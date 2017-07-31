@@ -11,7 +11,6 @@ django_compressor==2.1
 
 # django-userswitch==0.2.2  # NOTE Ver <=0.2.2 is broken! See below for git version.
 django-common-helpers==0.9.1
-django-allauth==0.31.0
 
 # REST framework
 djangorestframework==3.6.3
@@ -31,5 +30,3 @@ factory_boy==2.8.1
 
 # WSGI
 uwsgi==2.0.15
-
--e git+http://github.com/Tivix/django-userswitch.git@cf3a396269d9f998e1#egg=django_userswitch_fork

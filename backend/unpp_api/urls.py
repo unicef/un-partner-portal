@@ -8,9 +8,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.defaults import page_not_found, server_error
 
 urlpatterns = [
-    url(r'api/^', include('marketing.urls')),
-    url(r'^api/accounts/', include('accounts.urls')),
-    url(r'^api/accounts/', include('allauth.urls')),
     url(r'^api/admin/', include(admin.site.urls)),
     # url(r'^robots.txt$', include('robots.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
