@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block feature %}
+<div class="jumbotron">
+    <div class="container">
+        <h1 class="text-center">{% if request.user.is_authenticated %}
+				Welcome back, {{ request.user.first_name }}
+			{% else %}
+				unpp_api
+			{% endif %}
+		</h1>
+		<p class="lead text-center">The floor is made of lava.</p>
+		<p class="text-center"><a href="#" class="btn btn-lg btn-primary">Get started</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+
+<div class="row">
+	<div class="col-md-4">
+		<div class="well">Well, well, well...</div>
+		<p>
+			<button type="button" class="btn btn-default">Default</button>
+	        <button type="button" class="btn btn-primary">Primary</button>
+	        <button type="button" class="btn btn-success">Success</button>
+	    </p>
+	    <p>
+	        <button type="button" class="btn btn-info">Info</button>
+	        <button type="button" class="btn btn-warning">Warning</button>
+	        <button type="button" class="btn btn-danger">Danger</button>
+	    </p>
+	    <p>
+	        <button type="button" class="btn btn-link">Link</button>
+	        <button type="button" class="btn btn-default">
+	        	<i class="fa fa-pencil"></i>
+	        	Default
+	        </button>
+	    </p>
+	</div>
+	<div class="col-md-4">
+		<div class="panel panel-success">
+			<div class="panel-heading">
+				<h3 class="panel-title">Panel title</h3>
+			</div>
+			<div class="panel-body">
+				Panel content
+			</div>
+		</div>
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Panel title</h3>
+			</div>
+			<div class="panel-body">
+				Panel content
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<h2>Heading</h2>
+        <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+        <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+	</div>
+</div>
+
+{% endblock %}

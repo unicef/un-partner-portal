@@ -1,0 +1,75 @@
+{% load compress %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+        <title>{% block title %}unpp_api{% endblock %}</title>
+
+        <meta name="keywords" content="" />
+        <meta name="description" content="{% block meta_description %}{% endblock %}" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0;" />
+
+        {% compress css %}
+            <!-- Include less files within compress for staging and prod -->
+            {% if not is_dev %}
+                <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}global/less/index.less">
+            {% endif %}
+        {% endcompress %}
+
+        {% if is_dev %}
+            <!-- On dev, leave less uncompressed and include clientside compiling -->
+            <link rel="stylesheet/less" type="text/css" href="{{ STATIC_URL }}global/less/index.less">
+            <script type="text/javascript" src="{{ STATIC_URL }}global/js/less.js"></script>
+        {% endif %}
+
+        {% compress js %}
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/js/jquery.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/bootstrap/js/affix.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/bootstrap/js/alert.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/bootstrap/js/button.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/bootstrap/js/carousel.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/bootstrap/js/collapse.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/bootstrap/js/dropdown.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/bootstrap/js/modal.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/bootstrap/js/scrollspy.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/bootstrap/js/tab.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/bootstrap/js/tooltip.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/bootstrap/js/popover.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}global/bootstrap/js/transition.js"></script>
+            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}django_common/js/ajax_form.js"></script>
+        {% endcompress %}
+
+        {% block header_includes %}{% endblock %}
+    </head>
+
+    <body>
+        {% include 'fragments/navbar.html' %}
+
+        {% include 'fragments/messages.html' %}
+
+        {% block feature %}
+
+        {% endblock %}
+
+        <div class="container">
+            {% block body %}
+
+            {% endblock %}
+        </div>
+
+        {% include 'fragments/footer.html' %}
+
+        <!-- Placeholder for login modal -->
+        <div id="login_modal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div> <!-- /.modal-content -->
+            </div> <!-- /.modal-dialog -->
+        </div>
+        <!-- End login modal -->
+
+    {% block footer_scripts %}{% endblock %}
+    </body>
+</html>

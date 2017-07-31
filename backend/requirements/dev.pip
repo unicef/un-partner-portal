@@ -1,6 +1,6 @@
 -r base.pip
 
-django-extensions==1.7.7
+django-extensions==1.8.0
 django-debug-toolbar==1.7
 
 # django-test-without-migrations==0.4
