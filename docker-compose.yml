@@ -26,7 +26,7 @@ services:
         REQUIREMENT_FILE: dev.pip
     volumes:
       - './backend:/code/'
-    command: bash -c "/usr/local/bin/waitforit -host=db -port=5432 && python /code/manage.py migrate && python /code/manage.py collectstatic --noinput && uwsgi --ini /code/unpp_api/uwsgi.ini"
+    command: bash -c "/usr/local/bin/waitforit -host=db -port=5432  && python /code/manage.py collectstatic --noinput && uwsgi --ini /code/unpp_api/uwsgi.ini"
     depends_on:
       - db
 

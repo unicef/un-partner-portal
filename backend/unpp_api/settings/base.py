@@ -118,6 +118,7 @@ INSTALLED_APPS = [
     'compressor',
     'django_common',
 
+    'account',
     'common',
 ]
 
@@ -138,7 +139,7 @@ EMAIL_SUBJECT_PREFIX = '[%s %s] ' % (PROJECT_NAME, ENV)
 
 
 # auth / django-registration params
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'account.User'
 
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 LOGIN_URL = '/accounts/login/'
