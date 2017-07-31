@@ -1,4 +1,4 @@
-upstream django_api_uwsgi {
+upstream backend {
   server {{ DJANGO_APPLICATION_SERVICE_HOST }}:8000;
 }
 
@@ -6,7 +6,7 @@ server {
     listen      80;
 
     location /api/ {
-      uwsgi_pass django_api_uwsgi;
+      uwsgi_pass backend;
       include /etc/nginx/conf.d/uwsgi_params;
     }
 

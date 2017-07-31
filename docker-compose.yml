@@ -41,8 +41,9 @@ services:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
+      args:
+        ENV: dev
     volumes:
         - ./frontend/:/code
         - /code/node_modules
-        - /code/bower_components
-    command: ash -c "npm run dev"
+    command: /bin/bash -c "node server.js"
