@@ -104,3 +104,7 @@ ENV/
 
 #frontend dependencies
 frontend/node_modules
+
+# PyCharm etc.
+.idea/
+.vscode/
