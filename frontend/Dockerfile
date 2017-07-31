@@ -17,4 +17,4 @@ WORKDIR /code
 VOLUME /code
 
 EXPOSE 3000
-CMD ["yarn run start"]
+CMD ["yarn run build, node server.js"]
