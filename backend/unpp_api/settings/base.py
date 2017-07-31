@@ -81,9 +81,6 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-
-    'userswitch.middleware.UserSwitchMiddleware',
-
 ]
 
 TEMPLATES = [
@@ -120,11 +117,7 @@ INSTALLED_APPS = [
 
     'compressor',
     'django_common',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
 
-    'accounts',
     'common',
 ]
 
@@ -154,7 +147,6 @@ LOGIN_ERROR_URL = '/accounts/login/error/'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
@@ -233,16 +225,3 @@ LOGGING = {
         },
     }
 }
-
-# see http://django-allauth.readthedocs.org/en/latest/configuration.html for
-# more config options
-ACCOUNT_FORMS = {
-    'signup': 'accounts.forms.SignupForm'
-}
-ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_ADAPTER = 'accounts.adapter.DefaultAccountAdapter'
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-# Determines the e-mail verification method during signup -
-# choose one of "mandatory", "optional", or "none"
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
