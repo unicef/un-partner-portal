@@ -41,7 +41,11 @@ services:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
+      args:
+        ENV: dev
     volumes:
         - ./frontend/:/code
         - /code/node_modules
     command: bash -c "yarn run build && node server.js"
+
+

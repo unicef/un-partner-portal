@@ -16,5 +16,6 @@ RUN cp -a /tmp/node_modules /code/node_modules
 WORKDIR /code
 VOLUME /code
 
-EXPOSE 3000
+
+EXPOSE 8080
 CMD ["yarn run build, node server.js"]
