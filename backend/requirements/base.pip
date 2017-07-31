@@ -31,3 +31,5 @@ factory_boy==2.8.1
 
 # WSGI
 uwsgi==2.0.15
+
+-e git+http://github.com/Tivix/django-userswitch.git@cf3a396269d9f998e1#egg=django_userswitch_fork
