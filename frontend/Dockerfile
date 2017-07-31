@@ -1,6 +1,6 @@
 FROM node:7.10.1-wheezy
 
-ADD package.json /tmp/
+ADD package.json yarn.lock /tmp/
 
 ADD . /code/
 
