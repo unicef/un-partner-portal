@@ -4,7 +4,7 @@ ARG env
 ENV ENV ${env:-dev}
 
 ARG requirement_file
-ENV REQUIREMENT_FILE ${requirement_file:-dev.txt}
+ENV REQUIREMENT_FILE ${requirement_file:-dev.pip}
 
 # Install dependencies
 RUN apt-get update && \
