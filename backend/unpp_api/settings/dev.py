@@ -29,8 +29,6 @@ CACHES = {
     }
 }
 
-LOGS_PATH = os.path.join(BASE_DIR, 'logs/')
-
 # change logging level to debug
 LOGGING['loggers']['']['level'] = 'DEBUG'
 LOGGING['loggers']['django.request']['level'] = 'DEBUG'
