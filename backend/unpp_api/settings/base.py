@@ -7,10 +7,7 @@ import os, sys
 ####
 PROJECT_NAME = 'unpp_api'
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-DATA_VOLUME = '/data'
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(os.path.join(BASE_DIR, 'apps/'))
+BASE_DIR = '/data'
 
 ####
 # Other settings
@@ -176,7 +173,7 @@ def extend_list_avoid_repeats(list_to_extend, extend_with):
     list_to_extend.extend(filter(lambda x: not list_to_extend.count(x), extend_with))
 
 
-LOGS_PATH = os.path.join(DATA_VOLUME, PROJECT_NAME, 'logs')
+LOGS_PATH = os.path.join(BASE_DIR, PROJECT_NAME, 'logs')
 
 LOGGING = {
     'version': 1,
