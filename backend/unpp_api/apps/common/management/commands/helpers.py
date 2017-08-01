@@ -1,7 +1,7 @@
 from django.conf import settings
 
 from account.models import User, UserProfile
-#from common.factories import UserFactory
+from common.factories import UserFactory
 
 def clean_up_data_in_db():
     if settings.ENV == 'dev':
@@ -23,5 +23,5 @@ def generate_fake_data(quantity=5):
     admin.save()
     print "Superuser created:{}/{}".format(admin.username, 'Passw0rd!')
 
-    # UserFactory.create_batch(quantity)
-    # print "{} User objects created".format(quantity)
+    UserFactory.create_batch(quantity)
+    print "{} User objects created".format(quantity)
