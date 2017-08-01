@@ -7,8 +7,8 @@ DEBUG = True
 # TEMPLATE_DEBUG = DEBUG
 IS_DEV = True
 
-MEDIA_ROOT = os.path.join(VIRTUAL_ENV_DIR, '%s' % UPLOADS_DIR_NAME)
-STATIC_ROOT = '%s/staticserve' % VIRTUAL_ENV_DIR
+MEDIA_ROOT = os.path.join(BASE_DIR, '%s' % UPLOADS_DIR_NAME)
+STATIC_ROOT = '%s/staticserve' % BASE_DIR
 
 COMPRESS = False
 #COMPRESS = True   # so we can test compressor locally. setting debug=False leads to other url / static serving issues.
@@ -29,7 +29,7 @@ CACHES = {
     }
 }
 
-LOGS_PATH = os.path.join(VIRTUAL_ENV_DIR, 'logs/')
+LOGS_PATH = os.path.join(BASE_DIR, 'logs/')
 
 # change logging level to debug
 LOGGING['loggers']['']['level'] = 'DEBUG'

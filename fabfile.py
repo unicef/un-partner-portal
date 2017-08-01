@@ -60,11 +60,8 @@ def fixtures(quantity=5):
     """
     Load example data from generate_fake_data management command.
     """
-    print "First create factoryboy generator of fake data to use this command!!!"
-    return
-    local('docker-compose exec backend python manage.py generate_fake_data %d --clean_before' % (int(quantity)))
-
-    print "Fake data generated!"
+    local('docker-compose exec backend python manage.py fakedata %d --clean_before' % (int(quantity)))
+    print "fab fixtures is done."
 
 
 def remove_untagged_images():
