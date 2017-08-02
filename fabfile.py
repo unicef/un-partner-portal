@@ -58,13 +58,20 @@ def stop():
 
 def fixtures(quantity=5):
     """
-    Load example data from generate_fake_data management command.
+    Load example data from fakedata management command.
     """
-    print "First create factoryboy generator of fake data to use this command!!!"
-    return
-    local('docker-compose exec backend python manage.py generate_fake_data %d --clean_before' % (int(quantity)))
+    local('docker-compose exec backend python manage.py fakedata %d --clean_before' % (int(quantity)))
+    print "fab fixtures is done."
 
-    print "Fake data generated!"
+
+def make_db():
+    """
+    Reset db, migrate and generate fixtures.
+    Useful when changing branch with different migration.
+    """
+    local('docker-compose exec backend python manage.py reset_db')
+    local('docker-compose exec backend python manage.py migrate')
+    fixtures()
 
 
 def remove_untagged_images():

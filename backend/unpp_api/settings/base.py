@@ -6,12 +6,8 @@ import os, sys
 # Change per project
 ####
 PROJECT_NAME = 'unpp_api'
-PROJECT_NAME_DB = 'unpp_api'
-# VIRTUAL_ENV_DIR = '/data/backend/unpp_api'
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(os.path.join(BASE_DIR, 'apps/'))
-VIRTUAL_ENV_DIR = BASE_DIR
+BASE_DIR = '/data'
 
 ####
 # Other settings
@@ -34,13 +30,13 @@ sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 
 UPLOADS_DIR_NAME = 'uploads'
 MEDIA_URL = '/%s/' % UPLOADS_DIR_NAME
-MEDIA_ROOT = os.path.join(VIRTUAL_ENV_DIR, '%s' % UPLOADS_DIR_NAME)
+MEDIA_ROOT = os.path.join(BASE_DIR, '%s' % UPLOADS_DIR_NAME)
 FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
 
 
 # static resources related. See documentation at: http://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/
-STATIC_URL = '/static/'
-STATIC_ROOT = '%s/staticserve' % VIRTUAL_ENV_DIR
+STATIC_URL = '/api/static/'
+STATIC_ROOT = '%s/staticserve' % BASE_DIR
 STATICFILES_DIRS = (
     ('global', '%s/static' % PROJECT_ROOT),
 )
@@ -54,8 +50,8 @@ STATICFILES_FINDERS = (
     "compressor.finders.CompressorFinder",
 )
 
-DEBUG = False
-IS_DEV = False
+DEBUG = True
+IS_DEV = True
 IS_STAGING = False
 IS_PROD = False
 
@@ -142,9 +138,6 @@ EMAIL_SUBJECT_PREFIX = '[%s %s] ' % (PROJECT_NAME, ENV)
 AUTH_USER_MODEL = 'account.User'
 
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
-LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
-LOGIN_ERROR_URL = '/accounts/login/error/'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -179,6 +172,8 @@ def extend_list_avoid_repeats(list_to_extend, extend_with):
     original list."""
     list_to_extend.extend(filter(lambda x: not list_to_extend.count(x), extend_with))
 
+
+LOGS_PATH = os.path.join(BASE_DIR, PROJECT_NAME, 'logs')
 
 LOGGING = {
     'version': 1,

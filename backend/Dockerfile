@@ -61,8 +61,8 @@ RUN pip install -r $REQUIREMENT_FILE --trusted-host pypi.python.org
 ADD . /code/
 VOLUME /code
 
-RUN mkdir -p /data/backend/logs
-RUN touch /data/backend/logs/django.log
+RUN mkdir -p /data/unpp_api/logs
+RUN touch /data/unpp_api/logs/django.log
 
 VOLUME /data
 RUN chmod -R a+rw /data
