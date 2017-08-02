@@ -46,11 +46,9 @@ const theme = {
       },
       button: {
         '&:hover': {
-          color: grey[400],
           backgroundColor: grey[200],
         },
         '&.active': {
-          color: grey[400],
           backgroundColor: grey[200],
         },
       },
