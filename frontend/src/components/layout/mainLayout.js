@@ -107,5 +107,3 @@ mainLayout.propTypes = {
 };
 
 export default withStyles(styleSheet)(mainLayout);
-
-

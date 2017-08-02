@@ -1,4 +1,3 @@
-
 import createPalette from 'material-ui/styles/palette';
 import purple from 'material-ui/colors/purple';
 import blue from 'material-ui/colors/blue';

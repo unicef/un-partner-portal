@@ -6,7 +6,6 @@ import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import getTheme from '../styles/muiTheme';
 
 
-
 class Main extends Component {
 
   componentWillMount() {
