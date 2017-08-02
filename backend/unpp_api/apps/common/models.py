@@ -43,3 +43,30 @@ class Point(TimeStampedModel):
 
     def __str__(self):
         return "Point <pk:{}>".format(self.id)
+
+
+class Sector(TimeStampedModel):
+    """
+
+    """
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "Sector: {} <pk:{}>".format(self.name, self.id)
+
+
+class Specialization(TimeStampedModel):
+    """
+
+    """
+    name = models.CharField(max_length=255)
+    category = models.ForeignKey(Sector, related_name="specializations")
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "Specialization: {} <pk:{}>".format(self.name, self.id)
