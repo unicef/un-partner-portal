@@ -1,21 +1,29 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Provider } from 'react-redux'
+import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+import { Router, browserHistory } from 'react-router'
+import { routeChanged } from './reducers/route'
+import getTheme from './styles/muiTheme';
+import store from './store';
+import RouterComponent from './routes';
+
+browserHistory.listen((location) => {
+  store.dispatch(routeChanged(location));
+});
+browserHistory.push(window.location.pathname);
+
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
+      <Provider store={store}>
+        <MuiThemeProvider theme={createMuiTheme(getTheme())}>
+          <Router routes={RouterComponent} history={browserHistory}>
+          </Router>
+        </MuiThemeProvider>
+      </Provider>
+    )
   }
-}
+};
 
 export default App;
