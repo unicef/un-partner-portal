@@ -1,0 +1,32 @@
+# Django packages
+Django==1.11.3
+
+Fabric==1.13.1
+BeautifulSoup==3.2.1
+Pillow==3.1.1
+python-memcached==1.58
+ipython==4.1.1.
+
+django_compressor==2.1
+
+# django-userswitch==0.2.2  # NOTE Ver <=0.2.2 is broken! See below for git version.
+django-common-helpers==0.9.1
+
+# REST framework
+djangorestframework==3.6.3
+django-filter==1.0.4
+
+# Other Python packages
+psycopg2==2.7.1
+django-model-utils==2.6.1  # latest 3.0.0 but need to check changes
+django-mptt==0.8.6
+python-json-logger==0.1.7
+
+# Testing
+astroid==1.5.2
+isort==4.2.5
+pylint==1.7.1
+factory_boy==2.8.1
+
+# WSGI
+uwsgi==2.0.15
