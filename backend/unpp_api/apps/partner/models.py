@@ -4,7 +4,10 @@ from __future__ import unicode_literals
 from django.db import models
 from model_utils.models import TimeStampedModel
 
-from common.consts import SATISFACTION_SCALE
+from common.consts import (
+    SATISFACTION_SCALE,
+    PARTNER_REVIEW_TYPES,
+)
 
 
 class Partner(TimeStampedModel):
@@ -61,7 +64,7 @@ class PartnerReview(TimeStampedModel):
     partner = models.ForeignKey(Partner, related_name="reviews")
     agency = models.ForeignKey('agency.Agency', related_name="partner_reviews")
     reviewer = models.ForeignKey('account.User', related_name="partner_reviews")
-    # display_type = TODO: need to get !
+    display_type = models.CharField(max_length=3, choices=PARTNER_REVIEW_TYPES)
     eoi = models.ForeignKey('project.EOI', related_name="partner_reviews")
     performance_pm = models.CharField(max_length=3, choices=SATISFACTION_SCALE)
     peformance_financial = models.CharField(max_length=3, choices=SATISFACTION_SCALE)
