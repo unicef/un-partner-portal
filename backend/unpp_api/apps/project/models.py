@@ -2,7 +2,13 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from model_utils.models import TimeStampedModel
+from common.consts import (
+    EOI_TYPE,
+    APPLICATION_STATUS,
+    SCALE_TYPE,
+)
 
 
 class EOI(TimeStampedModel):
@@ -10,7 +16,7 @@ class EOI(TimeStampedModel):
     Call of Expression of Interest
     """
     # TODO: this model is very heavy !!! we should think to split fields like file texts to some "EOI_profil" ..
-    # display_type = open, direct
+    display_type = models.CharField(max_length=3, choices=EOI_TYPE, default=EOI_TYPE.open)
     is_closed = models.BooleanField(default=True, verbose_name='Is closed?')
     title = models.CharField(max_length=255)
     country = models.ForeignKey('common.Country', related_name="expressions_of_interest")
@@ -38,6 +44,10 @@ class EOI(TimeStampedModel):
     def __str__(self):
         return "EOI: {} <pk:{}>".format(self.title, self.id)
 
+    @property
+    def is_direct(self):
+        return self.display_type == EOI_TYPE.direct
+
 
 class Application(TimeStampedModel):
     is_unsolicited = models.BooleanField(default=False, verbose_name='Is unsolicited?')
@@ -46,7 +56,7 @@ class Application(TimeStampedModel):
     submitter = models.ForeignKey('account.User', related_name="applications")
     agency = models.ForeignKey('agency.Agency', related_name="applications")
     cn = models.FileField()
-    # TODO: status = PENDING, PRESELECTED, REJECTED
+    status = models.CharField(max_length=3, choices=APPLICATION_STATUS, default=APPLICATION_STATUS.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
     # These two (ds_justification_*) will be used as direct selection will create applications for DS EOIs.
@@ -77,10 +87,15 @@ class AssessmentCriteria(TimeStampedModel):
     # TODO: display_type = Selection of criteria types
     scale = models.CharField(
         max_length=3,
-        # choices=SCALE_TYPE,
-        # default=SCALE_TYPE.standard ???,
+        choices=SCALE_TYPE,
+        default=SCALE_TYPE.standard,
     )
-    weight = models.PositiveSmallIntegerField()
+    weight = models.PositiveSmallIntegerField(
+        "Weight in percentage",
+        help_text="Value in percentage, provide number from 0 to 100",
+        default=100,
+        validators=[MaxValueValidator(100), MinValueValidator(1)]
+    )
 
     class Meta:
         ordering = ['id']

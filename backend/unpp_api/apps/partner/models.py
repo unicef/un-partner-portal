@@ -7,6 +7,7 @@ from model_utils.models import TimeStampedModel
 from common.consts import (
     SATISFACTION_SCALE,
     PARTNER_REVIEW_TYPES,
+    PARTNER_TYPE,
 )
 
 
@@ -15,7 +16,7 @@ class Partner(TimeStampedModel):
 
     """
     legal_name = models.CharField(max_length=255)
-    # display_type = International, national
+    display_type = models.CharField(max_length=3, choices=PARTNER_TYPE)
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
     country = models.ForeignKey('common.Country', related_name="partners")
 
