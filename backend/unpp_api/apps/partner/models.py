@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.db import models
 from model_utils.models import TimeStampedModel
 
+from common.consts import SATISFACTION_SCALE
+
 
 class Partner(TimeStampedModel):
     """
@@ -61,9 +63,9 @@ class PartnerReview(TimeStampedModel):
     reviewer = models.ForeignKey('account.User', related_name="partner_reviews")
     # display_type = TODO: need to get !
     eoi = models.ForeignKey('project.EOI', related_name="partner_reviews")
-    # performance_pm = Highly satisfactory, satisfactory, not satisfactory
-    # peformance_financial = Highly satisfactory, satisfactory, not satisfactory
-    # performance_com_eng = Highly satisfactory, satisfactory, not satisfactory
+    performance_pm = models.CharField(max_length=3, choices=SATISFACTION_SCALE)
+    peformance_financial = models.CharField(max_length=3, choices=SATISFACTION_SCALE)
+    performance_com_eng = models.CharField(max_length=3, choices=SATISFACTION_SCALE)
     ethical_concerns = models.BooleanField(default=False, verbose_name='Ethical concerns?')
     does_recommend = models.BooleanField(default=False, verbose_name='Does recommend?')
     comment = models.TextField()
