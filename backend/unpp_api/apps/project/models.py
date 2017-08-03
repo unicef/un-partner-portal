@@ -28,12 +28,12 @@ class EOI(TimeStampedModel):
     cn_template = models.FileField()  # or take it from agency or agency office
     specializations = models.ManyToManyField('common.Specializations', related_name="expressions_of_interest")
     # TODO: intended_pop_of_concern = Selection. Should have in help text only for UNHCR. TODO on select options
-    description = models.TextField()
-    other_information = models.TextField()
-    start_date = models.DateField(verbose_name='Start Date')
-    end_date = models.DateField(verbose_name='End Date')
-    deadline_date = models.DateField(verbose_name='Deadline Date')
-    notif_results_date = models.DateField(verbose_name='Notif Results Date')
+    description = models.CharField(max_length=200, verbose_name='Brief background of the project')
+    other_information = models.CharField(max_length=200, verbose_name='Other information (optional)')
+    start_date = models.DateField(verbose_name='Estimated Start Date')
+    end_date = models.DateField(verbose_name='Estimated End Date')
+    deadline_date = models.DateField(verbose_name='Estimated Deadline Date')
+    notif_results_date = models.DateField(verbose_name='Notification of Results Date')
     has_weighting = models.BooleanField(default=True, verbose_name='Has weighting?')  # TBD - not even sure we need to store
     invited_partners = models.ManyToManyField('common.Partner', related_name="expressions_of_interest")
     reviewers = models.ManyToManyField('account.PartUserner', related_name="expressions_of_interest")
