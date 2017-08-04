@@ -6,6 +6,8 @@ import { routeChanged } from './reducers/route'
 import getTheme from './styles/muiTheme';
 import store from './store';
 import RouterComponent from './routes';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
 
 browserHistory.listen((location) => {
   store.dispatch(routeChanged(location));

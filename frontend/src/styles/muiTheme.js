@@ -1,5 +1,5 @@
 import createPalette from 'material-ui/styles/palette';
-import purple from 'material-ui/colors/purple';
+import purple from 'material-ui/colors/deepPurple';
 import blue from 'material-ui/colors/blue';
 import grey from 'material-ui/colors/grey';
 import store from '../store';
@@ -8,7 +8,7 @@ const getColorTheme = () => {
   const role = store.getState().session.role;
   return (role && role === 'agency')
     ? blue
-    : purple;
+    : { ...purple, 500: '#6B5CA5' };
 };
 
 const theme = {
@@ -50,6 +50,16 @@ const theme = {
         '&.active': {
           backgroundColor: grey[200],
         },
+      },
+    },
+    MuiTypography: {
+      headline: {
+        color: 'inherit',
+      },
+    },
+    MuiButton: {
+      raisedAccent: {
+        backgroundColor: '#6B5CA5',
       },
     },
   },
