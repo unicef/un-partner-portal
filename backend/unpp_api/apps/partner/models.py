@@ -50,7 +50,7 @@ class PartnerMember(TimeStampedModel):
 
     """
     user = models.ForeignKey('account.User', related_name="partner_members")
-    partner_profile = models.ForeignKey(PartnerProfile, related_name="partner_members")
+    partner = models.ForeignKey(Partner, related_name="partners")
     title = models.CharField(max_length=255)
     # role = ??? the same that we have in agency?
 
