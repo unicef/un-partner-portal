@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { withStyles, createStyleSheet } from 'material-ui/styles';
+
 import CheckCircle from 'material-ui-icons/CheckCircle';
 import SvgIcon from 'material-ui/SvgIcon';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
-import classNames from 'classnames';
 import Typography from 'material-ui/Typography';
+
 import StepIcon from './StepIcon';
 
-export const styleSheet = createStyleSheet("MuiStepLabel", theme => ({
+export const styleSheet = createStyleSheet('MuiStepLabel', theme => ({
   root: {
     display: 'flex',
     alignItems: 'center',
@@ -72,10 +74,11 @@ function StepLabel(props) {
             completed={completed}
             active={active}
             icon={icon}
+            disabled={disabled}
           />
         </span>
       )}
-      <Typography type="body1">{children}</Typography>
+      <Typography type='body1'>{children}</Typography>
     </span>
   );
 }
@@ -113,7 +116,7 @@ StepLabel.propTypes = {
   /**
    * @ignore
    */
-  orientation: PropTypes.oneOf(["horizontal", "vertical"]).isRequired,
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']).isRequired,
 };
 
 export default withStyles(styleSheet)(StepLabel);

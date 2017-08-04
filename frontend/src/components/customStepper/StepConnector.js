@@ -1,18 +1,19 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
+import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
-export const styleSheet = createStyleSheet("MuiStepConnector", theme => ({
+export const styleSheet = createStyleSheet('MuiStepConnector', theme => ({
   root: {
-    flex: "1 1 auto"
+    flex: '1 1 auto'
   },
   line: {
-    display: "block",
+    display: 'block',
     borderColor: theme.palette.primary[200],
   },
   hidden: {
-    display: "none",
+    display: 'none',
     height: 0
   },
   rootVertical: {
@@ -20,11 +21,11 @@ export const styleSheet = createStyleSheet("MuiStepConnector", theme => ({
   },
   lineHorizontal: {
     marginLeft: -6,
-    borderTopStyle: "solid",
+    borderTopStyle: 'solid',
     borderTopWidth: 1
   },
   lineVertical: {
-    borderLeftStyle: "solid",
+    borderLeftStyle: 'solid',
     borderLeftWidth: 1,
     margin: '8px 0px',
     borderLeftWidth: 1,
@@ -44,7 +45,7 @@ function StepConnector(props) {
   const className = classNames(
     classes.root,
     {
-      [classes.rootVertical]: orientation === "vertical",
+      [classes.rootVertical]: orientation === 'vertical',
       [classes.hidden]: active
     },
     classNameProp
@@ -77,7 +78,7 @@ StepConnector.propTypes = {
   /**
    * @ignore
    */
-  orientation: PropTypes.oneOf(["horizontal", "vertical"]).isRequired
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']).isRequired
 };
 
 export default withStyles(styleSheet)(StepConnector);

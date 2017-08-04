@@ -7,7 +7,7 @@
     "express": "^4.15.3",
     "material-ui": "next",
     "material-ui-icons": "^1.0.0-alpha.19",
-    "material-ui-stepper": "~/Users/dolinskim/Documents/material-ui/",
+    "material-ui-old": "npm:material-ui",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",

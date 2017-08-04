@@ -1,24 +1,25 @@
 import React, { Component, Children } from 'react';
 import PropTypes from 'prop-types';
-import StepConnector from './StepConnector';
+import classNames from 'classnames';
+
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import classNames from "classnames";
-import Paper from "material-ui/Paper";
+import Paper from 'material-ui/Paper';
 
+import StepConnector from './StepConnector';
 
-export const styleSheet = createStyleSheet("MuiStepper", theme => ({
+export const styleSheet = createStyleSheet('MuiStepper', theme => ({
   root: {
-    display: "flex",
-    alignContent: "center",
-    justifyContent: "space-between"
+    display: 'flex',
+    alignContent: 'center',
+    justifyContent: 'space-between'
   },
   horizontal: {
-    flexDirection: "row",
-    alignItems: "center"
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   vertical: {
-    flexDirection: "column",
-    alignItems: "stretch"
+    flexDirection: 'column',
+    alignItems: 'stretch'
   }
 }));
 
@@ -100,14 +101,14 @@ Stepper.propTypes = {
   /**
    * The stepper orientation (layout flow direction)
    */
-  orientation: PropTypes.oneOf(["horizontal", "vertical"])
+  orientation: PropTypes.oneOf(['horizontal', 'vertical'])
 };
 
 Stepper.defaultProps = {
   activeStep: 0,
   connector: <StepConnector />,
   linear: true,
-  orientation: "horizontal",
+  orientation: 'horizontal',
 };
 
 export default withStyles(styleSheet)(Stepper);

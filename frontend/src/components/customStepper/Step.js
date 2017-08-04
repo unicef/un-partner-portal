@@ -1,12 +1,13 @@
 
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
+import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
-export const styleSheet = createStyleSheet("MuiStep", theme => ({
+export const styleSheet = createStyleSheet('MuiStep', theme => ({
   root: {
-    flex: "0 0 auto"
+    flex: '0 0 auto'
   },
   horizontal: {
     marginLeft: -6,
@@ -84,7 +85,7 @@ Step.propTypes = {
   /**
    * @ignore
    */
-  orientation: PropTypes.oneOf(["horizontal", "vertical"]).isRequired,
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']).isRequired,
 };
 
 export default withStyles(styleSheet)(Step);

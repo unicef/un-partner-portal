@@ -14,7 +14,7 @@ export const styleSheet = createStyleSheet("MuiStepPositionIcon", theme => ({
     fontSize: theme.typography.caption.fontSize,
   },
   active: {
-    fill: theme.palette.primary[500],
+    fill: theme.palette.accent[500],
   },
 }));
 
@@ -30,7 +30,7 @@ function StepPositionIcon(props) {
 
   return (
     <SvgIcon className={className}>
-      <circle cx="12" cy="12" r="10"/>
+      <circle cx="12" cy="12" r="12"/>
       <text className={classes.text} x="12" y="16" textAnchor="middle">
         {position}
       </text>

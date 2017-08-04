@@ -57,23 +57,13 @@ class VerticalLinearStepper extends React.Component {
       <div style={{ margin: '12px 0' }}>
         <Button
           color='accent'
-          disableTouchRipple={true}
-          disableFocusRipple={true}
           raised={true}
-          onTouchTap={this.handleNext}
-          style={{ marginRight: 12 }}
-          labelStyle={{
-            paddingLeft: "5px",
-            paddingRight: "5px"
-          }}>
+          onTouchTap={this.handleNext}>
           {stepIndex === 4 ? 'Submit' : 'Continue'}
         </Button>
         {step > 0 && (
           <Button
-
             disabled={stepIndex === 0}
-            disableTouchRipple={true}
-            disableFocusRipple={true}
             onTouchTap={this.handlePrev}>
             Cancel
           </Button>

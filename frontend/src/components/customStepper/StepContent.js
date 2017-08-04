@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Collapse from 'material-ui/transitions/Collapse';
-import classNames from "classnames";
 
-export const styleSheet = createStyleSheet("MuiStep", theme => ({
+export const styleSheet = createStyleSheet('MuiStepContent', theme => ({
   root: {
     marginLeft:  14 + 11,
     paddingLeft: 24 - 11 + 8,
@@ -44,7 +45,7 @@ class StepContent extends Component {
     );
     return (
       <div className={className}>
-        <Collapse in={active} transitionDuration="auto" unmountOnExit>
+        <Collapse in={active} transitionDuration='auto' unmountOnExit>
           {children}
         </Collapse>
       </div>

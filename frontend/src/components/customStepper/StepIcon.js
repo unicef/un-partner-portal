@@ -1,28 +1,30 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import CheckCircle from "material-ui-icons/CheckCircle";
+import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+
+import CheckCircle from 'material-ui-icons/CheckCircle';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
+
 import StepPositionIcon from './StepPositionIcon';
 
-export const styleSheet = createStyleSheet("MuiStepIcon", theme => ({
+export const styleSheet = createStyleSheet('MuiStepIcon', theme => ({
   root: {
-    fill: theme.palette.accent[500],
-    display: "block",
+    display: 'block',
   },
   checkIcon: {
-    color: 'green',
-    display: "block",
+    fill: theme.palette.accent[500],
+    display: 'block',
     height: '30px',
+    width: '30px'
   },
 
 }));
 
 function StepIcon(props) {
-  const { completed, icon, active, classes, theme } = props;
+  const { completed, icon, active, disabled, classes, theme } = props;
   const iconType = typeof icon;
 
-  if (iconType === "number" || iconType === "string") {
+  if (iconType === 'number' || iconType === 'string') {
     if (completed) {
       return <CheckCircle color='accent' className={`${classes.root} ${classes.checkIcon}` } />;
     }
@@ -32,6 +34,7 @@ function StepIcon(props) {
         classes={classes}
         position={icon}
         active={active}
+        disabled={disabled}
       />
     );
   }
