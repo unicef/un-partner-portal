@@ -59,7 +59,7 @@ class OrganizationTypes extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <Grid container direction='column' gutter={16}>
+      <Grid container direction='column' xs={12} >
         <Grid item className={classes.info}>
           This portal is not intended for private sector companies, goverment ministries or agencies and individuals.&nbsp;
           <a style={linkStyle} href="http://google.com">learn more</a>

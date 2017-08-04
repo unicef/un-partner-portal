@@ -14,8 +14,6 @@ export const styleSheet = createStyleSheet('MuiStepIcon', theme => ({
   checkIcon: {
     fill: theme.palette.accent[500],
     display: 'block',
-    height: '30px',
-    width: '30px'
   },
 
 }));
