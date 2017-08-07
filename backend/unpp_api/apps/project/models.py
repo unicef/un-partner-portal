@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db.models import Sum
 from django.core.validators import MaxValueValidator, MinValueValidator
 from model_utils.models import TimeStampedModel
 from common.consts import (
@@ -120,3 +121,26 @@ class Assessment(TimeStampedModel):
 
     def __str__(self):
         return "Assessment <pk:{}>".format(self.id)
+
+
+class ApplicationReview(TimeStampedModel):
+    application = models.ForeignKey(Application, related_name="application_reviews")
+    reviewer = models.ForeignKey('account.User', related_name="application_reviews")
+
+    __total_score = None
+
+    @property
+    def total_score(self):
+        if self.__total_score is None:
+            self.__total_score = ApplicationReviewCriteria.objects.filter(
+                application_review=self
+            ).aggregate(Sum('score')).get('score__sum') or 0
+        else:
+            return self.__total_score
+
+
+class ApplicationReviewCriteria(TimeStampedModel):
+
+    application_review = models.ForeignKey(ApplicationReview, related_name="application_review_criterias")
+    criteria = models.ForeignKey(AssessmentCriteria, related_name="application_review_criterias")
+    score = models.PositiveSmallIntegerField(default=1, validators=[MaxValueValidator(100), MinValueValidator(1)])
