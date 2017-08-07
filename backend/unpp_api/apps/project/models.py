@@ -37,6 +37,7 @@ class EOI(TimeStampedModel):
     has_weighting = models.BooleanField(default=True, verbose_name='Has weighting?')  # TBD - not even sure we need to store
     invited_partners = models.ManyToManyField('common.Partner', related_name="expressions_of_interest")
     reviewers = models.ManyToManyField('account.PartUserner', related_name="expressions_of_interest")
+    closed_justification = models.TextField()
 
     class Meta:
         ordering = ['id']
@@ -74,6 +75,8 @@ class ApplicationFeedback(TimeStampedModel):
     application = models.ForeignKey(Application, related_name="application_feedbacks")
     provider = models.ForeignKey('account.User', related_name="application_feedbacks")
     feedback = models.TextField()
+    score = models.PositiveSmallIntegerField()
+    criteria = models.ForeignKey(AssessmentCriteria, related_name="application_feedbacks")
 
     class Meta:
         ordering = ['id']
@@ -96,6 +99,7 @@ class AssessmentCriteria(TimeStampedModel):
         default=100,
         validators=[MaxValueValidator(100), MinValueValidator(1)]
     )
+    description = models.TextField()
 
     class Meta:
         ordering = ['id']

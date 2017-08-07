@@ -8,6 +8,8 @@ from common.consts import (
     SATISFACTION_SCALE,
     PARTNER_REVIEW_TYPES,
     PARTNER_TYPE,
+    MEMBER_ROLE,
+    MEMBER_STATUS,
 )
 
 
@@ -19,6 +21,8 @@ class Partner(TimeStampedModel):
     display_type = models.CharField(max_length=3, choices=PARTNER_TYPE)
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
     country = models.ForeignKey('common.Country', related_name="partners")
+    is_active = models.BooleanField(default=True)
+    registration_number = models.CharField(max_length=255)
 
     class Meta:
         ordering = ['id']
@@ -37,6 +41,12 @@ class PartnerProfile(TimeStampedModel):
     org_head_first_name = models.CharField(max_length=255, null=True, blank=True)
     org_head_last_name = models.CharField(max_length=255, null=True, blank=True)
     org_head_email = models.EmailField(max_length=255, null=True, blank=True)
+    register_country = models.BooleanField(default=False, verbose_name='Register to work in country?')
+    flagged = models.BooleanField(default=False)
+    start_cooperate_date = models.DateField()
+    annual_budget = models.DecimalField(decimal_places=2, max_digits=12, blank=True, null=True)
+    have_gov_doc = models.BooleanField(default=False, verbose_name='Does the organization have a government document?')
+    # TODO registration_doc = models.FileField ...
 
     class Meta:
         ordering = ['id']
@@ -52,7 +62,8 @@ class PartnerMember(TimeStampedModel):
     user = models.ForeignKey('account.User', related_name="partner_members")
     partner = models.ForeignKey(Partner, related_name="partners")
     title = models.CharField(max_length=255)
-    # role = ??? the same that we have in agency?
+    role = models.CharField(max_length=3, choices=MEMBER_ROLE, default=MEMBER_ROLE.reader)
+    status = models.CharField(max_length=3, choices=MEMBER_STATUS, default=MEMBER_STATUS.invited)
 
     class Meta:
         ordering = ['id']

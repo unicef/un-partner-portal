@@ -37,3 +37,15 @@ SCALE_TYPE = Choices(
     ('Std', 'standard', '1-10'),
     ('Hig', 'high', '1-100'),
 )
+
+MEMBER_ROLE = Choices(
+    ('Adm', 'admin', 'Administrator'),
+    ('Edi', 'editor', 'Editor'),
+    ('Rea', 'reader', 'Reader'),
+)
+
+MEMBER_STATUS = Choices(
+    ('Act', 'active', 'Active'),
+    ('Dea', 'deactivated', 'Deactivated'),
+    ('Inv', 'invited', 'Invited'),
+)
