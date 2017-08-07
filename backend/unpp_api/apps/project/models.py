@@ -9,6 +9,7 @@ from common.consts import (
     EOI_TYPE,
     APPLICATION_STATUS,
     SCALE_TYPE,
+    EOI_STATUS,
 )
 
 
@@ -40,6 +41,7 @@ class EOI(TimeStampedModel):
     invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest")
     reviewers = models.ManyToManyField('account.User', related_name="expressions_of_interest_by_reviewers")
     closed_justification = models.TextField()
+    status = models.CharField(max_length=3, choices=EOI_STATUS, default=EOI_STATUS.open)
 
     class Meta:
         ordering = ['id']

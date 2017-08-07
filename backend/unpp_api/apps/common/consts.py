@@ -49,3 +49,8 @@ MEMBER_STATUS = Choices(
     ('Dea', 'deactivated', 'Deactivated'),
     ('Inv', 'invited', 'Invited'),
 )
+
+EOI_STATUS = Choices(
+    ('Ope', 'open', 'Open'),
+    ('Clo', 'closed', 'Closed'),
+)
