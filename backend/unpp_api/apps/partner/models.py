@@ -46,7 +46,7 @@ class PartnerProfile(TimeStampedModel):
     start_cooperate_date = models.DateField()
     annual_budget = models.DecimalField(decimal_places=2, max_digits=12, blank=True, null=True)
     have_gov_doc = models.BooleanField(default=False, verbose_name='Does the organization have a government document?')
-    # TODO registration_doc = models.FileField ...
+    registration_doc = models.FileField(null=True)
 
     class Meta:
         ordering = ['id']
