@@ -1,31 +1,16 @@
 import React, { Component } from 'react';
+import { reduxForm, Field } from 'redux-form';
+
+import { withStyles, createStyleSheet } from 'material-ui/styles';
 import InfoIcon from 'material-ui-icons/Info';
 import { CardTitle } from 'material-ui/Card';
 import SelectField from 'material-ui-old/SelectField';
 import Grid from 'material-ui/Grid';
 import { MenuItem } from 'material-ui-old/Menu';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import Radio, { RadioGroup } from 'material-ui/Radio';
+import { FormControl, FormLabel, FormControlLabel } from 'material-ui/Form';
 
-
-const textColor = "#9E9E9E";
-
-const center = {
-  "backgroundColor": "#EEEEEE",
-  padding: "2%",
-  color: textColor,
-  fontSize: "0.8em",
-  fontWeight: "300",
-  width: "90%"
-};
-
-const linkStyle = {
-  color: textColor,
-  fontWeight: "bold"
-}
-
-const styles = {
-  maxWidth: "90%",
-};
+import { renderRadioGroup, renderSelectField } from '../../lib/formHelper';
 
 
 const styleSheet = createStyleSheet("OrganizationTypes", theme => ({
@@ -39,53 +24,83 @@ const styleSheet = createStyleSheet("OrganizationTypes", theme => ({
   infoIcon: {
     fill: theme.palette.primary[500],
   },
+  formContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  checkedRadio: {
+    color: theme.palette.accent[500]
+  }
 }))
 
-/**
- * This example uses an [IconButton](/#/components/icon-button) on the left, has a clickable `title`
- * through the `onTouchTap` property, and a [FlatButton](/#/components/flat-button) on the right.
- */
 class OrganizationTypes extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { value: null };
+    this.state = { organization: undefined, selectedOffice: undefined };
     this.handleChange = this.handleChange.bind(this);
+    this.handleRadioChange = this.handleRadioChange.bind(this);
   }
 
+  handleChange(event, value) {
+    this.setState({ organization: value });
+  }
 
-  handleChange(event, index, value) { this.setState({ value }); }
+  handleRadioChange(event, value) {
+    this.setState({ selectedOffice: value });
+  }
 
   render() {
     const { classes } = this.props;
     return (
-      <Grid container direction='column' xs={12} >
-        <Grid item className={classes.info}>
-          This portal is not intended for private sector companies, goverment ministries or agencies and individuals.&nbsp;
-          <a style={linkStyle} href="http://google.com">learn more</a>
-        </Grid>
-        <Grid item>
-          <Grid container direction='row' align='flex-end' wrap='nowrap'>
-            <Grid item xs={11}>
-              <SelectField
-                value={this.state.value}
-                floatingLabelFixed
-                floatingLabelText='Type of organization'
-                hintText="Select type of your organization"
-                onChange={this.handleChange}
-                fullWidth>
-                <MenuItem value={1} primaryText="National NGO" />
-                <MenuItem value={2} primaryText="International NGO (INGO)" />
-              </SelectField>
-            </Grid>
-            <Grid item xs={1} >
-              <InfoIcon className={classes.infoIcon} />
+      <form>
+        <Grid container direction='column' xs={12} >
+          <Grid item className={classes.info}>
+            This portal is not intended for private sector companies, goverment ministries or agencies and individuals.&nbsp;
+          <a target="_blank" href="http://unicef.com">learn more</a>
+          </Grid>
+          <Grid item>
+            <Grid container direction='row' align='flex-end' wrap='nowrap'>
+              <Grid item xs={11}>
+                <Field
+                  name='organizationType'
+                  component={renderSelectField}
+                  floatingLabelFixed
+                  floatingLabelText='Type of organization'
+                  hintText="Select type of your organization"
+                  onChange={this.handleChange}
+                  fullWidth>
+                  <MenuItem value='ngo' primaryText="National NGO" />
+                  <MenuItem value='ingo' primaryText="International NGO (INGO)" />
+                </Field>
+              </Grid>
+              <Grid item xs={1} >
+                <InfoIcon className={classes.infoIcon} />
+              </Grid>
             </Grid>
           </Grid>
+          {(this.state.organization === 'ingo')
+            ? (<Grid item>
+              <FormControl>
+                <FormLabel>Indicate if you are</FormLabel>
+                <Field name="office" component={renderRadioGroup} className={classes.formContainer}
+                  selectedValue={this.state.selectedOffice}
+                  onChange={this.handleRadioChange}>
+                  <FormControlLabel value='hq' control={<Radio classes={{ checked: classes.checkedRadio }} />} label="Headquarters" />
+                  <FormControlLabel value='country' control={<Radio classes={{ checked: classes.checkedRadio }} />} label="Country Office" />
+                </Field>
+              </FormControl>
+            </Grid>)
+            : null
+          }
         </Grid>
-      </Grid>
+      </form>
     )
   }
 };
 
-export default withStyles(styleSheet)(OrganizationTypes)
+export default OrganizationTypes = reduxForm({
+  form: 'registration',  // a unique identifier for this form
+  destroyOnUnmount: false, // <------ preserve form data
+  forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
+})(withStyles(styleSheet)(OrganizationTypes));

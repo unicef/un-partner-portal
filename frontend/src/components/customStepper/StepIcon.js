@@ -13,7 +13,6 @@ export const styleSheet = createStyleSheet('MuiStepIcon', theme => ({
   },
   checkIcon: {
     fill: theme.palette.accent[500],
-    display: 'block',
   },
 
 }));
@@ -29,7 +28,7 @@ function StepIcon(props) {
     return (
       <StepPositionIcon
         theme={theme}
-        classes={classes}
+        classes={{root}}
         position={icon}
         active={active}
         disabled={disabled}
