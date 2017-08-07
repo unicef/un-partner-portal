@@ -22,11 +22,12 @@ class EOI(TimeStampedModel):
     country = models.ForeignKey('common.Country', related_name="expressions_of_interest")
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
     created_by = models.ForeignKey('account.User', related_name="expressions_of_interest")
-    focal_point = models.ForeignKey('account.User', related_name="expressions_of_interest")  # limited to users under agency
+    # focal_point - limited to users under agency
+    focal_point = models.ForeignKey('account.User', related_name="expressions_of_interest_by_focal_point")
     locations = models.ManyToManyField('common.Point', related_name="expressions_of_interest")
     agency_office = models.ForeignKey('agency.AgencyOffice', related_name="expressions_of_interest")
     cn_template = models.FileField()  # or take it from agency or agency office
-    specializations = models.ManyToManyField('common.Specializations', related_name="expressions_of_interest")
+    specializations = models.ManyToManyField('common.Specialization', related_name="expressions_of_interest")
     # TODO: intended_pop_of_concern = Selection. Should have in help text only for UNHCR. TODO on select options
     description = models.CharField(max_length=200, verbose_name='Brief background of the project')
     other_information = models.CharField(max_length=200, verbose_name='Other information (optional)')
@@ -35,8 +36,8 @@ class EOI(TimeStampedModel):
     deadline_date = models.DateField(verbose_name='Estimated Deadline Date')
     notif_results_date = models.DateField(verbose_name='Notification of Results Date')
     has_weighting = models.BooleanField(default=True, verbose_name='Has weighting?')  # TBD - not even sure we need to store
-    invited_partners = models.ManyToManyField('common.Partner', related_name="expressions_of_interest")
-    reviewers = models.ManyToManyField('account.PartUserner', related_name="expressions_of_interest")
+    invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest")
+    reviewers = models.ManyToManyField('account.User', related_name="expressions_of_interest_by_reviewers")
     closed_justification = models.TextField()
 
     class Meta:
@@ -52,7 +53,7 @@ class EOI(TimeStampedModel):
 
 class Application(TimeStampedModel):
     is_unsolicited = models.BooleanField(default=False, verbose_name='Is unsolicited?')
-    partner = models.ForeignKey('common.Partner', related_name="applications")
+    partner = models.ForeignKey('partner.Partner', related_name="applications")
     eoi = models.ForeignKey(EOI, related_name="applications")
     submitter = models.ForeignKey('account.User', related_name="applications")
     agency = models.ForeignKey('agency.Agency', related_name="applications")
@@ -75,8 +76,6 @@ class ApplicationFeedback(TimeStampedModel):
     application = models.ForeignKey(Application, related_name="application_feedbacks")
     provider = models.ForeignKey('account.User', related_name="application_feedbacks")
     feedback = models.TextField()
-    score = models.PositiveSmallIntegerField()
-    criteria = models.ForeignKey(AssessmentCriteria, related_name="application_feedbacks")
 
     class Meta:
         ordering = ['id']

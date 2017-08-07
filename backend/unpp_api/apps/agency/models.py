@@ -64,4 +64,4 @@ class AgencyMember(TimeStampedModel):
 
 # Signals
 
-post_save.connect(AgencyProfile.create_user_profile, sender=Agency)
+post_save.connect(AgencyProfile.create_agency_profile, sender=Agency)
