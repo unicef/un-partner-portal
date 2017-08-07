@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from datetime import date
 
 from django.db import models
 from django.db.models import Sum
@@ -19,7 +20,6 @@ class EOI(TimeStampedModel):
     """
     # TODO: this model is very heavy !!! we should think to split fields like file texts to some "EOI_profil" ..
     display_type = models.CharField(max_length=3, choices=EOI_TYPE, default=EOI_TYPE.open)
-    is_closed = models.BooleanField(default=True, verbose_name='Is closed?')
     title = models.CharField(max_length=255)
     country = models.ForeignKey('common.Country', related_name="expressions_of_interest")
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
@@ -41,7 +41,6 @@ class EOI(TimeStampedModel):
     invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest")
     reviewers = models.ManyToManyField('account.User', related_name="expressions_of_interest_by_reviewers")
     closed_justification = models.TextField()
-    status = models.CharField(max_length=3, choices=EOI_STATUS, default=EOI_STATUS.open)
 
     class Meta:
         ordering = ['id']
@@ -52,6 +51,14 @@ class EOI(TimeStampedModel):
     @property
     def is_direct(self):
         return self.display_type == EOI_TYPE.direct
+
+    @property
+    def is_overdue_deadline(self):
+        return self.deadline_date < date.today()
+
+    @property
+    def is_closed(self):
+        return self.applications.filter(did_win=True).exists()
 
 
 class Application(TimeStampedModel):
