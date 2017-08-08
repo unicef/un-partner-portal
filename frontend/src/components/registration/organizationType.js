@@ -1,91 +1,96 @@
 import React, { Component } from 'react';
-import InfoIcon from 'material-ui-icons/Info';
-import { CardTitle } from 'material-ui/Card';
-import SelectField from 'material-ui-old/SelectField';
-import Grid from 'material-ui/Grid';
-import { MenuItem } from 'material-ui-old/Menu';
+
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
+import Grid from 'material-ui/Grid';
 
-const textColor = "#9E9E9E";
-
-const center = {
-  "backgroundColor": "#EEEEEE",
-  padding: "2%",
-  color: textColor,
-  fontSize: "0.8em",
-  fontWeight: "300",
-  width: "90%"
-};
-
-const linkStyle = {
-  color: textColor,
-  fontWeight: "bold"
-}
-
-const styles = {
-  maxWidth: "90%",
-};
+import RadioForm from '../forms/radioForm'
+import SelectForm from '../forms/selectForm'
 
 
 const styleSheet = createStyleSheet("OrganizationTypes", theme => ({
   info: {
     color: theme.palette.primary[500],
     background: theme.palette.primary[300],
-    margin: '10px',
+    padding: '10px',
     fontSize: "0.8em",
     fontWeight: "300",
   },
   infoIcon: {
     fill: theme.palette.primary[500],
   },
+  formContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  checkedRadio: {
+    color: theme.palette.accent[500]
+  }
 }))
 
-/**
- * This example uses an [IconButton](/#/components/icon-button) on the left, has a clickable `title`
- * through the `onTouchTap` property, and a [FlatButton](/#/components/flat-button) on the right.
- */
+const RADIO_VALUES = [
+  {
+    value: 'hq',
+    label: 'Headquarters'
+  },
+  {
+    value: 'country',
+    label: 'Country Office'
+  },
+]
+
+const MENU_VALUES = [
+  {
+    value: 'ngo',
+    label: 'National NGO'
+  },
+  {
+    value: 'ingo',
+    label: 'International NGO (INGO)'
+  },
+]
+
+
 class OrganizationTypes extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { value: null };
-    this.handleChange = this.handleChange.bind(this);
+    this.state = { organization: undefined };
+    this.handleFieldChange = this.handleFieldChange.bind(this);
+
   }
 
-
-  handleChange(event, index, value) { this.setState({ value }); }
+  handleFieldChange(value) {
+    this.setState({ organization: value });
+  }
 
   render() {
     const { classes } = this.props;
     return (
-      <Grid container direction='column' gutter={16}>
-        <Grid item className={classes.info}>
-          This portal is not intended for private sector companies, goverment ministries or agencies and individuals.&nbsp;
-          <a style={linkStyle} href="http://google.com">learn more</a>
-        </Grid>
+      <Grid item>
         <Grid item>
-          <Grid container direction='row' align='flex-end' wrap='nowrap'>
-            <Grid item xs={11}>
-              <SelectField
-                value={this.state.value}
-                floatingLabelFixed
-                floatingLabelText='Type of organization'
-                hintText="Select type of your organization"
-                onChange={this.handleChange}
-                fullWidth>
-                <MenuItem value={1} primaryText="National NGO" />
-                <MenuItem value={2} primaryText="International NGO (INGO)" />
-              </SelectField>
-            </Grid>
-            <Grid item xs={1} >
-              <InfoIcon className={classes.infoIcon} />
-            </Grid>
-          </Grid>
+          <div className={classes.info}>
+            This portal is not intended for private sector companies, goverment ministries or agencies and individuals.&nbsp;
+            <a target="_blank" href="http://unicef.com" rel="noopener noreferrer">learn more</a>
+          </div>
         </Grid>
+        <SelectForm
+          fieldName='organizationType'
+          label='Type of organization'
+          values={MENU_VALUES}
+          onFieldChange={this.handleFieldChange}
+          infoIcon
+        />
+        {this.state.organization === 'ingo' && (
+          <RadioForm
+            fieldName='office'
+            label='Indicate if you are'
+            values={RADIO_VALUES}
+          />
+        )}
       </Grid>
     )
   }
-};
+}
 
-export default withStyles(styleSheet)(OrganizationTypes)
+export default withStyles(styleSheet)(OrganizationTypes);

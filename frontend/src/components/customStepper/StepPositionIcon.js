@@ -30,7 +30,7 @@ function StepPositionIcon(props) {
 
   return (
     <SvgIcon className={className}>
-      <circle cx="12" cy="12" r="12"/>
+      <circle cx="12" cy="12" r="10"/>
       <text className={classes.text} x="12" y="16" textAnchor="middle">
         {position}
       </text>

@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
-import CheckCircle from 'material-ui-icons/CheckCircle';
-import SvgIcon from 'material-ui/SvgIcon';
 import Typography from 'material-ui/Typography';
 
 import StepIcon from './StepIcon';
