@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Field } from 'redux-form';
+import PropTypes from 'prop-types';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
@@ -63,6 +64,28 @@ class RadioForm extends Component {
       </Grid>
     )
   }
-};
+}
 
+RadioForm.propTypes = {
+  /**
+   * Name of the field used by react-form and as unique id.
+   */
+  fieldName: PropTypes.string.isRequired,
+  /**
+   * label used in field
+   */
+  label: PropTypes.node,
+  /**
+   * array of objects with values for radio button 
+   * {
+   *   value: name of value represented by button
+   *   label: label used for button
+   * }
+   */
+  values: PropTypes.array.isRequired,
+  /**
+   * callback to save selected value in parent's state
+   */
+  onFieldChange: PropTypes.func,
+}
 export default withStyles(styleSheet)(RadioForm);

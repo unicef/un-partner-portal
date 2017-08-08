@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Field } from 'redux-form';
+import PropTypes from 'prop-types';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import InfoIcon from 'material-ui-icons/Info';
@@ -66,6 +67,29 @@ class SelectForm extends Component {
 
     )
   }
+}
+
+SelectForm.propTypes = {
+  /**
+   * Name of the field used by react-form
+   */
+  fieldName: PropTypes.string.isRequired,
+  /**
+   * label used in field
+   */
+  label: PropTypes.node,
+  /**
+   * array of objects with values for menu items 
+   * {
+   *   value: name of value represented by item
+   *   label: label used for button
+   * }
+   */
+  values: PropTypes.array.isRequired,
+  /**
+   * callback to save selected value in parent's state
+   */
+  onFieldChange: PropTypes.func,
 }
 
 export default withStyles(styleSheet)(SelectForm);

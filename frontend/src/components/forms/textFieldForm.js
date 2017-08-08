@@ -1,33 +1,44 @@
 import React, { Component } from 'react';
 import { Field } from 'redux-form';
+import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import { FormControl, FormLabel } from 'material-ui/Form';
 
 import { renderTextField } from '../../lib/formHelper';
 
+
 class TextFieldForm extends Component {
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
-    const { fieldName, label } = this.props;
+    const { fieldName, label, placeholder=null } = this.props;
     return (
       <Grid item>
-        <FormControl>
+        <FormControl fullWidth>
           <FormLabel>{label}</FormLabel>
           <Field
             name={fieldName}
-            placeholder={label}
+            placeholder={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
             component={renderTextField}
           />
         </FormControl>
       </Grid>
     )
   }
-};
+}
+
+TextFieldForm.propTypes = {
+  /**
+   * Name of the field used by react-form and as unique id.
+   */
+  fieldName: PropTypes.string.isRequired,
+  /**
+   * label used in field, also placeholder is built from it by adding 'Provide'
+   */
+  label: PropTypes.node,
+  /**
+   * Mark the step as completed. Is passed to child components.
+   */
+}
 
 export default TextFieldForm;

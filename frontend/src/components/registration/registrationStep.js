@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { reduxForm } from 'redux-form';
+import PropTypes from 'prop-types';
 
 import Grid from 'material-ui/Grid';
 
@@ -38,6 +39,29 @@ class RegistrationStep extends Component {
       </form >
     )
   }
+}
+
+RegistrationStep.propTypes = {
+  /**
+   * callback for 'next' button
+   */
+  handleSubmit: PropTypes.func.isRequired,
+  /**
+   * callback for 'back' button
+   */
+  handlePrev: PropTypes.func,
+  /**
+   * component to be wrapped
+   */
+  children: PropTypes.node.isRequired,
+  /**
+   * whether step is the first, to control buttons appearance
+   */
+  first: PropTypes.boolean,
+  /**
+   * whether step is the last, to control buttons appearance
+   */
+  last: PropTypes.boolean,
 }
 
 export default reduxForm({
