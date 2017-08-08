@@ -5,11 +5,11 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 
 from common.consts import (
-    SATISFACTION_SCALE,
+    SATISFACTION_SCALES,
     PARTNER_REVIEW_TYPES,
-    PARTNER_TYPE,
-    MEMBER_ROLE,
-    MEMBER_STATUS,
+    PARTNER_TYPES,
+    MEMBER_ROLES,
+    MEMBER_STATUSES,
 )
 
 
@@ -18,11 +18,11 @@ class Partner(TimeStampedModel):
 
     """
     legal_name = models.CharField(max_length=255)
-    display_type = models.CharField(max_length=3, choices=PARTNER_TYPE)
-    hq = models.ForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+    display_type = models.CharField(max_length=3, choices=PARTNER_TYPES)
+    hq = models.ForeignKey('self', null=True, blank=True, related_name='children')
     country = models.ForeignKey('common.Country', related_name="partners")
     is_active = models.BooleanField(default=True)
-    registration_number = models.CharField(max_length=255)
+    registration_number = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -62,8 +62,8 @@ class PartnerMember(TimeStampedModel):
     user = models.ForeignKey('account.User', related_name="partner_members")
     partner = models.ForeignKey(Partner, related_name="partners")
     title = models.CharField(max_length=255)
-    role = models.CharField(max_length=3, choices=MEMBER_ROLE, default=MEMBER_ROLE.reader)
-    status = models.CharField(max_length=3, choices=MEMBER_STATUS, default=MEMBER_STATUS.invited)
+    role = models.CharField(max_length=3, choices=MEMBER_ROLES, default=MEMBER_ROLES.reader)
+    status = models.CharField(max_length=3, choices=MEMBER_STATUSES, default=MEMBER_STATUSES.invited)
 
     class Meta:
         ordering = ['id']
@@ -73,14 +73,16 @@ class PartnerMember(TimeStampedModel):
 
 
 class PartnerReview(TimeStampedModel):
+    # This class is under construction at all UNICEF projects.. they are figuring out the right result of this entity.
+    # We should keep in mind that this class can totally change!
     partner = models.ForeignKey(Partner, related_name="reviews")
     agency = models.ForeignKey('agency.Agency', related_name="partner_reviews")
     reviewer = models.ForeignKey('account.User', related_name="partner_reviews")
     display_type = models.CharField(max_length=3, choices=PARTNER_REVIEW_TYPES)
     eoi = models.ForeignKey('project.EOI', related_name="partner_reviews")
-    performance_pm = models.CharField(max_length=3, choices=SATISFACTION_SCALE)
-    peformance_financial = models.CharField(max_length=3, choices=SATISFACTION_SCALE)
-    performance_com_eng = models.CharField(max_length=3, choices=SATISFACTION_SCALE)
+    performance_pm = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
+    peformance_financial = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
+    performance_com_eng = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
     ethical_concerns = models.BooleanField(default=False, verbose_name='Ethical concerns?')
     does_recommend = models.BooleanField(default=False, verbose_name='Does recommend?')
     comment = models.TextField()

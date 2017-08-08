@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from model_utils import Choices
 
 
-SATISFACTION_SCALE = Choices(
+SATISFACTION_SCALES = Choices(
     ('Not', 'not', 'not satisfactory'),
     ('Sat', 'satisfactory', 'satisfactory'),
     ('Hig', 'highly', 'Highly satisfactory'),
@@ -16,41 +16,41 @@ PARTNER_REVIEW_TYPES = Choices(
     ('EX3', 'example3', 'Example 3'),
 )
 
-PARTNER_TYPE = Choices(
+PARTNER_TYPES = Choices(
     ('int', 'international', 'International'),
     ('nat', 'national', 'National'),
 )
 
-EOI_TYPE = Choices(
+EOI_TYPES = Choices(
     ('Ope', 'open', 'Open'),
     ('Dir', 'direct', 'Direct'),
 )
 
-APPLICATION_STATUS = Choices(
+APPLICATION_STATUSES = Choices(
     ('Pen', 'pending', 'Pending'),
     ('Pre', 'preselected', 'Preselected'),
     ('Rej', 'rejected', 'Rejected'),
 )
 
-SCALE_TYPE = Choices(
+SCALE_TYPES = Choices(
     ('Low', 'low', '1-3'),
     ('Std', 'standard', '1-10'),
     ('Hig', 'high', '1-100'),
 )
 
-MEMBER_ROLE = Choices(
+MEMBER_ROLES = Choices(
     ('Adm', 'admin', 'Administrator'),
     ('Edi', 'editor', 'Editor'),
     ('Rea', 'reader', 'Reader'),
 )
 
-MEMBER_STATUS = Choices(
+MEMBER_STATUSES = Choices(
     ('Act', 'active', 'Active'),
     ('Dea', 'deactivated', 'Deactivated'),
     ('Inv', 'invited', 'Invited'),
 )
 
-EOI_STATUS = Choices(
+EOI_STATUSES = Choices(
     ('Ope', 'open', 'Open'),
     ('Clo', 'closed', 'Closed'),
 )

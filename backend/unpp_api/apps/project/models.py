@@ -7,10 +7,10 @@ from django.db.models import Sum
 from django.core.validators import MaxValueValidator, MinValueValidator
 from model_utils.models import TimeStampedModel
 from common.consts import (
-    EOI_TYPE,
-    APPLICATION_STATUS,
-    SCALE_TYPE,
-    EOI_STATUS,
+    EOI_TYPES,
+    APPLICATION_STATUSES,
+    SCALE_TYPES,
+    EOI_STATUSES,
 )
 
 
@@ -19,7 +19,8 @@ class EOI(TimeStampedModel):
     Call of Expression of Interest
     """
     # TODO: this model is very heavy !!! we should think to split fields like file texts to some "EOI_profil" ..
-    display_type = models.CharField(max_length=3, choices=EOI_TYPE, default=EOI_TYPE.open)
+    display_type = models.CharField(max_length=3, choices=EOI_TYPES, default=EOI_TYPES.open)
+    status = models.CharField(max_length=3, choices=EOI_STATUSES, default=EOI_STATUSES.open)
     title = models.CharField(max_length=255)
     country = models.ForeignKey('common.Country', related_name="expressions_of_interest")
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
@@ -35,11 +36,11 @@ class EOI(TimeStampedModel):
     other_information = models.CharField(max_length=200, verbose_name='Other information (optional)')
     start_date = models.DateField(verbose_name='Estimated Start Date')
     end_date = models.DateField(verbose_name='Estimated End Date')
-    deadline_date = models.DateField(verbose_name='Estimated Deadline Date')
-    notif_results_date = models.DateField(verbose_name='Notification of Results Date')
+    deadline_date = models.DateField(verbose_name='Estimated Deadline Date', null=True, blank=True)
+    notif_results_date = models.DateField(verbose_name='Notification of Results Date', null=True, blank=True)
     has_weighting = models.BooleanField(default=True, verbose_name='Has weighting?')  # TBD - not even sure we need to store
     invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest")
-    reviewers = models.ManyToManyField('account.User', related_name="expressions_of_interest_by_reviewers")
+    reviewers = models.ManyToManyField('account.User', related_name="expressions_of_interest_as_reviewer")
     closed_justification = models.TextField()
 
     class Meta:
@@ -57,18 +58,18 @@ class EOI(TimeStampedModel):
         return self.deadline_date < date.today()
 
     @property
-    def is_closed(self):
+    def contains_the_winners(self):
         return self.applications.filter(did_win=True).exists()
 
 
 class Application(TimeStampedModel):
     is_unsolicited = models.BooleanField(default=False, verbose_name='Is unsolicited?')
     partner = models.ForeignKey('partner.Partner', related_name="applications")
-    eoi = models.ForeignKey(EOI, related_name="applications")
+    eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
     submitter = models.ForeignKey('account.User', related_name="applications")
-    agency = models.ForeignKey('agency.Agency', related_name="applications")
+    agency = models.ForeignKey('agency.Agency', related_name="applications", null=True, blank=True)
     cn = models.FileField()
-    status = models.CharField(max_length=3, choices=APPLICATION_STATUS, default=APPLICATION_STATUS.pending)
+    status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
     # These two (ds_justification_*) will be used as direct selection will create applications for DS EOIs.
@@ -99,8 +100,8 @@ class AssessmentCriteria(TimeStampedModel):
     # TODO: display_type = Selection of criteria types
     scale = models.CharField(
         max_length=3,
-        choices=SCALE_TYPE,
-        default=SCALE_TYPE.standard,
+        choices=SCALE_TYPES,
+        default=SCALE_TYPES.standard,
     )
     weight = models.PositiveSmallIntegerField(
         "Weight in percentage",
@@ -131,25 +132,13 @@ class Assessment(TimeStampedModel):
     def __str__(self):
         return "Assessment <pk:{}>".format(self.id)
 
-
-class ApplicationReview(TimeStampedModel):
-    application = models.ForeignKey(Application, related_name="application_reviews")
-    reviewer = models.ForeignKey('account.User', related_name="application_reviews")
-
     __total_score = None
 
     @property
     def total_score(self):
         if self.__total_score is None:
-            self.__total_score = ApplicationReviewCriteria.objects.filter(
-                application_review=self
+            self.__total_score = Assessment.objects.filter(
+                cirteria__eoi=self.criteria.eoi
             ).aggregate(Sum('score')).get('score__sum') or 0
         else:
             return self.__total_score
-
-
-class ApplicationReviewCriteria(TimeStampedModel):
-
-    application_review = models.ForeignKey(ApplicationReview, related_name="application_review_criterias")
-    criteria = models.ForeignKey(AssessmentCriteria, related_name="application_review_criterias")
-    score = models.PositiveSmallIntegerField(default=1, validators=[MaxValueValidator(100), MinValueValidator(1)])

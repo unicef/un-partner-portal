@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 from model_utils.models import TimeStampedModel
 
 from common.consts import (
-    MEMBER_ROLE,
+    MEMBER_ROLES,
 )
 
 class Agency(TimeStampedModel):
@@ -58,7 +58,7 @@ class AgencyMember(TimeStampedModel):
 
     """
     user = models.ForeignKey('account.User', related_name="agency_members")
-    role = models.CharField(max_length=3, choices=MEMBER_ROLE, default=MEMBER_ROLE.reader)
+    role = models.CharField(max_length=3, choices=MEMBER_ROLES, default=MEMBER_ROLES.reader)
     office = models.ForeignKey(AgencyOffice, related_name="agency_members")
 
 
