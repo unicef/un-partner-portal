@@ -28,7 +28,6 @@ export const styleSheet = createStyleSheet('MuiStepConnector', theme => ({
     borderLeftStyle: 'solid',
     borderLeftWidth: 1,
     margin: '8px 0px',
-    borderLeftWidth: 1,
     minHeight: 40
   }
 }));

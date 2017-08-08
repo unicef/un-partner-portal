@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
-import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+import { CardHeader } from 'material-ui/Card';
 import Paper from 'material-ui/Paper';
-import Button from 'material-ui/Button';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
 import Stepper from './stepper';
