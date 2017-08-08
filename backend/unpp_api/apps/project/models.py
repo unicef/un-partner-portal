@@ -51,7 +51,7 @@ class EOI(TimeStampedModel):
 
     @property
     def is_direct(self):
-        return self.display_type == EOI_TYPE.direct
+        return self.display_type == EOI_TYPES.direct
 
     @property
     def is_overdue_deadline(self):
