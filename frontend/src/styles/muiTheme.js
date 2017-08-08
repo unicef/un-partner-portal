@@ -65,13 +65,20 @@ const theme = {
     MuiFormLabel: {
       root: {
         color: 'rgba(0, 0, 0, 0.34)',
-        zIndex: 1, // Needed to display label above Chrome's autocomplete field background
+        zIndex: 1,
         transform: 'scale(0.75)',
         transformOrigin: 'left top',
         pointerEvents: 'none',
       },
       focused: {
         color: 'rgba(0, 0, 0, 0.34)',
+      },
+    },
+    MuiInput: {
+      input: {
+        'label + $formControl > &': {
+          opacity: 0.5,
+        },
       },
     },
   },
@@ -81,7 +88,7 @@ const getTheme = () => (
     ...theme,
     palette: {
       ...theme.palette,
-      accent: getColorTheme()
+      accent: getColorTheme(),
     },
   }
 );

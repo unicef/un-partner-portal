@@ -1,23 +1,18 @@
 import React, { Component } from 'react';
-import { reduxForm, Field } from 'redux-form';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import InfoIcon from 'material-ui-icons/Info';
-import { CardTitle } from 'material-ui/Card';
-import SelectField from 'material-ui-old/SelectField';
-import Grid from 'material-ui/Grid';
-import { MenuItem } from 'material-ui-old/Menu';
-import Radio, { RadioGroup } from 'material-ui/Radio';
-import { FormControl, FormLabel, FormControlLabel } from 'material-ui/Form';
 
-import { renderRadioGroup, renderSelectField } from '../../lib/formHelper';
+import Grid from 'material-ui/Grid';
+
+import RadioForm from '../forms/radioForm'
+import SelectForm from '../forms/selectForm'
 
 
 const styleSheet = createStyleSheet("OrganizationTypes", theme => ({
   info: {
     color: theme.palette.primary[500],
     background: theme.palette.primary[300],
-    margin: '10px',
+    padding: '10px',
     fontSize: "0.8em",
     fontWeight: "300",
   },
@@ -33,74 +28,69 @@ const styleSheet = createStyleSheet("OrganizationTypes", theme => ({
   }
 }))
 
+const RADIO_VALUES = [
+  {
+    value: 'hq',
+    label: 'Headquarters'
+  },
+  {
+    value: 'country',
+    label: 'Country Office'
+  },
+]
+
+const MENU_VALUES = [
+  {
+    value: 'ngo',
+    label: 'National NGO'
+  },
+  {
+    value: 'ingo',
+    label: 'International NGO (INGO)'
+  },
+]
+
+
 class OrganizationTypes extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { organization: undefined, selectedOffice: undefined };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleRadioChange = this.handleRadioChange.bind(this);
+    this.state = { organization: undefined };
+    this.handleFieldChange = this.handleFieldChange.bind(this);
+
   }
 
-  handleChange(event, value) {
+  handleFieldChange(value) {
     this.setState({ organization: value });
-  }
-
-  handleRadioChange(event, value) {
-    this.setState({ selectedOffice: value });
   }
 
   render() {
     const { classes } = this.props;
     return (
-      <form>
-        <Grid container direction='column' xs={12} >
-          <Grid item className={classes.info}>
+      <Grid item>
+        <Grid item>
+          <div className={classes.info}>
             This portal is not intended for private sector companies, goverment ministries or agencies and individuals.&nbsp;
-          <a target="_blank" href="http://unicef.com">learn more</a>
-          </Grid>
-          <Grid item>
-            <Grid container direction='row' align='flex-end' wrap='nowrap'>
-              <Grid item xs={11}>
-                <Field
-                  name='organizationType'
-                  component={renderSelectField}
-                  floatingLabelFixed
-                  floatingLabelText='Type of organization'
-                  hintText="Select type of your organization"
-                  onChange={this.handleChange}
-                  fullWidth>
-                  <MenuItem value='ngo' primaryText="National NGO" />
-                  <MenuItem value='ingo' primaryText="International NGO (INGO)" />
-                </Field>
-              </Grid>
-              <Grid item xs={1} >
-                <InfoIcon className={classes.infoIcon} />
-              </Grid>
-            </Grid>
-          </Grid>
-          {(this.state.organization === 'ingo')
-            ? (<Grid item>
-              <FormControl>
-                <FormLabel>Indicate if you are</FormLabel>
-                <Field name="office" component={renderRadioGroup} className={classes.formContainer}
-                  selectedValue={this.state.selectedOffice}
-                  onChange={this.handleRadioChange}>
-                  <FormControlLabel value='hq' control={<Radio classes={{ checked: classes.checkedRadio }} />} label="Headquarters" />
-                  <FormControlLabel value='country' control={<Radio classes={{ checked: classes.checkedRadio }} />} label="Country Office" />
-                </Field>
-              </FormControl>
-            </Grid>)
-            : null
-          }
+            <a target="_blank" href="http://unicef.com" rel="noopener noreferrer">learn more</a>
+          </div>
         </Grid>
-      </form>
+        <SelectForm
+          fieldName='organizationType'
+          label='Type of organization'
+          values={MENU_VALUES}
+          onFieldChange={this.handleFieldChange}
+          infoIcon
+        />
+        {this.state.organization === 'ingo' && (
+          <RadioForm
+            fieldName='office'
+            label='Indicate if you are'
+            values={RADIO_VALUES}
+          />
+        )}
+      </Grid>
     )
   }
-};
+}
 
-export default OrganizationTypes = reduxForm({
-  form: 'registration',  // a unique identifier for this form
-  destroyOnUnmount: false, // <------ preserve form data
-  forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-})(withStyles(styleSheet)(OrganizationTypes));
+export default withStyles(styleSheet)(OrganizationTypes);

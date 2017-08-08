@@ -28,11 +28,7 @@ class StepContent extends Component {
       children,
       completed, // eslint-disable-line no-unused-vars
       last, // eslint-disable-line no-unused-vars
-      style,
-      transition,
-      transitionDuration,
       classes,
-      ...other
     } = this.props;
 
 

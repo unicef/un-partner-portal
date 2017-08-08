@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 
 import CheckCircle from 'material-ui-icons/CheckCircle';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
