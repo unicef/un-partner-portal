@@ -90,6 +90,10 @@ SelectForm.propTypes = {
    * callback to save selected value in parent's state
    */
   onFieldChange: PropTypes.func,
+  /**
+   * Whether to display info icon with tooltip next ot the field
+   */
+  infoIcon: PropTypes.boolean,
 }
 
 export default withStyles(styleSheet)(SelectForm);
