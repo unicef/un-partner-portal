@@ -11,7 +11,7 @@ import { renderTextField } from '../../lib/formHelper';
 class TextFieldForm extends Component {
 
   render() {
-    const { fieldName, label, placeholder=null } = this.props;
+    const { fieldName, label, textFieldProps, placeholder=null } = this.props;
     return (
       <Grid item>
         <FormControl fullWidth>
@@ -20,6 +20,7 @@ class TextFieldForm extends Component {
             name={fieldName}
             placeholder={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
             component={renderTextField}
+            {...textFieldProps}
           />
         </FormControl>
       </Grid>

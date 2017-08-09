@@ -9,7 +9,7 @@ import Tabs, { Tab } from 'material-ui/Tabs';
 import Paper from 'material-ui/Paper';
 
 import { partnerProfileIdentification } from './partnerProfileIdentification'
-import contactInfo from './partnerProfileContactInfo'
+import contactInfo from './contactInformation/partnerProfileContactInfo'
 import mandate from './partnerProfileMandate'
 import funding from './partnerProfileFunding'
 import collaboration from './partnerProfileCollaboration';
@@ -42,12 +42,17 @@ const styleSheet = createStyleSheet(theme => ({
 }));
 
 class BasicTabs extends Component {
-  state = {
-    index: 0,
-  };
 
-  handleChange = (event, index) => {
-    this.setState({ index });
+  constructor(props) {
+    super()
+    this.state = {
+      index: 0,
+    };
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(value) {
+    this.setState({ index: value });
   };
 
   render() {
@@ -86,7 +91,6 @@ class BasicTabs extends Component {
           <TabContainer>
             <Paper className={classes.paper}>
             {'Item one'}
-              <partnerProfileIdentification />
             </Paper>
           </TabContainer>}
         {this.state.index === 1 &&
