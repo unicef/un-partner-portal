@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from datetime import date
 
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from model_utils.models import TimeStampedModel
 
+from common.validators import MaxCurrentYearValidator
 from common.consts import (
     SATISFACTION_SCALES,
     PARTNER_REVIEW_TYPES,
@@ -44,7 +47,6 @@ class PartnerProfile(TimeStampedModel):
     register_country = models.BooleanField(default=False, verbose_name='Register to work in country?')
     flagged = models.BooleanField(default=False)
     start_cooperate_date = models.DateField()
-    annual_budget = models.DecimalField(decimal_places=2, max_digits=12, blank=True, null=True)
     have_gov_doc = models.BooleanField(default=False, verbose_name='Does the organization have a government document?')
     registration_doc = models.FileField(null=True)
 
@@ -53,6 +55,29 @@ class PartnerProfile(TimeStampedModel):
 
     def __str__(self):
         return "PartnerProfile <pk:{}>".format(self.id)
+
+    @property
+    def annual_budget(self):
+        return PartnerBudget.objects.filter(partner=self, year=date.today().year).values_list('budget', flat=True) or 0
+
+
+class PartnerBudget(TimeStampedModel):
+    """
+
+    """
+    partner = models.ForeignKey(Partner, related_name="budget")
+    year = models.PositiveSmallIntegerField(
+        "Weight in percentage",
+        help_text="Value in percentage, provide number from 0 to 100",
+        validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
+    )
+    budget = models.DecimalField(decimal_places=2, max_digits=12, blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerBudget {} <pk:{}>".format(self.year, self.id)
 
 
 class PartnerMember(TimeStampedModel):
