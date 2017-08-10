@@ -7,7 +7,7 @@ import Grid from 'material-ui/Grid';
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControlLabel } from 'material-ui/Form';
 
-import { renderFormControl } from '../../lib/formHelper';
+import { renderFormControl } from '../helpers/formHelper';
 
 
 const styleSheet = createStyleSheet("BasicInformation", theme => ({

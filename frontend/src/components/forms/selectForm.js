@@ -7,7 +7,7 @@ import InfoIcon from 'material-ui-icons/Info';
 import Grid from 'material-ui/Grid';
 import { MenuItem } from 'material-ui-old/Menu';
 
-import { renderSelectField } from '../../lib/formHelper';
+import { renderSelectField } from '../helpers/formHelper';
 
 
 
@@ -33,7 +33,7 @@ class SelectForm extends Component {
   }
 
   render() {
-    const { classes, fieldName, label, infoIcon, values } = this.props;
+    const { classes, fieldName, label, infoIcon, values, selectFieldProps } = this.props;
     return (
       <Grid item>
         <Grid container direction='row' align='flex-end' wrap='nowrap'>
@@ -41,6 +41,7 @@ class SelectForm extends Component {
             <Field
               name={fieldName}
               component={renderSelectField}
+              {...selectFieldProps}
               floatingLabelFixed
               floatingLabelText={label}
               hintText={`Select ${label.toLowerCase()}`}

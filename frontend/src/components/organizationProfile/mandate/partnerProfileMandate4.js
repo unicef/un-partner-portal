@@ -67,7 +67,7 @@ class PartnerProfileMandate4 extends Component {
           </Grid>
           <Grid item>
             <TextFieldForm
-              label="BYour most up-to-date organigram"
+              label="Your most up-to-date organigram"
               placeholder='Upload File'
               fieldName='organigram'
             />

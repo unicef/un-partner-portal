@@ -35,7 +35,7 @@ class PartnerProfileContactInfo2 extends Component {
     super(props);
     this.state = { addressType: undefined, country: undefined };
     this.handleAddressFieldChange = this.handleAddressFieldChange.bind(this);
-    this.handleOrgFieldChange = this.handleOrgFieldChange.bind(this);
+    this.handleCountryFieldChange = this.handleCountryFieldChange.bind(this);
   }
 
   handleAddressFieldChange(value) {

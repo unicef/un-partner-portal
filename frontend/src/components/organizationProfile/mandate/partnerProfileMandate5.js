@@ -41,7 +41,8 @@ class PartnerProfileMandate5 extends Component {
   constructor(props) {
     super(props);
     this.state = { popOfConcernWork: undefined, groups: undefined };
-    this.handleFieldChange = this.handleFieldChange.bind(this);
+    this.handleConcernFieldChange = this.handleConcernFieldChange.bind(this);
+    this.handleGroupFieldChange = this.handleGroupFieldChange.bind(this);
   }
 
   handleConcernFieldChange(value) {
@@ -70,7 +71,9 @@ class PartnerProfileMandate5 extends Component {
               label='Please indicate which group(s)'
               values={GROUP_VALUES}
               onFieldChange={this.handleGroupFieldChange}
-              infoIcon
+              selectFieldProps={{
+                              multiple: true
+                            }}
             />
           </Grid>
         </Grid>

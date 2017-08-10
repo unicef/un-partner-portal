@@ -6,15 +6,15 @@ import {
   Step,
   StepContent,
   StepLabel,
-} from '../customStepper'
-import PartnerProfileMandate1 from "./PartnerProfileMandate1";
-import PartnerProfileMandate2 from "./PartnerProfileMandate2";
-import PartnerProfileMandate3 from "./PartnerProfileMandate3";
-import PartnerProfileMandate4 from "./PartnerProfileMandate4";
-import PartnerProfileMandate5 from "./PartnerProfileMandate5";
-import PartnerProfileMandate6 from "./PartnerProfileMandate6";
-import PartnerProfileMandate7 from "./PartnerProfileMandate7";
-import PartnerProfileStepper from '../../registration/partnerProfileStepper'
+} from '../../customStepper'
+import PartnerProfileMandate1 from "./partnerProfileMandate1";
+import PartnerProfileMandate2 from "./partnerProfileMandate2";
+import PartnerProfileMandate3 from "./partnerProfileMandate3";
+import PartnerProfileMandate4 from "./partnerProfileMandate4";
+import PartnerProfileMandate5 from "./partnerProfileMandate5";
+import PartnerProfileMandate6 from "./partnerProfileMandate6";
+import PartnerProfileMandate7 from "./partnerProfileMandate7";
+import PartnerProfileStepper from '../partnerProfileStepper'
 
 
 class PartnerProfileMandate extends React.Component {
@@ -48,52 +48,64 @@ class PartnerProfileMandate extends React.Component {
     const { stepIndex } = this.state;
     return (
       <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <PartnerProfileStepper onSubmit={this.handleNext} first>
-          <Stepper linear activeStep={stepIndex} orientation="vertical">
-            <Step>
-              <StepLabel>Background</StepLabel>
-              <StepContent>
+        <Stepper linear='false' activeStep={stepIndex} orientation="vertical">
+          <Step>
+            <StepLabel>Background</StepLabel>
+            <StepContent>
+              <PartnerProfileStepper onSubmit={this.handleNext} first>
                 <PartnerProfileMandate1 />
-              </StepContent>
-            </Step>
-            <Step>
-              <StepLabel>Governance</StepLabel>
-              <StepContent>
+              </PartnerProfileStepper>
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>Governance</StepLabel>
+            <StepContent>
+              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
                 <PartnerProfileMandate2 />
-              </StepContent>
-            </Step>
-            <Step>
-              <StepLabel>Ethics</StepLabel>
-              <StepContent>
+              </PartnerProfileStepper>
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>Ethics</StepLabel>
+            <StepContent>
+              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
                 <PartnerProfileMandate3 />
-              </StepContent>
-            </Step>
-            <Step>
-              <StepLabel>Experience</StepLabel>
-              <StepContent>
+              </PartnerProfileStepper>
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>Experience</StepLabel>
+            <StepContent>
+              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
                 <PartnerProfileMandate4 />
-              </StepContent>
-            </Step>
-            <Step>
-              <StepLabel>Population of Concern</StepLabel>
-              <StepContent>
+              </PartnerProfileStepper>
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>Population of Concern</StepLabel>
+            <StepContent>
+              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
                 <PartnerProfileMandate5 />
-              </StepContent>
-            </Step>
-            <Step>
-              <StepLabel>Country Presence</StepLabel>
-              <StepContent>
+              </PartnerProfileStepper>
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>Country Presence</StepLabel>
+            <StepContent>
+              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
                 <PartnerProfileMandate6 />
-              </StepContent>
-            </Step>
-            <Step>
-              <StepLabel>Security</StepLabel>
-              <StepContent>
+              </PartnerProfileStepper>
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>Security</StepLabel>
+            <StepContent>
+              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
                 <PartnerProfileMandate7 />
-              </StepContent>
-            </Step>
-          </Stepper>
-        </PartnerProfileStepper>
+              </PartnerProfileStepper>
+            </StepContent>
+          </Step>
+        </Stepper>
       </div>
     );
   }

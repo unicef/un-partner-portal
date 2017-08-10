@@ -22,8 +22,8 @@ class PartnerProfileMandate7 extends Component {
   constructor(props) {
     super(props);
     this.state = { hasAbuseSafeguard: undefined, hasFraudSafeguard: undefined };
-    this.handleBoDFieldChange = this.handleBoDFieldChange.bind(this);
-    this.handleAuthorisedOfficerFieldChange = this.handleAuthorisedOfficerFieldChange.bind(this);
+    this.handleAbuseSafeguardFieldChange = this.handleAbuseSafeguardFieldChange.bind(this);
+    this.handleFraudSafeguardFieldChange = this.handleFraudSafeguardFieldChange.bind(this);
   }
 
   handleAbuseSafeguardFieldChange(value) {

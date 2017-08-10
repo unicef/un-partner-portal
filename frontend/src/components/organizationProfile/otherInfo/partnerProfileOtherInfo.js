@@ -7,12 +7,11 @@ import {
   StepContent,
   StepLabel,
 } from '../../customStepper'
-import PartnerProfileIdentification1 from "./partnerProfileIdentification1";
-import PartnerProfileIdentification2 from "./partnerProfileIdentification2";
+
+import PartnerProfileOtherInfo1 from "./partnerProfileOtherInfo1";
 import PartnerProfileStepper from '../partnerProfileStepper'
 
-
-class PartnerProfileIdentification extends React.Component {
+class PartnerProfileOtherInfo extends React.Component {
 
   constructor(props) {
     super()
@@ -45,18 +44,9 @@ class PartnerProfileIdentification extends React.Component {
       <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
         <Stepper linear activeStep={stepIndex} orientation="vertical">
           <Step>
-            <StepLabel>Basic Information</StepLabel>
             <StepContent>
               <PartnerProfileStepper onSubmit={this.handleNext} first>
-                <PartnerProfileIdentification1 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Registration of Organization</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
-                <PartnerProfileIdentification2 />
+                <PartnerProfileOtherInfo1 />
               </PartnerProfileStepper>
             </StepContent>
           </Step>
@@ -65,4 +55,4 @@ class PartnerProfileIdentification extends React.Component {
     );
   }
 }
-export default withStyles()(PartnerProfileIdentification);
+export default withStyles()(PartnerProfileOtherInfo);

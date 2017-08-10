@@ -33,7 +33,7 @@ class PartnerProfileMandate6 extends Component {
   constructor(props) {
     super(props);
     this.state = { countries: undefined };
-    this.handleFieldChange = this.handleFieldChange.bind(this);
+    this.handleCountryFieldChange = this.handleCountryFieldChange.bind(this);
   }
 
   handleCountryFieldChange(value) {
@@ -50,7 +50,9 @@ class PartnerProfileMandate6 extends Component {
               label='Select the countries in which the organization operates'
               values={COUNTRY_MENU}
               onFieldChange={this.handleCountryFieldChange}
-              infoIcon
+              selectFieldProps={{
+                              multiple: true
+                            }}
             />
           </Grid>
         </Grid>

@@ -33,7 +33,7 @@ class PartnerProfileContactInfo4 extends Component {
   constructor(props) {
     super(props);
     this.state = { languages: undefined };
-    this.handleFieldChange = this.handleFieldChange.bind(this);
+    this.handleLanguagesFieldChange = this.handleLanguagesFieldChange.bind(this);
   }
 
   handleLanguagesFieldChange(value) {
@@ -50,13 +50,15 @@ class PartnerProfileContactInfo4 extends Component {
               label='Working Language(s) of your Organization'
               values={COUNTRY_MENU}
               onFieldChange={this.handleLanguagesFieldChange}
-              infoIcon
+              selectFieldProps={{
+                              multiple: true
+                            }}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
             <TextFieldForm
               label="Please State"
-              placeholder=''
+              placeholder='Additional languages known'
               fieldName='extraLanguage'
             />
           </Grid>

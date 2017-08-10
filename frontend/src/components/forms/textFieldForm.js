@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { FormControl, FormLabel } from 'material-ui/Form';
 
-import { renderTextField } from '../../lib/formHelper';
+import { renderTextField } from '../helpers/formHelper';
 
 
 class TextFieldForm extends Component {

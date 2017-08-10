@@ -64,8 +64,8 @@ class PartnerProfileIdentification2 extends Component {
   constructor(props) {
     super(props);
     this.state = { hasGoverningDocument: undefined, registered: undefined, staff: undefined };
-    this.handleLegalFieldChange = this.handleLegalFieldChange.bind(this);
-    this.handleOrgFieldChange = this.handleOrgFieldChange.bind(this);
+    this.handleGoverningFieldChange = this.handleGoverningFieldChange.bind(this);
+    this.handleRegistrationFieldChange = this.handleRegistrationFieldChange.bind(this);
   }
 
   handleGoverningFieldChange(value) {

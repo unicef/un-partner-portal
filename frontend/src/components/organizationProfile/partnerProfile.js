@@ -8,13 +8,13 @@ import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
 import Paper from 'material-ui/Paper';
 
-import { partnerProfileIdentification } from './partnerProfileIdentification'
-import contactInfo from './contactInformation/partnerProfileContactInfo'
-import mandate from './partnerProfileMandate'
-import funding from './partnerProfileFunding'
-import collaboration from './partnerProfileCollaboration';
-import projectImplementation from './partnerProfileProjectImplementation'
-import otherInfo from './partnerProfileOtherInfo'
+import PartnerProfileIdentification from './identification/partnerProfileIdentification'
+import PartnerProfileContactInfo from './contactInformation/partnerProfileContactInfo'
+import Mandate from './mandate/partnerProfileMandate'
+import Funding from './funding/partnerProfileFunding'
+import ProjectImplementation from './projectImplementation/partnerProfileProjectImplementation'
+import Collaboration from './collaboration/partnerProfileCollaboration';
+import OtherInfo from './otherInfo/partnerProfileOtherInfo'
 
 const TabContainer = props =>
   <div style={{ padding: 20 }}>
@@ -70,13 +70,15 @@ class BasicTabs extends Component {
 
     return (
       <div className={classes.root}>
-        <AppBar position="static">
+        <AppBar position="static"
+          color='white'
+        >
           <Tabs 
             index={this.state.index} 
             onChange={this.handleChange}
             scrollable
             scrollButtons="auto"
-            backgroundColor={styleSheet.backgroundColor}
+            style={{background: 'white'}}
           >
             <Tab label="identification" />
             <Tab label="contact info" />
@@ -89,33 +91,31 @@ class BasicTabs extends Component {
         </AppBar>
         {this.state.index === 0 &&
           <TabContainer>
-            <Paper className={classes.paper}>
-            {'Item one'}
-            </Paper>
+            <PartnerProfileIdentification />
           </TabContainer>}
         {this.state.index === 1 &&
           <TabContainer>
-            {'Item Two'}
+            <PartnerProfileContactInfo />
           </TabContainer>}
         {this.state.index === 2 &&
           <TabContainer>
-            {'Item Three'}
+            <Mandate />
           </TabContainer>}
         {this.state.index === 3 &&
           <TabContainer>
-            {'Item Three'}
+            <Funding />
           </TabContainer>}
         {this.state.index === 4 &&
           <TabContainer>
-            {'Item Three'}
+            <ProjectImplementation />
           </TabContainer>}
         {this.state.index === 5 &&
           <TabContainer>
-            {'Item Three'}
+            <Collaboration />
           </TabContainer>}
         {this.state.index === 6 &&
           <TabContainer>
-            {'Item Three'}
+            <OtherInfo />
           </TabContainer>}
       </div>
     );

@@ -7,14 +7,15 @@ import {
   StepContent,
   StepLabel,
 } from '../../customStepper'
-import PartnerProfileContactInfo1 from "./partnerProfileContactInfo1";
-import PartnerProfileContactInfo2 from "./partnerProfileContactInfo2";
-import PartnerProfileContactInfo3 from "./partnerProfileContactInfo3";
-import PartnerProfileContactInfo4 from "./partnerProfileContactInfo4";
+import PartnerProfileProjectImplementation1 from "./partnerProfileProjectImplementation1";
+import PartnerProfileProjectImplementation2 from "./partnerProfileProjectImplementation2";
+import PartnerProfileProjectImplementation3 from "./partnerProfileProjectImplementation3";
+import PartnerProfileProjectImplementation4 from "./partnerProfileProjectImplementation4";
+import PartnerProfileProjectImplementation5 from "./partnerProfileProjectImplementation5";
+import PartnerProfileProjectImplementation6 from "./partnerProfileProjectImplementation6";
 import PartnerProfileStepper from '../partnerProfileStepper'
 
-
-class PartnerProfileContactInfo extends React.Component {
+class PartnerProfileProjectImplementation extends React.Component {
 
   constructor(props) {
     super()
@@ -47,34 +48,50 @@ class PartnerProfileContactInfo extends React.Component {
       <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
         <Stepper linear activeStep={stepIndex} orientation="vertical">
           <Step>
-            <StepLabel>Mode of Communication</StepLabel>
+            <StepLabel>Programme Management</StepLabel>
             <StepContent>
               <PartnerProfileStepper onSubmit={this.handleNext} first>
-                <PartnerProfileContactInfo1 />
+                <PartnerProfileProjectImplementation1 />
               </PartnerProfileStepper>
             </StepContent>
           </Step>
           <Step>
-            <StepLabel>Mailing Address</StepLabel>
+            <StepLabel>Financial Controls</StepLabel>
             <StepContent>
               <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
-                <PartnerProfileContactInfo2 />
+                <PartnerProfileProjectImplementation2 />
               </PartnerProfileStepper>
             </StepContent>
           </Step>
           <Step>
-            <StepLabel>Authorised Officials</StepLabel>
+            <StepLabel>Internal Controls</StepLabel>
             <StepContent>
               <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
-                <PartnerProfileContactInfo3 />
+                <PartnerProfileProjectImplementation3 />
               </PartnerProfileStepper>
             </StepContent>
           </Step>
           <Step>
-            <StepLabel>Working Languages</StepLabel>
+            <StepLabel>Banking Information</StepLabel>
             <StepContent>
               <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
-                <PartnerProfileContactInfo4 />
+                  <PartnerProfileProjectImplementation4 />
+              </PartnerProfileStepper>
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>Audit & Assessments</StepLabel>
+            <StepContent>
+              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+                <PartnerProfileProjectImplementation5 />
+              </PartnerProfileStepper>
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>Reporting</StepLabel>
+            <StepContent>
+              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+                <PartnerProfileProjectImplementation6 />
               </PartnerProfileStepper>
             </StepContent>
           </Step>
@@ -83,4 +100,4 @@ class PartnerProfileContactInfo extends React.Component {
     );
   }
 }
-export default withStyles()(PartnerProfileContactInfo);
+export default withStyles()(PartnerProfileProjectImplementation);

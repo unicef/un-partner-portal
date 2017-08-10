@@ -42,11 +42,14 @@ class PartnerProfileContactInfo1 extends Component {
       <Grid item>
         <Grid container direction='column' gutter={16}>
           <Grid item sm={6} xs={12}>
-            <RadioForm
+            <SelectForm
                 fieldName='communicationMode'
                 label='What is your preferred mode of conversation?'
                 values={COMMUNICATION_VALUES}
                 onFieldChange={this.handleFieldChange}
+                selectFieldProps={{
+                              multiple: true
+                            }}
             />
           </Grid>
         </Grid>

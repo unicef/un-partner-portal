@@ -9,13 +9,13 @@ import partnerProfile from './components/organizationProfile/partnerProfile';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
 
-import identification from './components/organizationProfile/partnerProfileIdentification'
-import contactInfo from './components/organizationProfile/partnerProfileContactInfo'
-import mandate from './components/organizationProfile/partnerProfileMandate'
-import funding from './components/organizationProfile/partnerProfileFunding'
-import collaboration from './components/organizationProfile/partnerProfileCollaboration';
-import projectImplementation from './components/organizationProfile/partnerProfileProjectImplementation'
-import otherInfo from './components/organizationProfile/partnerProfileOtherInfo'
+import identification from './components/organizationProfile/identification/partnerProfileIdentification'
+import contactInfo from './components/organizationProfile/contactInformation/partnerProfileContactInfo'
+import mandate from './components/organizationProfile/mandate/partnerProfileMandate'
+import funding from './components/organizationProfile/funding/partnerProfileFunding'
+import collaboration from './components/organizationProfile/collaboration/partnerProfileCollaboration';
+import projectImplementation from './components/organizationProfile/projectImplementation/partnerProfileProjectImplementation'
+import otherInfo from './components/organizationProfile/otherInfo/partnerProfileOtherInfo'
 
 export default [
   {
