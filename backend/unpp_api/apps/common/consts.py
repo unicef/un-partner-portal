@@ -54,3 +54,13 @@ EOI_STATUSES = Choices(
     ('Ope', 'open', 'Open'),
     ('Clo', 'closed', 'Closed'),
 )
+
+COLLABORATION_EVIDENCE_MODES = Choices(
+    ('Acc', 'accreditation', 'Accreditation'),
+    ('Ref', 'reference', 'Reference'),
+)
+
+METHOD_ACC_ADOPTED_CHOICES = Choices(
+    ('Cas', 'cash', 'Cash'),
+    ('Acc', 'accrual', 'Accrual'),
+)
