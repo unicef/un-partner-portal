@@ -6,7 +6,7 @@ from django.utils.deconstruct import deconstructible
 @deconstructible
 class MaxCurrentYearValidator(BaseValidator):
     """
-    Validator defaultly
+    Validator that check if given year is not bigger the current year.
     """
     message = 'Ensure this given year is older than or equal to current year %(limit_value)s.'
     code = 'max_year'
