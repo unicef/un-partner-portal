@@ -108,6 +108,8 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+    'django_filters',
     'compressor',
     'django_common',
 
