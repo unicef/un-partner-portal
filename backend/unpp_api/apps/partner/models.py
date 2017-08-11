@@ -7,6 +7,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from model_utils.models import TimeStampedModel
 
 from common.validators import MaxCurrentYearValidator
+from common.countries import COUNTRIES_ALPHA2_CODE
 from common.consts import (
     SATISFACTION_SCALES,
     PARTNER_REVIEW_TYPES,
@@ -25,7 +26,7 @@ class Partner(TimeStampedModel):
     legal_name = models.CharField(max_length=255)
     display_type = models.CharField(max_length=3, choices=PARTNER_TYPES)
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children')
-    country = models.ForeignKey('common.Country', related_name="partners")
+    country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
     is_active = models.BooleanField(default=True)
     registration_number = models.CharField(max_length=255, null=True, blank=True)
 
@@ -33,7 +34,7 @@ class Partner(TimeStampedModel):
         ordering = ['id']
 
     def __str__(self):
-        return "Partner: {} <pk:{}>".format(self.name, self.id)
+        return "Partner: {} <pk:{}>".format(self.legal_name, self.id)
 
 
 class PartnerFinancialControlSystem(TimeStampedModel):
@@ -46,13 +47,14 @@ class PartnerProfile(TimeStampedModel):
     """
     partner = models.ForeignKey(Partner, related_name="profile")
     alias_name = models.CharField(max_length=255, null=True, blank=True)
+    legal_name_change = models.BooleanField(default=False)
     former_legal_name = models.CharField(max_length=255, null=True, blank=True)
     org_head_first_name = models.CharField(max_length=255, null=True, blank=True)
     org_head_last_name = models.CharField(max_length=255, null=True, blank=True)
     org_head_email = models.EmailField(max_length=255, null=True, blank=True)
     register_country = models.BooleanField(default=False, verbose_name='Register to work in country?')
     flagged = models.BooleanField(default=False)
-    start_cooperate_date = models.DateField()
+    start_cooperate_date = models.DateField(auto_now_add=True)
     have_gov_doc = models.BooleanField(default=False, verbose_name='Does the organization have a government document?')
     registration_doc = models.FileField(null=True)
 
@@ -64,7 +66,12 @@ class PartnerProfile(TimeStampedModel):
     have_feedback_mechanism = models.BooleanField(default=False)
 
     # financial controls
-    org_acc_system = models.ForeignKey(PartnerFinancialControlSystem, related_name="partner_profiles")
+    org_acc_system = models.ForeignKey(
+        PartnerFinancialControlSystem,
+        related_name="partner_profiles",
+        null=True,
+        blank=True,
+    )
     method_acc = models.CharField(
         max_length=3,
         choices=METHOD_ACC_ADOPTED_CHOICES,

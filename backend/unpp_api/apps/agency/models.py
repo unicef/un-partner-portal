@@ -65,7 +65,7 @@ class AgencyOffice(TimeStampedModel):
     """
     name = models.CharField(max_length=255)
     agency = models.ForeignKey(Agency, related_name="agency_offices")
-    countries = models.ManyToManyField('common.Country', related_name="agency_offices")
+    countries = models.ManyToManyField('common.Country', related_name="agency_offices")  # change to ArrayField - char(2) fields list
 
 
 class AgencyMember(TimeStampedModel):

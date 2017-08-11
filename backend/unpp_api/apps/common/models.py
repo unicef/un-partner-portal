@@ -11,6 +11,7 @@ class Country(TimeStampedModel):
 
     """
     name = models.CharField(max_length=255)
+    country_code = models.CharField(max_length=2)
 
     class Meta:
         ordering = ['id']
