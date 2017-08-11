@@ -9,7 +9,6 @@ import Grid from 'material-ui/Grid';
 import List from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
-import DraftsIcon from 'material-ui-icons/Drafts';
 
 import MenuLink from './menuLink';
 
@@ -24,25 +23,46 @@ const styleSheet = createStyleSheet('sidebarMenu', theme => ({
     padding: 15,
     margin: 'auto',
     background: theme.palette.primary[500],
-  }
+  },
+  icon: {
+    color: 'inherit',
+  },
+  button: {
+    '&:hover': {
+      backgroundColor: theme.palette.primary[200],
+      color: theme.palette.accent[500],
+    },
+    '&.active': {
+      backgroundColor: theme.palette.primary[200],
+      color: theme.palette.accent[500],
+    },
+  },
 }));
 
-function sidebarMenu(props, context) {
+function sidebarMenu(props) {
   const { classes, location, sidebar, onItemClick } = props;
   const links = sidebar.map((item, index) => {
-    const link = <MenuLink
-      active={location.includes(item.path)}
-      label={item.label}
-      key={index}
-      icon={createElement(DraftsIcon)}
-      onClick={() => { onItemClick(index, item.path) }} />
-    if (item.path === '/settings') {
+    const link = (
+      <MenuLink
+        active={location.includes(item.path)}
+        label={item.label}
+        key={index}
+        icon={createElement(item.icon)}
+        classes={{
+          button: classes.button,
+          icon: classes.icon,
+        }}
+        onClick={() => onItemClick(index, item.path)}
+      />
+    );
+    if (item.path === '/settings' || item.path === '/profile') {
       return [
         <Divider />,
-        link
-      ]
+        link,
+        <Divider />,
+      ];
     }
-    return link
+    return link;
   });
 
   return (
@@ -65,24 +85,20 @@ sidebarMenu.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => {
-  return {
-    location: state.route.location,
-    sidebar: state.nav.sidebar
-  }
-}
+const mapStateToProps = state => ({
+  location: state.route.location,
+  sidebar: state.nav,
+});
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onItemClick: (id, path) => {
-      history.push(path)
-    }
-  }
-}
+const mapDispatchToProps = () => ({
+  onItemClick: (id, path) => {
+    history.push(path);
+  },
+});
 
 const containerSidebarMenu = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(sidebarMenu);
 
 export default withStyles(styleSheet)(withRouter(containerSidebarMenu));
