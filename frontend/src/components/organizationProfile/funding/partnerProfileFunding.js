@@ -43,24 +43,22 @@ class PartnerProfileFunding extends React.Component {
     const { stepIndex } = this.state;
     return (
       <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <Stepper linear activeStep={stepIndex} orientation="vertical">
-          <Step>
-            <StepLabel>Budget</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} first>
+        <PartnerProfileStepper onSubmit={this.handleNext} first>
+          <Stepper linear activeStep={stepIndex} orientation="vertical">
+            <Step>
+              <StepLabel>Budget</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
                 <PartnerProfileFunding1 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Major Donors</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Major Donors</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
                 <PartnerProfileFunding2 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-        </Stepper>
+              </div>
+            </Step>
+          </Stepper>
+        </PartnerProfileStepper>
       </div>
     );
   }

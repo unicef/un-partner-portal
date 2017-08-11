@@ -29,7 +29,7 @@ const styleSheet = createStyleSheet(theme => ({
   root: {
     flexGrow: 1,
     width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    marginTop: 0,
     backgroundColor: theme.palette.background.paper,
   },
   default_tab:{
@@ -51,7 +51,7 @@ class BasicTabs extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange(value) {
+  handleChange(event, value) {
     this.setState({ index: value });
   };
 
@@ -78,7 +78,7 @@ class BasicTabs extends Component {
             onChange={this.handleChange}
             scrollable
             scrollButtons="auto"
-            style={{background: 'white'}}
+            style={tabStyles[this.state.index]}
           >
             <Tab label="identification" />
             <Tab label="contact info" />

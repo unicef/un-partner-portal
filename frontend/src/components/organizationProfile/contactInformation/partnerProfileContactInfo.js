@@ -45,40 +45,34 @@ class PartnerProfileContactInfo extends React.Component {
     const { stepIndex } = this.state;
     return (
       <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <Stepper linear activeStep={stepIndex} orientation="vertical">
-          <Step>
-            <StepLabel>Mode of Communication</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} first>
-                <PartnerProfileContactInfo1 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Mailing Address</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
-                <PartnerProfileContactInfo2 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Authorised Officials</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
-                <PartnerProfileContactInfo3 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Working Languages</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
-                <PartnerProfileContactInfo4 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-        </Stepper>
+        <PartnerProfileStepper onSubmit={this.handleNext} first>
+          <Stepper linear activeStep={stepIndex} orientation="vertical">
+              <Step>
+                <StepLabel>Mode of Communication</StepLabel>
+                <div style={{ maxWidth: "100%", padding: '1em 3em 3em', backgroundColor: 'rgba(52,52,52,alpha)' }}>
+                  <PartnerProfileContactInfo1 />
+                </div>
+              </Step>
+              <Step>
+                <StepLabel>Mailing Address</StepLabel>
+                <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
+                  <PartnerProfileContactInfo2 />
+                </div>
+              </Step>
+              <Step>
+                <StepLabel>Authorised Officials</StepLabel>
+                <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
+                  <PartnerProfileContactInfo3 />
+                </div>
+              </Step>
+              <Step>
+                <StepLabel>Working Languages</StepLabel>
+                <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
+                  <PartnerProfileContactInfo4 />
+                </div>
+              </Step>
+          </Stepper>
+        </PartnerProfileStepper>
       </div>
     );
   }

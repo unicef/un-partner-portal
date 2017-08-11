@@ -48,64 +48,52 @@ class PartnerProfileMandate extends React.Component {
     const { stepIndex } = this.state;
     return (
       <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <Stepper linear='false' activeStep={stepIndex} orientation="vertical">
-          <Step>
-            <StepLabel>Background</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} first>
+        <PartnerProfileStepper onSubmit={this.handleNext} first>
+          <Stepper linear='false' activeStep={stepIndex} orientation="vertical">
+            <Step>
+              <StepLabel>Background</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
                 <PartnerProfileMandate1 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Governance</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Governance</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
                 <PartnerProfileMandate2 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Ethics</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Ethics</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
                 <PartnerProfileMandate3 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Experience</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Experience</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
                 <PartnerProfileMandate4 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Population of Concern</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Population of Concern</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
                 <PartnerProfileMandate5 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Country Presence</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Country Presence</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
                 <PartnerProfileMandate6 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Security</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Security</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
                 <PartnerProfileMandate7 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-        </Stepper>
+              </div>
+            </Step>
+          </Stepper>
+        </PartnerProfileStepper>
       </div>
     );
   }

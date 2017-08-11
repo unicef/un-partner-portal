@@ -11,7 +11,6 @@ import PartnerProfileIdentification1 from "./partnerProfileIdentification1";
 import PartnerProfileIdentification2 from "./partnerProfileIdentification2";
 import PartnerProfileStepper from '../partnerProfileStepper'
 
-
 class PartnerProfileIdentification extends React.Component {
 
   constructor(props) {
@@ -43,24 +42,22 @@ class PartnerProfileIdentification extends React.Component {
     const { stepIndex } = this.state;
     return (
       <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <Stepper linear activeStep={stepIndex} orientation="vertical">
-          <Step>
-            <StepLabel>Basic Information</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} first>
+        <PartnerProfileStepper onSubmit={this.handleNext} first>
+          <Stepper linear activeStep={stepIndex} orientation="vertical">
+            <Step>
+              <StepLabel>Basic Information</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
                 <PartnerProfileIdentification1 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Registration of Organization</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Registration of Organization</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
                 <PartnerProfileIdentification2 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-        </Stepper>
+              </div>
+            </Step>
+          </Stepper>
+        </PartnerProfileStepper>
       </div>
     );
   }

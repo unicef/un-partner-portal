@@ -44,11 +44,11 @@ class PartnerProfileOtherInfo extends React.Component {
       <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
         <Stepper linear activeStep={stepIndex} orientation="vertical">
           <Step>
-            <StepContent>
+            <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
               <PartnerProfileStepper onSubmit={this.handleNext} first>
                 <PartnerProfileOtherInfo1 />
               </PartnerProfileStepper>
-            </StepContent>
+            </div>
           </Step>
         </Stepper>
       </div>
