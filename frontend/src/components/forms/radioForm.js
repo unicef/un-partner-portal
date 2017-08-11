@@ -7,25 +7,23 @@ import Grid from 'material-ui/Grid';
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControlLabel } from 'material-ui/Form';
 
-import { renderFormControl } from '../../lib/formHelper';
+import { renderFormControl } from '../../helpers/formHelper';
 
 
-const styleSheet = createStyleSheet("BasicInformation", theme => ({
-
+const styleSheet = createStyleSheet('BasicInformation', theme => ({
   formContainer: {
     display: 'flex',
     flexDirection: 'row',
   },
   checkedRadio: {
-    color: theme.palette.accent[500]
+    color: theme.palette.accent[500],
   },
   rootRadio: {
-    height: '100%'
-  }
-}))
+    height: '100%',
+  },
+}));
 
 class RadioForm extends Component {
-
   constructor(props) {
     super(props);
     this.state = { selectedRadio: undefined };
@@ -39,16 +37,17 @@ class RadioForm extends Component {
 
 
   render() {
-    const { classes, fieldName, label, values } = this.props;
+    const { classes, fieldName, label, values, ...other } = this.props;
     return (
       <Grid item>
-        <Field name={fieldName} component={renderFormControl}>
+        <Field name={fieldName} component={renderFormControl} {...other}>
           <FormLabel>{label}</FormLabel>
-          <RadioGroup className={classes.formContainer}
+          <RadioGroup
+className={classes.formContainer}
             selectedValue={this.state.selectedRadio}
-            onChange={this.handleChange}>
-            {values.map((value, index) => {
-              return (
+            onChange={this.handleChange}
+          >
+            {values.map((value, index) => (
                 <FormControlLabel
                   key={index}
                   value={value.value}
@@ -57,12 +56,12 @@ class RadioForm extends Component {
                     checked: classes.checkedRadio }} />}
                   label={value.label}
                 />
-              )}
+              ),
             )}
           </RadioGroup>
         </Field>
       </Grid>
-    )
+    );
   }
 }
 
@@ -87,5 +86,5 @@ RadioForm.propTypes = {
    * callback to save selected value in parent's state
    */
   onFieldChange: PropTypes.func,
-}
+};
 export default withStyles(styleSheet)(RadioForm);
