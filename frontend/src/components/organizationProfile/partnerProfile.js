@@ -107,11 +107,11 @@ class BasicTabs extends Component {
           </TabContainer>}
         {this.state.index === 4 &&
           <TabContainer>
-            <ProjectImplementation />
+            <Collaboration />
           </TabContainer>}
         {this.state.index === 5 &&
           <TabContainer>
-            <Collaboration />
+            <ProjectImplementation />
           </TabContainer>}
         {this.state.index === 6 &&
           <TabContainer>

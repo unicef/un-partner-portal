@@ -46,56 +46,46 @@ class PartnerProfileProjectImplementation extends React.Component {
     const { stepIndex } = this.state;
     return (
       <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <Stepper linear activeStep={stepIndex} orientation="vertical">
-          <Step>
-            <StepLabel>Programme Management</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} first>
+        <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+          <Stepper linear activeStep={stepIndex} orientation="vertical">
+            <Step>
+              <StepLabel>Programme Management</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em', backgroundColor: 'transparent' }}>
                 <PartnerProfileProjectImplementation1 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Financial Controls</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Financial Controls</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em', backgroundColor: 'transparent' }}>
                 <PartnerProfileProjectImplementation2 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Internal Controls</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Internal Controls</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em', backgroundColor: 'transparent' }}>
                 <PartnerProfileProjectImplementation3 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Banking Information</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
-                  <PartnerProfileProjectImplementation4 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Audit & Assessments</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Banking Information</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em', backgroundColor: 'transparent' }}>
+                <PartnerProfileProjectImplementation4 />
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Audit & Assessments</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em', backgroundColor: 'transparent' }}>
                 <PartnerProfileProjectImplementation5 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-          <Step>
-            <StepLabel>Reporting</StepLabel>
-            <StepContent>
-              <PartnerProfileStepper onSubmit={this.handleNext} handlePrev={this.handlePrev}>
+              </div>
+            </Step>
+            <Step>
+              <StepLabel>Reporting</StepLabel>
+              <div style={{ maxWidth: "100%", padding: '1em 3em 3em', backgroundColor: 'transparent' }}>
                 <PartnerProfileProjectImplementation6 />
-              </PartnerProfileStepper>
-            </StepContent>
-          </Step>
-        </Stepper>
+              </div>
+            </Step>
+          </Stepper>
+        </PartnerProfileStepper>
       </div>
     );
   }

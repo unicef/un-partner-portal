@@ -125,7 +125,7 @@ class PartnerProfileProjectImplementation3 extends Component {
             <FormLabel>{"For each of the following areas of responsibility has the organization instituted safeguards to ensure the following functional responsibilities are appropriately segregated?"}</FormLabel>
           </Grid>
           <Grid item>
-            <Paper elevation={4}>
+            <Paper elevation={4} style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
               <Grid container direction='column'>
                 <Grid item>
                   <Grid container direction='column'>
