@@ -4,6 +4,7 @@ import Grid from 'material-ui/Grid';
 
 import TextFieldForm from '../forms/textFieldForm';
 import PasswordFieldForm from '../forms/passwordFieldForm';
+import { email } from '../../helpers/validation';
 
 
 class Account extends Component {
@@ -52,6 +53,7 @@ class Account extends Component {
                   label="E-mail address"
                   placeholder="Provide E-mail"
                   fieldName="userEmail"
+                  validation={[email]}
                 />
               </Grid>
               <Grid item sm={6} xs={12}>

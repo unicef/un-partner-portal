@@ -24,25 +24,31 @@ const styleSheet = createStyleSheet('sidebarMenu', theme => ({
     padding: 15,
     margin: 'auto',
     background: theme.palette.primary[500],
-  }
+  },
 }));
 
-function sidebarMenu(props, context) {
-  const { classes, location, sidebar, onItemClick } = props;
+const onItemClick = path => history.push(path);
+
+
+function sidebarMenu(props) {
+  const { classes, location, sidebar } = props;
   const links = sidebar.map((item, index) => {
-    const link = <MenuLink
-      active={location.includes(item.path)}
-      label={item.label}
-      key={index}
-      icon={createElement(DraftsIcon)}
-      onClick={() => { onItemClick(index, item.path) }} />
+    const link = (
+      <MenuLink
+        active={location.includes(item.path)}
+        label={item.label}
+        key={index}
+        icon={createElement(DraftsIcon)}
+        onClick={() => { onItemClick(item.path); }}
+      />
+    );
     if (item.path === '/settings') {
       return [
         <Divider />,
-        link
-      ]
+        link,
+      ];
     }
-    return link
+    return link;
   });
 
   return (
@@ -61,28 +67,16 @@ function sidebarMenu(props, context) {
 sidebarMenu.propTypes = {
   location: PropTypes.string.isRequired,
   sidebar: PropTypes.array.isRequired,
-  onItemClick: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => {
-  return {
-    location: state.route.location,
-    sidebar: state.nav.sidebar
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    onItemClick: (id, path) => {
-      history.push(path)
-    }
-  }
-}
+const mapStateToProps = state => ({
+  location: state.route.location,
+  sidebar: state.nav.sidebar,
+});
 
 const containerSidebarMenu = connect(
   mapStateToProps,
-  mapDispatchToProps
 )(sidebarMenu);
 
 export default withStyles(styleSheet)(withRouter(containerSidebarMenu));

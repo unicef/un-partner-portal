@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import { RadioGroup } from 'material-ui/Radio';
 import SelectField from 'material-ui-old/SelectField';
@@ -20,10 +22,10 @@ export const renderRadioGroup = ({
 
 export const renderFormControl = ({
   className,
-  label, 
+  label,
   meta: { touched, error },
-  input, 
-  ...other 
+  input,
+  ...other
 }) => (
   <div>
     <FormControl
@@ -56,7 +58,7 @@ export const renderTextField = ({
   className,
   meta: { touched, error },
   input,
-  ...other 
+  ...other
 }) => (
   <TextField
     className={className}
