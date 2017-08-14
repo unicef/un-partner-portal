@@ -4,23 +4,11 @@ from decimal import Decimal
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from model_utils.models import TimeStampedModel
-
-
-class Country(TimeStampedModel):
-    """
-
-    """
-    name = models.CharField(max_length=255)
-    country_code = models.CharField(max_length=2)
-
-    class Meta:
-        ordering = ['id']
-
-    def __str__(self):
-        return "Country: {} <pk:{}>".format(self.name, self.id)
+from .countries import COUNTRIES_ALPHA2_CODE
 
 
 class Point(TimeStampedModel):
+    country_code = models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE)
     lat = models.DecimalField(
         verbose_name='Latitude',
         null=True,
