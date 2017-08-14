@@ -10,6 +10,7 @@ from .consts import (
     WORKING_LAGNUAGES_CHOICES,
 )
 
+
 class ConfigCountriesAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
