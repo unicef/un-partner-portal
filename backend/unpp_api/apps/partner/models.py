@@ -15,6 +15,7 @@ from common.consts import (
     MEMBER_STATUSES,
     COLLABORATION_EVIDENCE_MODES,
     METHOD_ACC_ADOPTED_CHOICES,
+    FINANCIAL_CONTROL_SYSTEM_CHOICES,
 )
 
 
@@ -34,10 +35,6 @@ class Partner(TimeStampedModel):
 
     def __str__(self):
         return "Partner: {} <pk:{}>".format(self.name, self.id)
-
-
-class PartnerFinancialControlSystem(TimeStampedModel):
-    name = models.CharField(max_length=200)
 
 
 class PartnerProfile(TimeStampedModel):
@@ -64,7 +61,12 @@ class PartnerProfile(TimeStampedModel):
     have_feedback_mechanism = models.BooleanField(default=False)
 
     # financial controls
-    org_acc_system = models.ForeignKey(PartnerFinancialControlSystem, related_name="partner_profiles")
+    org_acc_system = models.CharField(
+        max_length=3,
+        choices=FINANCIAL_CONTROL_SYSTEM_CHOICES,
+        default=FINANCIAL_CONTROL_SYSTEM_CHOICES.no_system,
+
+    )
     method_acc = models.CharField(
         max_length=3,
         choices=METHOD_ACC_ADOPTED_CHOICES,
