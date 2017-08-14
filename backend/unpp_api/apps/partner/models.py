@@ -58,7 +58,9 @@ class PartnerProfile(TimeStampedModel):
     org_head_fax = models.CharField(max_length=255, null=True, blank=True)
     org_head_mobile = models.CharField(max_length=255, null=True, blank=True)
     working_languages = ArrayField(
-        models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
+        models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE),
+        default=list,
+        null=True
     )
     working_languages_other = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
     register_country = models.BooleanField(default=False, verbose_name='Register to work in country?')
