@@ -102,7 +102,7 @@ class PartnerProfile(TimeStampedModel):
         return PartnerBudget.objects.filter(partner=self, year=date.today().year).values_list('budget', flat=True) or 0
 
 
-class PartnerInternalControls(TimeStampedModel):
+class PartnerInternalControl(TimeStampedModel):
     partner = models.ForeignKey(Partner, related_name="internal_controls")
     functional_responsibility = models.CharField(
         max_length=3,
@@ -115,7 +115,7 @@ class PartnerInternalControls(TimeStampedModel):
         ordering = ['id']
 
     def __str__(self):
-        return "PartnerInternalControls <pk:{}>".format(self.id)
+        return "PartnerInternalControl <pk:{}>".format(self.id)
 
 
 class PartnerBudget(TimeStampedModel):
