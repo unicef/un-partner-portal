@@ -93,3 +93,13 @@ PARTNER_DONORS_CHOICES = Choices(
     ('NGO', 'non_gov', 'International Non Governmental Organizations'),
     ('Oth', 'other', 'Other'),
 )
+
+WORKING_LAGNUAGES_CHOICES = Choices(
+    ('Ara', 'arabic', 'Arabic'),
+    ('Chi', 'chinese', 'Chinese'),
+    ('Eng', 'english', 'English'),
+    ('Fre', 'french', 'French'),
+    ('Rus', 'russian', 'Russian'),
+    ('Spa', 'spanish', 'Spanish'),
+    ('Oth', 'other', 'Other'),
+)

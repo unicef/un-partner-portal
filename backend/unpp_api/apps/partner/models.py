@@ -19,6 +19,7 @@ from common.consts import (
     METHOD_ACC_ADOPTED_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
+    WORKING_LAGNUAGES_CHOICES,
 )
 
 
@@ -58,7 +59,7 @@ class PartnerProfile(TimeStampedModel):
     org_head_fax = models.CharField(max_length=255, null=True, blank=True)
     org_head_mobile = models.CharField(max_length=255, null=True, blank=True)
     working_languages = ArrayField(
-        models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE),
+        models.CharField(max_length=3, choices=WORKING_LAGNUAGES_CHOICES),
         default=list,
         null=True
     )
