@@ -73,3 +73,12 @@ FINANCIAL_CONTROL_SYSTEM_CHOICES = Choices(
     ('Pap', 'paper', 'Paper-based accounting system'),
     ('NoS', 'no_system', 'No accounting system'),
 )
+
+FUNCTIONAL_RESPONSIBILITY_CHOICES = Choices(
+    ('Pro', 'procurement', 'Procurement'),
+    ('AET', 'authorization', 'Authorization to execute a transaction'),
+    ('RoT', 'recording', 'Recording of a transaction'),
+    ('Pay', 'payment', 'Payment approvals'),
+    ('CoA', 'custody', 'Custody of assets involved in a transaction'),
+    ('Ban', 'bank', 'Bank reconciliation'),
+)
