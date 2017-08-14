@@ -54,7 +54,7 @@ class SelectForm extends Component {
   }
 
   render() {
-    const { classes, fieldName, label, infoIcon, infoText, values } = this.props;
+    const { classes, fieldName, label, infoIcon, infoText, values, selectFieldProps } = this.props;
     return (
       <Grid item>
         <Grid container direction="row" align="flex-end" wrap="nowrap">
@@ -62,6 +62,7 @@ class SelectForm extends Component {
             <Field
               name={fieldName}
               component={renderSelectField}
+              {...selectFieldProps}
               floatingLabelFixed
               floatingLabelText={label}
               hintText={`Select ${label.toLowerCase()}`}
