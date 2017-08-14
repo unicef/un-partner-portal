@@ -82,3 +82,14 @@ FUNCTIONAL_RESPONSIBILITY_CHOICES = Choices(
     ('CoA', 'custody', 'Custody of assets involved in a transaction'),
     ('Ban', 'bank', 'Bank reconciliation'),
 )
+
+PARTNER_DONORS_CHOICES = Choices(
+    ('Ind', 'Individuals', 'Individuals'),
+    ('TaF', 'trusts', 'Trusts and foundations'),
+    ('Pri', 'private', 'Private companies and corporations'),
+    ('Gov', 'gov', 'Government'),
+    ('UNA', 'united_agency', 'United Nations Agency'),
+    ('Bil', 'bilateral', 'Bilateral Agency/Multilateral Agency/Development Banks'),
+    ('NGO', 'non_gov', 'International Non Governmental Organizations'),
+    ('Oth', 'other', 'Other'),
+)
