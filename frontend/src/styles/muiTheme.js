@@ -1,5 +1,5 @@
 import createPalette from 'material-ui/styles/palette';
-import purple from 'material-ui/colors/purple';
+import purple from 'material-ui/colors/deepPurple';
 import blue from 'material-ui/colors/blue';
 import grey from 'material-ui/colors/grey';
 import store from '../store';
@@ -8,7 +8,7 @@ const getColorTheme = () => {
   const role = store.getState().session.role;
   return (role && role === 'agency')
     ? blue
-    : purple;
+    : { ...purple, 500: '#6B5CA5' };
 };
 
 const theme = {
@@ -52,6 +52,35 @@ const theme = {
         },
       },
     },
+    MuiTypography: {
+      headline: {
+        color: 'inherit',
+      },
+    },
+    MuiButton: {
+      raisedAccent: {
+        backgroundColor: '#6B5CA5',
+      },
+    },
+    MuiFormLabel: {
+      root: {
+        color: 'rgba(0, 0, 0, 0.34)',
+        zIndex: 1,
+        transform: 'scale(0.75)',
+        transformOrigin: 'left top',
+        pointerEvents: 'none',
+      },
+      focused: {
+        color: 'rgba(0, 0, 0, 0.34)',
+      },
+    },
+    MuiInput: {
+      input: {
+        'label + $formControl > &': {
+          opacity: 0.5,
+        },
+      },
+    },
   },
 };
 const getTheme = () => (
@@ -59,7 +88,8 @@ const getTheme = () => (
     ...theme,
     palette: {
       ...theme.palette,
-      accent: getColorTheme() },
+      accent: getColorTheme(),
+    },
   }
 );
 

@@ -7,6 +7,7 @@ import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
 import profile from './components/organizationProfile/organizationProfile';
 import settings from './components/agencySettings/agencySettings';
+import registration from './components/registration/registration';
 
 export default [
   {
@@ -24,5 +25,9 @@ export default [
         { path: 'settings', component: settings },
       ],
     }],
+  },
+  {
+    path: '/registration',
+    component: registration,
   },
 ];
