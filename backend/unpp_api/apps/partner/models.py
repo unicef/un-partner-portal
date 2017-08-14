@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from datetime import date
 
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from model_utils.models import TimeStampedModel
 
@@ -17,6 +18,7 @@ from common.consts import (
     COLLABORATION_EVIDENCE_MODES,
     METHOD_ACC_ADOPTED_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
+    FUNCTIONAL_RESPONSIBILITY_CHOICES,
 )
 
 
@@ -47,8 +49,18 @@ class PartnerProfile(TimeStampedModel):
     legal_name_change = models.BooleanField(default=False)
     former_legal_name = models.CharField(max_length=255, null=True, blank=True)
     org_head_first_name = models.CharField(max_length=255, null=True, blank=True)
+
     org_head_last_name = models.CharField(max_length=255, null=True, blank=True)
     org_head_email = models.EmailField(max_length=255, null=True, blank=True)
+    org_head_job_title = models.CharField(max_length=255, null=True, blank=True)
+    # TODO: shall we provide PhoneNumberField ???
+    org_head_telephonee = models.CharField(max_length=255, null=True, blank=True)
+    org_head_fax = models.CharField(max_length=255, null=True, blank=True)
+    org_head_mobile = models.CharField(max_length=255, null=True, blank=True)
+    working_languages = ArrayField(
+        models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
+    )
+    working_languages_other = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
     register_country = models.BooleanField(default=False, verbose_name='Register to work in country?')
     flagged = models.BooleanField(default=False)
     start_cooperate_date = models.DateField(auto_now_add=True)
@@ -91,10 +103,19 @@ class PartnerProfile(TimeStampedModel):
 
 
 class PartnerInternalControls(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="partner_internal_controls")
-    functional_responsibility = None
+    partner = models.ForeignKey(Partner, related_name="internal_controls")
+    functional_responsibility = models.CharField(
+        max_length=3,
+        choices=FUNCTIONAL_RESPONSIBILITY_CHOICES,
+    )
     segregation_duties = models.BooleanField(default=False)
     comment = models.CharField(max_length=200, null=True, blank=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerInternalControls <pk:{}>".format(self.id)
 
 
 class PartnerBudget(TimeStampedModel):
