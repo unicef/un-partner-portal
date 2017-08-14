@@ -111,8 +111,11 @@ INSTALLED_APPS = [
     'compressor',
     'django_common',
 
-    'account',
     'common',
+    'account',
+    'agency',
+    'partner',
+    'project',
 ]
 
 # auth / django-registration params
