@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
 import { browserHistory as history } from 'react-router';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import List from 'material-ui/List';
 import Typography from 'material-ui/Typography';
-import Paper from 'material-ui/Paper';
-import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
+
+const messages = {
+  header: 'Calls for Expressions of Interest',
+};
 
 const styleSheet = createStyleSheet('sidebarMenu', (theme) => {
   const padding = theme.spacing.unit * 4;
@@ -42,8 +42,8 @@ const styleSheet = createStyleSheet('sidebarMenu', (theme) => {
   };
 });
 
-const renderTabs = tabs => tabs.map(tab => (
-  <Tab label={tab.label} />
+const renderTabs = tabs => tabs.map((tab, index) => (
+  <Tab label={tab.label} key={index} />
 ));
 
 
@@ -74,7 +74,7 @@ class CfeiHeader extends Component {
         <Grid className={classes.container} container direction="column" gutter={16}>
           <div>
             <Typography type="headline">
-              Calls for Expressions of Interest
+              {messages.header}
             </Typography>
           </div>
           <div>
@@ -90,8 +90,9 @@ class CfeiHeader extends Component {
 }
 
 CfeiHeader.propTypes = {
-  tabs: PropTypes.string.isRequired,
+  tabs: PropTypes.array.isRequired,
   classes: PropTypes.object.isRequired,
+  children: PropTypes.node,
 };
 
 const mapStateToProps = state => ({
