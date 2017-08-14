@@ -46,6 +46,6 @@ services:
     volumes:
         - ./frontend/:/code
         - /code/node_modules
-    command: bash -c "yarn run build && node server.js"
+    command: bash -c "yarn run start"
 
 

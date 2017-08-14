@@ -18,4 +18,4 @@ VOLUME /code
 
 
 EXPOSE 8080
-CMD ["yarn run build, node server.js"]
+CMD ["yarn run start"]
