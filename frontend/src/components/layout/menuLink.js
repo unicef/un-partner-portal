@@ -4,15 +4,18 @@ import { ListItem, ListItemText, ListItemIcon } from 'material-ui/List';
 import Hidden from 'material-ui/Hidden';
 
 const menuLink = (props) => {
-  const { active, onClick, icon, label } = props;
+  const { active, onClick, icon, label, classes } = props;
   return (
     <ListItem
       className={active ? 'active' : ''}
+      classes={{
+        button: classes.button,
+      }}
       button
       onClick={onClick}
     >
       <Hidden mdDown>
-        <ListItemIcon>
+        <ListItemIcon className={classes.icon}>
           {icon}
         </ListItemIcon>
       </Hidden>
@@ -26,6 +29,7 @@ menuLink.propTypes = {
   onClick: PropTypes.func.isRequired,
   icon: PropTypes.element,
   label: PropTypes.string,
+  classes: PropTypes.object,
 };
 
 export default menuLink;

@@ -9,6 +9,21 @@ from common.consts import (
     MEMBER_ROLES,
 )
 
+
+class OtherAgency(TimeStampedModel):
+    """
+    Other Agencies are defined for Partner Profile history like accreditation, references and this entity is
+    something different then core Agency like Unicef and others.
+    """
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "Other Agency: {} <pk:{}>".format(self.name, self.id)
+
+
 class Agency(TimeStampedModel):
     """
 

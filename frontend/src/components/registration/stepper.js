@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
+import { browserHistory as history } from 'react-router';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import PropTypes from 'prop-types';
 
@@ -61,7 +62,7 @@ class RegistrationStepper extends React.Component {
   }
 
   handleSubmit(values) {
-    alert(JSON.stringify(values, null, 4));
+    history.push('/');
   }
 
 

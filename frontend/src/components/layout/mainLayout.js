@@ -20,7 +20,9 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
     margin: 'auto',
   },
   leftHeader: {
-    paddingLeft: 30,
+    display: 'flex',
+    justifyContent: 'center',
+    backgroundColor: theme.palette.accent[500],
   },
   rightHeader: {
     // dark blue color added as extra to regular palette
@@ -28,10 +30,10 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
   },
   paper: {
     height: '100%',
-    borderRight: 2,
+    borderRight: `1px ${theme.palette.primary[300]} solid`,
   },
   paper2: {
-    height: '45vw',
+    height: '100%',
   },
   badge: {
     backgroundColor: 'red',
@@ -53,14 +55,14 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
 const mainLayout = (props) => {
   const classes = props.classes;
   return (
-    <Grid container gutter={0} sm={10} className={classes.root}>
+    <Grid container gutter={0} md={10} className={classes.root}>
       <Grid item sm={2} hidden={{ xsDown: true }}>
         <AppBar
           className={`${classes.header} ${classes.leftHeader}`}
           position="static"
           color="accent"
         >
-          <Typography type="title" color="inherit">
+          <Typography type="display1" color="inherit" align="center">
             UNPP
           </Typography>
         </AppBar>

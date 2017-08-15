@@ -10,7 +10,6 @@ import getTheme from './styles/muiTheme';
 import store from './store';
 import RouterComponent from './routes';
 
-
 injectTapEventPlugin();
 
 browserHistory.listen((location) => {

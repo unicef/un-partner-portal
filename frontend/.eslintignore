@@ -1,0 +1,4 @@
+
+# ignore config and scripts as they come from react-scripts
+scripts
+config
