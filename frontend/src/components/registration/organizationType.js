@@ -13,7 +13,7 @@ import AlertDialog from '../common/alertDialog';
 
 const messages = {
   header: 'This portal is not intended for private sector companies, ' +
-  'goverment ministries or agencies and individuals.&nbsp;',
+  'goverment ministries or agencies and individuals. ',
   tooltip: 'Community Based Organization (CBO): A community-based ' +
   'organization is a grass-root association with small organizational' +
   ' and management structure, focused on improving the lives and ' +
