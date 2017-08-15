@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { initSession } from '../reducers/session';
-
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+
+import { initSession } from '../reducers/session';
 import getTheme from '../styles/muiTheme';
 
 
 class Main extends Component {
-
   componentWillMount() {
     const role = window.localStorage.role;
     this.props.sessionInit(role);
@@ -19,19 +19,23 @@ class Main extends Component {
         {this.props.children}
       </MuiThemeProvider>
 
-    )
+    );
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    sessionInit: (role) => {
-      dispatch(initSession({ role }))
-    }
-  }
-}
+Main.propTypes = {
+  sessionInit: PropTypes.func,
+  children: PropTypes.node,
+};
+
+const mapDispatchToProps = dispatch => ({
+  sessionInit: (role) => {
+    dispatch(initSession({ role }));
+  },
+});
+
 
 export default connect(
   null,
-  mapDispatchToProps
-)(Main)
+  mapDispatchToProps,
+)(Main);

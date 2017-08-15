@@ -14,4 +14,5 @@ export default createStore(combineReducers({
   form: formReducer,
 }),
 // TODO(marcindo: disable devtools in prod
+// eslint-disable-next-line
 window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())

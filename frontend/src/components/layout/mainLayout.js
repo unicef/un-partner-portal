@@ -110,6 +110,7 @@ const mainLayout = (props) => {
 
 mainLayout.propTypes = {
   classes: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 export default withStyles(styleSheet)(mainLayout);

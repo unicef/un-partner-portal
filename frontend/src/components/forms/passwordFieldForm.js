@@ -2,19 +2,20 @@ import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 
+import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Visibility from 'material-ui-icons/Visibility';
 import VisibilityOff from 'material-ui-icons/VisibilityOff';
 import { FormControl, FormLabel } from 'material-ui/Form';
 import IconButton from 'material-ui/IconButton';
+
 import { renderTextField } from '../../helpers/formHelper';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { required, password } from '../../helpers/validation';
 
-
-const styleSheet = createStyleSheet('BasicInformation', theme => ({
+const styleSheet = createStyleSheet('BasicInformation', () => ({
   root: {
     position: 'relative',
-    display:  'inline-block',
+    display: 'inline-block',
   },
   visibilityButton: {
     marginTop: 4,
@@ -30,7 +31,7 @@ class PasswordFieldForm extends Component {
     super(props);
     this.state = {
       focused: false,
-      visible: props.visible,
+      visible: false,
     };
   }
 
@@ -41,7 +42,8 @@ class PasswordFieldForm extends Component {
   }
 
   render() {
-    const { classes, fieldName, label, textFieldProps, placeholder } = this.props;
+    const { classes, fieldName, label, textFieldProps, placeholder,
+      optional, validation } = this.props;
     const { visible } = this.state;
     return (
       <Grid item className={classes.root}>
@@ -52,6 +54,7 @@ class PasswordFieldForm extends Component {
             placeholder={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
             component={renderTextField}
             type={visible ? 'text' : 'password'}
+            validate={[password].concat(optional ? [] : [required].concat(validation || []))}
             {...textFieldProps}
           />
           <IconButton
@@ -70,6 +73,10 @@ class PasswordFieldForm extends Component {
 
 PasswordFieldForm.propTypes = {
   /**
+   * css classes
+   */
+  classes: PropTypes.object,
+  /**
    * Name of the field used by react-form and as unique id.
    */
   fieldName: PropTypes.string.isRequired,
@@ -85,6 +92,14 @@ PasswordFieldForm.propTypes = {
    * unique text used as placeholder
    */
   placeholder: PropTypes.text,
+  /**
+   * if field is optional
+   */
+  optional: PropTypes.bool,
+  /**
+   * validations passed to field
+   */
+  validation: PropTypes.arrayOf(PropTypes.func),
 };
 
 PasswordFieldForm.defaultProps = {

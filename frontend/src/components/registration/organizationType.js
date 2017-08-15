@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 
@@ -45,6 +46,14 @@ const messages = {
   'composed of the International Committee of the Red Cross (ICRC), ' +
   'the International Federation of Red Cross and Red Crescent ' +
   'Societies (IFRC) and 190 member Red Cross and Red Crescent Societies.',
+  alertDialog: 'You can not register your organization until a Headquarters ' +
+            'profile is completed. Please contact your ' +
+            'organization\'s HQ focal point to proceed',
+  labels: {
+    organizationType: 'Type of organization',
+    office: 'Indicate if you are',
+  },
+  alertTitle: 'Warning',
 };
 
 const styleSheet = createStyleSheet('OrganizationTypes', theme => ({
@@ -102,64 +111,62 @@ const MENU_VALUES = [
 ];
 
 
-class OrganizationTypes extends Component {
-  constructor(props) {
-    super(props);
-    this.reset = props.reset;
-    this.state = { organization: undefined };
-    this.handleOfficeChange = this.handleOfficeChange.bind(this);
-    this.handleDialogClose = this.handleDialogClose.bind(this);
-  }
-
-  handleOfficeChange(office) {
-    this.setState({ officeAlert: office === 'country' });
-  }
-
-  handleDialogClose() {
-    this.reset();
-    this.setState({ officeAlert: null });
-  }
-
-  render() {
-    const { classes, organization, office } = this.props;
-    return (
+const OrganizationTypes = (props) => {
+  const { classes, organization, office, reset } = props;
+  return (
+    <Grid item>
       <Grid item>
-        <Grid item>
-          <div className={classes.info}>
-            <Typography color="inherit" >
-              {messages.header}
-              <a target="_blank" href="http://unicef.com" rel="noopener noreferrer">learn more</a>
-            </Typography>
-          </div>
-        </Grid>
-        <SelectForm
-          fieldName="organizationType"
-          label="Type of organization"
-          values={MENU_VALUES}
-          infoIcon
-          infoText={messages.tooltip}
-        />
-        {organization === 'ingo' && (
-          <RadioForm
-            fieldName="office"
-            label="Indicate if you are"
-            values={RADIO_VALUES}
-            onFieldChange={this.handleOfficeChange}
-          />
-        )}
-        <AlertDialog
-          trigger={this.state.officeAlert}
-          title="Warning"
-          text={'You can not register your organization until a Headquarters ' +
-            'profile is completed. Please contact your ' +
-            'organization\'s HQ focal point to proceed'}
-          handleDialogClose={this.handleDialogClose}
-        />
+        <div className={classes.info}>
+          <Typography color="inherit" >
+            {messages.header}
+            <a target="_blank" href="http://unicef.com" rel="noopener noreferrer">{messages.link}</a>
+          </Typography>
+        </div>
       </Grid>
+      <SelectForm
+        fieldName="organizationType"
+        label={messages.labels.organizationType}
+        values={MENU_VALUES}
+        infoIcon
+        infoText={messages.tooltip}
+      />
+      {organization === 'ingo' && (
+        <RadioForm
+          fieldName="office"
+          label={messages.labels.office}
+          values={RADIO_VALUES}
+        />
+      )}
+      <AlertDialog
+        trigger={office === 'country'}
+        title={messages.alertTitle}
+        text={messages.alertDialog}
+        handleDialogClose={reset}
+      />
+    </Grid>
+  );
+};
 
-    );
-  }
-}
+
+OrganizationTypes.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
+  /**
+   * value picked for organization field to determine if office field should be
+   * displayed
+   */
+  organization: PropTypes.string,
+  /**
+   * value picked for office field to determine if alert should be displayed
+   */
+  office: PropTypes.string,
+  /**
+   * function from redux form to reset form state
+   */
+  reset: PropTypes.func,
+};
 
 const selector = formValueSelector('registration');
 const connectedOrganizationTypes = connect(

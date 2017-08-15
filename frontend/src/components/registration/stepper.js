@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import { browserHistory as history } from 'react-router';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
+import PropTypes from 'prop-types';
+
 import {
   Stepper,
   Step,
@@ -15,6 +17,13 @@ import RegistrationStep from './registrationStep';
 import Declaration from './declaration';
 import Account from './account';
 import AlertDialog from '../common/alertDialog';
+
+const styleSheet = createStyleSheet('RegistrationStepper', () => ({
+  root: {
+    maxWidth: '100%',
+    padding: '1em 1em 3em',
+  },
+}));
 
 
 class RegistrationStepper extends React.Component {
@@ -38,7 +47,7 @@ class RegistrationStepper extends React.Component {
 
   handleNextQuestions() {
     const answers = this.props.answers;
-    if (answers && answers.some(answer => answer === false)) {
+    if (answers && answers.some(answer => answer === 'false')) {
       this.setState({ declarationAlert: true });
       return;
     }
@@ -58,9 +67,10 @@ class RegistrationStepper extends React.Component {
 
 
   render() {
+    const { classes } = this.props;
     const { stepIndex } = this.state;
     return (
-      <div style={{ maxWidth: '100%', padding: '1em 1em 3em' }}>
+      <div className={classes.root}>
         <Stepper linear activeStep={stepIndex} orientation="vertical">
           <Step>
             <StepLabel>Select type of your organization</StepLabel>
@@ -111,6 +121,16 @@ class RegistrationStepper extends React.Component {
     );
   }
 }
+RegistrationStepper.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
+  /**
+   * answers to all questions in declaration component, show dialog when at least one is false
+   */
+  answers: PropTypes.arrayOf(PropTypes.string),
+};
 
 const selector = formValueSelector('registration');
 const connectedRegistrationStepper = connect(
@@ -119,4 +139,4 @@ const connectedRegistrationStepper = connect(
   }),
 )(RegistrationStepper);
 
-export default withStyles()(connectedRegistrationStepper);
+export default withStyles(styleSheet)(connectedRegistrationStepper);

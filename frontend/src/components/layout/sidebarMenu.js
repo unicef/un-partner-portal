@@ -81,7 +81,6 @@ function sidebarMenu(props) {
 sidebarMenu.propTypes = {
   location: PropTypes.string.isRequired,
   sidebar: PropTypes.array.isRequired,
-  onItemClick: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 
