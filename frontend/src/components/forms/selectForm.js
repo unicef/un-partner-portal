@@ -8,6 +8,7 @@ import Grid from 'material-ui/Grid';
 import { MenuItem } from 'material-ui-old/Menu';
 
 import { renderSelectField } from '../../helpers/formHelper';
+import { required } from '../../helpers/validation';
 import Tooltip from '../common/tooltip';
 
 const styleSheet = createStyleSheet('OrganizationTypes', theme => ({
@@ -33,7 +34,6 @@ class SelectForm extends Component {
   }
 
   handleChange(event, value) {
-    if (this.props.onFieldChange) this.props.onFieldChange(value);
     this.setState({ selectedItem: value });
   }
 
@@ -54,7 +54,8 @@ class SelectForm extends Component {
   }
 
   render() {
-    const { classes, fieldName, label, infoIcon, infoText, values, selectFieldProps } = this.props;
+    const { classes, fieldName, label, infoIcon, infoText, values,
+      optional, validation, selectFieldProps } = this.props;
     return (
       <Grid item>
         <Grid container direction="row" align="flex-end" wrap="nowrap">
@@ -67,6 +68,7 @@ class SelectForm extends Component {
               floatingLabelText={label}
               hintText={`Select ${label.toLowerCase()}`}
               onChange={this.handleChange}
+              validate={optional ? [] : [required].concat(validation || [])}
               fullWidth
             >
               {values.map((value, index) => (
@@ -98,6 +100,10 @@ class SelectForm extends Component {
 
 SelectForm.propTypes = {
   /**
+   * css classes
+   */
+  classes: PropTypes.object,
+  /**
    * Name of the field used by react-form
    */
   fieldName: PropTypes.string.isRequired,
@@ -114,13 +120,21 @@ SelectForm.propTypes = {
    */
   values: PropTypes.array.isRequired,
   /**
-   * callback to save selected value in parent's state
-   */
-  onFieldChange: PropTypes.func,
-  /**
    * Whether to display info icon with tooltip next ot the field
    */
-  infoIcon: PropTypes.boolean,
+  infoIcon: PropTypes.bool,
+  /**
+   * text passed to tooltip
+   */
+  infoText: PropTypes.bool,
+  /**
+   * if field is optional
+   */
+  optional: PropTypes.bool,
+  /**
+   * validations passed to field
+   */
+  validation: PropTypes.arrayOf(PropTypes.func),
 };
 
 export default withStyles(styleSheet)(SelectForm);

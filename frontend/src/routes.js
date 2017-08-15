@@ -1,7 +1,9 @@
 
 import main from './components/main';
 import mainLayout from './components/layout/mainLayout';
-import eoi from './components/eois/eoiHeader';
+import eoiHeader from './components/eois/eoiHeader';
+import overview from './components/eois/overview';
+import pinned from './components/eois/pinned';
 import partner from './components/partners/partnersHeader';
 import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
@@ -26,7 +28,15 @@ export default [
       component: mainLayout,
       childRoutes: [
         { path: 'dashboard', component: dashboard },
-        { path: 'cfei', component: eoi },
+        {
+          path: 'cfei',
+          component: eoiHeader,
+          // indexRoute: { path: 'overview', component: overview },
+          childRoutes: [
+            { path: 'overview', component: overview },
+            { path: 'pinned', component: pinned },
+          ],
+        },
         { path: 'partner', component: partner },
         { path: 'applications', component: applications },
         { path: 'profile', component: partnerProfile },

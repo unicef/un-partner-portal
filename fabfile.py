@@ -5,7 +5,7 @@ from fabric.api import local
 def ssh(service):
     """
     ssh into running service container
-    :param service: ['django_api', 'polymer', 'proxy', 'db']
+    :param service: ['backend', 'frontend', 'proxy', 'db']
     """
     assert service in ['backend', 'frontend', 'proxy', 'db'], "%s is unrecognized service"
     if service == 'frontend':

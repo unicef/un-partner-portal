@@ -54,3 +54,19 @@ EOI_STATUSES = Choices(
     ('Ope', 'open', 'Open'),
     ('Clo', 'closed', 'Closed'),
 )
+
+COLLABORATION_EVIDENCE_MODES = Choices(
+    ('Acc', 'accreditation', 'Accreditation'),
+    ('Ref', 'reference', 'Reference'),
+)
+
+METHOD_ACC_ADOPTED_CHOICES = Choices(
+    ('Cas', 'cash', 'Cash'),
+    ('Acc', 'accrual', 'Accrual'),
+)
+
+FINANCIAL_CONTROL_SYSTEM_CHOICES = Choices(
+    ('Com', 'computerized', 'Computerized accounting system'),
+    ('Pap', 'paper', 'Paper-based accounting system'),
+    ('NoS', 'no_system', 'No accounting system'),
+)

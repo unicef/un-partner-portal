@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { FieldArray } from 'redux-form';
-
+import PropTypes from 'prop-types';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
@@ -52,40 +52,38 @@ const styleSheet = createStyleSheet('DeclarationRow', theme => ({
   },
 }));
 
-class Declaration extends Component {
-  static renderQuestions() {
-    return (
-      <Grid item>
-        {Object.keys(messages.questions).map((key, index) => (
-          <DeclarationRow
-            message={messages.questions[key]}
-            index={index}
-            key={index}
-          />
-        ))
-        }
-      </Grid>
-    );
-  }
+const renderQuestions = () => (
+  <Grid item>
+    {Object.keys(messages.questions).map((key, index) => (
+      <DeclarationRow
+        message={messages.questions[key]}
+        index={index}
+        key={index}
+      />
+    ))}
+  </Grid>
+);
 
-  constructor(props) {
-    super(props);
-    this.state = { answers: props.answers };
-  }
-
-  render() {
-    const { classes } = this.props;
-    return (
-      <Grid item xs={12}>
-        <Grid container direction="column" gutter={16}>
-          <Grid className={classes.headerContainer} item>
-            <Typography type="body2">{messages.header}</Typography>
-          </Grid>
-          <FieldArray name="questions" component={Declaration.renderQuestions} />
+const Declaration = (props) => {
+  const { classes } = props;
+  return (
+    <Grid item xs={12}>
+      <Grid container direction="column" gutter={16}>
+        <Grid className={classes.headerContainer} item>
+          <Typography type="body2">{messages.header}</Typography>
         </Grid>
+        <FieldArray name="questions" component={renderQuestions} />
       </Grid>
-    );
-  }
-}
+    </Grid>
+  );
+};
+
+
+Declaration.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
+};
 
 export default withStyles(styleSheet)(Declaration);

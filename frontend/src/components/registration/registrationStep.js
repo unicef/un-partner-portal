@@ -3,13 +3,15 @@ import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
 
 import Grid from 'material-ui/Grid';
-
-
 import Button from 'material-ui/Button';
 
-import validate from './registrationValidation';
+const messages = {
+  continue: 'Continue',
+  register: 'Register',
+  cancel: 'Cancel',
+};
 
-function RegistrationStep(props) {
+const RegistrationStep = (props) => {
   const { handleSubmit, handlePrev, last, first, children, reset } = props;
   return (
     <form onSubmit={handleSubmit}>
@@ -25,14 +27,14 @@ function RegistrationStep(props) {
                 raised
                 onTouchTap={handleSubmit}
               >
-                {(last) ? 'Register' : 'Continue'}
+                {(last) ? messages.register : messages.continue}
               </Button>
             </Grid>
             <Grid item>
               {(!first && <Button
                 onTouchTap={handlePrev}
               >
-                {'Cancel'}
+                {messages.cancel}
               </Button>)}
             </Grid>
           </Grid>
@@ -40,7 +42,7 @@ function RegistrationStep(props) {
       </Grid>
     </form >
   );
-}
+};
 
 RegistrationStep.propTypes = {
   /**
@@ -70,8 +72,7 @@ RegistrationStep.propTypes = {
 };
 
 export default reduxForm({
-  form: 'registration', // a unique identifier for this form
-  destroyOnUnmount: false, // <------ preserve form data
-  forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-  validate,
+  form: 'registration',
+  destroyOnUnmount: false,
+  forceUnregisterOnUnmount: true,
 })(RegistrationStep);

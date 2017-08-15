@@ -6,10 +6,12 @@ import Grid from 'material-ui/Grid';
 import { FormControl, FormLabel } from 'material-ui/Form';
 
 import { renderTextField } from '../../helpers/formHelper';
+import { required } from '../../helpers/validation';
 
 
 function TextFieldForm(props) {
-  const { fieldName, label, textFieldProps, placeholder } = props;
+  const { fieldName, label, textFieldProps, placeholder, optional,
+    validation } = props;
   return (
     <Grid item>
       <FormControl fullWidth>
@@ -18,6 +20,7 @@ function TextFieldForm(props) {
           name={fieldName}
           placeholder={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
           component={renderTextField}
+          validate={optional ? [] : [required].concat(validation || [])}
           {...textFieldProps}
         />
       </FormControl>
@@ -43,6 +46,14 @@ TextFieldForm.propTypes = {
    * unique text used as placeholder
    */
   placeholder: PropTypes.text,
+  /**
+   * if field is optional
+   */
+  optional: PropTypes.bool,
+  /**
+   * validations passed to field
+   */
+  validation: PropTypes.arrayOf(PropTypes.func),
 };
 
 TextFieldForm.defaultProps = {
