@@ -110,7 +110,7 @@ SelectForm.propTypes = {
   /**
    * text passed to tooltip
    */
-  infoText: PropTypes.bool,
+  infoText: PropTypes.string,
   /**
    * if field is optional
    */
