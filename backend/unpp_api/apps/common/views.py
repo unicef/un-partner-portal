@@ -2,6 +2,8 @@ from __future__ import absolute_import
 from rest_framework import status as statuses
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from .serializers import ConfigSectorSerializer
+from .models import Sector
 from .countries import COUNTRIES_ALPHA2_CODE_DICT
 from .consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
@@ -38,4 +40,14 @@ class ConfigPPAPIView(APIView):
             "audit-types": AUDIT_TYPES,
             "formal-capacity-assessment": FORMAL_CAPACITY_ASSESSMENT,
         }
+        return Response(data, status=statuses.HTTP_200_OK)
+
+
+class ConfigSectorsAPIView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        """
+        Return list of defined Sector & Specialization in backend.
+        """
+        data = ConfigSectorSerializer(Sector.objects.all(), many=True).data
         return Response(data, status=statuses.HTTP_200_OK)
