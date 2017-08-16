@@ -135,6 +135,10 @@ SelectForm.propTypes = {
    * validations passed to field
    */
   validation: PropTypes.arrayOf(PropTypes.func),
+  /**
+   * props passed to wrapped SelectField
+   */
+  selectFieldProps: PropTypes.node,
 };
 
 export default withStyles(styleSheet)(SelectForm);

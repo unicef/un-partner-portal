@@ -77,6 +77,12 @@ const theme = {
         padding: '0 4px 0 4px',
       },
     },
+  	MuiDefaultTab: {
+      fontWeight: 400,
+    },
+    MuiActiveTab: {
+      color: purple,
+    }
   },
 };
 const getTheme = () => (

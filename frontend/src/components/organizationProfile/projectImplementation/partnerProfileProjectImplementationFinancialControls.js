@@ -43,7 +43,7 @@ const ACCOUNTING_MENU = [
   }
 ]
 
-class PartnerProfileProjectImplementation2 extends Component {
+class PartnerProfileProjectImplementationFinancialControls extends Component {
 
   constructor(props) {
     super(props);
@@ -108,4 +108,4 @@ class PartnerProfileProjectImplementation2 extends Component {
   }
 };
 
-export default PartnerProfileProjectImplementation2;
+export default PartnerProfileProjectImplementationFinancialControls;

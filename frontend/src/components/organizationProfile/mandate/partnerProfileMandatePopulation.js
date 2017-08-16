@@ -36,7 +36,7 @@ const GROUP_VALUES = [
   },
 ]
 
-class PartnerProfileMandate5 extends Component {
+class PartnerProfileMandatePopulation extends Component {
 
   constructor(props) {
     super(props);
@@ -83,4 +83,4 @@ class PartnerProfileMandate5 extends Component {
   }
 };
 
-export default PartnerProfileMandate5;
+export default PartnerProfileMandatePopulation;

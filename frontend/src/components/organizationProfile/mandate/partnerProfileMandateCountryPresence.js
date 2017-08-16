@@ -28,7 +28,7 @@ const COUNTRY_MENU = [
   }
 ]
 
-class PartnerProfileMandate6 extends Component {
+class PartnerProfileMandateCountryPresence extends Component {
 
   constructor(props) {
     super(props);
@@ -62,4 +62,4 @@ class PartnerProfileMandate6 extends Component {
   }
 };
 
-export default PartnerProfileMandate6;
+export default PartnerProfileMandateCountryPresence;

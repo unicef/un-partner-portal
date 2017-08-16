@@ -30,7 +30,7 @@ const BOOL_VAL = [
   }
 ]
 
-class PartnerProfileCollaboration1 extends Component {
+class PartnerProfileCollaborationHistory extends Component {
 
   constructor(props) {
     super(props);
@@ -155,4 +155,4 @@ class PartnerProfileCollaboration1 extends Component {
   }
 };
 
-export default PartnerProfileCollaboration1;
+export default PartnerProfileCollaborationHistory;

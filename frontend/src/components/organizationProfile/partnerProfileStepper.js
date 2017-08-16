@@ -3,20 +3,38 @@ import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
 
 import Grid from 'material-ui/Grid';
-
-
 import Button from 'material-ui/Button';
 
+import {
+  Stepper,
+  Step,
+  StepContent,
+  StepLabel,
+} from '../customStepper'
 import validate from './partnerProfileValidation'
 
 class partnerProfileStep extends Component {
 
   render() {
-    const { handleSubmit, handlePrev, last, first, children } = this.props;
+    const { handleSubmit, handlePrev, last, first, steps } = this.props;
+    const sections = steps.map((item, index) => {
+    const section = (
+      <Step>
+        <StepLabel>{item.label}</StepLabel>
+        <StepContent>
+          {item.component}
+        </StepContent>
+      </Step>
+    );
+    return section;
+  });
+
     return (
       <form onSubmit={handleSubmit}>
         <Grid container direction='column' xs={12} >
-          { children }
+          <Stepper linear activeStep={0} orientation="vertical" allActive={true}>
+            {sections}
+          </Stepper>
           <Grid item>
             <Grid container direction='row' spacing={8}>
               <Grid item>

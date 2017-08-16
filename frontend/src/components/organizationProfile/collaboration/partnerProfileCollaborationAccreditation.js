@@ -21,7 +21,7 @@ const DONORS_MENU = [
   }
 ]
 
-class PartnerProfileCollaboration3 extends Component {
+class PartnerProfileCollaborationAccreditation extends Component {
 
   constructor(props) {
     super(props);
@@ -52,4 +52,4 @@ class PartnerProfileCollaboration3 extends Component {
   }
 };
 
-export default PartnerProfileCollaboration3;
+export default PartnerProfileCollaborationAccreditation;

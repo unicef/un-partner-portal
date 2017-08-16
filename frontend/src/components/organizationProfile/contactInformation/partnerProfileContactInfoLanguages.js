@@ -28,7 +28,7 @@ const BOOL_VAL = [
   }
 ]
 
-class PartnerProfileContactInfo4 extends Component {
+class PartnerProfileContactInfoLanguages extends Component {
 
   constructor(props) {
     super(props);
@@ -68,4 +68,4 @@ class PartnerProfileContactInfo4 extends Component {
   }
 };
 
-export default PartnerProfileContactInfo4;
+export default PartnerProfileContactInfoLanguages;

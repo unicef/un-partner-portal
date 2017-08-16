@@ -22,7 +22,7 @@ const DONORS_MENU = [
   }
 ]
 
-class PartnerProfileOtherInfo1 extends Component {
+class PartnerProfileOtherInfoContent extends Component {
 
   constructor(props) {
     super(props);
@@ -95,4 +95,4 @@ class PartnerProfileOtherInfo1 extends Component {
   }
 };
 
-export default PartnerProfileOtherInfo1;
+export default PartnerProfileOtherInfoContent;

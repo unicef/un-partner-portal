@@ -27,7 +27,7 @@ export const filterItems = (state, role) => state.filter(
 export default function sessionReducer(state = initialState, action) {
   switch (action.type) {
     case SESSION_INIT: {
-      return filterItems(state, 'partner');
+      return filterItems(state, action.session.role);
     }
     default:
       return state;

@@ -1,15 +1,16 @@
 import React from 'react';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import {
-  Stepper,
-  Step,
-  StepContent,
-  StepLabel,
-} from '../../customStepper'
 
-import PartnerProfileOtherInfo1 from "./partnerProfileOtherInfo1";
+import PartnerProfileOtherInfoContent from "./partnerProfileOtherInfoContent";
 import PartnerProfileStepper from '../partnerProfileStepper'
+
+const STEPS = [
+  {
+    component: <PartnerProfileOtherInfoContent />,
+    label: ''
+  }
+]
 
 class PartnerProfileOtherInfo extends React.Component {
 
@@ -42,15 +43,7 @@ class PartnerProfileOtherInfo extends React.Component {
     const { stepIndex } = this.state;
     return (
       <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <Stepper linear activeStep={stepIndex} orientation="vertical">
-          <Step>
-            <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
-              <PartnerProfileStepper onSubmit={this.handleNext} first>
-                <PartnerProfileOtherInfo1 />
-              </PartnerProfileStepper>
-            </div>
-          </Step>
-        </Stepper>
+        <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
       </div>
     );
   }

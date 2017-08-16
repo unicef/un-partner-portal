@@ -32,6 +32,7 @@ function Stepper(props) {
     connector: connectorProp,
     linear,
     orientation,
+    allActive,
     ...other
   } = props;
 
@@ -49,7 +50,7 @@ function Stepper(props) {
       orientation,
     };
 
-    if (activeStep === index) {
+    if ((activeStep === index) || allActive) {
       controlProps.active = true;
     } else if (linear && activeStep > index) {
       controlProps.completed = true;
@@ -60,10 +61,16 @@ function Stepper(props) {
     if (index + 1 === numChildren) {
       controlProps.last = true;
     }
-    return [
+    if (allActive) {
+      return [
+      React.cloneElement(step, Object.assign(controlProps, step.props))
+    ];
+    } else {
+      return [
       (index > 0 && (activeStep !== index - 1) && connector),
       React.cloneElement(step, Object.assign(controlProps, step.props))
     ];
+    }
   });
 
   return (
@@ -101,7 +108,11 @@ Stepper.propTypes = {
   /**
    * The stepper orientation (layout flow direction)
    */
-  orientation: PropTypes.oneOf(['horizontal', 'vertical'])
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']),
+  /**
+   * If set to `true`, all fields will be active
+   */
+  allActive: PropTypes.bool
 };
 
 Stepper.defaultProps = {
@@ -109,6 +120,7 @@ Stepper.defaultProps = {
   connector: <StepConnector />,
   linear: true,
   orientation: 'horizontal',
+  allActive: false,
 };
 
 export default withStyles(styleSheet)(Stepper);

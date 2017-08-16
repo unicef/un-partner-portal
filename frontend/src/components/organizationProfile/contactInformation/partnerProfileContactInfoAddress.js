@@ -29,7 +29,7 @@ const ADDRESS_VALUES = [
   },
 ]
 
-class PartnerProfileContactInfo2 extends Component {
+class PartnerProfileContactInfoAddress extends Component {
 
   constructor(props) {
     super(props);
@@ -131,4 +131,4 @@ class PartnerProfileContactInfo2 extends Component {
   }
 };
 
-export default PartnerProfileContactInfo2;
+export default PartnerProfileContactInfoAddress;

@@ -80,7 +80,7 @@ const STAFF_VALUES = [
   },
 ]
 
-class PartnerProfileProjectImplementation3 extends Component {
+class PartnerProfileProjectImplementationInternalControls extends Component {
 
   constructor(props) {
     super(props);
@@ -264,4 +264,4 @@ class PartnerProfileProjectImplementation3 extends Component {
   }
 };
 
-export default PartnerProfileProjectImplementation3;
+export default PartnerProfileProjectImplementationInternalControls;

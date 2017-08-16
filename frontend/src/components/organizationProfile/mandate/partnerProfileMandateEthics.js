@@ -17,7 +17,7 @@ const BOOL_VAL = [
   }
 ]
 
-class PartnerProfileMandate7 extends Component {
+class PartnerProfileMandateEthics extends Component {
 
   constructor(props) {
     super(props);
@@ -49,26 +49,42 @@ class PartnerProfileMandate7 extends Component {
                 />
               </Grid>
               <Grid item sm={6} xs={12}>
-                <RadioForm
-                  fieldName='hasAbuseSafeguard'
-                  label='Does the organization have a policy or code of conduct to safegaurd against the violation and abuse of beneficiaries?'
-                  values={BOOL_VAL}
-                  onFieldChange={this.handleAbuseSafeguardFieldChange}
+                <TextFieldForm
+                  label="Please comment"
+                  placeholder=''
+                  fieldName='abuseSafeguardComment'
+                  textFieldProps={{
+                    inputProps: {
+                      maxLength:'200'
+                    }
+                  }}
                 />
               </Grid>
             </Grid>
           </Grid>
-          <Grid item sm={6} xs={12}>
-            <TextFieldForm
-              label="Please comment"
-              placeholder=''
-              fieldName='fraudSafeguardComment'
-              textFieldProps={{
-                inputProps: {
-                  maxLength:'200'
-                }
-              }}
-            />
+          <Grid item>
+            <Grid container direction='row'>
+              <Grid item sm={6} xs={12}>
+                <RadioForm
+                  fieldName='hasFraudSafeguard'
+                  label='Does the organization have a policy or code of conduct to safegaurd against fraud and corruption?'
+                  values={BOOL_VAL}
+                  onFieldChange={this.handleFraudSafeguardFieldChange}
+                />
+              </Grid>
+              <Grid item sm={6} xs={12}>
+                <TextFieldForm
+                  label="Please comment"
+                  placeholder=''
+                  fieldName='fraudSafeguardComment'
+                  textFieldProps={{
+                    inputProps: {
+                      maxLength:'200'
+                    }
+                  }}
+                />
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
@@ -77,4 +93,4 @@ class PartnerProfileMandate7 extends Component {
   }
 };
 
-export default PartnerProfileMandate7;
+export default PartnerProfileMandateEthics;

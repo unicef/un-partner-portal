@@ -17,7 +17,7 @@ const BOOL_VAL = [
   }
 ]
 
-class PartnerProfileProjectImplementation1 extends Component {
+class PartnerProfileProjectImplementationManagement extends Component {
 
   constructor(props) {
     super(props);
@@ -113,4 +113,4 @@ class PartnerProfileProjectImplementation1 extends Component {
   }
 };
 
-export default PartnerProfileProjectImplementation1;
+export default PartnerProfileProjectImplementationManagement;

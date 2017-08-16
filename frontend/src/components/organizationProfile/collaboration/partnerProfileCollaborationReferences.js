@@ -21,7 +21,7 @@ const DONORS_MENU = [
   }
 ]
 
-class PartnerProfileFunding2 extends Component {
+class PartnerProfileCollaborationReferences extends Component {
 
   constructor(props) {
     super(props);
@@ -43,9 +43,7 @@ class PartnerProfileFunding2 extends Component {
               label='Please select the type of donors that fund your agency'
               values={DONORS_MENU}
               onFieldChange={this.handleDonorFieldChange}
-              selectFieldProps={{
-                              multiple: true
-                            }}
+              infoIcon
             />
           </Grid>
         </Grid>
@@ -54,4 +52,4 @@ class PartnerProfileFunding2 extends Component {
   }
 };
 
-export default PartnerProfileFunding2;
+export default PartnerProfileCollaborationReferences;

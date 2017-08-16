@@ -1,15 +1,20 @@
 import React from 'react';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import {
-  Stepper,
-  Step,
-  StepContent,
-  StepLabel,
-} from '../../customStepper'
-import PartnerProfileIdentification1 from "./partnerProfileIdentification1";
-import PartnerProfileIdentification2 from "./partnerProfileIdentification2";
+import PartnerProfileIdentificationBasicInfo from "./partnerProfileIdentificationBasicInfo";
+import PartnerProfileIdentificationRegistration from "./partnerProfileIdentificationRegistration";
 import PartnerProfileStepper from '../partnerProfileStepper'
+
+const STEPS = [
+  {
+    component: <PartnerProfileIdentificationBasicInfo />,
+    label: 'Basic Information'
+  },
+  {
+    component: <PartnerProfileIdentificationRegistration />,
+    label: 'Registration of Organization'
+  }
+]
 
 class PartnerProfileIdentification extends React.Component {
 
@@ -19,22 +24,14 @@ class PartnerProfileIdentification extends React.Component {
       stepIndex: 0,
       lastStep: 4
     };
-    this.handleNext = this.handleNext.bind(this);
-    this.handlePrev = this.handlePrev.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleNext() {
+  handleSubmit() {
     const { stepIndex } = this.state;
     this.setState({
       stepIndex: stepIndex + 1,
     });
-  };
-
-  handlePrev() {
-    const { stepIndex } = this.state;
-    if (stepIndex > 0) {
-      this.setState({ stepIndex: stepIndex - 1 });
-    }
   };
 
 
@@ -42,22 +39,7 @@ class PartnerProfileIdentification extends React.Component {
     const { stepIndex } = this.state;
     return (
       <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <PartnerProfileStepper onSubmit={this.handleNext} first>
-          <Stepper linear activeStep={stepIndex} orientation="vertical">
-            <Step>
-              <StepLabel>Basic Information</StepLabel>
-              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
-                <PartnerProfileIdentification1 />
-              </div>
-            </Step>
-            <Step>
-              <StepLabel>Registration of Organization</StepLabel>
-              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
-                <PartnerProfileIdentification2 />
-              </div>
-            </Step>
-          </Stepper>
-        </PartnerProfileStepper>
+        <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
       </div>
     );
   }

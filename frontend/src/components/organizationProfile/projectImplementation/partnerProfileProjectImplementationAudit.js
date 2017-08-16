@@ -32,7 +32,7 @@ const AUDIT_TYPES = [
   },
 ]
 
-class PartnerProfileProjectImplementation5 extends Component {
+class PartnerProfileProjectImplementationAudit extends Component {
 
   constructor(props) {
     super(props);
@@ -155,4 +155,4 @@ class PartnerProfileProjectImplementation5 extends Component {
   }
 };
 
-export default PartnerProfileProjectImplementation5;
+export default PartnerProfileProjectImplementationAudit;

@@ -1,4 +1,3 @@
-
 import main from './components/main';
 import mainLayout from './components/layout/mainLayout';
 import eoiHeader from './components/eois/eoiHeader';
@@ -10,14 +9,6 @@ import applications from './components/applications/applications';
 import partnerProfile from './components/organizationProfile/partnerProfile';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
-
-import identification from './components/organizationProfile/identification/partnerProfileIdentification'
-import contactInfo from './components/organizationProfile/contactInformation/partnerProfileContactInfo'
-import mandate from './components/organizationProfile/mandate/partnerProfileMandate'
-import funding from './components/organizationProfile/funding/partnerProfileFunding'
-import collaboration from './components/organizationProfile/collaboration/partnerProfileCollaboration';
-import projectImplementation from './components/organizationProfile/projectImplementation/partnerProfileProjectImplementation'
-import otherInfo from './components/organizationProfile/otherInfo/partnerProfileOtherInfo'
 
 export default [
   {
@@ -41,13 +32,6 @@ export default [
         { path: 'applications', component: applications },
         { path: 'profile', component: partnerProfile },
         { path: 'settings', component: settings },
-        { path: 'profile/identification', component: identification },
-        { path: 'profile/contactInfo', component: contactInfo },
-        { path: 'profile/mandate', component: mandate },
-        { path: 'profile/funding', component: funding },
-        { path: 'profile/collaboration', component: collaboration },
-        { path: 'profile/projectImplementation', component: projectImplementation },
-        { path: 'profile/otherInfo', component: otherInfo },
       ],
     }],
   },

@@ -31,15 +31,18 @@ const styleSheet = createStyleSheet(theme => ({
     width: '100%',
     marginTop: 0,
     backgroundColor: theme.palette.background.paper,
-  },
-  default_tab:{
-      backgroundColor: theme.palette.background.paper,
-      fontWeight: 400,
-    },
-    active_tab:{
-      color: theme.palette.primary[400],
-    }
+  }
 }));
+
+const tabs = [
+  <PartnerProfileIdentification />,
+  <PartnerProfileContactInfo />,
+  <Mandate />,
+  <Funding />,
+  <Collaboration />,
+  <ProjectImplementation />,
+  <OtherInfo />,
+]
 
 class BasicTabs extends Component {
 
@@ -58,16 +61,6 @@ class BasicTabs extends Component {
   render() {
     const classes = this.props.classes;
 
-    var tabStyles =[]
-    tabStyles[0] = styleSheet.default_tab;
-    tabStyles[1] = styleSheet.default_tab;
-    tabStyles[2] = styleSheet.default_tab;
-    tabStyles[3] = styleSheet.default_tab;
-    tabStyles[4] = styleSheet.default_tab;
-    tabStyles[5] = styleSheet.default_tab;
-    tabStyles[6] = styleSheet.default_tab;
-    tabStyles[this.state.index] = Object.assign({},   tabStyles[this.state.index], styleSheet.active_tab);
-
     return (
       <div className={classes.root}>
         <AppBar position="static"
@@ -78,7 +71,6 @@ class BasicTabs extends Component {
             onChange={this.handleChange}
             scrollable
             scrollButtons="auto"
-            style={tabStyles[this.state.index]}
           >
             <Tab label="identification" />
             <Tab label="contact info" />
@@ -89,34 +81,9 @@ class BasicTabs extends Component {
             <Tab label="other information" />
           </Tabs>
         </AppBar>
-        {this.state.index === 0 &&
-          <TabContainer>
-            <PartnerProfileIdentification />
-          </TabContainer>}
-        {this.state.index === 1 &&
-          <TabContainer>
-            <PartnerProfileContactInfo />
-          </TabContainer>}
-        {this.state.index === 2 &&
-          <TabContainer>
-            <Mandate />
-          </TabContainer>}
-        {this.state.index === 3 &&
-          <TabContainer>
-            <Funding />
-          </TabContainer>}
-        {this.state.index === 4 &&
-          <TabContainer>
-            <Collaboration />
-          </TabContainer>}
-        {this.state.index === 5 &&
-          <TabContainer>
-            <ProjectImplementation />
-          </TabContainer>}
-        {this.state.index === 6 &&
-          <TabContainer>
-            <OtherInfo />
-          </TabContainer>}
+        <TabContainer>
+          {tabs[this.state.index]}
+        </TabContainer>
       </div>
     );
   }

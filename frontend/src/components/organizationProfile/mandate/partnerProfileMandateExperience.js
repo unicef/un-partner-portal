@@ -25,7 +25,7 @@ const COMMUNICATION_VALUES = [
   },
 ]
 
-class PartnerProfileMandate1 extends Component {
+class PartnerProfileMandateExperience extends Component {
 
   constructor(props) {
     super(props);
@@ -79,4 +79,4 @@ class PartnerProfileMandate1 extends Component {
   }
 };
 
-export default PartnerProfileMandate1;
+export default PartnerProfileMandateExperience;

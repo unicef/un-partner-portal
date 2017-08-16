@@ -1,16 +1,21 @@
 import React from 'react';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import {
-  Stepper,
-  Step,
-  StepContent,
-  StepLabel,
-} from '../../customStepper'
-import PartnerProfileFunding1 from "./partnerProfileFunding1";
-import PartnerProfileFunding2 from "./partnerProfileFunding2";
+
+import PartnerProfileFundingBudget from "./partnerProfileFundingBudget";
+import PartnerProfileFundingDonors from "./partnerProfileFundingDonors";
 import PartnerProfileStepper from '../partnerProfileStepper'
 
+const STEPS = [
+  {
+    component: <PartnerProfileFundingBudget />,
+    label: 'Budget'
+  },
+  {
+    component: <PartnerProfileFundingDonors />,
+    label: 'Major Donors'
+  }
+]
 
 class PartnerProfileFunding extends React.Component {
 
@@ -20,45 +25,21 @@ class PartnerProfileFunding extends React.Component {
       stepIndex: 0,
       lastStep: 4
     };
-    this.handleNext = this.handleNext.bind(this);
-    this.handlePrev = this.handlePrev.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleNext() {
+  handleSubmit() {
     const { stepIndex } = this.state;
     this.setState({
       stepIndex: stepIndex + 1,
     });
   };
 
-  handlePrev() {
-    const { stepIndex } = this.state;
-    if (stepIndex > 0) {
-      this.setState({ stepIndex: stepIndex - 1 });
-    }
-  };
-
-
   render() {
     const { stepIndex } = this.state;
     return (
       <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <PartnerProfileStepper onSubmit={this.handleNext} first>
-          <Stepper linear activeStep={stepIndex} orientation="vertical">
-            <Step>
-              <StepLabel>Budget</StepLabel>
-              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
-                <PartnerProfileFunding1 />
-              </div>
-            </Step>
-            <Step>
-              <StepLabel>Major Donors</StepLabel>
-              <div style={{ maxWidth: "100%", padding: '1em 3em 3em' }}>
-                <PartnerProfileFunding2 />
-              </div>
-            </Step>
-          </Stepper>
-        </PartnerProfileStepper>
+        <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
       </div>
     );
   }

@@ -69,7 +69,7 @@ const STAFF_VALUES = [
   },
 ]
 
-class PartnerProfileFunding1 extends Component {
+class PartnerProfileFundingBudget extends Component {
 
   constructor(props) {
     super(props);
@@ -153,4 +153,4 @@ class PartnerProfileFunding1 extends Component {
   }
 };
 
-export default PartnerProfileFunding1;
+export default PartnerProfileFundingBudget;
