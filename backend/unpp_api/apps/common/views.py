@@ -8,6 +8,9 @@ from .consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     PARTNER_DONORS_CHOICES,
     WORKING_LAGNUAGES_CHOICES,
+    CONCERN_GROUP_CHOICES,
+    AUDIT_TYPES,
+    FORMAL_CAPACITY_ASSESSMENT,
 )
 
 
@@ -31,5 +34,8 @@ class ConfigPPAPIView(APIView):
             "functional-responsibilities": FUNCTIONAL_RESPONSIBILITY_CHOICES,
             "partner-donors": PARTNER_DONORS_CHOICES,
             "working-languages": WORKING_LAGNUAGES_CHOICES,
+            "population-of-concerns-groups": CONCERN_GROUP_CHOICES,
+            "audit-types": AUDIT_TYPES,
+            "formal-capacity-assessment": FORMAL_CAPACITY_ASSESSMENT,
         }
         return Response(data, status=statuses.HTTP_200_OK)

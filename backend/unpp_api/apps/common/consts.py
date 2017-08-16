@@ -103,3 +103,28 @@ WORKING_LAGNUAGES_CHOICES = Choices(
     ('Spa', 'spanish', 'Spanish'),
     ('Oth', 'other', 'Other'),
 )
+
+CONCERN_GROUP_CHOICES = Choices(
+    ('Ref', 'Refugees', 'Refugees'),
+    ('Ast', 'Asylum', 'Asylum seekers '),
+    ('Int', 'internally', 'Internally displaced persons'),
+    ('Sta', 'stateless', 'Stateless'),
+    ('Ret', 'returning', 'Returning'),
+    ('Hos', 'host_country', 'Host Country'),
+)
+
+AUDIT_TYPES = Choices(
+    ('Int', 'internal', 'Internal audit'),
+    ('Fin', 'financial', 'Financial statement audit'),
+    ('Don', 'donor', 'Donor audit'),
+)
+
+FORMAL_CAPACITY_ASSESSMENT = Choices(
+    ('HAC', 'hact', 'HACT micro-assessment'),
+    ('OCH', 'ocha', 'OCHA CBPF (Country-Based Pooled Fund) capacity assessment'),
+    ('UNH', 'unhcr', 'UNHCR procurement pre-qualification assessment'),
+    ('DFI', 'dfid', 'DFID pre-grant due diligence assessment'),
+    ('EUE', 'eu_echo', 'EU/ECHO Framework Partnership Agreement (FPA) assessment'),
+    ('Oth', 'other', 'Other formal capacity assessment'),
+)
+
