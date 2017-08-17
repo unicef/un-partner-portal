@@ -10,6 +10,7 @@ class SimpleSpecializationSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
+            'category'
         )
 
 
