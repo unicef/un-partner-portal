@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
-import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 
@@ -15,9 +14,8 @@ const styleSheet = createStyleSheet('OrganizationTypes', (theme) => {
       background: bgColor,
       position: 'absolute',
       zIndex: 1,
-      left: 0,
-      width: '100%',
-      padding: 8,
+      right: '10%',
+      maxWidth: '100%',
     },
     text: {
       whiteSpace: 'pre-line',
@@ -48,6 +46,7 @@ Tooltip.propTypes = {
   * text body of the tooltip
   */
   text: PropTypes.string,
+  classes: PropTypes.object,
 
 };
 

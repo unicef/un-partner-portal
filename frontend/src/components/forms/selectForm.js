@@ -2,21 +2,13 @@ import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 import InfoIcon from 'material-ui-icons/Info';
 import Grid from 'material-ui/Grid';
 import { MenuItem } from 'material-ui-old/Menu';
 
 import { renderSelectField } from '../../helpers/formHelper';
 import { required } from '../../helpers/validation';
-import Tooltip from '../common/tooltip';
-
-const styleSheet = createStyleSheet('OrganizationTypes', theme => ({
-  infoIcon: {
-    fill: theme.palette.primary[500],
-  },
-}));
-
+import TooltipIcon from '../common/tooltipIcon';
 
 class SelectForm extends Component {
   constructor(props) {
@@ -54,7 +46,7 @@ class SelectForm extends Component {
   }
 
   render() {
-    const { classes, fieldName, label, infoIcon, infoText, values,
+    const { fieldName, label, infoIcon, infoText, values,
       optional, validation } = this.props;
     return (
       <Grid item>
@@ -81,13 +73,10 @@ class SelectForm extends Component {
           </Grid>
           {infoIcon && (
             <Grid item xs={1} >
-              <InfoIcon
-                className={classes.infoIcon}
-                onMouseLeave={this.handleMouseLeave}
-                onMouseEnter={this.handleMouseEnter}
+              <TooltipIcon
+                infoText={infoText}
+                Icon={InfoIcon}
               />
-              {this.state.tooltipShown && <Tooltip text={infoText} />}
-
             </Grid>
           )}
         </Grid>
@@ -98,10 +87,6 @@ class SelectForm extends Component {
 }
 
 SelectForm.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
   /**
    * Name of the field used by react-form
    */
@@ -136,4 +121,4 @@ SelectForm.propTypes = {
   validation: PropTypes.arrayOf(PropTypes.func),
 };
 
-export default withStyles(styleSheet)(SelectForm);
+export default SelectForm;

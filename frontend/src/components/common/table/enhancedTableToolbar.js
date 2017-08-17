@@ -1,14 +1,11 @@
 
-import React from 'react';
+import React, { cloneElement } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
-import IconButton from 'material-ui/IconButton';
-import DeleteIcon from 'material-ui-icons/Delete';
-
 
 const messages = {
   selected: 'selected',
@@ -36,8 +33,7 @@ const styleSheet = createStyleSheet(theme => ({
 }));
 
 const EnhancedTableToolbar = (props) => {
-  const { numSelected, classes, title } = props;
-
+  const { numSelected, classes, title, children } = props;
   return (
     <Toolbar
       className={classNames(classes.root, {
@@ -54,9 +50,7 @@ const EnhancedTableToolbar = (props) => {
       <div className={classes.spacer} />
       <div className={classes.actions}>
         {numSelected > 0 &&
-          <IconButton aria-label="Delete">
-            <DeleteIcon />
-          </IconButton>
+          cloneElement(children)
         }
       </div>
     </Toolbar>
@@ -67,6 +61,7 @@ EnhancedTableToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
   numSelected: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
+  children: PropTypes.node,
 };
 
 export default withStyles(styleSheet)(EnhancedTableToolbar);

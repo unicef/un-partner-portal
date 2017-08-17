@@ -82,6 +82,7 @@ sidebarMenu.propTypes = {
   location: PropTypes.string.isRequired,
   sidebar: PropTypes.array.isRequired,
   classes: PropTypes.object.isRequired,
+  onItemClick: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
