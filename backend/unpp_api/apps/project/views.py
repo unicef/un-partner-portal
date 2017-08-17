@@ -19,7 +19,7 @@ class BaseProjectAPIView(ListAPIView):
     Base endpoint for Call of Expression of Interest.
     """
     permission_classes = (IsAuthenticated, )
-    queryset = EOI.objects.prefetch_related("specializations", "specializations", "agency", "pinned")
+    queryset = EOI.objects.prefetch_related("specializations", "agency", "pinned")
     serializer_class = BaseProjectSerializer
     pagination_class = SmallPagination
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, )
