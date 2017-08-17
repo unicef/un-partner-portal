@@ -1,47 +1,54 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
-import PartnerProfileFundingBudget from "./partnerProfileFundingBudget";
-import PartnerProfileFundingDonors from "./partnerProfileFundingDonors";
-import PartnerProfileStepper from '../partnerProfileStepper'
+import PartnerProfileFundingBudget from './partnerProfileFundingBudget';
+import PartnerProfileFundingDonors from './partnerProfileFundingDonors';
+import PartnerProfileStepper from '../partnerProfileStepper';
+
+const styleSheet = createStyleSheet('registration', theme => ({
+  container: {
+    position: 'absolute',
+    height: '100%',
+  },
+  header: {
+    color: theme.palette.primary[400],
+    backgroundColor: theme.palette.accent[500],
+    marginBottom: '1em',
+  },
+  divider: {
+    maxWidth: '100%',
+    padding: '1em 1em 3em',
+  },
+}));
 
 const STEPS = [
   {
     component: <PartnerProfileFundingBudget />,
-    label: 'Budget'
+    label: 'Budget',
   },
   {
     component: <PartnerProfileFundingDonors />,
-    label: 'Major Donors'
-  }
-]
+    label: 'Major Donors',
+  },
+];
 
-class PartnerProfileFunding extends React.Component {
+const PartnerProfileFunding = (props) => {
+  const { classes } = props;
 
-  constructor(props) {
-    super()
-    this.state = {
-      stepIndex: 0,
-      lastStep: 4
-    };
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  return (
+    <div className={classes.divider}>
+      <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
+    </div>
+  );
+};
 
-  handleSubmit() {
-    const { stepIndex } = this.state;
-    this.setState({
-      stepIndex: stepIndex + 1,
-    });
-  };
+PartnerProfileFunding.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
+};
 
-  render() {
-    const { stepIndex } = this.state;
-    return (
-      <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
-      </div>
-    );
-  }
-}
-export default withStyles()(PartnerProfileFunding);
+export default withStyles(styleSheet)(PartnerProfileFunding);

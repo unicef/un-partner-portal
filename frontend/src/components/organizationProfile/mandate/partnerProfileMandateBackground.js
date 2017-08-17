@@ -1,75 +1,61 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
+import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
-import RadioForm from '../../forms/radioForm'
-import SelectForm from '../../forms/selectForm'
-import TextFieldForm from '../../forms/textFieldForm'
+import TextFieldForm from '../../forms/textFieldForm';
 
-const COMMUNICATION_VALUES = [
-  {
-    value: '1',
-    label: 'Through the UNPP'
+export const styleSheet = createStyleSheet('MuiStepper', theme => ({
+  root: {
   },
-  {
-    value: '2',
-    label: 'Email'
+  divider: {
+    maxWidth: '100%',
+    padding: '1em 1em 3em',
   },
-  {
-    value: '3',
-    label: 'Telephone'
-  },
-  {
-    value: '4',
-    label: 'Letter'
-  },
-]
+}));
 
-class PartnerProfileMandateBackground extends Component {
+const PartnerProfileMandateBackground = (props) => {
+  const { classes } = props;
 
-  constructor(props) {
-    super(props);
-    this.state = { communicationMode: undefined};
-    this.handleFieldChange = this.handleFieldChange.bind(this);
-  }
-
-  handleFieldChange(value) {
-    this.setState({ communicationMode: value });
-  }
-
-  render() {
-    return (
-      <Grid item>
-        <Grid container direction='column' gutter={16}>
-          <Grid item>
-            <TextFieldForm
-              label="Briefly state the background and rationale for the establishment of the organization"
-              placeholder='Please limit your response to 400 characters'
-              fieldName='background'
-              textFieldProps={{
-                inputProps: {
-                  maxLength:'400'
-                }
-              }}
-            />
-          </Grid>
-          <Grid item>
-            <TextFieldForm
-              label="Briefly state the mandate and mission of the organization"
-              placeholder='Please limit your response to 400 characters'
-              fieldName='mandate'
-              textFieldProps={{
-                inputProps: {
-                  maxLength:'400'
-                }
-              }}
-            />
-          </Grid>
+  return (
+    <Grid item>
+      <Grid container direction="column" gutter={16}>
+        <Grid item>
+          <TextFieldForm
+            label="Briefly state the background and rationale for the establishment of the organization"
+            placeholder="Please limit your response to 400 characters"
+            fieldName="background"
+            textFieldProps={{
+              inputProps: {
+                maxLength: '400',
+              },
+            }}
+          />
+        </Grid>
+        <Grid item>
+          <TextFieldForm
+            label="Briefly state the mandate and mission of the organization"
+            placeholder="Please limit your response to 400 characters"
+            fieldName="mandate"
+            textFieldProps={{
+              inputProps: {
+                maxLength: '400',
+              },
+            }}
+          />
         </Grid>
       </Grid>
+    </Grid>
 
-    )
-  }
+  );
 };
 
-export default PartnerProfileMandateBackground;
+PartnerProfileMandateBackground.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
+};
+
+export default withStyles(styleSheet)(PartnerProfileMandateBackground);

@@ -1,72 +1,72 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
-import PartnerProfileMandateBackground from "./partnerProfileMandateBackground";
-import PartnerProfileMandateGovernance from "./partnerProfileMandateGovernance";
-import PartnerProfileMandateEthics from "./partnerProfileMandateEthics";
-import PartnerProfileMandateExperience from "./partnerProfileMandateExperience";
-import PartnerProfileMandatePopulation from "./partnerProfileMandatePopulation";
-import PartnerProfileMandateCountryPresence from "./partnerProfileMandateCountryPresence";
-import PartnerProfileMandateSecurity from "./partnerProfileMandateSecurity";
-import PartnerProfileStepper from '../partnerProfileStepper'
+import PartnerProfileMandateBackground from './partnerProfileMandateBackground';
+import PartnerProfileMandateGovernance from './partnerProfileMandateGovernance';
+import PartnerProfileMandateEthics from './partnerProfileMandateEthics';
+import PartnerProfileMandateExperience from './partnerProfileMandateExperience';
+import PartnerProfileMandatePopulation from './partnerProfileMandatePopulation';
+import PartnerProfileMandateCountryPresence from './partnerProfileMandateCountryPresence';
+import PartnerProfileMandateSecurity from './partnerProfileMandateSecurity';
+import PartnerProfileStepper from '../partnerProfileStepper';
+
+export const styleSheet = createStyleSheet('MuiStepper', theme => ({
+  root: {
+  },
+  divider: {
+    maxWidth: '100%',
+    padding: '1em 1em 3em',
+  },
+}));
 
 const STEPS = [
   {
     component: <PartnerProfileMandateBackground />,
-    label: 'Background'
+    label: 'Background',
   },
   {
     component: <PartnerProfileMandateGovernance />,
-    label: 'Governance'
+    label: 'Governance',
   },
   {
     component: <PartnerProfileMandateEthics />,
-    label: 'Ethics'
+    label: 'Ethics',
   },
   {
     component: <PartnerProfileMandateExperience />,
-    label: 'Experience'
+    label: 'Experience',
   },
   {
     component: <PartnerProfileMandatePopulation />,
-    label: 'Population of Concern'
+    label: 'Population of Concern',
   },
   {
     component: <PartnerProfileMandateCountryPresence />,
-    label: 'Country Presence'
+    label: 'Country Presence',
   },
   {
     component: <PartnerProfileMandateSecurity />,
-    label: 'Security'
-  }
-]
+    label: 'Security',
+  },
+];
 
-class PartnerProfileMandate extends React.Component {
+const PartnerProfileMandate = (props) => {
+  const { classes } = props;
 
-  constructor(props) {
-    super()
-    this.state = {
-      stepIndex: 0,
-      lastStep: 4
-    };
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  return (
+    <div className={classes.divider}>
+      <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
+    </div>
+  );
+};
 
-  handleSubmit() {
-    const { stepIndex } = this.state;
-    this.setState({
-      stepIndex: stepIndex + 1,
-    });
-  };
+PartnerProfileMandate.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
+};
 
-  render() {
-    const { stepIndex } = this.state;
-    return (
-      <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
-      </div>
-    );
-  }
-}
-export default withStyles()(PartnerProfileMandate);
+export default withStyles(styleSheet)(PartnerProfileMandate);

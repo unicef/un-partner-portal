@@ -1,56 +1,56 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import PartnerProfileContactInfoMode from "./partnerProfileContactInfoMode";
-import PartnerProfileContactInfoAddress from "./partnerProfileContactInfoAddress";
-import PartnerProfileContactInfoOfficials from "./partnerProfileContactInfoOfficials";
-import PartnerProfileContactInfoLanguages from "./partnerProfileContactInfoLanguages";
-import PartnerProfileStepper from '../partnerProfileStepper'
+import PartnerProfileContactInfoMode from './partnerProfileContactInfoMode';
+import PartnerProfileContactInfoAddress from './partnerProfileContactInfoAddress';
+import PartnerProfileContactInfoOfficials from './partnerProfileContactInfoOfficials';
+import PartnerProfileContactInfoLanguages from './partnerProfileContactInfoLanguages';
+import PartnerProfileStepper from '../partnerProfileStepper';
+
+export const styleSheet = createStyleSheet('MuiStepper', theme => ({
+  root: {
+  },
+  divider: {
+    maxWidth: '100%',
+    padding: '1em 1em 3em',
+  },
+}));
 
 const STEPS = [
   {
     component: <PartnerProfileContactInfoMode />,
-    label: 'History of Partnership'
+    label: 'History of Partnership',
   },
   {
     component: <PartnerProfileContactInfoAddress />,
-    label: 'Accreditation (optional)'
+    label: 'Accreditation (optional)',
   },
   {
     component: <PartnerProfileContactInfoOfficials />,
-    label: 'References (optional)'
+    label: 'References (optional)',
   },
   {
     component: <PartnerProfileContactInfoLanguages />,
-    label: 'References (optional)'
-  }
-]
+    label: 'References (optional)',
+  },
+];
 
-class PartnerProfileContactInfo extends React.Component {
+const PartnerProfileContactInfo = (props) => {
+  const { classes } = props;
 
-  constructor(props) {
-    super()
-    this.state = {
-      stepIndex: 0,
-      lastStep: 4
-    };
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  return (
+    <div className={classes.divider}>
+      <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
+    </div>
+  );
+};
 
-  handleSubmit() {
-    const { stepIndex } = this.state;
-    this.setState({
-      stepIndex: stepIndex + 1,
-    });
-  };
+PartnerProfileContactInfo.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
+};
 
-  render() {
-    const { stepIndex } = this.state;
-    return (
-      <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
-      </div>
-    );
-  }
-}
-export default withStyles()(PartnerProfileContactInfo);
+export default withStyles(styleSheet)(PartnerProfileContactInfo);

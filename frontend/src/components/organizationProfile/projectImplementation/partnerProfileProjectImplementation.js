@@ -1,66 +1,67 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
-import PartnerProfileProjectImplementationManagement from "./partnerProfileProjectImplementationManagement";
-import PartnerProfileProjectImplementationFinancialControls from "./partnerProfileProjectImplementationFinancialControls";
-import PartnerProfileProjectImplementationInternalControls from "./partnerProfileProjectImplementationInternalControls";
-import PartnerProfileProjectImplementationBankingInfo from "./partnerProfileProjectImplementationBankingInfo";
-import PartnerProfileProjectImplementationAudit from "./partnerProfileProjectImplementationAudit";
-import PartnerProfileProjectImplementationReporting from "./partnerProfileProjectImplementationReporting";
-import PartnerProfileStepper from '../partnerProfileStepper'
+import PartnerProfileProjectImplementationManagement from './partnerProfileProjectImplementationManagement';
+import PartnerProfileProjectImplementationFinancialControls from './partnerProfileProjectImplementationFinancialControls';
+import PartnerProfileProjectImplementationInternalControls from './partnerProfileProjectImplementationInternalControls';
+import PartnerProfileProjectImplementationBankingInfo from './partnerProfileProjectImplementationBankingInfo';
+import PartnerProfileProjectImplementationAudit from './partnerProfileProjectImplementationAudit';
+import PartnerProfileProjectImplementationReporting from './partnerProfileProjectImplementationReporting';
+import PartnerProfileStepper from '../partnerProfileStepper';
+
+export const styleSheet = createStyleSheet('MuiStepper', theme => ({
+  root: {
+  },
+  divider: {
+    maxWidth: '100%',
+    padding: '1em 1em 3em',
+  },
+}));
 
 const STEPS = [
   {
     component: <PartnerProfileProjectImplementationManagement />,
-    label: 'Programme Management'
+    label: 'Programme Management',
   },
   {
     component: <PartnerProfileProjectImplementationFinancialControls />,
-    label: 'Financial Controls'
+    label: 'Financial Controls',
   },
   {
     component: <PartnerProfileProjectImplementationInternalControls />,
-    label: 'Internal Controls'
+    label: 'Internal Controls',
   },
   {
     component: <PartnerProfileProjectImplementationBankingInfo />,
-    label: 'Banking Information'
+    label: 'Banking Information',
   },
   {
     component: <PartnerProfileProjectImplementationAudit />,
-    label: 'Audit & Assessments'
+    label: 'Audit & Assessments',
   },
   {
     component: <PartnerProfileProjectImplementationReporting />,
-    label: 'Reporting'
-  }
-]
+    label: 'Reporting',
+  },
+];
 
-class PartnerProfileProjectImplementation extends React.Component {
+const PartnerProfileProjectImplementation = (props) => {
+  const { classes } = props;
 
-  constructor(props) {
-    super()
-    this.state = {
-      stepIndex: 0,
-    };
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  return (
+    <div className={classes.divider}>
+      <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
+    </div>
+  );
+};
 
-  handleSubmit() {
-    const { stepIndex } = this.state;
-    this.setState({
-      stepIndex: stepIndex + 1,
-    });
-  };
+PartnerProfileProjectImplementation.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
+};
 
-  render() {
-    const { stepIndex } = this.state;
-    return (
-      <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
-      </div>
-    );
-  }
-}
-export default withStyles()(PartnerProfileProjectImplementation);
+export default withStyles(styleSheet)(PartnerProfileProjectImplementation);

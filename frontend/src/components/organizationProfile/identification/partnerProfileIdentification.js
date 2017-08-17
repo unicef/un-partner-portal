@@ -1,47 +1,46 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import PartnerProfileIdentificationBasicInfo from "./partnerProfileIdentificationBasicInfo";
-import PartnerProfileIdentificationRegistration from "./partnerProfileIdentificationRegistration";
-import PartnerProfileStepper from '../partnerProfileStepper'
+import PartnerProfileIdentificationBasicInfo from './partnerProfileIdentificationBasicInfo';
+import PartnerProfileIdentificationRegistration from './partnerProfileIdentificationRegistration';
+import PartnerProfileStepper from '../partnerProfileStepper';
+
+export const styleSheet = createStyleSheet('MuiStepper', theme => ({
+  root: {
+  },
+  divider: {
+    maxWidth: '100%',
+    padding: '1em 1em 3em',
+  },
+}));
 
 const STEPS = [
   {
     component: <PartnerProfileIdentificationBasicInfo />,
-    label: 'Basic Information'
+    label: 'Basic Information',
   },
   {
     component: <PartnerProfileIdentificationRegistration />,
-    label: 'Registration of Organization'
-  }
-]
+    label: 'Registration of Organization',
+  },
+];
 
-class PartnerProfileIdentification extends React.Component {
+const PartnerProfileIdentification = (props) => {
+  const { classes } = props;
 
-  constructor(props) {
-    super()
-    this.state = {
-      stepIndex: 0,
-      lastStep: 4
-    };
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  return (
+    <div className={classes.divider}>
+      <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
+    </div>
+  );
+};
 
-  handleSubmit() {
-    const { stepIndex } = this.state;
-    this.setState({
-      stepIndex: stepIndex + 1,
-    });
-  };
+PartnerProfileIdentification.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
+};
 
-
-  render() {
-    const { stepIndex } = this.state;
-    return (
-      <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
-      </div>
-    );
-  }
-}
-export default withStyles()(PartnerProfileIdentification);
+export default withStyles(styleSheet)(PartnerProfileIdentification);

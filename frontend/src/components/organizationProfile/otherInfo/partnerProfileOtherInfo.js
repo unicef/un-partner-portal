@@ -1,51 +1,41 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
-import PartnerProfileOtherInfoContent from "./partnerProfileOtherInfoContent";
-import PartnerProfileStepper from '../partnerProfileStepper'
+import PartnerProfileOtherInfoContent from './partnerProfileOtherInfoContent';
+import PartnerProfileStepper from '../partnerProfileStepper';
 
+export const styleSheet = createStyleSheet('MuiStepper', theme => ({
+  root: {
+  },
+  divider: {
+    maxWidth: '100%',
+    padding: '1em 1em 3em',
+  },
+}));
 const STEPS = [
   {
     component: <PartnerProfileOtherInfoContent />,
-    label: ''
-  }
-]
+    label: '',
+  },
+];
 
-class PartnerProfileOtherInfo extends React.Component {
+const PartnerProfileOtherInfo = (props) => {
+  const { classes } = props;
 
-  constructor(props) {
-    super()
-    this.state = {
-      stepIndex: 0,
-      lastStep: 4
-    };
-    this.handleNext = this.handleNext.bind(this);
-    this.handlePrev = this.handlePrev.bind(this);
-  }
+  return (
+    <div className={classes.divider}>
+      <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
+    </div>
+  );
+};
 
-  handleNext() {
-    const { stepIndex } = this.state;
-    this.setState({
-      stepIndex: stepIndex + 1,
-    });
-  };
+PartnerProfileOtherInfo.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
+};
 
-  handlePrev() {
-    const { stepIndex } = this.state;
-    if (stepIndex > 0) {
-      this.setState({ stepIndex: stepIndex - 1 });
-    }
-  };
-
-
-  render() {
-    const { stepIndex } = this.state;
-    return (
-      <div style={{ maxWidth: "100%", padding: '1em 1em 3em' }}>
-        <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
-      </div>
-    );
-  }
-}
-export default withStyles()(PartnerProfileOtherInfo);
+export default withStyles(styleSheet)(PartnerProfileOtherInfo);

@@ -10,44 +10,45 @@ import {
   Step,
   StepContent,
   StepLabel,
-} from '../customStepper'
-import validate from './partnerProfileValidation'
+} from '../customStepper';
+import validate from './partnerProfileValidation';
 
 class partnerProfileStep extends Component {
-
   render() {
     const { handleSubmit, handlePrev, last, first, steps } = this.props;
-    const sections = steps.map((item, index) => {
-    const section = (
-      <Step>
-        <StepLabel>{item.label}</StepLabel>
-        <StepContent>
-          {item.component}
-        </StepContent>
-      </Step>
-    );
-    return section;
-  });
+    const sections = steps.map((item) => {
+      const section = (
+        <Step>
+          <StepLabel>{item.label}</StepLabel>
+          <StepContent>
+            {item.component}
+          </StepContent>
+        </Step>
+      );
+      return section;
+    });
 
     return (
       <form onSubmit={handleSubmit}>
-        <Grid container direction='column' xs={12} >
-          <Stepper linear activeStep={0} orientation="vertical" allActive={true}>
+        <Grid container direction="column" xs={12} >
+          <Stepper linear activeStep={0} orientation="vertical" allActive>
             {sections}
           </Stepper>
           <Grid item>
-            <Grid container direction='row' spacing={8}>
+            <Grid container direction="row" spacing={8}>
               <Grid item>
                 <Button
-                  color='accent'
-                  raised={true}
-                  onTouchTap={handleSubmit}>
+                  color="accent"
+                  raised
+                  onTouchTap={handleSubmit}
+                >
                   {(last) ? 'Submit' : 'SAVE & CONTINUE'}
                 </Button>
               </Grid>
               <Grid item>
                 {(!first && <Button
-                  onTouchTap={handlePrev}>
+                  onTouchTap={handlePrev}
+                >
                   {'SAVE & EXIT'}
                 </Button>)}
               </Grid>
@@ -55,7 +56,7 @@ class partnerProfileStep extends Component {
           </Grid>
         </Grid>
       </form >
-    )
+    );
   }
 }
 
@@ -71,7 +72,7 @@ partnerProfileStep.propTypes = {
   /**
    * component to be wrapped
    */
-  children: PropTypes.node.isRequired,
+  steps: PropTypes.node.isRequired,
   /**
    * whether step is the first, to control buttons appearance
    */
@@ -80,11 +81,11 @@ partnerProfileStep.propTypes = {
    * whether step is the last, to control buttons appearance
    */
   last: PropTypes.boolean,
-}
+};
 
 export default reduxForm({
-  form: 'partnerProfile',  // a unique identifier for this form
+  form: 'partnerProfile', // a unique identifier for this form
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-  validate
+  validate,
 })(partnerProfileStep);
