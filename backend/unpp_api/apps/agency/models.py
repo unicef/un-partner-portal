@@ -82,6 +82,6 @@ class AgencyMember(TimeStampedModel):
     office = models.ForeignKey(AgencyOffice, related_name="agency_members")
 
 
-# Signals
-
-post_save.connect(AgencyProfile.create_agency_profile, sender=Agency)
+# # Signals
+#
+# post_save.connect(AgencyProfile.create_agency_profile, sender=Agency)

@@ -42,7 +42,7 @@ class EOI(TimeStampedModel):
     has_weighting = models.BooleanField(default=True, verbose_name='Has weighting?')  # TBD - not even sure we need to store
     invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest")
     reviewers = models.ManyToManyField('account.User', related_name="expressions_of_interest_as_reviewer")
-    closed_justification = models.TextField()
+    closed_justification = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -61,6 +61,18 @@ class EOI(TimeStampedModel):
     @property
     def contains_the_winners(self):
         return self.applications.filter(did_win=True).exists()
+
+
+class Pin(TimeStampedModel):
+    eoi = models.ForeignKey(EOI, related_name="pinned")
+    partner = models.ForeignKey('partner.Partner', related_name="pinned")
+    pinned_by = models.ForeignKey('account.User', related_name="pinned")
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "Pin <pk:{}> (eoi:{})".format(self.id, self.eoi_id)
 
 
 class Application(TimeStampedModel):
