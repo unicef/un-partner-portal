@@ -24,6 +24,12 @@ class IsAtLeastMemberReader(BasePermission):
     MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.reader]
 
     def pass_at_least(self, role):
+        """
+        POWER_MEMBER_ROLES contain negative integers or zero to admin.
+        In that case it's very easy to present is member power stronger (less negative) then expected.
+        :param role: one of common.consts.MEMBER_ROLES
+        :rtype Boolean
+        """
         power = POWER_MEMBER_ROLES[role]
         return power >= self.MIN_POWER
 
@@ -34,7 +40,10 @@ class IsAtLeastMemberReader(BasePermission):
         else:
             member = AgencyMember.objects.filter(user=request.user).first()
             if member is None:
-                logger.error("User has no member object like partner or agency")
+                logger.error(
+                    "User (pk: {}) has no member object like partner or agency. Data are not integrated!".format(
+                        request.user.id
+                    ))
                 return False
             role = member.role
         return self.pass_at_least(role)
