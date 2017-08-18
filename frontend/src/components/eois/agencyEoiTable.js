@@ -3,37 +3,33 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Table, {
   TableBody,
+  TableCell,
   TableRow,
 
 } from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
-import EnhancedTableToolbar from './enhancedTableToolbar';
-import EnhancedTableHead from './enhancedTableHead';
-import SharedTable from './sharedTable';
-import TableStyleSheet from './tableStyling';
+import EnhancedTableHead from '../common/table/enhancedTableHead';
+import SharedTable from '../common/table/sharedTable';
+import styleSheet from '../common/table/tableStyling';
+import EoiSectorCell from './cells/eoiSectorCell';
+import EoiStatusCell from './cells/eoiStatusCell';
 
 
-class RegularTable extends SharedTable {
+class AgencyEoiTable extends SharedTable {
   constructor(props) {
     super(props);
     this.state = {
       ...this.state,
-      ...{
-        selectable: false,
-      },
+      selectable: false,
     };
   }
 
   render() {
-    const { classes, columnData, title, renderTableCells } = this.props;
-    const { data, order, orderBy } = this.state;
+    const { classes } = this.props;
+    const { data, order, orderBy, columnData } = this.state;
 
     return (
       <Paper >
-        {title && <EnhancedTableToolbar
-          title={title}
-          numSelected={0}
-        />}
         <Paper elevation={0} className={classes.paper}>
           <Table>
             <EnhancedTableHead
@@ -52,7 +48,27 @@ class RegularTable extends SharedTable {
                   tabIndex="-1"
                   key={n.id}
                 >
-                  {renderTableCells(n, classes)}
+                  <TableCell className={`${classes.limitedCell} ${classes.firstCell}`}>
+                    {n.name}
+                  </TableCell>
+                  <TableCell >
+                    {n.agency}
+                  </TableCell>
+                  <TableCell >
+                    {n.country}
+                  </TableCell>
+                  <TableCell >
+                    <EoiSectorCell data={n.sector} />
+                  </TableCell>
+                  <TableCell >
+                    {n.datePosted}
+                  </TableCell>
+                  <TableCell >
+                    {n.deadline}
+                  </TableCell>
+                  <TableCell>
+                    <EoiStatusCell id={n.status} />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -63,7 +79,7 @@ class RegularTable extends SharedTable {
   }
 }
 
-RegularTable.propTypes = {
+AgencyEoiTable.propTypes = {
   classes: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
@@ -71,4 +87,4 @@ RegularTable.propTypes = {
   renderCells: PropTypes.func.isRequired,
 };
 
-export default withStyles(TableStyleSheet)(RegularTable);
+export default withStyles(styleSheet)(AgencyEoiTable);
