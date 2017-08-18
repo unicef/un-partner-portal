@@ -11,16 +11,16 @@ export const styleSheet = createStyleSheet('MuiStepper', theme => ({
   root: {
     display: 'flex',
     alignContent: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   horizontal: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   vertical: {
     flexDirection: 'column',
-    alignItems: 'stretch'
-  }
+    alignItems: 'stretch',
+  },
 }));
 
 function Stepper(props) {
@@ -39,7 +39,7 @@ function Stepper(props) {
   const className = classNames(
     classes.root,
     classNameProp,
-    classes[orientation]
+    classes[orientation],
   );
 
   const connector = React.cloneElement(connectorProp, { orientation });
@@ -63,14 +63,13 @@ function Stepper(props) {
     }
     if (allActive) {
       return [
-      React.cloneElement(step, Object.assign(controlProps, step.props))
-    ];
-    } else {
-      return [
-      (index > 0 && (activeStep !== index - 1) && connector),
-      React.cloneElement(step, Object.assign(controlProps, step.props))
-    ];
+        React.cloneElement(step, Object.assign(controlProps, step.props)),
+      ];
     }
+    return [
+      ((!allActive && (index > 0)) && connector),
+      React.cloneElement(step, Object.assign(controlProps, step.props)),
+    ];
   });
 
   return (
@@ -112,7 +111,7 @@ Stepper.propTypes = {
   /**
    * If set to `true`, all fields will be active
    */
-  allActive: PropTypes.bool
+  allActive: PropTypes.bool,
 };
 
 Stepper.defaultProps = {

@@ -11,7 +11,6 @@ import {
   StepContent,
   StepLabel,
 } from '../customStepper';
-import validate from './partnerProfileValidation';
 
 class partnerProfileStep extends Component {
   render() {
@@ -87,5 +86,4 @@ export default reduxForm({
   form: 'partnerProfile', // a unique identifier for this form
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-  validate,
 })(partnerProfileStep);

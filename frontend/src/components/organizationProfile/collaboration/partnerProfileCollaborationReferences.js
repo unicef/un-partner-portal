@@ -1,55 +1,56 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
+import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
-import RadioForm from '../../forms/radioForm'
-import SelectForm from '../../forms/selectForm'
-import TextFieldForm from '../../forms/textFieldForm'
+import SelectForm from '../../forms/selectForm';
+
+export const styleSheet = createStyleSheet('MuiStepper', theme => ({
+  root: {
+  },
+  divider: {
+    maxWidth: '100%',
+    padding: '1em 1em 3em',
+  },
+}));
 
 const DONORS_MENU = [
   {
     value: '1',
-    label: 'Individuals'
+    label: 'Individuals',
   },
   {
     value: '2',
-    label: 'United Nations Agency'
+    label: 'United Nations Agency',
   },
   {
     value: '3',
-    label: 'Governments'
-  }
-]
+    label: 'Governments',
+  },
+];
 
-class PartnerProfileCollaborationReferences extends Component {
+const PartnerProfileCollaborationReferences = (props) => {
+  const { classes } = props;
 
-  constructor(props) {
-    super(props);
-    this.state = { donors: undefined };
-    this.handleDonorFieldChange = this.handleDonorFieldChange.bind(this);
-  }
-
-  handleDonorFieldChange(value) {
-    this.setState({ donors: value });
-  }
-
-  render() {
-    return (
-      <Grid item>
-        <Grid container direction='column' gutter={16}>
-          <Grid item>
-            <SelectForm
-              fieldName='donors'
-              label='Please select the type of donors that fund your agency'
-              values={DONORS_MENU}
-              onFieldChange={this.handleDonorFieldChange}
-              infoIcon
-            />
-          </Grid>
-        </Grid>
-      </Grid>
-    )
-  }
+  return (
+    <Grid item>
+      <SelectForm
+        fieldName="donors"
+        label="Please select the type of donors that fund your agency"
+        values={DONORS_MENU}
+        onFieldChange={this.handleDonorFieldChange}
+        infoIcon
+      />
+    </Grid>
+  );
 };
 
-export default PartnerProfileCollaborationReferences;
+PartnerProfileCollaborationReferences.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
+};
+
+export default withStyles(styleSheet)(PartnerProfileCollaborationReferences);
