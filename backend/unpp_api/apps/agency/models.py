@@ -72,6 +72,12 @@ class AgencyOffice(TimeStampedModel):
         default=list
     )
 
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "AgencyOffice: {} <pk:{}>".format(self.name, self.id)
+
 
 class AgencyMember(TimeStampedModel):
     """
@@ -81,6 +87,11 @@ class AgencyMember(TimeStampedModel):
     role = models.CharField(max_length=3, choices=MEMBER_ROLES, default=MEMBER_ROLES.reader)
     office = models.ForeignKey(AgencyOffice, related_name="agency_members")
 
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "AgencyMember: {} <pk:{}>".format(self.name, self.id)
 
 # # Signals
 #
