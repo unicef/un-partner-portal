@@ -7,7 +7,7 @@ import django_filters.rest_framework
 
 from common.consts import EOI_TYPES
 from common.paginations import SmallPagination
-from common.permissions import IsAuthenticated
+from common.permissions import IsAuthenticated, IsAtLeastMemberReader
 from partner.models import PartnerMember
 from .models import EOI
 from .serializers import BaseProjectSerializer
@@ -18,7 +18,7 @@ class BaseProjectAPIView(ListAPIView):
     """
     Base endpoint for Call of Expression of Interest.
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
     queryset = EOI.objects.prefetch_related("specializations", "agency", "pinned")
     serializer_class = BaseProjectSerializer
     pagination_class = SmallPagination
