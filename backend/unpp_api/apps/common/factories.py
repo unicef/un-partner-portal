@@ -6,6 +6,7 @@ import factory
 from factory import fuzzy
 from account.models import User, UserProfile
 from agency.models import Agency, AgencyOffice
+from common.models import Sector, Specialization
 from partner.models import Partner, PartnerMember
 from project.models import EOI
 from .consts import (
@@ -110,3 +111,14 @@ class EOIFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = EOI
+
+    @factory.post_generation
+    def specializations(self, create, extracted, **kwargs):
+        sector_food = Sector.objects.get_or_create(name='Food Security')[0]
+        sector_nutro = Sector.objects.get_or_create(name='Nutrition')[0]
+        self.specializations.add(
+            Specialization.objects.get_or_create(name='Food area 1', category=sector_food)[0],
+            Specialization.objects.get_or_create(name='Food area 2', category=sector_food)[0],
+            Specialization.objects.get_or_create(name='Nutrition area 1', category=sector_nutro)[0],
+            Specialization.objects.get_or_create(name='Nutrition area 2', category=sector_nutro)[0],
+        )

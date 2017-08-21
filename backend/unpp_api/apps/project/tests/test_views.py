@@ -55,7 +55,6 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
 
         # read pins
         response = self.client.get(self.url, format='json')
-
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['count'], self.quantity)
 
