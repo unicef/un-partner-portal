@@ -1,8 +1,15 @@
+import random
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 import factory
 from factory import fuzzy
 from account.models import User, UserProfile
+from partner.models import Partner, PartnerMember
+from .consts import (
+    PARTNER_TYPES,
+    MEMBER_STATUSES,
+)
+from .countries import COUNTRIES_ALPHA2_CODE
 
 
 class GroupFactory(factory.django.DjangoModelFactory):
@@ -38,3 +45,23 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = User
+
+
+class PartnerFactory(factory.django.DjangoModelFactory):
+    legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
+    display_type = PARTNER_TYPES.national
+    country_code = random.choice(COUNTRIES_ALPHA2_CODE)[0]
+    registration_number = factory.Sequence(lambda n: "reg-number {}".format(n))
+
+    class Meta:
+        model = Partner
+
+
+class PartnerMemberFactory(factory.django.DjangoModelFactory):
+    user = factory.SubFactory(UserFactory)
+    partner = factory.SubFactory(PartnerFactory)
+    title = random.choice(['Project Manager', 'PM Assistant', 'Agent'])
+    status = MEMBER_STATUSES.active
+
+    class Meta:
+        model = PartnerMember
