@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import Grid from 'material-ui/Grid';
 import PartnerEoiTable from './partnerEoiTable';
 import PinIcon from '../common/pinIcon';
+import TableFilter from '../common/tableFilter';
 import TooltipIcon from '../common/tooltipIcon';
 
 
@@ -32,11 +33,15 @@ const renderPinIcon = (item, classes) => (
 );
 
 const Overview = () => (
-  <PartnerEoiTable
-    data={createData(mockData)}
-    title={messages.title}
-    renderItemIcon={renderPinIcon}
-  />
+  <Grid container direction="column">
+
+    <TableFilter />
+    <PartnerEoiTable
+      data={createData(mockData)}
+      title={messages.title}
+      renderItemIcon={renderPinIcon}
+    />
+    </Grid>
 );
 
 Overview.PropTypes = {
