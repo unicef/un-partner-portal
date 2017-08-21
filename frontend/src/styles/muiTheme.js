@@ -33,7 +33,6 @@ const theme = {
         width: '100%',
       },
     },
-
     MuiListItem: {
       default: {
         paddingTop: '1.5em',
@@ -42,14 +41,6 @@ const theme = {
       gutters: {
         paddingLeft: '16px',
         paddingRight: '16px',
-      },
-      button: {
-        '&:hover': {
-          backgroundColor: grey[200],
-        },
-        '&.active': {
-          backgroundColor: grey[200],
-        },
       },
     },
     MuiTypography: {
@@ -81,6 +72,11 @@ const theme = {
         },
       },
     },
+    MuiTableCell: {
+      padding: {
+        padding: '0 4px 0 4px',
+      },
+    },
   },
 };
 const getTheme = () => (
@@ -89,6 +85,10 @@ const getTheme = () => (
     palette: {
       ...theme.palette,
       accent: getColorTheme(),
+      success: {
+        primary: '#72C300',
+        secondary: '#BEF078',
+      },
     },
   }
 );

@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
-from django.db import IntegrityError
 from rest_framework import status as statuses
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 import django_filters.rest_framework
 
 from common.consts import EOI_TYPES
 from common.paginations import SmallPagination
-from common.permissions import IsAuthenticated, IsAtLeastMemberReader
+from common.permissions import IsAtLeastMemberReader
 from partner.models import PartnerMember
 from .models import EOI, Pin
 from .serializers import BaseProjectSerializer

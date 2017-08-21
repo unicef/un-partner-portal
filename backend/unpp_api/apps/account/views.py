@@ -5,29 +5,14 @@ from rest_framework import status as statuses
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
-from common.permissions import IsAuthenticated
-from common.paginations import SmallPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .serializers import (
     RegisterSimpleAccountSerializer,
     PartnerRegistrationSerializer,
 )
-from .models import User
 
 logger = logging.getLogger(__name__)
-
-
-class AccountListCreateAPIView(ListCreateAPIView):
-
-    serializer_class = RegisterSimpleAccountSerializer
-    permission_classes = (IsAuthenticated, )
-    pagination_class = SmallPagination
-
-    # TODO we can add latter filters to get right part of users (partners, agencies)
-
-    def get_queryset(self, *args, **kwargs):
-        return User.objects.all()
 
 
 class AccountRegisterAPIView(APIView):

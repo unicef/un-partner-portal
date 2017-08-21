@@ -20,26 +20,24 @@ const QUESTIONS = [
   },
 ];
 
-const styleSheet = createStyleSheet('DeclarationRow', (theme) => {
-  return {
-    container: {
-      borderBottom: `1px ${theme.palette.grey[300]} solid`,
-    },
-    column: {
-      borderRight: `1px ${theme.palette.grey[300]} solid`,
-    },
-    message: {
-      whiteSpace: 'pre-line',
-      padding: 4,
-    },
-  };
-});
+const styleSheet = createStyleSheet('DeclarationRow', theme => ({
+  container: {
+    borderBottom: `1px ${theme.palette.grey[300]} solid`,
+  },
+  column: {
+    borderRight: `1px ${theme.palette.grey[300]} solid`,
+  },
+  message: {
+    whiteSpace: 'pre-line',
+    padding: 4,
+  },
+}));
 
 function DeclarationRow(props) {
   const { classes, message, index } = props;
   return (
     <Grid item className={classes.container}>
-      <Grid container direction='row' align='center'>
+      <Grid container direction="row" align="center">
         <Grid item xs={8} className={classes.column}>
           <Typography className={classes.message}>{message}</Typography>
         </Grid>
@@ -47,7 +45,6 @@ function DeclarationRow(props) {
           <RadioForm
             fieldName={`questions[${index}]`}
             values={QUESTIONS}
-            normalize={JSON.parse}
           />
         </Grid>
       </Grid>
@@ -57,6 +54,10 @@ function DeclarationRow(props) {
 
 
 DeclarationRow.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
   /**
    * Message to be displayed
    */

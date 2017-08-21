@@ -8,6 +8,7 @@ import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControlLabel } from 'material-ui/Form';
 
 import { renderFormControl } from '../../helpers/formHelper';
+import { required } from '../../helpers/validation';
 
 
 const styleSheet = createStyleSheet('BasicInformation', theme => ({
@@ -31,32 +32,38 @@ class RadioForm extends Component {
   }
 
   handleChange(event, value) {
-    this.props.onFieldChange && this.props.onFieldChange(value);
     this.setState({ selectedRadio: value });
   }
 
 
   render() {
-    const { classes, fieldName, label, values, ...other } = this.props;
+    const { classes, fieldName, label, values, optional, validation,
+      ...other } = this.props;
     return (
       <Grid item>
-        <Field name={fieldName} component={renderFormControl} {...other}>
+        <Field
+          name={fieldName}
+          component={renderFormControl}
+          validate={optional ? [] : [required].concat(validation || [])}
+          {...other}
+        >
           <FormLabel>{label}</FormLabel>
           <RadioGroup
-className={classes.formContainer}
+            className={classes.formContainer}
             selectedValue={this.state.selectedRadio}
             onChange={this.handleChange}
           >
             {values.map((value, index) => (
-                <FormControlLabel
-                  key={index}
-                  value={value.value}
-                  control={<Radio classes={{
-                    root: classes.rootRadio, 
-                    checked: classes.checkedRadio }} />}
-                  label={value.label}
-                />
-              ),
+              <FormControlLabel
+                key={index}
+                value={value.value}
+                control={<Radio classes={{
+                  root: classes.rootRadio,
+                  checked: classes.checkedRadio }}
+                />}
+                label={value.label}
+              />
+            ),
             )}
           </RadioGroup>
         </Field>
@@ -66,6 +73,10 @@ className={classes.formContainer}
 }
 
 RadioForm.propTypes = {
+  /**
+   * css classes
+   */
+  classes: PropTypes.object,
   /**
    * Name of the field used by react-form and as unique id.
    */
@@ -83,8 +94,12 @@ RadioForm.propTypes = {
    */
   values: PropTypes.array.isRequired,
   /**
-   * callback to save selected value in parent's state
+   * if field is optional
    */
-  onFieldChange: PropTypes.func,
+  optional: PropTypes.bool,
+  /**
+   * validations passed to field
+   */
+  validation: PropTypes.arrayOf(PropTypes.func),
 };
 export default withStyles(styleSheet)(RadioForm);
