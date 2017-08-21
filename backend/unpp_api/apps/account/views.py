@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
-from common.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from common.paginations import SmallPagination
 
 from .serializers import (

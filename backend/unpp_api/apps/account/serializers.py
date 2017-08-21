@@ -28,7 +28,6 @@ class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
             'last_name',
             'username',
             'email',
-            'password',
             'date_joined',
         )
 
