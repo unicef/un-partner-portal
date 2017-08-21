@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.db.models.signals import post_save
 from django.contrib.postgres.fields import ArrayField
 from model_utils.models import TimeStampedModel
 
