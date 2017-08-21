@@ -30,8 +30,6 @@ class PartnerMemberSerializer(serializers.ModelSerializer):
 
 class PartnerProfileSerializer(serializers.ModelSerializer):
 
-    # partner = PartnerSerializer(read_only=True)
-
     class Meta:
         model = PartnerProfile
         fields = (
