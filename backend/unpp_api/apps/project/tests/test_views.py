@@ -42,16 +42,24 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['error'], PinProjectAPIView.ERROR_MSG_WRONG_PARAMS)
         self.assertEquals(Pin.objects.count(), 0)
 
-    def test_pin_unpin_project_pin(self):
+    def test_pin_unpin_project(self):
         """
         Register partner via registration process.
         """
+        # add pins
         eoi_ids = EOI.objects.all().values_list('id', flat=True)
         response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": True}, format='json')
 
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(Pin.objects.count(), self.quantity)
 
+        # read pins
+        response = self.client.get(self.url, format='json')
+
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['count'], self.quantity)
+
+        # delete pins
         response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": False}, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(Pin.objects.count(), 0)
