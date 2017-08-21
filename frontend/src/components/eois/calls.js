@@ -1,20 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import AgencyEoiTable from './agencyEoiTable';
-import PinIcon from '../common/pinIcon';
-import TooltipIcon from '../common/tooltipIcon';
 import {
   TableCell,
 } from 'material-ui/Table';
 
-import PinHeaderIcon from './icons/pinHeaderIcon';
-import EoiStatusWithIconsCell from './cells/eoiStatusWithIconsCell';
 import RegularTable from '../common/table/regularTable';
 import EoiSectorCell from './cells/eoiSectorCell';
 import EoiStatusCell from './cells/eoiStatusCell';
-
-const createData = data => data.map((item, index) => ({ id: index, ...item }));
 
 const columnData = [
   { id: 'name', label: 'Project name' },
@@ -45,7 +38,7 @@ const renderCells = (item, classes) => ([
     {item.country}
   </TableCell>,
   <TableCell >
-    <EoiSectorCell data={item.sector} />
+    <EoiSectorCell data={item.sector} id={item.id} />
   </TableCell>,
   <TableCell >
     {item.datePosted}

@@ -1,18 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import EoiPartnersStatusCell from './cells/eoiPartnersStatusCell';
-import AgencyEoiTable from './agencyEoiTable';
-import PinIcon from '../common/pinIcon';
-import TooltipIcon from '../common/tooltipIcon';
 import {
   TableCell,
 } from 'material-ui/Table';
 
-
+import EoiPartnersStatusCell from './cells/eoiPartnersStatusCell';
 import RegularTable from '../common/table/regularTable';
 import EoiSectorCell from './cells/eoiSectorCell';
-import EoiStatusCell from './cells/eoiStatusCell';
 
 const columnData = [
   { id: 'name', label: 'Project name' },
@@ -46,13 +41,13 @@ const renderCells = (item, classes) => ([
     {item.country}
   </TableCell>,
   <TableCell >
-    <EoiSectorCell data={item.sector} />
+    <EoiSectorCell data={item.sector} id={item.id} />
   </TableCell>,
   <TableCell >
     {item.source}
   </TableCell>,
   <TableCell>
-    <EoiPartnersStatusCell status={item.status} />
+    <EoiPartnersStatusCell status={item.status} id={item.id} />
   </TableCell>,
 ]);
 

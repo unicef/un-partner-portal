@@ -46,14 +46,14 @@ const renderExpandedCell = (data, classes) => Object.keys(data).map((sector, ind
 
 
 const EoiSectorCell = (props) => {
-  const { data, classes } = props;
+  const { data, classes, id } = props;
   return (
     <div >
       {typeof data === 'string' ? data : (
-        <div data-tip data-for="sectorTooltip">
+        <div data-tip data-for={`${id}-sector-tooltip`}>
           {renderShortCell(data)}
           <Tooltip
-            id="sectorTooltip"
+            id={`${id}-sector-tooltip`}
             text={renderExpandedCell(data, classes)}
           />
         </div>
@@ -65,6 +65,7 @@ const EoiSectorCell = (props) => {
 EoiSectorCell.propTypes = {
   classes: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired,
+  id: PropTypes.number.isRequired,
 };
 
 export default withStyles(styleSheet)(EoiSectorCell);

@@ -7,6 +7,7 @@ import {
 import PinHeaderIcon from './icons/pinHeaderIcon';
 import EoiStatusWithIconsCell from './cells/eoiStatusWithIconsCell';
 import SelectableTable from '../common/table/selectableTable';
+import EoiSectorCell from './cells/eoiSectorCell';
 
 const messages = {
   title: 'List of Calls for Expressions of Interest',
@@ -26,7 +27,7 @@ export const columnData = [
 ];
 
 const mockData = [
-  { name: 'Capacity building for small rural farmers in Kenia', country: 'Kenia', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '01 Jan 2016', startDate: '30 Sep 2017', status: 0, pinned: true },
+  { name: 'Capacity building for small rural farmers in Kenia', country: 'Kenia', sector: { FoodSecurity: ['Area1', 'Area2'] }, agency: 'UNICEF', deadline: '01 Jan 2016', startDate: '30 Sep 2017', status: 0, pinned: true },
   { name: 'Capacity building for small rural farmers in Chile', country: 'Chile', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '04 Mar 2017', startDate: '30 Sep 2017', status: 0, pinned: false },
   { name: 'Capacity building for small rural farmers in Ukraine', country: 'Ukraine', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '30 Jun 1994', startDate: '30 Sep 2017', status: 2, pinned: true },
   { name: 'Capacity building for small rural farmers in Vietnam', country: 'Vietnam', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '30 Jun 2018', startDate: '30 Sep 2017', status: 1, pinned: true },
@@ -41,10 +42,7 @@ const renderCells = (item, classes, hoverOn) => ([
     {item.country}
   </TableCell>,
   <TableCell >
-    {item.sector}
-  </TableCell>,
-  <TableCell >
-    {item.area}
+    <EoiSectorCell data={item.sector} id={item.id} />
   </TableCell>,
   <TableCell >
     {item.agency}
