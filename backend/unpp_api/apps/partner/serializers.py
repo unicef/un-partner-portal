@@ -24,11 +24,7 @@ class PartnerMemberSerializer(serializers.ModelSerializer):
         model = PartnerMember
         fields = (
             'id',
-            #'user',
-            #'partner',
             'title',
-            # 'role',
-            # 'status',
         )
 
 
@@ -40,12 +36,10 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
         model = PartnerProfile
         fields = (
             'id',
-            # 'partner',
             'alias_name',
             'former_legal_name',
             'legal_name_change',
             'org_head_first_name',
             'org_head_last_name',
             'org_head_email',
-
         )
