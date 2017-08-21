@@ -108,6 +108,8 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+    'django_filters',
     'compressor',
     'django_common',
 
@@ -128,9 +130,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
-
-if 'test' in sys.argv:
-    DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3', 'PASSWORD': '', 'USER': ''}
 
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),

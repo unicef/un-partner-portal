@@ -4,22 +4,11 @@ from decimal import Decimal
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from model_utils.models import TimeStampedModel
-
-
-class Country(TimeStampedModel):
-    """
-
-    """
-    name = models.CharField(max_length=255)
-
-    class Meta:
-        ordering = ['id']
-
-    def __str__(self):
-        return "Country: {} <pk:{}>".format(self.name, self.id)
+from .countries import COUNTRIES_ALPHA2_CODE
 
 
 class Point(TimeStampedModel):
+    country_code = models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE)
     lat = models.DecimalField(
         verbose_name='Latitude',
         null=True,
@@ -36,6 +25,7 @@ class Point(TimeStampedModel):
         decimal_places=5,
         validators=[MinValueValidator(Decimal(-180)), MaxValueValidator(Decimal(180))]
     )
+    # TODO: find out what UNICEF understands exactly under this name (admin_level_1)
     admin_level_1 = models.CharField(max_length=255)
 
     class Meta:
