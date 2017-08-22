@@ -64,9 +64,9 @@ class EOI(TimeStampedModel):
 
 
 class Pin(TimeStampedModel):
-    eoi = models.ForeignKey(EOI, related_name="pinned")
-    partner = models.ForeignKey('partner.Partner', related_name="pinned")
-    pinned_by = models.ForeignKey('account.User', related_name="pinned")
+    eoi = models.ForeignKey(EOI, related_name="pins")
+    partner = models.ForeignKey('partner.Partner', related_name="pins")
+    pinned_by = models.ForeignKey('account.User', related_name="pins")
 
     class Meta:
         ordering = ['id']
