@@ -8,7 +8,7 @@ const loadCountriesSuccess = countries => ({ type: LOAD_COUNTRIES_SUCCESS, count
 
 export const loadCountries = (dispatch) => {
   getCountries()
-  .then(countries => dispatch(loadCountriesSuccess(countries)));
+    .then(countries => dispatch(loadCountriesSuccess(countries)));
 };
 
 const saveCountries = action => Object.keys(action.countries).map(key => ({
