@@ -95,6 +95,11 @@ const getTheme = () => (
         primary: '#72C300',
         secondary: '#BEF078',
       },
+      eoiStatus: {
+        completed: '#5B92E5',
+        closed: '#233944',
+        open: '#72C300',
+      },
     },
   }
 );
