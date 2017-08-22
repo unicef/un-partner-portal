@@ -11,7 +11,6 @@ import Stepper from './stepper';
 
 const styleSheet = createStyleSheet('registration', theme => ({
   container: {
-    position: 'absolute',
     height: '100%',
   },
   header: {

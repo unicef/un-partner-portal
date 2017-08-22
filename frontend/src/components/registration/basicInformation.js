@@ -38,7 +38,7 @@ const COUNTRY_MENU = [
 ];
 
 const BasicInformation = (props) => {
-  const { legalNameChange } = props;
+  const { legalNameChange, countries } = props;
   return (
     <Grid item>
       <Grid container direction="column" gutter={16}>
@@ -69,7 +69,7 @@ const BasicInformation = (props) => {
         <SelectForm
           fieldName="country"
           label="Country of Origin"
-          values={COUNTRY_MENU}
+          values={countries}
           infoIcon
           infoText={messages.tooltip}
         />
@@ -115,6 +115,7 @@ const selector = formValueSelector('registration');
 const connectedBasicInformation = connect(
   state => ({
     legalNameChange: selector(state, 'legalNameChange'),
+    countries: state.countries,
   }),
 )(BasicInformation);
 
