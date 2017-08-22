@@ -96,7 +96,7 @@ SelectForm.propTypes = {
    */
   label: PropTypes.node,
   /**
-   * array of objects with values for menu items 
+   * array of objects with values for menu items
    * {
    *   value: name of value represented by item
    *   label: label used for button
@@ -110,7 +110,7 @@ SelectForm.propTypes = {
   /**
    * text passed to tooltip
    */
-  infoText: PropTypes.bool,
+  infoText: PropTypes.string,
   /**
    * if field is optional
    */

@@ -1,10 +1,14 @@
-
 import React from 'react';
 import PropTypes from 'prop-types';
+import {
+  TableCell,
+} from 'material-ui/Table';
 
-import PartnerEoiTable from './partnerEoiTable';
-import PinIcon from '../common/pinIcon';
-import TooltipIcon from '../common/tooltipIcon';
+import PinHeaderIcon from './icons/pinHeaderIcon';
+import EoiStatusWithIconsCell from './cells/eoiStatusWithIconsCell';
+import SelectableTable from '../common/table/selectableTable';
+import EoiSectorCell from './cells/eoiSectorCell';
+import { columnData } from './overview';
 
 
 const messages = {
@@ -12,34 +16,55 @@ const messages = {
   tooltip: 'remove pin',
 };
 
-const createData = data => data.map((item, index) => ({ id: index, ...item }));
-
-
 const mockData = [
-  { name: 'Capacity building for small rural farmers in Kenia', country: 'Kenia', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '01 Jan 2016', startDate: '30 Sep 2017', status: 0, pinned: true },
+  { name: 'Capacity building for small rural farmers in Kenia', country: 'Kenia', sector: { FoodSecurity: ['Area1', 'Area2'] }, agency: 'UNICEF', deadline: '01 Jan 2016', startDate: '30 Sep 2017', status: 0, pinned: true },
   { name: 'Capacity building for small rural farmers in Chile', country: 'Chile', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '04 Mar 2017', startDate: '30 Sep 2017', status: 0, pinned: true },
   { name: 'Capacity building for small rural farmers in Ukraine', country: 'Ukraine', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '30 Jun 1994', startDate: '30 Sep 2017', status: 2, pinned: true },
   { name: 'Capacity building for small rural farmers in Vietnam', country: 'Vietnam', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '30 Jun 2018', startDate: '30 Sep 2017', status: 1, pinned: true },
   { name: 'Capacity building for small rural farmers in Kanada', country: 'Kanada', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '29 Jun 2017', startDate: '30 Sep 2017', status: 2, pinned: true },
 ];
 
-const renderPinIcon = () => (
-  <TooltipIcon
-    Icon={PinIcon}
-    infoText={messages.tooltip}
-  />
-);
+const renderCells = (item, classes, hoverOn) => ([
+  <TableCell className={`${classes.limitedCell}`}>
+    {item.name}
+  </TableCell>,
+  <TableCell >
+    {item.country}
+  </TableCell>,
+  <TableCell >
+    <EoiSectorCell data={item.sector} id={item.id} />
+  </TableCell>,
+  <TableCell >
+    {item.agency}
+  </TableCell>,
+  <TableCell >
+    {item.deadline}
+  </TableCell>,
+  <TableCell >
+    {item.startDate}
+  </TableCell>,
+  <TableCell >
+    <EoiStatusWithIconsCell
+      item={item}
+      hoverOn={hoverOn}
+      message={messages.tooltip}
+      simple
+    />
+  </TableCell>,
+]);
 
-const Overview = () => (
-  <PartnerEoiTable
-    data={createData(mockData)}
+const Pinned = () => (
+  <SelectableTable
+    data={mockData}
+    columnData={columnData}
     title={messages.title}
-    renderItemIcon={renderPinIcon}
+    renderTableCells={renderCells}
+    toolbarIcons={<PinHeaderIcon />}
   />
 );
 
-Overview.PropTypes = {
+Pinned.PropTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default Overview;
+export default Pinned;
