@@ -12,6 +12,7 @@ from common.consts import (
     SCALE_TYPES,
     EOI_STATUSES,
 )
+from common.countries import COUNTRIES_ALPHA2_CODE
 
 
 class EOI(TimeStampedModel):
@@ -22,7 +23,7 @@ class EOI(TimeStampedModel):
     display_type = models.CharField(max_length=3, choices=EOI_TYPES, default=EOI_TYPES.open)
     status = models.CharField(max_length=3, choices=EOI_STATUSES, default=EOI_STATUSES.open)
     title = models.CharField(max_length=255)
-    country = models.ForeignKey('common.Country', related_name="expressions_of_interest")
+    country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
     created_by = models.ForeignKey('account.User', related_name="expressions_of_interest")
     # focal_point - limited to users under agency

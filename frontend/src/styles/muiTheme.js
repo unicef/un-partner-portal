@@ -91,6 +91,10 @@ const getTheme = () => (
     palette: {
       ...theme.palette,
       accent: getColorTheme(),
+      success: {
+        primary: '#72C300',
+        secondary: '#BEF078',
+      },
     },
   }
 );

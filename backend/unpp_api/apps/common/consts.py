@@ -17,8 +17,11 @@ PARTNER_REVIEW_TYPES = Choices(
 )
 
 PARTNER_TYPES = Choices(
-    ('int', 'international', 'International'),
-    ('nat', 'national', 'National'),
+    ('CBO', 'cbo', 'Community Based Organization (CBO) '),
+    ('NGO', 'national', 'National NGO'),
+    ('Int', 'international', 'International NGO (INGO)'),
+    ('Aca', 'academic', 'Academic Institution'),
+    ('RCC', 'red_cross', 'Red Cross/Red Crescent Movement'),
 )
 
 EOI_TYPES = Choices(
@@ -70,3 +73,58 @@ FINANCIAL_CONTROL_SYSTEM_CHOICES = Choices(
     ('Pap', 'paper', 'Paper-based accounting system'),
     ('NoS', 'no_system', 'No accounting system'),
 )
+
+FUNCTIONAL_RESPONSIBILITY_CHOICES = Choices(
+    ('Pro', 'procurement', 'Procurement'),
+    ('AET', 'authorization', 'Authorization to execute a transaction'),
+    ('RoT', 'recording', 'Recording of a transaction'),
+    ('Pay', 'payment', 'Payment approvals'),
+    ('CoA', 'custody', 'Custody of assets involved in a transaction'),
+    ('Ban', 'bank', 'Bank reconciliation'),
+)
+
+PARTNER_DONORS_CHOICES = Choices(
+    ('Ind', 'Individuals', 'Individuals'),
+    ('TaF', 'trusts', 'Trusts and foundations'),
+    ('Pri', 'private', 'Private companies and corporations'),
+    ('Gov', 'gov', 'Government'),
+    ('UNA', 'united_agency', 'United Nations Agency'),
+    ('Bil', 'bilateral', 'Bilateral Agency/Multilateral Agency/Development Banks'),
+    ('NGO', 'non_gov', 'International Non Governmental Organizations'),
+    ('Oth', 'other', 'Other'),
+)
+
+WORKING_LAGNUAGES_CHOICES = Choices(
+    ('Ara', 'arabic', 'Arabic'),
+    ('Chi', 'chinese', 'Chinese'),
+    ('Eng', 'english', 'English'),
+    ('Fre', 'french', 'French'),
+    ('Rus', 'russian', 'Russian'),
+    ('Spa', 'spanish', 'Spanish'),
+    ('Oth', 'other', 'Other'),
+)
+
+CONCERN_GROUP_CHOICES = Choices(
+    ('Ref', 'Refugees', 'Refugees'),
+    ('Ast', 'Asylum', 'Asylum seekers '),
+    ('Int', 'internally', 'Internally displaced persons'),
+    ('Sta', 'stateless', 'Stateless'),
+    ('Ret', 'returning', 'Returning'),
+    ('Hos', 'host_country', 'Host Country'),
+)
+
+AUDIT_TYPES = Choices(
+    ('Int', 'internal', 'Internal audit'),
+    ('Fin', 'financial', 'Financial statement audit'),
+    ('Don', 'donor', 'Donor audit'),
+)
+
+FORMAL_CAPACITY_ASSESSMENT = Choices(
+    ('HAC', 'hact', 'HACT micro-assessment'),
+    ('OCH', 'ocha', 'OCHA CBPF (Country-Based Pooled Fund) capacity assessment'),
+    ('UNH', 'unhcr', 'UNHCR procurement pre-qualification assessment'),
+    ('DFI', 'dfid', 'DFID pre-grant due diligence assessment'),
+    ('EUE', 'eu_echo', 'EU/ECHO Framework Partnership Agreement (FPA) assessment'),
+    ('Oth', 'other', 'Other formal capacity assessment'),
+)
+

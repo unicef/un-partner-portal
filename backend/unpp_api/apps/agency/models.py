@@ -3,8 +3,10 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.db.models.signals import post_save
+from django.contrib.postgres.fields import ArrayField
 from model_utils.models import TimeStampedModel
 
+from common.countries import COUNTRIES_ALPHA2_CODE
 from common.consts import (
     MEMBER_ROLES,
 )
@@ -65,7 +67,10 @@ class AgencyOffice(TimeStampedModel):
     """
     name = models.CharField(max_length=255)
     agency = models.ForeignKey(Agency, related_name="agency_offices")
-    countries = models.ManyToManyField('common.Country', related_name="agency_offices")
+    countries_code = ArrayField(
+        models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE),
+        default=list
+    )
 
 
 class AgencyMember(TimeStampedModel):
