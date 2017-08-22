@@ -96,7 +96,7 @@ class PinProjectAPIView(BaseProjectAPIView):
             Pin.objects.bulk_create(pins)
             return Response("data", status=statuses.HTTP_201_CREATED)
         elif pin is False and len(eoi_ids) > 0:
-            Pin.objects.filter(id__in=eoi_ids, partner=partner, pinned_by=request.user).delete()
+            Pin.objects.filter(eoi_id__in=eoi_ids, partner=partner, pinned_by=request.user).delete()
             return Response(status=statuses.HTTP_204_NO_CONTENT)
         else:
             return Response(
