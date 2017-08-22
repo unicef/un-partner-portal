@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status as statuses
 from project.models import EOI, Pin
 from common.tests.base import BaseAPITestCase
-from common.factories import EOIFactory
+from common.factories import EOIFactory, AgencyMemberFactory
 from project.views import PinProjectAPIView
 
 
@@ -24,11 +24,12 @@ class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
 
 class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
 
-    quantity = 3
+    quantity = 2
     url = reverse('projects:pins')
 
     def setUp(self):
         super(TestPinUnpinEOIAPITestCase, self).setUp()
+        AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
 
     def test_pin_unpin_project_wrong_params(self):

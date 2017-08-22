@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from rest_framework.test import APITestCase, APIClient
 from account.models import User
-from ..factories import PartnerFactory, PartnerMemberFactory
+from ..factories import PartnerFactory, PartnerMemberFactory, AgencyMemberFactory
 
 
 class BaseAPITestCase(APITestCase):
@@ -19,6 +19,8 @@ class BaseAPITestCase(APITestCase):
         if self.user_type == 'partner':
             PartnerFactory.create_batch(1)
             PartnerMemberFactory.create_batch(1)
+        elif self.user_type == 'agency':
+            AgencyMemberFactory.create_batch(1)
 
         # creating a session (login already created user in generate_fake_data)
         if self.with_session_login:

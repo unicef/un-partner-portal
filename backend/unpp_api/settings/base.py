@@ -136,7 +136,7 @@ COMPRESS_PRECOMPILERS = (
 )
 
 COMPRESS_CSS_FILTERS = [
-    #css minimizer
+    # css minimizer
     'compressor.filters.cssmin.CSSMinFilter',
     'compressor.filters.css_default.CssAbsoluteFilter'
 ]
@@ -145,9 +145,12 @@ COMPRESS_JS_FILTERS = [
 ]
 
 USERSWITCH_OPTIONS = {
-    'auth_backend': 'django.contrib.auth.backends.ModelBackend',
-    'css_inline': 'position:fixed !important; bottom: 10px !important; left: 10px !important; opacity:0.50; z-index: 9999;',
+    'auth_backend':
+        'django.contrib.auth.backends.ModelBackend',
+    'css_inline':
+        'position:fixed !important; bottom: 10px !important; left: 10px !important; opacity:0.50; z-index: 9999;',
 }
+
 
 # helper function to extend all the common lists
 def extend_list_avoid_repeats(list_to_extend, extend_with):

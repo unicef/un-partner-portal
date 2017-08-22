@@ -67,7 +67,7 @@ class AgencyOffice(TimeStampedModel):
     name = models.CharField(max_length=255)
     agency = models.ForeignKey(Agency, related_name="agency_offices")
     countries_code = ArrayField(
-        models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE),
+        models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE),
         default=list
     )
 
@@ -90,7 +90,7 @@ class AgencyMember(TimeStampedModel):
         ordering = ['id']
 
     def __str__(self):
-        return "AgencyMember: {} <pk:{}>".format(self.name, self.id)
+        return "AgencyMember <pk:{}>".format(self.id)
 
 # # Signals
 #

@@ -133,4 +133,3 @@ FORMAL_CAPACITY_ASSESSMENT = Choices(
     ('EUE', 'eu_echo', 'EU/ECHO Framework Partnership Agreement (FPA) assessment'),
     ('Oth', 'other', 'Other formal capacity assessment'),
 )
-
