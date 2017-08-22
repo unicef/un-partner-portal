@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import {
   TableCell,
 } from 'material-ui/Table';
+import Grid from 'material-ui/Grid';
 
 import PinHeaderIcon from './icons/pinHeaderIcon';
 import EoiStatusWithIconsCell from './cells/eoiStatusWithIconsCell';
 import SelectableTable from '../common/table/selectableTable';
 import EoiSectorCell from './cells/eoiSectorCell';
 import { columnData } from './overview';
-
+import EoiFilter from './filters/eoiFilter';
 
 const messages = {
   title: 'List of Calls for Expressions of Interest',
@@ -54,13 +55,23 @@ const renderCells = (item, classes, hoverOn) => ([
 ]);
 
 const Pinned = () => (
-  <SelectableTable
-    data={mockData}
-    columnData={columnData}
-    title={messages.title}
-    renderTableCells={renderCells}
-    toolbarIcons={<PinHeaderIcon />}
-  />
+
+  <Grid container direction="column" gutter={40}>
+    <Grid item>
+      <EoiFilter />
+    </Grid>
+    <Grid item>
+      <SelectableTable
+        data={mockData}
+        columnData={columnData}
+        title={messages.title}
+        renderTableCells={renderCells}
+        toolbarIcons={<PinHeaderIcon />}
+      />
+    </Grid>
+  </Grid>
+
+
 );
 
 Pinned.PropTypes = {

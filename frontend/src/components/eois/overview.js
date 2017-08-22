@@ -1,5 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Grid from 'material-ui/Grid';
+
+
 import {
   TableCell,
 } from 'material-ui/Table';
@@ -8,6 +11,7 @@ import PinHeaderIcon from './icons/pinHeaderIcon';
 import EoiStatusWithIconsCell from './cells/eoiStatusWithIconsCell';
 import SelectableTable from '../common/table/selectableTable';
 import EoiSectorCell from './cells/eoiSectorCell';
+import EoiFilter from './filters/eoiFilter';
 
 const messages = {
   title: 'List of Calls for Expressions of Interest',
@@ -19,7 +23,6 @@ export const columnData = [
   { id: 'name', label: 'Project name' },
   { id: 'country', label: 'Country' },
   { id: 'sector', label: 'Sector' },
-  { id: 'area', label: 'Area of specialization' },
   { id: 'agency', label: 'Agency' },
   { id: 'deadline', label: 'Application deadline' },
   { id: 'startDate', label: 'Project start date' },
@@ -63,13 +66,22 @@ const renderCells = (item, classes, hoverOn) => ([
 ]);
 
 const Overview = () => (
-  <SelectableTable
-    data={mockData}
-    columnData={columnData}
-    title={messages.title}
-    renderTableCells={renderCells}
-    toolbarIcons={<PinHeaderIcon />}
-  />
+
+  <Grid container direction="column" gutter={40}>
+    <Grid item>
+      <EoiFilter />
+    </Grid>
+    <Grid item>
+      <SelectableTable
+        data={mockData}
+        columnData={columnData}
+        title={messages.title}
+        renderTableCells={renderCells}
+        toolbarIcons={<PinHeaderIcon />}
+      />
+    </Grid>
+  </Grid>
+
 );
 
 Overview.PropTypes = {
