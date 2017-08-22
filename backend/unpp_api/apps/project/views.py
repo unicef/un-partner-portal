@@ -26,7 +26,7 @@ class BaseProjectAPIView(ListAPIView):
     ALLOWED_SORT_BY = ['deadline_date', 'start_date', 'status']
     ALLOWED_SORT_TYPE = [SORT_TYPE_ASC, SORT_TYPE_DESC]
     permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
-    queryset = EOI.objects.prefetch_related("specializations", "agency", "pinned")
+    queryset = EOI.objects.prefetch_related("specializations", "agency", "pins")
     serializer_class = BaseProjectSerializer
     pagination_class = SmallPagination
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, )
@@ -78,7 +78,7 @@ class PinProjectAPIView(BaseProjectAPIView):
 
     def make_custom_queryset(self):
         member = get_object_or_404(PartnerMember, user=self.request.user)
-        self.queryset = self.queryset.filter(pinned__partner=member.partner)
+        self.queryset = self.queryset.filter(pins__partner=member.partner)
 
     def patch(self, request, *args, **kwargs):
         eoi_ids = request.data.get("eoi_ids")
