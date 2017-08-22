@@ -60,11 +60,11 @@ RegistrationStep.propTypes = {
   /**
    * whether step is the first, to control buttons appearance
    */
-  first: PropTypes.boolean,
+  first: PropTypes.bool,
   /**
    * whether step is the last, to control buttons appearance
    */
-  last: PropTypes.boolean,
+  last: PropTypes.bool,
   /**
    * callback for 'back' button
    */

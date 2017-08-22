@@ -17,6 +17,8 @@ import RegistrationStep from './registrationStep';
 import Declaration from './declaration';
 import Account from './account';
 import AlertDialog from '../common/alertDialog';
+import { getCountries } from '../../helpers/api/api';
+import {loadCountries} from '../../reducers/countries';
 
 const styleSheet = createStyleSheet('RegistrationStepper', () => ({
   root: {
@@ -36,6 +38,10 @@ class RegistrationStepper extends React.Component {
     this.handleNext = this.handleNext.bind(this);
     this.handleNextQuestions = this.handleNextQuestions.bind(this);
     this.handlePrev = this.handlePrev.bind(this);
+  }
+
+  componentWillMount() {
+    loadCountries(this.props.dispatch);
   }
 
   handleNext() {
