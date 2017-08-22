@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "autoprefixer": "7.1.1",
+    "axios": "^0.16.2",
     "babel-core": "6.25.0",
     "babel-eslint": "7.2.3",
     "babel-jest": "20.0.3",
@@ -44,6 +45,7 @@
     "redux-form": "^7.0.0",
     "style-loader": "0.18.2",
     "sw-precache-webpack-plugin": "0.11.3",
+    "thunk": "^0.0.1",
     "url-loader": "0.5.9",
     "webpack": "2.6.1",
     "webpack-dev-server": "2.5.0",

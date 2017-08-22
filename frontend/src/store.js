@@ -5,12 +5,14 @@ import cfeiNav from './reducers/cfeiNav';
 import nav from './reducers/nav';
 import route from './reducers/route';
 import session from './reducers/session';
+import countries from './reducers/countries';
 
 export default createStore(combineReducers({
   cfeiNav,
   nav,
   route,
   session,
+  countries,
   form: formReducer,
 }),
 // TODO(marcindo: disable devtools in prod
