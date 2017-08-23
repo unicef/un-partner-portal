@@ -1,10 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import os
+import random
+from datetime import date
+
 from django.urls import reverse
+from django.conf import settings
 from rest_framework import status as statuses
+
+from account.models import User
+from agency.models import AgencyOffice
 from project.models import EOI, Pin
+from partner.models import Partner
 from common.tests.base import BaseAPITestCase
+from common.countries import COUNTRIES_ALPHA2_CODE
 from common.factories import EOIFactory, AgencyMemberFactory
+from common.models import Specialization
 from project.views import PinProjectAPIView
 
 
@@ -63,3 +74,62 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
         response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": False}, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(Pin.objects.count(), 0)
+
+
+class TestOpenProjectsAPITestCase(BaseAPITestCase):
+
+    quantity = 2
+    url = reverse('projects:open')
+
+    def setUp(self):
+        super(TestOpenProjectsAPITestCase, self).setUp()
+        AgencyMemberFactory.create_batch(self.quantity)
+        EOIFactory.create_batch(self.quantity)
+
+    def test_open_project(self):
+        # read open projects
+        response = self.client.get(self.url, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['count'], self.quantity)
+
+    def test_create_project(self):
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        cn_template = open(filename).read()
+        ao = AgencyOffice.objects.first()
+        payload = {
+            'title': "EOI title",
+            'country_code': COUNTRIES_ALPHA2_CODE[0][0],
+            'agency': ao.agency.id,
+            'focal_point': User.objects.first().id,
+            'locations': [
+                {
+                    "country_code": 'IQ',
+                    "admin_level_1": "Baghdad, Abu Gharaib, Algaara",
+                    "lat": random.randint(-180, 180),
+                    "lon": random.randint(-180, 180),
+                },
+                {
+                    "country_code": "FR",
+                    "admin_level_1": "Paris",
+                    "lat": random.randint(-180, 180),
+                    "lon": random.randint(-180, 180),
+                },
+            ],
+            'agency_office': ao.id,
+            'cn_template': cn_template,
+            'specializations': Specialization.objects.all().values_list('id', flat=True)[:2],
+            'description': 'Brief background of the project',
+            'other_information': 'Other information',
+            'start_date': date.today(),
+            'end_date': date.today(),
+            'deadline_date': date.today(),
+            'notif_results_date': date.today(),
+            'has_weighting': True,
+            'invited_partners': Partner.objects.all().values_list('id', flat=True)[:2],
+            'reviewers': User.objects.all().values_list('id', flat=True)[:2],
+        }
+
+        response = self.client.post(self.url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['title'], payload['title'])
+        self.assertEquals(response.data['created_by'], self.user.id)
