@@ -13,7 +13,7 @@ from common.paginations import SmallPagination
 from common.permissions import IsAtLeastMemberReader
 from partner.models import PartnerMember
 from .models import EOI, Pin
-from .serializers import BaseProjectSerializer
+from .serializers import BaseProjectSerializer, CreateProjectSerializer
 from .filters import BaseProjectFilter
 
 
@@ -57,6 +57,18 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
     def make_custom_queryset(self):
         self.queryset = self.queryset.filter(display_type=EOI_TYPES.open)
+
+    def post(self, request, *args, **kwargs):
+        data = request.data or {}
+        data['created_by'] = request.user.id
+
+        serializer = CreateProjectSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
 
 class DirectProjectAPIView(BaseProjectAPIView):
