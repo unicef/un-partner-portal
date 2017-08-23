@@ -25,16 +25,22 @@ class IsAtLeastMemberReader(BasePermission):
         return power >= self.MIN_POWER
 
     def has_permission(self, request, view):
-        member = PartnerMember.objects.filter(user=request.user).first()
-        if member:
-            role = member.role
-        else:
-            member = AgencyMember.objects.filter(user=request.user).first()
-            if member is None:
-                logger.error(
-                    "User (pk: {}) has no member object like partner or agency. Data are not integrated!".format(
-                        request.user.id
-                    ))
-                return False
-            role = member.role
-        return self.pass_at_least(role)
+        try:
+            member = PartnerMember.objects.get(user=request.user)
+        except PartnerMember.DoesNotExist as exp:
+            member = None
+
+        if member is None:
+            try:
+                member = AgencyMember.objects.get(user=request.user)
+            except AgencyMember.DoesNotExist as exp:
+                member = None
+
+        if member is None:
+            logger.error(
+                "User (pk: {}) has no member object like partner or agency. Data are not integrated!".format(
+                    request.user.id
+                ))
+            return False
+
+        return self.pass_at_least(member.role)

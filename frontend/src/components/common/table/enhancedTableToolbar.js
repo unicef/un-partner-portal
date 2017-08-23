@@ -1,5 +1,5 @@
 
-import React, { cloneElement } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
@@ -34,6 +34,7 @@ const styleSheet = createStyleSheet(theme => ({
 
 const EnhancedTableToolbar = (props) => {
   const { numSelected, classes, title, children } = props;
+
   return (
     <Toolbar
       className={classNames(classes.root, {
@@ -50,7 +51,7 @@ const EnhancedTableToolbar = (props) => {
       <div className={classes.spacer} />
       <div className={classes.actions}>
         {numSelected > 0 &&
-          cloneElement(children)
+          children
         }
       </div>
     </Toolbar>

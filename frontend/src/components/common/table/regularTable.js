@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Table, {
   TableBody,
   TableRow,
@@ -10,24 +10,8 @@ import Paper from 'material-ui/Paper';
 import EnhancedTableToolbar from './enhancedTableToolbar';
 import EnhancedTableHead from './enhancedTableHead';
 import SharedTable from './sharedTable';
+import TableStyleSheet from './tableStyling';
 
-
-const styleSheet = createStyleSheet('RegularTable', theme => ({
-  root: {
-    background: theme.palette.primary[200],
-    padding: theme.spacing.unit * 3,
-  },
-  paper: {
-    width: '100%',
-    overflowX: 'scroll',
-  },
-  limitedCell: {
-    maxWidth: 250,
-  },
-  firstCell: {
-    padding: `0px 4px 0px ${theme.spacing.unit * 4}px`,
-  },
-}));
 
 class RegularTable extends SharedTable {
   constructor(props) {
@@ -41,40 +25,38 @@ class RegularTable extends SharedTable {
   }
 
   render() {
-    const { classes, columnData, title, renderCells } = this.props;
+    const { classes, columnData, title, renderTableCells } = this.props;
     const { data, order, orderBy } = this.state;
 
     return (
-      <Paper elevation={0} className={classes.root}>
-        <Paper >
-          <EnhancedTableToolbar
-            title={title}
-            numSelected={0}
-          />
-          <Paper elevation={0} className={classes.paper}>
-            <Table>
-              <EnhancedTableHead
-                order={order}
-                orderBy={orderBy}
-                onRequestSort={this.handleRequestSort}
-                columnData={columnData}
-                firstCell={classes.firstCell}
-              />
-              <TableBody>
-                {data.map(n => (
-                  <TableRow
-                    hover
-                    onMouseLeave={this.handleMouseLeave}
-                    onMouseEnter={this.handleMouseEnter(n.id)}
-                    tabIndex="-1"
-                    key={n.id}
-                  >
-                    {renderCells(n, this.state, classes)}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>
+      <Paper >
+        {title && <EnhancedTableToolbar
+          title={title}
+          numSelected={0}
+        />}
+        <Paper elevation={0} className={classes.paper}>
+          <Table>
+            <EnhancedTableHead
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={this.handleRequestSort}
+              columnData={columnData}
+              firstCell={classes.firstCell}
+            />
+            <TableBody>
+              {data.map(n => (
+                <TableRow
+                  hover
+                  onMouseLeave={this.handleMouseLeave}
+                  onMouseEnter={this.handleMouseEnter(n.id)}
+                  tabIndex="-1"
+                  key={n.id}
+                >
+                  {renderTableCells(n, classes)}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </Paper>
       </Paper>
     );
@@ -89,4 +71,4 @@ RegularTable.propTypes = {
   renderCells: PropTypes.func.isRequired,
 };
 
-export default withStyles(styleSheet)(RegularTable);
+export default withStyles(TableStyleSheet)(RegularTable);

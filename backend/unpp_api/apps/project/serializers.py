@@ -12,7 +12,6 @@ class BaseProjectSerializer(serializers.ModelSerializer):
 
     sectors = serializers.SerializerMethodField()
     agency = AgencySerializer()
-    pinned = serializers.SerializerMethodField()
 
     class Meta:
         model = EOI
@@ -26,7 +25,6 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'end_date',
             'deadline_date',
             'status',
-            'pinned',
         )
 
     def get_sectors(self, obj):
@@ -34,9 +32,6 @@ class BaseProjectSerializer(serializers.ModelSerializer):
         categories = specializations.values_list('category_id', flat=True)
         qs = Sector.objects.filter(id__in=categories, specializations__in=specializations).distinct()
         return ConfigSectorSerializer(qs, many=True).data
-
-    def get_pinned(self, obj):
-        return obj.pinned.exists()
 
 
 class CreateProjectSerializer(serializers.ModelSerializer):
