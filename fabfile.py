@@ -56,7 +56,7 @@ def stop():
     local('docker-compose stop')
 
 
-def fixtures(quantity=5):
+def fixtures(quantity=4):
     """
     Load example data from fakedata management command.
     """
@@ -72,6 +72,13 @@ def make_db():
     local('docker-compose exec backend python manage.py reset_db')
     local('docker-compose exec backend python manage.py migrate')
     fixtures()
+
+
+def tests():
+    """
+    Run unit tests.
+    """
+    local('docker-compose exec backend python manage.py test --parallel')
 
 
 def remove_untagged_images():

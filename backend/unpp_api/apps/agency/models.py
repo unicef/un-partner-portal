@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.db.models.signals import post_save
 from django.contrib.postgres.fields import ArrayField
 from model_utils.models import TimeStampedModel
 
@@ -68,9 +67,15 @@ class AgencyOffice(TimeStampedModel):
     name = models.CharField(max_length=255)
     agency = models.ForeignKey(Agency, related_name="agency_offices")
     countries_code = ArrayField(
-        models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE),
+        models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE),
         default=list
     )
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "AgencyOffice: {} <pk:{}>".format(self.name, self.id)
 
 
 class AgencyMember(TimeStampedModel):
@@ -81,7 +86,12 @@ class AgencyMember(TimeStampedModel):
     role = models.CharField(max_length=3, choices=MEMBER_ROLES, default=MEMBER_ROLES.reader)
     office = models.ForeignKey(AgencyOffice, related_name="agency_members")
 
+    class Meta:
+        ordering = ['id']
 
-# Signals
+    def __str__(self):
+        return "AgencyMember <pk:{}>".format(self.id)
 
-post_save.connect(AgencyProfile.create_agency_profile, sender=Agency)
+# # Signals
+#
+# post_save.connect(AgencyProfile.create_agency_profile, sender=Agency)
