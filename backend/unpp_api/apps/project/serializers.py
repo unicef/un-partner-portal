@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.db import transaction
 from rest_framework import serializers
 from agency.serializers import AgencySerializer
-from common.serializers import ConfigSectorSerializer
-from common.models import Sector
+from common.serializers import ConfigSectorSerializer, PointSerializer
+from common.models import Sector, Point
 from .models import EOI
 
 
@@ -36,3 +37,25 @@ class BaseProjectSerializer(serializers.ModelSerializer):
 
     def get_pinned(self, obj):
         return obj.pinned.exists()
+
+
+class CreateProjectSerializer(serializers.ModelSerializer):
+
+    locations = PointSerializer(many=True)
+
+    class Meta:
+        model = EOI
+        # fields = '__all__'
+        exclude = ('cn_template', )
+
+    @transaction.atomic
+    def create(self, validated_data):
+        locations = validated_data['locations']
+        del validated_data['locations']
+        eoi = super(CreateProjectSerializer, self).create(validated_data)
+
+        for location in locations:
+            point, created = Point.objects.get_or_create(**location)
+            eoi.locations.add(point)
+
+        return eoi
