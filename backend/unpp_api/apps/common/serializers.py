@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Sector, Specialization
+from .models import Point, Sector, Specialization
 
 
 class SimpleSpecializationSerializer(serializers.ModelSerializer):
@@ -24,3 +24,10 @@ class ConfigSectorSerializer(serializers.ModelSerializer):
             'name',
             'specializations',
         )
+
+
+class PointSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Point
+        fields = "__all__"
