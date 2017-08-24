@@ -1,42 +1,66 @@
 import Paper from 'material-ui/Paper';
-import IconButton from 'material-ui/IconButton';
-import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
+import Typography from 'material-ui/Typography';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import Divider from 'material-ui/Divider';
+import Add from 'material-ui-icons/Add';
+import Button from 'material-ui/Button';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
+import CountryProfileItem from './countryProfileItem';
 
 const messages = {
-  profile: 'HQ Profile',
+  countryProfile: 'Country Profiles',
   user: 'user',
+  new: 'new',
   lastUpdate: 'Last update: ',
   pluralSuffix: 's',
 };
 
-const hgProfileMockData = {
-  users: 25, update: '01 Jan 2016',
-};
+const countryItemsMockData = [
+  { country: 'Kenya', users: 25, update: '01 Jan 2016', completed: true },
+  { country: 'Syria', users: 1, update: '03 Jan 2017', completed: false },
+  { country: 'Ukraine', users: 2, update: '01 Aug 2016', completed: false },
+  { country: 'Poland', users: 105, update: '01 Aug 2017', completed: true },
+];
 
 const styleSheet = createStyleSheet('sidebarMenu', (theme) => {
-  const padding = theme.spacing.unit;
-  const paddingMedium = theme.spacing.unit * 2;
+  const paddingSmall = theme.spacing.unit * 2;
+  const paddingMedium = theme.spacing.unit * 3;
   return {
     center: {
       textAlign: 'center',
     },
+    alignCenter: {
+      display: 'flex',
+      alignItems: 'center',
+    },
     title: {
-      fontSize: '20px',
+      fontSize: '15px',
+    },
+    icon: {
+      fill: theme.palette.primary[300],
+      marginRight: 3,
+      width: 20,
+      height: 20,
     },
     container: {
       width: '100%',
       margin: '0',
-      padding: `${paddingMedium}px 0 ${paddingMedium}px ${padding}px`,
+      backgroundColor: theme.palette.primary[100],
+      padding: `${paddingMedium}px ${paddingSmall}px ${paddingMedium}px ${paddingMedium}px`,
     },
   };
 });
 
-const pluralize = (count, noun, suffix = messages.pluralSuffix) => `${count} ${noun}${count !== 1 ? suffix : ''}`;
+const renderCountryItems = countryItemsMockData.map(item =>
+  (<Grid item ><Divider />
+    <CountryProfileItem
+      country={item.country}
+      users={item.users}
+      update={item.update}
+      completed={item.completed}
+    /></Grid>));
 
 class CountryOfficesList extends Component {
   constructor(props) {
@@ -49,25 +73,32 @@ class CountryOfficesList extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <Paper>
-        <Grid align="center" className={classes.container} container>
-          <Grid item xs={6}>
-            <div className={classes.title}>{messages.profile}</div>
-          </Grid>
 
-          <Grid className={classes.center} item xs={2}>
-            {pluralize(hgProfileMockData.users, messages.user)}
+      <Grid container direction="column">
+        <Paper>
+          <Grid item>
+            <Grid align="center" className={classes.container} container>
+              <Grid xs={11} item>
+                <div className={classes.title}>
+                  <Typography type="title" color="inherit">{messages.countryProfile}</Typography>
+                </div>
+              </Grid>
+              <Grid xs={1} item>
+                <Button
+                  color="accent"
+                  raised
+                >
+                  <div className={classes.alignCenter}>
+                    <Add className={classes.icon} />
+                    {messages.new}
+                  </div>
+                </Button>
+              </Grid>
+            </Grid>
           </Grid>
-
-          <Grid className={classes.center} item xs={3}>
-            {messages.lastUpdate} {hgProfileMockData.update}
-          </Grid>
-
-          <Grid item xs={1}>
-            <IconButton><KeyboardArrowRight /></IconButton>
-          </Grid>
-        </Grid>
-      </Paper>
+          {renderCountryItems}
+        </Paper>
+      </Grid>
     );
   }
 }

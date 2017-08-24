@@ -3,7 +3,7 @@ import IconButton from 'material-ui/IconButton';
 import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import Typography from 'material-ui/Typography';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
@@ -25,8 +25,11 @@ const styleSheet = createStyleSheet('sidebarMenu', (theme) => {
     center: {
       textAlign: 'center',
     },
+    right: {
+      textAlign: 'right',
+    },
     title: {
-      fontSize: '20px',
+      fontSize: '15px',
     },
     container: {
       width: '100%',
@@ -51,19 +54,23 @@ class HqProfile extends Component {
     return (
       <Paper>
         <Grid align="center" className={classes.container} container>
-          <Grid item xs={6}>
-            <div className={classes.title}>{messages.profile}</div>
+          <Grid item xs={5}>
+            <div className={classes.title}>
+              <Typography type="title" color="inherit">{messages.profile}</Typography>
+            </div>
           </Grid>
 
           <Grid className={classes.center} item xs={2}>
             {pluralize(hgProfileMockData.users, messages.user)}
           </Grid>
 
-          <Grid className={classes.center} item xs={3}>
+          <Grid className={classes.right} item xs={3}>
             {messages.lastUpdate} {hgProfileMockData.update}
           </Grid>
 
-          <Grid item xs={1}>
+          <Grid item xs={1} />
+
+          <Grid className={classes.right} item xs={1}>
             <IconButton><KeyboardArrowRight /></IconButton>
           </Grid>
         </Grid>
