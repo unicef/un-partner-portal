@@ -3,13 +3,14 @@ import main from './components/main';
 import mainLayout from './components/layout/mainLayout';
 import eoiHeader from './components/eois/eoiHeader';
 import overview from './components/eois/overview';
+import overviewProfile from './components/organizationProfile/overview';
 import pinned from './components/eois/pinned';
 import calls from './components/eois/calls';
 import direct from './components/eois/direct';
 import partner from './components/partners/partnersHeader';
 import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
-import profile from './components/organizationProfile/organizationProfile';
+import profileHeader from './components/organizationProfile/organizationProfileHeader';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
 import mainContent from './components/common/mainContentWrapper';
@@ -40,7 +41,17 @@ export default [
         },
         { path: 'partner', component: partner },
         { path: 'applications', component: applications },
-        { path: 'profile', component: profile },
+        {
+          path: 'profile',
+          component: profileHeader,
+          childRoutes: [
+            { component: mainContent,
+              childRoutes: [
+                { path: 'overview', component: overviewProfile },
+              ],
+            },
+          ],
+        },
         { path: 'settings', component: settings },
       ],
     }],
