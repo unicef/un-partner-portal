@@ -11,6 +11,7 @@ from common.consts import (
     APPLICATION_STATUSES,
     SCALE_TYPES,
     EOI_STATUSES,
+    SELECTION_CRITERIA_CHOICES,
 )
 from common.countries import COUNTRIES_ALPHA2_CODE
 
@@ -111,7 +112,11 @@ class ApplicationFeedback(TimeStampedModel):
 
 class AssessmentCriteria(TimeStampedModel):
     eoi = models.ForeignKey(EOI, related_name="assessments_criteria")
-    # TODO: display_type = Selection of criteria types
+    display_type = models.CharField(
+        max_length=3,
+        choices=SELECTION_CRITERIA_CHOICES,
+        default=SELECTION_CRITERIA_CHOICES.sector,
+    )
     scale = models.CharField(
         max_length=3,
         choices=SCALE_TYPES,
