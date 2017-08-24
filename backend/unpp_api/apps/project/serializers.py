@@ -5,7 +5,13 @@ from rest_framework import serializers
 from agency.serializers import AgencySerializer
 from common.serializers import ConfigSectorSerializer, PointSerializer
 from common.models import Sector, Point
-from .models import EOI
+from .models import EOI, AssessmentCriteria
+
+
+class AssessmentCriteriasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AssessmentCriteria
+        exclude = ('eoi', )
 
 
 class BaseProjectSerializer(serializers.ModelSerializer):
@@ -34,23 +40,44 @@ class BaseProjectSerializer(serializers.ModelSerializer):
         return ConfigSectorSerializer(qs, many=True).data
 
 
-class CreateProjectSerializer(serializers.ModelSerializer):
+class CreateEOISerializer(serializers.ModelSerializer):
 
     locations = PointSerializer(many=True)
 
     class Meta:
         model = EOI
-        # fields = '__all__'
-        exclude = ('cn_template', )
+        exclude = ('cn_template', 'invited_partners', 'reviewers')
+
+
+class CreateProjectSerializer(serializers.Serializer):
+
+    eoi = CreateEOISerializer()
+    assessment_criterias = AssessmentCriteriasSerializer(many=True)
 
     @transaction.atomic
     def create(self, validated_data):
-        locations = validated_data['locations']
-        del validated_data['locations']
-        eoi = super(CreateProjectSerializer, self).create(validated_data)
+        locations = validated_data['eoi']['locations']
+        del validated_data['eoi']['locations']
+        specializations = validated_data['eoi']['specializations']
+        del validated_data['eoi']['specializations']
+        assessment_criterias = validated_data['assessment_criterias']
+        del validated_data['assessment_criterias']
+
+        eoi = EOI.objects.create(**validated_data['eoi'])
 
         for location in locations:
             point, created = Point.objects.get_or_create(**location)
             eoi.locations.add(point)
 
-        return eoi
+        for specialization in specializations:
+            eoi.specializations.add(specialization)
+
+        created_ac = []
+        for assessment_criteria in assessment_criterias:
+            assessment_criteria['eoi'] = eoi
+            created_ac.append(AssessmentCriteria.objects.create(**assessment_criteria))
+
+        return {
+            'eoi': eoi,
+            'assessment_criterias': created_ac,
+        }

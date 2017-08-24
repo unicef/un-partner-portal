@@ -23,7 +23,7 @@ class BaseProjectAPIView(ListAPIView):
     Base endpoint for Call of Expression of Interest.
     """
     permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
-    queryset = EOI.objects.prefetch_related("specializations", "agency", "pins")
+    queryset = EOI.objects.prefetch_related("specializations", "agency")
     serializer_class = BaseProjectSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
@@ -33,7 +33,7 @@ class BaseProjectAPIView(ListAPIView):
 
 class OpenProjectAPIView(BaseProjectAPIView):
     """
-    Endpoint for getting Call of Expression of Interest.
+    Endpoint for getting OPEN Call of Expression of Interest.
     """
 
     def get_queryset(self):
@@ -41,7 +41,10 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
     def post(self, request, *args, **kwargs):
         data = request.data or {}
-        data['created_by'] = request.user.id
+        try:
+            data['eoi']['created_by'] = request.user.id
+        except Exception:
+            pass  # serializer.is_valid() will take care of right response
 
         serializer = CreateProjectSerializer(data=request.data)
 
@@ -54,16 +57,20 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
 class DirectProjectAPIView(BaseProjectAPIView):
     """
-    Endpoint for getting Call of Expression of Interest.
+    Endpoint for getting DIRECT Call of Expression of Interest.
     """
 
+    def get_partners_pks(self):
+        # Partner Member can have many partners! This case is under construction and can change in future!
+        return PartnerMember.objects.filter(user=self.request.user).values_list('partner', flat=True)
+
     def get_queryset(self):
-        return self.queryset.filter(display_type=EOI_TYPES.direct)
+        return self.queryset.filter(display_type=EOI_TYPES.direct, invited_partners__in=self.get_partners_pks())
 
 
 class PinProjectAPIView(BaseProjectAPIView):
     """
-    Endpoint for getting Call of Expression of Interest.
+    Endpoint for getting PINNED Call of Expression of Interest for User Partner.
     """
 
     ERROR_MSG_WRONG_EOI_PKS = "At least one of given EOI primary key doesn't exists."
