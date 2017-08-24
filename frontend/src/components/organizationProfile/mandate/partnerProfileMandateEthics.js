@@ -1,20 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 
 import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
 
 const BOOL_VAL = [
   {
@@ -27,10 +17,8 @@ const BOOL_VAL = [
   },
 ];
 
-const PartnerProfileMandateEthics = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileMandateEthics = () => (
+  <FormSection name="ethics">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>
@@ -38,9 +26,11 @@ const PartnerProfileMandateEthics = (props) => {
             <Grid item sm={6} xs={12}>
               <RadioForm
                 fieldName="hasAbuseSafeguard"
-                label="Does the organization have a policy or code of conduct to safegaurd against the violation and abuse of beneficiaries?"
+                label={'Does the organization have a policy or code of conduct to safegaurd ' +
+                'against the violation and abuse of beneficiaries?'}
                 values={BOOL_VAL}
-                onFieldChange={this.handleAbuseSafeguardFieldChange}
+                optional
+                warn
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -53,6 +43,8 @@ const PartnerProfileMandateEthics = (props) => {
                     maxLength: '200',
                   },
                 }}
+                optional
+                warn
               />
             </Grid>
           </Grid>
@@ -62,9 +54,11 @@ const PartnerProfileMandateEthics = (props) => {
             <Grid item sm={6} xs={12}>
               <RadioForm
                 fieldName="hasFraudSafeguard"
-                label="Does the organization have a policy or code of conduct to safegaurd against fraud and corruption?"
+                label={'Does the organization have a policy or code of conduct to safegaurd ' +
+                'against fraud and corruption?'}
                 values={BOOL_VAL}
-                onFieldChange={this.handleFraudSafeguardFieldChange}
+                optional
+                warn
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -77,20 +71,16 @@ const PartnerProfileMandateEthics = (props) => {
                     maxLength: '200',
                   },
                 }}
+                optional
+                warn
               />
             </Grid>
           </Grid>
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileMandateEthics.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileMandateEthics);
+export default PartnerProfileMandateEthics;

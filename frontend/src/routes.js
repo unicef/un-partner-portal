@@ -8,7 +8,7 @@ import direct from './components/eois/direct';
 import partner from './components/partners/partnersHeader';
 import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
-import partnerProfile from './components/organizationProfile/partnerProfile';
+import partnerProfile from './components/organizationProfile/tabsContainer';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
 import mainContent from './components/common/mainContentWrapper';

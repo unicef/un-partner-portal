@@ -1,58 +1,58 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 
 import SelectForm from '../../forms/selectForm';
 import TextFieldForm from '../../forms/textFieldForm';
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
 
 const COUNTRY_MENU = [
+  {
+    value: 'ar',
+    label: 'Arabic',
+  },
+  {
+    value: 'ch',
+    label: 'Chinese',
+  },
+  {
+    value: 'en',
+    label: 'English',
+  },
   {
     value: 'fr',
     label: 'French',
   },
   {
-    value: 'it',
-    label: 'Italian',
+    value: 'fr',
+    label: 'French',
+  },
+  {
+    value: 'ru',
+    label: 'Russian',
+  },
+  {
+    value: 'ot',
+    label: 'Other',
   },
 ];
 
-const BOOL_VAL = [
-  {
-    value: 'yes',
-    label: 'Yes',
-  },
-  {
-    value: 'no',
-    label: 'No',
-  },
-];
 
-const PartnerProfileContactInfoLanguages = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileContactInfoLanguages = () => (
+  <FormSection name="workingLanguages">
     <Grid item>
       <Grid container direction="row">
         <Grid item sm={6} xs={12}>
           <SelectForm
             fieldName="languages"
             label="Working Language(s) of your Organization"
+            placeholder="Select language"
             values={COUNTRY_MENU}
-            onFieldChange={this.handleLanguagesFieldChange}
             selectFieldProps={{
               multiple: true,
             }}
+            optional
+            warn
           />
         </Grid>
         <Grid item sm={6} xs={12}>
@@ -60,18 +60,13 @@ const PartnerProfileContactInfoLanguages = (props) => {
             label="Please State"
             placeholder="Additional languages known"
             fieldName="extraLanguage"
+            optional
           />
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileContactInfoLanguages.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileContactInfoLanguages);
+export default PartnerProfileContactInfoLanguages;

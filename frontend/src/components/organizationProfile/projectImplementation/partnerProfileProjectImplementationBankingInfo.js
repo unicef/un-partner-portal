@@ -1,7 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 
 import SelectForm from '../../forms/selectForm';
@@ -18,19 +16,8 @@ const BOOL_VAL = [
   },
 ];
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
-
-const PartnerProfileProjectImplementationBankingInfo = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileProjectImplementationBankingInfo = () => (
+  <FormSection name="bankingInformation">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>
@@ -38,17 +25,19 @@ const PartnerProfileProjectImplementationBankingInfo = (props) => {
             fieldName="hasBankAccount"
             label="Does the organization have a bank account?"
             values={BOOL_VAL}
-            onFieldChange={this.handleHasBankAccountFieldChange}
-            infoIcon
+            optional
+            warn
           />
         </Grid>
         <Grid item>
           <SelectForm
             fieldName="hasInterestAccount"
-            label="Does the organization currently maintain, or has it previously maintained, a seperate interest-bearing account for UN funded projects that require a seperate account?"
+            label={'Does the organization currently maintain, or has it previously maintained, ' +
+            'a seperate interest-bearing account for UN funded projects that require a seperate ' +
+            'account?'}
             values={BOOL_VAL}
-            onFieldChange={this.handleHasInterestAccountFieldChange}
-            infoIcon
+            optional
+            warn
           />
         </Grid>
         <Grid item sm={6} xs={12}>
@@ -61,18 +50,14 @@ const PartnerProfileProjectImplementationBankingInfo = (props) => {
                 maxLength: '200',
               },
             }}
+            optional
+            warn
           />
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileProjectImplementationBankingInfo.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileProjectImplementationBankingInfo);
+export default PartnerProfileProjectImplementationBankingInfo;

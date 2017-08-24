@@ -1,29 +1,15 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { RadioGroup } from 'material-ui/Radio';
 import SelectField from 'material-ui-old/SelectField';
 import TextField from 'material-ui/TextField';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 
 
-export const renderRadioGroup = ({
-  className,
-  label,
-  meta: { touched, error },
-  input, ...other
-}) => (
-  <RadioGroup
-    className={className}
-    {...input}
-    {...other}
-  />
-);
-
 export const renderFormControl = ({
   className,
   label,
-  meta: { touched, error },
+  meta: { touched, error, warning },
   input,
   ...other
 }) => (
@@ -33,18 +19,18 @@ export const renderFormControl = ({
       {...input}
       {...other}
     />
-    {(touched && error) && <FormHelperText error>{error}</FormHelperText>}
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
   </div>
 );
 
 export const renderSelectField = ({
   input,
-  meta: { touched, error },
+  meta: { touched, error, warning },
   children,
   ...other
 }) => (
   <SelectField
-    errorText={touched && error}
+    errorText={(touched && error) || warning}
     {...input}
     onChange={(event, index, value) => input.onChange(value)}
     {...other}
@@ -56,15 +42,15 @@ export const renderSelectField = ({
 export const renderTextField = ({
   name,
   className,
-  meta: { touched, error },
+  meta: { touched, error, warning },
   input,
   ...other
 }) => (
   <TextField
     className={className}
     id={name}
-    error={touched && error}
-    helperText={touched && error} // hack to get error message
+    error={(touched && !!error) || !!warning}
+    helperText={(touched && error) || warning} // hack to get error message
     fullWidth
     {...input}
     {...other}

@@ -1,57 +1,44 @@
-import React, { Component } from 'react';
-
+import React from 'react';
+import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 
-import RadioForm from '../../forms/radioForm'
-import SelectForm from '../../forms/selectForm'
-import TextFieldForm from '../../forms/textFieldForm'
+
+import SelectForm from '../../forms/selectForm';
 
 const DONORS_MENU = [
   {
     value: '1',
-    label: 'Individuals'
+    label: 'Individuals',
   },
   {
     value: '2',
-    label: 'United Nations Agency'
+    label: 'United Nations Agency',
   },
   {
     value: '3',
-    label: 'Governments'
-  }
-]
+    label: 'Governments',
+  },
+];
 
-class PartnerProfileFundingDonors extends Component {
-
-  constructor(props) {
-    super(props);
-    this.state = { donors: undefined };
-    this.handleDonorFieldChange = this.handleDonorFieldChange.bind(this);
-  }
-
-  handleDonorFieldChange(value) {
-    this.setState({ donors: value });
-  }
-
-  render() {
-    return (
-      <Grid item>
-        <Grid container direction='column' gutter={16}>
-          <Grid item>
-            <SelectForm
-              fieldName='donors'
-              label='Please select the type of donors that fund your agency'
-              values={DONORS_MENU}
-              onFieldChange={this.handleDonorFieldChange}
-              selectFieldProps={{
-                              multiple: true
-                            }}
-            />
-          </Grid>
+const PartnerProfileFundingDonors = () => (
+  <FormSection name="majorDonors">
+    <Grid item>
+      <Grid container direction="column" gutter={16}>
+        <Grid item>
+          <SelectForm
+            fieldName="donors"
+            label="Please select the type of donors that fund your agency"
+            values={DONORS_MENU}
+            selectFieldProps={{
+              multiple: true,
+            }}
+            optional
+            warn
+          />
         </Grid>
       </Grid>
-    )
-  }
-};
+    </Grid>
+  </FormSection>
+);
 
 export default PartnerProfileFundingDonors;

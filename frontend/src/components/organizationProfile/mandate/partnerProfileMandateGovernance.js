@@ -1,24 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { FormSection } from 'redux-form';
+
 import Grid from 'material-ui/Grid';
 
 import TextFieldForm from '../../forms/textFieldForm';
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
 
-const PartnerProfileMandateGovernance = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileMandateGovernance = () => (
+  <FormSection name="governance" >
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>
@@ -31,18 +21,8 @@ const PartnerProfileMandateGovernance = (props) => {
                 maxLength: '200',
               },
             }}
-          />
-        </Grid>
-        <Grid item>
-          <TextFieldForm
-            label="Briefly describe the headquarters' oversight of country/branch office operations including anf reporting requirements of the country/branch offices to HQ"
-            placeholder="Please limit your response to 200 characters"
-            fieldName="oversight"
-            textFieldProps={{
-              inputProps: {
-                maxLength: '200',
-              },
-            }}
+            optional
+            warn
           />
         </Grid>
         <Grid item>
@@ -50,18 +30,14 @@ const PartnerProfileMandateGovernance = (props) => {
             label="Your most up-to-date organigram"
             placeholder="Upload File"
             fieldName="organigram"
+            optional
+            warn
           />
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileMandateGovernance.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileMandateGovernance);
+export default PartnerProfileMandateGovernance;

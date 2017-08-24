@@ -1,7 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 
 import RadioForm from '../../forms/radioForm';
@@ -18,19 +16,8 @@ const BOOL_VAL = [
   },
 ];
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
-
-const PartnerProfileProjectImplementationManagement = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileProjectImplementationManagement = () => (
+  <FormSection name="programmeManagement">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item sm={6} xs={12}>
@@ -38,7 +25,8 @@ const PartnerProfileProjectImplementationManagement = (props) => {
             fieldName="approach"
             label="Do you use a results-based approach to managing programmes and projects?"
             values={BOOL_VAL}
-            onFieldChange={this.handleApproachFieldChange}
+            optional
+            warn
           />
         </Grid>
         <Grid item sm={6} xs={12}>
@@ -51,6 +39,8 @@ const PartnerProfileProjectImplementationManagement = (props) => {
                 maxLength: '200',
               },
             }}
+            optional
+            warn
           />
         </Grid>
         <Grid item>
@@ -58,9 +48,11 @@ const PartnerProfileProjectImplementationManagement = (props) => {
             <Grid item sm={6} xs={12}>
               <RadioForm
                 fieldName="approach"
-                label="Does your organization have a system for monitoring and evaluating its projects & programmes?"
+                label={'Does your organization have a system for monitoring and evaluating ' +
+                'its projects & programmes?'}
                 values={BOOL_VAL}
-                onFieldChange={this.handleApproachFieldChange}
+                optional
+                warn
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -73,6 +65,8 @@ const PartnerProfileProjectImplementationManagement = (props) => {
                     maxLength: '200',
                   },
                 }}
+                optional
+                warn
               />
             </Grid>
           </Grid>
@@ -82,9 +76,11 @@ const PartnerProfileProjectImplementationManagement = (props) => {
             <Grid item sm={6} xs={12}>
               <RadioForm
                 fieldName="approach"
-                label="Does the organization have systems or procedures in place for beneficaries to provide feedback on prject activities?"
+                label={'Does the organization have systems or procedures in place for ' +
+                'beneficaries to provide feedback on prject activities?'}
                 values={BOOL_VAL}
-                onFieldChange={this.handleApproachFieldChange}
+                optional
+                warn
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -97,20 +93,16 @@ const PartnerProfileProjectImplementationManagement = (props) => {
                     maxLength: '200',
                   },
                 }}
+                optional
+                warn
               />
             </Grid>
           </Grid>
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileProjectImplementationManagement.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileProjectImplementationManagement);
+export default PartnerProfileProjectImplementationManagement;

@@ -1,7 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 
 import RadioForm from '../../forms/radioForm';
@@ -45,19 +43,8 @@ const ACCOUNTING_MENU = [
   },
 ];
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
-
-const PartnerProfileProjectImplementationFinancialControls = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileProjectImplementationFinancialControls = () => (
+  <FormSection name="financialControls">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>
@@ -65,8 +52,8 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
             fieldName="accountingType"
             label="Please select your organization's accounting system"
             values={ACCOUNTING_MENU}
-            onFieldChange={this.handleAccountingTypeFieldChange}
-            infoIcon
+            optional
+            warn
           />
         </Grid>
         <Grid item sm={6} xs={12}>
@@ -74,15 +61,18 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
             fieldName="method"
             label="What is the method of accounting adopted by the organization?"
             values={METHOD_VAL}
-            onFieldChange={this.handleMethodFieldChange}
+            optional
+            warn
           />
         </Grid>
         <Grid item sm={6} xs={12}>
           <RadioForm
             fieldName="tracking"
-            label="Does your organization have a system to track expenditures, prepare project reports, and prepare claims for donors?"
+            label={'Does your organization have a system to track expenditures, prepare project ' +
+            'reports, and prepare claims for donors?'}
             values={BOOL_VAL}
-            onFieldChange={this.handleApproachFieldChange}
+            optional
+            warn
           />
         </Grid>
         <Grid item sm={6} xs={12}>
@@ -95,18 +85,14 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
                 maxLength: '200',
               },
             }}
+            optional
+            warn
           />
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileProjectImplementationFinancialControls.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileProjectImplementationFinancialControls);
+export default PartnerProfileProjectImplementationFinancialControls;

@@ -1,21 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 
-import RadioForm from '../../forms/radioForm';
 import SelectForm from '../../forms/selectForm';
 import TextFieldForm from '../../forms/textFieldForm';
-
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
 
 const COUNTRY_MENU = [
   {
@@ -39,79 +28,64 @@ const ORG_VALUES = [
   },
 ];
 
-const STAFF_VALUES = [
-  {
-    value: '1',
-    label: '1-10',
-  },
-  {
-    value: '2',
-    label: '11-50',
-  },
-  {
-    value: '3',
-    label: '51-100',
-  },
-  {
-    value: '4',
-    label: '101-200',
-  },
-];
-
-const PartnerProfileIdentificationBasicInfo = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileIdentificationBasicInfo = () => (
+  <FormSection name="basicInfo">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <TextFieldForm
           label="Organization's Legal Name"
           fieldName="legalName"
+          optional
+          warn
         />
         <Grid item sm={6} xs={12}>
           <TextFieldForm
             label="Alias (if applicable)"
             fieldName="legalNameAlias"
+            placeholder="Provide alias"
             optional
+            warn
           />
         </Grid>
         <Grid item sm={6} xs={12}>
           <TextFieldForm
             label="Acronym (if applicable)"
             fieldName="acronym"
+            placeholder="Provide acronym"
             optional
+            warn
           />
         </Grid>
         <Grid item sm={6} xs={12}>
           <TextFieldForm
             label="Organization's former Legal Name"
-            fieldName="formerNAme"
+            fieldName="formerName"
+            optional
+            warn
           />
         </Grid>
         <SelectForm
           fieldName="country"
           label="Country of Origin"
           values={COUNTRY_MENU}
+          optional
+          warn
         />
         <Grid item sm={6} xs={12}>
           <SelectForm
             fieldName="organizationType"
             label="Type of organization"
             values={ORG_VALUES}
-            onFieldChange={this.handleOrgFieldChange}
             infoIcon
+            optional
+            warn
           />
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileIdentificationBasicInfo.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileIdentificationBasicInfo);
+export default PartnerProfileIdentificationBasicInfo;
+

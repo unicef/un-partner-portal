@@ -1,7 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 
 import SelectForm from '../../forms/selectForm';
@@ -18,19 +16,9 @@ const BOOL_VAL = [
   },
 ];
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
 
-const PartnerProfileProjectImplementationReporting = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileProjectImplementationReporting = () => (
+  <FormSection name="reporting">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item sm={6} xs={12}>
@@ -43,6 +31,8 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                 maxLength: '200',
               },
             }}
+            optional
+            warn
           />
         </Grid>
         <Grid item>
@@ -52,7 +42,8 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                 fieldName="annualReports"
                 label="Does the organization publish annual reports?"
                 values={BOOL_VAL}
-                onFieldChange={this.handleAnnualReportsFieldChange}
+                optional
+                warn
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -60,6 +51,8 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                 label="Date of most recent annual report"
                 placeholder="DD/MM/YYYY"
                 fieldName="date"
+                optional
+                warn
               />
             </Grid>
           </Grid>
@@ -71,6 +64,8 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                 label="Copy of your most rescent audit report"
                 placeholder="UPLOAD FILE"
                 fieldName="date"
+                optional
+                warn
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -83,20 +78,16 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                     maxLength: '200',
                   },
                 }}
+                optional
+                warn
               />
             </Grid>
           </Grid>
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileProjectImplementationReporting.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileProjectImplementationReporting);
+export default PartnerProfileProjectImplementationReporting;

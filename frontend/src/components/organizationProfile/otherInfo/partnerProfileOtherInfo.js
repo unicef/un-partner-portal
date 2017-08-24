@@ -1,41 +1,24 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 
 import PartnerProfileOtherInfoContent from './partnerProfileOtherInfoContent';
-import PartnerProfileStepper from '../partnerProfileStepper';
+import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
+
 const STEPS = [
   {
     component: <PartnerProfileOtherInfoContent />,
     label: '',
+    name: 'content',
   },
 ];
 
-const PartnerProfileOtherInfo = (props) => {
-  const { classes } = props;
+const PartnerProfileOtherInfo = () => (
+  <PartnerProfileStepperContainer
+    name="otherInfo"
+    steps={STEPS}
+    last
+  />
+);
 
-  return (
-    <div className={classes.divider}>
-      <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
-    </div>
-  );
-};
 
-PartnerProfileOtherInfo.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
-
-export default withStyles(styleSheet)(PartnerProfileOtherInfo);
+export default PartnerProfileOtherInfo;

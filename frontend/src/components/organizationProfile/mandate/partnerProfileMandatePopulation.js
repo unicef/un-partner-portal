@@ -1,20 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { FormSection } from 'redux-form';
+
 import Grid from 'material-ui/Grid';
 
 import RadioForm from '../../forms/radioForm';
 import SelectForm from '../../forms/selectForm';
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
 
 const BOOL_VAL = [
   {
@@ -46,10 +38,8 @@ const GROUP_VALUES = [
   },
 ];
 
-const PartnerProfileMandatePopulation = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileMandatePopulation = () => (
+  <FormSection name="populationOfConcern">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item sm={6} xs={12}>
@@ -57,7 +47,8 @@ const PartnerProfileMandatePopulation = (props) => {
             fieldName="popOfConcernWork"
             label="Does your organization work with populations of concern as defined by UNHCR"
             values={BOOL_VAL}
-            onFieldChange={this.handleConcernFieldChange}
+            optional
+            warn
           />
         </Grid>
         <Grid item>
@@ -65,22 +56,17 @@ const PartnerProfileMandatePopulation = (props) => {
             fieldName="languages"
             label="Please indicate which group(s)"
             values={GROUP_VALUES}
-            onFieldChange={this.handleGroupFieldChange}
             selectFieldProps={{
               multiple: true,
             }}
+            optional
+            warn
           />
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileMandatePopulation.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileMandatePopulation);
+export default PartnerProfileMandatePopulation;

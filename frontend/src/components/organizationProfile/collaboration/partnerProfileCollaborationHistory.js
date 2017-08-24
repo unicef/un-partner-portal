@@ -1,7 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { FormSection } from 'redux-form';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import { FormControl, FormLabel } from 'material-ui/Form';
 import Button from 'material-ui/Button';
@@ -9,15 +8,6 @@ import Button from 'material-ui/Button';
 import RadioForm from '../../forms/radioForm';
 import SelectForm from '../../forms/selectForm';
 import TextFieldForm from '../../forms/textFieldForm';
-
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    padding: 10,
-    backgroundColor: 'lightGrey',
-  },
-}));
 
 const PARTNER_MENU = [
   {
@@ -41,25 +31,24 @@ const BOOL_VAL = [
   },
 ];
 
-const PartnerProfileCollaborationHistory = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileCollaborationHistory = () => (
+  <FormSection name="history">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>
           <FormControl fullWidth>
             <FormLabel>{'My Partnerships'}</FormLabel>
-            <Grid item className={classes.divider}>
+            <Grid item >
               <Grid container direction="column" gutter={16}>
                 <Grid item>
                   <Grid container direction="row">
                     <Grid item sm={6} xs={12}>
                       <SelectForm
                         fieldName="organization"
-                        label="Select UN agency your organization has ever collaborated with (optional)"
-
+                        label={'Select UN agency your organization has ever collaborated with ' +
+                        '(optional)'}
                         values={PARTNER_MENU}
+                        optional
                       />
                     </Grid>
                   </Grid>
@@ -67,7 +56,7 @@ const PartnerProfileCollaborationHistory = (props) => {
               </Grid>
             </Grid>
             <Grid item>
-              <Grid item className={classes.divider}>
+              <Grid item>
                 <Grid container direction="column" gutter={16}>
                   <Grid item sm={6} xs={12}>
                     <TextFieldForm
@@ -79,6 +68,7 @@ const PartnerProfileCollaborationHistory = (props) => {
                           maxLength: '200',
                         },
                       }}
+                      optional
                     />
                   </Grid>
                   <Grid item sm={6} xs={12}>
@@ -91,6 +81,7 @@ const PartnerProfileCollaborationHistory = (props) => {
                           maxLength: '200',
                         },
                       }}
+                      optional
                     />
                   </Grid>
                 </Grid>
@@ -103,7 +94,7 @@ const PartnerProfileCollaborationHistory = (props) => {
                 label="GitHub Link"
                 secondary
               >
-                    + Add new
+                + Add new
               </Button>
             </Grid>
           </FormControl>
@@ -116,18 +107,23 @@ const PartnerProfileCollaborationHistory = (props) => {
             selectFieldProps={{
               multiple: true,
             }}
+
           />
         </Grid>
         <Grid item sm={6} xs={12}>
           <RadioForm
             fieldName="hasFraudSafeguard"
-            label="Has the organization collaborated with a member of a cluster, professional network, consortium or any similar institution?"
+            label={'Has the organization collaborated with a member of a cluster, professional ' +
+            'network, consortium or any similar institution?'}
             values={BOOL_VAL}
+            optional
+            warn
           />
         </Grid>
         <Grid item sm={6} xs={12}>
           <TextFieldForm
-            label="Please state which cluster, network or consortium and briefly explain the collaboration"
+            label={'Please state which cluster, network or consortium and briefly explain the ' +
+            'collaboration'}
             placeholder=""
             fieldName="fraudSafeguardComment"
             textFieldProps={{
@@ -135,18 +131,14 @@ const PartnerProfileCollaborationHistory = (props) => {
                 maxLength: '200',
               },
             }}
+            optional
+            warn
           />
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileCollaborationHistory.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileCollaborationHistory);
+export default PartnerProfileCollaborationHistory;

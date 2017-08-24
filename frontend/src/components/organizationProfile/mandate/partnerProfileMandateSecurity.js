@@ -1,20 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { FormSection } from 'redux-form';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
 import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
 
 const BOOL_VAL = [
   {
@@ -27,54 +18,52 @@ const BOOL_VAL = [
   },
 ];
 
-const PartnerProfileMandateSecurity = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileMandateSecurity = () => (
+  <FormSection name="security">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>
           <Grid container direction="row">
             <Grid item sm={6} xs={12}>
               <RadioForm
-                fieldName="hasAbuseSafeguard"
-                label="Does the organization have a policy or code of conduct to safegaurd against the violation and abuse of beneficiaries?"
+                fieldName="hasAbility"
+                label={'Does the organization have the ablility to work in high-risk securit' +
+                'locations?'}
                 values={BOOL_VAL}
-                onFieldChange={this.handleAbuseSafeguardFieldChange}
+                optional
+                warn
               />
             </Grid>
             <Grid item sm={6} xs={12}>
               <RadioForm
-                fieldName="hasAbuseSafeguard"
-                label="Does the organization have a policy or code of conduct to safegaurd against the violation and abuse of beneficiaries?"
+                fieldName="hasPolicies"
+                label={'Does the organization have policies, procedures and practices related to ' +
+                'security risk management?'}
                 values={BOOL_VAL}
-                onFieldChange={this.handleAbuseSafeguardFieldChange}
+                optional
+                warn
               />
             </Grid>
           </Grid>
         </Grid>
-        <Grid item sm={6} xs={12}>
+        <Grid item >
           <TextFieldForm
-            label="Please comment"
-            placeholder=""
-            fieldName="fraudSafeguardComment"
+            label={'Briefly describe the organization\'s ability, if any, to scale-up ' +
+            'operations in emergencies or other situations requiring rapid response.'}
+            placeholder="Please comment"
+            fieldName="emergencyComment"
             textFieldProps={{
               inputProps: {
                 maxLength: '200',
               },
             }}
+            optional
           />
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileMandateSecurity.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileMandateSecurity);
+export default PartnerProfileMandateSecurity;

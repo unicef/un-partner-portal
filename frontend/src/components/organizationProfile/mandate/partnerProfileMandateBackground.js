@@ -1,29 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-
+import { FormSection } from 'redux-form';
 import TextFieldForm from '../../forms/textFieldForm';
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
-
-const PartnerProfileMandateBackground = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileMandateBackground = () => (
+  <FormSection name="background">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>
           <TextFieldForm
-            label="Briefly state the background and rationale for the establishment of the organization"
+            label={'Briefly state the background and rationale for the establishment of the ' +
+            'organization'}
             placeholder="Please limit your response to 400 characters"
             fieldName="background"
             textFieldProps={{
@@ -31,6 +18,8 @@ const PartnerProfileMandateBackground = (props) => {
                 maxLength: '400',
               },
             }}
+            optional
+            warn
           />
         </Grid>
         <Grid item>
@@ -43,19 +32,14 @@ const PartnerProfileMandateBackground = (props) => {
                 maxLength: '400',
               },
             }}
+            optional
+            warn
           />
         </Grid>
       </Grid>
     </Grid>
+  </FormSection>
+);
 
-  );
-};
 
-PartnerProfileMandateBackground.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
-
-export default withStyles(styleSheet)(PartnerProfileMandateBackground);
+export default PartnerProfileMandateBackground;

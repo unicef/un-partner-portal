@@ -1,21 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 
 import RadioForm from '../../forms/radioForm';
 import SelectForm from '../../forms/selectForm';
 import TextFieldForm from '../../forms/textFieldForm';
-
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
 
 const COUNTRY_MENU = [
   {
@@ -39,10 +29,8 @@ const ADDRESS_VALUES = [
   },
 ];
 
-const PartnerProfileContactInfoAddress = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileContactInfoAddress = () => (
+  <FormSection name="mailingAddress">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item sm={6} xs={12}>
@@ -50,34 +38,40 @@ const PartnerProfileContactInfoAddress = (props) => {
             fieldName="addressType"
             label="Type of Mailing Address"
             values={ADDRESS_VALUES}
-            onFieldChange={this.handleAddressFieldChange}
+            optional
+            warn
           />
         </Grid>
         <Grid item>
           <Grid container direction="row">
-            <Grid item sm={6} xs={12}>
+            <Grid item sm={3} xs={12}>
               <TextFieldForm
                 label="Street Address or PO Box Number"
                 placeholder=""
                 fieldName="streetAddress"
+                optional
+                warn
               />
             </Grid>
-            <Grid item sm={6} xs={12}>
+            <Grid item sm={3} xs={12}>
               <TextFieldForm
                 label="City"
                 placeholder=""
                 fieldName="city"
+                optional
+                warn
               />
             </Grid>
-            <Grid item sm={6} xs={12}>
+            <Grid item sm={3} xs={12}>
               <SelectForm
                 fieldName="country"
                 label="Country"
                 values={COUNTRY_MENU}
-                onFieldChange={this.handleCountryFieldChange}
+                optional
+                warn
               />
             </Grid>
-            <Grid item sm={6} xs={12}>
+            <Grid item sm={3} xs={12}>
               <TextFieldForm
                 label="Zip Code (optional)"
                 placeholder=""
@@ -85,19 +79,16 @@ const PartnerProfileContactInfoAddress = (props) => {
                 optional
               />
             </Grid>
-          </Grid>
-        </Grid>
-        <Grid item>
-          <Grid container direction="row">
-            <Grid item sm={6} xs={12}>
+            <Grid item sm={3} xs={12}>
               <TextFieldForm
                 label="Telephone"
                 placeholder=""
                 fieldName="telephone"
                 optional
+                warn
               />
             </Grid>
-            <Grid item sm={6} xs={12}>
+            <Grid item sm={3} xs={12}>
               <TextFieldForm
                 label="Fax (optional"
                 placeholder=""
@@ -105,7 +96,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                 optional
               />
             </Grid>
-            <Grid item sm={6} xs={12}>
+            <Grid item sm={3} xs={12}>
               <TextFieldForm
                 label="Website (optional)"
                 placeholder=""
@@ -113,7 +104,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                 optional
               />
             </Grid>
-            <Grid item sm={6} xs={12}>
+            <Grid item sm={3} xs={12}>
               <TextFieldForm
                 label="Organization Email (optional)"
                 placeholder=""
@@ -125,14 +116,8 @@ const PartnerProfileContactInfoAddress = (props) => {
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileContactInfoAddress.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileContactInfoAddress);
+export default PartnerProfileContactInfoAddress;

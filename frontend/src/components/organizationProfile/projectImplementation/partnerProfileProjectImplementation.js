@@ -1,7 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 
 import PartnerProfileProjectImplementationManagement from './partnerProfileProjectImplementationManagement';
 import PartnerProfileProjectImplementationFinancialControls from './partnerProfileProjectImplementationFinancialControls';
@@ -9,59 +6,47 @@ import PartnerProfileProjectImplementationInternalControls from './partnerProfil
 import PartnerProfileProjectImplementationBankingInfo from './partnerProfileProjectImplementationBankingInfo';
 import PartnerProfileProjectImplementationAudit from './partnerProfileProjectImplementationAudit';
 import PartnerProfileProjectImplementationReporting from './partnerProfileProjectImplementationReporting';
-import PartnerProfileStepper from '../partnerProfileStepper';
-
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
+import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 
 const STEPS = [
   {
     component: <PartnerProfileProjectImplementationManagement />,
     label: 'Programme Management',
+    name: 'programmeManagement',
   },
   {
     component: <PartnerProfileProjectImplementationFinancialControls />,
     label: 'Financial Controls',
+    name: 'financialControls',
   },
   {
     component: <PartnerProfileProjectImplementationInternalControls />,
     label: 'Internal Controls',
+    name: 'internalControls',
   },
   {
     component: <PartnerProfileProjectImplementationBankingInfo />,
     label: 'Banking Information',
+    name: 'bankingInformation',
   },
   {
     component: <PartnerProfileProjectImplementationAudit />,
     label: 'Audit & Assessments',
+    name: 'auditAssessment',
   },
   {
     component: <PartnerProfileProjectImplementationReporting />,
     label: 'Reporting',
+    name: 'reporting',
   },
 ];
 
-const PartnerProfileProjectImplementation = (props) => {
-  const { classes } = props;
+const PartnerProfileProjectImplementation = () => (
+  <PartnerProfileStepperContainer
+    name="implementation"
+    steps={STEPS}
+  />
+);
 
-  return (
-    <div className={classes.divider}>
-      <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
-    </div>
-  );
-};
 
-PartnerProfileProjectImplementation.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
-
-export default withStyles(styleSheet)(PartnerProfileProjectImplementation);
+export default PartnerProfileProjectImplementation;

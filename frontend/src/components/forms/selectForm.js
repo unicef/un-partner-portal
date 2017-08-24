@@ -7,7 +7,7 @@ import Grid from 'material-ui/Grid';
 import { MenuItem } from 'material-ui-old/Menu';
 
 import { renderSelectField } from '../../helpers/formHelper';
-import { required } from '../../helpers/validation';
+import { required, warning } from '../../helpers/validation';
 import TooltipIcon from '../common/tooltipIcon';
 
 class SelectForm extends Component {
@@ -51,11 +51,12 @@ class SelectForm extends Component {
       infoIcon,
       infoText,
       label,
-      optional,
       placeholder,
       selectFieldProps,
-      validation,
       values,
+      warn,
+      optional,
+      validation,
     } = this.props;
 
     return (
@@ -69,8 +70,9 @@ class SelectForm extends Component {
               floatingLabelFixed
               floatingLabelText={label}
               hintText={placeholder || `Select ${label.toLowerCase()}`}
-              onChange={this.handleChange}
               validate={optional ? [] : [required].concat(validation || [])}
+              warn={warn && warning}
+              onChange={this.handleChange}
               style={{
                 height: '56px',
               }}
@@ -82,11 +84,14 @@ class SelectForm extends Component {
               }}
               iconStyle={{
                 fill: 'rgba(0, 0, 0, 0.42)',
-                top: '-5px',
+                top: '10px',
               }}
               underlineStyle={{
                 'border-top': '1px solid rgba(0, 0, 0, 0.42)',
                 bottom: '6px',
+              }}
+              errorStyle={{
+                bottom: 0,
               }}
               fullWidth
             >
@@ -152,9 +157,13 @@ SelectForm.propTypes = {
    */
   validation: PropTypes.arrayOf(PropTypes.func),
   /**
+   * if field should display warning
+   */
+  warn: PropTypes.bool,
+  /**
    * props passed to wrapped SelectField
    */
-  selectFieldProps: PropTypes.node,
+  selectFieldProps: PropTypes.object,
 };
 
 export default SelectForm;

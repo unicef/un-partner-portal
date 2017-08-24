@@ -43,7 +43,7 @@ const styleSheet = createStyleSheet('EoiFilter', theme => ({
 
 const handleSubmit = (values) => {
 
-}
+};
 
 const EoiFilter = (props) => {
   const { classes, handleSubmit, reset } = props;

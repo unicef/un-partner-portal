@@ -1,11 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { FormSection } from 'redux-form';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 
-import { FormControl, FormLabel } from 'material-ui/Form';
+import { FormLabel } from 'material-ui/Form';
 
 import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
@@ -21,19 +20,8 @@ const BOOL_VAL = [
   },
 ];
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
-
-const PartnerProfileProjectImplementationInternalControls = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileProjectImplementationInternalControls = () => (
+  <FormSection name="internalControls">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>
@@ -49,8 +37,8 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
                       fieldName="procurementSegregated"
                       label="Procurement"
                       values={BOOL_VAL}
-                      onFieldChange={this.handleProcurementFieldChange}
-                      infoIcon
+                      optional
+                      warn
                     />
                   </Grid>
                   <Grid item sm={6} xs={12}>
@@ -63,6 +51,8 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
                           maxLength: '200',
                         },
                       }}
+                      optional
+                      warn
                     />
                   </Grid>
                   <div />
@@ -75,8 +65,8 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
                       fieldName="authorizationSegregated"
                       label="Authorization to execute a transaction"
                       values={BOOL_VAL}
-                      onFieldChange={this.handleAuthorizationFieldChange}
-                      infoIcon
+                      optional
+                      warn
                     />
                   </Grid>
                   <Grid item sm={6} xs={12}>
@@ -89,6 +79,8 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
                           maxLength: '200',
                         },
                       }}
+                      optional
+                      warn
                     />
                   </Grid>
                 </Grid>
@@ -100,8 +92,8 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
                       fieldName="transactionRecordingSegregated"
                       label="Recording of a transaction"
                       values={BOOL_VAL}
-                      onFieldChange={this.handleTransactionFieldChange}
-                      infoIcon
+                      optional
+                      warn
                     />
                   </Grid>
                   <Grid item sm={6} xs={12}>
@@ -114,6 +106,8 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
                           maxLength: '200',
                         },
                       }}
+                      optional
+                      warn
                     />
                   </Grid>
                 </Grid>
@@ -126,10 +120,11 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
             <Grid item sm={6} xs={12}>
               <RadioForm
                 fieldName="adequateStaff"
-                label="Does the organization have an adequate number of experienced staff responsible for financial management?"
+                label={'Does the organization have an adequate number of experienced staff ' + 
+                'responsible for financial management?'}
                 values={BOOL_VAL}
-                onFieldChange={this.handleAdequateStaffFieldChange}
-                infoIcon
+                optional
+                warn
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -142,6 +137,8 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
                     maxLength: '200',
                   },
                 }}
+                optional
+                warn
               />
             </Grid>
           </Grid>
@@ -157,8 +154,8 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
                   fieldName="documentedHR"
                   label="Human Resources"
                   values={BOOL_VAL}
-                  onFieldChange={this.handleHRFieldChange}
-                  infoIcon
+                  optional
+                  warn
                 />
               </Grid>
               <Grid item sm={6} xs={12}>
@@ -166,8 +163,8 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
                   fieldName="documentedProcurement"
                   label="Procurement"
                   values={BOOL_VAL}
-                  onFieldChange={this.handleDocumentedProcurementFieldChange}
-                  infoIcon
+                  optional
+                  warn
                 />
               </Grid>
             </Grid>
@@ -175,14 +172,8 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
         </Grid>
       </Grid>
     </Grid>
-  );
-};
+  </FormSection>
+);
 
-PartnerProfileProjectImplementationInternalControls.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
 
-export default withStyles(styleSheet)(PartnerProfileProjectImplementationInternalControls);
+export default PartnerProfileProjectImplementationInternalControls;

@@ -1,20 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { FormSection } from 'redux-form';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
 import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
 
 const BOOL_VAL = [
   {
@@ -27,10 +18,8 @@ const BOOL_VAL = [
   },
 ];
 
-const PartnerProfileContactInfoOfficials = (props) => {
-  const { classes } = props;
-
-  return (
+const PartnerProfileContactInfoOfficials = () => (
+  <FormSection name="authorizedOfficials">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item sm={6} xs={12}>
@@ -102,15 +91,8 @@ const PartnerProfileContactInfoOfficials = (props) => {
         </Grid>
       </Grid>
     </Grid>
+  </FormSection>
+);
 
-  );
-};
 
-PartnerProfileContactInfoOfficials.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
-
-export default withStyles(styleSheet)(PartnerProfileContactInfoOfficials);
+export default PartnerProfileContactInfoOfficials;

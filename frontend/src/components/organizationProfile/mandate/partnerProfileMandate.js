@@ -1,7 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 
 import PartnerProfileMandateBackground from './partnerProfileMandateBackground';
 import PartnerProfileMandateGovernance from './partnerProfileMandateGovernance';
@@ -10,63 +7,52 @@ import PartnerProfileMandateExperience from './partnerProfileMandateExperience';
 import PartnerProfileMandatePopulation from './partnerProfileMandatePopulation';
 import PartnerProfileMandateCountryPresence from './partnerProfileMandateCountryPresence';
 import PartnerProfileMandateSecurity from './partnerProfileMandateSecurity';
-import PartnerProfileStepper from '../partnerProfileStepper';
-
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
-  root: {
-  },
-  divider: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
+import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 
 const STEPS = [
   {
     component: <PartnerProfileMandateBackground />,
     label: 'Background',
+    name: 'background',
   },
   {
     component: <PartnerProfileMandateGovernance />,
     label: 'Governance',
+    name: 'governance',
   },
   {
     component: <PartnerProfileMandateEthics />,
     label: 'Ethics',
+    name: 'ethics',
   },
   {
     component: <PartnerProfileMandateExperience />,
     label: 'Experience',
+    name: 'experience',
   },
   {
     component: <PartnerProfileMandatePopulation />,
     label: 'Population of Concern',
+    name: 'populationOfConcern',
   },
   {
     component: <PartnerProfileMandateCountryPresence />,
     label: 'Country Presence',
+    name: 'countryPresence',
   },
   {
     component: <PartnerProfileMandateSecurity />,
     label: 'Security',
+    name: 'security',
   },
 ];
 
-const PartnerProfileMandate = (props) => {
-  const { classes } = props;
+const PartnerProfileMandate = () => (
+  <PartnerProfileStepperContainer
+    name="mandateMission"
+    steps={STEPS}
+  />
+);
 
-  return (
-    <div className={classes.divider}>
-      <PartnerProfileStepper onSubmit={this.handleSubmit} first steps={STEPS} />
-    </div>
-  );
-};
 
-PartnerProfileMandate.propTypes = {
-  /**
-   * css classes
-   */
-  classes: PropTypes.object,
-};
-
-export default withStyles(styleSheet)(PartnerProfileMandate);
+export default PartnerProfileMandate;

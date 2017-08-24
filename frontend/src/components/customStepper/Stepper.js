@@ -7,7 +7,7 @@ import Paper from 'material-ui/Paper';
 
 import StepConnector from './StepConnector';
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
+export const styleSheet = createStyleSheet('MuiStepper', () => ({
   root: {
     display: 'flex',
     alignContent: 'center',

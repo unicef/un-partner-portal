@@ -1,65 +1,66 @@
 import React, { Component } from 'react';
-import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
 
+
+import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 
+import ProfileStepContainer from './profileStepContainer';
 import {
   Stepper,
-  Step,
-  StepContent,
-  StepLabel,
 } from '../customStepper';
 
-class partnerProfileStep extends Component {
+export const styleSheet = createStyleSheet('MuiStepper', () => ({
+  root: {
+    maxWidth: '100%',
+    padding: '1em 1em 3em',
+  },
+}));
+
+class partnerProfileStepper extends Component {
   render() {
-    const { handleSubmit, handlePrev, last, first, steps } = this.props;
-    const sections = steps.map((item) => {
+    const { classes, handleSubmit, handlePrev, steps, last } = this.props;
+    const sections = steps.map((item, index) => {
       const section = (
-        <Step>
-          <StepLabel>{item.label}</StepLabel>
-          <StepContent>
-            {item.component}
-          </StepContent>
-        </Step>
+        <ProfileStepContainer item={item} index={index} />
       );
       return section;
     });
 
     return (
-      <form onSubmit={handleSubmit}>
-        <Grid container direction="column" xs={12} >
-          <Stepper linear activeStep={0} orientation="vertical" allActive>
-            {sections}
-          </Stepper>
-          <Grid item>
-            <Grid container direction="row" spacing={8}>
-              <Grid item>
-                <Button
-                  color="accent"
-                  raised
-                  onTouchTap={handleSubmit}
-                >
-                  {(last) ? 'Submit' : 'SAVE & CONTINUE'}
-                </Button>
-              </Grid>
-              <Grid item>
-                {(!first && <Button
-                  onTouchTap={handlePrev}
-                >
-                  {'SAVE & EXIT'}
-                </Button>)}
-              </Grid>
+      <Grid container direction="column" xs={12} className={classes.root} >
+        <Stepper linear activeStep={0} orientation="vertical" allActive>
+          {sections}
+        </Stepper>
+        <Grid item>
+          <Grid container direction="row" gutter={8}>
+            {!last && <Grid item>
+              <Button
+                color="accent"
+                raised
+                onTouchTap={handleSubmit}
+              >
+                {'SAVE & CONTINUE'}
+              </Button>
+            </Grid>}
+            <Grid item>
+              <Button
+                raised={last}
+                onTouchTap={handlePrev}
+              >
+                {'SAVE & EXIT'}
+              </Button>
             </Grid>
           </Grid>
         </Grid>
-      </form >
+      </Grid>
     );
   }
 }
 
-partnerProfileStep.propTypes = {
+partnerProfileStepper.propTypes = {
+  classes: PropTypes.object,
   /**
    * callback for 'next' button
    */
@@ -73,17 +74,9 @@ partnerProfileStep.propTypes = {
    */
   steps: PropTypes.node.isRequired,
   /**
-   * whether step is the first, to control buttons appearance
-   */
-  first: PropTypes.boolean,
-  /**
    * whether step is the last, to control buttons appearance
    */
   last: PropTypes.boolean,
 };
 
-export default reduxForm({
-  form: 'partnerProfile', // a unique identifier for this form
-  destroyOnUnmount: false, // <------ preserve form data
-  forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-})(partnerProfileStep);
+export default withStyles(styleSheet)(partnerProfileStepper);
