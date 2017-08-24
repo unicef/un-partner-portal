@@ -8,6 +8,8 @@ from common.factories import (
     AgencyMemberFactory,
     EOIFactory,
 )
+from partner.models import Partner
+from project.models import EOI
 
 
 def clean_up_data_in_db():
@@ -46,3 +48,8 @@ def generate_fake_data(quantity=4):
     for idx in xrange(0, quantity):
         EOIFactory(display_type=EOI_TYPES.direct)
     print "{} direct EOI objects created".format(quantity)
+
+    for eoi in EOI.objects.filter(display_type=EOI_TYPES.direct):
+        for partner in Partner.objects.all():
+            eoi.invited_partners.add(partner)
+    print "All partners invited to direct EOI."
