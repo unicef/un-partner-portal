@@ -11,11 +11,11 @@ from rest_framework import status as statuses
 from account.models import User
 from agency.models import AgencyOffice
 from project.models import EOI, Pin
-from partner.models import Partner
 from common.tests.base import BaseAPITestCase
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.factories import EOIFactory, AgencyMemberFactory
 from common.models import Specialization
+from common.consts import SELECTION_CRITERIA_CHOICES, SCALE_TYPES
 from project.views import PinProjectAPIView
 
 
@@ -97,39 +97,48 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         cn_template = open(filename).read()
         ao = AgencyOffice.objects.first()
         payload = {
-            'title': "EOI title",
-            'country_code': COUNTRIES_ALPHA2_CODE[0][0],
-            'agency': ao.agency.id,
-            'focal_point': User.objects.first().id,
-            'locations': [
+            'eoi': {
+                'title': "EOI title",
+                'country_code': COUNTRIES_ALPHA2_CODE[0][0],
+                'agency': ao.agency.id,
+                'focal_point': User.objects.first().id,
+                'locations': [
+                    {
+                        "country_code": 'IQ',
+                        "admin_level_1": "Baghdad, Abu Gharaib, Algaara",
+                        "lat": random.randint(-180, 180),
+                        "lon": random.randint(-180, 180),
+                    },
+                    {
+                        "country_code": "FR",
+                        "admin_level_1": "Paris",
+                        "lat": random.randint(-180, 180),
+                        "lon": random.randint(-180, 180),
+                    },
+                ],
+                'agency_office': ao.id,
+                'cn_template': cn_template,
+                'specializations': Specialization.objects.all().values_list('id', flat=True)[:2],
+                'description': 'Brief background of the project',
+                'other_information': 'Other information',
+                'start_date': date.today(),
+                'end_date': date.today(),
+                'deadline_date': date.today(),
+                'notif_results_date': date.today(),
+                'has_weighting': True,
+            },
+            'assessment_criterias': [
                 {
-                    "country_code": 'IQ',
-                    "admin_level_1": "Baghdad, Abu Gharaib, Algaara",
-                    "lat": random.randint(-180, 180),
-                    "lon": random.randint(-180, 180),
-                },
-                {
-                    "country_code": "FR",
-                    "admin_level_1": "Paris",
-                    "lat": random.randint(-180, 180),
-                    "lon": random.randint(-180, 180),
-                },
-            ],
-            'agency_office': ao.id,
-            'cn_template': cn_template,
-            'specializations': Specialization.objects.all().values_list('id', flat=True)[:2],
-            'description': 'Brief background of the project',
-            'other_information': 'Other information',
-            'start_date': date.today(),
-            'end_date': date.today(),
-            'deadline_date': date.today(),
-            'notif_results_date': date.today(),
-            'has_weighting': True,
-            'invited_partners': Partner.objects.all().values_list('id', flat=True)[:2],
-            'reviewers': User.objects.all().values_list('id', flat=True)[:2],
+                    "display_type": SELECTION_CRITERIA_CHOICES.project_management,
+                    "scale": SCALE_TYPES.standard,
+                    "weight": random.randint(0, 100),
+                    "description": "test",
+                }
+            ]
         }
 
         response = self.client.post(self.url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
-        self.assertEquals(response.data['title'], payload['title'])
-        self.assertEquals(response.data['created_by'], self.user.id)
+        self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
+        self.assertEquals(response.data['eoi']['created_by'], self.user.id)
+        self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
