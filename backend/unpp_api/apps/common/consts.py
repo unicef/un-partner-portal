@@ -133,3 +133,19 @@ FORMAL_CAPACITY_ASSESSMENT = Choices(
     ('EUE', 'eu_echo', 'EU/ECHO Framework Partnership Agreement (FPA) assessment'),
     ('Oth', 'other', 'Other formal capacity assessment'),
 )
+
+SELECTION_CRITERIA_CHOICES = Choices(
+    ('SEE', 'sector', 'Sector expertise and experience'),
+    ('Pro', 'project_management', 'Project management'),
+    ('LEP', 'local', 'Local experience and presence'),
+    ('Con', 'contribution', 'Contribution of resource'),
+    ('Cos', 'cost', 'Cost effectiveness'),
+    ('Exp', 'experience', 'Experience working with UN'),
+    ('Rel', 'relevance', 'Relevance of proposal to achieving expected results'),
+    ('Cla', 'clarity', 'Clarity of activities and expected results'),
+    ('Inn', 'innovative', 'Innovative approach'),
+    ('Sus', 'sustainability', 'Sustainability of intervention'),
+    ('Rea', 'realistic', 'Realistic timelines and plans'),
+    ('ASC', 'access', 'Access/security considerations'),
+    ('Oth', 'other', 'Other'),
+)
