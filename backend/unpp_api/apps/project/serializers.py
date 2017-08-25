@@ -8,7 +8,7 @@ from common.models import Sector, Point
 from .models import EOI, AssessmentCriteria
 
 
-class AssessmentCriteriasSerializer(serializers.ModelSerializer):
+class AssessmentCriteriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = AssessmentCriteria
         exclude = ('eoi', )
@@ -52,7 +52,7 @@ class CreateEOISerializer(serializers.ModelSerializer):
 class CreateProjectSerializer(serializers.Serializer):
 
     eoi = CreateEOISerializer()
-    assessment_criterias = AssessmentCriteriasSerializer(many=True)
+    assessment_criterias = AssessmentCriteriaSerializer(many=True)
 
     @transaction.atomic
     def create(self, validated_data):
