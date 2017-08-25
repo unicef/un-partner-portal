@@ -4,7 +4,7 @@ from django.db import transaction
 from rest_framework import serializers
 from agency.serializers import AgencySerializer
 from common.serializers import ConfigSectorSerializer, PointSerializer
-from common.models import Sector, Point
+from common.models import Sector, Point, AdminLevel1
 from .models import EOI, AssessmentCriteria
 
 
@@ -66,6 +66,7 @@ class CreateProjectSerializer(serializers.Serializer):
         eoi = EOI.objects.create(**validated_data['eoi'])
 
         for location in locations:
+            location['admin_level_1'], created = AdminLevel1.objects.get_or_create(**location['admin_level_1'])
             point, created = Point.objects.get_or_create(**location)
             eoi.locations.add(point)
 

@@ -105,13 +105,13 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
                 'locations': [
                     {
                         "country_code": 'IQ',
-                        "admin_level_1": "Baghdad, Abu Gharaib, Algaara",
+                        "admin_level_1": {"name": "Baghdad"},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
                     {
                         "country_code": "FR",
-                        "admin_level_1": "Paris",
+                        "admin_level_1": {"name": "Paris"},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
