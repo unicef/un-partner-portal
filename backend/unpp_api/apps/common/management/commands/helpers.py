@@ -4,6 +4,7 @@ from account.models import User, UserProfile
 from common.consts import EOI_TYPES
 from common.factories import (
     PartnerFactory,
+    PartnerProfileFactory,
     PartnerMemberFactory,
     AgencyMemberFactory,
     EOIFactory,
@@ -31,8 +32,11 @@ def generate_fake_data(quantity=4):
     admin.save()
     print "Superuser created:{}/{}".format(admin.username, password)
 
-    PartnerFactory.create_batch(quantity)
-    print "{} Partner objects created".format(quantity)
+    PartnerFactory.create_batch(quantity/2)
+    print "{} Partner objects created".format(quantity/2)
+
+    PartnerProfileFactory.create_batch(quantity/2)
+    print "{} Partner Profile objects created".format(quantity/2)
 
     PartnerMemberFactory.create_batch(quantity/2)
     print "{} PartnerMember objects created".format(quantity/2)

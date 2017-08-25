@@ -7,7 +7,7 @@ from factory import fuzzy
 from account.models import User, UserProfile
 from agency.models import Agency, AgencyOffice, AgencyMember
 from common.models import Sector, Specialization
-from partner.models import Partner, PartnerMember
+from partner.models import Partner, PartnerProfile, PartnerMember
 from project.models import EOI
 from .consts import (
     PARTNER_TYPES,
@@ -23,8 +23,36 @@ def get_agency_member():
     return User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?").first()
 
 
+def get_partner():
+    return Partner.objects.all().order_by("?").first()
+
+
 def get_country_list(quantity=3):
     return [random.choice(COUNTRIES) for idx in xrange(0, quantity)]
+
+
+def get_first_name():
+    return random.choice([
+        "William",
+        "Lizzy",
+        "Jack"
+    ])
+
+
+def get_last_name():
+    return random.choice([
+        "Collins",
+        "Bennet",
+        "Sparow",
+    ])
+
+
+def get_job_title():
+    return random.choice([
+        'Project Manager',
+        'PM Assistant',
+        'Head'
+    ])
 
 
 class GroupFactory(factory.django.DjangoModelFactory):
@@ -72,10 +100,24 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         model = Partner
 
 
+class PartnerProfileFactory(factory.django.DjangoModelFactory):
+    partner = factory.LazyFunction(get_partner)
+    alias_name = factory.Sequence(lambda n: "aliast name {}".format(n))
+    org_head_first_name = factory.LazyFunction(get_first_name)
+    org_head_last_name = factory.LazyFunction(get_last_name)
+    org_head_email = factory.Sequence(lambda n: "fake-partner-head-{}@unicef.org".format(n))
+    org_head_job_title = factory.LazyFunction(get_job_title)
+    org_head_telephonee = "+48 22 568 03 00"
+    working_languages = factory.LazyFunction(get_country_list)
+
+    class Meta:
+        model = PartnerProfile
+
+
 class PartnerMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
-    partner = factory.SubFactory(PartnerFactory)
-    title = random.choice(['Project Manager', 'PM Assistant', 'Agent'])
+    partner = factory.LazyFunction(get_partner)
+    title = factory.LazyFunction(get_job_title)
     status = MEMBER_STATUSES.active
 
     class Meta:
