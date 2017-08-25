@@ -5,11 +5,9 @@ import {
 } from 'material-ui/Table';
 import Grid from 'material-ui/Grid';
 
-import PinHeaderIcon from './icons/pinHeaderIcon';
-import EoiStatusWithIconsCell from './cells/eoiStatusWithIconsCell';
-import SelectableTable from '../common/table/selectableTable';
+import RegularTable from '../common/table/regularTable';
 import EoiSectorCell from './cells/eoiSectorCell';
-import { columnData } from './overview';
+import { columnData, renderCells } from './overview';
 import EoiFilter from './filters/eoiFilter';
 
 const messages = {
@@ -25,35 +23,6 @@ const mockData = [
   { name: 'Capacity building for small rural farmers in Kanada', country: 'Kanada', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '29 Jun 2017', startDate: '30 Sep 2017', status: 2, pinned: true },
 ];
 
-const renderCells = (item, classes, hoverOn) => ([
-  <TableCell className={`${classes.limitedCell}`}>
-    {item.name}
-  </TableCell>,
-  <TableCell >
-    {item.country}
-  </TableCell>,
-  <TableCell >
-    <EoiSectorCell data={item.sector} id={item.id} />
-  </TableCell>,
-  <TableCell >
-    {item.agency}
-  </TableCell>,
-  <TableCell >
-    {item.deadline}
-  </TableCell>,
-  <TableCell >
-    {item.startDate}
-  </TableCell>,
-  <TableCell >
-    <EoiStatusWithIconsCell
-      item={item}
-      hoverOn={hoverOn}
-      message={messages.tooltip}
-      simple
-    />
-  </TableCell>,
-]);
-
 const Pinned = () => (
 
   <Grid container direction="column" gutter={40}>
@@ -61,12 +30,11 @@ const Pinned = () => (
       <EoiFilter />
     </Grid>
     <Grid item>
-      <SelectableTable
+      <RegularTable
         data={mockData}
         columnData={columnData}
         title={messages.title}
         renderTableCells={renderCells}
-        toolbarIcons={<PinHeaderIcon />}
       />
     </Grid>
   </Grid>

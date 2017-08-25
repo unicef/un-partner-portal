@@ -14,7 +14,7 @@ const STEPS = [
 
 const PartnerProfileOtherInfo = () => (
   <PartnerProfileStepperContainer
-    name="otherInfo"
+    name="otherInformation"
     steps={STEPS}
     last
   />

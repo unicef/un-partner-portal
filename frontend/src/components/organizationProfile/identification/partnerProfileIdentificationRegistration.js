@@ -8,6 +8,7 @@ import Grid from 'material-ui/Grid';
 import RadioForm from '../../forms/radioForm';
 import SelectForm from '../../forms/selectForm';
 import TextFieldForm from '../../forms/textFieldForm';
+import DatePickerForm from '../../forms/datePickerForm';
 
 const BOOL_VAL = [
   {
@@ -82,10 +83,10 @@ const PartnerProfileIdentificationRegistration = (props) => {
             <Grid item>
               <Grid container direction="row">
                 <Grid item sm={4} xs={12}>
-                  <SelectForm
+                  <DatePickerForm
                     fieldName="registrationDate"
                     label="Registration Date"
-                    values={YEAR_MENU}
+                    placeholder="Provide Date"
                     optional
                     warn
                   />

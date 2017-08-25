@@ -37,7 +37,7 @@ const renderTabs = tabs => tabs.map(tab => (
 
 const renderTabContent = (id, tabsList) => tabsList[id].component;
 
-const BasicTabs = (props) => {
+const PartnerProfileTabs = (props) => {
   const { classes, tabsList, currentTab, onTabClick } = props;
   return (
     <div className={classes.root}>
@@ -64,11 +64,11 @@ const BasicTabs = (props) => {
 };
 
 
-BasicTabs.propTypes = {
+PartnerProfileTabs.propTypes = {
   tabsList: PropTypes.arrayOf(PropTypes.objectOf(TabContainer)),
   currentTab: PropTypes.number,
   onTabClick: PropTypes.func,
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styleSheet)(BasicTabs);
+export default withStyles(styleSheet)(PartnerProfileTabs);

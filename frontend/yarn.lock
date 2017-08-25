@@ -1864,6 +1864,10 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
+date-fns@^1.27.2, date-fns@^1.28.5:
+  version "1.28.5"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.28.5.tgz#257cfc45d322df45ef5658665967ee841cd73faf"
+
 date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
@@ -5227,6 +5231,18 @@ react-event-listener@^0.4.5:
     prop-types "^15.5.4"
     warning "^3.0.0"
 
+react-infinite-calendar@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/react-infinite-calendar/-/react-infinite-calendar-2.3.1.tgz#97f63983b3ee1ec0df476b36b8227c7db0edbf85"
+  dependencies:
+    classnames "^2.2.5"
+    date-fns "^1.27.2"
+    dom-helpers "^3.2.1"
+    prop-types "^15.5.7"
+    react-tiny-virtual-list "^2.0.0"
+    react-transition-group "^1.1.3"
+    recompose "^0.22.0"
+
 react-jss@^7.0.2:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/react-jss/-/react-jss-7.1.0.tgz#de9430cbe01a82f3b2dcf87a03b798130868ff93"
@@ -5275,6 +5291,12 @@ react-tap-event-plugin@^2.0.1:
   dependencies:
     fbjs "^0.8.6"
 
+react-tiny-virtual-list@^2.0.0:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/react-tiny-virtual-list/-/react-tiny-virtual-list-2.0.6.tgz#6f27d0d68e939c6e3c30739766eeb69acc1de503"
+  dependencies:
+    prop-types "^15.5.7"
+
 react-tooltip@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-3.3.0.tgz#51c08ae0221075e2c43d83cd47fc78466612df7d"
@@ -5282,7 +5304,7 @@ react-tooltip@^3.3.0:
     classnames "^2.2.0"
     prop-types "^15.5.8"
 
-react-transition-group@^1.1.2:
+react-transition-group@^1.1.2, react-transition-group@^1.1.3:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-1.2.0.tgz#b51fc921b0c3835a7ef7c571c79fc82c73e9204f"
   dependencies:
@@ -5383,6 +5405,15 @@ readdirp@^2.0.0:
 recompose@0.24.0, recompose@^0.24.0:
   version "0.24.0"
   resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.24.0.tgz#262e93f974439eb17e7779824d88cce90492a5dd"
+  dependencies:
+    change-emitter "^0.1.2"
+    fbjs "^0.8.1"
+    hoist-non-react-statics "^1.0.0"
+    symbol-observable "^1.0.4"
+
+recompose@^0.22.0:
+  version "0.22.0"
+  resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.22.0.tgz#f099d18385882ca41d9eec891718dadddc3204ef"
   dependencies:
     change-emitter "^0.1.2"
     fbjs "^0.8.1"

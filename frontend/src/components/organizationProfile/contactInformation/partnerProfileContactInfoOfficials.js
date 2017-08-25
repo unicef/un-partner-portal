@@ -27,7 +27,6 @@ const PartnerProfileContactInfoOfficials = () => (
             fieldName="hasBoD"
             label="Does your Organization have a Board of Directors?"
             values={BOOL_VAL}
-            onFieldChange={this.handleBoDFieldChange}
           />
         </Grid>
 
@@ -59,7 +58,6 @@ const PartnerProfileContactInfoOfficials = () => (
                 fieldName="isAuthorisedOfficer"
                 label="Authorised Officer?"
                 values={BOOL_VAL}
-                onFieldChange={this.handleAuthorisedOfficerFieldChange}
               />
             </Grid>
           </Grid>

@@ -72,7 +72,7 @@ partnerProfileStepper.propTypes = {
   /**
    * component to be wrapped
    */
-  steps: PropTypes.node.isRequired,
+  steps: PropTypes.element.isRequired,
   /**
    * whether step is the last, to control buttons appearance
    */

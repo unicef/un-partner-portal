@@ -120,7 +120,7 @@ const PartnerProfileProjectImplementationInternalControls = () => (
             <Grid item sm={6} xs={12}>
               <RadioForm
                 fieldName="adequateStaff"
-                label={'Does the organization have an adequate number of experienced staff ' + 
+                label={'Does the organization have an adequate number of experienced staff ' +
                 'responsible for financial management?'}
                 values={BOOL_VAL}
                 optional

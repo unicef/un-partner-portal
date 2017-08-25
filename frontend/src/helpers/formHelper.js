@@ -3,6 +3,7 @@
 import React from 'react';
 import SelectField from 'material-ui-old/SelectField';
 import TextField from 'material-ui/TextField';
+import DatePicker from 'material-ui-old/DatePicker';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 
 
@@ -55,4 +56,19 @@ export const renderTextField = ({
     {...input}
     {...other}
   />
+);
+
+export const renderDatePicker = ({
+  input,
+  meta: { touched, error, warning },
+  ...other
+}) => (
+  <div>
+    <DatePicker
+      errorText={(touched && error) || warning}
+      {...input}
+      onChange={(event, value) => input.onChange(value)}
+      {...other}
+    />
+  </div>
 );

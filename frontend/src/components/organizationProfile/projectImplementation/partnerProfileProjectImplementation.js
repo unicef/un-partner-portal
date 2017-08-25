@@ -43,7 +43,7 @@ const STEPS = [
 
 const PartnerProfileProjectImplementation = () => (
   <PartnerProfileStepperContainer
-    name="implementation"
+    name="projectImplementation"
     steps={STEPS}
   />
 );

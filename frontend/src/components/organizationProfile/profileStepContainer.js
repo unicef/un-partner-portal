@@ -9,7 +9,7 @@ import {
   StepLabel,
 } from '../customStepper';
 
-const PartnerProfileStep = (props) => {
+const ProfileStepContainer = (props) => {
   const { item, incompleteSteps, index, ...other } = props;
   const warn = incompleteSteps.includes(item.name);
   return (
@@ -28,7 +28,7 @@ const PartnerProfileStep = (props) => {
   );
 };
 
-PartnerProfileStep.propTypes = {
+ProfileStepContainer.propTypes = {
   incompleteSteps: PropTypes.array,
   item: PropTypes.objectOf({
     label: PropTypes.string,
@@ -43,4 +43,4 @@ const mapState = state => ({
 
 export default connect(
   mapState,
-)(PartnerProfileStep);
+)(ProfileStepContainer);
