@@ -16,16 +16,13 @@ const messages = {
 
 const styleSheet = createStyleSheet('countryProfileItem', (theme) => {
   const paddingSmall = theme.spacing.unit / 2;
-  const padding = theme.spacing.unit * 3;
+  const padding = theme.spacing.unit;
   return {
     center: {
       textAlign: 'center',
     },
     right: {
       textAlign: 'right',
-    },
-    title: {
-      fontSize: '15px',
     },
     icon: {
       fill: '#FF0000',
@@ -52,13 +49,13 @@ const CountryProfileItem = (props) => {
       </Grid>
 
       <Grid className={classes.center} item xs={2}>
-        <Typography type="subheader" color="inherit">
+        <Typography type="body1" color="inherit">
           {pluralize(users, messages.user)}
         </Typography>
       </Grid>
 
       <Grid className={classes.right} item xs={3}>
-        <Typography type="subheader" color="inherit">
+        <Typography type="body1" color="inherit">
           {messages.lastUpdate} {update}
         </Typography>
       </Grid>
@@ -71,17 +68,15 @@ const CountryProfileItem = (props) => {
         <IconButton><KeyboardArrowRight /></IconButton>
       </Grid>
     </Grid>
-
-
   );
 };
 
 CountryProfileItem.propTypes = {
   classes: PropTypes.object.isRequired,
-  country: PropTypes.object.isRequired,
-  users: PropTypes.object.isRequired,
-  update: PropTypes.object.isRequired,
-  completed: PropTypes.object.isRequired,
+  country: PropTypes.string.isRequired,
+  users: PropTypes.number.isRequired,
+  update: PropTypes.string.isRequired,
+  completed: PropTypes.bool.isRequired,
 };
 
 export default withStyles(styleSheet)(CountryProfileItem);

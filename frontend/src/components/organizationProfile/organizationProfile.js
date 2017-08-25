@@ -20,21 +20,11 @@ const styleSheet = createStyleSheet('OrganizationProfile', (theme) => {
       padding: `${padding}px 0 0 ${padding}px`,
       borderBottom: `2px ${theme.palette.grey[300]} solid`,
     },
-    logo: {
-      padding: 15,
-      margin: 'auto',
-      background: theme.palette.primary[500],
-    },
-    icon: {
-      color: 'inherit',
-    },
-
     headlinePadding: {
       paddingBottom: `${padding}px`,
     },
   };
 });
-
 
 const OrganizationProfile = (props) => {
   const { classes } = props;
