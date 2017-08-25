@@ -78,7 +78,7 @@ class CountryOfficesList extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, header, children } = this.props;
     return (
       <Paper>
         <Grid align="center" className={classes.container} container>
@@ -107,6 +107,8 @@ class CountryOfficesList extends Component {
 
 CountryOfficesList.propTypes = {
   classes: PropTypes.object.isRequired,
+  header: PropTypes.element.isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 export default withStyles(styleSheet)(CountryOfficesList);

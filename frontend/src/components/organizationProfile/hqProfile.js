@@ -21,6 +21,7 @@ const hgProfileMockData = {
 const styleSheet = createStyleSheet('sidebarMenu', (theme) => {
   const padding = theme.spacing.unit;
   const paddingMedium = theme.spacing.unit * 2;
+
   return {
     center: {
       textAlign: 'center',
@@ -52,29 +53,36 @@ class HqProfile extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <Paper>
-        <Grid align="center" className={classes.container} container>
-          <Grid item xs={5}>
-            <div className={classes.title}>
-              <Typography type="title" color="inherit">{messages.profile}</Typography>
-            </div>
-          </Grid>
+      // <Grid container direction="column">
+        <Paper>
+          <Grid align="center" container className={classes.container}>
+            <Grid item xs={5}>
+              <div className={classes.title}>
+                <Typography type="title" color="inherit">{messages.profile}</Typography>
+              </div>
+            </Grid>
 
-          <Grid className={classes.center} item xs={2}>
-            {pluralize(hgProfileMockData.users, messages.user)}
-          </Grid>
+            <Grid className={classes.center} item xs={2}>
+              <Typography type="subheader" color="inherit">
+                {pluralize(hgProfileMockData.users, messages.user)}
+              </Typography>
+            </Grid>
 
-          <Grid className={classes.right} item xs={3}>
-            {messages.lastUpdate} {hgProfileMockData.update}
-          </Grid>
+            <Grid className={classes.right} item xs={3}>
+              <Typography type="subheader" color="inherit">
+                {messages.lastUpdate} {hgProfileMockData.update}
+              </Typography>
+            </Grid>
 
-          <Grid item xs={1} />
+            <Grid item xs={1} />
 
-          <Grid className={classes.right} item xs={1}>
-            <IconButton><KeyboardArrowRight /></IconButton>
+            <Grid className={classes.right} item xs={1}>
+              <IconButton><KeyboardArrowRight /></IconButton>
+            </Grid>
           </Grid>
-        </Grid>
-      </Paper>
+        </Paper>
+      // </Grid>
+
     );
   }
 }

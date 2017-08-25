@@ -3,6 +3,7 @@ import IconButton from 'material-ui/IconButton';
 import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
 import Warning from 'material-ui-icons/Warning';
 import PropTypes from 'prop-types';
+import Typography from 'material-ui/Typography';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
@@ -51,11 +52,15 @@ const CountryProfileItem = (props) => {
       </Grid>
 
       <Grid className={classes.center} item xs={2}>
-        {pluralize(users, messages.user)}
+        <Typography type="subheader" color="inherit">
+          {pluralize(users, messages.user)}
+        </Typography>
       </Grid>
 
       <Grid className={classes.right} item xs={3}>
-        {messages.lastUpdate} {update}
+        <Typography type="subheader" color="inherit">
+          {messages.lastUpdate} {update}
+        </Typography>
       </Grid>
 
       <Grid className={classes.right} item xs={1}>

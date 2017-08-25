@@ -2,7 +2,6 @@ import { createStore, combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form';
 
 import cfeiNav from './reducers/cfeiNav';
-import profileNav from './reducers/profileNav';
 import nav from './reducers/nav';
 import route from './reducers/route';
 import session from './reducers/session';
@@ -10,7 +9,6 @@ import countries from './reducers/countries';
 
 export default createStore(combineReducers({
   cfeiNav,
-  profileNav,
   nav,
   route,
   session,
