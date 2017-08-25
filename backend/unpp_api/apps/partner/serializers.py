@@ -41,3 +41,10 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
             'org_head_last_name',
             'org_head_email',
         )
+
+
+class PartnerFullProfilesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerProfile
+        fields = "__all__"

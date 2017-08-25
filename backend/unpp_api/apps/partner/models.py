@@ -50,7 +50,6 @@ class PartnerProfile(TimeStampedModel):
     legal_name_change = models.BooleanField(default=False)
     former_legal_name = models.CharField(max_length=255, null=True, blank=True)
     org_head_first_name = models.CharField(max_length=255, null=True, blank=True)
-
     org_head_last_name = models.CharField(max_length=255, null=True, blank=True)
     org_head_email = models.EmailField(max_length=255, null=True, blank=True)
     org_head_job_title = models.CharField(max_length=255, null=True, blank=True)
