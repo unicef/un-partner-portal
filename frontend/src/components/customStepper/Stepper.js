@@ -66,8 +66,9 @@ function Stepper(props) {
         React.cloneElement(step, Object.assign(controlProps, step.props)),
       ];
     }
+
     return [
-      ((!allActive && (index > 0)) && connector),
+      ((!allActive && (activeStep + 1 !== index) && (index > 0)) && connector),
       React.cloneElement(step, Object.assign(controlProps, step.props)),
     ];
   });

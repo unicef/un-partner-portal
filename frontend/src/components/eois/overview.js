@@ -7,8 +7,6 @@ import {
   TableCell,
 } from 'material-ui/Table';
 
-import PinHeaderIcon from './icons/pinHeaderIcon';
-import EoiStatusCell from './cells/eoiStatusCell';
 import RegularTable from '../common/table/regularTable';
 import EoiSectorCell from './cells/eoiSectorCell';
 import EoiFilter from './filters/eoiFilter';

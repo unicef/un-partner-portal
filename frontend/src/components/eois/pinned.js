@@ -1,12 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  TableCell,
-} from 'material-ui/Table';
 import Grid from 'material-ui/Grid';
 
 import RegularTable from '../common/table/regularTable';
-import EoiSectorCell from './cells/eoiSectorCell';
 import { columnData, renderCells } from './overview';
 import EoiFilter from './filters/eoiFilter';
 
