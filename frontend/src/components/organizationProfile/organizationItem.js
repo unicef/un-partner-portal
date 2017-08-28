@@ -15,10 +15,6 @@ const messages = {
   pluralSuffix: 's',
 };
 
-const hgProfileMockData = {
-  users: 25, update: '01 Jan 2016',
-};
-
 const styleSheet = createStyleSheet('HqProfile', (theme) => {
   const paddingSmall = theme.spacing.unit / 2;
   const padding = theme.spacing.unit;

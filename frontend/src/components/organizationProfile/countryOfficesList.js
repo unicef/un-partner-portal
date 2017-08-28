@@ -22,12 +22,8 @@ const countryOfficesItems = () => countryItemsMockData.map(item =>
     completed={item.completed}
   />));
 
-class CountryOfficesListTmp extends Component {
-  render() {
-    return (
-      <HeaderList header={CountryOfficesHeader} rows={countryOfficesItems(countryItemsMockData)} />
-    );
-  }
-}
+const CountryOfficesList = () => (
+  <HeaderList header={CountryOfficesHeader} rows={countryOfficesItems(countryItemsMockData)} />
+);
 
-export default CountryOfficesListTmp;
+export default CountryOfficesList;
