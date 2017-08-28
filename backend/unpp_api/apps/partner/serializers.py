@@ -48,3 +48,18 @@ class PartnerFullProfilesSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerProfile
         fields = "__all__"
+
+
+class OrganizationProfileSerializer(serializers.ModelSerializer):
+
+    country_profiles = PartnerSerializer(many=True)
+
+    class Meta:
+        model = Partner
+        fields = (
+            'id',
+            'legal_name',
+            'country_code',
+            'is_hq',
+            'country_profiles',
+        )
