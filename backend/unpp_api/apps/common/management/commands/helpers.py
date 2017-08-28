@@ -9,6 +9,7 @@ from common.factories import (
     AgencyMemberFactory,
     EOIFactory,
 )
+from partner.models import Partner
 
 
 def clean_up_data_in_db():
@@ -34,6 +35,10 @@ def generate_fake_data(quantity=4):
 
     PartnerFactory.create_batch(quantity/2)
     print "{} Partner objects created".format(quantity/2)
+
+    hq = Partner.objects.first()
+    Partner.objects.exclude(id=hq.id).update(hq=hq)
+    print "Partner HQ & Country Profiles"
 
     PartnerProfileFactory.create_batch(quantity/2)
     print "{} Partner Profile objects created".format(quantity/2)

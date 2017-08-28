@@ -40,6 +40,14 @@ class Partner(TimeStampedModel):
     def __str__(self):
         return "Partner: {} <pk:{}>".format(self.legal_name, self.id)
 
+    @property
+    def is_hq(self):
+        return self.hq in [None, '']
+
+    @property
+    def country_profiles(self):
+        return self.__class__.objects.filter(hq=self)
+
 
 class PartnerProfile(TimeStampedModel):
     """
