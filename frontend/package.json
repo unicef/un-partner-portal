@@ -61,7 +61,6 @@
     "test": "jest",
     "test:watch": "npm test -- --watch",
     "eslint": "eslint ./src/"
-
   },
   "devDependencies": {
     "eslint": "^4.3.0",
