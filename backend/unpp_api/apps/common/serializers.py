@@ -1,4 +1,3 @@
-from django.conf import settings
 from rest_framework import serializers
 from .models import Sector, Specialization
 
@@ -10,6 +9,7 @@ class SimpleSpecializationSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
+            'category'
         )
 
 

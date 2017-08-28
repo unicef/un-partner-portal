@@ -34,7 +34,7 @@ class EOI(TimeStampedModel):
     specializations = models.ManyToManyField('common.Specialization', related_name="expressions_of_interest")
     # TODO: intended_pop_of_concern = Selection. Should have in help text only for UNHCR. TODO on select options
     description = models.CharField(max_length=200, verbose_name='Brief background of the project')
-    other_information = models.CharField(max_length=200, verbose_name='Other information (optional)')
+    other_information = models.CharField(max_length=200, null=True, blank=True, verbose_name='Other information (optional)')
     start_date = models.DateField(verbose_name='Estimated Start Date')
     end_date = models.DateField(verbose_name='Estimated End Date')
     deadline_date = models.DateField(verbose_name='Estimated Deadline Date', null=True, blank=True)
@@ -42,7 +42,7 @@ class EOI(TimeStampedModel):
     has_weighting = models.BooleanField(default=True, verbose_name='Has weighting?')  # TBD - not even sure we need to store
     invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest")
     reviewers = models.ManyToManyField('account.User', related_name="expressions_of_interest_as_reviewer")
-    closed_justification = models.TextField()
+    closed_justification = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -61,6 +61,18 @@ class EOI(TimeStampedModel):
     @property
     def contains_the_winners(self):
         return self.applications.filter(did_win=True).exists()
+
+
+class Pin(TimeStampedModel):
+    eoi = models.ForeignKey(EOI, related_name="pins")
+    partner = models.ForeignKey('partner.Partner', related_name="pins")
+    pinned_by = models.ForeignKey('account.User', related_name="pins")
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "Pin <pk:{}> (eoi:{})".format(self.id, self.eoi_id)
 
 
 class Application(TimeStampedModel):

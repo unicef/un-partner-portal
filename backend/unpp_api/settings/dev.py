@@ -11,7 +11,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '%s' % UPLOADS_DIR_NAME)
 STATIC_ROOT = '%s/staticserve' % BASE_DIR
 
 COMPRESS = False
-#COMPRESS = True   # so we can test compressor locally. setting debug=False leads to other url / static serving issues.
+# COMPRESS = True   # so we can test compressor locally. setting debug=False leads to other url / static serving issues.
 
 # domains/hosts etc.
 DOMAIN_NAME = 'localhost:8000'
