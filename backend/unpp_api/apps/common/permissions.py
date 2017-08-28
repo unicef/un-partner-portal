@@ -44,3 +44,8 @@ class IsAtLeastMemberReader(BasePermission):
             return False
 
         return self.pass_at_least(member.role)
+
+
+class IsAtLeastMemberEditor(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
