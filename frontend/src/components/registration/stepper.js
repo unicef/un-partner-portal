@@ -18,7 +18,7 @@ import Declaration from './declaration';
 import Account from './account';
 import AlertDialog from '../common/alertDialog';
 import { getCountries } from '../../helpers/api/api';
-import {loadCountries} from '../../reducers/countries';
+import { loadCountries } from '../../reducers/countries';
 
 const styleSheet = createStyleSheet('RegistrationStepper', () => ({
   root: {

@@ -46,8 +46,8 @@ const theme = {
     MuiTypography: {
       headline: {
         color: 'inherit',
-      },
-    },
+      }
+    }, 
     MuiButton: {
       raisedAccent: {
         backgroundColor: '#6B5CA5',
