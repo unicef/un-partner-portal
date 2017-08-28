@@ -15,14 +15,6 @@ import OtherInfo from './otherInfo/partnerProfileOtherInfo';
 import PartnerProfileTabs from './partnerProfileTabs';
 import { changeTab } from '../../../reducers/partnerProfileEdit';
 
-const TabContainer = props =>
-  (<div style={{ padding: 20, background: 'white' }}>
-    {props.children}
-  </div>);
-
-TabContainer.propTypes = {
-  children: PropTypes.node.isRequired,
-};
 
 const tabsList = [
   { id: 0, component: <PartnerProfileIdentification />, label: 'identification', name: 'identification' },

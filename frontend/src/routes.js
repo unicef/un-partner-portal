@@ -8,7 +8,7 @@ import direct from './components/eois/direct';
 import partner from './components/partners/partnersHeader';
 import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
-import partnerProfileEdit from './components/organizationProfile/edit/tabsContainer';
+import organizationProfileEdit from './components/organizationProfile/edit/tabsContainer';
 import organizationProfile from './components/organizationProfile/organizationProfile';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
@@ -39,13 +39,8 @@ export default [
         },
         { path: 'partner', component: partner },
         { path: 'applications', component: applications },
-        { 
-          path: 'profile',
-          component: organizationProfile,
-          childRoutes: [
-            { path: 'edit', component: partnerProfileEdit },
-          ],
-        },
+        { path: 'profile', component: organizationProfile },
+        { path: 'profile/edit', component: organizationProfileEdit },
         { path: 'settings', component: settings },
       ],
     }],
