@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import HeaderList from '../../components/common/list/headerList';
-import CountryProfileItem from './countryProfileItem';
+import OrganizationItem from './organizationItem';
 import CountryOfficesHeader from './countryOfficesHeader';
 
 const countryItemsMockData = [
@@ -14,8 +14,9 @@ const countryItemsMockData = [
 ];
 
 const countryOfficesItems = () => countryItemsMockData.map(item =>
-  (<CountryProfileItem
-    country={item.country}
+  (<OrganizationItem
+    isCountryItem
+    title={item.country}
     users={item.users}
     update={item.update}
     completed={item.completed}
