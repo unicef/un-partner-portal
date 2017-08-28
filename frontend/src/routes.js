@@ -1,4 +1,3 @@
-
 import main from './components/main';
 import mainLayout from './components/layout/mainLayout';
 import eoiHeader from './components/eois/eoiHeader';
@@ -9,11 +8,11 @@ import direct from './components/eois/direct';
 import partner from './components/partners/partnersHeader';
 import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
+import organizationProfileEdit from './components/organizationProfile/edit/tabsContainer';
 import organizationProfile from './components/organizationProfile/organizationProfile';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
 import mainContent from './components/common/mainContentWrapper';
-
 
 export default [
   {
@@ -41,6 +40,7 @@ export default [
         { path: 'partner', component: partner },
         { path: 'applications', component: applications },
         { path: 'profile', component: organizationProfile },
+        { path: 'profile/edit', component: organizationProfileEdit },
         { path: 'settings', component: settings },
       ],
     }],

@@ -10,7 +10,6 @@ import Checkbox from 'material-ui/Checkbox';
 
 
 class EnhancedTableHead extends Component {
-
   createSortHandler(property) {
     return (event) => {
       this.props.onRequestSort(event, property);

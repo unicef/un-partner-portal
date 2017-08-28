@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 
+
 const messages = {
   continue: 'Continue',
   register: 'Register',
@@ -20,7 +21,7 @@ const RegistrationStep = (props) => {
           React.cloneElement(child, { reset }),
         )}
         <Grid item>
-          <Grid container direction="row" spacing={8}>
+          <Grid container direction="row" gutter={8}>
             <Grid item>
               <Button
                 color="accent"

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -7,11 +7,10 @@ import ButtonBase from 'material-ui/internal/ButtonBase';
 
 import StepLabel from './StepLabel';
 
-const isLabel = (child) => {
-  return child && child.type && child.type.muiName === 'StepLabel';
-};
+const isLabel = child => child && child.type && child.type.muiName === 'StepLabel';
 
-export const styleSheet = createStyleSheet('MuiStepButton', theme => ({
+
+export const styleSheet = createStyleSheet('MuiStepButton', () => ({
   root: {
     display: 'flex',
     alignItems: 'center',
@@ -45,7 +44,8 @@ function StepButton(props) {
       className={className}
       {...other}
     >
-      {React.cloneElement(child, {active, completed, disabled, icon, iconContainerStyle, orientation})}
+      {React.cloneElement(child,
+        { active, completed, disabled, icon, iconContainerStyle, orientation })}
     </ButtonBase>
   );
 }

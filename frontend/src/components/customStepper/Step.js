@@ -5,16 +5,16 @@ import classNames from 'classnames';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
-export const styleSheet = createStyleSheet('MuiStep', theme => ({
+export const styleSheet = createStyleSheet('MuiStep', () => ({
   root: {
-    flex: '0 0 auto'
+    flex: '0 0 auto',
   },
   horizontal: {
     marginLeft: -6,
   },
   vertical: {
     marginLeft: -14,
-  }
+  },
 }));
 
 function Step(props) {
@@ -32,7 +32,7 @@ function Step(props) {
 
   const className = classNames(
     classes.root,
-    classes[orientation]
+    classes[orientation],
   );
 
   return (
@@ -49,7 +49,7 @@ function Step(props) {
             orientation,
             ...child.props,
           },
-        )
+        ),
       )}
     </div>
   );
@@ -86,6 +86,7 @@ Step.propTypes = {
    * @ignore
    */
   orientation: PropTypes.oneOf(['horizontal', 'vertical']).isRequired,
+  classes: PropTypes.object,
 };
 
 export default withStyles(styleSheet)(Step);

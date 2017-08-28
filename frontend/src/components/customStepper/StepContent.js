@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -7,13 +7,13 @@ import Collapse from 'material-ui/transitions/Collapse';
 
 export const styleSheet = createStyleSheet('MuiStepContent', theme => ({
   root: {
-    marginLeft:  14 + 11,
-    paddingLeft: 24 - 11 + 8,
+    marginLeft: 14 + 11,
+    paddingLeft: (24 - 11) + 8,
     paddingRight: 16,
     overflow: 'hidden',
   },
   notLast: {
-    borderLeft: `1px solid ${theme.palette.primary[200]}`
+    borderLeft: `1px solid ${theme.palette.primary[200]}`,
   },
   active: {
     margin: '8px 0px 8px 25px',
@@ -21,33 +21,31 @@ export const styleSheet = createStyleSheet('MuiStepContent', theme => ({
 
 }));
 
-class StepContent extends Component {
-  render() {
-    const {
-      active,
-      children,
-      completed, // eslint-disable-line no-unused-vars
-      last, // eslint-disable-line no-unused-vars
-      classes,
-    } = this.props;
+const StepContent = (props) => {
+  const {
+    active,
+    children,
+    completed, // eslint-disable-line no-unused-vars
+    last, // eslint-disable-line no-unused-vars
+    classes,
+  } = props;
 
+  const className = classNames(
+    classes.root,
+    {
+      [classes.notLast]: !last,
+      [classes.active]: active,
+    },
+  );
+  return (
+    <div className={className}>
+      <Collapse in={active} transitionDuration="auto" unmountOnExit>
+        {children}
+      </Collapse>
+    </div>
+  );
+};
 
-    const className = classNames(
-      classes.root,
-      {
-        [classes.notLast]: !last,
-        [classes.active]: active,
-      }
-    );
-    return (
-      <div className={className}>
-        <Collapse in={active} transitionDuration='auto' unmountOnExit>
-          {children}
-        </Collapse>
-      </div>
-    );
-  }
-}
 
 StepContent.propTypes = {
   /**
@@ -66,18 +64,7 @@ StepContent.propTypes = {
    * @ignore
    */
   last: PropTypes.bool,
-  /**
-   * Override the inline-style of the root element.
-   */
-  style: PropTypes.object,
-  /**
-   * ReactTransitionGroup component.
-   */
-  transition: PropTypes.func,
-  /**
-   * Adjust the duration of the content expand transition. Passed as a prop to the transition component.
-   */
-  transitionDuration: PropTypes.number,
+  classes: PropTypes.object,
 };
 
 StepContent.contextTypes = {

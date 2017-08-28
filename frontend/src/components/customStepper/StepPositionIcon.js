@@ -1,13 +1,13 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
+import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import SvgIcon from "material-ui/SvgIcon";
+import SvgIcon from 'material-ui/SvgIcon';
 
-export const styleSheet = createStyleSheet("MuiStepPositionIcon", theme => ({
+export const styleSheet = createStyleSheet('MuiStepPositionIcon', theme => ({
   root: {
     fill: theme.palette.action.disabled,
-    display: "block",
+    display: 'block',
   },
   text: {
     fill: theme.palette.getContrastText(theme.palette.accent[500]),
@@ -30,7 +30,7 @@ function StepPositionIcon(props) {
 
   return (
     <SvgIcon className={className}>
-      <circle cx="12" cy="12" r="10"/>
+      <circle cx="12" cy="12" r="10" />
       <text className={classes.text} x="12" y="16" textAnchor="middle">
         {position}
       </text>
@@ -47,6 +47,7 @@ StepPositionIcon.propTypes = {
    * The step position as a number.
    */
   position: PropTypes.number.isRequired,
+  classes: PropTypes.object,
 };
 
 export default withStyles(styleSheet)(StepPositionIcon);

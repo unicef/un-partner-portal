@@ -8,7 +8,7 @@ import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControlLabel } from 'material-ui/Form';
 
 import { renderFormControl } from '../../helpers/formHelper';
-import { required } from '../../helpers/validation';
+import { required, warning } from '../../helpers/validation';
 
 
 const styleSheet = createStyleSheet('BasicInformation', theme => ({
@@ -37,7 +37,14 @@ class RadioForm extends Component {
 
 
   render() {
-    const { classes, fieldName, label, values, optional, validation,
+    const {
+      classes,
+      fieldName,
+      label,
+      values,
+      optional,
+      validation,
+      warn,
       ...other } = this.props;
     return (
       <Grid item>
@@ -45,6 +52,7 @@ class RadioForm extends Component {
           name={fieldName}
           component={renderFormControl}
           validate={optional ? [] : [required].concat(validation || [])}
+          warn={warn ? [warning] : []}
           {...other}
         >
           <FormLabel>{label}</FormLabel>
@@ -101,5 +109,6 @@ RadioForm.propTypes = {
    * validations passed to field
    */
   validation: PropTypes.arrayOf(PropTypes.func),
+  warn: PropTypes.bool,
 };
 export default withStyles(styleSheet)(RadioForm);
