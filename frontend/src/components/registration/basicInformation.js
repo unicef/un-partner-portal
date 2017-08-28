@@ -26,17 +26,6 @@ const NAME_CHANGE = [
   },
 ];
 
-const COUNTRY_MENU = [
-  {
-    value: 'fr',
-    label: 'France',
-  },
-  {
-    value: 'it',
-    label: 'Italy',
-  },
-];
-
 const BasicInformation = (props) => {
   const { legalNameChange, countries } = props;
   return (
@@ -109,6 +98,7 @@ BasicInformation.propTypes = {
    * value of legal name change field to determine if former legal name field have to be displayed
    */
   legalNameChange: PropTypes.bool,
+  countries: PropTypes.arrayOf(PropTypes.string),
 };
 
 const selector = formValueSelector('registration');

@@ -7,20 +7,20 @@ import Paper from 'material-ui/Paper';
 
 import StepConnector from './StepConnector';
 
-export const styleSheet = createStyleSheet('MuiStepper', theme => ({
+export const styleSheet = createStyleSheet('MuiStepper', () => ({
   root: {
     display: 'flex',
     alignContent: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   horizontal: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   vertical: {
     flexDirection: 'column',
-    alignItems: 'stretch'
-  }
+    alignItems: 'stretch',
+  },
 }));
 
 function Stepper(props) {
@@ -32,13 +32,14 @@ function Stepper(props) {
     connector: connectorProp,
     linear,
     orientation,
+    allActive,
     ...other
   } = props;
 
   const className = classNames(
     classes.root,
     classNameProp,
-    classes[orientation]
+    classes[orientation],
   );
 
   const connector = React.cloneElement(connectorProp, { orientation });
@@ -49,7 +50,7 @@ function Stepper(props) {
       orientation,
     };
 
-    if (activeStep === index) {
+    if ((activeStep === index) || allActive) {
       controlProps.active = true;
     } else if (linear && activeStep > index) {
       controlProps.completed = true;
@@ -60,9 +61,15 @@ function Stepper(props) {
     if (index + 1 === numChildren) {
       controlProps.last = true;
     }
+    if (allActive) {
+      return [
+        React.cloneElement(step, Object.assign(controlProps, step.props)),
+      ];
+    }
+
     return [
-      (index > 0 && (activeStep !== index - 1) && connector),
-      React.cloneElement(step, Object.assign(controlProps, step.props))
+      ((!allActive && (activeStep + 1 !== index) && (index > 0)) && connector),
+      React.cloneElement(step, Object.assign(controlProps, step.props)),
     ];
   });
 
@@ -101,7 +108,11 @@ Stepper.propTypes = {
   /**
    * The stepper orientation (layout flow direction)
    */
-  orientation: PropTypes.oneOf(['horizontal', 'vertical'])
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']),
+  /**
+   * If set to `true`, all fields will be active
+   */
+  allActive: PropTypes.bool,
 };
 
 Stepper.defaultProps = {
@@ -109,6 +120,7 @@ Stepper.defaultProps = {
   connector: <StepConnector />,
   linear: true,
   orientation: 'horizontal',
+  allActive: false,
 };
 
 export default withStyles(styleSheet)(Stepper);

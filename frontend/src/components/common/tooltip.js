@@ -1,52 +1,47 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-
-import Paper from 'material-ui/Paper';
+import ReactTooltip from 'react-tooltip';
 import Typography from 'material-ui/Typography';
 
 
-const styleSheet = createStyleSheet('OrganizationTypes', (theme) => {
-  const bgColor = theme.palette.grey[700];
-  return {
-    root: {
-      color: theme.palette.getContrastText(bgColor),
-      background: bgColor,
-      position: 'absolute',
-      zIndex: 1,
-      right: '10%',
-      maxWidth: '100%',
-    },
-    text: {
-      whiteSpace: 'pre-line',
-      padding: 4,
-      fontSize: 12,
-    },
-  };
-});
+const styleSheet = createStyleSheet('OrganizationTypes', () => ({
+  paper: {
+    padding: '4px !important',
+  },
+  text: {
+    whiteSpace: 'pre-line',
+    fontSize: 12,
+  },
+}));
+
+const renderTooltipContent = (content, classes) => {
+  if (typeof content === 'string') {
+    return (
+      <Typography type="body2" color="inherit" className={classes.text} align="left">
+        {content}
+      </Typography>
+    );
+  }
+  return content;
+};
 
 function Tooltip(props) {
-  const { classes, text } = props;
+  const { classes, text, id } = props;
   return (
-    <Paper
-      className={classes.root}
-      elevation={0}
-    >
-      <Typography type="body2" color="inherit" className={classes.text} align="left">
-        {text}
-      </Typography>
-
-    </Paper>
-
+    <ReactTooltip id={id} class={classes.paper} place="bottom" effect="solid" >
+      { renderTooltipContent(text, classes) }
+    </ReactTooltip>
   );
 }
 
 Tooltip.propTypes = {
   /**
-  * text body of the tooltip
+  * tooltip content, can be a string or object
   */
   text: PropTypes.string,
   classes: PropTypes.object,
+  id: PropTypes.string,
 
 };
 

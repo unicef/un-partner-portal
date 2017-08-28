@@ -7,7 +7,7 @@ import Grid from 'material-ui/Grid';
 import { MenuItem } from 'material-ui-old/Menu';
 
 import { renderSelectField } from '../../helpers/formHelper';
-import { required } from '../../helpers/validation';
+import { required, warning } from '../../helpers/validation';
 import TooltipIcon from '../common/tooltipIcon';
 
 class SelectForm extends Component {
@@ -46,8 +46,19 @@ class SelectForm extends Component {
   }
 
   render() {
-    const { fieldName, label, infoIcon, infoText, values,
-      optional, validation } = this.props;
+    const {
+      fieldName,
+      infoIcon,
+      infoText,
+      label,
+      placeholder,
+      selectFieldProps,
+      values,
+      warn,
+      optional,
+      validation,
+    } = this.props;
+
     return (
       <Grid item>
         <Grid container direction="row" align="flex-end" wrap="nowrap">
@@ -55,11 +66,33 @@ class SelectForm extends Component {
             <Field
               name={fieldName}
               component={renderSelectField}
+              {...selectFieldProps}
               floatingLabelFixed
               floatingLabelText={label}
-              hintText={`Select ${label.toLowerCase()}`}
-              onChange={this.handleChange}
+              hintText={placeholder || `Select ${label.toLowerCase()}`}
               validate={optional ? [] : [required].concat(validation || [])}
+              warn={warn && warning}
+              onChange={this.handleChange}
+              style={{
+                height: '56px',
+              }}
+              inputStyle={{
+                'margin-top': 0,
+              }}
+              floatingLabelStyle={{
+                top: '22px',
+              }}
+              iconStyle={{
+                fill: 'rgba(0, 0, 0, 0.42)',
+                top: '10px',
+              }}
+              underlineStyle={{
+                'border-top': '1px solid rgba(0, 0, 0, 0.42)',
+                bottom: '6px',
+              }}
+              errorStyle={{
+                bottom: 0,
+              }}
               fullWidth
             >
               {values.map((value, index) => (
@@ -96,7 +129,7 @@ SelectForm.propTypes = {
    */
   label: PropTypes.node,
   /**
-   * array of objects with values for menu items 
+   * array of objects with values for menu items
    * {
    *   value: name of value represented by item
    *   label: label used for button
@@ -112,6 +145,10 @@ SelectForm.propTypes = {
    */
   infoText: PropTypes.string,
   /**
+   * text passed as placeholder to field
+   */
+  placeholder: PropTypes.string,
+  /**
    * if field is optional
    */
   optional: PropTypes.bool,
@@ -119,6 +156,14 @@ SelectForm.propTypes = {
    * validations passed to field
    */
   validation: PropTypes.arrayOf(PropTypes.func),
+  /**
+   * if field should display warning
+   */
+  warn: PropTypes.bool,
+  /**
+   * props passed to wrapped SelectField
+   */
+  selectFieldProps: PropTypes.object,
 };
 
 export default SelectForm;

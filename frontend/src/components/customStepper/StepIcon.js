@@ -22,12 +22,12 @@ function StepIcon(props) {
 
   if (iconType === 'number' || iconType === 'string') {
     if (completed) {
-      return <CheckCircle color='accent' className={`${classes.root} ${classes.checkIcon}` } />;
+      return <CheckCircle color="accent" className={`${classes.root} ${classes.checkIcon}`} />;
     }
     return (
       <StepPositionIcon
         theme={theme}
-        classes={{root}}
+        classes={{ root }}
         position={icon}
         active={active}
         disabled={disabled}
@@ -53,8 +53,11 @@ StepIcon.propTypes = {
   icon: PropTypes.oneOfType([
     PropTypes.element,
     PropTypes.string,
-    PropTypes.number
+    PropTypes.number,
   ]),
+  disabled: PropTypes.bool,
+  theme: PropTypes.object,
+  classes: PropTypes.object,
 };
 
 export default withStyles(styleSheet)(StepIcon);

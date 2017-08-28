@@ -2,6 +2,7 @@ import createPalette from 'material-ui/styles/palette';
 import purple from 'material-ui/colors/deepPurple';
 import blue from 'material-ui/colors/blue';
 import grey from 'material-ui/colors/grey';
+import getMuiTheme from 'material-ui-old/styles/getMuiTheme';
 import store from '../store';
 
 const getColorTheme = () => {
@@ -10,6 +11,21 @@ const getColorTheme = () => {
     ? blue
     : { ...purple, 500: '#6B5CA5' };
 };
+
+const getOldTheme = () => {
+  const role = store.getState().session.role;
+  const mainColor = (role === 'agency') ? '#5b92e5' : '#6B5CA5';
+  return {
+    pickerHeaderColor: mainColor,
+    primary1Color: mainColor,
+    primary2Color: mainColor,
+    accent1Color: mainColor,
+  };
+};
+
+export const muiOldTheme = () => getMuiTheme({
+  palette: getOldTheme(),
+});
 
 const theme = {
   palette: createPalette({
@@ -77,6 +93,9 @@ const theme = {
         padding: '0 4px 0 4px',
       },
     },
+    MuiDefaultTab: {
+      fontWeight: 400,
+    },
   },
 };
 const getTheme = () => (
@@ -88,6 +107,11 @@ const getTheme = () => (
       success: {
         primary: '#72C300',
         secondary: '#BEF078',
+      },
+      eoiStatus: {
+        completed: '#5B92E5',
+        closed: '#233944',
+        open: '#72C300',
       },
     },
   }

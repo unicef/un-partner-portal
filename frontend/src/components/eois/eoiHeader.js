@@ -6,7 +6,8 @@ import { browserHistory as history } from 'react-router';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
-import Tabs, { Tab } from 'material-ui/Tabs';
+import Tabs from 'material-ui/Tabs';
+import CustomTab from '../common/customTab';
 
 const messages = {
   header: 'Calls for Expressions of Interest',
@@ -43,7 +44,7 @@ const styleSheet = createStyleSheet('sidebarMenu', (theme) => {
 });
 
 const renderTabs = tabs => tabs.map((tab, index) => (
-  <Tab label={tab.label} key={index} />
+  <CustomTab label={tab.label} key={index} />
 ));
 
 

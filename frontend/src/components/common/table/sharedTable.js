@@ -1,5 +1,8 @@
+// eslint-disable-next-line
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+
+const createData = data => data.map((item, index) => ({ id: index, ...item }));
 
 class SharedTable extends Component {
   constructor(props) {
@@ -7,9 +10,10 @@ class SharedTable extends Component {
     this.state = {
       order: 'asc',
       orderBy: 'Status',
-      data: this.props.data,
+      data: createData(this.props.data),
       hoverOn: null,
       selectable: false,
+      columnData: props.columnData,
     };
     this.handleRequestSort = this.handleRequestSort.bind(this);
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
@@ -42,6 +46,7 @@ class SharedTable extends Component {
 
 SharedTable.propTypes = {
   data: PropTypes.array.isRequired,
+  columnData: PropTypes.array.isRequired,
 };
 
 export default SharedTable;

@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 
+
 const messages = {
   continue: 'Continue',
   register: 'Register',
@@ -15,12 +16,12 @@ const RegistrationStep = (props) => {
   const { handleSubmit, handlePrev, last, first, children, reset } = props;
   return (
     <form onSubmit={handleSubmit}>
-      <Grid container direction="column" xs={12} >
+      <Grid container direction="column" >
         {React.Children.map(children, child =>
           React.cloneElement(child, { reset }),
         )}
-        <Grid item>
-          <Grid container direction="row" spacing={8}>
+        <Grid item xs={12}>
+          <Grid container direction="row" gutter={8}>
             <Grid item>
               <Button
                 color="accent"

@@ -47,6 +47,12 @@ MEMBER_ROLES = Choices(
     ('Rea', 'reader', 'Reader'),
 )
 
+POWER_MEMBER_ROLES = {
+    MEMBER_ROLES.admin: 0,
+    MEMBER_ROLES.editor: -1,
+    MEMBER_ROLES.reader: -2,
+}
+
 MEMBER_STATUSES = Choices(
     ('Act', 'active', 'Active'),
     ('Dea', 'deactivated', 'Deactivated'),
@@ -127,4 +133,3 @@ FORMAL_CAPACITY_ASSESSMENT = Choices(
     ('EUE', 'eu_echo', 'EU/ECHO Framework Partnership Agreement (FPA) assessment'),
     ('Oth', 'other', 'Other formal capacity assessment'),
 )
-

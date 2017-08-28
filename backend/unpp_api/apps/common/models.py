@@ -25,7 +25,7 @@ class Point(TimeStampedModel):
         decimal_places=5,
         validators=[MinValueValidator(Decimal(-180)), MaxValueValidator(Decimal(180))]
     )
-    # TODO: find out what UNICEF understands exactly under this name (admin_level_1)
+    # level 1 - is like California in USA or Mazowieckie in Poland
     admin_level_1 = models.CharField(max_length=255)
 
     class Meta:

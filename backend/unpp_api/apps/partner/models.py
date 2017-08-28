@@ -4,7 +4,7 @@ from datetime import date
 
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator
 from model_utils.models import TimeStampedModel
 
 from common.validators import MaxCurrentYearValidator
@@ -157,7 +157,7 @@ class PartnerCollaborationPartnershipOther(TimeStampedModel):
     created_by = models.ForeignKey('account.User', related_name="collaborations_partnership_others")
     partner = models.ForeignKey(Partner, related_name="collaborations_partnership_others")
     other_agency = models.ForeignKey('agency.OtherAgency', related_name="collaborations_partnership_others")
-    partnership_with_insitutions =  models.BooleanField(
+    partnership_with_insitutions = models.BooleanField(
         default=False,
         verbose_name=(
             'Has the organization collaborated with or a member of a cluster,'

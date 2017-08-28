@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+import MuiThemeProviderLegacy from 'material-ui-old/styles/MuiThemeProvider';
 
 import { initSession } from '../reducers/session';
-import getTheme from '../styles/muiTheme';
+import getTheme, { muiOldTheme } from '../styles/muiTheme';
 
 
 class Main extends Component {
@@ -16,7 +17,9 @@ class Main extends Component {
   render() {
     return (
       <MuiThemeProvider theme={createMuiTheme(getTheme())}>
-        {this.props.children}
+        <MuiThemeProviderLegacy muiTheme={muiOldTheme()}>
+          {this.props.children}
+        </MuiThemeProviderLegacy>
       </MuiThemeProvider>
 
     );

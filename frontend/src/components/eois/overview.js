@@ -1,42 +1,76 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Grid from 'material-ui/Grid';
 
-import PartnerEoiTable from './partnerEoiTable';
-import PinIcon from '../common/pinIcon';
-import TooltipIcon from '../common/tooltipIcon';
 
+import {
+  TableCell,
+} from 'material-ui/Table';
+
+import RegularTable from '../common/table/regularTable';
+import EoiSectorCell from './cells/eoiSectorCell';
+import EoiFilter from './filters/eoiFilter';
 
 const messages = {
   title: 'List of Calls for Expressions of Interest',
   tooltip: 'Pin CFEI',
 };
 
-const createData = data => data.map((item, index) => ({ id: index, ...item }));
 
+export const columnData = [
+  { id: 'name', label: 'Project name' },
+  { id: 'country', label: 'Country' },
+  { id: 'sector', label: 'Sector' },
+  { id: 'agency', label: 'Agency' },
+  { id: 'deadline', label: 'Application deadline' },
+  { id: 'startDate', label: 'Project start date' },
+];
 
 const mockData = [
-  { name: 'Capacity building for small rural farmers in Kenia', country: 'Kenia', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '01 Jan 2016', startDate: '30 Sep 2017', status: 0, pinned: true },
+  { name: 'Capacity building for small rural farmers in Kenia', country: 'Kenia', sector: { FoodSecurity: ['Area1', 'Area2'] }, agency: 'UNICEF', deadline: '01 Jan 2016', startDate: '30 Sep 2017', status: 0, pinned: true },
   { name: 'Capacity building for small rural farmers in Chile', country: 'Chile', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '04 Mar 2017', startDate: '30 Sep 2017', status: 0, pinned: false },
   { name: 'Capacity building for small rural farmers in Ukraine', country: 'Ukraine', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '30 Jun 1994', startDate: '30 Sep 2017', status: 2, pinned: true },
   { name: 'Capacity building for small rural farmers in Vietnam', country: 'Vietnam', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '30 Jun 2018', startDate: '30 Sep 2017', status: 1, pinned: true },
   { name: 'Capacity building for small rural farmers in Kanada', country: 'Kanada', sector: 'Food Security', area: 'Agriculture Inputs', agency: 'UNICEF', deadline: '29 Jun 2017', startDate: '30 Sep 2017', status: 2, pinned: false },
 ];
 
-const renderPinIcon = (item, classes) => (
-  <TooltipIcon
-    Icon={PinIcon}
-    displayTooltip={!item.pinned}
-    infoText={messages.tooltip}
-    iconClass={item.pinned ? classes.pinnedIcon : ''}
-  />
-);
+export const renderCells = (item, classes) => ([
+  <TableCell className={`${classes.limitedCell} ${classes.firstCell}`}>
+    {item.name}
+  </TableCell>,
+  <TableCell >
+    {item.country}
+  </TableCell>,
+  <TableCell >
+    <EoiSectorCell data={item.sector} id={item.id} />
+  </TableCell>,
+  <TableCell >
+    {item.agency}
+  </TableCell>,
+  <TableCell >
+    {item.deadline}
+  </TableCell>,
+  <TableCell >
+    {item.startDate}
+  </TableCell>,
+]);
 
 const Overview = () => (
-  <PartnerEoiTable
-    data={createData(mockData)}
-    title={messages.title}
-    renderItemIcon={renderPinIcon}
-  />
+
+  <Grid container direction="column" gutter={40}>
+    <Grid item>
+      <EoiFilter />
+    </Grid>
+    <Grid item>
+      <RegularTable
+        data={mockData}
+        columnData={columnData}
+        title={messages.title}
+        renderTableCells={renderCells}
+      />
+    </Grid>
+  </Grid>
+
 );
 
 Overview.PropTypes = {
