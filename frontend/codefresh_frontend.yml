@@ -1,0 +1,22 @@
+version: '1.0'
+
+steps:
+
+    build_frontend:
+        type: build
+        image_name: unicef/unpp-frontend
+        dockerfile: Dockerfile
+        working_directory: ${{main_clone}}/frontend
+        tag: ${{CF_BRANCH}}
+            
+    push_to_hub:
+        type: push
+        title: Pushing frontend image to docker hub
+        candidate: ${{build_frontend}}
+        tags: 
+            - ${{CF_BRANCH}}
+            - latest
+        when:
+            branch:
+                only: 
+                    - develop
