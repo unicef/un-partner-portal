@@ -6,7 +6,7 @@ from .models import (
     PartnerProfile,
     PartnerInternalControl,
     PartnerBudget,
-    PartnerDonor,
+    PartnerFunding,
     PartnerCollaborationPartnership,
     PartnerCollaborationPartnershipOther,
     PartnerCollaborationEvidence,
@@ -18,7 +18,7 @@ admin.site.register(Partner)
 admin.site.register(PartnerProfile)
 admin.site.register(PartnerInternalControl)
 admin.site.register(PartnerBudget)
-admin.site.register(PartnerDonor)
+admin.site.register(PartnerFunding)
 admin.site.register(PartnerCollaborationPartnership)
 admin.site.register(PartnerCollaborationPartnershipOther)
 admin.site.register(PartnerCollaborationEvidence)

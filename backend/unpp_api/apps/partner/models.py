@@ -138,7 +138,7 @@ class PartnerProfile(TimeStampedModel):
 
 
 # class PartnerHeadOrganization(TimeStampedModel):
-#     partner = models.ForeignKey(Partner, related_name="profile")
+#     partner = models.ForeignKey(Partner, related_name="org_heads")
 #     first_name = models.CharField(max_length=255, null=True, blank=True)
 #     last_name = models.CharField(max_length=255, null=True, blank=True)
 #     email = models.EmailField(max_length=255, null=True, blank=True)
@@ -156,7 +156,7 @@ class PartnerProfile(TimeStampedModel):
 
 
 class PartnerPolicyArea(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="profile")
+    partner = models.ForeignKey(Partner, related_name="area_policies")
     area = models.CharField(max_length=3, choices=POLICY_AREA_CHOICES)
     document_policies = models.BooleanField(default=True)
 
@@ -198,7 +198,7 @@ class PartnerAuditAssessment(TimeStampedModel):
 
 
 class PartnerReporting(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="audits")
+    partner = models.ForeignKey(Partner, related_name="reports")
     key_result = models.CharField(max_length=200, null=True, blank=True)
     publish_annual_reports = models.BooleanField(default=True)
     last_report = models.DateField(verbose_name='Date of most recent annual report')
@@ -213,6 +213,7 @@ class PartnerReporting(TimeStampedModel):
 
 
 class PartnerMandateMission(TimeStampedModel):
+    partner = models.ForeignKey(Partner, related_name="mandate_missions")
     # background
     background_and_rationale = models.CharField(max_length=400, null=True, blank=True)
     mandate_and_mission = models.CharField(max_length=400, null=True, blank=True)
@@ -329,7 +330,7 @@ class PartnerBudget(TimeStampedModel):
 
 
 class PartnerFunding(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="funding")
+    partner = models.ForeignKey(Partner, related_name="funds")
     source_core_funding = models.CharField(max_length=200, verbose_name="Please state your source(s) of core funding")
     major_donors = ArrayField(
         models.CharField(max_length=3, choices=PARTNER_DONORS_CHOICES),
@@ -391,7 +392,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
 
 
 class PartnerOtherInfo(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="audits")
+    partner = models.ForeignKey(Partner, related_name="other_info")
     info_to_share = models.CharField(max_length=200)
     org_logo = models.FileField(null=True)
     confirm_data_updated = models.BooleanField(default=False)
@@ -407,7 +408,7 @@ class PartnerOtherDocument(TimeStampedModel):
     """
     Max to 3 other document that User can upload.
     """
-    partner = models.ForeignKey(Partner, related_name="audits")
+    partner = models.ForeignKey(Partner, related_name="other_docs")
     document = models.FileField(null=True)
 
     class Meta:
