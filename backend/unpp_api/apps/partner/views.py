@@ -8,17 +8,15 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 # from django_filters.rest_framework import DjangoFilterBackend
 from common.permissions import IsAtLeastMemberEditor
-from .serializers import OrganizationProfileSerializer
-from .models import Partner
+from .serializers import OrganizationProfileSerializer, OrganizationProfileDetailsSerializer
+from .models import Partner, PartnerProfile
 
 
 class OrganizationProfileAPIView(APIView):
     """
-    Endpoint for getting Call of Expression of Interest.
+    Endpoint for getting Organization Profile.
     """
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
-    serializer_class = OrganizationProfileSerializer
-    lookup_field = lookup_url_kwarg = 'partner_id'
 
     def get_object(self, pk):
         return get_object_or_404(Partner, id=pk)
@@ -26,4 +24,15 @@ class OrganizationProfileAPIView(APIView):
     def get(self, request, partner_id, format=None):
         org_profile = self.get_object(partner_id)
         serializer = OrganizationProfileSerializer(org_profile)
+        return Response(serializer.data)
+
+
+class PartnerProfileAPIView(APIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+
+    def get(self, request, partner_id, format=None):
+        partner = get_object_or_404(Partner, id=partner_id)
+        profile = get_object_or_404(PartnerProfile, partner=partner)
+        serializer = OrganizationProfileDetailsSerializer(dict(partner=partner, profile=profile))
         return Response(serializer.data)
