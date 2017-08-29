@@ -110,6 +110,11 @@ class PartnerProfileFactory(factory.django.DjangoModelFactory):
     org_head_telephonee = "+48 22 568 03 00"
     working_languages = factory.LazyFunction(get_country_list)
 
+    mailing_street_box = factory.Sequence(lambda n: "Street {}".format(n))
+    mailing_city = factory.Sequence(lambda n: "City {}".format(n))
+    mailing_country = factory.fuzzy.FuzzyChoice(COUNTRIES)
+    mailing_zip_code = factory.Sequence(lambda n: "9681{}".format(n))
+
     class Meta:
         model = PartnerProfile
 
