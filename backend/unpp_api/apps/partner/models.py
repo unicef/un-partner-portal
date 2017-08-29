@@ -20,6 +20,7 @@ from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     WORKING_LAGNUAGES_CHOICES,
+    MAILING_TYPES,
 )
 
 
@@ -33,6 +34,11 @@ class Partner(TimeStampedModel):
     country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
     is_active = models.BooleanField(default=True)
     registration_number = models.CharField(max_length=255, null=True, blank=True)
+    country_presents = ArrayField(
+        models.CharField(max_length=2, choices=WORKING_LAGNUAGES_CHOICES),
+        default=list,
+        null=True
+    )
 
     class Meta:
         ordering = ['id']
@@ -98,8 +104,16 @@ class PartnerProfile(TimeStampedModel):
     have_system_track = models.BooleanField(default=False)
     financial_control_system_desc = models.CharField(max_length=200, null=True, blank=True)
 
-    # internal controls
-    # TODO: add here right fields + we will have relation with PartnerInternalControls
+    # mailing address
+    mailing_type = models.CharField(
+        max_length=3,
+        choices=MAILING_TYPES,
+        default=MAILING_TYPES.street
+    )
+    mailing_street_box = models.CharField(max_length=200, null=True, blank=True)
+    mailing_city = models.CharField(max_length=200, null=True, blank=True)
+    mailing_country = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
+    mailing_zip_code = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         ordering = ['id']

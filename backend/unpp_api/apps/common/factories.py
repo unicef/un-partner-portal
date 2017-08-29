@@ -101,7 +101,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
 
 class PartnerProfileFactory(factory.django.DjangoModelFactory):
-    partner = factory.LazyFunction(get_partner)
+    partner = factory.Iterator(Partner.objects.all())
     alias_name = factory.Sequence(lambda n: "aliast name {}".format(n))
     org_head_first_name = factory.LazyFunction(get_first_name)
     org_head_last_name = factory.LazyFunction(get_last_name)

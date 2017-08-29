@@ -133,3 +133,8 @@ FORMAL_CAPACITY_ASSESSMENT = Choices(
     ('EUE', 'eu_echo', 'EU/ECHO Framework Partnership Agreement (FPA) assessment'),
     ('Oth', 'other', 'Other formal capacity assessment'),
 )
+
+MAILING_TYPES = Choices(
+    ('Str', 'street', 'Street Address'),
+    ('POB', 'box', 'PO Box'),
+)
