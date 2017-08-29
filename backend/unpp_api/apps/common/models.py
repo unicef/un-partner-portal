@@ -7,6 +7,19 @@ from model_utils.models import TimeStampedModel
 from .countries import COUNTRIES_ALPHA2_CODE
 
 
+class AdminLevel1(TimeStampedModel):
+    """
+    Admin level 1 - is like California in USA or Mazowieckie in Poland
+    """
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "AdminLevel1 <pk:{}>".format(self.id)
+
+
 class Point(TimeStampedModel):
     country_code = models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE)
     lat = models.DecimalField(
@@ -25,8 +38,7 @@ class Point(TimeStampedModel):
         decimal_places=5,
         validators=[MinValueValidator(Decimal(-180)), MaxValueValidator(Decimal(180))]
     )
-    # level 1 - is like California in USA or Mazowieckie in Poland
-    admin_level_1 = models.CharField(max_length=255)
+    admin_level_1 = models.ForeignKey(AdminLevel1, related_name="points")
 
     class Meta:
         ordering = ['id']
