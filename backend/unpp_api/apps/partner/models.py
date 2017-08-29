@@ -73,7 +73,8 @@ class PartnerProfile(TimeStampedModel):
     org_head_telephonee = models.CharField(max_length=255, null=True, blank=True)
     org_head_fax = models.CharField(max_length=255, null=True, blank=True)
     org_head_mobile = models.CharField(max_length=255, null=True, blank=True)
-    connectivity = models.BooleanField(default=False, verbose_name='Does the organization have reliable access to internet in all of its operations?')
+    connectivity = models.BooleanField(default=False, verbose_name='Does the organization have reliable access to '
+                                                                   'internet in all of its operations?')
     connectivity_excuse = models.CharField(max_length=200, null=True, blank=True)
     working_languages = ArrayField(
         models.CharField(max_length=3, choices=WORKING_LAGNUAGES_CHOICES),
@@ -222,7 +223,7 @@ class PartnerMandateMission(TimeStampedModel):
     governance_structure = models.CharField(
         max_length=200, null=True, blank=True, verbose_name="Briefly describe the organization's governance structure")
     governance_hq = models.CharField(
-        max_length=200, null=True, blank=True ,
+        max_length=200, null=True, blank=True,
         verbose_name="Briefly describe the headquarters oversight of country/branch office operations including "
                      "any reporting requirements of the country/branch office to HQ")
     governance_organigram = models.FileField(null=True)

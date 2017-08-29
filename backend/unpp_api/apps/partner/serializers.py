@@ -77,4 +77,3 @@ class OrganizationProfileDetailsSerializer(serializers.Serializer):
 
     partner = PartnerFullSerializer()
     profile = PartnerFullProfilesSerializer()
-
