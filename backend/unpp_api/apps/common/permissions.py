@@ -27,13 +27,13 @@ class IsAtLeastMemberReader(BasePermission):
     def has_permission(self, request, view):
         try:
             member = PartnerMember.objects.get(user=request.user)
-        except PartnerMember.DoesNotExist as exp:
+        except PartnerMember.DoesNotExist:
             member = None
 
         if member is None:
             try:
                 member = AgencyMember.objects.get(user=request.user)
-            except AgencyMember.DoesNotExist as exp:
+            except AgencyMember.DoesNotExist:
                 member = None
 
         if member is None:

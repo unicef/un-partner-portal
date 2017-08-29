@@ -6,7 +6,7 @@ import { withStyles, createStyleSheet } from 'material-ui/styles';
 
 export const styleSheet = createStyleSheet('MuiStepConnector', theme => ({
   root: {
-    flex: '1 1 auto'
+    flex: '1 1 auto',
   },
   line: {
     display: 'block',
@@ -14,22 +14,22 @@ export const styleSheet = createStyleSheet('MuiStepConnector', theme => ({
   },
   hidden: {
     display: 'none',
-    height: 0
+    height: 0,
   },
   rootVertical: {
-    marginLeft: 11 // padding + 1/2 icon
+    marginLeft: 11, // padding + 1/2 icon
   },
   lineHorizontal: {
     marginLeft: -6,
     borderTopStyle: 'solid',
-    borderTopWidth: 1
+    borderTopWidth: 1,
   },
   lineVertical: {
     borderLeftStyle: 'solid',
     borderLeftWidth: 1,
     margin: '8px 0px',
-    minHeight: 40
-  }
+    minHeight: 40,
+  },
 }));
 
 function StepConnector(props) {
@@ -45,17 +45,17 @@ function StepConnector(props) {
     classes.root,
     {
       [classes.rootVertical]: orientation === 'vertical',
-      [classes.hidden]: active
+      [classes.hidden]: active,
     },
-    classNameProp
+    classNameProp,
   );
   const lineClassName = classNames(
     classes.line,
     {
       [classes.lineHorizontal]: orientation === 'horizontal',
       [classes.lineVertical]: orientation === 'vertical',
-      [classes.hidden]: active
-    }
+      [classes.hidden]: active,
+    },
   );
 
   return (
@@ -77,7 +77,8 @@ StepConnector.propTypes = {
   /**
    * @ignore
    */
-  orientation: PropTypes.oneOf(['horizontal', 'vertical']).isRequired
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']).isRequired,
+  active: PropTypes.bool,
 };
 
 export default withStyles(styleSheet)(StepConnector);

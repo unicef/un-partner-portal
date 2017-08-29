@@ -17,8 +17,7 @@ import RegistrationStep from './registrationStep';
 import Declaration from './declaration';
 import Account from './account';
 import AlertDialog from '../common/alertDialog';
-import { getCountries } from '../../helpers/api/api';
-import {loadCountries} from '../../reducers/countries';
+import { loadCountries } from '../../reducers/countries';
 
 const styleSheet = createStyleSheet('RegistrationStepper', () => ({
   root: {
@@ -136,6 +135,7 @@ RegistrationStepper.propTypes = {
    * answers to all questions in declaration component, show dialog when at least one is false
    */
   answers: PropTypes.arrayOf(PropTypes.string),
+  dispatch: PropTypes.func,
 };
 
 const selector = formValueSelector('registration');

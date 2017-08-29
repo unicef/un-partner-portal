@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Table, {
   TableBody,
   TableRow,
@@ -10,8 +10,24 @@ import Paper from 'material-ui/Paper';
 import EnhancedTableToolbar from './enhancedTableToolbar';
 import EnhancedTableHead from './enhancedTableHead';
 import SharedTable from './sharedTable';
-import TableStyleSheet from './tableStyling';
 
+
+const styleSheet = createStyleSheet('RegularTable', theme => ({
+  root: {
+    background: theme.palette.primary[200],
+    padding: theme.spacing.unit * 3,
+  },
+  paper: {
+    width: '100%',
+    overflowX: 'scroll',
+  },
+  limitedCell: {
+    maxWidth: 250,
+  },
+  firstCell: {
+    padding: `0px 4px 0px ${theme.spacing.unit * 4}px`,
+  },
+}));
 
 class RegularTable extends SharedTable {
   constructor(props) {
@@ -68,7 +84,7 @@ RegularTable.propTypes = {
   data: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
   columnData: PropTypes.array.isRequired,
-  renderCells: PropTypes.func.isRequired,
+  renderTableCells: PropTypes.func.isRequired,
 };
 
-export default withStyles(TableStyleSheet)(RegularTable);
+export default withStyles(styleSheet)(RegularTable);

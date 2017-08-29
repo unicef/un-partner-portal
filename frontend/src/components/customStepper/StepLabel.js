@@ -39,6 +39,9 @@ export const styleSheet = createStyleSheet('MuiStepLabel', theme => ({
   iconContainer: {
     paddingRight: 8,
   },
+  errorText: {
+    color: theme.palette.error[500],
+  },
 }));
 
 function StepLabel(props) {
@@ -50,6 +53,7 @@ function StepLabel(props) {
     orientation,
     last,
     children,
+    error,
     classes,
     ...other
   } = props;
@@ -76,12 +80,13 @@ function StepLabel(props) {
           />
         </span>
       )}
-      <Typography type='body1'>{children}</Typography>
+      <Typography className={error && classes.errorText} type="body1">{children}</Typography>
     </span>
   );
 }
 
 StepLabel.propTypes = {
+  classes: PropTypes.object,
   /**
    * Sets the step as active. Is passed to child components.
    */
@@ -115,6 +120,10 @@ StepLabel.propTypes = {
    * @ignore
    */
   orientation: PropTypes.oneOf(['horizontal', 'vertical']).isRequired,
+  /**
+   * whether label should be displayed in error state
+   */
+  error: PropTypes.bool,
 };
 
 export default withStyles(styleSheet)(StepLabel);

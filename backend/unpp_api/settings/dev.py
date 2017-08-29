@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from .base import *
+from .base import *  # noqa: ignore=F403
 
 
 # dev overrides
@@ -38,6 +38,6 @@ extend_list_avoid_repeats(INSTALLED_APPS, [
 ])
 
 try:
-    from .local import *
+    from .local import *  # noqa: ignore=F403
 except ImportError:
     pass

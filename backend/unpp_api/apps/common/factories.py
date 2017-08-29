@@ -19,6 +19,13 @@ from .countries import COUNTRIES_ALPHA2_CODE
 COUNTRIES = [x[0] for x in COUNTRIES_ALPHA2_CODE]
 
 
+def get_random_agency():
+    return random.choice([
+        Agency.objects.get_or_create(name='UNICEF')[0],
+        Agency.objects.get_or_create(name='World Food Program')[0],
+    ])
+
+
 def get_agency_member():
     return User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?").first()
 
@@ -140,12 +147,7 @@ class AgencyFactory(factory.django.DjangoModelFactory):
 class AgencyOfficeFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: "agency office {}".format(n))
-    agency = factory.SubFactory(AgencyFactory)
-    # post generated - TODO when right time will come (when we need them - depending on endpoint)
-    # countries_code = ArrayField(
-    #     models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE),
-    #     default=list
-    # )
+    agency = factory.LazyFunction(get_random_agency)
     countries_code = factory.LazyFunction(get_country_list)
 
     class Meta:
@@ -163,7 +165,7 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
 class EOIFactory(factory.django.DjangoModelFactory):
     title = factory.Sequence(lambda n: "title {}".format(n))
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
-    agency = factory.SubFactory(AgencyFactory)
+    agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
     focal_point = factory.LazyFunction(get_agency_member)
     # locations ... TODO when right time will come (when we need them - depending on endpoint)
