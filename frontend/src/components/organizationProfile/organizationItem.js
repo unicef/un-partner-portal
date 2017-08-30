@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import IconButton from 'material-ui/IconButton';
 import Warning from 'material-ui-icons/Warning';
 import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';

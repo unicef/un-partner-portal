@@ -2,6 +2,7 @@ import React from 'react';
 import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import R from 'ramda';
 
 import Grid from 'material-ui/Grid';
 
@@ -25,6 +26,12 @@ const NAME_CHANGE = [
     label: 'No',
   },
 ];
+
+const mapCountries = (countries) => {
+  const makeFormItem = list => R.zipObj(['value', 'label'], list);
+  const compare = (a, b) => a.label.localeCompare(b.label);
+  return R.sort(compare, R.map(makeFormItem, R.toPairs(countries)));
+};
 
 const BasicInformation = (props) => {
   const { legalNameChange, countries } = props;
@@ -58,7 +65,7 @@ const BasicInformation = (props) => {
         <SelectForm
           fieldName="country"
           label="Country of Origin"
-          values={countries}
+          values={mapCountries(countries)}
           infoIcon
           infoText={messages.tooltip}
         />

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import HeaderList from '../../components/common/list/headerList';
 import OrganizationItem from './organizationItem';
 import CountryOfficesHeader from './countryOfficesHeader';

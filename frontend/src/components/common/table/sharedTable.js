@@ -2,15 +2,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-const createData = data => data.map((item, index) => ({ id: index, ...item }));
-
 class SharedTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
       order: 'asc',
       orderBy: 'Status',
-      data: createData(this.props.data),
+      data: this.props.data,
       hoverOn: null,
       selectable: false,
       columnData: props.columnData,
@@ -20,17 +18,36 @@ class SharedTable extends Component {
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    return this.setState({ data: nextProps.data });
+  }
+
   handleRequestSort(event, property) {
     const orderBy = property;
+    let sortingFunc;
     let order = 'desc';
 
     if (this.state.orderBy === property && this.state.order === 'desc') {
       order = 'asc';
     }
 
-    const data = this.state.data.sort(
-      (a, b) => (order === 'desc' ? b[orderBy] > a[orderBy] : a[orderBy] > b[orderBy]),
-    );
+    if (this.state.orderBy === property && this.state.order === 'desc') {
+      order = 'asc';
+    }
+
+    if (orderBy === 'agency') {
+      sortingFunc = (a, b) => (order === 'desc'
+        ? b[orderBy].id > a[orderBy].id
+        : a[orderBy].id > b[orderBy].id
+      );
+    } else {
+      sortingFunc = (a, b) => (order === 'desc'
+        ? b[orderBy] > a[orderBy]
+        : a[orderBy] > b[orderBy]
+      );
+    }
+
+    const data = this.state.data.sort(sortingFunc);
 
     return this.setState({ data, order, orderBy });
   }
