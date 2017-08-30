@@ -161,6 +161,36 @@ class PartnerHeadOrganization(TimeStampedModel):
         return "PartnerHeadOrganization <pk:{}>".format(self.id)
 
 
+class PartnerDirector(TimeStampedModel):
+    partner = models.ForeignKey(Partner, related_name="directors")
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    job_title = models.CharField(max_length=255, null=True, blank=True)
+    authorized = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerDirector <pk:{}>".format(self.id)
+
+
+class PartnerAuthorisedOfficer(TimeStampedModel):
+    partner = models.ForeignKey(Partner, related_name="authorised_officers")
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    job_title = models.CharField(max_length=255, null=True, blank=True)
+    telephone = models.CharField(max_length=255, null=True, blank=True)
+    fax = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerAuthorisedOfficer <pk:{}>".format(self.id)
+
+
 class PartnerPolicyArea(TimeStampedModel):
     partner = models.ForeignKey(Partner, related_name="area_policies")
     area = models.CharField(max_length=3, choices=POLICY_AREA_CHOICES)
