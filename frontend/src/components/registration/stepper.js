@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
-import { browserHistory as history } from 'react-router';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import PropTypes from 'prop-types';
 
@@ -18,6 +17,8 @@ import Declaration from './declaration';
 import Account from './account';
 import AlertDialog from '../common/alertDialog';
 import { loadCountries } from '../../reducers/countries';
+import { registerUser } from '../../reducers/session';
+
 
 const styleSheet = createStyleSheet('RegistrationStepper', () => ({
   root: {
@@ -37,6 +38,7 @@ class RegistrationStepper extends React.Component {
     this.handleNext = this.handleNext.bind(this);
     this.handleNextQuestions = this.handleNextQuestions.bind(this);
     this.handlePrev = this.handlePrev.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentWillMount() {
@@ -67,7 +69,7 @@ class RegistrationStepper extends React.Component {
   }
 
   handleSubmit(values) {
-    history.push('/');
+    registerUser(this.props.dispatch, values.json);
   }
 
 
@@ -127,15 +129,12 @@ class RegistrationStepper extends React.Component {
   }
 }
 RegistrationStepper.propTypes = {
-  /**
-   * css classes
-   */
+  dispatch: PropTypes.func,
   classes: PropTypes.object,
   /**
    * answers to all questions in declaration component, show dialog when at least one is false
    */
   answers: PropTypes.arrayOf(PropTypes.string),
-  dispatch: PropTypes.func,
 };
 
 const selector = formValueSelector('registration');

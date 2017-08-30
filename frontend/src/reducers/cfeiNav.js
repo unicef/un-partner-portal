@@ -12,7 +12,7 @@ const initialState = [
 ];
 
 
-export default function sessionReducer(state = initialState, action) {
+export default function cfeiNavReducer(state = initialState, action) {
   switch (action.type) {
     case SESSION_INIT: {
       return filterItems(state, action.session.role);
