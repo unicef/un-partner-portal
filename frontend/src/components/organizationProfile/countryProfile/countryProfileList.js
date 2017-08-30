@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import List, { ListItem, ListSubheader, ListItemText } from 'material-ui/List';
-import Checkbox from 'material-ui/Checkbox';
+import List, { ListSubheader } from 'material-ui/List';
+import CountryProfileItem from './countryProfileItem';
 
 const messages = {
   choose: 'Choose country',
@@ -39,14 +39,16 @@ class CountryProfileList extends Component {
     this.state = {
       checkedItems: [],
     };
+
+    this.handleToggle = this.handleToggle.bind(this);
   }
 
   componentWillMount() {
     this.setState({ checkedItems: new Array(this.props.countries.length).fill(false) });
   }
 
-  handleToggle(event, value) {
-    const currentIndex = this.props.countries.indexOf(value);
+  handleToggle(country) {
+    const currentIndex = this.props.countries.indexOf(country);
     const list = new Array(this.props.countries.length).fill(false);
     list[currentIndex] = true;
 
@@ -66,28 +68,12 @@ class CountryProfileList extends Component {
         <List>
           <ListSubheader classes={{ root: classes.lineHeight }}>{messages.choose}</ListSubheader>
           {countries.map(value =>
-            (<ListItem
-              classes={{ default: classes.default }}
+            (<CountryProfileItem
               key={value.id}
-              onClick={event => this.handleToggle(event, value)}
-            >
-              <Checkbox
-                checked={value.profile ? true : this.state.checkedItems[countries.indexOf(value)]}
-                disabled={value.profile}
-                tabIndex="-1"
-                classes={{
-                  checked: classes.checked,
-                  disabled: classes.disabled,
-                }}
-              />
-
-              <ListItemText
-                disableTypography
-                classes={{ root: classes.default }}
-                primary={value.name}
-              />
-
-            </ListItem>),
+              country={value}
+              handleToggle={this.handleToggle}
+              selected={this.state.checkedItems[countries.indexOf(value)]}
+            />),
           )}
         </List>
       </div>

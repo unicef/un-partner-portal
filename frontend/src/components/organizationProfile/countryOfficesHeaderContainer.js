@@ -37,17 +37,14 @@ class CountryOfficesHeaderContainer extends React.Component {
   }
 
   handleNewCountry() {
-    console.log('new');
     this.setState({ showCountryModal: true });
   }
 
   handleDialogClose() {
-    console.log('cancel');
     this.setState({ showCountryModal: false });
   }
 
   handleDialogCreate() {
-    console.log('create');
     this.setState({ showCountryModal: false });
   }
 
