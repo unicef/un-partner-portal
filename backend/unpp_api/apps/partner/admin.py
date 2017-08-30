@@ -4,6 +4,7 @@ from django.contrib import admin
 from .models import (
     Partner,
     PartnerProfile,
+    PartnerMailingAddress,
     PartnerInternalControl,
     PartnerBudget,
     PartnerFunding,
@@ -16,6 +17,7 @@ from .models import (
 
 admin.site.register(Partner)
 admin.site.register(PartnerProfile)
+admin.site.register(PartnerMailingAddress)
 admin.site.register(PartnerInternalControl)
 admin.site.register(PartnerBudget)
 admin.site.register(PartnerFunding)

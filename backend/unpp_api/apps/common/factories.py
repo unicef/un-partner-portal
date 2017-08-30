@@ -7,7 +7,7 @@ from factory import fuzzy
 from account.models import User, UserProfile
 from agency.models import Agency, AgencyOffice, AgencyMember
 from common.models import Sector, Specialization
-from partner.models import Partner, PartnerProfile, PartnerMember
+from partner.models import Partner, PartnerProfile, PartnerMember, PartnerMailingAddress
 from project.models import EOI
 from .consts import (
     PARTNER_TYPES,
@@ -103,6 +103,21 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
     registration_number = factory.Sequence(lambda n: "reg-number {}".format(n))
 
+    @factory.post_generation
+    def mailing_addresses(self, create, extracted, **kwargs):
+        address, created = PartnerMailingAddress.objects.get_or_create(
+            partner=self,
+            street='fake street',
+            city='fake city',
+            country=get_country_list(1)[0],
+            zip_code='90210',
+            telephone='(123) 234 569',
+            fax='(123) 234 566',
+            website='partner.website.org',
+            org_email="office@partner.website.org",
+        )
+        self.mailing_addresses.add(address)
+
     class Meta:
         model = Partner
 
@@ -116,11 +131,6 @@ class PartnerProfileFactory(factory.django.DjangoModelFactory):
     org_head_job_title = factory.LazyFunction(get_job_title)
     org_head_telephonee = "+48 22 568 03 00"
     working_languages = factory.LazyFunction(get_country_list)
-
-    mailing_street_box = factory.Sequence(lambda n: "Street {}".format(n))
-    mailing_city = factory.Sequence(lambda n: "City {}".format(n))
-    mailing_country = factory.fuzzy.FuzzyChoice(COUNTRIES)
-    mailing_zip_code = factory.Sequence(lambda n: "9681{}".format(n))
 
     class Meta:
         model = PartnerProfile

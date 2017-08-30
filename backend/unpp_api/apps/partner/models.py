@@ -116,17 +116,6 @@ class PartnerProfile(TimeStampedModel):
                                     "for financial management in all operations?")
     experienced_staff_desc = models.CharField(max_length=200, null=True, blank=True)
 
-    # mailing address
-    mailing_type = models.CharField(
-        max_length=3,
-        choices=MAILING_TYPES,
-        default=MAILING_TYPES.street
-    )
-    mailing_street_box = models.CharField(max_length=200, null=True, blank=True)
-    mailing_city = models.CharField(max_length=200, null=True, blank=True)
-    mailing_country = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
-    mailing_zip_code = models.CharField(max_length=200, null=True, blank=True)
-
     class Meta:
         ordering = ['id']
 
@@ -138,6 +127,30 @@ class PartnerProfile(TimeStampedModel):
         return PartnerBudget.objects.filter(partner=self, year=date.today().year).values_list('budget', flat=True) or 0
 
 
+class PartnerMailingAddress(TimeStampedModel):
+    partner = models.ForeignKey(Partner, related_name="mailing_addresses")
+    mailing_type = models.CharField(
+        max_length=3,
+        choices=MAILING_TYPES,
+        default=MAILING_TYPES.street
+    )
+    street = models.CharField(max_length=200, null=True, blank=True)
+    po_box = models.CharField(max_length=200, null=True, blank=True)
+    city = models.CharField(max_length=200, null=True, blank=True)
+    country = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
+    zip_code = models.CharField(max_length=200, null=True, blank=True)
+    telephone = models.CharField(max_length=255, null=True, blank=True)
+    fax = models.CharField(max_length=255, null=True, blank=True)
+    website = models.URLField(null=True, blank=True)
+    org_email = models.EmailField()
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerMailingAddress <pk:{}>".format(self.id)
+
+
 # class PartnerHeadOrganization(TimeStampedModel):
 #     partner = models.ForeignKey(Partner, related_name="org_heads")
 #     first_name = models.CharField(max_length=255, null=True, blank=True)
@@ -145,7 +158,7 @@ class PartnerProfile(TimeStampedModel):
 #     email = models.EmailField(max_length=255, null=True, blank=True)
 #     job_title = models.CharField(max_length=255, null=True, blank=True)
 #     # TODO: shall we provide PhoneNumberField ???
-#     telephonee = models.CharField(max_length=255, null=True, blank=True)
+#     telephone = models.CharField(max_length=255, null=True, blank=True)
 #     fax = models.CharField(max_length=255, null=True, blank=True)
 #     mobile = models.CharField(max_length=255, null=True, blank=True)
 #
