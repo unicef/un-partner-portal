@@ -16,11 +16,11 @@ const RegistrationStep = (props) => {
   const { handleSubmit, handlePrev, last, first, children, reset } = props;
   return (
     <form onSubmit={handleSubmit}>
-      <Grid container direction="column" xs={12} >
+      <Grid container direction="column" >
         {React.Children.map(children, child =>
           React.cloneElement(child, { reset }),
         )}
-        <Grid item>
+        <Grid item xs={12}>
           <Grid container direction="row" gutter={8}>
             <Grid item>
               <Button
