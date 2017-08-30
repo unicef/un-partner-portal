@@ -18,7 +18,6 @@ class CountryOfficesHeaderContainer extends React.Component {
     super(props);
     this.state = {
       showCountryModal: false,
-      selectedItem: -1,
     };
 
     this.handleNewCountry = this.handleNewCountry.bind(this);
