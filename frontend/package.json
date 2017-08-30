@@ -59,6 +59,7 @@
     "start": "PORT=8080 node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "jest",
+    "test:watch": "npm test -- --watch",
     "eslint": "eslint ./src/"
   },
   "devDependencies": {

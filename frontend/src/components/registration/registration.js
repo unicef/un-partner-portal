@@ -16,7 +16,6 @@ const styleSheet = createStyleSheet('registration', theme => ({
   header: {
     color: theme.palette.primary[400],
     backgroundColor: theme.palette.accent[500],
-    marginBottom: '1em',
   },
 
 }));

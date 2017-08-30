@@ -89,23 +89,23 @@ const RADIO_VALUES = [
 
 const MENU_VALUES = [
   {
-    value: 'cbo',
+    value: 'CBO',
     label: 'Community Based Organization (CBO)',
   },
   {
-    value: 'ngo',
+    value: 'NGO',
     label: 'National NGO',
   },
   {
-    value: 'ingo',
+    value: 'Int',
     label: 'International NGO (INGO)',
   },
   {
-    value: 'aci',
+    value: 'Aca',
     label: 'Academic Institution',
   },
   {
-    value: 'rcm',
+    value: 'RCC',
     label: 'Red Cross/Red Crescent Movement',
   },
 ];
@@ -124,13 +124,13 @@ const OrganizationTypes = (props) => {
         </div>
       </Grid>
       <SelectForm
-        fieldName="organizationType"
+        fieldName={'json.partner.display_type'}
         label={messages.labels.organizationType}
         values={MENU_VALUES}
         infoIcon
         infoText={messages.tooltip}
       />
-      {organization === 'ingo' && (
+      {(organization === 'Int' || organization === 'RCC') && (
         <RadioForm
           fieldName="office"
           label={messages.labels.office}
@@ -172,7 +172,7 @@ const selector = formValueSelector('registration');
 const connectedOrganizationTypes = connect(
   state => ({
     office: selector(state, 'office'),
-    organization: selector(state, 'organizationType'),
+    organization: selector(state, 'json.partner.display_type'),
   }),
 )(OrganizationTypes);
 

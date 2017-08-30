@@ -24,7 +24,7 @@ export const filterItems = (state, role) => state.filter(
 );
 
 
-export default function sessionReducer(state = initialState, action) {
+export default function navReducer(state = initialState, action) {
   switch (action.type) {
     case SESSION_INIT: {
       return filterItems(state, action.session.role);
