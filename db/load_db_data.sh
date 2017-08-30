@@ -2,7 +2,8 @@
 set -e
 
 # Perform all actions as $POSTGRES_USER
-export PGUSER="$POSTGRES_USER"
+# export PGUSER="$POSTGRES_USER"
+ export PGUSER="postgres"
 
 # Create the 'template_postgis' template db
 "${psql[@]}" <<- 'EOSQL'
@@ -26,9 +27,9 @@ echo "*** CREATING DATABASE ***"
 
 # create default database
 "${psql[@]}" <<- 'EOSQL'
-    CREATE ROLE etools_unpp_user WITH superuser login;
-    CREATE DATABASE etools_unpp;
-    GRANT ALL PRIVILEGES ON DATABASE etools_unpp TO etools_unpp_user;
+    CREATE ROLE $POSTGRES_USER WITH superuser login;
+    CREATE DATABASE $POSTGRES_DB;
+    GRANT ALL PRIVILEGES ON DATABASE $POSTGRES_DB TO $POSTGRES_USER;
 EOSQL
 
 echo "*** DATABASE CREATED! ***"
