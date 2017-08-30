@@ -3,6 +3,7 @@ from rest_framework import serializers
 from partner.models import (
     Partner,
     PartnerProfile,
+    PartnerHeadOrganization,
     PartnerMember,
 )
 
@@ -37,10 +38,14 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
             'alias_name',
             'former_legal_name',
             'legal_name_change',
-            'org_head_first_name',
-            'org_head_last_name',
-            'org_head_email',
         )
+
+
+class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerHeadOrganization
+        exclude = ('partner', )
 
 
 class PartnerFullSerializer(serializers.ModelSerializer):

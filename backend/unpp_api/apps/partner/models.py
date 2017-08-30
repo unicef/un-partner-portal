@@ -65,14 +65,6 @@ class PartnerProfile(TimeStampedModel):
     alias_name = models.CharField(max_length=255, null=True, blank=True)
     legal_name_change = models.BooleanField(default=False)
     former_legal_name = models.CharField(max_length=255, null=True, blank=True)
-    org_head_first_name = models.CharField(max_length=255, null=True, blank=True)
-    org_head_last_name = models.CharField(max_length=255, null=True, blank=True)
-    org_head_email = models.EmailField(max_length=255, null=True, blank=True)
-    org_head_job_title = models.CharField(max_length=255, null=True, blank=True)
-    # TODO: shall we provide PhoneNumberField ???
-    org_head_telephonee = models.CharField(max_length=255, null=True, blank=True)
-    org_head_fax = models.CharField(max_length=255, null=True, blank=True)
-    org_head_mobile = models.CharField(max_length=255, null=True, blank=True)
     connectivity = models.BooleanField(default=False, verbose_name='Does the organization have reliable access to '
                                                                    'internet in all of its operations?')
     connectivity_excuse = models.CharField(max_length=200, null=True, blank=True)
@@ -151,22 +143,22 @@ class PartnerMailingAddress(TimeStampedModel):
         return "PartnerMailingAddress <pk:{}>".format(self.id)
 
 
-# class PartnerHeadOrganization(TimeStampedModel):
-#     partner = models.ForeignKey(Partner, related_name="org_heads")
-#     first_name = models.CharField(max_length=255, null=True, blank=True)
-#     last_name = models.CharField(max_length=255, null=True, blank=True)
-#     email = models.EmailField(max_length=255, null=True, blank=True)
-#     job_title = models.CharField(max_length=255, null=True, blank=True)
-#     # TODO: shall we provide PhoneNumberField ???
-#     telephone = models.CharField(max_length=255, null=True, blank=True)
-#     fax = models.CharField(max_length=255, null=True, blank=True)
-#     mobile = models.CharField(max_length=255, null=True, blank=True)
-#
-#     class Meta:
-#         ordering = ['id']
-#
-#     def __str__(self):
-#         return "PartnerHeadOrganization <pk:{}>".format(self.id)
+class PartnerHeadOrganization(TimeStampedModel):
+    partner = models.ForeignKey(Partner, related_name="org_heads")
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(max_length=255, null=True, blank=True)
+    job_title = models.CharField(max_length=255, null=True, blank=True)
+    # TODO: shall we provide PhoneNumberField ???
+    telephone = models.CharField(max_length=255, null=True, blank=True)
+    fax = models.CharField(max_length=255, null=True, blank=True)
+    mobile = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerHeadOrganization <pk:{}>".format(self.id)
 
 
 class PartnerPolicyArea(TimeStampedModel):
