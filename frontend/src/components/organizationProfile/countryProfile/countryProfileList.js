@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import List, { ListSubheader } from 'material-ui/List';
 import CountryProfileItem from './countryProfileItem';
+import { selectCountryId } from '../../../reducers/countryProfiles';
 
 const messages = {
   choose: 'Choose country',
@@ -15,16 +17,6 @@ const styleSheet = createStyleSheet('CountryProfileList', (theme) => {
       width: '100%',
       paddingTop: `${padding}px`,
       background: theme.palette.background.paper,
-    },
-    default: {
-      userSelect: 'none',
-      padding: 0,
-    },
-    checked: {
-      color: theme.palette.accent[500],
-    },
-    disabled: {
-      color: theme.palette.accent[200],
     },
     lineHeight: {
       lineHeight: '24px',
@@ -52,6 +44,8 @@ class CountryProfileList extends Component {
     const list = new Array(this.props.countries.length).fill(false);
     list[currentIndex] = true;
 
+    this.props.setSelectedCountryId(country.id);
+
     this.setState({
       checkedItems: list,
     });
@@ -62,9 +56,6 @@ class CountryProfileList extends Component {
 
     return (
       <div className={classes.root}>
-        <div className={classes.info}>
-          {messages.info}
-        </div>
         <List>
           <ListSubheader classes={{ root: classes.lineHeight }}>{messages.choose}</ListSubheader>
           {countries.map(value =>
@@ -84,6 +75,16 @@ class CountryProfileList extends Component {
 CountryProfileList.propTypes = {
   classes: PropTypes.object.isRequired,
   countries: PropTypes.array.isRequired,
+  setSelectedCountryId: PropTypes.func,
 };
 
-export default withStyles(styleSheet)(CountryProfileList);
+const mapDispatch = dispatch => ({
+  setSelectedCountryId: countryId => dispatch(selectCountryId(countryId)),
+});
+
+const connectedCountryProfileList = connect(
+  null,
+  mapDispatch,
+)(CountryProfileList);
+
+export default withStyles(styleSheet)(connectedCountryProfileList);

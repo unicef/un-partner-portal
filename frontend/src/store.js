@@ -6,6 +6,7 @@ import nav from './reducers/nav';
 import route from './reducers/route';
 import session from './reducers/session';
 import countries from './reducers/countries';
+import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
 
 export default createStore(combineReducers({
@@ -14,6 +15,7 @@ export default createStore(combineReducers({
   route,
   session,
   countries,
+  countryProfiles,
   partnerProfileEdit,
   form: formReducer,
 }),
