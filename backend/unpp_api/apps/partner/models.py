@@ -63,6 +63,7 @@ class Partner(TimeStampedModel):
 class PartnerProfile(TimeStampedModel):
     partner = models.ForeignKey(Partner, related_name="profile")
     alias_name = models.CharField(max_length=255, null=True, blank=True)
+    acronym = models.CharField(max_length=200, null=True, blank=True)
     legal_name_change = models.BooleanField(default=False)
     former_legal_name = models.CharField(max_length=255, null=True, blank=True)
     connectivity = models.BooleanField(default=False, verbose_name='Does the organization have reliable access to '
@@ -75,7 +76,7 @@ class PartnerProfile(TimeStampedModel):
     )
     working_languages_other = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
     register_country = models.BooleanField(default=False, verbose_name='Register to work in country?')
-    flagged = models.BooleanField(default=False)
+    flagged = models.BooleanField(default=False)  # not sure do we need this attr
     start_cooperate_date = models.DateField(auto_now_add=True)
     have_gov_doc = models.BooleanField(default=False, verbose_name='Does the organization have a government document?')
     registration_doc = models.FileField(null=True)
