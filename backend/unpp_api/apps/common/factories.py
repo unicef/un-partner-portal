@@ -1,5 +1,6 @@
 import random
 from datetime import date
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 import factory
@@ -7,11 +8,27 @@ from factory import fuzzy
 from account.models import User, UserProfile
 from agency.models import Agency, AgencyOffice, AgencyMember
 from common.models import Sector, Specialization
-from partner.models import Partner, PartnerProfile, PartnerMember, PartnerMailingAddress
+from partner.models import (
+    Partner,
+    PartnerProfile,
+    PartnerMailingAddress,
+    PartnerDirector,
+    PartnerAuthorisedOfficer,
+    PartnerHeadOrganization,
+    PartnerMandateMission,
+    PartnerExperience,
+    PartnerBudget,
+    PartnerFunding,
+    PartnerCollaborationPartnership,
+    PartnerMember,
+)
 from project.models import EOI
 from .consts import (
     PARTNER_TYPES,
     MEMBER_STATUSES,
+    CONCERN_CHOICES,
+    YEARS_OF_EXP_CHOICES,
+    PARTNER_DONORS_CHOICES,
 )
 from .countries import COUNTRIES_ALPHA2_CODE
 
@@ -60,6 +77,18 @@ def get_job_title():
         'PM Assistant',
         'Head'
     ])
+
+
+def get_concerns(quantity=2):
+    return [random.choice(list(CONCERN_CHOICES._db_values)) for idx in xrange(0, quantity)]
+
+
+def get_year_of_exp():
+    return random.choice(list(YEARS_OF_EXP_CHOICES._db_values))
+
+
+def get_donors(quantity=2):
+    return [random.choice(list(PARTNER_DONORS_CHOICES._db_values)) for idx in xrange(0, quantity)]
 
 
 class GroupFactory(factory.django.DjangoModelFactory):
@@ -118,6 +147,62 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         )
         self.mailing_addresses.add(address)
 
+    @factory.post_generation
+    def directors(self, create, extracted, **kwargs):
+        for x in xrange(0, 2):
+            director, created = PartnerDirector.objects.get_or_create(
+                partner=self,
+                first_name=get_first_name(),
+                last_name=get_last_name(),
+                job_title=get_job_title(),
+            )
+            self.directors.add(director)
+
+    @factory.post_generation
+    def authorised_officers(self, create, extracted, **kwargs):
+        for x in xrange(0, 2):
+            officer, created = PartnerAuthorisedOfficer.objects.get_or_create(
+                partner=self,
+                first_name=get_first_name(),
+                last_name=get_last_name(),
+                job_title=get_job_title(),
+                telephone = '(123) 234 569',
+                fax='(123) 234 566',
+                email="office@partner.website.org",
+            )
+            self.authorised_officers.add(officer)
+
+    @factory.post_generation
+    def experiences(self, create, extracted, **kwargs):
+        for x in xrange(0, 2):
+            experience, created = PartnerExperience.objects.get_or_create(
+                partner=self,
+                specialization=Specialization.objects.all().order_by("?").first(),
+                years=get_year_of_exp()
+            )
+            self.experiences.add(experience)
+
+    @factory.post_generation
+    def budgets(self, create, extracted, **kwargs):
+        for year in [date.today().year, date.today().year-1]:
+            budget, created = PartnerBudget.objects.get_or_create(
+                partner=self,
+                year=year,
+                budget=year**2
+            )
+            self.budgets.add(budget)
+
+
+    @factory.post_generation
+    def collaborations_partnership(self, create, extracted, **kwargs):
+        partnership, created = PartnerCollaborationPartnership.objects.get_or_create(
+            partner=self,
+            created_by=User.objects.first(),
+            agency=Agency.objects.all().order_by("?").first(),
+            description="description"
+        )
+        self.collaborations_partnership.add(partnership)
+
     class Meta:
         model = Partner
 
@@ -125,15 +210,48 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 class PartnerProfileFactory(factory.django.DjangoModelFactory):
     partner = factory.Iterator(Partner.objects.all())
     alias_name = factory.Sequence(lambda n: "aliast name {}".format(n))
-    org_head_first_name = factory.LazyFunction(get_first_name)
-    org_head_last_name = factory.LazyFunction(get_last_name)
-    org_head_email = factory.Sequence(lambda n: "fake-partner-head-{}@unicef.org".format(n))
-    org_head_job_title = factory.LazyFunction(get_job_title)
-    org_head_telephonee = "+48 22 568 03 00"
     working_languages = factory.LazyFunction(get_country_list)
 
     class Meta:
         model = PartnerProfile
+
+
+class PartnerHeadOrganizationFactory(factory.django.DjangoModelFactory):
+    partner = factory.Iterator(Partner.objects.all())
+    first_name = factory.LazyFunction(get_first_name)
+    last_name = factory.LazyFunction(get_last_name)
+    email = factory.Sequence(lambda n: "fake-partner-head-{}@unicef.org".format(n))
+    job_title = factory.LazyFunction(get_job_title)
+    telephone = factory.Sequence(lambda n: "+48 22 568 03 0{}".format(n))
+
+    class Meta:
+        model = PartnerHeadOrganization
+
+
+class PartnerMandateMissionFactory(factory.django.DjangoModelFactory):
+    partner = factory.Iterator(Partner.objects.all())
+    background_and_rationale = factory.Sequence(lambda n: "background and rationale {}".format(n))
+    mandate_and_mission = factory.Sequence(lambda n: "mandate and mission {}".format(n))
+    governance_structure = factory.Sequence(lambda n: "governance structure {}".format(n))
+    governance_hq = factory.Sequence(lambda n: "reporting requirements of the country office to HQ {}".format(n))
+
+    concern_groups = factory.LazyFunction(get_concerns)
+    security_desc = factory.Sequence(lambda n: "rapid response {}".format(n))
+    description = factory.Sequence(lambda n: "collaboration professional netwok {}".format(n))
+
+    class Meta:
+        model = PartnerMandateMission
+
+
+class PartnerFundingFactory(factory.django.DjangoModelFactory):
+    partner = factory.Iterator(Partner.objects.all())
+
+    source_core_funding = factory.Sequence(lambda n: "source(s) of core funding {}".format(n))
+    major_donors = factory.LazyFunction(get_donors)
+    main_donors_list = factory.Sequence(lambda n: "list of main donors {}".format(n))
+
+    class Meta:
+        model = PartnerFunding
 
 
 class PartnerMemberFactory(factory.django.DjangoModelFactory):

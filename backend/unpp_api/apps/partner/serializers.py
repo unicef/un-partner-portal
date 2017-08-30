@@ -1,9 +1,18 @@
 from rest_framework import serializers
 
+from common.serializers import SpecializationSerializer
 from partner.models import (
     Partner,
     PartnerProfile,
+    PartnerMailingAddress,
+    PartnerDirector,
+    PartnerAuthorisedOfficer,
     PartnerHeadOrganization,
+    PartnerMandateMission,
+    PartnerExperience,
+    PartnerBudget,
+    PartnerFunding,
+    PartnerCollaborationPartnership,
     PartnerMember,
 )
 
@@ -78,7 +87,81 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
         )
 
 
+class PartnerMailingAddressSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerMailingAddress
+        fields = "__all__"
+
+
+class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerHeadOrganization
+        fields = "__all__"
+
+
+class PartnerDirectorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerDirector
+        fields = "__all__"
+
+
+class PartnerAuthorisedOfficerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerAuthorisedOfficer
+        fields = "__all__"
+
+
+class PartnerMandateMissionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerMandateMission
+        fields = "__all__"
+
+
+class PartnerExperienceSerializer(serializers.ModelSerializer):
+
+    specialization = SpecializationSerializer()
+
+    class Meta:
+        model = PartnerExperience
+        fields = "__all__"
+
+
+class PartnerBudgetSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerBudget
+        fields = "__all__"
+
+
+class PartnerFundingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerFunding
+        fields = "__all__"
+
+
+class PartnerCollaborationPartnershipSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerCollaborationPartnership
+        fields = "__all__"
+
+
 class OrganizationProfileDetailsSerializer(serializers.Serializer):
 
     partner = PartnerFullSerializer()
     profile = PartnerFullProfilesSerializer()
+    mailing = PartnerMailingAddressSerializer()
+    directors = PartnerDirectorSerializer(many=True)
+    authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
+    head_organization = PartnerHeadOrganizationSerializer()
+    mandate_mission = PartnerMandateMissionSerializer()
+    experiences = PartnerExperienceSerializer(many=True)
+    budgets = PartnerBudgetSerializer(many=True)
+    funding = PartnerFundingSerializer()
+    collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)

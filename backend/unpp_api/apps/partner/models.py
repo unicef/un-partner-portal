@@ -348,13 +348,10 @@ class PartnerInternalControl(TimeStampedModel):
 
 
 class PartnerBudget(TimeStampedModel):
-    """
-
-    """
     partner = models.ForeignKey(Partner, related_name="budgets")
     year = models.PositiveSmallIntegerField(
         "Weight in percentage",
-        help_text="Value in percentage, provide number from 0 to 100",
+        help_text="Enter valid year.",
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
     budget = models.DecimalField(decimal_places=2, max_digits=12, blank=True, null=True)

@@ -5,6 +5,9 @@ from common.consts import EOI_TYPES
 from common.factories import (
     PartnerFactory,
     PartnerProfileFactory,
+    PartnerHeadOrganizationFactory,
+    PartnerMandateMissionFactory,
+    PartnerFundingFactory,
     PartnerMemberFactory,
     AgencyMemberFactory,
     EOIFactory,
@@ -34,18 +37,6 @@ def generate_fake_data(quantity=4):
     admin.save()
     print "Superuser created:{}/{}".format(admin.username, password)
 
-    PartnerFactory.create_batch(quantity/2)
-    print "{} Partner objects created".format(quantity/2)
-
-    hq = Partner.objects.first()
-    Partner.objects.exclude(id=hq.id).update(hq=hq)
-    print "Partner HQ & Country Profiles"
-
-    PartnerProfileFactory.create_batch(quantity/2)
-    print "{} Partner Profile objects created".format(quantity/2)
-
-    PartnerMemberFactory.create_batch(quantity/2)
-    print "{} PartnerMember objects created".format(quantity/2)
 
     AgencyMemberFactory.create_batch(quantity/2)
     print "{} AgencyMember objects created".format(quantity/2)
@@ -61,3 +52,25 @@ def generate_fake_data(quantity=4):
         for partner in Partner.objects.all():
             eoi.invited_partners.add(partner)
     print "All partners invited to direct EOI."
+
+    PartnerFactory.create_batch(quantity/2)
+    print "{} Partner objects created".format(quantity/2)
+
+    hq = Partner.objects.first()
+    Partner.objects.exclude(id=hq.id).update(hq=hq)
+    print "Partner HQ & Country Profiles"
+
+    PartnerProfileFactory.create_batch(quantity/2)
+    print "{} Partner Profile objects created".format(quantity/2)
+
+    PartnerHeadOrganizationFactory.create_batch(quantity/2)
+    print "{} Partner Head Organization objects created".format(quantity/2)
+
+    PartnerMandateMissionFactory.create_batch(quantity/2)
+    print "{} Partner Mandate Mission objects created".format(quantity/2)
+
+    PartnerFundingFactory.create_batch(quantity/2)
+    print "{} Partner Funding objects created".format(quantity/2)
+
+    PartnerMemberFactory.create_batch(quantity/2)
+    print "{} PartnerMember objects created".format(quantity/2)
