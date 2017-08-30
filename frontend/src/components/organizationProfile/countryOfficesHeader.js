@@ -36,7 +36,7 @@ const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
 });
 
 const CountryOfficesHeader = (props) => {
-  const { classes } = props;
+  const { classes, handleNewCountryClick } = props;
   return (
     <Grid align="center" className={classes.container} container>
       <Grid xs={9} item>
@@ -47,6 +47,7 @@ const CountryOfficesHeader = (props) => {
       <Grid className={classes.right} xs={3} item>
         <Button
           color="accent"
+          onClick={handleNewCountryClick}
           raised
         >
           <div className={classes.alignCenter}>
@@ -61,6 +62,7 @@ const CountryOfficesHeader = (props) => {
 
 CountryOfficesHeader.propTypes = {
   classes: PropTypes.object.isRequired,
+  handleNewCountryClick: PropTypes.func.isRequired,
 };
 
 export default withStyles(styleSheet)(CountryOfficesHeader);

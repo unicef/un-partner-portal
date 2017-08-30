@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import HeaderList from '../../components/common/list/headerList';
 import OrganizationItem from './organizationItem';
-import CountryOfficesHeader from './countryOfficesHeader';
+import CountryOfficesHeaderContainer from './countryOfficesHeaderContainer';
 
 const countryItemsMockData = [
   { country: 'Kenya', users: 25, update: '01 Jan 2016', completed: true },
@@ -23,7 +23,10 @@ const countryOfficesItems = () => countryItemsMockData.map(item =>
   />));
 
 const CountryOfficesList = () => (
-  <HeaderList header={CountryOfficesHeader} rows={countryOfficesItems(countryItemsMockData)} />
+  <HeaderList
+    header={CountryOfficesHeaderContainer}
+    rows={countryOfficesItems(countryItemsMockData)}
+  />
 );
 
 export default CountryOfficesList;
