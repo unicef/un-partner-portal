@@ -59,6 +59,7 @@ AlertDialog.propTypes = {
   * lcallback called when dialog is closed
   */
   handleDialogClose: PropTypes.func.isRequired,
+  classes: PropTypes.object,
 };
 
 export default withStyles(styleSheet)(AlertDialog);

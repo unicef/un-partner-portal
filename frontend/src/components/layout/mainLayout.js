@@ -55,54 +55,56 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
 const mainLayout = (props) => {
   const classes = props.classes;
   return (
-    <Grid container gutter={0} md={10} className={classes.root}>
-      <Grid item sm={2} hidden={{ xsDown: true }}>
-        <AppBar
-          className={`${classes.header} ${classes.leftHeader}`}
-          position="static"
-          color="accent"
-        >
-          <Typography type="display1" color="inherit" align="center">
-            UNPP
-          </Typography>
-        </AppBar>
-      </Grid>
-      <Grid item xs={12} sm={10}>
-        <AppBar
-          className={`${classes.header} ${classes.rightHeader}`}
-          position="static"
-          color="primary"
-        >
-          <Grid
-            container
-            direction="row"
-            justify="flex-end"
-            gutter={0}
+    <Grid item >
+      <Grid container gutter={0} className={classes.root}>
+        <Grid item sm={2} hidden={{ xsDown: true }}>
+          <AppBar
+            className={`${classes.header} ${classes.leftHeader}`}
+            position="static"
+            color="accent"
           >
-            <Badge
-              badgeContent=" "
-              className={classes.iconBox}
-              classes={{ badge: classes.badge }}
+            <Typography type="display1" color="inherit" align="center">
+              UNPP
+            </Typography>
+          </AppBar>
+        </Grid>
+        <Grid item xs={12} sm={10}>
+          <AppBar
+            className={`${classes.header} ${classes.rightHeader}`}
+            position="static"
+            color="primary"
+          >
+            <Grid
+              container
+              direction="row"
+              justify="flex-end"
+              gutter={0}
             >
+              <Badge
+                badgeContent=" "
+                className={classes.iconBox}
+                classes={{ badge: classes.badge }}
+              >
+                <IconButton color="contrast">
+                  <LensIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
+                </IconButton>
+              </Badge>
               <IconButton color="contrast">
-                <LensIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
+                <AccountIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
               </IconButton>
-            </Badge>
-            <IconButton color="contrast">
-              <AccountIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
-            </IconButton>
-          </Grid>
-        </AppBar>
-      </Grid>
-      <Grid item xs={12} sm={2}>
-        <Paper className={classes.paper}>
-          <SidebarMenu />
-        </Paper>
-      </Grid>
-      <Grid item xs={12} sm={10}>
-        <Paper className={classes.paper2}>
-          {props.children}
-        </Paper>
+            </Grid>
+          </AppBar>
+        </Grid>
+        <Grid item xs={12} sm={2}>
+          <Paper className={classes.paper}>
+            <SidebarMenu />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={10}>
+          <Paper className={classes.paper2}>
+            {props.children}
+          </Paper>
+        </Grid>
       </Grid>
     </Grid>
   );

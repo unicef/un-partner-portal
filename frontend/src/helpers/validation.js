@@ -1,5 +1,6 @@
 
 export const required = value => (value ? undefined : 'Required');
+export const warning = value => (value ? undefined : 'Missing field');
 export const email = value => (
   /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)
     ? undefined
@@ -10,3 +11,8 @@ export const password = value => (
     ? undefined
     : 'Invalid password'
 );
+
+export const areFieldsMissing = (fields, values) => {
+  const isFieldMissing = key => values[key] === undefined;
+  return Object.keys(fields).find(isFieldMissing);
+};

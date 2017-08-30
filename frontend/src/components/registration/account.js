@@ -28,14 +28,14 @@ class Account extends Component {
                 <TextFieldForm
                   label="Your First Name"
                   placeholder="Provide First Name"
-                  fieldName="userFirstName"
+                  fieldName="json.user.first_name"
                 />
               </Grid>
               <Grid item sm={6} xs={12}>
                 <TextFieldForm
                   label="Your Last Name"
                   placeholder="Provide Last Name"
-                  fieldName="userLastName"
+                  fieldName="json.user.last_name"
                 />
               </Grid>
             </Grid>
@@ -43,7 +43,7 @@ class Account extends Component {
           <Grid item sm={6} xs={12}>
             <TextFieldForm
               label="Your Position/Job Title"
-              fieldName="userPosition"
+              fieldName="json.partner_member.title"
             />
           </Grid>
           <Grid item>
@@ -52,14 +52,14 @@ class Account extends Component {
                 <TextFieldForm
                   label="E-mail address"
                   placeholder="Provide E-mail"
-                  fieldName="userEmail"
+                  fieldName="json.user.email"
                   validation={[email]}
                 />
               </Grid>
               <Grid item sm={6} xs={12}>
                 <PasswordFieldForm
                   label="Password"
-                  fieldName="userPassword"
+                  fieldName="json.user.password"
                   textFieldProps={{
                     helperText: 'Use at least 8 characters, include both an uppercase, letter and a number.',
                   }}
