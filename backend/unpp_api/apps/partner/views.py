@@ -21,6 +21,11 @@ from .models import (
     PartnerBudget,
     PartnerFunding,
     PartnerCollaborationPartnership,
+    PartnerCollaborationPartnershipOther,
+    PartnerCollaborationEvidence,
+    PartnerOtherInfo,
+    PartnerOtherDocument,
+    PartnerInternalControl,
 )
 
 
@@ -55,6 +60,11 @@ class PartnerProfileAPIView(APIView):
         budgets = PartnerBudget.objects.filter(partner=partner)
         funding = get_object_or_404(PartnerFunding, partner=partner)
         collaborations_partnership = PartnerCollaborationPartnership.objects.filter(partner=partner)
+        collaborations_partnership_others = PartnerCollaborationPartnershipOther.objects.filter(partner=partner)
+        collaboration_evidences = PartnerCollaborationEvidence.objects.filter(partner=partner)
+        other_info = get_object_or_404(PartnerOtherInfo, partner=partner)
+        other_documents = PartnerOtherDocument.objects.filter(partner=partner)
+        internal_controls = PartnerInternalControl.objects.filter(partner=partner)
         serializer = OrganizationProfileDetailsSerializer(dict(
             partner=partner,
             profile=profile,
@@ -67,5 +77,10 @@ class PartnerProfileAPIView(APIView):
             budgets=budgets,
             funding=funding,
             collaborations_partnership=collaborations_partnership,
+            collaborations_partnership_others=collaborations_partnership_others,
+            collaboration_evidences=collaboration_evidences,
+            other_info=other_info,
+            other_documents=other_documents,
+            internal_controls=internal_controls,
         ))
         return Response(serializer.data)

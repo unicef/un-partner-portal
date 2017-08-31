@@ -8,7 +8,9 @@ from common.factories import (
     PartnerHeadOrganizationFactory,
     PartnerMandateMissionFactory,
     PartnerFundingFactory,
+    PartnerOtherInfoFactory,
     PartnerMemberFactory,
+    OtherAgencyFactory,
     AgencyMemberFactory,
     EOIFactory,
 )
@@ -37,6 +39,8 @@ def generate_fake_data(quantity=4):
     admin.save()
     print "Superuser created:{}/{}".format(admin.username, password)
 
+    OtherAgencyFactory.create_batch(quantity/2)
+    print "{} OtherAgencyFactory objects created".format(quantity/2)
 
     AgencyMemberFactory.create_batch(quantity/2)
     print "{} AgencyMember objects created".format(quantity/2)
@@ -71,6 +75,9 @@ def generate_fake_data(quantity=4):
 
     PartnerFundingFactory.create_batch(quantity/2)
     print "{} Partner Funding objects created".format(quantity/2)
+
+    PartnerOtherInfoFactory.create_batch(quantity)
+    print "{} Partner Other Info objects created".format(quantity/2)
 
     PartnerMemberFactory.create_batch(quantity/2)
     print "{} PartnerMember objects created".format(quantity/2)

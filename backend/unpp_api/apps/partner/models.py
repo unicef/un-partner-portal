@@ -109,6 +109,10 @@ class PartnerProfile(TimeStampedModel):
                                     "for financial management in all operations?")
     experienced_staff_desc = models.CharField(max_length=200, null=True, blank=True)
 
+    # collaborate
+    partnership_collaborate_institution = models.BooleanField(default=False)
+    partnership_collaborate_institution_desc = models.CharField(max_length=200, null=True, blank=True)
+
     class Meta:
         ordering = ['id']
 
@@ -442,7 +446,7 @@ class PartnerOtherDocument(TimeStampedModel):
     """
     Max to 3 other document that User can upload.
     """
-    partner = models.ForeignKey(Partner, related_name="other_docs")
+    partner = models.ForeignKey(Partner, related_name="other_documents")
     document = models.FileField(null=True)
 
     class Meta:

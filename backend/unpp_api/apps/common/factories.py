@@ -1,3 +1,4 @@
+import os
 import random
 from datetime import date
 from django.conf import settings
@@ -6,7 +7,7 @@ from django.db.models.signals import post_save
 import factory
 from factory import fuzzy
 from account.models import User, UserProfile
-from agency.models import Agency, AgencyOffice, AgencyMember
+from agency.models import OtherAgency, Agency, AgencyOffice, AgencyMember
 from common.models import Sector, Specialization
 from partner.models import (
     Partner,
@@ -20,6 +21,10 @@ from partner.models import (
     PartnerBudget,
     PartnerFunding,
     PartnerCollaborationPartnership,
+    PartnerCollaborationPartnershipOther,
+    PartnerCollaborationEvidence,
+    PartnerOtherInfo,
+    PartnerInternalControl,
     PartnerMember,
 )
 from project.models import EOI
@@ -29,6 +34,8 @@ from .consts import (
     CONCERN_CHOICES,
     YEARS_OF_EXP_CHOICES,
     PARTNER_DONORS_CHOICES,
+    COLLABORATION_EVIDENCE_MODES,
+    FUNCTIONAL_RESPONSIBILITY_CHOICES,
 )
 from .countries import COUNTRIES_ALPHA2_CODE
 
@@ -203,6 +210,45 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         )
         self.collaborations_partnership.add(partnership)
 
+    @factory.post_generation
+    def collaborations_partnership_others(self, create, extracted, **kwargs):
+        partnership, created = PartnerCollaborationPartnershipOther.objects.get_or_create(
+            partner=self,
+            created_by=User.objects.first(),
+            other_agency=OtherAgency.objects.all().order_by("?").first(),
+        )
+        self.collaborations_partnership_others.add(partnership)
+
+    @factory.post_generation
+    def collaboration_evidences(self, create, extracted, **kwargs):
+        accreditation, created = PartnerCollaborationEvidence.objects.get_or_create(
+            partner=self,
+            created_by=User.objects.first(),
+            mode = COLLABORATION_EVIDENCE_MODES.accreditation,
+            organization_name = "accreditation organization name",
+            date_received = date.today()
+        )
+        self.collaboration_evidences.add(accreditation)
+
+        reference, created = PartnerCollaborationEvidence.objects.get_or_create(
+            partner=self,
+            created_by=User.objects.first(),
+            mode = COLLABORATION_EVIDENCE_MODES.reference,
+            organization_name = "reference organization name",
+            date_received = date.today()
+        )
+        self.collaboration_evidences.add(reference)
+
+    @factory.post_generation
+    def internal_controls(self, create, extracted, **kwargs):
+        control, created = PartnerInternalControl.objects.get_or_create(
+            partner=self,
+            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.procurement,
+            segregation_duties=True,
+            comment="fake comment"
+        )
+        # self.internal_controls.add(control)
+
     class Meta:
         model = Partner
 
@@ -254,6 +300,14 @@ class PartnerFundingFactory(factory.django.DjangoModelFactory):
         model = PartnerFunding
 
 
+class PartnerOtherInfoFactory(factory.django.DjangoModelFactory):
+    partner = factory.Iterator(Partner.objects.all())
+    info_to_share = factory.Sequence(lambda n: "info to share {}".format(n))
+
+    class Meta:
+        model = PartnerOtherInfo
+
+
 class PartnerMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     partner = factory.LazyFunction(get_partner)
@@ -270,6 +324,14 @@ class AgencyFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Agency
+
+
+class OtherAgencyFactory(factory.django.DjangoModelFactory):
+
+    name = factory.Sequence(lambda n: "other agency {}".format(n))
+
+    class Meta:
+        model = OtherAgency
 
 
 class AgencyOfficeFactory(factory.django.DjangoModelFactory):

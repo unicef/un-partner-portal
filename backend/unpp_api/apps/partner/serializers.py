@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from agency.serializers import OtherAgencySerializer
 from common.serializers import SpecializationSerializer
 from partner.models import (
     Partner,
@@ -13,6 +14,11 @@ from partner.models import (
     PartnerBudget,
     PartnerFunding,
     PartnerCollaborationPartnership,
+    PartnerCollaborationPartnershipOther,
+    PartnerCollaborationEvidence,
+    PartnerOtherInfo,
+    PartnerOtherDocument,
+    PartnerInternalControl,
     PartnerMember,
 )
 
@@ -152,6 +158,43 @@ class PartnerCollaborationPartnershipSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class PartnerCollaborationPartnershipOtherSerializer(serializers.ModelSerializer):
+
+    other_agency = OtherAgencySerializer()
+
+    class Meta:
+        model = PartnerCollaborationPartnershipOther
+        fields = "__all__"
+
+
+class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerCollaborationEvidence
+        fields = "__all__"
+
+
+class PartnerOtherInfoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerOtherInfo
+        fields = "__all__"
+
+
+class PartnerOtherDocumentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerOtherDocument
+        fields = "__all__"
+
+
+class PartnerInternalControlSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerInternalControl
+        fields = "__all__"
+
+
 class OrganizationProfileDetailsSerializer(serializers.Serializer):
 
     partner = PartnerFullSerializer()
@@ -165,3 +208,8 @@ class OrganizationProfileDetailsSerializer(serializers.Serializer):
     budgets = PartnerBudgetSerializer(many=True)
     funding = PartnerFundingSerializer()
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
+    collaborations_partnership_others = PartnerCollaborationPartnershipOtherSerializer(many=True)
+    collaboration_evidences = PartnerCollaborationEvidenceSerializer(many=True)
+    other_info = PartnerOtherInfoSerializer()
+    other_documents = PartnerOtherDocumentSerializer(many=True)
+    internal_controls = PartnerInternalControlSerializer(many=True)
