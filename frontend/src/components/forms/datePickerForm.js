@@ -34,24 +34,19 @@ class DatePickerForm extends Component {
         <FormControl fullWidth>
           <FormLabel>{label}</FormLabel>
           <Grid container direction="row" gutter={4} align="center">
-            <Grid item xs={2} md={1}>
-              <DateRange />
-            </Grid>
-            <Grid item xs={10} md={11}>
-              <Field
-                name={fieldName}
-                component={renderDatePicker}
-                validate={optional ? [] : [required].concat(validation || [])}
-                hintText={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
-                warn={warn && warning}
-                textFieldStyle={{
-                  width: '100%',
-                  'line-height': null,
-                  height: 40,
-                }}
-                {...datePickerProps}
-              />
-            </Grid>
+            <Field
+              name={fieldName}
+              component={renderDatePicker}
+              validate={optional ? [] : [required].concat(validation || [])}
+              hintText={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
+              warn={warn && warning}
+              textFieldStyle={{
+                width: '100%',
+                'line-height': null,
+                height: 40,
+              }}
+              {...datePickerProps}
+            />
           </Grid>
         </FormControl>
       </Grid>
