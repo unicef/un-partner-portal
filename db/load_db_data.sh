@@ -23,14 +23,14 @@ EOSQL
 
 done
 
-echo "*** CREATING DATABASE ***"
+# echo "*** CREATING DATABASE ***"
 
-# create default database
-"${psql[@]}" <<- 'EOSQL'
-    CREATE ROLE "$POSTGRES_USER" WITH superuser login;
-    CREATE DATABASE "$POSTGRES_DB";
-    GRANT ALL PRIVILEGES ON DATABASE "$POSTGRES_DB" TO "$POSTGRES_USER";
-EOSQL
+# # create default database
+# "${psql[@]}" <<- 'EOSQL'
+#     CREATE ROLE "$POSTGRES_USER" WITH superuser login;
+#     CREATE DATABASE "$POSTGRES_DB";
+#     GRANT ALL PRIVILEGES ON DATABASE "$POSTGRES_DB" TO "$POSTGRES_USER";
+# EOSQL
 
-echo "*** DATABASE CREATED! ***"
+# echo "*** DATABASE CREATED! ***"
 
