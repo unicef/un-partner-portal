@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 import PropTypes from 'prop-types';
+import HqProfileOverviewHeader from './hqProfileOverviewHeader';
 import HeaderNavigation from '../../../components/common/headerNavigation';
 
 const messages = {
@@ -17,6 +18,7 @@ const HqProfile = (props) => {
         tabs={tabs}
         children={children}
         handleBackButton={() => { history.goBack(); }}
+        header={<HqProfileOverviewHeader update="12 Aug 2017" handleEditClick={() => { history.push('profile/edit'); }} />}
         title={messages.header}
       />
     </div>

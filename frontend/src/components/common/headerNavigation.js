@@ -22,6 +22,9 @@ const styleSheet = createStyleSheet('HeaderNavigation', (theme) => {
       display: 'flex',
       alignItems: 'center',
     },
+    right: {
+      alignItems: 'right',
+    },
     alignItemsPadding: {
       display: 'flex',
       alignItems: 'center',
@@ -54,12 +57,12 @@ class HeaderNavigation extends Component {
   }
 
   render() {
-    const { classes, title, backButton, handleBackButton, tabs, children } = this.props;
+    const { classes, title, backButton, handleBackButton, tabs, children, header } = this.props;
 
     return (
       <div>
         <Grid align="center" className={classes.container} container>
-          <Grid item xs={12}>
+          <Grid item xs={8}>
             <div className={tabs ? classes.alignItems : classes.alignItemsPadding}>
               {backButton ?
                 <IconButton onClick={handleBackButton}>
@@ -70,6 +73,11 @@ class HeaderNavigation extends Component {
               <Typography type="headline">
                 {title}
               </Typography>
+            </div>
+          </Grid>
+          <Grid item xs={4}>
+            <div className={classes.right}>
+              {header}
             </div>
           </Grid>
           {tabs ?
@@ -94,6 +102,7 @@ HeaderNavigation.propTypes = {
   handleBackButton: PropTypes.func,
   tabs: PropTypes.array,
   children: PropTypes.node,
+  header: PropTypes.Component,
 };
 
 export default withStyles(styleSheet)(HeaderNavigation);

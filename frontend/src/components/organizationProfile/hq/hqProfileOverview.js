@@ -37,7 +37,7 @@ const messages = {
 
 class HqProfileOverview extends Component {
   handleEditMode(sectionIndex) {
-    console.log('INDDEX', sectionIndex);
+    // TODO: navigate to edit section
   }
 
   render() {
