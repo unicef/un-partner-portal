@@ -1,29 +1,32 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import HeaderList from '../../components/common/list/headerList';
 import OrganizationItem from './organizationItem';
-import CountryOfficesHeader from './countryOfficesHeader';
+import CountryOfficesHeaderContainer from './countryOfficesHeaderContainer';
 
-const countryItemsMockData = [
-  { country: 'Kenya', users: 25, update: '01 Jan 2016', completed: true },
-  { country: 'Syria', users: 1, update: '03 Jan 2017', completed: true },
-  { country: 'Germany', users: 2, update: '1 Dec 2015', completed: false },
-  { country: 'Irland', users: 2, update: '1 Aug 2016', completed: true },
-  { country: 'Ukraine', users: 2, update: '01 Aug 2016', completed: false },
-  { country: 'England', users: 2, update: '1 Aug 2016', completed: false },
-  { country: 'Poland', users: 105, update: '01 Aug 2017', completed: true },
-];
-
-const countryOfficesItems = () => countryItemsMockData.map(item =>
+const countryOfficesItems = profiles => profiles.map(item =>
   (<OrganizationItem
     isCountryItem
-    title={item.country}
+    title={item.name}
     users={item.users}
     update={item.update}
     completed={item.completed}
   />));
 
-const CountryOfficesList = () => (
-  <HeaderList header={CountryOfficesHeader} rows={countryOfficesItems(countryItemsMockData)} />
+const CountryOfficesList = props => (
+  <HeaderList
+    header={CountryOfficesHeaderContainer}
+    rows={countryOfficesItems(props.countryProfiles)}
+  />
 );
 
-export default CountryOfficesList;
+CountryOfficesList.propTypes = {
+  countryProfiles: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = state => ({
+  countryProfiles: state.countryProfiles.countryProfiles,
+});
+
+export default connect(mapStateToProps)(CountryOfficesList);
