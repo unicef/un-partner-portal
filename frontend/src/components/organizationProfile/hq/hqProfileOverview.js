@@ -1,8 +1,10 @@
 import R from 'ramda';
+import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
+import PropTypes from 'prop-types';
 import CollapsableItem from '../../../components/common/collapsableItem';
 import PartnerProfileCollaboration from '../edit/collaboration/partnerProfileCollaboration';
 import PartnerProfileIdentification from '../edit/identification/partnerProfileIdentification';
@@ -11,6 +13,7 @@ import PartnerProfileMandate from '../edit/mandate/partnerProfileMandate';
 import PartnerProfileFunding from '../edit/funding/partnerProfileFunding';
 import PartnerProfileProjectImplementation from '../edit/projectImplementation/partnerProfileProjectImplementation';
 import PartnerProfileOtherInfo from '../edit/otherInfo/partnerProfileOtherInfo';
+import { changeTab } from '../../../reducers/partnerProfileEdit';
 
 const FIRST_INDEX = 0;
 
@@ -37,7 +40,8 @@ const messages = {
 
 class HqProfileOverview extends Component {
   handleEditMode(sectionIndex) {
-    // TODO: navigate to edit section
+    this.props.changeTab(sectionIndex);
+    history.push('profile/edit');
   }
 
   render() {
@@ -61,4 +65,12 @@ class HqProfileOverview extends Component {
   }
 }
 
-export default HqProfileOverview;
+HqProfileOverview.propTypes = {
+  changeTab: PropTypes.func.isRequired,
+};
+
+const mapDispatch = dispatch => ({
+  changeTab: index => dispatch(changeTab(index)),
+});
+
+export default connect(null, mapDispatch)(HqProfileOverview);
