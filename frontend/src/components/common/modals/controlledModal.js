@@ -1,62 +1,81 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
-
 import Button from 'material-ui/Button';
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from 'material-ui/Dialog';
+import { withStyles, createStyleSheet } from 'material-ui/styles';
+import Dialog, { DialogContent, DialogTitle, DialogActions } from 'material-ui/Dialog';
+import ModalContentHeader from './modalContentHeader';
 
-
-const styleSheet = createStyleSheet('OrganizationTypes', theme => ({
-  dialogMain: {
-    overflow: 'auto',
-  },
+const styleSheet = createStyleSheet('ContentDialog', theme => ({
   dialogTitle: {
     color: 'white',
     background: theme.palette.accent[500],
   },
+  info: {
+    fontSize: '14px',
+    background: theme.palette.primary[100],
+  },
 }));
 
-function AlertDialog(props) {
-  const { classes, trigger, title, content } = props;
+const messages = {
+  cancel: 'Cancel',
+  ok: 'Ok',
+};
+
+function ControlledModal(props) {
+  const { classes, trigger, title, info, content, buttons } = props;
   return (
-    <Dialog
-      open={trigger}
-      classes={{ paper: classes.dialogMain }}
-      maxWidth="md"
-    >
+    <Dialog open={trigger} >
       <DialogTitle
         className={classes.dialogTitle}
         disableTypography
       >
         {title}
       </DialogTitle>
-      {content}
+      <ModalContentHeader
+        titleText={info.title}
+        bodyText={info.body}
+      />
+      <DialogContent>
+        {content}
+      </DialogContent>
+      <DialogActions>
+        {buttons.flat && <Button onTouchTap={buttons.flat.handleClick} color="accent">
+          {buttons.flat.label || messages.cancel }
+        </Button>
+        }
+        {buttons.raised && <Button onTouchTap={buttons.raised.handleClick} raised color="accent">
+          {buttons.raised.label || messages.ok}
+        </Button>
+        }
+
+      </DialogActions>
     </Dialog>
   );
 }
 
-AlertDialog.propTypes = {
+ControlledModal.propTypes = {
   /**
    * Trigger, show dialog when true
    */
   trigger: PropTypes.bool.isRequired,
   /**
+   * Component presenting dialog content
+   */
+  content: PropTypes.node.isRequired,
+  /**
+   * Component presenting dialog actions
+   */
+  buttons: PropTypes.object.isRequired,
+  /**
    * title of the dialog
    */
   title: PropTypes.string,
   /**
-  * text body of the dialog
-  */
-  text: PropTypes.string,
-  /**
-  * lcallback called when dialog is closed
-  */
-  content: PropTypes.node,
-  classes: PropTypes.object,
+   * Extra info in grey section
+   */
+  info: PropTypes.string,
+
+  classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styleSheet)(AlertDialog);
+export default withStyles(styleSheet)(ControlledModal);

@@ -1,24 +1,12 @@
 import React from 'react';
-
 import PropTypes from 'prop-types';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 
-import RadioForm from '../forms/radioForm';
+import PolarRadio from '../forms/fields/PolarRadio';
 
-
-const QUESTIONS = [
-  {
-    value: 'true',
-    label: 'Yes',
-  },
-  {
-    value: 'false',
-    label: 'No',
-  },
-];
 
 const styleSheet = createStyleSheet('DeclarationRow', theme => ({
   container: {
@@ -42,9 +30,8 @@ function DeclarationRow(props) {
           <Typography className={classes.message}>{message}</Typography>
         </Grid>
         <Grid item xs={4}>
-          <RadioForm
+          <PolarRadio
             fieldName={`questions[${index}]`}
-            values={QUESTIONS}
           />
         </Grid>
       </Grid>

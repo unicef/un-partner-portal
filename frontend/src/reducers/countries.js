@@ -2,7 +2,7 @@ import { getCountries } from '../helpers/api/api';
 
 export const LOAD_COUNTRIES_SUCCESS = 'LOAD_COUNTRIES_SUCCESS';
 
-const initialState = [];
+const initialState = {};
 
 const loadCountriesSuccess = countries => ({ type: LOAD_COUNTRIES_SUCCESS, countries });
 

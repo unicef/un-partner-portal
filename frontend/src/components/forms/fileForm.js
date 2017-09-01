@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 
+import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
@@ -10,11 +11,10 @@ import Input from 'material-ui/Input';
 import FileUpload from 'material-ui-icons/FileUpload';
 import CloudDownload from 'material-ui-icons/CloudDownload';
 import Attachment from 'material-ui-icons/Attachment';
-import { FormControl, FormLabel } from 'material-ui/Form';
-import { FormControlLabel } from 'material-ui/Form';
+import { FormLabel, FormControlLabel } from 'material-ui/Form';
 import { renderFormControl } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+
 
 const styleSheet = createStyleSheet('mainLayout', theme => ({
   root: {
@@ -29,6 +29,11 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
     display: 'flex',
     alignItems: 'center',
   },
+  FileNameField: {
+    minWidth: 72,
+    paddingBottom: theme.spacing.unit,
+    borderBottom: '1px solid',
+  },
   icon: {
     marginRight: theme.spacing.unit,
   },
@@ -37,6 +42,7 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
   },
 }));
 
+
 class FileForm extends Component {
   constructor(props) {
     super(props);
@@ -44,8 +50,15 @@ class FileForm extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange(event) {
+  handleChange() {
     this.setState({ fileAdded: true });
+  }
+
+  renderFileName(fieldName) {
+    const file = document.getElementById(`${fieldName}-input`).files[0];
+    if (file) return file.name;
+    this.setState({ fileAdded: false });
+    return '';
   }
 
   render() {
@@ -53,7 +66,6 @@ class FileForm extends Component {
       classes,
       fieldName,
       label,
-      values,
       optional,
       validation,
       warn,
@@ -69,27 +81,30 @@ class FileForm extends Component {
           {...other}
         >
           <FormLabel>{label}</FormLabel>
+
+          <FormControlLabel
+            control={
+              <input
+                onChange={this.handleChange}
+                className={classes.root}
+                name={`${fieldName}-input`}
+                id={`${fieldName}-input`}
+                type="file"
+              />
+            }
+          />
           <Button dense classes={{ root: classes.button }} color="accent" >
-            <FormControlLabel
-              control={
-                <input
-                  onChange={this.handleChange}
-                  className={classes.root}
-                  name={`${fieldName}-input`}
-                  id={`${fieldName}-input`}
-                  type="file"
-                />
-              }
-            />
             <label className={classes.iconLabel} htmlFor={`${fieldName}-input`}>
               {fileAdded
                 ? (
-                  <Typography className={classes.iconLabel} gutterBottom >
+                  <Typography className={[classes.iconLabel, classes.FileNameField]} gutterBottom >
                     <Attachment className={classes.icon} />
-                    {document.getElementById(`${fieldName}-input`).files[0].name}
+                    {this.renderFileName(fieldName)}
                   </Typography>)
-                : ([<FileUpload className={classes.icon} />,
-                  'Upload File'])
+                : ([
+                  <FileUpload className={classes.icon} />,
+                  'Upload File']
+                )
               }
             </label>
           </Button>
@@ -101,6 +116,7 @@ class FileForm extends Component {
 
 
 FileForm.propTypes = {
+  classes: PropTypes.object,
   /**
    * Name of the field used by react-form and as unique id.
    */

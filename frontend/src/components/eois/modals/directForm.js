@@ -1,44 +1,40 @@
 import React from 'react';
-import { reduxForm, FormSection } from 'redux-form';
+import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
+
 import Typography from 'material-ui/Typography';
+
 import * as fields from './commonFields';
 import GridColumn from '../../common/grid/gridColumn';
+
 import ProjectDetails from './ProjectDetails';
 
 const messages = {
-  conceptNoteTemplate: 'Concept Note Template',
+
+  selectPartners: 'Select Partners',
   selectionCriteria: 'Selection Criteria',
 };
 
-const OpenForm = (props) => {
+const DirectForm = (props) => {
   const { handleSubmit } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <ProjectDetails
           dateFields={[
-            <fields.DeadlineDate />,
-            <fields.NotifyDate />,
             <fields.StartDate />,
             <fields.EndDate />,
           ]}
         />
         <Typography type="headline">
-          {messages.conceptNoteTemplate}
+          {messages.selectPartners}
         </Typography>
-        <Typography type="headline">
-          {messages.selectionCriteria}
-        </Typography>
-        <FormSection name="eoi">
-          <fields.Weighting />
-        </FormSection>
       </GridColumn>
     </form >
   );
 };
 
-OpenForm.propTypes = {
+DirectForm.propTypes = {
   /**
    * callback for form submit
    */
@@ -47,5 +43,5 @@ OpenForm.propTypes = {
 };
 
 export default reduxForm({
-  form: 'newOpenCfei',
-})(OpenForm);
+  form: 'newDirectCfei',
+})(DirectForm);

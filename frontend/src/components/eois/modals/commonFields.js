@@ -1,20 +1,47 @@
 import React from 'react';
-import { formValueSelector } from 'redux-form';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import R from 'ramda';
-
-import Grid from 'material-ui/Grid';
 
 import TextFieldForm from '../../forms/textFieldForm';
 import SelectForm from '../../forms/selectForm';
 import DatePickerForm from '../../forms/datePickerForm';
 import PolarRadio from '../../forms/fields/PolarRadio';
-import FileForm from '../../forms/fileForm';
 
-const messages = {
 
-};
+const FOCAL = [
+  {
+    value: 1,
+    label: 'Main',
+  },
+  {
+    value: 2,
+    label: 'Second',
+  },
+];
+
+const COUNTRIES = [
+  {
+    value: 'GB',
+    label: 'England',
+  },
+  {
+    value: 'KE',
+    label: 'Kenya',
+  },
+];
+
+const PARTNERS = [
+  {
+    value: 1,
+    label: 'Partner1',
+  },
+  {
+    value: 2,
+    label: 'Partner2',
+  },
+  {
+    value: 3,
+    label: 'Partner3',
+  },
+];
 
 export const TitleField = () => (<TextFieldForm
   label="Project Title"
@@ -22,17 +49,19 @@ export const TitleField = () => (<TextFieldForm
   placeholder="Enter Project Title"
 />);
 
-export const FocalPoint = () => (<TextFieldForm
+export const FocalPoint = () => (<SelectForm
   label="Project/Programme Focal Point(s)"
   fieldName="focal_point"
-  placeholder="Enter the name of the Focal Point"
+  placeholder="Select the name of the Focal Point"
+  values={FOCAL}
 />);
 
 export const Population = () => (<SelectForm
   label="Intended populations of concern (only for UNHCR)"
   fieldName="population"
-  placeholder="Enter the name of the Focal Point"
+  placeholder="Select population"
   values={[]}
+  optional
 />);
 
 export const Background = () => (<TextFieldForm
@@ -64,24 +93,36 @@ export const StartDate = () => (<DatePickerForm
   label="Estimated Start Date"
   fieldName="start_date"
   placeholder="Pick a date"
+  datePickerProps={{
+    minDate: new Date(),
+  }}
 />);
 
 export const EndDate = () => (<DatePickerForm
-  label="Estimated Start Date"
+  label="Estimated End Date"
   fieldName="end_date"
   placeholder="Pick a date"
+  datePickerProps={{
+    minDate: new Date(),
+  }}
 />);
 
 export const DeadlineDate = () => (<DatePickerForm
   label="Application Deadline"
   fieldName="deadline_date"
   placeholder="Pick a date"
+  datePickerProps={{
+    minDate: new Date(),
+  }}
 />);
 
 export const NotifyDate = () => (<DatePickerForm
   label="Notification of Result"
   fieldName="notif_results_date"
   placeholder="Pick a date"
+  datePickerProps={{
+    minDate: new Date(),
+  }}
 />);
 
 export const Weighting = () => (<PolarRadio
@@ -89,8 +130,18 @@ export const Weighting = () => (<PolarRadio
   fieldName="has_weighting"
 />);
 
-export const ConceptNoteTemplate = () => (<FileForm
-  label="Concept Note Template"
-  fieldName="cn_template"
-  placeholder="Upload file"
+export const ProjectCountries = () => (<SelectForm
+  fieldName="countries"
+  label="Country"
+  values={COUNTRIES}
+/>);
+
+export const ProjectPartners = () => (<SelectForm
+  fieldName="partners"
+  label="Partners"
+  values={PARTNERS}
+  selectFieldProps={{
+    multiple: true,
+  }}
+
 />);

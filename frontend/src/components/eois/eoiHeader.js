@@ -5,11 +5,10 @@ import { browserHistory as history } from 'react-router';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import Tabs from 'material-ui/Tabs';
 import CustomTab from '../common/customTab';
-import AgencyModals from './modals/agencyModals';
+import NewCfeiModalButton from './modals/newCfeiModalButton';
 
 const messages = {
   partner: 'Calls for Expressions of Interest',
@@ -83,7 +82,7 @@ class CfeiHeader extends Component {
                   {messages[role]}
                 </Typography>
               </Grid>
-              {role === 'agency' && <AgencyModals />
+              {role === 'agency' && <NewCfeiModalButton />
               }
             </Grid>
           </Grid>
@@ -103,6 +102,7 @@ CfeiHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   classes: PropTypes.object.isRequired,
   children: PropTypes.node,
+  role: PropTypes.string,
 };
 
 const mapStateToProps = state => ({
