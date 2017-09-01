@@ -22,9 +22,6 @@ const styleSheet = createStyleSheet('CountryProfileList', (theme) => {
     disabled: {
       color: theme.palette.accent[200],
     },
-    lineHeight: {
-      lineHeight: '24px',
-    },
   };
 });
 

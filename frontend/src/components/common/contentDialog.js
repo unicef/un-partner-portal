@@ -1,7 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Button from 'material-ui/Button';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import Dialog, { DialogContent, DialogTitle } from 'material-ui/Dialog';
+import Dialog, { DialogContent, DialogTitle, DialogActions } from 'material-ui/Dialog';
+
+const messages = {
+  cancel: 'Cancel',
+  ok: 'Ok',
+};
 
 const styleSheet = createStyleSheet('ContentDialog', theme => ({
   dialogTitle: {
@@ -19,7 +25,7 @@ function infoSection(info, classes) {
 }
 
 function ContentDialog(props) {
-  const { classes, trigger, title, info, content, actions } = props;
+  const { classes, trigger, title, info, content, buttons } = props;
 
   return (
     <Dialog open={trigger} >
@@ -33,9 +39,16 @@ function ContentDialog(props) {
       <DialogContent>
         {content}
       </DialogContent>
-      <DialogContent>
-        {actions}
-      </DialogContent>
+      <DialogActions>
+        {buttons.flat && <Button onTouchTap={buttons.flat.handleClick} color="accent">
+          {buttons.flat.label || messages.cancel }
+        </Button>
+        }
+        {buttons.raised && <Button onTouchTap={buttons.raised.handleClick} raised color="accent">
+          {buttons.raised.label || messages.ok}
+        </Button>
+        }
+      </DialogActions>
     </Dialog>
   );
 }
@@ -50,10 +63,6 @@ ContentDialog.propTypes = {
    */
   content: PropTypes.node.isRequired,
   /**
-   * Component presenting dialog actions
-   */
-  actions: PropTypes.node.isRequired,
-  /**
    * title of the dialog
    */
   title: PropTypes.string,
@@ -61,6 +70,10 @@ ContentDialog.propTypes = {
    * Extra info in grey section
    */
   info: PropTypes.string,
+  /**
+   * Object to define buttons
+   */
+  buttons: PropTypes.object.isRequired,
 
   classes: PropTypes.object.isRequired,
 };

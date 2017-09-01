@@ -28,7 +28,7 @@ export const selectCountryId = countryId => ({ type: SELECT_COUNTRY_ID, countryI
 
 export const createCountryProfile = () => ({ type: CREATE_COUNTRY_PROFILE });
 
-const setSelectedCountryId = (state, index) => ({ ...state, ...{ selectedCountryId: index } });
+const setSelectedCountryId = (state, index) => R.assoc('selectedCountryId', index, state);
 
 const addCountryProfile = (state) => {
   const countryId = state.selectedCountryId;
@@ -36,6 +36,8 @@ const addCountryProfile = (state) => {
   let presenceCountry = R.find(R.propEq('id', countryId))(state.countryPresence);
   presenceCountry = R.assoc('profile', true, presenceCountry);
   presenceCountry = R.assoc('completed', false, presenceCountry);
+  presenceCountry = R.assoc('update', (new Date()).toString().split(' ').splice(1, 3)
+    .join(' '), presenceCountry);
 
   let stateClone = R.assoc('countryPresence', R.filter(country => country.id !== presenceCountry.id, state.countryPresence), state);
   stateClone = R.assoc('countryProfiles', R.append(presenceCountry, state.countryProfiles), stateClone);
@@ -43,7 +45,7 @@ const addCountryProfile = (state) => {
   return stateClone;
 };
 
-export default function countryProfiles(state = initialState, action) {
+export default function countryProfilesReducer(state = initialState, action) {
   switch (action.type) {
     case SELECT_COUNTRY_ID: {
       return setSelectedCountryId(state, action.countryId);

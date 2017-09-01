@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import ContentDialog from '../common/contentDialog';
 import CountryOfficesHeader from './countryOfficesHeader';
 import CountryProfileList from './countryProfile/countryProfileList';
-import CountryProfileActions from './countryProfile/countryProfileActions';
 import { selectCountryId, createCountryProfile, INIT_COUNTRY_ID } from '../../reducers/countryProfiles';
 
 const messages = {
   countryDialogTitle: 'Create new country profile',
   countryDialogInfo: 'You have ability to choose from countries selected in HQ Profile as a countries of presence. Disabled options suggest, that those profiles are already created.',
+  create: 'Create',
 };
 
 class CountryOfficesHeaderContainer extends React.Component {
@@ -54,11 +54,15 @@ class CountryOfficesHeaderContainer extends React.Component {
           title={messages.countryDialogTitle}
           info={messages.countryDialogInfo}
           content={<CountryProfileList countries={R.concat(countryPresence, countryProfiles)} />}
-          actions={
-            <CountryProfileActions
-              close={this.handleDialogClose}
-              create={this.handleDialogCreate}
-            />}
+          buttons={{
+            flat: {
+              handleClick: this.handleDialogClose,
+            },
+            raised: {
+              handleClick: this.handleDialogCreate,
+              label: messages.create,
+            },
+          }}
         />
       </div>
     );
