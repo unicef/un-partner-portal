@@ -83,6 +83,7 @@ class PartnerFullProfilesSerializer(serializers.ModelSerializer):
 class OrganizationProfileSerializer(serializers.ModelSerializer):
 
     country_profiles = PartnerSerializer(many=True)
+    users = serializers.SerializerMethodField()
 
     class Meta:
         model = Partner
@@ -93,7 +94,11 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
             'is_hq',
             'country_profiles',
             'country_presents',
+            'users',
         )
+
+    def get_users(self, obj):
+        return PartnerMember.objects.filter(partner=obj).count()
 
 
 class PartnerMailingAddressSerializer(serializers.ModelSerializer):
