@@ -1,10 +1,7 @@
 import main from './components/main';
 import mainLayout from './components/layout/mainLayout';
 import eoiHeader from './components/eois/eoiHeader';
-import overview from './components/eois/overview';
-import pinned from './components/eois/pinned';
-import calls from './components/eois/calls';
-import direct from './components/eois/direct';
+import cfeiContainer from './components/eois/cfeiContainer';
 import partner from './components/partners/partnersHeader';
 import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
@@ -24,15 +21,12 @@ export default [
       childRoutes: [
         { path: 'dashboard', component: dashboard },
         {
-          path: 'cfei',
           component: eoiHeader,
+          path: 'cfei',
           childRoutes: [
             { component: mainContent,
               childRoutes: [
-                { path: 'overview', component: overview },
-                { path: 'pinned', component: pinned },
-                { path: 'calls', component: calls },
-                { path: 'direct', component: direct },
+                { path: ':type', component: cfeiContainer },
               ],
             },
           ],

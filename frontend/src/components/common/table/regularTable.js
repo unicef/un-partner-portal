@@ -93,7 +93,7 @@ class RegularTable extends SharedTable {
 RegularTable.propTypes = {
   classes: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   columnData: PropTypes.array.isRequired,
   renderTableCells: PropTypes.func.isRequired,
   loading: PropTypes.bool,

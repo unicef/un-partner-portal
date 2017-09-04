@@ -44,3 +44,7 @@ export function getOpenCfei() {
 export function getPinnedCfei() {
   return authorizedGet('/projects/pins');
 }
+
+export function getDirectCfei() {
+  return authorizedGet('/projects/direct');
+}
