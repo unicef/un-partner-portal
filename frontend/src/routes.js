@@ -11,6 +11,7 @@ import applications from './components/applications/applications';
 import organizationProfileEdit from './components/organizationProfile/edit/tabsContainer';
 import organizationProfile from './components/organizationProfile/organizationProfile';
 import hqProfile from './components/organizationProfile/hq/hqProfile';
+import partnersContainer from './components/partners/partnersContainer';
 import hqProfileOverview from './components/organizationProfile/hq/hqProfileOverview';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
@@ -39,7 +40,7 @@ export default [
             },
           ],
         },
-        { path: 'partner', component: partner },
+        { path: 'partner', component: partnersContainer },
         { path: 'applications', component: applications },
         { path: 'profile', component: organizationProfile },
         { path: 'profile/edit', component: organizationProfileEdit },
