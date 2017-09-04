@@ -1,44 +1,46 @@
-import React from 'react';
-import MaterialGrid from 'material-ui/Grid';
-import Paper from 'material-ui/Paper';
-import { Grid, TableView, TableHeaderRow } from '@devexpress/dx-react-grid-material-ui';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import Grid from 'material-ui/Grid';
 import MainContentWrapper from '../../components/common/mainContentWrapper';
 import HeaderNavigation from '../../components/common/headerNavigation';
-
+import PartnersList from './partnersList';
 
 const messages = {
   header: 'Partners',
 };
 
-const hgProfileMockData = {
-  users: 25, update: '01 Jan 2016',
-};
+const PartnersContainer = (props) => {
+  const { partners, columns } = props;
 
-const PartnerContainer = () => (
-  <div>
-    <MaterialGrid item>
+  return (<div>
+    <Grid item>
       <HeaderNavigation title={messages.header} />
-    </MaterialGrid>
+    </Grid>
     <MainContentWrapper>
-      <MaterialGrid container direction="column" gutter={40}>
-        <MaterialGrid item>
-          <Grid
-    rows={[
-      { id: 0, product: 'DevExtreme', owner: 'DevExpress' },
-      { id: 1, product: 'DevExtreme Reactive', owner: 'DevExpress' },
-    ]}
-    columns={[
-      { name: 'id', title: 'ID' },
-      { name: 'product', title: 'Product' },
-      { name: 'owner', title: 'Owner' },
-    ]}>
-    <TableView />
-    <TableHeaderRow />
-  </Grid>
-        </MaterialGrid>
-      </MaterialGrid>
+      <Grid container direction="column" gutter={40}>
+        <Grid item>
+          <PartnersList
+            items={partners}
+            columns={columns}
+          />
+        </Grid>
+      </Grid>
     </MainContentWrapper>
   </div>
-);
+  );
+};
 
-export default PartnerContainer;
+
+PartnersContainer.propTypes = {
+  partners: PropTypes.array.isRequired,
+  columns: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = state => ({
+  partners: state.agencyPartnersList.partners,
+  columns: state.agencyPartnersList.columns,
+});
+
+
+export default connect(mapStateToProps, null)(PartnersContainer);
