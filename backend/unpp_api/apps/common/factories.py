@@ -146,8 +146,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     registration_number = factory.Sequence(lambda n: "reg-number {}".format(n))
 
     @factory.post_generation
-    def mailing_addresses(self, create, extracted, **kwargs):
-        address, created = PartnerMailingAddress.objects.get_or_create(
+    def mailing_address(self, create, extracted, **kwargs):
+        PartnerMailingAddress.objects.get_or_create(
             partner=self,
             street='fake street',
             city='fake city',
@@ -158,7 +158,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             website='partner.website.org',
             org_email="office@partner.website.org",
         )
-        self.mailing_addresses.add(address)
 
     @factory.post_generation
     def directors(self, create, extracted, **kwargs):
@@ -204,7 +203,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
                 budget=year**2
             )
             self.budgets.add(budget)
-
 
     @factory.post_generation
     def collaborations_partnership(self, create, extracted, **kwargs):

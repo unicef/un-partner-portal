@@ -61,7 +61,7 @@ class Partner(TimeStampedModel):
 
 
 class PartnerProfile(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="profile")
+    partner = models.OneToOneField(Partner, related_name="profile")
     alias_name = models.CharField(max_length=255, null=True, blank=True)
     acronym = models.CharField(max_length=200, null=True, blank=True)
     legal_name_change = models.BooleanField(default=False)
@@ -125,7 +125,7 @@ class PartnerProfile(TimeStampedModel):
 
 
 class PartnerMailingAddress(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="mailing_addresses")
+    partner = models.OneToOneField(Partner, related_name="mailing_address")
     mailing_type = models.CharField(
         max_length=3,
         choices=MAILING_TYPES,
@@ -149,7 +149,7 @@ class PartnerMailingAddress(TimeStampedModel):
 
 
 class PartnerHeadOrganization(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="org_heads")
+    partner = models.OneToOneField(Partner, related_name="org_head")
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField(max_length=255, null=True, blank=True)
@@ -209,7 +209,7 @@ class PartnerPolicyArea(TimeStampedModel):
 
 
 class PartnerAuditAssessment(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="audits")
+    partner = models.OneToOneField(Partner, related_name="audit")
     regular_audited = models.BooleanField(default=True)
     org_audits = ArrayField(
         models.CharField(max_length=3, choices=ORG_AUDIT_CHOICES),
@@ -239,7 +239,7 @@ class PartnerAuditAssessment(TimeStampedModel):
 
 
 class PartnerReporting(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="reports")
+    partner = models.OneToOneField(Partner, related_name="report")
     key_result = models.CharField(max_length=200, null=True, blank=True)
     publish_annual_reports = models.BooleanField(default=True)
     last_report = models.DateField(verbose_name='Date of most recent annual report')
@@ -254,7 +254,7 @@ class PartnerReporting(TimeStampedModel):
 
 
 class PartnerMandateMission(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="mandate_missions")
+    partner = models.OneToOneField(Partner, related_name="mandate_mission")
     # background
     background_and_rationale = models.CharField(max_length=400, null=True, blank=True)
     mandate_and_mission = models.CharField(max_length=400, null=True, blank=True)
@@ -368,7 +368,7 @@ class PartnerBudget(TimeStampedModel):
 
 
 class PartnerFunding(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="funds")
+    partner = models.OneToOneField(Partner, related_name="fund")
     source_core_funding = models.CharField(max_length=200, verbose_name="Please state your source(s) of core funding")
     major_donors = ArrayField(
         models.CharField(max_length=3, choices=PARTNER_DONORS_CHOICES),
@@ -430,7 +430,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
 
 
 class PartnerOtherInfo(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="other_info")
+    partner = models.OneToOneField(Partner, related_name="other_info")
     info_to_share = models.CharField(max_length=200)
     org_logo = models.FileField(null=True)
     confirm_data_updated = models.BooleanField(default=False)

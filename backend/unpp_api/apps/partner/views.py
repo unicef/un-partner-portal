@@ -61,7 +61,7 @@ class PartnerProfileAPIView(APIView):
         mandate_mission = get_object_or_404(PartnerMandateMission, partner=partner)
         experiences = PartnerExperience.objects.filter(partner=partner)
         budgets = PartnerBudget.objects.filter(partner=partner)
-        funding = get_object_or_404(PartnerFunding, partner=partner)
+        fund = get_object_or_404(PartnerFunding, partner=partner)
         collaborations_partnership = PartnerCollaborationPartnership.objects.filter(partner=partner)
         collaborations_partnership_others = PartnerCollaborationPartnershipOther.objects.filter(partner=partner)
         collaboration_evidences = PartnerCollaborationEvidence.objects.filter(partner=partner)
@@ -81,7 +81,7 @@ class PartnerProfileAPIView(APIView):
             mandate_mission=mandate_mission,
             experiences=experiences,
             budgets=budgets,
-            funding=funding,
+            fund=fund,
             collaborations_partnership=collaborations_partnership,
             collaborations_partnership_others=collaborations_partnership_others,
             collaboration_evidences=collaboration_evidences,

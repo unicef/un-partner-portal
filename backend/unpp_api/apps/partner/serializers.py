@@ -230,7 +230,7 @@ class OrganizationProfileDetailsSerializer(serializers.Serializer):
     mandate_mission = PartnerMandateMissionSerializer()
     experiences = PartnerExperienceSerializer(many=True)
     budgets = PartnerBudgetSerializer(many=True)
-    funding = PartnerFundingSerializer()
+    fund = PartnerFundingSerializer()
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
     collaborations_partnership_others = PartnerCollaborationPartnershipOtherSerializer(many=True)
     collaboration_evidences = PartnerCollaborationEvidenceSerializer(many=True)
