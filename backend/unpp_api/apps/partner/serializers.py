@@ -95,6 +95,7 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
             'country_profiles',
             'country_presents',
             'users',
+            'modified',
         )
 
     def get_users(self, obj):
