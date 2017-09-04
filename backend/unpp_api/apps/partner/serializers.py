@@ -19,6 +19,9 @@ from partner.models import (
     PartnerOtherInfo,
     PartnerOtherDocument,
     PartnerInternalControl,
+    PartnerPolicyArea,
+    PartnerAuditAssessment,
+    PartnerReporting,
     PartnerMember,
 )
 
@@ -195,6 +198,27 @@ class PartnerInternalControlSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class PartnerPolicyAreaSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerPolicyArea
+        fields = "__all__"
+
+
+class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerAuditAssessment
+        fields = "__all__"
+
+
+class PartnerReportingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerReporting
+        fields = "__all__"
+
+
 class OrganizationProfileDetailsSerializer(serializers.Serializer):
 
     partner = PartnerFullSerializer()
@@ -213,3 +237,6 @@ class OrganizationProfileDetailsSerializer(serializers.Serializer):
     other_info = PartnerOtherInfoSerializer()
     other_documents = PartnerOtherDocumentSerializer(many=True)
     internal_controls = PartnerInternalControlSerializer(many=True)
+    area_policies = PartnerPolicyAreaSerializer(many=True)
+    audit_assessment = PartnerAuditAssessmentSerializer()
+    report = PartnerReportingSerializer()

@@ -25,6 +25,9 @@ from partner.models import (
     PartnerCollaborationEvidence,
     PartnerOtherInfo,
     PartnerInternalControl,
+    PartnerPolicyArea,
+    PartnerAuditAssessment,
+    PartnerReporting,
     PartnerMember,
 )
 from project.models import EOI
@@ -36,6 +39,9 @@ from .consts import (
     PARTNER_DONORS_CHOICES,
     COLLABORATION_EVIDENCE_MODES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
+    POLICY_AREA_CHOICES,
+    ORG_AUDIT_CHOICES,
+    AUDIT_ASSESMENT_CHOICES,
 )
 from .countries import COUNTRIES_ALPHA2_CODE
 
@@ -241,13 +247,57 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def internal_controls(self, create, extracted, **kwargs):
-        control, created = PartnerInternalControl.objects.get_or_create(
+        PartnerInternalControl.objects.get_or_create(
             partner=self,
             functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.procurement,
             segregation_duties=True,
             comment="fake comment"
         )
-        # self.internal_controls.add(control)
+        PartnerInternalControl.objects.get_or_create(
+            partner=self,
+            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.authorization,
+            segregation_duties=True,
+            comment="fake comment"
+        )
+        PartnerInternalControl.objects.get_or_create(
+            partner=self,
+            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.recording,
+            segregation_duties=True,
+            comment="fake comment"
+        )
+        PartnerInternalControl.objects.get_or_create(
+            partner=self,
+            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.payment,
+            segregation_duties=True,
+            comment="fake comment"
+        )
+        PartnerInternalControl.objects.get_or_create(
+            partner=self,
+            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.custody,
+            segregation_duties=True,
+            comment="fake comment"
+        )
+        PartnerInternalControl.objects.get_or_create(
+            partner=self,
+            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.bank,
+            segregation_duties=True,
+            comment="fake comment"
+        )
+
+    @factory.post_generation
+    def area_policies(self, create, extracted, **kwargs):
+        PartnerPolicyArea.objects.get_or_create(
+            partner=self,
+            area = POLICY_AREA_CHOICES.human
+        )
+        PartnerPolicyArea.objects.get_or_create(
+            partner=self,
+            area = POLICY_AREA_CHOICES.procurement
+        )
+        PartnerPolicyArea.objects.get_or_create(
+            partner=self,
+            area = POLICY_AREA_CHOICES.asset
+        )
 
     class Meta:
         model = Partner
@@ -306,6 +356,28 @@ class PartnerOtherInfoFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = PartnerOtherInfo
+
+
+class PartnerAuditAssessmentFactory(factory.django.DjangoModelFactory):
+    partner = factory.Iterator(Partner.objects.all())
+    org_audits = [ORG_AUDIT_CHOICES.internal, ]
+    link_report = "www.link.report.org/example"
+    comment = factory.Sequence(lambda n: "comment {}".format(n))
+    assessments = [AUDIT_ASSESMENT_CHOICES.ocha, ]
+
+    class Meta:
+        model = PartnerAuditAssessment
+
+
+class PartnerReportingFactory(factory.django.DjangoModelFactory):
+
+    partner = factory.Iterator(Partner.objects.all())
+    key_result = factory.Sequence(lambda n: "key result {}".format(n))
+    last_report = date.today()
+    link_report = 'www.link.report.org'
+
+    class Meta:
+        model = PartnerReporting
 
 
 class PartnerMemberFactory(factory.django.DjangoModelFactory):

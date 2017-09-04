@@ -26,6 +26,9 @@ from .models import (
     PartnerOtherInfo,
     PartnerOtherDocument,
     PartnerInternalControl,
+    PartnerPolicyArea,
+    PartnerAuditAssessment,
+    PartnerReporting,
 )
 
 
@@ -65,6 +68,9 @@ class PartnerProfileAPIView(APIView):
         other_info = get_object_or_404(PartnerOtherInfo, partner=partner)
         other_documents = PartnerOtherDocument.objects.filter(partner=partner)
         internal_controls = PartnerInternalControl.objects.filter(partner=partner)
+        area_policies = PartnerPolicyArea.objects.filter(partner=partner)
+        audit_assessment = get_object_or_404(PartnerAuditAssessment, partner=partner)
+        report = get_object_or_404(PartnerReporting, partner=partner)
         serializer = OrganizationProfileDetailsSerializer(dict(
             partner=partner,
             profile=profile,
@@ -82,5 +88,8 @@ class PartnerProfileAPIView(APIView):
             other_info=other_info,
             other_documents=other_documents,
             internal_controls=internal_controls,
+            area_policies=area_policies,
+            audit_assessment=audit_assessment,
+            report=report,
         ))
         return Response(serializer.data)

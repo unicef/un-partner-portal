@@ -9,6 +9,8 @@ from common.factories import (
     PartnerMandateMissionFactory,
     PartnerFundingFactory,
     PartnerOtherInfoFactory,
+    PartnerAuditAssessmentFactory,
+    PartnerReportingFactory,
     PartnerMemberFactory,
     OtherAgencyFactory,
     AgencyMemberFactory,
@@ -76,8 +78,14 @@ def generate_fake_data(quantity=4):
     PartnerFundingFactory.create_batch(quantity/2)
     print "{} Partner Funding objects created".format(quantity/2)
 
-    PartnerOtherInfoFactory.create_batch(quantity)
+    PartnerOtherInfoFactory.create_batch(quantity/2)
     print "{} Partner Other Info objects created".format(quantity/2)
+
+    PartnerAuditAssessmentFactory.create_batch(quantity/2)
+    print "{} Partner Audit Assessment Info objects created".format(quantity/2)
+
+    PartnerReportingFactory.create_batch(quantity/2)
+    print "{} Partner Reporting objects created".format(quantity/2)
 
     PartnerMemberFactory.create_batch(quantity/2)
     print "{} PartnerMember objects created".format(quantity/2)
