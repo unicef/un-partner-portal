@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import R from 'ramda';
-import { connect } from 'react-redux'
 
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
@@ -38,7 +37,6 @@ class AgencyModals extends Component {
     const { router } = this.props;
     const { modalOpen } = this.state;
     const path = extractPath(router);
-    debugger
     return (
       <Grid item>
         <Button
@@ -59,8 +57,5 @@ AgencyModals.propTypes = {
   router: PropTypes.object,
 };
 
-const mapStateToProps = (state) => {
-  debugger
-}
 
-export default withRouter(connect(mapStateToProps)(AgencyModals));
+export default withRouter(AgencyModals);

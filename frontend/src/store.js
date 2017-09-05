@@ -9,7 +9,6 @@ import cfei from './reducers/cfei';
 import cfeiNav from './reducers/cfeiNav';
 import newCfei from './reducers/newCfei';
 import nav from './reducers/nav';
-import route from './reducers/route';
 import session from './reducers/session';
 import countries from './reducers/countries';
 import population from './reducers/population';
@@ -22,7 +21,6 @@ export default createStore(combineReducers({
   cfeiNav,
   newCfei,
   nav,
-  route,
   session,
   countries,
   population,

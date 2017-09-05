@@ -47,6 +47,7 @@ export const TitleField = () => (<TextFieldForm
   label="Project Title"
   fieldName="title"
   placeholder="Enter Project Title"
+  value="brick"
 />);
 
 export const FocalPoint = () => (<SelectForm

@@ -4,9 +4,7 @@ import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import MuiThemeProviderLegacy from 'material-ui-old/styles/MuiThemeProvider';
 import { Router, browserHistory } from 'react-router';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
-
-import { routeChanged } from './reducers/route';
+import { syncHistoryWithStore } from 'react-router-redux';
 import getTheme from './styles/muiTheme';
 import store from './store';
 import RouterComponent from './routes';
@@ -14,12 +12,6 @@ import RouterComponent from './routes';
 injectTapEventPlugin();
 
 const history = syncHistoryWithStore(browserHistory, store);
-
-browserHistory.listen((location) => {
-  store.dispatch(routeChanged(location));
-});
-
-browserHistory.push(window.location.pathname);
 
 // has to be React class otherwise react-scripts throw error
 // eslint-disable-next-line
