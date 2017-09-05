@@ -63,15 +63,11 @@ export const addOpenCfei = (dispatch, body) => {
     .then(() => {
       dispatch(newCfeiSubmitted());
       dispatch(newCfeiProcessing());
+    })
+    .catch((error) => {
+      dispatch(newCfeiSubmitted());
+      dispatch(newCfeiFailure(error));
     });
-  //   .then(() => {
-  //     dispatch(newCfeiSubmitted());
-  //     dispatch(newCfeiProcessing());
-  //   })
-  //   .catch((error) => {
-  //     dispatch(newCfeiSubmitted());
-  //     dispatch(newCfeiFailure(error));
-  //   });
 };
 
 export const addDirectCfei = () => {
