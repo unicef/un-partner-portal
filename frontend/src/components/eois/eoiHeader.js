@@ -60,7 +60,9 @@ class CfeiHeader extends Component {
   }
 
   componentWillMount() {
-    this.handleChange(null, this.state.index);
+    if (this.props.location.pathname === '/cfei') {
+      this.handleChange(null, this.state.index);
+    }
   }
 
   handleChange(event, index) {
@@ -71,7 +73,7 @@ class CfeiHeader extends Component {
 
 
   render() {
-    const { classes, tabs, children, role } = this.props;
+    const { classes, tabs, children, role, location: { pathname } } = this.props;
     return (
       <Grid item>
         <Grid className={classes.container} container direction="column" gutter={16}>
@@ -82,7 +84,7 @@ class CfeiHeader extends Component {
                   {messages[role]}
                 </Typography>
               </Grid>
-              {role === 'agency' && <NewCfeiModalButton />
+              {pathname === '/cfei' && role === 'agency' && <NewCfeiModalButton />
               }
             </Grid>
           </Grid>
@@ -103,6 +105,7 @@ CfeiHeader.propTypes = {
   classes: PropTypes.object.isRequired,
   children: PropTypes.node,
   role: PropTypes.string,
+  location: PropTypes.object,
 };
 
 const mapStateToProps = state => ({

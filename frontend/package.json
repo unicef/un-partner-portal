@@ -29,6 +29,7 @@
     "material-ui-icons": "^1.0.0-alpha.19",
     "material-ui-old": "npm:material-ui",
     "moment": "^2.18.1",
+    "normalizr": "^3.2.3",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.0.0",
     "postcss-loader": "2.0.6",

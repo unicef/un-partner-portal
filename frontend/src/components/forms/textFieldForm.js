@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import Grid from 'material-ui/Grid';
 import { FormControl, FormLabel } from 'material-ui/Form';
-import { renderTextField } from '../../helpers/formHelper';
+import { renderTextField, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
 
@@ -16,22 +16,30 @@ function TextFieldForm(props) {
     placeholder,
     optional,
     validation,
-    value,
     warn,
+    readOnly,
   } = props;
   return (
     <Grid item>
       <FormControl fullWidth>
-        <FormLabel>{label}</FormLabel>
-        <Field
-          name={fieldName}
-          placeholder={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
-          component={renderTextField}
-          validate={optional ? [] : [required].concat(validation || [])}
-          warn={warn && warning}
-          initialValues={value}
-          {...textFieldProps}
-        />
+        {readOnly
+          ? <Field
+            name={fieldName}
+            label={label}
+            component={renderText}
+            optional={optional}
+          />
+          : [
+            <FormLabel>{label}</FormLabel>,
+            <Field
+              name={fieldName}
+              placeholder={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
+              component={renderTextField}
+              validate={optional ? [] : [required].concat(validation || [])}
+              warn={warn && warning}
+              {...textFieldProps}
+            />]
+        }
       </FormControl>
     </Grid>
   );
@@ -63,10 +71,6 @@ TextFieldForm.propTypes = {
    * validations passed to field
    */
   validation: PropTypes.arrayOf(PropTypes.func),
-  /**
-   * default value
-   */
-  value: PropTypes.string,
   /**
    * validations passed to field
    */

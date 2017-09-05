@@ -13,12 +13,14 @@ import countries from './reducers/countries';
 import population from './reducers/population';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
+import cfeiDetails from './reducers/cfeiDetails';
 
 const middleware = routerMiddleware(browserHistory);
 
 export default createStore(combineReducers({
   cfei,
   cfeiNav,
+  cfeiDetails,
   newCfei,
   nav,
   session,
