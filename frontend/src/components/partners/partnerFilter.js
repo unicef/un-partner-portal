@@ -85,6 +85,7 @@ const PartnerFilter = (props) => {
 };
 
 PartnerFilter.propTypes = {
+  classes: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   /**
    *  reset function

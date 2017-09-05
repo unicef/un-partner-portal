@@ -8,19 +8,11 @@ import { withStyles, createStyleSheet } from 'material-ui/styles';
 
 const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
   const paddingIcon = theme.spacing.unit / 2;
-  const padding = theme.spacing.unit;
-  const paddingSmall = theme.spacing.unit * 2;
-  const paddingMedium = theme.spacing.unit * 4;
+  
   return {
     alignCenter: {
       display: 'flex',
       alignItems: 'center',
-    },
-    row: {
-      display: 'flex',
-    },
-    padding: {
-      padding: `0 0 0 ${padding}px`,
     },
     iconNotVerified: {
       fill: theme.palette.primary[500],
@@ -46,11 +38,6 @@ const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
       height: 15,
       margin: `0 0 0 ${paddingIcon}px`,
     },
-    container: {
-      width: '100%',
-      margin: '0',
-      padding: `${paddingSmall}px 0 ${paddingSmall}px ${paddingMedium}px`,
-    },
   };
 });
 
@@ -63,7 +50,9 @@ const PartnerProfileNameCell = (props) => {
           {name}
         </Typography>
 
-        {verified ? <VerifiedUser className={classes.iconVerified} /> : <VerifiedUser className={classes.iconNotVerified} />}
+        {verified ?
+          <VerifiedUser className={classes.iconVerified} />
+          : <VerifiedUser className={classes.iconNotVerified} />}
         {yellowFlag ? <Flag className={classes.iconYellow} /> : null}
         {redFlag ? <Flag className={classes.iconRed} /> : null}
       </div>
