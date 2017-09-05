@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { TableCell } from 'material-ui/Table';
-import { PagingState, LocalPaging, RowDetailState, SelectionState } from '@devexpress/dx-react-grid';
+import { PagingState, LocalPaging, RowDetailState } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
-import { Grid, TableView, TableHeaderRow, TableRowDetail, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
+import { Grid, TableView, TableHeaderRow, TableRowDetail, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import PartnerProfileDetailItem from './partnerProfileDetailItem';
+import PartnerProfileNameCell from './partnerProfileNameCell';
 
 const table = {
   allowedPageSizes: [5, 10, 15, 0],
@@ -33,8 +34,17 @@ class PartnersList extends Component {
           onExpandedRowsChange={this.changeExpandedDetails}
         />
         <TableView
-          tableCellTemplate={({ row, column, style }) =>
-            <TableCell onClick={() => onRowClick(row)}>{row[column.name]}</TableCell>}
+          tableCellTemplate={({ row, column, style }) => {
+            if (column.name === 'name') {
+              return (<PartnerProfileNameCell
+                verified={row.verified}
+                yellowFlag={row.flagYellow}
+                redFlag={row.flagRed}
+                name={row.name}
+              />);
+            }
+            return <TableCell onClick={() => onRowClick(row)}>{row[column.name]}</TableCell>;
+          }}
         />
         <TableHeaderRow />
 

@@ -4,33 +4,44 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import MainContentWrapper from '../../components/common/mainContentWrapper';
 import HeaderNavigation from '../../components/common/headerNavigation';
+import PartnerFilter from './partnerFilter';
 import PartnersList from './partnersList';
 
 const messages = {
   header: 'Partners',
 };
 
-const PartnersContainer = (props) => {
-  const { partners, columns } = props;
+class PartnersContainer extends Component {
+  onRowClick(row) {
+    // todo navigate to detail page
+  }
 
-  return (<div>
-    <Grid item>
-      <HeaderNavigation title={messages.header} />
-    </Grid>
-    <MainContentWrapper>
-      <Grid container direction="column" gutter={40}>
+  render() {
+    const { partners, columns } = this.props;
+
+    return (
+      <div>
         <Grid item>
-          <PartnersList
-            items={partners}
-            columns={columns}
-          />
+          <HeaderNavigation title={messages.header} />
         </Grid>
-      </Grid>
-    </MainContentWrapper>
-  </div>
-  );
-};
-
+        <MainContentWrapper>
+          <Grid container direction="column" gutter={24}>
+            <Grid item>
+              <PartnerFilter />
+            </Grid>
+            <Grid item>
+              <PartnersList
+                items={partners}
+                columns={columns}
+                onRowClick={(row) => { this.onRowClick(row); }}
+              />
+            </Grid>
+          </Grid>
+        </MainContentWrapper>
+      </div>
+    );
+  }
+}
 
 PartnersContainer.propTypes = {
   partners: PropTypes.array.isRequired,

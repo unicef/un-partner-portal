@@ -15,6 +15,9 @@ const initialState = {
       type: 'International NGO (INGO)',
       country: 'Kenya',
       experience: 'UNICEF',
+      verified: false,
+      flagYellow: true,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -36,6 +39,9 @@ const initialState = {
       type: 'International NGO (INGO)',
       country: 'England',
       experience: 'WFP',
+      verified: true,
+      flagYellow: true,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -56,6 +62,9 @@ const initialState = {
       type: 'National NGO',
       country: 'Poland',
       experience: 'WFP',
+      verified: true,
+      flagYellow: true,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -76,6 +85,9 @@ const initialState = {
       type: 'Academic Institution',
       country: 'France',
       experience: 'UNICEF',
+      verified: true,
+      flagYellow: true,
+      flagRed: true,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -96,6 +108,9 @@ const initialState = {
       type: 'International NGO (INGO)',
       country: 'Kenya',
       experience: 'UNICEF',
+      verified: false,
+      flagYellow: false,
+      flagRed: true,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -116,6 +131,9 @@ const initialState = {
       type: 'International NGO (INGO)',
       country: 'England',
       experience: 'WFP',
+      verified: true,
+      flagYellow: true,
+      flagRed: true,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -136,6 +154,9 @@ const initialState = {
       type: 'National NGO',
       country: 'Poland',
       experience: 'WFP',
+      verified: false,
+      flagYellow: false,
+      flagRed: true,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -156,6 +177,9 @@ const initialState = {
       type: 'Academic Institution',
       country: 'France',
       experience: 'UNICEF',
+      verified: false,
+      flagYellow: false,
+      flagRed: true,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -176,6 +200,9 @@ const initialState = {
       type: 'International NGO (INGO)',
       country: 'Kenya',
       experience: 'UNICEF',
+      verified: true,
+      flagYellow: false,
+      flagRed: true,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -196,6 +223,9 @@ const initialState = {
       type: 'International NGO (INGO)',
       country: 'England',
       experience: 'WFP',
+      verified: false,
+      flagYellow: false,
+      flagRed: true,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -216,6 +246,9 @@ const initialState = {
       type: 'National NGO',
       country: 'Poland',
       experience: 'WFP',
+      verified: true,
+      flagYellow: false,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -236,6 +269,9 @@ const initialState = {
       type: 'Academic Institution',
       country: 'France',
       experience: 'UNICEF',
+      verified: false,
+      flagYellow: false,
+      flagRed: true,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -256,6 +292,9 @@ const initialState = {
       type: 'International NGO (INGO)',
       country: 'Kenya',
       experience: 'UNICEF',
+      verified: false,
+      flagYellow: false,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -276,6 +315,9 @@ const initialState = {
       type: 'International NGO (INGO)',
       country: 'England',
       experience: 'WFP',
+      verified: false,
+      flagYellow: false,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -296,6 +338,9 @@ const initialState = {
       type: 'National NGO',
       country: 'Poland',
       experience: 'WFP',
+      verified: false,
+      flagYellow: false,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -316,6 +361,9 @@ const initialState = {
       type: 'Academic Institution',
       country: 'France',
       experience: 'UNICEF',
+      verified: false,
+      flagYellow: false,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -336,6 +384,9 @@ const initialState = {
       type: 'Academic Institution',
       country: 'France',
       experience: 'UNICEF',
+      verified: false,
+      flagYellow: false,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -356,6 +407,9 @@ const initialState = {
       type: 'Academic Institution',
       country: 'France',
       experience: 'UNICEF',
+      verified: false,
+      flagYellow: false,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -376,6 +430,9 @@ const initialState = {
       type: 'International NGO (INGO)',
       country: 'Kenya',
       experience: 'UNICEF',
+      verified: true,
+      flagYellow: false,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -396,6 +453,9 @@ const initialState = {
       type: 'International NGO (INGO)',
       country: 'Kenya',
       experience: 'UNICEF',
+      verified: true,
+      flagYellow: false,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -416,6 +476,9 @@ const initialState = {
       type: 'International NGO (INGO)',
       country: 'Kenya',
       experience: 'UNICEF',
+      verified: false,
+      flagYellow: false,
+      flagRed: false,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',
@@ -436,6 +499,9 @@ const initialState = {
       type: 'International NGO (INGO)',
       country: 'Kenya',
       experience: 'UNICEF',
+      verified: true,
+      flagYellow: true,
+      flagRed: true,
       details: {
         mail: 'partner10@email.org',
         phone: '001 444 444 444',

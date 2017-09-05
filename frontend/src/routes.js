@@ -5,7 +5,6 @@ import overview from './components/eois/overview';
 import pinned from './components/eois/pinned';
 import calls from './components/eois/calls';
 import direct from './components/eois/direct';
-import partner from './components/partners/partnersHeader';
 import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
 import organizationProfileEdit from './components/organizationProfile/edit/tabsContainer';
