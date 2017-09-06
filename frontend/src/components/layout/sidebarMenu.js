@@ -40,11 +40,11 @@ const styleSheet = createStyleSheet('sidebarMenu', theme => ({
 }));
 
 function sidebarMenu(props) {
-  const { classes, location, sidebar, onItemClick } = props;
+  const { classes, router: { location: { pathname } }, sidebar, onItemClick } = props;
   const links = sidebar.map((item, index) => {
     const link = (
       <MenuLink
-        active={location.includes(item.path)}
+        active={pathname.includes(item.path)}
         label={item.label}
         key={index}
         icon={createElement(item.icon)}
@@ -79,14 +79,13 @@ function sidebarMenu(props) {
 }
 
 sidebarMenu.propTypes = {
-  location: PropTypes.string.isRequired,
+  router: PropTypes.object.isRequired,
   sidebar: PropTypes.array.isRequired,
   classes: PropTypes.object.isRequired,
   onItemClick: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
-  location: state.route.location,
   sidebar: state.nav,
 });
 

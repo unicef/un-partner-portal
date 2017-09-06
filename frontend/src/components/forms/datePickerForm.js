@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { FormControl, FormLabel } from 'material-ui/Form';
 import DateRange from 'material-ui-icons/DateRange';
-
+import moment from 'moment';
 import { renderDatePicker } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
@@ -34,24 +34,24 @@ class DatePickerForm extends Component {
         <FormControl fullWidth>
           <FormLabel>{label}</FormLabel>
           <Grid container direction="row" gutter={4} align="center">
-            <Grid item xs={2} md={1}>
-              <DateRange />
-            </Grid>
-            <Grid item xs={10} md={11}>
-              <Field
-                name={fieldName}
-                component={renderDatePicker}
-                validate={optional ? [] : [required].concat(validation || [])}
-                hintText={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
-                warn={warn && warning}
-                textFieldStyle={{
-                  width: '100%',
-                  'line-height': null,
-                  height: 40,
-                }}
-                {...datePickerProps}
-              />
-            </Grid>
+            <Field
+              name={fieldName}
+              component={renderDatePicker}
+              validate={optional ? [] : [required].concat(validation || [])}
+              hintText={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
+              warn={warn && warning}
+              format={(value) => {
+                if (value && value !== 'Invalid date') return new Date(`${value}T00:00:00.000Z`);
+                return value;
+              }}
+              normalize={value => moment(value).format('YYYY-MM-DD').toString()}
+              textFieldStyle={{
+                width: '100%',
+                'line-height': null,
+                height: 40,
+              }}
+              {...datePickerProps}
+            />
           </Grid>
         </FormControl>
       </Grid>
@@ -76,7 +76,7 @@ DatePickerForm.propTypes = {
   /**
    * unique text used as placeholder
    */
-  placeholder: PropTypes.text,
+  placeholder: PropTypes.string,
   /**
    * if field is optional
    */
