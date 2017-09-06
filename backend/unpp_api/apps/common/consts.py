@@ -61,7 +61,8 @@ MEMBER_STATUSES = Choices(
 
 EOI_STATUSES = Choices(
     ('Ope', 'open', 'Open'),
-    ('Clo', 'closed', 'Closed'),
+    ('Clo', 'closed', 'Closed/Under Review'),
+    ('Com', 'completed', 'Completed'),
 )
 
 COLLABORATION_EVIDENCE_MODES = Choices(
@@ -148,4 +149,23 @@ SELECTION_CRITERIA_CHOICES = Choices(
     ('Rea', 'realistic', 'Realistic timelines and plans'),
     ('ASC', 'access', 'Access/security considerations'),
     ('Oth', 'other', 'Other'),
+)
+
+JUSTIFICATION_FOR_DIRECT_SELECTION = Choices(
+    ('Kno', 'known', 'Known expertise'),
+    ('Loc', 'local', 'Local presence'),
+    ('Inn', 'innovative', 'Innovative approach'),
+    ('TCC', 'time', 'Time constraints/criticality of response'),
+    ('Imp', 'importance', 'Importance of strengthening national civil society engagement'),
+    ('Oth', 'other', 'Other'),
+)
+
+ACCEPTED_DECLINED = Choices(
+    ('Acc', 'accepted', 'Accepted'),
+    ('Dec', 'declined', 'Declined'),
+)
+
+DIRECT_SELECTION_SOURCE = Choices(
+    ('CSO', 'cso', 'CSO-Initiated'),
+    ('UNI', 'un', 'UN-Initiated'),
 )
