@@ -14,6 +14,7 @@ import session from './reducers/session';
 import countries from './reducers/countries';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
+import agencyPartnersList from './reducers/agencyPartnersList';
 import population from './reducers/population';
 import hqProfileNav from './reducers/hqProfileNav';
 
@@ -28,6 +29,7 @@ const mainReducer = combineReducers({
   countries,
   countryProfiles,
   partnerProfileEdit,
+  agencyPartnersList,
   form: formReducer,
   population,
   routing: routerReducer,
