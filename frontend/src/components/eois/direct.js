@@ -20,7 +20,7 @@ const columnData = [
 ];
 
 const mockData = [
-  { name: 'Capacity building for small rural farmers in Kenia', country: 'Kenia', sector: { FoodSecurity: ['Area1', 'Area2'], Nutrition: ['Area1', 'Area2', 'Area3'] }, agency: 'UNICEF', source: 'CSO-Initiated', partner: 'Save the Children', status: { id: 0 } },
+  { name: 'Capacity building for small rural farmers in Kenia', country: 'Kenia', sector: 'FoodSecurity', agency: 'UNICEF', source: 'CSO-Initiated', partner: 'Save the Children', status: { id: 0 } },
   { name: 'Capacity building for small rural farmers in Chile', country: 'Chile', sector: 'Food Security', agency: 'UNICEF', partner: 'Red Cross, Save the Children', source: 'UN-Initiated', status: { id: 0, partner: [{ name: 'Save the Children Kenya', status: 'accepted' }, { name: 'Red Cross Kenya', status: 'pending' }] } },
   { name: 'Capacity building for small rural farmers in Ukraine', country: 'Ukraine', sector: 'Food Security', agency: 'UNICEF', partner: 'Save the Children', source: 'CSO-Initiated', status: { id: 2 } },
   { name: 'Capacity building for small rural farmers in Vietnam', country: 'Vietnam', sector: 'Food Security', agency: 'UNICEF', partner: 'Red Cross', source: 'UN-initiated', status: { id: 1 } },

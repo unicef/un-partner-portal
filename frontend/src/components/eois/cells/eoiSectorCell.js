@@ -27,16 +27,16 @@ const styleSheet = createStyleSheet('EoiSectorCell', theme => ({
   },
 }));
 
-const renderShortCell = data => Object.keys(data).join(', ');
-const renderExpandedCell = (data, classes) => Object.keys(data).map((sector, index) =>
+const renderShortCell = data => data.map(sector => sector.name).join(', ');
+const renderExpandedCell = (data, classes) => data.map((sector, index) =>
   (
     <div>
       <Typography type="body2" color="inherit" className={classes.mainText} align="left">
-        {sector}
+        {sector.name}
       </Typography>
-      { data[sector].map(area => (
+      { sector.specializations.map(area => (
         <Typography type="body1" color="inherit" className={classes.text} align="left">
-          {area}
+          {area.name}
         </Typography>
       ))}
       {index !== (Object.keys(data).length - 1) && <Divider className={classes.divider} />}
@@ -64,7 +64,7 @@ const EoiSectorCell = (props) => {
 
 EoiSectorCell.propTypes = {
   classes: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
   id: PropTypes.number.isRequired,
 };
 
