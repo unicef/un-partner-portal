@@ -1,8 +1,9 @@
-import Typography from 'material-ui/Typography';
+import Grid from 'material-ui/Grid';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import Grid from 'material-ui/Grid';
+import ItemColumnCell from '../common/cell/itemColumnCell';
+import ItemDynamicCell from '../common/cell/itemDynamicCell';
 
 const messages = {
   mailing: 'Organization\'s mailing Address',
@@ -47,47 +48,6 @@ const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
   };
 });
 
-const ItemColumnCell = (values) => {
-  const { label, content } = values;
-  return (
-    <div>
-      <Typography type="caption" color="secondary">
-        {label}
-      </Typography>
-      <Typography type="body1" color="inherit">
-        {content}
-      </Typography>
-    </div>
-  );
-};
-
-const ItemRowCell = (values) => {
-  const { label, content, classes } = values;
-  return (
-    <div className={classes.row}>
-      <Typography type="body1" color="secondary">
-        {label}
-      </Typography>
-      <div className={classes.padding}>
-        <Typography type="body1" color="inherit">
-          {content}
-        </Typography>
-      </div>
-    </div>
-  );
-};
-
-const DynamicItemsCell = (values) => {
-  const { items, classes } = values;
-  return (
-    <div>
-      {items.map(item => (
-        <ItemRowCell classes={classes} label={item.name} content={item.area} />
-      ))}
-    </div>
-  );
-};
-
 const PartnerProfileDetailItem = (props) => {
   const { classes, partner } = props;
   return (
@@ -128,7 +88,7 @@ const PartnerProfileDetailItem = (props) => {
       <Grid item>
         <Grid container>
           <Grid xs={12} item>
-            <DynamicItemsCell items={partner.sectors} classes={classes} />
+            <ItemDynamicCell items={partner.sectors} classes={classes} />
           </Grid>
         </Grid>
       </Grid>

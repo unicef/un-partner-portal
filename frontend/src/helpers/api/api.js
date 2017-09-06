@@ -49,6 +49,10 @@ export function getPinnedCfei() {
   return authorizedGet('/projects/pins');
 }
 
+export function getDirectCfei() {
+  return authorizedGet('/projects/direct');
+}
+
 export function postOpenCfei(body) {
   return authorizedPost('/projects/open/', body);
 }

@@ -11,34 +11,26 @@ const messages = {
   new: 'New',
 };
 
-const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
-  const padding = theme.spacing.unit * 2;
-  return {
-    alignCenter: {
-      display: 'flex',
-      alignItems: 'center',
-    },
-    right: {
-      textAlign: 'right',
-    },
-    icon: {
-      fill: theme.palette.primary[300],
-      marginRight: 3,
-      width: 20,
-      height: 20,
-    },
-    container: {
-      width: '100%',
-      margin: '0',
-      padding: `${padding}px 0 ${padding}px 0`,
-    },
-  };
-});
+const styleSheet = createStyleSheet('CountryOfficesHeader', theme => ({
+  alignCenter: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  right: {
+    textAlign: 'right',
+  },
+  icon: {
+    fill: theme.palette.primary[300],
+    marginRight: 3,
+    width: 20,
+    height: 20,
+  },
+}));
 
 const CountryOfficesHeader = (props) => {
   const { classes, handleNewCountryClick } = props;
   return (
-    <Grid align="center" className={classes.container} container>
+    <Grid align="center" container>
       <Grid xs={9} item>
         <Typography type="title" color="inherit">
           {messages.countryProfile}

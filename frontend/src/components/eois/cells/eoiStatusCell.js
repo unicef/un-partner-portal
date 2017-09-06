@@ -7,20 +7,20 @@ import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import SvgIcon from 'material-ui/SvgIcon';
 
-const STATUSES = [
-  { id: 'open', label: 'Open' },
-  { id: 'closed', label: 'Closed/Under Review' },
-  { id: 'completed', label: 'Completed' },
-];
+const STATUSES = {
+  Ope: 'Open',
+  Clo: 'Closed/Under Review',
+  Com: 'Completed',
+};
 
 const styleSheet = createStyleSheet('EoiStatusCell', theme => ({
-  open: {
-    fill: theme.palette.eoiStatus.open,
+  Ope: {
+    color: theme.palette.eoiStatus.open,
   },
-  closed: {
+  Clo: {
     color: theme.palette.eoiStatus.closed,
   },
-  completed: {
+  Com: {
     color: theme.palette.eoiStatus.completed,
   },
   mainText: {
@@ -38,16 +38,16 @@ const styleSheet = createStyleSheet('EoiStatusCell', theme => ({
 
 const EoiStatusCell = (props) => {
   const { classes, id } = props;
-  const colorClass = classNames(classes[STATUSES[id].id]);
+  const colorClass = classNames(classes[id]);
   return (
-    <Grid container direction="row" align="center" wrap="nowrap" gutter={4}>
+    <Grid container direction="row" align="center" wrap="nowrap" gutter={8}>
       <Grid item >
         <SvgIcon className={colorClass}>
           <circle cx="12" cy="12" r="8" />
         </SvgIcon>
       </Grid>
       <Grid item className={classes.text}>
-        {STATUSES[id].label}
+        {STATUSES[id]}
       </Grid>
     </Grid>
   );
@@ -55,7 +55,7 @@ const EoiStatusCell = (props) => {
 
 EoiStatusCell.propTypes = {
   classes: PropTypes.object.isRequired,
-  id: PropTypes.object.isRequired,
+  id: PropTypes.string.isRequired,
 };
 
 export default withStyles(styleSheet)(EoiStatusCell);
