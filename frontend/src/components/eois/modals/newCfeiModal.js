@@ -12,7 +12,7 @@ import CallPartnersModal from './callPartnersModal';
 const messages = {
   title: 'Create new Call for Expressions of Interests',
   header: {
-    calls: {
+    open: {
       title: 'This CFEI is for open selections.',
       body: 'If you would like to notify specific partners about this CFEI, you can select ' +
       'their names on the next page of this form.',
@@ -26,17 +26,17 @@ const messages = {
 };
 
 const modals = {
-  calls: OpenForm,
+  open: OpenForm,
   direct: DirectForm,
 };
 
 const formNames = {
-  calls: 'newOpenCfei',
+  open: 'newOpenCfei',
   direct: 'newDirectCfei',
 };
 
 const postMethods = {
-  calls: addOpenCfei,
+  open: addOpenCfei,
   direct: addDirectCfei,
 };
 
@@ -57,14 +57,14 @@ class NewCfeiModal extends Component {
   }
 
   render() {
-    const { open, path, onDialogClose } = this.props;
+    const { open, type, onDialogClose } = this.props;
     return (
       <Grid item>
         <ControlledModal
           maxWidth="md"
           title={messages.title}
           trigger={open}
-          info={messages.header[path]}
+          info={messages.header[type]}
           buttons={{
             flat: {
               handleClick: onDialogClose,
@@ -73,7 +73,7 @@ class NewCfeiModal extends Component {
               handleClick: this.handleDialogSubmit,
             },
           }}
-          content={React.createElement(modals[path], { onSubmit: this.handleSubmit })}
+          content={React.createElement(modals[type], { onSubmit: this.handleSubmit })}
         />
         <CallPartnersModal />
       </Grid>
@@ -83,7 +83,7 @@ class NewCfeiModal extends Component {
 
 NewCfeiModal.propTypes = {
   open: PropTypes.bool,
-  path: PropTypes.string,
+  type: PropTypes.string,
   onDialogClose: PropTypes.func,
   postCfei: PropTypes.func,
   submit: PropTypes.func,

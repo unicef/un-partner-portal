@@ -14,7 +14,7 @@ from common.paginations import SmallPagination
 from common.permissions import IsAtLeastMemberReader
 from partner.models import PartnerMember
 from .models import EOI, Pin
-from .serializers import BaseProjectSerializer, CreateProjectSerializer
+from .serializers import BaseProjectSerializer, DirectProjectSerializer, CreateProjectSerializer
 from .filters import BaseProjectFilter
 
 
@@ -60,12 +60,14 @@ class DirectProjectAPIView(BaseProjectAPIView):
     Endpoint for getting DIRECT Call of Expression of Interest.
     """
 
+    serializer_class = DirectProjectSerializer
+
     def get_partners_pks(self):
         # Partner Member can have many partners! This case is under construction and can change in future!
         return PartnerMember.objects.filter(user=self.request.user).values_list('partner', flat=True)
 
     def get_queryset(self):
-        return self.queryset.filter(display_type=EOI_TYPES.direct, invited_partners__in=self.get_partners_pks())
+        return self.queryset.filter(display_type=EOI_TYPES.direct)
 
 
 class PinProjectAPIView(BaseProjectAPIView):
