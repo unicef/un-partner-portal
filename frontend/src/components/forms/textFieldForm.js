@@ -62,7 +62,7 @@ TextFieldForm.propTypes = {
   /**
    * unique text used as placeholder
    */
-  placeholder: PropTypes.text,
+  placeholder: PropTypes.string,
   /**
    * if field is optional
    */

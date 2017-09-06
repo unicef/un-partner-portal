@@ -3,6 +3,7 @@ from rest_framework import serializers
 from partner.models import (
     Partner,
     PartnerProfile,
+    PartnerSelected,
     PartnerMember,
 )
 
@@ -40,4 +41,19 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
             'org_head_first_name',
             'org_head_last_name',
             'org_head_email',
+        )
+
+
+class PartnerSelectedSerializer(serializers.ModelSerializer):
+
+    partner = PartnerSerializer()
+
+    class Meta:
+        model = PartnerSelected
+        fields = (
+            'id',
+            'partner',
+            'summary_justification',
+            'justification_for_direct_selection',
+            'status'
         )

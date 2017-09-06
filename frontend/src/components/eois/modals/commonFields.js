@@ -47,7 +47,6 @@ export const TitleField = props => (<TextFieldForm
   label="Project Title"
   fieldName="title"
   placeholder="Enter Project Title"
-  optional
   {...props}
 />);
 

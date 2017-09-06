@@ -1,5 +1,7 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import { reducer as formReducer } from 'redux-form';
+import thunk from 'redux-thunk';
 import R from 'ramda';
 import { routerReducer, routerMiddleware } from 'react-router-redux';
 import { browserHistory } from 'react-router';
@@ -10,31 +12,40 @@ import newCfei from './reducers/newCfei';
 import nav from './reducers/nav';
 import session from './reducers/session';
 import countries from './reducers/countries';
-import population from './reducers/population';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
 import cfeiDetails from './reducers/cfeiDetails';
+import agencyPartnersList from './reducers/agencyPartnersList';
+import population from './reducers/population';
+import hqProfileNav from './reducers/hqProfileNav';
 
-const middleware = routerMiddleware(browserHistory);
-
-export default createStore(combineReducers({
+const mainReducer = combineReducers({
   cfei,
   cfeiNav,
   cfeiDetails,
   newCfei,
+  hqProfileNav,
   nav,
   session,
   countries,
-  population,
   countryProfiles,
   partnerProfileEdit,
+  agencyPartnersList,
   form: formReducer,
+  population,
   routing: routerReducer,
-}),
-applyMiddleware(middleware),
+});
+
+const middelware = [thunk, routerMiddleware(browserHistory)];
 // TODO(marcindo: disable devtools in prod
-// eslint-disable-next-line
-window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+export default createStore(
+  mainReducer,
+  composeEnhancers(
+    applyMiddleware(...middelware),
+  ),
+);
 
 const mapValuesForSelectionField = (state) => {
   const makeFormItem = list => R.zipObj(['value', 'label'], list);
@@ -46,3 +57,4 @@ export const selectNormalizedCountries = state =>
   mapValuesForSelectionField(state.countries);
 export const selectNormalizedPopulations = state =>
   mapValuesForSelectionField(state.population);
+

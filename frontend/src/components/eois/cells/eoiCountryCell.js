@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import withCountryName from '../../common/hoc/withCountryName';
 
 const eoiCountryCell = (props) => {

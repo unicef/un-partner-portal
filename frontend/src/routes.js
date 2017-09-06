@@ -7,16 +7,15 @@ import store from './store';
 import main from './components/main';
 import mainLayout from './components/layout/mainLayout';
 import eoiHeader from './components/eois/eoiHeader';
-import overview from './components/eois/overview';
-import pinned from './components/eois/pinned';
-import calls from './components/eois/calls';
-import direct from './components/eois/direct';
 import cfeiDetails from './components/eois/details/cfeiDetails';
-import partner from './components/partners/partnersHeader';
+import cfeiContainer from './components/eois/cfeiContainer';
 import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
 import organizationProfileEdit from './components/organizationProfile/edit/tabsContainer';
 import organizationProfile from './components/organizationProfile/organizationProfile';
+import hqProfile from './components/organizationProfile/hq/hqProfile';
+import partnersContainer from './components/partners/partnersContainer';
+import hqProfileOverview from './components/organizationProfile/hq/hqProfileOverview';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
 import mainContent from './components/common/mainContentWrapper';
@@ -30,17 +29,20 @@ const allRoutes = () => (
         <Route path="dashboard" component={dashboard} />
         <Route path="cfei" component={eoiHeader} >
           <Route component={mainContent} >
-            <Route path="overview" component={overview} />
-            <Route path="pinned" component={pinned} />
-            <Route path="calls" component={calls} />
-            <Route path="calls/:id" component={cfeiDetails} />
-            <Route path="direct" component={direct} />
+            <Route path=":type" component={cfeiContainer} />
+            <Route path="open/:id" component={cfeiDetails} />
           </Route>
         </Route>
-        <Route path="partner" component={partner} />
+        <Route path="partner" component={partnersContainer} />
         <Route path="applications" component={applications} />
         <Route path="profile" component={organizationProfile} />
         <Route path="profile/edit" component={organizationProfileEdit} />
+        <Route path="profile/hq" component={hqProfile} >
+          <Route component={mainContent} >
+            <Route path="overview" component={hqProfileOverview} />
+            <Route path="user" component={null} />
+          </Route>
+        </Route>
         <Route path="settings" component={settings} />
       </Route>
     </Route>
