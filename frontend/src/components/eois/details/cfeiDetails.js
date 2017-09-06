@@ -9,6 +9,7 @@ import SelectionCriteria from './selectionCriteria';
 import InformedPartners from './informedPartners';
 
 const CfeiDetails = (props) => {
+  const {params:{id}} = props;
   return (
     <form >
       <GridColumn >
@@ -19,7 +20,7 @@ const CfeiDetails = (props) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <GridColumn >
-              <SelectionCriteria />
+              <SelectionCriteria id={id} />
               <InformedPartners />
             </GridColumn>
           </Grid>
