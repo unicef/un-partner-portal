@@ -11,6 +11,7 @@ import nav from './reducers/nav';
 import session from './reducers/session';
 import countries from './reducers/countries';
 import population from './reducers/population';
+import hqProfileNav from './reducers/hqProfileNav';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
 
@@ -20,6 +21,7 @@ export default createStore(combineReducers({
   cfei,
   cfeiNav,
   newCfei,
+  hqProfileNav,
   nav,
   session,
   countries,
