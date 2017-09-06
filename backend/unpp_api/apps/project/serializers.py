@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db import transaction
 from rest_framework import serializers
 from agency.serializers import AgencySerializer
-from common.serializers import ConfigSectorSerializer, PointSerializer
+from common.serializers import SimpleSpecializationSerializer, ConfigSectorSerializer, PointSerializer
 from common.models import Sector, Point, AdminLevel1
 from .models import EOI, AssessmentCriteria
 
@@ -16,7 +16,7 @@ class AssessmentCriteriaSerializer(serializers.ModelSerializer):
 
 class BaseProjectSerializer(serializers.ModelSerializer):
 
-    sectors = serializers.SerializerMethodField()
+    specializations = SimpleSpecializationSerializer(many=True)
     agency = AgencySerializer()
 
     class Meta:
@@ -25,19 +25,13 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'id',
             'title',
             'country_code',
-            'sectors',
+            'specializations',
             'agency',
             'start_date',
             'end_date',
             'deadline_date',
             'status',
         )
-
-    def get_sectors(self, obj):
-        specializations = obj.specializations.all()
-        categories = specializations.values_list('category_id', flat=True)
-        qs = Sector.objects.filter(id__in=categories, specializations__in=specializations).distinct()
-        return ConfigSectorSerializer(qs, many=True).data
 
 
 class CreateEOISerializer(serializers.ModelSerializer):

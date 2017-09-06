@@ -1,14 +1,15 @@
 from django.conf import settings
 
 from account.models import User, UserProfile
-from common.consts import EOI_TYPES
+from agency.models import AgencyMember
+from common.consts import EOI_TYPES, MEMBER_ROLES
 from common.factories import (
     PartnerFactory,
     PartnerMemberFactory,
     AgencyMemberFactory,
     EOIFactory,
 )
-from partner.models import Partner
+from partner.models import Partner, PartnerMember
 from project.models import EOI
 
 
@@ -53,3 +54,14 @@ def generate_fake_data(quantity=4):
         for partner in Partner.objects.all():
             eoi.invited_partners.add(partner)
     print "All partners invited to direct EOI."
+
+    pm = PartnerMember.objects.first()
+    pm.user = admin
+    pm.role = MEMBER_ROLES.admin
+    pm.save()
+
+    am = AgencyMember.objects.first()
+    am.user = admin
+    am.role = MEMBER_ROLES.admin
+    am.save()
+    print "Set default first Partner and Agency member as admin."
