@@ -2,7 +2,7 @@ import R from 'ramda';
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import ContentDialog from '../common/contentDialog';
+import ControlledModal from '../common/modals/controlledModal';
 import CountryOfficesHeader from './countryOfficesHeader';
 import CountryProfileList from './countryProfile/countryProfileList';
 import { selectCountryId, createCountryProfile, INIT_COUNTRY_ID } from '../../reducers/countryProfiles';
@@ -49,10 +49,10 @@ class CountryOfficesHeaderContainer extends React.Component {
     return (
       <div>
         <CountryOfficesHeader handleNewCountryClick={this.handleNewCountry} />
-        <ContentDialog
+        <ControlledModal
           trigger={this.state.showCountryModal}
           title={messages.countryDialogTitle}
-          info={messages.countryDialogInfo}
+          info={{ title: messages.countryDialogInfo }}
           content={<CountryProfileList countries={R.concat(countryPresence, countryProfiles)} />}
           buttons={{
             flat: {

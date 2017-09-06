@@ -2,35 +2,18 @@ import React from 'react';
 import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import R from 'ramda';
+
 
 import Grid from 'material-ui/Grid';
-
-import RadioForm from '../forms/radioForm';
+import { selectNormalizedCountries } from '../../store';
 import SelectForm from '../forms/selectForm';
 import TextFieldForm from '../forms/textFieldForm';
+import PolarRadio from '../forms/fields/PolarRadio';
 import { email } from '../../helpers/validation';
 
 const messages = {
   tooltip: 'Country of Origin: Country of origin refers to the ' +
   'country where an organization’s headquarters is located.',
-};
-
-const NAME_CHANGE = [
-  {
-    value: 'yes',
-    label: 'Yes',
-  },
-  {
-    value: 'no',
-    label: 'No',
-  },
-];
-
-const mapCountries = (countries) => {
-  const makeFormItem = list => R.zipObj(['value', 'label'], list);
-  const compare = (a, b) => a.label.localeCompare(b.label);
-  return R.sort(compare, R.map(makeFormItem, R.toPairs(countries)));
 };
 
 const BasicInformation = (props) => {
@@ -51,10 +34,9 @@ const BasicInformation = (props) => {
           />
         </Grid>
         <Grid item sm={6} xs={12}>
-          <RadioForm
+          <PolarRadio
             fieldName="legalNameChange"
             label="Has the Organization had a legal name change?"
-            values={NAME_CHANGE}
           />
         </Grid>
         {legalNameChange === 'yes' &&
@@ -65,7 +47,7 @@ const BasicInformation = (props) => {
         <SelectForm
           fieldName="json.partner.country_code"
           label="Country of Origin"
-          values={mapCountries(countries)}
+          values={countries}
           infoIcon
           infoText={messages.tooltip}
         />
@@ -112,7 +94,7 @@ const selector = formValueSelector('registration');
 const connectedBasicInformation = connect(
   state => ({
     legalNameChange: selector(state, 'legalNameChange'),
-    countries: state.countries,
+    countries: selectNormalizedCountries(state),
   }),
 )(BasicInformation);
 

@@ -1,15 +1,23 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { CircularProgress } from 'material-ui/Progress';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
-const styleSheet = createStyleSheet('Loader', () => ({
+const styleSheet = createStyleSheet('Loader', theme => ({
   root: {
-    display: 'flex',
     position: 'relative',
+    display: 'flex',
     width: '100%',
     height: '100%',
+  },
+  Fullscreen: {
+    position: 'absolute',
+    backgroundColor: theme.palette.common.lightBlack,
+    top: 0,
+    left: 0,
+    zIndex: 1,
   },
   spinner: {
     position: 'absolute',
@@ -19,9 +27,13 @@ const styleSheet = createStyleSheet('Loader', () => ({
 }));
 
 const Loader = (props) => {
-  const { classes, children, loading } = props;
+  const { classes, children, loading, fullscreen } = props;
+  const className = classNames({
+    [classes.root]: loading,
+    [classes.Fullscreen]: fullscreen,
+  });
   return (
-    <div className={loading && classes.root}>
+    <div className={className}>
       {loading && <CircularProgress
         className={classes.spinner}
         color="accent"
@@ -36,6 +48,7 @@ Loader.propTypes = {
   classes: PropTypes.object.isRequired,
   children: PropTypes.element,
   loading: PropTypes.bool,
+  fullscreen: PropTypes.bool,
 };
 
 

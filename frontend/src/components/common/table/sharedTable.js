@@ -2,11 +2,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+const ASC = 'asc';
+const DESC = 'desc';
+
 class SharedTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      order: 'asc',
+      order: ASC,
       orderBy: 'Status',
       data: this.props.data,
       hoverOn: null,
@@ -25,23 +28,23 @@ class SharedTable extends Component {
   handleRequestSort(event, property) {
     const orderBy = property;
     let sortingFunc;
-    let order = 'desc';
+    let order = DESC;
 
-    if (this.state.orderBy === property && this.state.order === 'desc') {
-      order = 'asc';
+    if (this.state.orderBy === property && this.state.order === DESC) {
+      order = ASC;
     }
 
-    if (this.state.orderBy === property && this.state.order === 'desc') {
-      order = 'asc';
+    if (this.state.orderBy === property && this.state.order === DESC) {
+      order = ASC;
     }
 
     if (orderBy === 'agency') {
-      sortingFunc = (a, b) => (order === 'desc'
+      sortingFunc = (a, b) => (order === DESC
         ? b[orderBy].id > a[orderBy].id
         : a[orderBy].id > b[orderBy].id
       );
     } else {
-      sortingFunc = (a, b) => (order === 'desc'
+      sortingFunc = (a, b) => (order === DESC
         ? b[orderBy] > a[orderBy]
         : a[orderBy] > b[orderBy]
       );

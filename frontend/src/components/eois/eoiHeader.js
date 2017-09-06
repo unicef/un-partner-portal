@@ -8,9 +8,11 @@ import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import Tabs from 'material-ui/Tabs';
 import CustomTab from '../common/customTab';
+import NewCfeiModalButton from './modals/newCfeiModalButton';
 
 const messages = {
-  header: 'Calls for Expressions of Interest',
+  partner: 'Calls for Expressions of Interest',
+  agency: 'Expression of Interests',
 };
 
 const styleSheet = createStyleSheet('sidebarMenu', (theme) => {
@@ -69,15 +71,21 @@ class CfeiHeader extends Component {
 
 
   render() {
-    const { classes, tabs, children } = this.props;
+    const { classes, tabs, children, role } = this.props;
     return (
       <Grid item>
         <Grid className={classes.container} container direction="column" gutter={16}>
-          <div>
-            <Typography type="headline">
-              {messages.header}
-            </Typography>
-          </div>
+          <Grid item>
+            <Grid container direction="row" justify="space-between">
+              <Grid item>
+                <Typography type="headline">
+                  {messages[role]}
+                </Typography>
+              </Grid>
+              {role === 'agency' && <NewCfeiModalButton />
+              }
+            </Grid>
+          </Grid>
           <div>
             <Tabs index={this.state.index} onChange={this.handleChange}>
               {renderTabs(tabs)}
@@ -94,21 +102,16 @@ CfeiHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   classes: PropTypes.object.isRequired,
   children: PropTypes.node,
+  role: PropTypes.string,
 };
 
 const mapStateToProps = state => ({
   tabs: state.cfeiNav,
-});
-
-const mapDispatchToProps = () => ({
-  onItemClick: (id, path) => {
-    history.push(path);
-  },
+  role: state.session.role,
 });
 
 const containerCfeiHeader = connect(
   mapStateToProps,
-  mapDispatchToProps,
 )(CfeiHeader);
 
 export default withStyles(styleSheet)(containerCfeiHeader);

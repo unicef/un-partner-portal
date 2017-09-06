@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@devexpress/dx-react-core": "^1.0.0-alpha.8",
+    "@devexpress/dx-react-grid": "^1.0.0-alpha.8",
+    "@devexpress/dx-react-grid-material-ui": "^1.0.0-alpha.8",
     "autoprefixer": "7.1.1",
     "axios": "^0.16.2",
     "babel-core": "6.25.0",
@@ -42,6 +45,7 @@
     "react-infinite-calendar": "^2.3.1",
     "react-redux": "^5.0.5",
     "react-router": "^3.0.0",
+    "react-router-redux": "^4.0.8",
     "react-tap-event-plugin": "^2.0.1",
     "react-tooltip": "^3.3.0",
     "redux": "^3.7.2",
