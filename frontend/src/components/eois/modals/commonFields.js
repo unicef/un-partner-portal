@@ -152,5 +152,4 @@ export const ProjectPartners = () => (<SelectForm
   selectFieldProps={{
     multiple: true,
   }}
-
 />);

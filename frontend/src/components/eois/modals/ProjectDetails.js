@@ -3,7 +3,7 @@ import { FormSection } from 'redux-form';
 import PropTypes from 'prop-types';
 
 import Typography from 'material-ui/Typography';
-
+import SectorForm from '../../forms/fields/projectFields/sectorFieldArray';
 import SelectPopulationOfConcern from '../../forms/fields/newCfeiFields/selectPopulationOfConcern';
 import * as fields from './commonFields';
 import GridColumn from '../../common/grid/gridColumn';
@@ -24,6 +24,7 @@ const ProjectDetails = (props) => {
         <GridColumn>
           <fields.TitleField />
           <fields.FocalPoint />
+          <SectorForm />
           <SelectPopulationOfConcern />
           <fields.Background />
           <fields.OtherInfo />

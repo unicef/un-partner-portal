@@ -6,11 +6,12 @@ import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import Divider from 'material-ui/Divider';
-import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
+import List, { ListItem } from 'material-ui/List';
 import Grid from 'material-ui/Grid';
+import Typography from 'material-ui/Typography';
 
 import GridColumn from '../common/grid/gridColumn';
-import GridRow from '../common/grid/gridRow';
+
 
 const styleSheet = createStyleSheet('BasicInformation', theme => ({
   outerPaper: {
@@ -71,16 +72,19 @@ const renderMembers = ({ limit, fields, outerField, innerField, classes }) => {
 };
 
 const ArrayForm = (props) => {
-  const { classes, fieldName, outerField, innerField, limit } = props;
+  const { classes, fieldName, outerField, innerField, limit, label } = props;
   return (
-    <FieldArray
-      limit={limit}
-      classes={classes}
-      name={fieldName}
-      component={renderMembers}
-      outerField={outerField}
-      innerField={innerField}
-    />
+    <div>
+      <Typography type="caption">{label}</Typography>
+      <FieldArray
+        limit={limit}
+        classes={classes}
+        name={fieldName}
+        component={renderMembers}
+        outerField={outerField}
+        innerField={innerField}
+      />
+    </div>
   );
 };
 
