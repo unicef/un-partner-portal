@@ -41,7 +41,6 @@ class CallPartnersModal extends Component {
     this.props.newCfeiProcessed();
   }
 
-
   render() {
     const { openDialog, showLoading } = this.props;
     return (

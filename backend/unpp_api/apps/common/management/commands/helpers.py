@@ -1,14 +1,21 @@
 from django.conf import settings
 
 from account.models import User, UserProfile
-from common.consts import EOI_TYPES
+from agency.models import AgencyMember
+from common.consts import (
+    EOI_TYPES,
+    MEMBER_ROLES,
+    JUSTIFICATION_FOR_DIRECT_SELECTION,
+    ACCEPTED_DECLINED,
+    DIRECT_SELECTION_SOURCE
+)
 from common.factories import (
     PartnerFactory,
     PartnerMemberFactory,
     AgencyMemberFactory,
     EOIFactory,
 )
-from partner.models import Partner
+from partner.models import Partner, PartnerMember, PartnerSelected
 from project.models import EOI
 
 
@@ -50,6 +57,32 @@ def generate_fake_data(quantity=4):
     print "{} direct EOI objects created".format(quantity)
 
     for eoi in EOI.objects.filter(display_type=EOI_TYPES.direct):
-        for partner in Partner.objects.all():
-            eoi.invited_partners.add(partner)
-    print "All partners invited to direct EOI."
+        partner_example = Partner.objects.all().order_by("?")
+        first = PartnerSelected.objects.create(
+            partner=partner_example.first(),
+            summary_justification='summary',
+            justification_for_direct_selection=JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+            status=ACCEPTED_DECLINED.accepted
+        )
+        eoi.selected_partners.add(first)
+        last = PartnerSelected.objects.create(
+            partner=partner_example.last(),
+            summary_justification='summary',
+            justification_for_direct_selection=JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+            status=ACCEPTED_DECLINED.accepted
+        )
+        eoi.selected_partners.add(last)
+        eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
+        eoi.save()
+    print "Partners selected to direct EOI."
+
+    pm = PartnerMember.objects.first()
+    pm.user = admin
+    pm.role = MEMBER_ROLES.admin
+    pm.save()
+
+    am = AgencyMember.objects.first()
+    am.user = admin
+    am.role = MEMBER_ROLES.admin
+    am.save()
+    print "Set default first Partner and Agency member as admin."

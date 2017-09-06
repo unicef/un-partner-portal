@@ -3,8 +3,9 @@ from __future__ import unicode_literals
 from django.db import transaction
 from rest_framework import serializers
 from agency.serializers import AgencySerializer
-from common.serializers import ConfigSectorSerializer, PointSerializer
-from common.models import Sector, Point, AdminLevel1
+from common.serializers import SimpleSpecializationSerializer, PointSerializer
+from common.models import Point, AdminLevel1
+from partner.serializers import PartnerSelectedSerializer
 from .models import EOI, AssessmentCriteria
 
 
@@ -16,16 +17,18 @@ class AssessmentCriteriaSerializer(serializers.ModelSerializer):
 
 class BaseProjectSerializer(serializers.ModelSerializer):
 
-    sectors = serializers.SerializerMethodField()
+    specializations = SimpleSpecializationSerializer(many=True)
     agency = AgencySerializer()
+    created = serializers.SerializerMethodField()
 
     class Meta:
         model = EOI
         fields = (
             'id',
             'title',
+            'created',
             'country_code',
-            'sectors',
+            'specializations',
             'agency',
             'start_date',
             'end_date',
@@ -33,11 +36,30 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'status',
         )
 
-    def get_sectors(self, obj):
-        specializations = obj.specializations.all()
-        categories = specializations.values_list('category_id', flat=True)
-        qs = Sector.objects.filter(id__in=categories, specializations__in=specializations).distinct()
-        return ConfigSectorSerializer(qs, many=True).data
+    def get_created(self, obj):
+        return obj.created.date()
+
+
+class DirectProjectSerializer(BaseProjectSerializer):
+
+    selected_partners = PartnerSelectedSerializer(many=True)
+
+    class Meta:
+        model = EOI
+        fields = (
+            'id',
+            'title',
+            'created',
+            'country_code',
+            'sectors',
+            'agency',
+            'start_date',
+            'end_date',
+            'deadline_date',
+            'status',
+            'selected_partners',
+            'selected_source',
+        )
 
 
 class CreateEOISerializer(serializers.ModelSerializer):

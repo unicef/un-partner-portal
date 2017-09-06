@@ -1,3 +1,5 @@
+
+import { browserHistory as history } from 'react-router';
 import IconButton from 'material-ui/IconButton';
 import Warning from 'material-ui-icons/Warning';
 import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
@@ -12,6 +14,7 @@ const messages = {
   user: 'user',
   lastUpdate: 'Last update: ',
   pluralSuffix: 's',
+  overviewPath: 'profile/hq/overview',
 };
 
 const styleSheet = createStyleSheet('HqProfile', (theme) => {
@@ -54,10 +57,19 @@ class OrganizationItem extends Component {
     };
   }
 
+  handleOnClick() {
+    history.push(messages.overviewPath);
+  }
+
   render() {
     const { classes, isCountryItem, title, users, update, completed } = this.props;
     return (
-      <Grid align="center" container className={isCountryItem ? classes.countryItem : classes.hqProfile}>
+      <Grid
+        align="center"
+        container
+        className={isCountryItem ?
+          classes.countryItem : classes.hqProfile}
+      >
         <Grid item xs={5}>
           <Typography type={isCountryItem ? 'body1' : 'title'} color="inherit">
             {title}
@@ -81,7 +93,7 @@ class OrganizationItem extends Component {
         </Grid>
 
         <Grid className={classes.right} item xs={1}>
-          <IconButton>
+          <IconButton onClick={this.handleOnClick}>
             <KeyboardArrowRight />
           </IconButton>
         </Grid>

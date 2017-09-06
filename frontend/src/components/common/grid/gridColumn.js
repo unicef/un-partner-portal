@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 
 
-function GridRow(props) {
-  const { children } = props;
+function GridColumn(props) {
+  const { children, gutter } = props;
   return (
     <Grid item >
-      <Grid container direction="column" gutter={16}>
+      <Grid container direction="column" gutter={gutter}>
         {React.Children.map(children, child => (
           <Grid item>
             {child}
@@ -18,9 +18,13 @@ function GridRow(props) {
   );
 }
 
-GridRow.propTypes = {
+GridColumn.propTypes = {
   children: PropTypes.array,
-
+  gutter: PropTypes.number,
 };
 
-export default GridRow;
+GridColumn.defaultProps = {
+  gutter: 16,
+};
+
+export default GridColumn;

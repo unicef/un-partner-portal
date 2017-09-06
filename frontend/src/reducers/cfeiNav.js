@@ -4,9 +4,9 @@ import { SESSION_INIT } from './session';
 import { PARTNER, AGENCY, filterItems } from './nav';
 
 const initialState = [
-  { path: '/cfei/overview', label: 'Overview', roles: [PARTNER] },
+  { path: '/cfei/open', label: 'Overview', roles: [PARTNER] },
   { path: '/cfei/pinned', label: 'Pinned', roles: [PARTNER] },
-  { path: '/cfei/calls', label: 'Calls for expression of interest', roles: [AGENCY] },
+  { path: '/cfei/open', label: 'Calls for expression of interest', roles: [AGENCY] },
   { path: '/cfei/direct', label: 'direct selections', roles: [AGENCY] },
   { path: '/cfei/unsolicited', label: 'Unsolicited Concept Notes', roles: [AGENCY] },
 ];
