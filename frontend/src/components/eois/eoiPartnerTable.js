@@ -15,6 +15,7 @@ import AlertDialog from '../common/alertDialog';
 
 const messages = {
   title: 'List of Calls for Expressions of Interest',
+  warning: 'Warning',
 };
 
 export const columnData = [
@@ -80,7 +81,7 @@ class EoiPartnerTable extends Component {
         </Grid>
         <AlertDialog
           trigger={alert}
-          title="Warning"
+          title={messages.warning}
           text={errorMsg}
           handleDialogClose={() => this.setState({ alert: false })}
         />

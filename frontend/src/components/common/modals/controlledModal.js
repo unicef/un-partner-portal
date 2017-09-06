@@ -21,7 +21,8 @@ const messages = {
   ok: 'Ok',
 };
 
-function ControlledModal(props) {
+
+const ControlledModal = (props) => {
   const { classes, trigger, title, info, content, buttons } = props;
   return (
     <Dialog open={trigger} >
@@ -47,7 +48,6 @@ function ControlledModal(props) {
           {buttons.raised.label || messages.ok}
         </Button>
         }
-
       </DialogActions>
     </Dialog>
   );
