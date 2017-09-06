@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Typography from 'material-ui/Typography';
-import GridColumn from '../../common/grid/gridColumn';
 import HeaderList from '../../common/list/headerList';
 import PaddedContent from '../../common/paddedContent';
 
@@ -15,8 +14,8 @@ const title = () => (
 
 const renderRow = criterias => criterias.map(selection => (
   <PaddedContent>
-    <Typography type="SubHeading">{selection.display_type}</Typography>
-    <Typography>{selection.description} </Typography>
+    <Typography type="subheading">{selection.display_type}</Typography>
+    <Typography type="caption">{selection.description} </Typography>
   </PaddedContent>
 ));
 

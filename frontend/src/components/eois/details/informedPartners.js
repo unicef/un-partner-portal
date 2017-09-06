@@ -1,6 +1,5 @@
 import React from 'react';
 import Typography from 'material-ui/Typography';
-import GridColumn from '../../common/grid/gridColumn';
 import HeaderList from '../../common/list/headerList';
 import PaddedContent from '../../common/paddedContent';
 
@@ -20,19 +19,18 @@ const data = [
 
 const renderRow = partners => partners.map(partner => (
   <PaddedContent>
-    <Typography type="SubHeading">{partner.name}</Typography>
-    <Typography>{partner.date} </Typography>
+    <Typography type="subheading">{partner.name}</Typography>
+    <Typography type="caption">{partner.date} </Typography>
   </PaddedContent>
 ));
 
 
-const InformedPartners = (props) => {
-  return (
-    <HeaderList
-      header={title}
-      rows={renderRow(data)}
-    />
-  );
-};
+const InformedPartners = () => (
+  <HeaderList
+    header={title}
+    rows={renderRow(data)}
+  />
+);
+
 
 export default InformedPartners;

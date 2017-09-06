@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
-const styleSheet = createStyleSheet('PaddedHeader', (theme) => {
+const styleSheet = createStyleSheet('PaddedContent', (theme) => {
   const padding = theme.spacing.unit * 2;
   return {
     container: {
