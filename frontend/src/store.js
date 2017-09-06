@@ -14,14 +14,15 @@ import session from './reducers/session';
 import countries from './reducers/countries';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
+import cfeiDetails from './reducers/cfeiDetails';
 import agencyPartnersList from './reducers/agencyPartnersList';
 import population from './reducers/population';
 import hqProfileNav from './reducers/hqProfileNav';
 
-
 const mainReducer = combineReducers({
   cfei,
   cfeiNav,
+  cfeiDetails,
   newCfei,
   hqProfileNav,
   nav,

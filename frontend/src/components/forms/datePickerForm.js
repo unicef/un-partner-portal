@@ -5,7 +5,7 @@ import Grid from 'material-ui/Grid';
 import { FormControl, FormLabel } from 'material-ui/Form';
 import DateRange from 'material-ui-icons/DateRange';
 import moment from 'moment';
-import { renderDatePicker } from '../../helpers/formHelper';
+import { renderDatePicker, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
 class DatePickerForm extends Component {
@@ -27,32 +27,39 @@ class DatePickerForm extends Component {
       placeholder,
       optional,
       validation,
+      readOnly,
       warn,
     } = this.props;
     return (
       <Grid item>
         <FormControl fullWidth>
-          <FormLabel>{label}</FormLabel>
-          <Grid container direction="row" gutter={4} align="center">
-            <Field
+          {readOnly
+            ? <Field
               name={fieldName}
-              component={renderDatePicker}
-              validate={optional ? [] : [required].concat(validation || [])}
-              hintText={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
-              warn={warn && warning}
-              format={(value) => {
-                if (value && value !== 'Invalid date') return new Date(`${value}T00:00:00.000Z`);
-                return value;
-              }}
-              normalize={value => moment(value).format('YYYY-MM-DD').toString()}
-              textFieldStyle={{
-                width: '100%',
-                'line-height': null,
-                height: 40,
-              }}
-              {...datePickerProps}
+              label={label}
+              component={renderText}
+              optional={optional}
             />
-          </Grid>
+            : [<FormLabel>{label}</FormLabel>,
+              <Field
+                name={fieldName}
+                component={readOnly ? renderText : renderDatePicker}
+                validate={optional ? [] : [required].concat(validation || [])}
+                hintText={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
+                warn={warn && warning}
+                format={(value) => {
+                  if (value && value !== 'Invalid date') return new Date(`${value}T00:00:00.000Z`);
+                  return value;
+                }}
+                normalize={value => moment(value).format('YYYY-MM-DD').toString()}
+                textFieldStyle={{
+                  width: '100%',
+                  'line-height': null,
+                  height: 40,
+                }}
+                {...datePickerProps}
+              />]
+          }
         </FormControl>
       </Grid>
     );

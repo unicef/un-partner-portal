@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import InfoIcon from 'material-ui-icons/Info';
 import Grid from 'material-ui/Grid';
 import { MenuItem } from 'material-ui-old/Menu';
-
-import { renderSelectField } from '../../helpers/formHelper';
+import { FormControl, FormLabel } from 'material-ui/Form';
+import { renderSelectField, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 import TooltipIcon from '../common/tooltipIcon';
 
@@ -57,52 +57,64 @@ class SelectForm extends Component {
       warn,
       optional,
       validation,
+      readOnly,
     } = this.props;
 
     return (
       <Grid item>
         <Grid container direction="row" align="flex-end" wrap="nowrap">
           <Grid item xs={infoIcon ? 11 : 12}>
-            <Field
-              name={fieldName}
-              component={renderSelectField}
-              {...selectFieldProps}
-              floatingLabelFixed
-              floatingLabelText={label}
-              hintText={placeholder || `Select ${label.toLowerCase()}`}
-              validate={optional ? [] : [required].concat(validation || [])}
-              warn={warn && warning}
-              onChange={this.handleChange}
-              style={{
-                height: '56px',
-              }}
-              inputStyle={{
-                'margin-top': 0,
-              }}
-              floatingLabelStyle={{
-                top: '22px',
-              }}
-              iconStyle={{
-                fill: 'rgba(0, 0, 0, 0.42)',
-                top: '10px',
-              }}
-              underlineStyle={{
-                'border-top': '1px solid rgba(0, 0, 0, 0.42)',
-                bottom: '6px',
-              }}
-              errorStyle={{
-                bottom: 0,
-              }}
-              fullWidth
-            >
-              {values.map((value, index) => (
-                <MenuItem
-                  key={index}
-                  value={value.value}
-                  primaryText={value.label}
+            {readOnly ?
+              <FormControl fullWidth>
+                <Field
+                  name={fieldName}
+                  component={renderText}
+                  values={values}
+                  optional={optional}
+                  label={label}
                 />
-              ))}
-            </Field>
+              </FormControl>
+              : <Field
+                name={fieldName}
+                component={renderSelectField}
+                {...selectFieldProps}
+                floatingLabelFixed
+                floatingLabelText={label}
+                hintText={placeholder || `Select ${label.toLowerCase()}`}
+                validate={optional ? [] : [required].concat(validation || [])}
+                warn={warn && warning}
+                onChange={this.handleChange}
+                style={{
+                  height: '56px',
+                }}
+                inputStyle={{
+                  'margin-top': 0,
+                }}
+                floatingLabelStyle={{
+                  top: '22px',
+                }}
+                iconStyle={{
+                  fill: 'rgba(0, 0, 0, 0.42)',
+                  top: '10px',
+                }}
+                underlineStyle={{
+                  'border-top': '1px solid rgba(0, 0, 0, 0.42)',
+                  bottom: '6px',
+                }}
+                errorStyle={{
+                  bottom: 0,
+                }}
+                fullWidth
+              >
+                {values.map((value, index) => (
+                  <MenuItem
+                    key={index}
+                    value={value.value}
+                    primaryText={value.label}
+                  />
+                ))}
+              </Field>
+            }
           </Grid>
           {infoIcon && (
             <Grid item xs={1} >

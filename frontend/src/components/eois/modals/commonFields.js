@@ -43,18 +43,19 @@ const PARTNERS = [
   },
 ];
 
-export const TitleField = () => (<TextFieldForm
+export const TitleField = props => (<TextFieldForm
   label="Project Title"
   fieldName="title"
   placeholder="Enter Project Title"
-  value="brick"
+  {...props}
 />);
 
-export const FocalPoint = () => (<SelectForm
+export const FocalPoint = props => (<SelectForm
   label="Project/Programme Focal Point(s)"
   fieldName="focal_point"
   placeholder="Select the name of the Focal Point"
   values={FOCAL}
+  {...props}
 />);
 
 export const Population = () => (<SelectForm
@@ -65,7 +66,7 @@ export const Population = () => (<SelectForm
   optional
 />);
 
-export const Background = () => (<TextFieldForm
+export const Background = props => (<TextFieldForm
   label="Brief background of the project"
   fieldName="description"
   multiline
@@ -75,9 +76,10 @@ export const Background = () => (<TextFieldForm
       maxLength: '200',
     },
   }}
+  {...props}
 />);
 
-export const OtherInfo = () => (<TextFieldForm
+export const OtherInfo = props => (<TextFieldForm
   label="Other information (optional)"
   fieldName="other_information"
   multiline
@@ -88,42 +90,47 @@ export const OtherInfo = () => (<TextFieldForm
     },
   }}
   optional
+  {...props}
 />);
 
-export const StartDate = () => (<DatePickerForm
+export const StartDate = props => (<DatePickerForm
   label="Estimated Start Date"
   fieldName="start_date"
   placeholder="Pick a date"
   datePickerProps={{
     minDate: new Date(),
   }}
+  {...props}
 />);
 
-export const EndDate = () => (<DatePickerForm
+export const EndDate = props => (<DatePickerForm
   label="Estimated End Date"
   fieldName="end_date"
   placeholder="Pick a date"
   datePickerProps={{
     minDate: new Date(),
   }}
+  {...props}
 />);
 
-export const DeadlineDate = () => (<DatePickerForm
+export const DeadlineDate = props => (<DatePickerForm
   label="Application Deadline"
   fieldName="deadline_date"
   placeholder="Pick a date"
   datePickerProps={{
     minDate: new Date(),
   }}
+  {...props}
 />);
 
-export const NotifyDate = () => (<DatePickerForm
+export const NotifyDate = props => (<DatePickerForm
   label="Notification of Result"
   fieldName="notif_results_date"
   placeholder="Pick a date"
   datePickerProps={{
     minDate: new Date(),
   }}
+  {...props}
 />);
 
 export const Weighting = () => (<PolarRadio
