@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 from django.db import transaction
 from rest_framework import serializers
 from agency.serializers import AgencySerializer
-from common.serializers import SimpleSpecializationSerializer, ConfigSectorSerializer, PointSerializer
-from common.models import Sector, Point, AdminLevel1
+from common.serializers import SimpleSpecializationSerializer, PointSerializer
+from common.models import Point, AdminLevel1
 from partner.serializers import PartnerSelectedSerializer
 from .models import EOI, AssessmentCriteria
 

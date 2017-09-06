@@ -1,23 +1,21 @@
 from django.conf import settings
 
 from account.models import User, UserProfile
-<<<<<<< HEAD
 from agency.models import AgencyMember
-from common.consts import EOI_TYPES, MEMBER_ROLES
-=======
-from common.consts import EOI_TYPES, JUSTIFICATION_FOR_DIRECT_SELECTION, ACCEPTED_DECLINED, DIRECT_SELECTION_SOURCE
->>>>>>> develop
+from common.consts import (
+    EOI_TYPES,
+    MEMBER_ROLES,
+    JUSTIFICATION_FOR_DIRECT_SELECTION,
+    ACCEPTED_DECLINED,
+    DIRECT_SELECTION_SOURCE
+)
 from common.factories import (
     PartnerFactory,
     PartnerMemberFactory,
     AgencyMemberFactory,
     EOIFactory,
 )
-<<<<<<< HEAD
-from partner.models import Partner, PartnerMember
-=======
-from partner.models import Partner, PartnerSelected
->>>>>>> develop
+from partner.models import Partner, PartnerMember, PartnerSelected
 from project.models import EOI
 
 

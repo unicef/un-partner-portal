@@ -6,7 +6,7 @@ import factory
 from factory import fuzzy
 from account.models import User, UserProfile
 from agency.models import Agency, AgencyOffice, AgencyMember
-from common.models import Sector, Specialization
+from common.models import Specialization
 from partner.models import Partner, PartnerMember
 from project.models import EOI
 from .consts import (
