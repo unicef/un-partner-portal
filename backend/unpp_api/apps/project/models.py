@@ -12,6 +12,7 @@ from common.consts import (
     SCALE_TYPES,
     EOI_STATUSES,
     SELECTION_CRITERIA_CHOICES,
+    DIRECT_SELECTION_SOURCE,
 )
 from common.countries import COUNTRIES_ALPHA2_CODE
 
@@ -45,6 +46,9 @@ class EOI(TimeStampedModel):
     invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest")
     reviewers = models.ManyToManyField('account.User', related_name="expressions_of_interest_as_reviewer")
     closed_justification = models.TextField(null=True, blank=True)
+    selected_partners = \
+        models.ManyToManyField('partner.PartnerSelected', related_name="expressions_of_interest", blank=True)
+    selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
 
     class Meta:
         ordering = ['id']

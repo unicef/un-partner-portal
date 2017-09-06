@@ -5,6 +5,7 @@ from rest_framework import serializers
 from agency.serializers import AgencySerializer
 from common.serializers import ConfigSectorSerializer, PointSerializer
 from common.models import Sector, Point, AdminLevel1
+from partner.serializers import PartnerSelectedSerializer
 from .models import EOI, AssessmentCriteria
 
 
@@ -18,12 +19,14 @@ class BaseProjectSerializer(serializers.ModelSerializer):
 
     sectors = serializers.SerializerMethodField()
     agency = AgencySerializer()
+    created = serializers.SerializerMethodField()
 
     class Meta:
         model = EOI
         fields = (
             'id',
             'title',
+            'created',
             'country_code',
             'sectors',
             'agency',
@@ -33,11 +36,36 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'status',
         )
 
+    def get_created(self, obj):
+        return obj.created.date()
+
     def get_sectors(self, obj):
         specializations = obj.specializations.all()
         categories = specializations.values_list('category_id', flat=True)
         qs = Sector.objects.filter(id__in=categories, specializations__in=specializations).distinct()
         return ConfigSectorSerializer(qs, many=True).data
+
+
+class DirectProjectSerializer(BaseProjectSerializer):
+
+    selected_partners = PartnerSelectedSerializer(many=True)
+
+    class Meta:
+        model = EOI
+        fields = (
+            'id',
+            'title',
+            'created',
+            'country_code',
+            'sectors',
+            'agency',
+            'start_date',
+            'end_date',
+            'deadline_date',
+            'status',
+            'selected_partners',
+            'selected_source',
+        )
 
 
 class CreateEOISerializer(serializers.ModelSerializer):

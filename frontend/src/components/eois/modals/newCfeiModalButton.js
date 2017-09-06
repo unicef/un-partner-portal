@@ -8,11 +8,9 @@ import Button from 'material-ui/Button';
 import NewCfeiModal from './newCfeiModal';
 
 const messages = {
-  calls: 'New cfei',
+  open: 'New cfei',
   direct: 'new direct selection',
 };
-
-const extractPath = router => R.last(router.location.pathname.split('/'));
 
 
 class AgencyModals extends Component {
@@ -34,9 +32,8 @@ class AgencyModals extends Component {
   }
 
   render() {
-    const { router } = this.props;
+    const { params: { type } } = this.props;
     const { modalOpen } = this.state;
-    const path = extractPath(router);
     return (
       <Grid item>
         <Button
@@ -44,9 +41,9 @@ class AgencyModals extends Component {
           color="accent"
           onClick={this.handleButtonClick}
         >
-          {messages[path]}
+          {messages[type]}
         </Button>
-        <NewCfeiModal path={path} open={modalOpen} onDialogClose={this.handleDialogClose} />
+        <NewCfeiModal type={type} open={modalOpen} onDialogClose={this.handleDialogClose} />
       </Grid>
 
     );
@@ -54,7 +51,7 @@ class AgencyModals extends Component {
 }
 
 AgencyModals.propTypes = {
-  router: PropTypes.object,
+  params: PropTypes.object,
 };
 
 
