@@ -10,6 +10,7 @@ import hqProfileNav from './reducers/hqProfileNav';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
 import agencyPartnersList from './reducers/agencyPartnersList';
+import agencyPartnerProfile from './reducers/agencyPartnerProfileNav';
 
 export default createStore(combineReducers({
   cfeiNav,
@@ -21,6 +22,7 @@ export default createStore(combineReducers({
   countryProfiles,
   partnerProfileEdit,
   agencyPartnersList,
+  agencyPartnerProfile,
   form: formReducer,
 }),
 // TODO(marcindo: disable devtools in prod

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { browserHistory as history } from 'react-router';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import MainContentWrapper from '../../components/common/mainContentWrapper';
@@ -13,7 +14,7 @@ const messages = {
 
 class PartnersContainer extends Component {
   onRowClick(row) {
-    // todo navigate to detail page
+    history.push('partner/info/overview');
   }
 
   render() {

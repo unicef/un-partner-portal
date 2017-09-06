@@ -11,6 +11,7 @@ import organizationProfileEdit from './components/organizationProfile/edit/tabsC
 import organizationProfile from './components/organizationProfile/organizationProfile';
 import hqProfile from './components/organizationProfile/hq/hqProfile';
 import partnersContainer from './components/partners/partnersContainer';
+import partnerProfile from './components/partners/details/partnerProfile';
 import hqProfileOverview from './components/organizationProfile/hq/hqProfileOverview';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
@@ -40,6 +41,19 @@ export default [
           ],
         },
         { path: 'partner', component: partnersContainer },
+        { path: 'partner/info',
+          component: partnerProfile,
+          childRoutes: [
+            { component: mainContent,
+              childRoutes: [
+                { path: 'overview', component: null },
+                { path: 'details', component: hqProfileOverview },
+                { path: 'user', component: null },
+                { path: 'applications', component: null },
+              ],
+            },
+          ],
+        },
         { path: 'applications', component: applications },
         { path: 'profile', component: organizationProfile },
         { path: 'profile/edit', component: organizationProfileEdit },
