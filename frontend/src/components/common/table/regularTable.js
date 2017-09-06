@@ -51,7 +51,7 @@ class RegularTable extends SharedTable {
           numSelected={0}
         />}
         <Paper elevation={0} className={classes.paper}>
-          <Loader loading={loading} >
+          <Loader loading={loading && !data.length} >
             <Table>
               <EnhancedTableHead
                 order={order}
@@ -60,7 +60,7 @@ class RegularTable extends SharedTable {
                 columnData={columnData}
                 firstCell={classes.firstCell}
               />
-              {loading
+              {loading && !data.length
                 ? (
                   <TableBody>
                     <TableRow />

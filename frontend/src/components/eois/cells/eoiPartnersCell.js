@@ -6,7 +6,7 @@ const eoiPartnersCell = (props) => {
   return (
     <div>
       { partners.map(partner => (
-        `${partner.legalName}, `
+        `${partner.partner.legal_name}, `
       ))
       }
     </div>
