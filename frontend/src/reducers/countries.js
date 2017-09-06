@@ -7,19 +7,20 @@ const initialState = {};
 const loadCountriesSuccess = countries => ({ type: LOAD_COUNTRIES_SUCCESS, countries });
 
 export const loadCountries = (dispatch) => {
-  getCountries()
-    .then(countries => dispatch(loadCountriesSuccess(countries)));
+  if (!window.localStorage.countries) {
+    return getCountries()
+      .then((countries) => {
+        window.localStorage.setItem('countries', JSON.stringify(countries));
+        return dispatch(loadCountriesSuccess(countries));
+      });
+  }
+  return dispatch(loadCountriesSuccess(JSON.parse(window.localStorage.countries)));
 };
-
-const saveCountries = action => Object.keys(action.countries).map(key => ({
-  value: key,
-  label: action.countries[key],
-})).sort((a, b) => a.label.localeCompare(b.label));
 
 export default function countriesReducer(state = initialState, action) {
   switch (action.type) {
     case LOAD_COUNTRIES_SUCCESS: {
-      return saveCountries(action);
+      return action.countries;
     }
     default:
       return state;

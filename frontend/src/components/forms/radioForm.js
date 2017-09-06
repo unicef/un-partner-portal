@@ -35,7 +35,6 @@ class RadioForm extends Component {
     this.setState({ selectedRadio: value });
   }
 
-
   render() {
     const {
       classes,

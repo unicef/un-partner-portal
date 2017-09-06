@@ -64,11 +64,6 @@ const theme = {
         color: 'inherit',
       },
     },
-    MuiButton: {
-      raisedAccent: {
-        backgroundColor: '#6B5CA5',
-      },
-    },
     MuiFormLabel: {
       root: {
         color: 'rgba(0, 0, 0, 0.34)',
