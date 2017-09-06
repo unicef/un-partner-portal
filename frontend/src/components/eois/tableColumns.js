@@ -12,7 +12,7 @@ export const openAgencyColumns = [
   { id: 'agency', label: 'Agency' },
   { id: 'country_code', label: 'Country' },
   { id: 'sector', label: 'Sector & Area of specialization' },
-  { id: 'start_date', label: 'Date Posted' },
+  { id: 'created', label: 'Date Posted' },
   { id: 'deadline_date', label: 'Application deadline' },
   { id: 'status', label: 'Status' },
 ];
@@ -23,6 +23,6 @@ export const directAgencyColumns = [
   { id: 'partner', label: 'Partner' },
   { id: 'country', label: 'Country' },
   { id: 'sector', label: 'Sector & Area of specialization' },
-  { id: 'source', label: 'Direct Selection Source' },
+  { id: 'selected_source', label: 'Direct Selection Source' },
   { id: 'status', label: 'Status' },
 ];

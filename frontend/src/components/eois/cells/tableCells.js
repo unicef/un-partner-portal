@@ -4,6 +4,7 @@ import EoiSectorCell from './eoiSectorCell';
 import EoiPartnersStatusCell from './eoiPartnersStatusCell';
 import EoiStatusCell from './eoiStatusCell';
 import EoiCountryCell from './eoiCountryCell';
+import EoiPartnersCell from './eoiPartnersCell';
 
 export const renderPartnerOpenCells = item => ([
   <TableCell first limited>
@@ -40,7 +41,7 @@ export const renderAgencyOpenCells = item => ([
     <EoiSectorCell data={item.sectors} id={item.id} />
   </TableCell>,
   <TableCell >
-    {item.start_date}
+    {item.created}
   </TableCell>,
   <TableCell >
     {item.deadline_date}
@@ -52,24 +53,28 @@ export const renderAgencyOpenCells = item => ([
 
 export const renderAgencyDirectCells = item => ([
   <TableCell first limited>
-    {item.name}
+    {item.title}
   </TableCell>,
   <TableCell >
-    {item.agency}
+    {item.agency.name}
   </TableCell>,
   <TableCell limited >
-    {item.partner}
+    <EoiPartnersCell partners={item.selected_partners} />
   </TableCell>,
   <TableCell >
-    {item.country}
+    <EoiCountryCell code={item.country_code} />
   </TableCell>,
   <TableCell >
-    <EoiSectorCell data={item.sector} id={item.id} />
+    <EoiSectorCell data={item.sectors} id={item.id} />
   </TableCell>,
   <TableCell >
-    {item.source}
+    {item.selected_source}
   </TableCell>,
   <TableCell>
-    <EoiPartnersStatusCell status={item.status} id={item.id} />
+    <EoiPartnersStatusCell
+      status={item.status}
+      id={item.id}
+      partners={item.selected_partners}
+    />
   </TableCell>,
 ]);
