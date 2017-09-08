@@ -57,22 +57,23 @@ class HeaderNavigation extends Component {
   }
 
   render() {
-    const { classes, title, backButton, handleBackButton, tabs, children, header } = this.props;
+    const { classes, title, backButton, handleBackButton, tabs, children, header, titleObject } = this.props;
 
     return (
       <div>
         <Grid align="center" className={classes.container} container>
           <Grid item xs={8}>
             <div className={tabs ? classes.alignItems : classes.alignItemsPadding}>
-              {backButton ?
+              { backButton ?
                 <IconButton onClick={handleBackButton}>
                   <KeyboardArrowLeft />
                 </IconButton>
-                : null
-              }
-              <Typography type="headline">
-                {title}
-              </Typography>
+                : null }
+              { title ?
+                <Typography type="headline">
+                  {title}
+                </Typography>
+                : titleObject }
             </div>
           </Grid>
           <Grid item xs={4}>
@@ -98,6 +99,7 @@ class HeaderNavigation extends Component {
 HeaderNavigation.propTypes = {
   classes: PropTypes.object.isRequired,
   title: PropTypes.string.isRequired,
+  titleObject: PropTypes.object.isRequired,
   backButton: PropTypes.bool,
   handleBackButton: PropTypes.func,
   tabs: PropTypes.array,

@@ -15,6 +15,8 @@ const styleSheet = createStyleSheet('HeaderList', (theme) => {
     header: {
       backgroundColor: theme.palette.primary[100],
       padding: `${padding}px ${padding}px`,
+      alignItems: 'center',
+      display: 'flex',
     },
   };
 });
@@ -28,12 +30,12 @@ class HeaderList extends Component {
   }
 
   render() {
-    const { classes, header } = this.props;
+    const { classes, header, headerObject } = this.props;
     return (
       <Paper>
         <Grid direction="column" className={classes.container} container gutter={0}>
           <Grid className={classes.header} item>
-            {createElement(header)}
+            {header ? createElement(header) : headerObject}
           </Grid>
           {this.renderChildren()}
         </Grid>
@@ -44,7 +46,8 @@ class HeaderList extends Component {
 
 HeaderList.propTypes = {
   classes: PropTypes.object.isRequired,
-  header: PropTypes.func.isRequired,
+  header: PropTypes.func,
+  headerObject: PropTypes.object,
   rows: PropTypes.func.isRequired,
 };
 

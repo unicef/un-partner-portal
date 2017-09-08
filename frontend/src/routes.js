@@ -15,7 +15,8 @@ import organizationProfileEdit from './components/organizationProfile/edit/tabsC
 import organizationProfile from './components/organizationProfile/organizationProfile';
 import hqProfile from './components/organizationProfile/hq/hqProfile';
 import partnersContainer from './components/partners/partnersContainer';
-import partnerProfile from './components/partners/details/partnerProfile';
+import partnerProfile from './components/partners/profile/partnerProfile';
+import partnerOverview from './components/partners/profile/overview/partnerOverview';
 import hqProfileOverview from './components/organizationProfile/hq/hqProfileOverview';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
@@ -37,9 +38,9 @@ const allRoutes = () => (
         <Route path="partner" component={partnersContainer} />
         <Route path="partner/info" component={partnerProfile}>
           <Route component={mainContent} >
-            <Route path="overview" component={null} />
+            <Route path="overview" component={partnerOverview} />
             <Route path="details" component={hqProfileOverview} />
-            <Route path="user" component={null} />
+            <Route path="users" component={null} />
             <Route path="applications" component={null} />
           </Route>
         </Route>
