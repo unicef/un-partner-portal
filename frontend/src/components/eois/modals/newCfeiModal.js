@@ -90,8 +90,8 @@ NewCfeiModal.propTypes = {
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  postCfei: values => postMethods[ownProps.path](dispatch, values),
-  submit: () => dispatch(submit(formNames[ownProps.path])),
+  postCfei: values => dispatch(postMethods[ownProps.type](values)),
+  submit: () => dispatch(submit(formNames[ownProps.type])),
 });
 
 export default connect(

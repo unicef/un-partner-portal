@@ -13,9 +13,9 @@ export const renderPartnerOpenCells = item => ([
   <TableCell >
     <EoiCountryCell code={item.country_code} />
   </TableCell>,
-  // <TableCell >
-  //   <EoiSectorCell data={item.sectors} id={item.id} />
-  // </TableCell>,
+  <TableCell >
+    <EoiSectorCell data={item.specializations} id={item.id} />
+  </TableCell>,
   <TableCell >
     {item.agency.name}
   </TableCell>,
@@ -37,9 +37,9 @@ export const renderAgencyOpenCells = item => ([
   <TableCell >
     <EoiCountryCell code={item.country_code} />
   </TableCell>,
-  // <TableCell >
-  //   <EoiSectorCell data={item.sectors} id={item.id} />
-  // </TableCell>,
+  <TableCell >
+    <EoiSectorCell data={item.specializations} id={item.id} />
+  </TableCell>,
   <TableCell >
     {item.created}
   </TableCell>,
@@ -65,7 +65,7 @@ export const renderAgencyDirectCells = item => ([
     <EoiCountryCell code={item.country_code} />
   </TableCell>,
   <TableCell >
-    <EoiSectorCell data={item.sectors} id={item.id} />
+    <EoiSectorCell data={item.specializations} id={item.id} />
   </TableCell>,
   <TableCell >
     {item.selected_source}

@@ -15,9 +15,10 @@ import countries from './reducers/countries';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
 import cfeiDetails from './reducers/cfeiDetails';
+import agencyPartnersList from './reducers/agencyPartnersList';
 import population from './reducers/population';
 import hqProfileNav from './reducers/hqProfileNav';
-
+import sectors, * as sectorsSelectors from './reducers/sectors';
 
 const mainReducer = combineReducers({
   cfei,
@@ -30,9 +31,11 @@ const mainReducer = combineReducers({
   countries,
   countryProfiles,
   partnerProfileEdit,
+  agencyPartnersList,
   form: formReducer,
   population,
   routing: routerReducer,
+  sectors,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -54,6 +57,16 @@ const mapValuesForSelectionField = (state) => {
 
 export const selectNormalizedCountries = state =>
   mapValuesForSelectionField(state.countries);
+
 export const selectNormalizedPopulations = state =>
   mapValuesForSelectionField(state.population);
 
+export const mapSectorsToSelection = state =>
+  mapValuesForSelectionField(sectorsSelectors.selectAllSectors(state.sectors));
+
+export const mapSpecializationsToSelection = (state, sectorId) =>
+  mapValuesForSelectionField(
+    sectorsSelectors.selectSpecializationsForSector(state.sectors, sectorId));
+
+export const selectSector = (state, id) =>
+  sectorsSelectors.selectSector(state.sectors, id);

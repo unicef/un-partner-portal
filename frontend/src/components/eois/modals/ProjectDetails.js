@@ -3,7 +3,7 @@ import { FormSection } from 'redux-form';
 import PropTypes from 'prop-types';
 
 import Typography from 'material-ui/Typography';
-import SectorForm from '../../forms/fields/projectFields/sectorFieldArray';
+import SectorForm from '../../forms/fields/projectFields/sectorField/sectorFieldArray';
 import SelectPopulationOfConcern from '../../forms/fields/newCfeiFields/selectPopulationOfConcern';
 import * as fields from './commonFields';
 import GridColumn from '../../common/grid/gridColumn';

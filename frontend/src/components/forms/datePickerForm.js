@@ -3,7 +3,6 @@ import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { FormControl, FormLabel } from 'material-ui/Form';
-import DateRange from 'material-ui-icons/DateRange';
 import moment from 'moment';
 import { renderDatePicker, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
@@ -96,6 +95,10 @@ DatePickerForm.propTypes = {
    * validations passed to field
    */
   warn: PropTypes.bool,
+  /**
+   * if form should be displayed in read only state
+   */
+  readOnly: PropTypes.bool,
 };
 
 DatePickerForm.defaultProps = {

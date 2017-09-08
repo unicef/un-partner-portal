@@ -27,7 +27,8 @@ const saveErrorMsg = (state, action) => R.assoc(
 
 export const loadCfeiStarted = () => ({ type: LOAD_CFEI_STARTED });
 export const loadCfeiEnded = () => ({ type: LOAD_CFEI_ENDED });
-export const loadCfeiSuccess = (cfei, project) => ({ type: LOAD_CFEI_SUCCESS, cfei, project });
+export const loadCfeiSuccess = (cfei, project, getState) => (
+  { type: LOAD_CFEI_SUCCESS, cfei, project, getState });
 export const loadCfeiFailure = error => ({ type: LOAD_CFEI_FAILURE, error });
 
 export default function cfeiStatus(state = initialState, action) {

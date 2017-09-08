@@ -4,12 +4,10 @@ import { Router, Route, browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import store from './store';
-import main from './components/main';
 import mainLayout from './components/layout/mainLayout';
 import eoiHeader from './components/eois/eoiHeader';
 import cfeiDetails from './components/eois/details/cfeiDetails';
 import cfeiContainer from './components/eois/cfeiContainer';
-import partner from './components/partners/partnersHeader';
 import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
 import organizationProfileEdit from './components/organizationProfile/edit/tabsContainer';
@@ -27,21 +25,25 @@ const history = syncHistoryWithStore(browserHistory, store);
 
 const allRoutes = () => (
   <Router history={history}>
-    <Route component={main}>
-      <Route path="/" component={mainLayout} >
-        <Route path="dashboard" component={dashboard} />
-        <Route path="cfei" component={eoiHeader} >
-          <Route component={mainContent} >
-            <Route path=":type" component={cfeiContainer} />
-            <Route path=":type/:id" component={cfeiDetails} />
-          </Route>
+    <Route path="/" component={mainLayout} >
+      <Route path="dashboard" component={dashboard} />
+      <Route path="cfei" component={eoiHeader} >
+        <Route component={mainContent} >
+          <Route path=":type" component={cfeiContainer} />
+          <Route path="open/:id" component={cfeiDetails} />
         </Route>
-        <Route path="partner" component={partner} />
-        <Route path="applications" component={applications} />
-        <Route path="profile" component={organizationProfile} />
-        <Route path="profile/edit" component={organizationProfileEdit} />
-        <Route path="settings" component={settings} />
       </Route>
+      <Route path="partner" component={partnersContainer} />
+      <Route path="applications" component={applications} />
+      <Route path="profile" component={organizationProfile} />
+      <Route path="profile/edit" component={organizationProfileEdit} />
+      <Route path="profile/hq" component={hqProfile} >
+        <Route component={mainContent} >
+          <Route path="overview" component={hqProfileOverview} />
+          <Route path="user" component={null} />
+        </Route>
+      </Route>
+      <Route path="settings" component={settings} />
     </Route>
     <Route path="/registration" component={registration} />
     <Route path="/dev" component={dev} />

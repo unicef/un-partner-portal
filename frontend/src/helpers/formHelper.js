@@ -6,8 +6,6 @@ import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui-old/DatePicker';
 import { FormControl, FormHelperText, FormLabel } from 'material-ui/Form';
 import Typography from 'material-ui/Typography';
-import R from 'ramda';
-
 
 export const renderFormControl = ({
   className,
@@ -91,8 +89,13 @@ export const renderText = ({
         className={className}
         {...other}
       >
-        {values
-          ? R.values(R.filter(val => val.value === input.value, values))[0].label
+        {(values && values.length)
+          ? values.filter((val) => {
+            if (Array.isArray(input.value)) return input.value.includes(val.value);
+            return input.value === val.value;
+          })
+            .map(matchedValue => matchedValue.label)
+            .join(', ')
           : input.value}
       </Typography>
     </FormControl>

@@ -6,14 +6,12 @@ import Grid from 'material-ui/Grid';
 function GridColumn(props) {
   const { children, gutter } = props;
   return (
-    <Grid item >
-      <Grid container direction="column" gutter={gutter}>
-        {React.Children.map(children, child => (
-          <Grid item>
-            {child}
-          </Grid>
-        ))}
-      </Grid>
+    <Grid container direction="column" gutter={gutter}>
+      {React.Children.map(children, child => (
+        <Grid item>
+          {child}
+        </Grid>
+      ))}
     </Grid>
   );
 }

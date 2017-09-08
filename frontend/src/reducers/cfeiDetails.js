@@ -42,8 +42,19 @@ const mockData = {
     focal_point: 2,
     agency_office: 1,
     specializations: [
-      1,
-      2,
+      {
+        sector: '12',
+        areas: [
+          '69',
+          '70',
+        ],
+      },
+      {
+        sector: '5',
+        areas: [
+          '28',
+        ],
+      },
     ],
   },
   assessment_criterias: [

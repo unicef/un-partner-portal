@@ -47,7 +47,6 @@ export const TitleField = props => (<TextFieldForm
   label="Project Title"
   fieldName="title"
   placeholder="Enter Project Title"
-  optional
   {...props}
 />);
 
@@ -57,14 +56,6 @@ export const FocalPoint = props => (<SelectForm
   placeholder="Select the name of the Focal Point"
   values={FOCAL}
   {...props}
-/>);
-
-export const Population = () => (<SelectForm
-  label="Intended populations of concern (only for UNHCR)"
-  fieldName="population"
-  placeholder="Select population"
-  values={[]}
-  optional
 />);
 
 export const Background = props => (<TextFieldForm

@@ -9,13 +9,14 @@ import HeaderList from '../../common/list/headerList';
 import TextField from '../../forms/textFieldForm';
 import PaddedContent from '../../common/paddedContent';
 import { TitleField, FocalPoint, OtherInfo, Background, StartDate, EndDate, DeadlineDate, NotifyDate } from '../modals/commonFields';
+import SectorForm from '../../forms/fields/projectFields/sectorField/sectorFieldArray';
 
 const messages = {
   title: 'Project Details',
   labels: {
     id: 'CFEI ID:',
     issued: 'Issued by',
-    goal: 'Goal, Objective, Expected Outcome and Results'
+    goal: 'Goal, Objective, Expected Outcome and Results',
   },
 
 };
@@ -25,6 +26,7 @@ const Fields = () => (
     <GridColumn >
       <TitleField readOnly />
       <FocalPoint readOnly />
+      <SectorForm readOnly />
       <TextField
         fieldName="agency"
         label={messages.labels.issued}
