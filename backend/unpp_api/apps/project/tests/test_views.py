@@ -11,11 +11,12 @@ from rest_framework import status as statuses
 from account.models import User
 from agency.models import AgencyOffice
 from project.models import EOI, Pin
+from partner.models import Partner
 from common.tests.base import BaseAPITestCase
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.factories import EOIFactory, AgencyMemberFactory
 from common.models import Specialization
-from common.consts import SELECTION_CRITERIA_CHOICES, SCALE_TYPES
+from common.consts import SELECTION_CRITERIA_CHOICES, SCALE_TYPES, JUSTIFICATION_FOR_DIRECT_SELECTION
 from project.views import PinProjectAPIView
 
 
@@ -134,6 +135,68 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
                     "scale": SCALE_TYPES.standard,
                     "weight": random.randint(0, 100),
                     "description": "test",
+                }
+            ]
+        }
+
+        response = self.client.post(self.url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
+        self.assertEquals(response.data['eoi']['created_by'], self.user.id)
+        self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
+
+
+class TestDirectProjectsAPITestCase(BaseAPITestCase):
+
+    quantity = 2
+    url = reverse('projects:direct')
+
+    def setUp(self):
+        super(TestDirectProjectsAPITestCase, self).setUp()
+        AgencyMemberFactory.create_batch(self.quantity)
+        EOIFactory.create_batch(self.quantity)
+
+    def test_create_direct_project(self):
+        ao = AgencyOffice.objects.first()
+        payload = {
+            'eoi': {
+                'title': "EOI title",
+                'country_code': COUNTRIES_ALPHA2_CODE[0][0],
+                'agency': ao.agency.id,
+                'focal_point': User.objects.first().id,
+                'locations': [
+                    {
+                        "country_code": 'IQ',
+                        "admin_level_1": {"name": "Baghdad"},
+                        "lat": random.randint(-180, 180),
+                        "lon": random.randint(-180, 180),
+                    },
+                    {
+                        "country_code": "FR",
+                        "admin_level_1": {"name": "Paris"},
+                        "lat": random.randint(-180, 180),
+                        "lon": random.randint(-180, 180),
+                    },
+                ],
+                'agency_office': ao.id,
+                'specializations': Specialization.objects.all().values_list('id', flat=True)[:2],
+                'description': 'Brief background of the project',
+                'other_information': 'Other information',
+                'start_date': date.today(),
+                'end_date': date.today(),
+                'notif_results_date': date.today(),
+                'has_weighting': True,
+            },
+            'applications': [
+                {
+                    "partner": Partner.objects.first().id,
+                    "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+                    "ds_justification_reason": "To save those we love."
+                },
+                {
+                    "partner": Partner.objects.last().id,
+                    "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+                    "ds_justification_reason": "To save those we love."
                 }
             ]
         }
