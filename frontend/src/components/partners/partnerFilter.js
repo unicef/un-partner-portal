@@ -14,11 +14,45 @@ const messages = {
   labels: {
     search: 'Search',
     country: 'Country',
+    verificationStatus: 'Verification Status',
+    typeOfOrganization: 'Type of Organization',
+    sectorArea: 'Sector & Area of specialization',
+    populations: 'Populations of concer',
   },
   clear: 'clear',
 };
 
+const VERIFICATION_MENU = [
+  {
+    value: 'all',
+    label: 'All',
+  },
+  {
+    value: 'pen',
+    label: 'Pending',
+  },
+  {
+    value: 'ver',
+    label: 'Verified',
+  },
+  {
+    value: 'un',
+    label: 'Unverified',
+  },
+];
+
+const ALL_MENU = [
+  {
+    value: 'all',
+    label: 'All',
+  },
+];
+
 const COUNTRY_MENU = [
+  {
+    value: 'all',
+    label: 'All',
+  },
   {
     value: 'pl',
     label: 'Poland',
@@ -64,20 +98,56 @@ const PartnerFilter = (props) => {
           </Grid>
           <Grid item sm={4} xs={12}>
             <SelectForm
+              fieldName="verificationStatus"
+              label={messages.labels.verificationStatus}
+              values={VERIFICATION_MENU}
+              optional
+            />
+          </Grid>
+          <Grid item sm={4} xs={12}>
+            <SelectForm
+              fieldName="typeOfOrganization"
+              label={messages.labels.typeOfOrganization}
+              values={ALL_MENU}
+              optional
+            />
+          </Grid>
+
+        </Grid>
+        <Grid container direction="row" >
+          <Grid item sm={4} xs={12} >
+            <SelectForm
               fieldName="country"
               label={messages.labels.country}
               values={COUNTRY_MENU}
               optional
             />
           </Grid>
-          <Grid className={classes.button} item sm={4}>
-            <Button
-              color="accent"
-              onTouchTap={reset}
-            >
-              {messages.clear}
-            </Button>
+          <Grid item sm={4} xs={12}>
+            <SelectForm
+              fieldName="sector"
+              label={messages.labels.sectorArea}
+              values={ALL_MENU}
+              optional
+            />
           </Grid>
+          <Grid item sm={4} xs={12}>
+            <SelectForm
+              fieldName="populations"
+              label={messages.labels.populations}
+              values={ALL_MENU}
+              optional
+            />
+          </Grid>
+
+        </Grid>
+        <Grid className={classes.button} item sm={12}>
+          <Button
+            color="accent"
+            onTouchTap={reset}
+          >
+            {messages.clear}
+          </Button>
         </Grid>
       </Grid>
     </form >
