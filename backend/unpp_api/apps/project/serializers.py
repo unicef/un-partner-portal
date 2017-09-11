@@ -6,7 +6,6 @@ from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES
 from common.serializers import ConfigSectorSerializer, PointSerializer
 from common.models import Sector, Point, AdminLevel1
-from partner.serializers import PartnerSelectedSerializer
 from .models import EOI, Application, AssessmentCriteria
 
 
@@ -49,8 +48,6 @@ class BaseProjectSerializer(serializers.ModelSerializer):
 
 class DirectProjectSerializer(BaseProjectSerializer):
 
-    selected_partners = PartnerSelectedSerializer(many=True)
-
     class Meta:
         model = EOI
         fields = (
@@ -64,7 +61,6 @@ class DirectProjectSerializer(BaseProjectSerializer):
             'end_date',
             'deadline_date',
             'status',
-            'selected_partners',
             'selected_source',
         )
 
