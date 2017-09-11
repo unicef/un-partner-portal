@@ -55,6 +55,12 @@ const mockData = {
           '28',
         ],
       },
+      {
+        sector: '5',
+        areas: [
+          '28',
+        ],
+      },
     ],
   },
   assessment_criterias: [

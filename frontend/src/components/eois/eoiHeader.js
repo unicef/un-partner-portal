@@ -73,7 +73,7 @@ class CfeiHeader extends Component {
 
 
   render() {
-    const { classes, tabs, children, role, params: { id } } = this.props;
+    const { classes, tabs, children, role, params: { type, id } } = this.props;
     return (
       <Grid item>
         <Grid className={classes.container} container direction="column" gutter={16}>
@@ -84,7 +84,7 @@ class CfeiHeader extends Component {
                   {messages[role]}
                 </Typography>
               </Grid>
-              {!id && role === 'agency' && <NewCfeiModalButton />
+              {!id && type && role === 'agency' && <NewCfeiModalButton />
               }
             </Grid>
           </Grid>

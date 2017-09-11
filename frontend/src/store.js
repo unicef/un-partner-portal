@@ -19,6 +19,7 @@ import agencyPartnersList from './reducers/agencyPartnersList';
 import population from './reducers/population';
 import hqProfileNav from './reducers/hqProfileNav';
 import sectors, * as sectorsSelectors from './reducers/sectors';
+import partnersApplicationsList from './reducers/partnersApplicationsList';
 
 const mainReducer = combineReducers({
   cfei,
@@ -36,6 +37,7 @@ const mainReducer = combineReducers({
   population,
   routing: routerReducer,
   sectors,
+  partnersApplicationsList,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
