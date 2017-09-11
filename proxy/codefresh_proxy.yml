@@ -4,7 +4,7 @@ steps:
 
     build_proxy:
         type: build
-        image_name: tivix/unpp-proxy
+        image_name: unpp-proxy
         dockerfile: Dockerfile
         working_directory: ${{main_clone}}/proxy
         tag: ${{CF_BRANCH}}

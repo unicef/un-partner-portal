@@ -4,7 +4,7 @@ steps:
 
     build_frontend:
         type: build
-        image_name: tivix/unpp-frontend
+        image_name: unpp-frontend
         dockerfile: Dockerfile
         working_directory: ${{main_clone}}/frontend
         tag: ${{CF_BRANCH}}

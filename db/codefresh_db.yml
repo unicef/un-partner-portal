@@ -4,7 +4,7 @@ steps:
 
     build_db:
         type: build
-        image_name: tivixf/unpp-db
+        image_name: unpp-db
         dockerfile: Dockerfile
         working_directory: ${{main_clone}}/db
         tag: ${{CF_BRANCH}}
