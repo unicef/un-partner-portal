@@ -12,6 +12,7 @@ steps:
     push_to_hub:
         type: push
         title: Pushing db image to docker hub
+        registry: tivix-dockerhub
         candidate: ${{build_db}}
         tags: 
             - ${{CF_BRANCH}}

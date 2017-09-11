@@ -13,6 +13,7 @@ steps:
         type: push
         title: Pushing proxy image to docker hub
         candidate: ${{build_proxy}}
+        registry: tivix-dockerhub
         tags: 
             - ${{CF_BRANCH}}
             - latest

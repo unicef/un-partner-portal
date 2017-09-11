@@ -33,6 +33,7 @@ steps:
     push_to_hub:
         type: push
         title: Pushing backend image to docker hub
+        registry: tivix-dockerhub
         candidate: ${{build_backend}}
         tags: 
             - ${{CF_BRANCH}}
