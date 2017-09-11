@@ -3,13 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
-import Tabs from 'material-ui/Tabs';
-import CustomTab from '../common/customTab';
 import NewCfeiModalButton from './modals/newCfeiModalButton';
 import HeaderNavigation from '../common/headerNavigation';
+import { OPEN, PINNED, DIRECT, UNSOLICITED } from '../../helpers/constants';
 
 const messages = {
   partner: 'Calls for Expressions of Interest',
@@ -30,14 +27,15 @@ class CfeiHeader extends Component {
     if (!type) return history.push(`/cfei/${tabs[0].path}`);
     const tab = tabs.find(itab => itab.path === type);
     switch (type) {
-      case 'open':
-      case 'pinned':
-      case 'direct':
-      case 'unsolicited':
+      case OPEN:
+      case PINNED:
+      case DIRECT:
+      case UNSOLICITED:
         return tab.id;
       // TODO: add proper 404
       default:
-        return history.replace('/');
+        history.push('/');
+        return null;
     }
   }
 
@@ -63,7 +61,7 @@ class CfeiHeader extends Component {
           header={!id && type && role === 'agency' && <NewCfeiModalButton />}
           handleChange={this.handleChange}
         >
-          {children}
+          {(index !== null) && children}
         </HeaderNavigation>
       </Grid>
     );

@@ -7,10 +7,7 @@ import cfeiStatus, {
   loadCfeiSuccess,
   loadCfeiFailure,
   LOAD_CFEI_SUCCESS } from './cfeiStatus';
-
-export const OPEN = 'open';
-export const PINNED = 'pinned';
-export const DIRECT = 'direct';
+import { OPEN, PINNED, DIRECT } from '../helpers/constants';
 
 const initialState = {
   open: [],

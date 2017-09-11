@@ -8,6 +8,8 @@ import OpenForm from './openForm';
 import DirectForm from './directForm';
 import { addDirectCfei, addOpenCfei } from '../../../reducers/newCfei';
 import CallPartnersModal from './callPartnersModal';
+import { OPEN, DIRECT } from '../../../helpers/constants';
+
 
 const messages = {
   title: 'Create new Call for Expressions of Interests',
@@ -25,19 +27,44 @@ const messages = {
 
 };
 
-const modals = {
-  open: OpenForm,
-  direct: DirectForm,
+const getFormName = (type) => {
+  switch (type) {
+    case OPEN:
+    default:
+      return 'newOpenCfei';
+    case DIRECT:
+      return 'newDirectCfei';
+  }
 };
 
-const formNames = {
-  open: 'newOpenCfei',
-  direct: 'newDirectCfei',
+const getInfo = (type) => {
+  switch (type) {
+    case OPEN:
+    default:
+      return messages.header.open;
+    case DIRECT:
+      return messages.header.direct;
+  }
 };
 
-const postMethods = {
-  open: addOpenCfei,
-  direct: addDirectCfei,
+const getPostMethod = (type) => {
+  switch (type) {
+    case OPEN:
+    default:
+      return addOpenCfei;
+    case DIRECT:
+      return addDirectCfei;
+  }
+};
+
+const getModal = (type) => {
+  switch (type) {
+    case OPEN:
+    default:
+      return OpenForm;
+    case DIRECT:
+      return DirectForm;
+  }
 };
 
 class NewCfeiModal extends Component {
@@ -64,7 +91,7 @@ class NewCfeiModal extends Component {
           maxWidth="md"
           title={messages.title}
           trigger={open}
-          info={messages.header[type]}
+          info={getInfo(type)}
           buttons={{
             flat: {
               handleClick: onDialogClose,
@@ -73,7 +100,7 @@ class NewCfeiModal extends Component {
               handleClick: this.handleDialogSubmit,
             },
           }}
-          content={React.createElement(modals[type], { onSubmit: this.handleSubmit })}
+          content={React.createElement(getModal(type), { onSubmit: this.handleSubmit })}
         />
         <CallPartnersModal />
       </Grid>
@@ -90,8 +117,8 @@ NewCfeiModal.propTypes = {
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  postCfei: values => postMethods[ownProps.type](dispatch, values),
-  submit: () => dispatch(submit(formNames[ownProps.type])),
+  postCfei: values => dispatch(getPostMethod(ownProps.type)(values)),
+  submit: () => dispatch(submit(getFormName(ownProps.type))),
 });
 
 export default connect(
