@@ -4,7 +4,7 @@ steps:
 
     build_backend:
         type: build
-        image_name: unicef/unpp-backend
+        image_name: tivixf/unpp-backend
         dockerfile: Dockerfile
         working_directory: ${{main_clone}}/backend
         tag: ${{CF_BRANCH}}
