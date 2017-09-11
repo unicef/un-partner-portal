@@ -9,8 +9,9 @@ import PartnerOverviewFlag from './partnerOverviewFlag';
 
 const PartnerOverview = (props) => {
   const { partner } = props;
-
+  
   return (
+
     <Grid container direction="row">
       <Grid item xs={12} sm={8}>
         <PartnerOverviewSummary partner={partner} />
@@ -28,8 +29,8 @@ PartnerOverview.propTypes = {
   partner: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-  partner: state.agencyPartnerProfile.partner,
+const mapStateToProps = (state, ownProps) => ({
+  partner: state.agencyPartnerProfile[ownProps.params.id],
 });
 
 export default connect(mapStateToProps)(PartnerOverview);

@@ -16,7 +16,8 @@ import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
 import cfeiDetails from './reducers/cfeiDetails';
 import agencyPartnersList from './reducers/agencyPartnersList';
-import agencyPartnerProfile from './reducers/agencyPartnerProfileNav';
+import agencyPartnerProfileNav from './reducers/agencyPartnerProfileNav';
+import agencyPartnerProfile from './reducers/agencyPartnerProfile';
 import population from './reducers/population';
 import hqProfileNav from './reducers/hqProfileNav';
 
@@ -32,6 +33,7 @@ const mainReducer = combineReducers({
   countryProfiles,
   partnerProfileEdit,
   agencyPartnersList,
+  agencyPartnerProfileNav,
   agencyPartnerProfile,
   form: formReducer,
   population,

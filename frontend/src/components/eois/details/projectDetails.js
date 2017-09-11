@@ -9,13 +9,14 @@ import HeaderList from '../../common/list/headerList';
 import TextField from '../../forms/textFieldForm';
 import PaddedContent from '../../common/paddedContent';
 import { TitleField, FocalPoint, OtherInfo, Background, StartDate, EndDate, DeadlineDate, NotifyDate } from '../modals/commonFields';
+import projectHeader from './projectDetailsHeader';
 
 const messages = {
   title: 'Project Details',
   labels: {
     id: 'CFEI ID:',
     issued: 'Issued by',
-    goal: 'Goal, Objective, Expected Outcome and Results'
+    goal: 'Goal, Objective, Expected Outcome and Results',
   },
 
 };
@@ -50,7 +51,7 @@ const Fields = () => (
 );
 
 const title = () => (
-  <Grid container align="center" direction="row">
+  <Grid align="center" container>
     <Grid item xs={10}>
       <Typography type="subheading" >{messages.title}</Typography>
     </Grid>
@@ -65,15 +66,13 @@ const title = () => (
 
 );
 
-const ProjectDetails = (props) => {
-  return (
-    <FormSection name="eoi">
-      <HeaderList
-        header={title}
-        rows={[<Fields />]}
-      />
-    </FormSection>
-  );
-};
+const ProjectDetails = props => (
+  <FormSection name="eoi">
+    <HeaderList
+      header={title}
+      rows={[<Fields />]}
+    />
+  </FormSection>
+);
 
 export default ProjectDetails;

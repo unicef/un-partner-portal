@@ -15,8 +15,6 @@ const styleSheet = createStyleSheet('HeaderList', (theme) => {
     header: {
       backgroundColor: theme.palette.primary[100],
       padding: `${padding}px ${padding}px`,
-      alignItems: 'center',
-      display: 'flex',
     },
   };
 });

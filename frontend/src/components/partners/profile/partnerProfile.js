@@ -49,22 +49,22 @@ const messages = {
   header: 'Partner 0',
 };
 
-const title = (props) => {
-  const { classes, verified, flagRed, flagYellow } = props;
+const PartnerTitle = (props) => {
+  const { classes, partner } = props;
 
   return (
     <div className={classes.alignCenter}>
       <Typography type="headline">
         {messages.header}
       </Typography>
-      <VerifiedUser className={verified ? classes.iconVerified : classes.iconNotVerified} />
-      {flagYellow && <Flag className={classes.iconYellow} />}
-      {flagRed && <Flag className={classes.iconRed} />}
+      <VerifiedUser className={partner.verified ? classes.iconVerified : classes.iconNotVerified} />
+      {partner.flagYellow && <Flag className={classes.iconYellow} />}
+      {partner.flagRed && <Flag className={classes.iconRed} />}
     </div>);
 };
 
 const PartnerProfile = (props) => {
-  const { classes, tabs, children, partner } = props;
+  const { tabs, children } = props;
   return (
     <div>
       <HeaderNavigation
@@ -73,22 +73,25 @@ const PartnerProfile = (props) => {
         children={children}
         handleBackButton={() => { history.goBack(); }}
         header={<PartnerProfileHeader handleMoreClick={() => { }} />}
-        titleObject={title(props)}
+        titleObject={PartnerTitle(props)}
       />
     </div>
   );
 };
 
 PartnerProfile.propTypes = {
-  classes: PropTypes.object.isRequired,
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
-  verified: PropTypes.bool,
 };
 
-const mapStateToProps = state => ({
-  tabs: state.agencyPartnerProfile.tabs,
-  partner: state.agencyPartnerProfile.partner,
+PartnerTitle.propTypes = {
+  classes: PropTypes.object.isRequired,
+  partner: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = (state, ownProps) => ({
+  tabs: state.agencyPartnerProfileNav.tabs,
+  partner: state.agencyPartnerProfile[ownProps.params.id],
 });
 
 const mapDispatchToProps = () => ({
@@ -98,6 +101,8 @@ const mapDispatchToProps = () => ({
 });
 
 const connectedPartnerProfile = connect(mapStateToProps, mapDispatchToProps)(PartnerProfile);
+const connectedPartnerTitle = connect(mapStateToProps, mapDispatchToProps)(PartnerTitle);
+withStyles(styleSheet)(connectedPartnerTitle);
 
 export default withStyles(styleSheet)(connectedPartnerProfile);
 

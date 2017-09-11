@@ -36,7 +36,7 @@ const allRoutes = () => (
           </Route>
         </Route>
         <Route path="partner" component={partnersContainer} />
-        <Route path="partner/info" component={partnerProfile}>
+        <Route path="partner/:id" component={partnerProfile}>
           <Route component={mainContent} >
             <Route path="overview" component={partnerOverview} />
             <Route path="details" component={hqProfileOverview} />
