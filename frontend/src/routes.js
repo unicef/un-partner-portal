@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Router, Route, browserHistory } from 'react-router';
+import { Router, Route, browserHistory, IndexRedirect } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import store from './store';
@@ -13,7 +13,7 @@ import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
 import organizationProfileEdit from './components/organizationProfile/edit/tabsContainer';
 import organizationProfile from './components/organizationProfile/organizationProfile';
-import hqProfile from './components/organizationProfile/hq/hqProfile';
+import hqProfileHeader from './components/organizationProfile/hq/hqProfileHeader';
 import partnersContainer from './components/partners/partnersContainer';
 import partnerProfile from './components/partners/profile/partnerProfile';
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
@@ -36,7 +36,7 @@ const allRoutes = () => (
           </Route>
         </Route>
         <Route path="partner" component={partnersContainer} />
-        <Route path="partner/:id" component={partnerProfile}>
+        <Route path="partner/:id/" component={partnerProfile}>
           <Route component={mainContent} >
             <Route path="overview" component={partnerOverview} />
             <Route path="details" component={hqProfileOverview} />
@@ -46,11 +46,12 @@ const allRoutes = () => (
         </Route>
         <Route path="applications" component={applications} />
         <Route path="profile" component={organizationProfile} />
-        <Route path="profile/edit" component={organizationProfileEdit} />
-        <Route path="profile/hq" component={hqProfile} >
+        <Route path="profile/:countryCode/edit" component={organizationProfileEdit} />
+        <Route path="profile/:countryCode" component={hqProfileHeader} >
+          <IndexRedirect to="overview" />
           <Route component={mainContent} >
             <Route path="overview" component={hqProfileOverview} />
-            <Route path="user" component={null} />
+            <Route path="users" component={null} />
           </Route>
         </Route>
         <Route path="settings" component={settings} />

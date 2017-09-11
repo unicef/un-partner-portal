@@ -20,12 +20,14 @@ import agencyPartnerProfileNav from './reducers/agencyPartnerProfileNav';
 import agencyPartnerProfile from './reducers/agencyPartnerProfile';
 import population from './reducers/population';
 import hqProfileNav from './reducers/hqProfileNav';
+import hqProfile from './reducers/hqProfile';
 
 const mainReducer = combineReducers({
   cfei,
   cfeiNav,
   cfeiDetails,
   newCfei,
+  hqProfile,
   hqProfileNav,
   nav,
   session,

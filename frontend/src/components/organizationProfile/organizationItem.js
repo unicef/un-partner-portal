@@ -14,7 +14,6 @@ const messages = {
   user: 'user',
   lastUpdate: 'Last update: ',
   pluralSuffix: 's',
-  overviewPath: 'profile/hq/overview',
 };
 
 const styleSheet = createStyleSheet('HqProfile', (theme) => {
@@ -57,8 +56,10 @@ class OrganizationItem extends Component {
     };
   }
 
-  handleOnClick() {
-    history.push(messages.overviewPath);
+  handleOnClick(isCountry) {
+    const countryCode = !isCountry ? 'hq' : 'ke';
+
+    history.push(`/profile/${countryCode}/overview`);
   }
 
   render() {
@@ -93,7 +94,7 @@ class OrganizationItem extends Component {
         </Grid>
 
         <Grid className={classes.right} item xs={1}>
-          <IconButton onClick={this.handleOnClick}>
+          <IconButton onClick={() => this.handleOnClick(isCountryItem)}>
             <KeyboardArrowRight />
           </IconButton>
         </Grid>

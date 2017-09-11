@@ -2,8 +2,8 @@
 import { SESSION_INIT } from './session';
 
 const initialState = [
-  { path: '/profile/hq/overview', label: 'Overview', name: 'a' },
-  { path: '/profile/hq/user', label: 'User management', name: 'a' },
+  { id: 0, path: 'overview', label: 'Overview', name: 'a' },
+  { id: 1, path: 'users', label: 'User management', name: 'a' },
 ];
 
 export default function hqProfileNavReducer(state = initialState, action) {
