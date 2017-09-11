@@ -40,14 +40,6 @@ class HeaderNavigation extends Component {
     this.state = {
       index: 0,
     };
-
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(event, index) {
-    const { tabs } = this.props;
-    this.setState({ index });
-    history.replace(tabs[index].path);
   }
 
   renderTabs() {
@@ -57,7 +49,17 @@ class HeaderNavigation extends Component {
   }
 
   render() {
-    const { classes, title, backButton, handleBackButton, tabs, children, header, titleObject } = this.props;
+    const {
+      classes,
+      index,
+      title,
+      titleObject,
+      backButton,
+      handleBackButton,
+      tabs,
+      children,
+      header,
+      handleChange } = this.props;
 
     return (
       <div>
@@ -83,7 +85,7 @@ class HeaderNavigation extends Component {
           </Grid>
           {tabs ?
             <div>
-              <Tabs index={this.state.index} onChange={this.handleChange}>
+              <Tabs index={index} onChange={handleChange}>
                 {this.renderTabs()}
               </Tabs>
             </div>
@@ -98,6 +100,7 @@ class HeaderNavigation extends Component {
 
 HeaderNavigation.propTypes = {
   classes: PropTypes.object.isRequired,
+  index: PropTypes.number,
   title: PropTypes.string.isRequired,
   titleObject: PropTypes.object.isRequired,
   backButton: PropTypes.bool,
@@ -105,6 +108,7 @@ HeaderNavigation.propTypes = {
   tabs: PropTypes.array,
   children: PropTypes.node,
   header: PropTypes.Component,
+  handleChange: PropTypes.Func,
 };
 
 export default withStyles(styleSheet)(HeaderNavigation);
