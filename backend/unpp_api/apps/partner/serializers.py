@@ -222,14 +222,12 @@ class PartnerReportingSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class OrganizationProfileDetailsSerializer(serializers.Serializer):
-
-    partner = PartnerFullSerializer()
+class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     profile = PartnerFullProfilesSerializer()
-    mailing = PartnerMailingAddressSerializer()
+    mailing_address = PartnerMailingAddressSerializer()
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
-    head_organization = PartnerHeadOrganizationSerializer()
+    org_head = PartnerHeadOrganizationSerializer()
     mandate_mission = PartnerMandateMissionSerializer()
     experiences = PartnerExperienceSerializer(many=True)
     budgets = PartnerBudgetSerializer(many=True)
@@ -241,5 +239,37 @@ class OrganizationProfileDetailsSerializer(serializers.Serializer):
     other_documents = PartnerOtherDocumentSerializer(many=True)
     internal_controls = PartnerInternalControlSerializer(many=True)
     area_policies = PartnerPolicyAreaSerializer(many=True)
-    audit_assessment = PartnerAuditAssessmentSerializer()
+    audit = PartnerAuditAssessmentSerializer()
     report = PartnerReportingSerializer()
+
+    class Meta:
+        model = Partner
+        fields = (
+            'legal_name',
+            'display_type',
+            'hq',
+            'country_code',
+            'is_active',
+            'registration_number',
+            'country_presents',
+            'staff_globally',
+
+            "profile",
+            "mailing_address",
+            "directors",
+            "authorised_officers",
+            "org_head",
+            "mandate_mission",
+            "experiences",
+            "budgets",
+            "fund",
+            "collaborations_partnership",
+            "collaborations_partnership_others",
+            "collaboration_evidences",
+            "other_info",
+            "other_documents",
+            "internal_controls",
+            "area_policies",
+            "audit",
+            "report",
+        )
