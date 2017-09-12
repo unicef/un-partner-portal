@@ -23,6 +23,10 @@ const styleSheet = createStyleSheet('EoiPartnerStatusCell', theme => ({
   },
 }));
 
+const partnerStatuses = {
+  Acc: 'Accepted',
+  Dec: 'Declined',
+};
 
 const renderExpandedCell = (partners, classes) => (
   <div>
@@ -31,22 +35,22 @@ const renderExpandedCell = (partners, classes) => (
     </Typography>
     { partners.map(partner => (
       <Typography className={classes.text} align="left">
-        {`${partner.name}
-${partner.status}`}
+        {`${partner.partner.legal_name}
+${partnerStatuses[partner.status]}`}
       </Typography>
     ))}
   </div>
 );
 
 const EoiPartnerStatusCell = (props) => {
-  const { status, classes, id } = props;
+  const { status, classes, id, partners } = props;
 
   return (
     <div data-tip data-for={`${id}-partner-status-tooltip`}>
-      <EoiStatusCell id={status.id} />
-      { status.partner && <Tooltip
+      <EoiStatusCell id={status} />
+      { partners && <Tooltip
         id={`${id}-partner-status-tooltip`}
-        text={renderExpandedCell(status.partner, classes)}
+        text={renderExpandedCell(partners, classes)}
       />}
     </div>
   );
@@ -56,6 +60,7 @@ EoiPartnerStatusCell.propTypes = {
   classes: PropTypes.object.isRequired,
   status: PropTypes.object.isRequired,
   id: PropTypes.number.isRequired,
+  partners: PropTypes.array,
 };
 
 export default withStyles(styleSheet)(EoiPartnerStatusCell);

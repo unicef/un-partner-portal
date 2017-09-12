@@ -1,0 +1,44 @@
+version: '1.0'
+
+steps:
+
+    build_backend:
+        type: build
+        image_name: unpp-backend
+        dockerfile: Dockerfile
+        working_directory: ${{main_clone}}/backend
+        tag: ${{CF_BRANCH}}
+        build_arguments:
+            - env=$ENV
+            
+    composition_step:
+        type: composition
+        composition: 'unicef-unpp'
+        composition_candidates:
+            test:
+                image: ${{build_backend}}
+                depends_on:
+                    - proxy
+                    - backend
+                command: bash -c "/usr/local/bin/waitforit -host=backend -port=8000 -timeout=30 -- python /code/manage.py test --parallel"
+        composition_variables:
+            - POSTGRES_DB=postgres
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=
+            - POSTGRES_HOST=db
+            - SECRET_KEY=asdfqwef124rf
+            - ENV=dev
+            - DJANGO_ALLOWED_HOST="*"
+
+    push_to_hub:
+        type: push
+        title: Pushing backend image to docker hub
+        registry: tivix-dockerhub
+        candidate: ${{build_backend}}
+        tags: 
+            - ${{CF_BRANCH}}
+            - latest
+        when:
+            branch:
+                only: 
+                    - develop

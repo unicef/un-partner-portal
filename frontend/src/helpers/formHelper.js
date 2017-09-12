@@ -4,7 +4,9 @@ import React from 'react';
 import SelectField from 'material-ui-old/SelectField';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui-old/DatePicker';
-import { FormControl, FormHelperText } from 'material-ui/Form';
+import { FormControl, FormHelperText, FormLabel } from 'material-ui/Form';
+import Typography from 'material-ui/Typography';
+import R from 'ramda';
 
 
 export const renderFormControl = ({
@@ -72,3 +74,28 @@ export const renderDatePicker = ({
     />
   </div>
 );
+
+export const renderText = ({
+  className,
+  input,
+  values,
+  optional,
+  label,
+  ...other
+}) => {
+  if (!input.value && optional) return null;
+  return (
+    <FormControl fullWidth>
+      <FormLabel>{label}</FormLabel>
+      <Typography
+        className={className}
+        {...other}
+      >
+        {values
+          ? R.values(R.filter(val => val.value === input.value, values))[0].label
+          : input.value}
+      </Typography>
+    </FormControl>
+  );
+};
+

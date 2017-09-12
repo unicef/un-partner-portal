@@ -48,6 +48,10 @@ const theme = {
       root: {
         width: '100%',
       },
+      padding: {
+        paddingTop: 0,
+        paddingBottom: 0,
+      },
     },
     MuiListItem: {
       default: {
@@ -62,11 +66,6 @@ const theme = {
     MuiTypography: {
       headline: {
         color: 'inherit',
-      },
-    },
-    MuiButton: {
-      raisedAccent: {
-        backgroundColor: '#6B5CA5',
       },
     },
     MuiFormLabel: {

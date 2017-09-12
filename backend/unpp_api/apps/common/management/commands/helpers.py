@@ -1,7 +1,15 @@
 from django.conf import settings
 
 from account.models import User, UserProfile
-from common.consts import EOI_TYPES
+from agency.models import AgencyMember
+from common.consts import (
+    EOI_TYPES,
+    MEMBER_ROLES,
+    JUSTIFICATION_FOR_DIRECT_SELECTION,
+    ACCEPTED_DECLINED,
+    DIRECT_SELECTION_SOURCE,
+    APPLICATION_STATUSES,
+)
 from common.factories import (
     PartnerFactory,
     PartnerProfileFactory,
@@ -16,8 +24,8 @@ from common.factories import (
     AgencyMemberFactory,
     EOIFactory,
 )
-from partner.models import Partner
-from project.models import EOI
+from partner.models import Partner, PartnerMember, PartnerSelected
+from project.models import EOI, Application
 
 
 def clean_up_data_in_db():
@@ -51,13 +59,25 @@ def generate_fake_data(quantity=4):
     print "{} open EOI objects created".format(quantity)
 
     for idx in xrange(0, quantity):
-        EOIFactory(display_type=EOI_TYPES.direct)
+        EOIFactory(display_type=EOI_TYPES.direct, deadline_date=None)
     print "{} direct EOI objects created".format(quantity)
 
     for eoi in EOI.objects.filter(display_type=EOI_TYPES.direct):
-        for partner in Partner.objects.all():
-            eoi.invited_partners.add(partner)
-    print "All partners invited to direct EOI."
+        partner_example = Partner.objects.all().order_by("?").first()
+        Application.objects.create(
+            partner=partner_example,
+            eoi=eoi,
+            submitter=eoi.created_by,
+            agency=eoi.agency,
+            status=APPLICATION_STATUSES.pending,
+            did_win=True,
+            did_accept=False,
+            ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+            ds_justification_reason="They are the best!",
+        )
+        eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
+        eoi.save()
+    print "Partners selected to direct EOI."
 
     PartnerFactory.create_batch(quantity/2)
     print "{} Partner objects created".format(quantity/2)
@@ -89,3 +109,14 @@ def generate_fake_data(quantity=4):
 
     PartnerMemberFactory.create_batch(quantity/2)
     print "{} PartnerMember objects created".format(quantity/2)
+
+    pm = PartnerMember.objects.first()
+    pm.user = admin
+    pm.role = MEMBER_ROLES.admin
+    pm.save()
+
+    am = AgencyMember.objects.first()
+    am.user = admin
+    am.role = MEMBER_ROLES.admin
+    am.save()
+    print "Set default first Partner and Agency member as admin."

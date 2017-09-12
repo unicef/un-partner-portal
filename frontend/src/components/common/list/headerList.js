@@ -6,6 +6,7 @@ import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
 const styleSheet = createStyleSheet('HeaderList', (theme) => {
+  const padding = theme.spacing.unit * 2;
   return {
     container: {
       width: '100%',
@@ -13,6 +14,7 @@ const styleSheet = createStyleSheet('HeaderList', (theme) => {
     },
     header: {
       backgroundColor: theme.palette.primary[100],
+      padding: `${padding}px ${padding}px`,
     },
   };
 });
@@ -29,7 +31,7 @@ class HeaderList extends Component {
     const { classes, header } = this.props;
     return (
       <Paper>
-        <Grid direction="column" className={classes.container} container>
+        <Grid direction="column" className={classes.container} container gutter={0}>
           <Grid className={classes.header} item>
             {createElement(header)}
           </Grid>
