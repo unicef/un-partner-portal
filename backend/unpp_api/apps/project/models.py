@@ -13,6 +13,7 @@ from common.consts import (
     EOI_STATUSES,
     SELECTION_CRITERIA_CHOICES,
     DIRECT_SELECTION_SOURCE,
+    JUSTIFICATION_FOR_DIRECT_SELECTION,
 )
 from common.countries import COUNTRIES_ALPHA2_CODE
 
@@ -32,7 +33,7 @@ class EOI(TimeStampedModel):
     focal_point = models.ForeignKey('account.User', related_name="expressions_of_interest_by_focal_point")
     locations = models.ManyToManyField('common.Point', related_name="expressions_of_interest")
     agency_office = models.ForeignKey('agency.AgencyOffice', related_name="expressions_of_interest")
-    cn_template = models.FileField()  # or take it from agency or agency office
+    cn_template = models.FileField(null=True, blank=True)  # or take it from agency or agency office
     specializations = models.ManyToManyField('common.Specialization', related_name="expressions_of_interest")
     # TODO: intended_pop_of_concern = Selection. Should have in help text only for UNHCR. TODO on select options
     description = models.CharField(max_length=200, verbose_name='Brief background of the project')
@@ -43,11 +44,11 @@ class EOI(TimeStampedModel):
     deadline_date = models.DateField(verbose_name='Estimated Deadline Date', null=True, blank=True)
     notif_results_date = models.DateField(verbose_name='Notification of Results Date', null=True, blank=True)
     has_weighting = models.BooleanField(default=True, verbose_name='Has weighting?')
-    invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest")
-    reviewers = models.ManyToManyField('account.User', related_name="expressions_of_interest_as_reviewer")
+    invited_partners = \
+        models.ManyToManyField('partner.Partner', related_name="expressions_of_interest", null=True, blank=True)
+    reviewers = \
+        models.ManyToManyField('account.User', related_name="eoi_as_reviewer", null=True, blank=True)
     closed_justification = models.TextField(null=True, blank=True)
-    selected_partners = \
-        models.ManyToManyField('partner.PartnerSelected', related_name="expressions_of_interest", blank=True)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
 
     class Meta:
@@ -92,7 +93,8 @@ class Application(TimeStampedModel):
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
     # These two (ds_justification_*) will be used as direct selection will create applications for DS EOIs.
-    ds_justification_select = models.TextField()  # if direct select
+    ds_justification_select = models.CharField(
+        max_length=3, choices=JUSTIFICATION_FOR_DIRECT_SELECTION, null=True, blank=True)  # if direct select
     ds_justification_reason = models.TextField()  # reason why we choose winner
 
     class Meta:

@@ -3,10 +3,10 @@ from __future__ import unicode_literals
 from django.db import transaction
 from rest_framework import serializers
 from agency.serializers import AgencySerializer
-from common.serializers import SimpleSpecializationSerializer, PointSerializer
-from common.models import Point, AdminLevel1
-from partner.serializers import PartnerSelectedSerializer
-from .models import EOI, AssessmentCriteria
+from common.consts import APPLICATION_STATUSES
+from common.serializers import SimpleSpecializationSerializer, ConfigSectorSerializer, PointSerializer
+from common.models import Sector, Point, AdminLevel1
+from .models import EOI, Application, AssessmentCriteria
 
 
 class AssessmentCriteriaSerializer(serializers.ModelSerializer):
@@ -42,8 +42,6 @@ class BaseProjectSerializer(serializers.ModelSerializer):
 
 class DirectProjectSerializer(BaseProjectSerializer):
 
-    selected_partners = PartnerSelectedSerializer(many=True)
-
     class Meta:
         model = EOI
         fields = (
@@ -57,7 +55,6 @@ class DirectProjectSerializer(BaseProjectSerializer):
             'end_date',
             'deadline_date',
             'status',
-            'selected_partners',
             'selected_source',
         )
 
@@ -68,7 +65,64 @@ class CreateEOISerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EOI
-        exclude = ('cn_template', 'invited_partners', 'reviewers')
+        exclude = ('cn_template', )
+
+
+class CreateDirectEOISerializer(serializers.ModelSerializer):
+
+    locations = PointSerializer(many=True)
+
+    class Meta:
+        model = EOI
+        exclude = ('cn_template', 'deadline_date')
+
+
+class ApplicationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Application
+        exclude = ("cn", )
+
+
+class CreateDirectProjectSerializer(serializers.Serializer):
+
+    eoi = CreateDirectEOISerializer()
+    applications = ApplicationSerializer(many=True)
+
+    @transaction.atomic
+    def create(self, validated_data):
+        locations = validated_data['eoi']['locations']
+        del validated_data['eoi']['locations']
+        specializations = validated_data['eoi']['specializations']
+        del validated_data['eoi']['specializations']
+
+        eoi = EOI.objects.create(**validated_data['eoi'])
+        for location in locations:
+            location['admin_level_1'], created = AdminLevel1.objects.get_or_create(**location['admin_level_1'])
+            point, created = Point.objects.get_or_create(**location)
+            eoi.locations.add(point)
+
+        for specialization in specializations:
+            eoi.specializations.add(specialization)
+
+        apps = []
+        for app in validated_data['applications']:
+            _app = Application.objects.create(
+                partner=app['partner'],
+                eoi=eoi,
+                submitter=app['submitter'],
+                agency=eoi.agency,
+                status=APPLICATION_STATUSES.pending,
+                did_win=True,
+                did_accept=False,
+                ds_justification_select=app['ds_justification_select'],
+                ds_justification_reason=app['ds_justification_reason'],
+            )
+            apps.append(_app)
+        return {
+            "eoi": eoi,
+            "applications": apps,
+        }
 
 
 class CreateProjectSerializer(serializers.Serializer):

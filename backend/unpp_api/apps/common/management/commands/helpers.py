@@ -7,7 +7,8 @@ from common.consts import (
     MEMBER_ROLES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     ACCEPTED_DECLINED,
-    DIRECT_SELECTION_SOURCE
+    DIRECT_SELECTION_SOURCE,
+    APPLICATION_STATUSES,
 )
 from common.factories import (
     PartnerFactory,
@@ -24,7 +25,7 @@ from common.factories import (
     EOIFactory,
 )
 from partner.models import Partner, PartnerMember, PartnerSelected
-# from project.models import EOI
+from project.models import EOI, Application
 
 
 def clean_up_data_in_db():
@@ -58,7 +59,7 @@ def generate_fake_data(quantity=4):
     print "{} open EOI objects created".format(quantity)
 
     for idx in xrange(0, quantity):
-        EOIFactory(display_type=EOI_TYPES.direct)
+        EOIFactory(display_type=EOI_TYPES.direct, deadline_date=None)
     print "{} direct EOI objects created".format(quantity)
 
     PartnerFactory.create_batch(quantity/2)
@@ -102,3 +103,20 @@ def generate_fake_data(quantity=4):
     am.role = MEMBER_ROLES.admin
     am.save()
     print "Set default first Partner and Agency member as admin."
+
+    for eoi in EOI.objects.filter(display_type=EOI_TYPES.direct):
+        partner_example = Partner.objects.all().order_by("?").first()
+        Application.objects.create(
+            partner=partner_example,
+            eoi=eoi,
+            submitter=eoi.created_by,
+            agency=eoi.agency,
+            status=APPLICATION_STATUSES.pending,
+            did_win=True,
+            did_accept=False,
+            ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+            ds_justification_reason="They are the best!",
+        )
+        eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
+        eoi.save()
+    print "Partners selected to direct EOI."
