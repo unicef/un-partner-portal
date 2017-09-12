@@ -45,9 +45,9 @@ class EOI(TimeStampedModel):
     notif_results_date = models.DateField(verbose_name='Notification of Results Date', null=True, blank=True)
     has_weighting = models.BooleanField(default=True, verbose_name='Has weighting?')
     invited_partners = \
-        models.ManyToManyField('partner.Partner', related_name="expressions_of_interest", null=True, blank=True)
+        models.ManyToManyField('partner.Partner', related_name="expressions_of_interest", blank=True)
     reviewers = \
-        models.ManyToManyField('account.User', related_name="eoi_as_reviewer", null=True, blank=True)
+        models.ManyToManyField('account.User', related_name="eoi_as_reviewer", blank=True)
     closed_justification = models.TextField(null=True, blank=True)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
 

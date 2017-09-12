@@ -20,21 +20,32 @@ from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     WORKING_LAGNUAGES_CHOICES,
+    MAILING_TYPES,
+    YEARS_OF_EXP_CHOICES,
+    CONCERN_CHOICES,
+    STAFF_GLOBALLY_CHOICES,
+    PARTNER_DONORS_CHOICES,
+    POLICY_AREA_CHOICES,
+    ORG_AUDIT_CHOICES,
+    AUDIT_ASSESMENT_CHOICES,
     ACCEPTED_DECLINED,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
 )
 
 
 class Partner(TimeStampedModel):
-    """
-
-    """
     legal_name = models.CharField(max_length=255)
     display_type = models.CharField(max_length=3, choices=PARTNER_TYPES)
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children')
     country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
     is_active = models.BooleanField(default=True)
     registration_number = models.CharField(max_length=255, null=True, blank=True)
+    country_presents = ArrayField(
+        models.CharField(max_length=2, choices=WORKING_LAGNUAGES_CHOICES),
+        default=list,
+        null=True
+    )
+    staff_globally = models.CharField(max_length=3, choices=STAFF_GLOBALLY_CHOICES, null=True, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -42,24 +53,24 @@ class Partner(TimeStampedModel):
     def __str__(self):
         return "Partner: {} <pk:{}>".format(self.legal_name, self.id)
 
+    @property
+    def is_hq(self):
+        return self.hq in [None, '']
+
+    @property
+    def country_profiles(self):
+        return self.__class__.objects.filter(hq=self)
+
 
 class PartnerProfile(TimeStampedModel):
-    """
-
-    """
-    partner = models.ForeignKey(Partner, related_name="profile")
+    partner = models.OneToOneField(Partner, related_name="profile")
     alias_name = models.CharField(max_length=255, null=True, blank=True)
+    acronym = models.CharField(max_length=200, null=True, blank=True)
     legal_name_change = models.BooleanField(default=False)
     former_legal_name = models.CharField(max_length=255, null=True, blank=True)
-    org_head_first_name = models.CharField(max_length=255, null=True, blank=True)
-
-    org_head_last_name = models.CharField(max_length=255, null=True, blank=True)
-    org_head_email = models.EmailField(max_length=255, null=True, blank=True)
-    org_head_job_title = models.CharField(max_length=255, null=True, blank=True)
-    # TODO: shall we provide PhoneNumberField ???
-    org_head_telephonee = models.CharField(max_length=255, null=True, blank=True)
-    org_head_fax = models.CharField(max_length=255, null=True, blank=True)
-    org_head_mobile = models.CharField(max_length=255, null=True, blank=True)
+    connectivity = models.BooleanField(default=False, verbose_name='Does the organization have reliable access to '
+                                                                   'internet in all of its operations?')
+    connectivity_excuse = models.CharField(max_length=200, null=True, blank=True)
     working_languages = ArrayField(
         models.CharField(max_length=3, choices=WORKING_LAGNUAGES_CHOICES),
         default=list,
@@ -67,7 +78,7 @@ class PartnerProfile(TimeStampedModel):
     )
     working_languages_other = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
     register_country = models.BooleanField(default=False, verbose_name='Register to work in country?')
-    flagged = models.BooleanField(default=False)
+    flagged = models.BooleanField(default=False)  # not sure do we need this attr
     start_cooperate_date = models.DateField(auto_now_add=True)
     have_gov_doc = models.BooleanField(default=False, verbose_name='Does the organization have a government document?')
     registration_doc = models.FileField(null=True)
@@ -78,6 +89,7 @@ class PartnerProfile(TimeStampedModel):
     have_system_monitoring = models.BooleanField(default=False)
     system_monitoring_desc = models.CharField(max_length=200, null=True, blank=True)
     have_feedback_mechanism = models.BooleanField(default=False)
+    feedback_mechanism_desc = models.CharField(max_length=200, null=True, blank=True)
 
     # financial controls
     org_acc_system = models.CharField(
@@ -93,8 +105,15 @@ class PartnerProfile(TimeStampedModel):
     have_system_track = models.BooleanField(default=False)
     financial_control_system_desc = models.CharField(max_length=200, null=True, blank=True)
 
-    # internal controls
-    # TODO: add here right fields + we will have relation with PartnerInternalControls
+    # internal control - other fields
+    experienced_staff = models.BooleanField(
+        default=False, verbose_name="Does the organization have an adequate number of experienced staff responsible "
+                                    "for financial management in all operations?")
+    experienced_staff_desc = models.CharField(max_length=200, null=True, blank=True)
+
+    # collaborate
+    partnership_collaborate_institution = models.BooleanField(default=False)
+    partnership_collaborate_institution_desc = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -105,6 +124,217 @@ class PartnerProfile(TimeStampedModel):
     @property
     def annual_budget(self):
         return PartnerBudget.objects.filter(partner=self, year=date.today().year).values_list('budget', flat=True) or 0
+
+
+class PartnerMailingAddress(TimeStampedModel):
+    partner = models.OneToOneField(Partner, related_name="mailing_address")
+    mailing_type = models.CharField(
+        max_length=3,
+        choices=MAILING_TYPES,
+        default=MAILING_TYPES.street
+    )
+    street = models.CharField(max_length=200, null=True, blank=True)
+    po_box = models.CharField(max_length=200, null=True, blank=True)
+    city = models.CharField(max_length=200, null=True, blank=True)
+    country = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
+    zip_code = models.CharField(max_length=200, null=True, blank=True)
+    telephone = models.CharField(max_length=255, null=True, blank=True)
+    fax = models.CharField(max_length=255, null=True, blank=True)
+    website = models.URLField(null=True, blank=True)
+    org_email = models.EmailField()
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerMailingAddress <pk:{}>".format(self.id)
+
+
+class PartnerHeadOrganization(TimeStampedModel):
+    partner = models.OneToOneField(Partner, related_name="org_head")
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(max_length=255, null=True, blank=True)
+    job_title = models.CharField(max_length=255, null=True, blank=True)
+    # TODO: shall we provide PhoneNumberField ???
+    telephone = models.CharField(max_length=255, null=True, blank=True)
+    fax = models.CharField(max_length=255, null=True, blank=True)
+    mobile = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerHeadOrganization <pk:{}>".format(self.id)
+
+
+class PartnerDirector(TimeStampedModel):
+    partner = models.ForeignKey(Partner, related_name="directors")
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    job_title = models.CharField(max_length=255, null=True, blank=True)
+    authorized = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerDirector <pk:{}>".format(self.id)
+
+
+class PartnerAuthorisedOfficer(TimeStampedModel):
+    partner = models.ForeignKey(Partner, related_name="authorised_officers")
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    job_title = models.CharField(max_length=255, null=True, blank=True)
+    telephone = models.CharField(max_length=255, null=True, blank=True)
+    fax = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerAuthorisedOfficer <pk:{}>".format(self.id)
+
+
+class PartnerPolicyArea(TimeStampedModel):
+    partner = models.ForeignKey(Partner, related_name="area_policies")
+    area = models.CharField(max_length=3, choices=POLICY_AREA_CHOICES)
+    document_policies = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerPolicyArea <pk:{}>".format(self.id)
+
+
+class PartnerAuditAssessment(TimeStampedModel):
+    partner = models.OneToOneField(Partner, related_name="audit")
+    regular_audited = models.BooleanField(default=True)
+    org_audits = ArrayField(
+        models.CharField(max_length=3, choices=ORG_AUDIT_CHOICES),
+        default=list,
+        null=True
+    )
+    most_recent_audit_report = models.FileField(null=True)
+    link_report = models.URLField()
+    major_accountability_issues_highlighted = models.BooleanField(
+        default=False, verbose_name="Were there any major accountability issues highlighted by audits in the past "
+                                    "three years?")
+    comment = models.CharField(max_length=200, null=True, blank=True)
+    capacity_assessment = models.BooleanField(default=True, verbose_name="Has the organization undergone a formal "
+                                                                         "capacity assessment?")
+    assessments = ArrayField(
+        models.CharField(max_length=3, choices=AUDIT_ASSESMENT_CHOICES),
+        default=list,
+        null=True
+    )
+    assessment_report = models.FileField(null=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerAuditAssessment <pk:{}>".format(self.id)
+
+
+class PartnerReporting(TimeStampedModel):
+    partner = models.OneToOneField(Partner, related_name="report")
+    key_result = models.CharField(max_length=200, null=True, blank=True)
+    publish_annual_reports = models.BooleanField(default=True)
+    last_report = models.DateField(verbose_name='Date of most recent annual report')
+    report = models.FileField(null=True)
+    link_report = models.URLField()
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerReporting <pk:{}>".format(self.id)
+
+
+class PartnerMandateMission(TimeStampedModel):
+    partner = models.OneToOneField(Partner, related_name="mandate_mission")
+    # background
+    background_and_rationale = models.CharField(max_length=400, null=True, blank=True)
+    mandate_and_mission = models.CharField(max_length=400, null=True, blank=True)
+
+    # governance
+    governance_structure = models.CharField(
+        max_length=200, null=True, blank=True, verbose_name="Briefly describe the organization's governance structure")
+    governance_hq = models.CharField(
+        max_length=200, null=True, blank=True,
+        verbose_name="Briefly describe the headquarters oversight of country/branch office operations including "
+                     "any reporting requirements of the country/branch office to HQ")
+    governance_organigram = models.FileField(null=True)
+
+    # ethics
+    ethic_safeguard = models.BooleanField(default=False)
+    ethic_safeguard_policy = models.FileField(null=True)
+    ethic_fraud = models.BooleanField(default=False)
+    ethic_fraud_policy = models.FileField(null=True)
+
+    # population of concern
+    population_of_concern = models.BooleanField(default=False)
+    concern_groups = ArrayField(
+        models.CharField(max_length=3, choices=CONCERN_CHOICES),
+        default=list,
+        null=True
+    )
+
+    # security
+    security_high_risk_locations = models.BooleanField(
+        default=False, verbose_name="Does the organization have the ability to work in high-risk security locations?")
+    security_high_risk_policy = models.BooleanField(
+        default=False, verbose_name="Does the organization have policies, procedures and practices related "
+                                    "to security risk management?")
+    security_desc = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        verbose_name="Briefly describe the organization's ability, if any, to scale-up operations in emergencies or "
+                     "other situations requiring rapid response."
+    )
+
+    # Collaboration
+    partnership_with_insitutions = models.BooleanField(
+        default=False,
+        verbose_name=(
+            'Has the organization collaborated with or a member of a cluster,'
+            ' professional netwok, consortium or any similar insitutions?')
+    )
+    description = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name=(
+            'Please state which cluster, network or consortium and briefly explain the collaboration'
+            ' professional netwok, consortium or any similar insitutions?')
+    )
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerMandateMission <pk:{}>".format(self.id)
+
+
+class PartnerExperience(TimeStampedModel):
+    partner = models.ForeignKey(Partner, related_name="experiences")
+    specialization = models.ForeignKey('common.Specialization', related_name="partner_experiences")
+    years = models.CharField(
+        max_length=3,
+        choices=YEARS_OF_EXP_CHOICES,
+        default=YEARS_OF_EXP_CHOICES.less_1
+    )
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerExperience <pk:{}>".format(self.id)
 
 
 class PartnerInternalControl(TimeStampedModel):
@@ -124,13 +354,10 @@ class PartnerInternalControl(TimeStampedModel):
 
 
 class PartnerBudget(TimeStampedModel):
-    """
-
-    """
     partner = models.ForeignKey(Partner, related_name="budgets")
     year = models.PositiveSmallIntegerField(
         "Weight in percentage",
-        help_text="Value in percentage, provide number from 0 to 100",
+        help_text="Enter valid year.",
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
     budget = models.DecimalField(decimal_places=2, max_digits=12, blank=True, null=True)
@@ -142,9 +369,22 @@ class PartnerBudget(TimeStampedModel):
         return "PartnerBudget {} <pk:{}>".format(self.year, self.id)
 
 
-class PartnerDonor(TimeStampedModel):
-    partner = models.ForeignKey(Partner, related_name="donors")
-    name = models.CharField(max_length=255)
+class PartnerFunding(TimeStampedModel):
+    partner = models.OneToOneField(Partner, related_name="fund")
+    source_core_funding = models.CharField(max_length=200, verbose_name="Please state your source(s) of core funding")
+    major_donors = ArrayField(
+        models.CharField(max_length=3, choices=PARTNER_DONORS_CHOICES),
+        default=list,
+        null=True
+    )
+    main_donors_list = models.CharField(
+        max_length=200, blank=True, null=True, verbose_name="Please list your main donors")
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerFunding <pk:{}>".format(self.id)
 
 
 class PartnerCollaborationPartnership(TimeStampedModel):
@@ -154,42 +394,73 @@ class PartnerCollaborationPartnership(TimeStampedModel):
     description = models.CharField(max_length=200, blank=True, null=True)
     partner_number = models.CharField(max_length=200, blank=True, null=True)
 
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerCollaborationPartnership <pk:{}>".format(self.id)
+
 
 class PartnerCollaborationPartnershipOther(TimeStampedModel):
     created_by = models.ForeignKey('account.User', related_name="collaborations_partnership_others")
     partner = models.ForeignKey(Partner, related_name="collaborations_partnership_others")
     other_agency = models.ForeignKey('agency.OtherAgency', related_name="collaborations_partnership_others")
-    partnership_with_insitutions = models.BooleanField(
-        default=False,
-        verbose_name=(
-            'Has the organization collaborated with or a member of a cluster,'
-            ' professional netwok, consortium or any similar insitutions?')
-    )
-    description = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True,
-        verbose_name=(
-            'Please state which cluster, network or consortium and briefly explain the collaboration'
-            ' professional netwok, consortium or any similar insitutions?')
-    )
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerCollaborationPartnershipOther <pk:{}>".format(self.id)
 
 
 class PartnerCollaborationEvidence(TimeStampedModel):
+    """
+    Accreditation & References
+    """
     created_by = models.ForeignKey('account.User', related_name="collaboration_evidences")
     partner = models.ForeignKey(Partner, related_name="collaboration_evidences")
     mode = models.CharField(max_length=3, choices=COLLABORATION_EVIDENCE_MODES)
     organization_name = models.CharField(max_length=200)
     date_received = models.DateField(verbose_name='Date Received')
-    evidence_file = models.FileField()
+    evidence_file = models.FileField(null=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerCollaborationEvidence <pk:{}>".format(self.id)
+
+
+class PartnerOtherInfo(TimeStampedModel):
+    partner = models.OneToOneField(Partner, related_name="other_info")
+    info_to_share = models.CharField(max_length=200)
+    org_logo = models.FileField(null=True)
+    confirm_data_updated = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerOtherInfo <pk:{}>".format(self.id)
+
+
+class PartnerOtherDocument(TimeStampedModel):
+    """
+    Max to 3 other document that User can upload.
+    """
+    partner = models.ForeignKey(Partner, related_name="other_documents")
+    document = models.FileField(null=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerOtherDocument <pk:{}>".format(self.id)
 
 
 class PartnerMember(TimeStampedModel):
-    """
-
-    """
     user = models.ForeignKey('account.User', related_name="partner_members")
-    partner = models.ForeignKey(Partner, related_name="partners")
+    partner = models.ForeignKey(Partner, related_name="partner_members")
     title = models.CharField(max_length=255)
     role = models.CharField(max_length=3, choices=MEMBER_ROLES, default=MEMBER_ROLES.reader)
     status = models.CharField(max_length=3, choices=MEMBER_STATUSES, default=MEMBER_STATUSES.invited)
