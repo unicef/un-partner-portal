@@ -8,7 +8,7 @@ import OpenForm from './openForm';
 import DirectForm from './directForm';
 import { addDirectCfei, addOpenCfei } from '../../../reducers/newCfei';
 import CallPartnersModal from './callPartnersModal';
-import { OPEN, DIRECT } from '../../../helpers/constants';
+import { PROJECT_TYPES } from '../../../helpers/constants';
 
 
 const messages = {
@@ -29,40 +29,40 @@ const messages = {
 
 const getFormName = (type) => {
   switch (type) {
-    case OPEN:
+    case PROJECT_TYPES.OPEN:
     default:
       return 'newOpenCfei';
-    case DIRECT:
+    case PROJECT_TYPES.DIRECT:
       return 'newDirectCfei';
   }
 };
 
 const getInfo = (type) => {
   switch (type) {
-    case OPEN:
+    case PROJECT_TYPES.OPEN:
     default:
       return messages.header.open;
-    case DIRECT:
+    case PROJECT_TYPES.DIRECT:
       return messages.header.direct;
   }
 };
 
 const getPostMethod = (type) => {
   switch (type) {
-    case OPEN:
+    case PROJECT_TYPES.OPEN:
     default:
       return addOpenCfei;
-    case DIRECT:
+    case PROJECT_TYPES.DIRECT:
       return addDirectCfei;
   }
 };
 
 const getModal = (type) => {
   switch (type) {
-    case OPEN:
+    case PROJECT_TYPES.OPEN:
     default:
       return OpenForm;
-    case DIRECT:
+    case PROJECT_TYPES.DIRECT:
       return DirectForm;
   }
 };

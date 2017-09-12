@@ -75,6 +75,10 @@ TextFieldForm.propTypes = {
    * validations passed to field
    */
   warn: PropTypes.bool,
+  /**
+   * if form should be displayed in read only state
+   */
+  readOnly: PropTypes.bool,
 };
 
 TextFieldForm.defaultProps = {

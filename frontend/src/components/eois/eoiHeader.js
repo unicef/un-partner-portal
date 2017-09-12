@@ -6,7 +6,6 @@ import { browserHistory as history } from 'react-router';
 import Grid from 'material-ui/Grid';
 import NewCfeiModalButton from './modals/newCfeiModalButton';
 import HeaderNavigation from '../common/headerNavigation';
-import { OPEN, PINNED, DIRECT, UNSOLICITED } from '../../helpers/constants';
 
 const messages = {
   partner: 'Calls for Expressions of Interest',
@@ -24,19 +23,12 @@ class CfeiHeader extends Component {
 
   updatePath() {
     const { tabs, params: { type } } = this.props;
-    if (!type) return history.push(`/cfei/${tabs[0].path}`);
-    const tab = tabs.find(itab => itab.path === type);
-    switch (type) {
-      case OPEN:
-      case PINNED:
-      case DIRECT:
-      case UNSOLICITED:
-        return tab.id;
-      // TODO: add proper 404
-      default:
-        history.push('/');
-        return null;
+    const index = tabs.findIndex(itab => itab.path === type);
+    if (index === -1) {
+      // TODO: do real 404
+      history.push('/');
     }
+    return index;
   }
 
   handleChange(event, index) {
@@ -61,7 +53,7 @@ class CfeiHeader extends Component {
           header={!id && type && role === 'agency' && <NewCfeiModalButton />}
           handleChange={this.handleChange}
         >
-          {(index !== null) && children}
+          {(index !== -1) && children}
         </HeaderNavigation>
       </Grid>
     );
