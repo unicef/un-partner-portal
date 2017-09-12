@@ -24,7 +24,7 @@ from common.factories import (
     AgencyMemberFactory,
     EOIFactory,
 )
-from partner.models import Partner, PartnerMember, PartnerSelected
+from partner.models import Partner, PartnerMember
 from project.models import EOI, Application
 
 
@@ -62,6 +62,13 @@ def generate_fake_data(quantity=4):
         EOIFactory(display_type=EOI_TYPES.direct, deadline_date=None)
     print "{} direct EOI objects created".format(quantity)
 
+    PartnerFactory.create_batch(quantity/2)
+    print "{} Partner objects created".format(quantity/2)
+
+    hq = Partner.objects.first()
+    Partner.objects.exclude(id=hq.id).update(hq=hq)
+    print "Partner HQ & Country Profiles"
+
     for eoi in EOI.objects.filter(display_type=EOI_TYPES.direct):
         partner_example = Partner.objects.all().order_by("?").first()
         Application.objects.create(
@@ -78,13 +85,6 @@ def generate_fake_data(quantity=4):
         eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
         eoi.save()
     print "Partners selected to direct EOI."
-
-    PartnerFactory.create_batch(quantity/2)
-    print "{} Partner objects created".format(quantity/2)
-
-    hq = Partner.objects.first()
-    Partner.objects.exclude(id=hq.id).update(hq=hq)
-    print "Partner HQ & Country Profiles"
 
     PartnerProfileFactory.create_batch(quantity/2)
     print "{} Partner Profile objects created".format(quantity/2)
