@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from rest_framework.test import APITestCase, APIClient
 from account.models import User
-from ..factories import PartnerSimpleFactory, PartnerMemberFactory, AgencyMemberFactory, AgencyFactory
+from ..factories import PartnerSimpleFactory, PartnerMemberFactory, AgencyFactory, AgencyMemberFactory
 
 
 class BaseAPITestCase(APITestCase):

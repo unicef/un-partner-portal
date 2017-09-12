@@ -1,44 +1,84 @@
-import React from 'react';
-import MaterialGrid from 'material-ui/Grid';
-import Paper from 'material-ui/Paper';
-import { Grid, TableView, TableHeaderRow } from '@devexpress/dx-react-grid-material-ui';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import Grid from 'material-ui/Grid';
+import { TableCell } from 'material-ui/Table';
 import MainContentWrapper from '../../components/common/mainContentWrapper';
 import HeaderNavigation from '../../components/common/headerNavigation';
-
+import PartnerFilter from './partnerFilter';
+import PartnerProfileNameCell from './partnerProfileNameCell';
+import PaginatedList from '../common/list/paginatedList';
+import PartnerProfileDetailItem from './partnerProfileDetailItem';
 
 const messages = {
   header: 'Partners',
 };
 
-const hgProfileMockData = {
-  users: 25, update: '01 Jan 2016',
+class PartnersContainer extends Component {
+  onRowClick(row) {
+    // todo navigate to detail page
+  }
+
+  static partnerDetailCell(row) {
+    return (
+      <PartnerProfileDetailItem partner={row.details} />
+    );
+  }
+
+  partnerCell(row, column, style) {
+    if (column.name === 'name') {
+      return (<PartnerProfileNameCell
+        verified={row.verified}
+        yellowFlag={row.flagYellow}
+        redFlag={row.flagRed}
+        name={row.name}
+      />);
+    }
+
+    return <TableCell onClick={() => this.onRowClick(row)}>{row[column.name]}</TableCell>;
+  }
+
+  render() {
+    const { partners, columns } = this.props;
+
+    return (
+      <div>
+        <Grid item>
+          <HeaderNavigation title={messages.header} />
+        </Grid>
+        <MainContentWrapper>
+          <Grid container direction="column" gutter={24}>
+            <Grid item>
+              <PartnerFilter />
+            </Grid>
+            <Grid item>
+              <PaginatedList
+                items={partners}
+                columns={columns}
+                expandable
+                templateCell={(row, column, style) => this.partnerCell(row, column, style)}
+                expandedCell={row => PartnersContainer.partnerDetailCell(row)}
+                onRowClick={(row) => { this.onRowClick(row); }}
+                onPageSizeChange={pageSize => console.log('Page size', pageSize)}
+                onCurrentPageChange={page => console.log('Page number', page)}
+              />
+            </Grid>
+          </Grid>
+        </MainContentWrapper>
+      </div>
+    );
+  }
+}
+
+PartnersContainer.propTypes = {
+  partners: PropTypes.array.isRequired,
+  columns: PropTypes.array.isRequired,
 };
 
-const PartnerContainer = () => (
-  <div>
-    <MaterialGrid item>
-      <HeaderNavigation title={messages.header} />
-    </MaterialGrid>
-    <MainContentWrapper>
-      <MaterialGrid container direction="column" gutter={40}>
-        <MaterialGrid item>
-          <Grid
-    rows={[
-      { id: 0, product: 'DevExtreme', owner: 'DevExpress' },
-      { id: 1, product: 'DevExtreme Reactive', owner: 'DevExpress' },
-    ]}
-    columns={[
-      { name: 'id', title: 'ID' },
-      { name: 'product', title: 'Product' },
-      { name: 'owner', title: 'Owner' },
-    ]}>
-    <TableView />
-    <TableHeaderRow />
-  </Grid>
-        </MaterialGrid>
-      </MaterialGrid>
-    </MainContentWrapper>
-  </div>
-);
+const mapStateToProps = state => ({
+  partners: state.agencyPartnersList.partners,
+  columns: state.agencyPartnersList.columns,
+});
 
-export default PartnerContainer;
+
+export default connect(mapStateToProps, null)(PartnersContainer);

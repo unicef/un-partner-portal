@@ -68,6 +68,23 @@ def generate_fake_data(quantity=4):
     Partner.objects.exclude(id=hq.id).update(hq=hq)
     print "Partner HQ & Country Profiles"
 
+    for eoi in EOI.objects.filter(display_type=EOI_TYPES.direct):
+        partner_example = Partner.objects.all().order_by("?").first()
+        Application.objects.create(
+            partner=partner_example,
+            eoi=eoi,
+            submitter=eoi.created_by,
+            agency=eoi.agency,
+            status=APPLICATION_STATUSES.pending,
+            did_win=True,
+            did_accept=False,
+            ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+            ds_justification_reason="They are the best!",
+        )
+        eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
+        eoi.save()
+    print "Partners selected to direct EOI."
+
     PartnerProfileFactory.create_batch(quantity/2)
     print "{} Partner Profile objects created".format(quantity/2)
 
@@ -102,20 +119,3 @@ def generate_fake_data(quantity=4):
     am.role = MEMBER_ROLES.admin
     am.save()
     print "Set default first Partner and Agency member as admin."
-
-    for eoi in EOI.objects.filter(display_type=EOI_TYPES.direct):
-        partner_example = Partner.objects.all().order_by("?").first()
-        Application.objects.create(
-            partner=partner_example,
-            eoi=eoi,
-            submitter=eoi.created_by,
-            agency=eoi.agency,
-            status=APPLICATION_STATUSES.pending,
-            did_win=True,
-            did_accept=False,
-            ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.known,
-            ds_justification_reason="They are the best!",
-        )
-        eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
-        eoi.save()
-    print "Partners selected to direct EOI."

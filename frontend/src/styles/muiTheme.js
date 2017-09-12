@@ -48,6 +48,10 @@ const theme = {
       root: {
         width: '100%',
       },
+      padding: {
+        paddingTop: 0,
+        paddingBottom: 0,
+      },
     },
     MuiListItem: {
       default: {

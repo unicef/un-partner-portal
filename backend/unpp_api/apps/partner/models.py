@@ -458,7 +458,7 @@ class PartnerOtherDocument(TimeStampedModel):
 
 class PartnerMember(TimeStampedModel):
     user = models.ForeignKey('account.User', related_name="partner_members")
-    partner = models.ForeignKey(Partner, related_name="partners")
+    partner = models.ForeignKey(Partner, related_name="partner_members")
     title = models.CharField(max_length=255)
     role = models.CharField(max_length=3, choices=MEMBER_ROLES, default=MEMBER_ROLES.reader)
     status = models.CharField(max_length=3, choices=MEMBER_STATUSES, default=MEMBER_STATUSES.invited)
