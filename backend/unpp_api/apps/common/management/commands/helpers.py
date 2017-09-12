@@ -1,8 +1,10 @@
 from django.conf import settings
 
 from account.models import User, UserProfile
+from agency.models import AgencyMember
 from common.consts import (
     EOI_TYPES,
+    MEMBER_ROLES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     ACCEPTED_DECLINED,
     DIRECT_SELECTION_SOURCE,
@@ -14,7 +16,7 @@ from common.factories import (
     AgencyMemberFactory,
     EOIFactory,
 )
-from partner.models import Partner
+from partner.models import Partner, PartnerMember, PartnerSelected
 from project.models import EOI, Application
 
 
@@ -71,3 +73,14 @@ def generate_fake_data(quantity=4):
         eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
         eoi.save()
     print "Partners selected to direct EOI."
+
+    pm = PartnerMember.objects.first()
+    pm.user = admin
+    pm.role = MEMBER_ROLES.admin
+    pm.save()
+
+    am = AgencyMember.objects.first()
+    am.user = admin
+    am.role = MEMBER_ROLES.admin
+    am.save()
+    print "Set default first Partner and Agency member as admin."

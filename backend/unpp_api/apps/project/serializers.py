@@ -4,7 +4,7 @@ from django.db import transaction
 from rest_framework import serializers
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES
-from common.serializers import ConfigSectorSerializer, PointSerializer
+from common.serializers import ConfigSectorSerializer, SimpleSpecializationSerializer, PointSerializer
 from common.models import Sector, Point, AdminLevel1
 from .models import EOI, Application, AssessmentCriteria
 
@@ -17,7 +17,7 @@ class AssessmentCriteriaSerializer(serializers.ModelSerializer):
 
 class BaseProjectSerializer(serializers.ModelSerializer):
 
-    sectors = serializers.SerializerMethodField()
+    specializations = SimpleSpecializationSerializer(many=True)
     agency = AgencySerializer()
     created = serializers.SerializerMethodField()
 
@@ -28,7 +28,7 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'title',
             'created',
             'country_code',
-            'sectors',
+            'specializations',
             'agency',
             'start_date',
             'end_date',
@@ -38,12 +38,6 @@ class BaseProjectSerializer(serializers.ModelSerializer):
 
     def get_created(self, obj):
         return obj.created.date()
-
-    def get_sectors(self, obj):
-        specializations = obj.specializations.all()
-        categories = specializations.values_list('category_id', flat=True)
-        qs = Sector.objects.filter(id__in=categories, specializations__in=specializations).distinct()
-        return ConfigSectorSerializer(qs, many=True).data
 
 
 class DirectProjectSerializer(BaseProjectSerializer):
