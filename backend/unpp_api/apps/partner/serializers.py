@@ -83,7 +83,7 @@ class PartnerFullProfilesSerializer(serializers.ModelSerializer):
 class OrganizationProfileSerializer(serializers.ModelSerializer):
 
     country_profiles = PartnerSerializer(many=True)
-    users = serializers.SerializerMethodField()
+    users = serializers.IntegerField(source='partner_members.count')
 
     class Meta:
         model = Partner
@@ -97,9 +97,6 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
             'users',
             'modified',
         )
-
-    def get_users(self, obj):
-        return PartnerMember.objects.filter(partner=obj).count()
 
 
 class PartnerMailingAddressSerializer(serializers.ModelSerializer):
