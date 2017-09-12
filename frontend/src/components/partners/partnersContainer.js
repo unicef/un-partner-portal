@@ -17,7 +17,7 @@ const messages = {
 
 class PartnersContainer extends Component {
   onRowClick(row) {
-    history.push('partner/1/overview');
+    history.push('/partner/1/overview');
   }
 
   static partnerDetailCell(row) {
