@@ -1,7 +1,5 @@
-import os
 import random
 from datetime import date
-from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 import factory
@@ -178,7 +176,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
                 first_name=get_first_name(),
                 last_name=get_last_name(),
                 job_title=get_job_title(),
-                telephone = '(123) 234 569',
+                telephone='(123) 234 569',
                 fax='(123) 234 566',
                 email="office@partner.website.org",
             )
@@ -228,18 +226,18 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         accreditation, created = PartnerCollaborationEvidence.objects.get_or_create(
             partner=self,
             created_by=User.objects.first(),
-            mode = COLLABORATION_EVIDENCE_MODES.accreditation,
-            organization_name = "accreditation organization name",
-            date_received = date.today()
+            mode=COLLABORATION_EVIDENCE_MODES.accreditation,
+            organization_name="accreditation organization name",
+            date_received=date.today()
         )
         self.collaboration_evidences.add(accreditation)
 
         reference, created = PartnerCollaborationEvidence.objects.get_or_create(
             partner=self,
             created_by=User.objects.first(),
-            mode = COLLABORATION_EVIDENCE_MODES.reference,
-            organization_name = "reference organization name",
-            date_received = date.today()
+            mode=COLLABORATION_EVIDENCE_MODES.reference,
+            organization_name="reference organization name",
+            date_received=date.today()
         )
         self.collaboration_evidences.add(reference)
 
@@ -286,15 +284,15 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     def area_policies(self, create, extracted, **kwargs):
         PartnerPolicyArea.objects.get_or_create(
             partner=self,
-            area = POLICY_AREA_CHOICES.human
+            area=POLICY_AREA_CHOICES.human
         )
         PartnerPolicyArea.objects.get_or_create(
             partner=self,
-            area = POLICY_AREA_CHOICES.procurement
+            area=POLICY_AREA_CHOICES.procurement
         )
         PartnerPolicyArea.objects.get_or_create(
             partner=self,
-            area = POLICY_AREA_CHOICES.asset
+            area=POLICY_AREA_CHOICES.asset
         )
 
     class Meta:

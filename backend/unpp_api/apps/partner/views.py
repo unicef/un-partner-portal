@@ -120,7 +120,7 @@ class PartnersListItemAPIView(APIView):
         mailing = get_object_or_404(PartnerMailingAddress, partner_id=partner_id)
         head_organization = get_object_or_404(PartnerHeadOrganization, partner_id=partner_id)
         profile = get_object_or_404(PartnerProfile, partner_id=partner_id)
-        experiences = PartnerExperience.objects.filter(partner=partner_id)
+        experiences = PartnerExperience.objects.filter(partner_id=partner_id)
 
         serializer = PartnersListItemSerializer(dict(
             mailing=mailing,

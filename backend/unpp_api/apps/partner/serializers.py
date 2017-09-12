@@ -59,13 +59,6 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
         )
 
 
-class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = PartnerHeadOrganization
-        exclude = ('partner', )
-
-
 class PartnerFullSerializer(serializers.ModelSerializer):
 
     class Meta:
