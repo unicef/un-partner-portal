@@ -246,3 +246,35 @@ class OrganizationProfileDetailsSerializer(serializers.Serializer):
     area_policies = PartnerPolicyAreaSerializer(many=True)
     audit_assessment = PartnerAuditAssessmentSerializer()
     report = PartnerReportingSerializer()
+
+
+class PartnersListSerializer(serializers.ModelSerializer):
+
+    acronym = serializers.SerializerMethodField()
+    experience_working = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Partner
+        fields = (
+            'id',
+            'legal_name',
+            'acronym',
+            'display_type',
+            'country_code',
+            'is_hq',
+            'experience_working',
+        )
+
+    def get_acronym(self, obj):
+        return obj.profile.acronym
+
+    def get_experience_working(self, obj):
+        return PartnerCollaborationPartnership.objects.filter(partner=obj).\
+            values_list("agency__name", flat=True).distinct()
+
+
+class PartnersListItemSerializer(serializers.Serializer):
+    mailing = PartnerMailingAddressSerializer()
+    head_organization = PartnerHeadOrganizationSerializer()
+    working_languages = serializers.ListField()
+    experiences = PartnerExperienceSerializer(many=True)
