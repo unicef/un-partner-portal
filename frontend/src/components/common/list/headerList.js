@@ -5,17 +5,15 @@ import Divider from 'material-ui/Divider';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
-const styleSheet = createStyleSheet('HeaderList', (theme) => {
-  return {
-    container: {
-      width: '100%',
-      margin: '0',
-    },
-    header: {
-      backgroundColor: theme.palette.primary[100],
-    },
-  };
-});
+const styleSheet = createStyleSheet('HeaderList', theme => ({
+  container: {
+    width: '100%',
+    margin: '0',
+  },
+  header: {
+    backgroundColor: theme.palette.primary[100],
+  },
+}));
 
 class HeaderList extends Component {
   renderChildren() {

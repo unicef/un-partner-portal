@@ -1,0 +1,28 @@
+import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import SelectForm from '../../selectForm';
+import { selectNormalizedPopulations } from '../../../../store';
+
+const messages = {
+  label: 'Intended populations of concern (only for UNHCR)',
+  placeholder: 'Enter the name of the Focal Point',
+};
+// TODO make this only for agency=UNHCR
+const SelectPopulationOfConcern = (props) => {
+  const { values } = props;
+  return (<SelectForm
+    label={messages.label}
+    fieldName="population"
+    placeholder={messages.placeholder}
+    values={values}
+  />);
+};
+
+SelectPopulationOfConcern.propTypes = {
+  values: PropTypes.array.isRequired,
+};
+
+export default connect(state => ({
+  values: selectNormalizedPopulations(state),
+}))(SelectPopulationOfConcern);

@@ -28,6 +28,8 @@ from common.consts import (
     POLICY_AREA_CHOICES,
     ORG_AUDIT_CHOICES,
     AUDIT_ASSESMENT_CHOICES,
+    ACCEPTED_DECLINED,
+    JUSTIFICATION_FOR_DIRECT_SELECTION,
 )
 
 
@@ -490,3 +492,17 @@ class PartnerReview(TimeStampedModel):
 
     def __str__(self):
         return "PartnerReview <pk:{}>".format(self.id)
+
+
+class PartnerSelected(TimeStampedModel):
+    partner = models.ForeignKey(Partner, related_name="selected_parnters")
+    summary_justification = models.TextField(null=True, blank=True)
+    justification_for_direct_selection = \
+        models.CharField(max_length=3, choices=JUSTIFICATION_FOR_DIRECT_SELECTION, null=True, blank=True)
+    status = models.CharField(max_length=3, choices=ACCEPTED_DECLINED)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "Partner Selected <pk:{}>".format(self.id)

@@ -71,6 +71,7 @@ def make_db():
     """
     local('docker-compose exec backend python manage.py reset_db')
     local('docker-compose exec backend python manage.py migrate')
+    local('docker-compose exec backend python manage.py loaddata --app common initial.json')
     fixtures()
 
 

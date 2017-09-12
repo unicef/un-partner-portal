@@ -1,4 +1,6 @@
 from __future__ import unicode_literals
+import os
+from django.conf import settings
 from rest_framework.test import APITestCase, APIClient
 from account.models import User
 from ..factories import PartnerFactory, PartnerMemberFactory, AgencyMemberFactory
@@ -9,6 +11,7 @@ class BaseAPITestCase(APITestCase):
     Base class for all api test case with generated fake data.
     """
 
+    fixtures = [os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'fixtures', 'initial.json'), ]
     client_class = APIClient
     with_session_login = True
     user_type = 'partner'  # or agency
