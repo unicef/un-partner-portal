@@ -106,6 +106,13 @@ class PartnerMailingAddressSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class PartnerHeadOrganizationRegisterSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerHeadOrganization
+        exclude = ("partner", )
+
+
 class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
 
     class Meta:

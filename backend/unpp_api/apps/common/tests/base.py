@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from rest_framework.test import APITestCase, APIClient
 from account.models import User
-from ..factories import PartnerFactory, PartnerMemberFactory, AgencyMemberFactory
+from ..factories import PartnerSimpleFactory, PartnerMemberFactory, AgencyFactory, AgencyMemberFactory
 
 
 class BaseAPITestCase(APITestCase):
@@ -19,8 +19,9 @@ class BaseAPITestCase(APITestCase):
     def setUp(self):
         assert self.user_type in ['agency', 'partner'], "User type can be only agency or partner."
 
+        AgencyFactory.create_batch(1)
+        PartnerSimpleFactory.create_batch(1)
         if self.user_type == 'partner':
-            PartnerFactory.create_batch(1)
             PartnerMemberFactory.create_batch(1)
         elif self.user_type == 'agency':
             AgencyMemberFactory.create_batch(1)

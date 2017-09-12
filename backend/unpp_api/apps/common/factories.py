@@ -138,6 +138,16 @@ class UserFactory(factory.django.DjangoModelFactory):
         model = User
 
 
+class PartnerSimpleFactory(factory.django.DjangoModelFactory):
+    legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
+    display_type = PARTNER_TYPES.national
+    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+    registration_number = factory.Sequence(lambda n: "reg-number {}".format(n))
+
+    class Meta:
+        model = Partner
+
+
 class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
     display_type = PARTNER_TYPES.national
