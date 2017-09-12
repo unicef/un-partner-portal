@@ -145,6 +145,20 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
         self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
 
+        # invite partners
+        eoi_id = response.data['eoi']['id']
+        payload = {
+            "id": eoi_id,
+            "invited_partners": [
+                Partner.objects.first().id,
+            ]
+        }
+        response = self.client.patch(self.url, data=payload, format='json')
+
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['id'], eoi_id)
+        self.assertTrue(Partner.objects.first().id in response.data['invited_partners'])
+
 
 class TestDirectProjectsAPITestCase(BaseAPITestCase):
 

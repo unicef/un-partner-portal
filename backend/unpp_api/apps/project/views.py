@@ -18,7 +18,8 @@ from .serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
     CreateProjectSerializer,
-    CreateDirectProjectSerializer
+    CreateDirectProjectSerializer,
+    PatchProjectSerializer,
 )
 from .filters import BaseProjectFilter
 
@@ -58,6 +59,15 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
         serializer.save()
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
+
+    def patch(self, request, *args, **kwargs):
+        eoi = get_object_or_404(EOI, id=request.data.get("id"))
+        serializer = PatchProjectSerializer(eoi, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        return Response(serializer.data, status=statuses.HTTP_200_OK)
 
 
 class DirectProjectAPIView(BaseProjectAPIView):

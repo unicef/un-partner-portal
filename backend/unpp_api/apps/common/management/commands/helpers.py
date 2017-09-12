@@ -6,7 +6,6 @@ from common.consts import (
     EOI_TYPES,
     MEMBER_ROLES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
-    ACCEPTED_DECLINED,
     DIRECT_SELECTION_SOURCE,
     APPLICATION_STATUSES,
 )
@@ -24,7 +23,7 @@ from common.factories import (
     AgencyMemberFactory,
     EOIFactory,
 )
-from partner.models import Partner, PartnerMember, PartnerSelected
+from partner.models import Partner, PartnerMember
 from project.models import EOI, Application
 
 

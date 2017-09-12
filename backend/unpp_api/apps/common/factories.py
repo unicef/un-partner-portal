@@ -6,7 +6,7 @@ import factory
 from factory import fuzzy
 from account.models import User, UserProfile
 from agency.models import OtherAgency, Agency, AgencyOffice, AgencyMember
-from common.models import Sector, Specialization
+from common.models import Specialization
 from partner.models import (
     Partner,
     PartnerProfile,
