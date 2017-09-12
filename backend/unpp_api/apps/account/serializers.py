@@ -11,7 +11,7 @@ from partner.models import (
 from partner.serializers import (
     PartnerSerializer,
     PartnerProfileSerializer,
-    PartnerHeadOrganizationSerializer,
+    PartnerHeadOrganizationRegisterSerializer,
     PartnerMemberSerializer,
 )
 from .models import User
@@ -40,7 +40,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
     user = RegisterSimpleAccountSerializer()
     partner = PartnerSerializer()
     partner_profile = PartnerProfileSerializer()
-    partner_head_organization = PartnerHeadOrganizationSerializer()
+    partner_head_organization = PartnerHeadOrganizationRegisterSerializer()
     partner_member = PartnerMemberSerializer()
 
     @transaction.atomic
@@ -71,7 +71,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
             "partner": PartnerSerializer(instance=self.partner).data,
             "user": user_data,
             "partner_profile": PartnerProfileSerializer(instance=self.partner_profile).data,
-            "partner_head_organization": PartnerHeadOrganizationSerializer(self.partner_head_organization).data,
+            "partner_head_organization": PartnerHeadOrganizationRegisterSerializer(self.partner_head_organization).data,
             "partner_member": PartnerMemberSerializer(instance=self.partner_member).data,
         }
         return self.instance_json
