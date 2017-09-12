@@ -1,15 +1,20 @@
 import React from 'react';
 import Grid from 'material-ui/Grid';
 import { FormSection } from 'redux-form';
-
 import Typography from 'material-ui/Typography';
-import GridColumn from '../../common/grid/gridColumn';
-import GridRow from '../../common/grid/gridRow';
-import HeaderList from '../../common/list/headerList';
-import TextField from '../../forms/textFieldForm';
-import PaddedContent from '../../common/paddedContent';
-import { TitleField, FocalPoint, OtherInfo, Background, StartDate, EndDate, DeadlineDate, NotifyDate } from '../modals/commonFields';
-import projectHeader from './projectDetailsHeader';
+import GridColumn from '../../../common/grid/gridColumn';
+import GridRow from '../../../common/grid/gridRow';
+import HeaderList from '../../../common/list/headerList';
+import TextField from '../../../forms/textFieldForm';
+import PaddedContent from '../../../common/paddedContent';
+import { TitleField,
+  FocalPoint,
+  OtherInfo,
+  Background,
+  StartDate,
+  EndDate,
+  DeadlineDate,
+  NotifyDate } from '../../modals/commonFields';
 
 const messages = {
   title: 'Project Details',

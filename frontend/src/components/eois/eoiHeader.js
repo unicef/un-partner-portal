@@ -3,11 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
-import Tabs from 'material-ui/Tabs';
-import CustomTab from '../common/customTab';
 import NewCfeiModalButton from './modals/newCfeiModalButton';
 import HeaderNavigation from '../common/headerNavigation';
 
@@ -27,18 +23,12 @@ class CfeiHeader extends Component {
 
   updatePath() {
     const { tabs, params: { type } } = this.props;
-    if (!type) return history.push(`/cfei/${tabs[0].path}`);
-    const tab = tabs.find(itab => itab.path === type);
-    switch (type) {
-      case 'open':
-      case 'pinned':
-      case 'direct':
-      case 'unsolicited':
-        return tab.id;
-      // TODO: add proper 404
-      default:
-        return history.replace('/');
+    const index = tabs.findIndex(itab => itab.path === type);
+    if (index === -1) {
+      // TODO: do real 404
+      history.push('/');
     }
+    return index;
   }
 
   handleChange(event, index) {
@@ -63,7 +53,7 @@ class CfeiHeader extends Component {
           header={!id && type && role === 'agency' && <NewCfeiModalButton />}
           handleChange={this.handleChange}
         >
-          {children}
+          {(index !== -1) && children}
         </HeaderNavigation>
       </Grid>
     );
