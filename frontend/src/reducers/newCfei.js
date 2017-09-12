@@ -57,9 +57,7 @@ export const newCfeiFailure = () => ({ type: NEW_CFEI_FAILURE });
 
 export const addOpenCfei = (dispatch, body) => {
   dispatch(newCfeiSubmitting());
-  postOpenCfei(R.mergeWith(R.merge, body, mockData));
-  new Promise(resolve =>
-    setTimeout(resolve, 5000))
+  postOpenCfei(R.mergeWith(R.merge, body, mockData))
     .then(() => {
       dispatch(newCfeiSubmitted());
       dispatch(newCfeiProcessing());

@@ -14,13 +14,17 @@ import session from './reducers/session';
 import countries from './reducers/countries';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
+import cfeiDetails, * as cfeiDetailsSelector from './reducers/cfeiDetails';
+import cfeiDetailsNav, { selectItemsByType } from './reducers/cfeiDetailsNav';
+import agencyPartnersList from './reducers/agencyPartnersList';
 import population from './reducers/population';
 import hqProfileNav from './reducers/hqProfileNav';
-
 
 const mainReducer = combineReducers({
   cfei,
   cfeiNav,
+  cfeiDetails,
+  cfeiDetailsNav,
   newCfei,
   hqProfileNav,
   nav,
@@ -28,6 +32,7 @@ const mainReducer = combineReducers({
   countries,
   countryProfiles,
   partnerProfileEdit,
+  agencyPartnersList,
   form: formReducer,
   population,
   routing: routerReducer,
@@ -55,3 +60,11 @@ export const selectNormalizedCountries = state =>
 export const selectNormalizedPopulations = state =>
   mapValuesForSelectionField(state.population);
 
+export const selectCfeiDetailsItemsByType = (state, type) =>
+  selectItemsByType(state.cfeiDetailsNav, type);
+
+export const selectCfeiDetails = (state, id) =>
+  cfeiDetailsSelector.selectCfeiDetail(state.cfeiDetails, id);
+
+export const selectCfeiTitle = (state, id) =>
+  cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails, id);

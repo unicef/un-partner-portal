@@ -1,0 +1,80 @@
+unpp-backend:
+  autoredeploy: true
+  command: 'bash -c "/usr/local/bin/waitforit -host=unpp-db -port=5432 && python /code/manage.py migrate && python manage.py collectstatic --noinput && uwsgi --ini /code/django_api/uwsgi.ini"'
+  environment:
+    - DJANGO_ALLOWED_HOST=unpp.tivixlabs.com
+    - DJANGO_DEBUG=true
+    - EMAIL_HOST_PASSWORD=TBD
+    - EMAIL_HOST_USER=TBD
+    - ENV=dev
+    - POSTGRES_DB=postgres
+    - POSTGRES_HOST=prp-db
+    - POSTGRES_PASSWORD=
+    - POSTGRES_USER=postgres
+    - SECRET_KEY=ldsfskdljfsdf98483u4530495iofjweiosjfsdjfLKJSLDFJ09
+  expose:
+    - '8000'
+  image: 'tivix/unpp-backend:develop'
+  links:
+    - unpp-db
+  restart: on-failure
+  tags:
+    - unpp
+    - staging
+unpp-backend-fake-data:
+  autodestroy: on-success
+  command: 'bash -c "python /code/manage.py migrate && python manage.py generate_fake_data 2 --clean_before --fast && python /code/manage.py generate_reports_for_periods"'
+  environment:
+    - ENV=dev
+    - POSTGRES_DB=postgres
+    - POSTGRES_HOST=unpp-db
+    - POSTGRES_PASSWORD=
+    - POSTGRES_USER=postgres
+    - SECRET_KEY=ldsfskdljfsdf98483u4530495iofjweiosjfsdjfLKJSLDFJ09
+  image: 'tivix/unpp-backend:develop'
+  links:
+    - unpp-db
+  tags:
+    - unpp
+    - staging
+  target_num_containers: 0
+unpp-logger:
+  command: 'syslog+tls://logs6.papertrailapp.com:38074'
+  deployment_strategy: every_node
+  image: 'gliderlabs/logspout:latest'
+  restart: on-failure
+  tags:
+    - unpp
+    - staging
+  volumes:
+    - '/var/run/docker.sock:/var/run/docker.sock'
+unpp-frontend:
+  autoredeploy: true
+  command: npm run dev
+  expose:
+    - '8080'
+  image: 'tivix/unpp-frontend:develop'
+  restart: on-failure
+  tags:
+    - unpp
+    - staging
+unpp-proxy:
+  autoredeploy: true
+  environment:
+    - DJANGO_APPLICATION_SERVICE_HOST=unpp-backend
+  image: 'tivix/unpp-proxy:develop'
+  links:
+    - unpp-backend
+    - unpp-frontend
+  ports:
+    - '80:80'
+  restart: on-failure
+  tags:
+    - unpp
+    - staging
+unpp-db:
+  image: 'tivix/unpp-db:develop'
+  restart: on-failure
+  tags:
+    - unpp
+    - staging
