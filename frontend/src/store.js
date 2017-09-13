@@ -40,7 +40,10 @@ const mainReducer = combineReducers({
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
 // TODO(marcindo: disable devtools in prod
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+let composeEnhancers = compose;
+if (process.env.NODE_ENV !== 'production') {
+  composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || composeEnhancers;
+}
 
 export default createStore(
   mainReducer,
