@@ -1,5 +1,6 @@
 import React from 'react';
 import Grid from 'material-ui/Grid';
+import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import GridColumn from '../../common/grid/gridColumn';
@@ -9,11 +10,11 @@ import SelectionCriteria from './selectionCriteria';
 import InformedPartners from './informedPartners';
 
 const CfeiDetails = (props) => {
-  const {params:{id}} = props;
+  const { params: { id } } = props;
   return (
     <form >
       <GridColumn >
-        <Timeline />
+        <Timeline id={id} />
         <Grid container direction="row">
           <Grid item xs={12} sm={8}>
             <ProjectDetails />
@@ -28,6 +29,10 @@ const CfeiDetails = (props) => {
       </GridColumn>
     </form>
   );
+};
+
+CfeiDetails.propTypes = {
+  params: PropTypes.object,
 };
 
 const formCfeiDetails = reduxForm({
