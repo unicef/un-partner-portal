@@ -3,11 +3,10 @@ from __future__ import unicode_literals
 from decimal import Decimal
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-from model_utils.models import TimeStampedModel
 from .countries import COUNTRIES_ALPHA2_CODE
 
 
-class AdminLevel1(TimeStampedModel):
+class AdminLevel1(models.Model):
     """
     Admin level 1 - is like California in USA or Mazowieckie in Poland
     """
@@ -20,7 +19,7 @@ class AdminLevel1(TimeStampedModel):
         return "AdminLevel1 <pk:{}>".format(self.id)
 
 
-class Point(TimeStampedModel):
+class Point(models.Model):
     country_code = models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE)
     lat = models.DecimalField(
         verbose_name='Latitude',
@@ -47,7 +46,7 @@ class Point(TimeStampedModel):
         return "Point <pk:{}>".format(self.id)
 
 
-class Sector(TimeStampedModel):
+class Sector(models.Model):
     """
 
     """
@@ -60,7 +59,7 @@ class Sector(TimeStampedModel):
         return "Sector: {} <pk:{}>".format(self.name, self.id)
 
 
-class Specialization(TimeStampedModel):
+class Specialization(models.Model):
     """
 
     """

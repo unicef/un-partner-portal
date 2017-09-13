@@ -1,9 +1,27 @@
 from rest_framework import serializers
 
+from agency.serializers import OtherAgencySerializer
+from common.serializers import SpecializationSerializer
 from partner.models import (
     Partner,
     PartnerProfile,
-    PartnerSelected,
+    PartnerMailingAddress,
+    PartnerDirector,
+    PartnerAuthorisedOfficer,
+    PartnerHeadOrganization,
+    PartnerMandateMission,
+    PartnerExperience,
+    PartnerBudget,
+    PartnerFunding,
+    PartnerCollaborationPartnership,
+    PartnerCollaborationPartnershipOther,
+    PartnerCollaborationEvidence,
+    PartnerOtherInfo,
+    PartnerOtherDocument,
+    PartnerInternalControl,
+    PartnerPolicyArea,
+    PartnerAuditAssessment,
+    PartnerReporting,
     PartnerMember,
 )
 
@@ -38,22 +56,227 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
             'alias_name',
             'former_legal_name',
             'legal_name_change',
-            'org_head_first_name',
-            'org_head_last_name',
-            'org_head_email',
         )
 
 
-class PartnerSelectedSerializer(serializers.ModelSerializer):
-
-    partner = PartnerSerializer()
+class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = PartnerSelected
+        model = PartnerHeadOrganization
+        exclude = ('partner', )
+
+
+class PartnerFullSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Partner
+        fields = "__all__"
+
+
+class PartnerFullProfilesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerProfile
+        fields = "__all__"
+
+
+class OrganizationProfileSerializer(serializers.ModelSerializer):
+
+    country_profiles = PartnerSerializer(many=True)
+    users = serializers.IntegerField(source='partner_members.count')
+
+    class Meta:
+        model = Partner
         fields = (
             'id',
-            'partner',
-            'summary_justification',
-            'justification_for_direct_selection',
-            'status'
+            'legal_name',
+            'country_code',
+            'is_hq',
+            'country_profiles',
+            'country_presents',
+            'users',
+            'modified',
+        )
+
+
+class PartnerMailingAddressSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerMailingAddress
+        fields = "__all__"
+
+
+class PartnerHeadOrganizationRegisterSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerHeadOrganization
+        exclude = ("partner", )
+
+
+class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerHeadOrganization
+        fields = "__all__"
+
+
+class PartnerDirectorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerDirector
+        fields = "__all__"
+
+
+class PartnerAuthorisedOfficerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerAuthorisedOfficer
+        fields = "__all__"
+
+
+class PartnerMandateMissionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerMandateMission
+        fields = "__all__"
+
+
+class PartnerExperienceSerializer(serializers.ModelSerializer):
+
+    specialization = SpecializationSerializer()
+
+    class Meta:
+        model = PartnerExperience
+        fields = "__all__"
+
+
+class PartnerBudgetSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerBudget
+        fields = "__all__"
+
+
+class PartnerFundingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerFunding
+        fields = "__all__"
+
+
+class PartnerCollaborationPartnershipSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerCollaborationPartnership
+        fields = "__all__"
+
+
+class PartnerCollaborationPartnershipOtherSerializer(serializers.ModelSerializer):
+
+    other_agency = OtherAgencySerializer()
+
+    class Meta:
+        model = PartnerCollaborationPartnershipOther
+        fields = "__all__"
+
+
+class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerCollaborationEvidence
+        fields = "__all__"
+
+
+class PartnerOtherInfoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerOtherInfo
+        fields = "__all__"
+
+
+class PartnerOtherDocumentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerOtherDocument
+        fields = "__all__"
+
+
+class PartnerInternalControlSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerInternalControl
+        fields = "__all__"
+
+
+class PartnerPolicyAreaSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerPolicyArea
+        fields = "__all__"
+
+
+class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerAuditAssessment
+        fields = "__all__"
+
+
+class PartnerReportingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerReporting
+        fields = "__all__"
+
+
+class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
+    profile = PartnerFullProfilesSerializer()
+    mailing_address = PartnerMailingAddressSerializer()
+    directors = PartnerDirectorSerializer(many=True)
+    authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
+    org_head = PartnerHeadOrganizationSerializer()
+    mandate_mission = PartnerMandateMissionSerializer()
+    experiences = PartnerExperienceSerializer(many=True)
+    budgets = PartnerBudgetSerializer(many=True)
+    fund = PartnerFundingSerializer()
+    collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
+    collaborations_partnership_others = PartnerCollaborationPartnershipOtherSerializer(many=True)
+    collaboration_evidences = PartnerCollaborationEvidenceSerializer(many=True)
+    other_info = PartnerOtherInfoSerializer()
+    other_documents = PartnerOtherDocumentSerializer(many=True)
+    internal_controls = PartnerInternalControlSerializer(many=True)
+    area_policies = PartnerPolicyAreaSerializer(many=True)
+    audit = PartnerAuditAssessmentSerializer()
+    report = PartnerReportingSerializer()
+
+    class Meta:
+        model = Partner
+        fields = (
+            'legal_name',
+            'display_type',
+            'hq',
+            'country_code',
+            'is_active',
+            'registration_number',
+            'country_presents',
+            'staff_globally',
+
+            "profile",
+            "mailing_address",
+            "directors",
+            "authorised_officers",
+            "org_head",
+            "mandate_mission",
+            "experiences",
+            "budgets",
+            "fund",
+            "collaborations_partnership",
+            "collaborations_partnership_others",
+            "collaboration_evidences",
+            "other_info",
+            "other_documents",
+            "internal_controls",
+            "area_policies",
+            "audit",
+            "report",
         )

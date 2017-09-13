@@ -2,6 +2,29 @@ from rest_framework import serializers
 from .models import AdminLevel1, Point, Sector, Specialization
 
 
+class ShortSectorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Sector
+        fields = (
+            "id",
+            'name',
+        )
+
+
+class SpecializationSerializer(serializers.ModelSerializer):
+
+    category = ShortSectorSerializer()
+
+    class Meta:
+        model = Specialization
+        fields = (
+            'id',
+            'name',
+            'category'
+        )
+
+
 class SimpleSpecializationSerializer(serializers.ModelSerializer):
 
     class Meta:
