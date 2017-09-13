@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Typography from 'material-ui/Typography';
-import HeaderList from '../../common/list/headerList';
-import PaddedContent from '../../common/paddedContent';
+import HeaderList from '../../../common/list/headerList';
+import PaddedContent from '../../../common/paddedContent';
 
 const messages = {
   title: 'Selection Criteria',

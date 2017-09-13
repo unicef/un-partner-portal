@@ -1,14 +1,15 @@
 
 import React from 'react';
-import { Router, Route, browserHistory } from 'react-router';
+import { Router, Route, browserHistory, IndexRedirect } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import store from './store';
 import main from './components/main';
 import mainLayout from './components/layout/mainLayout';
 import eoiHeader from './components/eois/eoiHeader';
-import cfeiDetails from './components/eois/details/cfeiDetails';
+import cfeiOverview from './components/eois/details/overview/cfeiOverview';
 import cfeiContainer from './components/eois/cfeiContainer';
+import cfeiDetailsHeader from './components/eois/details/cfeiDetailsHeader';
 import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
 import organizationProfileEdit from './components/organizationProfile/edit/tabsContainer';
@@ -28,9 +29,20 @@ const allRoutes = () => (
       <Route path="/" component={mainLayout} >
         <Route path="dashboard" component={dashboard} />
         <Route path="cfei" component={eoiHeader} >
+          <IndexRedirect to="open" />
           <Route component={mainContent} >
             <Route path=":type" component={cfeiContainer} />
-            <Route path="open/:id" component={cfeiDetails} />
+          </Route>
+        </Route>
+        <Route path="cfei/:type/:id" component={cfeiDetailsHeader}>
+          <IndexRedirect to="overview" />
+          <Route component={mainContent} >
+            <Route path="overview" component={cfeiOverview} />
+            <Route path="feedback" component={null} />
+            <Route path="submission" component={null} />
+            <Route path="results" component={null} />
+            <Route path="preselected" component={null} />
+            <Route path="applications" component={null} />ł
           </Route>
         </Route>
         <Route path="partner" component={partnersContainer} />
