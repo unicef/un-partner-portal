@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import { FormSection } from 'redux-form';
 
 import Grid from 'material-ui/Grid';
@@ -38,35 +38,44 @@ const GROUP_VALUES = [
   },
 ];
 
-const PartnerProfileMandatePopulation = () => (
-  <FormSection name="populationOfConcern">
-    <Grid item>
-      <Grid container direction="column" gutter={16}>
-        <Grid item sm={6} xs={12}>
-          <RadioForm
-            fieldName="popOfConcernWork"
-            label="Does your organization work with populations of concern as defined by UNHCR"
-            values={BOOL_VAL}
-            optional
-            warn
-          />
-        </Grid>
-        <Grid item>
-          <SelectForm
-            fieldName="languages"
-            label="Please indicate which group(s)"
-            values={GROUP_VALUES}
-            selectFieldProps={{
-              multiple: true,
-            }}
-            optional
-            warn
-          />
+const PartnerProfileMandatePopulation = (props) => {
+  const { readOnly } = props;
+
+  return (
+    <FormSection name="populationOfConcern">
+      <Grid item>
+        <Grid container direction="column" gutter={16}>
+          <Grid item sm={6} xs={12}>
+            <RadioForm
+              fieldName="popOfConcernWork"
+              label="Does your organization work with populations of concern as defined by UNHCR"
+              values={BOOL_VAL}
+              optional
+              warn
+              readOnly={readOnly}
+            />
+          </Grid>
+          <Grid item>
+            <SelectForm
+              fieldName="languages"
+              label="Please indicate which group(s)"
+              values={GROUP_VALUES}
+              selectFieldProps={{
+                multiple: true,
+              }}
+              optional
+              warn
+              readOnly={readOnly}
+            />
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
-  </FormSection>
-);
+    </FormSection>
+  );
+};
 
+PartnerProfileMandatePopulation.propTypes = {
+  readOnly: PropTypes.bool,
+};
 
 export default PartnerProfileMandatePopulation;

@@ -36,7 +36,7 @@ const AUDIT_TYPES = [
 ];
 
 const PartnerProfileProjectImplementationAudit = (props) => {
-  const { hadCapacityAssessment } = props;
+  const { hadCapacityAssessment, readOnly } = props;
   return (
     <FormSection name="auditAssessment">
       <Grid item>
@@ -48,6 +48,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               values={BOOL_VAL}
               optional
               warn
+              readOnly={readOnly}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
@@ -60,6 +61,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               }}
               optional
               warn
+              readOnly={readOnly}
             />
           </Grid>
           <Grid item>
@@ -71,6 +73,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
                   values={AUDIT_TYPES}
                   optional
                   warn
+                  readOnly={readOnly}
                 />
               </Grid>
               <Grid item sm={6} xs={12}>
@@ -85,6 +88,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
                   }}
                   optional
                   warn
+                  readOnly={readOnly}
                 />
               </Grid>
             </Grid>
@@ -99,6 +103,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
                   values={BOOL_VAL}
                   optional
                   warn
+                  readOnly={readOnly}
                 />
               </Grid>
               <Grid item sm={6} xs={12}>
@@ -113,6 +118,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
                   }}
                   optional
                   warn
+                  readOnly={readOnly}
                 />
               </Grid>
             </Grid>
@@ -124,6 +130,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               values={BOOL_VAL}
               optional
               warn
+              readOnly={readOnly}
             />
           </Grid>
           {hadCapacityAssessment === 'yes' &&
@@ -132,6 +139,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               fieldName="formerLegalName"
               optional
               warn
+              readOnly={readOnly}
             />)}
           {hadCapacityAssessment === 'yes' &&
             (<TextFieldForm
@@ -139,6 +147,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               fieldName="formerLegalName"
               optional
               warn
+              readOnly={readOnly}
             />)}
         </Grid>
       </Grid>
@@ -151,6 +160,8 @@ PartnerProfileProjectImplementationAudit.propTypes = {
    * css classes
    */
   hadCapacityAssessment: PropTypes.bool,
+
+  readOnly: PropTypes.bool,
 };
 
 const selector = formValueSelector('registration');
@@ -159,5 +170,6 @@ const ConnectedPartnerProfileProjectImplementationAudit = connect(
     hadCapacityAssessment: selector(state, 'hadCapacityAssessment'),
   }),
 )(PartnerProfileProjectImplementationAudit);
+
 
 export default ConnectedPartnerProfileProjectImplementationAudit;

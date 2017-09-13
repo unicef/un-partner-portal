@@ -83,7 +83,13 @@ export const renderText = ({
   label,
   ...other
 }) => {
-  if (!input.value && optional) return null;
+  let value = input.value;
+  if (!value) value = '-';
+
+  let selected;
+  if (values) selected = R.filter(val => val.value === value, values);
+  if (selected && selected.length) value = selected[0].label;
+
   return (
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>
@@ -91,9 +97,7 @@ export const renderText = ({
         className={className}
         {...other}
       >
-        {values
-          ? R.values(R.filter(val => val.value === input.value, values))[0].label
-          : input.value}
+        {value}
       </Typography>
     </FormControl>
   );

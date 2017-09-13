@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormSection } from 'redux-form';
-
+import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { FormControl, FormLabel } from 'material-ui/Form';
 import Button from 'material-ui/Button';
@@ -31,8 +31,10 @@ const BOOL_VAL = [
   },
 ];
 
-const PartnerProfileCollaborationHistory = () => (
-  <FormSection name="history">
+const PartnerProfileCollaborationHistory = (props) => {
+  const { readOnly } = props;
+
+  return (<FormSection name="history">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>
@@ -49,6 +51,7 @@ const PartnerProfileCollaborationHistory = () => (
                         '(optional)'}
                         values={PARTNER_MENU}
                         optional
+                        readOnly={readOnly}
                       />
                     </Grid>
                   </Grid>
@@ -69,6 +72,7 @@ const PartnerProfileCollaborationHistory = () => (
                         },
                       }}
                       optional
+                      readOnly={readOnly}
                     />
                   </Grid>
                   <Grid item sm={6} xs={12}>
@@ -82,6 +86,7 @@ const PartnerProfileCollaborationHistory = () => (
                         },
                       }}
                       optional
+                      readOnly={readOnly}
                     />
                   </Grid>
                 </Grid>
@@ -107,7 +112,7 @@ const PartnerProfileCollaborationHistory = () => (
             selectFieldProps={{
               multiple: true,
             }}
-
+                        readOnly={readOnly}
           />
         </Grid>
         <Grid item sm={6} xs={12}>
@@ -118,6 +123,7 @@ const PartnerProfileCollaborationHistory = () => (
             values={BOOL_VAL}
             optional
             warn
+            readOnly={readOnly}
           />
         </Grid>
         <Grid item sm={6} xs={12}>
@@ -133,12 +139,17 @@ const PartnerProfileCollaborationHistory = () => (
             }}
             optional
             warn
+            readOnly={readOnly}
           />
         </Grid>
       </Grid>
     </Grid>
   </FormSection>
-);
+  );
+};
 
+PartnerProfileCollaborationHistory.propTypes = {
+  readOnly: PropTypes.bool,
+};
 
 export default PartnerProfileCollaborationHistory;

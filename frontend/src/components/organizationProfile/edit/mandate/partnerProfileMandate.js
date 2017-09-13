@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import PartnerProfileMandateBackground from './partnerProfileMandateBackground';
 import PartnerProfileMandateGovernance from './partnerProfileMandateGovernance';
 import PartnerProfileMandateEthics from './partnerProfileMandateEthics';
@@ -9,50 +9,57 @@ import PartnerProfileMandateCountryPresence from './partnerProfileMandateCountry
 import PartnerProfileMandateSecurity from './partnerProfileMandateSecurity';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 
-const STEPS = [
+const STEPS = readOnly => [
   {
-    component: <PartnerProfileMandateBackground />,
+    component: <PartnerProfileMandateBackground readOnly={readOnly} />,
     label: 'Background',
     name: 'background',
   },
   {
-    component: <PartnerProfileMandateGovernance />,
+    component: <PartnerProfileMandateGovernance readOnly={readOnly} />,
     label: 'Governance',
     name: 'governance',
   },
   {
-    component: <PartnerProfileMandateEthics />,
+    component: <PartnerProfileMandateEthics readOnly={readOnly} />,
     label: 'Ethics',
     name: 'ethics',
   },
   {
-    component: <PartnerProfileMandateExperience />,
+    component: <PartnerProfileMandateExperience readOnly={readOnly} />,
     label: 'Experience',
     name: 'experience',
   },
   {
-    component: <PartnerProfileMandatePopulation />,
+    component: <PartnerProfileMandatePopulation readOnly={readOnly} />,
     label: 'Population of Concern',
     name: 'populationOfConcern',
   },
   {
-    component: <PartnerProfileMandateCountryPresence />,
+    component: <PartnerProfileMandateCountryPresence readOnly={readOnly} />,
     label: 'Country Presence',
     name: 'countryPresence',
   },
   {
-    component: <PartnerProfileMandateSecurity />,
+    component: <PartnerProfileMandateSecurity readOnly={readOnly} />,
     label: 'Security',
     name: 'security',
   },
 ];
 
-const PartnerProfileMandate = () => (
-  <PartnerProfileStepperContainer
-    name="mandateMission"
-    steps={STEPS}
-  />
-);
+const PartnerProfileMandate = (props) => {
+  const { readOnly } = props;
 
+  return (<PartnerProfileStepperContainer
+    name="mandateMission"
+    readOnly={readOnly}
+    steps={STEPS(readOnly)}
+  />
+  );
+};
+
+PartnerProfileMandate.propTypes = {
+  readOnly: PropTypes.bool,
+};
 
 export default PartnerProfileMandate;

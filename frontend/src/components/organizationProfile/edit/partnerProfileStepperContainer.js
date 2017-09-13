@@ -33,11 +33,11 @@ class PartnerProfileIdentification extends Component {
   }
 
   render() {
-    const { name, onNextClick, steps, last } = this.props;
+    const { name, onNextClick, readOnly, steps, last } = this.props;
     return (
       <form onSubmit={onNextClick}>
         <FormSection name={name}>
-          <PartnerProfileStepper handleSubmit={onNextClick} steps={steps} last={last} />
+          <PartnerProfileStepper handleSubmit={onNextClick} steps={steps} last={last} readOnly={readOnly} />
         </FormSection>
       </form>
     );
@@ -57,6 +57,7 @@ PartnerProfileIdentification.propTypes = {
   isStepWarning: PropTypes.func,
   noStepWarning: PropTypes.func,
   last: PropTypes.bool,
+  readOnly: PropTypes.bool,
 };
 
 const mapState = state => ({

@@ -20,7 +20,7 @@ const BOOL_VAL = [
 
 
 const PartnerProfileContactInfoConnectivity = (props) => {
-  const { hasInternetAccess } = props;
+  const { hasInternetAccess, readOnly } = props;
   return (
     <FormSection name="connectivity">
       <Grid item>
@@ -33,6 +33,7 @@ const PartnerProfileContactInfoConnectivity = (props) => {
               values={BOOL_VAL}
               optional
               warn
+              readOnly={readOnly}
             />
           </Grid>
           {hasInternetAccess === 'no' && <Grid item >
@@ -47,6 +48,7 @@ const PartnerProfileContactInfoConnectivity = (props) => {
               }}
               optional
               warn
+              readOnly={readOnly}
             />
           </Grid>
           }
@@ -61,6 +63,7 @@ PartnerProfileContactInfoConnectivity.propTypes = {
    * value of legal name change field to determine if former legal name field have to be displayed
    */
   hasInternetAccess: PropTypes.bool,
+  readOnly: PropTypes.bool,
 };
 
 const selector = formValueSelector('partnerProfile');

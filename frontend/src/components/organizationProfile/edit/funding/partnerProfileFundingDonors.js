@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
-
+import PropTypes from 'prop-types';
 import SelectForm from '../../../forms/selectForm';
 
 const DONORS_MENU = [
@@ -19,8 +19,9 @@ const DONORS_MENU = [
   },
 ];
 
-const PartnerProfileFundingDonors = () => (
-  <FormSection name="majorDonors">
+const PartnerProfileFundingDonors = (props) => {
+  const { readOnly } = props;
+  return (<FormSection name="majorDonors">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>
@@ -33,11 +34,17 @@ const PartnerProfileFundingDonors = () => (
             }}
             optional
             warn
+            readOnly={readOnly}
           />
         </Grid>
       </Grid>
     </Grid>
   </FormSection>
-);
+  );
+};
+
+PartnerProfileFundingDonors.propTypes = {
+  readOnly: PropTypes.bool,
+};
 
 export default PartnerProfileFundingDonors;

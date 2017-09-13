@@ -28,13 +28,13 @@ const messages = {
     { label: 'Other Information', notComplete: false },
   ],
   sectionComponents: [
-    <PartnerProfileIdentification />,
-    <PartnerProfileContactInfo />,
-    <PartnerProfileMandate />,
-    <PartnerProfileFunding />,
-    <PartnerProfileCollaboration />,
-    <PartnerProfileProjectImplementation />,
-    <PartnerProfileOtherInfo />,
+    <PartnerProfileIdentification readOnly />,
+    <PartnerProfileContactInfo readOnly />,
+    <PartnerProfileMandate readOnly />,
+    <PartnerProfileFunding readOnly />,
+    <PartnerProfileCollaboration readOnly />,
+    <PartnerProfileProjectImplementation readOnly />,
+    <PartnerProfileOtherInfo readOnly />,
   ],
 };
 

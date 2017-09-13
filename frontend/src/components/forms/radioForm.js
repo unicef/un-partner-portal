@@ -7,7 +7,7 @@ import Grid from 'material-ui/Grid';
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControlLabel } from 'material-ui/Form';
 
-import { renderFormControl } from '../../helpers/formHelper';
+import { renderFormControl, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
 
@@ -44,36 +44,45 @@ class RadioForm extends Component {
       optional,
       validation,
       warn,
+      readOnly,
       ...other } = this.props;
     return (
       <Grid item>
-        <Field
-          name={fieldName}
-          component={renderFormControl}
-          validate={optional ? [] : [required].concat(validation || [])}
-          warn={warn ? [warning] : []}
-          {...other}
-        >
-          <FormLabel>{label}</FormLabel>
-          <RadioGroup
-            className={classes.formContainer}
-            selectedValue={this.state.selectedRadio}
-            onChange={this.handleChange}
+        {readOnly ?
+          <Field
+            name={fieldName}
+            component={renderText}
+            values={values}
+            optional={optional}
+            label={label}
+          />
+          : <Field
+            name={fieldName}
+            component={renderFormControl}
+            validate={optional ? [] : [required].concat(validation || [])}
+            warn={warn ? [warning] : []}
+            {...other}
           >
-            {values.map((value, index) => (
-              <FormControlLabel
-                key={index}
-                value={value.value}
-                control={<Radio classes={{
-                  root: classes.rootRadio,
-                  checked: classes.checkedRadio }}
-                />}
-                label={value.label}
-              />
-            ),
-            )}
-          </RadioGroup>
-        </Field>
+            <FormLabel>{label}</FormLabel>
+            <RadioGroup
+              className={classes.formContainer}
+              selectedValue={this.state.selectedRadio}
+              onChange={this.handleChange}
+            >
+              {values.map((value, index) => (
+                <FormControlLabel
+                  key={index}
+                  value={value.value}
+                  control={<Radio classes={{
+                    root: classes.rootRadio,
+                    checked: classes.checkedRadio }}
+                  />}
+                  label={value.label}
+                />
+              ),
+              )}
+            </RadioGroup>
+          </Field>}
       </Grid>
     );
   }
@@ -108,6 +117,10 @@ RadioForm.propTypes = {
    * validations passed to field
    */
   validation: PropTypes.arrayOf(PropTypes.func),
+  /**
+   * if form should be displayed in read only state
+   */
+  readOnly: PropTypes.bool,
   warn: PropTypes.bool,
 };
 export default withStyles(styleSheet)(RadioForm);

@@ -33,7 +33,7 @@ const YEAR_MENU = [
 ];
 
 const PartnerProfileIdentificationRegistration = (props) => {
-  const { isRegistered } = props;
+  const { isRegistered, readOnly } = props;
   return (
     <FormSection name="registration">
       <Grid item>
@@ -48,6 +48,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   values={YEAR_MENU}
                   optional
                   warn
+                  readOnly={readOnly}
                 />
               </Grid>
               <Grid item sm={4} xs={12}>
@@ -57,6 +58,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   values={BOOL_VAL}
                   optional
                   warn
+                  readOnly={readOnly}
                 />
               </Grid>
               <Grid item sm={4} xs={12}>
@@ -66,6 +68,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   fieldName="governingDocument"
                   optional
                   warn
+                  readOnly={readOnly}
                 />
               </Grid>
             </Grid>
@@ -77,6 +80,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
               values={BOOL_VAL}
               optional
               warn
+              readOnly={readOnly}
             />
           </Grid>
           {isRegistered === 'yes' &&
@@ -89,6 +93,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                     placeholder="Provide Date"
                     optional
                     warn
+                    readOnly={readOnly}
                   />
                 </Grid>
                 <Grid item sm={4} xs={12}>
@@ -98,6 +103,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                     fieldName="registrationNumber"
                     optional
                     warn
+                    readOnly={readOnly}
                   />
                 </Grid>
                 <Grid item sm={4} xs={12}>
@@ -107,6 +113,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                     fieldName="registrationDocument"
                     optional
                     warn
+                    readOnly={readOnly}
                   />
                 </Grid>
               </Grid>
@@ -119,6 +126,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                 fieldName="registrationExplanation"
                 optional
                 warn
+                readOnly={readOnly}
               />
             </Grid>
           }
@@ -133,6 +141,7 @@ PartnerProfileIdentificationRegistration.propTypes = {
    * value of legal name change field to determine if former legal name field have to be displayed
    */
   isRegistered: PropTypes.bool,
+  readOnly: PropTypes.bool,
 };
 
 const selector = formValueSelector('partnerProfile');
