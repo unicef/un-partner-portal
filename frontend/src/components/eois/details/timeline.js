@@ -1,6 +1,7 @@
 import React from 'react';
 import Typography from 'material-ui/Typography';
 import HeaderList from '../../common/list/headerList';
+import TimelineComponent from '../../common/timeline';
 
 const messages = {
   title: 'Timeline',
@@ -14,7 +15,7 @@ const Timeline = (props) => {
   return (
     <HeaderList
       header={title}
-      rows={['timeline']}
+      rows={[<TimelineComponent />]}
     />
   );
 };
