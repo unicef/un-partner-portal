@@ -32,6 +32,7 @@ from project.models import EOI
 from .consts import (
     PARTNER_TYPES,
     MEMBER_STATUSES,
+    MEMBER_ROLES,
     CONCERN_CHOICES,
     YEARS_OF_EXP_CHOICES,
     PARTNER_DONORS_CHOICES,
@@ -391,6 +392,7 @@ class PartnerMemberFactory(factory.django.DjangoModelFactory):
     partner = factory.LazyFunction(get_partner)
     title = factory.LazyFunction(get_job_title)
     status = MEMBER_STATUSES.active
+    role = MEMBER_ROLES.admin
 
     class Meta:
         model = PartnerMember

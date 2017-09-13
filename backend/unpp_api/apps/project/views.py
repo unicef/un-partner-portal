@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import OrderingFilter
@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from common.consts import EOI_TYPES
 from common.paginations import SmallPagination
-from common.permissions import IsAtLeastMemberReader
+from common.permissions import IsAtLeastMemberReader, IsAtLeastMemberEditor
 from partner.models import PartnerMember
 from .models import EOI, Pin
 from .serializers import (
@@ -60,14 +60,12 @@ class OpenProjectAPIView(BaseProjectAPIView):
         serializer.save()
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
-    def patch(self, request, *args, **kwargs):
-        eoi = get_object_or_404(EOI, id=request.data.get("id"))
-        serializer = PatchProjectSerializer(eoi, data=request.data, partial=True)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
 
-        serializer.save()
-        return Response(serializer.data, status=statuses.HTTP_200_OK)
+class UpdateProjectAPIView(UpdateAPIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = PatchProjectSerializer
+    queryset = EOI.objects.all()
 
 
 class DirectProjectAPIView(BaseProjectAPIView):
