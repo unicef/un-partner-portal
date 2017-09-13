@@ -37,6 +37,16 @@ class PartnerSerializer(serializers.ModelSerializer):
         )
 
 
+class PartnerShortSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Partner
+        fields = (
+            'id',
+            'legal_name',
+        )
+
+
 class PartnerMemberSerializer(serializers.ModelSerializer):
 
     class Meta:

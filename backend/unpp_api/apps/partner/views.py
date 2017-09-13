@@ -14,6 +14,7 @@ from .serializers import (
     OrganizationProfileDetailsSerializer,
     PartnersListSerializer,
     PartnersListItemSerializer,
+    PartnerShortSerializer
 )
 from .filters import PartnersListFilter
 from .models import (
@@ -47,6 +48,11 @@ class PartnersListAPIView(ListAPIView):
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
     filter_class = PartnersListFilter
+
+
+class PartnerShortListAPIView(ListAPIView):
+    queryset = Partner.objects.all()
+    serializer_class = PartnerShortSerializer
 
 
 class PartnersListItemAPIView(APIView):
