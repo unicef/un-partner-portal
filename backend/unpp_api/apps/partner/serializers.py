@@ -310,8 +310,18 @@ class PartnersListSerializer(serializers.ModelSerializer):
             values_list("agency__name", flat=True).distinct()
 
 
-class PartnersListItemSerializer(serializers.Serializer):
-    mailing = PartnerMailingAddressSerializer()
-    head_organization = PartnerHeadOrganizationSerializer()
-    working_languages = serializers.ListField()
+class PartnersListItemSerializer(serializers.ModelSerializer):
+    mailing_address = PartnerMailingAddressSerializer()
+    org_head = PartnerHeadOrganizationSerializer()
+    working_languages = serializers.ListField(source="profile.working_languages")
     experiences = PartnerExperienceSerializer(many=True)
+
+    class Meta:
+        model = Partner
+        fields = (
+            "id",
+            "mailing_address",
+            "org_head",
+            "working_languages",
+            "experiences",
+        )
