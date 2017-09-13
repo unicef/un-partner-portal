@@ -1,8 +1,10 @@
 import React from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
-import HeaderList from '../../common/list/headerList';
-import TimelineComponent from '../../common/timeline';
+import HeaderList from '../../../common/list/headerList';
+import TimelineComponent from '../../../common/timeline';
+
 
 const messages = {
   title: 'Timeline',
@@ -13,7 +15,7 @@ const title = () => (
 );
 
 const Timeline = (props) => {
-  const {id, deadline, start, posted, notif} = props;
+  const { deadline, start, posted, notif } = props;
   return (
     <HeaderList
       header={title}
@@ -25,6 +27,13 @@ const Timeline = (props) => {
       />]}
     />
   );
+};
+
+Timeline.propTypes = {
+  posted: PropTypes.string,
+  deadline: PropTypes.string,
+  notif: PropTypes.string,
+  start: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({

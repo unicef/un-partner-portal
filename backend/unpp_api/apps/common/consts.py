@@ -96,7 +96,8 @@ PARTNER_DONORS_CHOICES = Choices(
     ('Pri', 'private', 'Private companies and corporations'),
     ('Gov', 'gov', 'Government'),
     ('UNA', 'united_agency', 'United Nations Agency'),
-    ('Bil', 'bilateral', 'Bilateral Agency/Multilateral Agency/Development Banks'),
+    ('Bil', 'bilateral', 'Bilateral Agency/Multilateral'),
+    ('Age', 'agency', 'Agency/Development Banks'),
     ('NGO', 'non_gov', 'International Non Governmental Organizations'),
     ('Oth', 'other', 'Other'),
 )
@@ -132,6 +133,58 @@ FORMAL_CAPACITY_ASSESSMENT = Choices(
     ('UNH', 'unhcr', 'UNHCR procurement pre-qualification assessment'),
     ('DFI', 'dfid', 'DFID pre-grant due diligence assessment'),
     ('EUE', 'eu_echo', 'EU/ECHO Framework Partnership Agreement (FPA) assessment'),
+    ('Oth', 'other', 'Other formal capacity assessment'),
+)
+
+MAILING_TYPES = Choices(
+    ('Str', 'street', 'Street Address'),
+    ('POB', 'box', 'PO Box'),
+)
+
+YEARS_OF_EXP_CHOICES = Choices(
+    ('Y01', 'less_1', 'Less than 1 year'),
+    ('Y15', 'years15', '1-5 years'),
+    ('Y51', 'years510', '5-10 years'),
+    ('Y10', 'years10', '10+ years'),
+)
+
+CONCERN_CHOICES = Choices(
+    ('Ref', 'refugees', 'Refugees'),
+    ('Asy', 'asylum seekers', 'Asylum seekers'),
+    ('IDP', 'internally_displaced', 'Internally displaced persons'),
+    ('Sta', 'stateless', 'Stateless'),
+    ('Ret', 'returning', 'Returning'),
+    ('Hos', 'host', 'Host Country'),
+)
+
+STAFF_GLOBALLY_CHOICES = Choices(
+    ('005', 'to50', '1 to 50'),
+    ('010', 'to100', '51 to 100'),
+    ('020', 'to200', '101 to 200'),
+    ('050', 'to500', '201 to 500'),
+    ('100', 'to1000', '501 to 1000'),
+    ('500', 'to5000', '1001 to 5000'),
+    ('Mor', 'more5000', 'more than 5000'),
+)
+
+POLICY_AREA_CHOICES = Choices(
+    ('Hum', 'human', 'Human Resources'),
+    ('Pro', 'procurement', 'Procurement'),
+    ('Ass', 'asset', 'Asset and Inventory Management'),
+)
+
+ORG_AUDIT_CHOICES = Choices(
+    ('Int', 'internal', 'Internal audit'),
+    ('Fin', 'financial', 'Financial statement audit'),
+    ('Don', 'donor', 'Donor audit'),
+)
+
+AUDIT_ASSESMENT_CHOICES = Choices(
+    ('HAC', 'micro', 'HACT micro-assessment'),
+    ('OCH', 'ocha', 'OCHA CBPF (Country-Based Pooled Fund) capacity assessment'),
+    ('UNH', 'unhcr', 'UNHCR procurement pre-qualification assessment '),
+    ('DFI', 'dfid', 'DFID pre-grant due diligence assessment'),
+    ('EUE', 'euecho', 'EU/ECHO Framework Partnership Agreement (FPA) assessment'),
     ('Oth', 'other', 'Other formal capacity assessment'),
 )
 

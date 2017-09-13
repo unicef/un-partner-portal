@@ -64,6 +64,14 @@ const initialState = {
   13: mockData,
 };
 
+export function selectCfeiDetail(state, id) {
+  return state[id] ? state[id] : null;
+}
+
+export function selectCfeiTitle(state, id) {
+  return state[id] ? state[id].eoi.title : null;
+}
+
 export default function countriesReducer(state = initialState, action) {
   switch (action.type) {
     default:
