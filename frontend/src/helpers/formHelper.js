@@ -7,7 +7,6 @@ import DatePicker from 'material-ui-old/DatePicker';
 import { FormControl, FormHelperText, FormLabel } from 'material-ui/Form';
 import Typography from 'material-ui/Typography';
 
-
 export const renderFormControl = ({
   className,
   label,
@@ -80,7 +79,6 @@ export const renderText = ({
   values,
   optional,
   label,
-  date,
   ...other
 }) => {
   return (

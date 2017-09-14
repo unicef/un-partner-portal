@@ -6,7 +6,6 @@ import { FormControl, FormLabel } from 'material-ui/Form';
 import moment from 'moment';
 import { renderDatePicker, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
-import { normalizeDate, formatDateForPrint } from '../../helpers/dates';
 
 class DatePickerForm extends Component {
   constructor(props) {
@@ -39,7 +38,6 @@ class DatePickerForm extends Component {
               label={label}
               component={renderText}
               optional={optional}
-              date
             />
             : [<FormLabel>{label}</FormLabel>,
               <Field
@@ -52,8 +50,7 @@ class DatePickerForm extends Component {
                   if (value && value !== 'Invalid date') return new Date(`${value}T00:00:00.000Z`);
                   return value;
                 }}
-                formatDate={formatDateForPrint}
-                normalize={normalizeDate}
+                normalize={value => moment(value).format('YYYY-MM-DD').toString()}
                 textFieldStyle={{
                   width: '100%',
                   'line-height': null,
