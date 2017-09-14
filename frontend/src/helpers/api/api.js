@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const host = '/api';
-console.log(process.env)
 
 const authClient = axios.create({
   auth: {
