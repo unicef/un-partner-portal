@@ -94,7 +94,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['count'], self.quantity)
 
-    def test_create_project(self):
+    def test_create_patch_project(self):
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
         cn_template = open(filename).read()
         ao = AgencyOffice.objects.first()
@@ -144,6 +144,19 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
         self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
+
+        # invite partners
+        eoi_id = response.data['eoi']['id']
+        url = reverse('projects:eoi-detail', kwargs={"pk": eoi_id})
+        payload = {
+            "invited_partners": [
+                Partner.objects.first().id,
+            ]
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['id'], eoi_id)
+        self.assertTrue(Partner.objects.first().id in response.data['invited_partners'])
 
 
 class TestDirectProjectsAPITestCase(BaseAPITestCase):

@@ -37,6 +37,16 @@ class PartnerSerializer(serializers.ModelSerializer):
         )
 
 
+class PartnerShortSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Partner
+        fields = (
+            'id',
+            'legal_name',
+        )
+
+
 class PartnerMemberSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -57,13 +67,6 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
             'former_legal_name',
             'legal_name_change',
         )
-
-
-class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = PartnerHeadOrganization
-        exclude = ('partner', )
 
 
 class PartnerFullSerializer(serializers.ModelSerializer):
@@ -279,4 +282,46 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "area_policies",
             "audit",
             "report",
+        )
+
+
+class PartnersListSerializer(serializers.ModelSerializer):
+
+    acronym = serializers.SerializerMethodField()
+    experience_working = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Partner
+        fields = (
+            'id',
+            'legal_name',
+            'acronym',
+            'display_type',
+            'country_code',
+            'is_hq',
+            'experience_working',
+        )
+
+    def get_acronym(self, obj):
+        return obj.profile.acronym
+
+    def get_experience_working(self, obj):
+        return PartnerCollaborationPartnership.objects.filter(partner=obj).\
+            values_list("agency__name", flat=True).distinct()
+
+
+class PartnersListItemSerializer(serializers.ModelSerializer):
+    mailing_address = PartnerMailingAddressSerializer()
+    org_head = PartnerHeadOrganizationSerializer()
+    working_languages = serializers.ListField(source="profile.working_languages")
+    experiences = PartnerExperienceSerializer(many=True)
+
+    class Meta:
+        model = Partner
+        fields = (
+            "id",
+            "mailing_address",
+            "org_head",
+            "working_languages",
+            "experiences",
         )
