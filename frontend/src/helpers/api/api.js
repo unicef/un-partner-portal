@@ -23,7 +23,7 @@ function authorizedGet(uri, params = {}) {
 
 function post(uri, body = {}) {
   return axios.post(`${host}${uri}`, body)
-    .then(response => response.data)
+    .then(response => response.data);
 }
 
 function authorizedPost(uri, body = {}) {
@@ -51,6 +51,10 @@ export function getPinnedCfei() {
 
 export function getDirectCfei() {
   return authorizedGet('/projects/direct');
+}
+
+export function getPartnerProfileDetails(partnerId) {
+  return authorizedGet(`/partners/${partnerId}`);
 }
 
 export function postOpenCfei(body) {

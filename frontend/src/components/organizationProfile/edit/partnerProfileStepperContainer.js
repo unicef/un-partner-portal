@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router';
 import { reduxForm, FormSection, getFormSyncWarnings } from 'redux-form';
-
 import { connect } from 'react-redux';
+import { loadPartnerDetails } from '../../../reducers/partnerProfileDetails';
 import PartnerProfileStepper from './partnerProfileStepper';
 import { changeTabToNext,
   addIncompleteTab,
@@ -10,9 +11,11 @@ import { changeTabToNext,
   addIncompleteStep,
   removeIncompleteStep } from '../../../reducers/partnerProfileEdit';
 
-class PartnerProfileIdentification extends Component {
+class PartnerProfileStepperContainer extends Component {
   componentWillMount() {
     this.setState({ observedSteps: this.props.steps.map(step => step.name) });
+
+    this.props.loadPartnerProfileDetails();
   }
 
   componentWillUpdate(nextProps) {
@@ -34,17 +37,23 @@ class PartnerProfileIdentification extends Component {
 
   render() {
     const { name, onNextClick, readOnly, steps, last } = this.props;
+
     return (
       <form onSubmit={onNextClick}>
         <FormSection name={name}>
-          <PartnerProfileStepper handleSubmit={onNextClick} steps={steps} last={last} readOnly={readOnly} />
+          <PartnerProfileStepper
+            handleSubmit={onNextClick}
+            steps={steps}
+            last={last}
+            readOnly={readOnly}
+          />
         </FormSection>
       </form>
     );
   }
 }
 
-PartnerProfileIdentification.propTypes = {
+PartnerProfileStepperContainer.propTypes = {
   name: PropTypes.string,
   onNextClick: PropTypes.func,
   steps: PropTypes.arrayOf(PropTypes.objectOf({
@@ -58,28 +67,37 @@ PartnerProfileIdentification.propTypes = {
   noStepWarning: PropTypes.func,
   last: PropTypes.bool,
   readOnly: PropTypes.bool,
+  loadPartnerProfileDetails: PropTypes.func,
 };
 
 const mapState = state => ({
-  warnings: getFormSyncWarnings('partnerProfile')(state),
+  warnings: getFormSyncWarnings('PartnerProfileStepperContainer')(state),
 });
 
-const mapDispatch = dispatch => ({
-  isTabWarning: tabName => dispatch(addIncompleteTab(tabName)),
-  noTabWarning: tabName => dispatch(removeIncompleteTab(tabName)),
-  isStepWarning: stepName => dispatch(addIncompleteStep(stepName)),
-  noStepWarning: stepName => dispatch(removeIncompleteStep(stepName)),
-  onNextClick: () => dispatch(changeTabToNext()),
-});
+const mapDispatch = (dispatch, ownProps) => {
+  const { countryCode } = ownProps.params;
 
-const connectedPartnerProfileIdentification = connect(
+  return {
+    isTabWarning: tabName => dispatch(addIncompleteTab(tabName)),
+    noTabWarning: tabName => dispatch(removeIncompleteTab(tabName)),
+    isStepWarning: stepName => dispatch(addIncompleteStep(stepName)),
+    noStepWarning: stepName => dispatch(removeIncompleteStep(stepName)),
+    onNextClick: () => dispatch(changeTabToNext()),
+    loadPartnerProfileDetails: () => dispatch(loadPartnerDetails(countryCode)),
+  };
+};
+
+
+const connectedPartnerProfileStepper = connect(
   mapState,
   mapDispatch,
-)(PartnerProfileIdentification);
+)(PartnerProfileStepperContainer);
+
+const connectedPartnerProfileRouter = withRouter(connectedPartnerProfileStepper);
 
 export default reduxForm({
   form: 'partnerProfile', // a unique identifier for this form
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-})(connectedPartnerProfileIdentification);
+})(connectedPartnerProfileRouter);
 
