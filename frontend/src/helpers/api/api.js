@@ -1,16 +1,14 @@
 import axios from 'axios';
 
 const host = '/api';
-console.log(process)
 console.log(process.env)
-console.log(process.ENV)
+
 const authClient = axios.create({
   auth: {
-    username: 'admin',
-    password: 'Passw0rd!',
+    username: process.env.USERNAME,
+    password: process.env.PASSWORD,
   },
 });
-debugger
 // Internal help/generic functions
 
 function get(uri, params = {}) {
