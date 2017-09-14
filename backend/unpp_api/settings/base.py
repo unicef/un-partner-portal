@@ -51,7 +51,7 @@ STATICFILES_FINDERS = (
 )
 
 DEBUG = True
-IS_DEV = True
+IS_DEV = False
 IS_STAGING = False
 IS_PROD = False
 
