@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
-from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import OrderingFilter
@@ -61,7 +61,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
 
-class UpdateProjectAPIView(UpdateAPIView):
+class EOIAPIView(RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
     serializer_class = PatchProjectSerializer

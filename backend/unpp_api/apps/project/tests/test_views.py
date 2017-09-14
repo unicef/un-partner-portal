@@ -147,7 +147,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
 
         # invite partners
         eoi_id = response.data['eoi']['id']
-        url = reverse('projects:update', kwargs={"pk": eoi_id})
+        url = reverse('projects:eoi-detail', kwargs={"pk": eoi_id})
         payload = {
             "invited_partners": [
                 Partner.objects.first().id,
