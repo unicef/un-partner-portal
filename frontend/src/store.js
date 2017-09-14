@@ -14,7 +14,8 @@ import session from './reducers/session';
 import countries from './reducers/countries';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
-import cfeiDetails from './reducers/cfeiDetails';
+import cfeiDetails, * as cfeiDetailsSelector from './reducers/cfeiDetails';
+import cfeiDetailsNav, { selectItemsByType } from './reducers/cfeiDetailsNav';
 import agencyPartnersList from './reducers/agencyPartnersList';
 import population from './reducers/population';
 import hqProfileNav from './reducers/hqProfileNav';
@@ -25,6 +26,7 @@ const mainReducer = combineReducers({
   cfei,
   cfeiNav,
   cfeiDetails,
+  cfeiDetailsNav,
   newCfei,
   hqProfileNav,
   nav,
@@ -72,3 +74,12 @@ export const mapSpecializationsToSelection = (state, sectorId) =>
 
 export const selectSector = (state, id) =>
   sectorsSelectors.selectSector(state.sectors, id);
+
+export const selectCfeiDetailsItemsByType = (state, type) =>
+  selectItemsByType(state.cfeiDetailsNav, type);
+
+export const selectCfeiDetails = (state, id) =>
+  cfeiDetailsSelector.selectCfeiDetail(state.cfeiDetails, id);
+
+export const selectCfeiTitle = (state, id) =>
+  cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails, id);

@@ -30,10 +30,11 @@ const mockData = {
     country_code: 'PL',
     description: 'background',
     other_information: null,
-    start_date: '2017-09-05',
-    end_date: '2017-09-05',
-    deadline_date: '2017-09-05',
-    notif_results_date: '2017-09-05',
+    start_date: '2017-09-30',
+    end_date: '2017-09-17',
+    deadline_date: '2017-09-16',
+    posted_date: '2017-08-17',
+    notif_results_date: '2017-09-20',
     has_weighting: true,
     closed_justification: null,
     goal: 'Nothing',
@@ -79,6 +80,14 @@ const mockData = {
 const initialState = {
   13: mockData,
 };
+
+export function selectCfeiDetail(state, id) {
+  return state[id] ? state[id] : null;
+}
+
+export function selectCfeiTitle(state, id) {
+  return state[id] ? state[id].eoi.title : null;
+}
 
 export default function countriesReducer(state = initialState, action) {
   switch (action.type) {

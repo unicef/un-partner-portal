@@ -1,19 +1,20 @@
 import React from 'react';
 import Grid from 'material-ui/Grid';
+import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
-import GridColumn from '../../common/grid/gridColumn';
+import GridColumn from '../../../common/grid/gridColumn';
 import Timeline from './timeline';
 import ProjectDetails from './projectDetails';
 import SelectionCriteria from './selectionCriteria';
 import InformedPartners from './informedPartners';
 
-const CfeiDetails = (props) => {
-  const {params:{id}} = props;
+const CfeiOverview = (props) => {
+  const { params: { id } } = props;
   return (
     <form >
       <GridColumn >
-        <Timeline />
+        <Timeline id={id} />
         <Grid container direction="row">
           <Grid item xs={12} sm={8}>
             <ProjectDetails />
@@ -30,9 +31,13 @@ const CfeiDetails = (props) => {
   );
 };
 
+CfeiOverview.propTypes = {
+  params: PropTypes.object,
+};
+
 const formCfeiDetails = reduxForm({
   form: 'cfeiDetails',
-})(CfeiDetails);
+})(CfeiOverview);
 
 const mapStateToProps = (state, ownProps) => ({
   initialValues: state.cfeiDetails[ownProps.params.id],
