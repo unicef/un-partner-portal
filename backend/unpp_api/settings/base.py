@@ -60,6 +60,11 @@ ENV = os.getenv('ENV')
 if not ENV:
     raise Exception('Environment variable ENV is required!')
 
+# domains/hosts etc.
+DOMAIN_NAME = os.getenv('DJANGO_ALLOWED_HOST', 'localhost')
+WWW_ROOT = 'http://%s/' % DOMAIN_NAME
+ALLOWED_HOSTS = [DOMAIN_NAME]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
