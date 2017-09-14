@@ -9,10 +9,7 @@ import cfeiStatus, {
   LOAD_CFEI_SUCCESS,
 } from './cfeiStatus';
 import { selectSector } from '../store';
-
-export const OPEN = 'open';
-export const PINNED = 'pinned';
-export const DIRECT = 'direct';
+import { PROJECT_TYPES } from '../helpers/constants';
 
 const initialState = {
   open: [],
@@ -22,12 +19,12 @@ const initialState = {
 
 const getCfei = (project, filters) => {
   switch (project) {
-    case OPEN:
+    case PROJECT_TYPES.OPEN:
     default:
       return getOpenCfei(filters);
-    case PINNED:
+    case PROJECT_TYPES.PINNED:
       return getPinnedCfei(filters);
-    case DIRECT:
+    case PROJECT_TYPES.DIRECT:
       return getDirectCfei(filters);
   }
 };
@@ -65,12 +62,12 @@ const normalizeCfei = (cfeis, getState) =>
 const saveCfei = (state, action) => {
   const cfei = normalizeCfei(action.cfei, action.getState);
   switch (action.project) {
-    case OPEN:
-      return R.assoc(OPEN, cfei, state);
-    case PINNED:
-      return R.assoc(PINNED, cfei, state);
-    case DIRECT:
-      return R.assoc(DIRECT, cfei, state);
+    case PROJECT_TYPES.OPEN:
+      return R.assoc(PROJECT_TYPES.OPEN, cfei, state);
+    case PROJECT_TYPES.PINNED:
+      return R.assoc(PROJECT_TYPES.PINNED, cfei, state);
+    case PROJECT_TYPES.DIRECT:
+      return R.assoc(PROJECT_TYPES.DIRECT, cfei, state);
     default:
       return state;
   }

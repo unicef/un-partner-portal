@@ -48,6 +48,10 @@ const theme = {
       root: {
         width: '100%',
       },
+      padding: {
+        paddingTop: 0,
+        paddingBottom: 0,
+      },
     },
     MuiListItem: {
       default: {
@@ -107,6 +111,12 @@ const getTheme = () => (
         completed: '#5B92E5',
         closed: '#233944',
         open: '#72C300',
+      },
+      dateColors: {
+        dark: '#233944',
+        green: '#72C300',
+        red: '#EA4022',
+        blue: '#0099FF',
       },
     },
   }
