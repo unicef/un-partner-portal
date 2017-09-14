@@ -1,13 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import { LinearProgress } from 'material-ui/Progress';
 import SvgIcon from 'material-ui/SvgIcon';
 import Typography from 'material-ui/Typography';
 import className from 'classnames';
+import { formatDateForPrint } from '../../../helpers/dates';
 
-const styleSheet = createStyleSheet('DatePoint', (theme) => {
-  const circleSize = 12;
-  return {
+const styleSheet = createStyleSheet('DatePoint', (theme) => ({
     root: {
       display: 'flex',
       flexDirection: 'column',
@@ -44,17 +43,21 @@ const styleSheet = createStyleSheet('DatePoint', (theme) => {
     dark: {
       color: theme.palette.dateColors.dark,
     },
-  };
-});
+  }));
 
 const DatePoint = (props) => {
-  const { classes, label, date, type, colorClass, big, small, align, bold, color } = props;
+  const {
+    classes,
+    label,
+    date,
+    flexSize,
+    align,
+    bold,
+    color } = props;
   const mainClass = className(
     classes.root,
     classes[color],
     {
-      [classes.bigItem]: big,
-      [classes.smallItem]: small,
       [classes.left]: align === 'left',
       [classes.right]: align === 'right',
       [classes.center]: align === 'center',
@@ -67,14 +70,53 @@ const DatePoint = (props) => {
   if (align === 'left') viewBox = '0 -4 16 16';
   else if (align === 'right') viewBox = '-8 -4 16 16';
   return (
-    <div className={mainClass}>
-      <Typography type={fontType} align={align} className={classes.text}>{date}</Typography>
+    <div
+      className={mainClass}
+      style={{
+        'flex-basis': `${flexSize}%`,
+      }}
+    >
+      <Typography
+        type={fontType}
+        align={align}
+        className={classes.text}
+      >
+        {formatDateForPrint(date)}
+      </Typography>
       <SvgIcon className={classes.firstIcon} viewBox={viewBox}>
         <circle cx="4" cy="4" r="4" />
       </SvgIcon>
       <Typography type={fontType} align={align} className={classes.text}>{label}</Typography>
     </div>
   );
+};
+
+DatePoint.propTypes = {
+  classes: PropTypes.object,
+  /**
+   * label to be displayed below the point
+   */
+  label: PropTypes.string,
+  /**
+   * date to be displayed above the point
+   */
+  date: PropTypes.string,
+  /**
+   * size of the whole element flexbox (in %)
+   */
+  flexSize: PropTypes.number,
+  /**
+   * align of texts and dot, 
+   */
+  align: PropTypes.string,
+  /**
+   * if text should be bolded
+   */
+  bold: PropTypes.bool,
+  /**
+   * string for point color, supported are red, green, dark and blue
+   */
+  color: PropTypes.string,
 };
 
 

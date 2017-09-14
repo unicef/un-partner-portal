@@ -6,7 +6,7 @@ const FORMAT = 'YYYY-MM-DD';
 export const getToday = () => moment().format(FORMAT);
 
 export const dayDifference = (firstDate, secondDate) =>
-  moment.duration(firstDate, secondDate).days();
+  moment(firstDate).diff(secondDate, 'days');
 
 export const normalizeDate = date => moment(date).format(FORMAT).toString();
 
