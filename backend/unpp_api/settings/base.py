@@ -37,9 +37,9 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
 # static resources related. See documentation at: http://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/
 STATIC_URL = '/api/static/'
 STATIC_ROOT = '%s/staticserve' % BASE_DIR
-STATICFILES_DIRS = (
-    ('global', '%s/static' % PROJECT_ROOT),
-)
+# STATICFILES_DIRS = (
+#     ('global', '%s/static' % PROJECT_ROOT),
+# )
 
 # static serving
 STATICFILES_FINDERS = (
