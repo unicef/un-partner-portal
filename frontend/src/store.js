@@ -19,6 +19,7 @@ import cfeiDetailsNav, { selectItemsByType } from './reducers/cfeiDetailsNav';
 import agencyPartnersList from './reducers/agencyPartnersList';
 import population from './reducers/population';
 import hqProfileNav from './reducers/hqProfileNav';
+import sectors, * as sectorsSelectors from './reducers/sectors';
 
 const mainReducer = combineReducers({
   cfei,
@@ -36,6 +37,7 @@ const mainReducer = combineReducers({
   form: formReducer,
   population,
   routing: routerReducer,
+  sectors,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -60,9 +62,19 @@ const mapValuesForSelectionField = (state) => {
 
 export const selectNormalizedCountries = state =>
   mapValuesForSelectionField(state.countries);
+
 export const selectNormalizedPopulations = state =>
   mapValuesForSelectionField(state.population);
 
+export const mapSectorsToSelection = state =>
+  mapValuesForSelectionField(sectorsSelectors.selectAllSectors(state.sectors));
+
+export const mapSpecializationsToSelection = (state, sectorId) =>
+  mapValuesForSelectionField(
+    sectorsSelectors.selectSpecializationsForSector(state.sectors, sectorId));
+
+export const selectSector = (state, id) =>
+  sectorsSelectors.selectSector(state.sectors, id);
 export const selectCfeiDetailsItemsByType = (state, type) =>
   selectItemsByType(state.cfeiDetailsNav, type);
 
