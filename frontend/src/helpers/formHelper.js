@@ -96,8 +96,8 @@ export const renderText = ({
       >
         {(values && values.length)
           ? values.filter((val) => {
-            if (Array.isArray(input.value)) return input.value.includes(val.value);
-            return input.value === val.value;
+            if (Array.isArray(value)) return value.includes(val.value);
+            return value === val.value;
           })
             .map(matchedValue => matchedValue.label)
             .join(', ')

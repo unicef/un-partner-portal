@@ -4,6 +4,7 @@ import { Router, Route, browserHistory, IndexRedirect } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import store from './store';
+import main from './components/main';
 import mainLayout from './components/layout/mainLayout';
 import eoiHeader from './components/eois/eoiHeader';
 import openCfeiApplications from './components/eois/details/applications/openCfeiApplications';

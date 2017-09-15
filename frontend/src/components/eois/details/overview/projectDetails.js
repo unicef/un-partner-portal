@@ -3,6 +3,8 @@ import Grid from 'material-ui/Grid';
 import { FormSection } from 'redux-form';
 
 import Typography from 'material-ui/Typography';
+
+import SectorForm from '../../../forms/fields/projectFields/sectorField/sectorFieldArray';
 import GridColumn from '../../../common/grid/gridColumn';
 import GridRow from '../../../common/grid/gridRow';
 import HeaderList from '../../../common/list/headerList';
@@ -16,7 +18,6 @@ import { TitleField,
   EndDate,
   DeadlineDate,
   NotifyDate } from '../../modals/commonFields';
-import SectorForm from '../../forms/fields/projectFields/sectorField/sectorFieldArray';
 
 const messages = {
   title: 'Project Details',
