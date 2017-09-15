@@ -6,6 +6,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import getTheme from './styles/muiTheme';
 import store from './store';
 import Router from './routes';
+import Main from './components/main';
 
 injectTapEventPlugin();
 
@@ -17,7 +18,9 @@ class App extends Component {
       <Provider store={store}>
         <MuiThemeProvider theme={createMuiTheme(getTheme())}>
           <MuiThemeProviderLegacy>
-            <Router />
+            <Main>
+              <Router />
+            </Main>
           </MuiThemeProviderLegacy>
         </MuiThemeProvider>
 
