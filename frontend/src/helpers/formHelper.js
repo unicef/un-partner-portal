@@ -6,6 +6,8 @@ import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui-old/DatePicker';
 import { FormControl, FormHelperText, FormLabel } from 'material-ui/Form';
 import Typography from 'material-ui/Typography';
+import { formatDateForPrint } from './dates';
+
 
 export const renderFormControl = ({
   className,
@@ -79,8 +81,12 @@ export const renderText = ({
   values,
   optional,
   label,
+  date,
   ...other
 }) => {
+  let value = input.value;
+  if (!input.value && optional) return null;
+  if (date) value = formatDateForPrint(value);
   return (
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>
@@ -90,8 +96,8 @@ export const renderText = ({
       >
         {(values && values.length)
           ? values.filter((val) => {
-            if (Array.isArray(input.value)) return input.value.includes(val.value);
-            return input.value === val.value;
+            if (Array.isArray(value)) return value.includes(val.value);
+            return value === val.value;
           })
             .map(matchedValue => matchedValue.label)
             .join(', ')

@@ -33,7 +33,8 @@ class EOI(TimeStampedModel):
     focal_point = models.ForeignKey('account.User', related_name="expressions_of_interest_by_focal_point")
     locations = models.ManyToManyField('common.Point', related_name="expressions_of_interest")
     agency_office = models.ForeignKey('agency.AgencyOffice', related_name="expressions_of_interest")
-    cn_template = models.FileField(null=True, blank=True)  # or take it from agency or agency office
+    # always be taken from the agency; we always keep their base template of the one they used.
+    cn_template = models.FileField(null=True, blank=True)
     specializations = models.ManyToManyField('common.Specialization', related_name="expressions_of_interest")
     # TODO: intended_pop_of_concern = Selection. Should have in help text only for UNHCR. TODO on select options
     description = models.CharField(max_length=200, verbose_name='Brief background of the project')

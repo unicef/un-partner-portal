@@ -17,7 +17,6 @@ const AreaField = (props) => {
         disabled,
       }}
       {...other}
-
     />
   );
 };

@@ -4,8 +4,8 @@ from django.db import transaction
 from rest_framework import serializers
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES
-from common.serializers import ConfigSectorSerializer, SimpleSpecializationSerializer, PointSerializer
-from common.models import Sector, Point, AdminLevel1
+from common.serializers import SimpleSpecializationSerializer, PointSerializer
+from common.models import Point, AdminLevel1
 from .models import EOI, Application, AssessmentCriteria
 
 
@@ -158,3 +158,10 @@ class CreateProjectSerializer(serializers.Serializer):
             'eoi': eoi,
             'assessment_criterias': created_ac,
         }
+
+
+class PatchProjectSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = EOI
+        fields = "__all__"
