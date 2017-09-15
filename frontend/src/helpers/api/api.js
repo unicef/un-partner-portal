@@ -1,10 +1,11 @@
 import axios from 'axios';
 
 const host = '/api';
+
 const authClient = axios.create({
   auth: {
-    username: 'admin',
-    password: 'Passw0rd!',
+    username: process.env.USERNAME,
+    password: process.env.PASSWORD,
   },
 });
 // Internal help/generic functions
