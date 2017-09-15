@@ -41,6 +41,8 @@ services:
 
   frontend:
     image: unicef/unpp-frontend
+    env_file:
+      - .env
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
