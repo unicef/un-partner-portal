@@ -9,14 +9,14 @@ from django.conf import settings
 from rest_framework import status as statuses
 
 from account.models import User
-from agency.models import AgencyOffice
+from agency.models import AgencyOffice, AgencyMember
 from project.models import Application, EOI, Pin
-from partner.models import Partner
+from partner.models import Partner, PartnerMember
 from common.tests.base import BaseAPITestCase
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.factories import EOIFactory, AgencyMemberFactory, PartnerSimpleFactory
 from common.models import Specialization
-from common.consts import SELECTION_CRITERIA_CHOICES, SCALE_TYPES, JUSTIFICATION_FOR_DIRECT_SELECTION
+from common.consts import SELECTION_CRITERIA_CHOICES, SCALE_TYPES, JUSTIFICATION_FOR_DIRECT_SELECTION, MEMBER_ROLES
 from project.views import PinProjectAPIView
 
 
@@ -223,19 +223,19 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         self.assertEquals(app.submitter, self.user)
 
 
-class TestApplicationsAPITestCase(BaseAPITestCase):
+class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
 
     quantity = 1
 
     def setUp(self):
-        super(TestApplicationsAPITestCase, self).setUp()
+        super(TestPartnerApplicationsAPITestCase, self).setUp()
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
         PartnerSimpleFactory.create_batch(1)
 
     def test_create(self):
         eoi_id = EOI.objects.first().id
-        url = reverse('projects:applications', kwargs={"pk": eoi_id})
+        url = reverse('projects:partner-applications', kwargs={"pk": eoi_id})
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
         with open(filename) as cn_template:
             payload = {
@@ -260,11 +260,36 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         expected_msgs = ['The fields eoi, partner must make a unique set.']
         self.assertEquals(response.data['non_field_errors'], expected_msgs)
 
+        url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
         payload = {
             "partner": Partner.objects.last().id,
             "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
             "ds_justification_reason": "a good reason",
+        }
+        response = self.client.post(url, data=payload, format='json')
 
+        expected_msgs = 'You do not have permission to perform this action.'
+        self.assertEquals(response.data['detail'], expected_msgs)
+
+
+class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
+
+    quantity = 1
+    user_type = 'agency'
+    user_role = MEMBER_ROLES.editor
+
+    def setUp(self):
+        super(TestAgencyApplicationsAPITestCase, self).setUp()
+        EOIFactory.create_batch(self.quantity)
+
+    def test_create(self):
+        eoi_id = EOI.objects.first().id
+        url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
+
+        payload = {
+            "partner": Partner.objects.last().id,
+            "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+            "ds_justification_reason": "a good reason",
         }
         response = self.client.post(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))

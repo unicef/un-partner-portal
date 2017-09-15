@@ -49,7 +49,7 @@ class DirectProjectSerializer(BaseProjectSerializer):
             'title',
             'created',
             'country_code',
-            'sectors',
+            'specializations',
             'agency',
             'start_date',
             'end_date',
@@ -110,7 +110,6 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         specializations = validated_data['eoi']['specializations']
         del validated_data['eoi']['specializations']
 
-        validated_data['eoi']['cn_template'] = validated_data['eoi']['agency'].profile.eoi_template
         eoi = EOI.objects.create(**validated_data['eoi'])
         for location in locations:
             location['admin_level_1'], created = AdminLevel1.objects.get_or_create(**location['admin_level_1'])

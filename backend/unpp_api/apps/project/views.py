@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from common.consts import EOI_TYPES
 from common.paginations import SmallPagination
-from common.permissions import IsAtLeastMemberReader, IsAtLeastMemberEditor
+from common.permissions import IsAtLeastMemberReader, IsAtLeastMemberEditor, IsAtLeastAgencyMemberEditor
 from partner.models import PartnerMember
 from .models import Application, EOI, Pin
 from .serializers import (
@@ -137,19 +137,28 @@ class PinProjectAPIView(BaseProjectAPIView):
             )
 
 
-class ApplicationsAPIView(CreateAPIView):
+class ApplicationsPartnerAPIView(CreateAPIView):
     """
-    Create Application for open EOI.
+    Create Application for open EOI by partner.
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
     def create(self, request, pk, *args, **kwargs):
         request.data['eoi'] = pk
         request.data['submitter'] = request.user.id
-        if request.data.get('ds_justification_select') is not None and \
-                request.data.get('ds_justification_reason') is not None:
-            request.data['did_win'] = True
-            self.serializer_class = CreateDirectApplicationNoCNSerializer
-        return super(ApplicationsAPIView, self).create(request, *args, **kwargs)
+        return super(ApplicationsPartnerAPIView, self).create(request, *args, **kwargs)
+
+
+class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
+    """
+    Create Application for open EOI by agency.
+    """
+    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+    queryset = Application.objects.all()
+    serializer_class = CreateDirectApplicationNoCNSerializer
+
+    def create(self, request, pk, *args, **kwargs):
+        request.data['did_win'] = True
+        return super(ApplicationsAgencyAPIView, self).create(request, pk, *args, **kwargs)
