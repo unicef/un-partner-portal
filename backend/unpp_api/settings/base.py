@@ -7,8 +7,9 @@ import sys
 # Change per project
 ####
 PROJECT_NAME = 'unpp_api'
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = '/data'
+# project root and add "apps" to the path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 
 ####
 # Other settings
@@ -24,19 +25,18 @@ SECRET_KEY = '7mtv%enh%j6v23jl*y2kf!@@@=uj1x1e2yb^dpkr3l83s&amp;_7+_'
 DEFAULT_CHARSET = 'utf-8'
 ROOT_URLCONF = 'unpp_api.urls'
 
-# project root and add "apps" to the path
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
+DATA_VOLUME = '/data'
 
 UPLOADS_DIR_NAME = 'uploads'
-MEDIA_URL = '/api/%s/' % UPLOADS_DIR_NAME
-MEDIA_ROOT = os.path.join(BASE_DIR, '%s' % UPLOADS_DIR_NAME)
+MEDIA_URL = '/%s/' % UPLOADS_DIR_NAME
+MEDIA_ROOT = os.path.join(DATA_VOLUME, '%s' % UPLOADS_DIR_NAME)
+
 FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
 
 
 # static resources related. See documentation at: http://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/
 STATIC_URL = '/api/static/'
-STATIC_ROOT = '%s/staticserve' % BASE_DIR
+STATIC_ROOT = '%s/staticserve' % DATA_VOLUME
 # STATICFILES_DIRS = (
 #     ('global', '%s/static' % PROJECT_ROOT),
 # )
@@ -116,7 +116,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'django_filters',
-    'compressor',
+    # 'compressor',
     'django_common',
 
     'common',
@@ -137,18 +137,18 @@ AUTHENTICATION_BACKENDS = [
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc {infile} {outfile}'),
-)
-
-COMPRESS_CSS_FILTERS = [
-    # css minimizer
-    'compressor.filters.cssmin.CSSMinFilter',
-    'compressor.filters.css_default.CssAbsoluteFilter'
-]
-COMPRESS_JS_FILTERS = [
-    'compressor.filters.jsmin.JSMinFilter'
-]
+# COMPRESS_PRECOMPILERS = (
+#     ('text/less', 'lessc {infile} {outfile}'),
+# )
+#
+# COMPRESS_CSS_FILTERS = [
+#     # css minimizer
+#     'compressor.filters.cssmin.CSSMinFilter',
+#     'compressor.filters.css_default.CssAbsoluteFilter'
+# ]
+# COMPRESS_JS_FILTERS = [
+#     'compressor.filters.jsmin.JSMinFilter'
+# ]
 
 USERSWITCH_OPTIONS = {
     'auth_backend':
@@ -165,7 +165,7 @@ def extend_list_avoid_repeats(list_to_extend, extend_with):
     list_to_extend.extend(filter(lambda x: not list_to_extend.count(x), extend_with))
 
 
-LOGS_PATH = os.path.join(BASE_DIR, PROJECT_NAME, 'logs')
+LOGS_PATH = os.path.join(PROJECT_ROOT, PROJECT_NAME, 'logs')
 
 LOGGING = {
     'version': 1,
