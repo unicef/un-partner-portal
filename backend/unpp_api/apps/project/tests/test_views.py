@@ -217,6 +217,10 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
         self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
+        app = Application.objects.get(pk=response.data['applications'][0]['id'])
+        self.assertEquals(app.submitter, self.user)
+        app = Application.objects.get(pk=response.data['applications'][1]['id'])
+        self.assertEquals(app.submitter, self.user)
 
 
 class TestApplicationsAPITestCase(BaseAPITestCase):
@@ -227,6 +231,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         super(TestApplicationsAPITestCase, self).setUp()
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
+        PartnerSimpleFactory.create_batch(1)
 
     def test_create(self):
         eoi_id = EOI.objects.first().id
@@ -254,3 +259,13 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertFalse(statuses.is_success(response.status_code))
         expected_msgs = ['The fields eoi, partner must make a unique set.']
         self.assertEquals(response.data['non_field_errors'], expected_msgs)
+
+        payload = {
+            "partner": Partner.objects.last().id,
+            "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+            "ds_justification_reason": "a good reason",
+
+        }
+        response = self.client.post(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['id'], Application.objects.last().id)
