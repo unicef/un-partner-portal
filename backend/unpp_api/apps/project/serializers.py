@@ -129,7 +129,7 @@ class CreateDirectProjectSerializer(serializers.Serializer):
                 did_win=True,
                 did_accept=False,
                 ds_justification_select=app['ds_justification_select'],
-                ds_justification_reason=app['ds_justification_reason'],
+                justification_reason=app['justification_reason'],
             )
             apps.append(_app)
         return {

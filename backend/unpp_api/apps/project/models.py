@@ -95,7 +95,7 @@ class Application(TimeStampedModel):
     # These two (ds_justification_*) will be used as direct selection will create applications for DS EOIs.
     ds_justification_select = models.CharField(
         max_length=3, choices=JUSTIFICATION_FOR_DIRECT_SELECTION, null=True, blank=True)  # if direct select
-    ds_justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
+    justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
 
     class Meta:
         ordering = ['id']

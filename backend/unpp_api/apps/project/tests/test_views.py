@@ -202,12 +202,12 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
                 {
                     "partner": Partner.objects.first().id,
                     "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
-                    "ds_justification_reason": "To save those we love."
+                    "justification_reason": "To save those we love."
                 },
                 {
                     "partner": Partner.objects.last().id,
                     "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.local,
-                    "ds_justification_reason": "To save those we love."
+                    "justification_reason": "To save those we love."
                 }
             ]
         }
@@ -264,7 +264,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         payload = {
             "partner": Partner.objects.last().id,
             "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
-            "ds_justification_reason": "a good reason",
+            "justification_reason": "a good reason",
         }
         response = self.client.post(url, data=payload, format='json')
 
@@ -289,7 +289,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         payload = {
             "partner": Partner.objects.last().id,
             "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
-            "ds_justification_reason": "a good reason",
+            "justification_reason": "a good reason",
         }
         response = self.client.post(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))

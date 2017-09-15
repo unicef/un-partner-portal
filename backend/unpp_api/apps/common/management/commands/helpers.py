@@ -79,7 +79,7 @@ def generate_fake_data(quantity=4):
             did_win=True,
             did_accept=False,
             ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.known,
-            ds_justification_reason="They are the best!",
+            justification_reason="They are the best!",
         )
         eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
         eoi.save()
