@@ -2,6 +2,7 @@ import R from 'ramda';
 import { postOpenCfei } from '../helpers/api/api';
 import { mergeListsFromObjectArray } from './normalizationHelpers';
 import { loadCfei, OPEN } from './cfei';
+import { PROJECT_TYPES } from '../helpers/constants';
 
 export const NEW_CFEI_SUBMITTING = 'NEW_CFEI_SUBMITTING';
 export const NEW_CFEI_SUBMITTED = 'NEW_CFEI_SUBMITTED';
@@ -70,7 +71,7 @@ export const addOpenCfei = body => (dispatch) => {
     .then(() => {
       dispatch(newCfeiSubmitted());
       dispatch(newCfeiProcessing());
-      dispatch(loadCfei(OPEN));
+      dispatch(loadCfei(PROJECT_TYPES.OPEN));
     })
     .catch((error) => {
       dispatch(newCfeiSubmitted());
