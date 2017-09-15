@@ -21,6 +21,7 @@ from .serializers import (
     CreateDirectProjectSerializer,
     PatchProjectSerializer,
     ApplicationFullSerializer,
+    CreateDirectApplicationNoCNSerializer,
 )
 from .filters import BaseProjectFilter
 
@@ -147,4 +148,8 @@ class ApplicationsAPIView(CreateAPIView):
     def create(self, request, pk, *args, **kwargs):
         request.data['eoi'] = pk
         request.data['submitter'] = request.user.id
+        if request.data.get('ds_justification_select') is not None and \
+                request.data.get('ds_justification_reason') is not None:
+            request.data['did_win'] = True
+            self.serializer_class = CreateDirectApplicationNoCNSerializer
         return super(ApplicationsAPIView, self).create(request, *args, **kwargs)

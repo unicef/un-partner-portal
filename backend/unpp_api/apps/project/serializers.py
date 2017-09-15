@@ -84,6 +84,13 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
         exclude = ("cn", "eoi", "submitter")
 
 
+class CreateDirectApplicationNoCNSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Application
+        exclude = ("cn", )
+
+
 class ApplicationFullSerializer(serializers.ModelSerializer):
 
     class Meta:
