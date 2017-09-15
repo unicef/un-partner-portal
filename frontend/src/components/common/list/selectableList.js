@@ -3,7 +3,11 @@ import { withStyles, createStyleSheet } from 'material-ui/styles';
 import { PagingState, LocalPaging, RowDetailState, SelectionState } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
 import { Grid, TableView, TableHeaderRow, TableRowDetail, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
+import SelectedHeader from './selectedHeader';
+import TableTemplate from './tableTemplate';
+
 
 const table = {
   allowedPageSizes: [5, 10, 15, 0],
@@ -22,26 +26,44 @@ const styleSheet = createStyleSheet('HeaderList', (theme) => {
 });
 
 class PaginatedList extends Component {
-  static navigationHeader(classes) {
-    return (<div className={classes.container}><Typography type="title">
-          1-10 of 12 results to show
-    </Typography></div>);
+  static navigationHeader(classes, numSelected) {
+    return (<div>
+      {numSelected > 0
+        ? <SelectedHeader numSelected={numSelected} >
+          <Button color='inherit'> Check </Button>
+        </SelectedHeader>
+        : <div className={classes.container}>
+          <Typography type="title">
+            1-10 of 12 results to show
+          </Typography>
+        </div>
+      }
+    </div>);
   }
 
   constructor(props) {
     super(props);
-
+    this.state = {
+      selected: [],
+    };
+    this.handleSelect = this.handleSelect.bind(this);
     this.changeExpandedDetails = expandedRows => this.setState({ expandedRows });
+  }
+
+  handleSelect(newSelected) {
+    return this.setState({ selected: newSelected });
   }
 
   render() {
     const { classes, items, columns, templateCell,
       onCurrentPageChange, onPageSizeChange } = this.props;
+    const { selected } = this.state;
+    console.log(selected)
     return (
       <Grid
         rows={items}
         columns={columns}
-        headerPlaceholderTemplate={() => PaginatedList.navigationHeader(classes)}
+        headerPlaceholderTemplate={() => PaginatedList.navigationHeader(classes, selected.length)}
       >
         <PagingState
           defaultCurrentPage={0}
@@ -51,12 +73,19 @@ class PaginatedList extends Component {
         />
         <LocalPaging />
 
-        <SelectionState />
+        <SelectionState
+          selection={selected}
+          onSelectionChange={this.handleSelect}
+        />
         <TableView
+          tableTemplate={TableTemplate}
           tableCellTemplate={({ row, column, style }) =>
             templateCell(row, column, style)}
         />
-        <TableSelection />
+        <TableSelection
+          selectionColumnWidth={50}
+          highlightSelected
+        />
         <TableHeaderRow />
 
         <PagingPanel allowedPageSizes={table.allowedPageSizes} />

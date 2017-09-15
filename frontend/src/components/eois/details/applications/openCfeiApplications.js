@@ -5,7 +5,7 @@ import Grid from 'material-ui/Grid';
 import { TableCell } from 'material-ui/Table';
 import PartnerFilter from '../../../partners/partnerFilter';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
-import PaginatedList from '../../../common/list/paginatedList';
+import SelectableList from '../../../common/list/selectableList';
 import GridColumn from '../../../common/grid/gridColumn';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
@@ -46,7 +46,7 @@ class PartnersContainer extends Component {
       <div>
         <GridColumn gutter={24}>
           <PartnerFilter />
-          <PaginatedList
+          <SelectableList
             items={applications}
             columns={columns}
             templateCell={(row, column, style) => partnerCell(row, column, style)}
