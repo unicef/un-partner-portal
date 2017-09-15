@@ -77,17 +77,24 @@ class CreateDirectEOISerializer(serializers.ModelSerializer):
         exclude = ('cn_template', 'deadline_date')
 
 
-class ApplicationSerializer(serializers.ModelSerializer):
+class CreateDirectApplicationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Application
-        exclude = ("cn", )
+        exclude = ("cn", "eoi", "submitter")
+
+
+class ApplicationFullSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Application
+        fields = '__all__'
 
 
 class CreateDirectProjectSerializer(serializers.Serializer):
 
     eoi = CreateDirectEOISerializer()
-    applications = ApplicationSerializer(many=True)
+    applications = CreateDirectApplicationSerializer(many=True)
 
     @transaction.atomic
     def create(self, validated_data):
@@ -96,6 +103,7 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         specializations = validated_data['eoi']['specializations']
         del validated_data['eoi']['specializations']
 
+        validated_data['eoi']['cn_template'] = validated_data['eoi']['agency'].profile.eoi_template
         eoi = EOI.objects.create(**validated_data['eoi'])
         for location in locations:
             location['admin_level_1'], created = AdminLevel1.objects.get_or_create(**location['admin_level_1'])
@@ -110,8 +118,7 @@ class CreateDirectProjectSerializer(serializers.Serializer):
             _app = Application.objects.create(
                 partner=app['partner'],
                 eoi=eoi,
-                submitter=app['submitter'],
-                agency=eoi.agency,
+                submitter=validated_data['eoi']['created_by'],
                 status=APPLICATION_STATUSES.pending,
                 did_win=True,
                 did_accept=False,
@@ -139,6 +146,7 @@ class CreateProjectSerializer(serializers.Serializer):
         assessment_criterias = validated_data['assessment_criterias']
         del validated_data['assessment_criterias']
 
+        validated_data['eoi']['cn_template'] = validated_data['eoi']['agency'].profile.eoi_template
         eoi = EOI.objects.create(**validated_data['eoi'])
 
         for location in locations:

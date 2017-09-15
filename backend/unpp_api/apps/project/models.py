@@ -88,7 +88,6 @@ class Application(TimeStampedModel):
     partner = models.ForeignKey('partner.Partner', related_name="applications")
     eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
     submitter = models.ForeignKey('account.User', related_name="applications")
-    agency = models.ForeignKey('agency.Agency', related_name="applications", null=True, blank=True)
     cn = models.FileField()
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
@@ -96,10 +95,11 @@ class Application(TimeStampedModel):
     # These two (ds_justification_*) will be used as direct selection will create applications for DS EOIs.
     ds_justification_select = models.CharField(
         max_length=3, choices=JUSTIFICATION_FOR_DIRECT_SELECTION, null=True, blank=True)  # if direct select
-    ds_justification_reason = models.TextField()  # reason why we choose winner
+    ds_justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
 
     class Meta:
         ordering = ['id']
+        unique_together = (("eoi", "partner"), )
 
     def __str__(self):
         return "Application <pk:{}>".format(self.id)

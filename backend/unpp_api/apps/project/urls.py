@@ -5,11 +5,13 @@ from .views import (
     DirectProjectAPIView,
     PinProjectAPIView,
     EOIAPIView,
+    ApplicationsAPIView,
 )
 
 
 urlpatterns = [
     url(r'^(?P<pk>\d+)/$', EOIAPIView.as_view(), name="eoi-detail"),
+    url(r'^(?P<pk>\d+)/applications/$', ApplicationsAPIView.as_view(), name="applications"),
     url(r'^open/$', OpenProjectAPIView.as_view(), name="open"),
     url(r'^direct/$', DirectProjectAPIView.as_view(), name="direct"),
     url(r'^pins/$', PinProjectAPIView.as_view(), name="pins"),
