@@ -15,7 +15,7 @@ import {
   openPartnerColumns,
   directAgencyColumns,
 } from './tableColumns';
-
+import { errorToBeCleared } from '../../reducers/cfeiStatus';
 
 class CfeiTableContainer extends Component {
   static getCellsRenderer(role, type) {
@@ -55,6 +55,7 @@ class CfeiTableContainer extends Component {
 
   handleDialogClose() {
     this.setState({ alert: false });
+    this.props.clearError();
   }
 
   render() {
@@ -89,6 +90,7 @@ CfeiTableContainer.propTypes = {
   errorMsg: PropTypes.string,
   role: PropTypes.string,
   type: PropTypes.string,
+  clearError: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -98,6 +100,11 @@ const mapStateToProps = (state, ownProps) => ({
   errorMsg: state.cfei.cfeiStatus.error.message,
 });
 
+const mapDispatchToProps = dispatch => ({
+  clearError: () => dispatch(errorToBeCleared()),
+});
+
 export default connect(
   mapStateToProps,
+  mapDispatchToProps,
 )(CfeiTableContainer);

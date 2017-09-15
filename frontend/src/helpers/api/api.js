@@ -23,7 +23,7 @@ function authorizedGet(uri, params = {}) {
 
 function post(uri, body = {}) {
   return axios.post(`${host}${uri}`, body)
-    .then(response => response.data)
+    .then(response => response.data);
 }
 
 function authorizedPost(uri, body = {}) {
@@ -40,6 +40,11 @@ export function postRegistration(body) {
 export function getCountries() {
   return get('/config/countries');
 }
+
+export function getSectors() {
+  return get('/config/sectors');
+}
+
 // Project
 export function getOpenCfei() {
   return authorizedGet('/projects/open');
