@@ -153,7 +153,7 @@ class ApplicationsPartnerAPIView(CreateAPIView):
 
 class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
     """
-    Create Application for open EOI by agency.
+    Create Application for direct EOI by agency.
     """
     permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
     queryset = Application.objects.all()
