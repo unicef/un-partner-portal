@@ -35,14 +35,14 @@ const YEAR_MENU = [
 const PartnerProfileIdentificationRegistration = (props) => {
   const { isRegistered, readOnly } = props;
   return (
-    <FormSection name="registration">
+    <FormSection name="registration_hq">
       <Grid item>
         <Grid container direction="column" gutter={16}>
           <Grid item>
             <Grid container direction="row">
               <Grid item sm={4} xs={12}>
                 <SelectForm
-                  fieldName="yearOfEstablishment"
+                  fieldName="start_cooperate_date"
                   label="Year of Establishment in Country of Origin"
                   placeholder="Select year"
                   values={YEAR_MENU}
@@ -53,7 +53,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
               </Grid>
               <Grid item sm={4} xs={12}>
                 <RadioForm
-                  fieldName="hasGoverningDocument"
+                  fieldName="have_gov_doc"
                   label="Does the Organization have a Governing Document?"
                   values={BOOL_VAL}
                   optional
@@ -75,7 +75,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
           </Grid>
           <Grid item sm={4} xs={12}>
             <RadioForm
-              fieldName="isRegistered"
+              fieldName="register_country"
               label="Is the Organization Registered in the Country of Origin?"
               values={BOOL_VAL}
               optional
@@ -100,7 +100,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   <TextFieldForm
                     label="Registration Number (if applicable)"
                     placeholder="-"
-                    fieldName="registrationNumber"
+                    fieldName="registration_number"
                     optional
                     warn
                     readOnly={readOnly}
@@ -110,7 +110,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   <TextFieldForm
                     label="Registration Document"
                     placeholder="Upload File"
-                    fieldName="registrationDocument"
+                    fieldName="registration_doc"
                     optional
                     warn
                     readOnly={readOnly}

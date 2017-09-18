@@ -51,7 +51,7 @@ const PartnerProfileMandate = (props) => {
   const { readOnly } = props;
 
   return (<PartnerProfileStepperContainer
-    name="mandateMission"
+    name="mandate_mission"
     readOnly={readOnly}
     steps={STEPS(readOnly)}
   />

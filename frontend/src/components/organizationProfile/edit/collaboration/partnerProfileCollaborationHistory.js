@@ -104,20 +104,20 @@ const PartnerProfileCollaborationHistory = (props) => {
             </Grid>
           </FormControl>
         </Grid>
-        <Grid>
+        <Grid item>
           <SelectForm
-            fieldName="otherAgency"
+            fieldName="collaborations_partnership_other"
             label="Please indicate if you have collaborated with any other UN Agency (optional)"
             values={PARTNER_MENU}
             selectFieldProps={{
               multiple: true,
             }}
-                        readOnly={readOnly}
+            readOnly={readOnly}
           />
         </Grid>
-        <Grid item sm={6} xs={12}>
+        <Grid item>
           <RadioForm
-            fieldName="hasFraudSafeguard"
+            fieldName="partnership_collaborate_institution"
             label={'Has the organization collaborated with a member of a cluster, professional ' +
             'network, consortium or any similar institution?'}
             values={BOOL_VAL}
@@ -126,12 +126,12 @@ const PartnerProfileCollaborationHistory = (props) => {
             readOnly={readOnly}
           />
         </Grid>
-        <Grid item sm={6} xs={12}>
+        <Grid item>
           <TextFieldForm
             label={'Please state which cluster, network or consortium and briefly explain the ' +
             'collaboration'}
             placeholder=""
-            fieldName="fraudSafeguardComment"
+            fieldName="partnership_collaborate_institution_desc"
             textFieldProps={{
               inputProps: {
                 maxLength: '200',

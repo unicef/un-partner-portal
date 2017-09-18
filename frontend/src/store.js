@@ -14,6 +14,7 @@ import session from './reducers/session';
 import countries from './reducers/countries';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
+import partnerProfileDetails from './reducers/partnerProfileDetails';
 import cfeiDetails, * as cfeiDetailsSelector from './reducers/cfeiDetails';
 import cfeiDetailsNav, { selectItemsByType } from './reducers/cfeiDetailsNav';
 import agencyPartnersList from './reducers/agencyPartnersList';
@@ -36,6 +37,7 @@ const mainReducer = combineReducers({
   countries,
   countryProfiles,
   partnerProfileEdit,
+  partnerProfileDetails,
   agencyPartnersList,
   agencyPartnerProfileNav,
   agencyPartnerProfile,

@@ -19,7 +19,7 @@ const BOOL_VAL = [
 
 const METHOD_VAL = [
   {
-    value: 'cash',
+    value: 'Cas',
     label: 'Cash',
   },
   {
@@ -47,32 +47,33 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
   const { readOnly } = props;
 
   return (
-    <FormSection name="financialControls">
+    <FormSection name="financial_controls">
       <Grid item>
         <Grid container direction="column" gutter={16}>
           <Grid item>
             <SelectForm
-              fieldName="accountingType"
-              label="Please select your organization's accounting system"
+              fieldName="org_acc_system"
+              label="Your organization's accounting system"
               values={ACCOUNTING_MENU}
               optional
               warn
               readOnly={readOnly}
             />
           </Grid>
-          <Grid item sm={6} xs={12}>
+          <Grid item>
             <RadioForm
-              fieldName="method"
+              fieldName="method_acc"
               label="What is the method of accounting adopted by the organization?"
               values={METHOD_VAL}
               optional
               warn
               readOnly={readOnly}
+              renderTextSelection
             />
           </Grid>
-          <Grid item sm={6} xs={12}>
+          <Grid item>
             <RadioForm
-              fieldName="tracking"
+              fieldName="have_system_track"
               label={'Does your organization have a system to track expenditures, prepare project ' +
             'reports, and prepare claims for donors?'}
               values={BOOL_VAL}
@@ -81,11 +82,11 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
               readOnly={readOnly}
             />
           </Grid>
-          <Grid item sm={6} xs={12}>
+          <Grid item>
             <TextFieldForm
               label="Briefly explain the system used"
               placeholder="200 character maximum"
-              fieldName="trackingDescription"
+              fieldName="financial_control_system_desc"
               textFieldProps={{
                 inputProps: {
                   maxLength: '200',

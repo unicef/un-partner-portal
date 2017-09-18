@@ -12,12 +12,12 @@ const STEPS = readOnly => [
   {
     component: <PartnerProfileProjectImplementationManagement readOnly={readOnly} />,
     label: 'Programme Management',
-    name: 'programmeManagement',
+    name: 'program_management',
   },
   {
     component: <PartnerProfileProjectImplementationFinancialControls readOnly={readOnly} />,
     label: 'Financial Controls',
-    name: 'financialControls',
+    name: 'financial_controls',
   },
   {
     component: <PartnerProfileProjectImplementationInternalControls readOnly={readOnly} />,
@@ -32,7 +32,7 @@ const STEPS = readOnly => [
   {
     component: <PartnerProfileProjectImplementationAudit readOnly={readOnly} />,
     label: 'Audit & Assessments',
-    name: 'auditAssessment',
+    name: 'audit',
   },
   {
     component: <PartnerProfileProjectImplementationReporting readOnly={readOnly} />,
@@ -46,7 +46,7 @@ const PartnerProfileProjectImplementation = (props) => {
 
   return (
     <PartnerProfileStepperContainer
-      name="projectImplementation"
+      name="project_impl"
       readOnly={readOnly}
       steps={STEPS(readOnly)}
     />

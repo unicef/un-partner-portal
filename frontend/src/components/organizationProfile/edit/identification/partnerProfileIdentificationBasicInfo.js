@@ -32,12 +32,12 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
   const { readOnly } = props;
 
   return (
-    <FormSection name="basicInfo">
+    <FormSection name="basic">
       <Grid item>
         <Grid container direction="column" gutter={16}>
           <TextFieldForm
             label="Organization's Legal Name"
-            fieldName="legalName"
+            fieldName="legal_name"
             optional
             warn
             readOnly={readOnly}
@@ -45,7 +45,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
           <Grid item sm={6} xs={12}>
             <TextFieldForm
               label="Alias (if applicable)"
-              fieldName="legalNameAlias"
+              fieldName="alias_name"
               placeholder="Provide alias"
               optional
               warn
@@ -72,7 +72,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
             />
           </Grid>
           <SelectForm
-            fieldName="country"
+            fieldName="country_code"
             label="Country of Origin"
             values={COUNTRY_MENU}
             optional
@@ -81,7 +81,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
           />
           <Grid item sm={6} xs={12}>
             <SelectForm
-              fieldName="organizationType"
+              fieldName="display_type"
               label="Type of organization"
               values={ORG_VALUES}
               optional

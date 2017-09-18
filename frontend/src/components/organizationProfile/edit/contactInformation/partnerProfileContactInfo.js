@@ -5,18 +5,24 @@ import PartnerProfileContactInfoAddress from './partnerProfileContactInfoAddress
 import PartnerProfileContactInfoOfficials from './partnerProfileContactInfoOfficials';
 import PartnerProfileContactInfoLanguages from './partnerProfileContactInfoLanguages';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
+import PartnerProfileContactInfoHeadOrganization from './partnerProfileContactInfoHeadOrganization';
 
 const STEPS = readOnly =>
   [
     {
       component: <PartnerProfileContactInfoAddress readOnly={readOnly} />,
       label: 'Mailing Address',
-      name: 'mailingAddress',
+      name: 'address',
     },
     {
       component: <PartnerProfileContactInfoOfficials readOnly={readOnly} />,
       label: 'Authorized Officials',
-      name: 'authorizedOfficials',
+      name: 'authorised_officers',
+    },
+    {
+      component: <PartnerProfileContactInfoHeadOrganization readOnly={readOnly} />,
+      label: 'Head of Organization',
+      name: 'org_head',
     },
     {
       component: <PartnerProfileContactInfoConnectivity readOnly={readOnly} />,
@@ -26,7 +32,7 @@ const STEPS = readOnly =>
     {
       component: <PartnerProfileContactInfoLanguages readOnly={readOnly} />,
       label: 'Working Languages',
-      name: 'workingLanguages',
+      name: 'working_languages',
     },
   ];
 
@@ -34,7 +40,7 @@ const PartnerProfileContactInfo = (props) => {
   const { readOnly } = props;
 
   return (<PartnerProfileStepperContainer
-    name="contactInfo"
+    name="mailing"
     readOnly={readOnly}
     steps={STEPS(readOnly)}
   />);

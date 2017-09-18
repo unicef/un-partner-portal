@@ -2,7 +2,9 @@ import React from 'react';
 import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
-import SelectForm from '../../../forms/selectForm';
+import RadioForm from '../../../forms/radioForm';
+import FileForm from '../../../forms/fileForm';
+import DatePickerForm from '../../../forms/datePickerForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 
 const BOOL_VAL = [
@@ -21,14 +23,14 @@ const PartnerProfileProjectImplementationReporting = (props) => {
   const { readOnly } = props;
 
   return (
-    <FormSection name="reporting">
+    <FormSection name="report">
       <Grid item>
         <Grid container direction="column" gutter={16}>
-          <Grid item sm={6} xs={12}>
+          <Grid item>
             <TextFieldForm
               label="Briefly explain the key results achieved by your organization over the last year"
               placeholder="200 character maximum"
-              fieldName="achievements"
+              fieldName="key_result"
               textFieldProps={{
                 inputProps: {
                   maxLength: '200',
@@ -42,8 +44,8 @@ const PartnerProfileProjectImplementationReporting = (props) => {
           <Grid item>
             <Grid container direction="row">
               <Grid item sm={6} xs={12}>
-                <SelectForm
-                  fieldName="annualReports"
+                <RadioForm
+                  fieldName="publish_annual_reports"
                   label="Does the organization publish annual reports?"
                   values={BOOL_VAL}
                   optional
@@ -52,10 +54,10 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                 />
               </Grid>
               <Grid item sm={6} xs={12}>
-                <TextFieldForm
+                <DatePickerForm
                   label="Date of most recent annual report"
-                  placeholder="DD/MM/YYYY"
-                  fieldName="date"
+                  fieldName="last_report"
+                  placeholder="Provide Date"
                   optional
                   warn
                   readOnly={readOnly}
@@ -66,20 +68,19 @@ const PartnerProfileProjectImplementationReporting = (props) => {
           <Grid item>
             <Grid container direction="row">
               <Grid item sm={6} xs={12}>
-                <TextFieldForm
+                <FileForm
                   label="Copy of your most rescent audit report"
                   placeholder="UPLOAD FILE"
-                  fieldName="date"
+                  fieldName="report"
                   optional
                   warn
-                  readOnly={readOnly}
                 />
               </Grid>
               <Grid item sm={6} xs={12}>
                 <TextFieldForm
-                  label="Or insert the link to the report form the organization's website"
+                  label="Or link to the report form the organization's website"
                   placeholder="200 character maximum"
-                  fieldName="approachDescription"
+                  fieldName="link_report"
                   textFieldProps={{
                     inputProps: {
                       maxLength: '200',

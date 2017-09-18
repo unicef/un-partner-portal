@@ -16,7 +16,7 @@ const PartnerProfileMandateBackground = (props) => {
               label={'Briefly state the background and rationale for the establishment of the ' +
             'organization'}
               placeholder="Please limit your response to 400 characters"
-              fieldName="background"
+              fieldName="background_and_rationale"
               textFieldProps={{
                 inputProps: {
                   maxLength: '400',
@@ -31,7 +31,7 @@ const PartnerProfileMandateBackground = (props) => {
             <TextFieldForm
               label="Briefly state the mandate and mission of the organization"
               placeholder="Please limit your response to 400 characters"
-              fieldName="mandate"
+              fieldName="mandate_and_mission"
               textFieldProps={{
                 inputProps: {
                   maxLength: '400',

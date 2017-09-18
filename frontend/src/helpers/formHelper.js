@@ -3,6 +3,7 @@
 import React from 'react';
 import SelectField from 'material-ui-old/SelectField';
 import TextField from 'material-ui/TextField';
+import Checkbox from 'material-ui/Checkbox';
 import DatePicker from 'material-ui-old/DatePicker';
 import { FormControl, FormHelperText, FormLabel } from 'material-ui/Form';
 import Typography from 'material-ui/Typography';
@@ -40,6 +41,20 @@ export const renderSelectField = ({
   >
     {children}
   </SelectField>
+);
+
+export const renderCheckbox = ({
+  name,
+  className,
+  disabled,
+  value,
+}) => (
+  <Checkbox
+    className={className}
+    id={name}
+    disabled={disabled}
+    checked={value}
+  />
 );
 
 export const renderTextField = ({
@@ -89,6 +104,30 @@ export const renderText = ({
   let selected;
   if (values) selected = R.filter(val => val.value === value, values);
   if (selected && selected.length) value = selected[0].label;
+
+  return (
+    <FormControl fullWidth>
+      <FormLabel>{label}</FormLabel>
+      <Typography
+        className={className}
+        {...other}
+      >
+        {value}
+      </Typography>
+    </FormControl>
+  );
+};
+
+export const renderBool = ({
+  className,
+  input,
+  values,
+  optional,
+  label,
+  ...other
+}) => {
+  let value = 'No';
+  if (input.value) value = 'Yes';
 
   return (
     <FormControl fullWidth>

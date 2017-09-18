@@ -25,10 +25,11 @@ const labels = {
 
 class partnerProfileStepper extends Component {
   render() {
-    const { classes, readOnly, handleSubmit, handlePrev, steps, last } = this.props;
+    const { classes, readOnly, handleSubmit, handlePrev, singleSection, steps, last } = this.props;
+
     const sections = steps.map((item, index) => {
       const section = (
-        <ProfileStepContainer item={item} index={index} />
+        <ProfileStepContainer item={item} index={index} singleSection={singleSection} />
       );
       return section;
     });
@@ -89,6 +90,10 @@ partnerProfileStepper.propTypes = {
    * Read only mode
    */
   readOnly: PropTypes.bool,
+  /**
+   * Single section without label steps
+   */
+  singleSection: PropTypes.bool,
 };
 
 export default withStyles(styleSheet)(partnerProfileStepper);

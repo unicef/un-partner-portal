@@ -7,8 +7,8 @@ import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 const STEPS = readOnly => [
   {
     component: <PartnerProfileOtherInfoContent readOnly={readOnly} />,
-    label: '',
-    name: 'content',
+    label: 'Other Informations',
+    name: 'other_info',
   },
 ];
 
@@ -17,10 +17,11 @@ const PartnerProfileOtherInfo = (props) => {
 
   return (
     <PartnerProfileStepperContainer
-      name="otherInformation"
+      name="other_info"
       steps={STEPS(readOnly)}
       readOnly={readOnly}
       last
+      singleSection
     />
   );
 };

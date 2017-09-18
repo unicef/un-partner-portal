@@ -13,6 +13,7 @@ import PartnerProfileMandate from '../edit/mandate/partnerProfileMandate';
 import PartnerProfileFunding from '../edit/funding/partnerProfileFunding';
 import PartnerProfileProjectImplementation from '../edit/projectImplementation/partnerProfileProjectImplementation';
 import PartnerProfileOtherInfo from '../edit/otherInfo/partnerProfileOtherInfo';
+import { loadPartnerDetails } from '../../../reducers/partnerProfileDetails';
 import { changeTab } from '../../../reducers/partnerProfileEdit';
 
 const FIRST_INDEX = 0;
@@ -46,6 +47,10 @@ class HqProfileOverview extends Component {
     history.push(`/profile/${countryCode}/edit`);
   }
 
+  componentWillMount() {
+    this.props.loadPartnerProfileDetails();
+  }
+
   render() {
     return (
       <Paper>
@@ -70,11 +75,17 @@ class HqProfileOverview extends Component {
 HqProfileOverview.propTypes = {
   changeTab: PropTypes.func.isRequired,
   countryCode: PropTypes.string.isRequired,
+  loadPartnerProfileDetails: PropTypes.func,
 };
 
-const mapDispatch = dispatch => ({
-  changeTab: index => dispatch(changeTab(index)),
-});
+const mapDispatch = (dispatch, ownProps) => {
+  const { countryCode } = ownProps.params;
+
+  return {
+    changeTab: index => dispatch(changeTab(index)),
+    loadPartnerProfileDetails: () => dispatch(loadPartnerDetails(countryCode)),
+  };
+};
 
 const mapStateToProps = (state, ownProps) => ({
   countryCode: ownProps.params.countryCode,

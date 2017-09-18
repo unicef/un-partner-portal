@@ -32,12 +32,12 @@ const ADDRESS_VALUES = [
 const PartnerProfileContactInfoAddress = (props) => {
   const { readOnly } = props;
 
-  return (<FormSection name="mailingAddress">
+  return (<FormSection name="address">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item sm={6} xs={12}>
           <RadioForm
-            fieldName="addressType"
+            fieldName="mailing_type"
             label="Type of Mailing Address"
             values={ADDRESS_VALUES}
             optional
@@ -51,7 +51,7 @@ const PartnerProfileContactInfoAddress = (props) => {
               <TextFieldForm
                 label="Street Address or PO Box Number"
                 placeholder=""
-                fieldName="streetAddress"
+                fieldName="street"
                 optional
                 warn
                 readOnly={readOnly}
@@ -81,7 +81,7 @@ const PartnerProfileContactInfoAddress = (props) => {
               <TextFieldForm
                 label="Zip Code (optional)"
                 placeholder=""
-                fieldName="zipCode"
+                fieldName="zip_code"
                 optional
                 readOnly={readOnly}
               />
@@ -118,7 +118,7 @@ const PartnerProfileContactInfoAddress = (props) => {
               <TextFieldForm
                 label="Organization Email (optional)"
                 placeholder=""
-                fieldName="orgEmail"
+                fieldName="org_email"
                 optional
                 readOnly={readOnly}
               />

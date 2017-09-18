@@ -9,12 +9,12 @@ const STEPS = readOnly =>
     {
       component: <PartnerProfileIdentificationBasicInfo readOnly={readOnly} />,
       label: 'Basic Information',
-      name: 'basicInfo',
+      name: 'basic',
     },
     {
       component: <PartnerProfileIdentificationRegistration readOnly={readOnly} />,
       label: 'Registration of Organization',
-      name: 'registration',
+      name: 'registration_hq',
     },
   ];
 

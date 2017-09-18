@@ -42,13 +42,13 @@ const PartnerProfileMandatePopulation = (props) => {
   const { readOnly } = props;
 
   return (
-    <FormSection name="populationOfConcern">
+    <FormSection name="populations_of_concern">
       <Grid item>
         <Grid container direction="column" gutter={16}>
-          <Grid item sm={6} xs={12}>
+          <Grid item>
             <RadioForm
-              fieldName="popOfConcernWork"
-              label="Does your organization work with populations of concern as defined by UNHCR"
+              fieldName="population_of_concern"
+              label="Does your organization work with populations of concern as defined by UNHCR?"
               values={BOOL_VAL}
               optional
               warn
@@ -57,7 +57,7 @@ const PartnerProfileMandatePopulation = (props) => {
           </Grid>
           <Grid item>
             <SelectForm
-              fieldName="languages"
+              fieldName="concern_groups"
               label="Please indicate which group(s)"
               values={GROUP_VALUES}
               selectFieldProps={{

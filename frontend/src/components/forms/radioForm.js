@@ -7,7 +7,7 @@ import Grid from 'material-ui/Grid';
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControlLabel } from 'material-ui/Form';
 
-import { renderFormControl, renderText } from '../../helpers/formHelper';
+import { renderFormControl, renderText, renderBool } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
 
@@ -44,6 +44,7 @@ class RadioForm extends Component {
       optional,
       validation,
       warn,
+      renderTextSelection,
       readOnly,
       ...other } = this.props;
     return (
@@ -51,7 +52,7 @@ class RadioForm extends Component {
         {readOnly ?
           <Field
             name={fieldName}
-            component={renderText}
+            component={renderTextSelection ? renderText : renderBool}
             values={values}
             optional={optional}
             label={label}
@@ -121,6 +122,9 @@ RadioForm.propTypes = {
    * if form should be displayed in read only state
    */
   readOnly: PropTypes.bool,
+
   warn: PropTypes.bool,
+
+  renderTextSelection: PropTypes.bool,
 };
 export default withStyles(styleSheet)(RadioForm);

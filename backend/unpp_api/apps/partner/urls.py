@@ -7,6 +7,6 @@ from .views import (
 
 
 urlpatterns = [
-    url(r'^(?P<partner_id>\d+)/org-profile', OrganizationProfileAPIView.as_view(), name="org-profile"),
-    url(r'^(?P<partner_id>\d+)', PartnerProfileAPIView.as_view(), name="partner-profile"),
+    url(r'^(?P<pk>\d+)/org-profile', OrganizationProfileAPIView.as_view(), name="org-profile"),
+    url(r'^(?P<pk>\d+)', PartnerProfileAPIView.as_view(), name="partner-profile"),
 ]

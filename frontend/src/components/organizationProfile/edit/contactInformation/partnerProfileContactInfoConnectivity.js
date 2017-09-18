@@ -21,14 +21,15 @@ const BOOL_VAL = [
 
 const PartnerProfileContactInfoConnectivity = (props) => {
   const { hasInternetAccess, readOnly } = props;
+  
   return (
     <FormSection name="connectivity">
       <Grid item>
         <Grid container direction="column" gutter={16}>
           <Grid item sm={6} xs={12}>
             <RadioForm
-              fieldName="hasInternetAccess"
-              label={'Does the organiation have reliable access to internet in all of its' +
+              fieldName="connectivity"
+              label={'Does the organization have reliable access to internet in all of its' +
               'operations?'}
               values={BOOL_VAL}
               optional
@@ -36,11 +37,11 @@ const PartnerProfileContactInfoConnectivity = (props) => {
               readOnly={readOnly}
             />
           </Grid>
-          {hasInternetAccess === 'no' && <Grid item >
+          {!hasInternetAccess && <Grid item >
             <TextFieldForm
               label="Please explain how communication is done with non-connected operations"
-              placeholder="200 character maximum"
-              fieldName="communications"
+              placeholder="Provide explanation"
+              fieldName="connectivity_excuse"
               textFieldProps={{
                 inputProps: {
                   maxLength: '200',
@@ -69,7 +70,7 @@ PartnerProfileContactInfoConnectivity.propTypes = {
 const selector = formValueSelector('partnerProfile');
 export default connect(
   state => ({
-    hasInternetAccess: selector(state, 'contactInfo.connectivity.hasInternetAccess'),
+    hasInternetAccess: selector(state, 'mailing.connectivity.connectivity'),
   }),
 )(PartnerProfileContactInfoConnectivity);
 

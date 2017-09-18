@@ -12,7 +12,7 @@ import FileUpload from 'material-ui-icons/FileUpload';
 import CloudDownload from 'material-ui-icons/CloudDownload';
 import Attachment from 'material-ui-icons/Attachment';
 import { FormLabel, FormControlLabel } from 'material-ui/Form';
-import { renderFormControl } from '../../helpers/formHelper';
+import { renderFormControl, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
 
@@ -69,13 +69,14 @@ class FileForm extends Component {
       optional,
       validation,
       warn,
+      readOnly,
       ...other } = this.props;
     const { fileAdded } = this.state;
     return (
       <Grid item>
         <Field
           name={fieldName}
-          component={renderFormControl}
+          component={readOnly ? renderText : renderFormControl}
           validate={optional ? [] : [required].concat(validation || [])}
           warn={warn ? [warning] : []}
           {...other}
@@ -93,21 +94,24 @@ class FileForm extends Component {
               />
             }
           />
-          <Button dense classes={{ root: classes.button }} color="accent" >
-            <label className={classes.iconLabel} htmlFor={`${fieldName}-input`}>
-              {fileAdded
-                ? (
-                  <Typography className={[classes.iconLabel, classes.FileNameField]} gutterBottom >
-                    <Attachment className={classes.icon} />
-                    {this.renderFileName(fieldName)}
-                  </Typography>)
-                : ([
-                  <FileUpload className={classes.icon} />,
-                  'Upload File']
-                )
-              }
-            </label>
-          </Button>
+
+          {!readOnly &&
+            <Button dense classes={{ root: classes.button }} color="accent" >
+              <label className={classes.iconLabel} htmlFor={`${fieldName}-input`}>
+                {fileAdded
+                  ? (
+                    <Typography className={[classes.iconLabel, classes.FileNameField]} gutterBottom >
+                      <Attachment className={classes.icon} />
+                      {this.renderFileName(fieldName)}
+                    </Typography>)
+                  : ([
+                    <FileUpload className={classes.icon} />,
+                    'Upload File']
+                  )
+                }
+              </label>
+            </Button>
+          }
         </Field>
       </Grid>
     );
@@ -145,6 +149,10 @@ FileForm.propTypes = {
    * validations passed to field
    */
   warn: PropTypes.bool,
+  /**
+   * read only mode
+   */
+  readOnly: PropTypes.bool,
 };
 
 FileForm.defaultProps = {

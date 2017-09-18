@@ -8,19 +8,19 @@ const STEPS = readOnly => [
   {
     component: <PartnerProfileFundingBudget readOnly={readOnly} />,
     label: 'Budget',
-    name: 'budget',
+    name: 'budgets',
   },
   {
     component: <PartnerProfileFundingDonors readOnly={readOnly} />,
     label: 'Major Donors',
-    name: 'majorDonors',
+    name: 'major_donors',
   },
 ];
 
 const PartnerProfileFunding = (props) => {
   const { readOnly } = props;
   return (<PartnerProfileStepperContainer
-    name="funding"
+    name="fund"
     steps={STEPS(readOnly)}
     readOnly={readOnly}
   />

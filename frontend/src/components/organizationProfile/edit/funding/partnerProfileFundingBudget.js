@@ -30,7 +30,7 @@ const BUDGET_VALUES = [
 
 const PartnerProfileFundingBudget = (props) => {
   const { readOnly } = props;
-  return (<FormSection name="budget">
+  return (<FormSection name="fund">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>

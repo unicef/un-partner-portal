@@ -30,7 +30,7 @@ export const loadDetailsSuccess = partnerDetails =>
   ({ type: LOAD_DETAILS_SUCCESS, partnerDetails });
 export const loadDetailsFailure = error => ({ type: LOAD_DETAILS_FAILURE, error });
 
-export default function cfeiStatus(state = initialState, action) {
+export default function partnerProfileDetailsStatus(state = initialState, action) {
   switch (action.type) {
     case LOAD_DETAILS_FAILURE: {
       return saveErrorMsg(state, action);

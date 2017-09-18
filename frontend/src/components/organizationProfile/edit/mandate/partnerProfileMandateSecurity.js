@@ -29,7 +29,7 @@ const PartnerProfileMandateSecurity = (props) => {
             <Grid container direction="row">
               <Grid item sm={6} xs={12}>
                 <RadioForm
-                  fieldName="hasAbility"
+                  fieldName="security_high_risk_locations"
                   label={'Does the organization have the ablility to work in high-risk securit' +
                 'locations?'}
                   values={BOOL_VAL}
@@ -40,7 +40,7 @@ const PartnerProfileMandateSecurity = (props) => {
               </Grid>
               <Grid item sm={6} xs={12}>
                 <RadioForm
-                  fieldName="hasPolicies"
+                  fieldName="security_high_risk_policy"
                   label={'Does the organization have policies, procedures and practices related to ' +
                 'security risk management?'}
                   values={BOOL_VAL}
@@ -56,7 +56,7 @@ const PartnerProfileMandateSecurity = (props) => {
               label={'Briefly describe the organization\'s ability, if any, to scale-up ' +
             'operations in emergencies or other situations requiring rapid response.'}
               placeholder="Please comment"
-              fieldName="emergencyComment"
+              fieldName="security_desc"
               textFieldProps={{
                 inputProps: {
                   maxLength: '200',

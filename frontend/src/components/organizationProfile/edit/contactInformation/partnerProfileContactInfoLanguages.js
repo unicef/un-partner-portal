@@ -41,12 +41,12 @@ const COUNTRY_MENU = [
 const PartnerProfileContactInfoLanguages = (props) => {
   const { readOnly } = props;
 
-  return (<FormSection name="workingLanguages">
+  return (<FormSection name="working_languages">
     <Grid item>
       <Grid container direction="row">
         <Grid item sm={6} xs={12}>
           <SelectForm
-            fieldName="languages"
+            fieldName="working_languages"
             label="Working Language(s) of your Organization"
             placeholder="Select language"
             values={COUNTRY_MENU}
@@ -62,7 +62,7 @@ const PartnerProfileContactInfoLanguages = (props) => {
           <TextFieldForm
             label="Please State"
             placeholder="Additional languages known"
-            fieldName="extraLanguage"
+            fieldName="working_languages_other"
             optional
             readOnly={readOnly}
           />

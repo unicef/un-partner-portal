@@ -8,17 +8,21 @@ from rest_framework.permissions import IsAuthenticated
 # from django_filters.rest_framework import DjangoFilterBackend
 from common.permissions import IsAtLeastMemberEditor
 from .serializers import OrganizationProfileSerializer, OrganizationProfileDetailsSerializer
-
+from .models import (
+    Partner,
+)
 
 class OrganizationProfileAPIView(RetrieveAPIView):
     """
     Endpoint for getting Organization Profile.
     """
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
-    serializer = OrganizationProfileSerializer
+    serializer_class = OrganizationProfileSerializer
+    queryset = Partner.objects.all()
 
 
 class PartnerProfileAPIView(RetrieveAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
-    serializer = OrganizationProfileDetailsSerializer
+    serializer_class = OrganizationProfileDetailsSerializer
+    queryset = Partner.objects.all()

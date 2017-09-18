@@ -22,68 +22,58 @@ const PartnerProfileMandateEthics = (props) => {
 
   return (
     <FormSection name="ethics">
-      <Grid item>
-        <Grid container direction="column" gutter={16}>
-          <Grid item>
-            <Grid container direction="row">
-              <Grid item sm={6} xs={12}>
-                <RadioForm
-                  fieldName="hasAbuseSafeguard"
-                  label={'Does the organization have a policy or code of conduct to safegaurd ' +
+      <Grid container direction="column" gutter={16}>
+        <Grid item >
+          <RadioForm
+            fieldName="ethic_safeguard"
+            label={'Does the organization have a policy or code of conduct to safegaurd ' +
                 'against the violation and abuse of beneficiaries?'}
-                  values={BOOL_VAL}
-                  optional
-                  warn
-                  readOnly={readOnly}
-                />
-              </Grid>
-              <Grid item sm={6} xs={12}>
-                <TextFieldForm
-                  label="Please comment"
-                  placeholder=""
-                  fieldName="abuseSafeguardComment"
-                  textFieldProps={{
-                    inputProps: {
-                      maxLength: '200',
-                    },
-                  }}
-                  optional
-                  warn
-                  readOnly={readOnly}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <Grid container direction="row">
-              <Grid item sm={6} xs={12}>
-                <RadioForm
-                  fieldName="hasFraudSafeguard"
-                  label={'Does the organization have a policy or code of conduct to safegaurd ' +
+            values={BOOL_VAL}
+            optional
+            warn
+            readOnly={readOnly}
+          />
+        </Grid>
+        <Grid item>
+          <TextFieldForm
+            label="Please comment"
+            placeholder=""
+            fieldName="abuseSafeguardComment"
+            textFieldProps={{
+              inputProps: {
+                maxLength: '200',
+              },
+            }}
+            optional
+            warn
+            readOnly={readOnly}
+          />
+        </Grid>
+        <Grid item >
+          <RadioForm
+            fieldName="ethic_fraud"
+            label={'Does the organization have a policy or code of conduct to safegaurd ' +
                 'against fraud and corruption?'}
-                  values={BOOL_VAL}
-                  optional
-                  warn
-                  readOnly={readOnly}
-                />
-              </Grid>
-              <Grid item sm={6} xs={12}>
-                <TextFieldForm
-                  label="Please comment"
-                  placeholder=""
-                  fieldName="fraudSafeguardComment"
-                  textFieldProps={{
-                    inputProps: {
-                      maxLength: '200',
-                    },
-                  }}
-                  optional
-                  warn
-                  readOnly={readOnly}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
+            values={BOOL_VAL}
+            optional
+            warn
+            readOnly={readOnly}
+          />
+        </Grid>
+        <Grid item>
+          <TextFieldForm
+            label="Please comment"
+            placeholder=""
+            fieldName="fraudSafeguardComment"
+            textFieldProps={{
+              inputProps: {
+                maxLength: '200',
+              },
+            }}
+            optional
+            warn
+            readOnly={readOnly}
+          />
         </Grid>
       </Grid>
     </FormSection>
