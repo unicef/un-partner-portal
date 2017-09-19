@@ -111,6 +111,9 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         del validated_data['eoi']['locations']
         specializations = validated_data['eoi']['specializations']
         del validated_data['eoi']['specializations']
+        focal_points = validated_data['eoi']['focal_points']
+        del validated_data['eoi']['focal_points']
+        # import pdb; pdb.set_trace()
 
         eoi = EOI.objects.create(**validated_data['eoi'])
         for location in locations:
@@ -120,6 +123,9 @@ class CreateDirectProjectSerializer(serializers.Serializer):
 
         for specialization in specializations:
             eoi.specializations.add(specialization)
+
+        for focal_point in focal_points:
+            eoi.focal_points.add(focal_point)
 
         apps = []
         for app in validated_data['applications']:
@@ -151,6 +157,8 @@ class CreateProjectSerializer(serializers.Serializer):
         del validated_data['eoi']['locations']
         specializations = validated_data['eoi']['specializations']
         del validated_data['eoi']['specializations']
+        focal_points = validated_data['eoi']['focal_points']
+        del validated_data['eoi']['focal_points']
         assessment_criterias = validated_data['assessment_criterias']
         del validated_data['assessment_criterias']
 
@@ -164,6 +172,9 @@ class CreateProjectSerializer(serializers.Serializer):
 
         for specialization in specializations:
             eoi.specializations.add(specialization)
+
+        for focal_point in focal_points:
+            eoi.focal_points.add(focal_point)
 
         created_ac = []
         for assessment_criteria in assessment_criterias:
@@ -188,9 +199,17 @@ class PatchProjectSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def update(self, instance, validated_data):
-        del validated_data['invited_partners']
+        if 'invited_partners' in validated_data:
+            del validated_data['invited_partners']
+            # user can add and remove on update - here we remove partners that are not in list
+            for partner in instance.invited_partners.all():
+                if partner.id not in map(lambda x: x['id'], self.initial_data.get('invited_partners', [])):
+                    instance.invited_partners.remove(partner)
+
         instance = super(PatchProjectSerializer, self).update(instance, validated_data)
-        for invited_partner in self.initial_data.get('invited_partners'):
+
+        # user can add and remove on update - here we add partners on the list
+        for invited_partner in self.initial_data.get('invited_partners', []):
             instance.invited_partners.add(Partner.objects.get(id=invited_partner['id']))
         instance.save()
 

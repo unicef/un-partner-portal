@@ -444,18 +444,29 @@ class EOIFactory(factory.django.DjangoModelFactory):
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
-    focal_point = factory.LazyFunction(get_agency_member)
     # locations ... TODO when right time will come (when we need them - depending on endpoint)
     agency_office = factory.SubFactory(AgencyOfficeFactory)
     description = factory.Sequence(lambda n: "Brief background of the project {}".format(n))
     start_date = date.today()
     end_date = date.today()
     deadline_date = date.today()
-    # invited_partners ... TODO when right time will come (when we need them - depending on endpoint)
+    notif_results_date = date.today()
     # reviewers ... TODO when right time will come (when we need them - depending on endpoint)
 
     class Meta:
         model = EOI
+
+    @factory.post_generation
+    def focal_points(self, create, extracted, **kwargs):
+        focal_point = get_agency_member()
+        if focal_point:
+            self.focal_points.add(focal_point)
+
+    @factory.post_generation
+    def invited_partners(self, create, extracted, **kwargs):
+        partner = get_partner()
+        if partner:
+            self.invited_partners.add(partner)
 
     @factory.post_generation
     def specializations(self, create, extracted, **kwargs):
