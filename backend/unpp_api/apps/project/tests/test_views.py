@@ -313,7 +313,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         EOIFactory.create_batch(self.quantity)
 
     def test_read_update(self):
-        url = reverse('projects:applications', kwargs={"pk": Application.objects.first().id})
+        url = reverse('projects:application', kwargs={"pk": Application.objects.first().id})
         response = self.client.get(url, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], Application.objects.first().id)

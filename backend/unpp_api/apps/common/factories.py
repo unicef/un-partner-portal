@@ -43,6 +43,7 @@ from .consts import (
     AUDIT_ASSESMENT_CHOICES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     EOI_TYPES,
+    DIRECT_SELECTION_SOURCE,
 )
 from .countries import COUNTRIES_ALPHA2_CODE
 
@@ -59,6 +60,10 @@ def get_random_agency():
 
 def get_agency_member():
     return User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?").first()
+
+
+def get_partner_member():
+    return User.objects.filter(is_superuser=False, partner_members__isnull=False).order_by("?").first()
 
 
 def get_partner():
@@ -461,14 +466,23 @@ class EOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def applications(self, create, extracted, **kwargs):
-        app = Application(
-            partner=get_partner(),
-            eoi=self,
-            submitter=get_agency_member(),
-        )
         if self.status == EOI_TYPES.direct:
-            app.did_win = True
-            app.did_accept = True
-            app.ds_justification_select = JUSTIFICATION_FOR_DIRECT_SELECTION.local
-            app.justification_reason = "good reason"
-        app.save()
+            Application.objects.create(
+                partner=get_partner(),
+                eoi=self,
+                submitter=get_agency_member(),
+                cn_id="{}{}/CN".format(date.today().year, self.id),
+                did_win=True,
+                did_accept=True,
+                ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+                justification_reason="good reason",
+            )
+            self.selected_source = DIRECT_SELECTION_SOURCE.cso
+            self.save()
+        else:
+            Application.objects.create(
+                partner=get_partner(),
+                eoi=self,
+                submitter=get_partner_member(),
+                cn_id="{}{}/CN".format(date.today().year, self.id),
+            )

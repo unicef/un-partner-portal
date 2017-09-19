@@ -54,13 +54,6 @@ def generate_fake_data(quantity=4):
     AgencyMemberFactory.create_batch(quantity/2)
     print "{} AgencyMember objects created".format(quantity/2)
 
-    EOIFactory.create_batch(quantity)
-    print "{} open EOI objects created".format(quantity)
-
-    for idx in xrange(0, quantity):
-        EOIFactory(display_type=EOI_TYPES.direct, deadline_date=None)
-    print "{} direct EOI objects created".format(quantity)
-
     PartnerFactory.create_batch(quantity/2)
     print "{} Partner objects created".format(quantity/2)
 
@@ -68,21 +61,15 @@ def generate_fake_data(quantity=4):
     Partner.objects.exclude(id=hq.id).update(hq=hq)
     print "Partner HQ & Country Profiles"
 
-    for eoi in EOI.objects.filter(display_type=EOI_TYPES.direct):
-        partner_example = Partner.objects.all().order_by("?").first()
-        Application.objects.create(
-            partner=partner_example,
-            eoi=eoi,
-            submitter=eoi.created_by,
-            status=APPLICATION_STATUSES.pending,
-            did_win=True,
-            did_accept=False,
-            ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.known,
-            justification_reason="They are the best!",
-        )
-        eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
-        eoi.save()
-    print "Partners selected to direct EOI."
+    PartnerMemberFactory.create_batch(quantity/2)
+    print "{} PartnerMember objects created".format(quantity/2)
+
+    EOIFactory.create_batch(quantity)
+    print "{} open EOI objects created".format(quantity)
+
+    for idx in xrange(0, quantity):
+        EOIFactory(display_type=EOI_TYPES.direct, deadline_date=None)
+    print "{} direct EOI objects created with applications".format(quantity)
 
     PartnerProfileFactory.create_batch(quantity/2)
     print "{} Partner Profile objects created".format(quantity/2)
@@ -104,9 +91,6 @@ def generate_fake_data(quantity=4):
 
     PartnerReportingFactory.create_batch(quantity/2)
     print "{} Partner Reporting objects created".format(quantity/2)
-
-    PartnerMemberFactory.create_batch(quantity/2)
-    print "{} PartnerMember objects created".format(quantity/2)
 
     pm = PartnerMember.objects.first()
     pm.user = admin

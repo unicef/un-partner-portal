@@ -22,8 +22,9 @@ from .serializers import (
     PatchProjectSerializer,
     ApplicationFullSerializer,
     CreateDirectApplicationNoCNSerializer,
+    ApplicationsListSerializer,
 )
-from .filters import BaseProjectFilter
+from .filters import BaseProjectFilter, ApplicationsFilter
 
 
 class BaseProjectAPIView(ListAPIView):
@@ -164,7 +165,17 @@ class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
         return super(ApplicationsAgencyAPIView, self).create(request, pk, *args, **kwargs)
 
 
-class ApplicationsAPIView(RetrieveUpdateAPIView):
+class ApplicationAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
+
+
+class ApplicationsListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
+    queryset = Application.objects.all()
+    serializer_class = ApplicationsListSerializer
+    pagination_class = SmallPagination
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_class = ApplicationsFilter
+    ordering_fields = ('status', )

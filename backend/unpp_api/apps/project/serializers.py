@@ -179,3 +179,19 @@ class PatchProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = EOI
         fields = "__all__"
+
+
+class ApplicationsListSerializer(serializers.ModelSerializer):
+
+    legal_name = serializers.CharField(source="partner.legal_name")
+    type_org = serializers.CharField(source="partner.display_type")
+
+    class Meta:
+        model = Application
+        fields = (
+            'id',
+            'legal_name',
+            'type_org',
+            'cn_id',
+            'status',
+        )
