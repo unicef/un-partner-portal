@@ -14,11 +14,11 @@ import dashboard from './components/dashboard/dashboard';
 import applications from './components/applications/applications';
 import organizationProfileEdit from './components/organizationProfile/edit/tabsContainer';
 import organizationProfile from './components/organizationProfile/organizationProfile';
-import hqProfileHeader from './components/organizationProfile/hq/hqProfileHeader';
+import organizationProfileHeader from './components/organizationProfile/profile/organizationProfileHeader';
 import partnersContainer from './components/partners/partnersContainer';
 import partnerProfileHeader from './components/partners/profile/partnerProfileHeader';
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
-import hqProfileOverview from './components/organizationProfile/hq/hqProfileOverview';
+import organizationProfileOverview from './components/organizationProfile/profile/organizationProfileOverview';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
 import mainContent from './components/common/mainContentWrapper';
@@ -51,7 +51,7 @@ const allRoutes = () => (
         <Route path="partner/:id/" component={partnerProfileHeader}>
           <Route component={mainContent} >
             <Route path="overview" component={partnerOverview} />
-            <Route path="details" component={hqProfileOverview} />
+            <Route path="details" component={organizationProfileOverview} />
             <Route path="users" component={null} />
             <Route path="applications" component={null} />
           </Route>
@@ -59,10 +59,10 @@ const allRoutes = () => (
         <Route path="applications" component={applications} />
         <Route path="profile" component={organizationProfile} />
         <Route path="profile/:countryCode/edit" component={organizationProfileEdit} />
-        <Route path="profile/:countryCode" component={hqProfileHeader} >
+        <Route path="profile/:countryCode" component={organizationProfileHeader} >
           <IndexRedirect to="overview" />
           <Route component={mainContent} >
-            <Route path="overview" component={hqProfileOverview} />
+            <Route path="overview" component={organizationProfileOverview} />
             <Route path="users" component={null} />
           </Route>
         </Route>

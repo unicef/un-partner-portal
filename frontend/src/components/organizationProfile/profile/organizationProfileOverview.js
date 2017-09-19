@@ -38,7 +38,7 @@ const messages = {
   ],
 };
 
-class HqProfileOverview extends Component {
+class OrganizationProfileOverview extends Component {
   handleEditMode(sectionIndex) {
     const { countryCode } = this.props;
 
@@ -67,7 +67,7 @@ class HqProfileOverview extends Component {
   }
 }
 
-HqProfileOverview.propTypes = {
+OrganizationProfileOverview.propTypes = {
   changeTab: PropTypes.func.isRequired,
   countryCode: PropTypes.string.isRequired,
 };
@@ -81,4 +81,4 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 
-export default connect(mapStateToProps, mapDispatch)(HqProfileOverview);
+export default connect(mapStateToProps, mapDispatch)(OrganizationProfileOverview);

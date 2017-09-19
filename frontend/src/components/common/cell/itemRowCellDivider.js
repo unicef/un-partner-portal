@@ -39,11 +39,11 @@ const ItemRowCellDivider = (props) => {
           <Typography type="body1" >{content}</Typography>
         </Grid>
       </Grid>
-      {!divider ?
-        <div className={classes.paddingTopBottom}>
+      {!divider
+        ? <div className={classes.paddingTopBottom}>
           <Divider />
-        </div> :
-        <div className={classes.paddingTop} />}
+        </div>
+        : <div className={classes.paddingTop} />}
     </div>
   );
 };

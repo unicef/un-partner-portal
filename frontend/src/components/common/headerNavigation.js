@@ -66,13 +66,13 @@ class HeaderNavigation extends Component {
         <Grid align="center" className={classes.container} container>
           <Grid item xs={8}>
             <div className={tabs ? classes.alignItems : classes.alignItemsPadding}>
-              { backButton ?
-                <IconButton onClick={handleBackButton}>
+              { backButton
+                ? <IconButton onClick={handleBackButton}>
                   <KeyboardArrowLeft />
                 </IconButton>
                 : null }
-              { title ?
-                <Typography type="headline">
+              { typeof title === 'string'
+                ? <Typography type="headline">
                   {title}
                 </Typography>
                 : titleObject }
@@ -83,8 +83,8 @@ class HeaderNavigation extends Component {
               {header}
             </div>
           </Grid>
-          {tabs ?
-            <div>
+          {tabs
+            ? <div>
               <Tabs index={index} onChange={handleChange}>
                 {this.renderTabs()}
               </Tabs>

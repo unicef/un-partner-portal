@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 import PropTypes from 'prop-types';
-import HqProfileOverviewHeader from './hqProfileOverviewHeader';
+import OrganizationProfileOverviewHeader from './organizationProfileOverviewHeader';
 import HeaderNavigation from '../../../components/common/headerNavigation';
 
-class HqProfileHeader extends Component {
+class OrganizationProfileHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -46,7 +46,7 @@ class HqProfileHeader extends Component {
           index={index}
           children={children}
           handleBackButton={() => { history.goBack(); }}
-          header={<HqProfileOverviewHeader update="12 Aug 2017" handleEditClick={() => { history.push(`/profile/${countryCode}/edit`); }} />}
+          header={<OrganizationProfileOverviewHeader update="12 Aug 2017" handleEditClick={() => { history.push(`/profile/${countryCode}/edit`); }} />}
           title={profile.name}
           handleChange={this.handleChange}
         />
@@ -55,7 +55,7 @@ class HqProfileHeader extends Component {
   }
 }
 
-HqProfileHeader.propTypes = {
+OrganizationProfileHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
   profile: PropTypes.object.isRequired,
@@ -64,10 +64,10 @@ HqProfileHeader.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  profile: state.hqProfile[ownProps.params.countryCode],
+  profile: state.organizationProfile[ownProps.params.countryCode],
   countryCode: ownProps.params.countryCode,
   location: ownProps.location.pathname,
-  tabs: state.hqProfileNav,
+  tabs: state.organizationProfileNav,
 });
 
 const mapDispatchToProps = () => ({
@@ -76,5 +76,5 @@ const mapDispatchToProps = () => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(HqProfileHeader);
+export default connect(mapStateToProps, mapDispatchToProps)(OrganizationProfileHeader);
 
