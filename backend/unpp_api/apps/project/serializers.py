@@ -6,6 +6,8 @@ from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES
 from common.serializers import SimpleSpecializationSerializer, PointSerializer
 from common.models import Point, AdminLevel1
+from partner.serializers import PartnerSerializer
+from partner.models import Partner
 from .models import EOI, Application, AssessmentCriteria
 
 
@@ -176,9 +178,23 @@ class CreateProjectSerializer(serializers.Serializer):
 
 class PatchProjectSerializer(serializers.ModelSerializer):
 
+    specializations = SimpleSpecializationSerializer(many=True)
+    invited_partners = PartnerSerializer(many=True)
+    locations = PointSerializer(many=True)
+    assessments_criteria = AssessmentCriteriaSerializer(many=True)
+
     class Meta:
         model = EOI
         fields = "__all__"
+
+    def update(self, instance, validated_data):
+        del validated_data['invited_partners']
+        instance = super(PatchProjectSerializer, self).update(instance, validated_data)
+        for invited_partner in self.initial_data.get('invited_partners'):
+            instance.invited_partners.add(Partner.objects.get(id=invited_partner['id']))
+        instance.save()
+
+        return instance
 
 
 class ApplicationsListSerializer(serializers.ModelSerializer):

@@ -479,7 +479,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
             )
             self.selected_source = DIRECT_SELECTION_SOURCE.cso
             self.save()
-        else:
+        elif self.status == EOI_TYPES.open:
             Application.objects.create(
                 partner=get_partner(),
                 eoi=self,

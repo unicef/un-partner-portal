@@ -5,9 +5,6 @@ from agency.models import AgencyMember
 from common.consts import (
     EOI_TYPES,
     MEMBER_ROLES,
-    JUSTIFICATION_FOR_DIRECT_SELECTION,
-    DIRECT_SELECTION_SOURCE,
-    APPLICATION_STATUSES,
 )
 from common.factories import (
     PartnerFactory,
@@ -24,7 +21,6 @@ from common.factories import (
     EOIFactory,
 )
 from partner.models import Partner, PartnerMember
-from project.models import EOI, Application
 
 
 def clean_up_data_in_db():
