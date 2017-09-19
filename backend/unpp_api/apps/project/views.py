@@ -162,3 +162,9 @@ class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
     def create(self, request, pk, *args, **kwargs):
         request.data['did_win'] = True
         return super(ApplicationsAgencyAPIView, self).create(request, pk, *args, **kwargs)
+
+
+class ApplicationsAPIView(RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    queryset = Application.objects.all()
+    serializer_class = ApplicationFullSerializer
