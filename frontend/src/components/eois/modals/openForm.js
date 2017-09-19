@@ -7,7 +7,6 @@ import GridColumn from '../../common/grid/gridColumn';
 import ProjectDetails from './ProjectDetails';
 
 const messages = {
-  conceptNoteTemplate: 'Concept Note Template',
   selectionCriteria: 'Selection Criteria',
 };
 
@@ -24,9 +23,6 @@ const OpenForm = (props) => {
             <fields.EndDate />,
           ]}
         />
-        <Typography type="headline">
-          {messages.conceptNoteTemplate}
-        </Typography>
         <Typography type="headline">
           {messages.selectionCriteria}
         </Typography>

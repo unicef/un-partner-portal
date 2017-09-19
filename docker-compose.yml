@@ -5,6 +5,7 @@ services:
     image: unicef/unpp-proxy
     environment:
       - DJANGO_APPLICATION_SERVICE_HOST=backend
+      - FRONTEND_SERVICE_HOST=frontend
     build:
       context: ./proxy
       dockerfile: ./Dockerfile
@@ -17,7 +18,7 @@ services:
   backend:
     image: unicef/unpp-backend
     env_file:
-      - backend/.env
+      - .env
     build:
       context: ./backend
       dockerfile: ./Dockerfile
@@ -26,20 +27,22 @@ services:
         REQUIREMENT_FILE: dev.pip
     volumes:
       - './backend:/code/'
-    command: bash -c "/usr/local/bin/waitforit -host=db -port=5432 && python /code/manage.py collectstatic --noinput && uwsgi --ini /code/unpp_api/uwsgi.ini"
+    command: bash -c "/usr/local/bin/waitforit -host=db -port=5432 --timeout 30 -- python /code/manage.py collectstatic --noinput && uwsgi --ini /code/unpp_api/uwsgi.ini"
     depends_on:
       - db
 
   db:
     image: unicef/unpp-db
     env_file:
-      - backend/.env
+      - .env
     build:
       context: ./db
       dockerfile: ./Dockerfile
 
   frontend:
     image: unicef/unpp-frontend
+    env_file:
+      - .env
     build:
       context: ./frontend
       dockerfile: ./Dockerfile

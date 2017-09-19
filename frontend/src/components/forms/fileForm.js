@@ -4,12 +4,9 @@ import PropTypes from 'prop-types';
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
-import Input from 'material-ui/Input';
 import FileUpload from 'material-ui-icons/FileUpload';
-import CloudDownload from 'material-ui-icons/CloudDownload';
 import Attachment from 'material-ui-icons/Attachment';
 import { FormLabel, FormControlLabel } from 'material-ui/Form';
 import { renderFormControl } from '../../helpers/formHelper';

@@ -3,5 +3,5 @@ from .base import *  # noqa: ignore=F403
 
 
 # dev overrides
-DEBUG = False
+DEBUG = True
 IS_STAGING = True
