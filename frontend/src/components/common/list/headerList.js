@@ -33,7 +33,7 @@ class HeaderList extends Component {
       <Paper>
         <Grid direction="column" className={classes.container} container gutter={0}>
           <Grid className={classes.header} item>
-            {header ? createElement(header) : headerObject}
+            {header}
           </Grid>
           {this.renderChildren()}
         </Grid>
@@ -44,8 +44,7 @@ class HeaderList extends Component {
 
 HeaderList.propTypes = {
   classes: PropTypes.object.isRequired,
-  header: PropTypes.func,
-  headerObject: PropTypes.object,
+  header: PropTypes.object,
   rows: PropTypes.func.isRequired,
 };
 

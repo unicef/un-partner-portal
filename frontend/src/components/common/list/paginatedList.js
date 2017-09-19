@@ -9,7 +9,7 @@ const table = {
   allowedPageSizes: [5, 10, 15, 0],
 };
 
-const styleSheet = createStyleSheet('HeaderList', (theme) => {
+const styleSheet = createStyleSheet('paginatedList', (theme) => {
   const paddingSmall = theme.spacing.unit * 3;
   const paddingMedium = theme.spacing.unit * 4;
 

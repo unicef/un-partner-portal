@@ -84,7 +84,7 @@ const PartnerOverviewSummary = (props) => {
   const { classes, partner } = props;
   return (
     <HeaderList
-      headerObject={summaryHeader(classes, partner.lastUpdate)}
+      header={summaryHeader(classes, partner.lastUpdate)}
       rows={[fields(partner)]}
     />);
 };
