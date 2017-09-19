@@ -113,7 +113,6 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         del validated_data['eoi']['specializations']
         focal_points = validated_data['eoi']['focal_points']
         del validated_data['eoi']['focal_points']
-        # import pdb; pdb.set_trace()
 
         eoi = EOI.objects.create(**validated_data['eoi'])
         for location in locations:
