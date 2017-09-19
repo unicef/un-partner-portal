@@ -28,7 +28,7 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
 )
-from project.models import EOI
+from project.models import EOI, Application
 from .consts import (
     PARTNER_TYPES,
     MEMBER_STATUSES,
@@ -41,6 +41,8 @@ from .consts import (
     POLICY_AREA_CHOICES,
     ORG_AUDIT_CHOICES,
     AUDIT_ASSESMENT_CHOICES,
+    JUSTIFICATION_FOR_DIRECT_SELECTION,
+    EOI_TYPES,
 )
 from .countries import COUNTRIES_ALPHA2_CODE
 
@@ -456,3 +458,17 @@ class EOIFactory(factory.django.DjangoModelFactory):
             Specialization.objects.order_by("?").first(),
             Specialization.objects.order_by("?").first(),
         )
+
+    @factory.post_generation
+    def applications(self, create, extracted, **kwargs):
+        app = Application(
+            partner=get_partner(),
+            eoi=self,
+            submitter=get_agency_member(),
+        )
+        if self.status == EOI_TYPES.direct:
+            app.did_win = True
+            app.did_accept = True
+            app.ds_justification_select = JUSTIFICATION_FOR_DIRECT_SELECTION.local
+            app.justification_reason = "good reason"
+        app.save()

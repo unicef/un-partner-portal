@@ -74,7 +74,6 @@ def generate_fake_data(quantity=4):
             partner=partner_example,
             eoi=eoi,
             submitter=eoi.created_by,
-            agency=eoi.agency,
             status=APPLICATION_STATUSES.pending,
             did_win=True,
             did_accept=False,
