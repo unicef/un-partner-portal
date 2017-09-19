@@ -1,63 +1,69 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import Grid from 'material-ui/Grid';
-import { TableCell } from 'material-ui/Table';
 import PartnerFilter from '../../../partners/partnerFilter';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
 import SelectableList from '../../../common/list/selectableList';
 import GridColumn from '../../../common/grid/gridColumn';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import RejectButton from '../../buttons/rejectButton';
+import PreselectButton from '../../buttons/preselectButton';
+import GridRow from '../../../common/grid/gridRow';
+import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
+import ApplicationStatusCell from '../../cells/applicationStatusCell';
 
-const styleSheet = createStyleSheet('HeaderList', (theme) => {
-  const paddingMedium = theme.spacing.unit * 4;
-
-  return {
-    container: {
-      paddingLeft: `${paddingMedium}px`,
-    },
-  };
-});
-
-const FirstCell = withStyles(styleSheet)((props) => {
-  const { classes, row } = props;
+/* eslint-disable react/prop-types */
+const HeaderActions = (props) => {
+  const { rows } = props;
+  const ids = rows.map(row => row.id);
+  const Preselect = WithGreyColor(PreselectButton);
+  const Reject = WithGreyColor(RejectButton);
   return (
-    <PartnerProfileNameCell
-      className={classes.container}
+    <GridRow gutter={0}>
+      <Preselect id={ids} />
+      <Reject id={ids} />
+    </GridRow>
+  );
+};
+
+const applicationsCells = (row, column) => {
+  if (column.name === 'name') {
+    return (<PartnerProfileNameCell
       verified={row.verified}
       yellowFlag={row.flagYellow}
       redFlag={row.flagRed}
       name={row.name}
+    />);
+  }
+  if (column.name === 'status') {
+    return (<ApplicationStatusCell
+      id={row.id}
+      status={row.status}
+      conceptNoteId={row.conceptNote}
+      hovered={row.hovered}
     />
-  )
-});
-
-const partnerCell = (row, column, style) => {
-  if (column.name === 'name') {
-    return (<FirstCell row={row} />);
+    );
   }
   return undefined;
 };
-
-class PartnersContainer extends Component {
-  render() {
-    const { applications, columns } = this.props;
-    return (
-      <div>
-        <GridColumn gutter={24}>
-          <PartnerFilter />
-          <SelectableList
-            items={applications}
-            columns={columns}
-            templateCell={(row, column, style) => partnerCell(row, column, style)}
-            onPageSizeChange={pageSize => console.log('Page size', pageSize)}
-            onCurrentPageChange={page => console.log('Page number', page)}
-          />
-        </GridColumn>
-      </div>
-    );
-  }
-}
+/* eslint-enable react/prop-types */
+const PartnersContainer = (props) => {
+  const { applications, columns } = props;
+  return (
+    <div>
+      <GridColumn gutter={24}>
+        <PartnerFilter />
+        <SelectableList
+          items={applications}
+          columns={columns}
+          headerAction={HeaderActions}
+          templateCell={(row, column, style) => applicationsCells(row, column, style)}
+          onPageSizeChange={pageSize => console.log('Page size', pageSize)}
+          onCurrentPageChange={page => console.log('Page number', page)}
+        />
+      </GridColumn>
+    </div>
+  );
+};
 
 PartnersContainer.propTypes = {
   applications: PropTypes.array.isRequired,

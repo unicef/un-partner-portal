@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
-import SpreadContent from '../spreadContent'
+import SpreadContent from '../spreadContent';
 
 const messages = {
   selected: 'items selected',
@@ -39,7 +39,6 @@ const SelectedHeader = (props) => {
 SelectedHeader.propTypes = {
   classes: PropTypes.object.isRequired,
   numSelected: PropTypes.number.isRequired,
-  title: PropTypes.string.isRequired,
   children: PropTypes.node,
 };
 

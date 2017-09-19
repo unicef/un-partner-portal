@@ -24,42 +24,51 @@ const headTemplate = ({ children, ...restProps }) => (
 const bodyTemplate = ({ children, ...restProps }) => (
   <TableBodyMUI {...restProps}>{children}</TableBodyMUI>
 );
-const rowTemplate = ({ children, row, ...restProps }) => (
-  <TableRowMUI
-    selected={row.selected}
-    hover
-    {...restProps}
-  >
-    {children}
-  </TableRowMUI>
-);
-/* eslint-enable react/prop-types */
 
-const Table = ({
+const rowTemplate = (handleRowMouseEnter, handleRowMouseLeave) =>
+  ({ children, row, ...restProps }) => (
+    <TableRowMUI
+      selected={row.selected}
+      hover
+      {...restProps}
+      onMouseEnter={() => handleRowMouseEnter(row.rowId)}
+      onMouseLeave={() => handleRowMouseLeave()}
+    >
+      {children}
+    </TableRowMUI>
+  );
+
+const Table = (handleRowMouseEnter, handleRowMouseLeave, hoveredRow) => ({
   headerRows, bodyRows, getRowId,
   columns,
   cellTemplate,
   onClick,
   allowColumnReordering, setColumnOrder,
-}) => (
-  <TableLayout
-    headerRows={headerRows}
-    rows={bodyRows}
-    getRowId={getRowId}
-    columns={columns}
-    minColumnWidth={MINIMAL_COLUMN_WIDTH}
-    tableTemplate={tableTemplate}
-    headTemplate={headTemplate}
-    bodyTemplate={bodyTemplate}
-    rowTemplate={rowTemplate}
-    cellTemplate={cellTemplate}
-    onClick={onClick}
-    allowColumnReordering={allowColumnReordering}
-    setColumnOrder={setColumnOrder}
-  />
-);
+}) => {
+  const newRows = bodyRows.map((row, index) => {
+    const newRow = Object.assign({}, row.row, { hovered: index === hoveredRow });
+    return Object.assign({}, row, { row: newRow });
+  });
+  return (
+    <TableLayout
+      headerRows={headerRows}
+      rows={newRows}
+      getRowId={getRowId}
+      columns={columns}
+      minColumnWidth={MINIMAL_COLUMN_WIDTH}
+      tableTemplate={tableTemplate}
+      headTemplate={headTemplate}
+      bodyTemplate={bodyTemplate}
+      rowTemplate={rowTemplate(handleRowMouseEnter, handleRowMouseLeave)}
+      cellTemplate={cellTemplate}
+      onClick={onClick}
+      allowColumnReordering={allowColumnReordering}
+      setColumnOrder={setColumnOrder}
+    />
+  );
+};
 Table.defaultProps = {
-  onClick: () => {},
+  onClick: () => { },
 };
 Table.propTypes = {
   headerRows: PropTypes.array.isRequired,

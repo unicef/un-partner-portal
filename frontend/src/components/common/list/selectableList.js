@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import { PagingState, LocalPaging, RowDetailState, SelectionState } from '@devexpress/dx-react-grid';
+import { PagingState, LocalPaging, SelectionState } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
-import { Grid, TableView, TableHeaderRow, TableRowDetail, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
+import R from 'ramda';
+import { Grid, TableView, TableHeaderRow, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import SelectedHeader from './selectedHeader';
 import TableTemplate from './tableTemplate';
 
@@ -26,11 +26,11 @@ const styleSheet = createStyleSheet('HeaderList', (theme) => {
 });
 
 class PaginatedList extends Component {
-  static navigationHeader(classes, numSelected) {
+  static navigationHeader(classes, selected, rows, HeaderAction) {
     return (<div>
-      {numSelected > 0
-        ? <SelectedHeader numSelected={numSelected} >
-          <Button color='inherit'> Check </Button>
+      {selected.length > 0
+        ? <SelectedHeader numSelected={selected.length} >
+          <HeaderAction rows={R.values(R.pick(selected, rows))} />
         </SelectedHeader>
         : <div className={classes.container}>
           <Typography type="title">
@@ -45,25 +45,38 @@ class PaginatedList extends Component {
     super(props);
     this.state = {
       selected: [],
+      hovered: null,
     };
     this.handleSelect = this.handleSelect.bind(this);
-    this.changeExpandedDetails = expandedRows => this.setState({ expandedRows });
+    this.handleRowMouseEnter = this.handleRowMouseEnter.bind(this);
+    this.handleRowMouseLeave = this.handleRowMouseLeave.bind(this);
   }
 
   handleSelect(newSelected) {
     return this.setState({ selected: newSelected });
   }
 
+  handleRowMouseEnter(newHovered) {
+    this.setState({ hoveredRow: newHovered });
+  }
+
+  handleRowMouseLeave() {
+    this.setState({ hoveredRow: null });
+  }
+
   render() {
     const { classes, items, columns, templateCell,
-      onCurrentPageChange, onPageSizeChange } = this.props;
-    const { selected } = this.state;
-    console.log(selected)
+      onCurrentPageChange, onPageSizeChange, headerAction } = this.props;
+    const { selected, hoveredRow } = this.state;
     return (
       <Grid
         rows={items}
         columns={columns}
-        headerPlaceholderTemplate={() => PaginatedList.navigationHeader(classes, selected.length)}
+        headerPlaceholderTemplate={() => PaginatedList.navigationHeader(
+          classes,
+          selected,
+          items,
+          headerAction)}
       >
         <PagingState
           defaultCurrentPage={0}
@@ -72,13 +85,14 @@ class PaginatedList extends Component {
           onCurrentPageChange={(page) => { onCurrentPageChange(page); }}
         />
         <LocalPaging />
-
         <SelectionState
           selection={selected}
           onSelectionChange={this.handleSelect}
         />
         <TableView
-          tableTemplate={TableTemplate}
+          tableTemplate={TableTemplate(this.handleRowMouseEnter,
+            this.handleRowMouseLeave,
+            hoveredRow)}
           tableCellTemplate={({ row, column, style }) =>
             templateCell(row, column, style)}
         />
@@ -87,7 +101,6 @@ class PaginatedList extends Component {
           highlightSelected
         />
         <TableHeaderRow />
-
         <PagingPanel allowedPageSizes={table.allowedPageSizes} />
       </Grid>
     );
@@ -99,10 +112,9 @@ PaginatedList.propTypes = {
   items: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   templateCell: PropTypes.func.isRequired,
-  expandable: PropTypes.bool,
-  expandedCell: PropTypes.func,
   onCurrentPageChange: PropTypes.func,
   onPageSizeChange: PropTypes.func,
+  headerAction: PropTypes.component,
 };
 
 export default withStyles(styleSheet)(PaginatedList);
