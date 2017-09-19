@@ -59,7 +59,7 @@ class ApplicationsFilter(django_filters.FilterSet):
         return queryset.filter(partner__experiences__years=value)
 
     def get_concern(self, queryset, name, value):
-        return queryset.filter(partner__mandate_mission__concern_groups__in=value)
+        return queryset.filter(partner__mandate_mission__concern_groups__contains=[value])
 
     def get_status(self, queryset, name, value):
         return queryset.filter(status=value)
