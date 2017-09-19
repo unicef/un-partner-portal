@@ -28,7 +28,7 @@ const styleSheet = createStyleSheet('HqProfileOverviewHeader', (theme) => {
   };
 });
 
-const HqProfileOverviewHeader = (props) => {
+const OrganizationProfileOverviewHeader = (props) => {
   const { classes, update, handleEditClick } = props;
 
   return (
@@ -43,10 +43,10 @@ const HqProfileOverviewHeader = (props) => {
   );
 };
 
-HqProfileOverviewHeader.propTypes = {
+OrganizationProfileOverviewHeader.propTypes = {
   classes: PropTypes.object.isRequired,
   handleEditClick: PropTypes.func.isRequired,
   update: PropTypes.string.isRequired,
 };
 
-export default withStyles(styleSheet)(HqProfileOverviewHeader);
+export default withStyles(styleSheet)(OrganizationProfileOverviewHeader);

@@ -17,8 +17,11 @@ import partnerProfileEdit from './reducers/partnerProfileEdit';
 import cfeiDetails, * as cfeiDetailsSelector from './reducers/cfeiDetails';
 import cfeiDetailsNav, { selectItemsByType } from './reducers/cfeiDetailsNav';
 import agencyPartnersList from './reducers/agencyPartnersList';
+import agencyPartnerProfileNav from './reducers/agencyPartnerProfileNav';
+import agencyPartnerProfile from './reducers/agencyPartnerProfile';
 import population from './reducers/population';
-import hqProfileNav from './reducers/hqProfileNav';
+import organizationProfileNav from './reducers/organizationProfileNav';
+import organizationProfile from './reducers/organizationProfile';
 import sectors, * as sectorsSelectors from './reducers/sectors';
 import partnersApplicationsList from './reducers/partnersApplicationsList';
 
@@ -28,13 +31,16 @@ const mainReducer = combineReducers({
   cfeiDetails,
   cfeiDetailsNav,
   newCfei,
-  hqProfileNav,
+  organizationProfile,
+  organizationProfileNav,
   nav,
   session,
   countries,
   countryProfiles,
   partnerProfileEdit,
   agencyPartnersList,
+  agencyPartnerProfileNav,
+  agencyPartnerProfile,
   form: formReducer,
   population,
   routing: routerReducer,

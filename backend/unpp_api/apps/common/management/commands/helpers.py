@@ -74,12 +74,11 @@ def generate_fake_data(quantity=4):
             partner=partner_example,
             eoi=eoi,
             submitter=eoi.created_by,
-            agency=eoi.agency,
             status=APPLICATION_STATUSES.pending,
             did_win=True,
             did_accept=False,
             ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.known,
-            ds_justification_reason="They are the best!",
+            justification_reason="They are the best!",
         )
         eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
         eoi.save()
