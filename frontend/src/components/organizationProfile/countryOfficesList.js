@@ -16,7 +16,7 @@ const countryOfficesItems = profiles => profiles.map(item =>
 
 const CountryOfficesList = props => (
   <HeaderList
-    header={CountryOfficesHeaderContainer}
+    header={<CountryOfficesHeaderContainer />}
     rows={countryOfficesItems(props.countryProfiles)}
   />
 );
