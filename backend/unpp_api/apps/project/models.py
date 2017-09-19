@@ -91,7 +91,6 @@ class Application(TimeStampedModel):
     eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
     submitter = models.ForeignKey('account.User', related_name="applications")
     cn = models.FileField()
-    cn_id = models.CharField(max_length=255, null=True, blank=True)
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')

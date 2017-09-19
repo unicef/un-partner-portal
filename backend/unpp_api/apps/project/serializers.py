@@ -176,7 +176,7 @@ class CreateProjectSerializer(serializers.Serializer):
         }
 
 
-class PatchProjectSerializer(serializers.ModelSerializer):
+class ProjectUpdateSerializer(serializers.ModelSerializer):
 
     specializations = SimpleSpecializationSerializer(many=True)
     invited_partners = PartnerSerializer(many=True)
@@ -185,11 +185,21 @@ class PatchProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EOI
-        fields = "__all__"
+        fields = (
+            'id',
+            'specializations',
+            'invited_partners',
+            'locations',
+            'assessments_criteria',
+            'start_date',
+            'end_date',
+            'deadline_date',
+            'notif_results_date',
+        )
 
     def update(self, instance, validated_data):
         del validated_data['invited_partners']
-        instance = super(PatchProjectSerializer, self).update(instance, validated_data)
+        instance = super(ProjectUpdateSerializer, self).update(instance, validated_data)
         for invited_partner in self.initial_data.get('invited_partners'):
             instance.invited_partners.add(Partner.objects.get(id=invited_partner['id']))
         instance.save()
@@ -208,6 +218,5 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'id',
             'legal_name',
             'type_org',
-            'cn_id',
             'status',
         )
