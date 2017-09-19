@@ -38,10 +38,12 @@ const messages = {
   ],
 };
 
-class HqProfileOverview extends Component {
+class OrganizationProfileOverview extends Component {
   handleEditMode(sectionIndex) {
+    const { countryCode } = this.props;
+
     this.props.changeTab(sectionIndex);
-    history.push('profile/edit');
+    history.push(`/profile/${countryCode}/edit`);
   }
 
   render() {
@@ -65,12 +67,18 @@ class HqProfileOverview extends Component {
   }
 }
 
-HqProfileOverview.propTypes = {
+OrganizationProfileOverview.propTypes = {
   changeTab: PropTypes.func.isRequired,
+  countryCode: PropTypes.string.isRequired,
 };
 
 const mapDispatch = dispatch => ({
   changeTab: index => dispatch(changeTab(index)),
 });
 
-export default connect(null, mapDispatch)(HqProfileOverview);
+const mapStateToProps = (state, ownProps) => ({
+  countryCode: ownProps.params.countryCode,
+});
+
+
+export default connect(mapStateToProps, mapDispatch)(OrganizationProfileOverview);

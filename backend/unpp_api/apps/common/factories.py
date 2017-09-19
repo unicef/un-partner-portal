@@ -482,7 +482,6 @@ class EOIFactory(factory.django.DjangoModelFactory):
                 partner=get_partner(),
                 eoi=self,
                 submitter=get_agency_member(),
-                cn_id="{}{}/CN".format(date.today().year, self.id),
                 did_win=True,
                 did_accept=True,
                 ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.local,
@@ -495,5 +494,4 @@ class EOIFactory(factory.django.DjangoModelFactory):
                 partner=get_partner(),
                 eoi=self,
                 submitter=get_partner_member(),
-                cn_id="{}{}/CN".format(date.today().year, self.id),
             )

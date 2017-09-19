@@ -191,13 +191,15 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['notif_results_date'], str(date.today() + timedelta(days=15)))
 
         # complete this CFEI
+        justification = "mission completed"
         payload = {
-            "justification": "mission completed",
+            "justification": justification,
             "completed_reason": COMPLETED_REASON.canceled
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.canceled)
+        self.assertEquals(response.data['justification'], justification)
 
 
 class TestDirectProjectsAPITestCase(BaseAPITestCase):

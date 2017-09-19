@@ -19,7 +19,7 @@ from .serializers import (
     DirectProjectSerializer,
     CreateProjectSerializer,
     CreateDirectProjectSerializer,
-    PatchProjectSerializer,
+    ProjectUpdateSerializer,
     ApplicationFullSerializer,
     CreateDirectApplicationNoCNSerializer,
     ApplicationsListSerializer,
@@ -67,7 +67,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
 class EOIAPIView(RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
-    serializer_class = PatchProjectSerializer
+    serializer_class = ProjectUpdateSerializer
     queryset = EOI.objects.all()
 
 

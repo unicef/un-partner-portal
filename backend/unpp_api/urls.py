@@ -14,11 +14,11 @@ urlpatterns = [
     url(r'^api/partners/', include('partner.urls', namespace='partners')),
 ]
 
-if settings.IS_DEV:
+if settings.IS_DEV or settings.IS_STAGING:
     from rest_framework_swagger.views import get_swagger_view
     schema_view = get_swagger_view(title='Swagger API')
     urlpatterns += [
-        url(r'^api/swagger/', schema_view),
+        url(r'^api/doc/', schema_view),
     ]
 
 urlpatterns += staticfiles_urlpatterns('/api/static/')

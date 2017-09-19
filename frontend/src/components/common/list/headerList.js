@@ -28,12 +28,12 @@ class HeaderList extends Component {
   }
 
   render() {
-    const { classes, header } = this.props;
+    const { classes, header, headerObject } = this.props;
     return (
       <Paper>
         <Grid direction="column" className={classes.container} container gutter={0}>
           <Grid className={classes.header} item>
-            {createElement(header)}
+            {header}
           </Grid>
           {this.renderChildren()}
         </Grid>
@@ -44,7 +44,7 @@ class HeaderList extends Component {
 
 HeaderList.propTypes = {
   classes: PropTypes.object.isRequired,
-  header: PropTypes.func.isRequired,
+  header: PropTypes.object,
   rows: PropTypes.func.isRequired,
 };
 

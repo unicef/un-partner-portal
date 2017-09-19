@@ -187,7 +187,7 @@ class CreateProjectSerializer(serializers.Serializer):
         }
 
 
-class PatchProjectSerializer(serializers.ModelSerializer):
+class ProjectUpdateSerializer(serializers.ModelSerializer):
 
     specializations = SimpleSpecializationSerializer(many=True)
     invited_partners = PartnerSerializer(many=True)
@@ -196,7 +196,19 @@ class PatchProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EOI
-        fields = "__all__"
+        fields = (
+            'id',
+            'specializations',
+            'invited_partners',
+            'locations',
+            'assessments_criteria',
+            'start_date',
+            'end_date',
+            'deadline_date',
+            'notif_results_date',
+            'justification',
+            'completed_reason',
+        )
 
     def update(self, instance, validated_data):
         if 'invited_partners' in validated_data:
@@ -206,9 +218,7 @@ class PatchProjectSerializer(serializers.ModelSerializer):
                 if partner.id not in map(lambda x: x['id'], self.initial_data.get('invited_partners', [])):
                     instance.invited_partners.remove(partner)
 
-        instance = super(PatchProjectSerializer, self).update(instance, validated_data)
-
-        # user can add and remove on update - here we add partners on the list
+        instance = super(ProjectUpdateSerializer, self).update(instance, validated_data)
         for invited_partner in self.initial_data.get('invited_partners', []):
             instance.invited_partners.add(Partner.objects.get(id=invited_partner['id']))
         instance.save()
@@ -227,6 +237,5 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'id',
             'legal_name',
             'type_org',
-            'cn_id',
             'status',
         )
