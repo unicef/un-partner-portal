@@ -22,6 +22,8 @@ import organizationProfileOverview from './components/organizationProfile/profil
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
 import mainContent from './components/common/mainContentWrapper';
+import dev from './components/dev';
+
 
 const history = syncHistoryWithStore(browserHistory, store);
 
@@ -70,6 +72,7 @@ const allRoutes = () => (
       </Route>
     </Route>
     <Route path="/registration" component={registration} />
+    <Route path="/dev" component={dev} />
   </Router>
 );
 

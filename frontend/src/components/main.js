@@ -6,6 +6,7 @@ import MuiThemeProviderLegacy from 'material-ui-old/styles/MuiThemeProvider';
 
 import { initSession } from '../reducers/session';
 import { loadCountries } from '../reducers/countries';
+import { loadSectors } from '../reducers/sectors';
 import getTheme, { muiOldTheme } from '../styles/muiTheme';
 
 
@@ -14,6 +15,7 @@ class Main extends Component {
     const role = window.localStorage.role;
     this.props.sessionInit(role);
     this.props.loadCountries();
+    this.props.loadSectors();
   }
 
   render() {
@@ -31,6 +33,7 @@ class Main extends Component {
 Main.propTypes = {
   sessionInit: PropTypes.func,
   loadCountries: PropTypes.func,
+  loadSectors: PropTypes.func,
   children: PropTypes.node,
 };
 
@@ -39,6 +42,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(initSession({ role }));
   },
   loadCountries: () => loadCountries(dispatch),
+  loadSectors: () => dispatch(loadSectors()),
 });
 
 

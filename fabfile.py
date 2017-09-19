@@ -71,6 +71,7 @@ def make_db():
     """
     local('docker-compose exec backend python manage.py reset_db')
     local('docker-compose exec backend python manage.py migrate')
+    local('docker-compose exec backend python manage.py loaddata --app common initial.json')
     fixtures()
 
 
@@ -86,3 +87,10 @@ def remove_untagged_images():
     Delete all untagged (<none>) images
     """
     local('docker rmi $(docker images | grep "^<none>" | awk "{print $3}")')
+
+
+def pep8():
+    """
+    Delete all untagged (<none>) images
+    """
+    local('docker-compose exec backend flake8 ./ --count')

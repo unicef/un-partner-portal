@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
-import R from 'ramda';
 
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
