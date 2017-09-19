@@ -6,7 +6,6 @@ import { selectNormalizedPopulations } from '../../../../store';
 
 const messages = {
   label: 'Intended populations of concern (only for UNHCR)',
-  placeholder: 'Enter the name of the Focal Point',
 };
 // TODO make this only for agency=UNHCR
 const SelectPopulationOfConcern = (props) => {
@@ -14,7 +13,6 @@ const SelectPopulationOfConcern = (props) => {
   return (<SelectForm
     label={messages.label}
     fieldName="population"
-    placeholder={messages.placeholder}
     values={values}
   />);
 };

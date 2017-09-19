@@ -28,8 +28,7 @@ class CallPartnersModal extends Component {
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
-  onFormSubmit(event, values) {
-    console.log(values);
+  onFormSubmit() {
     this.props.newCfeiProcessed();
   }
 

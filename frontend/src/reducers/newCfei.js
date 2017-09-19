@@ -1,5 +1,8 @@
 import R from 'ramda';
 import { postOpenCfei } from '../helpers/api/api';
+import { mergeListsFromObjectArray } from './normalizationHelpers';
+import { loadCfei, OPEN } from './cfei';
+import { PROJECT_TYPES } from '../helpers/constants';
 
 export const NEW_CFEI_SUBMITTING = 'NEW_CFEI_SUBMITTING';
 export const NEW_CFEI_SUBMITTED = 'NEW_CFEI_SUBMITTED';
@@ -28,7 +31,6 @@ const mockData = {
         lon: 19,
       },
     ],
-    specializations: [1, 2],
     country_code: 'PL',
     agency: 1,
     agency_office: 1,
@@ -55,12 +57,21 @@ export const newCfeiProcessing = () => ({ type: NEW_CFEI_PROCESSING });
 export const newCfeiProcessed = () => ({ type: NEW_CFEI_PROCESSED });
 export const newCfeiFailure = () => ({ type: NEW_CFEI_FAILURE });
 
-export const addOpenCfei = (dispatch, body) => {
+const prepareBody = (body) => {
+  const newBody = R.clone(body);
+  const flatSectors = mergeListsFromObjectArray(newBody.eoi.specializations, 'areas');
+  newBody.eoi = R.assoc('specializations', flatSectors, body.eoi);
+  return newBody;
+};
+
+export const addOpenCfei = body => (dispatch) => {
   dispatch(newCfeiSubmitting());
-  postOpenCfei(R.mergeWith(R.merge, body, mockData))
+  const preparedBody = prepareBody(body);
+  return postOpenCfei(R.mergeWith(R.merge, preparedBody, mockData))
     .then(() => {
       dispatch(newCfeiSubmitted());
       dispatch(newCfeiProcessing());
+      dispatch(loadCfei(PROJECT_TYPES.OPEN));
     })
     .catch((error) => {
       dispatch(newCfeiSubmitted());

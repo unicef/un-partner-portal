@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import InfoIcon from 'material-ui-icons/Info';
 import Grid from 'material-ui/Grid';
 import { MenuItem } from 'material-ui-old/Menu';
-import { FormControl, FormLabel } from 'material-ui/Form';
+import { FormControl } from 'material-ui/Form';
 import { renderSelectField, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 import TooltipIcon from '../common/tooltipIcon';
@@ -176,6 +176,10 @@ SelectForm.propTypes = {
    * props passed to wrapped SelectField
    */
   selectFieldProps: PropTypes.object,
+  /**
+   * if form should be displayed in read only state
+   */
+  readOnly: PropTypes.bool,
 };
 
 export default SelectForm;
