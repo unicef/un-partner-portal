@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 import os
 import random
-from datetime import date
+from datetime import date, timedelta
 
 from django.urls import reverse
 from django.conf import settings
@@ -22,6 +22,7 @@ from common.consts import (
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     MEMBER_ROLES,
     APPLICATION_STATUSES,
+    COMPLETED_REASON,
 )
 from project.views import PinProjectAPIView
 
@@ -107,7 +108,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
                 'title': "EOI title",
                 'country_code': COUNTRIES_ALPHA2_CODE[0][0],
                 'agency': ao.agency.id,
-                'focal_point': User.objects.first().id,
+                'focal_points': [User.objects.first().id],
                 'locations': [
                     {
                         "country_code": 'IQ',
@@ -154,12 +155,51 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         payload = {
             "invited_partners": [
                 {"id": Partner.objects.first().id},
+                {"id": Partner.objects.last().id},
             ]
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], eoi_id)
         self.assertTrue(Partner.objects.first().id in map(lambda x: x['id'], response.data['invited_partners']))
+        self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
+
+        payload = {
+            "invited_partners": [
+                {"id": Partner.objects.last().id},
+            ]
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['id'], eoi_id)
+        self.assertTrue(Partner.objects.last().id in map(lambda x: x['id'], response.data['invited_partners']))
+        self.assertTrue(Partner.objects.count(), 1)
+        self.assertTrue(len(response.data['invited_partners']), 1)
+
+        # edit EOI - dates & focal point(s)
+        payload = {
+            "start_date": date.today() - timedelta(days=10),
+            "end_date": date.today() + timedelta(days=20),
+            "deadline_date": date.today() + timedelta(days=10),
+            "notif_results_date": date.today() + timedelta(days=15),
+            "focal_points": [
+                User.objects.filter(is_superuser=False, agency_members__isnull=False).first().id,
+            ]
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['notif_results_date'], str(date.today() + timedelta(days=15)))
+
+        # complete this CFEI
+        justification = "mission completed"
+        payload = {
+            "justification": justification,
+            "completed_reason": COMPLETED_REASON.canceled
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.canceled)
+        self.assertEquals(response.data['justification'], justification)
 
 
 class TestDirectProjectsAPITestCase(BaseAPITestCase):
@@ -180,7 +220,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
                 'title': "EOI title",
                 'country_code': COUNTRIES_ALPHA2_CODE[0][0],
                 'agency': ao.agency.id,
-                'focal_point': User.objects.first().id,
+                'focal_points': [User.objects.first().id],
                 'locations': [
                     {
                         "country_code": 'IQ',

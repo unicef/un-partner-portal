@@ -14,6 +14,7 @@ from common.consts import (
     SELECTION_CRITERIA_CHOICES,
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
+    COMPLETED_REASON,
 )
 from common.countries import COUNTRIES_ALPHA2_CODE
 
@@ -30,7 +31,7 @@ class EOI(TimeStampedModel):
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
     created_by = models.ForeignKey('account.User', related_name="expressions_of_interest")
     # focal_point - limited to users under agency
-    focal_point = models.ForeignKey('account.User', related_name="expressions_of_interest_by_focal_point")
+    focal_points = models.ManyToManyField('account.User', related_name="eoi_focal_points")
     locations = models.ManyToManyField('common.Point', related_name="expressions_of_interest")
     agency_office = models.ForeignKey('agency.AgencyOffice', related_name="expressions_of_interest")
     # always be taken from the agency; we always keep their base template of the one they used.
@@ -51,7 +52,8 @@ class EOI(TimeStampedModel):
         models.ManyToManyField('partner.Partner', related_name="expressions_of_interest", blank=True)
     reviewers = \
         models.ManyToManyField('account.User', related_name="eoi_as_reviewer", blank=True)
-    closed_justification = models.TextField(null=True, blank=True)
+    justification = models.TextField(null=True, blank=True)  # closed or completed
+    completed_reason = models.CharField(max_length=3, choices=COMPLETED_REASON, null=True, blank=True)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
 
     class Meta:
