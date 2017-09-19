@@ -9,9 +9,9 @@ from django.conf import settings
 from rest_framework import status as statuses
 
 from account.models import User
-from agency.models import AgencyOffice, AgencyMember
+from agency.models import AgencyOffice
 from project.models import Application, EOI, Pin
-from partner.models import Partner, PartnerMember
+from partner.models import Partner
 from common.tests.base import BaseAPITestCase
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.factories import EOIFactory, AgencyMemberFactory, PartnerSimpleFactory
@@ -153,13 +153,13 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         url = reverse('projects:eoi-detail', kwargs={"pk": eoi_id})
         payload = {
             "invited_partners": [
-                Partner.objects.first().id,
+                {"id": Partner.objects.first().id},
             ]
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], eoi_id)
-        self.assertTrue(Partner.objects.first().id in response.data['invited_partners'])
+        self.assertTrue(Partner.objects.first().id in map(lambda x: x['id'], response.data['invited_partners']))
 
 
 class TestDirectProjectsAPITestCase(BaseAPITestCase):
@@ -286,8 +286,9 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestAgencyApplicationsAPITestCase, self).setUp()
-        EOIFactory.create_batch(self.quantity)
-        PartnerSimpleFactory.create_batch(1)
+        PartnerSimpleFactory.create_batch(self.quantity)
+        # status='NoN' - will not create applications
+        EOIFactory.create_batch(self.quantity, status='NoN')
 
     def test_create(self):
         eoi_id = EOI.objects.first().id
@@ -313,7 +314,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         EOIFactory.create_batch(self.quantity)
 
     def test_read_update(self):
-        url = reverse('projects:applications', kwargs={"pk": Application.objects.first().id})
+        url = reverse('projects:application', kwargs={"pk": Application.objects.first().id})
         response = self.client.get(url, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], Application.objects.first().id)
