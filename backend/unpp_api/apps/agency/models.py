@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.postgres.fields import ArrayField
 from model_utils.models import TimeStampedModel
 
@@ -57,7 +58,7 @@ class AgencyProfile(TimeStampedModel):
         Signal handler to create agency profiles automatically
         """
         if created:
-            cls.objects.create(user=instance)
+            cls.objects.create(agency=instance)
 
 
 class AgencyOffice(TimeStampedModel):
@@ -92,6 +93,5 @@ class AgencyMember(TimeStampedModel):
     def __str__(self):
         return "AgencyMember <pk:{}>".format(self.id)
 
-# # Signals
-#
-# post_save.connect(AgencyProfile.create_agency_profile, sender=Agency)
+
+post_save.connect(AgencyProfile.create_agency_profile, sender=Agency)

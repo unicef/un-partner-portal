@@ -49,3 +49,43 @@ class IsAtLeastMemberReader(BasePermission):
 class IsAtLeastMemberEditor(IsAtLeastMemberReader):
 
     MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+
+
+class IsAtLeastAgencyMemberEditor(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+
+    def has_permission(self, request, view):
+        if PartnerMember.objects.filter(user=request.user).exists():
+            return False
+
+        try:
+            member = AgencyMember.objects.get(user=request.user)
+        except AgencyMember.DoesNotExist:
+            logger.error(
+                "User (pk: {}) has no member object like partner or agency. Data are not integrated!".format(
+                    request.user.id
+                ))
+            return False
+
+        return self.pass_at_least(member.role)
+
+
+class IsAtLeastPartnerMemberEditor(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+
+    def has_permission(self, request, view):
+        if AgencyMember.objects.filter(user=request.user).exists():
+            return False
+
+        try:
+            member = PartnerMember.objects.get(user=request.user)
+        except PartnerMember.DoesNotExist:
+            logger.error(
+                "User (pk: {}) has no member object like partner or agency. Data are not integrated!".format(
+                    request.user.id
+                ))
+            return False
+
+        return self.pass_at_least(member.role)
