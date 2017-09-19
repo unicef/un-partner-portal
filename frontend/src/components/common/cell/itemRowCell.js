@@ -9,6 +9,9 @@ const styleSheet = createStyleSheet('ItemRowCell', (theme) => {
     row: {
       display: 'flex',
     },
+    alignRight: {
+      marginLeft: 'auto',
+    },
     padding: {
       padding: `0 0 0 ${padding}px`,
     },
@@ -16,10 +19,10 @@ const styleSheet = createStyleSheet('ItemRowCell', (theme) => {
 });
 
 const ItemRowCell = (props) => {
-  const { label, content, classes } = props;
+  const { label, content, alignRight, classes } = props;
   return (
     <div className={classes.row}>
-      <Typography type="body1" color="secondary">
+      <Typography className={alignRight && classes.alignRight} type="body1" color="secondary">
         {label}
       </Typography>
       <div className={classes.padding}>
@@ -34,6 +37,7 @@ const ItemRowCell = (props) => {
 ItemRowCell.propTypes = {
   classes: PropTypes.object.isRequired,
   label: PropTypes.string.isRequired,
+  alignRight: PropTypes.bool,
   content: PropTypes.string,
 };
 

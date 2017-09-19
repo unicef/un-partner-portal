@@ -1,7 +1,6 @@
 import React from 'react';
 import Grid from 'material-ui/Grid';
 import { FormSection } from 'redux-form';
-
 import Typography from 'material-ui/Typography';
 
 import SectorForm from '../../../forms/fields/projectFields/sectorField/sectorFieldArray';
@@ -60,7 +59,7 @@ const Fields = () => (
 );
 
 const title = () => (
-  <Grid container align="center" direction="row">
+  <Grid align="center" container>
     <Grid item xs={10}>
       <Typography type="subheading" >{messages.title}</Typography>
     </Grid>
@@ -75,15 +74,13 @@ const title = () => (
 
 );
 
-const ProjectDetails = (props) => {
-  return (
-    <FormSection name="eoi">
-      <HeaderList
-        header={title}
-        rows={[<Fields />]}
-      />
-    </FormSection>
-  );
-};
+const ProjectDetails = props => (
+  <FormSection name="eoi">
+    <HeaderList
+      header={title}
+      rows={[<Fields />]}
+    />
+  </FormSection>
+);
 
 export default ProjectDetails;
