@@ -92,13 +92,15 @@ class PartnerProfile(TimeStampedModel):
     year_establishment = models.PositiveSmallIntegerField(
         'Year of establishment',
         help_text="Enter valid year.",
+        null=True,
+        blank=True,
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
     have_gov_doc = models.BooleanField(default=False, verbose_name='Does the organization have a government document?')
     gov_doc = models.FileField(null=True)
     registration_to_operate_in_country = models.BooleanField(default=True)
     registration_doc = models.FileField(null=True)
-    registration_date = models.DateField(auto_now_add=True)
+    registration_date = models.DateField(null=True, blank=True)
     registration_comment = models.CharField(max_length=255, null=True, blank=True)
     registration_number = models.CharField(max_length=255, null=True, blank=True)
 

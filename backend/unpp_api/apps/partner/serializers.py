@@ -324,3 +324,39 @@ class PartnersListItemSerializer(serializers.ModelSerializer):
             "working_languages",
             "experiences",
         )
+
+
+class PartnerIdentificationSerializer(serializers.ModelSerializer):
+
+    partner_id = serializers.CharField(source="partner.id", read_only=True)
+    profile_id = serializers.CharField(source="id", read_only=True)
+    legal_name = serializers.CharField(source="partner.legal_name", read_only=True)
+    alias_name = serializers.CharField(read_only=True)
+    acronym = serializers.CharField(read_only=True)
+    former_legal_name = serializers.CharField(read_only=True)
+    country_origin = serializers.CharField(read_only=True)
+    type_org = serializers.CharField(source="partner.display_type", read_only=True)
+
+    class Meta:
+        model = PartnerProfile
+        fields = (
+            'partner_id',
+            'profile_id',
+            'legal_name',
+            'alias_name',
+            'acronym',
+            'former_legal_name',
+            'country_origin',
+            'type_org',
+
+            'year_establishment',
+            'have_gov_doc',
+            'gov_doc',
+            'registration_to_operate_in_country',
+            'registration_doc',
+            'registration_date',
+            'registration_comment',
+            'registration_number',
+        )
+
+
