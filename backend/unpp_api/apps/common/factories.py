@@ -28,7 +28,7 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
 )
-from project.models import EOI
+from project.models import EOI, Application
 from .consts import (
     PARTNER_TYPES,
     MEMBER_STATUSES,
@@ -41,6 +41,9 @@ from .consts import (
     POLICY_AREA_CHOICES,
     ORG_AUDIT_CHOICES,
     AUDIT_ASSESMENT_CHOICES,
+    JUSTIFICATION_FOR_DIRECT_SELECTION,
+    EOI_TYPES,
+    DIRECT_SELECTION_SOURCE,
 )
 from .countries import COUNTRIES_ALPHA2_CODE
 
@@ -57,6 +60,10 @@ def get_random_agency():
 
 def get_agency_member():
     return User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?").first()
+
+
+def get_partner_member():
+    return User.objects.filter(is_superuser=False, partner_members__isnull=False).order_by("?").first()
 
 
 def get_partner():
@@ -437,18 +444,29 @@ class EOIFactory(factory.django.DjangoModelFactory):
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
-    focal_point = factory.LazyFunction(get_agency_member)
     # locations ... TODO when right time will come (when we need them - depending on endpoint)
     agency_office = factory.SubFactory(AgencyOfficeFactory)
     description = factory.Sequence(lambda n: "Brief background of the project {}".format(n))
     start_date = date.today()
     end_date = date.today()
     deadline_date = date.today()
-    # invited_partners ... TODO when right time will come (when we need them - depending on endpoint)
+    notif_results_date = date.today()
     # reviewers ... TODO when right time will come (when we need them - depending on endpoint)
 
     class Meta:
         model = EOI
+
+    @factory.post_generation
+    def focal_points(self, create, extracted, **kwargs):
+        focal_point = get_agency_member()
+        if focal_point:
+            self.focal_points.add(focal_point)
+
+    @factory.post_generation
+    def invited_partners(self, create, extracted, **kwargs):
+        partner = get_partner()
+        if partner:
+            self.invited_partners.add(partner)
 
     @factory.post_generation
     def specializations(self, create, extracted, **kwargs):
@@ -456,3 +474,24 @@ class EOIFactory(factory.django.DjangoModelFactory):
             Specialization.objects.order_by("?").first(),
             Specialization.objects.order_by("?").first(),
         )
+
+    @factory.post_generation
+    def applications(self, create, extracted, **kwargs):
+        if self.status == EOI_TYPES.direct:
+            Application.objects.create(
+                partner=get_partner(),
+                eoi=self,
+                submitter=get_agency_member(),
+                did_win=True,
+                did_accept=True,
+                ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+                justification_reason="good reason",
+            )
+            self.selected_source = DIRECT_SELECTION_SOURCE.cso
+            self.save()
+        elif self.status == EOI_TYPES.open:
+            Application.objects.create(
+                partner=get_partner(),
+                eoi=self,
+                submitter=get_partner_member(),
+            )

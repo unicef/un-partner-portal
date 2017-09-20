@@ -2,7 +2,6 @@ from __future__ import absolute_import
 
 from django.conf.urls import url, include
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
@@ -15,11 +14,11 @@ urlpatterns = [
     url(r'^api/partners/', include('partner.urls', namespace='partners')),
 ]
 
-if settings.IS_DEV:
+if settings.IS_DEV or settings.IS_STAGING:
     from rest_framework_swagger.views import get_swagger_view
     schema_view = get_swagger_view(title='Swagger API')
     urlpatterns += [
-        url(r'^api/swagger/', schema_view),
+        url(r'^api/doc/', schema_view),
     ]
 
 urlpatterns += staticfiles_urlpatterns('/api/static/')

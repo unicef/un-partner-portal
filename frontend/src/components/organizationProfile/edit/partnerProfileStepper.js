@@ -18,12 +18,18 @@ export const styleSheet = createStyleSheet('MuiStepper', () => ({
   },
 }));
 
+const labels = {
+  continue: 'SAVE & CONTINUE',
+  exit: 'SAVE & EXIT',
+};
+
 class partnerProfileStepper extends Component {
   render() {
-    const { classes, handleSubmit, handlePrev, steps, last } = this.props;
+    const { classes, readOnly, handleSubmit, handlePrev, singleSection, steps, last } = this.props;
+
     const sections = steps.map((item, index) => {
       const section = (
-        <ProfileStepContainer item={item} index={index} />
+        <ProfileStepContainer item={item} index={index} singleSection={singleSection} />
       );
       return section;
     });
@@ -33,27 +39,30 @@ class partnerProfileStepper extends Component {
         <Stepper linear activeStep={0} orientation="vertical" allActive>
           {sections}
         </Stepper>
-        <Grid item>
-          <Grid container direction="row" gutter={8}>
-            {!last && <Grid item>
-              <Button
-                color="accent"
-                raised
-                onTouchTap={handleSubmit}
-              >
-                {'SAVE & CONTINUE'}
-              </Button>
-            </Grid>}
-            <Grid item>
-              <Button
-                raised={last}
-                onTouchTap={handlePrev}
-              >
-                {'SAVE & EXIT'}
-              </Button>
+
+        {!readOnly ?
+          <Grid item>
+            <Grid container direction="row" gutter={8}>
+              {!last && <Grid item>
+                <Button
+                  color="accent"
+                  raised
+                  onTouchTap={handleSubmit}
+                >
+                  {labels.continue}
+                </Button>
+              </Grid>}
+              <Grid item>
+                <Button
+                  raised={last}
+                  onTouchTap={handlePrev}
+                >
+                  {labels.exit}
+                </Button>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
+          : null}
       </Grid>
     );
   }
@@ -77,6 +86,14 @@ partnerProfileStepper.propTypes = {
    * whether step is the last, to control buttons appearance
    */
   last: PropTypes.boolean,
+  /**
+   * Read only mode
+   */
+  readOnly: PropTypes.bool,
+  /**
+   * Single section without label steps
+   */
+  singleSection: PropTypes.bool,
 };
 
 export default withStyles(styleSheet)(partnerProfileStepper);

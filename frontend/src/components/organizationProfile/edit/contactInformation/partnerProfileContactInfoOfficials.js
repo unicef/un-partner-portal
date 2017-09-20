@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormSection } from 'redux-form';
-
+import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 
 import RadioForm from '../../../forms/radioForm';
@@ -18,8 +18,10 @@ const BOOL_VAL = [
   },
 ];
 
-const PartnerProfileContactInfoOfficials = () => (
-  <FormSection name="authorizedOfficials">
+const PartnerProfileContactInfoOfficials = (props) => {
+  const { readOnly } = props;
+
+  return (<FormSection name="authorizedOfficials">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item sm={6} xs={12}>
@@ -27,6 +29,7 @@ const PartnerProfileContactInfoOfficials = () => (
             fieldName="hasBoD"
             label="Does your Organization have a Board of Directors?"
             values={BOOL_VAL}
+            readOnly={readOnly}
           />
         </Grid>
 
@@ -37,6 +40,7 @@ const PartnerProfileContactInfoOfficials = () => (
                 label="First Name"
                 placeholder=""
                 fieldName="firstName"
+                readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -44,6 +48,7 @@ const PartnerProfileContactInfoOfficials = () => (
                 label="Last Name"
                 placeholder=""
                 fieldName="lastName"
+                readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -51,6 +56,7 @@ const PartnerProfileContactInfoOfficials = () => (
                 label="Job Title/Position"
                 placeholder=""
                 fieldName="job"
+                readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -58,6 +64,7 @@ const PartnerProfileContactInfoOfficials = () => (
                 fieldName="isAuthorisedOfficer"
                 label="Authorised Officer?"
                 values={BOOL_VAL}
+                readOnly={readOnly}
               />
             </Grid>
           </Grid>
@@ -69,6 +76,7 @@ const PartnerProfileContactInfoOfficials = () => (
                 label="First Name"
                 placeholder=""
                 fieldName="firstName"
+                readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -76,6 +84,7 @@ const PartnerProfileContactInfoOfficials = () => (
                 label="Last Name"
                 placeholder=""
                 fieldName="lastName"
+                readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -83,6 +92,7 @@ const PartnerProfileContactInfoOfficials = () => (
                 label="Job Title/Position"
                 placeholder=""
                 fieldName="job"
+                readOnly={readOnly}
               />
             </Grid>
           </Grid>
@@ -90,7 +100,11 @@ const PartnerProfileContactInfoOfficials = () => (
       </Grid>
     </Grid>
   </FormSection>
-);
+  );
+};
 
+PartnerProfileContactInfoOfficials.propTypes = {
+  readOnly: PropTypes.bool,
+};
 
 export default PartnerProfileContactInfoOfficials;

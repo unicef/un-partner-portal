@@ -222,3 +222,9 @@ DIRECT_SELECTION_SOURCE = Choices(
     ('CSO', 'cso', 'CSO-Initiated'),
     ('UNI', 'un', 'UN-Initiated'),
 )
+
+COMPLETED_REASON = Choices(
+    ('Par', 'partners', 'Completed - Partners selected'),
+    ('Can', 'canceled', 'Completed - Canceled'),
+    ('NoC', 'no_candidate', 'Completed - No successful candidate'),
+)

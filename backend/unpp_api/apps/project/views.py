@@ -19,11 +19,12 @@ from .serializers import (
     DirectProjectSerializer,
     CreateProjectSerializer,
     CreateDirectProjectSerializer,
-    PatchProjectSerializer,
+    ProjectUpdateSerializer,
     ApplicationFullSerializer,
     CreateDirectApplicationNoCNSerializer,
+    ApplicationsListSerializer,
 )
-from .filters import BaseProjectFilter
+from .filters import BaseProjectFilter, ApplicationsFilter
 
 
 class BaseProjectAPIView(ListAPIView):
@@ -66,7 +67,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
 class EOIAPIView(RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
-    serializer_class = PatchProjectSerializer
+    serializer_class = ProjectUpdateSerializer
     queryset = EOI.objects.all()
 
 
@@ -162,3 +163,19 @@ class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
     def create(self, request, pk, *args, **kwargs):
         request.data['did_win'] = True
         return super(ApplicationsAgencyAPIView, self).create(request, pk, *args, **kwargs)
+
+
+class ApplicationAPIView(RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    queryset = Application.objects.all()
+    serializer_class = ApplicationFullSerializer
+
+
+class ApplicationsListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
+    queryset = Application.objects.all()
+    serializer_class = ApplicationsListSerializer
+    pagination_class = SmallPagination
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_class = ApplicationsFilter
+    ordering_fields = ('status', )

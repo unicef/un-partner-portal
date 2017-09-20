@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router';
 import { reduxForm, FormSection, getFormSyncWarnings } from 'redux-form';
-
 import { connect } from 'react-redux';
 import PartnerProfileStepper from './partnerProfileStepper';
 import { changeTabToNext,
@@ -10,7 +10,7 @@ import { changeTabToNext,
   addIncompleteStep,
   removeIncompleteStep } from '../../../reducers/partnerProfileEdit';
 
-class PartnerProfileIdentification extends Component {
+class PartnerProfileStepperContainer extends Component {
   componentWillMount() {
     this.setState({ observedSteps: this.props.steps.map(step => step.name) });
   }
@@ -33,18 +33,25 @@ class PartnerProfileIdentification extends Component {
   }
 
   render() {
-    const { name, onNextClick, steps, last } = this.props;
+    const { name, onNextClick, readOnly, steps, singleSection, last } = this.props;
+
     return (
       <form onSubmit={onNextClick}>
         <FormSection name={name}>
-          <PartnerProfileStepper handleSubmit={onNextClick} steps={steps} last={last} />
+          <PartnerProfileStepper
+            handleSubmit={onNextClick}
+            steps={steps}
+            last={last}
+            readOnly={readOnly}
+            singleSection={singleSection}
+          />
         </FormSection>
       </form>
     );
   }
 }
 
-PartnerProfileIdentification.propTypes = {
+PartnerProfileStepperContainer.propTypes = {
   name: PropTypes.string,
   onNextClick: PropTypes.func,
   steps: PropTypes.arrayOf(PropTypes.objectOf({
@@ -57,10 +64,13 @@ PartnerProfileIdentification.propTypes = {
   isStepWarning: PropTypes.func,
   noStepWarning: PropTypes.func,
   last: PropTypes.bool,
+  singleSection: PropTypes.bool,
+  readOnly: PropTypes.bool,
 };
 
 const mapState = state => ({
-  warnings: getFormSyncWarnings('partnerProfile')(state),
+  warnings: getFormSyncWarnings('PartnerProfileStepperContainer')(state),
+  initialValues: state.partnerProfileDetails.partnerProfileDetails,
 });
 
 const mapDispatch = dispatch => ({
@@ -71,14 +81,16 @@ const mapDispatch = dispatch => ({
   onNextClick: () => dispatch(changeTabToNext()),
 });
 
-const connectedPartnerProfileIdentification = connect(
+const connectedPartnerProfileRedux = reduxForm({
+  form: 'partnerProfile', // a unique identifier for this form
+  enableReinitialize: true,
+  destroyOnUnmount: false,
+  forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
+})(PartnerProfileStepperContainer);
+
+const connectedPartnerProfileStepper = connect(
   mapState,
   mapDispatch,
-)(PartnerProfileIdentification);
+)(connectedPartnerProfileRedux);
 
-export default reduxForm({
-  form: 'partnerProfile', // a unique identifier for this form
-  destroyOnUnmount: false, // <------ preserve form data
-  forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-})(connectedPartnerProfileIdentification);
-
+export default withRouter(connectedPartnerProfileStepper);

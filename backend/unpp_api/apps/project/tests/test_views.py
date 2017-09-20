@@ -2,21 +2,28 @@
 from __future__ import unicode_literals
 import os
 import random
-from datetime import date
+from datetime import date, timedelta
 
 from django.urls import reverse
 from django.conf import settings
 from rest_framework import status as statuses
 
 from account.models import User
-from agency.models import AgencyOffice, AgencyMember
+from agency.models import AgencyOffice
 from project.models import Application, EOI, Pin
-from partner.models import Partner, PartnerMember
+from partner.models import Partner
 from common.tests.base import BaseAPITestCase
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.factories import EOIFactory, AgencyMemberFactory, PartnerSimpleFactory
 from common.models import Specialization
-from common.consts import SELECTION_CRITERIA_CHOICES, SCALE_TYPES, JUSTIFICATION_FOR_DIRECT_SELECTION, MEMBER_ROLES
+from common.consts import (
+    SELECTION_CRITERIA_CHOICES,
+    SCALE_TYPES,
+    JUSTIFICATION_FOR_DIRECT_SELECTION,
+    MEMBER_ROLES,
+    APPLICATION_STATUSES,
+    COMPLETED_REASON,
+)
 from project.views import PinProjectAPIView
 
 
@@ -101,7 +108,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
                 'title': "EOI title",
                 'country_code': COUNTRIES_ALPHA2_CODE[0][0],
                 'agency': ao.agency.id,
-                'focal_point': User.objects.first().id,
+                'focal_points': [User.objects.first().id],
                 'locations': [
                     {
                         "country_code": 'IQ',
@@ -147,13 +154,52 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         url = reverse('projects:eoi-detail', kwargs={"pk": eoi_id})
         payload = {
             "invited_partners": [
-                Partner.objects.first().id,
+                {"id": Partner.objects.first().id},
+                {"id": Partner.objects.last().id},
             ]
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], eoi_id)
-        self.assertTrue(Partner.objects.first().id in response.data['invited_partners'])
+        self.assertTrue(Partner.objects.first().id in map(lambda x: x['id'], response.data['invited_partners']))
+        self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
+
+        payload = {
+            "invited_partners": [
+                {"id": Partner.objects.last().id},
+            ]
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['id'], eoi_id)
+        self.assertTrue(Partner.objects.last().id in map(lambda x: x['id'], response.data['invited_partners']))
+        self.assertTrue(Partner.objects.count(), 1)
+        self.assertTrue(len(response.data['invited_partners']), 1)
+
+        # edit EOI - dates & focal point(s)
+        payload = {
+            "start_date": date.today() - timedelta(days=10),
+            "end_date": date.today() + timedelta(days=20),
+            "deadline_date": date.today() + timedelta(days=10),
+            "notif_results_date": date.today() + timedelta(days=15),
+            "focal_points": [
+                User.objects.filter(is_superuser=False, agency_members__isnull=False).first().id,
+            ]
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['notif_results_date'], str(date.today() + timedelta(days=15)))
+
+        # complete this CFEI
+        justification = "mission completed"
+        payload = {
+            "justification": justification,
+            "completed_reason": COMPLETED_REASON.canceled
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.canceled)
+        self.assertEquals(response.data['justification'], justification)
 
 
 class TestDirectProjectsAPITestCase(BaseAPITestCase):
@@ -174,7 +220,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
                 'title': "EOI title",
                 'country_code': COUNTRIES_ALPHA2_CODE[0][0],
                 'agency': ao.agency.id,
-                'focal_point': User.objects.first().id,
+                'focal_points': [User.objects.first().id],
                 'locations': [
                     {
                         "country_code": 'IQ',
@@ -239,7 +285,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
         with open(filename) as cn_template:
             payload = {
-                "partner": Partner.objects.first().id,
+                "partner": Partner.objects.last().id,
                 "cn": cn_template,
             }
             response = self.client.post(url, data=payload, format='multipart')
@@ -251,7 +297,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
 
         with open(filename) as cn_template:
             payload = {
-                "partner": Partner.objects.first().id,
+                "partner": Partner.objects.last().id,
                 "cn": cn_template,
             }
             response = self.client.post(url, data=payload, format='multipart')
@@ -280,7 +326,9 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestAgencyApplicationsAPITestCase, self).setUp()
-        EOIFactory.create_batch(self.quantity)
+        PartnerSimpleFactory.create_batch(self.quantity)
+        # status='NoN' - will not create applications
+        EOIFactory.create_batch(self.quantity, status='NoN')
 
     def test_create(self):
         eoi_id = EOI.objects.first().id
@@ -294,3 +342,59 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         response = self.client.post(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], Application.objects.last().id)
+
+
+class TestApplicationsAPITestCase(BaseAPITestCase):
+
+    quantity = 1
+
+    def setUp(self):
+        super(TestApplicationsAPITestCase, self).setUp()
+        AgencyMemberFactory.create_batch(self.quantity)
+        EOIFactory.create_batch(self.quantity)
+
+    def test_read_update(self):
+        url = reverse('projects:application', kwargs={"pk": Application.objects.first().id})
+        response = self.client.get(url, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['id'], Application.objects.first().id)
+        self.assertFalse(response.data['did_win'])
+        self.assertEquals(response.data['ds_justification_select'], None)
+
+        payload = {
+            "status": APPLICATION_STATUSES.preselected,
+            "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
+        self.assertEquals(response.data['ds_justification_select'], JUSTIFICATION_FOR_DIRECT_SELECTION.local)
+
+        payload = {
+            "did_win": True,
+            "status": APPLICATION_STATUSES.rejected,
+            "justification_reason": "good reason",
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(response.data['did_win'])
+        self.assertEquals(response.data['status'], APPLICATION_STATUSES.rejected)
+
+        # accept offer
+        payload = {
+            "did_accept": True,
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(response.data['did_accept'])
+
+        # withdraw
+        reason = "They are better then You."
+        payload = {
+            "did_win": False,
+            "justification_reason": reason,
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertFalse(response.data['did_win'])
+        self.assertEquals(response.data["justification_reason"], reason)
