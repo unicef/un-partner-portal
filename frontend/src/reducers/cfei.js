@@ -46,17 +46,18 @@ const extractSector = list => ({ name: list[0].category, specializations: list }
 const groupSpecializationsByCategory = () =>
   R.compose(R.map(extractSector), R.groupWith(R.eqProps('category')));
 
+export const normalizeSingleCfei = getState => cfei => R.assoc(
+  'specializations',
+  R.compose(
+    R.map(spec => R.assoc('name', selectSector(getState(), spec.name), spec)),
+    groupSpecializationsByCategory(),
+  )(cfei.specializations),
+  cfei);
+
 
 const normalizeCfei = (cfeis, getState) =>
-  R.map(cfei =>
-    R.assoc(
-      'specializations',
-      R.compose(
-        R.map(spec => R.assoc('name', selectSector(getState(), spec.name), spec)),
-        groupSpecializationsByCategory(),
-      )(cfei.specializations),
-      cfei,
-    ), cfeis,
+  R.map(
+    normalizeSingleCfei(getState), cfeis,
   );
 
 const saveCfei = (state, action) => {

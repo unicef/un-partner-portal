@@ -1,6 +1,11 @@
-import R from 'ramda';
+import {
+  clearError,
+  startLoading,
+  stopLoading,
+  saveErrorMsg,
+} from './apiStatus';
 
-export const CLEAR_ERROR = 'CLEAR_ERROR';
+export const CLEAR_CFEI_ERROR = 'CLEAR_CFEI_ERROR';
 export const LOAD_CFEI_STARTED = 'LOAD_CFEI_STARTED';
 export const LOAD_CFEI_ENDED = 'LOAD_CFEI_ENDED';
 export const LOAD_CFEI_SUCCESS = 'LOAD_CFEI_SUCCESS';
@@ -16,18 +21,7 @@ const messages = {
   'Interests, please refresh page and try again',
 };
 
-const clearError = state => R.assoc('error', {}, state);
-const startLoading = state => R.assoc('loading', true, state);
-const stopLoading = state => R.assoc('loading', false, state);
-const saveErrorMsg = (state, action) => R.assoc(
-  'error',
-  {
-    message: messages.loadingFailure,
-    error: action.error,
-  },
-  state);
-
-export const errorToBeCleared = () => ({ type: CLEAR_ERROR });
+export const errorToBeCleared = () => ({ type: CLEAR_CFEI_ERROR });
 export const loadCfeiStarted = () => ({ type: LOAD_CFEI_STARTED });
 export const loadCfeiEnded = () => ({ type: LOAD_CFEI_ENDED });
 export const loadCfeiSuccess = (cfei, project, getState) => (
@@ -37,7 +31,7 @@ export const loadCfeiFailure = error => ({ type: LOAD_CFEI_FAILURE, error });
 export default function cfeiStatus(state = initialState, action) {
   switch (action.type) {
     case LOAD_CFEI_FAILURE: {
-      return saveErrorMsg(state, action);
+      return saveErrorMsg(state, action, messages);
     }
     case LOAD_CFEI_STARTED: {
       clearError(state);
@@ -46,7 +40,7 @@ export default function cfeiStatus(state = initialState, action) {
     case LOAD_CFEI_ENDED: {
       return stopLoading(state);
     }
-    case CLEAR_ERROR: {
+    case CLEAR_CFEI_ERROR: {
       return clearError(state);
     }
     default:
