@@ -24,6 +24,7 @@ import organizationProfileNav from './reducers/organizationProfileNav';
 import organizationProfile from './reducers/organizationProfile';
 import sectors, * as sectorsSelectors from './reducers/sectors';
 import partnersApplicationsList from './reducers/partnersApplicationsList';
+import partnersPreselectionList from './reducers/partnersPreselectionList';
 
 const mainReducer = combineReducers({
   cfei,
@@ -46,6 +47,7 @@ const mainReducer = combineReducers({
   routing: routerReducer,
   sectors,
   partnersApplicationsList,
+  partnersPreselectionList,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
