@@ -12,6 +12,7 @@ from .serializers import (
     PartnersListItemSerializer,
     PartnerShortSerializer,
     PartnerIdentificationSerializer,
+    PartnerContactInformationSerializer,
 )
 from .filters import PartnersListFilter
 from .models import (
@@ -66,3 +67,10 @@ class PartnerIdentificationAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
     serializer_class = PartnerIdentificationSerializer
     queryset = PartnerProfile.objects.all()
+
+
+class PartnerContactInformationAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = PartnerContactInformationSerializer
+    queryset = Partner.objects.all()

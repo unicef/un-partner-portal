@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from agency.serializers import OtherAgencySerializer
+from common.countries import COUNTRIES_ALPHA2_CODE
 from common.serializers import SpecializationSerializer
 from partner.models import (
     Partner,
@@ -360,3 +361,29 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
         )
 
 
+class PartnerContactInformationSerializer(serializers.ModelSerializer):
+
+    mailing_address = PartnerMailingAddressSerializer()
+    have_board_directors = serializers.BooleanField(source="profile.have_board_directors")
+    directors = PartnerDirectorSerializer(many=True)
+    authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
+    org_head = PartnerHeadOrganizationSerializer(read_only=True)
+    connectivity = serializers.BooleanField(source="profile.connectivity")
+    connectivity_excuse = serializers.CharField(source="profile.connectivity_excuse")
+    working_languages = serializers.ListField(source="profile.working_languages")
+    working_languages_other = serializers.ChoiceField(
+        source="profile.working_languages_other", choices=COUNTRIES_ALPHA2_CODE)
+
+    class Meta:
+        model = Partner
+        fields = (
+            'mailing_address',
+            'have_board_directors',
+            'directors',
+            'authorised_officers',
+            'org_head',
+            'connectivity',
+            'connectivity_excuse',
+            'working_languages',
+            'working_languages_other',
+        )
