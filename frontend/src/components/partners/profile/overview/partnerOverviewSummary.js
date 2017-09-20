@@ -9,7 +9,7 @@ import ItemRowCell from '../../../common/cell/itemRowCell';
 import ItemRowCellDivider from '../../../common/cell/itemRowCellDivider';
 
 
-const styleSheet = createStyleSheet('HqProfileOverviewHeader', theme => ({
+const styleSheet = createStyleSheet('PartnerOverviewSummary', theme => ({
   root: {
     minHeight: '48px',
     display: 'flex',
@@ -84,7 +84,7 @@ const PartnerOverviewSummary = (props) => {
   const { classes, partner } = props;
   return (
     <HeaderList
-      headerObject={summaryHeader(classes, partner.lastUpdate)}
+      header={summaryHeader(classes, partner.lastUpdate)}
       rows={[fields(partner)]}
     />);
 };

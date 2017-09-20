@@ -58,14 +58,6 @@ export const FocalPoint = props => (<SelectForm
   {...props}
 />);
 
-export const Population = () => (<SelectForm
-  label="Intended populations of concern (only for UNHCR)"
-  fieldName="population"
-  placeholder="Select population"
-  values={[]}
-  optional
-/>);
-
 export const Background = props => (<TextFieldForm
   label="Brief background of the project"
   fieldName="description"
@@ -151,5 +143,4 @@ export const ProjectPartners = () => (<SelectForm
   selectFieldProps={{
     multiple: true,
   }}
-
 />);

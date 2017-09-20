@@ -16,7 +16,7 @@ const initialState = {
   1: countryProfile,
 };
 
-export default function hqProfileReducer(state = initialState, action) {
+export default function organizationProfileReducer(state = initialState, action) {
   switch (action.type) {
     case SESSION_INIT: {
       return state;

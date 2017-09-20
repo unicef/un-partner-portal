@@ -32,7 +32,7 @@ const PartnerOverviewVerification = (props) => {
   return (
     <div>
       <HeaderList
-        headerObject={summaryHeader()}
+        header={summaryHeader()}
         rows={verificationItems ? [fields()] : []}
       />
     </div>);

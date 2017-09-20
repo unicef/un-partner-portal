@@ -14,6 +14,7 @@ from common.consts import (
     SELECTION_CRITERIA_CHOICES,
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
+    COMPLETED_REASON,
 )
 from common.countries import COUNTRIES_ALPHA2_CODE
 
@@ -30,13 +31,16 @@ class EOI(TimeStampedModel):
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
     created_by = models.ForeignKey('account.User', related_name="expressions_of_interest")
     # focal_point - limited to users under agency
-    focal_point = models.ForeignKey('account.User', related_name="expressions_of_interest_by_focal_point")
+    focal_points = models.ManyToManyField('account.User', related_name="eoi_focal_points")
     locations = models.ManyToManyField('common.Point', related_name="expressions_of_interest")
     agency_office = models.ForeignKey('agency.AgencyOffice', related_name="expressions_of_interest")
-    cn_template = models.FileField(null=True, blank=True)  # or take it from agency or agency office
+    # always be taken from the agency; we always keep their base template of the one they used.
+    cn_template = models.FileField(null=True, blank=True)
     specializations = models.ManyToManyField('common.Specialization', related_name="expressions_of_interest")
     # TODO: intended_pop_of_concern = Selection. Should have in help text only for UNHCR. TODO on select options
     description = models.CharField(max_length=200, verbose_name='Brief background of the project')
+    goal = models.CharField(
+        max_length=200, null=True, blank=True, verbose_name='Goal, Objective, Expected Outcome and Results.')
     other_information = models.CharField(
         max_length=200, null=True, blank=True, verbose_name='Other information (optional)')
     start_date = models.DateField(verbose_name='Estimated Start Date')
@@ -48,7 +52,8 @@ class EOI(TimeStampedModel):
         models.ManyToManyField('partner.Partner', related_name="expressions_of_interest", blank=True)
     reviewers = \
         models.ManyToManyField('account.User', related_name="eoi_as_reviewer", blank=True)
-    closed_justification = models.TextField(null=True, blank=True)
+    justification = models.TextField(null=True, blank=True)  # closed or completed
+    completed_reason = models.CharField(max_length=3, choices=COMPLETED_REASON, null=True, blank=True)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
 
     class Meta:
@@ -87,7 +92,6 @@ class Application(TimeStampedModel):
     partner = models.ForeignKey('partner.Partner', related_name="applications")
     eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
     submitter = models.ForeignKey('account.User', related_name="applications")
-    agency = models.ForeignKey('agency.Agency', related_name="applications", null=True, blank=True)
     cn = models.FileField()
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
@@ -95,10 +99,11 @@ class Application(TimeStampedModel):
     # These two (ds_justification_*) will be used as direct selection will create applications for DS EOIs.
     ds_justification_select = models.CharField(
         max_length=3, choices=JUSTIFICATION_FOR_DIRECT_SELECTION, null=True, blank=True)  # if direct select
-    ds_justification_reason = models.TextField()  # reason why we choose winner
+    justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
 
     class Meta:
         ordering = ['id']
+        unique_together = (("eoi", "partner"), )
 
     def __str__(self):
         return "Application <pk:{}>".format(self.id)
@@ -123,6 +128,8 @@ class AssessmentCriteria(TimeStampedModel):
         choices=SELECTION_CRITERIA_CHOICES,
         default=SELECTION_CRITERIA_CHOICES.sector,
     )
+    goal = models.CharField(
+        max_length=200, null=True, blank=True, verbose_name='Goal, Objective, Expected Outcome and Results.')
     scale = models.CharField(
         max_length=3,
         choices=SCALE_TYPES,

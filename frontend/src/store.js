@@ -21,8 +21,9 @@ import agencyPartnersList from './reducers/agencyPartnersList';
 import agencyPartnerProfileNav from './reducers/agencyPartnerProfileNav';
 import agencyPartnerProfile from './reducers/agencyPartnerProfile';
 import population from './reducers/population';
-import hqProfileNav from './reducers/hqProfileNav';
-import hqProfile from './reducers/hqProfile';
+import organizationProfileNav from './reducers/organizationProfileNav';
+import organizationProfile from './reducers/organizationProfile';
+import sectors, * as sectorsSelectors from './reducers/sectors';
 
 const mainReducer = combineReducers({
   cfei,
@@ -30,8 +31,8 @@ const mainReducer = combineReducers({
   cfeiDetails,
   cfeiDetailsNav,
   newCfei,
-  hqProfile,
-  hqProfileNav,
+  organizationProfile,
+  organizationProfileNav,
   nav,
   session,
   countries,
@@ -44,11 +45,15 @@ const mainReducer = combineReducers({
   form: formReducer,
   population,
   routing: routerReducer,
+  sectors,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
 // TODO(marcindo: disable devtools in prod
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+let composeEnhancers = compose;
+if (process.env.NODE_ENV !== 'production') {
+  composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || composeEnhancers;
+}
 
 export default createStore(
   mainReducer,
@@ -65,9 +70,19 @@ const mapValuesForSelectionField = (state) => {
 
 export const selectNormalizedCountries = state =>
   mapValuesForSelectionField(state.countries);
+
 export const selectNormalizedPopulations = state =>
   mapValuesForSelectionField(state.population);
 
+export const mapSectorsToSelection = state =>
+  mapValuesForSelectionField(sectorsSelectors.selectAllSectors(state.sectors));
+
+export const mapSpecializationsToSelection = (state, sectorId) =>
+  mapValuesForSelectionField(
+    sectorsSelectors.selectSpecializationsForSector(state.sectors, sectorId));
+
+export const selectSector = (state, id) =>
+  sectorsSelectors.selectSector(state.sectors, id);
 export const selectCfeiDetailsItemsByType = (state, type) =>
   selectItemsByType(state.cfeiDetailsNav, type);
 

@@ -40,7 +40,7 @@ const PartnerOverviewFlag = (props) => {
   return (
     <div>
       <HeaderList
-        headerObject={flagHeader(partner.lastUpdate)}
+        header={flagHeader(partner.lastUpdate)}
         rows={flagItems ? flags() : [none()]}
       />
     </div>);

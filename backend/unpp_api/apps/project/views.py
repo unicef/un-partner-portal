@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status as statuses
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import OrderingFilter
@@ -12,16 +11,20 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from common.consts import EOI_TYPES
 from common.paginations import SmallPagination
-from common.permissions import IsAtLeastMemberReader
+from common.permissions import IsAtLeastMemberReader, IsAtLeastMemberEditor, IsAtLeastAgencyMemberEditor
 from partner.models import PartnerMember
-from .models import EOI, Pin
+from .models import Application, EOI, Pin
 from .serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
     CreateProjectSerializer,
-    CreateDirectProjectSerializer
+    CreateDirectProjectSerializer,
+    ProjectUpdateSerializer,
+    ApplicationFullSerializer,
+    CreateDirectApplicationNoCNSerializer,
+    ApplicationsListSerializer,
 )
-from .filters import BaseProjectFilter
+from .filters import BaseProjectFilter, ApplicationsFilter
 
 
 class BaseProjectAPIView(ListAPIView):
@@ -61,6 +64,13 @@ class OpenProjectAPIView(BaseProjectAPIView):
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
 
+class EOIAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = ProjectUpdateSerializer
+    queryset = EOI.objects.all()
+
+
 class DirectProjectAPIView(BaseProjectAPIView):
     """
     Endpoint for getting DIRECT Call of Expression of Interest.
@@ -79,8 +89,6 @@ class DirectProjectAPIView(BaseProjectAPIView):
         data = request.data or {}
         try:
             data['eoi']['created_by'] = request.user.id
-            for app in data['applications']:
-                app['submitter'] = request.user.id
         except Exception:
             pass  # serializer.is_valid() will take care of right response
 
@@ -128,3 +136,46 @@ class PinProjectAPIView(BaseProjectAPIView):
                 {"error": self.ERROR_MSG_WRONG_PARAMS},
                 status=statuses.HTTP_400_BAD_REQUEST
             )
+
+
+class ApplicationsPartnerAPIView(CreateAPIView):
+    """
+    Create Application for open EOI by partner.
+    """
+    permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
+    queryset = Application.objects.all()
+    serializer_class = ApplicationFullSerializer
+
+    def create(self, request, pk, *args, **kwargs):
+        request.data['eoi'] = pk
+        request.data['submitter'] = request.user.id
+        return super(ApplicationsPartnerAPIView, self).create(request, *args, **kwargs)
+
+
+class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
+    """
+    Create Application for direct EOI by agency.
+    """
+    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+    queryset = Application.objects.all()
+    serializer_class = CreateDirectApplicationNoCNSerializer
+
+    def create(self, request, pk, *args, **kwargs):
+        request.data['did_win'] = True
+        return super(ApplicationsAgencyAPIView, self).create(request, pk, *args, **kwargs)
+
+
+class ApplicationAPIView(RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    queryset = Application.objects.all()
+    serializer_class = ApplicationFullSerializer
+
+
+class ApplicationsListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
+    queryset = Application.objects.all()
+    serializer_class = ApplicationsListSerializer
+    pagination_class = SmallPagination
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_class = ApplicationsFilter
+    ordering_fields = ('status', )

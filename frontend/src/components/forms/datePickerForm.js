@@ -3,10 +3,10 @@ import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { FormControl, FormLabel } from 'material-ui/Form';
-import DateRange from 'material-ui-icons/DateRange';
 import moment from 'moment';
 import { renderDatePicker, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
+import { normalizeDate, formatDateForPrint } from '../../helpers/dates';
 
 class DatePickerForm extends Component {
   constructor(props) {
@@ -39,6 +39,7 @@ class DatePickerForm extends Component {
               label={label}
               component={renderText}
               optional={optional}
+              date
             />
             : [<FormLabel>{label}</FormLabel>,
               <Field
@@ -51,7 +52,8 @@ class DatePickerForm extends Component {
                   if (value && value !== 'Invalid date') return new Date(`${value}T00:00:00.000Z`);
                   return value;
                 }}
-                normalize={value => moment(value).format('YYYY-MM-DD').toString()}
+                formatDate={formatDateForPrint}
+                normalize={normalizeDate}
                 textFieldStyle={{
                   width: '100%',
                   'line-height': null,
@@ -96,6 +98,10 @@ DatePickerForm.propTypes = {
    * validations passed to field
    */
   warn: PropTypes.bool,
+  /**
+   * if form should be displayed in read only state
+   */
+  readOnly: PropTypes.bool,
 };
 
 DatePickerForm.defaultProps = {

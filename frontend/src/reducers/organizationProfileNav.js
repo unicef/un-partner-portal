@@ -6,7 +6,7 @@ const initialState = [
   { id: 1, path: 'users', label: 'User management', name: 'a' },
 ];
 
-export default function hqProfileNavReducer(state = initialState, action) {
+export default function organizationProfileNavReducer(state = initialState, action) {
   switch (action.type) {
     case SESSION_INIT: {
       return state;

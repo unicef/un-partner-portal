@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 import os
 import random
-from datetime import date
+from datetime import date, timedelta
 
 from django.urls import reverse
 from django.conf import settings
@@ -10,13 +10,20 @@ from rest_framework import status as statuses
 
 from account.models import User
 from agency.models import AgencyOffice
-from project.models import EOI, Pin
+from project.models import Application, EOI, Pin
 from partner.models import Partner
 from common.tests.base import BaseAPITestCase
 from common.countries import COUNTRIES_ALPHA2_CODE
-from common.factories import EOIFactory, AgencyMemberFactory
+from common.factories import EOIFactory, AgencyMemberFactory, PartnerSimpleFactory
 from common.models import Specialization
-from common.consts import SELECTION_CRITERIA_CHOICES, SCALE_TYPES, JUSTIFICATION_FOR_DIRECT_SELECTION
+from common.consts import (
+    SELECTION_CRITERIA_CHOICES,
+    SCALE_TYPES,
+    JUSTIFICATION_FOR_DIRECT_SELECTION,
+    MEMBER_ROLES,
+    APPLICATION_STATUSES,
+    COMPLETED_REASON,
+)
 from project.views import PinProjectAPIView
 
 
@@ -94,16 +101,14 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['count'], self.quantity)
 
-    def test_create_project(self):
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        cn_template = open(filename).read()
+    def test_create_patch_project(self):
         ao = AgencyOffice.objects.first()
         payload = {
             'eoi': {
                 'title': "EOI title",
                 'country_code': COUNTRIES_ALPHA2_CODE[0][0],
                 'agency': ao.agency.id,
-                'focal_point': User.objects.first().id,
+                'focal_points': [User.objects.first().id],
                 'locations': [
                     {
                         "country_code": 'IQ',
@@ -119,7 +124,6 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
                     },
                 ],
                 'agency_office': ao.id,
-                'cn_template': cn_template,
                 'specializations': Specialization.objects.all().values_list('id', flat=True)[:2],
                 'description': 'Brief background of the project',
                 'other_information': 'Other information',
@@ -145,6 +149,58 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
         self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
 
+        # invite partners
+        eoi_id = response.data['eoi']['id']
+        url = reverse('projects:eoi-detail', kwargs={"pk": eoi_id})
+        payload = {
+            "invited_partners": [
+                {"id": Partner.objects.first().id},
+                {"id": Partner.objects.last().id},
+            ]
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['id'], eoi_id)
+        self.assertTrue(Partner.objects.first().id in map(lambda x: x['id'], response.data['invited_partners']))
+        self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
+
+        payload = {
+            "invited_partners": [
+                {"id": Partner.objects.last().id},
+            ]
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['id'], eoi_id)
+        self.assertTrue(Partner.objects.last().id in map(lambda x: x['id'], response.data['invited_partners']))
+        self.assertTrue(Partner.objects.count(), 1)
+        self.assertTrue(len(response.data['invited_partners']), 1)
+
+        # edit EOI - dates & focal point(s)
+        payload = {
+            "start_date": date.today() - timedelta(days=10),
+            "end_date": date.today() + timedelta(days=20),
+            "deadline_date": date.today() + timedelta(days=10),
+            "notif_results_date": date.today() + timedelta(days=15),
+            "focal_points": [
+                User.objects.filter(is_superuser=False, agency_members__isnull=False).first().id,
+            ]
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['notif_results_date'], str(date.today() + timedelta(days=15)))
+
+        # complete this CFEI
+        justification = "mission completed"
+        payload = {
+            "justification": justification,
+            "completed_reason": COMPLETED_REASON.canceled
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.canceled)
+        self.assertEquals(response.data['justification'], justification)
+
 
 class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
@@ -153,6 +209,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestDirectProjectsAPITestCase, self).setUp()
+        PartnerSimpleFactory.create_batch(1)
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
 
@@ -163,7 +220,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
                 'title': "EOI title",
                 'country_code': COUNTRIES_ALPHA2_CODE[0][0],
                 'agency': ao.agency.id,
-                'focal_point': User.objects.first().id,
+                'focal_points': [User.objects.first().id],
                 'locations': [
                     {
                         "country_code": 'IQ',
@@ -191,12 +248,12 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
                 {
                     "partner": Partner.objects.first().id,
                     "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
-                    "ds_justification_reason": "To save those we love."
+                    "justification_reason": "To save those we love."
                 },
                 {
                     "partner": Partner.objects.last().id,
                     "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.local,
-                    "ds_justification_reason": "To save those we love."
+                    "justification_reason": "To save those we love."
                 }
             ]
         }
@@ -206,3 +263,138 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
         self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
+        app = Application.objects.get(pk=response.data['applications'][0]['id'])
+        self.assertEquals(app.submitter, self.user)
+        app = Application.objects.get(pk=response.data['applications'][1]['id'])
+        self.assertEquals(app.submitter, self.user)
+
+
+class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
+
+    quantity = 1
+
+    def setUp(self):
+        super(TestPartnerApplicationsAPITestCase, self).setUp()
+        AgencyMemberFactory.create_batch(self.quantity)
+        EOIFactory.create_batch(self.quantity)
+        PartnerSimpleFactory.create_batch(1)
+
+    def test_create(self):
+        eoi_id = EOI.objects.first().id
+        url = reverse('projects:partner-applications', kwargs={"pk": eoi_id})
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        with open(filename) as cn_template:
+            payload = {
+                "partner": Partner.objects.last().id,
+                "cn": cn_template,
+            }
+            response = self.client.post(url, data=payload, format='multipart')
+
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['id'], Application.objects.last().id)
+        self.assertEquals(response.data['eoi'], eoi_id)
+        self.assertEquals(response.data['submitter'], self.user.id)
+
+        with open(filename) as cn_template:
+            payload = {
+                "partner": Partner.objects.last().id,
+                "cn": cn_template,
+            }
+            response = self.client.post(url, data=payload, format='multipart')
+
+        self.assertFalse(statuses.is_success(response.status_code))
+        expected_msgs = ['The fields eoi, partner must make a unique set.']
+        self.assertEquals(response.data['non_field_errors'], expected_msgs)
+
+        url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
+        payload = {
+            "partner": Partner.objects.last().id,
+            "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+            "justification_reason": "a good reason",
+        }
+        response = self.client.post(url, data=payload, format='json')
+
+        expected_msgs = 'You do not have permission to perform this action.'
+        self.assertEquals(response.data['detail'], expected_msgs)
+
+
+class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
+
+    quantity = 1
+    user_type = 'agency'
+    user_role = MEMBER_ROLES.editor
+
+    def setUp(self):
+        super(TestAgencyApplicationsAPITestCase, self).setUp()
+        PartnerSimpleFactory.create_batch(self.quantity)
+        # status='NoN' - will not create applications
+        EOIFactory.create_batch(self.quantity, status='NoN')
+
+    def test_create(self):
+        eoi_id = EOI.objects.first().id
+        url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
+
+        payload = {
+            "partner": Partner.objects.last().id,
+            "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+            "justification_reason": "a good reason",
+        }
+        response = self.client.post(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['id'], Application.objects.last().id)
+
+
+class TestApplicationsAPITestCase(BaseAPITestCase):
+
+    quantity = 1
+
+    def setUp(self):
+        super(TestApplicationsAPITestCase, self).setUp()
+        AgencyMemberFactory.create_batch(self.quantity)
+        EOIFactory.create_batch(self.quantity)
+
+    def test_read_update(self):
+        url = reverse('projects:application', kwargs={"pk": Application.objects.first().id})
+        response = self.client.get(url, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['id'], Application.objects.first().id)
+        self.assertFalse(response.data['did_win'])
+        self.assertEquals(response.data['ds_justification_select'], None)
+
+        payload = {
+            "status": APPLICATION_STATUSES.preselected,
+            "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
+        self.assertEquals(response.data['ds_justification_select'], JUSTIFICATION_FOR_DIRECT_SELECTION.local)
+
+        payload = {
+            "did_win": True,
+            "status": APPLICATION_STATUSES.rejected,
+            "justification_reason": "good reason",
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(response.data['did_win'])
+        self.assertEquals(response.data['status'], APPLICATION_STATUSES.rejected)
+
+        # accept offer
+        payload = {
+            "did_accept": True,
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(response.data['did_accept'])
+
+        # withdraw
+        reason = "They are better then You."
+        payload = {
+            "did_win": False,
+            "justification_reason": reason,
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertFalse(response.data['did_win'])
+        self.assertEquals(response.data["justification_reason"], reason)

@@ -17,7 +17,7 @@ const messages = {
     verificationStatus: 'Verification Status',
     typeOfOrganization: 'Type of Organization',
     sectorArea: 'Sector & Area of specialization',
-    populations: 'Populations of concer',
+    populations: 'Populations of concern',
   },
   clear: 'clear',
 };

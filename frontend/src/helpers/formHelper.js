@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-
+import R from 'ramda';
 import React from 'react';
 import SelectField from 'material-ui-old/SelectField';
 import TextField from 'material-ui/TextField';
@@ -7,7 +7,7 @@ import Checkbox from 'material-ui/Checkbox';
 import DatePicker from 'material-ui-old/DatePicker';
 import { FormControl, FormHelperText, FormLabel } from 'material-ui/Form';
 import Typography from 'material-ui/Typography';
-import R from 'ramda';
+import { formatDateForPrint } from './dates';
 
 
 export const renderFormControl = ({
@@ -96,15 +96,17 @@ export const renderText = ({
   values,
   optional,
   label,
+  date,
   ...other
 }) => {
   let value = input.value;
+
   if (!value) value = '-';
 
   let selected;
   if (values) selected = R.filter(val => val.value === value, values);
   if (selected && selected.length) value = selected[0].label;
-
+  if (date) value = formatDateForPrint(value);
   return (
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>

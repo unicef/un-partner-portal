@@ -87,3 +87,10 @@ def remove_untagged_images():
     Delete all untagged (<none>) images
     """
     local('docker rmi $(docker images | grep "^<none>" | awk "{print $3}")')
+
+
+def pep8():
+    """
+    Delete all untagged (<none>) images
+    """
+    local('docker-compose exec backend flake8 ./ --count')

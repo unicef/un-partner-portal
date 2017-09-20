@@ -112,6 +112,12 @@ const getTheme = () => (
         closed: '#233944',
         open: '#72C300',
       },
+      dateColors: {
+        dark: '#233944',
+        green: '#72C300',
+        red: '#EA4022',
+        blue: '#0099FF',
+      },
     },
   }
 );
