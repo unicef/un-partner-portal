@@ -23,7 +23,7 @@ const messages = {
 
 
 const ControlledModal = (props) => {
-  const { classes, trigger, title, info, content, buttons } = props;
+  const { classes, paddedContent, trigger, title, info, content, buttons } = props;
   return (
     <Dialog open={trigger} >
       <DialogTitle
@@ -33,12 +33,16 @@ const ControlledModal = (props) => {
         {title}
       </DialogTitle>
       <ModalContentHeader
-        titleText={info.title}
-        bodyText={info.body}
+        titleText={info ? info.title : info}
+        bodyText={info ? info.body : info}
       />
-      <DialogContent>
-        {content}
-      </DialogContent>
+
+      {!paddedContent
+        ? <DialogContent>
+          {content}
+        </DialogContent>
+        : <div>{ content }</div>
+      }
       <DialogActions>
         {buttons.flat && <Button onTouchTap={buttons.flat.handleClick} color="accent">
           {buttons.flat.label || messages.cancel }
@@ -51,7 +55,7 @@ const ControlledModal = (props) => {
       </DialogActions>
     </Dialog>
   );
-}
+};
 
 ControlledModal.propTypes = {
   /**
@@ -74,6 +78,11 @@ ControlledModal.propTypes = {
    * Extra info in grey section
    */
   info: PropTypes.string,
+
+  /**
+   * Wrap content in DialogContent
+   */
+  paddedContent: PropTypes.bool,
 
   classes: PropTypes.object.isRequired,
 };

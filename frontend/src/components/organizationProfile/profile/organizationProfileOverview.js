@@ -2,7 +2,6 @@ import R from 'ramda';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 import React, { Component } from 'react';
-import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
 import PropTypes from 'prop-types';
 import CollapsableItem from '../../../components/common/collapsableItem';
@@ -48,7 +47,7 @@ class OrganizationProfileOverview extends Component {
 
   render() {
     return (
-      <Paper>
+      <div>
         {messages.sections.map(item =>
           (<div>
             <CollapsableItem
@@ -62,7 +61,7 @@ class OrganizationProfileOverview extends Component {
           </div>
           ))
         }
-      </Paper>
+      </div>
     );
   }
 }
@@ -77,7 +76,7 @@ const mapDispatch = dispatch => ({
 });
 
 const mapStateToProps = (state, ownProps) => ({
-  countryCode: ownProps.params.countryCode,
+  countryCode: 1,
 });
 
 
