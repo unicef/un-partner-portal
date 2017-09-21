@@ -1,48 +1,39 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
-import random
-from datetime import date, timedelta
 
 from django.urls import reverse
 from django.conf import settings
 from rest_framework import status as statuses
 
-from account.models import User
-from agency.models import AgencyOffice
-from project.models import Application, EOI, Pin
-from partner.models import Partner
+from partner.models import Partner, PartnerProfile
 from common.tests.base import BaseAPITestCase
-from common.countries import COUNTRIES_ALPHA2_CODE
-from common.factories import EOIFactory, AgencyMemberFactory, PartnerFactory, OtherAgencyFactory, PartnerProfileFactory
-from common.models import Specialization
-from common.consts import (
-    SELECTION_CRITERIA_CHOICES,
-    SCALE_TYPES,
-    JUSTIFICATION_FOR_DIRECT_SELECTION,
-    MEMBER_ROLES,
-    APPLICATION_STATUSES,
-    COMPLETED_REASON,
+from common.factories import (
+    AgencyFactory,
+    UserFactory,
+    PartnerFactory,
+    OtherAgencyFactory,
 )
-from project.views import PinProjectAPIView
+from common.consts import (
+    MEMBER_ROLES,
+)
 
-class TestPartnerIdentificationAPITestCase(BaseAPITestCase):
+
+class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
     quantity = 1
-
-    def setUp(self):
-        super(TestPartnerIdentificationAPITestCase, self).setUp()
-        OtherAgencyFactory.create_batch(self.quantity)
-        AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
-        PartnerFactory.create_batch(self.quantity)
-        PartnerProfileFactory.create_batch(self.quantity)
+    initial_factories = [
+        OtherAgencyFactory,
+        AgencyFactory,
+        UserFactory,
+        PartnerFactory,
+    ]
 
     def test_identification(self):
-        partner = Partner.objects.first()
-        year_establishment= 2015
+        profile = PartnerProfile.objects.first()
+        year_establishment = 2015
         registration_date = '2016-01-01'
-        url = reverse('partners:identification', kwargs={"pk": partner.profile.id})
+        url = reverse('partners:identification', kwargs={"pk": profile.id})
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
         with open(filename) as gov_doc:
             with open(filename) as registration_doc:
@@ -69,3 +60,26 @@ class TestPartnerIdentificationAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['registration_date'], registration_date)
         self.assertTrue(response.data['registration_doc'] is not None)
+
+    def test_contact_information(self):
+        partner = Partner.objects.first()
+        url = reverse('partners:contact-information', kwargs={"pk": partner.id})
+
+        response = self.client.get(url, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        working_languages_other = 'PL'
+        connectivity_excuse = "test excuse"
+        first_name = "Leszek"
+        email = "leszek@unicef.org"
+        payload = {
+            'org_head': {"first_name": first_name, "email": email},
+            'connectivity_excuse': connectivity_excuse,
+            'working_languages_other': working_languages_other,
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['working_languages_other'], working_languages_other)
+        self.assertEquals(response.data['connectivity_excuse'], connectivity_excuse)
+        # org head can't be changed
+        self.assertTrue(response.data['org_head']['first_name'] != first_name)
+        self.assertTrue(response.data['org_head']['email'] != email)

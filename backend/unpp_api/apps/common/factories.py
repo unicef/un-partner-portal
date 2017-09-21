@@ -311,6 +311,28 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             area=POLICY_AREA_CHOICES.asset
         )
 
+    @factory.post_generation
+    def org_head(self, create, extracted, **kwargs):
+        PartnerHeadOrganization.objects.get_or_create(
+            partner=self,
+            first_name=get_first_name(),
+            last_name=get_last_name(),
+            email="fake-partner-head-{}@unicef.org".format(self.id),
+            job_title=get_job_title(),
+            telephone="+48 22 568 03 0{}".format(self.id)
+        )
+
+    @factory.post_generation
+    def profile(self, create, extracted, **kwargs):
+        profile, created = PartnerProfile.objects.get_or_create(
+            partner=self,
+            alias_name="aliast name {}".format(self.id),
+            registration_number="reg-number {}".format(self.id),
+        )
+        if created:
+            profile.working_languages = get_country_list()
+            profile.save()
+
     class Meta:
         model = Partner
 

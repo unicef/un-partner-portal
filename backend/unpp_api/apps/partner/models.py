@@ -85,7 +85,7 @@ class PartnerProfile(TimeStampedModel):
     working_languages_other = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
     flagged = models.BooleanField(default=False)  # not sure do we need this attr
     # authorised_officials
-    have_board_directors= models.BooleanField(
+    have_board_directors = models.BooleanField(
         default=False, verbose_name="Does your organization have a board of directors?")
 
     # Registration of organization

@@ -329,8 +329,6 @@ class PartnersListItemSerializer(serializers.ModelSerializer):
 
 class PartnerIdentificationSerializer(serializers.ModelSerializer):
 
-    partner_id = serializers.CharField(source="partner.id", read_only=True)
-    profile_id = serializers.CharField(source="id", read_only=True)
     legal_name = serializers.CharField(source="partner.legal_name", read_only=True)
     alias_name = serializers.CharField(read_only=True)
     acronym = serializers.CharField(read_only=True)
@@ -341,8 +339,6 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerProfile
         fields = (
-            'partner_id',
-            'profile_id',
             'legal_name',
             'alias_name',
             'acronym',
@@ -358,6 +354,20 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
             'registration_date',
             'registration_comment',
             'registration_number',
+        )
+
+
+class PartnerProfileContactInformationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartnerProfile
+        fields = (
+            'id',
+            'have_board_directors',
+            'connectivity',
+            'connectivity_excuse',
+            'working_languages',
+            'working_languages_other',
         )
 
 
@@ -387,3 +397,20 @@ class PartnerContactInformationSerializer(serializers.ModelSerializer):
             'working_languages',
             'working_languages_other',
         )
+
+    def update(self, instance, validated_data):
+        # std method does not support writable nested fields by default
+        instance.profile.have_board_directors = validated_data.get("profile", {}).get(
+            'have_board_directors', instance.profile.have_board_directors)
+        instance.profile.connectivity = validated_data.get("profile", {}).get(
+            'connectivity', instance.profile.connectivity)
+        instance.profile.connectivity_excuse = validated_data.get("profile", {}).get(
+            'connectivity_excuse', instance.profile.connectivity_excuse)
+        instance.profile.working_languages = validated_data.get("profile", {}).get(
+            'working_languages', instance.profile.working_languages)
+        instance.profile.working_languages_other = validated_data.get("profile", {}).get(
+            'working_languages_other', instance.profile.working_languages_other)
+        instance.profile.save()
+        # add directors, authorised_officers & mailing_address
+
+        return instance
