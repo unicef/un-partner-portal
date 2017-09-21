@@ -11,6 +11,7 @@ import PaddedContent from '../../../common/paddedContent';
 import FileUploadButton from '../../../common/buttons/fileUploadButton';
 import ControlledModal from '../../../common/modals/controlledModal';
 import OrganizationProfileContent from './modal/organizationProfileContent';
+import { uploadPartnerConceptNote } from '../../../../reducers/conceptNote';
 
 const messages = {
   upload_1: 'Please make sure to use the Concept Note template provided by the UN Agency that published this CFEI.',
@@ -149,6 +150,10 @@ class ConceptNoteSubmission extends Component {
       this.setState({ errorMsg: messages.confirmError });
       this.setState({ alert: true });
     }
+
+    if (fileSelected && confirm) {
+      this.props.uploadConceptNote(this.state.fileSelected);
+    }
   }
 
   render() {
@@ -240,13 +245,23 @@ class ConceptNoteSubmission extends Component {
 ConceptNoteSubmission.propTypes = {
   classes: PropTypes.object.isRequired,
   partnerId: PropTypes.string,
+  uploadConceptNote: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   partnerId: ownProps.params.id,
 });
 
-const connectedConceptNoteSubmission = connect(mapStateToProps, null)(ConceptNoteSubmission);
+
+const mapDispatch = (dispatch, ownProps) => {
+  const { id } = ownProps.params;
+
+  return {
+    uploadConceptNote: file => dispatch(uploadPartnerConceptNote(id, file)),
+  };
+};
+
+const connectedConceptNoteSubmission = connect(mapStateToProps, mapDispatch)(ConceptNoteSubmission);
 const withRouterConceptNoteSubmission = withRouter(connectedConceptNoteSubmission);
 
 export default withStyles(styleSheet)(withRouterConceptNoteSubmission);
