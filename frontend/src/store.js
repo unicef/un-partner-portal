@@ -24,6 +24,7 @@ import population from './reducers/population';
 import organizationProfileNav from './reducers/organizationProfileNav';
 import organizationProfile from './reducers/organizationProfile';
 import sectors, * as sectorsSelectors from './reducers/sectors';
+import partnersApplicationsList from './reducers/partnersApplicationsList';
 
 const mainReducer = combineReducers({
   cfei,
@@ -46,6 +47,7 @@ const mainReducer = combineReducers({
   population,
   routing: routerReducer,
   sectors,
+  partnersApplicationsList,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -83,6 +85,7 @@ export const mapSpecializationsToSelection = (state, sectorId) =>
 
 export const selectSector = (state, id) =>
   sectorsSelectors.selectSector(state.sectors, id);
+
 export const selectCfeiDetailsItemsByType = (state, type) =>
   selectItemsByType(state.cfeiDetailsNav, type);
 
