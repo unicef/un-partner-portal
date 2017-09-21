@@ -386,39 +386,10 @@ class PartnerContactInformationSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
-        instance.profile.have_board_directors = validated_data.get("profile", {}).get(
-            'have_board_directors', instance.profile.have_board_directors)
-        instance.profile.connectivity = validated_data.get("profile", {}).get(
-            'connectivity', instance.profile.connectivity)
-        instance.profile.connectivity_excuse = validated_data.get("profile", {}).get(
-            'connectivity_excuse', instance.profile.connectivity_excuse)
-        instance.profile.working_languages = validated_data.get("profile", {}).get(
-            'working_languages', instance.profile.working_languages)
-        instance.profile.working_languages_other = validated_data.get("profile", {}).get(
-            'working_languages_other', instance.profile.working_languages_other)
-        instance.profile.save()
-
-        instance.mailing_address.mailing_type = validated_data.get("mailing_address", {}).get(
-            'mailing_type', instance.mailing_address.mailing_type)
-        instance.mailing_address.street = validated_data.get("mailing_address", {}).get(
-            'street', instance.mailing_address.street)
-        instance.mailing_address.po_box = validated_data.get("mailing_address", {}).get(
-            'po_box', instance.mailing_address.po_box)
-        instance.mailing_address.city = validated_data.get("mailing_address", {}).get(
-            'city', instance.mailing_address.city)
-        instance.mailing_address.country = validated_data.get("mailing_address", {}).get(
-            'country', instance.mailing_address.country)
-        instance.mailing_address.zip_code = validated_data.get("mailing_address", {}).get(
-            'zip_code', instance.mailing_address.zip_code)
-        instance.mailing_address.telephone = validated_data.get("mailing_address", {}).get(
-            'telephone', instance.mailing_address.telephone)
-        instance.mailing_address.fax = validated_data.get("mailing_address", {}).get(
-            'fax', instance.mailing_address.fax)
-        instance.mailing_address.website = validated_data.get("mailing_address", {}).get(
-            'website', instance.mailing_address.website)
-        instance.mailing_address.org_email = validated_data.get("mailing_address", {}).get(
-            'org_email', instance.mailing_address.org_email)
-        instance.mailing_address.save()
+        PartnerProfile.objects.filter(
+            id=instance.profile.id).update(**validated_data["profile"])
+        PartnerMailingAddress.objects.filter(
+            id=instance.mailing_address.id).update(**validated_data["mailing_address"])
 
         for director in self.initial_data.get('directors', []):
             _id = director.get("id")
@@ -436,7 +407,7 @@ class PartnerContactInformationSerializer(serializers.ModelSerializer):
                 authorised_officer['partner_id'] = instance.id
                 PartnerAuthorisedOfficer.objects.create(**authorised_officer)
 
-        return instance
+        return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
 
 class PartnerProfileMandateMissionSerializer(serializers.ModelSerializer):
@@ -493,54 +464,16 @@ class PartnerProfileMandateMissionSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
-        instance.mandate_mission.background_and_rationale = validated_data.get("mandate_mission", {}).get(
-            'background_and_rationale', instance.mandate_mission.background_and_rationale)
-        instance.mandate_mission.mandate_and_mission = validated_data.get("mandate_mission", {}).get(
-            'mandate_and_mission', instance.mandate_mission.mandate_and_mission)
-        instance.mandate_mission.governance_structure = validated_data.get("mandate_mission", {}).get(
-            'governance_structure', instance.mandate_mission.governance_structure)
-        instance.mandate_mission.governance_hq = validated_data.get("mandate_mission", {}).get(
-            'governance_hq', instance.mandate_mission.governance_hq)
-        instance.mandate_mission.governance_organigram = validated_data.get("mandate_mission", {}).get(
-            'governance_organigram', instance.mandate_mission.governance_organigram)
-        instance.mandate_mission.ethic_safeguard = validated_data.get("mandate_mission", {}).get(
-            'ethic_safeguard', instance.mandate_mission.ethic_safeguard)
-        instance.mandate_mission.ethic_safeguard_policy = validated_data.get("mandate_mission", {}).get(
-            'ethic_safeguard_policy', instance.mandate_mission.ethic_safeguard_policy)
-        instance.mandate_mission.ethic_safeguard_comment = validated_data.get("mandate_mission", {}).get(
-            'ethic_safeguard_comment', instance.mandate_mission.ethic_safeguard_comment)
-        instance.mandate_mission.ethic_fraud = validated_data.get("mandate_mission", {}).get(
-            'ethic_fraud', instance.mandate_mission.ethic_fraud)
-        instance.mandate_mission.ethic_fraud_policy = validated_data.get("mandate_mission", {}).get(
-            'ethic_fraud_policy', instance.mandate_mission.ethic_fraud_policy)
-        instance.mandate_mission.ethic_fraud_comment = validated_data.get("mandate_mission", {}).get(
-            'ethic_fraud_comment', instance.mandate_mission.ethic_fraud_comment)
-        instance.mandate_mission.population_of_concern = validated_data.get("mandate_mission", {}).get(
-            'population_of_concern', instance.mandate_mission.population_of_concern)
-        instance.mandate_mission.concern_groups = validated_data.get("mandate_mission", {}).get(
-            'concern_groups', instance.mandate_mission.concern_groups)
-        instance.mandate_mission.security_high_risk_locations = validated_data.get("mandate_mission", {}).get(
-            'security_high_risk_locations', instance.mandate_mission.security_high_risk_locations)
-        instance.mandate_mission.security_high_risk_policy = validated_data.get("mandate_mission", {}).get(
-            'security_high_risk_policy', instance.mandate_mission.security_high_risk_policy)
-        instance.mandate_mission.security_desc = validated_data.get("mandate_mission", {}).get(
-            'security_desc', instance.mandate_mission.security_desc)
+        PartnerMandateMission.objects.filter(
+            id=instance.mandate_mission.id).update(**validated_data["mandate_mission"])
 
-        instance.mandate_mission.save()
-
-        instance.country_presence = validated_data.get("mandate_mission", {}).get(
-            'country_presence', instance.country_presence)
-        instance.staff_globally = validated_data.get("mandate_mission", {}).get(
-            'staff_globally', instance.staff_globally)
-        instance.location_of_office = validated_data.get("mandate_mission", {}).get(
-            'location_of_office', instance.location_of_office)
-        instance.more_office_in_country = validated_data.get("mandate_mission", {}).get(
-            'more_office_in_country', instance.more_office_in_country)
-        instance.location_field_offices = validated_data.get("mandate_mission", {}).get(
-            'location_field_offices', instance.location_field_offices)
-        instance.staff_in_country = validated_data.get("mandate_mission", {}).get(
-            'staff_in_country', instance.staff_in_country)
-        instance.engagement_operate_desc = validated_data.get("mandate_mission", {}).get(
+        instance.country_presence = validated_data.get('country_presence', instance.country_presence)
+        instance.staff_globally = validated_data.get('staff_globally', instance.staff_globally)
+        instance.location_of_office = validated_data.get('location_of_office', instance.location_of_office)
+        instance.more_office_in_country = validated_data.get('more_office_in_country', instance.more_office_in_country)
+        instance.location_field_offices = validated_data.get('location_field_offices', instance.location_field_offices)
+        instance.staff_in_country = validated_data.get('staff_in_country', instance.staff_in_country)
+        instance.engagement_operate_desc = validated_data.get(
             'engagement_operate_desc', instance.engagement_operate_desc)
 
         instance.save()
@@ -553,4 +486,35 @@ class PartnerProfileMandateMissionSerializer(serializers.ModelSerializer):
                 experience['partner_id'] = instance.id
                 PartnerExperience.objects.create(**experience)
 
-        return instance
+        return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+
+
+class PartnerProfileFundingSerializer(serializers.ModelSerializer):
+
+    budgets = PartnerBudgetSerializer(many=True)
+    major_donors = serializers.ListField(source="fund.major_donors")
+    source_core_funding = serializers.CharField(source="fund.source_core_funding")
+    main_donors_list = serializers.CharField(source="fund.main_donors_list")
+
+    class Meta:
+        model = Partner
+        fields = (
+            'budgets',
+            'major_donors',
+            'main_donors_list',
+            'source_core_funding',
+        )
+
+    def update(self, instance, validated_data):
+        fund_id = validated_data["fund"]["id"]
+        PartnerFunding.objects.filter(id=fund_id).update(**validated_data["fund"])
+
+        for budget in self.initial_data.get('budgets', []):
+            _id = budget.get("id")
+            if _id:
+                PartnerBudget.objects.filter(id=_id).update(**budget)
+            else:
+                budget['partner_id'] = instance.id
+                PartnerBudget.objects.create(**budget)
+
+        return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models

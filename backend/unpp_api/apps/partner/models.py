@@ -28,6 +28,7 @@ from common.consts import (
     POLICY_AREA_CHOICES,
     ORG_AUDIT_CHOICES,
     AUDIT_ASSESMENT_CHOICES,
+    BUDGET_CHOICES,
 )
 
 
@@ -393,7 +394,7 @@ class PartnerBudget(TimeStampedModel):
         help_text="Enter valid year.",
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
-    budget = models.DecimalField(decimal_places=2, max_digits=12, blank=True, null=True)
+    budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, default=BUDGET_CHOICES.less)
 
     class Meta:
         ordering = ['id']

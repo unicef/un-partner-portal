@@ -44,6 +44,7 @@ from .consts import (
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     EOI_TYPES,
     DIRECT_SELECTION_SOURCE,
+    BUDGET_CHOICES,
 )
 from .countries import COUNTRIES_ALPHA2_CODE
 
@@ -108,6 +109,10 @@ def get_year_of_exp():
 
 def get_donors(quantity=2):
     return [random.choice(list(PARTNER_DONORS_CHOICES._db_values)) for idx in xrange(0, quantity)]
+
+
+def get_budget_choice():
+    return random.choice(list(BUDGET_CHOICES._db_values))
 
 
 class GroupFactory(factory.django.DjangoModelFactory):
@@ -214,7 +219,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             budget, created = PartnerBudget.objects.get_or_create(
                 partner=self,
                 year=year,
-                budget=year**2
+                budget=get_budget_choice()
             )
             self.budgets.add(budget)
 
