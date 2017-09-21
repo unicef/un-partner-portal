@@ -411,6 +411,43 @@ class PartnerContactInformationSerializer(serializers.ModelSerializer):
         instance.profile.working_languages_other = validated_data.get("profile", {}).get(
             'working_languages_other', instance.profile.working_languages_other)
         instance.profile.save()
-        # add directors, authorised_officers & mailing_address
+
+        instance.mailing_address.mailing_type = validated_data.get("mailing_address", {}).get(
+            'mailing_type', instance.mailing_address.mailing_type)
+        instance.mailing_address.street = validated_data.get("mailing_address", {}).get(
+            'street', instance.mailing_address.street)
+        instance.mailing_address.po_box = validated_data.get("mailing_address", {}).get(
+            'po_box', instance.mailing_address.po_box)
+        instance.mailing_address.city = validated_data.get("mailing_address", {}).get(
+            'city', instance.mailing_address.city)
+        instance.mailing_address.country = validated_data.get("mailing_address", {}).get(
+            'country', instance.mailing_address.country)
+        instance.mailing_address.zip_code = validated_data.get("mailing_address", {}).get(
+            'zip_code', instance.mailing_address.zip_code)
+        instance.mailing_address.telephone = validated_data.get("mailing_address", {}).get(
+            'telephone', instance.mailing_address.telephone)
+        instance.mailing_address.fax = validated_data.get("mailing_address", {}).get(
+            'fax', instance.mailing_address.fax)
+        instance.mailing_address.website = validated_data.get("mailing_address", {}).get(
+            'website', instance.mailing_address.website)
+        instance.mailing_address.org_email = validated_data.get("mailing_address", {}).get(
+            'org_email', instance.mailing_address.org_email)
+        instance.mailing_address.save()
+
+        for director in self.initial_data.get('directors', []):
+            director_id = director.get("id")
+            if director_id:
+                PartnerDirector.objects.filter(id=director_id).update(**director)
+            else:
+                director['partner_id'] = instance.id
+                PartnerDirector.objects.create(**director)
+
+        for authorised_officer in self.initial_data.get('authorised_officers', []):
+            authorised_officer_id = authorised_officer.get("id")
+            if authorised_officer_id:
+                PartnerAuthorisedOfficer.objects.filter(id=authorised_officer_id).update(**authorised_officer)
+            else:
+                authorised_officer['partner_id'] = instance.id
+                PartnerAuthorisedOfficer.objects.create(**authorised_officer)
 
         return instance

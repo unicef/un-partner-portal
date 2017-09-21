@@ -67,14 +67,42 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         response = self.client.get(url, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
+        directors = response.data['directors']
+        authorised_officers = response.data['authorised_officers']
         working_languages_other = 'PL'
         connectivity_excuse = "test excuse"
         first_name = "Leszek"
         email = "leszek@unicef.org"
+        website = 'http://test.pl'
+        for director in directors:
+            director['first_name'] = first_name
+            director['authorized'] = True
+
+        for authorised_officer in authorised_officers:
+            authorised_officer['first_name'] = first_name
+            authorised_officer['email'] = email
+
+        directors.append({
+            'first_name': first_name,
+            'last_name': 'Sparow',
+            'job_title': 'PM Assistant',
+            'authorized': True
+        })
+        authorised_officers.append({
+            'first_name': first_name,
+            'last_name': 'Sparow',
+            'job_title': 'PM Assistant',
+            'telephone': '(123) 234 569',
+            'fax': u'(123) 234 566',
+            'email': email
+        })
         payload = {
             'org_head': {"first_name": first_name, "email": email},
+            'mailing_address': {'website': website},
             'connectivity_excuse': connectivity_excuse,
             'working_languages_other': working_languages_other,
+            'directors': directors,
+            'authorised_officers': authorised_officers,
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
@@ -83,3 +111,13 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         # org head can't be changed
         self.assertTrue(response.data['org_head']['first_name'] != first_name)
         self.assertTrue(response.data['org_head']['email'] != email)
+        self.assertEquals(response.data['mailing_address']['website'], website)
+        self.assertEquals(len(response.data['directors']), len(directors))
+
+        for director in response.data['directors']:
+            self.assertEquals(director['first_name'], first_name)
+            self.assertEquals(director['authorized'], True)
+
+        for authorised_officer in response.data['authorised_officers']:
+            self.assertEquals(authorised_officer['first_name'], first_name)
+            self.assertEquals(authorised_officer['email'], email)
