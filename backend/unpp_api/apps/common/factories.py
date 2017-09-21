@@ -43,6 +43,7 @@ from .consts import (
     AUDIT_ASSESMENT_CHOICES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     EOI_TYPES,
+    DIRECT_SELECTION_SOURCE,
 )
 from .countries import COUNTRIES_ALPHA2_CODE
 
@@ -59,6 +60,10 @@ def get_random_agency():
 
 def get_agency_member():
     return User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?").first()
+
+
+def get_partner_member():
+    return User.objects.filter(is_superuser=False, partner_members__isnull=False).order_by("?").first()
 
 
 def get_partner():
@@ -144,7 +149,6 @@ class PartnerSimpleFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
     display_type = PARTNER_TYPES.national
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
-    registration_number = factory.Sequence(lambda n: "reg-number {}".format(n))
 
     class Meta:
         model = Partner
@@ -154,7 +158,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
     display_type = PARTNER_TYPES.national
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
-    registration_number = factory.Sequence(lambda n: "reg-number {}".format(n))
 
     @factory.post_generation
     def mailing_address(self, create, extracted, **kwargs):
@@ -316,6 +319,7 @@ class PartnerProfileFactory(factory.django.DjangoModelFactory):
     partner = factory.Iterator(Partner.objects.all())
     alias_name = factory.Sequence(lambda n: "aliast name {}".format(n))
     working_languages = factory.LazyFunction(get_country_list)
+    registration_number = factory.Sequence(lambda n: "reg-number {}".format(n))
 
     class Meta:
         model = PartnerProfile
@@ -439,18 +443,29 @@ class EOIFactory(factory.django.DjangoModelFactory):
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
-    focal_point = factory.LazyFunction(get_agency_member)
     # locations ... TODO when right time will come (when we need them - depending on endpoint)
     agency_office = factory.SubFactory(AgencyOfficeFactory)
     description = factory.Sequence(lambda n: "Brief background of the project {}".format(n))
     start_date = date.today()
     end_date = date.today()
     deadline_date = date.today()
-    # invited_partners ... TODO when right time will come (when we need them - depending on endpoint)
+    notif_results_date = date.today()
     # reviewers ... TODO when right time will come (when we need them - depending on endpoint)
 
     class Meta:
         model = EOI
+
+    @factory.post_generation
+    def focal_points(self, create, extracted, **kwargs):
+        focal_point = get_agency_member()
+        if focal_point:
+            self.focal_points.add(focal_point)
+
+    @factory.post_generation
+    def invited_partners(self, create, extracted, **kwargs):
+        partner = get_partner()
+        if partner:
+            self.invited_partners.add(partner)
 
     @factory.post_generation
     def specializations(self, create, extracted, **kwargs):
@@ -461,14 +476,21 @@ class EOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def applications(self, create, extracted, **kwargs):
-        app = Application(
-            partner=get_partner(),
-            eoi=self,
-            submitter=get_agency_member(),
-        )
         if self.status == EOI_TYPES.direct:
-            app.did_win = True
-            app.did_accept = True
-            app.ds_justification_select = JUSTIFICATION_FOR_DIRECT_SELECTION.local
-            app.justification_reason = "good reason"
-        app.save()
+            Application.objects.create(
+                partner=get_partner(),
+                eoi=self,
+                submitter=get_agency_member(),
+                did_win=True,
+                did_accept=True,
+                ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+                justification_reason="good reason",
+            )
+            self.selected_source = DIRECT_SELECTION_SOURCE.cso
+            self.save()
+        elif self.status == EOI_TYPES.open:
+            Application.objects.create(
+                partner=get_partner(),
+                eoi=self,
+                submitter=get_partner_member(),
+            )

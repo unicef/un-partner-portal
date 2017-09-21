@@ -1,28 +1,34 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import PartnerProfileFundingBudget from './partnerProfileFundingBudget';
 import PartnerProfileFundingDonors from './partnerProfileFundingDonors';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 
-const STEPS = [
+const STEPS = readOnly => [
   {
-    component: <PartnerProfileFundingBudget />,
+    component: <PartnerProfileFundingBudget readOnly={readOnly} />,
     label: 'Budget',
-    name: 'budget',
+    name: 'budgets',
   },
   {
-    component: <PartnerProfileFundingDonors />,
+    component: <PartnerProfileFundingDonors readOnly={readOnly} />,
     label: 'Major Donors',
-    name: 'majorDonors',
+    name: 'major_donors',
   },
 ];
 
-const PartnerProfileFunding = () => (
-  <PartnerProfileStepperContainer
-    name="funding"
-    steps={STEPS}
+const PartnerProfileFunding = (props) => {
+  const { readOnly } = props;
+  return (<PartnerProfileStepperContainer
+    name="fund"
+    steps={STEPS(readOnly)}
+    readOnly={readOnly}
   />
-);
+  );
+};
 
+PartnerProfileFunding.propTypes = {
+  readOnly: PropTypes.bool,
+};
 
 export default PartnerProfileFunding;

@@ -59,6 +59,10 @@ export function getDirectCfei() {
   return authorizedGet('/projects/direct');
 }
 
+export function getPartnerProfileDetails(partnerId) {
+  return authorizedGet(`/partners/${partnerId}`);
+}
+
 export function postOpenCfei(body) {
   return authorizedPost('/projects/open/', body);
 }

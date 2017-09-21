@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
 
-const styleSheet = createStyleSheet('WithGreyColot', theme => ({
+const styleSheet = createStyleSheet('WithGreyColor', theme => ({
   grey: {
     color: theme.palette.primary[700],
     '&:hover': {

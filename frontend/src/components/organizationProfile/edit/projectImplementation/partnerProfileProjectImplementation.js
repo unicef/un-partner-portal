@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import PartnerProfileProjectImplementationManagement from './partnerProfileProjectImplementationManagement';
 import PartnerProfileProjectImplementationFinancialControls from './partnerProfileProjectImplementationFinancialControls';
 import PartnerProfileProjectImplementationInternalControls from './partnerProfileProjectImplementationInternalControls';
@@ -8,45 +8,53 @@ import PartnerProfileProjectImplementationAudit from './partnerProfileProjectImp
 import PartnerProfileProjectImplementationReporting from './partnerProfileProjectImplementationReporting';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 
-const STEPS = [
+const STEPS = readOnly => [
   {
-    component: <PartnerProfileProjectImplementationManagement />,
+    component: <PartnerProfileProjectImplementationManagement readOnly={readOnly} />,
     label: 'Programme Management',
-    name: 'programmeManagement',
+    name: 'program_management',
   },
   {
-    component: <PartnerProfileProjectImplementationFinancialControls />,
+    component: <PartnerProfileProjectImplementationFinancialControls readOnly={readOnly} />,
     label: 'Financial Controls',
-    name: 'financialControls',
+    name: 'financial_controls',
   },
   {
-    component: <PartnerProfileProjectImplementationInternalControls />,
+    component: <PartnerProfileProjectImplementationInternalControls readOnly={readOnly} />,
     label: 'Internal Controls',
     name: 'internalControls',
   },
   {
-    component: <PartnerProfileProjectImplementationBankingInfo />,
+    component: <PartnerProfileProjectImplementationBankingInfo readOnly={readOnly} />,
     label: 'Banking Information',
     name: 'bankingInformation',
   },
   {
-    component: <PartnerProfileProjectImplementationAudit />,
+    component: <PartnerProfileProjectImplementationAudit readOnly={readOnly} />,
     label: 'Audit & Assessments',
-    name: 'auditAssessment',
+    name: 'audit',
   },
   {
-    component: <PartnerProfileProjectImplementationReporting />,
+    component: <PartnerProfileProjectImplementationReporting readOnly={readOnly} />,
     label: 'Reporting',
     name: 'reporting',
   },
 ];
 
-const PartnerProfileProjectImplementation = () => (
-  <PartnerProfileStepperContainer
-    name="projectImplementation"
-    steps={STEPS}
-  />
-);
+const PartnerProfileProjectImplementation = (props) => {
+  const { readOnly } = props;
 
+  return (
+    <PartnerProfileStepperContainer
+      name="project_impl"
+      readOnly={readOnly}
+      steps={STEPS(readOnly)}
+    />
+  );
+};
+
+PartnerProfileProjectImplementation.propTypes = {
+  readOnly: PropTypes.bool,
+};
 
 export default PartnerProfileProjectImplementation;

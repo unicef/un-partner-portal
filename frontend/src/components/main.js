@@ -12,7 +12,12 @@ import getTheme, { muiOldTheme } from '../styles/muiTheme';
 
 class Main extends Component {
   componentWillMount() {
-    const role = window.localStorage.role;
+    let role = window.localStorage.role;
+
+    if (!role) {
+      window.localStorage.setItem('role', 'partner');
+      role = 'partner';
+    }
     this.props.sessionInit(role);
     this.props.loadCountries();
     this.props.loadSectors();
@@ -25,7 +30,6 @@ class Main extends Component {
           {this.props.children}
         </MuiThemeProviderLegacy>
       </MuiThemeProvider>
-
     );
   }
 }
