@@ -10,17 +10,19 @@ import {
 } from '../../customStepper';
 
 const ProfileStepContainer = (props) => {
-  const { item, incompleteSteps, index, ...other } = props;
+  const { item, incompleteSteps, singleSection, index, ...other } = props;
   const warn = incompleteSteps.includes(item.name);
+  
   return (
     <Step {...other}>
-      <StepLabel
+      {!singleSection ? <StepLabel
         icon={warn ? <Icon color="error"><ReportProblemIcon /></Icon> : index + 1}
         orientation="vertical"
         error={warn}
       >
         {item.label}
       </StepLabel>
+        : <div />}
       <StepContent>
         {item.component}
       </StepContent>
@@ -35,12 +37,15 @@ ProfileStepContainer.propTypes = {
     component: PropTypes.element,
   }),
   index: PropTypes.number,
+  singleSection: PropTypes.bool,
+};
+
+ProfileStepContainer.defaultProps = {
+  singleSection: false,
 };
 
 const mapState = state => ({
   incompleteSteps: state.partnerProfileEdit.incompleteSteps,
 });
 
-export default connect(
-  mapState,
-)(ProfileStepContainer);
+export default connect(mapState, null)(ProfileStepContainer);

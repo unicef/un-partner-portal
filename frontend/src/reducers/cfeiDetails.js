@@ -12,8 +12,7 @@ import { } from './apiStatus';
 import { normalizeSingleCfei } from './cfei';
 import { getOpenCfeiDetails } from '../helpers/api/api';
 
-const initialState = {
-};
+const initialState = {};
 
 export const loadCfei = id => (dispatch) => {
   dispatch(loadCfeiDetailStarted());

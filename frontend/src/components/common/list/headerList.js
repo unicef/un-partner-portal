@@ -33,7 +33,6 @@ class HeaderList extends Component {
       <Paper>
         <Grid direction="column" className={classes.container} container gutter={0}>
           <Grid className={classes.header} item>
-
             {(typeof header === 'function')
               ? React.createElement(header)
               : header

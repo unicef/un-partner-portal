@@ -14,6 +14,7 @@ import session from './reducers/session';
 import countries from './reducers/countries';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
+import partnerProfileDetails from './reducers/partnerProfileDetails';
 import cfeiDetails, * as cfeiDetailsSelector from './reducers/cfeiDetails';
 import cfeiDetailsNav, { selectItemsByType } from './reducers/cfeiDetailsNav';
 import agencyPartnersList from './reducers/agencyPartnersList';
@@ -23,6 +24,7 @@ import population from './reducers/population';
 import organizationProfileNav from './reducers/organizationProfileNav';
 import organizationProfile from './reducers/organizationProfile';
 import sectors, * as sectorsSelectors from './reducers/sectors';
+import partnersApplicationsList from './reducers/partnersApplicationsList';
 
 const mainReducer = combineReducers({
   cfei,
@@ -37,6 +39,7 @@ const mainReducer = combineReducers({
   countries,
   countryProfiles,
   partnerProfileEdit,
+  partnerProfileDetails,
   agencyPartnersList,
   agencyPartnerProfileNav,
   agencyPartnerProfile,
@@ -44,6 +47,7 @@ const mainReducer = combineReducers({
   population,
   routing: routerReducer,
   sectors,
+  partnersApplicationsList,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];

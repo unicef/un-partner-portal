@@ -12,6 +12,7 @@ import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 
 import GridColumn from '../common/grid/gridColumn';
+import SpreadContent from '../common/spreadContent';
 
 
 const styleSheet = createStyleSheet('ArrayForm', theme => ({
@@ -49,21 +50,17 @@ class RenderArrayMembers extends Component {
             <div>
               <ListItem key={index} >
                 <GridColumn >
-                  <Grid container direction="row" >
-                    <Grid item xs={10} >
-                      {outerField(member, index, fields)}
-                    </Grid>
-                    {index > 0 && !readOnly && <Grid item xs={2} >
-                      <IconButton
-                        type="button"
-                        title="Remove Member"
-                        onClick={() => fields.remove(index)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Grid>
+                  <SpreadContent>
+                    {outerField(member, index, fields)}
+                    {index > 0 && !readOnly && <IconButton
+                      type="button"
+                      title="Remove Member"
+                      onClick={() => fields.remove(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
                     }
-                  </Grid>
+                  </SpreadContent>
                   <Paper elevation={0} className={classes.innerPaper}>
                     {innerField(member, index, fields)}
                   </Paper>
