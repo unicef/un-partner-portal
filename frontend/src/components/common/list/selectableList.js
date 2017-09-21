@@ -13,7 +13,7 @@ const table = {
   allowedPageSizes: [5, 10, 15, 0],
 };
 
-const styleSheet = createStyleSheet('HeaderList', (theme) => {
+const styleSheet = createStyleSheet('SelectableList', (theme) => {
   const paddingSmall = theme.spacing.unit * 3;
   const paddingMedium = theme.spacing.unit * 4;
 
@@ -25,7 +25,7 @@ const styleSheet = createStyleSheet('HeaderList', (theme) => {
   };
 });
 
-class PaginatedList extends Component {
+class SelectableList extends Component {
   static navigationHeader(classes, selected, rows, HeaderAction) {
     return (<div>
       {selected.length > 0
@@ -107,7 +107,7 @@ class PaginatedList extends Component {
   }
 }
 
-PaginatedList.propTypes = {
+SelectableList.propTypes = {
   classes: PropTypes.object.isRequired,
   items: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
@@ -117,4 +117,4 @@ PaginatedList.propTypes = {
   headerAction: PropTypes.component,
 };
 
-export default withStyles(styleSheet)(PaginatedList);
+export default withStyles(styleSheet)(SelectableList);
