@@ -1,3 +1,15 @@
+import { combineReducers } from 'redux';
+import R from 'ramda';
+import cfeiDetailsStatus, {
+  loadCfeiDetailStarted,
+  loadCfeiDetailEnded,
+  loadCfeiDetailSuccess,
+  loadCfeiDetailFailure,
+  LOAD_CFEI_DETAIL_SUCCESS,
+} from './cfeiDetailsStatus';
+import { } from './apiStatus';
+import { normalizeSingleCfei } from './cfei';
+import { getOpenCfeiDetails } from '../helpers/api/api';
 
 const mockData = {
   eoi: {
@@ -75,6 +87,24 @@ const initialState = {
   13: mockData,
 };
 
+export const loadCfei = (project, filters) => (dispatch, getState) => {
+  dispatch(loadCfeiDetailStarted());
+  return getOpenCfeiDetails(project, filters)
+    .then((cfei) => {
+      dispatch(loadCfeiDetailEnded());
+      dispatch(loadCfeiDetailSuccess(cfei.results, project, getState));
+    })
+    .catch((error) => {
+      dispatch(loadCfeiDetailEnded());
+      dispatch(loadCfeiDetailFailure(error));
+    });
+};
+
+const saveCfei = (state, action) => {
+  const cfei = normalizeSingleCfei(action.cfei, action.getState);
+  return R.assoc(cfei.id, cfei, state);
+};
+
 export function selectCfeiDetail(state, id) {
   return state[id] ? state[id] : null;
 }
@@ -83,9 +113,14 @@ export function selectCfeiTitle(state, id) {
   return state[id] ? state[id].eoi.title : null;
 }
 
-export default function countriesReducer(state = initialState, action) {
+const cfeiDetails = (state = initialState, action) => {
   switch (action.type) {
+    case LOAD_CFEI_DETAIL_SUCCESS: {
+      return saveCfei(state, action);
+    }
     default:
       return state;
   }
-}
+};
+
+export default combineReducers({ cfeiDetails, cfeiDetailsStatus });

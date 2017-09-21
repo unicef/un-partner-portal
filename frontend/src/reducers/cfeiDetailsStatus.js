@@ -1,4 +1,4 @@
-import { CLEAR_ERROR,
+import {
   clearError,
   startLoading,
   stopLoading,
@@ -21,12 +21,12 @@ const messages = {
   'please refresh page and try again',
 };
 
-export const errorToBeCleared = () => ({ type: CLEAR_ERROR });
+export const errorToBeCleared = () => ({ type: CLEAR_CFEI_DETAIL_ERROR });
 export const loadCfeiDetailStarted = () => ({ type: LOAD_CFEI_DETAIL_STARTED });
 export const loadCfeiDetailEnded = () => ({ type: LOAD_CFEI_DETAIL_ENDED });
 export const loadCfeiDetailSuccess = (cfei, project, getState) => (
   { type: LOAD_CFEI_DETAIL_SUCCESS, cfei, project, getState });
-export const loadCfeiFailure = error => ({ type: LOAD_CFEI_DETAIL_FAILURE, error });
+export const loadCfeiDetailFailure = error => ({ type: LOAD_CFEI_DETAIL_FAILURE, error });
 
 export default function cfeiStatus(state = initialState, action) {
   switch (action.type) {

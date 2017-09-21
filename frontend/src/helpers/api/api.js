@@ -62,3 +62,7 @@ export function getDirectCfei() {
 export function postOpenCfei(body) {
   return authorizedPost('/projects/open/', body);
 }
+
+export function getOpenCfeiDetails(id) {
+  return authorizedGet(`/projects/${id}`);
+}
