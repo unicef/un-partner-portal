@@ -24,8 +24,8 @@ const messages = {
 export const errorToBeCleared = () => ({ type: CLEAR_CFEI_ERROR });
 export const loadCfeiStarted = () => ({ type: LOAD_CFEI_STARTED });
 export const loadCfeiEnded = () => ({ type: LOAD_CFEI_ENDED });
-export const loadCfeiSuccess = (cfei, project, getState) => (
-  { type: LOAD_CFEI_SUCCESS, cfei, project, getState });
+export const loadCfeiSuccess = (cfei, project) => (
+  { type: LOAD_CFEI_SUCCESS, cfei, project });
 export const loadCfeiFailure = error => ({ type: LOAD_CFEI_FAILURE, error });
 
 export default function cfeiStatus(state = initialState, action) {

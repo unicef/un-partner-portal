@@ -9,14 +9,16 @@ import GridRow from '../../../common/grid/gridRow';
 import HeaderList from '../../../common/list/headerList';
 import TextField from '../../../forms/textFieldForm';
 import PaddedContent from '../../../common/paddedContent';
-import { TitleField,
+import {
+  TitleField,
   FocalPoint,
   OtherInfo,
   Background,
   StartDate,
   EndDate,
   DeadlineDate,
-  NotifyDate } from '../../modals/commonFields';
+  NotifyDate,
+} from '../../modals/commonFields';
 
 const messages = {
   title: 'Project Details',
@@ -74,13 +76,12 @@ const title = () => (
 
 );
 
-const ProjectDetails = props => (
-  <FormSection name="eoi">
-    <HeaderList
-      header={title}
-      rows={[<Fields />]}
-    />
-  </FormSection>
+const ProjectDetails = () => (
+  <HeaderList
+    header={title}
+    rows={[<Fields />]}
+  />
+
 );
 
 export default ProjectDetails;

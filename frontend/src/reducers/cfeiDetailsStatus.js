@@ -1,8 +1,8 @@
+import R from 'ramda';
 import {
   clearError,
   startLoading,
   stopLoading,
-  saveErrorMsg,
 } from './apiStatus';
 
 export const CLEAR_CFEI_DETAIL_ERROR = 'CLEAR_CFEI_DETAIL_ERROR';
@@ -24,14 +24,25 @@ const messages = {
 export const errorToBeCleared = () => ({ type: CLEAR_CFEI_DETAIL_ERROR });
 export const loadCfeiDetailStarted = () => ({ type: LOAD_CFEI_DETAIL_STARTED });
 export const loadCfeiDetailEnded = () => ({ type: LOAD_CFEI_DETAIL_ENDED });
-export const loadCfeiDetailSuccess = (cfei, project, getState) => (
-  { type: LOAD_CFEI_DETAIL_SUCCESS, cfei, project, getState });
+export const loadCfeiDetailSuccess = cfei => (
+  { type: LOAD_CFEI_DETAIL_SUCCESS, cfei });
 export const loadCfeiDetailFailure = error => ({ type: LOAD_CFEI_DETAIL_FAILURE, error });
+
+export const saveErrorMsg = (state, action) => R.assoc(
+  'error',
+  {
+    message: messages.loadingFailure,
+    error: action.error,
+    notFound: R.pathSatisfies(detail => detail === 'Not found.',
+      ['error', 'response', 'data', 'detail'], action),
+  },
+  state);
+
 
 export default function cfeiStatus(state = initialState, action) {
   switch (action.type) {
     case LOAD_CFEI_DETAIL_FAILURE: {
-      return saveErrorMsg(state, action, messages);
+      return saveErrorMsg(state, action);
     }
     case LOAD_CFEI_DETAIL_STARTED: {
       clearError(state);
