@@ -1,40 +1,53 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import PartnerProfileContactInfoConnectivity from './partnerProfileContactInfoConnectivity';
 import PartnerProfileContactInfoAddress from './partnerProfileContactInfoAddress';
 import PartnerProfileContactInfoOfficials from './partnerProfileContactInfoOfficials';
 import PartnerProfileContactInfoLanguages from './partnerProfileContactInfoLanguages';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
+import PartnerProfileContactInfoHeadOrganization from './partnerProfileContactInfoHeadOrganization';
 
-const STEPS = [
-  {
-    component: <PartnerProfileContactInfoAddress />,
-    label: 'Mailing Address',
-    name: 'mailingAddress',
-  },
-  {
-    component: <PartnerProfileContactInfoOfficials />,
-    label: 'Authorized Officials',
-    name: 'authorizedOfficials',
-  },
-  {
-    component: <PartnerProfileContactInfoConnectivity />,
-    label: 'Connectivity',
-    name: 'connectivity',
-  },
-  {
-    component: <PartnerProfileContactInfoLanguages />,
-    label: 'Working Languages',
-    name: 'workingLanguages',
-  },
-];
+const STEPS = readOnly =>
+  [
+    {
+      component: <PartnerProfileContactInfoAddress readOnly={readOnly} />,
+      label: 'Mailing Address',
+      name: 'address',
+    },
+    {
+      component: <PartnerProfileContactInfoOfficials readOnly={readOnly} />,
+      label: 'Authorized Officials',
+      name: 'authorised_officers',
+    },
+    {
+      component: <PartnerProfileContactInfoHeadOrganization readOnly={readOnly} />,
+      label: 'Head of Organization',
+      name: 'org_head',
+    },
+    {
+      component: <PartnerProfileContactInfoConnectivity readOnly={readOnly} />,
+      label: 'Connectivity',
+      name: 'connectivity',
+    },
+    {
+      component: <PartnerProfileContactInfoLanguages readOnly={readOnly} />,
+      label: 'Working Languages',
+      name: 'working_languages',
+    },
+  ];
 
-const PartnerProfileContactInfo = () => (
-  <PartnerProfileStepperContainer
-    name="contactInfo"
-    steps={STEPS}
-  />
-);
+const PartnerProfileContactInfo = (props) => {
+  const { readOnly } = props;
 
+  return (<PartnerProfileStepperContainer
+    name="mailing"
+    readOnly={readOnly}
+    steps={STEPS(readOnly)}
+  />);
+};
+
+PartnerProfileContactInfo.propTypes = {
+  readOnly: PropTypes.bool,
+};
 
 export default PartnerProfileContactInfo;

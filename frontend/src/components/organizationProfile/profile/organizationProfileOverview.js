@@ -13,6 +13,7 @@ import PartnerProfileMandate from '../edit/mandate/partnerProfileMandate';
 import PartnerProfileFunding from '../edit/funding/partnerProfileFunding';
 import PartnerProfileProjectImplementation from '../edit/projectImplementation/partnerProfileProjectImplementation';
 import PartnerProfileOtherInfo from '../edit/otherInfo/partnerProfileOtherInfo';
+import { loadPartnerDetails } from '../../../reducers/partnerProfileDetails';
 import { changeTab } from '../../../reducers/partnerProfileEdit';
 
 const FIRST_INDEX = 0;
@@ -28,13 +29,13 @@ const messages = {
     { label: 'Other Information', notComplete: false },
   ],
   sectionComponents: [
-    <PartnerProfileIdentification />,
-    <PartnerProfileContactInfo />,
-    <PartnerProfileMandate />,
-    <PartnerProfileFunding />,
-    <PartnerProfileCollaboration />,
-    <PartnerProfileProjectImplementation />,
-    <PartnerProfileOtherInfo />,
+    <PartnerProfileIdentification readOnly />,
+    <PartnerProfileContactInfo readOnly />,
+    <PartnerProfileMandate readOnly />,
+    <PartnerProfileFunding readOnly />,
+    <PartnerProfileCollaboration readOnly />,
+    <PartnerProfileProjectImplementation readOnly />,
+    <PartnerProfileOtherInfo readOnly />,
   ],
 };
 
@@ -44,6 +45,10 @@ class OrganizationProfileOverview extends Component {
 
     this.props.changeTab(sectionIndex);
     history.push(`/profile/${countryCode}/edit`);
+  }
+
+  componentWillMount() {
+    this.props.loadPartnerProfileDetails();
   }
 
   render() {
@@ -70,11 +75,17 @@ class OrganizationProfileOverview extends Component {
 OrganizationProfileOverview.propTypes = {
   changeTab: PropTypes.func.isRequired,
   countryCode: PropTypes.string.isRequired,
+  loadPartnerProfileDetails: PropTypes.func,
 };
 
-const mapDispatch = dispatch => ({
-  changeTab: index => dispatch(changeTab(index)),
-});
+const mapDispatch = (dispatch, ownProps) => {
+  const { countryCode } = ownProps.params;
+
+  return {
+    changeTab: index => dispatch(changeTab(index)),
+    loadPartnerProfileDetails: () => dispatch(loadPartnerDetails(countryCode)),
+  };
+};
 
 const mapStateToProps = (state, ownProps) => ({
   countryCode: ownProps.params.countryCode,

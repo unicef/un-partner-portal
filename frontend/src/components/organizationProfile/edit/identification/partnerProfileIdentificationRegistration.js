@@ -33,30 +33,32 @@ const YEAR_MENU = [
 ];
 
 const PartnerProfileIdentificationRegistration = (props) => {
-  const { isRegistered } = props;
+  const { isRegistered, readOnly } = props;
   return (
-    <FormSection name="registration">
+    <FormSection name="registration_hq">
       <Grid item>
         <Grid container direction="column" gutter={16}>
           <Grid item>
             <Grid container direction="row">
               <Grid item sm={4} xs={12}>
                 <SelectForm
-                  fieldName="yearOfEstablishment"
+                  fieldName="start_cooperate_date"
                   label="Year of Establishment in Country of Origin"
                   placeholder="Select year"
                   values={YEAR_MENU}
                   optional
                   warn
+                  readOnly={readOnly}
                 />
               </Grid>
               <Grid item sm={4} xs={12}>
                 <RadioForm
-                  fieldName="hasGoverningDocument"
+                  fieldName="have_gov_doc"
                   label="Does the Organization have a Governing Document?"
                   values={BOOL_VAL}
                   optional
                   warn
+                  readOnly={readOnly}
                 />
               </Grid>
               <Grid item sm={4} xs={12}>
@@ -66,17 +68,19 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   fieldName="governingDocument"
                   optional
                   warn
+                  readOnly={readOnly}
                 />
               </Grid>
             </Grid>
           </Grid>
           <Grid item sm={4} xs={12}>
             <RadioForm
-              fieldName="isRegistered"
+              fieldName="register_country"
               label="Is the Organization Registered in the Country of Origin?"
               values={BOOL_VAL}
               optional
               warn
+              readOnly={readOnly}
             />
           </Grid>
           {isRegistered === 'yes' &&
@@ -89,24 +93,27 @@ const PartnerProfileIdentificationRegistration = (props) => {
                     placeholder="Provide Date"
                     optional
                     warn
+                    readOnly={readOnly}
                   />
                 </Grid>
                 <Grid item sm={4} xs={12}>
                   <TextFieldForm
                     label="Registration Number (if applicable)"
                     placeholder="-"
-                    fieldName="registrationNumber"
+                    fieldName="registration_number"
                     optional
                     warn
+                    readOnly={readOnly}
                   />
                 </Grid>
                 <Grid item sm={4} xs={12}>
                   <TextFieldForm
                     label="Registration Document"
                     placeholder="Upload File"
-                    fieldName="registrationDocument"
+                    fieldName="registration_doc"
                     optional
                     warn
+                    readOnly={readOnly}
                   />
                 </Grid>
               </Grid>
@@ -119,6 +126,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                 fieldName="registrationExplanation"
                 optional
                 warn
+                readOnly={readOnly}
               />
             </Grid>
           }
@@ -133,6 +141,7 @@ PartnerProfileIdentificationRegistration.propTypes = {
    * value of legal name change field to determine if former legal name field have to be displayed
    */
   isRegistered: PropTypes.bool,
+  readOnly: PropTypes.bool,
 };
 
 const selector = formValueSelector('partnerProfile');

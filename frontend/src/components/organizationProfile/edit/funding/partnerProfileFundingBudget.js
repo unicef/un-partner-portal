@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
-
+import PropTypes from 'prop-types';
 import { FormControl, FormLabel } from 'material-ui/Form';
 
 import SelectForm from '../../../forms/selectForm';
@@ -28,8 +28,9 @@ const BUDGET_VALUES = [
 ];
 
 
-const PartnerProfileFundingBudget = () => (
-  <FormSection name="budget">
+const PartnerProfileFundingBudget = (props) => {
+  const { readOnly } = props;
+  return (<FormSection name="fund">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>
@@ -47,6 +48,7 @@ const PartnerProfileFundingBudget = () => (
                           values={BUDGET_VALUES}
                           optional
                           warn
+                          readOnly={readOnly}
                         />
                       </Grid>
                     </Grid>
@@ -60,6 +62,7 @@ const PartnerProfileFundingBudget = () => (
                           values={BUDGET_VALUES}
                           optional
                           warn
+                          readOnly={readOnly}
                         />
                       </Grid>
                     </Grid>
@@ -74,6 +77,7 @@ const PartnerProfileFundingBudget = () => (
                           onFieldChange={this.handleBudgetFieldChange}
                           optional
                           warn
+                          readOnly={readOnly}
                         />
                       </Grid>
                     </Grid>
@@ -95,12 +99,17 @@ const PartnerProfileFundingBudget = () => (
             }}
             optional
             warn
+            readOnly={readOnly}
           />
         </Grid>
       </Grid>
     </Grid>
   </FormSection>
-);
+  );
+};
 
+PartnerProfileFundingBudget.propTypes = {
+  readOnly: PropTypes.bool,
+};
 
 export default PartnerProfileFundingBudget;

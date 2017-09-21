@@ -1,19 +1,27 @@
 import React from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-
+import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
-import { FormControl, FormLabel } from 'material-ui/Form';
-import { renderTextField, renderText } from '../../helpers/formHelper';
+import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { FormControl } from 'material-ui/Form';
+import { renderCheckbox } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
+const styleSheet = createStyleSheet('mainLayout', theme => ({
+  root: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+}));
 
-function TextFieldForm(props) {
+
+function CheckboxForm(props) {
   const {
+    classes,
     fieldName,
     label,
     textFieldProps,
-    placeholder,
     optional,
     validation,
     warn,
@@ -22,32 +30,27 @@ function TextFieldForm(props) {
   return (
     <Grid item>
       <FormControl fullWidth>
-        {readOnly
-          ? [
-            <Field
-              name={fieldName}
-              label={label}
-              component={renderText}
-              optional={optional}
-            />]
-          : [
-            <FormLabel>{label}</FormLabel>,
-            <Field
-              name={fieldName}
-              placeholder={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
-              component={renderTextField}
-              validate={optional ? [] : [required].concat(validation || [])}
-              warn={warn && warning}
-              {...textFieldProps}
-            />]
-        }
+        <div className={classes.root}>
+          <Field
+            name={fieldName}
+            component={renderCheckbox}
+            validate={optional ? [] : [required].concat(validation || [])}
+            warn={warn && warning}
+            disabled={readOnly}
+            {...textFieldProps}
+          />
+          <Typography color="inherit" type="caption">
+            {label}
+          </Typography>
+        </div>
       </FormControl>
     </Grid>
   );
 }
 
 
-TextFieldForm.propTypes = {
+CheckboxForm.propTypes = {
+  classes: PropTypes.object.isRequired,
   /**
    * Name of the field used by react-form and as unique id.
    */
@@ -55,7 +58,7 @@ TextFieldForm.propTypes = {
   /**
    * label used in field, also placeholder is built from it by adding 'Provide'
    */
-  label: PropTypes.node,
+  label: PropTypes.string,
   /**
    * props passed to wrapped TextField
    */
@@ -82,9 +85,9 @@ TextFieldForm.propTypes = {
   readOnly: PropTypes.bool,
 };
 
-TextFieldForm.defaultProps = {
+CheckboxForm.defaultProps = {
   placeholder: null,
 };
 
 
-export default TextFieldForm;
+export default withStyles(styleSheet)(CheckboxForm);
