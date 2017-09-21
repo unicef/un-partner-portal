@@ -19,7 +19,7 @@ import organizationProfileHeader from './components/organizationProfile/profile/
 import partnersContainer from './components/partners/partnersContainer';
 import partnerProfileHeader from './components/partners/profile/partnerProfileHeader';
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
-import organizationProfileOverview from './components/organizationProfile/profile/organizationProfileOverview';
+import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
 import mainContent from './components/common/mainContentWrapper';
@@ -54,7 +54,7 @@ const allRoutes = () => (
         <Route path="partner/:id/" component={partnerProfileHeader}>
           <Route component={mainContent} >
             <Route path="overview" component={partnerOverview} />
-            <Route path="details" component={organizationProfileOverview} />
+            <Route path="details" component={organizationProfileOverviewPaper} />
             <Route path="users" component={null} />
             <Route path="applications" component={null} />
           </Route>
@@ -65,7 +65,7 @@ const allRoutes = () => (
         <Route path="profile/:id" component={organizationProfileHeader} >
           <IndexRedirect to="overview" />
           <Route component={mainContent} >
-            <Route path="overview" component={organizationProfileOverview} />
+            <Route path="overview" component={organizationProfileOverviewPaper} />
             <Route path="users" component={null} />
           </Route>
         </Route>

@@ -57,9 +57,7 @@ class OrganizationItem extends Component {
   }
 
   handleOnClick(isCountry) {
-    const countryCode = !isCountry ? 'hq' : 'ke';
-
-    history.push(`/profile/${countryCode}/overview`);
+    history.push('/profile/1/overview');
   }
 
   render() {
