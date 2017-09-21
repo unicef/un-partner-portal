@@ -14,9 +14,6 @@ from common.factories import (
     PartnerFactory,
     OtherAgencyFactory,
 )
-from common.consts import (
-    MEMBER_ROLES,
-)
 
 
 class TestPartnerDetailAPITestCase(BaseAPITestCase):

@@ -357,20 +357,6 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
         )
 
 
-class PartnerProfileContactInformationSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = PartnerProfile
-        fields = (
-            'id',
-            'have_board_directors',
-            'connectivity',
-            'connectivity_excuse',
-            'working_languages',
-            'working_languages_other',
-        )
-
-
 class PartnerContactInformationSerializer(serializers.ModelSerializer):
 
     mailing_address = PartnerMailingAddressSerializer()
@@ -435,19 +421,136 @@ class PartnerContactInformationSerializer(serializers.ModelSerializer):
         instance.mailing_address.save()
 
         for director in self.initial_data.get('directors', []):
-            director_id = director.get("id")
-            if director_id:
-                PartnerDirector.objects.filter(id=director_id).update(**director)
+            _id = director.get("id")
+            if _id:
+                PartnerDirector.objects.filter(id=_id).update(**director)
             else:
                 director['partner_id'] = instance.id
                 PartnerDirector.objects.create(**director)
 
         for authorised_officer in self.initial_data.get('authorised_officers', []):
-            authorised_officer_id = authorised_officer.get("id")
-            if authorised_officer_id:
-                PartnerAuthorisedOfficer.objects.filter(id=authorised_officer_id).update(**authorised_officer)
+            _id = authorised_officer.get("id")
+            if _id:
+                PartnerAuthorisedOfficer.objects.filter(id=_id).update(**authorised_officer)
             else:
                 authorised_officer['partner_id'] = instance.id
                 PartnerAuthorisedOfficer.objects.create(**authorised_officer)
+
+        return instance
+
+
+class PartnerProfileMandateMissionSerializer(serializers.ModelSerializer):
+
+    background_and_rationale = serializers.CharField(source="mandate_mission.background_and_rationale")
+    mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
+    governance_structure = serializers.CharField(source="mandate_mission.governance_structure")
+    governance_hq = serializers.CharField(source="mandate_mission.governance_hq")
+    governance_organigram = serializers.FileField(source="mandate_mission.governance_organigram")
+    ethic_safeguard = serializers.BooleanField(source="mandate_mission.ethic_safeguard")
+    ethic_safeguard_policy = serializers.FileField(source="mandate_mission.ethic_safeguard_policy")
+    ethic_safeguard_comment = serializers.CharField(source="mandate_mission.ethic_safeguard_comment")
+    ethic_fraud = serializers.BooleanField(source="mandate_mission.ethic_fraud")
+    ethic_fraud_policy = serializers.FileField(source="mandate_mission.ethic_fraud_policy")
+    ethic_fraud_comment = serializers.CharField(source="mandate_mission.ethic_fraud_comment")
+    population_of_concern = serializers.BooleanField(source="mandate_mission.population_of_concern")
+    concern_groups = serializers.ListField(source="mandate_mission.concern_groups")
+    security_high_risk_locations = serializers.BooleanField(source="mandate_mission.security_high_risk_locations")
+    security_high_risk_policy = serializers.BooleanField(source="mandate_mission.security_high_risk_policy")
+    security_desc = serializers.CharField(source="mandate_mission.security_desc")
+
+    experiences = PartnerExperienceSerializer(many=True)
+
+    class Meta:
+        model = Partner
+        fields = (
+            'background_and_rationale',
+            'mandate_and_mission',
+            'governance_structure',
+            'governance_hq',
+            'governance_organigram',
+            'ethic_safeguard',
+            'ethic_safeguard_policy',
+            'ethic_safeguard_comment',
+            'ethic_fraud',
+            'ethic_fraud_policy',
+            'ethic_fraud_comment',
+            'population_of_concern',
+            'concern_groups',
+            'security_high_risk_locations',
+            'security_high_risk_policy',
+            'security_desc',
+
+            'country_presence',
+            'staff_globally',
+            'location_of_office',
+            'more_office_in_country',
+            'location_field_offices',
+            'staff_in_country',
+            'engagement_operate_desc',
+
+            'experiences',
+        )
+
+    def update(self, instance, validated_data):
+        # std method does not support writable nested fields by default
+        instance.mandate_mission.background_and_rationale = validated_data.get("mandate_mission", {}).get(
+            'background_and_rationale', instance.mandate_mission.background_and_rationale)
+        instance.mandate_mission.mandate_and_mission = validated_data.get("mandate_mission", {}).get(
+            'mandate_and_mission', instance.mandate_mission.mandate_and_mission)
+        instance.mandate_mission.governance_structure = validated_data.get("mandate_mission", {}).get(
+            'governance_structure', instance.mandate_mission.governance_structure)
+        instance.mandate_mission.governance_hq = validated_data.get("mandate_mission", {}).get(
+            'governance_hq', instance.mandate_mission.governance_hq)
+        instance.mandate_mission.governance_organigram = validated_data.get("mandate_mission", {}).get(
+            'governance_organigram', instance.mandate_mission.governance_organigram)
+        instance.mandate_mission.ethic_safeguard = validated_data.get("mandate_mission", {}).get(
+            'ethic_safeguard', instance.mandate_mission.ethic_safeguard)
+        instance.mandate_mission.ethic_safeguard_policy = validated_data.get("mandate_mission", {}).get(
+            'ethic_safeguard_policy', instance.mandate_mission.ethic_safeguard_policy)
+        instance.mandate_mission.ethic_safeguard_comment = validated_data.get("mandate_mission", {}).get(
+            'ethic_safeguard_comment', instance.mandate_mission.ethic_safeguard_comment)
+        instance.mandate_mission.ethic_fraud = validated_data.get("mandate_mission", {}).get(
+            'ethic_fraud', instance.mandate_mission.ethic_fraud)
+        instance.mandate_mission.ethic_fraud_policy = validated_data.get("mandate_mission", {}).get(
+            'ethic_fraud_policy', instance.mandate_mission.ethic_fraud_policy)
+        instance.mandate_mission.ethic_fraud_comment = validated_data.get("mandate_mission", {}).get(
+            'ethic_fraud_comment', instance.mandate_mission.ethic_fraud_comment)
+        instance.mandate_mission.population_of_concern = validated_data.get("mandate_mission", {}).get(
+            'population_of_concern', instance.mandate_mission.population_of_concern)
+        instance.mandate_mission.concern_groups = validated_data.get("mandate_mission", {}).get(
+            'concern_groups', instance.mandate_mission.concern_groups)
+        instance.mandate_mission.security_high_risk_locations = validated_data.get("mandate_mission", {}).get(
+            'security_high_risk_locations', instance.mandate_mission.security_high_risk_locations)
+        instance.mandate_mission.security_high_risk_policy = validated_data.get("mandate_mission", {}).get(
+            'security_high_risk_policy', instance.mandate_mission.security_high_risk_policy)
+        instance.mandate_mission.security_desc = validated_data.get("mandate_mission", {}).get(
+            'security_desc', instance.mandate_mission.security_desc)
+
+        instance.mandate_mission.save()
+
+        instance.country_presence = validated_data.get("mandate_mission", {}).get(
+            'country_presence', instance.country_presence)
+        instance.staff_globally = validated_data.get("mandate_mission", {}).get(
+            'staff_globally', instance.staff_globally)
+        instance.location_of_office = validated_data.get("mandate_mission", {}).get(
+            'location_of_office', instance.location_of_office)
+        instance.more_office_in_country = validated_data.get("mandate_mission", {}).get(
+            'more_office_in_country', instance.more_office_in_country)
+        instance.location_field_offices = validated_data.get("mandate_mission", {}).get(
+            'location_field_offices', instance.location_field_offices)
+        instance.staff_in_country = validated_data.get("mandate_mission", {}).get(
+            'staff_in_country', instance.staff_in_country)
+        instance.engagement_operate_desc = validated_data.get("mandate_mission", {}).get(
+            'engagement_operate_desc', instance.engagement_operate_desc)
+
+        instance.save()
+
+        for experience in self.initial_data.get('experiences', []):
+            _id = experience.get("id")
+            if _id:
+                PartnerExperience.objects.filter(id=_id).update(**experience)
+            else:
+                experience['partner_id'] = instance.id
+                PartnerExperience.objects.create(**experience)
 
         return instance

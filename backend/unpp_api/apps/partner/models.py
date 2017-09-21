@@ -45,9 +45,9 @@ class Partner(TimeStampedModel):
     )
     staff_globally = models.CharField(max_length=3, choices=STAFF_GLOBALLY_CHOICES, null=True, blank=True)
     # country profile information
-    location_of_office = None
-    more_office_in_country = None
-    location_field_offices = None
+    location_of_office = models.ForeignKey('common.Point', related_name="location_of_offices", null=True, blank=True)
+    more_office_in_country = models.BooleanField(default=True)
+    location_field_offices = models.ManyToManyField('common.Point', related_name="location_field_offices")
     staff_in_country = models.CharField(max_length=3, choices=STAFF_GLOBALLY_CHOICES, null=True, blank=True)
     engagement_operate_desc = models.CharField(
         verbose_name="Briefly describe the organization's engagement with the communities in which you operate",
