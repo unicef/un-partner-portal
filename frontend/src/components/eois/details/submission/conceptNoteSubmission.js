@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { browserHistory as history, withRouter } from 'react-router';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
@@ -8,7 +10,7 @@ import Snackbar from 'material-ui/Snackbar';
 import PaddedContent from '../../../common/paddedContent';
 import FileUploadButton from '../../../common/buttons/fileUploadButton';
 import ControlledModal from '../../../common/modals/controlledModal';
-import OrganizationProfileOverview from '../../../organizationProfile/profile/organizationProfileOverview';
+import OrganizationProfileContent from './modal/organizationProfileContent';
 
 const messages = {
   upload_1: 'Please make sure to use the Concept Note template provided by the UN Agency that published this CFEI.',
@@ -90,17 +92,24 @@ class ConceptNoteSubmission extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { fileSelected: '', confirm: false, errorMsg: '', alert: false, openDialog: false };
+    this.state = { fileSelected: null, confirm: false, errorMsg: null, alert: false, openDialog: false };
     this.fileSelect = this.fileSelect.bind(this);
     this.handleCheck = this.handleCheck.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.onDialogClose = this.onDialogClose.bind(this);
     this.onDialogOpen = this.onDialogOpen.bind(this);
+    this.onDialogEdit = this.onDialogEdit.bind(this);
   }
 
   onDialogClose() {
     this.setState({ openDialog: false });
+  }
+
+  onDialogEdit() {
+    const { partnerId } = this.props;
+
+    history.push(`/profile/${partnerId}/edit`);
   }
 
   onDialogOpen() {
@@ -143,7 +152,7 @@ class ConceptNoteSubmission extends Component {
   }
 
   render() {
-    const { classes, partnerId } = this.props;
+    const { classes } = this.props;
     const { alert, openDialog, fileSelected, errorMsg } = this.state;
     return (
       <div >
@@ -216,12 +225,12 @@ class ConceptNoteSubmission extends Component {
               label: messages.close,
             },
             raised: {
-              handleClick: this.onDialogSubmit,
+              handleClick: this.onDialogEdit,
               label: messages.editProfile,
             },
           }}
-          paddedContent
-          content={<OrganizationProfileOverview />}
+          removeContentPadding
+          content={<OrganizationProfileContent />}
         />
       </div>
     );
@@ -233,5 +242,12 @@ ConceptNoteSubmission.propTypes = {
   partnerId: PropTypes.string,
 };
 
-export default withStyles(styleSheet)(ConceptNoteSubmission);
+const mapStateToProps = (state, ownProps) => ({
+  partnerId: ownProps.params.id,
+});
+
+const connectedConceptNoteSubmission = connect(mapStateToProps, null)(ConceptNoteSubmission);
+const withRouterConceptNoteSubmission = withRouter(connectedConceptNoteSubmission);
+
+export default withStyles(styleSheet)(withRouterConceptNoteSubmission);
 

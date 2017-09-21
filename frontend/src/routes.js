@@ -47,7 +47,7 @@ const allRoutes = () => (
             <Route path="submission" component={cfeiSubmission} />
             <Route path="results" component={null} />
             <Route path="preselected" component={null} />
-            <Route path="applications" component={null} />ł
+            <Route path="applications" component={null} />
           </Route>
         </Route>
         <Route path="partner" component={partnersContainer} />
@@ -61,8 +61,8 @@ const allRoutes = () => (
         </Route>
         <Route path="applications" component={applications} />
         <Route path="profile" component={organizationProfile} />
-        <Route path="profile/:countryCode/edit" component={organizationProfileEdit} />
-        <Route path="profile/:countryCode" component={organizationProfileHeader} >
+        <Route path="profile/:id/edit" component={organizationProfileEdit} />
+        <Route path="profile/:id" component={organizationProfileHeader} >
           <IndexRedirect to="overview" />
           <Route component={mainContent} >
             <Route path="overview" component={organizationProfileOverview} />

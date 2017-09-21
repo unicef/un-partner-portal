@@ -1,6 +1,6 @@
 import R from 'ramda';
 import { connect } from 'react-redux';
-import { browserHistory as history } from 'react-router';
+import { browserHistory as history, withRouter } from 'react-router';
 import React, { Component } from 'react';
 import Divider from 'material-ui/Divider';
 import PropTypes from 'prop-types';
@@ -40,10 +40,10 @@ const messages = {
 
 class OrganizationProfileOverview extends Component {
   handleEditMode(sectionIndex) {
-    const { countryCode } = this.props;
+    const { partnerId } = this.props;
 
     this.props.changeTab(sectionIndex);
-    history.push(`/profile/${countryCode}/edit`);
+    history.push(`/profile/${partnerId}/edit`);
   }
 
   componentWillMount() {
@@ -73,22 +73,24 @@ class OrganizationProfileOverview extends Component {
 
 OrganizationProfileOverview.propTypes = {
   changeTab: PropTypes.func.isRequired,
-  countryCode: PropTypes.string.isRequired,
+  partnerId: PropTypes.string.isRequired,
   loadPartnerProfileDetails: PropTypes.func,
 };
 
 const mapDispatch = (dispatch, ownProps) => {
-  const { countryCode } = ownProps.params;
+  const { id } = ownProps.params;
 
   return {
     changeTab: index => dispatch(changeTab(index)),
-    loadPartnerProfileDetails: () => dispatch(loadPartnerDetails(countryCode)),
+    loadPartnerProfileDetails: () => dispatch(loadPartnerDetails(id)),
   };
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  countryCode: 1,
+  partnerId: ownProps.params.id,
 });
 
+const connectedOrganizationProfileOverview = connect(
+  mapStateToProps, mapDispatch)(OrganizationProfileOverview);
 
-export default connect(mapStateToProps, mapDispatch)(OrganizationProfileOverview);
+export default withRouter(connectedOrganizationProfileOverview);
