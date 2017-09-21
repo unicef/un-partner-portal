@@ -518,3 +518,59 @@ class PartnerProfileFundingSerializer(serializers.ModelSerializer):
                 PartnerBudget.objects.create(**budget)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+
+
+class PartnerProfileCollaborationSerializer(serializers.ModelSerializer):
+
+    collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
+    collaborations_partnership_others = PartnerCollaborationPartnershipOtherSerializer(many=True)
+
+    partnership_collaborate_institution = serializers.BooleanField(
+        source="profile.partnership_collaborate_institution")
+    partnership_collaborate_institution_desc = serializers.CharField(
+        source="profile.partnership_collaborate_institution_desc")
+
+    collaboration_evidences = PartnerCollaborationEvidenceSerializer(many=True)
+
+    class Meta:
+        model = Partner
+        fields = (
+            'collaborations_partnership',
+            'collaborations_partnership_others',
+
+            'partnership_collaborate_institution',
+            'partnership_collaborate_institution_desc',
+
+            'collaboration_evidences',
+        )
+
+    def update(self, instance, validated_data):
+        # std method does not support writable nested fields by default
+        PartnerProfile.objects.filter(
+            id=instance.profile.id).update(**validated_data["profile"])
+
+        for partnership in self.initial_data.get('collaborations_partnership', []):
+            _id = partnership.get("id")
+            if _id:
+                PartnerCollaborationPartnership.objects.filter(id=_id).update(**partnership)
+            else:
+                partnership['partner_id'] = instance.id
+                PartnerCollaborationPartnership.objects.create(**partnership)
+
+        for partnership_other in self.initial_data.get('collaborations_partnership_others', []):
+            _id = partnership_other.get("id")
+            if _id:
+                PartnerCollaborationPartnershipOther.objects.filter(id=_id).update(**partnership_other)
+            else:
+                partnership_other['partner_id'] = instance.id
+                PartnerCollaborationPartnershipOther.objects.create(**partnership_other)
+
+        for collaboration_evidence in self.initial_data.get('collaboration_evidences', []):
+            _id = collaboration_evidence.get("id")
+            if _id:
+                PartnerCollaborationEvidence.objects.filter(id=_id).update(**collaboration_evidence)
+            else:
+                collaboration_evidence['partner_id'] = instance.id
+                PartnerCollaborationEvidence.objects.create(**collaboration_evidence)
+
+        return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models

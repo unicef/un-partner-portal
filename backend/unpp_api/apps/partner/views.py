@@ -15,6 +15,7 @@ from .serializers import (
     PartnerContactInformationSerializer,
     PartnerProfileMandateMissionSerializer,
     PartnerProfileFundingSerializer,
+    PartnerProfileCollaborationSerializer,
 )
 from .filters import PartnersListFilter
 from .models import (
@@ -89,4 +90,11 @@ class PartnerFundingAPIView(RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
     serializer_class = PartnerProfileFundingSerializer
+    queryset = Partner.objects.all()
+
+
+class PartnerCollaborationAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = PartnerProfileCollaborationSerializer
     queryset = Partner.objects.all()
