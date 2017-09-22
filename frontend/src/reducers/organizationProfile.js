@@ -14,6 +14,7 @@ const countryProfile = {
 const initialState = {
   hq: hqProfile,
   1: countryProfile,
+  13: countryProfile,
 };
 
 export default function organizationProfileReducer(state = initialState, action) {

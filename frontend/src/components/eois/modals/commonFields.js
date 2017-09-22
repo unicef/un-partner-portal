@@ -52,9 +52,12 @@ export const TitleField = props => (<TextFieldForm
 
 export const FocalPoint = props => (<SelectForm
   label="Project/Programme Focal Point(s)"
-  fieldName="focal_point"
+  fieldName="focal_points"
   placeholder="Select the name of the Focal Point"
   values={FOCAL}
+  selectFieldProps={{
+    multiple: true,
+  }}
   {...props}
 />);
 

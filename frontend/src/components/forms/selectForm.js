@@ -59,7 +59,6 @@ class SelectForm extends Component {
       validation,
       readOnly,
     } = this.props;
-
     return (
       <Grid item>
         <Grid container direction="row" align="flex-end" wrap="nowrap">

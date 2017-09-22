@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-
 import Grid from 'material-ui/Grid';
 import AppBar from 'material-ui/AppBar';
+import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
@@ -13,6 +13,9 @@ import Badge from 'material-ui/Badge';
 
 import SidebarMenu from './sidebarMenu';
 
+const label = {
+  switchTo: 'Switch to',
+};
 
 // TODO check what can be done in muiTheme
 const styleSheet = createStyleSheet('mainLayout', theme => ({
@@ -52,6 +55,31 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
   },
 }));
 
+
+//Remove when sesion controlled by auth user
+const switchToRole = () => {
+  const role = window.localStorage.role;
+
+  if (role === 'partner') {
+    return `${label.switchTo} agency`;
+  }
+
+  return `${label.switchTo} partner`;
+};
+
+//Remove when sesion controlled by auth user
+const onRoleSwitch = () => {
+  const role = window.localStorage.role;
+
+  if (role === 'partner') {
+    window.localStorage.setItem('role', 'agency');
+  } else if (role === 'agency') {
+    window.localStorage.setItem('role', 'partner');
+  }
+
+  window.location.reload();
+};
+
 const mainLayout = (props) => {
   const classes = props.classes;
   return (
@@ -80,6 +108,7 @@ const mainLayout = (props) => {
               justify="flex-end"
               gutter={0}
             >
+              <Button onClick={() => onRoleSwitch()} raised color="accent">{switchToRole()}</Button>
               <Badge
                 badgeContent=" "
                 className={classes.iconBox}

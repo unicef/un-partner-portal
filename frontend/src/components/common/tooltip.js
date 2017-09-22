@@ -3,24 +3,23 @@ import PropTypes from 'prop-types';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import ReactTooltip from 'react-tooltip';
 import Typography from 'material-ui/Typography';
+import TooltipText from './text/tooltipText';
 
 
-const styleSheet = createStyleSheet('OrganizationTypes', () => ({
+const styleSheet = createStyleSheet('OrganizationTypes', theme => ({
   paper: {
-    padding: '4px !important',
-  },
-  text: {
-    whiteSpace: 'pre-line',
-    fontSize: 12,
+    padding: '8px !important',
+    background: 'solid',
+    backgroundColor: `${theme.palette.primary[700]} !important`,
   },
 }));
 
-const renderTooltipContent = (content, classes) => {
+const renderTooltipContent = (content) => {
   if (typeof content === 'string') {
     return (
-      <Typography type="body2" color="inherit" className={classes.text} align="left">
+      <TooltipText type="body1" color="inherit" align="left">
         {content}
-      </Typography>
+      </TooltipText>
     );
   }
   return content;
@@ -30,7 +29,7 @@ function Tooltip(props) {
   const { classes, text, id } = props;
   return (
     <ReactTooltip id={id} class={classes.paper} place="bottom" effect="solid" >
-      { renderTooltipContent(text, classes) }
+      { renderTooltipContent(text)}
     </ReactTooltip>
   );
 }

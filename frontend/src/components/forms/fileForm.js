@@ -18,7 +18,7 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
     width: 0.1,
     height: 0.1,
     opacity: 0,
-    overflow: 'hidden',∂
+    overflow: 'hidden',
     position: 'absolute',
     zIndex: -1,
   },
