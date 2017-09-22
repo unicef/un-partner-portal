@@ -7,17 +7,19 @@ import PartnerApplicationsNotesFilter from './partnerApplicationsUnsolicitedFilt
 import DirectSelectionCell from './directSelectionCell';
 import PaginatedList from '../../common/list/paginatedList';
 
-class PartnerApplicationsUnsolicited extends Component {
-  applicationCell(row, column, style) {
-    if (column.name === 'direct_selection') {
-      return (<DirectSelectionCell
-        directSelection={row.direct_selection}
-      />);
-    }
-
-    return undefined;
+/* eslint-disable react/prop-types */
+const applicationCell = ({ row, column }) => {
+  if (column.name === 'direct_selection') {
+    return (<DirectSelectionCell
+      directSelection={row.direct_selection}
+    />);
   }
 
+  return undefined;
+};
+
+/* eslint-disable react/prefer-stateless-function */
+class PartnerApplicationsUnsolicited extends Component {
   render() {
     const { partners, columns } = this.props;
 
@@ -27,7 +29,7 @@ class PartnerApplicationsUnsolicited extends Component {
         <PaginatedList
           items={partners}
           columns={columns}
-          templateCell={(row, column, style) => this.applicationCell(row, column, style)}
+          templateCell={applicationCell}
           onPageSizeChange={pageSize => console.log('Page size', pageSize)}
           onCurrentPageChange={page => console.log('Page number', page)}
         />

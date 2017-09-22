@@ -6,27 +6,29 @@ import PartnerApplicationsNotesFilter from './partnerApplicationsNotesFilter';
 import ConceptNoteIDCell from './conceptNoteIDCell';
 import PaginatedList from '../../common/list/paginatedList';
 
-class PartnerApplicationsNotes extends Component {
-  applicationCell(row, column, style) {
-    if (column.name === 'id' || column.name === 'cfei_id') {
-      return (<ConceptNoteIDCell
-        id={row.id}
-      />);
-    }
-
-    return undefined;
+/* eslint-disable react/prop-types */
+const applicationCell = ({ row, column }) => {
+  if (column.name === 'id' || column.name === 'cfei_id') {
+    return (<ConceptNoteIDCell
+      id={row.id}
+    />);
   }
 
+  return undefined;
+};
+
+/* eslint-disable react/prefer-stateless-function */
+class PartnerApplicationsNotes extends Component {
   render() {
-    const { partners, columns } = this.props;
+    const { partners, notesColumns } = this.props;
 
     return (
       <GridColumn gutter={24}>
         <PartnerApplicationsNotesFilter />
         <PaginatedList
           items={partners}
-          columns={columns}
-          templateCell={(row, column, style) => this.applicationCell(row, column, style)}
+          columns={notesColumns}
+          templateCell={applicationCell}
           onPageSizeChange={pageSize => console.log('Page size', pageSize)}
           onCurrentPageChange={page => console.log('Page number', page)}
         />
@@ -37,12 +39,12 @@ class PartnerApplicationsNotes extends Component {
 
 PartnerApplicationsNotes.propTypes = {
   partners: PropTypes.array.isRequired,
-  columns: PropTypes.array.isRequired,
+  notesColumns: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => ({
   partners: state.applicationsNotesList.notes,
-  columns: state.applicationsNotesList.columns,
+  notesColumns: state.applicationsNotesList.columns,
 });
 
 

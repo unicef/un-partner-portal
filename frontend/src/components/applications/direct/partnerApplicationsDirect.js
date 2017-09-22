@@ -5,7 +5,7 @@ import GridColumn from '../../common/grid/gridColumn';
 import PartnerApplicationsDirectFilter from './partnerApplicationsDirectFilter';
 import PaginatedList from '../../common/list/paginatedList';
 
-
+/* eslint-disable react/prefer-stateless-function */
 class PartnerApplicationsDirect extends Component {
   render() {
     const { partners, columns } = this.props;
