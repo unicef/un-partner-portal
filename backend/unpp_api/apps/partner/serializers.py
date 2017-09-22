@@ -1,6 +1,10 @@
 from rest_framework import serializers
 
 from agency.serializers import OtherAgencySerializer
+from common.consts import (
+    FINANCIAL_CONTROL_SYSTEM_CHOICES,
+    METHOD_ACC_ADOPTED_CHOICES,
+)
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.serializers import SpecializationSerializer
 from partner.models import (
@@ -572,5 +576,110 @@ class PartnerProfileCollaborationSerializer(serializers.ModelSerializer):
             else:
                 collaboration_evidence['partner_id'] = instance.id
                 PartnerCollaborationEvidence.objects.create(**collaboration_evidence)
+
+        return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+
+
+class PartnerProfileProjectImplementationSerializer(serializers.ModelSerializer):
+
+    have_management_approach = serializers.BooleanField(source="profile.have_management_approach")
+    management_approach_desc = serializers.CharField(source="profile.management_approach_desc")
+    have_system_monitoring = serializers.BooleanField(source="profile.have_system_monitoring")
+    system_monitoring_desc = serializers.CharField(source="profile.system_monitoring_desc")
+    have_feedback_mechanism = serializers.BooleanField(source="profile.have_feedback_mechanism")
+    feedback_mechanism_desc = serializers.CharField(source="profile.feedback_mechanism_desc")
+    org_acc_system = serializers.ChoiceField(source="profile.org_acc_system", choices=FINANCIAL_CONTROL_SYSTEM_CHOICES)
+    method_acc = serializers.ChoiceField(source="profile.method_acc", choices=METHOD_ACC_ADOPTED_CHOICES)
+    have_system_track = serializers.BooleanField(source="profile.have_system_track")
+    financial_control_system_desc = serializers.CharField(source="profile.financial_control_system_desc")
+    internal_controls = PartnerInternalControlSerializer(many=True)
+    experienced_staff = serializers.BooleanField(source="profile.experienced_staff")
+    experienced_staff_desc = serializers.CharField(source="profile.experienced_staff_desc")
+    area_policies = PartnerPolicyAreaSerializer(many=True)
+    have_bank_account = serializers.BooleanField(source="profile.have_bank_account")
+    have_separate_bank_account = serializers.BooleanField(source="profile.have_separate_bank_account")
+    explain = serializers.CharField(source="profile.explain")
+
+    regular_audited = serializers.BooleanField(source="audit.regular_audited")
+    regular_audited_comment = serializers.CharField(source="audit.regular_audited_comment")
+    org_audits = serializers.ListField(source="audit.org_audits")
+    most_recent_audit_report = serializers.FileField(source="audit.most_recent_audit_report")
+    link_report = serializers.URLField(source="audit.link_report")
+    major_accountability_issues_highlighted = serializers.BooleanField(
+        source="audit.major_accountability_issues_highlighted")
+    comment = serializers.CharField(source="audit.comment")
+    capacity_assessment = serializers.BooleanField(source="audit.capacity_assessment")
+    assessments = serializers.ListField(source="audit.assessments")
+    assessment_report = serializers.FileField(source="audit.assessment_report")
+
+    key_result = serializers.CharField(source="report.key_result")
+    publish_annual_reports = serializers.BooleanField(source="report.publish_annual_reports")
+    last_report = serializers.DateField(source="report.last_report")
+    report = serializers.FileField(source="report.report")
+    link_report = serializers.URLField(source="report.link_report")
+
+    class Meta:
+        model = Partner
+        fields = (
+            'have_management_approach',
+            'management_approach_desc',
+            'have_system_monitoring',
+            'system_monitoring_desc',
+            'have_feedback_mechanism',
+            'feedback_mechanism_desc',
+            'org_acc_system',
+            'method_acc',
+            'have_system_track',
+            'financial_control_system_desc',
+            'internal_controls',
+            'experienced_staff',
+            'experienced_staff_desc',
+            'area_policies',
+            'have_bank_account',
+            'have_separate_bank_account',
+            'explain',
+
+            'regular_audited',
+            'regular_audited_comment',
+            'org_audits',
+            'most_recent_audit_report',
+            'link_report',
+            'major_accountability_issues_highlighted',
+            'comment',
+            'capacity_assessment',
+            'assessments',
+            'assessment_report',
+
+            'key_result',
+            'publish_annual_reports',
+            'last_report',
+            'report',
+            'link_report',
+        )
+
+    def update(self, instance, validated_data):
+        # std method does not support writable nested fields by default
+        PartnerProfile.objects.filter(
+            id=instance.profile.id).update(**validated_data["profile"])
+        PartnerAuditAssessment.objects.filter(
+            id=instance.audit.id).update(**validated_data["audit"])
+        PartnerReporting.objects.filter(
+            id=instance.report.id).update(**validated_data["report"])
+
+        for internal_control in self.initial_data.get('internal_controls', []):
+            _id = internal_control.get("id")
+            if _id:
+                instance.internal_controls.filter(id=_id).update(**internal_control)
+            else:
+                internal_control['partner_id'] = instance.id
+                PartnerInternalControl.objects.create(**internal_control)
+
+        for area_policy in self.initial_data.get('area_policies', []):
+            _id = area_policy.get("id")
+            if _id:
+                instance.area_policies.filter(id=_id).update(**area_policy)
+            else:
+                area_policy['partner_id'] = instance.id
+                PartnerPolicyArea.objects.create(**area_policy)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models

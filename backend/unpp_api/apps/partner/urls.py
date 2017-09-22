@@ -11,6 +11,7 @@ from .views import (
     PartnerMandateMissionAPIView,
     PartnerFundingAPIView,
     PartnerCollaborationAPIView,
+    PartnerProjectImplementationAPIView,
 )
 
 
@@ -22,6 +23,9 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/mandate-mission/$', PartnerMandateMissionAPIView.as_view(), name="mandate-mission"),
     url(r'^(?P<pk>\d+)/funding/$', PartnerFundingAPIView.as_view(), name="funding"),
     url(r'^(?P<pk>\d+)/collaboration/$', PartnerCollaborationAPIView.as_view(), name="collaboration"),
+    url(r'^(?P<pk>\d+)/project-implementation/$',
+        PartnerProjectImplementationAPIView.as_view(),
+        name="project-implementation"),
     url(r'^$', PartnersListAPIView.as_view(), name="partners"),
     url(r'^short$', PartnerShortListAPIView.as_view(), name="partners-short"),
     url(r'^(?P<pk>\d+)/partners-list-item$', PartnersListItemAPIView.as_view(), name="partners-list-item"),
