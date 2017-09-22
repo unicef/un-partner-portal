@@ -8,7 +8,6 @@ import cfeiStatus, {
   loadCfeiFailure,
   LOAD_CFEI_SUCCESS,
 } from './cfeiStatus';
-import { selectSector } from '../store';
 import { PROJECT_TYPES } from '../helpers/constants';
 
 const initialState = {
@@ -29,12 +28,12 @@ const getCfei = (project, filters) => {
   }
 };
 
-export const loadCfei = (project, filters) => (dispatch, getState) => {
+export const loadCfei = (project, filters) => (dispatch) => {
   dispatch(loadCfeiStarted());
   return getCfei(project, filters)
     .then((cfei) => {
       dispatch(loadCfeiEnded());
-      dispatch(loadCfeiSuccess(cfei.results, project, getState));
+      dispatch(loadCfeiSuccess(cfei.results, project));
     })
     .catch((error) => {
       dispatch(loadCfeiEnded());
@@ -42,21 +41,22 @@ export const loadCfei = (project, filters) => (dispatch, getState) => {
     });
 };
 
-const extractSector = list => ({ name: list[0].category, specializations: list });
+const extractSector = list => ({
+  sector: list[0].category.toString(), areas: list.map(area => area.id.toString()) });
 const groupSpecializationsByCategory = () =>
   R.compose(R.map(extractSector), R.groupWith(R.eqProps('category')));
 
+export const normalizeSingleCfei = cfei => R.assoc(
+  'specializations',
+  R.compose(
+    groupSpecializationsByCategory(),
+  )(cfei.specializations),
+  cfei);
 
-const normalizeCfei = (cfeis, getState) =>
-  R.map(cfei =>
-    R.assoc(
-      'specializations',
-      R.compose(
-        R.map(spec => R.assoc('name', selectSector(getState(), spec.name), spec)),
-        groupSpecializationsByCategory(),
-      )(cfei.specializations),
-      cfei,
-    ), cfeis,
+
+const normalizeCfei = cfeis =>
+  R.map(
+    normalizeSingleCfei, cfeis,
   );
 
 const saveCfei = (state, action) => {

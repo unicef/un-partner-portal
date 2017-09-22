@@ -207,6 +207,22 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'notif_results_date',
             'justification',
             'completed_reason',
+
+            'display_type',
+            'status',
+            'title',
+            'country_code',
+            'agency',
+            'created_by',
+            'focal_points',
+            'agency_office',
+            'cn_template',
+            'description',
+            'goal',
+            'other_information',
+            'has_weighting',
+            'reviewers',
+            'selected_source',
         )
 
     def update(self, instance, validated_data):
