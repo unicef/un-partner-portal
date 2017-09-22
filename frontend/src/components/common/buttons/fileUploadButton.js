@@ -13,9 +13,6 @@ const messages = {
 };
 
 const styleSheet = createStyleSheet('FileUploadButton', (theme) => {
-  const paddingSmall = theme.spacing.unit * 2;
-  const padding = theme.spacing.unit * 3;
-
   return {
     root: {
       width: 0.1,
@@ -38,15 +35,6 @@ const styleSheet = createStyleSheet('FileUploadButton', (theme) => {
     },
     removeIcon: {
       fill: theme.palette.accent[300],
-    },
-    alignCenter: {
-      margin: `${padding}px`,
-      padding: `${paddingSmall}px ${padding}px ${paddingSmall}px ${padding}px`,
-      textAlign: 'center',
-      background: theme.palette.primary[300],
-    },
-    right: {
-      textAlign: 'right',
     },
   };
 });
