@@ -228,3 +228,12 @@ COMPLETED_REASON = Choices(
     ('Can', 'canceled', 'Completed - Canceled'),
     ('NoC', 'no_candidate', 'Completed - No successful candidate'),
 )
+
+BUDGET_CHOICES = Choices(
+    ('Les', 'less', "Less than $500,000"),
+    ('002', '_2', "$500,001 to $2,000,000"),
+    ('010', '_10', "$2,000,001 to $10,000,000"),
+    ('100', '_100', "$10,000,001 to $100,000,000"),
+    ('01m', '_1m', "$100,000,001 to $1,000,000,000"),
+    ('Mor', 'more', "More than $1,000,000,000"),
+)
