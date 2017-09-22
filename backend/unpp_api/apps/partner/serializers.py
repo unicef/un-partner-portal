@@ -393,7 +393,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
         related_names=["profile", "mailing_address", "directors", "authorised_officers"]
-        self.partner_related(instance, validated_data, related_names=related_names)
+        self.update_partner_related(instance, validated_data, related_names=related_names)
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
 
@@ -465,7 +465,7 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
         instance.save()
 
         related_names=["mandate_mission", "experiences"]
-        self.partner_related(instance, validated_data, related_names=related_names)
+        self.update_partner_related(instance, validated_data, related_names=related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
@@ -490,7 +490,7 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
         related_names=["fund", "budgets"]
-        self.partner_related(instance, validated_data, related_names=related_names)
+        self.update_partner_related(instance, validated_data, related_names=related_names)
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
 
@@ -524,7 +524,7 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
         related_names = [
             "profile", "collaborations_partnership", "collaborations_partnership_others", "collaboration_evidences"
         ]
-        self.partner_related(instance, validated_data, related_names=related_names)
+        self.update_partner_related(instance, validated_data, related_names=related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
@@ -612,7 +612,7 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
         related_names = [
             "profile", "audit", "report", "internal_controls", "area_policies"
         ]
-        self.partner_related(instance, validated_data, related_names=related_names)
+        self.update_partner_related(instance, validated_data, related_names=related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
@@ -640,6 +640,6 @@ class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serialize
         related_names = [
             "other_info", "other_documents",
         ]
-        self.partner_related(instance, validated_data, related_names=related_names)
+        self.update_partner_related(instance, validated_data, related_names=related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models

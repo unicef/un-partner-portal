@@ -5,7 +5,7 @@ from .models import AdminLevel1, Point, Sector, Specialization
 
 class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
-    def partner_related(self, instance, validated_data, related_names=[]):
+    def update_partner_related(self, instance, validated_data, related_names=[]):
 
         for related_name in related_names:
             if isinstance(getattr(instance, related_name), Model):
