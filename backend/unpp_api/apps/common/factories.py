@@ -149,7 +149,6 @@ class PartnerSimpleFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
     display_type = PARTNER_TYPES.national
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
-    registration_number = factory.Sequence(lambda n: "reg-number {}".format(n))
 
     class Meta:
         model = Partner
@@ -159,7 +158,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
     display_type = PARTNER_TYPES.national
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
-    registration_number = factory.Sequence(lambda n: "reg-number {}".format(n))
 
     @factory.post_generation
     def mailing_address(self, create, extracted, **kwargs):
@@ -321,6 +319,7 @@ class PartnerProfileFactory(factory.django.DjangoModelFactory):
     partner = factory.Iterator(Partner.objects.all())
     alias_name = factory.Sequence(lambda n: "aliast name {}".format(n))
     working_languages = factory.LazyFunction(get_country_list)
+    registration_number = factory.Sequence(lambda n: "reg-number {}".format(n))
 
     class Meta:
         model = PartnerProfile
