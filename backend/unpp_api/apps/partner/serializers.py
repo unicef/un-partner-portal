@@ -683,3 +683,36 @@ class PartnerProfileProjectImplementationSerializer(serializers.ModelSerializer)
                 PartnerPolicyArea.objects.create(**area_policy)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+
+
+class PartnerProfileOtherInfoSerializer(serializers.ModelSerializer):
+
+    info_to_share = serializers.CharField(source="other_info.info_to_share")
+    org_logo = serializers.FileField(source="other_info.org_logo")
+    confirm_data_updated = serializers.BooleanField(source="other_info.confirm_data_updated")
+
+    other_documents = PartnerOtherDocumentSerializer(many=True)
+
+    class Meta:
+        model = Partner
+        fields = (
+            'info_to_share',
+            'org_logo',
+            'confirm_data_updated',
+            'other_documents',
+        )
+
+    def update(self, instance, validated_data):
+        # std method does not support writable nested fields by default
+        PartnerOtherInfo.objects.filter(
+            id=instance.other_info.id).update(**validated_data["other_info"])
+
+        for doc in self.initial_data.get('other_documents', []):
+            _id = doc.get("id")
+            if _id:
+                instance.other_documents.filter(id=_id).update(**doc)
+            else:
+                doc['partner_id'] = instance.id
+                PartnerInternalControl.objects.create(**doc)
+
+        return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
