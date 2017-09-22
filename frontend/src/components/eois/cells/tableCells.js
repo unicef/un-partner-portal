@@ -5,11 +5,10 @@ import EoiPartnersStatusCell from './eoiPartnersStatusCell';
 import EoiStatusCell from './eoiStatusCell';
 import EoiCountryCell from './eoiCountryCell';
 import EoiPartnersCell from './eoiPartnersCell';
+import EoiNameCell from './eoiNameCell';
 
 export const renderPartnerOpenCells = item => ([
-  <TableCell first limited>
-    {item.title}
-  </TableCell>,
+  <EoiNameCell title={item.title} id={item.id} />,
   <TableCell >
     <EoiCountryCell code={item.country_code} />
   </TableCell>,
@@ -28,9 +27,7 @@ export const renderPartnerOpenCells = item => ([
 ]);
 
 export const renderAgencyOpenCells = item => ([
-  <TableCell first limited>
-    {item.title}
-  </TableCell>,
+  <EoiNameCell title={item.title} id={item.id} />,
   <TableCell >
     {item.agency.name}
   </TableCell>,
@@ -52,9 +49,7 @@ export const renderAgencyOpenCells = item => ([
 ]);
 
 export const renderAgencyDirectCells = item => ([
-  <TableCell first limited>
-    {item.title}
-  </TableCell>,
+  <EoiNameCell title={item.title} id={item.id} />,
   <TableCell >
     {item.agency.name}
   </TableCell>,

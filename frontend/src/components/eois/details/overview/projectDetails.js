@@ -1,22 +1,22 @@
 import React from 'react';
-import Grid from 'material-ui/Grid';
-import { FormSection } from 'redux-form';
 import Typography from 'material-ui/Typography';
-
 import SectorForm from '../../../forms/fields/projectFields/sectorField/sectorFieldArray';
 import GridColumn from '../../../common/grid/gridColumn';
 import GridRow from '../../../common/grid/gridRow';
 import HeaderList from '../../../common/list/headerList';
 import TextField from '../../../forms/textFieldForm';
 import PaddedContent from '../../../common/paddedContent';
-import { TitleField,
+import {
+  TitleField,
   FocalPoint,
   OtherInfo,
   Background,
   StartDate,
   EndDate,
   DeadlineDate,
-  NotifyDate } from '../../modals/commonFields';
+  NotifyDate,
+} from '../../modals/commonFields';
+import SpreadContent from '../../../common/spreadContent';
 
 const messages = {
   title: 'Project Details',
@@ -59,28 +59,22 @@ const Fields = () => (
 );
 
 const title = () => (
-  <Grid align="center" container>
-    <Grid item xs={10}>
-      <Typography type="subheading" >{messages.title}</Typography>
-    </Grid>
-    <Grid item xs={2}>
-      <TextField
-        fieldName="id"
-        label={messages.labels.id}
-        readOnly
-      />
-    </Grid>
-  </Grid>
-
+  <SpreadContent>
+    <Typography type="subheading" >{messages.title}</Typography>
+    <TextField
+      fieldName="id"
+      label={messages.labels.id}
+      readOnly
+    />
+  </SpreadContent>
 );
 
-const ProjectDetails = props => (
-  <FormSection name="eoi">
-    <HeaderList
-      header={title}
-      rows={[<Fields />]}
-    />
-  </FormSection>
+const ProjectDetails = () => (
+  <HeaderList
+    header={title}
+    rows={[<Fields />]}
+  />
+
 );
 
 export default ProjectDetails;

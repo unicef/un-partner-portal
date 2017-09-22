@@ -8,6 +8,7 @@ import Timeline from './timeline';
 import ProjectDetails from './projectDetails';
 import SelectionCriteria from './selectionCriteria';
 import InformedPartners from './informedPartners';
+import { selectCfeiDetails } from '../../../../store';
 
 const CfeiOverview = (props) => {
   const { params: { id } } = props;
@@ -22,7 +23,7 @@ const CfeiOverview = (props) => {
           <Grid item xs={12} sm={4}>
             <GridColumn >
               <SelectionCriteria id={id} />
-              <InformedPartners />
+              <InformedPartners id={id} />
             </GridColumn>
           </Grid>
         </Grid>
@@ -40,7 +41,7 @@ const formCfeiDetails = reduxForm({
 })(CfeiOverview);
 
 const mapStateToProps = (state, ownProps) => ({
-  initialValues: state.cfeiDetails[ownProps.params.id],
+  initialValues: selectCfeiDetails(state, ownProps.params.id),
 });
 
 export default connect(

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Typography from 'material-ui/Typography';
 import HeaderList from '../../../common/list/headerList';
 import PaddedContent from '../../../common/paddedContent';
+import { selectCfeiDetails } from '../../../../store';
 
 const messages = {
   title: 'Selection Criteria',
@@ -20,18 +21,21 @@ const renderRow = criterias => criterias.map(selection => (
 ));
 
 const SelectionCriteria = (props) => {
-  const { selectionCriterias } = props;
+  const { selectionCriteria } = props;
   return (
     <HeaderList
       header={title}
-      rows={renderRow(selectionCriterias)}
+      rows={renderRow(selectionCriteria)}
     />
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  selectionCriterias: state.cfeiDetails[ownProps.id].assessment_criterias,
-});
+const mapStateToProps = (state, ownProps) => {
+  const cfei = selectCfeiDetails(state, ownProps.id);
+  return {
+    selectionCriteria: cfei ? cfei.assessments_criteria : [],
+  };
+};
 
 export default connect(
   mapStateToProps,

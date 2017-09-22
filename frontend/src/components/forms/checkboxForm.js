@@ -11,13 +11,12 @@ import { required, warning } from '../../helpers/validation';
 const styleSheet = createStyleSheet('mainLayout', theme => ({
   root: {
     display: 'flex',
-     alignItems: 'center',
-  // justify-content: center;
+    alignItems: 'center',
   },
 }));
 
 
-function TextFieldForm(props) {
+function CheckboxForm(props) {
   const {
     classes,
     fieldName,
@@ -26,7 +25,6 @@ function TextFieldForm(props) {
     optional,
     validation,
     warn,
-    disabled,
     readOnly,
   } = props;
   return (
@@ -38,6 +36,7 @@ function TextFieldForm(props) {
             component={renderCheckbox}
             validate={optional ? [] : [required].concat(validation || [])}
             warn={warn && warning}
+            disabled={readOnly}
             {...textFieldProps}
           />
           <Typography color="inherit" type="caption">
@@ -50,7 +49,7 @@ function TextFieldForm(props) {
 }
 
 
-TextFieldForm.propTypes = {
+CheckboxForm.propTypes = {
   classes: PropTypes.object.isRequired,
   /**
    * Name of the field used by react-form and as unique id.
@@ -86,9 +85,9 @@ TextFieldForm.propTypes = {
   readOnly: PropTypes.bool,
 };
 
-TextFieldForm.defaultProps = {
+CheckboxForm.defaultProps = {
   placeholder: null,
 };
 
 
-export default withStyles(styleSheet)(TextFieldForm);
+export default withStyles(styleSheet)(CheckboxForm);

@@ -16,7 +16,7 @@ const styleSheet = createStyleSheet('CustomTableCell', theme => ({
 }));
 
 const CustomTableCell = (props) => {
-  const { classes, children, first, limited } = props;
+  const { classes, children, first, limited, ...other } = props;
   const className = classNames(
     {
       [classes.firstCell]: first,
@@ -24,7 +24,7 @@ const CustomTableCell = (props) => {
     },
   );
   return (
-    <TableCell className={className} >
+    <TableCell className={className} {...other} >
       {children}
     </TableCell >
   );
