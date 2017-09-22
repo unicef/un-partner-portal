@@ -50,7 +50,7 @@ class RenderArrayMembers extends Component {
               <ListItem key={index} >
                 <GridColumn >
                   <Grid container direction="row" >
-                    <Grid item xs={10} >
+                    <Grid item xs={!readOnly ? 10 : 12} >
                       {outerField(member, index, fields)}
                     </Grid>
                     {index > 0 && !readOnly && <Grid item xs={2} >

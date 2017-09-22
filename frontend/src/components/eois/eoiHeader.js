@@ -73,8 +73,13 @@ const mapStateToProps = (state, ownProps) => ({
   role: state.session.role,
 });
 
+const mapDispatchToProps = dispatch => ({
+  onTabChange: index => dispatch(ActiveItem(index)),
+});
+
 const containerCfeiHeader = connect(
   mapStateToProps,
+  mapDispatchToProps,
 )(CfeiHeader);
 
 export default containerCfeiHeader;

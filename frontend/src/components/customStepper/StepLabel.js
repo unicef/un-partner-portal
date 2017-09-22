@@ -80,7 +80,7 @@ function StepLabel(props) {
           />
         </span>
       )}
-      <Typography className={error && classes.errorText} type="body1">{children}</Typography>
+      <Typography className={error ? classes.errorText : null} type="body1">{children}</Typography>
     </span>
   );
 }

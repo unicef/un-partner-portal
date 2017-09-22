@@ -1,7 +1,7 @@
 import R from 'ramda';
 import { postOpenCfei } from '../helpers/api/api';
 import { mergeListsFromObjectArray } from './normalizationHelpers';
-import { loadCfei, OPEN } from './cfei';
+import { loadCfei } from './cfei';
 import { PROJECT_TYPES } from '../helpers/constants';
 
 export const NEW_CFEI_SUBMITTING = 'NEW_CFEI_SUBMITTING';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormSection } from 'redux-form';
-
+import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { FormControl, FormLabel } from 'material-ui/Form';
 import Button from 'material-ui/Button';
@@ -31,8 +31,10 @@ const BOOL_VAL = [
   },
 ];
 
-const PartnerProfileCollaborationHistory = () => (
-  <FormSection name="history">
+const PartnerProfileCollaborationHistory = (props) => {
+  const { readOnly } = props;
+
+  return (<FormSection name="history">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item>
@@ -49,6 +51,7 @@ const PartnerProfileCollaborationHistory = () => (
                         '(optional)'}
                         values={PARTNER_MENU}
                         optional
+                        readOnly={readOnly}
                       />
                     </Grid>
                   </Grid>
@@ -69,6 +72,7 @@ const PartnerProfileCollaborationHistory = () => (
                         },
                       }}
                       optional
+                      readOnly={readOnly}
                     />
                   </Grid>
                   <Grid item sm={6} xs={12}>
@@ -82,6 +86,7 @@ const PartnerProfileCollaborationHistory = () => (
                         },
                       }}
                       optional
+                      readOnly={readOnly}
                     />
                   </Grid>
                 </Grid>
@@ -99,33 +104,34 @@ const PartnerProfileCollaborationHistory = () => (
             </Grid>
           </FormControl>
         </Grid>
-        <Grid>
+        <Grid item>
           <SelectForm
-            fieldName="otherAgency"
+            fieldName="collaborations_partnership_other"
             label="Please indicate if you have collaborated with any other UN Agency (optional)"
             values={PARTNER_MENU}
             selectFieldProps={{
               multiple: true,
             }}
-
+            readOnly={readOnly}
           />
         </Grid>
-        <Grid item sm={6} xs={12}>
+        <Grid item>
           <RadioForm
-            fieldName="hasFraudSafeguard"
+            fieldName="partnership_collaborate_institution"
             label={'Has the organization collaborated with a member of a cluster, professional ' +
             'network, consortium or any similar institution?'}
             values={BOOL_VAL}
             optional
             warn
+            readOnly={readOnly}
           />
         </Grid>
-        <Grid item sm={6} xs={12}>
+        <Grid item>
           <TextFieldForm
             label={'Please state which cluster, network or consortium and briefly explain the ' +
             'collaboration'}
             placeholder=""
-            fieldName="fraudSafeguardComment"
+            fieldName="partnership_collaborate_institution_desc"
             textFieldProps={{
               inputProps: {
                 maxLength: '200',
@@ -133,12 +139,17 @@ const PartnerProfileCollaborationHistory = () => (
             }}
             optional
             warn
+            readOnly={readOnly}
           />
         </Grid>
       </Grid>
     </Grid>
   </FormSection>
-);
+  );
+};
 
+PartnerProfileCollaborationHistory.propTypes = {
+  readOnly: PropTypes.bool,
+};
 
 export default PartnerProfileCollaborationHistory;

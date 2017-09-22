@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
-
+import R from 'ramda';
 import React from 'react';
 import SelectField from 'material-ui-old/SelectField';
 import TextField from 'material-ui/TextField';
+import Checkbox from 'material-ui/Checkbox';
 import DatePicker from 'material-ui-old/DatePicker';
 import { FormControl, FormHelperText, FormLabel } from 'material-ui/Form';
 import Typography from 'material-ui/Typography';
@@ -40,6 +41,20 @@ export const renderSelectField = ({
   >
     {children}
   </SelectField>
+);
+
+export const renderCheckbox = ({
+  name,
+  className,
+  disabled,
+  value,
+}) => (
+  <Checkbox
+    className={className}
+    id={name}
+    disabled={disabled}
+    checked={value}
+  />
 );
 
 export const renderTextField = ({
@@ -85,7 +100,13 @@ export const renderText = ({
   ...other
 }) => {
   let value = input.value;
-  if (!input.value && optional) return null;
+  if (!value) value = '-';
+  if (values) {
+    value = R.filter((val) => {
+      if (Array.isArray(value)) return value.includes(val.value);
+      return value === val.value;
+    }, values).map(matchedValue => matchedValue.label).join(', ');
+  }
   if (date) value = formatDateForPrint(value);
   return (
     <FormControl fullWidth>
@@ -94,14 +115,31 @@ export const renderText = ({
         className={className}
         {...other}
       >
-        {(values && values.length)
-          ? values.filter((val) => {
-            if (Array.isArray(value)) return value.includes(val.value);
-            return value === val.value;
-          })
-            .map(matchedValue => matchedValue.label)
-            .join(', ')
-          : input.value}
+        {value}
+      </Typography>
+    </FormControl>
+  );
+};
+
+export const renderBool = ({
+  className,
+  input,
+  values,
+  optional,
+  label,
+  ...other
+}) => {
+  let value = 'No';
+  if (input.value) value = 'Yes';
+
+  return (
+    <FormControl fullWidth>
+      <FormLabel>{label}</FormLabel>
+      <Typography
+        className={className}
+        {...other}
+      >
+        {value}
       </Typography>
     </FormControl>
   );

@@ -23,12 +23,13 @@ function TextFieldForm(props) {
     <Grid item>
       <FormControl fullWidth>
         {readOnly
-          ? <Field
-            name={fieldName}
-            label={label}
-            component={renderText}
-            optional={optional}
-          />
+          ? [
+            <Field
+              name={fieldName}
+              label={label}
+              component={renderText}
+              optional={optional}
+            />]
           : [
             <FormLabel>{label}</FormLabel>,
             <Field

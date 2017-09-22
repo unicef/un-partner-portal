@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 
@@ -29,17 +29,20 @@ const ADDRESS_VALUES = [
   },
 ];
 
-const PartnerProfileContactInfoAddress = () => (
-  <FormSection name="mailingAddress">
+const PartnerProfileContactInfoAddress = (props) => {
+  const { readOnly } = props;
+
+  return (<FormSection name="address">
     <Grid item>
       <Grid container direction="column" gutter={16}>
         <Grid item sm={6} xs={12}>
           <RadioForm
-            fieldName="addressType"
+            fieldName="mailing_type"
             label="Type of Mailing Address"
             values={ADDRESS_VALUES}
             optional
             warn
+            readOnly={readOnly}
           />
         </Grid>
         <Grid item>
@@ -48,9 +51,10 @@ const PartnerProfileContactInfoAddress = () => (
               <TextFieldForm
                 label="Street Address or PO Box Number"
                 placeholder=""
-                fieldName="streetAddress"
+                fieldName="street"
                 optional
                 warn
+                readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={3} xs={12}>
@@ -60,6 +64,7 @@ const PartnerProfileContactInfoAddress = () => (
                 fieldName="city"
                 optional
                 warn
+                readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={3} xs={12}>
@@ -69,14 +74,16 @@ const PartnerProfileContactInfoAddress = () => (
                 values={COUNTRY_MENU}
                 optional
                 warn
+                readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={3} xs={12}>
               <TextFieldForm
                 label="Zip Code (optional)"
                 placeholder=""
-                fieldName="zipCode"
+                fieldName="zip_code"
                 optional
+                readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={3} xs={12}>
@@ -86,6 +93,7 @@ const PartnerProfileContactInfoAddress = () => (
                 fieldName="telephone"
                 optional
                 warn
+                readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={3} xs={12}>
@@ -94,6 +102,7 @@ const PartnerProfileContactInfoAddress = () => (
                 placeholder=""
                 fieldName="fax"
                 optional
+                readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={3} xs={12}>
@@ -102,22 +111,28 @@ const PartnerProfileContactInfoAddress = () => (
                 placeholder=""
                 fieldName="website"
                 optional
+                readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={3} xs={12}>
               <TextFieldForm
                 label="Organization Email (optional)"
                 placeholder=""
-                fieldName="orgEmail"
+                fieldName="org_email"
                 optional
+                readOnly={readOnly}
               />
             </Grid>
           </Grid>
         </Grid>
       </Grid>
     </Grid>
-  </FormSection>
-);
+  </FormSection>);
+};
 
+
+PartnerProfileContactInfoAddress.propTypes = {
+  readOnly: PropTypes.bool,
+};
 
 export default PartnerProfileContactInfoAddress;

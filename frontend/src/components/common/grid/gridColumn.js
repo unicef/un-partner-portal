@@ -8,7 +8,7 @@ function GridColumn(props) {
   return (
     <Grid container direction="column" gutter={gutter}>
       {React.Children.map(children, child => (
-        <Grid item>
+        <Grid item >
           {child}
         </Grid>
       ))}

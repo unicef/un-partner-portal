@@ -7,6 +7,8 @@ import store from './store';
 import main from './components/main';
 import mainLayout from './components/layout/mainLayout';
 import eoiHeader from './components/eois/eoiHeader';
+import openCfeiApplications from './components/eois/details/applications/openCfeiApplications';
+import openCfeiPreselected from './components/eois/details/applications/openCfeiPreselected';
 import cfeiOverview from './components/eois/details/overview/cfeiOverview';
 import cfeiContainer from './components/eois/cfeiContainer';
 import cfeiDetailsHeader from './components/eois/details/cfeiDetailsHeader';
@@ -45,8 +47,8 @@ const allRoutes = () => (
             <Route path="feedback" component={null} />
             <Route path="submission" component={null} />
             <Route path="results" component={null} />
-            <Route path="preselected" component={null} />
-            <Route path="applications" component={null} />ł
+            <Route path="preselected" component={openCfeiPreselected} />
+            <Route path="applications" component={openCfeiApplications} />ł
           </Route>
         </Route>
         <Route path="partner" component={partnersContainer} />
