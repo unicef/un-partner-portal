@@ -78,7 +78,7 @@ export function postOpenCfei(body) {
 }
 
 export function uploadConceptNote(partnerId, body) {
-  return authorizedPostUpload(`/partner/${partnerId}/partner-applications/`, body);
+  return authorizedPostUpload(`/projects/${partnerId}/partner-applications/`, body);
 }
 
 export function getOpenCfeiDetails(id) {
