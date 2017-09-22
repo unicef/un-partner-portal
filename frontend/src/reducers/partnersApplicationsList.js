@@ -20,9 +20,9 @@ const initialState = {
   applications: [],
 };
 
-export const loadApplications = id => (dispatch) => {
+export const loadApplications = (id, filter) => (dispatch) => {
   dispatch(loadApplicationListStarted());
-  return getOpenCfeiApplications(id)
+  return getOpenCfeiApplications(id, filter)
     .then((response) => {
       dispatch(loadApplicationListEnded());
       dispatch(loadApplicationListSuccess(response.results));

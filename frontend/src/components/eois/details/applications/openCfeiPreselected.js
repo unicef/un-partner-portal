@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
@@ -7,6 +7,7 @@ import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
 import Compare from '../../buttons/compareButton';
 import PreselectedTotalScore from '../../cells/preselectedTotalScore';
 import PreselectedYourScore from '../../cells/preselectedYourScore';
+import { loadApplications } from '../../../../reducers/partnersApplicationsList';
 
 /* eslint-disable react/prop-types */
 const HeaderActions = (props) => {
@@ -26,46 +27,60 @@ const applicationsCells = ({ row, column }) => {
       redFlag={row.flagRed}
       name={row.name}
     />);
-  } else if (column.name === 'yourScore') {
+  } else if (column.name === 'your_score') {
     return (<PreselectedYourScore
       id={row.id}
-      score={row.yourScore}
+      score={row.your_score}
     />);
-  } else if (column.name === 'totalScore') {
+  } else if (column.name === 'total_score') {
     return (<PreselectedTotalScore
       id={row.id}
-      score={row.totalScore}
+      score={row.total_score}
       hovered={row.hovered}
     />);
   }
   return undefined;
 };
 /* eslint-enable react/prop-types */
-const OpenCfeiPreselections = (props) => {
-  const { applications, columns } = props;
-  return (
-    <div>
-      <SelectableList
-        items={applications}
-        columns={columns}
-        headerAction={HeaderActions}
-        templateCell={applicationsCells}
-        onPageSizeChange={pageSize => console.log('Page size', pageSize)}
-        onCurrentPageChange={page => console.log('Page number', page)}
-      />
-    </div>
-  );
-};
+class OpenCfeiPreselections extends Component {
+  componentWillMount() {
+    this.props.loadApplications();
+  }
+
+  render() {
+    const { applications, columns, loading } = this.props;
+    return (
+      <div>
+        <SelectableList
+          items={applications}
+          columns={columns}
+          loading={loading}
+          headerAction={HeaderActions}
+          templateCell={applicationsCells}
+          onPageSizeChange={pageSize => console.log('Page size', pageSize)}
+          onCurrentPageChange={page => console.log('Page number', page)}
+        />
+      </div>
+    );
+  }
+}
 
 OpenCfeiPreselections.propTypes = {
   applications: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
+  loadApplications: PropTypes.func,
+  loading: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
-  applications: state.partnersPreselectionList.preselections,
+  applications: state.partnersApplicationsList.applicationsList.applications,
   columns: state.partnersPreselectionList.columns,
+  loading: state.partnersApplicationsList.status.loading,
+});
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  loadApplications: () => dispatch(loadApplications(ownProps.params.id, { status: 'Pre' })),
 });
 
 
-export default connect(mapStateToProps)(OpenCfeiPreselections);
+export default connect(mapStateToProps, mapDispatchToProps)(OpenCfeiPreselections);

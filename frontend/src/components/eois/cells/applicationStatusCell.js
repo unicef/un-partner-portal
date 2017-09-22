@@ -8,6 +8,12 @@ import GetConceptNoteButton from '../buttons/getConceptNoteButton';
 import GridRow from '../../common/grid/gridRow';
 import WithGreyColor from '../../common/hoc/withGreyButtonStyle';
 
+const statuses = {
+  Pre: 'Preselected',
+  Rej: 'Rejected',
+  Pen: 'Pending',
+};
+
 const ApplicationStatusCell = (props) => {
   const { id, conceptNoteId, status, hovered } = props;
   const Preselect = WithGreyColor(PreselectButton);
@@ -17,7 +23,7 @@ const ApplicationStatusCell = (props) => {
     <TableCell>
       <GridRow align="center" >
         <Typography type="body1" color="inherit">
-          {status}
+          {statuses[status]}
         </Typography>
         {hovered && <GridRow gutter={0} columns={3}>
           <Download id={conceptNoteId} />

@@ -71,6 +71,6 @@ export function getOpenCfeiDetails(id) {
   return authorizedGet(`/projects/${id}`);
 }
 
-export function getOpenCfeiApplications(id) {
-  return authorizedGet(`/projects/${id}/applications`);
+export function getOpenCfeiApplications(id, filters) {
+  return authorizedGet(`/projects/${id}/applications`, filters);
 }
