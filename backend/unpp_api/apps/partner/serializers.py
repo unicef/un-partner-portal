@@ -389,11 +389,14 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
             'working_languages_other',
         )
 
+    related_names = [
+        "profile", "mailing_address", "directors", "authorised_officers"
+    ]
+
     @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
-        related_names=["profile", "mailing_address", "directors", "authorised_officers"]
-        self.update_partner_related(instance, validated_data, related_names=related_names)
+        self.update_partner_related(instance, validated_data, related_names=self.related_names)
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
 
@@ -449,6 +452,10 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
             'experiences',
         )
 
+    related_names = [
+        "mandate_mission", "experiences"
+    ]
+
     @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
@@ -464,8 +471,7 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
 
         instance.save()
 
-        related_names=["mandate_mission", "experiences"]
-        self.update_partner_related(instance, validated_data, related_names=related_names)
+        self.update_partner_related(instance, validated_data, related_names=self.related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
@@ -486,11 +492,14 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
             'source_core_funding',
         )
 
+    related_names = [
+        "fund", "budgets"
+    ]
+
     @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
-        related_names=["fund", "budgets"]
-        self.update_partner_related(instance, validated_data, related_names=related_names)
+        self.update_partner_related(instance, validated_data, related_names=self.related_names)
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
 
@@ -518,13 +527,14 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
             'collaboration_evidences',
         )
 
+    related_names = [
+        "profile", "collaborations_partnership", "collaborations_partnership_others", "collaboration_evidences"
+    ]
+
     @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
-        related_names = [
-            "profile", "collaborations_partnership", "collaborations_partnership_others", "collaboration_evidences"
-        ]
-        self.update_partner_related(instance, validated_data, related_names=related_names)
+        self.update_partner_related(instance, validated_data, related_names=self.related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
@@ -606,13 +616,14 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
             'link_report',
         )
 
+    related_names = [
+        "profile", "audit", "report", "internal_controls", "area_policies"
+    ]
+
     @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
-        related_names = [
-            "profile", "audit", "report", "internal_controls", "area_policies"
-        ]
-        self.update_partner_related(instance, validated_data, related_names=related_names)
+        self.update_partner_related(instance, validated_data, related_names=self.related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
@@ -634,12 +645,13 @@ class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serialize
             'other_documents',
         )
 
+    related_names = [
+        "other_info", "other_documents",
+    ]
+
     @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
-        related_names = [
-            "other_info", "other_documents",
-        ]
-        self.update_partner_related(instance, validated_data, related_names=related_names)
+        self.update_partner_related(instance, validated_data, related_names=self.related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
