@@ -398,7 +398,7 @@ class PartnerContactInformationSerializer(serializers.ModelSerializer):
         for director in self.initial_data.get('directors', []):
             _id = director.get("id")
             if _id:
-                PartnerDirector.objects.filter(id=_id).update(**director)
+                instance.directors.filter(id=_id).update(**director)
             else:
                 director['partner_id'] = instance.id
                 PartnerDirector.objects.create(**director)
@@ -406,7 +406,7 @@ class PartnerContactInformationSerializer(serializers.ModelSerializer):
         for authorised_officer in self.initial_data.get('authorised_officers', []):
             _id = authorised_officer.get("id")
             if _id:
-                PartnerAuthorisedOfficer.objects.filter(id=_id).update(**authorised_officer)
+                instance.authorised_officers.filter(id=_id).update(**authorised_officer)
             else:
                 authorised_officer['partner_id'] = instance.id
                 PartnerAuthorisedOfficer.objects.create(**authorised_officer)
@@ -485,7 +485,7 @@ class PartnerProfileMandateMissionSerializer(serializers.ModelSerializer):
         for experience in self.initial_data.get('experiences', []):
             _id = experience.get("id")
             if _id:
-                PartnerExperience.objects.filter(id=_id).update(**experience)
+                instance.experiences.filter(id=_id).update(**experience)
             else:
                 experience['partner_id'] = instance.id
                 PartnerExperience.objects.create(**experience)
@@ -516,7 +516,7 @@ class PartnerProfileFundingSerializer(serializers.ModelSerializer):
         for budget in self.initial_data.get('budgets', []):
             _id = budget.get("id")
             if _id:
-                PartnerBudget.objects.filter(id=_id).update(**budget)
+                instance.budgets.filter(id=_id).update(**budget)
             else:
                 budget['partner_id'] = instance.id
                 PartnerBudget.objects.create(**budget)
@@ -556,7 +556,7 @@ class PartnerProfileCollaborationSerializer(serializers.ModelSerializer):
         for partnership in self.initial_data.get('collaborations_partnership', []):
             _id = partnership.get("id")
             if _id:
-                PartnerCollaborationPartnership.objects.filter(id=_id).update(**partnership)
+                instance.collaborations_partnership.filter(id=_id).update(**partnership)
             else:
                 partnership['partner_id'] = instance.id
                 PartnerCollaborationPartnership.objects.create(**partnership)
@@ -564,7 +564,7 @@ class PartnerProfileCollaborationSerializer(serializers.ModelSerializer):
         for partnership_other in self.initial_data.get('collaborations_partnership_others', []):
             _id = partnership_other.get("id")
             if _id:
-                PartnerCollaborationPartnershipOther.objects.filter(id=_id).update(**partnership_other)
+                instance.collaborations_partnership_others.filter(id=_id).update(**partnership_other)
             else:
                 partnership_other['partner_id'] = instance.id
                 PartnerCollaborationPartnershipOther.objects.create(**partnership_other)
@@ -572,7 +572,7 @@ class PartnerProfileCollaborationSerializer(serializers.ModelSerializer):
         for collaboration_evidence in self.initial_data.get('collaboration_evidences', []):
             _id = collaboration_evidence.get("id")
             if _id:
-                PartnerCollaborationEvidence.objects.filter(id=_id).update(**collaboration_evidence)
+                instance.collaboration_evidences.filter(id=_id).update(**collaboration_evidence)
             else:
                 collaboration_evidence['partner_id'] = instance.id
                 PartnerCollaborationEvidence.objects.create(**collaboration_evidence)
