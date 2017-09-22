@@ -12,7 +12,10 @@ import cfeiSubmission from './components/eois/details/submission/cfeiSubmission'
 import cfeiContainer from './components/eois/cfeiContainer';
 import cfeiDetailsHeader from './components/eois/details/cfeiDetailsHeader';
 import dashboard from './components/dashboard/dashboard';
-import applications from './components/applications/applications';
+import partnerApplicationsHeader from './components/applications/partnerApplicationsHeader';
+import partnerApplicationsNotes from './components/applications/notes/partnerApplicationsNotes';
+import partnerApplicationsDirect from './components/applications/direct/partnerApplicationsDirect';
+import partnerApplicationsUnsolicited from './components/applications/unsolicited/partnerApplicationsUnsolicited';
 import organizationProfileEdit from './components/organizationProfile/edit/tabsContainer';
 import organizationProfile from './components/organizationProfile/organizationProfile';
 import organizationProfileHeader from './components/organizationProfile/profile/organizationProfileHeader';
@@ -59,7 +62,14 @@ const allRoutes = () => (
             <Route path="applications" component={null} />
           </Route>
         </Route>
-        <Route path="applications" component={applications} />
+        <Route path="applications" component={partnerApplicationsHeader} >
+          <IndexRedirect to="notes" />
+          <Route component={mainContent} >
+            <Route path="notes" component={partnerApplicationsNotes} />
+            <Route path="unsolicited" component={partnerApplicationsUnsolicited} />
+            <Route path="direct" component={partnerApplicationsDirect} />
+          </Route>
+        </Route>
         <Route path="profile" component={organizationProfile} />
         <Route path="profile/:id/edit" component={organizationProfileEdit} />
         <Route path="profile/:id" component={organizationProfileHeader} >
