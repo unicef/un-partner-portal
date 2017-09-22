@@ -30,8 +30,10 @@ const ApplicationStatusCell = (props) => {
 };
 
 ApplicationStatusCell.propTypes = {
-  classes: PropTypes.object.isRequired,
-  name: PropTypes.object.isRequired,
+  id: PropTypes.string,
+  conceptNoteId: PropTypes.string,
+  status: PropTypes.string,
+  hovered: PropTypes.bool,
 };
 
 export default ApplicationStatusCell;
