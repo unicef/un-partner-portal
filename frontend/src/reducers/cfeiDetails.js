@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux';
 import R from 'ramda';
 import cfeiDetailsStatus, {
-  errorToBeCleared,
   loadCfeiDetailStarted,
   loadCfeiDetailEnded,
   loadCfeiDetailSuccess,
@@ -16,7 +15,6 @@ const initialState = {};
 
 export const loadCfei = id => (dispatch) => {
   dispatch(loadCfeiDetailStarted());
-  dispatch(errorToBeCleared());
   return getOpenCfeiDetails(id)
     .then((cfei) => {
       dispatch(loadCfeiDetailEnded());
