@@ -8,7 +8,7 @@ const ConceptNoteIDCell = (props) => {
 
   return (
     <TableCell>
-      <Typography type="body2">{id}</Typography>
+      <Typography color="accent" type="body2">{id}</Typography>
     </TableCell>
   );
 };
