@@ -7,6 +7,7 @@ import R from 'ramda';
 import { Grid, TableView, TableHeaderRow, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import SelectedHeader from './selectedHeader';
 import TableTemplate from './tableTemplate';
+import NoDataCell from './noDataCell';
 
 
 const table = {
@@ -65,14 +66,21 @@ class SelectableList extends Component {
   }
 
   render() {
-    const { classes, items, columns, templateCell,
-      onCurrentPageChange, onPageSizeChange, headerAction } = this.props;
+    const { classes,
+      items,
+      columns,
+      templateCell,
+      onCurrentPageChange,
+      onPageSizeChange,
+      headerAction,
+      loading,
+    } = this.props;
     const { selected, hoveredRow } = this.state;
     return (
       <Grid
         rows={items}
         columns={columns}
-        headerPlaceholderTemplate={() => PaginatedList.navigationHeader(
+        headerPlaceholderTemplate={() => SelectableList.navigationHeader(
           classes,
           selected,
           items,
@@ -93,8 +101,10 @@ class SelectableList extends Component {
           tableTemplate={TableTemplate(this.handleRowMouseEnter,
             this.handleRowMouseLeave,
             hoveredRow)}
-          tableCellTemplate={({ row, column, style }) =>
-            templateCell(row, column, style)}
+          tableNoDataCellTemplate={({ colSpan }) => (
+            <NoDataCell loading={loading} colSpan={colSpan} />
+          )}
+          tableCellTemplate={templateCell}
         />
         <TableSelection
           selectionColumnWidth={50}
@@ -111,10 +121,12 @@ SelectableList.propTypes = {
   classes: PropTypes.object.isRequired,
   items: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
-  templateCell: PropTypes.func.isRequired,
+  templateCell: PropTypes.func,
+  templateHeader: PropTypes.func,
   onCurrentPageChange: PropTypes.func,
   onPageSizeChange: PropTypes.func,
   headerAction: PropTypes.component,
+  loading: PropTypes.bool,
 };
 
 export default withStyles(styleSheet)(SelectableList);
