@@ -179,3 +179,8 @@ class ApplicationsListAPIView(ListAPIView):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = ApplicationsFilter
     ordering_fields = ('status', )
+    lookup_field = lookup_url_kwarg = 'pk'
+
+    def get_queryset(self, *args, **kwargs):
+        eoi_id = self.kwargs.get(self.lookup_field)
+        return Application.objects.filter(eoi_id=eoi_id)
