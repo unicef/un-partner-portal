@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from agency.serializers import OtherAgencySerializer
@@ -6,7 +7,7 @@ from common.consts import (
     METHOD_ACC_ADOPTED_CHOICES,
 )
 from common.countries import COUNTRIES_ALPHA2_CODE
-from common.serializers import SpecializationSerializer
+from common.serializers import SpecializationSerializer, MixinPartnerRelatedSerializer
 from partner.models import (
     Partner,
     PartnerProfile,
@@ -361,7 +362,7 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
         )
 
 
-class PartnerContactInformationSerializer(serializers.ModelSerializer):
+class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
     mailing_address = PartnerMailingAddressSerializer()
     have_board_directors = serializers.BooleanField(source="profile.have_board_directors")
@@ -388,33 +389,15 @@ class PartnerContactInformationSerializer(serializers.ModelSerializer):
             'working_languages_other',
         )
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
-        PartnerProfile.objects.filter(
-            id=instance.profile.id).update(**validated_data["profile"])
-        PartnerMailingAddress.objects.filter(
-            id=instance.mailing_address.id).update(**validated_data["mailing_address"])
-
-        for director in self.initial_data.get('directors', []):
-            _id = director.get("id")
-            if _id:
-                instance.directors.filter(id=_id).update(**director)
-            else:
-                director['partner_id'] = instance.id
-                PartnerDirector.objects.create(**director)
-
-        for authorised_officer in self.initial_data.get('authorised_officers', []):
-            _id = authorised_officer.get("id")
-            if _id:
-                instance.authorised_officers.filter(id=_id).update(**authorised_officer)
-            else:
-                authorised_officer['partner_id'] = instance.id
-                PartnerAuthorisedOfficer.objects.create(**authorised_officer)
-
+        related_names=["profile", "mailing_address", "directors", "authorised_officers"]
+        self.partner_related(instance, validated_data, related_names=related_names)
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
 
-class PartnerProfileMandateMissionSerializer(serializers.ModelSerializer):
+class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
     background_and_rationale = serializers.CharField(source="mandate_mission.background_and_rationale")
     mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
@@ -466,10 +449,9 @@ class PartnerProfileMandateMissionSerializer(serializers.ModelSerializer):
             'experiences',
         )
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
-        PartnerMandateMission.objects.filter(
-            id=instance.mandate_mission.id).update(**validated_data["mandate_mission"])
 
         instance.country_presence = validated_data.get('country_presence', instance.country_presence)
         instance.staff_globally = validated_data.get('staff_globally', instance.staff_globally)
@@ -482,18 +464,13 @@ class PartnerProfileMandateMissionSerializer(serializers.ModelSerializer):
 
         instance.save()
 
-        for experience in self.initial_data.get('experiences', []):
-            _id = experience.get("id")
-            if _id:
-                instance.experiences.filter(id=_id).update(**experience)
-            else:
-                experience['partner_id'] = instance.id
-                PartnerExperience.objects.create(**experience)
+        related_names=["mandate_mission", "experiences"]
+        self.partner_related(instance, validated_data, related_names=related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
 
-class PartnerProfileFundingSerializer(serializers.ModelSerializer):
+class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
     budgets = PartnerBudgetSerializer(many=True)
     major_donors = serializers.ListField(source="fund.major_donors")
@@ -509,22 +486,15 @@ class PartnerProfileFundingSerializer(serializers.ModelSerializer):
             'source_core_funding',
         )
 
+    @transaction.atomic
     def update(self, instance, validated_data):
-        fund_id = validated_data["fund"]["id"]
-        PartnerFunding.objects.filter(id=fund_id).update(**validated_data["fund"])
-
-        for budget in self.initial_data.get('budgets', []):
-            _id = budget.get("id")
-            if _id:
-                instance.budgets.filter(id=_id).update(**budget)
-            else:
-                budget['partner_id'] = instance.id
-                PartnerBudget.objects.create(**budget)
-
+        # std method does not support writable nested fields by default
+        related_names=["fund", "budgets"]
+        self.partner_related(instance, validated_data, related_names=related_names)
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
 
-class PartnerProfileCollaborationSerializer(serializers.ModelSerializer):
+class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
     collaborations_partnership_others = PartnerCollaborationPartnershipOtherSerializer(many=True)
@@ -548,39 +518,18 @@ class PartnerProfileCollaborationSerializer(serializers.ModelSerializer):
             'collaboration_evidences',
         )
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
-        PartnerProfile.objects.filter(
-            id=instance.profile.id).update(**validated_data["profile"])
-
-        for partnership in self.initial_data.get('collaborations_partnership', []):
-            _id = partnership.get("id")
-            if _id:
-                instance.collaborations_partnership.filter(id=_id).update(**partnership)
-            else:
-                partnership['partner_id'] = instance.id
-                PartnerCollaborationPartnership.objects.create(**partnership)
-
-        for partnership_other in self.initial_data.get('collaborations_partnership_others', []):
-            _id = partnership_other.get("id")
-            if _id:
-                instance.collaborations_partnership_others.filter(id=_id).update(**partnership_other)
-            else:
-                partnership_other['partner_id'] = instance.id
-                PartnerCollaborationPartnershipOther.objects.create(**partnership_other)
-
-        for collaboration_evidence in self.initial_data.get('collaboration_evidences', []):
-            _id = collaboration_evidence.get("id")
-            if _id:
-                instance.collaboration_evidences.filter(id=_id).update(**collaboration_evidence)
-            else:
-                collaboration_evidence['partner_id'] = instance.id
-                PartnerCollaborationEvidence.objects.create(**collaboration_evidence)
+        related_names = [
+            "profile", "collaborations_partnership", "collaborations_partnership_others", "collaboration_evidences"
+        ]
+        self.partner_related(instance, validated_data, related_names=related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
 
-class PartnerProfileProjectImplementationSerializer(serializers.ModelSerializer):
+class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
     have_management_approach = serializers.BooleanField(source="profile.have_management_approach")
     management_approach_desc = serializers.CharField(source="profile.management_approach_desc")
@@ -657,35 +606,18 @@ class PartnerProfileProjectImplementationSerializer(serializers.ModelSerializer)
             'link_report',
         )
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
-        PartnerProfile.objects.filter(
-            id=instance.profile.id).update(**validated_data["profile"])
-        PartnerAuditAssessment.objects.filter(
-            id=instance.audit.id).update(**validated_data["audit"])
-        PartnerReporting.objects.filter(
-            id=instance.report.id).update(**validated_data["report"])
-
-        for internal_control in self.initial_data.get('internal_controls', []):
-            _id = internal_control.get("id")
-            if _id:
-                instance.internal_controls.filter(id=_id).update(**internal_control)
-            else:
-                internal_control['partner_id'] = instance.id
-                PartnerInternalControl.objects.create(**internal_control)
-
-        for area_policy in self.initial_data.get('area_policies', []):
-            _id = area_policy.get("id")
-            if _id:
-                instance.area_policies.filter(id=_id).update(**area_policy)
-            else:
-                area_policy['partner_id'] = instance.id
-                PartnerPolicyArea.objects.create(**area_policy)
+        related_names = [
+            "profile", "audit", "report", "internal_controls", "area_policies"
+        ]
+        self.partner_related(instance, validated_data, related_names=related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
 
-class PartnerProfileOtherInfoSerializer(serializers.ModelSerializer):
+class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
     info_to_share = serializers.CharField(source="other_info.info_to_share")
     org_logo = serializers.FileField(source="other_info.org_logo")
@@ -702,17 +634,12 @@ class PartnerProfileOtherInfoSerializer(serializers.ModelSerializer):
             'other_documents',
         )
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
-        PartnerOtherInfo.objects.filter(
-            id=instance.other_info.id).update(**validated_data["other_info"])
-
-        for doc in self.initial_data.get('other_documents', []):
-            _id = doc.get("id")
-            if _id:
-                instance.other_documents.filter(id=_id).update(**doc)
-            else:
-                doc['partner_id'] = instance.id
-                PartnerInternalControl.objects.create(**doc)
+        related_names = [
+            "other_info", "other_documents",
+        ]
+        self.partner_related(instance, validated_data, related_names=related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
