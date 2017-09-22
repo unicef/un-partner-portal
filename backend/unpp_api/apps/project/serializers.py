@@ -253,4 +253,5 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'legal_name',
             'type_org',
             'status',
+            'cn',
         )
