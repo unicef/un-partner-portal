@@ -276,8 +276,8 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
     def setUp(self):
         super(TestPartnerApplicationsAPITestCase, self).setUp()
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
-        PartnerSimpleFactory.create_batch(1)
+        EOIFactory.create_batch(self.quantity, status='NoN')
+        PartnerSimpleFactory.create_batch(self.quantity)
 
     def test_create(self):
         eoi_id = EOI.objects.first().id
@@ -285,7 +285,6 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
         with open(filename) as cn_template:
             payload = {
-                "partner": Partner.objects.last().id,
                 "cn": cn_template,
             }
             response = self.client.post(url, data=payload, format='multipart')
@@ -297,7 +296,6 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
 
         with open(filename) as cn_template:
             payload = {
-                "partner": Partner.objects.last().id,
                 "cn": cn_template,
             }
             response = self.client.post(url, data=payload, format='multipart')

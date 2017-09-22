@@ -149,6 +149,9 @@ class ApplicationsPartnerAPIView(CreateAPIView):
     def create(self, request, pk, *args, **kwargs):
         request.data['eoi'] = pk
         request.data['submitter'] = request.user.id
+        partner_member = PartnerMember.objects.filter(user=request.user).first()
+        if partner_member:
+            request.data['partner'] = partner_member.partner.id
         return super(ApplicationsPartnerAPIView, self).create(request, *args, **kwargs)
 
 
