@@ -37,13 +37,21 @@ class Partner(TimeStampedModel):
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children')
     country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
     is_active = models.BooleanField(default=True)
-    registration_number = models.CharField(max_length=255, null=True, blank=True)
-    country_presents = ArrayField(
+    # hq information
+    country_presence = ArrayField(
         models.CharField(max_length=2, choices=WORKING_LAGNUAGES_CHOICES),
         default=list,
         null=True
     )
     staff_globally = models.CharField(max_length=3, choices=STAFF_GLOBALLY_CHOICES, null=True, blank=True)
+    # country profile information
+    location_of_office = None
+    more_office_in_country = None
+    location_field_offices = None
+    staff_in_country = models.CharField(max_length=3, choices=STAFF_GLOBALLY_CHOICES, null=True, blank=True)
+    engagement_operate_desc = models.CharField(
+        verbose_name="Briefly describe the organization's engagement with the communities in which you operate",
+        max_length=255, null=True, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -75,11 +83,24 @@ class PartnerProfile(TimeStampedModel):
         null=True
     )
     working_languages_other = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
-    register_country = models.BooleanField(default=False, verbose_name='Register to work in country?')
     flagged = models.BooleanField(default=False)  # not sure do we need this attr
-    start_cooperate_date = models.DateField(auto_now_add=True)
+    # authorised_officials
+    have_board_directors= models.BooleanField(
+        default=False, verbose_name="Does your organization have a board of directors?")
+
+    # Registration of organization
+    year_establishment = models.PositiveSmallIntegerField(
+        'Year of establishment',
+        help_text="Enter valid year.",
+        validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
+    )
     have_gov_doc = models.BooleanField(default=False, verbose_name='Does the organization have a government document?')
+    gov_doc = models.FileField(null=True)
+    registration_to_operate_in_country = models.BooleanField(default=True)
     registration_doc = models.FileField(null=True)
+    registration_date = models.DateField(auto_now_add=True)
+    registration_comment = models.CharField(max_length=255, null=True, blank=True)
+    registration_number = models.CharField(max_length=255, null=True, blank=True)
 
     # programme management
     have_management_approach = models.BooleanField(default=False)  # results_based_approach
@@ -112,6 +133,15 @@ class PartnerProfile(TimeStampedModel):
     # collaborate
     partnership_collaborate_institution = models.BooleanField(default=False)
     partnership_collaborate_institution_desc = models.CharField(max_length=200, null=True, blank=True)
+
+    # Banking Information
+    have_bank_account = models.BooleanField(
+        default=False, verbose_name="Does the organization have a bank account?")
+    have_separate_bank_account = models.BooleanField(
+        default=False, verbose_name="Does the organization currently maintain, or has it previously maintained, "
+                                    "a separate, interest-bearing account for UN funded projects that require "
+                                    "a separate account?")
+    explain = models.CharField(max_length=200, null=True, blank=True, verbose_name="Please explain")
 
     class Meta:
         ordering = ['id']
@@ -211,6 +241,7 @@ class PartnerPolicyArea(TimeStampedModel):
 class PartnerAuditAssessment(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="audit")
     regular_audited = models.BooleanField(default=True)
+    regular_audited_comment = models.CharField(max_length=200, null=True, blank=True)
     org_audits = ArrayField(
         models.CharField(max_length=3, choices=ORG_AUDIT_CHOICES),
         default=list,
@@ -271,8 +302,10 @@ class PartnerMandateMission(TimeStampedModel):
     # ethics
     ethic_safeguard = models.BooleanField(default=False)
     ethic_safeguard_policy = models.FileField(null=True)
+    ethic_safeguard_comment = models.CharField(max_length=200, null=True, blank=True)
     ethic_fraud = models.BooleanField(default=False)
     ethic_fraud_policy = models.FileField(null=True)
+    ethic_fraud_comment = models.CharField(max_length=200, null=True, blank=True)
 
     # population of concern
     population_of_concern = models.BooleanField(default=False)

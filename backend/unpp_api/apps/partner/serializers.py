@@ -96,7 +96,7 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
             'country_code',
             'is_hq',
             'country_profiles',
-            'country_presents',
+            'country_presence',
             'users',
             'modified',
         )
@@ -260,8 +260,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             'hq',
             'country_code',
             'is_active',
-            'registration_number',
-            'country_presents',
+            'country_presence',
             'staff_globally',
 
             "profile",

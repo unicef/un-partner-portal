@@ -100,12 +100,13 @@ export const renderText = ({
   ...other
 }) => {
   let value = input.value;
-
   if (!value) value = '-';
-
-  let selected;
-  if (values) selected = R.filter(val => val.value === value, values);
-  if (selected && selected.length) value = selected[0].label;
+  if (values) {
+    value = R.filter((val) => {
+      if (Array.isArray(value)) return value.includes(val.value);
+      return value === val.value;
+    }, values).map(matchedValue => matchedValue.label).join(', ');
+  }
   if (date) value = formatDateForPrint(value);
   return (
     <FormControl fullWidth>

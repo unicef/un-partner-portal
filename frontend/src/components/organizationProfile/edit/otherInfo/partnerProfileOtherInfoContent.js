@@ -63,6 +63,7 @@ const PartnerProfileOtherInfoContent = (props) => {
             fieldName="confirm_data_updated"
             optional
             warn
+            readOnly={readOnly}
           />
         </Grid>
       </Grid>

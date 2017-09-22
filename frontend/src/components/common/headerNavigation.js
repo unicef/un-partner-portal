@@ -8,14 +8,16 @@ import Grid from 'material-ui/Grid';
 import Tabs from 'material-ui/Tabs';
 import Typography from 'material-ui/Typography';
 import CustomTab from '../common/customTab';
+import SpreadContent from '../common/spreadContent';
 
 const styleSheet = createStyleSheet('HeaderNavigation', (theme) => {
   const padding = theme.spacing.unit * 2;
+  const biggerPadding = theme.spacing.unit * 3;
   return {
     container: {
       width: '100%',
       margin: '0',
-      padding: `${padding}px 0 0 ${padding}px`,
+      padding: `${padding}px ${biggerPadding}px 0 ${biggerPadding}px`,
       borderBottom: `2px ${theme.palette.grey[300]} solid`,
     },
     alignItems: {
@@ -64,7 +66,7 @@ class HeaderNavigation extends Component {
     return (
       <div>
         <Grid align="center" className={classes.container} container>
-          <Grid item xs={8}>
+          <SpreadContent >
             <div className={tabs ? classes.alignItems : classes.alignItemsPadding}>
               { backButton
                 ? <IconButton onClick={handleBackButton}>
@@ -77,12 +79,10 @@ class HeaderNavigation extends Component {
                 </Typography>
                 : titleObject }
             </div>
-          </Grid>
-          <Grid item xs={4}>
             <div className={classes.right}>
               {header}
             </div>
-          </Grid>
+          </SpreadContent>
           {tabs
             ? <div>
               <Tabs index={index} onChange={handleChange}>

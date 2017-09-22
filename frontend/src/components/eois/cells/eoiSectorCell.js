@@ -1,11 +1,14 @@
 import React from 'react';
+import R from 'ramda';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import Tooltip from '../../common/tooltip';
-
+import { selectSector, selectSpecializations } from '../../../store';
 
 const styleSheet = createStyleSheet('EoiSectorCell', theme => ({
   mainText: {
@@ -28,44 +31,49 @@ const styleSheet = createStyleSheet('EoiSectorCell', theme => ({
 }));
 
 const renderShortCell = data => data.map(sector => sector.name).join(', ');
-const renderExpandedCell = (data, classes) => data.map((sector, index) =>
+const renderExpandedCell = (sectors, classes) => sectors.map((sector, index) =>
   (
     <div>
       <Typography type="body2" color="inherit" className={classes.mainText} align="left">
         {sector.name}
       </Typography>
-      { sector.specializations.map(area => (
+      {sector.areas.map(area => (
         <Typography type="body1" color="inherit" className={classes.text} align="left">
-          {area.name}
+          {area}
         </Typography>
       ))}
-      {index !== (Object.keys(data).length - 1) && <Divider className={classes.divider} />}
+      {index !== (Object.keys(sectors).length - 1) && <Divider className={classes.divider} />}
     </div>
   ),
 );
 
 
 const EoiSectorCell = (props) => {
-  const { data, classes, id } = props;
+  const { classes, id, sectors } = props;
   return (
-    <div >
-      {typeof data === 'string' ? data : (
-        <div data-tip data-for={`${id}-sector-tooltip`}>
-          {renderShortCell(data)}
-          <Tooltip
-            id={`${id}-sector-tooltip`}
-            text={renderExpandedCell(data, classes)}
-          />
-        </div>
-      )}
+    <div data-tip data-for={`${id}-sector-tooltip`}>
+      {renderShortCell(sectors)}
+      <Tooltip
+        id={`${id}-sector-tooltip`}
+        text={renderExpandedCell(sectors, classes)}
+      />
     </div>
   );
 };
 
 EoiSectorCell.propTypes = {
   classes: PropTypes.object.isRequired,
-  data: PropTypes.array.isRequired,
+  sectors: PropTypes.array.isRequired,
   id: PropTypes.number.isRequired,
 };
 
-export default withStyles(styleSheet)(EoiSectorCell);
+const connectedEoiSectorCell = connect(
+  (state, ownProps) => ({ sectors:
+        ownProps.data.map(s => ({
+          name: selectSector(state, s.sector),
+          areas: R.values(selectSpecializations(state, s.areas)),
+        })),
+  }),
+)(EoiSectorCell);
+
+export default withStyles(styleSheet)(connectedEoiSectorCell);
