@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import PartnerFilter from '../../../partners/partnerFilter';
@@ -10,6 +10,7 @@ import PreselectButton from '../../buttons/preselectButton';
 import GridRow from '../../../common/grid/gridRow';
 import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
 import ApplicationStatusCell from '../../cells/applicationStatusCell';
+import { loadApplications } from '../../../../reducers/partnersApplicationsList';
 
 /* eslint-disable react/prop-types */
 const HeaderActions = (props) => {
@@ -46,34 +47,47 @@ const applicationsCells = (row, column) => {
   return undefined;
 };
 /* eslint-enable react/prop-types */
-const PartnersContainer = (props) => {
-  const { applications, columns } = props;
-  return (
-    <div>
-      <GridColumn gutter={24}>
-        <PartnerFilter />
-        <SelectableList
-          items={applications}
-          columns={columns}
-          headerAction={HeaderActions}
-          templateCell={(row, column, style) => applicationsCells(row, column, style)}
-          onPageSizeChange={pageSize => console.log('Page size', pageSize)}
-          onCurrentPageChange={page => console.log('Page number', page)}
-        />
-      </GridColumn>
-    </div>
-  );
-};
+class ApplicationsListContainer extends Component {
+  componentWillMount() {
+    this.props.loadApplications();
+  }
 
-PartnersContainer.propTypes = {
+  render() {
+    const { applications, columns, loading } = this.props;
+    return (
+      <div>
+        <GridColumn gutter={24}>
+          <PartnerFilter />
+          <SelectableList
+            items={applications}
+            columns={columns}
+            loading={loading}
+            headerAction={HeaderActions}
+            templateCell={(row, column, style) => applicationsCells(row, column, style)}
+            onPageSizeChange={pageSize => console.log('Page size', pageSize)}
+            onCurrentPageChange={page => console.log('Page number', page)}
+          />
+        </GridColumn>
+      </div>
+    );
+  }
+}
+
+ApplicationsListContainer.propTypes = {
   applications: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
+  loadApplications: PropTypes.func,
+  loading: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
-  applications: state.partnersApplicationsList.applications,
-  columns: state.partnersApplicationsList.columns,
+  applications: state.partnersApplicationsList.applicationsList.applications,
+  columns: state.partnersApplicationsList.applicationsList.columns,
+  loading: state.partnersApplicationsList.status.loading,
 });
 
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  loadApplications: () => dispatch(loadApplications(ownProps.params.id)),
+});
 
-export default connect(mapStateToProps)(PartnersContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(ApplicationsListContainer);

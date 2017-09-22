@@ -1,64 +1,50 @@
-export const INIT_COUNTRY_ID = -1;
+import R from 'ramda';
+import { combineReducers } from 'redux';
+import applicationsListStatus, {
+  LOAD_APPLICATION_LIST_SUCCESS,
+  loadApplicationListStarted,
+  loadApplicationListEnded,
+  loadApplicationListSuccess,
+  loadApplicationListFailure,
+
+} from './partnersApplicationListStatus';
+import { getOpenCfeiApplications } from '../helpers/api/api';
 
 const initialState = {
   columns: [
-    { name: 'name', title: 'Organization\'s Legal Name' },
-    { name: 'orgType', title: 'Type of Organization' },
-    { name: 'conceptNote', title: 'Concept Note ID' },
+    { name: 'legal_name', title: 'Organization\'s Legal Name' },
+    { name: 'type_org', title: 'Type of Organization' },
+    { name: 'id', title: 'Concept Note ID' },
     { name: 'status', title: 'Status' },
   ],
-  applications: [
-    { id: 1,
-      name: 'Partner 0',
-      orgType: 'International NGO (INGO)',
-      conceptNote: '22291/CN',
-      verified: false,
-      flagYellow: true,
-      flagRed: false,
-      status: 'Pending',
-    },
-    { id: 2,
-      name: 'Partner 1',
-      orgType: 'International NGO (INGO)',
-      conceptNote: '24491/CN',
-      verified: true,
-      flagYellow: true,
-      flagRed: false,
-      status: 'Pending',
-    },
-    { id: 3,
-      name: 'Partner 3',
-      orgType: 'National NGO',
-      conceptNote: '25671/CN',
-      verified: true,
-      flagYellow: true,
-      flagRed: false,
-      status: 'Preselected',
-    },
-    { id: 4,
-      name: 'Partner 4',
-      orgType: 'Academic Institution',
-      conceptNote: '13561/CN',
-      verified: true,
-      flagYellow: true,
-      flagRed: true,
-      status: 'Pending',
-    },
-    { id: 5,
-      name: 'Partner 0',
-      orgType: 'International NGO (INGO)',
-      conceptNote: '13471/CN',
-      verified: false,
-      flagYellow: false,
-      flagRed: true,
-      status: 'Rejected',
-    },
-  ],
+  applications: [],
 };
 
-export default function agencyPartnersListReducer(state = initialState, action) {
+export const loadApplications = id => (dispatch) => {
+  dispatch(loadApplicationListStarted());
+
+  return getOpenCfeiApplications(id)
+    .then((response) => {
+
+      dispatch(loadApplicationListEnded());
+      dispatch(loadApplicationListSuccess(response.results));
+    })
+    .catch((error) => {
+      dispatch(loadApplicationListEnded());
+      dispatch(loadApplicationListFailure(error));
+    });
+};
+
+const saveApplications = (state, action) => R.assoc('applications', action.applications, state);
+
+function applicationsList(state = initialState, action) {
   switch (action.type) {
+    case LOAD_APPLICATION_LIST_SUCCESS: {
+      return saveApplications(state, action);
+    }
     default:
       return state;
   }
 }
+
+export default combineReducers({ applicationsList, status: applicationsListStatus });
