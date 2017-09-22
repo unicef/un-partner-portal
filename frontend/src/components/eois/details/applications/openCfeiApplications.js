@@ -25,7 +25,7 @@ const HeaderActions = (props) => {
   );
 };
 
-const applicationsCells = (row, column) => {
+const applicationsCells = ({ row, column }) => {
   if (column.name === 'name') {
     return (<PartnerProfileNameCell
       verified={row.verified}
@@ -56,7 +56,7 @@ const PartnersContainer = (props) => {
           items={applications}
           columns={columns}
           headerAction={HeaderActions}
-          templateCell={(row, column, style) => applicationsCells(row, column, style)}
+          templateCell={applicationsCells}
           onPageSizeChange={pageSize => console.log('Page size', pageSize)}
           onCurrentPageChange={page => console.log('Page number', page)}
         />

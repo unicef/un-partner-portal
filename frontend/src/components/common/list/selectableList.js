@@ -65,7 +65,7 @@ class SelectableList extends Component {
   }
 
   render() {
-    const { classes, items, columns, templateCell,
+    const { classes, items, columns, templateCell, templateHeader,
       onCurrentPageChange, onPageSizeChange, headerAction } = this.props;
     const { selected, hoveredRow } = this.state;
     return (
@@ -93,8 +93,7 @@ class SelectableList extends Component {
           tableTemplate={TableTemplate(this.handleRowMouseEnter,
             this.handleRowMouseLeave,
             hoveredRow)}
-          tableCellTemplate={({ row, column, style }) =>
-            templateCell(row, column, style)}
+          tableCellTemplate={templateCell}
         />
         <TableSelection
           selectionColumnWidth={50}
@@ -111,7 +110,8 @@ SelectableList.propTypes = {
   classes: PropTypes.object.isRequired,
   items: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
-  templateCell: PropTypes.func.isRequired,
+  templateCell: PropTypes.func,
+  templateHeader: PropTypes.func,
   onCurrentPageChange: PropTypes.func,
   onPageSizeChange: PropTypes.func,
   headerAction: PropTypes.component,
