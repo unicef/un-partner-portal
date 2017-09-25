@@ -16,7 +16,7 @@ const styleSheet = createStyleSheet('ContentDialog', theme => ({
     background: theme.palette.primary[100],
   },
   root: {
-    padding: '0px 0px 0px 0px',
+    padding: '0',
   },
 }));
 

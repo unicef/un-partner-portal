@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -7,11 +8,13 @@ import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/Button';
 import Snackbar from 'material-ui/Snackbar';
+import { formatDateForPrint } from '../../../../helpers/dates';
+import Loader from '../../../common/loader';
 import PaddedContent from '../../../common/paddedContent';
 import FileUploadButton from '../../../common/buttons/fileUploadButton';
 import ControlledModal from '../../../common/modals/controlledModal';
 import OrganizationProfileContent from './modal/organizationProfileContent';
-import { uploadPartnerConceptNote } from '../../../../reducers/conceptNote';
+import { uploadPartnerConceptNote, uploadCnclearError } from '../../../../reducers/conceptNote';
 
 const messages = {
   upload_1: 'Please make sure to use the Concept Note template provided by the UN Agency that published this CFEI.',
@@ -19,10 +22,11 @@ const messages = {
   confirm: 'I confirm that my profile is up to date',
   lastUpdate: 'Last profile update:',
   update: '12 Sep 2017',
-  notSure: '. Not sure?',
+  notSure: 'Not sure?',
   viewProifle: 'View your profile.',
   deadline: 'Application deadline: ',
   submit: 'submit',
+  submitted: 'Submitted: ',
   close: 'close',
   editProfile: 'edit profile',
   countryProfile: 'Country Profile',
@@ -31,7 +35,6 @@ const messages = {
 };
 
 const styleSheet = createStyleSheet('HqProfile', (theme) => {
-  const paddingTiny = theme.spacing.unit / 2;
   const paddingNormal = theme.spacing.unit;
   const paddingSmall = theme.spacing.unit * 2;
   const padding = theme.spacing.unit * 3;
@@ -65,14 +68,7 @@ const styleSheet = createStyleSheet('HqProfile', (theme) => {
       textAlign: 'center',
       background: theme.palette.primary[300],
     },
-    right: {
-      textAlign: 'right',
-    },
-    labelPadding: {
-      color: theme.palette.primary[500],
-      padding: `0px ${paddingTiny}px 0px 0px`,
-    },
-    label: {
+    captionStyle: {
       color: theme.palette.primary[500],
     },
     labelUnderline: {
@@ -137,6 +133,7 @@ class ConceptNoteSubmission extends Component {
   }
 
   handleDialogClose() {
+    this.props.uploadCnclearError();
     this.setState({ alert: false });
   }
 
@@ -157,23 +154,20 @@ class ConceptNoteSubmission extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, loader, errorUpload, cnUploaded } = this.props;
     const { alert, openDialog, fileSelected, errorMsg } = this.state;
     return (
       <div >
         <div className={classes.alignCenter}>
           <div>
-            <FileUploadButton fieldName={'concept-note'} fileSelected={file => this.fileSelect(file)} />
+            <FileUploadButton fieldName={'concept-note'} fileSelected={file => this.fileSelect(file)} deleteDisabled={cnUploaded} />
           </div>
           {fileSelected ? null : this.upload()}
         </div>
 
-        <div className={classes.alignRight}>
-          <Typography className={classes.labelPadding} type="caption">
-            {messages.deadline}
-          </Typography>
-          <Typography type="caption">{messages.update}</Typography>
-        </div>
+        <Typography className={classes.alignRight} type="caption">
+          {`${messages.deadline} ${messages.update}`}
+        </Typography>
         <div className={classes.checkboxContainer}>
           <div className={classes.alignVertical}>
             <Checkbox
@@ -181,20 +175,15 @@ class ConceptNoteSubmission extends Component {
                 checked: classes.checked,
                 disabled: classes.disabled,
               }}
+              disabled={cnUploaded}
               checked={this.state.confirm}
               onChange={(event, checked) => this.handleCheck(event, checked)}
             />
             <div className={classes.paddingTop}>
               <Typography type="body1">{messages.confirm}</Typography>
               <div className={classes.alignVertical}>
-                <Typography className={classes.labelPadding} type="body1">
-                  {messages.lastUpdate}
-                </Typography>
-                <Typography className={classes.label} type="body1">
-                  {messages.update}
-                </Typography>
-                <Typography className={classes.labelPadding} type="body1">
-                  {messages.notSure}
+                <Typography className={classes.captionStyle} type="body1">
+                  {`${messages.lastUpdate} ${messages.update}. ${messages.notSure}`}
                 </Typography>
                 <Typography
                   onClick={() => this.onDialogOpen()}
@@ -207,7 +196,13 @@ class ConceptNoteSubmission extends Component {
             </div>
           </div>
           <div className={classes.alignRight}>
-            <Button onClick={() => this.handleSubmit()} color="accent">{messages.submit}</Button>
+            {cnUploaded
+              ? <Typography type="body1">
+                {`${messages.submitted} ${formatDateForPrint(cnUploaded.response.created)}`}
+              </Typography>
+              : <Button onClick={() => this.handleSubmit()} color="accent">
+                {messages.submit}
+              </Button>}
           </div>
         </div>
         <Snackbar
@@ -217,6 +212,16 @@ class ConceptNoteSubmission extends Component {
           }}
           open={alert}
           message={errorMsg}
+          autoHideDuration={6e3}
+          onRequestClose={this.handleDialogClose}
+        />
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={!R.isEmpty(errorUpload)}
+          message={errorUpload ? errorUpload.message || '' : ''}
           autoHideDuration={6e3}
           onRequestClose={this.handleDialogClose}
         />
@@ -237,6 +242,7 @@ class ConceptNoteSubmission extends Component {
           removeContentPadding
           content={<OrganizationProfileContent />}
         />
+        <Loader loading={loader} fullscreen />
       </div>
     );
   }
@@ -246,18 +252,25 @@ ConceptNoteSubmission.propTypes = {
   classes: PropTypes.object.isRequired,
   partnerId: PropTypes.string,
   uploadConceptNote: PropTypes.func.isRequired,
+  uploadCnclearError: PropTypes.func.isRequired,
+  loader: PropTypes.bool.isRequired,
+  errorUpload: PropTypes.object,
+  cnUploaded: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   partnerId: ownProps.params.id,
+  loader: state.conceptNote.loading,
+  cnUploaded: state.conceptNote.response,
+  errorUpload: state.conceptNote.error,
 });
-
 
 const mapDispatch = (dispatch, ownProps) => {
   const { id } = ownProps.params;
 
   return {
     uploadConceptNote: file => dispatch(uploadPartnerConceptNote(id, file)),
+    uploadCnclearError: () => dispatch(uploadCnclearError()),
   };
 };
 

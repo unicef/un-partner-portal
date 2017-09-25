@@ -23,6 +23,7 @@ import agencyPartnerProfile from './reducers/agencyPartnerProfile';
 import applicationsNotesList from './reducers/applicationsNotesList';
 import applicationsUnsolicitedList from './reducers/applicationsUnsolicitedList';
 import applicationsDirectList from './reducers/applicationsDirectList';
+import conceptNote from './reducers/conceptNote';
 import population from './reducers/population';
 import partnerInfo from './reducers/partnerInfo';
 import organizationProfileNav from './reducers/organizationProfileNav';
@@ -47,6 +48,7 @@ const mainReducer = combineReducers({
   nav,
   session,
   countries,
+  conceptNote,
   countryProfiles,
   partnerInfo,
   partnerProfileEdit,
