@@ -90,9 +90,9 @@ class FileUploadButton extends Component {
             <Typography type="subheading" className={classes.iconLabel} gutterBottom >
               <Attachment className={classes.icon} />
               {fileAdded}
-              <IconButton disabled={deleteDisabled} onClick={() => this.handleRemove()}>
+              {!deleteDisabled && <IconButton onClick={() => this.handleRemove()}>
                 <Close className={classes.removeIcon} />
-              </IconButton>
+              </IconButton>}
             </Typography>
           </div>}
       </div>
