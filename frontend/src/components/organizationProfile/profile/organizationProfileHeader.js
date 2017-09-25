@@ -15,17 +15,17 @@ class OrganizationProfileHeader extends Component {
   }
 
   updatePath() {
-    const { tabs, location, countryCode } = this.props; 
-    if (tabs.findIndex(tab => location.match(`^/profile/${countryCode}/${tab.path}`)) === -1) {
+    const { tabs, location, partnerId } = this.props;
+    if (tabs.findIndex(tab => location.match(`^/profile/${partnerId}/${tab.path}`)) === -1) {
       history.push('/');
     }
 
-    return tabs.findIndex(tab => location.match(`^/profile/${countryCode}/${tab.path}`));
+    return tabs.findIndex(tab => location.match(`^/profile/${partnerId}/${tab.path}`));
   }
 
   handleChange(event, index) {
-    const { tabs, countryCode } = this.props;
-    history.push(`/profile/${countryCode}/${tabs[index].path}`);
+    const { tabs, partnerId } = this.props;
+    history.push(`/profile/${partnerId}/${tabs[index].path}`);
   }
 
   render() {
@@ -33,7 +33,7 @@ class OrganizationProfileHeader extends Component {
       tabs,
       children,
       profile,
-      countryCode,
+      partnerId,
     } = this.props;
 
     const index = this.updatePath();
@@ -46,7 +46,7 @@ class OrganizationProfileHeader extends Component {
           index={index}
           children={children}
           handleBackButton={() => { history.goBack(); }}
-          header={<OrganizationProfileOverviewHeader update="12 Aug 2017" handleEditClick={() => { history.push(`/profile/${countryCode}/edit`); }} />}
+          header={<OrganizationProfileOverviewHeader update="12 Aug 2017" handleEditClick={() => { history.push(`/profile/${partnerId}/edit`); }} />}
           title={profile.name}
           handleChange={this.handleChange}
         />
@@ -60,12 +60,12 @@ OrganizationProfileHeader.propTypes = {
   children: PropTypes.node,
   profile: PropTypes.object.isRequired,
   location: PropTypes.string.isRequired,
-  countryCode: PropTypes.string.isRequired,
+  partnerId: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  profile: state.organizationProfile[ownProps.params.countryCode],
-  countryCode: ownProps.params.countryCode,
+  profile: state.organizationProfile[ownProps.params.id],
+  partnerId: ownProps.params.id,
   location: ownProps.location.pathname,
   tabs: state.organizationProfileNav,
 });

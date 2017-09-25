@@ -10,6 +10,7 @@ import eoiHeader from './components/eois/eoiHeader';
 import openCfeiApplications from './components/eois/details/applications/openCfeiApplications';
 import openCfeiPreselected from './components/eois/details/applications/openCfeiPreselected';
 import cfeiOverview from './components/eois/details/overview/cfeiOverview';
+import cfeiSubmission from './components/eois/details/submission/cfeiSubmission';
 import cfeiContainer from './components/eois/cfeiContainer';
 import cfeiDetailsHeader from './components/eois/details/cfeiDetailsHeader';
 import dashboard from './components/dashboard/dashboard';
@@ -20,7 +21,7 @@ import organizationProfileHeader from './components/organizationProfile/profile/
 import partnersContainer from './components/partners/partnersContainer';
 import partnerProfileHeader from './components/partners/profile/partnerProfileHeader';
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
-import organizationProfileOverview from './components/organizationProfile/profile/organizationProfileOverview';
+import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
 import mainContent from './components/common/mainContentWrapper';
@@ -45,7 +46,7 @@ const allRoutes = () => (
           <Route component={mainContent} >
             <Route path="overview" component={cfeiOverview} />
             <Route path="feedback" component={null} />
-            <Route path="submission" component={null} />
+            <Route path="submission" component={cfeiSubmission} />
             <Route path="results" component={null} />
             <Route path="preselected" component={openCfeiPreselected} />
             <Route path="applications" component={openCfeiApplications} />ł
@@ -55,18 +56,18 @@ const allRoutes = () => (
         <Route path="partner/:id/" component={partnerProfileHeader}>
           <Route component={mainContent} >
             <Route path="overview" component={partnerOverview} />
-            <Route path="details" component={organizationProfileOverview} />
+            <Route path="details" component={organizationProfileOverviewPaper} />
             <Route path="users" component={null} />
             <Route path="applications" component={null} />
           </Route>
         </Route>
         <Route path="applications" component={applications} />
         <Route path="profile" component={organizationProfile} />
-        <Route path="profile/:countryCode/edit" component={organizationProfileEdit} />
-        <Route path="profile/:countryCode" component={organizationProfileHeader} >
+        <Route path="profile/:id/edit" component={organizationProfileEdit} />
+        <Route path="profile/:id" component={organizationProfileHeader} >
           <IndexRedirect to="overview" />
           <Route component={mainContent} >
-            <Route path="overview" component={organizationProfileOverview} />
+            <Route path="overview" component={organizationProfileOverviewPaper} />
             <Route path="users" component={null} />
           </Route>
         </Route>

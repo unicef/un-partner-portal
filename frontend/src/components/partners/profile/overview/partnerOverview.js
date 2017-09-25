@@ -9,7 +9,7 @@ import PartnerOverviewFlag from './partnerOverviewFlag';
 
 const PartnerOverview = (props) => {
   const { partner } = props;
-  
+
   return (
 
     <Grid container direction="row">
