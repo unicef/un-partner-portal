@@ -26,7 +26,7 @@ class PartnersContainer extends Component {
     );
   }
 
-  partnerCell(row, column, style) {
+  partnerCell({ row, column }) {
     if (column.name === 'name') {
       return (<PartnerProfileNameCell
         verified={row.verified}
@@ -57,7 +57,7 @@ class PartnersContainer extends Component {
                 items={partners}
                 columns={columns}
                 expandable
-                templateCell={(row, column, style) => this.partnerCell(row, column, style)}
+                templateCell={this.partnerCell}
                 expandedCell={row => PartnersContainer.partnerDetailCell(row)}
                 onRowClick={(row) => { this.onRowClick(row); }}
                 onPageSizeChange={pageSize => console.log('Page size', pageSize)}

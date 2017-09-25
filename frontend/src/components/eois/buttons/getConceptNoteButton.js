@@ -7,19 +7,19 @@ const messages = {
   text: 'Download Concept Note',
 };
 
-const downloadConceptNoteApplication = (id) => {
-  console.log(`Download: ${id}`);
+const downloadConceptNoteApplication = (conceptNote) => {
+  window.open(conceptNote);
 };
 
 const GetConceptNoteButton = (props) => {
-  const { id, ...other } = props;
+  const { id, conceptNote, ...other } = props;
   return (
     <IconWithTooltipButton
       id={id}
       icon={<Download />}
       name="download"
       text={messages.text}
-      onClick={() => downloadConceptNoteApplication(id)}
+      onClick={() => downloadConceptNoteApplication(conceptNote)}
       {...other}
     />
   );
@@ -27,6 +27,7 @@ const GetConceptNoteButton = (props) => {
 
 GetConceptNoteButton.propTypes = {
   id: PropTypes.string,
+  conceptNote: PropTypes.string,
 };
 
 export default GetConceptNoteButton;

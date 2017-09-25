@@ -32,6 +32,11 @@ function authorizedPost(uri, body = {}) {
     .then(response => response.data);
 }
 
+function authorizedPatch(uri, body = {}) {
+  return authClient.patch(`${host}${uri}`, body)
+    .then(response => response.data);
+}
+
 function authorizedPostUpload(uri, body = {}) {
   const config = {
     headers: { 'content-type': 'multipart/form-data' },
@@ -85,6 +90,10 @@ export function getOpenCfeiDetails(id) {
   return authorizedGet(`/projects/${id}`);
 }
 
-export function getOpenCfeiApplications(id) {
-  return authorizedGet(`/projects/${id}/applications`);
+export function getOpenCfeiApplications(id, filters) {
+  return authorizedGet(`/projects/${id}/applications`, filters);
+}
+
+export function changeApplicationStatus(id, status) {
+  return authorizedPatch(`/projects/application/${id}/`, { status });
 }

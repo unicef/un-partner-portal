@@ -11,10 +11,17 @@ const styleSheet = createStyleSheet('WithGreyColor', theme => ({
       color: theme.palette.primary[900],
     },
   },
+  disabled: {
+    color: theme.palette.action.disabled,
+  },
 }));
 
-const WithGreyColor = Component => withStyles(styleSheet)(
-  ({ classes, ...props }) => <Component className={classes.grey} {...props} />,
+const WithGreyColor = disabled => Component => withStyles(styleSheet)(
+  ({ classes, ...props }) => (<Component
+    className={disabled ? classes.disabled : classes.grey}
+    disabled={disabled}
+    {...props}
+  />),
 );
 
 
