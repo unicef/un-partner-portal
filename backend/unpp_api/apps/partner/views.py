@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from common.permissions import IsAtLeastMemberEditor
@@ -10,11 +10,19 @@ from .serializers import (
     OrganizationProfileDetailsSerializer,
     PartnersListSerializer,
     PartnersListItemSerializer,
-    PartnerShortSerializer
+    PartnerShortSerializer,
+    PartnerIdentificationSerializer,
+    PartnerContactInformationSerializer,
+    PartnerProfileMandateMissionSerializer,
+    PartnerProfileFundingSerializer,
+    PartnerProfileCollaborationSerializer,
+    PartnerProfileProjectImplementationSerializer,
+    PartnerProfileOtherInfoSerializer,
 )
 from .filters import PartnersListFilter
 from .models import (
     Partner,
+    PartnerProfile,
 )
 
 class OrganizationProfileAPIView(RetrieveAPIView):
@@ -52,4 +60,56 @@ class PartnersListItemAPIView(RetrieveAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
     serializer_class = PartnersListItemSerializer
+    queryset = Partner.objects.all()
+
+
+class PartnerIdentificationAPIView(RetrieveUpdateAPIView):
+    """
+    PartnerIdentificationAPIView endpoint return specific partner profile data via serializer,
+    by given pk (PartnerProfile)
+    """
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = PartnerIdentificationSerializer
+    queryset = PartnerProfile.objects.all()
+
+
+class PartnerContactInformationAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = PartnerContactInformationSerializer
+    queryset = Partner.objects.all()
+
+
+class PartnerMandateMissionAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = PartnerProfileMandateMissionSerializer
+    queryset = Partner.objects.all()
+
+
+class PartnerFundingAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = PartnerProfileFundingSerializer
+    queryset = Partner.objects.all()
+
+
+class PartnerCollaborationAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = PartnerProfileCollaborationSerializer
+    queryset = Partner.objects.all()
+
+
+class PartnerProjectImplementationAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = PartnerProfileProjectImplementationSerializer
+    queryset = Partner.objects.all()
+
+
+class PartnerOtherInfoAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = PartnerProfileOtherInfoSerializer
     queryset = Partner.objects.all()

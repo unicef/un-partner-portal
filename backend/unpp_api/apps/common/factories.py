@@ -44,6 +44,7 @@ from .consts import (
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     EOI_TYPES,
     DIRECT_SELECTION_SOURCE,
+    BUDGET_CHOICES,
 )
 from .countries import COUNTRIES_ALPHA2_CODE
 
@@ -108,6 +109,10 @@ def get_year_of_exp():
 
 def get_donors(quantity=2):
     return [random.choice(list(PARTNER_DONORS_CHOICES._db_values)) for idx in xrange(0, quantity)]
+
+
+def get_budget_choice():
+    return random.choice(list(BUDGET_CHOICES._db_values))
 
 
 class GroupFactory(factory.django.DjangoModelFactory):
@@ -214,7 +219,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             budget, created = PartnerBudget.objects.get_or_create(
                 partner=self,
                 year=year,
-                budget=year**2
+                budget=get_budget_choice()
             )
             self.budgets.add(budget)
 
@@ -310,6 +315,28 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             partner=self,
             area=POLICY_AREA_CHOICES.asset
         )
+
+    @factory.post_generation
+    def org_head(self, create, extracted, **kwargs):
+        PartnerHeadOrganization.objects.get_or_create(
+            partner=self,
+            first_name=get_first_name(),
+            last_name=get_last_name(),
+            email="fake-partner-head-{}@unicef.org".format(self.id),
+            job_title=get_job_title(),
+            telephone="+48 22 568 03 0{}".format(self.id)
+        )
+
+    @factory.post_generation
+    def profile(self, create, extracted, **kwargs):
+        profile, created = PartnerProfile.objects.get_or_create(
+            partner=self,
+            alias_name="aliast name {}".format(self.id),
+            registration_number="reg-number {}".format(self.id),
+        )
+        if created:
+            profile.working_languages = get_country_list()
+            profile.save()
 
     class Meta:
         model = Partner
