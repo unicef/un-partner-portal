@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -7,12 +8,13 @@ import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/Button';
 import Snackbar from 'material-ui/Snackbar';
+import { formatDateForPrint } from '../../../../helpers/dates';
 import Loader from '../../../common/loader';
 import PaddedContent from '../../../common/paddedContent';
 import FileUploadButton from '../../../common/buttons/fileUploadButton';
 import ControlledModal from '../../../common/modals/controlledModal';
 import OrganizationProfileContent from './modal/organizationProfileContent';
-import { uploadPartnerConceptNote } from '../../../../reducers/conceptNote';
+import { uploadPartnerConceptNote, uploadCnclearError } from '../../../../reducers/conceptNote';
 
 const messages = {
   upload_1: 'Please make sure to use the Concept Note template provided by the UN Agency that published this CFEI.',
@@ -24,13 +26,13 @@ const messages = {
   viewProifle: 'View your profile.',
   deadline: 'Application deadline: ',
   submit: 'submit',
+  submitted: 'Submitted: ',
   close: 'close',
   dot: '.',
   editProfile: 'edit profile',
   countryProfile: 'Country Profile',
   fileError: 'Please upload your concept note before submission.',
   confirmError: 'Please confirm that your profile is up to date before submission.',
-  uploadError: 'Upload not completed, please try again.',
 };
 
 const styleSheet = createStyleSheet('HqProfile', (theme) => {
@@ -132,6 +134,7 @@ class ConceptNoteSubmission extends Component {
   }
 
   handleDialogClose() {
+    this.props.uploadCnclearError();
     this.setState({ alert: false });
   }
 
@@ -158,7 +161,7 @@ class ConceptNoteSubmission extends Component {
       <div >
         <div className={classes.alignCenter}>
           <div>
-            <FileUploadButton fieldName={'concept-note'} fileSelected={file => this.fileSelect(file)} />
+            <FileUploadButton fieldName={'concept-note'} fileSelected={file => this.fileSelect(file)} deleteDisabled={cnUploaded} />
           </div>
           {fileSelected ? null : this.upload()}
         </div>
@@ -194,7 +197,13 @@ class ConceptNoteSubmission extends Component {
             </div>
           </div>
           <div className={classes.alignRight}>
-            <Button onClick={() => this.handleSubmit()} color="accent">{messages.submit}</Button>
+            {cnUploaded
+              ? <Typography type="body1">
+                {`${messages.submitted} ${formatDateForPrint(cnUploaded.response.created)}`}
+              </Typography>
+              : <Button onClick={() => this.handleSubmit()} color="accent">
+                {messages.submit}
+              </Button>}
           </div>
         </div>
         <Snackbar
@@ -204,6 +213,16 @@ class ConceptNoteSubmission extends Component {
           }}
           open={alert}
           message={errorMsg}
+          autoHideDuration={6e3}
+          onRequestClose={this.handleDialogClose}
+        />
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={!R.isEmpty(errorUpload)}
+          message={errorUpload ? errorUpload.message || '' : ''}
           autoHideDuration={6e3}
           onRequestClose={this.handleDialogClose}
         />
@@ -234,8 +253,10 @@ ConceptNoteSubmission.propTypes = {
   classes: PropTypes.object.isRequired,
   partnerId: PropTypes.string,
   uploadConceptNote: PropTypes.func.isRequired,
+  uploadCnclearError: PropTypes.func.isRequired,
   loader: PropTypes.bool.isRequired,
-  errorUpload: PropTypes.string,
+  errorUpload: PropTypes.object,
+  cnUploaded: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -245,12 +266,12 @@ const mapStateToProps = (state, ownProps) => ({
   errorUpload: state.conceptNote.error,
 });
 
-
 const mapDispatch = (dispatch, ownProps) => {
   const { id } = ownProps.params;
 
   return {
     uploadConceptNote: file => dispatch(uploadPartnerConceptNote(id, file)),
+    uploadCnclearError: () => dispatch(uploadCnclearError()),
   };
 };
 

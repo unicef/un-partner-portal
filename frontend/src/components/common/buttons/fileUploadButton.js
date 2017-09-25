@@ -12,32 +12,30 @@ const messages = {
   upload: 'upload file',
 };
 
-const styleSheet = createStyleSheet('FileUploadButton', (theme) => {
-  return {
-    root: {
-      width: 0.1,
-      height: 0.1,
-      opacity: 0,
-      overflow: 'hidden',
-      position: 'absolute',
-      zIndex: -1,
-    },
-    iconLabel: {
-      display: 'flex',
-      alignItems: 'center',
-      minWidth: 72,
-    },
-    wrapContent: {
-      display: 'inline-block',
-    },
-    icon: {
-      marginRight: theme.spacing.unit,
-    },
-    removeIcon: {
-      fill: theme.palette.accent[300],
-    },
-  };
-});
+const styleSheet = createStyleSheet('FileUploadButton', theme => ({
+  root: {
+    width: 0.1,
+    height: 0.1,
+    opacity: 0,
+    overflow: 'hidden',
+    position: 'absolute',
+    zIndex: -1,
+  },
+  iconLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    minWidth: 72,
+  },
+  wrapContent: {
+    display: 'inline-block',
+  },
+  icon: {
+    marginRight: theme.spacing.unit,
+  },
+  removeIcon: {
+    fill: theme.palette.accent[300],
+  },
+}));
 
 class FileUploadButton extends Component {
   constructor(props) {
@@ -65,6 +63,7 @@ class FileUploadButton extends Component {
   handleRemove() {
     const { fileSelected } = this.props;
 
+    this.refInput.value = null;
     this.setState({ fileAdded: null });
     fileSelected(null);
   }
@@ -77,7 +76,7 @@ class FileUploadButton extends Component {
 
   render() {
     const { fileAdded } = this.state;
-    const { classes, fieldName } = this.props;
+    const { classes, fieldName, deleteDisabled } = this.props;
 
     return (
       <div>
@@ -102,7 +101,7 @@ class FileUploadButton extends Component {
             <Typography type="subheading" className={classes.iconLabel} gutterBottom >
               <Attachment className={classes.icon} />
               {this.renderFileName()}
-              <IconButton onClick={() => this.handleRemove()}>
+              <IconButton disabled={deleteDisabled} onClick={() => this.handleRemove()}>
                 <Close className={classes.removeIcon} />
               </IconButton>
             </Typography>
@@ -116,6 +115,11 @@ FileUploadButton.propTypes = {
   classes: PropTypes.object.isRequired,
   fieldName: PropTypes.string.isRequired,
   fileSelected: PropTypes.func.isRequired,
+  deleteDisabled: PropTypes.bool,
+};
+
+FileUploadButton.defaultProps = {
+  deleteDisabled: false,
 };
 
 export default withStyles(styleSheet)(FileUploadButton);
