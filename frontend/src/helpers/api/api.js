@@ -33,7 +33,6 @@ function authorizedPost(uri, body = {}) {
 }
 
 function authorizedPostUpload(uri, body = {}) {
-  debugger
   const config = {
     headers: { 'content-type': 'multipart/form-data' },
   };
