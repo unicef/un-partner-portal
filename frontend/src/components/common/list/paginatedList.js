@@ -55,8 +55,7 @@ class PaginatedList extends Component {
         <RowDetailState onExpandedRowsChange={this.changeExpandedDetails} />}
 
         <TableView
-          tableCellTemplate={({ row, column, style }) =>
-            templateCell(row, column, style)}
+          tableCellTemplate={templateCell}
         />
 
         <TableHeaderRow />

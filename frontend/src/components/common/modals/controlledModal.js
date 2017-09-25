@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
+import classNames from 'classnames';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Dialog, { DialogContent, DialogTitle, DialogActions } from 'material-ui/Dialog';
 import ModalContentHeader from './modalContentHeader';
@@ -14,6 +15,9 @@ const styleSheet = createStyleSheet('ContentDialog', theme => ({
     fontSize: '14px',
     background: theme.palette.primary[100],
   },
+  root: {
+    padding: '0',
+  },
 }));
 
 const messages = {
@@ -23,7 +27,7 @@ const messages = {
 
 
 const ControlledModal = (props) => {
-  const { classes, trigger, title, info, content, buttons } = props;
+  const { classes, removeContentPadding, trigger, title, info, content, buttons } = props;
   return (
     <Dialog open={trigger} >
       <DialogTitle
@@ -32,13 +36,20 @@ const ControlledModal = (props) => {
       >
         {title}
       </DialogTitle>
-      <ModalContentHeader
+
+      {info && <ModalContentHeader
         titleText={info.title}
         bodyText={info.body}
-      />
-      <DialogContent>
+      />}
+
+      <DialogContent
+        className={classNames({
+          [classes.root]: removeContentPadding,
+        })}
+      >
         {content}
       </DialogContent>
+
       <DialogActions>
         {buttons.flat && <Button onTouchTap={buttons.flat.handleClick} color="accent">
           {buttons.flat.label || messages.cancel }
@@ -51,7 +62,7 @@ const ControlledModal = (props) => {
       </DialogActions>
     </Dialog>
   );
-}
+};
 
 ControlledModal.propTypes = {
   /**
@@ -74,6 +85,11 @@ ControlledModal.propTypes = {
    * Extra info in grey section
    */
   info: PropTypes.string,
+
+  /**
+   * Wrap content in DialogContent
+   */
+  removeContentPadding: PropTypes.bool,
 
   classes: PropTypes.object.isRequired,
 };

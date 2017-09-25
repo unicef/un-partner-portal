@@ -149,6 +149,9 @@ class ApplicationsPartnerAPIView(CreateAPIView):
     def create(self, request, pk, *args, **kwargs):
         request.data['eoi'] = pk
         request.data['submitter'] = request.user.id
+        partner_member = PartnerMember.objects.filter(user=request.user).first()
+        if partner_member:
+            request.data['partner'] = partner_member.partner.id
         return super(ApplicationsPartnerAPIView, self).create(request, *args, **kwargs)
 
 
@@ -179,3 +182,8 @@ class ApplicationsListAPIView(ListAPIView):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = ApplicationsFilter
     ordering_fields = ('status', )
+    lookup_field = lookup_url_kwarg = 'pk'
+
+    def get_queryset(self, *args, **kwargs):
+        eoi_id = self.kwargs.get(self.lookup_field)
+        return Application.objects.filter(eoi_id=eoi_id)

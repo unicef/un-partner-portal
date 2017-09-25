@@ -37,6 +37,16 @@ function authorizedPatch(uri, body = {}) {
     .then(response => response.data);
 }
 
+function authorizedPostUpload(uri, body = {}) {
+  const config = {
+    headers: { 'content-type': 'multipart/form-data' },
+  };
+
+  return authClient.post(`${host}${uri}`, body, config)
+    .then(response => response.data);
+}
+
+
 // Accounts
 export function postRegistration(body) {
   return post('/accounts/registration', body);
@@ -70,6 +80,10 @@ export function getPartnerProfileDetails(partnerId) {
 
 export function postOpenCfei(body) {
   return authorizedPost('/projects/open/', body);
+}
+
+export function uploadConceptNote(projectId, body) {
+  return authorizedPostUpload(`/projects/${projectId}/partner-applications/`, body);
 }
 
 export function getOpenCfeiDetails(id) {
