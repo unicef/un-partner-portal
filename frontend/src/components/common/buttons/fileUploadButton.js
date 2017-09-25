@@ -54,12 +54,13 @@ class FileUploadButton extends Component {
     } else if (!fileAdded) {
       fileSelected(null);
     }
+
+    this.refInput.value = null;
   }
 
   handleRemove() {
     const { fileSelected } = this.props;
 
-    this.refInput.value = null;
     fileSelected(null);
   }
 
