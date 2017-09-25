@@ -2,24 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import RemovePreselection from 'material-ui-icons/Delete';
 import IconWithTooltipButton from '../../common/iconWithTooltipButton';
+import withApplicationStatusChange from '../../common/hoc/withApplicationStatusChange';
+import { APPLICATION_STATUSES } from '../../../helpers/constants';
 
 const messages = {
   text: 'Remove from preselected list',
 };
 
-const removePreselection = (id) => {
-  console.log(`Removed Preselected: ${id}`);
-};
 
 const RemovePreselectionButton = (props) => {
-  const { id, ...other } = props;
+  const { id, changeStatus, ...other } = props;
   return (
     <IconWithTooltipButton
       id={id}
       icon={<RemovePreselection />}
-      name="removePreselect"
       text={messages.text}
-      onClick={() => removePreselection(id)}
+      onClick={() => changeStatus(id)}
       {...other}
     />
   );
@@ -27,6 +25,7 @@ const RemovePreselectionButton = (props) => {
 
 RemovePreselectionButton.propTypes = {
   id: PropTypes.string,
+  changeStatus: PropTypes.func,
 };
 
-export default RemovePreselectionButton;
+export default withApplicationStatusChange(APPLICATION_STATUSES.PEN)(RemovePreselectionButton);
