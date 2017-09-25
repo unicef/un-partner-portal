@@ -14,7 +14,6 @@ RUN cp -a /tmp/node_modules /code/node_modules
 
 
 WORKDIR /code
-VOLUME /code
 
 
 EXPOSE 8080
