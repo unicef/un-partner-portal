@@ -7,6 +7,7 @@ import PreselectButton from '../buttons/preselectButton';
 import GetConceptNoteButton from '../buttons/getConceptNoteButton';
 import GridRow from '../../common/grid/gridRow';
 import WithGreyColor from '../../common/hoc/withGreyButtonStyle';
+import { APPLICATION_STATUSES } from '../../../helpers/constants';
 
 const statuses = {
   Pre: 'Preselected',
@@ -15,10 +16,10 @@ const statuses = {
 };
 
 const ApplicationStatusCell = (props) => {
-  const { id, conceptNoteId, status, hovered } = props;
-  const Preselect = WithGreyColor(PreselectButton);
-  const Reject = WithGreyColor(RejectButton);
-  const Download = WithGreyColor(GetConceptNoteButton);
+  const { id, conceptNote, status, hovered } = props;
+  const Preselect = WithGreyColor(status === APPLICATION_STATUSES.PRE)(PreselectButton);
+  const Reject = WithGreyColor(status === APPLICATION_STATUSES.REJ)(RejectButton);
+  const Download = WithGreyColor(!conceptNote)(GetConceptNoteButton);
   return (
     <TableCell>
       <GridRow align="center" >
@@ -26,9 +27,9 @@ const ApplicationStatusCell = (props) => {
           {statuses[status]}
         </Typography>
         {hovered && <GridRow gutter={0} columns={3}>
-          <Download id={conceptNoteId} />
-          <Preselect id={[id]} />
-          <Reject id={[id]} />
+          <Download id={id} conceptNote={conceptNote} />
+          <Preselect id={[id]} status={status} />
+          <Reject id={[id]} status={status} />
         </GridRow>}
       </GridRow >
     </TableCell>
@@ -37,7 +38,7 @@ const ApplicationStatusCell = (props) => {
 
 ApplicationStatusCell.propTypes = {
   id: PropTypes.string,
-  conceptNoteId: PropTypes.string,
+  conceptNote: PropTypes.string,
   status: PropTypes.string,
   hovered: PropTypes.bool,
 };

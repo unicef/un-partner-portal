@@ -22,3 +22,9 @@ export const DETAILS_ITEMS = {
   PRESELECTED: 'preselected',
   APPLICATIONS: 'applications',
 };
+
+export const APPLICATION_STATUSES = {
+  PRE: 'Pre',
+  REJ: 'Rej',
+  PEN: 'Pen',
+};

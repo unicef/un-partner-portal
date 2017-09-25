@@ -32,6 +32,11 @@ function authorizedPost(uri, body = {}) {
     .then(response => response.data);
 }
 
+function authorizedPatch(uri, body = {}) {
+  return authClient.patch(`${host}${uri}`, body)
+    .then(response => response.data);
+}
+
 // Accounts
 export function postRegistration(body) {
   return post('/accounts/registration', body);
@@ -73,4 +78,8 @@ export function getOpenCfeiDetails(id) {
 
 export function getOpenCfeiApplications(id, filters) {
   return authorizedGet(`/projects/${id}/applications`, filters);
+}
+
+export function changeApplicationStatus(id, status) {
+  return authorizedPatch(`/projects/application/${id}/`, { status });
 }

@@ -16,8 +16,8 @@ import { loadApplications } from '../../../../reducers/partnersApplicationsList'
 const HeaderActions = (props) => {
   const { rows } = props;
   const ids = rows.map(row => row.id);
-  const Preselect = WithGreyColor(PreselectButton);
-  const Reject = WithGreyColor(RejectButton);
+  const Preselect = WithGreyColor()(PreselectButton);
+  const Reject = WithGreyColor()(RejectButton);
   return (
     <GridRow gutter={0}>
       <Preselect id={ids} />
@@ -39,7 +39,7 @@ const applicationsCells = ({ row, column }) => {
     return (<ApplicationStatusCell
       id={row.id}
       status={row.status}
-      conceptNoteId={row.conceptNote}
+      conceptNote={row.cn}
       hovered={row.hovered}
     />
     );

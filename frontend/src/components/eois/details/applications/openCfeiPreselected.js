@@ -8,6 +8,7 @@ import Compare from '../../buttons/compareButton';
 import PreselectedTotalScore from '../../cells/preselectedTotalScore';
 import PreselectedYourScore from '../../cells/preselectedYourScore';
 import { loadApplications } from '../../../../reducers/partnersApplicationsList';
+import { APPLICATION_STATUSES } from '../../../../helpers/constants';
 
 /* eslint-disable react/prop-types */
 const HeaderActions = (props) => {
@@ -35,6 +36,7 @@ const applicationsCells = ({ row, column }) => {
   } else if (column.name === 'total_score') {
     return (<PreselectedTotalScore
       id={row.id}
+      conceptNote={row.cn}
       score={row.total_score}
       hovered={row.hovered}
     />);
@@ -79,7 +81,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  loadApplications: () => dispatch(loadApplications(ownProps.params.id, { status: 'Pre' })),
+  loadApplications: () => dispatch(loadApplications(
+    ownProps.params.id,
+    { status: APPLICATION_STATUSES.PRE })),
 });
 
 
