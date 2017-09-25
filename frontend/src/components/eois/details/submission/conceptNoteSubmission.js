@@ -7,6 +7,7 @@ import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/Button';
 import Snackbar from 'material-ui/Snackbar';
+import Loader from '../../../common/loader';
 import PaddedContent from '../../../common/paddedContent';
 import FileUploadButton from '../../../common/buttons/fileUploadButton';
 import ControlledModal from '../../../common/modals/controlledModal';
@@ -19,19 +20,20 @@ const messages = {
   confirm: 'I confirm that my profile is up to date',
   lastUpdate: 'Last profile update:',
   update: '12 Sep 2017',
-  notSure: '. Not sure?',
+  notSure: 'Not sure?',
   viewProifle: 'View your profile.',
   deadline: 'Application deadline: ',
   submit: 'submit',
   close: 'close',
+  dot: '.',
   editProfile: 'edit profile',
   countryProfile: 'Country Profile',
   fileError: 'Please upload your concept note before submission.',
   confirmError: 'Please confirm that your profile is up to date before submission.',
+  uploadError: 'Upload not completed, please try again.',
 };
 
 const styleSheet = createStyleSheet('HqProfile', (theme) => {
-  const paddingTiny = theme.spacing.unit / 2;
   const paddingNormal = theme.spacing.unit;
   const paddingSmall = theme.spacing.unit * 2;
   const padding = theme.spacing.unit * 3;
@@ -65,14 +67,7 @@ const styleSheet = createStyleSheet('HqProfile', (theme) => {
       textAlign: 'center',
       background: theme.palette.primary[300],
     },
-    right: {
-      textAlign: 'right',
-    },
-    labelPadding: {
-      color: theme.palette.primary[500],
-      padding: `0px ${paddingTiny}px 0px 0px`,
-    },
-    label: {
+    captionStyle: {
       color: theme.palette.primary[500],
     },
     labelUnderline: {
@@ -157,7 +152,7 @@ class ConceptNoteSubmission extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, loader, errorUpload, cnUploaded } = this.props;
     const { alert, openDialog, fileSelected, errorMsg } = this.state;
     return (
       <div >
@@ -168,12 +163,9 @@ class ConceptNoteSubmission extends Component {
           {fileSelected ? null : this.upload()}
         </div>
 
-        <div className={classes.alignRight}>
-          <Typography className={classes.labelPadding} type="caption">
-            {messages.deadline}
-          </Typography>
-          <Typography type="caption">{messages.update}</Typography>
-        </div>
+        <Typography className={classes.alignRight} type="caption">
+          {`${messages.deadline} ${messages.update}`}
+        </Typography>
         <div className={classes.checkboxContainer}>
           <div className={classes.alignVertical}>
             <Checkbox
@@ -181,20 +173,15 @@ class ConceptNoteSubmission extends Component {
                 checked: classes.checked,
                 disabled: classes.disabled,
               }}
+              disabled={cnUploaded}
               checked={this.state.confirm}
               onChange={(event, checked) => this.handleCheck(event, checked)}
             />
             <div className={classes.paddingTop}>
               <Typography type="body1">{messages.confirm}</Typography>
               <div className={classes.alignVertical}>
-                <Typography className={classes.labelPadding} type="body1">
-                  {messages.lastUpdate}
-                </Typography>
-                <Typography className={classes.label} type="body1">
-                  {messages.update}
-                </Typography>
-                <Typography className={classes.labelPadding} type="body1">
-                  {messages.notSure}
+                <Typography className={classes.captionStyle} type="body1">
+                  {`${messages.lastUpdate} ${messages.update}${messages.dot} ${messages.notSure}`}
                 </Typography>
                 <Typography
                   onClick={() => this.onDialogOpen()}
@@ -237,6 +224,7 @@ class ConceptNoteSubmission extends Component {
           removeContentPadding
           content={<OrganizationProfileContent />}
         />
+        <Loader loading={loader} fullscreen />
       </div>
     );
   }
@@ -246,10 +234,15 @@ ConceptNoteSubmission.propTypes = {
   classes: PropTypes.object.isRequired,
   partnerId: PropTypes.string,
   uploadConceptNote: PropTypes.func.isRequired,
+  loader: PropTypes.bool.isRequired,
+  errorUpload: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   partnerId: ownProps.params.id,
+  loader: state.conceptNote.loading,
+  cnUploaded: state.conceptNote.response,
+  errorUpload: state.conceptNote.error,
 });
 
 
