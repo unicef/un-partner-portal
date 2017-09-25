@@ -28,7 +28,6 @@ const messages = {
   submit: 'submit',
   submitted: 'Submitted: ',
   close: 'close',
-  dot: '.',
   editProfile: 'edit profile',
   countryProfile: 'Country Profile',
   fileError: 'Please upload your concept note before submission.',
@@ -184,7 +183,7 @@ class ConceptNoteSubmission extends Component {
               <Typography type="body1">{messages.confirm}</Typography>
               <div className={classes.alignVertical}>
                 <Typography className={classes.captionStyle} type="body1">
-                  {`${messages.lastUpdate} ${messages.update}${messages.dot} ${messages.notSure}`}
+                  {`${messages.lastUpdate} ${messages.update}. ${messages.notSure}`}
                 </Typography>
                 <Typography
                   onClick={() => this.onDialogOpen()}
