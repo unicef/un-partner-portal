@@ -28,6 +28,7 @@ from common.consts import (
     POLICY_AREA_CHOICES,
     ORG_AUDIT_CHOICES,
     AUDIT_ASSESMENT_CHOICES,
+    BUDGET_CHOICES,
 )
 
 
@@ -45,9 +46,9 @@ class Partner(TimeStampedModel):
     )
     staff_globally = models.CharField(max_length=3, choices=STAFF_GLOBALLY_CHOICES, null=True, blank=True)
     # country profile information
-    location_of_office = None
-    more_office_in_country = None
-    location_field_offices = None
+    location_of_office = models.ForeignKey('common.Point', related_name="location_of_offices", null=True, blank=True)
+    more_office_in_country = models.BooleanField(default=True)
+    location_field_offices = models.ManyToManyField('common.Point', related_name="location_field_offices")
     staff_in_country = models.CharField(max_length=3, choices=STAFF_GLOBALLY_CHOICES, null=True, blank=True)
     engagement_operate_desc = models.CharField(
         verbose_name="Briefly describe the organization's engagement with the communities in which you operate",
@@ -85,20 +86,22 @@ class PartnerProfile(TimeStampedModel):
     working_languages_other = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
     flagged = models.BooleanField(default=False)  # not sure do we need this attr
     # authorised_officials
-    have_board_directors= models.BooleanField(
+    have_board_directors = models.BooleanField(
         default=False, verbose_name="Does your organization have a board of directors?")
 
     # Registration of organization
     year_establishment = models.PositiveSmallIntegerField(
         'Year of establishment',
         help_text="Enter valid year.",
+        null=True,
+        blank=True,
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
     have_gov_doc = models.BooleanField(default=False, verbose_name='Does the organization have a government document?')
     gov_doc = models.FileField(null=True)
     registration_to_operate_in_country = models.BooleanField(default=True)
     registration_doc = models.FileField(null=True)
-    registration_date = models.DateField(auto_now_add=True)
+    registration_date = models.DateField(null=True, blank=True)
     registration_comment = models.CharField(max_length=255, null=True, blank=True)
     registration_number = models.CharField(max_length=255, null=True, blank=True)
 
@@ -391,7 +394,7 @@ class PartnerBudget(TimeStampedModel):
         help_text="Enter valid year.",
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
-    budget = models.DecimalField(decimal_places=2, max_digits=12, blank=True, null=True)
+    budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, default=BUDGET_CHOICES.less)
 
     class Meta:
         ordering = ['id']
