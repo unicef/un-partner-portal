@@ -32,6 +32,7 @@ import partnerApplicationsNav from './reducers/partnerApplicationsNav';
 import sectors, * as sectorsSelectors from './reducers/sectors';
 import partnersApplicationsList from './reducers/partnersApplicationsList';
 import partnersPreselectionList from './reducers/partnersPreselectionList';
+import selectionCriteria from './reducers/selectionCriteria';
 
 const mainReducer = combineReducers({
   cfei,
@@ -62,6 +63,7 @@ const mainReducer = combineReducers({
   sectors,
   partnersApplicationsList,
   partnersPreselectionList,
+  selectionCriteria,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -111,3 +113,7 @@ export const selectCfeiDetails = (state, id) =>
 
 export const selectCfeiTitle = (state, id) =>
   cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails.cfeiDetails, id);
+
+export const mapSelectCriteriaToSelection = state =>
+  mapValuesForSelectionField(state.selectionCriteria)
+;

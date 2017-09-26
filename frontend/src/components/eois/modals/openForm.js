@@ -27,10 +27,8 @@ const OpenForm = (props) => {
         <Typography type="headline">
           {messages.selectionCriteria}
         </Typography>
-        <FormSection name="eoi">
-          <fields.Weighting />
-          <SelectionField />
-        </FormSection>
+        <fields.Weighting />
+        <SelectionField />
       </GridColumn>
     </form >
   );
