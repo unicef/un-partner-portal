@@ -23,6 +23,7 @@ from common.consts import (
     MEMBER_ROLES,
     APPLICATION_STATUSES,
     COMPLETED_REASON,
+    EOI_TYPES,
 )
 from project.views import PinProjectAPIView
 
@@ -262,6 +263,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
+        self.assertEquals(response.data['eoi']['display_type'], EOI_TYPES.direct)
         self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
         app = Application.objects.get(pk=response.data['applications'][0]['id'])
         self.assertEquals(app.submitter, self.user)
