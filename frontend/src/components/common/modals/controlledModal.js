@@ -6,19 +6,27 @@ import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Dialog, { DialogContent, DialogTitle, DialogActions } from 'material-ui/Dialog';
 import ModalContentHeader from './modalContentHeader';
 
-const styleSheet = createStyleSheet('ContentDialog', theme => ({
-  dialogTitle: {
-    color: 'white',
-    background: theme.palette.accent[500],
-  },
-  info: {
-    fontSize: '14px',
-    background: theme.palette.primary[100],
-  },
-  root: {
-    padding: '0',
-  },
-}));
+const styleSheet = createStyleSheet('ContentDialog', (theme) => {
+  const padding = theme.spacing.unit * 4;
+
+  return {
+    dialogTitle: {
+      color: 'white',
+      background: theme.palette.accent[500],
+    },
+    info: {
+      fontSize: '14px',
+      background: theme.palette.primary[100],
+    },
+    root: {
+      padding: '0',
+    },
+    topBottom: {
+      paddingTop: `${padding}px`,
+      paddingBottom: `${padding}px`,
+    },
+  };
+});
 
 const messages = {
   cancel: 'Cancel',
@@ -27,7 +35,7 @@ const messages = {
 
 
 const ControlledModal = (props) => {
-  const { classes, removeContentPadding, trigger, title, info, content, buttons } = props;
+  const { classes, removeContentPadding, trigger, title, info, content, buttons, topBottomPadding } = props;
   return (
     <Dialog open={trigger} >
       <DialogTitle
@@ -45,6 +53,7 @@ const ControlledModal = (props) => {
       <DialogContent
         className={classNames({
           [classes.root]: removeContentPadding,
+          [classes.topBottom]: topBottomPadding,
         })}
       >
         {content}
@@ -90,6 +99,11 @@ ControlledModal.propTypes = {
    * Wrap content in DialogContent
    */
   removeContentPadding: PropTypes.bool,
+  /**
+   * Add top bottom padding for text content 
+   */
+  topBottomPadding: PropTypes.bool,
+
 
   classes: PropTypes.object.isRequired,
 };

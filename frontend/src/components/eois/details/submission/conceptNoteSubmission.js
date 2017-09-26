@@ -14,7 +14,11 @@ import PaddedContent from '../../../common/paddedContent';
 import FileUploadButton from '../../../common/buttons/fileUploadButton';
 import ControlledModal from '../../../common/modals/controlledModal';
 import OrganizationProfileContent from './modal/organizationProfileContent';
-import { uploadPartnerConceptNote, uploadCnclearError } from '../../../../reducers/conceptNote';
+import { uploadPartnerConceptNote,
+  uploadCnclearError,
+  confirmProfileUpdated,
+  selectLocalCnFile,
+  clearLocalState } from '../../../../reducers/conceptNote';
 
 const messages = {
   upload_1: 'Please make sure to use the Concept Note template provided by the UN Agency that published this CFEI.',
@@ -23,7 +27,7 @@ const messages = {
   lastUpdate: 'Last profile update:',
   update: '12 Sep 2017',
   notSure: 'Not sure?',
-  viewProifle: 'View your profile.',
+  viewProfile: 'View your profile.',
   deadline: 'Application deadline: ',
   submit: 'submit',
   submitted: 'Submitted: ',
@@ -89,7 +93,10 @@ class ConceptNoteSubmission extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { fileSelected: null, confirm: false, errorMsg: null, alert: false, openDialog: false };
+    this.state = {
+      errorMsg: null,
+      alert: false,
+      openDialog: false };
     this.fileSelect = this.fileSelect.bind(this);
     this.handleCheck = this.handleCheck.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
@@ -97,6 +104,10 @@ class ConceptNoteSubmission extends Component {
     this.onDialogClose = this.onDialogClose.bind(this);
     this.onDialogOpen = this.onDialogOpen.bind(this);
     this.onDialogEdit = this.onDialogEdit.bind(this);
+  }
+
+  componentWillUnmount() {
+    this.props.uploadCnClearState();
   }
 
   onDialogClose() {
@@ -114,11 +125,11 @@ class ConceptNoteSubmission extends Component {
   }
 
   handleCheck(event, checked) {
-    this.setState({ confirm: checked });
+    this.props.uploadConfirmProfile(checked);
   }
 
   fileSelect(file) {
-    this.setState({ fileSelected: file });
+    this.props.uploadSelectedLocalFile(file);
   }
 
   upload() {
@@ -138,33 +149,46 @@ class ConceptNoteSubmission extends Component {
   }
 
   handleSubmit() {
-    const { confirm, fileSelected } = this.state;
+    const { confirmProfile, fileSelectedLocal } = this.props;
 
-    if (!fileSelected) {
+    if (!fileSelectedLocal) {
       this.setState({ errorMsg: messages.fileError });
       this.setState({ alert: true });
-    } else if (!confirm) {
+    } else if (!confirmProfile) {
       this.setState({ errorMsg: messages.confirmError });
       this.setState({ alert: true });
     }
 
-    if (fileSelected && confirm) {
-      this.props.uploadConceptNote(this.state.fileSelected);
+    if (fileSelectedLocal && confirmProfile) {
+      this.props.uploadConceptNote();
     }
   }
 
+  fileName() {
+    const { cnUploaded, fileSelectedLocal } = this.props;
+
+    if (cnUploaded) {
+      return cnUploaded.cn.split('/').pop();
+    } else if (fileSelectedLocal) {
+      return fileSelectedLocal.name;
+    }
+
+    return null;
+  }
+
   render() {
-    const { classes, loader, errorUpload, cnUploaded } = this.props;
-    const { alert, openDialog, fileSelected, errorMsg } = this.state;
+    const { classes, loader, errorUpload,
+      cnUploaded, confirmProfile, fileSelectedLocal } = this.props;
+
+    const { alert, openDialog, errorMsg } = this.state;
     return (
       <div >
         <div className={classes.alignCenter}>
           <div>
-            <FileUploadButton fieldName={'concept-note'} fileSelected={file => this.fileSelect(file)} deleteDisabled={cnUploaded} />
+            <FileUploadButton fileAdded={this.fileName()} fieldName={'concept-note'} fileSelected={file => this.fileSelect(file)} deleteDisabled={cnUploaded} />
           </div>
-          {fileSelected ? null : this.upload()}
+          {fileSelectedLocal || cnUploaded ? null : this.upload()}
         </div>
-
         <Typography className={classes.alignRight} type="caption">
           {`${messages.deadline} ${messages.update}`}
         </Typography>
@@ -176,21 +200,22 @@ class ConceptNoteSubmission extends Component {
                 disabled: classes.disabled,
               }}
               disabled={cnUploaded}
-              checked={this.state.confirm}
+              checked={confirmProfile}
               onChange={(event, checked) => this.handleCheck(event, checked)}
             />
             <div className={classes.paddingTop}>
               <Typography type="body1">{messages.confirm}</Typography>
               <div className={classes.alignVertical}>
                 <Typography className={classes.captionStyle} type="body1">
-                  {`${messages.lastUpdate} ${messages.update}. ${messages.notSure}`}
+                  {`${messages.lastUpdate} ${messages.update}. ${messages.notSure} `}
                 </Typography>
+                &nbsp;
                 <Typography
                   onClick={() => this.onDialogOpen()}
                   className={classes.labelUnderline}
                   type="body1"
                 >
-                  {messages.viewProifle}
+                  {messages.viewProfile}
                 </Typography>
               </div>
             </div>
@@ -198,7 +223,7 @@ class ConceptNoteSubmission extends Component {
           <div className={classes.alignRight}>
             {cnUploaded
               ? <Typography type="body1">
-                {`${messages.submitted} ${formatDateForPrint(cnUploaded.response.created)}`}
+                {`${messages.submitted} ${formatDateForPrint(cnUploaded.created)}`}
               </Typography>
               : <Button onClick={() => this.handleSubmit()} color="accent">
                 {messages.submit}
@@ -253,16 +278,23 @@ ConceptNoteSubmission.propTypes = {
   partnerId: PropTypes.string,
   uploadConceptNote: PropTypes.func.isRequired,
   uploadCnclearError: PropTypes.func.isRequired,
+  uploadConfirmProfile: PropTypes.func.isRequired,
+  uploadSelectedLocalFile: PropTypes.func.isRequired,
+  uploadCnClearState: PropTypes.func.isRequired,
   loader: PropTypes.bool.isRequired,
   errorUpload: PropTypes.object,
   cnUploaded: PropTypes.object,
+  fileSelectedLocal: PropTypes.object,
+  confirmProfile: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   partnerId: ownProps.params.id,
   loader: state.conceptNote.loading,
-  cnUploaded: state.conceptNote.response,
+  cnUploaded: state.conceptNote.cnFile,
   errorUpload: state.conceptNote.error,
+  confirmProfile: state.conceptNote.confirmProfileUpdated,
+  fileSelectedLocal: state.conceptNote.fileSelectedLocal,
 });
 
 const mapDispatch = (dispatch, ownProps) => {
@@ -271,6 +303,9 @@ const mapDispatch = (dispatch, ownProps) => {
   return {
     uploadConceptNote: file => dispatch(uploadPartnerConceptNote(id, file)),
     uploadCnclearError: () => dispatch(uploadCnclearError()),
+    uploadCnClearState: () => dispatch(clearLocalState()),
+    uploadConfirmProfile: confirmation => dispatch(confirmProfileUpdated(confirmation)),
+    uploadSelectedLocalFile: file => dispatch(selectLocalCnFile(file)),
   };
 };
 

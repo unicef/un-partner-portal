@@ -41,42 +41,31 @@ class FileUploadButton extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { fileAdded: null };
     this.handleChange = this.handleChange.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
   }
 
   handleChange() {
-    const { fileAdded } = this.state;
-    const { fileSelected } = this.props;
+    const { fileSelected, fileAdded } = this.props;
     const [file] = this.refInput.files;
 
     if (file) {
       fileSelected(file);
-      this.setState({ fileAdded: file });
     } else if (!fileAdded) {
       fileSelected(null);
-      this.setState({ fileAdded: null });
     }
+
+    this.refInput.value = null;
   }
 
   handleRemove() {
     const { fileSelected } = this.props;
 
-    this.refInput.value = null;
-    this.setState({ fileAdded: null });
     fileSelected(null);
   }
 
-  renderFileName() {
-    const { fileAdded } = this.state;
-
-    return fileAdded ? fileAdded.name : null;
-  }
-
   render() {
-    const { fileAdded } = this.state;
-    const { classes, fieldName, deleteDisabled } = this.props;
+    const { classes, fieldName, deleteDisabled, fileAdded } = this.props;
 
     return (
       <div>
@@ -100,10 +89,10 @@ class FileUploadButton extends Component {
           <div className={classes.wrapContent}>
             <Typography type="subheading" className={classes.iconLabel} gutterBottom >
               <Attachment className={classes.icon} />
-              {this.renderFileName()}
-              <IconButton disabled={deleteDisabled} onClick={() => this.handleRemove()}>
+              {fileAdded}
+              {!deleteDisabled && <IconButton onClick={() => this.handleRemove()}>
                 <Close className={classes.removeIcon} />
-              </IconButton>
+              </IconButton>}
             </Typography>
           </div>}
       </div>
@@ -115,6 +104,7 @@ FileUploadButton.propTypes = {
   classes: PropTypes.object.isRequired,
   fieldName: PropTypes.string.isRequired,
   fileSelected: PropTypes.func.isRequired,
+  fileAdded: PropTypes.object,
   deleteDisabled: PropTypes.bool,
 };
 

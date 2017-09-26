@@ -11,15 +11,34 @@ export const UPLOAD_CN_STARTED = 'UPLOAD_CN_STARTED';
 export const UPLOAD_CN_SUCCESS = 'UPLOAD_CN_SUCCESS';
 export const UPLOAD_CN_FAILURE = 'UPLOAD_CN_FAILURE';
 export const UPLOAD_CN_ENDED = 'UPLOAD_CN_ENDED';
+export const UPLOAD_CN_DELETE = 'UPLOAD_CN_DELETE';
+export const UPLOAD_CN_CONFIRM = 'UPLOAD_CN_CONFIRM';
 export const UPLOAD_CN_CLEAR_ERROR = 'UPLOAD_CN_CLEAR_ERROR';
+export const UPLOAD_CN_CLEAR = 'UPLOAD_CN_CLEAR';
+export const UPLOAD_CN_LOCAL_FILE = 'UPLOAD_CN_LOCAL_FILE';
 
 export const uploadCnStarted = () => ({ type: UPLOAD_CN_STARTED });
 export const uploadCnSuccess = response => ({ type: UPLOAD_CN_SUCCESS, response });
 export const uploadCnFailure = error => ({ type: UPLOAD_CN_FAILURE, error });
 export const uploadCnEnded = () => ({ type: UPLOAD_CN_ENDED });
 export const uploadCnclearError = () => ({ type: UPLOAD_CN_CLEAR_ERROR });
+export const deleteCn = () => ({ type: UPLOAD_CN_DELETE });
+export const clearLocalState = () => ({ type: UPLOAD_CN_CLEAR });
+export const selectLocalCnFile = file => ({ type: UPLOAD_CN_LOCAL_FILE, file });
+export const confirmProfileUpdated = confirmation => ({ type: UPLOAD_CN_CONFIRM, confirmation });
 
-const saveReponse = (state, response) => R.assoc('response', response, state);
+const saveReponse = (state, action) => R.assoc('cnFile', action.response, state);
+
+const confirmProfile = (state, action) => R.assoc('confirmProfileUpdated', action.confirmation, state);
+
+const selectFileLocal = (state, action) => R.assoc('fileSelectedLocal', action.file, state);
+
+const clearConceptNoteState = (state) => {
+  const clearCnFile = R.assoc('cnFile', null, state);
+  const clearConfirm = R.assoc('confirmProfileUpdated', false, clearCnFile);
+  const clearLocalFile = R.assoc('fileSelectedLocal', false, clearConfirm);
+  return R.assoc('cnFile', false, clearLocalFile);
+};
 
 const messages = {
   uploadFailed: 'Uploaded concept note failed, please try again.',
@@ -27,13 +46,15 @@ const messages = {
 
 const initialState = {
   loading: false,
-  response: null,
+  cnFile: null,
+  confirmProfileUpdated: false,
+  fileSelectedLocal: null,
   error: { },
 };
 
-export const uploadPartnerConceptNote = (projectId, cn) => (dispatch) => {
+export const uploadPartnerConceptNote = projectId => (dispatch, getState) => {
   const formData = new FormData();
-  formData.append('cn', cn);
+  formData.append('cn', getState().conceptNote.fileSelectedLocal);
 
   dispatch(uploadCnStarted());
 
@@ -41,6 +62,7 @@ export const uploadPartnerConceptNote = (projectId, cn) => (dispatch) => {
     .then((response) => {
       dispatch(uploadCnSuccess(response));
       dispatch(uploadCnEnded());
+      dispatch(selectLocalCnFile(null));
     })
     .catch((error) => {
       dispatch(uploadCnFailure(error));
@@ -65,6 +87,18 @@ export default function conceptNoteReducer(state = initialState, action) {
     }
     case UPLOAD_CN_CLEAR_ERROR: {
       return clearError(state);
+    }
+    case UPLOAD_CN_DELETE: {
+      return clearConceptNoteState(state);
+    }
+    case UPLOAD_CN_CONFIRM: {
+      return confirmProfile(state, action);
+    }
+    case UPLOAD_CN_LOCAL_FILE: {
+      return selectFileLocal(state, action);
+    }
+    case UPLOAD_CN_CLEAR: {
+      return clearConceptNoteState(state);
     }
     default:
       return state;
