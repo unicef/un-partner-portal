@@ -1,54 +1,65 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Grid from 'material-ui/Grid';
 import ArrayForm from '../../../arrayForm';
 import SelectForm from '../../../selectForm';
 import { mapSectorsToSelection } from '../../../../../store';
+import CriteriaField from './criteriaField';
 import AreaField from './areaField';
+import TextFieldForm from '../../../textFieldForm';
 
-messages = {
+
+const messages = {
   labels: {
-    description: 'Description'
-  }
-}
-
-const Sector = (readOnly, ...props) => (member, index, fields) => {
-  const chosenSectors = fields.getAll().map(field => field.sector);
-  const ownSector = fields.get(index).sector;
-  const newValues = values.filter(value =>
-    (ownSector === value.value) || !(chosenSectors.includes(value.value)));
-  return (<SelectForm
-    nameame={member}
-    fields={fields}
-    index={index}
-
-    values={newValues}
-    readOnly={readOnly}
-    {...props}
-  />
-  );
+    description: 'Description',
+    weight: 'Weight',
+  },
 };
 
-const Area = (readOnly, ...props) => (member, index, fields) => (
-  <div>
-    <TextFieldForm
-  label="Brief background of the project"
-  fieldName="description"
-  multiline
-  textFieldProps={{
-    multiline: true,
-    inputProps: {
-      maxLength: '200',
-    },
-  }}
+const Sector = (readOnly, ...props) => (member, index, fields) => (<CriteriaField
+  name={member}
+  fields={fields}
+  index={index}
+  readOnly={readOnly}
   {...props}
-  <AreaField
-    name={member}
-    disabled={!fields.get(index).sector}
-    sectorId={fields.get(index).sector}
-    readOnly={readOnly}
-    {...props}
-  />
+/>
+);
+
+const Area = (readOnly, ...props) => (member, index, fields) => (
+  <Grid container>
+    <Grid item xs={12}>
+      <TextFieldForm
+        label={messages.labels.description}
+        fieldName={`${member}.description`}
+        disabled={!fields.get(index).display_type}
+        optional
+        textFieldProps={{
+          multiline: true,
+          inputProps: {
+            maxLength: '200',
+          },
+          disabled: !fields.get(index).display_type,
+        }}
+        {...props}
+      />
+    </Grid>
+    <Grid item xs={12} sm={4}>
+      <TextFieldForm
+        label={messages.labels.weight}
+        fieldName={`${member}.weight`}
+        textFieldProps={{
+          inputProps: {
+            type: 'number',
+            min: '1',
+            max: '100',
+          },
+          disabled: !fields.get(index).display_type,
+        }}
+        {...props}
+      />
+    </Grid>
+  </Grid>
 
 );
 
@@ -57,9 +68,9 @@ const SelectionFieldArray = (props) => {
   const { sectors, readOnly, ...other } = props;
   return (
     <ArrayForm
-      label="Sectors and specialization"
-      limit={sectors.length}
-      fieldName="specializations"
+      label=""
+      limit={13}
+      fieldName="assesment_criteria"
       initial
       readOnly={readOnly}
       {...other}

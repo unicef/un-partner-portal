@@ -37,9 +37,6 @@ const CriteriaField = (props) => {
       fieldName={`${name}.display_type`}
       label={messages.label}
       values={newValues}
-      selectFieldProps={{
-        multiple: true,
-      }}
       {...other}
     />
   );
