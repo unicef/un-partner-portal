@@ -10,7 +10,7 @@ import Typography from 'material-ui/Typography';
 import { CircularProgress } from 'material-ui';
 
 const table = {
-  allowedPageSizes: [5, 10, 15, 0],
+  allowedPageSizes: [5, 10, 15],
 };
 
 const styleSheet = createStyleSheet('paginatedList', (theme) => {
@@ -100,8 +100,8 @@ class PaginatedList extends Component {
   navigationHeader() {
     const { classes, itemsCount, pageSize, pageNumber } = this.props;
 
-    const firstRange = (pageSize * pageNumber) + 1;
-    const secondTmp = (pageSize * (pageNumber + 1));
+    const firstRange = (pageSize * (pageNumber - 1)) + 1;
+    const secondTmp = (pageSize * (pageNumber));
 
     const secondRange = secondTmp > itemsCount ? itemsCount : secondTmp;
 

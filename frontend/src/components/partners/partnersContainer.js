@@ -18,11 +18,7 @@ const messages = {
   header: 'Partners',
 };
 
-class PartnersContainer extends Component {
-  componentWillMount() {
-    this.props.loadPartners({ page: 1, page_size: 10 });
-  }
-
+class PartnersContainer extends Component { 
   shouldComponentUpdate(nextProps, nextState) {
     const { query } = this.props;
 
