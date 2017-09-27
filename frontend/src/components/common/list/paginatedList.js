@@ -121,7 +121,7 @@ class PaginatedList extends Component {
           headerPlaceholderTemplate={() => this.navigationHeader()}
         >
           <PagingState
-            currentPage={pageNumber}
+            currentPage={pageNumber - 1}
             pageSize={pageSize}
             onPageSizeChange={(size) => { this.onPageSize(size); }}
             onCurrentPageChange={(page) => { this.onPageChange(page); }}
