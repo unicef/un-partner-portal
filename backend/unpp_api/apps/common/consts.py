@@ -237,3 +237,8 @@ BUDGET_CHOICES = Choices(
     ('01m', '_1m', "$100,000,001 to $1,000,000,000"),
     ('Mor', 'more', "More than $1,000,000,000"),
 )
+
+FLAG_TYPES = Choices(
+    ('YLW', 'yellow', 'Yellow Flag'),
+    ('RED', 'red', 'Red Flag'),
+)
