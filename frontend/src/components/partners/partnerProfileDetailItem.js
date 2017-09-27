@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import ItemColumnCell from '../common/cell/itemColumnCell';
 import ItemDynamicCell from '../common/cell/itemDynamicCell';
+import PaddedContent from '../common/paddedContent';
 
 const messages = {
   mailing: 'Organization\'s mailing Address',
@@ -17,6 +18,7 @@ const messages = {
   education: 'Education',
   food: 'Food Security',
   health: 'Health',
+  no_data: 'NO DATA',
 };
 
 const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
@@ -27,6 +29,9 @@ const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
     alignCenter: {
       display: 'flex',
       alignItems: 'center',
+    },
+    alignText: {
+      textAlign: 'center',
     },
     row: {
       display: 'flex',
@@ -50,8 +55,9 @@ const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
 
 const PartnerProfileDetailItem = (props) => {
   const { classes, partner } = props;
-  return (
-    <Grid className={classes.container} container direction="column" spacing={0}>
+
+  if (partner) {
+    return (<Grid className={classes.container} container direction="column" spacing={0}>
       <Grid item>
         <Grid container>
           <Grid xs={4} item>
@@ -92,13 +98,17 @@ const PartnerProfileDetailItem = (props) => {
           </Grid>
         </Grid>
       </Grid>
-    </Grid>
-  );
+    </Grid>);
+  }
+
+  return (<PaddedContent big>
+    <div className={classes.alignText}>{messages.no_data}</div>
+  </PaddedContent>);
 };
 
 PartnerProfileDetailItem.propTypes = {
   classes: PropTypes.object.isRequired,
-  partner: PropTypes.object.isRequired,
+  partner: PropTypes.object,
 };
 
 export default withStyles(styleSheet)(PartnerProfileDetailItem);

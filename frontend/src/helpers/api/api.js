@@ -82,6 +82,10 @@ export function postOpenCfei(body) {
   return authorizedPost('/projects/open/', body);
 }
 
+export function getPartnersList(params) {
+  return authorizedGet('/partners', params);
+}
+
 export function uploadConceptNote(projectId, body) {
   return authorizedPostUpload(`/projects/${projectId}/partner-applications/`, body);
 }
