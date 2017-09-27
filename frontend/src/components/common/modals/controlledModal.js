@@ -12,7 +12,7 @@ const styleSheet = (theme) => {
   return {
     dialogTitle: {
       color: 'white',
-      background: theme.palette.accent[500],
+      background: theme.palette.secondary[500],
     },
     info: {
       fontSize: '14px',

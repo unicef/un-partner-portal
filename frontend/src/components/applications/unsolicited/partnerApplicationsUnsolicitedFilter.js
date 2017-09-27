@@ -157,7 +157,6 @@ const PartnerApplicationsUnsolicitedFilter = (props) => {
           <Grid item sm={6} xs={12}>
             <div className={classes.button}>
               <Button
-
                 color="accent"
                 onTouchTap={reset}
               >

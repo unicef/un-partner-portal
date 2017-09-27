@@ -22,7 +22,7 @@ const ItemRowCell = (props) => {
   const { label, content, alignRight, classes } = props;
   return (
     <div className={classes.row}>
-      <Typography className={alignRight && classes.alignRight} type="body1" color="secondary">
+      <Typography className={alignRight && classes.alignRight} type="body1" color="accent">
         {label}
       </Typography>
       <div className={classes.padding}>

@@ -33,7 +33,7 @@ const styleSheet = theme => ({
     marginRight: theme.spacing.unit,
   },
   removeIcon: {
-    fill: theme.palette.accent[300],
+    fill: theme.palette.secondary[300],
   },
 });
 

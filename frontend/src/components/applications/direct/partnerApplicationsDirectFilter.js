@@ -109,7 +109,6 @@ const PartnerApplicationsDirectFilter = (props) => {
           <Grid item sm={3} xs={12}>
             <div className={classes.button}>
               <Button
-
                 color="accent"
                 onTouchTap={reset}
               >

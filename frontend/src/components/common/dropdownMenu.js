@@ -12,7 +12,7 @@ const styleSheet = theme => ({
     padding: 0,
     color: 'black',
     '&:hover': {
-      color: theme.palette.accent[500],
+      color: theme.palette.secondary[500],
     },
   },
 });

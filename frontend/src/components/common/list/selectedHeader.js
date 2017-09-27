@@ -15,7 +15,7 @@ const messages = {
 const styleSheet = theme => ({
   root: {
     color: 'white',
-    backgroundColor: theme.palette.accent[500],
+    backgroundColor: theme.palette.secondary[500],
   },
 });
 

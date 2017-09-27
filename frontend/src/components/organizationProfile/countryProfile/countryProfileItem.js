@@ -17,10 +17,10 @@ const styleSheet = (theme) => {
       padding: 0,
     },
     checked: {
-      color: theme.palette.accent[500],
+      color: theme.palette.secondary[500],
     },
     disabled: {
-      color: theme.palette.accent[200],
+      color: theme.palette.secondary[200],
     },
   };
 };

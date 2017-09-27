@@ -29,11 +29,11 @@ const styleSheet = theme => ({
   button: {
     '&:hover': {
       backgroundColor: theme.palette.primary[200],
-      color: theme.palette.accent[500],
+      color: theme.palette.secondary[500],
     },
     '&.active': {
       backgroundColor: theme.palette.primary[200],
-      color: theme.palette.accent[500],
+      color: theme.palette.secondary[500],
     },
   },
 });

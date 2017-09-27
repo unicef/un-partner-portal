@@ -11,7 +11,7 @@ export const styleSheet = theme => ({
     display: 'block',
   },
   checkIcon: {
-    fill: theme.palette.accent[500],
+    fill: theme.palette.secondary[500],
   },
 });
 

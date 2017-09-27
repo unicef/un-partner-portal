@@ -25,7 +25,7 @@ const styleSheet = theme => ({
   leftHeader: {
     display: 'flex',
     justifyContent: 'center',
-    backgroundColor: theme.palette.accent[500],
+    backgroundColor: theme.palette.secondary[500],
   },
   rightHeader: {
     // dark blue color added as extra to regular palette

@@ -19,7 +19,7 @@ const styleSheet = theme => ({
   },
   highlight: {
     color: 'white',
-    backgroundColor: theme.palette.accent[500],
+    backgroundColor: theme.palette.secondary[500],
   },
   spacer: {
     flex: '1 1 100%',

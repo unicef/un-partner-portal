@@ -15,7 +15,7 @@ const styleSheet = theme => ({
   },
   header: {
     color: theme.palette.primary[400],
-    backgroundColor: theme.palette.accent[500],
+    backgroundColor: theme.palette.secondary[500],
   },
 });
 

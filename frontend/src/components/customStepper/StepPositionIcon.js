@@ -10,11 +10,11 @@ export const styleSheet = theme => ({
     display: 'block',
   },
   text: {
-    fill: theme.palette.getContrastText(theme.palette.accent[500]),
+    fill: theme.palette.getContrastText(theme.palette.secondary[500]),
     fontSize: theme.typography.caption.fontSize,
   },
   active: {
-    fill: theme.palette.accent[500],
+    fill: theme.palette.secondary[500],
   },
 });
 

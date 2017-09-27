@@ -72,7 +72,7 @@ const styleSheet = theme => ({
     flexDirection: 'row',
   },
   checkedRadio: {
-    color: theme.palette.accent[500],
+    color: theme.palette.secondary[500],
   },
 });
 

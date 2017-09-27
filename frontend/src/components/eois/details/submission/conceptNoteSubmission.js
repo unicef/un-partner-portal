@@ -81,10 +81,10 @@ const styleSheet = (theme) => {
       color: theme.palette.primary[500],
     },
     checked: {
-      color: theme.palette.accent[500],
+      color: theme.palette.secondary[500],
     },
     disabled: {
-      color: theme.palette.accent[200],
+      color: theme.palette.secondary[200],
     },
   };
 };

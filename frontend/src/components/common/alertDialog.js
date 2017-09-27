@@ -14,7 +14,7 @@ import Dialog, {
 const styleSheet = theme => ({
   dialogTitle: {
     color: 'white',
-    background: theme.palette.accent[500],
+    background: theme.palette.secondary[500],
   },
 });
 

@@ -10,10 +10,10 @@ import { withStyles } from 'material-ui/styles';
 
 const styleSheet = theme => ({
   rootPrimarySelected: {
-    color: theme.palette.accent[500],
+    color: theme.palette.secondary[500],
   },
   rootInheritSelected: {
-    color: theme.palette.accent[500],
+    color: theme.palette.secondary[500],
   },
   label: {
     display: 'flex',
