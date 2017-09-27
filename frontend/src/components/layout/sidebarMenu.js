@@ -66,7 +66,7 @@ function sidebarMenu(props) {
   });
 
   return (
-    <Grid className={classes.sidebar} container gutter={0}>
+    <Grid className={classes.sidebar} container spacing={0}>
       <List>
         {links}
       </List>

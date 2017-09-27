@@ -40,7 +40,7 @@ const EoiStatusCell = (props) => {
   const { classes, id } = props;
   const colorClass = classNames(classes[id]);
   return (
-    <Grid container direction="row" align="center" wrap="nowrap" gutter={8}>
+    <Grid container direction="row" align="center" wrap="nowrap" spacing={8}>
       <Grid item >
         <SvgIcon className={colorClass}>
           <circle cx="12" cy="12" r="8" />

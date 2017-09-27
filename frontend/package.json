@@ -28,7 +28,7 @@
     "fs-extra": "3.0.1",
     "html-webpack-plugin": "2.29.0",
     "jest": "20.0.4",
-    "material-ui": "v1.0.0-beta.3",
+    "material-ui": "v1.0.0-beta.4",
     "material-ui-icons": "^1.0.0-alpha.19",
     "material-ui-old": "npm:material-ui",
     "moment": "^2.18.1",

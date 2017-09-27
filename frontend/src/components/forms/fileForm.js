@@ -97,7 +97,7 @@ class FileForm extends Component {
               <label className={classes.iconLabel} htmlFor={`${fieldName}-input`}>
                 {fileAdded
                   ? (
-                    <Typography className={[classes.iconLabel, classes.FileNameField]} gutterBottom >
+                    <Typography className={[classes.iconLabel, classes.FileNameField]} spacingBottom >
                       <Attachment className={classes.icon} />
                       {this.renderFileName(fieldName)}
                     </Typography>)

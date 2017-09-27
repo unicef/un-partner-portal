@@ -40,7 +40,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
 
   return (
     <FormSection name="audit">
-      <Grid container direction="column" gutter={16}>
+      <Grid container direction="column" spacing={16}>
         <Grid item>
           <RadioForm
             fieldName="regular_audited"
@@ -131,7 +131,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
         </Grid>
         {hadCapacityAssessment ?
           <Grid item>
-            <Grid container direction="column" gutter={16}>
+            <Grid container direction="column" spacing={16}>
               <Grid item>
                 <TextFieldForm
                   label="Please indicate which assessment(s)"

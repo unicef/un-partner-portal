@@ -84,7 +84,7 @@ const mainLayout = (props) => {
   const classes = props.classes;
   return (
     <Grid item >
-      <Grid container gutter={0} className={classes.root}>
+      <Grid container spacing={0} className={classes.root}>
         <Grid item sm={2} hidden={{ xsDown: true }}>
           <AppBar
             className={`${classes.header} ${classes.leftHeader}`}
@@ -106,7 +106,7 @@ const mainLayout = (props) => {
               container
               direction="row"
               justify="flex-end"
-              gutter={0}
+              spacing={0}
             >
               <Button onClick={() => onRoleSwitch()} raised color="accent">{switchToRole()}</Button>
               <Badge

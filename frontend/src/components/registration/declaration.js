@@ -68,7 +68,7 @@ const Declaration = (props) => {
   const { classes } = props;
   return (
     <Grid item xs={12}>
-      <Grid container direction="column" gutter={16}>
+      <Grid container direction="column" spacing={16}>
         <Grid className={classes.headerContainer} item>
           <Typography type="body2">{messages.header}</Typography>
         </Grid>

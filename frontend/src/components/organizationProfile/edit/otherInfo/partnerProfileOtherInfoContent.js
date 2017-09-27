@@ -19,7 +19,7 @@ const PartnerProfileOtherInfoContent = (props) => {
 
   return (
     <FormSection name="info">
-      <Grid container direction="column" gutter={8}>
+      <Grid container direction="column" spacing={8}>
         <Grid item>
           <TextFieldForm
             label="Other information the organization may wish to share? (optional)"

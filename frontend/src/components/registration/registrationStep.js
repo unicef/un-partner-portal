@@ -21,7 +21,7 @@ const RegistrationStep = (props) => {
           React.cloneElement(child, { reset }),
         )}
         <Grid item xs={12}>
-          <Grid container direction="row" gutter={8}>
+          <Grid container direction="row" spacing={8}>
             <Grid item>
               <Button
                 color="accent"

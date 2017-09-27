@@ -42,7 +42,7 @@ class partnerProfileStepper extends Component {
 
         {!readOnly ?
           <Grid item>
-            <Grid container direction="row" gutter={8}>
+            <Grid container direction="row" spacing={8}>
               {!last && <Grid item>
                 <Button
                   color="accent"

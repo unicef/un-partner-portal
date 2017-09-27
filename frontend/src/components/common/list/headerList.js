@@ -31,7 +31,7 @@ class HeaderList extends Component {
     const { classes, header } = this.props;
     return (
       <Paper>
-        <Grid direction="column" className={classes.container} container gutter={0}>
+        <Grid direction="column" className={classes.container} container spacing={0}>
           <Grid className={classes.header} item>
             {(typeof header === 'function')
               ? React.createElement(header)
