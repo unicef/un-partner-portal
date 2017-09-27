@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import AppBar from 'material-ui/AppBar';
 import Button from 'material-ui/Button';
@@ -18,7 +18,7 @@ const label = {
 };
 
 // TODO check what can be done in muiTheme
-const styleSheet = createStyleSheet('mainLayout', theme => ({
+const styleSheet = theme => ({
   root: {
     margin: 'auto',
   },
@@ -53,7 +53,7 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
   headerIcon: {
     fill: theme.palette.primary[400],
   },
-}));
+});
 
 
 //Remove when sesion controlled by auth user
@@ -144,4 +144,4 @@ mainLayout.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default withStyles(styleSheet)(mainLayout);
+export default withStyles(styleSheet, { name: 'mainLayout' })(mainLayout);

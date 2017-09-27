@@ -5,10 +5,10 @@ import Icon from 'material-ui/Icon';
 import { Tab } from 'material-ui/Tabs';
 import ReportProblemIcon from 'material-ui-icons/ReportProblem';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
 
-const styleSheet = createStyleSheet('MainContentWrapper', theme => ({
+const styleSheet = theme => ({
   rootPrimarySelected: {
     color: theme.palette.accent[500],
   },
@@ -24,7 +24,7 @@ const styleSheet = createStyleSheet('MainContentWrapper', theme => ({
       fontSize: theme.typography.fontSize - 1,
     },
   },
-}));
+});
 
 const CustomTab = (props) => {
   const { classes, warn, label, ...tabProps } = props;
@@ -52,4 +52,4 @@ CustomTab.propTypes = {
 };
 
 
-export default withStyles(styleSheet)(CustomTab);
+export default withStyles(styleSheet, { name: 'CustomTab' })(CustomTab);

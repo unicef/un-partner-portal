@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
@@ -56,7 +56,7 @@ const messages = {
   alertTitle: 'Warning',
 };
 
-const styleSheet = createStyleSheet('OrganizationTypes', theme => ({
+const styleSheet = theme => ({
   info: {
     color: theme.palette.primary[500],
     background: theme.palette.primary[300],
@@ -74,7 +74,7 @@ const styleSheet = createStyleSheet('OrganizationTypes', theme => ({
   checkedRadio: {
     color: theme.palette.accent[500],
   },
-}));
+});
 
 const RADIO_VALUES = [
   {
@@ -176,4 +176,4 @@ const connectedOrganizationTypes = connect(
   }),
 )(OrganizationTypes);
 
-export default withStyles(styleSheet)(connectedOrganizationTypes);
+export default withStyles(styleSheet, { name: 'OrganizationTypes' })(connectedOrganizationTypes);

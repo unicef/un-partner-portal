@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 
@@ -66,7 +66,7 @@ const COUNTRY_MENU = [
   },
 ];
 
-const styleSheet = createStyleSheet('PartnerFilter', theme => ({
+const styleSheet = theme => ({
   filterContainer: {
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px`,
     background: '#F6F6F6',
@@ -75,7 +75,7 @@ const styleSheet = createStyleSheet('PartnerFilter', theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
-}));
+});
 
 const handleSubmit = (values) => {
 
@@ -167,4 +167,4 @@ const formPartnerFilter = reduxForm({
   handleSubmit,
 })(PartnerFilter);
 
-export default withStyles(styleSheet)(formPartnerFilter);
+export default withStyles(styleSheet, { name: 'PartnerFilter' })(formPartnerFilter);

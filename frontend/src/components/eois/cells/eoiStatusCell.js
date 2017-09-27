@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
 import Grid from 'material-ui/Grid';
 import SvgIcon from 'material-ui/SvgIcon';
@@ -13,7 +13,7 @@ const STATUSES = {
   Com: 'Completed',
 };
 
-const styleSheet = createStyleSheet('EoiStatusCell', theme => ({
+const styleSheet = theme => ({
   Ope: {
     color: theme.palette.eoiStatus.open,
   },
@@ -33,8 +33,7 @@ const styleSheet = createStyleSheet('EoiStatusCell', theme => ({
     whiteSpace: 'normal',
     maxWidth: 80,
   },
-}));
-
+});
 
 const EoiStatusCell = (props) => {
   const { classes, id } = props;
@@ -58,4 +57,4 @@ EoiStatusCell.propTypes = {
   id: PropTypes.string.isRequired,
 };
 
-export default withStyles(styleSheet)(EoiStatusCell);
+export default withStyles(styleSheet, { name: 'EoiStatusCell' })(EoiStatusCell);

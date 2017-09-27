@@ -3,7 +3,7 @@ import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import SpreadContent from '../spreadContent';
@@ -12,12 +12,12 @@ const messages = {
   selected: 'items selected',
 };
 
-const styleSheet = createStyleSheet(theme => ({
+const styleSheet = theme => ({
   root: {
     color: 'white',
     backgroundColor: theme.palette.accent[500],
   },
-}));
+});
 
 const SelectedHeader = (props) => {
   const { numSelected, classes, children } = props;
@@ -42,4 +42,4 @@ SelectedHeader.propTypes = {
   children: PropTypes.node,
 };
 
-export default withStyles(styleSheet)(SelectedHeader);
+export default withStyles(styleSheet, { name: 'SelectedHeader' })(SelectedHeader);

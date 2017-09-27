@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
@@ -13,7 +13,7 @@ import { renderFormControl, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
 
-const styleSheet = createStyleSheet('mainLayout', theme => ({
+const styleSheet = theme => ({
   root: {
     width: 0.1,
     height: 0.1,
@@ -37,7 +37,7 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
   button: {
     padding: '11px 0px',
   },
-}));
+});
 
 
 class FileForm extends Component {
@@ -97,7 +97,7 @@ class FileForm extends Component {
               <label className={classes.iconLabel} htmlFor={`${fieldName}-input`}>
                 {fileAdded
                   ? (
-                    <Typography className={[classes.iconLabel, classes.FileNameField]} spacingBottom >
+                    <Typography className={[classes.iconLabel, classes.FileNameField]} spacingBottom>
                       <Attachment className={classes.icon} />
                       {this.renderFileName(fieldName)}
                     </Typography>)
@@ -157,4 +157,4 @@ FileForm.defaultProps = {
 };
 
 
-export default withStyles(styleSheet)(FileForm);
+export default withStyles(styleSheet, { name: 'FileForm' })(FileForm);

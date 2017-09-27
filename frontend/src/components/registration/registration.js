@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import { CardHeader } from 'material-ui/Card';
 import Paper from 'material-ui/Paper';
@@ -9,7 +9,7 @@ import Paper from 'material-ui/Paper';
 
 import Stepper from './stepper';
 
-const styleSheet = createStyleSheet('registration', theme => ({
+const styleSheet = theme => ({
   container: {
     height: '100%',
   },
@@ -17,8 +17,7 @@ const styleSheet = createStyleSheet('registration', theme => ({
     color: theme.palette.primary[400],
     backgroundColor: theme.palette.accent[500],
   },
-
-}));
+});
 
 const messages = {
   title: 'Registration',
@@ -48,4 +47,4 @@ Registration.propTypes = {
   classes: PropTypes.object,
 };
 
-export default withStyles(styleSheet)(Registration);
+export default withStyles(styleSheet, { name: 'Registration' })(Registration);

@@ -1,9 +1,9 @@
 import Typography from 'material-ui/Typography';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
-const styleSheet = createStyleSheet('ItemRowCell', (theme) => {
+const styleSheet = (theme) => {
   const padding = theme.spacing.unit;
   return {
     row: {
@@ -16,7 +16,7 @@ const styleSheet = createStyleSheet('ItemRowCell', (theme) => {
       padding: `0 0 0 ${padding}px`,
     },
   };
-});
+};
 
 const ItemRowCell = (props) => {
   const { label, content, alignRight, classes } = props;
@@ -41,4 +41,4 @@ ItemRowCell.propTypes = {
   content: PropTypes.string,
 };
 
-export default withStyles(styleSheet)(ItemRowCell);
+export default withStyles(styleSheet, { name: 'ItemRowCell' })(ItemRowCell);

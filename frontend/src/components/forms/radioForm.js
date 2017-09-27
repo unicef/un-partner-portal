@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControlLabel } from 'material-ui/Form';
@@ -11,7 +11,7 @@ import { renderFormControl, renderText, renderBool } from '../../helpers/formHel
 import { required, warning } from '../../helpers/validation';
 
 
-const styleSheet = createStyleSheet('BasicInformation', theme => ({
+const styleSheet = theme => ({
   formContainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -22,7 +22,7 @@ const styleSheet = createStyleSheet('BasicInformation', theme => ({
   rootRadio: {
     height: '100%',
   },
-}));
+});
 
 class RadioForm extends Component {
   constructor(props) {
@@ -127,4 +127,4 @@ RadioForm.propTypes = {
 
   renderTextSelection: PropTypes.bool,
 };
-export default withStyles(styleSheet)(RadioForm);
+export default withStyles(styleSheet, { name: 'RadioForm' })(RadioForm);

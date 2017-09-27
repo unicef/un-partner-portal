@@ -3,7 +3,7 @@ import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 
@@ -11,7 +11,7 @@ const messages = {
   selected: 'selected',
 };
 
-const styleSheet = createStyleSheet(theme => ({
+const styleSheet = theme => ({
   root: {
     paddingRight: 2,
     backgroundColor: theme.palette.primary[100],
@@ -30,7 +30,7 @@ const styleSheet = createStyleSheet(theme => ({
   title: {
     flex: '0 0 auto',
   },
-}));
+});
 
 const EnhancedTableToolbar = (props) => {
   const { numSelected, classes, title, children } = props;
@@ -65,4 +65,4 @@ EnhancedTableToolbar.propTypes = {
   children: PropTypes.node,
 };
 
-export default withStyles(styleSheet)(EnhancedTableToolbar);
+export default withStyles(styleSheet, { name: 'EnhancedTableToolbar' })(EnhancedTableToolbar);

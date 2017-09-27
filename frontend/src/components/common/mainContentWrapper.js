@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 
 
-const styleSheet = createStyleSheet('MainContentWrapper', theme => ({
+const styleSheet = theme => ({
   root: {
     background: theme.palette.primary[200],
     padding: theme.spacing.unit * 3,
   },
-}));
+});
 
 const MainContentWrapper = (props) => {
   const { classes, children } = props;
@@ -25,4 +25,4 @@ MainContentWrapper.propTypes = {
   children: PropTypes.node,
 };
 
-export default withStyles(styleSheet)(MainContentWrapper);
+export default withStyles(styleSheet, { name: 'MainContentWrapper' })(MainContentWrapper);

@@ -2,7 +2,7 @@ import React from 'react';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 
@@ -44,13 +44,13 @@ const messages = {
   },
 };
 
-const styleSheet = createStyleSheet('DeclarationRow', theme => ({
+const styleSheet = theme => ({
   headerContainer: {
     marginTop: 10,
     borderBottom: `1px ${theme.palette.grey[300]} solid`,
     borderTop: `1px ${theme.palette.grey[300]} solid`,
   },
-}));
+});
 
 const renderQuestions = () => (
   <Grid item>
@@ -86,4 +86,4 @@ Declaration.propTypes = {
   classes: PropTypes.object,
 };
 
-export default withStyles(styleSheet)(Declaration);
+export default withStyles(styleSheet, { name: 'Declaration' })(Declaration);

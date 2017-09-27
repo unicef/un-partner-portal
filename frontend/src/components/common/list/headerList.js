@@ -1,11 +1,11 @@
 import Paper from 'material-ui/Paper';
-import React, { Component, createElement } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Divider from 'material-ui/Divider';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
-const styleSheet = createStyleSheet('HeaderList', (theme) => {
+const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 2;
   return {
     container: {
@@ -17,7 +17,7 @@ const styleSheet = createStyleSheet('HeaderList', (theme) => {
       padding: `${padding}px ${padding}px`,
     },
   };
-});
+};
 
 class HeaderList extends Component {
   renderChildren() {
@@ -51,4 +51,4 @@ HeaderList.propTypes = {
   rows: PropTypes.func.isRequired,
 };
 
-export default withStyles(styleSheet)(HeaderList);
+export default withStyles(styleSheet, { name: 'HeaderList' })(HeaderList);
