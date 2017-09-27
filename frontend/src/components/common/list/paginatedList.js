@@ -49,14 +49,14 @@ class PaginatedList extends Component {
     this.onPageSize = this.onPageSize.bind(this);
   }
 
-  // componentWillMount() {
-  //   const { pathName, query } = this.props;
+  componentWillMount() {
+    const { pathName, query } = this.props;
 
-  //   history.push({
-  //     pathname: pathName,
-  //     query: R.merge(query, { page: 1, page_size: 10 }),
-  //   });
-  // }
+    history.push({
+      pathname: pathName,
+      query: R.merge(query, { page: 1, page_size: 10 }),
+    });
+  }
 
   onPageChange(pageNumber) {
     this.updatePageNumber(pageNumber);
