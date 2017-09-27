@@ -67,7 +67,7 @@ class RadioForm extends Component {
             <FormLabel>{label}</FormLabel>
             <RadioGroup
               className={classes.formContainer}
-              selectedValue={this.state.selectedRadio}
+              value={this.state.selectedRadio}
               onChange={this.handleChange}
             >
               {values.map((value, index) => (
