@@ -17,6 +17,7 @@ class PartnerProfileStepperContainer extends Component {
 
   componentWillUpdate(nextProps) {
     const { name, isTabWarning, noTabWarning, isStepWarning, noStepWarning } = this.props;
+    console.log('NAME', name);
     if (!nextProps.warnings || !nextProps.warnings[name]) {
       noTabWarning(name);
       this.state.observedSteps.forEach(observedStep => noStepWarning(observedStep));
@@ -69,7 +70,7 @@ PartnerProfileStepperContainer.propTypes = {
 };
 
 const mapState = state => ({
-  warnings: getFormSyncWarnings('PartnerProfileStepperContainer')(state),
+  warnings: getFormSyncWarnings('partnerProfile')(state),
   initialValues: state.partnerProfileDetails.partnerProfileDetails,
 });
 
