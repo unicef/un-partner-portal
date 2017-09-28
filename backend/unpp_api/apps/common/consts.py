@@ -35,12 +35,6 @@ APPLICATION_STATUSES = Choices(
     ('Rej', 'rejected', 'Rejected'),
 )
 
-SCALE_TYPES = Choices(
-    ('Low', 'low', '1-3'),
-    ('Std', 'standard', '1-10'),
-    ('Hig', 'high', '1-100'),
-)
-
 MEMBER_ROLES = Choices(
     ('Adm', 'admin', 'Administrator'),
     ('Edi', 'editor', 'Editor'),

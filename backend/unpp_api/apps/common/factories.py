@@ -28,7 +28,7 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
 )
-from project.models import EOI, Application
+from project.models import EOI, Application, AssessmentCriteria
 from .consts import (
     PARTNER_TYPES,
     MEMBER_STATUSES,
@@ -45,6 +45,7 @@ from .consts import (
     EOI_TYPES,
     DIRECT_SELECTION_SOURCE,
     BUDGET_CHOICES,
+    SELECTION_CRITERIA_CHOICES,
 )
 from .countries import COUNTRIES_ALPHA2_CODE
 
@@ -521,3 +522,15 @@ class EOIFactory(factory.django.DjangoModelFactory):
                 eoi=self,
                 submitter=get_partner_member(),
             )
+
+    @factory.post_generation
+    def assessments_criteria(self, create, extracted, **kwargs):
+        AssessmentCriteria.objects.create(
+            eoi=self,
+            options=[
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'weight': 10},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'weight': 40},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'weight': 30},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 20}
+            ]
+        )
