@@ -132,6 +132,8 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = fuzzy.FuzzyText()
     email = factory.Sequence(lambda n: "fake-user-{}@unicef.org".format(n))
     password = factory.PostGenerationMethodCall('set_password', 'test')
+    first_name = factory.LazyFunction(get_first_name)
+    last_name = factory.LazyFunction(get_last_name)
 
     profile = factory.RelatedFactory(UserProfileFactory, 'user')
 
@@ -482,6 +484,12 @@ class EOIFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = EOI
+
+    @factory.post_generation
+    def reviewers(self, create, extracted, **kwargs):
+        agency_members = User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?")
+        self.reviewers.add(agency_members.first())
+        self.reviewers.add(agency_members.last())
 
     @factory.post_generation
     def focal_points(self, create, extracted, **kwargs):
