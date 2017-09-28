@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
-from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import OrderingFilter
@@ -13,7 +13,7 @@ from common.consts import EOI_TYPES
 from common.paginations import SmallPagination
 from common.permissions import IsAtLeastMemberReader, IsAtLeastMemberEditor, IsAtLeastAgencyMemberEditor
 from partner.models import PartnerMember
-from .models import Application, EOI, Pin
+from .models import Assessment, Application, EOI, Pin
 from .serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
@@ -23,6 +23,7 @@ from .serializers import (
     ApplicationFullSerializer,
     CreateDirectApplicationNoCNSerializer,
     ApplicationsListSerializer,
+    ReviewerAssessmentsSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter
 
@@ -187,3 +188,30 @@ class ApplicationsListAPIView(ListAPIView):
     def get_queryset(self, *args, **kwargs):
         eoi_id = self.kwargs.get(self.lookup_field)
         return Application.objects.filter(eoi_id=eoi_id)
+
+
+class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    queryset = Assessment.objects.all()
+    serializer_class = ReviewerAssessmentsSerializer
+    lookup_field = 'pk'
+    lookup_url_kwarg = 'application_id'
+
+    def set_bunch_of_required_data(self, request, application_id):
+        app = get_object_or_404(Application.objects.select_related('eoi', 'eoi__assessments_criteria'),
+                                pk=application_id)
+        request.data['criteria'] = app.eoi.assessments_criteria.id
+        request.data['reviewer'] = request.user.id
+        request.data['application'] = application_id
+
+    def create(self, request, application_id, *args, **kwargs):
+        self.set_bunch_of_required_data(request, application_id)
+        return super(ReviewerAssessmentsAPIView, self).create(request, application_id, *args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+        application_id = self.kwargs.get('application_id')
+        return Assessment.objects.filter(application_id=application_id)
+
+    def update(self, request, application_id, *args, **kwargs):
+        self.set_bunch_of_required_data(request, application_id)
+        return super(ReviewerAssessmentsAPIView, self).create(request, application_id, *args, **kwargs)

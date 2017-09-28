@@ -3,15 +3,12 @@ from __future__ import unicode_literals
 from datetime import date
 
 from django.db import models
-from django.db.models import Sum
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.contrib.postgres.fields import JSONField
 from model_utils.models import TimeStampedModel
 from common.consts import (
     EOI_TYPES,
     APPLICATION_STATUSES,
-    SCALE_TYPES,
     EOI_STATUSES,
-    SELECTION_CRITERIA_CHOICES,
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     COMPLETED_REASON,
@@ -122,26 +119,9 @@ class ApplicationFeedback(TimeStampedModel):
 
 
 class AssessmentCriteria(TimeStampedModel):
-    eoi = models.ForeignKey(EOI, related_name="assessments_criteria")
-    display_type = models.CharField(
-        max_length=3,
-        choices=SELECTION_CRITERIA_CHOICES,
-        default=SELECTION_CRITERIA_CHOICES.sector,
-    )
-    goal = models.CharField(
-        max_length=200, null=True, blank=True, verbose_name='Goal, Objective, Expected Outcome and Results.')
-    scale = models.CharField(
-        max_length=3,
-        choices=SCALE_TYPES,
-        default=SCALE_TYPES.standard,
-    )
-    weight = models.PositiveSmallIntegerField(
-        "Weight in percentage",
-        help_text="Value in percentage, provide number from 0 to 100",
-        default=100,
-        validators=[MaxValueValidator(100), MinValueValidator(1)]
-    )
-    description = models.TextField()
+    eoi = models.OneToOneField(EOI, related_name="assessments_criteria")
+    # selection_criteria -> SELECTION_CRITERIA_CHOICES
+    options = JSONField(default=dict([('selection_criteria', ''), ('weight', 0)]))
 
     class Meta:
         ordering = ['id']
@@ -152,11 +132,11 @@ class AssessmentCriteria(TimeStampedModel):
 
 class Assessment(TimeStampedModel):
     criteria = models.ForeignKey(AssessmentCriteria, related_name="assessments")
-
     reviewer = models.ForeignKey('account.User', related_name="assessments")
     application = models.ForeignKey(Application, related_name="assessments")
-    score = models.PositiveIntegerField()
-    date_reviewed = models.DateField(verbose_name='Date reviewed')
+    scores = JSONField(default=[dict((('selection_criteria', None), ('score', 0)))])
+    date_reviewed = models.DateField(auto_now=True, verbose_name='Date reviewed')
+    note = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -169,8 +149,5 @@ class Assessment(TimeStampedModel):
     @property
     def total_score(self):
         if self.__total_score is None:
-            self.__total_score = Assessment.objects.filter(
-                cirteria__eoi=self.criteria.eoi
-            ).aggregate(Sum('score')).get('score__sum') or 0
-        else:
-            return self.__total_score
+            self.__total_score = sum([x['score'] for x in self.scores])
+        return self.__total_score
