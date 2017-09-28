@@ -228,6 +228,12 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         application_id = self.kwargs.get('application_id')
         return Assessment.objects.filter(application_id=application_id)
 
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        obj = get_object_or_404(queryset, **{self.lookup_field: self.kwargs.get(self.lookup_field)})
+        self.check_object_permissions(self.request, obj)
+        return obj
+
     def update(self, request, application_id, *args, **kwargs):
         self.set_bunch_of_required_data(request, application_id)
-        return super(ReviewerAssessmentsAPIView, self).create(request, application_id, *args, **kwargs)
+        return super(ReviewerAssessmentsAPIView, self).update(request, application_id, *args, **kwargs)

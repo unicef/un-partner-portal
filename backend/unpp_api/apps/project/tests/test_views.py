@@ -431,13 +431,14 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         self.assertEquals(response.data['date_reviewed'], str(date.today()))
         self.assertEquals(response.data['reviewer'], self.user.id)
         self.assertEquals(len(response.data['scores']), len(payload['scores']))
-        self.assertEquals(response.data['id'], Assessment.objects.last().id)
+        assessment_id = Assessment.objects.last().id
+        self.assertEquals(response.data['id'], assessment_id)
 
         url = reverse(
             'projects:reviewer-assessments',
             kwargs={
                 "application_id": Application.objects.first().id,
-                "pk": Assessment.objects.last().id,
+                "pk": assessment_id,
             }
         )
         payload = {
@@ -445,7 +446,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertEquals(response.data['note'], payload['note'])
-        self.assertEquals(response.data['id'], Assessment.objects.last().id)
+        self.assertEquals(response.data['id'], assessment_id)
         self.assertEquals(Assessment.objects.last().note, payload['note'])
 
         payload = {
