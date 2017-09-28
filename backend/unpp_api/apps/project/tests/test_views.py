@@ -10,15 +10,14 @@ from rest_framework import status as statuses
 
 from account.models import User
 from agency.models import AgencyOffice
-from project.models import Application, EOI, Pin
+from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
 from common.tests.base import BaseAPITestCase
 from common.countries import COUNTRIES_ALPHA2_CODE
-from common.factories import EOIFactory, AgencyMemberFactory, PartnerSimpleFactory
+from common.factories import EOIFactory, AgencyMemberFactory, PartnerSimpleFactory, PartnerMemberFactory
 from common.models import Specialization
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
-    SCALE_TYPES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     MEMBER_ROLES,
     APPLICATION_STATUSES,
@@ -133,14 +132,12 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
                 'notif_results_date': date.today(),
                 'has_weighting': True,
             },
-            'assessment_criterias': [
-                {
-                    "display_type": SELECTION_CRITERIA_CHOICES.project_management,
-                    "scale": SCALE_TYPES.standard,
-                    "weight": random.randint(0, 100),
-                    "description": "test",
-                }
-            ]
+            'assessment_criterias': {
+                'options': [
+                    {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'weight': 10},
+                    {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'weight': 40},
+                ],
+            }
         }
 
         response = self.client.post(self.url, data=payload, format='json')
@@ -396,3 +393,69 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertFalse(response.data['did_win'])
         self.assertEquals(response.data["justification_reason"], reason)
+
+
+class TestReviewerAssessmentsAPIView(BaseAPITestCase):
+
+    quantity = 1
+    user_type = 'agency'
+    user_role = MEMBER_ROLES.editor
+
+    initial_factories = [
+        PartnerSimpleFactory,
+        PartnerMemberFactory,
+        AgencyMemberFactory,
+        EOIFactory,
+    ]
+
+    def test_add_review(self):
+        url = reverse(
+            'projects:reviewer-assessments',
+            kwargs={
+                "application_id": Application.objects.first().id,
+            }
+        )
+        note = 'I like this application, has strong sides...'
+        payload = {
+            'scores': [
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'score': 50},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'score': 75},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'score': 60},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'score': 90},
+            ],
+            'note': note,
+        }
+        response = self.client.post(url, data=payload, format='json')
+
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['date_reviewed'], str(date.today()))
+        self.assertEquals(response.data['reviewer'], self.user.id)
+        self.assertEquals(len(response.data['scores']), len(payload['scores']))
+        self.assertEquals(response.data['id'], Assessment.objects.last().id)
+
+        url = reverse(
+            'projects:reviewer-assessments',
+            kwargs={
+                "application_id": Application.objects.first().id,
+                "pk": Assessment.objects.last().id,
+            }
+        )
+        payload = {
+            'note': 'patch note test',
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertEquals(response.data['note'], payload['note'])
+        self.assertEquals(response.data['id'], Assessment.objects.last().id)
+        self.assertEquals(Assessment.objects.last().note, payload['note'])
+
+        payload = {
+            'scores': [
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'score': 5},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'score': 7},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'score': 6},
+            ],
+            'note': note,
+        }
+        response = self.client.put(url, data=payload, format='json')
+        self.assertEquals(response.data['note'], payload['note'])
+        self.assertEquals(response.data['scores'], payload['scores'])
