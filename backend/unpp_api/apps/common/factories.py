@@ -1,12 +1,14 @@
 import random
-from datetime import date
+import os
+from datetime import date, timedelta
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 import factory
 from factory import fuzzy
 from account.models import User, UserProfile
 from agency.models import OtherAgency, Agency, AgencyOffice, AgencyMember
-from common.models import Specialization
+from common.models import Specialization, Point
 from partner.models import (
     Partner,
     PartnerProfile,
@@ -45,6 +47,7 @@ from .consts import (
     EOI_TYPES,
     DIRECT_SELECTION_SOURCE,
     BUDGET_CHOICES,
+    STAFF_GLOBALLY_CHOICES,
 )
 from .countries import COUNTRIES_ALPHA2_CODE
 
@@ -163,6 +166,12 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
     display_type = PARTNER_TYPES.national
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+    # hq information
+    country_presence = factory.LazyFunction(get_country_list)
+    staff_globally = STAFF_GLOBALLY_CHOICES.to100
+    # country profile information
+    staff_in_country = STAFF_GLOBALLY_CHOICES.to50
+    engagement_operate_desc = factory.Sequence(lambda n: "engagement with the communitie {}".format(n))
 
     @factory.post_generation
     def mailing_address(self, create, extracted, **kwargs):
@@ -335,7 +344,29 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             registration_number="reg-number {}".format(self.id),
         )
         if created:
+            filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
             profile.working_languages = get_country_list()
+            profile.acronym = "acronym {}".format(self.id)
+            profile.former_legal_name = "former legal name {}".format(self.id)
+            profile.connectivity_excuse = "connectivity excuse {}".format(self.id)
+            profile.year_establishment = date.today().year - random.randint(1, 30)
+            profile.have_gov_doc = True
+            profile.gov_doc = open(filename).read()
+            profile.registration_doc = open(filename).read()
+            profile.registration_date = date.today() - timedelta(days=random.randint(365, 3650))
+            profile.registration_comment = "registration comment {}".format(self.id)
+            profile.registration_number = "registration number {}".format(self.id)
+            # programme management
+            profile.have_management_approach = True
+            profile.management_approach_desc = "management approach desc {}".format(self.id)
+            profile.have_system_monitoring = True
+            profile.system_monitoring_desc = "system monitoring desc {}".format(self.id)
+            profile.have_feedback_mechanism = True
+            profile.feedback_mechanism_desc = "feedback mechanism desc {}".format(self.id)
+
+            profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
+            profile.partnership_collaborate_institution_desc = "collaborate institution {}".format(self.id)
+            profile.explain = "explain {}".format(self.id)
             profile.save()
 
     class Meta:
