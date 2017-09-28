@@ -140,6 +140,7 @@ class Assessment(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
+        unique_together = (("reviewer", "application"), )
 
     def __str__(self):
         return "Assessment <pk:{}>".format(self.id)
