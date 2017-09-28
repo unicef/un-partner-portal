@@ -9,6 +9,7 @@ from rest_framework.filters import OrderingFilter
 
 from django_filters.rest_framework import DjangoFilterBackend
 
+from account.models import User
 from common.consts import EOI_TYPES
 from common.paginations import SmallPagination
 from common.permissions import IsAtLeastMemberReader, IsAtLeastMemberEditor, IsAtLeastAgencyMemberEditor
@@ -23,6 +24,7 @@ from .serializers import (
     ApplicationFullSerializer,
     CreateDirectApplicationNoCNSerializer,
     ApplicationsListSerializer,
+    ReviewersApplicationSerializer,
     ReviewerAssessmentsSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter
@@ -188,6 +190,20 @@ class ApplicationsListAPIView(ListAPIView):
     def get_queryset(self, *args, **kwargs):
         eoi_id = self.kwargs.get(self.lookup_field)
         return Application.objects.filter(eoi_id=eoi_id)
+
+
+class ReviewersStatusAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    queryset = User.objects.all()
+    serializer_class = ReviewersApplicationSerializer
+    lookup_field = 'pk'
+    lookup_url_kwarg = 'application_id'
+
+    def get_queryset(self, *args, **kwargs):
+        application_id = self.kwargs.get('application_id')
+        app = get_object_or_404(Application.objects.select_related('eoi'),
+                                pk=application_id)
+        return User.objects.filter(pk__in=app.eoi.reviewers.all().values_list("pk"))
 
 
 class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):

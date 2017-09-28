@@ -9,6 +9,7 @@ from .views import (
     ApplicationsAgencyAPIView,
     ApplicationAPIView,
     ApplicationsListAPIView,
+    ReviewersStatusAPIView,
     ReviewerAssessmentsAPIView,
 )
 
@@ -17,6 +18,9 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/$', EOIAPIView.as_view(), name="eoi-detail"),
     url(r'^(?P<pk>\d+)/partner-applications/$', ApplicationsPartnerAPIView.as_view(), name="partner-applications"),
     url(r'^(?P<pk>\d+)/agency-applications/$', ApplicationsAgencyAPIView.as_view(), name="agency-applications"),
+    url(r'^applications/(?P<application_id>\d+)/reviewers-status/',
+        ReviewersStatusAPIView.as_view(),
+        name="reviewers-status"),
     url(r'^applications/(?P<application_id>\d+)/reviewer-assessments/',
         ReviewerAssessmentsAPIView.as_view(),
         name="reviewer-assessments"),
