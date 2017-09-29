@@ -22,6 +22,7 @@ from common.consts import (
     MEMBER_ROLES,
     APPLICATION_STATUSES,
     COMPLETED_REASON,
+    EOI_TYPES,
 )
 from project.views import PinProjectAPIView
 
@@ -244,12 +245,18 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
             'applications': [
                 {
                     "partner": Partner.objects.first().id,
-                    "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+                    "ds_justification_select": [
+                        JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+                        JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+                    ],
                     "justification_reason": "To save those we love."
                 },
                 {
                     "partner": Partner.objects.last().id,
-                    "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+                    "ds_justification_select": [
+                        JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+                        JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+                    ],
                     "justification_reason": "To save those we love."
                 }
             ]
@@ -259,11 +266,16 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
+        self.assertEquals(response.data['eoi']['display_type'], EOI_TYPES.direct)
         self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
         app = Application.objects.get(pk=response.data['applications'][0]['id'])
         self.assertEquals(app.submitter, self.user)
+        self.assertEquals(app.ds_justification_select,
+                          [JUSTIFICATION_FOR_DIRECT_SELECTION.known, JUSTIFICATION_FOR_DIRECT_SELECTION.local])
         app = Application.objects.get(pk=response.data['applications'][1]['id'])
         self.assertEquals(app.submitter, self.user)
+        self.assertEquals(app.ds_justification_select,
+                          [JUSTIFICATION_FOR_DIRECT_SELECTION.known, JUSTIFICATION_FOR_DIRECT_SELECTION.local])
 
 
 class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
@@ -304,7 +316,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
         payload = {
             "partner": Partner.objects.last().id,
-            "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+            "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.known],
             "justification_reason": "a good reason",
         }
         response = self.client.post(url, data=payload, format='json')
@@ -331,7 +343,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
         payload = {
             "partner": Partner.objects.last().id,
-            "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+            "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.known],
             "justification_reason": "a good reason",
         }
         response = self.client.post(url, data=payload, format='json')
@@ -354,16 +366,16 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], Application.objects.first().id)
         self.assertFalse(response.data['did_win'])
-        self.assertEquals(response.data['ds_justification_select'], None)
+        self.assertEquals(response.data['ds_justification_select'], [])
 
         payload = {
             "status": APPLICATION_STATUSES.preselected,
-            "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+            "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.local],
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
-        self.assertEquals(response.data['ds_justification_select'], JUSTIFICATION_FOR_DIRECT_SELECTION.local)
+        self.assertEquals(response.data['ds_justification_select'], [JUSTIFICATION_FOR_DIRECT_SELECTION.local])
 
         payload = {
             "did_win": True,
