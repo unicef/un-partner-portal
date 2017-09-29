@@ -12,7 +12,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from account.models import User
 from common.consts import EOI_TYPES
 from common.paginations import SmallPagination
-from common.permissions import IsAtLeastMemberReader, IsAtLeastMemberEditor, IsAtLeastAgencyMemberEditor
+from common.permissions import (
+    IsAtLeastMemberReader,
+    IsAtLeastMemberEditor,
+    IsAtLeastAgencyMemberEditor,
+    IsEOIReviewerAssessments,
+)
 from partner.models import PartnerMember
 from .models import Assessment, Application, EOI, Pin
 from .serializers import (
@@ -207,7 +212,7 @@ class ReviewersStatusAPIView(ListAPIView):
 
 
 class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor, IsEOIReviewerAssessments)
     queryset = Assessment.objects.all()
     serializer_class = ReviewerAssessmentsSerializer
     lookup_field = 'pk'

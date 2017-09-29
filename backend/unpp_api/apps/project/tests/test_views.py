@@ -409,10 +409,11 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
     ]
 
     def test_add_review(self):
+        app = Application.objects.first()
         url = reverse(
             'projects:reviewer-assessments',
             kwargs={
-                "application_id": Application.objects.first().id,
+                "application_id": app.id,
             }
         )
         note = 'I like this application, has strong sides...'
@@ -426,7 +427,13 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             'note': note,
         }
         response = self.client.post(url, data=payload, format='json')
+        self.assertFalse(statuses.is_success(response.status_code))
+        self.assertEquals(response.status_code, statuses.HTTP_403_FORBIDDEN)
 
+        # add logged agency member to eoi/application reviewers
+        app.eoi.reviewers.add(self.user)
+
+        response = self.client.post(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['date_reviewed'], str(date.today()))
         self.assertEquals(response.data['reviewer'], self.user.id)
