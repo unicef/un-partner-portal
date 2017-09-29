@@ -4,6 +4,7 @@ from datetime import date
 
 from django.db import models
 from django.db.models import Sum
+from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from model_utils.models import TimeStampedModel
 from common.consts import (
@@ -97,8 +98,12 @@ class Application(TimeStampedModel):
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
     # These two (ds_justification_*) will be used as direct selection will create applications for DS EOIs.
-    ds_justification_select = models.CharField(
-        max_length=3, choices=JUSTIFICATION_FOR_DIRECT_SELECTION, null=True, blank=True)  # if direct select
+    # hq information
+    ds_justification_select = ArrayField(
+        models.CharField(max_length=3, choices=JUSTIFICATION_FOR_DIRECT_SELECTION),
+        default=list,
+        null=True
+    )
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
 
     class Meta:
