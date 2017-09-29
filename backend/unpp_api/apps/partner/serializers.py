@@ -124,6 +124,8 @@ class PartnerHeadOrganizationRegisterSerializer(serializers.ModelSerializer):
 
 class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
 
+    org_fax = serializers.CharField(source="fax")
+
     class Meta:
         model = PartnerHeadOrganization
         fields = "__all__"
