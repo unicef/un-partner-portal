@@ -1,36 +1,43 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormSection } from 'redux-form';
+import { FormSection, formValueSelector } from 'redux-form';
 import Grid from 'material-ui/Grid';
-
+import { connect } from 'react-redux';
 import RadioForm from '../../../forms/radioForm';
 import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import { selectNormalizedCountries } from '../../../../store';
 
-const COUNTRY_MENU = [
+const messages = {
+  mailingType: 'Type of mailing address',
+  streetAddress: 'Street Address',
+  poBox: 'PO Box',
+  streetNumber: 'Street Number',
+  city: 'City',
+  country: 'Country',
+  zipCode: 'Zip Code (optional)',
+  poBoxNumber: 'PO Box Number',
+  telephone: 'Telephone',
+  fax: 'Fax (optional)',
+  website: 'Website (optional)',
+  organizationEmail: 'Organization Email (optional)',
+};
+
+const MAILING_TYPE_VALUES = [
   {
-    value: 'fr',
-    label: 'France',
+    value: 'Str',
+    label: messages.streetAddress,
   },
   {
-    value: 'it',
-    label: 'Italy',
+    value: 'POB',
+    label: messages.poBox,
   },
 ];
 
-const ADDRESS_VALUES = [
-  {
-    value: 'street',
-    label: 'Street Address',
-  },
-  {
-    value: 'po',
-    label: 'PO Box',
-  },
-];
+const isStreetAddress = type => type && type === MAILING_TYPE_VALUES[0].value;
 
 const PartnerProfileContactInfoAddress = (props) => {
-  const { readOnly } = props;
+  const { readOnly, countries, mailingType } = props;
 
   return (<FormSection name="address">
     <Grid item>
@@ -38,19 +45,19 @@ const PartnerProfileContactInfoAddress = (props) => {
         <Grid item sm={6} xs={12}>
           <RadioForm
             fieldName="mailing_type"
-            label="Type of Mailing Address"
-            values={ADDRESS_VALUES}
+            label={messages.mailingType}
+            values={MAILING_TYPE_VALUES}
+            renderTextSelection
             optional
             warn
             readOnly={readOnly}
           />
         </Grid>
-        <Grid item>
+        {mailingType && <Grid item>
           <Grid container direction="row">
             <Grid item sm={3} xs={12}>
               <TextFieldForm
-                label="Street Address or PO Box Number"
-                placeholder=""
+                label={isStreetAddress(mailingType) ? messages.streetAddress : messages.poBoxNumber}
                 fieldName="street"
                 optional
                 warn
@@ -59,8 +66,7 @@ const PartnerProfileContactInfoAddress = (props) => {
             </Grid>
             <Grid item sm={3} xs={12}>
               <TextFieldForm
-                label="City"
-                placeholder=""
+                label={messages.city}
                 fieldName="city"
                 optional
                 warn
@@ -69,9 +75,9 @@ const PartnerProfileContactInfoAddress = (props) => {
             </Grid>
             <Grid item sm={3} xs={12}>
               <SelectForm
+                label={messages.country}
                 fieldName="country"
-                label="Country"
-                values={COUNTRY_MENU}
+                values={countries}
                 optional
                 warn
                 readOnly={readOnly}
@@ -79,60 +85,66 @@ const PartnerProfileContactInfoAddress = (props) => {
             </Grid>
             <Grid item sm={3} xs={12}>
               <TextFieldForm
-                label="Zip Code (optional)"
-                placeholder=""
+                label={messages.zipCode}
                 fieldName="zip_code"
                 optional
                 readOnly={readOnly}
               />
             </Grid>
-            <Grid item sm={3} xs={12}>
-              <TextFieldForm
-                label="Telephone"
-                placeholder=""
-                fieldName="telephone"
-                optional
-                warn
-                readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item sm={3} xs={12}>
-              <TextFieldForm
-                label="Fax (optional"
-                placeholder=""
-                fieldName="fax"
-                optional
-                readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item sm={3} xs={12}>
-              <TextFieldForm
-                label="Website (optional)"
-                placeholder=""
-                fieldName="website"
-                optional
-                readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item sm={3} xs={12}>
-              <TextFieldForm
-                label="Organization Email (optional)"
-                placeholder=""
-                fieldName="org_email"
-                optional
-                readOnly={readOnly}
-              />
-            </Grid>
+            {!isStreetAddress(mailingType) &&
+            <Grid item sm={12} xs={12}>
+              <Grid container direction="row">
+                <Grid item sm={3} xs={12}>
+                  <TextFieldForm
+                    label={messages.telephone}
+                    fieldName="telephone"
+                    optional
+                    warn
+                    readOnly={readOnly}
+                  />
+                </Grid>
+                <Grid item sm={3} xs={12}>
+                  <TextFieldForm
+                    label={messages.fax}
+                    fieldName="fax"
+                    optional
+                    readOnly={readOnly}
+                  />
+                </Grid>
+                <Grid item sm={3} xs={12}>
+                  <TextFieldForm
+                    label={messages.website}
+                    fieldName="website"
+                    optional
+                    readOnly={readOnly}
+                  />
+                </Grid>
+                <Grid item sm={3} xs={12}>
+                  <TextFieldForm
+                    label={messages.organizationEmail}
+                    fieldName="org_email"
+                    optional
+                    readOnly={readOnly}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>}
           </Grid>
-        </Grid>
+        </Grid>}
       </Grid>
     </Grid>
   </FormSection>);
 };
 
-
 PartnerProfileContactInfoAddress.propTypes = {
   readOnly: PropTypes.bool,
+  countries: PropTypes.array.isRequired,
+  mailingType: PropTypes.string,
 };
 
-export default PartnerProfileContactInfoAddress;
+const selector = formValueSelector('partnerProfile');
+
+export default connect(state => ({
+  countries: selectNormalizedCountries(state),
+  mailingType: selector(state, 'mailing.address.mailing_type'),
+}), null)(PartnerProfileContactInfoAddress);
