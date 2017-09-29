@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-
+import { FormControl, FormLabel } from 'material-ui/Form';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
-import FileUpload from 'material-ui-icons/FileUpload';
-import Attachment from 'material-ui-icons/Attachment';
-import { FormLabel, FormControlLabel } from 'material-ui/Form';
-import { renderFormControl, renderText } from '../../helpers/formHelper';
+import FileUploadButton from '../common/buttons/fileUploadButton';
+import { renderFileDownload, renderFormControl } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
+const messages = {
+  download: 'Download',
+};
 
 const styleSheet = createStyleSheet('mainLayout', theme => ({
   root: {
@@ -23,8 +22,26 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
     zIndex: -1,
   },
   iconLabel: {
+    alignItems: 'center',
+    minWidth: 72,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden !important',
+    textOverflow: 'ellipsis',
+    display: 'inline-block',
+    width: '100%',
+  },
+  wrapContent: {
     display: 'flex',
     alignItems: 'center',
+  },
+  wrapContentButton: {
+    display: 'flex',
+    cursor: 'pointer',
+    alignItems: 'center',
+  },
+  downloadIcon: {
+    fill: theme.palette.accent[700],
+    marginRight: 5,
   },
   FileNameField: {
     minWidth: 72,
@@ -38,7 +55,6 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
     padding: '11px 0px',
   },
 }));
-
 
 class FileForm extends Component {
   constructor(props) {
@@ -59,57 +75,32 @@ class FileForm extends Component {
   }
 
   render() {
-    const {
-      classes,
-      fieldName,
-      label,
-      optional,
-      validation,
-      warn,
-      readOnly,
-      ...other } = this.props;
-    const { fileAdded } = this.state;
+    const { classes, fieldName, label, optional, validation, warn, readOnly, ...other } = this.props;
+
     return (
       <Grid item>
-        <Field
-          name={fieldName}
-          component={readOnly ? renderText : renderFormControl}
-          validate={optional ? [] : [required].concat(validation || [])}
-          warn={warn ? [warning] : []}
-          {...other}
-        >
-          <FormLabel>{label}</FormLabel>
-
-          <FormControlLabel
-            control={
-              <input
-                onChange={this.handleChange}
-                className={classes.root}
-                name={`${fieldName}-input`}
-                id={`${fieldName}-input`}
-                type="file"
-              />
-            }
-          />
-
-          {!readOnly &&
-            <Button dense classes={{ root: classes.button }} color="accent" >
-              <label className={classes.iconLabel} htmlFor={`${fieldName}-input`}>
-                {fileAdded
-                  ? (
-                    <Typography className={[classes.iconLabel, classes.FileNameField]} gutterBottom >
-                      <Attachment className={classes.icon} />
-                      {this.renderFileName(fieldName)}
-                    </Typography>)
-                  : ([
-                    <FileUpload className={classes.icon} />,
-                    'Upload File']
-                  )
-                }
-              </label>
-            </Button>
+        <FormControl fullWidth>
+          {readOnly
+            ? [
+              <Field
+                name={fieldName}
+                label={label}
+                component={renderFileDownload(this.props, messages)}
+                optional={optional}
+              />]
+            :
+            <Field
+              name={fieldName}
+              component={renderFormControl}
+              validate={optional ? [] : [required].concat(validation || [])}
+              warn={warn ? [warning] : []}
+              {...other}
+            >
+              <FormLabel>{label}</FormLabel>
+              <FileUploadButton fileSelected={(file) => {}} />
+            </Field>
           }
-        </Field>
+        </FormControl>
       </Grid>
     );
   }

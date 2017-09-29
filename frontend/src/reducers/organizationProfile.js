@@ -14,6 +14,7 @@ const countryProfile = {
 const initialState = {
   hq: hqProfile,
   1: countryProfile,
+  2: countryProfile,  
   13: countryProfile,
 };
 

@@ -4,11 +4,57 @@ import React from 'react';
 import SelectField from 'material-ui-old/SelectField';
 import TextField from 'material-ui/TextField';
 import Checkbox from 'material-ui/Checkbox';
+import FileDownload from 'material-ui-icons/FileDownload';
+import Attachment from 'material-ui-icons/Attachment';
+import DateRange from 'material-ui-icons/DateRange';
 import DatePicker from 'material-ui-old/DatePicker';
-import { FormControl, FormHelperText, FormLabel } from 'material-ui/Form';
 import Typography from 'material-ui/Typography';
+import { FormControl, FormControlLabel, FormHelperText, FormLabel } from 'material-ui/Form';
+import RadioGroupRow from '../components/common/radio/radioGroupRow';
+import RadioHeight from '../components/common/radio/radioHeight';
 import { formatDateForPrint } from './dates';
 
+const fileNameFromUrl = (url) => {
+  if (url) {
+    return url.split('/').pop();
+  }
+
+  return '-';
+};
+
+export const BOOL_VAL = [
+  {
+    value: 'yes',
+    label: 'Yes',
+  },
+  {
+    value: 'no',
+    label: 'No',
+  },
+];
+
+const transformBool = (value) => {
+  if (typeof (value) === 'boolean' && value) {
+    return BOOL_VAL[0].value;
+  } else if (typeof (value) === 'boolean' && !value) {
+    return BOOL_VAL[1].value;
+  }
+
+  return value;
+};
+
+export const visibleIfNo = (value) => {
+  if (value === BOOL_VAL[1].value || (typeof (value) === 'boolean' && !value)) { return true; }
+
+  return false;
+};
+
+
+export const visibleIf = (value) => {
+  if (value === BOOL_VAL[0].value || (typeof (value) === 'boolean' && value)) { return true; }
+
+  return false;
+};
 
 export const renderFormControl = ({
   className,
@@ -43,6 +89,27 @@ export const renderSelectField = ({
   </SelectField>
 );
 
+export const renderRadioField = ({ input, label, meta: { touched, error, warning }, options }) => (
+  <div>
+    <FormControl fullWidth>
+      <FormLabel>{label}</FormLabel>
+      <RadioGroupRow
+        selectedValue={transformBool(input.value)}
+        onChange={(event, value) => input.onChange(value)}
+      >
+        {options.map((value, index) => (
+          <FormControlLabel
+            key={index}
+            value={value.value}
+            control={<RadioHeight />}
+            label={value.label}
+          />))}
+      </RadioGroupRow>
+    </FormControl>
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>
+);
+
 export const renderCheckbox = ({
   name,
   className,
@@ -56,6 +123,36 @@ export const renderCheckbox = ({
     checked={value}
   />
 );
+
+/* eslint-disable jsx-a11y/interactive-supports-focus */
+export const renderFileDownload = (props, messages) => {
+  const { classes } = props;
+
+  return ({ input, label }) => (
+    <FormControl fullWidth>
+      <FormLabel>{label}</FormLabel>
+      <div className={classes.wrapContent}>
+        <Attachment className={classes.icon} />
+        <Typography type="subheading" className={classes.iconLabel}>
+          {fileNameFromUrl(input.value)}
+        </Typography>
+
+      </div>
+      <div
+        role="button"
+        className={classes.wrapContentButton}
+        onClick={() => { window.open(input.value); }}
+      >
+        <FileDownload className={classes.downloadIcon} />
+        <Typography
+          color="accent"
+          type="button"
+        >
+          {messages.download}
+        </Typography>
+      </div>
+    </FormControl>);
+};
 
 export const renderTextField = ({
   name,
@@ -111,12 +208,19 @@ export const renderText = ({
   return (
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>
-      <Typography
-        className={className}
-        {...other}
-      >
-        {value}
-      </Typography>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        {date && <DateRange style={{
+          marginRight: 5,
+          width: 22,
+          height: 22 }}
+        />}
+        <Typography
+          className={className}
+          {...other}
+        >
+          {value}
+        </Typography>
+      </div>
     </FormControl>
   );
 };
@@ -144,4 +248,3 @@ export const renderBool = ({
     </FormControl>
   );
 };
-

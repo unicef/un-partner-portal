@@ -11,12 +11,18 @@ import {
   Stepper,
 } from '../../customStepper';
 
-export const styleSheet = createStyleSheet('MuiStepper', () => ({
-  root: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-}));
+export const styleSheet = createStyleSheet('MuiStepper', (theme) => {
+  const padding = theme.spacing.unit * 3;
+  return {
+    root: {
+      maxWidth: '100%',
+      padding: '1em 1em 3em',
+    },
+    buttonsMargin: {
+      padding: `${padding}px 0 0 ${padding}px`,
+    },
+  };
+});
 
 const labels = {
   continue: 'SAVE & CONTINUE',
@@ -42,7 +48,7 @@ class partnerProfileStepper extends Component {
 
         {!readOnly ?
           <Grid item>
-            <Grid container direction="row" gutter={8}>
+            <Grid className={classes.buttonsMargin} container direction="row" gutter={8}>
               {!last && <Grid item>
                 <Button
                   color="accent"
@@ -64,6 +70,7 @@ class partnerProfileStepper extends Component {
           </Grid>
           : null}
       </Grid>
+
     );
   }
 }
