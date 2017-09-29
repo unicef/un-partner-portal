@@ -510,7 +510,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
                 submitter=get_agency_member(),
                 did_win=True,
                 did_accept=True,
-                ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+                ds_justification_select=[JUSTIFICATION_FOR_DIRECT_SELECTION.local],
                 justification_reason="good reason",
             )
             self.selected_source = DIRECT_SELECTION_SOURCE.cso
