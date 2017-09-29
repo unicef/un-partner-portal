@@ -319,7 +319,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
         payload = {
             "partner": Partner.objects.last().id,
-            "ds_justification_select": JUSTIFICATION_FOR_DIRECT_SELECTION.known,
+            "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.known],
             "justification_reason": "a good reason",
         }
         response = self.client.post(url, data=payload, format='json')
