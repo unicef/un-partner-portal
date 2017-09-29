@@ -7,7 +7,8 @@ import { withStyles, createStyleSheet } from 'material-ui/styles';
 import { PagingState, RowDetailState } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
-import { CircularProgress } from 'material-ui';
+import ListLoader from './listLoader';
+import { calculatePaginatedPage, updatePageNumberSize, updatePageNumber } from '../../../helpers/apiHelper';
 
 const table = {
   allowedPageSizes: [5, 10, 15],
@@ -22,30 +23,14 @@ const styleSheet = createStyleSheet('paginatedList', (theme) => {
       padding: `${paddingSmall}px 0 ${paddingSmall}px ${paddingMedium}px`,
       backgroundColor: theme.palette.primary[100],
     },
-    loaderBg: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    },
-    loaderIcon: {
-      position: 'absolute',
-      fontSize: '20px',
-      top: 'calc(50% - 10px)',
-      left: 'calc(50% - 10px)',
-    },
   };
 });
-
 
 class PaginatedList extends Component {
   constructor(props) {
     super(props);
 
     this.changeExpandedDetails = expandedRows => this.setState({ expandedRows });
-    this.onPageChange = this.onPageChange.bind(this);
     this.onPageSize = this.onPageSize.bind(this);
   }
 
@@ -58,43 +43,11 @@ class PaginatedList extends Component {
     });
   }
 
-  onPageChange(pageNumber) {
-    this.updatePageNumber(pageNumber);
-  }
-
   onPageSize(pageSize) {
-    const { pageNumber, itemsCount } = this.props;
+    const { pageNumber, itemsCount, pathName, query } = this.props;
 
-    const totalPages = Math.ceil(itemsCount / pageSize);
-    const currentPage = Math.min(pageNumber, totalPages - 1);
-
-    this.updatePageNumberSize(currentPage, pageSize);
-  }
-
-  updatePageNumberSize(pageNumber, pageSize) {
-    const { pathName, query } = this.props;
-
-    history.push({
-      pathname: pathName,
-      query: R.merge(query, { page: pageNumber + 1, page_size: pageSize }),
-    });
-  }
-
-  updatePageNumber(pageNumber) {
-    const { pathName, query } = this.props;
-
-    history.push({
-      pathname: pathName,
-      query: R.merge(query, { page: pageNumber + 1 }),
-    });
-  }
-
-  listLoader() {
-    const { classes, loading } = this.props;
-
-    return (loading && <div className={classes.loaderBg}>
-      <CircularProgress color="accent" className={classes.loaderIcon} />
-    </div>);
+    updatePageNumberSize(calculatePaginatedPage(pageNumber, pageSize, itemsCount),
+      pageSize, pathName, query);
   }
 
   navigationHeader() {
@@ -111,10 +64,13 @@ class PaginatedList extends Component {
   }
 
   render() {
-    const { items, columns, templateCell, expandable, expandedCell, itemsCount, pageSize, pageNumber } = this.props;
+    const { items, columns, templateCell, expandable, expandedCell,
+      itemsCount, pageSize, pageNumber, loading, pathName, query } = this.props;
 
     return (
-      <div style={{ position: 'relative' }}>
+      <ListLoader
+        loading={loading}
+      >
         <Grid
           rows={items}
           columns={columns}
@@ -124,7 +80,7 @@ class PaginatedList extends Component {
             currentPage={pageNumber - 1}
             pageSize={pageSize}
             onPageSizeChange={(size) => { this.onPageSize(size); }}
-            onCurrentPageChange={(page) => { this.onPageChange(page); }}
+            onCurrentPageChange={(page) => { updatePageNumber(page, pathName, query); }}
             totalCount={itemsCount}
           />
 
@@ -143,8 +99,7 @@ class PaginatedList extends Component {
             allowedPageSizes={table.allowedPageSizes}
           />
         </Grid>
-        {this.listLoader()}
-      </div>
+      </ListLoader>
     );
   }
 }

@@ -13,26 +13,21 @@ import PartnerProfileDetailItem from './partnerProfileDetailItem';
 import { loadPartnersList } from '../../reducers/agencyPartnersList';
 import PartnerProfileCountryCell from './partnerProfileCountryCell';
 import PartnerProfileExperienceCell from './partnerProfileExperienceCell';
+import { isQueryChanged } from '../../helpers/apiHelper';
 
 const messages = {
   header: 'Partners',
 };
 
-class PartnersContainer extends Component { 
+class PartnersContainer extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     const { query } = this.props;
 
-    if (!R.isEmpty(nextProps.location.query)
-    && !R.equals(query, nextProps.location.query)) {
+    if (isQueryChanged(nextProps, query)) {
       this.props.loadPartners(nextProps.location.query);
     }
 
     return true;
-  }
-
-  /* eslint-disable class-methods-use-this */
-  onRowClick(row) {
-    history.push(`/partner/${row.id}/overview`);
   }
 
   /* eslint-disable class-methods-use-this */
@@ -43,6 +38,7 @@ class PartnersContainer extends Component {
         yellowFlag={row.flagYellow}
         redFlag={row.flagRed}
         name={row.legal_name}
+        onClick={() => history.push(`/partner/${row.id}/overview`)}
       />);
     } else if (column.name === 'country_code') {
       return <PartnerProfileCountryCell code={row.country_code} />;

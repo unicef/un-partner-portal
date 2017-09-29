@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import { PagingState, LocalPaging, SelectionState } from '@devexpress/dx-react-grid';
+import { connect } from 'react-redux';
+import { browserHistory as history, withRouter } from 'react-router';
+import { PagingState, SelectionState } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import R from 'ramda';
 import { Grid, TableView, TableHeaderRow, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import SelectedHeader from './selectedHeader';
 import TableTemplate from './tableTemplate';
-import NoDataCell from './noDataCell';
-
+import ListLoader from './listLoader';
+import { calculatePaginatedPage, updatePageNumberSize, updatePageNumber } from '../../../helpers/apiHelper';
 
 const table = {
-  allowedPageSizes: [5, 10, 15, 0],
+  allowedPageSizes: [5, 10, 15],
 };
 
 const styleSheet = createStyleSheet('SelectableList', (theme) => {
@@ -27,21 +29,6 @@ const styleSheet = createStyleSheet('SelectableList', (theme) => {
 });
 
 class SelectableList extends Component {
-  static navigationHeader(classes, selected, rows, HeaderAction) {
-    return (<div>
-      {selected.length > 0
-        ? <SelectedHeader numSelected={selected.length} >
-          <HeaderAction rows={R.values(R.pick(selected, rows))} />
-        </SelectedHeader>
-        : <div className={classes.container}>
-          <Typography type="title">
-            1-10 of 12 results to show
-          </Typography>
-        </div>
-      }
-    </div>);
-  }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -51,6 +38,23 @@ class SelectableList extends Component {
     this.handleSelect = this.handleSelect.bind(this);
     this.handleRowMouseEnter = this.handleRowMouseEnter.bind(this);
     this.handleRowMouseLeave = this.handleRowMouseLeave.bind(this);
+    this.onPageSize = this.onPageSize.bind(this);
+  }
+
+  componentWillMount() {
+    const { pathName, query } = this.props;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query, { page: 1, page_size: 10 }),
+    });
+  }
+
+  onPageSize(pageSize) {
+    const { pageNumber, itemsCount, pathName, query } = this.props;
+
+    updatePageNumberSize(calculatePaginatedPage(pageNumber, pageSize, itemsCount),
+      pageSize, pathName, query);
   }
 
   handleSelect(newSelected) {
@@ -64,55 +68,75 @@ class SelectableList extends Component {
   handleRowMouseLeave() {
     this.setState({ hoveredRow: null });
   }
+  navigationHeader(selected, rows, HeaderAction) {
+    const { classes, itemsCount, pageSize, pageNumber } = this.props;
+
+    const firstRange = (pageSize * (pageNumber - 1)) + 1;
+    const secondTmp = (pageSize * (pageNumber));
+
+    const secondRange = secondTmp > itemsCount ? itemsCount : secondTmp;
+
+    return (<div>
+      {selected.length > 0
+        ? <SelectedHeader numSelected={selected.length} >
+          <HeaderAction rows={R.values(R.pick(selected, rows))} />
+        </SelectedHeader>
+        : <div className={classes.container}><Typography type="title">
+          {`${firstRange}-${secondRange} of ${itemsCount} results to show`}
+        </Typography></div>
+      }
+    </div>);
+  }
 
   render() {
-    const { classes,
+    const {
       items,
       columns,
       templateCell,
-      onCurrentPageChange,
-      onPageSizeChange,
       headerAction,
+      pageSize,
+      pageNumber,
+      itemsCount,
       loading,
+      pathName,
+      query,
     } = this.props;
     const { selected, hoveredRow } = this.state;
     return (
-      <Grid
-        rows={items}
-        columns={columns}
-        headerPlaceholderTemplate={() => SelectableList.navigationHeader(
-          classes,
-          selected,
-          items,
-          headerAction)}
-      >
-        <PagingState
-          defaultCurrentPage={0}
-          defaultPageSize={10}
-          onPageSizeChange={(pageSize) => { onPageSizeChange(pageSize); }}
-          onCurrentPageChange={(page) => { onCurrentPageChange(page); }}
-        />
-        <LocalPaging />
-        <SelectionState
-          selection={selected}
-          onSelectionChange={this.handleSelect}
-        />
-        <TableView
-          tableTemplate={TableTemplate(this.handleRowMouseEnter,
-            this.handleRowMouseLeave,
-            hoveredRow)}
-          tableNoDataCellTemplate={({ colSpan }) => (
-            <NoDataCell loading={loading} colSpan={colSpan} />
-          )}
-          tableCellTemplate={templateCell}
-        />
-        <TableSelection
-          selectionColumnWidth={50}
-          highlightSelected
-        />
-        <TableHeaderRow />
-        <PagingPanel allowedPageSizes={table.allowedPageSizes} />
-      </Grid>
+      <ListLoader loading={loading}>
+        <Grid
+          rows={items}
+          columns={columns}
+          headerPlaceholderTemplate={() => this.navigationHeader(
+            selected,
+            items,
+            headerAction)}
+        >
+          <PagingState
+            currentPage={pageNumber - 1}
+            pageSize={pageSize}
+            onPageSizeChange={(size) => { this.onPageSize(size); }}
+            onCurrentPageChange={(page) => { updatePageNumber(page, pathName, query); }}
+            totalCount={itemsCount}
+          />
+          <SelectionState
+            selection={selected}
+            onSelectionChange={this.handleSelect}
+          />
+          <TableView
+            tableTemplate={TableTemplate(this.handleRowMouseEnter,
+              this.handleRowMouseLeave,
+              hoveredRow)}
+            tableCellTemplate={templateCell}
+          />
+          <TableSelection
+            selectionColumnWidth={50}
+            highlightSelected
+          />
+          <TableHeaderRow />
+          <PagingPanel allowedPageSizes={table.allowedPageSizes} />
+        </Grid>
+      </ListLoader>
     );
   }
 }
@@ -123,10 +147,25 @@ SelectableList.propTypes = {
   columns: PropTypes.array.isRequired,
   templateCell: PropTypes.func,
   templateHeader: PropTypes.func,
+  itemsCount: PropTypes.object.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  pageNumber: PropTypes.number.isRequired,
   onCurrentPageChange: PropTypes.func,
   onPageSizeChange: PropTypes.func,
   headerAction: PropTypes.component,
   loading: PropTypes.bool,
+  pathName: PropTypes.string.isRequired,
+  query: PropTypes.object,
 };
 
-export default withStyles(styleSheet)(SelectableList);
+
+const mapStateToProps = (state, ownProps) => ({
+  pathName: ownProps.location.pathname,
+  query: ownProps.location.query,
+  pageSize: ownProps.location.query.page_size,
+  pageNumber: ownProps.location.query.page,
+});
+
+const connectedSelectableList = connect(mapStateToProps, null)(SelectableList);
+const withRouterSelectableList = withRouter(connectedSelectableList);
+export default withStyles(styleSheet)(withRouterSelectableList);
