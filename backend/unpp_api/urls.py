@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^api/config/', include('common.urls', namespace='config')),
     url(r'^api/projects/', include('project.urls', namespace='projects')),
     url(r'^api/partners/', include('partner.urls', namespace='partners')),
+    url(r'^api/partners/', include('review.urls', namespace='partner-reviews'))
 ]
 
 if settings.IS_DEV or settings.IS_STAGING:

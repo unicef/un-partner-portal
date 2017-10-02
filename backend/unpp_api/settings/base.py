@@ -124,6 +124,7 @@ INSTALLED_APPS = [
     'agency',
     'partner',
     'project',
+    'review',
 ]
 
 # auth / django-registration params
