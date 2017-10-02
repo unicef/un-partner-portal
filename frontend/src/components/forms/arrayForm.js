@@ -72,7 +72,7 @@ class RenderArrayMembers extends Component {
             </div>
           ))}
 
-          {fields.length <= limit && !readOnly &&
+          {fields.length < limit && !readOnly &&
             <Button
               color="accent"
               onClick={() => fields.push({})}
