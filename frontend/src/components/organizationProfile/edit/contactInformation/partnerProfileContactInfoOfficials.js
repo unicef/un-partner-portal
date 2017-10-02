@@ -7,47 +7,42 @@ import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import ArrayForm from '../../../forms/arrayForm';
 import { visibleIf, BOOL_VAL } from '../../../../helpers/formHelper';
+import GridRow from '../../../common/grid/gridRow';
 
 const messages = {
   boardOfDirectors: 'Does your organization have a board of directors?',
 };
 
 const Director = director => (
-  <Grid container spacing={16}>
-    <Grid item sm={3} xs={12}>
-      <TextFieldForm
-        fieldName={`${director}.first_name`}
-        label="First Name"
-        optional
-        warn
-      />
-    </Grid>
-    <Grid item sm={3} xs={12}>
-      <TextFieldForm
-        fieldName={`${director}.last_name`}
-        label="Last Name"
-        optional
-        warn
-      />
-    </Grid>
-    <Grid item sm={3} xs={12}>
-      <TextFieldForm
-        fieldName={`${director}.job_title`}
-        label="Job Title/Position"
-        optional
-        warn
-      />
-    </Grid>
-    <Grid item sm={3} xs={12}>
-      <RadioForm
-        fieldName={`${director}.authorized`}
-        values={BOOL_VAL}
-        optional
-        warn
-        label="Authorised Officer?"
-      />
-    </Grid>
-  </Grid>
+
+  <GridRow columns={4}>
+    <TextFieldForm
+      fieldName={`${director}.first_name`}
+      label="First Name"
+      optional
+      warn
+    />
+    <TextFieldForm
+      fieldName={`${director}.last_name`}
+      label="Last Name"
+      optional
+      warn
+    />
+    <TextFieldForm
+      fieldName={`${director}.job_title`}
+      label="Job Title/Position"
+      optional
+      warn
+    />
+    <RadioForm
+      fieldName={`${director}.authorized`}
+      values={BOOL_VAL}
+      optional
+      warn
+      label="Authorised Officer?"
+    />
+  </GridRow>
+
 );
 
 const PartnerProfileContactInfoOfficials = (props) => {

@@ -10,7 +10,6 @@ import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
-
 import GridColumn from '../common/grid/gridColumn';
 
 
@@ -24,6 +23,17 @@ const styleSheet = theme => ({
   },
   list: {
     padding: 0,
+  },
+  container: {
+    display: 'flex',
+  },
+  item: {
+    flexFlow: 'column wrap',
+    flexGrow: '1',
+    display: 'flex',
+  },
+  items: {
+    flexBasis: '5%',
   },
 });
 
@@ -47,25 +57,26 @@ class RenderArrayMembers extends Component {
           {fields.map((member, index) => (
             <div>
               <ListItem key={index} >
-                <GridColumn>
-                  <Grid container direction="row">
-                    <Grid item xs={!readOnly ? 11 : 11} >
+                <GridColumn spacing={4}>
+                  <div className={classes.container}>
+                    <div className={classes.item}>
                       {outerField(member, index, fields)}
-                    </Grid>
-                    <Grid item xs={1} >
+                    </div>
+                    {index > 0 && !readOnly &&
+                    <div className={classes.items}>
                       <IconButton
                         type="button"
                         disabled={index === 0}
                         title="Remove Member"
                         onClick={() => fields.remove(index)}
-                      >
-                        {index > 0 && !readOnly && <DeleteIcon />}
+                      ><DeleteIcon />
                       </IconButton>
-                    </Grid>
-                  </Grid>
-                  <Paper elevation={0} className={classes.innerPaper}>
+
+                    </div>}
+                  </div>
+                  {innerField && <Paper elevation={0} className={classes.innerPaper}>
                     {innerField(member, index, fields)}
-                  </Paper>
+                  </Paper>}
                 </GridColumn>
               </ListItem>
               <Divider />
