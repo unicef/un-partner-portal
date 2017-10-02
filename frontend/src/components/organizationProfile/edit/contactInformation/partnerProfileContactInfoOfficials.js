@@ -1,100 +1,140 @@
 import React from 'react';
-import { FormSection } from 'redux-form';
+import { formValueSelector, FormSection } from 'redux-form';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
-
+import { connect } from 'react-redux';
 import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import ArrayForm from '../../../forms/arrayForm';
+import { visibleIf, BOOL_VAL } from '../../../../helpers/formHelper';
 
+const messages = {
+  boardOfDirectors: 'Does your organization have a board of directors?',
+};
 
-const BOOL_VAL = [
-  {
-    value: 'yes',
-    label: 'Yes',
-  },
-  {
-    value: 'no',
-    label: 'No',
-  },
-];
+const Director = director => (
+  <Grid container spacing={16}>
+    <Grid item sm={3} xs={12}>
+      <TextFieldForm
+        fieldName={`${director}.first_name`}
+        label="First Name"
+        optional
+        warn
+      />
+    </Grid>
+    <Grid item sm={3} xs={12}>
+      <TextFieldForm
+        fieldName={`${director}.last_name`}
+        label="Last Name"
+        optional
+        warn
+      />
+    </Grid>
+    <Grid item sm={3} xs={12}>
+      <TextFieldForm
+        fieldName={`${director}.job_title`}
+        label="Job Title/Position"
+        optional
+        warn
+      />
+    </Grid>
+    <Grid item sm={3} xs={12}>
+      <RadioForm
+        fieldName={`${director}.authorized`}
+        values={BOOL_VAL}
+        optional
+        warn
+        label="Authorised Officer?"
+      />
+    </Grid>
+  </Grid>
+);
 
 const PartnerProfileContactInfoOfficials = (props) => {
-  const { readOnly } = props;
+  const { readOnly, hasBoardOfDirectors } = props;
 
-  return (<FormSection name="authorizedOfficials">
-    <Grid item>
-      <Grid container direction="column" spacing={16}>
-        <Grid item sm={6} xs={12}>
-          <RadioForm
-            fieldName="hasBoD"
-            label="Does your Organization have a Board of Directors?"
-            values={BOOL_VAL}
-            readOnly={readOnly}
-          />
-        </Grid>
+  return (<FormSection name="authorised_officials">
+    <Grid container direction="column" spacing={16}>
+      <Grid item sm={12} xs={12}>
+        <RadioForm
+          label={messages.boardOfDirectors}
+          fieldName="have_board_directors"
+          values={BOOL_VAL}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+      </Grid>
 
-        <Grid item>
-          <Grid container direction="row">
-            <Grid item sm={6} xs={12}>
-              <TextFieldForm
-                label="First Name"
-                placeholder=""
-                fieldName="firstName"
-                readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item sm={6} xs={12}>
-              <TextFieldForm
-                label="Last Name"
-                placeholder=""
-                fieldName="lastName"
-                readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item sm={6} xs={12}>
-              <TextFieldForm
-                label="Job Title/Position"
-                placeholder=""
-                fieldName="job"
-                readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item sm={6} xs={12}>
-              <RadioForm
-                fieldName="isAuthorisedOfficer"
-                label="Authorised Officer?"
-                values={BOOL_VAL}
-                readOnly={readOnly}
-              />
-            </Grid>
+      {visibleIf(hasBoardOfDirectors) && <Grid item sm={12} xs={12}>
+        <ArrayForm
+          limit={15}
+          fieldName="directors"
+          outerField={Director}
+        />
+      </Grid>}
+
+      <Grid item>
+        <Grid container direction="row">
+          <Grid item sm={6} xs={12}>
+            <TextFieldForm
+              label="First Name"
+              placeholder=""
+              fieldName="firstName"
+              readOnly={readOnly}
+            />
+          </Grid>
+          <Grid item sm={6} xs={12}>
+            <TextFieldForm
+              label="Last Name"
+              placeholder=""
+              fieldName="lastName"
+              readOnly={readOnly}
+            />
+          </Grid>
+          <Grid item sm={6} xs={12}>
+            <TextFieldForm
+              label="Job Title/Position"
+              placeholder=""
+              fieldName="job"
+              readOnly={readOnly}
+            />
+          </Grid>
+          <Grid item sm={6} xs={12}>
+            <RadioForm
+              fieldName="isAuthorisedOfficer"
+              label="Authorised Officer?"
+              values={BOOL_VAL}
+              readOnly={readOnly}
+            />
           </Grid>
         </Grid>
-        <Grid item>
-          <Grid container direction="row">
-            <Grid item sm={6} xs={12}>
-              <TextFieldForm
-                label="First Name"
-                placeholder=""
-                fieldName="firstName"
-                readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item sm={6} xs={12}>
-              <TextFieldForm
-                label="Last Name"
-                placeholder=""
-                fieldName="lastName"
-                readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item sm={6} xs={12}>
-              <TextFieldForm
-                label="Job Title/Position"
-                placeholder=""
-                fieldName="job"
-                readOnly={readOnly}
-              />
-            </Grid>
+      </Grid>
+      <Grid item>
+        <Grid container direction="row">
+          <Grid item sm={6} xs={12}>
+            <TextFieldForm
+              label="First Name"
+              placeholder=""
+              fieldName="firstName"
+              readOnly={readOnly}
+            />
+          </Grid>
+          <Grid item sm={6} xs={12}>
+            <TextFieldForm
+              label="Last Name"
+              placeholder=""
+              fieldName="lastName"
+              readOnly={readOnly}
+            />
+          </Grid>
+          <Grid item sm={6} xs={12}>
+            <TextFieldForm
+              label="Job Title/Position"
+              placeholder=""
+              fieldName="job"
+              readOnly={readOnly}
+            />
           </Grid>
         </Grid>
       </Grid>
@@ -105,6 +145,12 @@ const PartnerProfileContactInfoOfficials = (props) => {
 
 PartnerProfileContactInfoOfficials.propTypes = {
   readOnly: PropTypes.bool,
+  hasBoardOfDirectors: PropTypes.bool,
 };
 
-export default PartnerProfileContactInfoOfficials;
+const selector = formValueSelector('partnerProfile');
+export default connect(
+  state => ({
+    hasBoardOfDirectors: selector(state, 'mailing.authorised_officials.have_board_directors'),
+  }),
+)(PartnerProfileContactInfoOfficials);

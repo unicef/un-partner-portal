@@ -4,14 +4,15 @@ import Grid from 'material-ui/Grid';
 
 
 function GridColumn(props) {
-  const { children, spacing } = props;
+  const { children, spacing, removeNullChildren } = props;
   return (
     <Grid container direction="column" spacing={spacing}>
-      {React.Children.map(children, child => (
-        <Grid item >
-          {child}
-        </Grid>
-      ))}
+      {React.Children.map(children, child =>
+        (removeNullChildren
+          ? null
+          : <Grid item >
+            {child}
+          </Grid>))}
     </Grid>
   );
 }
@@ -19,10 +20,12 @@ function GridColumn(props) {
 GridColumn.propTypes = {
   children: PropTypes.array,
   spacing: PropTypes.number,
+  removeNullChildren: PropTypes.bool,
 };
 
 GridColumn.defaultProps = {
   spacing: 16,
+  removeNullChildren: false,
 };
 
 export default GridColumn;

@@ -47,21 +47,21 @@ class RenderArrayMembers extends Component {
           {fields.map((member, index) => (
             <div>
               <ListItem key={index} >
-                <GridColumn >
-                  <Grid container direction="row" >
-                    <Grid item xs={!readOnly ? 10 : 12} >
+                <GridColumn>
+                  <Grid container direction="row">
+                    <Grid item xs={!readOnly ? 11 : 11} >
                       {outerField(member, index, fields)}
                     </Grid>
-                    {index > 0 && !readOnly && <Grid item xs={2} >
+                    <Grid item xs={1} >
                       <IconButton
                         type="button"
+                        disabled={index === 0}
                         title="Remove Member"
                         onClick={() => fields.remove(index)}
                       >
-                        <DeleteIcon />
+                        {index > 0 && !readOnly && <DeleteIcon />}
                       </IconButton>
                     </Grid>
-                    }
                   </Grid>
                   <Paper elevation={0} className={classes.innerPaper}>
                     {innerField(member, index, fields)}

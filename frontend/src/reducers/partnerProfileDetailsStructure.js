@@ -37,6 +37,7 @@ const partnerDetailsStructure = {
       telephone: null,
     },
     authorised_officials: {
+      have_board_directors: null,
       directors: null,
       authorised_officers: null,
     },
