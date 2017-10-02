@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Visibility from 'material-ui-icons/Visibility';
 import VisibilityOff from 'material-ui-icons/VisibilityOff';
@@ -12,7 +12,7 @@ import IconButton from 'material-ui/IconButton';
 import { renderTextField } from '../../helpers/formHelper';
 import { required, password } from '../../helpers/validation';
 
-const styleSheet = createStyleSheet('BasicInformation', () => ({
+const styleSheet = () => ({
   root: {
     position: 'relative',
     display: 'inline-block',
@@ -24,7 +24,7 @@ const styleSheet = createStyleSheet('BasicInformation', () => ({
     top: 0,
     right: 0,
   },
-}));
+});
 
 class PasswordFieldForm extends Component {
   constructor(props) {
@@ -106,4 +106,4 @@ PasswordFieldForm.defaultProps = {
   placeholder: null,
 };
 
-export default withStyles(styleSheet)(PasswordFieldForm);
+export default withStyles(styleSheet, { name: 'PasswordFieldForm' })(PasswordFieldForm);

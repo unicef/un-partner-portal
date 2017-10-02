@@ -2,12 +2,12 @@ import React, { Children } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 
 import StepConnector from './StepConnector';
 
-export const styleSheet = createStyleSheet('MuiStepper', () => ({
+export const styleSheet = () => ({
   root: {
     display: 'flex',
     alignContent: 'center',
@@ -21,7 +21,7 @@ export const styleSheet = createStyleSheet('MuiStepper', () => ({
     flexDirection: 'column',
     alignItems: 'stretch',
   },
-}));
+});
 
 function Stepper(props) {
   const {
@@ -123,4 +123,4 @@ Stepper.defaultProps = {
   allActive: false,
 };
 
-export default withStyles(styleSheet)(Stepper);
+export default withStyles(styleSheet, { name: 'Stepper' })(Stepper);

@@ -4,12 +4,12 @@ import VerifiedUser from 'material-ui-icons/VerifiedUser';
 import Flag from 'material-ui-icons/Flag';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import PaddedContent from '../../../../common/paddedContent';
 import OrganizationProfileOverview from '../../../../organizationProfile/profile/organizationProfileOverview';
 
-const styleSheet = createStyleSheet('OrganizationProfileContent', (theme) => {
+const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 4;
   const paddingIcon = theme.spacing.unit;
 
@@ -49,7 +49,7 @@ const styleSheet = createStyleSheet('OrganizationProfileContent', (theme) => {
       margin: `0 0 0 ${paddingIcon}px`,
     },
   };
-});
+};
 
 const OrganizationProfileContent = (props) => {
   const { classes, verifiedStatus, flag, profileName } = props;
@@ -88,4 +88,4 @@ const mapStateToProps = state => ({
 const connectedOrganizationProfileContent = connect(
   mapStateToProps, null)(OrganizationProfileContent);
 
-export default withStyles(styleSheet)(connectedOrganizationProfileContent);
+export default withStyles(styleSheet, { name: 'OrganizationProfileContent' })(connectedOrganizationProfileContent);

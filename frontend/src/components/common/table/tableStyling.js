@@ -1,7 +1,4 @@
-
-import { createStyleSheet } from 'material-ui/styles';
-
-const styleSheet = createStyleSheet('TableStyleSheet', theme => ({
+const styleSheet = theme => ({
   paper: {
     width: '100%',
     overflowX: 'scroll',
@@ -15,6 +12,6 @@ const styleSheet = createStyleSheet('TableStyleSheet', theme => ({
   row: {
     overflow: 'visible',
   },
-}));
+});
 
 export default styleSheet;

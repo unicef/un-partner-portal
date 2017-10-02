@@ -2,15 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
-import ButtonBase from 'material-ui/internal/ButtonBase';
+import { withStyles } from 'material-ui/styles';
+import ButtonBase from 'material-ui/ButtonBase';
 
 import StepLabel from './StepLabel';
 
 const isLabel = child => child && child.type && child.type.muiName === 'StepLabel';
 
 
-export const styleSheet = createStyleSheet('MuiStepButton', () => ({
+export const styleSheet = () => ({
   root: {
     display: 'flex',
     alignItems: 'center',
@@ -18,7 +18,7 @@ export const styleSheet = createStyleSheet('MuiStepButton', () => ({
     paddingRight: 14,
     background: 'none',
   },
-}));
+});
 
 function StepButton(props) {
   const {
@@ -97,4 +97,4 @@ StepButton.propTypes = {
   orientation: PropTypes.oneOf(['horizontal', 'vertical']).isRequired,
 };
 
-export default withStyles(styleSheet)(StepButton);
+export default withStyles(styleSheet, { name: 'StepButton' })(StepButton);

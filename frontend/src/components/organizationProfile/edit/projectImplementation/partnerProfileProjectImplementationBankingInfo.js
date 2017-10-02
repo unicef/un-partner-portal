@@ -22,7 +22,7 @@ const PartnerProfileProjectImplementationBankingInfo = (props) => {
   return (
     <FormSection name="bankingInformation">
       <Grid item>
-        <Grid container direction="column" gutter={16}>
+        <Grid container direction="column" spacing={16}>
           <Grid item>
             <SelectForm
               fieldName="hasBankAccount"

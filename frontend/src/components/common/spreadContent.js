@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
-const styleSheet = createStyleSheet('SpreadContent', () => ({
+const styleSheet = () => ({
   container: {
     display: 'flex',
     width: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-}));
+});
 
 const SpreadContent = (props) => {
   const { classes, children } = props;
@@ -25,4 +25,4 @@ SpreadContent.propTypes = {
   children: PropTypes.node,
 };
 
-export default withStyles(styleSheet)(SpreadContent);
+export default withStyles(styleSheet, { name: 'SpreadContent' })(SpreadContent);
