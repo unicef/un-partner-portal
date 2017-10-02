@@ -239,6 +239,6 @@ BUDGET_CHOICES = Choices(
 )
 
 FLAG_TYPES = Choices(
-    ('YLW', 'yellow', 'Yellow Flag'),
-    ('RED', 'red', 'Red Flag'),
+    ('Yel', 'yellow', 'Yellow Flag'),
+    ('Red', 'red', 'Red Flag'),
 )
