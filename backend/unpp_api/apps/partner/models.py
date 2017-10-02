@@ -276,7 +276,7 @@ class PartnerReporting(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="report")
     key_result = models.CharField(max_length=200, null=True, blank=True)
     publish_annual_reports = models.BooleanField(default=True)
-    last_report = models.DateField(verbose_name='Date of most recent annual report')
+    last_report = models.DateField(verbose_name='Date of most recent annual report', null=True, blank=True)
     report = models.FileField(null=True)
     link_report = models.URLField()
 
