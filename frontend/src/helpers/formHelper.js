@@ -197,6 +197,7 @@ export const renderText = ({
   ...other
 }) => {
   let value = input.value;
+
   if (!value) value = '-';
   if (values) {
     value = R.filter((val) => {
@@ -205,6 +206,8 @@ export const renderText = ({
     }, values).map(matchedValue => matchedValue.label).join(', ');
   }
   if (date) value = formatDateForPrint(value);
+  if (R.isEmpty(value)) value = '-';
+
   return (
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>
