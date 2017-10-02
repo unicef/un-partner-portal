@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
@@ -95,7 +95,7 @@ const AGENCY_MENU = [
   },
 ];
 
-const styleSheet = createStyleSheet('PartnerApplicationsNotesFilter', theme => ({
+const styleSheet = theme => ({
   filterContainer: {
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px`,
     background: '#F6F6F6',
@@ -104,7 +104,7 @@ const styleSheet = createStyleSheet('PartnerApplicationsNotesFilter', theme => (
     padding: `${theme.spacing.unit * 2}px 0px 0px 0px`,
     textAlign: 'right',
   },
-}));
+});
 
 const handleSubmit = (values) => {
 
@@ -201,4 +201,4 @@ const formPartnerApplicationsNotesFilter = reduxForm({
   handleSubmit,
 })(PartnerApplicationsNotesFilter);
 
-export default withStyles(styleSheet)(formPartnerApplicationsNotesFilter);
+export default withStyles(styleSheet, { name: 'PartnerApplicationsNotesFilter' })(formPartnerApplicationsNotesFilter);

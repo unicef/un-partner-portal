@@ -18,7 +18,7 @@ const PreselectedTotalScore = (props) => {
         <Typography type="body1" color="inherit">
           {localScore}
         </Typography>
-        {hovered && <GridRow gutter={0} columns={2}>
+        {hovered && <GridRow spacing={0} columns={2}>
           <Download id={id} conceptNote={conceptNote} />
           <Delete id={[id]} />
         </GridRow>}

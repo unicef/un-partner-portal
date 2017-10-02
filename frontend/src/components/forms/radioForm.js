@@ -40,6 +40,7 @@ const RadioForm = (props) => {
   );
 };
 
+
 RadioForm.propTypes = {
   /**
    * Name of the field used by react-form and as unique id.

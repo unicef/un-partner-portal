@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { visibleIf, visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
 import RadioForm from '../../../forms/radioForm';
-import TextFieldForm from '../../../forms/textFieldForm';
 import FileForm from '../../../forms/fileForm';
+import TextFieldForm from '../../../forms/textFieldForm';
 import DatePickerForm from '../../../forms/datePickerForm';
 
 const messages = {

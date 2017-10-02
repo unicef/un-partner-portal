@@ -26,7 +26,7 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
   return (
     <FormSection name="internalControls">
       <Grid item>
-        <Grid container direction="column" gutter={16}>
+        <Grid container direction="column" spacing={16}>
           <Grid item>
             <FormLabel>{'For each of the following areas of responsibility has the organization instituted safeguards to ensure the following functional responsibilities are appropriately segregated?'}</FormLabel>
           </Grid>

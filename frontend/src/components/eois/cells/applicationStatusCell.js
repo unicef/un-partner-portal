@@ -26,7 +26,7 @@ const ApplicationStatusCell = (props) => {
         <Typography type="body1" color="inherit">
           {statuses[status]}
         </Typography>
-        {hovered && <GridRow gutter={0} columns={3}>
+        {hovered && <GridRow spacing={0} columns={3}>
           <Download id={id} conceptNote={conceptNote} />
           <Preselect id={[id]} status={status} />
           <Reject id={[id]} status={status} />

@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
-const styleSheet = createStyleSheet('PaddedContent', (theme) => {
+const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 2;
   const paddingBig = theme.spacing.unit * 3;
 
@@ -14,7 +14,7 @@ const styleSheet = createStyleSheet('PaddedContent', (theme) => {
       padding: `${paddingBig}px ${paddingBig}px`,
     },
   };
-});
+};
 
 const PaddedContent = (props) => {
   const { classes, children, big } = props;
@@ -31,4 +31,4 @@ PaddedContent.propTypes = {
   big: PropTypes.bool,
 };
 
-export default withStyles(styleSheet)(PaddedContent);
+export default withStyles(styleSheet, { name: 'PaddedContent' })(PaddedContent);

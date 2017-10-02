@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import List, { ListSubheader } from 'material-ui/List';
 import CountryProfileItem from './countryProfileItem';
 import { selectCountryId } from '../../../reducers/countryProfiles';
@@ -10,7 +10,7 @@ const messages = {
   choose: 'Choose country',
 };
 
-const styleSheet = createStyleSheet('CountryProfileList', (theme) => {
+const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 2;
   return {
     root: {
@@ -22,7 +22,7 @@ const styleSheet = createStyleSheet('CountryProfileList', (theme) => {
       lineHeight: '24px',
     },
   };
-});
+};
 
 class CountryProfileList extends Component {
   constructor(props) {
@@ -87,4 +87,4 @@ const connectedCountryProfileList = connect(
   mapDispatch,
 )(CountryProfileList);
 
-export default withStyles(styleSheet)(connectedCountryProfileList);
+export default withStyles(styleSheet, { name: 'CountryProfileList' })(connectedCountryProfileList);

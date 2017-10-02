@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import { LinearProgress } from 'material-ui/Progress';
 import DatePoint from './timeline/datePoint';
 import { getToday, dayDifference } from '../../helpers/dates';
 
-const styleSheet = createStyleSheet('Timeline', theme => ({
+const styleSheet = theme => ({
   root: {
     padding: `${theme.spacing.unit * 4}px ${theme.spacing.unit * 2}px`,
     width: '100%',
@@ -21,7 +21,7 @@ const styleSheet = createStyleSheet('Timeline', theme => ({
     position: 'absolute',
     top: 'calc(50% - 2.5px)',
   },
-}));
+});
 
 const calcFill = (start, end) => {
   const currentDate = getToday();
@@ -91,4 +91,4 @@ Timeline.propTypes = {
   startDate: PropTypes.string,
 };
 
-export default withStyles(styleSheet)(Timeline);
+export default withStyles(styleSheet, { name: 'Timeline' })(Timeline);

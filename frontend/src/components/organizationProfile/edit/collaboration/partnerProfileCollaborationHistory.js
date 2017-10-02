@@ -36,12 +36,12 @@ const PartnerProfileCollaborationHistory = (props) => {
 
   return (<FormSection name="history">
     <Grid item>
-      <Grid container direction="column" gutter={16}>
+      <Grid container direction="column" spacing={16}>
         <Grid item>
           <FormControl fullWidth>
             <FormLabel>{'My Partnerships'}</FormLabel>
             <Grid item >
-              <Grid container direction="column" gutter={16}>
+              <Grid container direction="column" spacing={16}>
                 <Grid item>
                   <Grid container direction="row">
                     <Grid item sm={6} xs={12}>
@@ -60,7 +60,7 @@ const PartnerProfileCollaborationHistory = (props) => {
             </Grid>
             <Grid item>
               <Grid item>
-                <Grid container direction="column" gutter={16}>
+                <Grid container direction="column" spacing={16}>
                   <Grid item sm={6} xs={12}>
                     <TextFieldForm
                       label="Briefly explain the collaboration with the agency selected (optional)"

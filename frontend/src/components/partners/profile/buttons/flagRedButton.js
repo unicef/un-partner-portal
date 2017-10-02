@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Flag from 'material-ui-icons/Flag';
 import IconWithTextButton from '../../../common/iconWithTextButton';
 
-const styleSheet = createStyleSheet('FlagRedButton', (theme) => {
+const styleSheet = (theme) => {
   const paddingIcon = theme.spacing.unit;
 
   return {
@@ -15,7 +15,7 @@ const styleSheet = createStyleSheet('FlagRedButton', (theme) => {
       margin: `0 ${paddingIcon}px 0 0`,
     },
   };
-});
+};
 
 const messages = {
   text: 'Add red flag',
@@ -41,4 +41,4 @@ FlagRedButton.propTypes = {
   id: PropTypes.string,
 };
 
-export default withStyles(styleSheet)(FlagRedButton);
+export default withStyles(styleSheet, { name: 'FlagRedButton' })(FlagRedButton);
