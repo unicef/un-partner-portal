@@ -121,6 +121,25 @@ export const renderText = ({
   );
 };
 
+export const renderLocation = ({
+  className,
+  input,
+  values,
+  optional,
+  ...other
+}) => {
+  const { value: { formatted_address } } = input;
+  return (
+    <Typography
+      gutterBottom
+      className={className}
+      {...other}
+    >
+      {formatted_address}
+    </Typography>
+  );
+};
+
 export const renderBool = ({
   className,
   input,
