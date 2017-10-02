@@ -164,8 +164,9 @@ class PartnerSimpleFactory(factory.django.DjangoModelFactory):
 
 class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
-    display_type = PARTNER_TYPES.national
+    display_type = PARTNER_TYPES.international
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+    country_presence = factory.LazyFunction(get_country_list)
 
     @factory.post_generation
     def mailing_address(self, create, extracted, **kwargs):
