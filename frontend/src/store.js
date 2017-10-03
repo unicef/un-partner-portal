@@ -33,6 +33,7 @@ import partnerProfileConfig from './reducers/partnerProfileConfig';
 import sectors, * as sectorsSelectors from './reducers/sectors';
 import partnersApplicationsList from './reducers/partnersApplicationsList';
 import partnersPreselectionList from './reducers/partnersPreselectionList';
+import selectionCriteria from './reducers/selectionCriteria';
 import partnerNames from './reducers/partnerNames';
 
 const mainReducer = combineReducers({
@@ -65,6 +66,7 @@ const mainReducer = combineReducers({
   sectors,
   partnersApplicationsList,
   partnersPreselectionList,
+  selectionCriteria,
   partnerNames,
 });
 
@@ -119,5 +121,8 @@ export const selectCfeiDetails = (state, id) =>
 export const selectCfeiTitle = (state, id) =>
   cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails.cfeiDetails, id);
 
+export const mapSelectCriteriaToSelection = state =>
+  mapValuesForSelectionField(state.selectionCriteria)
+;
 export const mapPartnersNamesToSelection = state =>
   mapValuesForSelectionField(state.partnerNames);
