@@ -1,5 +1,6 @@
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { GoogleApiWrapper } from 'google-maps-react';
 import ArrayForm from '../../../arrayForm';
 import LocationsMap from './locationsMapField';
@@ -33,10 +34,16 @@ const LocationFieldArray = (props) => {
   />);
 };
 
+LocationFieldArray.propTypes = {
+  formName: PropTypes.string,
+  readOnly: PropTypes.bool,
+  loaded: PropTypes.bool,
+};
+
 
 const WrappedLocationFieldArray = GoogleApiWrapper({
   version: '3.exp',
-  apiKey: 'AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo',
+  apiKey: process.env.GOOGLE_KEY,
 })(LocationFieldArray);
 
 

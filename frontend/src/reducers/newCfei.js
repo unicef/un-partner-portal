@@ -17,7 +17,6 @@ const messages = {
 
 const mockData = {
   eoi: {
-    country_code: 'PL',
     agency: 1,
     agency_office: 1,
   },
@@ -44,12 +43,12 @@ export const newCfeiProcessed = () => ({ type: NEW_CFEI_PROCESSED });
 export const newCfeiFailure = () => ({ type: NEW_CFEI_FAILURE });
 
 const prepareBody = (body) => {
-  const newBody = R.clone(body);
+  let newBody = R.clone(body);
 
   const flatSectors = mergeListsFromObjectArray(newBody.eoi.specializations, 'areas');
   newBody.eoi = R.assoc('specializations', flatSectors, body.eoi);
-  R.assocPath(['eoi', 'country_code'], body.eoi.countries[0].country, newBody);
-  R.assocPath(
+  newBody = R.assocPath(['eoi', 'country_code'], body.eoi.countries[0].country, newBody);
+  newBody = R.assocPath(
     ['eoi', 'locations'],
     R.reduce(
       R.mergeDeepWith(R.concat),

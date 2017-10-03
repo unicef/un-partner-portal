@@ -9,7 +9,6 @@ import MapContainer from '../../../../common/map/MapContainer';
 import MapBounder from '../../../../common/map/MapBounder';
 
 
-
 /**
  * this component is controlled implementation of map.
  * To work, it needs to recieve focused country name, than it will center and zoom to this 
@@ -93,11 +92,12 @@ class LocationsMapBase extends Component {
           countryCode = loc.address_components[1].short_name;
         }
         if (countryCode !== currentCountryCode) return;
+        debugger
         const newLocation = {
           country_code: countryCode,
           admin_level_1: { name: loc.address_components[0].long_name },
-          lat: clickEvent.latLng.lat(),
-          lon: clickEvent.latLng.lng(),
+          lat: clickEvent.latLng.lat().toFixed(5),
+          lon: clickEvent.latLng.lng().toFixed(5),
           formatted_address: loc.formatted_address,
         };
         saveLocation(newLocation);
