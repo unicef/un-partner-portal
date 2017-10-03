@@ -1,12 +1,14 @@
 import random
+import os
 from datetime import date
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 import factory
 from factory import fuzzy
 from account.models import User, UserProfile
 from agency.models import OtherAgency, Agency, AgencyOffice, AgencyMember
-from common.models import Specialization
+from common.models import Specialization, Point, AdminLevel1
 from partner.models import (
     Partner,
     PartnerProfile,
@@ -22,6 +24,7 @@ from partner.models import (
     PartnerCollaborationPartnershipOther,
     PartnerCollaborationEvidence,
     PartnerOtherInfo,
+    PartnerOtherDocument,
     PartnerInternalControl,
     PartnerPolicyArea,
     PartnerAuditAssessment,
@@ -46,6 +49,8 @@ from .consts import (
     DIRECT_SELECTION_SOURCE,
     BUDGET_CHOICES,
     SELECTION_CRITERIA_CHOICES,
+    STAFF_GLOBALLY_CHOICES,
+    FINANCIAL_CONTROL_SYSTEM_CHOICES,
 )
 from .countries import COUNTRIES_ALPHA2_CODE
 
@@ -153,6 +158,23 @@ class UserFactory(factory.django.DjangoModelFactory):
         model = User
 
 
+class AdminLevel1Factory(factory.django.DjangoModelFactory):
+    name = factory.Sequence(lambda n: "admin level 1 name {}".format(n))
+
+    class Meta:
+        model = AdminLevel1
+
+
+class PointFactory(factory.django.DjangoModelFactory):
+    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+    lat = random.randint(-180, 180)
+    lon = random.randint(-180, 180)
+    admin_level_1 = factory.SubFactory(AdminLevel1Factory)
+
+    class Meta:
+        model = Point
+
+
 class PartnerSimpleFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
     display_type = PARTNER_TYPES.national
@@ -167,6 +189,10 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     display_type = PARTNER_TYPES.international
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
     country_presence = factory.LazyFunction(get_country_list)
+    staff_globally = STAFF_GLOBALLY_CHOICES.to200
+    engagement_operate_desc = factory.Sequence(lambda n: "fake engagement operate desc {}".format(n))
+    staff_in_country = STAFF_GLOBALLY_CHOICES.to100
+    # location_of_office = factory.RelatedFactory(PointFactory, 'location_field_offices')
 
     @factory.post_generation
     def mailing_address(self, create, extracted, **kwargs):
@@ -340,7 +366,82 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         )
         if created:
             profile.working_languages = get_country_list()
+            profile.explain = "explain {}".format(self.id)
+            profile.experienced_staff_desc = "experienced staff desc {}".format(self.id)
+            # programme management
+            profile.have_management_approach = True
+            profile.management_approach_desc = "management approach desc {}".format(self.id)
+            profile.have_system_monitoring = True
+            profile.system_monitoring_desc = "system monitoring desc {}".format(self.id)
+            profile.have_feedback_mechanism = True
+            profile.feedback_mechanism_desc = "feedback mechanism desc {}".format(self.id)
+            # financial controls
+            profile.org_acc_system = FINANCIAL_CONTROL_SYSTEM_CHOICES.computerized
+            profile.have_system_track = True
+            profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
+
             profile.save()
+
+    @factory.post_generation
+    def mandate_mission(self, create, extracted, **kwargs):
+        PartnerMandateMission.objects.create(
+            partner=self,
+            background_and_rationale="background and rationale {}".format(self.id),
+            mandate_and_mission="mandate and mission {}".format(self.id),
+            governance_structure="governance structure {}".format(self.id),
+            governance_hq="reporting requirements of the country office to HQ {}".format(self.id),
+            concern_groups=get_concerns(),
+            security_desc="rapid response {}".format(self.id),
+            description="collaboration professional netwok {}".format(self.id),
+            population_of_concern=True,
+            ethic_safeguard_comment="fake comment {}".format(self.id),
+        )
+
+    @factory.post_generation
+    def fund(self, create, extracted, **kwargs):
+        PartnerFunding.objects.create(
+            partner=self,
+            source_core_funding="source(s) of core funding {}".format(self.id),
+            major_donors=get_donors(),
+            main_donors_list="main donors {}".format(self.id),
+        )
+
+    @factory.post_generation
+    def audit(self, create, extracted, **kwargs):
+        PartnerAuditAssessment.objects.create(
+            partner=self,
+            regular_audited_comment="fake regular audited comment {}".format(self.id),
+            org_audits=[ORG_AUDIT_CHOICES.donor],
+            link_report="http://fake.unicef.org/fake_uri{}".format(self.id),
+            major_accountability_issues_highlighted=True,
+            comment="fake comment {}".format(self.id),
+            assessments=[AUDIT_ASSESMENT_CHOICES.micro],
+        )
+
+    @factory.post_generation
+    def report(self, create, extracted, **kwargs):
+        PartnerReporting.objects.create(
+            partner=self,
+            key_result="fake key result {}".format(self.id),
+            last_report=date.today(),
+            link_report="Http://fake.unicef.org/fake_uri{}".format(self.id),
+        )
+
+    @factory.post_generation
+    def other_info(self, create, extracted, **kwargs):
+        PartnerOtherInfo.objects.create(
+            partner=self,
+            info_to_share="fake info to share {}".format(self.id),
+            confirm_data_updated=True,
+        )
+
+    @factory.post_generation
+    def other_documents(self, create, extracted, **kwargs):
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        PartnerOtherDocument.objects.create(
+            partner=self,
+            document=open(filename).read(),
+        )
 
     class Meta:
         model = Partner
@@ -378,6 +479,12 @@ class PartnerMandateMissionFactory(factory.django.DjangoModelFactory):
     concern_groups = factory.LazyFunction(get_concerns)
     security_desc = factory.Sequence(lambda n: "rapid response {}".format(n))
     description = factory.Sequence(lambda n: "collaboration professional netwok {}".format(n))
+
+    population_of_concern = True
+    ethic_safeguard_comment = factory.Sequence(lambda n: "fake comment {}".format(n))
+    governance_hq = factory.Sequence(lambda n: "headquarters oversight operations {}".format(n))
+    mandate_and_mission = factory.Sequence(lambda n: "fake mandate & mission {}".format(n))
+    background_and_rationale = factory.Sequence(lambda n: "fake background & rationale {}".format(n))
 
     class Meta:
         model = PartnerMandateMission
@@ -520,7 +627,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
                 submitter=get_agency_member(),
                 did_win=True,
                 did_accept=True,
-                ds_justification_select=JUSTIFICATION_FOR_DIRECT_SELECTION.local,
+                ds_justification_select=[JUSTIFICATION_FOR_DIRECT_SELECTION.local],
                 justification_reason="good reason",
             )
             self.selected_source = DIRECT_SELECTION_SOURCE.cso

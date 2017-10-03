@@ -8,11 +8,6 @@ from common.consts import (
 )
 from common.factories import (
     PartnerFactory,
-    PartnerMandateMissionFactory,
-    PartnerFundingFactory,
-    PartnerOtherInfoFactory,
-    PartnerAuditAssessmentFactory,
-    PartnerReportingFactory,
     PartnerMemberFactory,
     OtherAgencyFactory,
     AgencyMemberFactory,
@@ -64,21 +59,6 @@ def generate_fake_data(quantity=4):
     for idx in xrange(0, quantity):
         EOIFactory(display_type=EOI_TYPES.direct, deadline_date=None)
     print "{} direct EOI objects created with applications".format(quantity)
-
-    PartnerMandateMissionFactory.create_batch(quantity/2)
-    print "{} Partner Mandate Mission objects created".format(quantity/2)
-
-    PartnerFundingFactory.create_batch(quantity/2)
-    print "{} Partner Funding objects created".format(quantity/2)
-
-    PartnerOtherInfoFactory.create_batch(quantity/2)
-    print "{} Partner Other Info objects created".format(quantity/2)
-
-    PartnerAuditAssessmentFactory.create_batch(quantity/2)
-    print "{} Partner Audit Assessment Info objects created".format(quantity/2)
-
-    PartnerReportingFactory.create_batch(quantity/2)
-    print "{} Partner Reporting objects created".format(quantity/2)
 
     pm = PartnerMember.objects.first()
     pm.user = admin

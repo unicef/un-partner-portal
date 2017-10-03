@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TableCell } from 'material-ui';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Loader from '../loader';
 
-const styleSheet = createStyleSheet('NodataCell', () => ({
+const styleSheet = () => ({
   saleAmountCell: {
     textAlign: 'right',
   },
@@ -12,8 +12,7 @@ const styleSheet = createStyleSheet('NodataCell', () => ({
     textAlign: 'center',
     padding: '40px 0',
   },
-}));
-
+});
 
 const NoDataCellBase = (props) => {
   const { classes, colSpan, loading } = props;
@@ -31,4 +30,4 @@ NoDataCellBase.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styleSheet)(NoDataCellBase);
+export default withStyles(styleSheet, { name: 'NoDataCellBase' })(NoDataCellBase);

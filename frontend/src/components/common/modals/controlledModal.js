@@ -2,17 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import classNames from 'classnames';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Dialog, { DialogContent, DialogTitle, DialogActions } from 'material-ui/Dialog';
 import ModalContentHeader from './modalContentHeader';
 
-const styleSheet = createStyleSheet('ContentDialog', (theme) => {
+const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 4;
 
   return {
     dialogTitle: {
       color: 'white',
-      background: theme.palette.accent[500],
+      background: theme.palette.secondary[500],
     },
     info: {
       fontSize: '14px',
@@ -26,7 +26,7 @@ const styleSheet = createStyleSheet('ContentDialog', (theme) => {
       paddingBottom: `${padding}px`,
     },
   };
-});
+};
 
 const messages = {
   cancel: 'Cancel',
@@ -35,7 +35,8 @@ const messages = {
 
 
 const ControlledModal = (props) => {
-  const { classes, removeContentPadding, trigger, title, info, content, buttons, topBottomPadding } = props;
+  const { classes, removeContentPadding, trigger, title,
+    info, content, buttons, topBottomPadding } = props;
   return (
     <Dialog open={trigger} >
       <DialogTitle
@@ -108,4 +109,4 @@ ControlledModal.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styleSheet)(ControlledModal);
+export default withStyles(styleSheet, { name: 'ControlledModal' })(ControlledModal);

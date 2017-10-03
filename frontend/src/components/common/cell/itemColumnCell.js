@@ -6,7 +6,7 @@ const ItemColumnCell = (props) => {
   const { label, content } = props;
   return (
     <div>
-      <Typography type="caption" color="secondary">
+      <Typography type="caption" color="accent">
         {label}
       </Typography>
       <Typography type="body1" color="inherit">

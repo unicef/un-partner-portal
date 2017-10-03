@@ -4,9 +4,9 @@ import Grid from 'material-ui/Grid';
 
 
 function GridColumn(props) {
-  const { children, gutter } = props;
+  const { children, spacing } = props;
   return (
-    <Grid container direction="column" gutter={gutter}>
+    <Grid container direction="column" spacing={spacing}>
       {React.Children.map(children, child => (
         <Grid item >
           {child}
@@ -18,11 +18,11 @@ function GridColumn(props) {
 
 GridColumn.propTypes = {
   children: PropTypes.array,
-  gutter: PropTypes.number,
+  spacing: PropTypes.number,
 };
 
 GridColumn.defaultProps = {
-  gutter: 16,
+  spacing: 16,
 };
 
 export default GridColumn;

@@ -4,7 +4,7 @@ from django.db import transaction
 from rest_framework import serializers
 from account.models import User
 from agency.serializers import AgencySerializer
-from common.consts import APPLICATION_STATUSES
+from common.consts import APPLICATION_STATUSES, EOI_TYPES
 from common.serializers import SimpleSpecializationSerializer, PointSerializer
 from common.models import Point, AdminLevel1
 from partner.serializers import PartnerSerializer
@@ -115,6 +115,7 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         focal_points = validated_data['eoi']['focal_points']
         del validated_data['eoi']['focal_points']
 
+        validated_data['eoi']['display_type'] = EOI_TYPES.direct
         eoi = EOI.objects.create(**validated_data['eoi'])
         for location in locations:
             location['admin_level_1'], created = AdminLevel1.objects.get_or_create(**location['admin_level_1'])

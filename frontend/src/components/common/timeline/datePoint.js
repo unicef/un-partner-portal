@@ -1,49 +1,49 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import SvgIcon from 'material-ui/SvgIcon';
 import Typography from 'material-ui/Typography';
 import className from 'classnames';
 import { formatDateForPrint } from '../../../helpers/dates';
 
-const styleSheet = createStyleSheet('DatePoint', (theme) => ({
-    root: {
-      display: 'flex',
-      flexDirection: 'column',
-      justifyItems: 'center',
-      zIndex: 1,
-    },
-    text: {
-      minHeight: 48,
-    },
-    bigItem: {
-      flexBasis: '55%',
-    },
-    smallItem: {
-      flexBasis: '15%',
-    },
-    left: {
-      alignItems: 'flex-start',
-    },
-    right: {
-      alignItems: 'flex-end',
-    },
-    center: {
-      alignItems: 'center',
-    },
-    green: {
-      color: theme.palette.dateColors.green,
-    },
-    red: {
-      color: theme.palette.dateColors.red,
-    },
-    blue: {
-      color: theme.palette.dateColors.blue,
-    },
-    dark: {
-      color: theme.palette.dateColors.dark,
-    },
-  }));
+const styleSheet = theme => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyItems: 'center',
+    zIndex: 1,
+  },
+  text: {
+    minHeight: 48,
+  },
+  bigItem: {
+    flexBasis: '55%',
+  },
+  smallItem: {
+    flexBasis: '15%',
+  },
+  left: {
+    alignItems: 'flex-start',
+  },
+  right: {
+    alignItems: 'flex-end',
+  },
+  center: {
+    alignItems: 'center',
+  },
+  green: {
+    color: theme.palette.dateColors.green,
+  },
+  red: {
+    color: theme.palette.dateColors.red,
+  },
+  blue: {
+    color: theme.palette.dateColors.blue,
+  },
+  dark: {
+    color: theme.palette.dateColors.dark,
+  },
+});
 
 const DatePoint = (props) => {
   const {
@@ -120,4 +120,4 @@ DatePoint.propTypes = {
 };
 
 
-export default withStyles(styleSheet)(DatePoint);
+export default withStyles(styleSheet, { name: 'DatePoint' })(DatePoint);

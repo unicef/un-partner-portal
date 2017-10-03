@@ -1,7 +1,7 @@
 import React from 'react';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import HeaderList from '../../../common/list/headerList';
 import PaddedContent from '../../../common/paddedContent';
@@ -9,13 +9,13 @@ import ItemRowCell from '../../../common/cell/itemRowCell';
 import ItemRowCellDivider from '../../../common/cell/itemRowCellDivider';
 
 
-const styleSheet = createStyleSheet('PartnerOverviewSummary', theme => ({
+const styleSheet = () => ({
   root: {
     minHeight: '48px',
     display: 'flex',
     alignItems: 'center',
   },
-}));
+});
 
 const labels = {
   profileSummary: 'Organization Profile Summary',
@@ -94,4 +94,4 @@ PartnerOverviewSummary.propTypes = {
   partner: PropTypes.object.isRequired,
 };
 
-export default withStyles(styleSheet)(PartnerOverviewSummary);
+export default withStyles(styleSheet, { name: 'PartnerOverviewSummary' })(PartnerOverviewSummary);

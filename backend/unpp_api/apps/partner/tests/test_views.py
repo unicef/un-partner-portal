@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
+from datetime import date
 
 from django.urls import reverse
 from django.conf import settings
@@ -18,15 +19,18 @@ from partner.models import (
     PartnerOtherInfo,
     PartnerInternalControl,
 )
+from common.models import Point
 from common.tests.base import BaseAPITestCase
-from common.consts import (
-    FUNCTIONAL_RESPONSIBILITY_CHOICES,
-)
 from common.factories import (
     AgencyFactory,
     UserFactory,
     PartnerFactory,
     OtherAgencyFactory,
+    PointFactory,
+)
+from common.consts import (
+    BUDGET_CHOICES,
+    FUNCTIONAL_RESPONSIBILITY_CHOICES,
 )
 
 
@@ -73,6 +77,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         AgencyFactory,
         UserFactory,
         PartnerFactory,
+        PointFactory,
     ]
 
     def test_identification(self):
@@ -167,3 +172,147 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         for authorised_officer in response.data['authorised_officers']:
             self.assertEquals(authorised_officer['first_name'], first_name)
             self.assertEquals(authorised_officer['email'], email)
+
+    def test_mandate_mission(self):
+        partner = Partner.objects.first()
+        url = reverse('partners:mandate-mission', kwargs={"pk": partner.id})
+
+        response = self.client.get(url, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        with open(filename) as fraud_policy,\
+                open(filename) as safeguard_policy,\
+                open(filename) as governance_organigram:
+            comment = "unit test desc"
+            payload = {
+                'security_desc': comment,
+                'ethic_fraud': True,
+                'ethic_fraud_comment': comment,
+                'ethic_fraud_policy': fraud_policy,
+                'security_high_risk_locations': True,
+                'security_high_risk_policy': True,
+                'population_of_concern': True,
+                'ethic_safeguard': True,
+                'ethic_safeguard_comment': comment,
+                'ethic_safeguard_policy': safeguard_policy,
+                'location_of_office': Point.objects.first().id,
+                'location_field_offices': [Point.objects.first().id],
+                'governance_organigram': governance_organigram,
+            }
+
+            response = self.client.patch(url, data=payload, format='multipart')
+
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['ethic_safeguard_comment'], comment)
+        self.assertEquals(response.data['security_desc'], comment)
+        self.assertEquals(response.data['ethic_fraud_comment'], comment)
+        self.assertTrue(response.data['security_high_risk_locations'])
+        self.assertTrue(response.data['security_high_risk_policy'])
+        self.assertTrue(response.data['population_of_concern'])
+
+    def test_funding(self):
+        partner = Partner.objects.first()
+        url = reverse('partners:funding', kwargs={"pk": partner.id})
+
+        response = self.client.get(url, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+
+        text = 'test text'
+        payload = response.data
+        budgets = response.data['budgets']
+        for budget in budgets:
+            budget['year'] -= 1
+        budgets.append({
+            'partner': partner.id,
+            'year': date.today().year,
+            'budget': BUDGET_CHOICES.more,
+        })
+        payload['budgets'] = budgets
+        payload['main_donors_list'] = text
+        payload['source_core_funding'] = text
+
+        response = self.client.put(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['main_donors_list'], text)
+        self.assertEquals(response.data['source_core_funding'], text)
+        self.assertEquals(len(response.data['budgets']), len(budgets))
+
+    def test_collaboration(self):
+        partner = Partner.objects.first()
+        url = reverse('partners:collaboration', kwargs={"pk": partner.id})
+
+        response = self.client.get(url, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+
+        text = 'test'
+        payload = response.data
+        del payload['collaborations_partnership_others']
+        del payload['collaboration_evidences']
+        collaborations_partnership = response.data['collaborations_partnership']
+        for collaboration_partnership in collaborations_partnership:
+            collaboration_partnership['description'] = text
+            collaboration_partnership['partner_number'] = text
+        payload['partnership_collaborate_institution_desc'] = text
+        payload['partnership_collaborate_institution'] = True
+
+        response = self.client.patch(url, data=payload, format='json')
+
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(payload['partnership_collaborate_institution'])
+        self.assertEquals(response.data['partnership_collaborate_institution_desc'], text)
+        for cp in response.data['collaborations_partnership']:
+            self.assertEquals(cp['description'], text)
+            self.assertEquals(cp['partner_number'], text)
+
+    def test_project_implementation(self):
+        partner = Partner.objects.first()
+        url = reverse('partners:project-implementation', kwargs={"pk": partner.id})
+
+        response = self.client.get(url, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+
+        payload = response.data
+        del payload['most_recent_audit_report']
+        del payload['publish_annual_reports']
+        del payload['link_report']
+        del payload['assessment_report']
+        del payload['report']
+        del payload['key_result']
+        del payload['last_report']
+        text = 'test'
+        payload['financial_control_system_desc'] = text
+        payload['management_approach_desc'] = text
+        payload['comment'] = text
+
+        for internal_control in payload['internal_controls']:
+            internal_control['comment'] = text
+
+        response = self.client.patch(url, data=payload, format='json')
+
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['financial_control_system_desc'], text)
+        self.assertEquals(response.data['management_approach_desc'], text)
+        self.assertEquals(response.data['comment'], text)
+        for ic in response.data['internal_controls']:
+            self.assertEquals(ic['comment'], text)
+
+    def test_other_info(self):
+        partner = Partner.objects.first()
+        url = reverse('partners:other-info', kwargs={"pk": partner.id})
+
+        response = self.client.get(url, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        text = 'test'
+        with open(filename) as org_logo:
+            payload = {
+                'info_to_share': text,
+                'org_logo': org_logo,
+                'confirm_data_updated': True,
+            }
+            response = self.client.patch(url, data=payload, format='multipart')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['info_to_share'], text)
+        self.assertTrue(response.data['org_logo'] is not None)

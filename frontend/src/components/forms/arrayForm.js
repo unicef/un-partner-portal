@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
@@ -14,7 +14,7 @@ import Typography from 'material-ui/Typography';
 import GridColumn from '../common/grid/gridColumn';
 
 
-const styleSheet = createStyleSheet('ArrayForm', theme => ({
+const styleSheet = theme => ({
   outerPaper: {
     background: theme.palette.primary[200],
   },
@@ -25,8 +25,7 @@ const styleSheet = createStyleSheet('ArrayForm', theme => ({
   list: {
     padding: 0,
   },
-}));
-
+});
 
 class RenderArrayMembers extends Component {
   constructor(props) {
@@ -73,7 +72,7 @@ class RenderArrayMembers extends Component {
             </div>
           ))}
 
-          {fields.length <= limit && !readOnly &&
+          {fields.length < limit && !readOnly &&
             <Button
               color="accent"
               onClick={() => fields.push({})}
@@ -117,7 +116,7 @@ RenderArrayMembers.propTypes = {
 };
 
 
-const renderMembers = withStyles(styleSheet)(RenderArrayMembers);
+const renderMembers = withStyles(styleSheet, { name: 'RenderArrayMembers' })(RenderArrayMembers);
 
 const ArrayForm = (props) => {
   const { fieldName,
@@ -178,4 +177,4 @@ ArrayForm.propTypes = {
   readOnly: PropTypes.bool,
 };
 
-export default withStyles(styleSheet)(ArrayForm);
+export default withStyles(styleSheet, { name: 'ArrayForm' })(ArrayForm);

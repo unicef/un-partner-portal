@@ -6,9 +6,10 @@ from .models import AdminLevel1, Point, Sector, Specialization
 class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
     def update_partner_related(self, instance, validated_data, related_names=[]):
-
         for related_name in related_names:
             if isinstance(getattr(instance, related_name), Model):
+                if related_name not in validated_data:
+                    continue  # for patch if we didn't patch some section in body
                 # OneToOneField related to partner - Model object
                 _id = getattr(instance, related_name).id
                 getattr(instance, related_name).__class__.objects.filter(id=_id).update(**validated_data[related_name])

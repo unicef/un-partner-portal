@@ -3,7 +3,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Tabs from 'material-ui/Tabs';
 import Paper from 'material-ui/Paper';
@@ -15,7 +15,7 @@ TabContainer.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const styleSheet = createStyleSheet(theme => ({
+const styleSheet = theme => ({
   root: {
     flexGrow: 1,
     width: '100%',
@@ -26,7 +26,7 @@ const styleSheet = createStyleSheet(theme => ({
     padding: 20,
     background: 'white',
   },
-}));
+});
 
 const renderTabs = tabs => tabs.map(tab => (
   <TabContainer
@@ -46,7 +46,7 @@ const PartnerProfileTabs = (props) => {
         color="inherit"
       >
         <Tabs
-          index={currentTab}
+          value={currentTab}
           onChange={onTabClick}
           scrollable
           scrollButtons="auto"
@@ -71,4 +71,4 @@ PartnerProfileTabs.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styleSheet)(PartnerProfileTabs);
+export default withStyles(styleSheet, { name: 'PartnerProfileTabs' })(PartnerProfileTabs);

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import { PagingState, LocalPaging, SelectionState } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
@@ -14,7 +14,7 @@ const table = {
   allowedPageSizes: [5, 10, 15, 0],
 };
 
-const styleSheet = createStyleSheet('SelectableList', (theme) => {
+const styleSheet = (theme) => {
   const paddingSmall = theme.spacing.unit * 3;
   const paddingMedium = theme.spacing.unit * 4;
 
@@ -24,7 +24,7 @@ const styleSheet = createStyleSheet('SelectableList', (theme) => {
       backgroundColor: theme.palette.primary[100],
     },
   };
-});
+};
 
 class SelectableList extends Component {
   static navigationHeader(classes, selected, rows, HeaderAction) {
@@ -129,4 +129,4 @@ SelectableList.propTypes = {
   loading: PropTypes.bool,
 };
 
-export default withStyles(styleSheet)(SelectableList);
+export default withStyles(styleSheet, { name: 'SelectableList' })(SelectableList);

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
@@ -12,7 +12,7 @@ const messages = {
   upload: 'upload file',
 };
 
-const styleSheet = createStyleSheet('FileUploadButton', theme => ({
+const styleSheet = theme => ({
   root: {
     width: 0.1,
     height: 0.1,
@@ -33,9 +33,9 @@ const styleSheet = createStyleSheet('FileUploadButton', theme => ({
     marginRight: theme.spacing.unit,
   },
   removeIcon: {
-    fill: theme.palette.accent[300],
+    fill: theme.palette.secondary[300],
   },
-}));
+});
 
 class FileUploadButton extends Component {
   constructor(props) {
@@ -87,7 +87,7 @@ class FileUploadButton extends Component {
           </Button>
           :
           <div className={classes.wrapContent}>
-            <Typography type="subheading" className={classes.iconLabel} gutterBottom >
+            <Typography type="subheading" className={classes.iconLabel} spacingBottom >
               <Attachment className={classes.icon} />
               {fileAdded}
               {!deleteDisabled && <IconButton onClick={() => this.handleRemove()}>
@@ -112,5 +112,5 @@ FileUploadButton.defaultProps = {
   deleteDisabled: false,
 };
 
-export default withStyles(styleSheet)(FileUploadButton);
+export default withStyles(styleSheet, { name: 'FileUploadButton' })(FileUploadButton);
 

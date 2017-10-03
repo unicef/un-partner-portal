@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
 import Typography from 'material-ui/Typography';
 
 import StepIcon from './StepIcon';
 
-export const styleSheet = createStyleSheet('MuiStepLabel', theme => ({
+export const styleSheet = theme => ({
   root: {
     display: 'flex',
     alignItems: 'center',
@@ -42,7 +42,7 @@ export const styleSheet = createStyleSheet('MuiStepLabel', theme => ({
   errorText: {
     color: theme.palette.error[500],
   },
-}));
+});
 
 function StepLabel(props) {
   const {
@@ -126,4 +126,4 @@ StepLabel.propTypes = {
   error: PropTypes.bool,
 };
 
-export default withStyles(styleSheet)(StepLabel);
+export default withStyles(styleSheet, { name: 'StepLabel' })(StepLabel);

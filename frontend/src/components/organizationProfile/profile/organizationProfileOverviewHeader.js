@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Button from 'material-ui/Button';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 
 const messages = {
@@ -9,7 +9,7 @@ const messages = {
   lastUpdate: 'Last update: ',
 };
 
-const styleSheet = createStyleSheet('HqProfileOverviewHeader', (theme) => {
+const styleSheet = (theme) => {
   const paddingSmall = theme.spacing.unit * 3;
   const padding = theme.spacing.unit * 4;
 
@@ -25,7 +25,7 @@ const styleSheet = createStyleSheet('HqProfileOverviewHeader', (theme) => {
       padding: `0 ${padding}px 0 ${padding}px`,
     },
   };
-});
+};
 
 const OrganizationProfileOverviewHeader = (props) => {
   const { classes, update, handleEditClick } = props;
@@ -48,4 +48,4 @@ OrganizationProfileOverviewHeader.propTypes = {
   update: PropTypes.string.isRequired,
 };
 
-export default withStyles(styleSheet)(OrganizationProfileOverviewHeader);
+export default withStyles(styleSheet, { name: 'OrganizationProfileOverviewHeader' })(OrganizationProfileOverviewHeader);

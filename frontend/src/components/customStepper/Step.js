@@ -3,9 +3,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
-export const styleSheet = createStyleSheet('MuiStep', () => ({
+export const styleSheet = () => ({
   root: {
     flex: '0 0 auto',
   },
@@ -15,7 +15,7 @@ export const styleSheet = createStyleSheet('MuiStep', () => ({
   vertical: {
     marginLeft: -14,
   },
-}));
+});
 
 function Step(props) {
   const {
@@ -89,4 +89,4 @@ Step.propTypes = {
   classes: PropTypes.object,
 };
 
-export default withStyles(styleSheet)(Step);
+export default withStyles(styleSheet, { name: 'Step' })(Step);
