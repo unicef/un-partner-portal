@@ -6,7 +6,7 @@ import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
 const messages = {
@@ -16,7 +16,7 @@ const messages = {
   pluralSuffix: 's',
 };
 
-const styleSheet = createStyleSheet('HqProfile', (theme) => {
+const styleSheet = (theme) => {
   const paddingSmall = theme.spacing.unit / 2;
   const padding = theme.spacing.unit;
   const paddingMedium = theme.spacing.unit * 2;
@@ -44,7 +44,7 @@ const styleSheet = createStyleSheet('HqProfile', (theme) => {
       padding: `${paddingSmall}px 0 ${paddingSmall}px ${padding}px`,
     },
   };
-});
+};
 
 const pluralize = (count, noun, suffix = messages.pluralSuffix) => `${count} ${noun}${count !== 1 ? suffix : ''}`;
 
@@ -118,4 +118,4 @@ OrganizationItem.defaultProps = {
   update: '',
 };
 
-export default withStyles(styleSheet)(OrganizationItem);
+export default withStyles(styleSheet, { name: 'OrganizationItem' })(OrganizationItem);

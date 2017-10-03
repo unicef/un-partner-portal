@@ -1,7 +1,7 @@
 import Grid from 'material-ui/Grid';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import ItemColumnCell from '../common/cell/itemColumnCell';
 import ItemDynamicCell from '../common/cell/itemDynamicCell';
 import PaddedContent from '../common/paddedContent';
@@ -21,7 +21,7 @@ const messages = {
   no_data: 'NO DATA',
 };
 
-const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
+const styleSheet = (theme) => {
   const padding = theme.spacing.unit;
   const paddingSmall = theme.spacing.unit * 2;
   const paddingMedium = theme.spacing.unit * 4;
@@ -51,7 +51,7 @@ const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
       padding: `${paddingSmall}px 0 ${paddingSmall}px ${paddingMedium}px`,
     },
   };
-});
+};
 
 const PartnerProfileDetailItem = (props) => {
   const { classes, partner } = props;
@@ -111,4 +111,4 @@ PartnerProfileDetailItem.propTypes = {
   partner: PropTypes.object,
 };
 
-export default withStyles(styleSheet)(PartnerProfileDetailItem);
+export default withStyles(styleSheet, { name: 'PartnerProfileDetailItem' })(PartnerProfileDetailItem);

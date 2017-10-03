@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 
-const styleSheet = createStyleSheet('IconWithText', () => ({
+const styleSheet = () => ({
   base: {
     display: 'flex',
     width: '100',
@@ -14,7 +14,7 @@ const styleSheet = createStyleSheet('IconWithText', () => ({
   text: {
     marginLeft: 8,
   },
-}));
+});
 
 const IconWithText = (props) => {
   const { classes, icon, text } = props;
@@ -34,4 +34,4 @@ IconWithText.propTypes = {
   text: PropTypes.string,
 };
 
-export default withStyles(styleSheet)(IconWithText);
+export default withStyles(styleSheet, { name: 'IconWithText' })(IconWithText);

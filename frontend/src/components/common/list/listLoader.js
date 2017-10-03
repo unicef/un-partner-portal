@@ -1,10 +1,10 @@
 import R from 'ramda';
 import React from 'react';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
 import { CircularProgress } from 'material-ui';
 
-const styleSheet = createStyleSheet('ListLoader', () => ({
+const styleSheet = () => ({
   relative: {
     position: 'relative',
   },
@@ -22,7 +22,7 @@ const styleSheet = createStyleSheet('ListLoader', () => ({
     top: 'calc(55% - 10px)',
     left: 'calc(50% - 10px)',
   },
-}));
+});
 
 
 const ListLoader = (props) => {
@@ -43,4 +43,4 @@ ListLoader.propTypes = {
   children: PropTypes.element,
 };
 
-export default withStyles(styleSheet)(ListLoader);
+export default withStyles(styleSheet, { name: 'ListLoader' })(ListLoader);

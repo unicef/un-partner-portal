@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory as history, withRouter } from 'react-router';
 import { Grid, TableView, TableHeaderRow, TableRowDetail, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import { PagingState, RowDetailState } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
@@ -14,7 +14,7 @@ const table = {
   allowedPageSizes: [5, 10, 15],
 };
 
-const styleSheet = createStyleSheet('paginatedList', (theme) => {
+const styleSheet = (theme) => {
   const paddingSmall = theme.spacing.unit * 3;
   const paddingMedium = theme.spacing.unit * 4;
 
@@ -24,7 +24,7 @@ const styleSheet = createStyleSheet('paginatedList', (theme) => {
       backgroundColor: theme.palette.primary[100],
     },
   };
-});
+};
 
 class PaginatedList extends Component {
   constructor(props) {
@@ -128,4 +128,4 @@ const mapStateToProps = (state, ownProps) => ({
 
 const connectedPaginatedList = connect(mapStateToProps, null)(PaginatedList);
 const withRouterPaginatedList = withRouter(connectedPaginatedList);
-export default withStyles(styleSheet)(withRouterPaginatedList);
+export default withStyles(styleSheet, { name: 'PaginatedList' })(withRouterPaginatedList);

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import { connect } from 'react-redux';
 import { browserHistory as history, withRouter } from 'react-router';
 import { PagingState, SelectionState } from '@devexpress/dx-react-grid';
@@ -16,7 +16,7 @@ const table = {
   allowedPageSizes: [5, 10, 15],
 };
 
-const styleSheet = createStyleSheet('SelectableList', (theme) => {
+const styleSheet = (theme) => {
   const paddingSmall = theme.spacing.unit * 3;
   const paddingMedium = theme.spacing.unit * 4;
 
@@ -26,7 +26,7 @@ const styleSheet = createStyleSheet('SelectableList', (theme) => {
       backgroundColor: theme.palette.primary[100],
     },
   };
-});
+};
 
 class SelectableList extends Component {
   constructor(props) {
@@ -150,14 +150,11 @@ SelectableList.propTypes = {
   itemsCount: PropTypes.object.isRequired,
   pageSize: PropTypes.number.isRequired,
   pageNumber: PropTypes.number.isRequired,
-  onCurrentPageChange: PropTypes.func,
-  onPageSizeChange: PropTypes.func,
   headerAction: PropTypes.component,
   loading: PropTypes.bool,
   pathName: PropTypes.string.isRequired,
   query: PropTypes.object,
 };
-
 
 const mapStateToProps = (state, ownProps) => ({
   pathName: ownProps.location.pathname,
@@ -168,4 +165,6 @@ const mapStateToProps = (state, ownProps) => ({
 
 const connectedSelectableList = connect(mapStateToProps, null)(SelectableList);
 const withRouterSelectableList = withRouter(connectedSelectableList);
-export default withStyles(styleSheet)(withRouterSelectableList);
+
+export default withStyles(styleSheet, { name: 'SelectableList' })(withRouterSelectableList);
+

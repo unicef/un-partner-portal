@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import VerifiedUser from 'material-ui-icons/VerifiedUser';
 import Flag from 'material-ui-icons/Flag';
 import PropTypes from 'prop-types';
@@ -9,8 +9,7 @@ import Typography from 'material-ui/Typography';
 import PartnerProfileHeaderMenu from './partnerProfileHeaderMenu';
 import HeaderNavigation from '../../../components/common/headerNavigation';
 
-
-const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
+const styleSheet = (theme) => {
   const paddingIcon = theme.spacing.unit;
 
   return {
@@ -43,7 +42,7 @@ const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
       margin: `0 ${paddingIcon}px 0 0`,
     },
   };
-});
+};
 
 const PartnerTitle = (props) => {
   const { classes, partner } = props;
@@ -154,7 +153,7 @@ const mapDispatchToProps = () => ({
 
 const connectedPartnerProfile = connect(mapStateToProps, mapDispatchToProps)(PartnerProfileHeader);
 const connectedPartnerTitle = connect(mapStateToProps, mapDispatchToProps)(PartnerTitle);
-withStyles(styleSheet)(connectedPartnerTitle);
+withStyles(styleSheet, { name: '' })(connectedPartnerTitle);
 
-export default withStyles(styleSheet)(connectedPartnerProfile);
+export default withStyles(styleSheet, { name: 'PartnerProfileHeader' })(connectedPartnerProfile);
 

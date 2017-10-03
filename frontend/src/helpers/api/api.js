@@ -74,16 +74,12 @@ export function getDirectCfei() {
   return authorizedGet('/projects/direct');
 }
 
-export function getPartnerProfileDetails(partnerId) {
-  return authorizedGet(`/partners/${partnerId}`);
-}
-
 export function postOpenCfei(body) {
   return authorizedPost('/projects/open/', body);
 }
 
-export function getPartnersList(params) {
-  return authorizedGet('/partners', params);
+export function postDirectCfei(body) {
+  return authorizedPost('/projects/direct/', body);
 }
 
 export function uploadConceptNote(projectId, body) {
@@ -101,3 +97,17 @@ export function getOpenCfeiApplications(id, filters) {
 export function changeApplicationStatus(id, status) {
   return authorizedPatch(`/projects/application/${id}/`, { status });
 }
+
+// Partners
+export function getPartnerProfileDetails(partnerId) {
+  return authorizedGet(`/partners/${partnerId}`);
+}
+
+export function getPartnerNames() {
+  return get('/partners/short');
+}
+
+export function getPartnersList(params) {
+  return authorizedGet('/partners', params);
+}
+

@@ -3,14 +3,14 @@ import R from 'ramda';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import Tooltip from '../../common/tooltip';
 import { selectSector, selectSpecializations } from '../../../store';
 
-const styleSheet = createStyleSheet('EoiSectorCell', theme => ({
+const styleSheet = theme => ({
   mainText: {
     color: theme.palette.grey[300],
     fontWeight: 400,
@@ -28,7 +28,7 @@ const styleSheet = createStyleSheet('EoiSectorCell', theme => ({
     background: theme.palette.grey[400],
     margin: '8px 0px',
   },
-}));
+});
 
 const renderShortCell = data => data.map(sector => sector.name).join(', ');
 const renderExpandedCell = (sectors, classes) => sectors.map((sector, index) =>
@@ -76,4 +76,4 @@ const connectedEoiSectorCell = connect(
   }),
 )(EoiSectorCell);
 
-export default withStyles(styleSheet)(connectedEoiSectorCell);
+export default withStyles(styleSheet, { name: 'EoiSectorCell' })(connectedEoiSectorCell);

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 
@@ -11,12 +11,12 @@ import {
   Stepper,
 } from '../../customStepper';
 
-export const styleSheet = createStyleSheet('MuiStepper', () => ({
+export const styleSheet = () => ({
   root: {
     maxWidth: '100%',
     padding: '1em 1em 3em',
   },
-}));
+});
 
 const labels = {
   continue: 'SAVE & CONTINUE',
@@ -42,7 +42,7 @@ class partnerProfileStepper extends Component {
 
         {!readOnly ?
           <Grid item>
-            <Grid container direction="row" gutter={8}>
+            <Grid container direction="row" spacing={8}>
               {!last && <Grid item>
                 <Button
                   color="accent"
@@ -96,4 +96,4 @@ partnerProfileStepper.propTypes = {
   singleSection: PropTypes.bool,
 };
 
-export default withStyles(styleSheet)(partnerProfileStepper);
+export default withStyles(styleSheet, { name: 'partnerProfileStepper' })(partnerProfileStepper);

@@ -49,7 +49,7 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
   return (
     <FormSection name="financial_controls">
       <Grid item>
-        <Grid container direction="column" gutter={16}>
+        <Grid container direction="column" spacing={16}>
           <Grid item>
             <SelectForm
               fieldName="org_acc_system"

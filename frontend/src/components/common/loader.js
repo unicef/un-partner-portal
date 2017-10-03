@@ -3,9 +3,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { CircularProgress } from 'material-ui/Progress';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
-const styleSheet = createStyleSheet('Loader', theme => ({
+const styleSheet = theme => ({
   root: {
     position: 'relative',
     display: 'flex',
@@ -24,7 +24,7 @@ const styleSheet = createStyleSheet('Loader', theme => ({
     left: 'calc(50% - 25px)',
     top: 'calc(50% - 25px)',
   },
-}));
+});
 
 const Loader = (props) => {
   const { classes, children, loading, fullscreen } = props;
@@ -52,4 +52,4 @@ Loader.propTypes = {
 };
 
 
-export default withStyles(styleSheet)(Loader);
+export default withStyles(styleSheet, { name: 'Loader' })(Loader);

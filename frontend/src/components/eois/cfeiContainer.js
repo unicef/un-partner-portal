@@ -28,7 +28,7 @@ class CfeiContainer extends Component {
   render() {
     const { role, params: { type } } = this.props;
     return (
-      <Grid container direction="column" gutter={40}>
+      <Grid container direction="column" spacing={40}>
         <Grid item>
           <EoiFilter />
         </Grid>

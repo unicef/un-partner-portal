@@ -7,9 +7,9 @@ import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import ModeEdit from 'material-ui-icons/ModeEdit';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
-const styleSheet = createStyleSheet('CollapsableItem', (theme) => {
+const styleSheet = (theme) => {
   const padding = theme.spacing.unit;
   const paddingMedium = theme.spacing.unit * 10;
 
@@ -54,7 +54,7 @@ const styleSheet = createStyleSheet('CollapsableItem', (theme) => {
       },
     },
   };
-});
+};
 
 class CollapsableItem extends Component {
   constructor(props) {
@@ -118,4 +118,4 @@ CollapsableItem.propTypes = {
   handleEditMode: PropTypes.func.isRequired,
 };
 
-export default withStyles(styleSheet)(CollapsableItem);
+export default withStyles(styleSheet, { name: 'CollapsableItem' })(CollapsableItem);

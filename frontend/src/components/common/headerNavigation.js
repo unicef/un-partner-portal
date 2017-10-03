@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { browserHistory as history } from 'react-router';
 import IconButton from 'material-ui/IconButton';
 import KeyboardArrowLeft from 'material-ui-icons/KeyboardArrowLeft';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Tabs from 'material-ui/Tabs';
 import Typography from 'material-ui/Typography';
 import CustomTab from '../common/customTab';
 import SpreadContent from '../common/spreadContent';
 
-const styleSheet = createStyleSheet('HeaderNavigation', (theme) => {
+const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 2;
   const biggerPadding = theme.spacing.unit * 3;
   return {
@@ -33,7 +33,7 @@ const styleSheet = createStyleSheet('HeaderNavigation', (theme) => {
       paddingBottom: `${padding}px`,
     },
   };
-});
+};
 
 class HeaderNavigation extends Component {
   constructor(props) {
@@ -85,7 +85,7 @@ class HeaderNavigation extends Component {
           </SpreadContent>
           {tabs
             ? <div>
-              <Tabs index={index} onChange={handleChange}>
+              <Tabs value={index} onChange={handleChange}>
                 {this.renderTabs()}
               </Tabs>
             </div>
@@ -111,4 +111,4 @@ HeaderNavigation.propTypes = {
   handleChange: PropTypes.Func,
 };
 
-export default withStyles(styleSheet)(HeaderNavigation);
+export default withStyles(styleSheet, { name: 'HeaderNavigation' })(HeaderNavigation);

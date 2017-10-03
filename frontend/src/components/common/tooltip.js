@@ -1,18 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import ReactTooltip from 'react-tooltip';
-import Typography from 'material-ui/Typography';
 import TooltipText from './text/tooltipText';
 
 
-const styleSheet = createStyleSheet('OrganizationTypes', theme => ({
+const styleSheet = theme => ({
   paper: {
     padding: '8px !important',
     background: 'solid',
     backgroundColor: `${theme.palette.primary[700]} !important`,
   },
-}));
+});
 
 const renderTooltipContent = (content) => {
   if (typeof content === 'string') {
@@ -44,4 +43,4 @@ Tooltip.propTypes = {
 
 };
 
-export default withStyles(styleSheet)(Tooltip);
+export default withStyles(styleSheet, { name: 'Tooltip' })(Tooltip);

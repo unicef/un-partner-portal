@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import AppBar from 'material-ui/AppBar';
 import Button from 'material-ui/Button';
@@ -18,14 +18,14 @@ const label = {
 };
 
 // TODO check what can be done in muiTheme
-const styleSheet = createStyleSheet('mainLayout', theme => ({
+const styleSheet = theme => ({
   root: {
     margin: 'auto',
   },
   leftHeader: {
     display: 'flex',
     justifyContent: 'center',
-    backgroundColor: theme.palette.accent[500],
+    backgroundColor: theme.palette.secondary[500],
   },
   rightHeader: {
     // dark blue color added as extra to regular palette
@@ -53,7 +53,7 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
   headerIcon: {
     fill: theme.palette.primary[400],
   },
-}));
+});
 
 
 //Remove when sesion controlled by auth user
@@ -84,7 +84,7 @@ const mainLayout = (props) => {
   const classes = props.classes;
   return (
     <Grid item >
-      <Grid container gutter={0} className={classes.root}>
+      <Grid container spacing={0} className={classes.root}>
         <Grid item sm={2} hidden={{ xsDown: true }}>
           <AppBar
             className={`${classes.header} ${classes.leftHeader}`}
@@ -106,7 +106,7 @@ const mainLayout = (props) => {
               container
               direction="row"
               justify="flex-end"
-              gutter={0}
+              spacing={0}
             >
               <Button onClick={() => onRoleSwitch()} raised color="accent">{switchToRole()}</Button>
               <Badge
@@ -144,4 +144,4 @@ mainLayout.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default withStyles(styleSheet)(mainLayout);
+export default withStyles(styleSheet, { name: 'mainLayout' })(mainLayout);

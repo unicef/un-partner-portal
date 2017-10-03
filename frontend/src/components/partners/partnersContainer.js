@@ -58,7 +58,7 @@ class PartnersContainer extends Component {
           <HeaderNavigation title={messages.header} />
         </Grid>
         <MainContentWrapper>
-          <Grid container direction="column" gutter={24}>
+          <Grid container direction="column" spacing={24}>
             <Grid item>
               <PartnerFilter />
             </Grid>

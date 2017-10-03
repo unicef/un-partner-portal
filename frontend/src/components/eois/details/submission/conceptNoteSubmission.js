@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { browserHistory as history, withRouter } from 'react-router';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/Button';
@@ -38,7 +38,7 @@ const messages = {
   confirmError: 'Please confirm that your profile is up to date before submission.',
 };
 
-const styleSheet = createStyleSheet('HqProfile', (theme) => {
+const styleSheet = (theme) => {
   const paddingNormal = theme.spacing.unit;
   const paddingSmall = theme.spacing.unit * 2;
   const padding = theme.spacing.unit * 3;
@@ -81,13 +81,13 @@ const styleSheet = createStyleSheet('HqProfile', (theme) => {
       color: theme.palette.primary[500],
     },
     checked: {
-      color: theme.palette.accent[500],
+      color: theme.palette.secondary[500],
     },
     disabled: {
-      color: theme.palette.accent[200],
+      color: theme.palette.secondary[200],
     },
   };
-});
+};
 
 class ConceptNoteSubmission extends Component {
   constructor(props) {
@@ -312,5 +312,5 @@ const mapDispatch = (dispatch, ownProps) => {
 const connectedConceptNoteSubmission = connect(mapStateToProps, mapDispatch)(ConceptNoteSubmission);
 const withRouterConceptNoteSubmission = withRouter(connectedConceptNoteSubmission);
 
-export default withStyles(styleSheet)(withRouterConceptNoteSubmission);
+export default withStyles(styleSheet, { name: 'ConceptNoteSubmission' })(withRouterConceptNoteSubmission);
 

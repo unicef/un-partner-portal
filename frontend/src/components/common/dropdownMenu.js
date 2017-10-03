@@ -3,19 +3,19 @@ import PropTypes from 'prop-types';
 import IconButton from 'material-ui/IconButton';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import MoreVertIcon from 'material-ui-icons/MoreVert';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
 
-const styleSheet = createStyleSheet('DropdownMenu', theme => ({
+const styleSheet = theme => ({
   item: {
     margin: 0,
     padding: 0,
     color: 'black',
     '&:hover': {
-      color: theme.palette.accent[500],
+      color: theme.palette.secondary[500],
     },
   },
-}));
+});
 
 class DropdownMenu extends React.Component {
   constructor() {
@@ -78,4 +78,4 @@ DropdownMenu.propTypes = {
   }),
 };
 
-export default withStyles(styleSheet)(DropdownMenu);
+export default withStyles(styleSheet, { name: 'DropdownMenu' })(DropdownMenu);
