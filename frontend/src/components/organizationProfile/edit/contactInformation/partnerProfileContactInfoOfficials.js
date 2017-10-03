@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import ArrayForm from '../../../forms/arrayForm';
-import { visibleIf, BOOL_VAL } from '../../../../helpers/formHelper';
+import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import GridRow from '../../../common/grid/gridRow';
 import GridColumn from '../../../common/grid/gridColumn';
 
@@ -98,14 +98,14 @@ const PartnerProfileContactInfoOfficials = (props) => {
       <Grid item sm={12} xs={12}>
         <RadioForm
           label={messages.boardOfDirectors}
-          fieldName="have_board_directors"
+          fieldName="have_board_directors_a"
           values={BOOL_VAL}
           optional
           warn
           readOnly={readOnly}
         />
       </Grid>
-      {visibleIf(hasBoardOfDirectors) && <Grid item sm={12} xs={12}>
+      {visibleIfYes(hasBoardOfDirectors) && <Grid item sm={12} xs={12}>
         <ArrayForm
           limit={15}
           initial
@@ -116,7 +116,7 @@ const PartnerProfileContactInfoOfficials = (props) => {
       <Grid item sm={12} xs={12}>
         <RadioForm
           label={messages.authorisedOfficers}
-          fieldName="have_authorised_officers"
+          fieldName="have_authorised_officers_a"
           values={BOOL_VAL}
           optional
           warn
@@ -124,7 +124,7 @@ const PartnerProfileContactInfoOfficials = (props) => {
         />
       </Grid>
 
-      {visibleIf(hasAuthorisedOfficers) && <Grid item sm={12} xs={12}>
+      {visibleIfYes(hasAuthorisedOfficers) && <Grid item sm={12} xs={12}>
         <ArrayForm
           limit={15}
           initial
