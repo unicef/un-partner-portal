@@ -386,8 +386,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             profile.system_monitoring_desc = "system monitoring desc {}".format(self.id)
             profile.have_feedback_mechanism = True
             profile.feedback_mechanism_desc = "feedback mechanism desc {}".format(self.id)
+            profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
             profile.partnership_collaborate_institution_desc = "collaborate institution {}".format(self.id)
-            
+            profile.explain = "explain {}".format(self.id)
             # financial controls
             profile.org_acc_system = FINANCIAL_CONTROL_SYSTEM_CHOICES.computerized
             profile.have_system_track = True
