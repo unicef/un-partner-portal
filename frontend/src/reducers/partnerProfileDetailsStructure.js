@@ -38,6 +38,7 @@ const partnerDetailsStructure = {
     },
     authorised_officials: {
       have_board_directors: null,
+      have_authorised_officers: null,
       directors: null,
       authorised_officers: null,
     },

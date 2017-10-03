@@ -8,10 +8,12 @@ import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
-import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import GridColumn from '../common/grid/gridColumn';
 
+const messages = {
+  addNew: '+ Add New',
+};
 
 const styleSheet = theme => ({
   outerPaper: {
@@ -27,12 +29,12 @@ const styleSheet = theme => ({
   container: {
     display: 'flex',
   },
-  item: {
+  items: {
     flexFlow: 'column wrap',
     flexGrow: '1',
     display: 'flex',
   },
-  items: {
+  delete: {
     flexBasis: '5%',
   },
 });
@@ -40,7 +42,8 @@ const styleSheet = theme => ({
 class RenderArrayMembers extends Component {
   constructor(props) {
     super(props);
-    if (props.initial && !props.readOnly) props.fields.push({});
+
+    if (props.initial && !props.readOnly && props.fields.length === 0) props.fields.push({});
   }
 
   render() {
@@ -51,6 +54,7 @@ class RenderArrayMembers extends Component {
       innerField,
       classes,
       readOnly } = this.props;
+
     return (
       <Paper elevation={0} className={classes.outerPaper} >
         <List className={classes.list}>
@@ -59,20 +63,18 @@ class RenderArrayMembers extends Component {
               <ListItem key={index} >
                 <GridColumn spacing={4}>
                   <div className={classes.container}>
-                    <div className={classes.item}>
+                    <div className={classes.items}>
                       {outerField(member, index, fields)}
                     </div>
-                    {index > 0 && !readOnly &&
-                    <div className={classes.items}>
+                    <div className={classes.delete}>
                       <IconButton
                         type="button"
                         disabled={index === 0}
                         title="Remove Member"
                         onClick={() => fields.remove(index)}
-                      ><DeleteIcon />
+                      >{index > 0 && !readOnly && <DeleteIcon />}
                       </IconButton>
-
-                    </div>}
+                    </div>
                   </div>
                   {innerField && <Paper elevation={0} className={classes.innerPaper}>
                     {innerField(member, index, fields)}
@@ -88,7 +90,7 @@ class RenderArrayMembers extends Component {
               color="accent"
               onClick={() => fields.push({})}
             >
-              + Add New
+              {messages.addNew}
             </Button>
           }
         </List>
