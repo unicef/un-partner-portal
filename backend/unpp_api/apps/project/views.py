@@ -5,6 +5,7 @@ from rest_framework import status as statuses
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.filters import OrderingFilter
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -23,6 +24,7 @@ from .serializers import (
     ApplicationFullSerializer,
     CreateDirectApplicationNoCNSerializer,
     ApplicationsListSerializer,
+    CreateUnsolicitedProjectSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter
 
@@ -187,3 +189,10 @@ class ApplicationsListAPIView(ListAPIView):
     def get_queryset(self, *args, **kwargs):
         eoi_id = self.kwargs.get(self.lookup_field)
         return Application.objects.filter(eoi_id=eoi_id)
+
+
+class UnsolicitedProjectAPIView(CreateAPIView):
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = (IsAuthenticated, )
+    queryset = Application.objects.all()
+    serializer_class = CreateUnsolicitedProjectSerializer

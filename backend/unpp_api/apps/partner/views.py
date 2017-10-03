@@ -25,6 +25,7 @@ from .models import (
     PartnerProfile,
 )
 
+
 class OrganizationProfileAPIView(RetrieveAPIView):
     """
     Endpoint for getting Organization Profile.

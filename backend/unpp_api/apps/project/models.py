@@ -4,7 +4,7 @@ from datetime import date
 
 from django.db import models
 from django.db.models import Sum
-from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import ArrayField, JSONField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from model_utils.models import TimeStampedModel
 from common.consts import (
@@ -90,6 +90,9 @@ class Pin(TimeStampedModel):
 
 class Application(TimeStampedModel):
     is_unsolicited = models.BooleanField(default=False, verbose_name='Is unsolicited?')
+    proposal_of_eoi_details = JSONField(
+        default=dict([('locations', []), ('title', ''), ('agency_id', None), ('specializations', [])])
+    )
     partner = models.ForeignKey('partner.Partner', related_name="applications")
     eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
     submitter = models.ForeignKey('account.User', related_name="applications")
