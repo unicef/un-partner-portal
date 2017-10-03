@@ -15,25 +15,28 @@ const messages = {
   authorisedOfficers: 'Does your organization have a authorised officer(s)?',
 };
 
-const Director = director => (
+const directorForm = (director, readOnly) => (
   <GridRow columns={4}>
     <TextFieldForm
       fieldName={`${director}.first_name`}
       label="First Name"
       optional
       warn
+      readOnly={readOnly}
     />
     <TextFieldForm
       fieldName={`${director}.last_name`}
       label="Last Name"
       optional
       warn
+      readOnly={readOnly}
     />
     <TextFieldForm
       fieldName={`${director}.job_title`}
       label="Job Title/Position"
       optional
       warn
+      readOnly={readOnly}
     />
     <RadioForm
       fieldName={`${director}.authorized`}
@@ -41,11 +44,12 @@ const Director = director => (
       optional
       warn
       label="Authorised Officer?"
+      readOnly={readOnly}
     />
   </GridRow>
 );
 
-const AuthorisedOfficer = officer => (
+const authorisedOfficerForm = (officer, readOnly) => (
   <GridColumn>
     <GridRow columns={4}>
       <TextFieldForm
@@ -53,18 +57,21 @@ const AuthorisedOfficer = officer => (
         label="First Name"
         optional
         warn
+        readOnly={readOnly}
       />
       <TextFieldForm
         fieldName={`${officer}.last_name`}
         label="Last Name"
         optional
         warn
+        readOnly={readOnly}
       />
       <TextFieldForm
         fieldName={`${officer}.job_title`}
         label="Job Title/Position"
         optional
         warn
+        readOnly={readOnly}
       />
     </GridRow>
     <GridRow columns={4}>
@@ -73,18 +80,21 @@ const AuthorisedOfficer = officer => (
         label="First Name"
         optional
         warn
+        readOnly={readOnly}
       />
       <TextFieldForm
         fieldName={`${officer}.fax`}
         label="Last Name"
         optional
         warn
+        readOnly={readOnly}
       />
       <TextFieldForm
         fieldName={`${officer}.email`}
         label="Job Title/Position"
         optional
         warn
+        readOnly={readOnly}
       />
     </GridRow>
   </GridColumn>
@@ -98,7 +108,7 @@ const PartnerProfileContactInfoOfficials = (props) => {
       <Grid item sm={12} xs={12}>
         <RadioForm
           label={messages.boardOfDirectors}
-          fieldName="have_board_directors_a"
+          fieldName="have_board_directors"
           values={BOOL_VAL}
           optional
           warn
@@ -110,13 +120,14 @@ const PartnerProfileContactInfoOfficials = (props) => {
           limit={15}
           initial
           fieldName="directors"
-          outerField={Director}
+          outerField={director => directorForm(director, readOnly)}
+          readOnly={readOnly}
         />
       </Grid>}
       <Grid item sm={12} xs={12}>
         <RadioForm
           label={messages.authorisedOfficers}
-          fieldName="have_authorised_officers_a"
+          fieldName="have_authorised_officers"
           values={BOOL_VAL}
           optional
           warn
@@ -129,7 +140,8 @@ const PartnerProfileContactInfoOfficials = (props) => {
           limit={15}
           initial
           fieldName="authorised_officers"
-          outerField={AuthorisedOfficer}
+          outerField={officer => authorisedOfficerForm(officer, readOnly)}
+          readOnly={readOnly}
         />
       </Grid>}
     </Grid>
