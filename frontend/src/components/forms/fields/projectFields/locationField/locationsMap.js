@@ -92,7 +92,6 @@ class LocationsMapBase extends Component {
           countryCode = loc.address_components[1].short_name;
         }
         if (countryCode !== currentCountryCode) return;
-        debugger
         const newLocation = {
           country_code: countryCode,
           admin_level_1: { name: loc.address_components[0].long_name },
