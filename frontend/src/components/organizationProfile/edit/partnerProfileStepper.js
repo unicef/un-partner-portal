@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
-
 import ProfileStepContainer from './profileStepContainer';
 import {
   Stepper,
 } from '../../customStepper';
 
-export const styleSheet = createStyleSheet('MuiStepper', (theme) => {
+
+export const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 3;
   return {
     root: {
@@ -22,7 +20,7 @@ export const styleSheet = createStyleSheet('MuiStepper', (theme) => {
       padding: `${padding}px 0 0 ${padding}px`,
     },
   };
-});
+};
 
 const labels = {
   continue: 'SAVE & CONTINUE',
@@ -103,4 +101,4 @@ partnerProfileStepper.propTypes = {
   singleSection: PropTypes.bool,
 };
 
-export default withStyles(styleSheet)(partnerProfileStepper);
+export default withStyles(styleSheet, { name: 'partnerProfileStepper' })(partnerProfileStepper);

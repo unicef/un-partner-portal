@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
 
 import {
@@ -20,13 +20,12 @@ import { loadCountries } from '../../reducers/countries';
 import { registerUser } from '../../reducers/session';
 
 
-const styleSheet = createStyleSheet('RegistrationStepper', () => ({
+const styleSheet = () => ({
   root: {
     maxWidth: '100%',
     padding: '1em 1em 3em',
   },
-}));
-
+});
 
 class RegistrationStepper extends React.Component {
   constructor(props) {
@@ -144,4 +143,4 @@ const connectedRegistrationStepper = connect(
   }),
 )(RegistrationStepper);
 
-export default withStyles(styleSheet)(connectedRegistrationStepper);
+export default withStyles(styleSheet, { name: 'RegistrationStepper' })(connectedRegistrationStepper);

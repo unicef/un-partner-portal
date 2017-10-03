@@ -1,18 +1,16 @@
 import Typography from 'material-ui/Typography';
 import React from 'react';
-import PropTypes from 'prop-types';
-import Add from 'material-ui-icons/Add';
-import TextField from '../../forms/textFieldForm';
-import Button from 'material-ui/Button';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
+import PropTypes from 'prop-types';
+import TextField from '../../forms/textFieldForm';
 
 const messages = {
   countryProfile: 'Country Profiles',
   new: 'New',
 };
 
-const styleSheet = createStyleSheet('CountryOfficesHeader', theme => ({
+const styleSheet = theme => ({
   alignCenter: {
     display: 'flex',
     alignItems: 'center',
@@ -26,10 +24,10 @@ const styleSheet = createStyleSheet('CountryOfficesHeader', theme => ({
     width: 20,
     height: 20,
   },
-}));
+});
 
 const CountryOfficesHeader = (props) => {
-  const { classes, handleNewCountryClick } = props;
+  const { classes } = props;
   return (
     <Grid align="center" container>
       <Grid xs={9} item>
@@ -50,7 +48,6 @@ const CountryOfficesHeader = (props) => {
 
 CountryOfficesHeader.propTypes = {
   classes: PropTypes.object.isRequired,
-  handleNewCountryClick: PropTypes.func.isRequired,
 };
 
-export default withStyles(styleSheet)(CountryOfficesHeader);
+export default withStyles(styleSheet, { name: 'CountryOfficesHeader' })(CountryOfficesHeader);

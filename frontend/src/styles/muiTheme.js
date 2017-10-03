@@ -1,4 +1,3 @@
-import createPalette from 'material-ui/styles/palette';
 import purple from 'material-ui/colors/deepPurple';
 import blue from 'material-ui/colors/blue';
 import grey from 'material-ui/colors/grey';
@@ -28,10 +27,10 @@ export const muiOldTheme = () => getMuiTheme({
 });
 
 const theme = {
-  palette: createPalette({
+  palette: {
     primary: { ...grey, strong: '#233944' },
-    accent: purple,
-  }),
+    secondary: purple,
+  },
   overrides: {
     typography: {
       fontSize: 20,
@@ -107,7 +106,7 @@ const getTheme = () => (
     ...theme,
     palette: {
       ...theme.palette,
-      accent: getColorTheme(),
+      secondary: getColorTheme(),
       success: {
         primary: '#72C300',
         secondary: '#BEF078',

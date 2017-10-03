@@ -24,7 +24,7 @@ class PartnerApplicationsUnsolicited extends Component {
     const { partners, columns } = this.props;
 
     return (
-      <GridColumn gutter={24}>
+      <GridColumn spacing={24}>
         <PartnerApplicationsNotesFilter />
         <PaginatedList
           items={partners}

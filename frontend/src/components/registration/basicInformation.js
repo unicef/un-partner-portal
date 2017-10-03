@@ -20,7 +20,7 @@ const BasicInformation = (props) => {
   const { legalNameChange, countries } = props;
   return (
     <Grid item>
-      <Grid container direction="column" gutter={16}>
+      <Grid container direction="column" spacing={16}>
         <TextFieldForm
           label="Organization's Legal Name"
           fieldName="json.partner.legal_name"

@@ -22,7 +22,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
   return (
     <FormSection name="basic">
       <Grid item>
-        <Grid container direction="column" gutter={16}>
+        <Grid container direction="column" spacing={16}>
           <TextFieldForm
             label={messages.legalName}
             fieldName="legal_name"

@@ -422,6 +422,8 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     security_desc = serializers.CharField(source="mandate_mission.security_desc")
 
     experiences = PartnerExperienceSerializer(many=True)
+    # location_of_office = PointSerializer()
+    # location_field_offices = PointSerializer(many=True)
 
     class Meta:
         model = Partner

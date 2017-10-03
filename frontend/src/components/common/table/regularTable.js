@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Table, {
   TableBody,
   TableRow,
@@ -12,7 +12,7 @@ import SharedTable from './sharedTable';
 import Loader from '../loader';
 
 
-const styleSheet = createStyleSheet('RegularTable', theme => ({
+const styleSheet = theme => ({
   root: {
     background: theme.palette.primary[200],
     padding: theme.spacing.unit * 3,
@@ -27,7 +27,7 @@ const styleSheet = createStyleSheet('RegularTable', theme => ({
   firstCell: {
     padding: `0px 4px 0px ${theme.spacing.unit * 4}px`,
   },
-}));
+});
 
 class RegularTable extends SharedTable {
   constructor(props) {
@@ -99,4 +99,4 @@ RegularTable.propTypes = {
   loading: PropTypes.bool,
 };
 
-export default withStyles(styleSheet)(RegularTable);
+export default withStyles(styleSheet, { name: 'RegularTable' })(RegularTable);

@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import { RadioGroup } from 'material-ui/Radio';
 
-const styleSheet = createStyleSheet('BasicInformation', () => ({
+export const styleSheet = () => ({
   row: {
     display: 'flex',
     flexDirection: 'row',
   },
-}));
+});
 
 const RadioGroupRow = (props) => {
   const { classes, selectedValue, onChange, children, ...other } = props;
@@ -33,5 +33,5 @@ RadioGroupRow.propTypes = {
   children: PropTypes.element,
 };
 
-export default withStyles(styleSheet)(RadioGroupRow);
+export default withStyles(styleSheet, { name: 'RadioGroupRow' })(RadioGroupRow);
 

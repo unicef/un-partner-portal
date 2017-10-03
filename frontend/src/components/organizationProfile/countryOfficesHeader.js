@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Add from 'material-ui-icons/Add';
 import Button from 'material-ui/Button';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
 const messages = {
@@ -11,7 +11,7 @@ const messages = {
   new: 'New',
 };
 
-const styleSheet = createStyleSheet('CountryOfficesHeader', theme => ({
+const styleSheet = theme => ({
   alignCenter: {
     display: 'flex',
     alignItems: 'center',
@@ -25,7 +25,7 @@ const styleSheet = createStyleSheet('CountryOfficesHeader', theme => ({
     width: 20,
     height: 20,
   },
-}));
+});
 
 const CountryOfficesHeader = (props) => {
   const { classes, handleNewCountryClick } = props;
@@ -57,4 +57,4 @@ CountryOfficesHeader.propTypes = {
   handleNewCountryClick: PropTypes.func.isRequired,
 };
 
-export default withStyles(styleSheet)(CountryOfficesHeader);
+export default withStyles(styleSheet, { name: 'CountryOfficesHeader' })(CountryOfficesHeader);

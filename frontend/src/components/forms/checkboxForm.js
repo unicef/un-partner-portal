@@ -3,18 +3,17 @@ import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import { FormControl } from 'material-ui/Form';
 import { renderCheckbox } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
-const styleSheet = createStyleSheet('mainLayout', theme => ({
+const styleSheet = () => ({
   root: {
     display: 'flex',
     alignItems: 'center',
   },
-}));
-
+});
 
 function CheckboxForm(props) {
   const {
@@ -90,4 +89,4 @@ CheckboxForm.defaultProps = {
 };
 
 
-export default withStyles(styleSheet)(CheckboxForm);
+export default withStyles(styleSheet, { name: 'CheckboxForm' })(CheckboxForm);

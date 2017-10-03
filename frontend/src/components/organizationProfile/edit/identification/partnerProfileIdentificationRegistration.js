@@ -2,7 +2,6 @@ import React from 'react';
 import { formValueSelector, FormSection } from 'redux-form';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import Grid from 'material-ui/Grid';
 import { visibleIf, visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
 import RadioForm from '../../../forms/radioForm';
@@ -56,7 +55,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
               && <Grid item sm={4} xs={12}>
                 <FileForm
                   fieldName="gov_doc"
-                  label={messages.governingDoc}
+                  label={messages.governingDoc} 
                   optional
                   warn
                   readOnly={readOnly}

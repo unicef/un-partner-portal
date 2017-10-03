@@ -1,46 +1,60 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { browserHistory as history } from 'react-router';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
-import { TableCell } from 'material-ui/Table';
+import { browserHistory as history, withRouter } from 'react-router';
 import MainContentWrapper from '../../components/common/mainContentWrapper';
 import HeaderNavigation from '../../components/common/headerNavigation';
 import PartnerFilter from './partnerFilter';
 import PartnerProfileNameCell from './partnerProfileNameCell';
 import PaginatedList from '../common/list/paginatedList';
 import PartnerProfileDetailItem from './partnerProfileDetailItem';
+import { loadPartnersList } from '../../reducers/agencyPartnersList';
+import PartnerProfileCountryCell from './partnerProfileCountryCell';
+import PartnerProfileExperienceCell from './partnerProfileExperienceCell';
 
 const messages = {
   header: 'Partners',
 };
 
-class PartnersContainer extends Component {
+class PartnersContainer extends Component { 
+  shouldComponentUpdate(nextProps, nextState) {
+    const { query } = this.props;
+
+    if (!R.isEmpty(nextProps.location.query)
+    && !R.equals(query, nextProps.location.query)) {
+      this.props.loadPartners(nextProps.location.query);
+    }
+
+    return true;
+  }
+
+  /* eslint-disable class-methods-use-this */
   onRowClick(row) {
-    history.push('/partner/1/overview');
+    history.push(`/partner/${row.id}/overview`);
   }
 
-  static partnerDetailCell(row) {
-    return (
-      <PartnerProfileDetailItem partner={row.details} />
-    );
-  }
-
+  /* eslint-disable class-methods-use-this */
   partnerCell({ row, column }) {
     if (column.name === 'name') {
       return (<PartnerProfileNameCell
         verified={row.verified}
         yellowFlag={row.flagYellow}
         redFlag={row.flagRed}
-        name={row.name}
+        name={row.legal_name}
       />);
+    } else if (column.name === 'country_code') {
+      return <PartnerProfileCountryCell code={row.country_code} />;
+    } else if (column.name === 'experience_working') {
+      return <PartnerProfileExperienceCell experience={row.experience_working} />;
     }
 
-    return <TableCell onClick={() => this.onRowClick(row)}>{row[column.name]}</TableCell>;
+    return undefined;
   }
 
   render() {
-    const { partners, columns } = this.props;
+    const { partners, columns, totalCount, loading } = this.props;
 
     return (
       <div>
@@ -48,7 +62,7 @@ class PartnersContainer extends Component {
           <HeaderNavigation title={messages.header} />
         </Grid>
         <MainContentWrapper>
-          <Grid container direction="column" gutter={24}>
+          <Grid container direction="column" spacing={24}>
             <Grid item>
               <PartnerFilter />
             </Grid>
@@ -56,12 +70,11 @@ class PartnersContainer extends Component {
               <PaginatedList
                 items={partners}
                 columns={columns}
+                itemsCount={totalCount}
                 expandable
+                loading={loading}
                 templateCell={this.partnerCell}
-                expandedCell={row => PartnersContainer.partnerDetailCell(row)}
-                onRowClick={(row) => { this.onRowClick(row); }}
-                onPageSizeChange={pageSize => console.log('Page size', pageSize)}
-                onCurrentPageChange={page => console.log('Page number', page)}
+                expandedCell={row => <PartnerProfileDetailItem partner={row.details} />}
               />
             </Grid>
           </Grid>
@@ -74,12 +87,23 @@ class PartnersContainer extends Component {
 PartnersContainer.propTypes = {
   partners: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
+  totalCount: PropTypes.number.isRequired,
+  loadPartners: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
+  query: PropTypes.object,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   partners: state.agencyPartnersList.partners,
+  totalCount: state.agencyPartnersList.totalCount,
   columns: state.agencyPartnersList.columns,
+  loading: state.agencyPartnersList.loading,
+  query: ownProps.location.query,
 });
 
+const mapDispatch = dispatch => ({
+  loadPartners: params => dispatch(loadPartnersList(params)),
+});
 
-export default connect(mapStateToProps, null)(PartnersContainer);
+const connectedPartnersContainer = connect(mapStateToProps, mapDispatch)(PartnersContainer);
+export default withRouter(connectedPartnersContainer);

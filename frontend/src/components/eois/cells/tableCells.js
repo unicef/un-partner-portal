@@ -54,7 +54,7 @@ export const renderAgencyDirectCells = item => ([
     {item.agency.name}
   </TableCell>,
   <TableCell limited >
-    <EoiPartnersCell partners={item.selected_partners} />
+    <EoiPartnersCell partners={item.selected_partners || []} />
   </TableCell>,
   <TableCell >
     <EoiCountryCell code={item.country_code} />

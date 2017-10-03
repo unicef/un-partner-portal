@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { browserHistory as history, withRouter } from 'react-router';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import List from 'material-ui/List';
 import Divider from 'material-ui/Divider';
@@ -13,8 +13,7 @@ import Paper from 'material-ui/Paper';
 import MenuLink from './menuLink';
 
 
-const styleSheet = createStyleSheet('sidebarMenu', theme => ({
-
+const styleSheet = theme => ({
   sidebar: {
     height: '100%',
     justifyContent: 'space-between',
@@ -30,14 +29,14 @@ const styleSheet = createStyleSheet('sidebarMenu', theme => ({
   button: {
     '&:hover': {
       backgroundColor: theme.palette.primary[200],
-      color: theme.palette.accent[500],
+      color: theme.palette.secondary[500],
     },
     '&.active': {
       backgroundColor: theme.palette.primary[200],
-      color: theme.palette.accent[500],
+      color: theme.palette.secondary[500],
     },
   },
-}));
+});
 
 function sidebarMenu(props) {
   const { classes, router: { location: { pathname } }, sidebar, onItemClick } = props;
@@ -66,7 +65,7 @@ function sidebarMenu(props) {
   });
 
   return (
-    <Grid className={classes.sidebar} container gutter={0}>
+    <Grid className={classes.sidebar} container spacing={0}>
       <List>
         {links}
       </List>
@@ -100,4 +99,4 @@ const containerSidebarMenu = connect(
   mapDispatchToProps,
 )(sidebarMenu);
 
-export default withStyles(styleSheet)(withRouter(containerSidebarMenu));
+export default withStyles(styleSheet, { name: 'sidebarMenu' })(withRouter(containerSidebarMenu));

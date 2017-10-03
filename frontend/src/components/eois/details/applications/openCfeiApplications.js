@@ -19,7 +19,7 @@ const HeaderActions = (props) => {
   const Preselect = WithGreyColor()(PreselectButton);
   const Reject = WithGreyColor()(RejectButton);
   return (
-    <GridRow gutter={0}>
+    <GridRow spacing={0}>
       <Preselect id={ids} />
       <Reject id={ids} />
     </GridRow>
@@ -56,7 +56,7 @@ class ApplicationsListContainer extends Component {
     const { applications, columns, loading } = this.props;
     return (
       <div>
-        <GridColumn gutter={24}>
+        <GridColumn spacing={24}>
           <PartnerFilter />
           <SelectableList
             items={applications}

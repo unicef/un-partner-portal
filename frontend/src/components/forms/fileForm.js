@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import { FormControl, FormLabel } from 'material-ui/Form';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import FileUploadButton from '../common/buttons/fileUploadButton';
 import { renderFileDownload, renderFormControl } from '../../helpers/formHelper';
@@ -12,7 +12,7 @@ const messages = {
   download: 'Download',
 };
 
-const styleSheet = createStyleSheet('mainLayout', theme => ({
+const styleSheet = theme => ({
   root: {
     width: 0.1,
     height: 0.1,
@@ -40,7 +40,7 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
     alignItems: 'center',
   },
   downloadIcon: {
-    fill: theme.palette.accent[700],
+    fill: theme.palette.secondary[700],
     marginRight: 5,
   },
   FileNameField: {
@@ -54,7 +54,7 @@ const styleSheet = createStyleSheet('mainLayout', theme => ({
   button: {
     padding: '11px 0px',
   },
-}));
+});
 
 class FileForm extends Component {
   constructor(props) {
@@ -148,4 +148,4 @@ FileForm.defaultProps = {
 };
 
 
-export default withStyles(styleSheet)(FileForm);
+export default withStyles(styleSheet, { name: 'FileForm' })(FileForm);

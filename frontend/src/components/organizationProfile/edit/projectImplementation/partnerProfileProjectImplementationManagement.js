@@ -22,7 +22,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
   return (
     <FormSection name="program_management">
       <Grid item>
-        <Grid container direction="column" gutter={16}>
+        <Grid container direction="column" spacing={16}>
           <Grid item>
             <RadioForm
               fieldName="have_management_approach"

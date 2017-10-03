@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
-import BaseButton from 'material-ui/internal/ButtonBase';
+import BaseButton from 'material-ui/ButtonBase';
 
 
-const styleSheet = createStyleSheet('IconWithTextButton', () => ({
+const styleSheet = () => ({
   base: {
     padding: 8,
     display: 'flex',
@@ -18,7 +18,7 @@ const styleSheet = createStyleSheet('IconWithTextButton', () => ({
   text: {
     marginLeft: 8,
   },
-}));
+});
 
 const IconWithTextButton = (props) => {
   const { classes, onClick, icon, text } = props;
@@ -42,4 +42,4 @@ IconWithTextButton.propTypes = {
   text: PropTypes.string,
 };
 
-export default withStyles(styleSheet)(IconWithTextButton);
+export default withStyles(styleSheet, { name: 'IconWithTextButton' })(IconWithTextButton);

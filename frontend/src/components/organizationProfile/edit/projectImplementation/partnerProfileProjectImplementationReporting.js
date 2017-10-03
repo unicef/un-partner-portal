@@ -25,7 +25,7 @@ const PartnerProfileProjectImplementationReporting = (props) => {
   return (
     <FormSection name="report">
       <Grid item>
-        <Grid container direction="column" gutter={16}>
+        <Grid container direction="column" spacing={16}>
           <Grid item>
             <TextFieldForm
               label="Briefly explain the key results achieved by your organization over the last year"

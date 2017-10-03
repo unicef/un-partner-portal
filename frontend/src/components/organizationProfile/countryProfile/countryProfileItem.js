@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import { ListItem, ListItemText } from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
 
-const styleSheet = createStyleSheet('CountryProfileList', (theme) => {
+const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 2;
   return {
     root: {
@@ -17,13 +17,13 @@ const styleSheet = createStyleSheet('CountryProfileList', (theme) => {
       padding: 0,
     },
     checked: {
-      color: theme.palette.accent[500],
+      color: theme.palette.secondary[500],
     },
     disabled: {
-      color: theme.palette.accent[200],
+      color: theme.palette.secondary[200],
     },
   };
-});
+};
 
 const CountryProfileItem = (props) => {
   const { classes, selected, country, handleToggle } = props;
@@ -61,4 +61,4 @@ CountryProfileItem.propTypes = {
   handleToggle: PropTypes.func.isRequired,
 };
 
-export default withStyles(styleSheet)(CountryProfileItem);
+export default withStyles(styleSheet, { name: 'CountryProfileItem' })(CountryProfileItem);

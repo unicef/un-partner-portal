@@ -3,9 +3,9 @@ import React from 'react';
 import Grid from 'material-ui/Grid';
 import Divider from 'material-ui/Divider';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
-const styleSheet = createStyleSheet('ItemRowCell', (theme) => {
+const styleSheet = (theme) => {
   const padding = theme.spacing.unit;
   return {
     row: {
@@ -25,7 +25,7 @@ const styleSheet = createStyleSheet('ItemRowCell', (theme) => {
       padding: `${padding}px 0 0 0`,
     },
   };
-});
+};
 
 const ItemRowCellDivider = (props) => {
   const { label, content, divider, labelSecondary, classes } = props;
@@ -56,4 +56,4 @@ ItemRowCellDivider.propTypes = {
   divider: PropTypes.bool,
 };
 
-export default withStyles(styleSheet)(ItemRowCellDivider);
+export default withStyles(styleSheet, { name: 'ItemRowCellDivider' })(ItemRowCellDivider);
