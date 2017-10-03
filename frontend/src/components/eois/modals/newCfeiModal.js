@@ -102,7 +102,7 @@ class NewCfeiModal extends Component {
           }}
           content={React.createElement(getModal(type), { onSubmit: this.handleSubmit })}
         />
-        <CallPartnersModal />
+        { type === PROJECT_TYPES.OPEN && <CallPartnersModal />}
       </Grid>
     );
   }

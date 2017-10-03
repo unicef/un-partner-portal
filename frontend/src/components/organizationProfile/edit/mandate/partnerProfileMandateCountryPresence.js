@@ -23,7 +23,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
   return (
     <FormSection name="country_presence_hq">
       <Grid item>
-        <Grid container direction="column" gutter={16}>
+        <Grid container direction="column" spacing={16}>
           <Grid item>
             <SelectForm
               fieldName="country_presents"

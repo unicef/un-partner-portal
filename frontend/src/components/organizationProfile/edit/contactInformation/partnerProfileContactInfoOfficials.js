@@ -23,7 +23,7 @@ const PartnerProfileContactInfoOfficials = (props) => {
 
   return (<FormSection name="authorizedOfficials">
     <Grid item>
-      <Grid container direction="column" gutter={16}>
+      <Grid container direction="column" spacing={16}>
         <Grid item sm={6} xs={12}>
           <RadioForm
             fieldName="hasBoD"

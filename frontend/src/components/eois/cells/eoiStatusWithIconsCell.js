@@ -1,19 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
 import EoiStatusCell from './eoiStatusCell';
 import TooltipIcon from '../../common/tooltipIcon';
 import PinIcon from '../../common/pinIcon';
 
 
-const styleSheet = createStyleSheet('EoiStatusCell', theme => ({
+const styleSheet = theme => ({
   pinnedIcon: {
     fill: theme.palette.success.primary,
   },
-}));
-
+});
 
 const EoiStatusWithIconsCell = (props) => {
   const { classes, item, hoverOn, message, simple } = props;
@@ -40,4 +39,4 @@ EoiStatusWithIconsCell.propTypes = {
   simple: PropTypes.bool,
 };
 
-export default withStyles(styleSheet)(EoiStatusWithIconsCell);
+export default withStyles(styleSheet, { name: 'EoiStatusWithIconsCell' })(EoiStatusWithIconsCell);

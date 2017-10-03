@@ -1,10 +1,9 @@
-
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
 
-const styleSheet = createStyleSheet('WithGreyColor', theme => ({
+const styleSheet = theme => ({
   grey: {
     color: theme.palette.primary[700],
     '&:hover': {
@@ -14,9 +13,9 @@ const styleSheet = createStyleSheet('WithGreyColor', theme => ({
   disabled: {
     color: theme.palette.action.disabled,
   },
-}));
+});
 
-const WithGreyColor = disabled => Component => withStyles(styleSheet)(
+const WithGreyColor = disabled => Component => withStyles(styleSheet, { name: 'WithGreyColor' })(
   ({ classes, ...props }) => (<Component
     className={disabled ? classes.disabled : classes.grey}
     disabled={disabled}

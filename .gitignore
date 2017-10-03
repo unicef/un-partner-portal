@@ -106,7 +106,7 @@ ENV/
 frontend/node_modules
 
 #frontend dev
-frontend/src/components/dev.js
+frontend/*/dev.js
 
 # PyCharm etc.
 .idea/

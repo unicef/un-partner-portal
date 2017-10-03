@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
 import Button from 'material-ui/Button';
 import Dialog, {
@@ -11,12 +11,12 @@ import Dialog, {
 } from 'material-ui/Dialog';
 
 
-const styleSheet = createStyleSheet('OrganizationTypes', theme => ({
+const styleSheet = theme => ({
   dialogTitle: {
     color: 'white',
-    background: theme.palette.accent[500],
+    background: theme.palette.secondary[500],
   },
-}));
+});
 
 function AlertDialog(props) {
   const { classes, trigger, title, text, handleDialogClose } = props;
@@ -62,4 +62,4 @@ AlertDialog.propTypes = {
   classes: PropTypes.object,
 };
 
-export default withStyles(styleSheet)(AlertDialog);
+export default withStyles(styleSheet, { name: 'AlertDialog' })(AlertDialog);

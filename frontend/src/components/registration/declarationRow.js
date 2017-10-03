@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 
 import PolarRadio from '../forms/fields/PolarRadio';
 
 
-const styleSheet = createStyleSheet('DeclarationRow', theme => ({
+const styleSheet = theme => ({
   container: {
     borderBottom: `1px ${theme.palette.grey[300]} solid`,
   },
@@ -19,7 +19,7 @@ const styleSheet = createStyleSheet('DeclarationRow', theme => ({
     whiteSpace: 'pre-line',
     padding: 4,
   },
-}));
+});
 
 function DeclarationRow(props) {
   const { classes, message, index } = props;
@@ -55,4 +55,4 @@ DeclarationRow.propTypes = {
   index: PropTypes.number,
 };
 
-export default withStyles(styleSheet)(DeclarationRow);
+export default withStyles(styleSheet, { name: 'DeclarationRow' })(DeclarationRow);

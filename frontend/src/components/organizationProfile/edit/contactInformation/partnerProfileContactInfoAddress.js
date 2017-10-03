@@ -34,7 +34,7 @@ const PartnerProfileContactInfoAddress = (props) => {
 
   return (<FormSection name="address">
     <Grid item>
-      <Grid container direction="column" gutter={16}>
+      <Grid container direction="column" spacing={16}>
         <Grid item sm={6} xs={12}>
           <RadioForm
             fieldName="mailing_type"

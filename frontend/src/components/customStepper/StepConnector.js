@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
-export const styleSheet = createStyleSheet('MuiStepConnector', theme => ({
+export const styleSheet = theme => ({
   root: {
     flex: '1 1 auto',
   },
@@ -30,7 +30,7 @@ export const styleSheet = createStyleSheet('MuiStepConnector', theme => ({
     margin: '8px 0px',
     minHeight: 40,
   },
-}));
+});
 
 function StepConnector(props) {
   const {
@@ -81,4 +81,4 @@ StepConnector.propTypes = {
   active: PropTypes.bool,
 };
 
-export default withStyles(styleSheet)(StepConnector);
+export default withStyles(styleSheet, { name: 'StepConnector' })(StepConnector);

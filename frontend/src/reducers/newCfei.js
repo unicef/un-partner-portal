@@ -1,5 +1,5 @@
 import R from 'ramda';
-import { postOpenCfei } from '../helpers/api/api';
+import { postOpenCfei, postDirectCfei } from '../helpers/api/api';
 import { mergeListsFromObjectArray } from './normalizationHelpers';
 import { loadCfei } from './cfei';
 import { PROJECT_TYPES } from '../helpers/constants';
@@ -74,10 +74,18 @@ export const addOpenCfei = body => (dispatch) => {
     });
 };
 
-export const addDirectCfei = () => {
-  new Promise(resolve =>
-    setTimeout(resolve, 3000))
-    .then(() => console.log('New direct selection created'));
+export const addDirectCfei = body => (dispatch) => {
+  dispatch(newCfeiSubmitting());
+  const preparedBody = prepareBody(body);
+  return postDirectCfei(R.mergeWith(R.merge, preparedBody, mockData))
+    .then(() => {
+      dispatch(newCfeiSubmitted());
+      dispatch(loadCfei(PROJECT_TYPES.DIRECT));
+    })
+    .catch((error) => {
+      dispatch(newCfeiSubmitted());
+      dispatch(newCfeiFailure(error));
+    });
 };
 
 const startSubmitting = state => R.assoc('error', {}, R.assoc('openCfeiSubmitting', true, state));

@@ -22,7 +22,7 @@ const PartnerProfileMandateEthics = (props) => {
 
   return (
     <FormSection name="ethics">
-      <Grid container direction="column" gutter={16}>
+      <Grid container direction="column" spacing={16}>
         <Grid item >
           <RadioForm
             fieldName="ethic_safeguard"
