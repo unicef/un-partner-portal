@@ -684,7 +684,10 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
 
         for country_code in country_list:
             if not (country_code in partner.country_presence):
-                msg = "Country code {} is not defined in country_presence list."
+                msg = "The country code {} is not defined in country_presence list."
+                raise serializers.ValidationError(msg.format(country_code))
+            if Partner.objects.filter(hq=partner, country_code=country_code).exists():
+                msg = "The country with code {} is already created."
                 raise serializers.ValidationError(msg.format(country_code))
 
         data['chosen_country_to_create'] = country_list
