@@ -1,8 +1,8 @@
 import React from 'react';
-import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
 import { FormSection } from 'redux-form';
 import TextFieldForm from '../../../forms/textFieldForm';
+import GridColumn from '../../../common/grid/gridColumn';
 
 const messages = {
   rationale: 'Briefly state the background and rationale for the establishment of the ' +
@@ -15,38 +15,32 @@ const PartnerProfileMandateBackground = (props) => {
 
   return (
     <FormSection name="background">
-      <Grid item>
-        <Grid container direction="column" spacing={16}>
-          <Grid item>
-            <TextFieldForm
-              label={messages.rationale}
-              fieldName="background_and_rationale"
-              textFieldProps={{
-                inputProps: {
-                  maxLength: '400',
-                },
-              }}
-              optional
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-          <Grid item>
-            <TextFieldForm
-              label={messages.mandate}
-              fieldName="mandate_and_mission"
-              textFieldProps={{
-                inputProps: {
-                  maxLength: '400',
-                },
-              }}
-              optional
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
+      <GridColumn>
+        <TextFieldForm
+          label={messages.rationale}
+          fieldName="background_and_rationale"
+          textFieldProps={{
+            inputProps: {
+              maxLength: '400',
+            },
+          }}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        <TextFieldForm
+          label={messages.mandate}
+          fieldName="mandate_and_mission"
+          textFieldProps={{
+            inputProps: {
+              maxLength: '400',
+            },
+          }}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+      </GridColumn>
     </FormSection>
   );
 };

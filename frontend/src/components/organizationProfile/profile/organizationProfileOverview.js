@@ -15,7 +15,7 @@ import PartnerProfileOtherInfo from '../edit/otherInfo/partnerProfileOtherInfo';
 import { loadPartnerDetails } from '../../../reducers/partnerProfileDetails';
 import { changeTab } from '../../../reducers/partnerProfileEdit';
 
-const FIRST_INDEX = 2;
+const FIRST_INDEX = 3;
 
 const messages = {
   sections: [

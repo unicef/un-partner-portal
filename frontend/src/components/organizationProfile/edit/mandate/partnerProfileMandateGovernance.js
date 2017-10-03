@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormSection } from 'redux-form';
 
 import Grid from 'material-ui/Grid';
-
+import GridColumn from '../../../common/grid/gridColumn';
 import TextFieldForm from '../../../forms/textFieldForm';
 import FileForm from '../../../forms/fileForm';
 
@@ -17,48 +17,40 @@ const PartnerProfileMandateGovernance = (props) => {
   const { readOnly } = props;
 
   return (
-    <FormSection name="governance" >
-      <Grid item>
-        <Grid container direction="column" spacing={16}>
-          <Grid item>
-            <TextFieldForm
-              label={messages.structure}
-              fieldName="governance_structure"
-              textFieldProps={{
-                inputProps: {
-                  maxLength: '200',
-                },
-              }}
-              optional
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-          <Grid item>
-            <TextFieldForm
-              label={messages.headquaters}
-              fieldName="governance_hq"
-              textFieldProps={{
-                inputProps: {
-                  maxLength: '200',
-                },
-              }}
-              optional
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-          <Grid item>
-            <FileForm
-              label={messages.organigram}
-              fieldName="governance_organigram"
-              optional
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
+    <FormSection name="governance">
+      <GridColumn>
+        <TextFieldForm
+          label={messages.structure}
+          fieldName="governance_structure"
+          textFieldProps={{
+            inputProps: {
+              maxLength: '200',
+            },
+          }}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        <TextFieldForm
+          label={messages.headquaters}
+          fieldName="governance_hq"
+          textFieldProps={{
+            inputProps: {
+              maxLength: '200',
+            },
+          }}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        <FileForm
+          label={messages.organigram}
+          fieldName="governance_organigram"
+          optional
+          warn
+          readOnly={readOnly}
+        />
+      </GridColumn>
     </FormSection>
   );
 };

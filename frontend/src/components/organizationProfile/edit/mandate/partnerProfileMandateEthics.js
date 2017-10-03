@@ -1,8 +1,8 @@
 import React from 'react';
 import { formValueSelector, FormSection } from 'redux-form';
-import Grid from 'material-ui/Grid';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import GridColumn from '../../../common/grid/gridColumn';
 import { visibleIfNo, visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import FileForm from '../../../forms/fileForm';
 import RadioForm from '../../../forms/radioForm';
@@ -22,19 +22,17 @@ const PartnerProfileMandateEthics = (props) => {
 
   return (
     <FormSection name="ethics">
-      <Grid container direction="column">
-        <Grid item >
-          <RadioForm
-            fieldName="ethic_safeguard"
-            label={messages.violation}
-            values={BOOL_VAL}
-            optional
-            warn
-            readOnly={readOnly}
-          />
-        </Grid>
-        {visibleIfNo(ethicsSafeguard) && <Grid item>
-          <TextFieldForm
+      <GridColumn removeNullChildren>
+        <RadioForm
+          fieldName="ethic_safeguard"
+          label={messages.violation}
+          values={BOOL_VAL}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        {visibleIfNo(ethicsSafeguard)
+          ? <TextFieldForm
             label={messages.commnet}
             placeholder=""
             fieldName="ethic_safeguard_comment"
@@ -47,28 +45,26 @@ const PartnerProfileMandateEthics = (props) => {
             warn
             readOnly={readOnly}
           />
-        </Grid>}
-        {visibleIfYes(ethicsSafeguard) && <Grid item>
-          <FileForm
+          : null}
+        {visibleIfYes(ethicsSafeguard)
+          ? <FileForm
             fieldName="ethic_safeguard_policy"
             label={messages.policy}
             optional
             warn
             readOnly={readOnly}
           />
-        </Grid>}
-        <Grid item >
-          <RadioForm
-            fieldName="ethic_fraud"
-            label={messages.fraud}
-            values={BOOL_VAL}
-            optional
-            warn
-            readOnly={readOnly}
-          />
-        </Grid>
-        {visibleIfNo(ethicsFraud) && <Grid item>
-          <TextFieldForm
+          : null}
+        <RadioForm
+          fieldName="ethic_fraud"
+          label={messages.fraud}
+          values={BOOL_VAL}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        {visibleIfNo(ethicsFraud)
+          ? <TextFieldForm
             label={messages.commnet}
             placeholder=""
             fieldName="ethic_fraud_comment"
@@ -81,17 +77,17 @@ const PartnerProfileMandateEthics = (props) => {
             warn
             readOnly={readOnly}
           />
-        </Grid>}
-        {visibleIfYes(ethicsFraud) && <Grid item>
-          <FileForm
+          : null}
+        {visibleIfYes(ethicsFraud)
+          ? <FileForm
             fieldName="ethic_fraud_policy"
             label={messages.policy}
             optional
             warn
             readOnly={readOnly}
           />
-        </Grid>}
-      </Grid>
+          : null}
+      </GridColumn>
     </FormSection>
   );
 };
