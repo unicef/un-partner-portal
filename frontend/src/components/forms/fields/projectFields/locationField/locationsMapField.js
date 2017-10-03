@@ -34,17 +34,17 @@ class LocationsMapField extends Component {
 
   saveLocation(newLocation) {
     const { dispatch, name, formName } = this.props;
-    dispatch(arrayPush(formName, `${name}.locations`, newLocation));
+    dispatch(arrayPush(formName, `eoi.${name}.locations`, newLocation));
   }
 
   removeLocation(index) {
     const { dispatch, name, formName } = this.props;
-    dispatch(arrayRemove(formName, `${name}.locations`, index));
+    dispatch(arrayRemove(formName, `eoi.${name}.locations`, index));
   }
 
   removeAllLocations() {
     const { dispatch, name, formName } = this.props;
-    dispatch(arrayRemoveAll(formName, `${name}.locations`));
+    dispatch(arrayRemoveAll(formName, `eoi.${name}.locations`));
   }
 
   render() {
@@ -90,7 +90,7 @@ LocationsMapField.propTypes = {
 export default connect(
   (state, ownProps) => {
     const selector = formValueSelector(ownProps.formName);
-    const { country, locations } = selector(state, `${ownProps.name}`);
+    const { country, locations } = selector(state, `eoi.${ownProps.name}`);
     const currentCountry = country ? state.countries[country] : null;
     const currentLocations = locations || [];
     return {

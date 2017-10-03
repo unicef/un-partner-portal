@@ -21,10 +21,10 @@ const ProjectDetails = (props) => {
       <Typography type="headline">
         {messages.projectDetails}
       </Typography>
-      <LocationForm formName={formName} />
       <FormSection name="eoi">
         <GridColumn>
           <fields.TitleField />
+          <LocationForm formName={formName} />
           <fields.FocalPoint />
           <SectorForm />
           <SelectPopulationOfConcern />

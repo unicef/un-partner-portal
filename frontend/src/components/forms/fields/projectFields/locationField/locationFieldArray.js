@@ -1,21 +1,9 @@
 
-import React, { Component } from 'react';
-import R from 'ramda';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { reduxForm, getFormValues, arrayPush, arrayRemove, formValueSelector, arrayRemoveAll } from 'redux-form';
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import { Map, Marker, InfoWindow, GoogleApiWrapper } from 'google-maps-react';
-import Button from 'material-ui/Button';
-import Typography from 'material-ui/Typography';
-import SelectForm from '../../../selectForm';
+import React from 'react';
+import { GoogleApiWrapper } from 'google-maps-react';
 import ArrayForm from '../../../arrayForm';
-import SpreadContent from '../../../../common/spreadContent';
 import LocationsMap from './locationsMapField';
 import LocationsCountry from './locationsCountry';
-
-
-import { selectNormalizedCountries } from '../../../../../store';
 
 
 const Country = formName => sector => (
@@ -36,6 +24,7 @@ const LocationFieldArray = (props) => {
   const { formName, readOnly, loaded, ...other } = props;
   return (<ArrayForm
     limit={230}
+    label="Project Location"
     initial
     fieldName="countries"
     outerField={Country(formName, ...other)}
