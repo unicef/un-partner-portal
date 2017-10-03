@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormSection } from 'redux-form';
-
-import Grid from 'material-ui/Grid';
 import GridColumn from '../../../common/grid/gridColumn';
 import TextFieldForm from '../../../forms/textFieldForm';
 import FileForm from '../../../forms/fileForm';
