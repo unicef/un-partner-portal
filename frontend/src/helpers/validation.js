@@ -12,6 +12,12 @@ export const password = value => (
     : 'Invalid password'
 );
 
+export const numerical = (min, max) => (value) => {
+  if (+value < min) return `Value is to small, min: ${min}`;
+  else if (+value > max) return `Value is to large, max: ${max}`;
+  return undefined;
+};
+
 export const areFieldsMissing = (fields, values) => {
   const isFieldMissing = key => values[key] === undefined;
   return Object.keys(fields).find(isFieldMissing);
