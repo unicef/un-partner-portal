@@ -91,5 +91,5 @@ PartnerProfileIdentificationBasicInfo.propTypes = {
 export default connect(state => ({
   countries: selectNormalizedCountries(state),
   organizationTypes: selectNormalizedOrganizationTypes(state),
-}), null)(PartnerProfileIdentificationBasicInfo);
+}))(PartnerProfileIdentificationBasicInfo);
 
