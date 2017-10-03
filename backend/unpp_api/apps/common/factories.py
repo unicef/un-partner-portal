@@ -634,9 +634,9 @@ class EOIFactory(factory.django.DjangoModelFactory):
 class PartnerFlagFactory(factory.django.DjangoModelFactory):
     submitter = factory.LazyFunction(get_agency_member)
     partner = factory.LazyFunction(get_partner)
-    contact_phone = "12345678"
-    contact_email = "test@email.com"
-    comment = "Test Comment"
+    contact_phone = factory.Sequence(lambda n: "+48 22 568 03 0{}".format(n))
+    contact_email = factory.Sequence(lambda n: "fake-contact-{}@unicef.org".format(n))
+    comment = factory.Sequence(lambda n: "fake comment {}".format(n))
     contact_person = "Person Name"
 
     class Meta:
@@ -648,13 +648,13 @@ class PartnerVerificationFactory(factory.django.DjangoModelFactory):
     submitter = factory.LazyFunction(get_agency_member)
     is_mm_consistent = True
     is_indicate_results = True
-    cert_uploaded_comment = "Cert Comment"
-    indicate_results_comment = "Indicate results comment"
-    yellow_flag_comment = "Yellow Flag Comment"
-    mm_consistent_comment = "MM Comment"
+    cert_uploaded_comment = factory.Sequence(lambda n: "cert comment {}".format(n))
+    indicate_results_comment = factory.Sequence(lambda n: "indicate results comment {}".format(n))
+    yellow_flag_comment = factory.Sequence(lambda n: "yellow flag {}".format(n))
+    mm_consistent_comment = factory.Sequence(lambda n: "mm comment {}".format(n))
     is_valid = True
     is_cert_uploaded = True
-    rep_risk_comment = "Rep Risk Comment"
+    rep_risk_comment = factory.Sequence(lambda n: "rep risk comment {}".format(n))
     is_yellow_flag = False
     is_rep_risk = False
 

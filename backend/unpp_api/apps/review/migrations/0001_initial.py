@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('flag_type', models.CharField(choices=[('YLW', 'Yellow Flag'), ('RED', 'Red Flag')], default='YLW', max_length=3)),
+                ('flag_type', models.CharField(choices=[('Yel', 'Yellow Flag'), ('Red', 'Red Flag')], default='Yel', max_length=3)),
                 ('is_valid', models.BooleanField(default=True)),
                 ('comment', models.TextField(blank=True, null=True)),
                 ('contact_person', models.CharField(blank=True, max_length=255, null=True)),

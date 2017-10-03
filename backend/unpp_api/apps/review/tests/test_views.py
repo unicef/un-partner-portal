@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.urls import reverse
 
+from common.consts import FLAG_TYPES
 from common.tests.base import BaseAPITestCase
 from common.factories import PartnerSimpleFactory, PartnerFlagFactory, PartnerVerificationFactory
 from partner.models import Partner
@@ -27,7 +28,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
         payload = {
             "comment": "This is a comment on a flag",
-            "flag_type": "Yel",
+            "flag_type": FLAG_TYPES.yellow,
             "contact_email": "test@test.com",
             "contact_person": "Nancy",
             "contact_phone": "Smith"
@@ -35,7 +36,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
         response = self.client.post(url, data=payload, format='json')
         self.assertEquals(response.data['submitter']['name'], self.user.get_fullname())
-        self.assertEquals(response.data['flag_type'], 'Yel')
+        self.assertEquals(response.data['flag_type'], FLAG_TYPES.yellow)
         self.assertEquals(response.data['is_valid'], True)
 
     def test_patch_flag(self):
@@ -54,7 +55,6 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         payload = {
             'comment': "%s - Appended" % flag_comment
         }
-        flag = PartnerFlag.objects.get(id=flag.id)
         response = self.client.patch(url, data=payload, format='json')
         self.assertEquals(response.data['comment'], flag_comment)
 
