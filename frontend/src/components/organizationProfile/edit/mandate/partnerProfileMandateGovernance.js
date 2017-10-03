@@ -7,6 +7,11 @@ import Grid from 'material-ui/Grid';
 import TextFieldForm from '../../../forms/textFieldForm';
 import FileForm from '../../../forms/fileForm';
 
+const messages = {
+  structure: 'Briefly describe the organization\'s governance structure',
+  headquaters: "Briefly describe the headquarters' oversight of country/ branch office operations including any reporting requirements of the country/branch offices to HQ.",
+  organigram: 'Your most up-to-date organigram',
+};
 
 const PartnerProfileMandateGovernance = (props) => {
   const { readOnly } = props;
@@ -17,8 +22,7 @@ const PartnerProfileMandateGovernance = (props) => {
         <Grid container direction="column" spacing={16}>
           <Grid item>
             <TextFieldForm
-              label="Briefly describe the organization's governance structure"
-              placeholder="Please limit your response to 200 characters"
+              label={messages.structure}
               fieldName="governance_structure"
               textFieldProps={{
                 inputProps: {
@@ -32,9 +36,13 @@ const PartnerProfileMandateGovernance = (props) => {
           </Grid>
           <Grid item>
             <TextFieldForm
-              label="Briefly describe the headquarters' oversight of country/ branch office operations including any reporting requirements of the country/branch offices to HQ."
-              placeholder="Please limit your response to 200 characters"
+              label={messages.headquaters}
               fieldName="governance_hq"
+              textFieldProps={{
+                inputProps: {
+                  maxLength: '200',
+                },
+              }}
               optional
               warn
               readOnly={readOnly}
@@ -42,11 +50,11 @@ const PartnerProfileMandateGovernance = (props) => {
           </Grid>
           <Grid item>
             <FileForm
-              label="Your most up-to-date organigram"
-              placeholder="Upload File"
+              label={messages.organigram}
               fieldName="governance_organigram"
               optional
               warn
+              readOnly={readOnly}
             />
           </Grid>
         </Grid>

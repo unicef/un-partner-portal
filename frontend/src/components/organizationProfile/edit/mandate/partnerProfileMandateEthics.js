@@ -1,44 +1,43 @@
 import React from 'react';
-import { FormSection } from 'redux-form';
+import { formValueSelector, FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { visibleIfNo, visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
+import FileForm from '../../../forms/fileForm';
 import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 
-
-const BOOL_VAL = [
-  {
-    value: 'yes',
-    label: 'Yes',
-  },
-  {
-    value: 'no',
-    label: 'No',
-  },
-];
+const messages = {
+  violation: 'Does the organization have a policy or code of conduct to safegaurd ' +
+                'against the violation and abuse of beneficiaries?',
+  fraud: 'Does the organization have a policy or code of conduct to safegaurd ' +
+                'against fraud and corruption?',
+  commnet: 'Please comment',
+  policy: 'Copy of your policy or code of conduct',
+};
 
 const PartnerProfileMandateEthics = (props) => {
-  const { readOnly } = props;
+  const { readOnly, ethicsSafeguard, ethicsFraud } = props;
 
   return (
     <FormSection name="ethics">
-      <Grid container direction="column" spacing={16}>
+      <Grid container direction="column">
         <Grid item >
           <RadioForm
             fieldName="ethic_safeguard"
-            label={'Does the organization have a policy or code of conduct to safegaurd ' +
-                'against the violation and abuse of beneficiaries?'}
+            label={messages.violation}
             values={BOOL_VAL}
             optional
             warn
             readOnly={readOnly}
           />
         </Grid>
-        <Grid item>
+        {visibleIfNo(ethicsSafeguard) && <Grid item>
           <TextFieldForm
-            label="Please comment"
+            label={messages.commnet}
             placeholder=""
-            fieldName="abuseSafeguardComment"
+            fieldName="ethic_safeguard_comment"
             textFieldProps={{
               inputProps: {
                 maxLength: '200',
@@ -48,23 +47,31 @@ const PartnerProfileMandateEthics = (props) => {
             warn
             readOnly={readOnly}
           />
-        </Grid>
+        </Grid>}
+        {visibleIfYes(ethicsSafeguard) && <Grid item>
+          <FileForm
+            fieldName="ethic_safeguard_policy"
+            label={messages.policy}
+            optional
+            warn
+            readOnly={readOnly}
+          />
+        </Grid>}
         <Grid item >
           <RadioForm
             fieldName="ethic_fraud"
-            label={'Does the organization have a policy or code of conduct to safegaurd ' +
-                'against fraud and corruption?'}
+            label={messages.fraud}
             values={BOOL_VAL}
             optional
             warn
             readOnly={readOnly}
           />
         </Grid>
-        <Grid item>
+        {visibleIfNo(ethicsFraud) && <Grid item>
           <TextFieldForm
-            label="Please comment"
+            label={messages.commnet}
             placeholder=""
-            fieldName="fraudSafeguardComment"
+            fieldName="ethic_fraud_comment"
             textFieldProps={{
               inputProps: {
                 maxLength: '200',
@@ -74,7 +81,16 @@ const PartnerProfileMandateEthics = (props) => {
             warn
             readOnly={readOnly}
           />
-        </Grid>
+        </Grid>}
+        {visibleIfYes(ethicsFraud) && <Grid item>
+          <FileForm
+            fieldName="ethic_fraud_policy"
+            label={messages.policy}
+            optional
+            warn
+            readOnly={readOnly}
+          />
+        </Grid>}
       </Grid>
     </FormSection>
   );
@@ -82,6 +98,14 @@ const PartnerProfileMandateEthics = (props) => {
 
 PartnerProfileMandateEthics.propTypes = {
   readOnly: PropTypes.bool,
+  ethicsSafeguard: PropTypes.bool,
+  ethicsFraud: PropTypes.bool,
 };
 
-export default PartnerProfileMandateEthics;
+const selector = formValueSelector('partnerProfile');
+export default connect(
+  state => ({
+    ethicsSafeguard: selector(state, 'mandate_mission.ethics.ethic_safeguard'),
+    ethicsFraud: selector(state, 'mandate_mission.ethics.ethic_fraud'),
+  }),
+)(PartnerProfileMandateEthics);

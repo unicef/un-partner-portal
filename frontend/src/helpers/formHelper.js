@@ -89,8 +89,7 @@ export const renderSelectField = ({
   </SelectField>
 );
 
-export const renderRadioField = ({ input, label, meta: { touched, error, warning }, options }) => {
-  return (
+export const renderRadioField = ({ input, label, meta: { touched, error, warning }, options }) => (
   <div>
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>
@@ -109,8 +108,7 @@ export const renderRadioField = ({ input, label, meta: { touched, error, warning
     </FormControl>
     {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
   </div>
-  )
-};
+);
 
 export const renderCheckbox = ({
   name,
@@ -163,16 +161,20 @@ export const renderTextField = ({
   input,
   ...other
 }) => (
-  <TextField
-    className={className}
-    id={name}
-    error={(touched && !!error) || !!warning}
-    helperText={(touched && error) || warning} // hack to get error message
-    fullWidth
-    {...input}
-    {...other}
-  />
-);
+  <div>
+    <TextField
+      className={className}
+      id={name}
+      error={(touched && !!error) || !!warning}
+      fullWidth
+      {...input}
+      {...other}
+    />
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+      {other.inputProps && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
+    </div>
+  </div>);
 
 export const renderDatePicker = ({
   input,

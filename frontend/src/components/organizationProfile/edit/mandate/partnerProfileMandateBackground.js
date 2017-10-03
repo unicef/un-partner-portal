@@ -4,6 +4,12 @@ import PropTypes from 'prop-types';
 import { FormSection } from 'redux-form';
 import TextFieldForm from '../../../forms/textFieldForm';
 
+const messages = {
+  rationale: 'Briefly state the background and rationale for the establishment of the ' +
+            'organization',
+  mandate: 'Briefly state the mandate and mission of the organization',
+};
+
 const PartnerProfileMandateBackground = (props) => {
   const { readOnly } = props;
 
@@ -13,9 +19,7 @@ const PartnerProfileMandateBackground = (props) => {
         <Grid container direction="column" spacing={16}>
           <Grid item>
             <TextFieldForm
-              label={'Briefly state the background and rationale for the establishment of the ' +
-            'organization'}
-              placeholder="Please limit your response to 400 characters"
+              label={messages.rationale}
               fieldName="background_and_rationale"
               textFieldProps={{
                 inputProps: {
@@ -29,8 +33,7 @@ const PartnerProfileMandateBackground = (props) => {
           </Grid>
           <Grid item>
             <TextFieldForm
-              label="Briefly state the mandate and mission of the organization"
-              placeholder="Please limit your response to 400 characters"
+              label={messages.mandate}
               fieldName="mandate_and_mission"
               textFieldProps={{
                 inputProps: {
