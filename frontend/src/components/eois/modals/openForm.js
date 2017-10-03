@@ -16,6 +16,7 @@ const OpenForm = (props) => {
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <ProjectDetails
+          formName="newOpenCfei"
           dateFields={[
             <fields.DeadlineDate />,
             <fields.NotifyDate />,

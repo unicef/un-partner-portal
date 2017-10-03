@@ -8,18 +8,20 @@ import SelectPopulationOfConcern from '../../forms/fields/newCfeiFields/selectPo
 import * as fields from './commonFields';
 import GridColumn from '../../common/grid/gridColumn';
 import GridRow from '../../common/grid/gridRow';
+import LocationForm from '../../forms/fields/projectFields/locationField/locationFieldArray';
 
 const messages = {
   projectDetails: 'Project Details',
 };
 
 const ProjectDetails = (props) => {
-  const { dateFields } = props;
+  const { dateFields, formName } = props;
   return (
     <GridColumn>
       <Typography type="headline">
         {messages.projectDetails}
       </Typography>
+      <LocationForm formName={formName} />
       <FormSection name="eoi">
         <GridColumn>
           <fields.TitleField />
@@ -43,6 +45,7 @@ ProjectDetails.propTypes = {
    * array of date pickers
    */
   dateFields: PropTypes.array,
+  formName: PropTypes.string,
 
 };
 

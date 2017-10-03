@@ -21,6 +21,7 @@ const DirectForm = (props) => {
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <ProjectDetails
+          formName="newDirectCfei"
           dateFields={[
             <fields.StartDate />,
             <fields.EndDate />,
