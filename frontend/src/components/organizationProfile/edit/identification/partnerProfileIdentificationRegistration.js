@@ -3,7 +3,7 @@ import { formValueSelector, FormSection } from 'redux-form';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
-import { visibleIf, visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
+import { visibleIfYes, visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
 import RadioForm from '../../../forms/radioForm';
 import FileForm from '../../../forms/fileForm';
 import TextFieldForm from '../../../forms/textFieldForm';
@@ -51,7 +51,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                 readOnly={readOnly}
               />
             </Grid>
-            {visibleIf(hasGovDoc)
+            {visibleIfYes(hasGovDoc)
               && <Grid item sm={4} xs={12}>
                 <FileForm
                   fieldName="gov_doc"
@@ -75,7 +75,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
             readOnly={readOnly}
           />
         </Grid>
-        {visibleIf(isRegistered)
+        {visibleIfYes(isRegistered)
             && <Grid item>
               <Grid container direction="row">
                 <Grid item sm={4} xs={12}>

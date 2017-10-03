@@ -50,7 +50,7 @@ export const visibleIfNo = (value) => {
 };
 
 
-export const visibleIf = (value) => {
+export const visibleIfYes = (value) => {
   if (value === BOOL_VAL[0].value || (typeof (value) === 'boolean' && value)) { return true; }
 
   return false;

@@ -57,10 +57,6 @@ export function getCountries() {
   return get('/config/countries');
 }
 
-export function getPartnerProfileConfig() {
-  return get('/config/partners/profile');
-}
-
 export function getSectors() {
   return get('/config/sectors');
 }
@@ -113,5 +109,9 @@ export function getPartnerNames() {
 
 export function getPartnersList(params) {
   return authorizedGet('/partners', params);
+}
+
+export function getPartnerProfileConfig() {
+  return get('/config/partners/profile');
 }
 
