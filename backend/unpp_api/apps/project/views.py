@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
 from rest_framework.generics import ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView
@@ -218,7 +219,24 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         request.data['reviewer'] = request.user.id
         request.data['application'] = application_id
 
+    def check_reviewer_permissions(self, request):
+        # only reviewer can create assessment
+        application_id = request.parser_context.get('kwargs', {}).get('application_id')
+        app = Application.objects.select_related('eoi').get(id=application_id)
+        eoi = app.eoi
+        if eoi.reviewers.filter(id=request.user.id).exists():
+            return
+        raise PermissionDenied
+
+    def check_reviewer_assessments_permissions(self, request):
+        # only owner of assessment can modify his object
+        obj = self.get_object()
+        if obj.reviewer.id == request.user.id:
+            return
+        raise PermissionDenied
+
     def create(self, request, application_id, *args, **kwargs):
+        self.check_reviewer_permissions(request)
         self.set_bunch_of_required_data(request, application_id)
         return super(ReviewerAssessmentsAPIView, self).create(request, application_id, *args, **kwargs)
 
@@ -233,6 +251,7 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         return obj
 
     def update(self, request, application_id, *args, **kwargs):
+        self.check_reviewer_assessments_permissions(request)
         self.set_bunch_of_required_data(request, application_id)
         return super(ReviewerAssessmentsAPIView, self).update(request, application_id, *args, **kwargs)
 
