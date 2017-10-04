@@ -5,10 +5,11 @@ from agency.serializers import OtherAgencySerializer
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
+    FUNCTIONAL_RESPONSIBILITY_CHOICES,
 )
-from common.countries import COUNTRIES_ALPHA2_CODE
+from common.countries import COUNTRIES_ALPHA2_CODE, COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import SpecializationSerializer, MixinPartnerRelatedSerializer
-from partner.models import (
+from .models import (
     Partner,
     PartnerProfile,
     PartnerMailingAddress,
@@ -372,6 +373,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
 
     mailing_address = PartnerMailingAddressSerializer()
     have_board_directors = serializers.BooleanField(source="profile.have_board_directors")
+    have_authorised_officers = serializers.BooleanField(source="profile.have_authorised_officers")
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
     org_head = PartnerHeadOrganizationSerializer(read_only=True)
@@ -386,6 +388,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
         fields = (
             'mailing_address',
             'have_board_directors',
+            'have_authorised_officers',
             'directors',
             'authorised_officers',
             'org_head',
@@ -661,3 +664,79 @@ class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serialize
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+
+
+class PartnerCountryProfileSerializer(serializers.ModelSerializer):
+
+    countries_profile = serializers.SerializerMethodField(read_only=True)
+    chosen_country_to_create = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Partner
+        fields = (
+            'id',
+            'countries_profile',
+            'chosen_country_to_create',
+        )
+
+    def validate(self, data):
+        hq_id = self.context['request'].parser_context.get('kwargs', {}).get('pk')
+        partner = Partner.objects.filter(pk=hq_id, hq=None)
+        if not partner.exists():
+            raise serializers.ValidationError("You can create profile only for HQ.")
+        partner = partner.get()
+
+        country_list = self.initial_data.get('chosen_country_to_create')
+        if not type(country_list):
+            raise serializers.ValidationError("Field 'chosen_country_to_create' should be a list of country codes")
+
+        for country_code in country_list:
+            if not (country_code in partner.country_presence):
+                msg = "The country code {} is not defined in country_presence list."
+                raise serializers.ValidationError(msg.format(country_code))
+            if Partner.objects.filter(hq=partner, country_code=country_code).exists():
+                msg = "The country with code {} is already created."
+                raise serializers.ValidationError(msg.format(country_code))
+
+        data['chosen_country_to_create'] = country_list
+        return data
+
+    def get_countries_profile(self, obj):
+        choose = []
+        for country_code in obj.country_presence:
+            item = {
+                "country_code": country_code,
+                "country_name": COUNTRIES_ALPHA2_CODE_DICT.get(country_code),
+                "exist": False,
+            }
+            if obj.country_profiles.filter(country_code=country_code).exists():
+                item["exist"] = True
+            choose.append(item)
+
+        return choose
+
+    def get_chosen_country_to_create(self, obj):
+        # we need this data only to upload - post
+        return []
+
+    @transaction.atomic
+    def create(self, validated_data):
+        hq_id = self.context['request'].parser_context.get('kwargs', {}).get('pk')
+        for country_code in validated_data['chosen_country_to_create']:
+            partner = Partner.objects.create(hq_id=hq_id, country_code=country_code)
+            PartnerProfile.objects.create(partner=partner)
+            PartnerMailingAddress.objects.create(partner=partner)
+            PartnerHeadOrganization.objects.create(partner=partner)
+            PartnerAuditAssessment.objects.create(partner=partner)
+            PartnerReporting.objects.create(partner=partner)
+            PartnerMandateMission.objects.create(partner=partner)
+            PartnerFunding.objects.create(partner=partner)
+            PartnerOtherInfo.objects.create(partner=partner)
+            responsibilities = []
+            for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
+                responsibilities.append(
+                    PartnerInternalControl(partner=partner, functional_responsibility=responsibility)
+                )
+            PartnerInternalControl.objects.bulk_create(responsibilities)
+
+        return Partner.objects.get(pk=hq_id)  # we want to refresh changes after creating related models

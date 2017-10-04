@@ -2,6 +2,7 @@ import logging
 from rest_framework.permissions import BasePermission
 from agency.models import AgencyMember
 from partner.models import PartnerMember
+from project.models import Application
 from .consts import POWER_MEMBER_ROLES, MEMBER_ROLES
 
 logger = logging.getLogger(__name__)
@@ -89,3 +90,20 @@ class IsAtLeastPartnerMemberEditor(IsAtLeastMemberReader):
             return False
 
         return self.pass_at_least(member.role)
+
+
+class IsEOIReviewerAssessments(BasePermission):
+
+    def has_permission(self, request, view):
+        application_id = request.parser_context.get('kwargs', {}).get('application_id')
+        app = Application.objects.select_related('eoi').filter(id=application_id)
+        if app.exists():
+            eoi = app.get().eoi
+            if eoi.reviewers.filter(id=request.user.id).exists():
+                return True
+            if eoi.created_by_id == request.user.id:
+                return True
+            if eoi.focal_points.filter(id=request.user.id).exists():
+                return True
+
+        return False

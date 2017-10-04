@@ -21,6 +21,7 @@ const initialState = {
     { name: 'status', title: 'Status' },
   ],
   applications: [],
+  itemsCount: 0,
 };
 
 const applicationStatusChanged = (ids, status) =>
@@ -31,7 +32,7 @@ export const loadApplications = (id, filter) => (dispatch) => {
   return getOpenCfeiApplications(id, filter)
     .then((response) => {
       dispatch(loadApplicationListEnded());
-      dispatch(loadApplicationListSuccess(response.results));
+      dispatch(loadApplicationListSuccess(response));
     })
     .catch((error) => {
       dispatch(loadApplicationListEnded());
@@ -47,7 +48,11 @@ export const changeAppStatus = (ids, status) => (dispatch) => {
   });
 };
 
-const saveApplications = (state, action) => R.assoc('applications', action.applications, state);
+const saveApplications = (state, action) => {
+  const itemsCount = R.assoc('itemsCount', action.applications.count, state);
+  return R.assoc('applications', action.applications.results, itemsCount);
+};
+
 const changeStatus = (state, action) => {
   if (action.status === APPLICATION_STATUSES.PEN) {
     return R.assoc('applications',
