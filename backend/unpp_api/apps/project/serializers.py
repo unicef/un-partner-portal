@@ -111,6 +111,7 @@ class CreateUnsolicitedProjectSerializer(serializers.Serializer):
 
     @transaction.atomic
     def create(self, validated_data):
+        # TODO: Will need to get the current partner from the header (since it can be switched as HQ user)
         partner = PartnerMember.objects.get(user=self.context['request'].user).partner
         app = Application.objects.create(
             is_unsolicited=True,
