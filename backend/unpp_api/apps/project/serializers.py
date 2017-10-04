@@ -10,13 +10,7 @@ from common.models import Point, AdminLevel1
 from partner.serializers import PartnerSerializer
 
 from partner.models import Partner, PartnerMember
-from .models import EOI, Application, AssessmentCriteria, Assessment
-
-
-class AssessmentCriteriaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AssessmentCriteria
-        exclude = ('eoi', )
+from .models import EOI, Application, Assessment
 
 
 class BaseProjectSerializer(serializers.ModelSerializer):
@@ -173,43 +167,37 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         }
 
 
-class CreateProjectSerializer(serializers.Serializer):
+class CreateProjectSerializer(CreateEOISerializer):
 
-    eoi = CreateEOISerializer()
-    assessment_criterias = AssessmentCriteriaSerializer()
+    class Meta:
+        model = EOI
+        exclude = ('cn_template', 'created_by')
 
     @transaction.atomic
     def create(self, validated_data):
-        locations = validated_data['eoi']['locations']
-        del validated_data['eoi']['locations']
-        specializations = validated_data['eoi']['specializations']
-        del validated_data['eoi']['specializations']
-        focal_points = validated_data['eoi']['focal_points']
-        del validated_data['eoi']['focal_points']
-        del validated_data['assessment_criterias']
+        locations = validated_data['locations']
+        del validated_data['locations']
+        specializations = validated_data['specializations']
+        del validated_data['specializations']
+        focal_points = validated_data['focal_points']
+        del validated_data['focal_points']
 
-        validated_data['eoi']['cn_template'] = validated_data['eoi']['agency'].profile.eoi_template
-        eoi = EOI.objects.create(**validated_data['eoi'])
+        validated_data['cn_template'] = validated_data['agency'].profile.eoi_template
+        validated_data['created_by'] = self.context['request'].user
+        self.instance = EOI.objects.create(**validated_data)
 
         for location in locations:
             location['admin_level_1'], created = AdminLevel1.objects.get_or_create(**location['admin_level_1'])
             point, created = Point.objects.get_or_create(**location)
-            eoi.locations.add(point)
+            self.instance.locations.add(point)
 
         for specialization in specializations:
-            eoi.specializations.add(specialization)
+            self.instance.specializations.add(specialization)
 
         for focal_point in focal_points:
-            eoi.focal_points.add(focal_point)
+            self.instance.focal_points.add(focal_point)
 
-        ac = AssessmentCriteria(**self.initial_data.get("assessment_criterias"))
-        ac.eoi = eoi
-        ac.save()
-
-        return {
-            'eoi': eoi,
-            'assessment_criterias': ac,
-        }
+        return self.instance
 
 
 class ProjectUpdateSerializer(serializers.ModelSerializer):
@@ -217,7 +205,6 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
     specializations = SimpleSpecializationSerializer(many=True)
     invited_partners = PartnerSerializer(many=True)
     locations = PointSerializer(many=True)
-    assessments_criteria = AssessmentCriteriaSerializer()
 
     class Meta:
         model = EOI
@@ -316,7 +303,6 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
         model = Assessment
         fields = (
             'id',
-            'criteria',
             'reviewer',
             'application',
             'scores',

@@ -37,7 +37,7 @@ from .serializers import (
 from .filters import BaseProjectFilter, ApplicationsFilter
 
 
-class BaseProjectAPIView(ListAPIView):
+class BaseProjectAPIView(ListCreateAPIView):
     """
     Base endpoint for Call of Expression of Interest.
     """
@@ -59,13 +59,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
         return self.queryset.filter(display_type=EOI_TYPES.open)
 
     def post(self, request, *args, **kwargs):
-        data = request.data or {}
-        try:
-            data['eoi']['created_by'] = request.user.id
-        except Exception:
-            pass  # serializer.is_valid() will take care of right response
-
-        serializer = CreateProjectSerializer(data=request.data)
+        serializer = CreateProjectSerializer(data=request.data, context={'request': request})
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
@@ -207,7 +201,7 @@ class ReviewersStatusAPIView(ListAPIView):
     lookup_url_kwarg = 'application_id'
 
     def get_queryset(self, *args, **kwargs):
-        application_id = self.kwargs.get('application_id')
+        application_id = self.kwargs.get(self.lookup_url_kwarg)
         app = get_object_or_404(Application.objects.select_related('eoi'),
                                 pk=application_id)
         return User.objects.filter(pk__in=app.eoi.reviewers.all().values_list("pk"))
@@ -221,9 +215,6 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     lookup_url_kwarg = 'application_id'
 
     def set_bunch_of_required_data(self, request, application_id):
-        app = get_object_or_404(Application.objects.select_related('eoi', 'eoi__assessments_criteria'),
-                                pk=application_id)
-        request.data['criteria'] = app.eoi.assessments_criteria.id
         request.data['reviewer'] = request.user.id
         request.data['application'] = application_id
 
@@ -232,7 +223,7 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         return super(ReviewerAssessmentsAPIView, self).create(request, application_id, *args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-        application_id = self.kwargs.get('application_id')
+        application_id = self.kwargs.get(self.lookup_url_kwarg)
         return Assessment.objects.filter(application_id=application_id)
 
     def get_object(self):

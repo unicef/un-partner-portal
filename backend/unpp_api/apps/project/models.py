@@ -52,12 +52,13 @@ class EOI(TimeStampedModel):
     justification = models.TextField(null=True, blank=True)  # closed or completed
     completed_reason = models.CharField(max_length=3, choices=COMPLETED_REASON, null=True, blank=True)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
+    assessments_criteria = JSONField(default=dict([('selection_criteria', ''), ('weight', 0)]))
 
     class Meta:
         ordering = ['id']
 
     def __str__(self):
-        return "EOI: {} <pk:{}>".format(self.title, self.id)
+        return "EOI {} <pk:{}>".format(self.title, self.id)
 
     @property
     def is_direct(self):
@@ -125,20 +126,7 @@ class ApplicationFeedback(TimeStampedModel):
         return "ApplicationFeedback <pk:{}>".format(self.id)
 
 
-class AssessmentCriteria(TimeStampedModel):
-    eoi = models.OneToOneField(EOI, related_name="assessments_criteria")
-    # selection_criteria -> SELECTION_CRITERIA_CHOICES
-    options = JSONField(default=dict([('selection_criteria', ''), ('weight', 0)]))
-
-    class Meta:
-        ordering = ['id']
-
-    def __str__(self):
-        return "AssessmentCriteria <pk:{}>".format(self.id)
-
-
 class Assessment(TimeStampedModel):
-    criteria = models.ForeignKey(AssessmentCriteria, related_name="assessments")
     reviewer = models.ForeignKey('account.User', related_name="assessments")
     application = models.ForeignKey(Application, related_name="assessments")
     scores = JSONField(default=[dict((('selection_criteria', None), ('score', 0)))])
