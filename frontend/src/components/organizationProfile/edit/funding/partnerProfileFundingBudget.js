@@ -32,13 +32,13 @@ const PartnerProfileFundingBudget = (props) => {
   const { readOnly } = props;
   return (<FormSection name="fund">
     <Grid item>
-      <Grid container direction="column" gutter={16}>
+      <Grid container direction="column" spacing={16}>
         <Grid item>
           <FormControl fullWidth>
             <FormLabel>{"What is your organization's annual budget (in USD) for the current and two previous years?"}</FormLabel>
             <div style={{ padding: 20, backgroundColor: 'lightGrey' }}>
               <Grid item>
-                <Grid container direction="column" gutter={16}>
+                <Grid container direction="column" spacing={16}>
                   <Grid item>
                     <Grid container direction="row">
                       <Grid item sm={6} xs={12}>

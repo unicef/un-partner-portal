@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
 import Typography from 'material-ui/Typography';
 import Tooltip from '../../common/tooltip';
 import EoiStatusCell from './eoiStatusCell';
 
 
-const styleSheet = createStyleSheet('EoiPartnerStatusCell', theme => ({
+const styleSheet = theme => ({
   mainText: {
     color: theme.palette.grey[400],
     fontWeight: 400,
@@ -21,7 +21,7 @@ const styleSheet = createStyleSheet('EoiPartnerStatusCell', theme => ({
     paddingLeft: 16,
     fontSize: 12,
   },
-}));
+});
 
 const partnerStatuses = {
   Acc: 'Accepted',
@@ -63,4 +63,4 @@ EoiPartnerStatusCell.propTypes = {
   partners: PropTypes.array,
 };
 
-export default withStyles(styleSheet)(EoiPartnerStatusCell);
+export default withStyles(styleSheet, { name: 'EoiPartnerStatusCell' })(EoiPartnerStatusCell);

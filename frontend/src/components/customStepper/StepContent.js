@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Collapse from 'material-ui/transitions/Collapse';
 
-export const styleSheet = createStyleSheet('MuiStepContent', theme => ({
+export const styleSheet = theme => ({
   root: {
     marginLeft: 14 + 11,
     paddingLeft: (24 - 11) + 8,
@@ -18,8 +18,7 @@ export const styleSheet = createStyleSheet('MuiStepContent', theme => ({
   active: {
     margin: '8px 0px 8px 25px',
   },
-
-}));
+});
 
 const StepContent = (props) => {
   const {
@@ -72,4 +71,4 @@ StepContent.contextTypes = {
   stepper: PropTypes.object,
 };
 
-export default withStyles(styleSheet)(StepContent);
+export default withStyles(styleSheet, { name: 'StepContent' })(StepContent);

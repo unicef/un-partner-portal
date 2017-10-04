@@ -44,7 +44,7 @@ const PartnerProfileMandatePopulation = (props) => {
   return (
     <FormSection name="populations_of_concern">
       <Grid item>
-        <Grid container direction="column" gutter={16}>
+        <Grid container direction="column" spacing={16}>
           <Grid item>
             <RadioForm
               fieldName="population_of_concern"

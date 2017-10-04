@@ -5,6 +5,7 @@ from rest_framework import status as statuses
 from rest_framework.generics import ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.filters import OrderingFilter
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -31,6 +32,7 @@ from .serializers import (
     ApplicationsListSerializer,
     ReviewersApplicationSerializer,
     ReviewerAssessmentsSerializer,
+    CreateUnsolicitedProjectSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter
 
@@ -242,3 +244,10 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     def update(self, request, application_id, *args, **kwargs):
         self.set_bunch_of_required_data(request, application_id)
         return super(ReviewerAssessmentsAPIView, self).update(request, application_id, *args, **kwargs)
+
+
+class UnsolicitedProjectAPIView(CreateAPIView):
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = (IsAuthenticated, )
+    queryset = Application.objects.all()
+    serializer_class = CreateUnsolicitedProjectSerializer

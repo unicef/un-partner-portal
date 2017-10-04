@@ -106,3 +106,8 @@ export function getPartnerProfileDetails(partnerId) {
 export function getPartnerNames() {
   return get('/partners/short');
 }
+
+export function getPartnersList(params) {
+  return authorizedGet('/partners', params);
+}
+

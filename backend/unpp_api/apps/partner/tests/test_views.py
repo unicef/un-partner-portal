@@ -7,7 +7,18 @@ from django.urls import reverse
 from django.conf import settings
 from rest_framework import status as statuses
 
-from partner.models import Partner, PartnerProfile
+from partner.models import (
+    Partner,
+    PartnerProfile,
+    PartnerMailingAddress,
+    PartnerHeadOrganization,
+    PartnerAuditAssessment,
+    PartnerReporting,
+    PartnerMandateMission,
+    PartnerFunding,
+    PartnerOtherInfo,
+    PartnerInternalControl,
+)
 from common.models import Point
 from common.tests.base import BaseAPITestCase
 from common.factories import (
@@ -19,7 +30,43 @@ from common.factories import (
 )
 from common.consts import (
     BUDGET_CHOICES,
+    FUNCTIONAL_RESPONSIBILITY_CHOICES,
 )
+
+
+class TestPartnerCountryProfileAPIView(BaseAPITestCase):
+
+    quantity = 1
+    initial_factories = [
+        OtherAgencyFactory,
+        AgencyFactory,
+        UserFactory,
+        PartnerFactory,
+    ]
+
+    def test_create_country_profile(self):
+        partner = Partner.objects.first()
+        url = reverse('partners:country-profile', kwargs={"pk": partner.id})
+        response = self.client.get(url, format='json')
+        chosen_country_to_create = map(lambda x: x['country_code'],
+                                       filter(lambda x: x['exist'] is False, response.data['countries_profile']))
+        payload = {
+            'chosen_country_to_create': chosen_country_to_create,
+        }
+        response = self.client.post(url, data=payload, format='json')
+        expected_count = len(chosen_country_to_create)
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(Partner.objects.filter(hq_id=partner.id).count(), expected_count)
+        self.assertEquals(PartnerProfile.objects.filter(partner__hq=partner).count(), expected_count)
+        self.assertEquals(PartnerMailingAddress.objects.filter(partner__hq=partner).count(), expected_count)
+        self.assertEquals(PartnerHeadOrganization.objects.filter(partner__hq=partner).count(), expected_count)
+        self.assertEquals(PartnerAuditAssessment.objects.filter(partner__hq=partner).count(), expected_count)
+        self.assertEquals(PartnerReporting.objects.filter(partner__hq=partner).count(), expected_count)
+        self.assertEquals(PartnerMandateMission.objects.filter(partner__hq=partner).count(), expected_count)
+        self.assertEquals(PartnerFunding.objects.filter(partner__hq=partner).count(), expected_count)
+        self.assertEquals(PartnerOtherInfo.objects.filter(partner__hq=partner).count(), expected_count)
+        self.assertEquals(PartnerInternalControl.objects.filter(partner__hq=partner).count(),
+                          expected_count*len(list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values)))
 
 
 class TestPartnerDetailAPITestCase(BaseAPITestCase):

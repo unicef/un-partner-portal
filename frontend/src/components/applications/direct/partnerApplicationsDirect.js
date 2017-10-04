@@ -11,7 +11,7 @@ class PartnerApplicationsDirect extends Component {
     const { partners, columns } = this.props;
 
     return (
-      <GridColumn container direction="column" gutter={24}>
+      <GridColumn container direction="column" spacing={24}>
         <PartnerApplicationsDirectFilter />
         <PaginatedList
           items={partners}

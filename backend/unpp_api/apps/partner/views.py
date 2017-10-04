@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from common.permissions import IsAtLeastMemberEditor
@@ -18,6 +18,7 @@ from .serializers import (
     PartnerProfileCollaborationSerializer,
     PartnerProfileProjectImplementationSerializer,
     PartnerProfileOtherInfoSerializer,
+    PartnerCountryProfileSerializer,
 )
 from .filters import PartnersListFilter
 from .models import (
@@ -113,4 +114,11 @@ class PartnerOtherInfoAPIView(RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
     serializer_class = PartnerProfileOtherInfoSerializer
+    queryset = Partner.objects.all()
+
+
+class PartnerCountryProfileAPIView(CreateAPIView, RetrieveAPIView):
+
+    permission_classes = (IsAuthenticated, )
+    serializer_class = PartnerCountryProfileSerializer
     queryset = Partner.objects.all()

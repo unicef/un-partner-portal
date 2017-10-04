@@ -4,9 +4,9 @@ import { TableCell } from 'material-ui/Table';
 import PropTypes from 'prop-types';
 import VerifiedUser from 'material-ui-icons/VerifiedUser';
 import Flag from 'material-ui-icons/Flag';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 
-const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
+const styleSheet = (theme) => {
   const paddingIcon = theme.spacing.unit / 2;
   
   return {
@@ -39,7 +39,7 @@ const styleSheet = createStyleSheet('CountryOfficesHeader', (theme) => {
       margin: `0 0 0 ${paddingIcon}px`,
     },
   };
-});
+};
 
 const PartnerProfileNameCell = (props) => {
   const { classes, name, verified, yellowFlag, redFlag } = props;
@@ -68,4 +68,4 @@ PartnerProfileNameCell.propTypes = {
   redFlag: PropTypes.bool,
 };
 
-export default withStyles(styleSheet)(PartnerProfileNameCell);
+export default withStyles(styleSheet, { name: 'PartnerProfileNameCell' })(PartnerProfileNameCell);
