@@ -86,7 +86,7 @@ class FileForm extends Component {
               <Field
                 name={fieldName}
                 label={label}
-                component={renderFileDownload(this.props, messages)}
+                component={renderFileDownload(this.props)}
                 optional={optional}
               />]
             :

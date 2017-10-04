@@ -1,10 +1,20 @@
 from django.db import transaction
 from rest_framework import serializers
 
+from common.consts import (
+    FUNCTIONAL_RESPONSIBILITY_CHOICES,
+)
 from partner.models import (
     Partner,
     PartnerProfile,
+    PartnerMailingAddress,
     PartnerHeadOrganization,
+    PartnerAuditAssessment,
+    PartnerReporting,
+    PartnerMandateMission,
+    PartnerFunding,
+    PartnerOtherInfo,
+    PartnerInternalControl,
     PartnerMember,
 )
 
@@ -59,6 +69,19 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         partner_head_orge = validated_data['partner_head_organization']
         partner_head_orge['partner_id'] = self.partner.id
         self.partner_head_organization = PartnerHeadOrganization.objects.create(**partner_head_orge)
+
+        PartnerMailingAddress.objects.create(partner=self.partner)
+        PartnerAuditAssessment.objects.create(partner=self.partner)
+        PartnerReporting.objects.create(partner=self.partner)
+        PartnerMandateMission.objects.create(partner=self.partner)
+        PartnerFunding.objects.create(partner=self.partner)
+        PartnerOtherInfo.objects.create(partner=self.partner)
+        responsibilities = []
+        for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
+            responsibilities.append(
+                PartnerInternalControl(partner=self.partner, functional_responsibility=responsibility)
+            )
+        PartnerInternalControl.objects.bulk_create(responsibilities)
 
         partner_member = validated_data['partner_member']
         partner_member['partner_id'] = self.partner.id
