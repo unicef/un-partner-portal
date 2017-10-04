@@ -9,7 +9,7 @@ from django.conf import settings
 from rest_framework import status as statuses
 
 from account.models import User
-from agency.models import AgencyOffice
+from agency.models import AgencyOffice, Agency
 from project.models import Application, EOI, Pin
 from partner.models import Partner
 from common.tests.base import BaseAPITestCase
@@ -408,3 +408,46 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertFalse(response.data['did_win'])
         self.assertEquals(response.data["justification_reason"], reason)
+
+
+class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
+
+    quantity = 1
+
+    def test_create(self):
+        url = reverse('projects:unsolicited')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        with open(filename) as cn_template:
+            payload = {
+                "locations": [
+                    {
+                        "country_code": 'IQ',
+                        "admin_level_1": {"name": "Baghdad"},
+                        "lat": random.randint(-180, 180),
+                        "lon": random.randint(-180, 180),
+                    },
+                    {
+                        "country_code": "FR",
+                        "admin_level_1": {"name": "Paris"},
+                        "lat": random.randint(-180, 180),
+                        "lon": random.randint(-180, 180),
+                    },
+                ],
+                "title": "Unsolicited Project",
+                "agency_id": Agency.objects.first().id,
+                "specializations": Specialization.objects.all()[:3].values_list("id", flat=True),
+                "cn": cn_template,
+            }
+            response = self.client.post(url, data=payload, format='multipart')
+
+        self.assertTrue(statuses.is_success(response.status_code))
+        app = Application.objects.last()
+        self.assertEquals(response.data['id'], str(app.id))
+        self.assertTrue(app.cn.name.startswith("test"))
+        self.assertEquals(app.proposal_of_eoi_details['title'], payload['title'])
+
+        for idx, item in enumerate(app.proposal_of_eoi_details['specializations']):
+            self.assertEquals(
+                app.proposal_of_eoi_details['specializations'][idx],
+                str(payload['specializations'][idx])
+            )

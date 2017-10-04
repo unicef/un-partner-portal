@@ -7,7 +7,7 @@ from common.consts import APPLICATION_STATUSES, EOI_TYPES
 from common.serializers import SimpleSpecializationSerializer, PointSerializer
 from common.models import Point, AdminLevel1
 from partner.serializers import PartnerSerializer
-from partner.models import Partner
+from partner.models import Partner, PartnerMember
 from .models import EOI, Application, AssessmentCriteria
 
 
@@ -98,6 +98,31 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
         fields = '__all__'
+
+
+class CreateUnsolicitedProjectSerializer(serializers.Serializer):
+
+    id = serializers.CharField(source="pk", read_only=True)
+    locations = serializers.ListField(source="eoi.locations")
+    title = serializers.CharField(source="eoi.title")
+    agency_id = serializers.CharField(source="eoi.agency_id")
+    specializations = serializers.ListField(source="eoi.specializations")
+    cn = serializers.FileField()
+
+    @transaction.atomic
+    def create(self, validated_data):
+        # TODO: Will need to get the current partner from the header (since it can be switched as HQ user)
+        partner = PartnerMember.objects.get(user=self.context['request'].user).partner
+        app = Application.objects.create(
+            is_unsolicited=True,
+            partner=partner,
+            eoi=None,
+            submitter=self.context['request'].user,
+            status=APPLICATION_STATUSES.pending,
+            proposal_of_eoi_details=validated_data['eoi'],
+            cn=validated_data['cn'],
+        )
+        return app
 
 
 class CreateDirectProjectSerializer(serializers.Serializer):
