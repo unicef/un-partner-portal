@@ -89,8 +89,7 @@ export const renderSelectField = ({
   </SelectField>
 );
 
-export const renderRadioField = ({ input, label, meta: { touched, error, warning }, options }) => {
-  return (
+export const renderRadioField = ({ input, label, meta: { touched, error, warning }, options }) => (
   <div>
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>
@@ -109,8 +108,7 @@ export const renderRadioField = ({ input, label, meta: { touched, error, warning
     </FormControl>
     {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
   </div>
-  )
-};
+);
 
 export const renderCheckbox = ({
   name,
@@ -140,7 +138,7 @@ export const renderFileDownload = (props) => {
         </Typography>
 
       </div>
-      <FileDownloadButton fileUrl={input.value}/> 
+      <FileDownloadButton fileUrl={input.value} />
     </FormControl>);
 };
 
