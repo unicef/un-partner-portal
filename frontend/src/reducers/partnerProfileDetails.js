@@ -33,12 +33,33 @@ export const loadPartnerDetails = partnerId => (dispatch) => {
     });
 };
 
+const extractSector = list => ({
+  sector: list[0].specialization.category.id.toString(),
+  areas: list.map(area => area.specialization.id.toString()),
+  years: list[0].years });
+
+const groupSpecializationsByCategory = R.compose(
+  R.map(extractSector),
+  R.groupWith((a, b) => R.path(['specialization', 'category', 'id'], a) === R.path(['specialization', 'category', 'id'], b)),
+);
+
 const savePartnerProfileDetails = (state, action) => {
   const flatjson = flatten(action.partnerDetails);
 
-  return R.mapObjIndexed((value, key) =>
+  const mappedFields = R.mapObjIndexed((value, key) =>
     mapJsonSteps(key, value, flatjson), detailsStructure);
+
+  const mappedSectors =
+  groupSpecializationsByCategory(mappedFields.mandate_mission.experience.experiences);
+
+  const mergedExperiences = R.assoc('specializations',
+    mappedSectors, mappedFields.mandate_mission.experience);
+
+  const mergedManadateMission = R.assoc('experience', mergedExperiences, mappedFields.mandate_mission);
+
+  return R.assoc('mandate_mission', mergedManadateMission, mappedFields);
 };
+
 
 const partnerProfileDetails = (state = initialState, action) => {
   switch (action.type) {
