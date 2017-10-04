@@ -29,6 +29,7 @@ import partnerInfo from './reducers/partnerInfo';
 import organizationProfileNav from './reducers/organizationProfileNav';
 import organizationProfile from './reducers/organizationProfile';
 import partnerApplicationsNav from './reducers/partnerApplicationsNav';
+import partnerProfileConfig from './reducers/partnerProfileConfig';
 import sectors, * as sectorsSelectors from './reducers/sectors';
 import partnersApplicationsList from './reducers/partnersApplicationsList';
 import partnersPreselectionList from './reducers/partnersPreselectionList';
@@ -53,6 +54,7 @@ const mainReducer = combineReducers({
   conceptNote,
   countryProfiles,
   partnerInfo,
+  partnerProfileConfig,
   partnerProfileEdit,
   partnerProfileDetails,
   agencyPartnersList,
@@ -90,6 +92,9 @@ const mapValuesForSelectionField = (state) => {
 
 export const selectNormalizedCountries = state =>
   mapValuesForSelectionField(state.countries);
+
+export const selectNormalizedOrganizationTypes = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['partner-type']);
 
 export const selectNormalizedPopulations = state =>
   mapValuesForSelectionField(state.population);

@@ -7,14 +7,14 @@ import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 const STEPS = readOnly =>
   [
     {
-      component: <PartnerProfileIdentificationBasicInfo readOnly={readOnly} />,
+      component: <PartnerProfileIdentificationBasicInfo />,
       label: 'Basic Information',
       name: 'basic',
     },
     {
       component: <PartnerProfileIdentificationRegistration readOnly={readOnly} />,
       label: 'Registration of Organization',
-      name: 'registration_hq',
+      name: 'registration',
     },
   ];
 

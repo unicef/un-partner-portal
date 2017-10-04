@@ -1,6 +1,6 @@
 import random
 import os
-from datetime import date
+from datetime import date, timedelta
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
@@ -189,11 +189,13 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
     display_type = PARTNER_TYPES.international
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+
+    # hq information
     country_presence = factory.LazyFunction(get_country_list)
     staff_globally = STAFF_GLOBALLY_CHOICES.to200
-    engagement_operate_desc = factory.Sequence(lambda n: "fake engagement operate desc {}".format(n))
+    # country profile information
     staff_in_country = STAFF_GLOBALLY_CHOICES.to100
-    # location_of_office = factory.RelatedFactory(PointFactory, 'location_field_offices')
+    engagement_operate_desc = factory.Sequence(lambda n: "engagement with the communitie {}".format(n))
 
     @factory.post_generation
     def mailing_address(self, create, extracted, **kwargs):
@@ -366,7 +368,18 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             registration_number="reg-number {}".format(self.id),
         )
         if created:
+            filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
             profile.working_languages = get_country_list()
+            profile.acronym = "acronym {}".format(self.id)
+            profile.former_legal_name = "former legal name {}".format(self.id)
+            profile.connectivity_excuse = "connectivity excuse {}".format(self.id)
+            profile.year_establishment = date.today().year - random.randint(1, 30)
+            profile.have_gov_doc = True
+            profile.gov_doc = open(filename).read()
+            profile.registration_doc = open(filename).read()
+            profile.registration_date = date.today() - timedelta(days=random.randint(365, 3650))
+            profile.registration_comment = "registration comment {}".format(self.id)
+            profile.registration_number = "registration number {}".format(self.id)
             profile.explain = "explain {}".format(self.id)
             profile.experienced_staff_desc = "experienced staff desc {}".format(self.id)
             # programme management
@@ -376,6 +389,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             profile.system_monitoring_desc = "system monitoring desc {}".format(self.id)
             profile.have_feedback_mechanism = True
             profile.feedback_mechanism_desc = "feedback mechanism desc {}".format(self.id)
+            profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
+            profile.partnership_collaborate_institution_desc = "collaborate institution {}".format(self.id)
+            profile.explain = "explain {}".format(self.id)
             # financial controls
             profile.org_acc_system = FINANCIAL_CONTROL_SYSTEM_CHOICES.computerized
             profile.have_system_track = True

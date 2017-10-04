@@ -18,7 +18,7 @@ import { changeTab } from '../../../reducers/partnerProfileEdit';
 
 const tabsList = [
   { id: 0, component: <PartnerProfileIdentification />, label: 'identification', name: 'identification' },
-  { id: 1, component: <PartnerProfileContactInfo />, label: 'contact info', name: 'contactInfo' },
+  { id: 1, component: <PartnerProfileContactInfo />, label: 'contact info', name: 'mailing' },
   { id: 2, component: <Mandate />, label: 'mandate & mission', name: 'mandateMission' },
   { id: 3, component: <Funding />, label: 'funding', name: 'funding' },
   { id: 4, component: <Collaboration />, label: 'collaboration', name: 'collaboration' },
