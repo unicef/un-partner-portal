@@ -270,7 +270,11 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             'is_active',
             'country_presence',
             'staff_globally',
-
+            'location_of_office',
+            'more_office_in_country',
+            'location_field_offices',
+            'staff_in_country',
+            'engagement_operate_desc',
             "profile",
             "mailing_address",
             "directors",
@@ -444,7 +448,6 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
             'security_high_risk_locations',
             'security_high_risk_policy',
             'security_desc',
-
             'country_presence',
             'staff_globally',
             'location_of_office',
@@ -452,7 +455,6 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
             'location_field_offices',
             'staff_in_country',
             'engagement_operate_desc',
-
             'experiences',
         )
 
