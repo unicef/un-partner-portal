@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
+import { FormControl, FormLabel } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
@@ -37,13 +38,30 @@ const styleSheet = theme => ({
   delete: {
     flexBasis: '5%',
   },
+  default: {
+    paddingTop: '1em',
+    paddingBottom: '1em',
+  },
 });
 
 class RenderArrayMembers extends Component {
   constructor(props) {
     super(props);
 
-    if (props.initial && !props.readOnly && props.fields.length === 0) props.fields.push({});
+    if (props.initial && !props.readOnly
+        && props.fields.length === 0 && !props.initialCount) {
+      props.fields.push({});
+    }
+  }
+
+  addMissingFields() {
+    const { fields, initialCount } = this.props;
+
+    if (initialCount) {
+      for (let i = 0; i < initialCount - fields.length; i += 1) {
+        fields.push({});
+      }
+    }
   }
 
   render() {
@@ -53,20 +71,24 @@ class RenderArrayMembers extends Component {
       outerField,
       innerField,
       classes,
+      disableAdding,
+      disableDeleting,
       readOnly } = this.props;
+
+    this.addMissingFields();
 
     return (
       <Paper elevation={0} className={classes.outerPaper} >
         <List className={classes.list}>
           {fields.map((member, index) => (
             <div>
-              <ListItem key={index} >
+              <ListItem classes={{ default: classes.default }} key={index} >
                 <GridColumn spacing={4}>
                   <div className={classes.container}>
                     <div className={classes.items}>
                       {outerField(member, index, fields)}
                     </div>
-                    <div className={classes.delete}>
+                    {!disableDeleting && <div className={classes.delete}>
                       <IconButton
                         type="button"
                         disabled={index === 0}
@@ -74,7 +96,7 @@ class RenderArrayMembers extends Component {
                         onClick={() => fields.remove(index)}
                       >{index > 0 && !readOnly && <DeleteIcon />}
                       </IconButton>
-                    </div>
+                    </div>}
                   </div>
                   {innerField && <Paper elevation={0} className={classes.innerPaper}>
                     {innerField(member, index, fields)}
@@ -85,7 +107,7 @@ class RenderArrayMembers extends Component {
             </div>
           ))}
 
-          {fields.length < limit && !readOnly &&
+          {fields.length < limit && !readOnly && !disableAdding &&
             <Button
               color="accent"
               onClick={() => fields.push({})}
@@ -123,9 +145,21 @@ RenderArrayMembers.propTypes = {
    */
   initial: PropTypes.bool,
   /**
+   * Number of initial fields
+   */
+  initialCount: PropTypes.number,
+  /**
    * if form should display in read-only style
    */
   readOnly: PropTypes.bool,
+  /**
+   * if form should not be able to add items
+   */
+  disableAdding: PropTypes.bool,
+  /**
+   * if form should not be able to delete items
+   */
+  disableDeleting: PropTypes.bool,
 };
 
 
@@ -138,10 +172,13 @@ const ArrayForm = (props) => {
     limit,
     label,
     initial,
+    initialCount,
+    disableAdding,
+    disableDeleting,
     readOnly } = props;
   return (
-    <div>
-      <Typography type="caption">{label}</Typography>
+    <FormControl fullWidth>
+      <FormLabel>{label}</FormLabel>
       <FieldArray
         limit={limit}
         name={fieldName}
@@ -149,9 +186,12 @@ const ArrayForm = (props) => {
         outerField={outerField}
         innerField={innerField}
         initial={initial}
+        disableAdding={disableAdding}
+        disableDeleting={disableDeleting}
+        initialCount={initialCount}
         readOnly={readOnly}
       />
-    </div>
+    </FormControl>
   );
 };
 
@@ -185,9 +225,21 @@ ArrayForm.propTypes = {
    */
   initial: PropTypes.bool,
   /**
+   * Number of initial fields
+   */
+  initialCount: PropTypes.number,
+  /**
    * if form should display in read-only style
    */
   readOnly: PropTypes.bool,
+  /**
+   * if form should not be able to add items
+   */
+  disableAdding: PropTypes.bool,
+  /**
+   * if form should not be able to delete items
+   */
+  disableDeleting: PropTypes.bool,
 };
 
 export default withStyles(styleSheet, { name: 'ArrayForm' })(ArrayForm);

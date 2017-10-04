@@ -2,114 +2,78 @@ import React from 'react';
 import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
-import { FormControl, FormLabel } from 'material-ui/Form';
-
+import { connect } from 'react-redux';
+import ArrayForm from '../../../forms/arrayForm';
 import SelectForm from '../../../forms/selectForm';
-import TextFieldForm from '../../../forms/textFieldForm';
+import NumberFieldForm from '../../../forms/numberFieldForm';
+import { selectNormalizedBudgets } from '../../../../store';
 
+const messages = {
+  annualBudget: 'What is your organization\'s annual budget (in USD) for the current and two previous fiscal years?',
+  budget: 'Budget',
+  year: 'Year',
+};
 
-const BUDGET_VALUES = [
-  {
-    value: '1',
-    label: '0 to 200,000',
-  },
-  {
-    value: '2',
-    label: '200,000 to 500,000',
-  },
-  {
-    value: '3',
-    label: '500,000 to 1,000,000',
-  },
-  {
-    value: '4',
-    label: '1,000,000 to 2,000,000',
-  },
-];
-
+const annualBudgetForm = (budget, budgetTypes, readOnly) => (
+  <Grid container direction="row">
+    <Grid item sm={5} xs={12} >
+      <NumberFieldForm
+        fieldName={`${budget}.year`}
+        label={messages.year}
+        textFieldProps={{
+          inputProps: {
+            type: 'number',
+            min: 1900,
+            max: (new Date()).getFullYear(),
+          },
+        }}
+        optional
+        warn
+        readOnly={readOnly}
+      />
+    </Grid>
+    <Grid item sm={7} xs={12} >
+      <SelectForm
+        fieldName={`${budget}.budget`}
+        label={messages.budget}
+        values={budgetTypes}
+        optional
+        warn
+        readOnly={readOnly}
+      />
+    </Grid>
+  </Grid>
+);
 
 const PartnerProfileFundingBudget = (props) => {
-  const { readOnly } = props;
-  return (<FormSection name="fund">
-    <Grid item>
+  const { readOnly, budgetTypes } = props;
+
+  return (
+    <FormSection name="budgets">
       <Grid container direction="column" spacing={16}>
         <Grid item>
-          <FormControl fullWidth>
-            <FormLabel>{"What is your organization's annual budget (in USD) for the current and two previous years?"}</FormLabel>
-            <div style={{ padding: 20, backgroundColor: 'lightGrey' }}>
-              <Grid item>
-                <Grid container direction="column" spacing={16}>
-                  <Grid item>
-                    <Grid container direction="row">
-                      <Grid item sm={6} xs={12}>
-                        <SelectForm
-                          fieldName="budget"
-                          label="This Year's Budget"
-                          values={BUDGET_VALUES}
-                          optional
-                          warn
-                          readOnly={readOnly}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Grid container direction="row">
-                      <Grid item sm={6} xs={12}>
-                        <SelectForm
-                          fieldName="lastYearBudget"
-                          label="Last Year's Budget"
-                          values={BUDGET_VALUES}
-                          optional
-                          warn
-                          readOnly={readOnly}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Grid container direction="row">
-                      <Grid item sm={6} xs={12}>
-                        <SelectForm
-                          fieldName="twoYearsbudget"
-                          label="Year before last's Budget"
-                          values={BUDGET_VALUES}
-                          onFieldChange={this.handleBudgetFieldChange}
-                          optional
-                          warn
-                          readOnly={readOnly}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </div>
-          </FormControl>
-        </Grid>
-        <Grid item sm={12} xs={12}>
-          <TextFieldForm
-            label="Please state your souce(s) of core funding"
-            placeholder="200 character maximum"
-            fieldName="fundingDescription"
-            textFieldProps={{
-              inputProps: {
-                maxLength: '200',
-              },
-            }}
-            optional
-            warn
+          <ArrayForm
+            fieldName="budgets"
+            limit={3}
+            label={messages.annualBudget}
+            initial
+            initialCount={3}
+            disableAdding
+            disableDeleting
+            outerField={budget => annualBudgetForm(budget, budgetTypes, readOnly)}
             readOnly={readOnly}
           />
         </Grid>
       </Grid>
-    </Grid>
-  </FormSection>
+    </FormSection>
   );
 };
 
 PartnerProfileFundingBudget.propTypes = {
   readOnly: PropTypes.bool,
+  budgetTypes: PropTypes.array.isRequired,
 };
 
-export default PartnerProfileFundingBudget;
+export default connect(state => ({
+  budgetTypes: selectNormalizedBudgets(state),
+}))(PartnerProfileFundingBudget);

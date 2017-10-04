@@ -94,7 +94,9 @@ const partnerDetailsStructure = {
     },
   },
   fund: {
-    budgets: null,
+    budgets: {
+      budgets: null,
+    },
     major_donors: {
       source_core_funding: null,
       main_donors_list: null,

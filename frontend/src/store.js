@@ -114,6 +114,9 @@ export const selectNormalizedPopulationsOfConcernGroups = state =>
 export const selectNormalizedStaffGlobalyChoices = state =>
   mapValuesForSelectionSortValue(state.partnerProfileConfig['staff-globaly-choices']);
 
+export const selectNormalizedBudgets = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['budget-choices']);
+
 export const selectNormalizedPartnerDonors = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['partner-donors']);
 
