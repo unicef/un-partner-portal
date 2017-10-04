@@ -88,6 +88,8 @@ class PartnerProfile(TimeStampedModel):
     # authorised_officials
     have_board_directors = models.BooleanField(
         default=False, verbose_name="Does your organization have a board of directors?")
+    have_authorised_officers = models.BooleanField(
+        default=False, verbose_name="Does your organization have a authorised officers?")
 
     # Registration of organization
     year_establishment = models.PositiveSmallIntegerField(

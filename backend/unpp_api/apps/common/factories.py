@@ -32,6 +32,7 @@ from partner.models import (
     PartnerMember,
 )
 from project.models import EOI, Application, AssessmentCriteria
+from review.models import PartnerFlag, PartnerVerification
 from .consts import (
     PARTNER_TYPES,
     MEMBER_STATUSES,
@@ -650,3 +651,34 @@ class EOIFactory(factory.django.DjangoModelFactory):
                 {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 20}
             ]
         )
+
+
+class PartnerFlagFactory(factory.django.DjangoModelFactory):
+    submitter = factory.LazyFunction(get_agency_member)
+    partner = factory.LazyFunction(get_partner)
+    contact_phone = factory.Sequence(lambda n: "+48 22 568 03 0{}".format(n))
+    contact_email = factory.Sequence(lambda n: "fake-contact-{}@unicef.org".format(n))
+    comment = factory.Sequence(lambda n: "fake comment {}".format(n))
+    contact_person = "Person Name"
+
+    class Meta:
+        model = PartnerFlag
+
+
+class PartnerVerificationFactory(factory.django.DjangoModelFactory):
+    partner = factory.LazyFunction(get_partner)
+    submitter = factory.LazyFunction(get_agency_member)
+    is_mm_consistent = True
+    is_indicate_results = True
+    cert_uploaded_comment = factory.Sequence(lambda n: "cert comment {}".format(n))
+    indicate_results_comment = factory.Sequence(lambda n: "indicate results comment {}".format(n))
+    yellow_flag_comment = factory.Sequence(lambda n: "yellow flag {}".format(n))
+    mm_consistent_comment = factory.Sequence(lambda n: "mm comment {}".format(n))
+    is_valid = True
+    is_cert_uploaded = True
+    rep_risk_comment = factory.Sequence(lambda n: "rep risk comment {}".format(n))
+    is_yellow_flag = False
+    is_rep_risk = False
+
+    class Meta:
+        model = PartnerVerification

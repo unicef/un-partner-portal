@@ -86,6 +86,9 @@ class Pin(TimeStampedModel):
 
 class Application(TimeStampedModel):
     is_unsolicited = models.BooleanField(default=False, verbose_name='Is unsolicited?')
+    proposal_of_eoi_details = JSONField(
+        default=dict([('locations', []), ('title', ''), ('agency_id', None), ('specializations', [])])
+    )
     partner = models.ForeignKey('partner.Partner', related_name="applications")
     eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
     submitter = models.ForeignKey('account.User', related_name="applications")

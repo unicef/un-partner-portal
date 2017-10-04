@@ -367,6 +367,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
 
     mailing_address = PartnerMailingAddressSerializer()
     have_board_directors = serializers.BooleanField(source="profile.have_board_directors")
+    have_authorised_officers = serializers.BooleanField(source="profile.have_authorised_officers")
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
     org_head = PartnerHeadOrganizationSerializer(read_only=True)
@@ -381,6 +382,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
         fields = (
             'mailing_address',
             'have_board_directors',
+            'have_authorised_officers',
             'directors',
             'authorised_officers',
             'org_head',

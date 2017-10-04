@@ -52,8 +52,12 @@ class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     def get_queryset(self):
         return PartnerFlag.objects.filter(partner=self.kwargs['partner_id'])
 
-    def perform_update(self, serializer):
-        serializer.save(update_fields=['is_valid'])
+    def get_serializer(self, *args, **kwargs):
+        flag = self.get_object()
+        return PartnerFlagSerializer(flag,
+                                     data={'is_valid': kwargs['data'].get('is_valid', flag.is_valid)},
+                                     partial=True)
+
 
 
 class PartnerVerificationRetrieveUpdateAPIView(RetrieveUpdateAPIView):
@@ -66,5 +70,9 @@ class PartnerVerificationRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     def get_queryset(self):
         return PartnerVerification.objects.filter(partner=self.kwargs['partner_id'])
 
-    def perform_update(self, serializer):
-        serializer.save(update_fields=['is_valid'])
+
+    def get_serializer(self, *args, **kwargs):
+        verification = self.get_object()
+        return PartnerVerificationSerializer(verification,
+                                             data={'is_valid': kwargs['data'].get('is_valid', verification.is_valid)},
+                                             partial=True)
