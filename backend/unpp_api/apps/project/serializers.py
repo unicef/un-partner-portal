@@ -2,13 +2,15 @@
 from __future__ import unicode_literals
 from django.db import transaction
 from rest_framework import serializers
+from account.models import User
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES, EOI_TYPES
 from common.serializers import SimpleSpecializationSerializer, PointSerializer
 from common.models import Point, AdminLevel1
 from partner.serializers import PartnerSerializer
+
 from partner.models import Partner, PartnerMember
-from .models import EOI, Application, AssessmentCriteria
+from .models import EOI, Application, AssessmentCriteria, Assessment
 
 
 class AssessmentCriteriaSerializer(serializers.ModelSerializer):
@@ -174,7 +176,7 @@ class CreateDirectProjectSerializer(serializers.Serializer):
 class CreateProjectSerializer(serializers.Serializer):
 
     eoi = CreateEOISerializer()
-    assessment_criterias = AssessmentCriteriaSerializer(many=True)
+    assessment_criterias = AssessmentCriteriaSerializer()
 
     @transaction.atomic
     def create(self, validated_data):
@@ -184,7 +186,6 @@ class CreateProjectSerializer(serializers.Serializer):
         del validated_data['eoi']['specializations']
         focal_points = validated_data['eoi']['focal_points']
         del validated_data['eoi']['focal_points']
-        assessment_criterias = validated_data['assessment_criterias']
         del validated_data['assessment_criterias']
 
         validated_data['eoi']['cn_template'] = validated_data['eoi']['agency'].profile.eoi_template
@@ -201,14 +202,13 @@ class CreateProjectSerializer(serializers.Serializer):
         for focal_point in focal_points:
             eoi.focal_points.add(focal_point)
 
-        created_ac = []
-        for assessment_criteria in assessment_criterias:
-            assessment_criteria['eoi'] = eoi
-            created_ac.append(AssessmentCriteria.objects.create(**assessment_criteria))
+        ac = AssessmentCriteria(**self.initial_data.get("assessment_criterias"))
+        ac.eoi = eoi
+        ac.save()
 
         return {
             'eoi': eoi,
-            'assessment_criterias': created_ac,
+            'assessment_criterias': ac,
         }
 
 
@@ -217,7 +217,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
     specializations = SimpleSpecializationSerializer(many=True)
     invited_partners = PartnerSerializer(many=True)
     locations = PointSerializer(many=True)
-    assessments_criteria = AssessmentCriteriaSerializer(many=True)
+    assessments_criteria = AssessmentCriteriaSerializer()
 
     class Meta:
         model = EOI
@@ -280,4 +280,47 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'type_org',
             'status',
             'cn',
+        )
+
+
+class ReviewersApplicationSerializer(serializers.ModelSerializer):
+
+    assessment = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'first_name',
+            'last_name',
+            'assessment',
+        )
+
+    def get_assessment(self, obj):
+        application_id = self.context['request'].parser_context['kwargs']['application_id']
+        assessment = Assessment.objects.filter(application=application_id, reviewer=obj)
+        if assessment.exists():
+            return {
+                'exists': True,
+                'total_score': assessment.get().total_score
+            }
+        else:
+            return {'exists': False, 'total_score': 0}
+
+
+class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
+
+    total_score = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Assessment
+        fields = (
+            'id',
+            'criteria',
+            'reviewer',
+            'application',
+            'scores',
+            'total_score',
+            'date_reviewed',
+            'note',
         )

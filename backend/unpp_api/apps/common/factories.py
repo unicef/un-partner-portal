@@ -31,7 +31,7 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
 )
-from project.models import EOI, Application
+from project.models import EOI, Application, AssessmentCriteria
 from review.models import PartnerFlag, PartnerVerification
 from .consts import (
     PARTNER_TYPES,
@@ -49,6 +49,7 @@ from .consts import (
     EOI_TYPES,
     DIRECT_SELECTION_SOURCE,
     BUDGET_CHOICES,
+    SELECTION_CRITERIA_CHOICES,
     STAFF_GLOBALLY_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
 )
@@ -137,6 +138,8 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = fuzzy.FuzzyText()
     email = factory.Sequence(lambda n: "fake-user-{}@unicef.org".format(n))
     password = factory.PostGenerationMethodCall('set_password', 'test')
+    first_name = factory.LazyFunction(get_first_name)
+    last_name = factory.LazyFunction(get_last_name)
 
     profile = factory.RelatedFactory(UserProfileFactory, 'user')
 
@@ -184,8 +187,9 @@ class PartnerSimpleFactory(factory.django.DjangoModelFactory):
 
 class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
-    display_type = PARTNER_TYPES.national
+    display_type = PARTNER_TYPES.international
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+    country_presence = factory.LazyFunction(get_country_list)
     staff_globally = STAFF_GLOBALLY_CHOICES.to200
     engagement_operate_desc = factory.Sequence(lambda n: "fake engagement operate desc {}".format(n))
     staff_in_country = STAFF_GLOBALLY_CHOICES.to100
@@ -591,6 +595,12 @@ class EOIFactory(factory.django.DjangoModelFactory):
         model = EOI
 
     @factory.post_generation
+    def reviewers(self, create, extracted, **kwargs):
+        agency_members = User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?")
+        self.reviewers.add(agency_members.first())
+        self.reviewers.add(agency_members.last())
+
+    @factory.post_generation
     def focal_points(self, create, extracted, **kwargs):
         focal_point = get_agency_member()
         if focal_point:
@@ -629,6 +639,18 @@ class EOIFactory(factory.django.DjangoModelFactory):
                 eoi=self,
                 submitter=get_partner_member(),
             )
+
+    @factory.post_generation
+    def assessments_criteria(self, create, extracted, **kwargs):
+        AssessmentCriteria.objects.create(
+            eoi=self,
+            options=[
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'weight': 10},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'weight': 40},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'weight': 30},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 20}
+            ]
+        )
 
 
 class PartnerFlagFactory(factory.django.DjangoModelFactory):

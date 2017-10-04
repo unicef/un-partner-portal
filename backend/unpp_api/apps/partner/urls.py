@@ -13,10 +13,12 @@ from .views import (
     PartnerCollaborationAPIView,
     PartnerProjectImplementationAPIView,
     PartnerOtherInfoAPIView,
+    PartnerCountryProfileAPIView,
 )
 
 
 urlpatterns = [
+    url(r'^(?P<pk>\d+)/country-profile/$', PartnerCountryProfileAPIView.as_view(), name="country-profile"),
     url(r'^(?P<pk>\d+)/org-profile$', OrganizationProfileAPIView.as_view(), name="org-profile"),
     url(r'^(?P<pk>\d+)/$', PartnerProfileAPIView.as_view(), name="partner-profile"),
     url(r'^(?P<pk>\d+)/identification/$', PartnerIdentificationAPIView.as_view(), name="identification"),
