@@ -78,7 +78,9 @@ const partnerDetailsStructure = {
       ethic_fraud_policy: null,
       ethic_fraud_comment: null,
     },
-    experiences: null,
+    experience: {
+      experiences: null,
+    },
     populations_of_concern: {
       population_of_concern: null,
       concern_groups: null,
