@@ -4,12 +4,12 @@ import React from 'react';
 import SelectField from 'material-ui-old/SelectField';
 import TextField from 'material-ui/TextField';
 import Checkbox from 'material-ui/Checkbox';
-import FileDownload from 'material-ui-icons/FileDownload';
+import { FormControl, FormControlLabel, FormHelperText, FormLabel } from 'material-ui/Form';
 import Attachment from 'material-ui-icons/Attachment';
 import DateRange from 'material-ui-icons/DateRange';
 import DatePicker from 'material-ui-old/DatePicker';
 import Typography from 'material-ui/Typography';
-import { FormControl, FormControlLabel, FormHelperText, FormLabel } from 'material-ui/Form';
+import FileDownloadButton from '../components/common/buttons/fileDownloadButton';
 import RadioGroupRow from '../components/common/radio/radioGroupRow';
 import RadioHeight from '../components/common/radio/radioHeight';
 import { formatDateForPrint } from './dates';
@@ -126,7 +126,7 @@ export const renderCheckbox = ({
 );
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-export const renderFileDownload = (props, messages) => {
+export const renderFileDownload = (props) => {
   const { classes } = props;
 
   return ({ input, label }) => (
@@ -139,19 +139,7 @@ export const renderFileDownload = (props, messages) => {
         </Typography>
 
       </div>
-      <div
-        role="button"
-        className={classes.wrapContentButton}
-        onClick={() => { window.open(input.value); }}
-      >
-        <FileDownload className={classes.downloadIcon} />
-        <Typography
-          color="accent"
-          type="button"
-        >
-          {messages.download}
-        </Typography>
-      </div>
+      <FileDownloadButton fileUrl={input.value}/> 
     </FormControl>);
 };
 

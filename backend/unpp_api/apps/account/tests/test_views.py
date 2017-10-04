@@ -3,7 +3,8 @@ from django.urls import reverse
 from rest_framework import status as statuses
 from rest_framework.test import APITestCase
 
-from common.consts import PARTNER_TYPES
+from common.consts import PARTNER_TYPES, FUNCTIONAL_RESPONSIBILITY_CHOICES
+from partner.models import Partner
 
 
 class TestRegisterPartnerAccountAPITestCase(APITestCase):
@@ -62,6 +63,18 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
         url = reverse('accounts:login')
         response = self.client.post(url, data=self.data['user'], format='json')
         self.assertTrue(statuses.is_success(response.status_code))
+
+        partner = Partner.objects.first()
+        self.assertEqual(partner.legal_name, self.data['partner']['legal_name'])
+        self.assertTrue(partner.mailing_address)
+        self.assertTrue(partner.org_head)
+        self.assertTrue(partner.audit)
+        self.assertTrue(partner.report)
+        self.assertTrue(partner.mandate_mission)
+        self.assertTrue(partner.fund)
+        self.assertTrue(partner.other_info)
+        self.assertEquals(partner.internal_controls.count(),
+                          len(list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values)))
 
         # check if logout endpoint work correct
         # TODO: Split it! Make external test class when base test class will ne implemented

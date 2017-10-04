@@ -8,11 +8,12 @@ import { withStyles } from 'material-ui/styles';
 
 const styleSheet = (theme) => {
   const paddingIcon = theme.spacing.unit / 2;
-  
+
   return {
     alignCenter: {
       display: 'flex',
       alignItems: 'center',
+      cursor: 'pointer',
     },
     iconNotVerified: {
       fill: theme.palette.primary[500],
@@ -41,12 +42,13 @@ const styleSheet = (theme) => {
   };
 };
 
+/* eslint-disable jsx-a11y/interactive-supports-focus */
 const PartnerProfileNameCell = (props) => {
-  const { classes, name, verified, yellowFlag, redFlag } = props;
+  const { classes, name, verified, yellowFlag, redFlag, onClick } = props;
   return (
     <TableCell>
-      <div className={classes.alignCenter}>
-        <Typography type="body1" color="inherit">
+      <div role="button" onClick={() => onClick()} className={classes.alignCenter}>
+        <Typography type="body1" color="accent">
           {name}
         </Typography>
 
@@ -66,6 +68,7 @@ PartnerProfileNameCell.propTypes = {
   verified: PropTypes.bool.isRequired,
   yellowFlag: PropTypes.bool,
   redFlag: PropTypes.bool,
+  onClick: PropTypes.func,
 };
 
 export default withStyles(styleSheet, { name: 'PartnerProfileNameCell' })(PartnerProfileNameCell);
