@@ -31,11 +31,14 @@ const styleSheet = theme => ({
   },
   items: {
     flexFlow: 'column wrap',
-    flexGrow: '1',
+    flexBasis: '90%',
     display: 'flex',
   },
   delete: {
-    flexBasis: '5%',
+    flexBasis: '10%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+
   },
 });
 
@@ -66,15 +69,15 @@ class RenderArrayMembers extends Component {
                     <div className={classes.items}>
                       {outerField(member, index, fields)}
                     </div>
-                    <div className={classes.delete}>
+                    {index > 0 && !readOnly && <div className={classes.delete}>
                       <IconButton
                         type="button"
                         disabled={index === 0}
                         title="Remove Member"
                         onClick={() => fields.remove(index)}
-                      >{index > 0 && !readOnly && <DeleteIcon />}
+                      ><DeleteIcon />
                       </IconButton>
-                    </div>
+                    </div>}
                   </div>
                   {innerField && <Paper elevation={0} className={classes.innerPaper}>
                     {innerField(member, index, fields)}
