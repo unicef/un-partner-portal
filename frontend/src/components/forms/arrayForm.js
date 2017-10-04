@@ -9,7 +9,6 @@ import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
-import Typography from 'material-ui/Typography';
 import GridColumn from '../common/grid/gridColumn';
 
 const messages = {
