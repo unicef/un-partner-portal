@@ -286,13 +286,7 @@ class ReviewersApplicationSerializer(serializers.ModelSerializer):
     def get_assessment(self, obj):
         application_id = self.context['request'].parser_context['kwargs']['application_id']
         assessment = Assessment.objects.filter(application=application_id, reviewer=obj)
-        if assessment.exists():
-            return {
-                'exists': True,
-                'total_score': assessment.get().total_score
-            }
-        else:
-            return {'exists': False, 'total_score': 0}
+        return ReviewerAssessmentsSerializer(assessment, many=True).data
 
 
 class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
