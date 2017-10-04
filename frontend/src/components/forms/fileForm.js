@@ -75,7 +75,8 @@ class FileForm extends Component {
   }
 
   render() {
-    const { classes, fieldName, label, optional, validation, warn, readOnly, ...other } = this.props;
+    const { classes, fieldName, label, optional,
+      validation, warn, readOnly, ...other } = this.props;
 
     return (
       <Grid item>

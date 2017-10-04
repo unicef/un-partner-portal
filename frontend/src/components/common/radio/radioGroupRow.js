@@ -16,7 +16,7 @@ const RadioGroupRow = (props) => {
   return (<RadioGroup
     {...other}
     className={classes.row}
-    selectedValue={selectedValue}
+    value={selectedValue}
     onChange={(event, value) => onChange(event, value)}
   >
     {children}

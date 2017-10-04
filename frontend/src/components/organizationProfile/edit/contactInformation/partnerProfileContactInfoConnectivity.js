@@ -3,58 +3,49 @@ import PropTypes from 'prop-types';
 import { formValueSelector, FormSection } from 'redux-form';
 import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
-
 import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import { visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
 
-const BOOL_VAL = [
-  {
-    value: 'yes',
-    label: 'Yes',
-  },
-  {
-    value: 'no',
-    label: 'No',
-  },
-];
-
+const messages = {
+  internetAccess: 'Does the organization have reliable access to internet in all of its ' +
+              'operations?',
+  explenation: 'Please explain how communication is done with non-connected operations',
+};
 
 const PartnerProfileContactInfoConnectivity = (props) => {
   const { hasInternetAccess, readOnly } = props;
-  
+
   return (
     <FormSection name="connectivity">
-      <Grid item>
-        <Grid container direction="column" spacing={16}>
-          <Grid item sm={6} xs={12}>
-            <RadioForm
-              fieldName="connectivity"
-              label={'Does the organization have reliable access to internet in all of its' +
-              'operations?'}
-              values={BOOL_VAL}
-              optional
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-          {!hasInternetAccess && <Grid item >
-            <TextFieldForm
-              label="Please explain how communication is done with non-connected operations"
-              placeholder="Provide explanation"
-              fieldName="connectivity_excuse"
-              textFieldProps={{
-                inputProps: {
-                  maxLength: '200',
-                },
-              }}
-              optional
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-          }
+      <Grid container direction="column" spacing={16}>
+        <Grid item >
+          <RadioForm
+            fieldName="connectivity"
+            label={messages.internetAccess}
+            values={BOOL_VAL}
+            optional
+            warn
+            readOnly={readOnly}
+          />
         </Grid>
+        {visibleIfNo(hasInternetAccess) && <Grid item >
+          <TextFieldForm
+            label={messages.explenation}
+            fieldName="connectivity_excuse"
+            textFieldProps={{
+              inputProps: {
+                maxLength: '200',
+              },
+            }}
+            optional
+            warn
+            readOnly={readOnly}
+          />
+        </Grid>
+        }
       </Grid>
+
     </FormSection>
   );
 };

@@ -96,6 +96,9 @@ export const selectNormalizedCountries = state =>
 export const selectNormalizedOrganizationTypes = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['partner-type']);
 
+export const selectNormalizedWorkingLanguages = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['working-languages']);
+
 export const selectNormalizedPopulations = state =>
   mapValuesForSelectionField(state.population);
 

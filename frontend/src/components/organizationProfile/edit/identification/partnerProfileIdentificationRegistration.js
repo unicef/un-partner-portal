@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { visibleIfYes, visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
 import RadioForm from '../../../forms/radioForm';
-import TextFieldForm from '../../../forms/textFieldForm';
 import FileForm from '../../../forms/fileForm';
+import TextFieldForm from '../../../forms/textFieldForm';
 import DatePickerForm from '../../../forms/datePickerForm';
 
 const messages = {
@@ -55,7 +55,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
               && <Grid item sm={4} xs={12}>
                 <FileForm
                   fieldName="gov_doc"
-                  label={messages.governingDoc} 
+                  label={messages.governingDoc}
                   optional
                   warn
                   readOnly={readOnly}
