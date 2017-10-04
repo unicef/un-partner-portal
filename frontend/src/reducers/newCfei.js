@@ -35,14 +35,6 @@ const mockData = {
     agency: 1,
     agency_office: 1,
   },
-  assessment_criterias: [
-    {
-      display_type: 'SEE',
-      scale: 'Std',
-      weight: 50,
-      description: 'test',
-    },
-  ],
 };
 
 const initialState = {
@@ -57,16 +49,24 @@ export const newCfeiProcessing = () => ({ type: NEW_CFEI_PROCESSING });
 export const newCfeiProcessed = () => ({ type: NEW_CFEI_PROCESSED });
 export const newCfeiFailure = () => ({ type: NEW_CFEI_FAILURE });
 
-const prepareBody = (body) => {
+const prepareSectors = (body) => {
   const newBody = R.clone(body);
   const flatSectors = mergeListsFromObjectArray(newBody.eoi.specializations, 'areas');
   newBody.eoi = R.assoc('specializations', flatSectors, body.eoi);
   return newBody;
 };
 
+const prepareCriteria = criteria =>
+  R.map(criterium => R.assoc('scale', 'Std', criterium), criteria);
+
+
 export const addOpenCfei = body => (dispatch) => {
   dispatch(newCfeiSubmitting());
-  const preparedBody = prepareBody(body);
+  let preparedBody = prepareSectors(body);
+  preparedBody = R.assoc(
+    'assessment_criterias',
+    prepareCriteria(preparedBody.assessment_criterias),
+    preparedBody);
   return postOpenCfei(R.mergeWith(R.merge, preparedBody, mockData))
     .then(() => {
       dispatch(newCfeiSubmitted());
