@@ -9,6 +9,7 @@ import PreselectedTotalScore from '../../cells/preselectedTotalScore';
 import PreselectedYourScore from '../../cells/preselectedYourScore';
 import { loadApplications } from '../../../../reducers/partnersApplicationsList';
 import { APPLICATION_STATUSES } from '../../../../helpers/constants';
+import { isQueryChanged } from '../../../../helpers/apiHelper';
 
 /* eslint-disable react/prop-types */
 const HeaderActions = (props) => {
@@ -45,22 +46,27 @@ const applicationsCells = ({ row, column }) => {
 };
 /* eslint-enable react/prop-types */
 class OpenCfeiPreselections extends Component {
-  componentWillMount() {
-    this.props.loadApplications();
+  shouldComponentUpdate(nextProps, nextState) {
+    const { id, query } = this.props;
+
+    if (isQueryChanged(nextProps, query)) {
+      this.props.loadApplications(id, nextProps.location.query);
+    }
+
+    return true;
   }
 
   render() {
-    const { applications, columns, loading } = this.props;
+    const { applications, columns, loading, itemsCount } = this.props;
     return (
       <div>
         <SelectableList
           items={applications}
+          itemsCount={itemsCount}
           columns={columns}
           loading={loading}
           headerAction={HeaderActions}
           templateCell={applicationsCells}
-          onPageSizeChange={pageSize => console.log('Page size', pageSize)}
-          onCurrentPageChange={page => console.log('Page number', page)}
         />
       </div>
     );
@@ -72,18 +78,22 @@ OpenCfeiPreselections.propTypes = {
   columns: PropTypes.array.isRequired,
   loadApplications: PropTypes.func,
   loading: PropTypes.bool,
+  query: PropTypes.object,
+  itemsCount: PropTypes.number,
+  id: PropTypes.number,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   applications: state.partnersApplicationsList.applicationsList.applications,
+  itemsCount: state.partnersApplicationsList.applicationsList.itemsCount,
   columns: state.partnersPreselectionList.columns,
   loading: state.partnersApplicationsList.status.loading,
+  query: ownProps.location.query,
+  id: ownProps.params.id,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  loadApplications: () => dispatch(loadApplications(
-    ownProps.params.id,
-    { status: APPLICATION_STATUSES.PRE })),
+const mapDispatchToProps = dispatch => ({
+  loadApplications: (id, params) => dispatch(loadApplications(id, params)),
 });
 
 
