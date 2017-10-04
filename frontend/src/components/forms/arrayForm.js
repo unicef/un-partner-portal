@@ -9,11 +9,7 @@ import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
-<<<<<<< HEAD
 import GridColumn from '../common/grid/gridColumn';
-=======
-import Typography from 'material-ui/Typography';
->>>>>>> feature/#156-partner-profile-mandate-mission
 
 const messages = {
   addNew: '+ Add New',
