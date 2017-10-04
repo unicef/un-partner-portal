@@ -16,7 +16,7 @@ const messages = {
 
 const annualBudgetForm = (budget, budgetTypes, readOnly) => (
   <Grid container direction="row">
-    <Grid item sm={5} xs={12} >
+    <Grid item sm={2} xs={12} >
       <NumberFieldForm
         fieldName={`${budget}.year`}
         label={messages.year}
@@ -32,7 +32,7 @@ const annualBudgetForm = (budget, budgetTypes, readOnly) => (
         readOnly={readOnly}
       />
     </Grid>
-    <Grid item sm={7} xs={12} >
+    <Grid item sm={10} xs={12} >
       <SelectForm
         fieldName={`${budget}.budget`}
         label={messages.budget}
