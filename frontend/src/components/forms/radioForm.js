@@ -33,7 +33,7 @@ const RadioForm = (props) => {
           options={values}
           label={label}
           validate={optional ? [] : [required].concat(validation || [])}
-          warn={warn && warning}
+          warn={warn ? [warning] : []}
           {...other}
         />}
     </Grid>

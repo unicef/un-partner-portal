@@ -9,7 +9,11 @@ import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
+<<<<<<< HEAD
 import GridColumn from '../common/grid/gridColumn';
+=======
+import Typography from 'material-ui/Typography';
+>>>>>>> feature/#156-partner-profile-mandate-mission
 
 const messages = {
   addNew: '+ Add New',
@@ -31,11 +35,13 @@ const styleSheet = theme => ({
   },
   items: {
     flexFlow: 'column wrap',
-    flexGrow: '1',
     display: 'flex',
+    flexBasis: '90%',
   },
   delete: {
-    flexBasis: '5%',
+    flexBasis: '10%',
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
   default: {
     paddingTop: '1em',
@@ -87,13 +93,12 @@ class RenderArrayMembers extends Component {
                     <div className={classes.items}>
                       {outerField(member, index, fields)}
                     </div>
-                    {!disableDeleting && <div className={classes.delete}>
+                    {!disableDeleting && index > 0 && !readOnly && <div className={classes.delete}>
                       <IconButton
                         type="button"
-                        disabled={index === 0}
                         title="Remove Member"
                         onClick={() => fields.remove(index)}
-                      >{index > 0 && !readOnly && <DeleteIcon />}
+                      ><DeleteIcon />
                       </IconButton>
                     </div>}
                   </div>

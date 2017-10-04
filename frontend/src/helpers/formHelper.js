@@ -139,7 +139,7 @@ export const renderFileDownload = (props) => {
         </Typography>
 
       </div>
-      <FileDownloadButton fileUrl={input.value}/> 
+      <FileDownloadButton fileUrl={input.value} />
     </FormControl>);
 };
 
