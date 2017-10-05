@@ -16,6 +16,7 @@ from .consts import (
     FORMAL_CAPACITY_ASSESSMENT,
     PARTNER_TYPES,
     YEARS_OF_EXP_CHOICES,
+    BUDGET_CHOICES,
 )
 
 
@@ -45,6 +46,7 @@ class ConfigPPAPIView(APIView):
             "partner-type": PARTNER_TYPES,
             "staff-globaly-choices": STAFF_GLOBALLY_CHOICES,
             "years-of-exp-choices": YEARS_OF_EXP_CHOICES,
+            "budget-choices": BUDGET_CHOICES,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

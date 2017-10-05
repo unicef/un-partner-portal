@@ -95,12 +95,14 @@ class IsAtLeastPartnerMemberEditor(IsAtLeastMemberReader):
 class IsEOIReviewerAssessments(BasePermission):
 
     def has_permission(self, request, view):
-        application_id = request.parser_context.get('kwargs', {}).get('application_id')
+        application_id = request.parser_context.get('kwargs', {}).get(view.lookup_url_kwarg)
+        reviewer_id = request.parser_context.get('kwargs', {}).get(view.lookup_field)
         app = Application.objects.select_related('eoi').filter(id=application_id)
         if app.exists():
             eoi = app.get().eoi
             if eoi.reviewers.filter(id=request.user.id).exists():
-                return True
+                if reviewer_id and int(reviewer_id) == request.user.id:
+                    return True
             if eoi.created_by_id == request.user.id:
                 return True
             if eoi.focal_points.filter(id=request.user.id).exists():

@@ -13,6 +13,7 @@ import FileDownloadButton from '../components/common/buttons/fileDownloadButton'
 import RadioGroupRow from '../components/common/radio/radioGroupRow';
 import RadioHeight from '../components/common/radio/radioHeight';
 import { formatDateForPrint } from './dates';
+import { numerical } from '../helpers/validation';
 
 const fileNameFromUrl = (url) => {
   if (url) {
@@ -160,9 +161,36 @@ export const renderTextField = ({
     />
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
       {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
-      {other.inputProps && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
+      {other.inputProps && other.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
     </div>
   </div>);
+
+export const renderNumberField = ({
+  name,
+  className,
+  meta: { touched, error, warning },
+  input,
+  ...other
+}) => {
+  const rangeError = numerical(other.inputProps.min, other.inputProps.max)(input.value);
+
+  return (
+    <div>
+      <TextField
+        className={className}
+        id={name}
+        error={(touched && !!error) || !!warning || !!rangeError}
+        fullWidth
+        {...input}
+        {...other}
+      />
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {((touched && error) || warning || rangeError) && <FormHelperText error>{error || warning || rangeError}</FormHelperText>}
+        {other.inputProps && other.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
+      </div>
+    </div>);
+};
 
 export const renderDatePicker = ({
   input,
