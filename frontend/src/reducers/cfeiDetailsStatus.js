@@ -32,7 +32,7 @@ export const saveErrorMsg = (state, action) => R.assoc(
   'error',
   {
     message: messages.loadingFailure,
-    error: action.error,
+    error: R.path(['error', 'message'], action),
     notFound: R.pathSatisfies(detail => detail === 'Not found.',
       ['error', 'response', 'data', 'detail'], action),
   },

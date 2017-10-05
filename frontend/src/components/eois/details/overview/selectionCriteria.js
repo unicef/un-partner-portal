@@ -1,4 +1,5 @@
 import React from 'react';
+import R from 'ramda';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
@@ -16,10 +17,9 @@ const title = () => (
 
 const renderRow = (criterias, allCriteria) => criterias.map(selection => (
   <PaddedContent>
-    <Typography type="subheading">{allCriteria[selection.display_type]}</Typography>
+    <Typography type="subheading">{allCriteria[selection.selection_criteria]}</Typography>
     <Typography type="caption">{selection.description} </Typography>
-  </PaddedContent>
-));
+  </PaddedContent>));
 
 const SelectionCriteria = (props) => {
   const { selectionCriteria, allCriteria } = props;
@@ -34,12 +34,12 @@ const SelectionCriteria = (props) => {
 SelectionCriteria.propTypes = {
   selectionCriteria: PropTypes.array,
   allCriteria: PropTypes.object,
-}
+};
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
   return {
-    selectionCriteria: cfei ? cfei.assessments_criteria : [],
+    selectionCriteria: R.path(['assessments_criteria', 'options'], cfei) || [],
     allCriteria: state.selectionCriteria,
   };
 };

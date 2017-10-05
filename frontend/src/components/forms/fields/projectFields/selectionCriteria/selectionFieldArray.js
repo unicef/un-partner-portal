@@ -28,7 +28,7 @@ const Criteria = (criteria, readOnly, ...props) => (member, index, fields) => (<
 />);
 
 const Description = (readOnly, hasWeighting, ...props) => (member, index, fields) => {
-  const disabled = !fields.get(index).display_type;
+  const disabled = !fields.get(index).selection_criteria;
   return (<Grid container>
     <Grid item xs={12}>
       <TextFieldForm
@@ -55,7 +55,7 @@ const SelectionFieldArray = (props) => {
     <ArrayForm
       label=""
       limit={13}
-      fieldName="assessment_criterias"
+      fieldName="assessments_criteria.options"
       initial
       readOnly={readOnly}
       {...other}

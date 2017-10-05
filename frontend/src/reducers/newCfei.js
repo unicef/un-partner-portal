@@ -16,25 +16,23 @@ const messages = {
 };
 
 const mockData = {
-  eoi: {
-    locations: [
-      {
-        country_code: 'IQ',
-        admin_level_1: { name: 'Baghdad' },
-        lat: 159,
-        lon: 130,
-      },
-      {
-        country_code: 'FR',
-        admin_level_1: { name: 'Paris' },
-        lat: 120,
-        lon: 19,
-      },
-    ],
-    country_code: 'PL',
-    agency: 1,
-    agency_office: 1,
-  },
+  locations: [
+    {
+      country_code: 'IQ',
+      admin_level_1: { name: 'Baghdad' },
+      lat: 159,
+      lon: 130,
+    },
+    {
+      country_code: 'FR',
+      admin_level_1: { name: 'Paris' },
+      lat: 120,
+      lon: 19,
+    },
+  ],
+  country_code: 'PL',
+  agency: 1,
+  agency_office: 1,
 };
 
 const initialState = {
@@ -50,23 +48,15 @@ export const newCfeiProcessed = () => ({ type: NEW_CFEI_PROCESSED });
 export const newCfeiFailure = () => ({ type: NEW_CFEI_FAILURE });
 
 const prepareSectors = (body) => {
-  const newBody = R.clone(body);
-  const flatSectors = mergeListsFromObjectArray(newBody.eoi.specializations, 'areas');
-  newBody.eoi = R.assoc('specializations', flatSectors, body.eoi);
+  let newBody = R.clone(body);
+  const flatSectors = mergeListsFromObjectArray(newBody.specializations, 'areas');
+  newBody = R.assoc('specializations', flatSectors, body);
   return newBody;
 };
 
-const prepareCriteria = criteria =>
-  R.map(criterium => R.assoc('scale', 'Std', criterium), criteria);
-
-
 export const addOpenCfei = body => (dispatch) => {
   dispatch(newCfeiSubmitting());
-  let preparedBody = prepareSectors(body);
-  preparedBody = R.assoc(
-    'assessment_criterias',
-    prepareCriteria(preparedBody.assessment_criterias),
-    preparedBody);
+  const preparedBody = prepareSectors(body);
   return postOpenCfei(R.mergeWith(R.merge, preparedBody, mockData))
     .then(() => {
       dispatch(newCfeiSubmitted());
@@ -81,7 +71,7 @@ export const addOpenCfei = body => (dispatch) => {
 
 export const addDirectCfei = body => (dispatch) => {
   dispatch(newCfeiSubmitting());
-  const preparedBody = prepareBody(body);
+  const preparedBody = prepareSectors(body);
   return postDirectCfei(R.mergeWith(R.merge, preparedBody, mockData))
     .then(() => {
       dispatch(newCfeiSubmitted());

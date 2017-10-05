@@ -23,6 +23,7 @@ const WeightField = (props) => {
         inputProps: {
           min: '1',
           max: '100',
+          type: 'number',
         },
         disabled,
       }}

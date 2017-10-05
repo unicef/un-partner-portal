@@ -32,7 +32,7 @@ const saveCfei = (state, action) => {
 };
 
 export function selectCfeiDetail(state, id) {
-  return state[id] ? state[id] : null;
+  return state[id] || null;
 }
 
 export function selectCfeiTitle(state, id) {
