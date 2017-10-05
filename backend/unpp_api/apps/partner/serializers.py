@@ -301,6 +301,10 @@ class PartnersListSerializer(serializers.ModelSerializer):
 
     acronym = serializers.SerializerMethodField()
     experience_working = serializers.SerializerMethodField()
+    mailing_address = PartnerMailingAddressSerializer()
+    org_head = PartnerHeadOrganizationSerializer()
+    working_languages = serializers.ListField(source="profile.working_languages")
+    experiences = PartnerExperienceSerializer(many=True)
 
     class Meta:
         model = Partner
@@ -312,6 +316,11 @@ class PartnersListSerializer(serializers.ModelSerializer):
             'country_code',
             'is_hq',
             'experience_working',
+
+            "mailing_address",
+            "org_head",
+            "working_languages",
+            "experiences",
         )
 
     def get_acronym(self, obj):
