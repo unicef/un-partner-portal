@@ -8,11 +8,12 @@ import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
-import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
-
 import GridColumn from '../common/grid/gridColumn';
 
+const messages = {
+  addNew: '+ Add New',
+};
 
 const styleSheet = theme => ({
   outerPaper: {
@@ -25,12 +26,26 @@ const styleSheet = theme => ({
   list: {
     padding: 0,
   },
+  container: {
+    display: 'flex',
+  },
+  items: {
+    flexFlow: 'column wrap',
+    display: 'flex',
+    flexBasis: '90%',
+  },
+  delete: {
+    flexBasis: '10%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
 });
 
 class RenderArrayMembers extends Component {
   constructor(props) {
     super(props);
-    if (props.initial && !props.readOnly) props.fields.push({});
+
+    if (props.initial && !props.readOnly && props.fields.length === 0) props.fields.push({});
   }
 
   render() {
@@ -41,31 +56,30 @@ class RenderArrayMembers extends Component {
       innerField,
       classes,
       readOnly } = this.props;
+
     return (
       <Paper elevation={0} className={classes.outerPaper} >
         <List className={classes.list}>
           {fields.map((member, index) => (
             <div>
               <ListItem key={index} >
-                <GridColumn >
-                  <Grid container direction="row" >
-                    <Grid item xs={!readOnly ? 10 : 12} >
+                <GridColumn spacing={4}>
+                  <div className={classes.container}>
+                    <div className={classes.items}>
                       {outerField(member, index, fields)}
-                    </Grid>
-                    {index > 0 && !readOnly && <Grid item xs={2} >
+                    </div>
+                    {index > 0 && !readOnly && <div className={classes.delete}>
                       <IconButton
                         type="button"
                         title="Remove Member"
                         onClick={() => fields.remove(index)}
-                      >
-                        <DeleteIcon />
+                      ><DeleteIcon />
                       </IconButton>
-                    </Grid>
-                    }
-                  </Grid>
-                  <Paper elevation={0} className={classes.innerPaper}>
+                    </div>}
+                  </div>
+                  {innerField && <Paper elevation={0} className={classes.innerPaper}>
                     {innerField(member, index, fields)}
-                  </Paper>
+                  </Paper>}
                 </GridColumn>
               </ListItem>
               <Divider />
@@ -77,7 +91,7 @@ class RenderArrayMembers extends Component {
               color="accent"
               onClick={() => fields.push({})}
             >
-              + Add New
+              {messages.addNew}
             </Button>
           }
         </List>
@@ -128,7 +142,7 @@ const ArrayForm = (props) => {
     readOnly } = props;
   return (
     <div>
-      <Typography type="caption">{label}</Typography>
+      <Typography type="caption" gutterBottom>{label}</Typography>
       <FieldArray
         limit={limit}
         name={fieldName}

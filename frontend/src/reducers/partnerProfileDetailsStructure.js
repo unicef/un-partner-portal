@@ -4,26 +4,23 @@ const partnerDetailsStructure = {
       alias_name: null,
       acronym: null,
       legal_name: null,
+      former_legal_name: null,
       country_code: null,
       display_type: null,
     },
-    registration_hq: {
+    registration: {
+      hq: null,
       created: null,
       country_code: null,
       start_cooperate_date: null,
       have_gov_doc: null,
-      register_country: null,
+      registration_to_operate_in_country: null,
+      gov_doc: null,
+      year_establishment: null,
       registration_number: null,
       registration_doc: null,
-    },
-    registration_country: {
-      created: null,
-      country_code: null,
-      start_cooperate_date: null,
-      have_gov_doc: null,
-      register_country: null,
-      registration_number: null,
-      registration_doc: null,
+      registration_date: null,
+      registration_comment: null,
     },
   },
   mailing: {
@@ -40,6 +37,8 @@ const partnerDetailsStructure = {
       telephone: null,
     },
     authorised_officials: {
+      have_board_directors: null,
+      have_authorised_officers: null,
       directors: null,
       authorised_officers: null,
     },
@@ -74,16 +73,20 @@ const partnerDetailsStructure = {
     ethics: {
       ethic_safeguard: null,
       ethic_safeguard_policy: null,
+      ethic_safeguard_comment: null,
       ethic_fraud: null,
       ethic_fraud_policy: null,
+      ethic_fraud_comment: null,
     },
-    experiences: null,
+    experience: {
+      experiences: null,
+    },
     populations_of_concern: {
       population_of_concern: null,
       concern_groups: null,
     },
-    country_presence_hq: {
-      country_presents: null,
+    country_presence: {
+      country_presence: null,
       staff_globally: null,
     },
     security: {

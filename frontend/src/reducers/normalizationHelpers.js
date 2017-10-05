@@ -13,3 +13,5 @@ export const toObject = R.compose(R.mergeAll, R.map);
 
 export const mergeListsFromObjectArray = (list, key) =>
   R.reduce((previous, next) => R.concat(next[key], previous), [], list);
+
+export const equalAtPaths = path => (a, b) => R.equal(R.path(path, a), R.path(path, b));

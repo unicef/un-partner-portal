@@ -29,6 +29,7 @@ import partnerInfo from './reducers/partnerInfo';
 import organizationProfileNav from './reducers/organizationProfileNav';
 import organizationProfile from './reducers/organizationProfile';
 import partnerApplicationsNav from './reducers/partnerApplicationsNav';
+import partnerProfileConfig from './reducers/partnerProfileConfig';
 import sectors, * as sectorsSelectors from './reducers/sectors';
 import partnersApplicationsList from './reducers/partnersApplicationsList';
 import partnersPreselectionList from './reducers/partnersPreselectionList';
@@ -54,6 +55,7 @@ const mainReducer = combineReducers({
   conceptNote,
   countryProfiles,
   partnerInfo,
+  partnerProfileConfig,
   partnerProfileEdit,
   partnerProfileDetails,
   agencyPartnersList,
@@ -84,14 +86,31 @@ export default createStore(
   ),
 );
 
-const mapValuesForSelectionField = (state) => {
+const mapValuesForSelectionField = (state, compareField = 'label') => {
   const makeFormItem = list => R.zipObj(['value', 'label'], list);
-  const compare = (a, b) => a.label.localeCompare(b.label);
+  const compare = (a, b) => a[compareField].localeCompare(b[compareField]);
   return R.sort(compare, R.map(makeFormItem, R.toPairs(state)));
 };
 
+const mapValuesForSelectionSortValue = state => mapValuesForSelectionField(state, 'value');
+
 export const selectNormalizedCountries = state =>
   mapValuesForSelectionField(state.countries);
+
+export const selectNormalizedOrganizationTypes = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['partner-type']);
+
+export const selectNormalizedYearsOfExperience = state =>
+  mapValuesForSelectionSortValue(state.partnerProfileConfig['years-of-exp-choices']);
+
+export const selectNormalizedWorkingLanguages = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['working-languages']);
+
+export const selectNormalizedPopulationsOfConcernGroups = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['population-of-concerns-groups']);
+
+export const selectNormalizedStaffGlobalyChoices = state =>
+  mapValuesForSelectionSortValue(state.partnerProfileConfig['staff-globaly-choices']);
 
 export const selectNormalizedPopulations = state =>
   mapValuesForSelectionField(state.population);

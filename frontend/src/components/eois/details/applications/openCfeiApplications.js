@@ -11,6 +11,7 @@ import GridRow from '../../../common/grid/gridRow';
 import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
 import ApplicationStatusCell from '../../cells/applicationStatusCell';
 import { loadApplications } from '../../../../reducers/partnersApplicationsList';
+import { isQueryChanged } from '../../../../helpers/apiHelper';
 
 /* eslint-disable react/prop-types */
 const HeaderActions = (props) => {
@@ -48,12 +49,18 @@ const applicationsCells = ({ row, column }) => {
 };
 /* eslint-enable react/prop-types */
 class ApplicationsListContainer extends Component {
-  componentWillMount() {
-    this.props.loadApplications();
+  shouldComponentUpdate(nextProps, nextState) {
+    const { id, query } = this.props;
+
+    if (isQueryChanged(nextProps, query)) {
+      this.props.loadApplications(id, nextProps.location.query);
+    }
+
+    return true;
   }
 
   render() {
-    const { applications, columns, loading } = this.props;
+    const { applications, columns, loading, itemsCount } = this.props;
     return (
       <div>
         <GridColumn spacing={24}>
@@ -62,10 +69,9 @@ class ApplicationsListContainer extends Component {
             items={applications}
             columns={columns}
             loading={loading}
+            itemsCount={itemsCount}
             headerAction={HeaderActions}
             templateCell={applicationsCells}
-            onPageSizeChange={pageSize => console.log('Page size', pageSize)}
-            onCurrentPageChange={page => console.log('Page number', page)}
           />
         </GridColumn>
       </div>
@@ -76,18 +82,24 @@ class ApplicationsListContainer extends Component {
 ApplicationsListContainer.propTypes = {
   applications: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
+  itemsCount: PropTypes.number,
   loadApplications: PropTypes.func,
   loading: PropTypes.bool,
+  query: PropTypes.object,
+  id: PropTypes.number,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   applications: state.partnersApplicationsList.applicationsList.applications,
+  itemsCount: state.partnersApplicationsList.applicationsList.itemsCount,
   columns: state.partnersApplicationsList.applicationsList.columns,
   loading: state.partnersApplicationsList.status.loading,
+  query: ownProps.location.query,
+  id: ownProps.params.id,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  loadApplications: () => dispatch(loadApplications(ownProps.params.id)),
+const mapDispatchToProps = dispatch => ({
+  loadApplications: (id, query) => dispatch(loadApplications(id, query)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ApplicationsListContainer);

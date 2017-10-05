@@ -8,11 +8,14 @@ from .countries import COUNTRIES_ALPHA2_CODE_DICT
 from .consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
+    STAFF_GLOBALLY_CHOICES,
     PARTNER_DONORS_CHOICES,
     WORKING_LAGNUAGES_CHOICES,
     CONCERN_GROUP_CHOICES,
     AUDIT_TYPES,
     FORMAL_CAPACITY_ASSESSMENT,
+    PARTNER_TYPES,
+    YEARS_OF_EXP_CHOICES,
 )
 
 
@@ -39,6 +42,9 @@ class ConfigPPAPIView(APIView):
             "population-of-concerns-groups": CONCERN_GROUP_CHOICES,
             "audit-types": AUDIT_TYPES,
             "formal-capacity-assessment": FORMAL_CAPACITY_ASSESSMENT,
+            "partner-type": PARTNER_TYPES,
+            "staff-globaly-choices": STAFF_GLOBALLY_CHOICES,
+            "years-of-exp-choices": YEARS_OF_EXP_CHOICES,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

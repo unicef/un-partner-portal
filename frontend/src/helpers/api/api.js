@@ -117,3 +117,7 @@ export function getPartnersList(params) {
   return authorizedGet('/partners', params);
 }
 
+export function getPartnerProfileConfig() {
+  return get('/config/partners/profile');
+}
+
