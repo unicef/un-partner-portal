@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ArrayForm from '../../../forms/arrayForm';
 import SelectForm from '../../../forms/selectForm';
-import NumberFieldForm from '../../../forms/numberFieldForm';
+import TextFieldForm from '../../../forms/textFieldForm';
 import { selectNormalizedBudgets } from '../../../../store';
 
 const messages = {
@@ -17,19 +17,10 @@ const messages = {
 const annualBudgetForm = (budget, budgetTypes, readOnly) => (
   <Grid container direction="row">
     <Grid item sm={2} xs={12} >
-      <NumberFieldForm
+      <TextFieldForm
         fieldName={`${budget}.year`}
         label={messages.year}
-        textFieldProps={{
-          inputProps: {
-            type: 'number',
-            min: 1900,
-            max: (new Date()).getFullYear(),
-          },
-        }}
-        optional
-        warn
-        readOnly={readOnly}
+        readOnly
       />
     </Grid>
     <Grid item sm={10} xs={12} >
@@ -57,7 +48,6 @@ const PartnerProfileFundingBudget = (props) => {
             limit={3}
             label={messages.annualBudget}
             initial
-            initialCount={3}
             disableAdding
             disableDeleting
             outerField={budget => annualBudgetForm(budget, budgetTypes, readOnly)}
