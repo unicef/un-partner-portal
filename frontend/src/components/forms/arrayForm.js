@@ -49,19 +49,8 @@ class RenderArrayMembers extends Component {
   constructor(props) {
     super(props);
 
-    if (props.initial && !props.readOnly
-        && props.fields.length === 0 && !props.initialCount) {
+    if (props.initial && !props.readOnly && props.fields.length === 0) {
       props.fields.push({});
-    }
-  }
-
-  addMissingFields() {
-    const { fields, initialCount } = this.props;
-
-    if (initialCount) {
-      for (let i = 0; i < initialCount - fields.length; i += 1) {
-        fields.push({});
-      }
     }
   }
 
@@ -75,8 +64,6 @@ class RenderArrayMembers extends Component {
       disableAdding,
       disableDeleting,
       readOnly } = this.props;
-
-    this.addMissingFields();
 
     return (
       <Paper elevation={0} className={classes.outerPaper} >
@@ -145,10 +132,6 @@ RenderArrayMembers.propTypes = {
    */
   initial: PropTypes.bool,
   /**
-   * Number of initial fields
-   */
-  initialCount: PropTypes.number,
-  /**
    * if form should display in read-only style
    */
   readOnly: PropTypes.bool,
@@ -172,7 +155,6 @@ const ArrayForm = (props) => {
     limit,
     label,
     initial,
-    initialCount,
     disableAdding,
     disableDeleting,
     readOnly } = props;
@@ -188,7 +170,6 @@ const ArrayForm = (props) => {
         initial={initial}
         disableAdding={disableAdding}
         disableDeleting={disableDeleting}
-        initialCount={initialCount}
         readOnly={readOnly}
       />
     </FormControl>
@@ -224,10 +205,6 @@ ArrayForm.propTypes = {
    * if true, add one empty field to the array at the beginning
    */
   initial: PropTypes.bool,
-  /**
-   * Number of initial fields
-   */
-  initialCount: PropTypes.number,
   /**
    * if form should display in read-only style
    */
