@@ -127,6 +127,8 @@ class ApplicationFeedback(TimeStampedModel):
 
 
 class Assessment(TimeStampedModel):
+    created_by = models.ForeignKey('account.User', related_name="assessments_creator")
+    modified_by = models.ForeignKey('account.User', related_name="assessments_editor", null=True, blank=True)
     reviewer = models.ForeignKey('account.User', related_name="assessments")
     application = models.ForeignKey(Application, related_name="assessments")
     scores = JSONField(default=[dict((('selection_criteria', None), ('score', 0)))])
