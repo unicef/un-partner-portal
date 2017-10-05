@@ -37,8 +37,7 @@ const prepareBody = (body) => {
   const flatSectors = mergeListsFromObjectArray(newBody.specializations, 'areas');
   newBody = R.assoc('specializations', flatSectors, body);
   newBody = R.assoc('country_code', body.countries[0].country, newBody);
-  newBody = R.assocPath(
-    ['eoi', 'locations'],
+  newBody = R.assoc('locations',
     R.reduce(
       R.mergeDeepWith(R.concat),
       0,

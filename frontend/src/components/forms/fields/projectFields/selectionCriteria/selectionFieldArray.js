@@ -55,7 +55,7 @@ const SelectionFieldArray = (props) => {
     <ArrayForm
       label=""
       limit={13}
-      fieldName="assessments_criteria.options"
+      fieldName="assessments_criteria"
       initial
       readOnly={readOnly}
       {...other}

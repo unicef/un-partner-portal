@@ -45,8 +45,7 @@ export default function cfeiStatus(state = initialState, action) {
       return saveErrorMsg(state, action);
     }
     case LOAD_CFEI_DETAIL_STARTED: {
-      clearError(state);
-      return startLoading(state);
+      return startLoading(clearError(state));
     }
     case LOAD_CFEI_DETAIL_ENDED: {
       return stopLoading(state);

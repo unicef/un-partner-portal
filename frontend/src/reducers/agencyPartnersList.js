@@ -65,8 +65,7 @@ export default function agencyPartnersListReducer(state = initialState, action) 
       return stopLoading(state);
     }
     case PARTNERS_LOAD_STARTED: {
-      clearError(state);
-      return startLoading(state);
+      return startLoading(clearError(state));
     }
     case PARTNERS_LOAD_SUCCESS: {
       return savePartners(state, action);

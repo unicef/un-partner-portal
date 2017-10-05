@@ -15,11 +15,13 @@ const title = () => (
   <Typography type="subheading" >{messages.title}</Typography>
 );
 
-const renderRow = (criterias, allCriteria) => criterias.map(selection => (
-  <PaddedContent>
+const renderRow = (criterias, allCriteria) => criterias.map(selection => {
+
+  return (<PaddedContent>
     <Typography type="subheading">{allCriteria[selection.selection_criteria]}</Typography>
     <Typography type="caption">{selection.description} </Typography>
-  </PaddedContent>));
+  </PaddedContent>)
+});
 
 const SelectionCriteria = (props) => {
   const { selectionCriteria, allCriteria } = props;
@@ -39,7 +41,7 @@ SelectionCriteria.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
   return {
-    selectionCriteria: R.path(['assessments_criteria', 'options'], cfei) || [],
+    selectionCriteria: R.path(['assessments_criteria'], cfei) || [],
     allCriteria: state.selectionCriteria,
   };
 };
