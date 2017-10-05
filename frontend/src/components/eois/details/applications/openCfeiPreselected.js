@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
+import ApplicationCnIdCell from '../../cells/applicationCnIdCell';
 import SelectableList from '../../../common/list/selectableList';
 import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
 import Compare from '../../buttons/compareButton';
@@ -29,6 +30,11 @@ const applicationsCells = ({ row, column }) => {
       redFlag={row.flagRed}
       name={row.name}
     />);
+  } else if (column.name === 'id') {
+    return (<ApplicationCnIdCell
+      id={row.id}
+    />
+    );
   } else if (column.name === 'your_score') {
     return (<PreselectedYourScore
       id={row.id}

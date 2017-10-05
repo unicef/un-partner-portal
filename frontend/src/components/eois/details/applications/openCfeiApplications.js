@@ -10,6 +10,7 @@ import PreselectButton from '../../buttons/preselectButton';
 import GridRow from '../../../common/grid/gridRow';
 import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
 import ApplicationStatusCell from '../../cells/applicationStatusCell';
+import ApplicationCnIdCell from '../../cells/applicationCnIdCell';
 import { loadApplications } from '../../../../reducers/partnersApplicationsList';
 import { isQueryChanged } from '../../../../helpers/apiHelper';
 
@@ -35,6 +36,12 @@ const applicationsCells = ({ row, column }) => {
       redFlag={row.flagRed}
       name={row.name}
     />);
+  }
+  if (column.name === 'id') {
+    return (<ApplicationCnIdCell
+      id={row.id}
+    />
+    );
   }
   if (column.name === 'status') {
     return (<ApplicationStatusCell

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Router, Route, browserHistory, IndexRedirect } from 'react-router';
+import { Router, Route, browserHistory, IndexRedirect, Redirect } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import store from './store';
@@ -62,6 +62,10 @@ const allRoutes = () => (
             <Route
               path="cfei/:type/:id/applications/:applicationId"
               component={applicationSummaryContent}
+            />
+            <Redirect
+              path="cfei/:type/:id/preselected/:applicationId"
+              to="cfei/:type/:id/applications/:applicationId"
             />
           </Route>
         </Route>
