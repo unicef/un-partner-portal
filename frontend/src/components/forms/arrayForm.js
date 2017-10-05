@@ -142,7 +142,7 @@ const ArrayForm = (props) => {
     readOnly } = props;
   return (
     <div>
-      <Typography type="caption">{label}</Typography>
+      <Typography type="caption" gutterBottom>{label}</Typography>
       <FieldArray
         limit={limit}
         name={fieldName}

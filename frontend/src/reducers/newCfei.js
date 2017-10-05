@@ -17,21 +17,6 @@ const messages = {
 
 const mockData = {
   eoi: {
-    locations: [
-      {
-        country_code: 'IQ',
-        admin_level_1: { name: 'Baghdad' },
-        lat: 159,
-        lon: 130,
-      },
-      {
-        country_code: 'FR',
-        admin_level_1: { name: 'Paris' },
-        lat: 120,
-        lon: 19,
-      },
-    ],
-    country_code: 'PL',
     agency: 1,
     agency_office: 1,
   },
@@ -49,10 +34,18 @@ export const newCfeiProcessing = () => ({ type: NEW_CFEI_PROCESSING });
 export const newCfeiProcessed = () => ({ type: NEW_CFEI_PROCESSED });
 export const newCfeiFailure = () => ({ type: NEW_CFEI_FAILURE });
 
-const prepareSectors = (body) => {
-  const newBody = R.clone(body);
+const prepareBody = (body) => {
+  let newBody = R.clone(body);
   const flatSectors = mergeListsFromObjectArray(newBody.eoi.specializations, 'areas');
   newBody.eoi = R.assoc('specializations', flatSectors, body.eoi);
+  newBody = R.assocPath(['eoi', 'country_code'], body.eoi.countries[0].country, newBody);
+  newBody = R.assocPath(
+    ['eoi', 'locations'],
+    R.reduce(
+      R.mergeDeepWith(R.concat),
+      0,
+      body.eoi.countries,
+    ).locations, newBody);
   return newBody;
 };
 
@@ -62,7 +55,7 @@ const prepareCriteria = criteria =>
 
 export const addOpenCfei = body => (dispatch) => {
   dispatch(newCfeiSubmitting());
-  let preparedBody = prepareSectors(body);
+  let preparedBody = prepareBody(body);
   preparedBody = R.assoc(
     'assessment_criterias',
     prepareCriteria(preparedBody.assessment_criterias),

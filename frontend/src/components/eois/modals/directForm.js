@@ -28,6 +28,7 @@ class DirectForm extends Component {
       <form onSubmit={handleSubmit}>
         <GridColumn>
           <ProjectDetails
+            formName="newDirectCfei"
             dateFields={[
               <fields.StartDate />,
               <fields.EndDate />,
