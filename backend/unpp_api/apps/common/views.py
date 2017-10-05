@@ -13,6 +13,7 @@ from .consts import (
     CONCERN_GROUP_CHOICES,
     AUDIT_TYPES,
     FORMAL_CAPACITY_ASSESSMENT,
+    PARTNER_TYPES,
 )
 
 
@@ -39,6 +40,7 @@ class ConfigPPAPIView(APIView):
             "population-of-concerns-groups": CONCERN_GROUP_CHOICES,
             "audit-types": AUDIT_TYPES,
             "formal-capacity-assessment": FORMAL_CAPACITY_ASSESSMENT,
+            "partner-type": PARTNER_TYPES,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

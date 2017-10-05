@@ -1,6 +1,6 @@
 import random
 import os
-from datetime import date
+from datetime import date, timedelta
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
@@ -31,7 +31,8 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
 )
-from project.models import EOI, Application
+from project.models import EOI, Application, AssessmentCriteria
+from review.models import PartnerFlag, PartnerVerification
 from .consts import (
     PARTNER_TYPES,
     MEMBER_STATUSES,
@@ -48,6 +49,7 @@ from .consts import (
     EOI_TYPES,
     DIRECT_SELECTION_SOURCE,
     BUDGET_CHOICES,
+    SELECTION_CRITERIA_CHOICES,
     STAFF_GLOBALLY_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
 )
@@ -136,6 +138,8 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = fuzzy.FuzzyText()
     email = factory.Sequence(lambda n: "fake-user-{}@unicef.org".format(n))
     password = factory.PostGenerationMethodCall('set_password', 'test')
+    first_name = factory.LazyFunction(get_first_name)
+    last_name = factory.LazyFunction(get_last_name)
 
     profile = factory.RelatedFactory(UserProfileFactory, 'user')
 
@@ -183,12 +187,15 @@ class PartnerSimpleFactory(factory.django.DjangoModelFactory):
 
 class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
-    display_type = PARTNER_TYPES.national
+    display_type = PARTNER_TYPES.international
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+
+    # hq information
+    country_presence = factory.LazyFunction(get_country_list)
     staff_globally = STAFF_GLOBALLY_CHOICES.to200
-    engagement_operate_desc = factory.Sequence(lambda n: "fake engagement operate desc {}".format(n))
+    # country profile information
     staff_in_country = STAFF_GLOBALLY_CHOICES.to100
-    # location_of_office = factory.RelatedFactory(PointFactory, 'location_field_offices')
+    engagement_operate_desc = factory.Sequence(lambda n: "engagement with the communitie {}".format(n))
 
     @factory.post_generation
     def mailing_address(self, create, extracted, **kwargs):
@@ -361,7 +368,19 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             registration_number="reg-number {}".format(self.id),
         )
         if created:
+            filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
             profile.working_languages = get_country_list()
+
+            profile.acronym = "acronym {}".format(self.id)
+            profile.former_legal_name = "former legal name {}".format(self.id)
+            profile.connectivity_excuse = "connectivity excuse {}".format(self.id)
+            profile.year_establishment = date.today().year - random.randint(1, 30)
+            profile.have_gov_doc = True
+            profile.gov_doc = open(filename).read()
+            profile.registration_doc = open(filename).read()
+            profile.registration_date = date.today() - timedelta(days=random.randint(365, 3650))
+            profile.registration_comment = "registration comment {}".format(self.id)
+            profile.registration_number = "registration number {}".format(self.id)
             profile.explain = "explain {}".format(self.id)
             profile.experienced_staff_desc = "experienced staff desc {}".format(self.id)
             # programme management
@@ -371,6 +390,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             profile.system_monitoring_desc = "system monitoring desc {}".format(self.id)
             profile.have_feedback_mechanism = True
             profile.feedback_mechanism_desc = "feedback mechanism desc {}".format(self.id)
+            profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
+            profile.partnership_collaborate_institution_desc = "collaborate institution {}".format(self.id)
+            profile.explain = "explain {}".format(self.id)
             # financial controls
             profile.org_acc_system = FINANCIAL_CONTROL_SYSTEM_CHOICES.computerized
             profile.have_system_track = True
@@ -590,6 +612,12 @@ class EOIFactory(factory.django.DjangoModelFactory):
         model = EOI
 
     @factory.post_generation
+    def reviewers(self, create, extracted, **kwargs):
+        agency_members = User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?")
+        self.reviewers.add(agency_members.first())
+        self.reviewers.add(agency_members.last())
+
+    @factory.post_generation
     def focal_points(self, create, extracted, **kwargs):
         focal_point = get_agency_member()
         if focal_point:
@@ -628,3 +656,46 @@ class EOIFactory(factory.django.DjangoModelFactory):
                 eoi=self,
                 submitter=get_partner_member(),
             )
+
+    @factory.post_generation
+    def assessments_criteria(self, create, extracted, **kwargs):
+        AssessmentCriteria.objects.create(
+            eoi=self,
+            options=[
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'weight': 10},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'weight': 40},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'weight': 30},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 20}
+            ]
+        )
+
+
+class PartnerFlagFactory(factory.django.DjangoModelFactory):
+    submitter = factory.LazyFunction(get_agency_member)
+    partner = factory.LazyFunction(get_partner)
+    contact_phone = factory.Sequence(lambda n: "+48 22 568 03 0{}".format(n))
+    contact_email = factory.Sequence(lambda n: "fake-contact-{}@unicef.org".format(n))
+    comment = factory.Sequence(lambda n: "fake comment {}".format(n))
+    contact_person = "Person Name"
+
+    class Meta:
+        model = PartnerFlag
+
+
+class PartnerVerificationFactory(factory.django.DjangoModelFactory):
+    partner = factory.LazyFunction(get_partner)
+    submitter = factory.LazyFunction(get_agency_member)
+    is_mm_consistent = True
+    is_indicate_results = True
+    cert_uploaded_comment = factory.Sequence(lambda n: "cert comment {}".format(n))
+    indicate_results_comment = factory.Sequence(lambda n: "indicate results comment {}".format(n))
+    yellow_flag_comment = factory.Sequence(lambda n: "yellow flag {}".format(n))
+    mm_consistent_comment = factory.Sequence(lambda n: "mm comment {}".format(n))
+    is_valid = True
+    is_cert_uploaded = True
+    rep_risk_comment = factory.Sequence(lambda n: "rep risk comment {}".format(n))
+    is_yellow_flag = False
+    is_rep_risk = False
+
+    class Meta:
+        model = PartnerVerification

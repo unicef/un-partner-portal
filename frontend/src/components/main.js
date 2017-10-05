@@ -6,6 +6,7 @@ import MuiThemeProviderLegacy from 'material-ui-old/styles/MuiThemeProvider';
 
 import { initSession } from '../reducers/session';
 import { loadCountries } from '../reducers/countries';
+import { loadPartnerConfig } from '../reducers/partnerProfileConfig';
 import { loadSectors } from '../reducers/sectors';
 import getTheme, { muiOldTheme } from '../styles/muiTheme';
 
@@ -20,6 +21,7 @@ class Main extends Component {
     }
     this.props.sessionInit(role);
     this.props.loadCountries();
+    this.props.loadPartnerConfig();
     this.props.loadSectors();
   }
 
@@ -37,6 +39,7 @@ class Main extends Component {
 Main.propTypes = {
   sessionInit: PropTypes.func,
   loadCountries: PropTypes.func,
+  loadPartnerConfig: PropTypes.func,
   loadSectors: PropTypes.func,
   children: PropTypes.node,
 };
@@ -47,6 +50,7 @@ const mapDispatchToProps = dispatch => ({
   },
   loadCountries: () => loadCountries(dispatch),
   loadSectors: () => dispatch(loadSectors()),
+  loadPartnerConfig: () => dispatch(loadPartnerConfig()),
 });
 
 

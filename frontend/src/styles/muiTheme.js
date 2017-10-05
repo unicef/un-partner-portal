@@ -43,6 +43,11 @@ const theme = {
         alignItems: 'center',
       },
     },
+    MuiRadio: {
+      checked: {
+        color: getColorTheme()[500],
+      },
+    },
     MuiList: {
       root: {
         width: '100%',

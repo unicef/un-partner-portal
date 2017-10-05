@@ -19,6 +19,7 @@ function TextFieldForm(props) {
     warn,
     readOnly,
   } = props;
+
   return (
     <Grid item>
       <FormControl fullWidth>
@@ -34,9 +35,9 @@ function TextFieldForm(props) {
             <FormLabel>{label}</FormLabel>,
             <Field
               name={fieldName}
-              placeholder={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
+              placeholder={placeholder || `Provide ${label.toLowerCase()}`}
               component={renderTextField}
-              validate={optional ? [] : [required].concat(validation || [])}
+              validate={(optional ? [] : [required]).concat(validation || [])}
               warn={warn && warning}
               {...textFieldProps}
             />]

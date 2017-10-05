@@ -5,6 +5,7 @@ import Typography from 'material-ui/Typography';
 import * as fields from './commonFields';
 import GridColumn from '../../common/grid/gridColumn';
 import ProjectDetails from './ProjectDetails';
+import SelectionField from '../../forms/fields/projectFields/selectionCriteria/selectionFieldArray';
 
 const messages = {
   selectionCriteria: 'Selection Criteria',
@@ -27,9 +28,8 @@ const OpenForm = (props) => {
         <Typography type="headline">
           {messages.selectionCriteria}
         </Typography>
-        <FormSection name="eoi">
-          <fields.Weighting />
-        </FormSection>
+        <fields.Weighting />
+        <SelectionField />
       </GridColumn>
     </form >
   );

@@ -2,91 +2,79 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
-
+import { connect } from 'react-redux';
 import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import { selectNormalizedCountries, selectNormalizedOrganizationTypes } from '../../../../store';
 
-const COUNTRY_MENU = [
-  {
-    value: 'fr',
-    label: 'France',
-  },
-  {
-    value: 'it',
-    label: 'Italy',
-  },
-];
-
-const ORG_VALUES = [
-  {
-    value: 'ngo',
-    label: 'National NGO',
-  },
-  {
-    value: 'ingo',
-    label: 'International NGO (INGO)',
-  },
-];
+const messages = {
+  legalName: 'Organization\'s Legal Name',
+  alias: 'Alias (if applicable)',
+  acronym: 'Acronym (If applicable)',
+  formerLegalName: 'Organization\'s former Legal Name',
+  countryOrigin: 'Country of Origin',
+  organizationType: 'Type of organization',
+};
 
 const PartnerProfileIdentificationBasicInfo = (props) => {
-  const { readOnly } = props;
+  const { countries, organizationTypes } = props;
 
   return (
     <FormSection name="basic">
       <Grid item>
         <Grid container direction="column" spacing={16}>
           <TextFieldForm
-            label="Organization's Legal Name"
+            label={messages.legalName}
             fieldName="legal_name"
             optional
             warn
-            readOnly={readOnly}
+            readOnly
           />
           <Grid item sm={6} xs={12}>
             <TextFieldForm
-              label="Alias (if applicable)"
+              label={messages.alias}
               fieldName="alias_name"
-              placeholder="Provide alias"
               optional
               warn
-              readOnly={readOnly}
+              readOnly
             />
           </Grid>
           <Grid item sm={6} xs={12}>
             <TextFieldForm
-              label="Acronym (if applicable)"
+              label={messages.acronym}
               fieldName="acronym"
-              placeholder="Provide acronym"
               optional
               warn
-              readOnly={readOnly}
+              readOnly
             />
           </Grid>
           <Grid item sm={6} xs={12}>
             <TextFieldForm
-              label="Organization's former Legal Name"
-              fieldName="formerName"
+              label={messages.formerLegalName}
+              fieldName="former_legal_name"
               optional
               warn
-              readOnly={readOnly}
+              readOnly
             />
           </Grid>
-          <SelectForm
-            fieldName="country_code"
-            label="Country of Origin"
-            values={COUNTRY_MENU}
-            optional
-            warn
-            readOnly={readOnly}
-          />
+          <Grid item sm={6} xs={12}>
+            <SelectForm
+              fieldName="country_code"
+              label={messages.countryOrigin}
+              values={countries}
+              optional
+              warn
+              readOnly
+            />
+          </Grid>
           <Grid item sm={6} xs={12}>
             <SelectForm
               fieldName="display_type"
-              label="Type of organization"
-              values={ORG_VALUES}
+              label={messages.organizationType}
+              values={organizationTypes}
               optional
               warn
-              readOnly={readOnly}
+              readOnly
             />
           </Grid>
         </Grid>
@@ -96,8 +84,12 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
 };
 
 PartnerProfileIdentificationBasicInfo.propTypes = {
-  readOnly: PropTypes.bool,
+  countries: PropTypes.array.isRequired,
+  organizationTypes: PropTypes.array.isRequired,
 };
 
-export default PartnerProfileIdentificationBasicInfo;
+export default connect(state => ({
+  countries: selectNormalizedCountries(state),
+  organizationTypes: selectNormalizedOrganizationTypes(state),
+}))(PartnerProfileIdentificationBasicInfo);
 
