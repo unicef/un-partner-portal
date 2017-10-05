@@ -6,7 +6,7 @@ import { Map } from 'google-maps-react';
 
 const style = {
   position: 'relative',
-  height: '450px',
+  height: '40vh',
 };
 
 const MapContainer = (props) => {
@@ -22,8 +22,7 @@ const MapContainer = (props) => {
           elementType: 'labels.text.fill',
           stylers: [{ visibility: 'off' }],
         },
-      ]
-      }
+      ]}
     >
       {children}
     </Map>
