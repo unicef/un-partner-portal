@@ -1,81 +1,58 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormSection } from 'redux-form';
-
-import Grid from 'material-ui/Grid';
-
+import { formValueSelector, FormSection } from 'redux-form';
+import { connect } from 'react-redux';
+import GridColumn from '../../../common/grid/gridColumn';
+import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import RadioForm from '../../../forms/radioForm';
 import SelectForm from '../../../forms/selectForm';
+import { selectNormalizedPopulationsOfConcernGroups } from '../../../../store';
 
-
-const BOOL_VAL = [
-  {
-    value: 'yes',
-    label: 'Yes',
-  },
-  {
-    value: 'no',
-    label: 'No',
-  },
-];
-
-const GROUP_VALUES = [
-  {
-    value: '1',
-    label: 'Refugees',
-  },
-  {
-    value: '2',
-    label: 'Asylum Seekers',
-  },
-  {
-    value: '3',
-    label: 'Stateless',
-  },
-  {
-    value: '4',
-    label: 'Orphans',
-  },
-];
+const messages = {
+  populationOfConcern: 'Does your organization work with populations of concern as defined by UNHCR?',
+};
 
 const PartnerProfileMandatePopulation = (props) => {
-  const { readOnly } = props;
+  const { readOnly, populationOfConcern, populationsOfConcernGroups } = props;
 
   return (
     <FormSection name="populations_of_concern">
-      <Grid item>
-        <Grid container direction="column" spacing={16}>
-          <Grid item>
-            <RadioForm
-              fieldName="population_of_concern"
-              label="Does your organization work with populations of concern as defined by UNHCR?"
-              values={BOOL_VAL}
-              optional
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-          <Grid item>
-            <SelectForm
-              fieldName="concern_groups"
-              label="Please indicate which group(s)"
-              values={GROUP_VALUES}
-              selectFieldProps={{
-                multiple: true,
-              }}
-              optional
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
+      <GridColumn>
+        <RadioForm
+          fieldName="population_of_concern"
+          label={messages.populationOfConcern}
+          values={BOOL_VAL}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        {visibleIfYes(populationOfConcern)
+        && <SelectForm
+          fieldName="concern_groups"
+          label="Please indicate which group(s)"
+          values={populationsOfConcernGroups}
+          selectFieldProps={{
+            multiple: true,
+          }}
+          optional
+          warn
+          readOnly={readOnly}
+        />}
+      </GridColumn>
     </FormSection>
   );
 };
 
 PartnerProfileMandatePopulation.propTypes = {
   readOnly: PropTypes.bool,
+  populationOfConcern: PropTypes.bool,
+  populationsOfConcernGroups: PropTypes.array.isRequired,
 };
 
-export default PartnerProfileMandatePopulation;
+const selector = formValueSelector('partnerProfile');
+export default connect(
+  state => ({
+    populationOfConcern: selector(state, 'mandate_mission.populations_of_concern.population_of_concern'),
+    populationsOfConcernGroups: selectNormalizedPopulationsOfConcernGroups(state),
+  }),
+)(PartnerProfileMandatePopulation);

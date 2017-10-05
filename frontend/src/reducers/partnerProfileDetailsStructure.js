@@ -21,7 +21,7 @@ const partnerDetailsStructure = {
       registration_doc: null,
       registration_date: null,
       registration_comment: null,
-    }, 
+    },
   },
   mailing: {
     address: {
@@ -73,16 +73,20 @@ const partnerDetailsStructure = {
     ethics: {
       ethic_safeguard: null,
       ethic_safeguard_policy: null,
+      ethic_safeguard_comment: null,
       ethic_fraud: null,
       ethic_fraud_policy: null,
+      ethic_fraud_comment: null,
     },
-    experiences: null,
+    experience: {
+      experiences: null,
+    },
     populations_of_concern: {
       population_of_concern: null,
       concern_groups: null,
     },
-    country_presence_hq: {
-      country_presents: null,
+    country_presence: {
+      country_presence: null,
       staff_globally: null,
     },
     security: {

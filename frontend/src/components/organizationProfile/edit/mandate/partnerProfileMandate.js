@@ -33,12 +33,12 @@ const STEPS = readOnly => [
   {
     component: <PartnerProfileMandatePopulation readOnly={readOnly} />,
     label: 'Population of Concern',
-    name: 'populationOfConcern',
+    name: 'populations_of_concern',
   },
   {
     component: <PartnerProfileMandateCountryPresence readOnly={readOnly} />,
     label: 'Country Presence',
-    name: 'countryPresence',
+    name: 'country_presence',
   },
   {
     component: <PartnerProfileMandateSecurity readOnly={readOnly} />,
