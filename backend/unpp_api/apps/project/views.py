@@ -2,7 +2,9 @@
 from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
-from rest_framework.generics import ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import (
+    ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
+)
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -163,6 +165,29 @@ class ApplicationsPartnerAPIView(CreateAPIView):
         if partner_member:
             request.data['partner'] = partner_member.partner.id
         return super(ApplicationsPartnerAPIView, self).create(request, *args, **kwargs)
+
+
+class ApplicationPartnerAPIView(RetrieveAPIView):
+    """
+    Create Application for open EOI by partner.
+    """
+    permission_classes = (IsAuthenticated, )
+    queryset = Application.objects.all()
+    serializer_class = ApplicationFullSerializer
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        eoi_id = self.kwargs.get(self.lookup_field)
+        partner_member = PartnerMember.objects.filter(user=self.request.user).first()
+        if partner_member:
+            partner = partner_member.partner
+            obj = get_object_or_404(queryset, **{
+                'partner': partner,
+                'eoi_id': eoi_id,
+            })
+            self.check_object_permissions(self.request, obj)
+            return obj
+        return Application.objects.none()
 
 
 class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
