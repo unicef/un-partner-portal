@@ -49,11 +49,18 @@ const applicationsCells = ({ row, column }) => {
 };
 /* eslint-enable react/prop-types */
 class ApplicationsListContainer extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
+
+  componentWillMount() {
+    const { id, query } = this.props;
+    this.props.loadApplications(id, query);
+  }
+
+  shouldComponentUpdate(nextProps) {
     const { id, query } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
       this.props.loadApplications(id, nextProps.location.query);
+      return false;
     }
 
     return true;

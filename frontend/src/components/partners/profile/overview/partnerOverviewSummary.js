@@ -1,22 +1,12 @@
 import React from 'react';
-import Grid from 'material-ui/Grid';
 import R from 'ramda';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import HeaderList from '../../../common/list/headerList';
 import PaddedContent from '../../../common/paddedContent';
 import ItemRowCell from '../../../common/cell/itemRowCell';
 import ItemRowCellDivider from '../../../common/cell/itemRowCellDivider';
-
-
-const styleSheet = () => ({
-  root: {
-    minHeight: '48px',
-    display: 'flex',
-    alignItems: 'center',
-  },
-});
+import SpreadContent from '../../../common/spreadContent';
 
 const labels = {
   profileSummary: 'Organization Profile Summary',
@@ -60,7 +50,7 @@ const fields = partner => (
     <ItemRowCellDivider divider labelSecondary label={labels.fax} content={R.path(['head', 'fax'], partner)} />
     <ItemRowCellDivider labelSecondary label={labels.email} content={R.path(['head', 'email'], partner)} />
     <ItemRowCellDivider label={labels.contact} content={R.prop('contact', partner)} />
-    <ItemRowCellDivider label={labels.sectors} content={R.prop('name', partner)} />
+    <ItemRowCellDivider label={labels.sectors} content={R.prop('sectors', partner)} />
     <ItemRowCellDivider label={labels.populations} content={R.prop('population', partner)} />
     <ItemRowCellDivider label={labels.unExperience} content={R.prop('unExperience', partner)} />
     <ItemRowCellDivider label={labels.budget} content={R.prop('budget', partner)} />
@@ -69,30 +59,24 @@ const fields = partner => (
   </PaddedContent>
 );
 
-const summaryHeader = (classes, lastUpdate) => (
-  <Grid container align="center" justify="space-between" direction="row">
-    <Grid item xs={8}>
-      <Typography className={classes.root} type="title" >{labels.profileSummary}</Typography>
-    </Grid>
-    <Grid item xs={4} >
-      <ItemRowCell alignRight label={labels.updated} content={lastUpdate} />
-    </Grid>
-  </Grid>
+const summaryHeader = lastUpdate => (
+  <SpreadContent>
+    <Typography type="headline" >{labels.profileSummary}</Typography>
+    <ItemRowCell alignRight label={labels.updated} content={lastUpdate} />
+  </SpreadContent>
 );
 
 const PartnerOverviewSummary = (props) => {
-  const { classes, partner, loading } = props;
-  console.log(partner);
+  const { partner, loading } = props;
   return (
     <HeaderList
-      header={summaryHeader(classes, R.prop('lastUpdate', partner))}
+      header={summaryHeader(R.prop('lastUpdate', partner))}
       rows={[fields(partner)]}
       loading={loading}
     />);
 };
 
 PartnerOverviewSummary.propTypes = {
-  classes: PropTypes.object.isRequired,
   partner: PropTypes.object.isRequired,
   loading: PropTypes.bool,
 };
@@ -101,4 +85,4 @@ PartnerOverviewSummary.defaultProps = {
   partner: {},
 };
 
-export default withStyles(styleSheet, { name: 'PartnerOverviewSummary' })(PartnerOverviewSummary);
+export default PartnerOverviewSummary;

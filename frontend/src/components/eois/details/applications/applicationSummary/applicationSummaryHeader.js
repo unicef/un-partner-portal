@@ -5,6 +5,7 @@ import { browserHistory as history } from 'react-router';
 
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
 
 import HeaderNavigation from '../../../../common/headerNavigation';
 import {
@@ -13,11 +14,13 @@ import {
 } from '../../../../../store';
 import { loadApplication } from '../../../../../reducers/applicationDetails';
 import { loadPartnerNames } from '../../../../../reducers/partnerNames';
-import { applicationStatuses } from '../../../../../helpers/idMaps';
+import ApplicationStatusText from '../applicationStatusText';
+import GridRow from '../../../../common/grid/gridRow';
 
 const messages = {
   header: 'Application from :',
   noCfei: 'Sorry but this application doesn\'t exist',
+  button: 'edit review',
 };
 
 class ApplicationSummaryHeader extends Component {
@@ -53,11 +56,15 @@ class ApplicationSummaryHeader extends Component {
     }
     return (<HeaderNavigation
       title={`${messages.header} ${partner}`}
-      header={applicationStatuses[status]}
+      header={<GridRow align="center">
+        <ApplicationStatusText status={status} />
+        <Button raised color="accent">{messages.button}</Button>
+      </GridRow>
+      }
       backButton
       handleBackButton={this.handleBackButton}
     >
-      { children }
+      {children}
     </HeaderNavigation>);
   }
 
@@ -71,7 +78,9 @@ class ApplicationSummaryHeader extends Component {
 }
 
 ApplicationSummaryHeader.propTypes = {
-
+  partner: PropTypes.string,
+  status: PropTypes.string,
+  type: PropTypes.string,
   children: PropTypes.node,
   params: PropTypes.object,
 

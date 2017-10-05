@@ -46,11 +46,16 @@ const applicationsCells = ({ row, column }) => {
 };
 /* eslint-enable react/prop-types */
 class OpenCfeiPreselections extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
+  componentWillMount() {
     const { id, query } = this.props;
+    this.props.loadApplications(id, query);
+  }
 
+  shouldComponentUpdate(nextProps) {
+    const { id, query } = this.props;
     if (isQueryChanged(nextProps, query)) {
       this.props.loadApplications(id, nextProps.location.query);
+      return false;
     }
 
     return true;
@@ -93,7 +98,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadApplications: (id, params) => dispatch(loadApplications(id, params)),
+  loadApplications: (id, params) => dispatch(
+    loadApplications(id, { ...params, status: APPLICATION_STATUSES.PRE })),
 });
 
 

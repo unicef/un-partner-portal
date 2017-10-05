@@ -1,47 +1,28 @@
 
 import R from 'ramda';
 import { LOAD_DETAILS_SUCCESS } from './partnerProfileDetailsStatus';
+import { groupSpecializationsByCategory } from './partnerProfileDetails';
 
-const mockData = {
-  lastUpdate: '18 Sep 2017',
-  name: 'Partner 0',
-  verified: true,
-  partnerId: 1112321,
-  organisationType: 'International NGO',
-  operationCountry: 'England',
-  location: 'London',
-  head: {
-    firstName: 'Barbara',
-    lastName: 'Smith',
-    title: 'Head of organization',
-    telephone: '1 092 123 213',
-    mobile: '1 232 123 999',
-    fax: '1 092 421 213',
-    email: 'barbara.smith@email.org',
-  },
-  contact: '34th Sunny Stree So Long On the 5th Avenue, London , phone: 834 231 213',
-  sectors: ['Area 1', 'Area 2'],
-  population: 'Children',
-  experience: '1 year',
-  unExperience: 'WFP',
-  budget: 150000,
-  keyResults: true,
-  mandateMission: 'This a brief statement of Mandate and Mission of my organization.',
-};
+const initialState = {};
 
-const initialState = {
-  1: mockData,
-};
+const flatSectorsAndAreas = (sectors, sectorsState) => sectors.map((sector) => {
+  const sectorName = sectorsState.allSectors[sector.sector];
+  const areasNames = sector.areas.map(
+    area => sectorsState.allSpecializations[area]).join(', ');
+  return `${sectorName}: ${areasNames}`;
+});
 
 const savePartnerProfileOverview = (state, action) => {
-  const { partnerDetails } = action;
+  const { partnerDetails, getState } = action;
+  const wholeState = getState();
+  const sectors = groupSpecializationsByCategory(partnerDetails.experiences);
   const profileOverview = {
     lastUpdate: '18 Sep 2017',
     name: R.prop('legal_name', partnerDetails),
     verified: true,
     partnerId: R.path(['profile', 'id'], partnerDetails),
     organisationType: R.prop('display_type', partnerDetails),
-    operationCountry: R.path(['mailing_address', 'country'], partnerDetails),
+    operationCountry: wholeState.countries[R.path(['mailing_address', 'country'], partnerDetails)],
     location: R.path(['mailing_address', 'city'], partnerDetails),
     head: {
       firstName: R.path(['org_head', 'first_name'], partnerDetails),
@@ -58,8 +39,9 @@ const savePartnerProfileOverview = (state, action) => {
       `${R.path(['mailing_address', 'city'], partnerDetails)}`,
       `phone: ${R.path(['mailing_address', 'telephone'], partnerDetails)}`,
     ],
-    sectors: ['Area 1', 'Area 2'],
-    population: R.path(['mandate_mission', 'concern_groups'], partnerDetails),
+    sectors: flatSectorsAndAreas(sectors, wholeState.sectors),
+    population: R.path(['mandate_mission', 'concern_groups'], partnerDetails).map(
+      item => wholeState.population[item]),
     unExperience: (R.prop('collaborations_partnership', partnerDetails) || []).map(item => item.agency),
     budget: R.path(['budgets', '0', 'budget'], partnerDetails),
     keyResults: 'Yes',

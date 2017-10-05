@@ -6,12 +6,17 @@ import { connect } from 'react-redux';
 import Divider from 'material-ui/Divider';
 import GridColumn from '../../../../common/grid/gridColumn';
 import PartnerOverview from '../../../../partners/profile/overview/partnerOverviewSummary';
+import ConceptNote from '../../overview/conceptNote';
 import {
   selectApplication,
 } from '../../../../../store';
 import {
   loadPartnerDetails,
 } from '../../../../../reducers/partnerProfileDetails';
+
+const messages = {
+  cn: 'Concept Note',
+};
 
 class ApplicationSummaryContent extends Component {
   componentWillUpdate(nextProps) {
@@ -21,14 +26,20 @@ class ApplicationSummaryContent extends Component {
   }
 
   render() {
-    const { partnerDetails, partnerLoading } = this.props;
+    const { application, partnerDetails, partnerLoading } = this.props;
     return (
-      <GridColumn >
+      <GridColumn spacing="8">
         <Grid container direction="row">
           <Grid item xs={12} sm={8}>
             <PartnerOverview partner={partnerDetails} loading={partnerLoading} />
           </Grid>
           <Grid item xs={12} sm={4}>
+            <ConceptNote
+              conceptNote={application.details}
+              loading={partnerLoading}
+              date={application.created}
+              title={messages.cn}
+            />
           </Grid>
         </Grid>
         <Divider />
@@ -39,7 +50,11 @@ class ApplicationSummaryContent extends Component {
 }
 
 ApplicationSummaryContent.propTypes = {
-  params: PropTypes.object,
+  application: PropTypes.object,
+  partner: PropTypes.string,
+  partnerDetails: PropTypes.object,
+  partnerLoading: PropTypes.bool,
+  dispatch: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => {
