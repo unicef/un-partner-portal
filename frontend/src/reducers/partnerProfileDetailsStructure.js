@@ -120,7 +120,11 @@ const partnerDetailsStructure = {
     },
   },
   project_impl: {
-    banking_information: null,
+    banking_information: {
+      have_bank_account: null,
+      have_separate_bank_account: null,
+      explain: null,
+    },
     program_management: {
       have_management_approach: null,
       management_approach_desc: null,
