@@ -236,3 +236,8 @@ FLAG_TYPES = Choices(
     ('Yel', 'yellow', 'Yellow Flag'),
     ('Red', 'red', 'Red Flag'),
 )
+
+SANCTION_LIST_TYPES = Choices(
+    ('Ent', 'entity', 'Sanctioned Entity'),
+    ('Ind', 'individual', 'Sanctioned Individual'),
+)
