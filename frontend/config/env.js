@@ -76,6 +76,7 @@ function getClientEnvironment(publicUrl) {
         PUBLIC_URL: publicUrl,
         USERNAME: process.env.USERNAME,
         PASSWORD: process.env.PASSWORD,
+        GOOGLE_KEY: process.env.GOOGLE_KEY,
       }
     );
   // Stringify all values so we can feed into Webpack DefinePlugin
