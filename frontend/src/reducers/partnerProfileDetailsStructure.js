@@ -147,6 +147,7 @@ const partnerDetailsStructure = {
     },
     audit: {
       regular_audited: null,
+      regular_audited_comment: null,
       org_audits: null,
       most_recent_audit_report: null,
       link_report: null,
