@@ -4,6 +4,16 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import TextFieldForm from '../../../forms/textFieldForm';
 
+const messages = {
+  firstName: 'First Name',
+  lastName: 'Last Name',
+  jobTitle: 'Job Title/Position',
+  telephone: 'Telephone',
+  mobile: 'Mobile (optional)',
+  fax: 'Fax (optional)',
+  email: 'Email',
+};
+
 const PartnerProfileContactInfoHeadOrganization = (props) => {
   const { readOnly } = props;
 
@@ -11,32 +21,28 @@ const PartnerProfileContactInfoHeadOrganization = (props) => {
     <Grid container direction="row">
       <Grid item sm={3} xs={12}>
         <TextFieldForm
-          label="First Name"
-          placeholder=""
+          label={messages.firstName}
           fieldName="first_name"
-          readOnly={readOnly}
+          readOnly
         />
       </Grid>
       <Grid item sm={3} xs={12}>
         <TextFieldForm
-          label="Last Name"
-          placeholder=""
+          label={messages.lastName}
           fieldName="last_name"
-          readOnly={readOnly}
+          readOnly
         />
       </Grid>
       <Grid item sm={3} xs={12}>
         <TextFieldForm
-          label="Job Title/Position"
-          placeholder=""
+          label={messages.jobTitle}
           fieldName="job_title"
           readOnly={readOnly}
         />
       </Grid>
       <Grid item sm={3} xs={12}>
         <TextFieldForm
-          label="Telephone"
-          placeholder=""
+          label={messages.telephone}
           fieldName="telephone"
           readOnly={readOnly}
         />
@@ -45,26 +51,23 @@ const PartnerProfileContactInfoHeadOrganization = (props) => {
     <Grid container direction="row">
       <Grid item sm={3} xs={12}>
         <TextFieldForm
-          label="Mobile (optional)"
-          placeholder=""
+          label={messages.mobile}
           fieldName="mobile"
           readOnly={readOnly}
         />
       </Grid>
       <Grid item sm={3} xs={12}>
         <TextFieldForm
-          label="Fax (optional)"
-          placeholder=""
+          label={messages.fax}
           fieldName="fax"
           readOnly={readOnly}
         />
       </Grid>
-      <Grid item sm={6} xs={12}>
+      <Grid item sm={3} xs={12}>
         <TextFieldForm
-          label="Email"
-          placeholder=""
+          label={messages.email}
           fieldName="email"
-          readOnly={readOnly}
+          readOnly
         />
       </Grid>
     </Grid>

@@ -370,6 +370,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         if created:
             filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
             profile.working_languages = get_country_list()
+
             profile.acronym = "acronym {}".format(self.id)
             profile.former_legal_name = "former legal name {}".format(self.id)
             profile.connectivity_excuse = "connectivity excuse {}".format(self.id)

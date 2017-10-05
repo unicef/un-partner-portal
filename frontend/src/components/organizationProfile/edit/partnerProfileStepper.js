@@ -8,9 +8,9 @@ import {
   Stepper,
 } from '../../customStepper';
 
-
 export const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 3;
+
   return {
     root: {
       maxWidth: '100%',

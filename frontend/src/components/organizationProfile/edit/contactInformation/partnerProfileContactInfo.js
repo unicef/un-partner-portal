@@ -17,7 +17,7 @@ const STEPS = readOnly =>
     {
       component: <PartnerProfileContactInfoOfficials readOnly={readOnly} />,
       label: 'Authorized Officials',
-      name: 'authorised_officers',
+      name: 'authorised_officials',
     },
     {
       component: <PartnerProfileContactInfoHeadOrganization readOnly={readOnly} />,

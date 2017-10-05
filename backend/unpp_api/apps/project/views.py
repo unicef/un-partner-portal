@@ -209,17 +209,22 @@ class ReviewersStatusAPIView(ListAPIView):
 
 
 class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
+    """
+    Only reviewers, EOI creator & focal points are allowed to create/modify assessments.
+    """
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor, IsEOIReviewerAssessments)
     queryset = Assessment.objects.all()
     serializer_class = ReviewerAssessmentsSerializer
-    lookup_field = 'pk'
+    lookup_field = 'reviewer_id'
     lookup_url_kwarg = 'application_id'
 
-    def set_bunch_of_required_data(self, request, application_id):
-        request.data['reviewer'] = request.user.id
+    def set_bunch_of_required_data(self, request):
+        reviewer_id = request.parser_context.get('kwargs', {}).get(self.lookup_field)
+        application_id = request.parser_context.get('kwargs', {}).get(self.lookup_url_kwarg)
+        request.data['reviewer'] = reviewer_id
         request.data['application'] = application_id
 
-    def check_reviewer_permissions(self, request):
+    def check_complex_permissions(self, request):
         # only reviewer can create assessment
         application_id = request.parser_context.get('kwargs', {}).get('application_id')
         app = Application.objects.select_related('eoi').get(id=application_id)
@@ -228,16 +233,9 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
             return
         raise PermissionDenied
 
-    def check_reviewer_assessments_permissions(self, request):
-        # only owner of assessment can modify his object
-        obj = self.get_object()
-        if obj.reviewer.id == request.user.id:
-            return
-        raise PermissionDenied
-
     def create(self, request, application_id, *args, **kwargs):
-        self.check_reviewer_permissions(request)
-        self.set_bunch_of_required_data(request, application_id)
+        self.set_bunch_of_required_data(request)
+        request.data['created_by'] = request.user.id
         return super(ReviewerAssessmentsAPIView, self).create(request, application_id, *args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
@@ -245,14 +243,22 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         return Assessment.objects.filter(application_id=application_id)
 
     def get_object(self):
+        """
+            we have defined:
+                unique_together = (("reviewer", "application"), )
+            so get will return only one item by given reviewer & application
+        """
         queryset = self.filter_queryset(self.get_queryset())
-        obj = get_object_or_404(queryset, **{self.lookup_field: self.kwargs.get(self.lookup_field)})
+        obj = get_object_or_404(queryset, **{
+            self.lookup_field: self.kwargs.get(self.lookup_field),
+            self.lookup_url_kwarg: self.kwargs.get(self.lookup_url_kwarg),
+        })
         self.check_object_permissions(self.request, obj)
         return obj
 
     def update(self, request, application_id, *args, **kwargs):
-        self.check_reviewer_assessments_permissions(request)
-        self.set_bunch_of_required_data(request, application_id)
+        self.set_bunch_of_required_data(request)
+        request.data['modified_by'] = request.user.id
         return super(ReviewerAssessmentsAPIView, self).update(request, application_id, *args, **kwargs)
 
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
+import { FormControl, FormLabel } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
@@ -8,11 +9,11 @@ import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
-import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
-
 import GridColumn from '../common/grid/gridColumn';
 
+const messages = {
+  addNew: '+ Add New',
+};
 
 const styleSheet = theme => ({
   outerPaper: {
@@ -25,12 +26,32 @@ const styleSheet = theme => ({
   list: {
     padding: 0,
   },
+  container: {
+    display: 'flex',
+  },
+  items: {
+    flexFlow: 'column wrap',
+    display: 'flex',
+    flexBasis: '90%',
+  },
+  delete: {
+    flexBasis: '10%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+  default: {
+    paddingTop: '1em',
+    paddingBottom: '1em',
+  },
 });
 
 class RenderArrayMembers extends Component {
   constructor(props) {
     super(props);
-    if (props.initial && !props.readOnly) props.fields.push({});
+
+    if (props.initial && !props.readOnly && props.fields.length === 0) {
+      props.fields.push({});
+    }
   }
 
   render() {
@@ -40,44 +61,45 @@ class RenderArrayMembers extends Component {
       outerField,
       innerField,
       classes,
+      disableAdding,
+      disableDeleting,
       readOnly } = this.props;
+
     return (
       <Paper elevation={0} className={classes.outerPaper} >
         <List className={classes.list}>
           {fields.map((member, index) => (
             <div>
-              <ListItem key={index} >
-                <GridColumn >
-                  <Grid container direction="row" >
-                    <Grid item xs={!readOnly ? 10 : 12} >
+              <ListItem classes={{ default: classes.default }} key={index} >
+                <GridColumn spacing={4}>
+                  <div className={classes.container}>
+                    <div className={classes.items}>
                       {outerField(member, index, fields)}
-                    </Grid>
-                    {index > 0 && !readOnly && <Grid item xs={2} >
+                    </div>
+                    {!disableDeleting && index > 0 && !readOnly && <div className={classes.delete}>
                       <IconButton
                         type="button"
                         title="Remove Member"
                         onClick={() => fields.remove(index)}
-                      >
-                        <DeleteIcon />
+                      ><DeleteIcon />
                       </IconButton>
-                    </Grid>
-                    }
-                  </Grid>
-                  <Paper elevation={0} className={classes.innerPaper}>
+                    </div>}
+                  </div>
+                  {innerField && <Paper elevation={0} className={classes.innerPaper}>
                     {innerField(member, index, fields)}
-                  </Paper>
+                  </Paper>}
                 </GridColumn>
               </ListItem>
               <Divider />
             </div>
           ))}
 
-          {fields.length < limit && !readOnly &&
+          {fields.length < limit && !readOnly && !disableAdding &&
             <Button
               color="accent"
               onClick={() => fields.push({})}
             >
-              + Add New
+              {messages.addNew}
             </Button>
           }
         </List>
@@ -113,6 +135,14 @@ RenderArrayMembers.propTypes = {
    * if form should display in read-only style
    */
   readOnly: PropTypes.bool,
+  /**
+   * if form should not be able to add items
+   */
+  disableAdding: PropTypes.bool,
+  /**
+   * if form should not be able to delete items
+   */
+  disableDeleting: PropTypes.bool,
 };
 
 
@@ -125,10 +155,12 @@ const ArrayForm = (props) => {
     limit,
     label,
     initial,
+    disableAdding,
+    disableDeleting,
     readOnly } = props;
   return (
-    <div>
-      <Typography type="caption">{label}</Typography>
+    <FormControl fullWidth>
+      <FormLabel>{label}</FormLabel>
       <FieldArray
         limit={limit}
         name={fieldName}
@@ -136,9 +168,11 @@ const ArrayForm = (props) => {
         outerField={outerField}
         innerField={innerField}
         initial={initial}
+        disableAdding={disableAdding}
+        disableDeleting={disableDeleting}
         readOnly={readOnly}
       />
-    </div>
+    </FormControl>
   );
 };
 
@@ -175,6 +209,14 @@ ArrayForm.propTypes = {
    * if form should display in read-only style
    */
   readOnly: PropTypes.bool,
+  /**
+   * if form should not be able to add items
+   */
+  disableAdding: PropTypes.bool,
+  /**
+   * if form should not be able to delete items
+   */
+  disableDeleting: PropTypes.bool,
 };
 
 export default withStyles(styleSheet, { name: 'ArrayForm' })(ArrayForm);

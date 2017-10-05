@@ -13,6 +13,7 @@ import FileDownloadButton from '../components/common/buttons/fileDownloadButton'
 import RadioGroupRow from '../components/common/radio/radioGroupRow';
 import RadioHeight from '../components/common/radio/radioHeight';
 import { formatDateForPrint } from './dates';
+import { numerical } from '../helpers/validation';
 
 const fileNameFromUrl = (url) => {
   if (url) {
@@ -138,7 +139,7 @@ export const renderFileDownload = (props) => {
         </Typography>
 
       </div>
-      <FileDownloadButton fileUrl={input.value}/> 
+      <FileDownloadButton fileUrl={input.value} />
     </FormControl>);
 };
 
@@ -149,16 +150,47 @@ export const renderTextField = ({
   input,
   ...other
 }) => (
-  <TextField
-    className={className}
-    id={name}
-    error={(touched && !!error) || !!warning}
-    helperText={(touched && error) || warning} // hack to get error message
-    fullWidth
-    {...input}
-    {...other}
-  />
-);
+  <div>
+    <TextField
+      className={className}
+      id={name}
+      error={(touched && !!error) || !!warning}
+      fullWidth
+      {...input}
+      {...other}
+    />
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+      {other.inputProps && other.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
+    </div>
+  </div>);
+
+export const renderNumberField = ({
+  name,
+  className,
+  meta: { touched, error, warning },
+  input,
+  ...other
+}) => {
+  const rangeError = numerical(other.inputProps.min, other.inputProps.max)(input.value);
+
+  return (
+    <div>
+      <TextField
+        className={className}
+        id={name}
+        error={(touched && !!error) || !!warning || !!rangeError}
+        fullWidth
+        {...input}
+        {...other}
+      />
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {((touched && error) || warning || rangeError) && <FormHelperText error>{error || warning || rangeError}</FormHelperText>}
+        {other.inputProps && other.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
+      </div>
+    </div>);
+};
 
 export const renderDatePicker = ({
   input,
@@ -185,6 +217,7 @@ export const renderText = ({
   ...other
 }) => {
   let value = input.value;
+
   if (!value) value = '-';
   if (values) {
     value = R.filter((val) => {
@@ -193,6 +226,8 @@ export const renderText = ({
     }, values).map(matchedValue => matchedValue.label).join(', ');
   }
   if (date) value = formatDateForPrint(value);
+  if (R.isEmpty(value)) value = '-';
+
   return (
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>

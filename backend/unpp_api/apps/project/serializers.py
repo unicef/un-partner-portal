@@ -290,7 +290,8 @@ class ReviewersApplicationSerializer(serializers.ModelSerializer):
 
 
 class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
-
+    created_by = serializers.IntegerField(source="created_by_id", required=False)
+    modified_by = serializers.IntegerField(source="modified_by_id", required=False)
     total_score = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -298,6 +299,8 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'reviewer',
+            'created_by',
+            'modified_by',
             'application',
             'scores',
             'total_score',

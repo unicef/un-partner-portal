@@ -16,21 +16,6 @@ const messages = {
 };
 
 const mockData = {
-  locations: [
-    {
-      country_code: 'IQ',
-      admin_level_1: { name: 'Baghdad' },
-      lat: 159,
-      lon: 130,
-    },
-    {
-      country_code: 'FR',
-      admin_level_1: { name: 'Paris' },
-      lat: 120,
-      lon: 19,
-    },
-  ],
-  country_code: 'PL',
   agency: 1,
   agency_office: 1,
 };
@@ -47,16 +32,24 @@ export const newCfeiProcessing = () => ({ type: NEW_CFEI_PROCESSING });
 export const newCfeiProcessed = () => ({ type: NEW_CFEI_PROCESSED });
 export const newCfeiFailure = () => ({ type: NEW_CFEI_FAILURE });
 
-const prepareSectors = (body) => {
+const prepareBody = (body) => {
   let newBody = R.clone(body);
   const flatSectors = mergeListsFromObjectArray(newBody.specializations, 'areas');
   newBody = R.assoc('specializations', flatSectors, body);
+  newBody = R.assoc('country_code', body.countries[0].country, newBody);
+  newBody = R.assocPath(
+    ['eoi', 'locations'],
+    R.reduce(
+      R.mergeDeepWith(R.concat),
+      0,
+      body.countries,
+    ).locations, newBody);
   return newBody;
 };
 
 export const addOpenCfei = body => (dispatch) => {
   dispatch(newCfeiSubmitting());
-  const preparedBody = prepareSectors(body);
+  const preparedBody = prepareBody(body);
   return postOpenCfei(R.mergeWith(R.merge, preparedBody, mockData))
     .then(() => {
       dispatch(newCfeiSubmitted());
@@ -71,7 +64,7 @@ export const addOpenCfei = body => (dispatch) => {
 
 export const addDirectCfei = body => (dispatch) => {
   dispatch(newCfeiSubmitting());
-  const preparedBody = prepareSectors(body);
+  const preparedBody = prepareBody(body);
   return postDirectCfei(R.mergeWith(R.merge, preparedBody, mockData))
     .then(() => {
       dispatch(newCfeiSubmitted());

@@ -422,6 +422,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             'projects:reviewer-assessments',
             kwargs={
                 "application_id": app.id,
+                "reviewer_id": self.user.id,
             }
         )
         note = 'I like this application, has strong sides...'
@@ -453,7 +454,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             'projects:reviewer-assessments',
             kwargs={
                 "application_id": Application.objects.first().id,
-                "pk": assessment_id,
+                "reviewer_id": self.user.id,
             }
         )
         payload = {
