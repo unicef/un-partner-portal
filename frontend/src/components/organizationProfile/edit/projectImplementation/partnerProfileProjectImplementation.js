@@ -22,12 +22,12 @@ const STEPS = readOnly => [
   {
     component: <PartnerProfileProjectImplementationInternalControls readOnly={readOnly} />,
     label: 'Internal Controls',
-    name: 'internalControls',
+    name: 'internal_control',
   },
   {
     component: <PartnerProfileProjectImplementationBankingInfo readOnly={readOnly} />,
     label: 'Banking Information',
-    name: 'bankingInformation',
+    name: 'banking_information',
   },
   {
     component: <PartnerProfileProjectImplementationAudit readOnly={readOnly} />,
@@ -37,7 +37,7 @@ const STEPS = readOnly => [
   {
     component: <PartnerProfileProjectImplementationReporting readOnly={readOnly} />,
     label: 'Reporting',
-    name: 'reporting',
+    name: 'report',
   },
 ];
 

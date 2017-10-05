@@ -22,7 +22,7 @@ const tabsList = [
   { id: 2, component: <Mandate />, label: 'mandate & mission', name: 'mandate_mission' },
   { id: 3, component: <Funding />, label: 'funding', name: 'fund' },
   { id: 4, component: <Collaboration />, label: 'collaboration', name: 'collaboration' },
-  { id: 5, component: <ProjectImplementation />, label: 'project implementation', name: 'projectImplementation' },
+  { id: 5, component: <ProjectImplementation />, label: 'project implementation', name: 'project_impl' },
   { id: 6, component: <OtherInfo />, label: 'other information', name: 'otherInformation' },
 ];
 

@@ -53,7 +53,7 @@ const directorForm = (director, readOnly) => (
 
 const authorisedOfficerForm = (officer, readOnly) => (
   <GridColumn>
-    <GridRow columns={4}>
+    <GridRow columns={3}>
       <TextFieldForm
         fieldName={`${officer}.first_name`}
         label="First Name"
@@ -76,7 +76,7 @@ const authorisedOfficerForm = (officer, readOnly) => (
         readOnly={readOnly}
       />
     </GridRow>
-    <GridRow columns={4}>
+    <GridRow columns={3}>
       <TextFieldForm
         fieldName={`${officer}.telephone`}
         label="First Name"

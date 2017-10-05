@@ -9,19 +9,23 @@ import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
-import GridColumn from '../common/grid/gridColumn';
+
 
 const messages = {
   addNew: '+ Add New',
 };
 
 const styleSheet = theme => ({
+  root: {
+    width: '100%',
+  },
   outerPaper: {
-    background: theme.palette.primary[200],
+    background: '#F5F5F5',
   },
   innerPaper: {
-    padding: theme.spacing.unit * 2,
-    background: theme.palette.primary[400],
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
+    margin: `${theme.spacing.unit}px 0px ${theme.spacing.unit}px 0px`,
+    backgroundColor: '#E0E0E0',
   },
   list: {
     padding: 0,
@@ -84,7 +88,7 @@ class RenderArrayMembers extends Component {
           {fields.map((member, index) => (
             <div>
               <ListItem classes={{ default: classes.default }} key={index} >
-                <GridColumn spacing={4}>
+                <div className={classes.root}>
                   <div className={classes.container}>
                     <div className={classes.items}>
                       {outerField(member, index, fields)}
@@ -98,10 +102,10 @@ class RenderArrayMembers extends Component {
                       </IconButton>
                     </div>}
                   </div>
-                  {innerField && <Paper elevation={0} className={classes.innerPaper}>
+                  {innerField && <Paper elevation={0} classes={{ root: classes.innerPaper }} className={classes.innerPaper}>
                     {innerField(member, index, fields)}
                   </Paper>}
-                </GridColumn>
+                </div>
               </ListItem>
               <Divider />
             </div>

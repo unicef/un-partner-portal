@@ -120,6 +120,18 @@ export const selectNormalizedBudgets = state =>
 export const selectNormalizedPartnerDonors = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['partner-donors']);
 
+export const selectNormalizedMethodAccAdopted = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['method-acc-adopted-choices']);
+
+export const selectNormalizedFinancialControlSystem = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['financial-control-system-choices']);
+
+export const selectNormalizedFunctionalResponsibility = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['functional-responsibility-choices']);
+
+  export const selectNormalizedPolicyArea = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['policy-area-choices']);
+
 export const selectNormalizedPopulations = state =>
   mapValuesForSelectionField(state.population);
 

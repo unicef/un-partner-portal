@@ -120,6 +120,7 @@ const partnerDetailsStructure = {
     },
   },
   project_impl: {
+    banking_information: null,
     program_management: {
       have_management_approach: null,
       management_approach_desc: null,
@@ -134,7 +135,7 @@ const partnerDetailsStructure = {
       have_system_track: null,
       financial_control_system_desc: null,
     },
-    internal_controls: {
+    internal_control: {
       internal_controls: null,
       experienced_staff: null,
       experienced_staff_desc: null,
