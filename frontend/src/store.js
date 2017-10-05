@@ -84,17 +84,13 @@ export default createStore(
   ),
 );
 
-const mapValuesForSelectionField = (state) => {
+const mapValuesForSelectionField = (state, compareField = 'label') => {
   const makeFormItem = list => R.zipObj(['value', 'label'], list);
-  const compare = (a, b) => a.label.localeCompare(b.label);
+  const compare = (a, b) => a[compareField].localeCompare(b[compareField]);
   return R.sort(compare, R.map(makeFormItem, R.toPairs(state)));
 };
 
-const mapValuesForSelectionSortValue = (state) => {
-  const makeFormItem = list => R.zipObj(['value', 'label'], list);
-  const compare = (a, b) => a.value.localeCompare(b.value);
-  return R.sort(compare, R.map(makeFormItem, R.toPairs(state)));
-};
+const mapValuesForSelectionSortValue = state => mapValuesForSelectionField(state, 'value');
 
 export const selectNormalizedCountries = state =>
   mapValuesForSelectionField(state.countries);
