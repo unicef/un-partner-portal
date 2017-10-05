@@ -9,6 +9,7 @@ import detailsStatus, {
   loadDetailsFailure,
   LOAD_DETAILS_SUCCESS } from './partnerProfileDetailsStatus';
 import detailsStructure from './partnerProfileDetailsStructure';
+import { equalAtPaths } from '../reducers/normalizationHelpers';
 
 const initialState = {
   identification: null,
@@ -40,7 +41,7 @@ const extractSector = list => ({
 
 const groupSpecializationsByCategory = R.compose(
   R.map(extractSector),
-  R.groupWith((a, b) => R.path(['specialization', 'category', 'id'], a) === R.path(['specialization', 'category', 'id'], b)),
+  R.groupWith((a, b) => equalAtPaths(['specialization', 'category', 'id'])),
 );
 
 const savePartnerProfileDetails = (state, action) => {
