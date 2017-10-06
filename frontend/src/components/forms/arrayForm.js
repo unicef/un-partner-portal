@@ -20,12 +20,12 @@ const styleSheet = theme => ({
     width: '100%',
   },
   outerPaper: {
-    background: '#F5F5F5',
+    background: theme.palette.common.arrayFormOuter,
   },
   innerPaper: {
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
     margin: `${theme.spacing.unit}px 0px ${theme.spacing.unit}px 0px`,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: theme.palette.common.arrayFormInner,
   },
   list: {
     padding: 0,
