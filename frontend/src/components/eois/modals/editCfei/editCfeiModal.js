@@ -61,7 +61,6 @@ EditCfeiModal.propTypes = {
 
 const mapStateToProps = state => ({
   showLoading: state.newCfei.openCfeiSubmitting,
-  openDialog: state.newCfei.openCfeiProcessing,
   role: state.session.role,
 });
 

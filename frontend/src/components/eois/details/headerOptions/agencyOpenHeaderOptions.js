@@ -8,6 +8,7 @@ import Reviewers from '../../buttons/manageReviewers';
 import Duplicate from '../../buttons/duplicateButton';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
+import AddInformedPartners from '../../modals/callPartners/addInformedPartners';
 
 const edit = 'edit';
 const invite = 'invite';
@@ -30,7 +31,7 @@ const PartnerOpenHeaderOptions = (props) => {
             },
             {
               name: invite,
-              content: <InviteButton id={id} onClick={() => handleDialogOpen(invite)} />,
+              content: <InviteButton handleClick={() => handleDialogOpen(invite)} />,
             },
             {
               name: manage,
@@ -46,6 +47,11 @@ const PartnerOpenHeaderOptions = (props) => {
       {dialogOpen[edit] && <EditCfeiModal
         id={id}
         type="open"
+        dialogOpen={dialogOpen}
+        handleDialogClose={handleDialogClose}
+      />}
+      {dialogOpen[invite] && <AddInformedPartners
+        id={id}
         dialogOpen={dialogOpen}
         handleDialogClose={handleDialogClose}
       />}

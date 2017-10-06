@@ -4,16 +4,16 @@ import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import Loader from '../../../common/loader';
 import ControlledModal from '../../../common/modals/controlledModal';
-import { newCfeiProcessed, newCfeiFailure, updateCfei } from '../../../../reducers/newCfei';
+import { updateCfei } from '../../../../reducers/newCfei';
 import CallPartnersForm from './callPartnersForm';
 
 const messages = {
-  title: 'New Expression of Interests was created. Do you want to notify specific partners?',
+  title: 'Invite Partners',
   header: {
     title: 'You can inform Partners registered to work in the country(ies) selected about this ' +
     'offer.',
     body: 'Email will be sent to selected accounts with a copy of the CFEI inviting them to ' +
-    'apply. You can also skip this step.',
+    'apply.',
   },
   skip: 'skip',
   send: 'send',
@@ -23,44 +23,34 @@ const messages = {
 class CallPartnersModal extends Component {
   constructor(props) {
     super(props);
-    this.onDialogSubmit = this.onDialogSubmit.bind(this);
-    this.onDialogClose = this.onDialogClose.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
-  onFormSubmit() {
-    this.props.newCfeiProcessed();
+  onFormSubmit(values) {
+    this.props.handleDialogClose();
+    this.props.updateCfei(values);
   }
 
-  onDialogSubmit() {
-    this.props.submit();
-  }
-
-  onDialogClose() {
-    this.props.newCfeiProcessed();
-  }
 
   render() {
-    const { openDialog, showLoading } = this.props;
+    const { id, submit, dialogOpen, handleDialogClose } = this.props;
     return (
       <div>
-        <Loader loading={showLoading} fullscreen />
         <ControlledModal
           maxWidth="md"
           title={messages.title}
-          trigger={openDialog}
+          trigger={dialogOpen}
           info={messages.header}
           buttons={{
             flat: {
-              handleClick: this.onDialogClose,
-              label: messages.skip,
+              handleClick: handleDialogClose,
             },
             raised: {
-              handleClick: this.onDialogSubmit,
-              label: messages.send,
+              handleClick: submit,
+              label: messages.save,
             },
           }}
-          content={<CallPartnersForm onSubmit={this.onFormSubmit} />}
+          content={<CallPartnersForm id={id} onSubmit={this.onFormSubmit} />}
         />
       </div >
     );
@@ -77,12 +67,9 @@ CallPartnersModal.propTypes = {
 
 const mapStateToProps = state => ({
   showLoading: state.newCfei.openCfeiSubmitting,
-  openDialog: state.newCfei.openCfeiProcessing,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  newCfeiProcessed: () => dispatch(newCfeiProcessed()),
-  newCfeiFailure: () => dispatch(newCfeiFailure()),
   updateCfei: body => dispatch(updateCfei(body, ownProps.id)),
   submit: () => dispatch(submit('callPartners')),
 });

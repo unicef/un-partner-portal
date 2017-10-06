@@ -1,9 +1,11 @@
 import React from 'react';
 import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-import { ProjectCountries, ProjectPartners } from '../../../forms/fields/projectFields/commonFields';
+import { ProjectPartners } from '../../../forms/fields/projectFields/commonFields';
 import GridColumn from '../../../common/grid/gridColumn';
+import { selectCfeiDetails } from '../../../../store';
 
 
 const CallPartnersForm = (props) => {
@@ -11,7 +13,6 @@ const CallPartnersForm = (props) => {
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
-        <ProjectCountries />
         <ProjectPartners />
       </GridColumn>
     </form >
@@ -26,6 +27,17 @@ CallPartnersForm.propTypes = {
 
 };
 
-export default reduxForm({
+const formCallPartners = reduxForm({
   form: 'callPartners',
 })(CallPartnersForm);
+
+const mapStateToProps = (state, ownProps) => {
+  const { invited_partners = [] } = selectCfeiDetails(state, ownProps.id);
+  return {
+    initialValues: { invited_partners },
+  };
+};
+
+export default connect(
+  mapStateToProps,
+)(formCallPartners);

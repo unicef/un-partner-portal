@@ -51,10 +51,12 @@ export const addOpenCfei = body => (dispatch) => {
   dispatch(newCfeiSubmitting());
   const preparedBody = prepareBody(body);
   return postOpenCfei(R.mergeWith(R.merge, preparedBody, mockData))
-    .then(() => {
+    .then((cfei) => {
       dispatch(newCfeiSubmitted());
       dispatch(newCfeiProcessing());
       dispatch(loadCfei(PROJECT_TYPES.OPEN));
+      debugger
+      return cfei;
     })
     .catch((error) => {
       dispatch(newCfeiSubmitted());
@@ -65,7 +67,9 @@ export const addOpenCfei = body => (dispatch) => {
 export const addDirectCfei = body => (dispatch) => {
   dispatch(newCfeiSubmitting());
   const preparedBody = prepareBody(body);
-  return postDirectCfei(R.mergeWith(R.merge, preparedBody, mockData))
+  const { applications, ...other } = preparedBody;
+  const finalBody = { applications, eoi: { ...other } };
+  return postDirectCfei(R.mergeWith(R.merge, finalBody, { eoi: mockData }))
     .then(() => {
       dispatch(newCfeiSubmitted());
       dispatch(loadCfei(PROJECT_TYPES.DIRECT));

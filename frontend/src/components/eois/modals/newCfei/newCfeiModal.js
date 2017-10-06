@@ -70,13 +70,19 @@ const getModal = (type) => {
 class NewCfeiModal extends Component {
   constructor(props) {
     super(props);
+    this.state = { id: null };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleDialogSubmit = this.handleDialogSubmit.bind(this);
   }
 
   handleSubmit(values) {
     this.props.onDialogClose();
-    this.props.postCfei(values);
+    const cfei = this.props.postCfei(values);
+    cfei.then(
+      cfei => {
+      debugger
+      //this.setState({id: cfei.id});
+    })
   }
 
   handleDialogSubmit() {
@@ -102,7 +108,7 @@ class NewCfeiModal extends Component {
           }}
           content={React.createElement(getModal(type), { onSubmit: this.handleSubmit })}
         />
-        { type === PROJECT_TYPES.OPEN && <CallPartnersModal />}
+        { type === PROJECT_TYPES.OPEN && <CallPartnersModal id={this.state.id} />}
       </Grid>
     );
   }

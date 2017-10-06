@@ -140,7 +140,7 @@ export const ProjectCountries = () => (<SelectForm
 />);
 
 export const ProjectPartners = () => (<SelectForm
-  fieldName="partners"
+  fieldName="invited_partners"
   label="Partners"
   values={PARTNERS}
   selectFieldProps={{
