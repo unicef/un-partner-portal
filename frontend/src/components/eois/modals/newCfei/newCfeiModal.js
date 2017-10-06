@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import Grid from 'material-ui/Grid';
-import ControlledModal from '../../common/modals/controlledModal';
+import ControlledModal from '../../../common/modals/controlledModal';
 import OpenForm from './openForm';
 import DirectForm from './directForm';
-import { addDirectCfei, addOpenCfei } from '../../../reducers/newCfei';
-import CallPartnersModal from './callPartnersModal';
-import { PROJECT_TYPES } from '../../../helpers/constants';
+import { addDirectCfei, addOpenCfei } from '../../../../reducers/newCfei';
+import CallPartnersModal from '../callPartners/callPartnersModal';
+import { PROJECT_TYPES } from '../../../../helpers/constants';
 
 
 const messages = {

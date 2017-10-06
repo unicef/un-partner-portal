@@ -1,7 +1,8 @@
 import R from 'ramda';
-import { postOpenCfei, postDirectCfei } from '../helpers/api/api';
+import { postOpenCfei, postDirectCfei, patchCfei } from '../helpers/api/api';
 import { mergeListsFromObjectArray } from './normalizationHelpers';
 import { loadCfei } from './cfei';
+import { loadCfeiDetailSuccess } from './cfeiDetailsStatus';
 import { PROJECT_TYPES } from '../helpers/constants';
 
 export const NEW_CFEI_SUBMITTING = 'NEW_CFEI_SUBMITTING';
@@ -85,6 +86,20 @@ export const addDirectCfei = body => (dispatch) => {
       dispatch(newCfeiFailure(error));
     });
 };
+
+export const updateCfei = (body, id) => (dispatch) => {
+  dispatch(newCfeiSubmitting());
+  return patchCfei(body, id)
+    .then((cfei) => {
+      dispatch(newCfeiSubmitted());
+      dispatch(loadCfeiDetailSuccess(cfei));
+    })
+    .catch((error) => {
+      dispatch(newCfeiSubmitted());
+      dispatch(newCfeiFailure(error));
+    });
+};
+
 
 const startSubmitting = state => R.assoc('error', {}, R.assoc('openCfeiSubmitting', true, state));
 const stopSubmitting = state => R.assoc('openCfeiSubmitting', false, state);

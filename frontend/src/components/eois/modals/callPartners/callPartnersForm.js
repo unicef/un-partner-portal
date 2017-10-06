@@ -2,8 +2,8 @@ import React from 'react';
 import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
 
-import { ProjectCountries, ProjectPartners } from './commonFields';
-import GridColumn from '../../common/grid/gridColumn';
+import { ProjectCountries, ProjectPartners } from '../../../forms/fields/projectFields/commonFields';
+import GridColumn from '../../../common/grid/gridColumn';
 
 
 const CallPartnersForm = (props) => {

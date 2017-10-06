@@ -6,37 +6,58 @@ import EditButton from '../../buttons/editCfeiButton';
 import InviteButton from '../../buttons/invitePartner';
 import Reviewers from '../../buttons/manageReviewers';
 import Duplicate from '../../buttons/duplicateButton';
+import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
+import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
+
+const edit = 'edit';
+const invite = 'invite';
+const manage = 'manage';
+const duplicate = 'duplicate';
 
 const PartnerOpenHeaderOptions = (props) => {
-  const { params: { id } } = props;
+  const { params: { id },
+    dialogOpen,
+    handleDialogClose,
+    handleDialogOpen } = props;
   return (
-    <DropdownMenu
-      options={
-        [
-          {
-            name: 'edit',
-            content: <EditButton id={id} />,
-          },
-          {
-            name: 'invite',
-            content: <InviteButton id={id} />,
-          },
-          {
-            name: 'manage',
-            content: <Reviewers id={id} />,
-          },
-          {
-            name: 'duplicate',
-            content: <Duplicate id={id} />,
-          },
-        ]
-      }
-    />
+    <div>
+      <DropdownMenu
+        options={
+          [
+            {
+              name: edit,
+              content: <EditButton handleClick={() => handleDialogOpen(edit)} />,
+            },
+            {
+              name: invite,
+              content: <InviteButton id={id} onClick={() => handleDialogOpen(invite)} />,
+            },
+            {
+              name: manage,
+              content: <Reviewers id={id} onClick={() => handleDialogOpen(manage)} />,
+            },
+            {
+              name: duplicate,
+              content: <Duplicate id={id} onClick={() => handleDialogOpen(duplicate)} />,
+            },
+          ]
+        }
+      />
+      {dialogOpen[edit] && <EditCfeiModal
+        id={id}
+        type="open"
+        dialogOpen={dialogOpen}
+        handleDialogClose={handleDialogClose}
+      />}
+    </div>
   );
 };
 
 PartnerOpenHeaderOptions.propTypes = {
   params: PropTypes.object,
+  dialogOpen: PropTypes.bool,
+  handleDialogClose: PropTypes.func,
+  handleDialogOpen: PropTypes.func,
 };
 
-export default withRouter(PartnerOpenHeaderOptions);
+export default withMultipleDialogHandling(withRouter(PartnerOpenHeaderOptions));

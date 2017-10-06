@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Typography from 'material-ui/Typography';
 
-import * as fields from './commonFields';
-import GridColumn from '../../common/grid/gridColumn';
+import * as fields from '../../../forms/fields/projectFields/commonFields';
+import GridColumn from '../../../common/grid/gridColumn';
 
 import ProjectDetails from './ProjectDetails';
-import { loadPartnerNames } from '../../../reducers/partnerNames';
-import PartnersForm from '../../forms/fields/projectFields/partnersField/partnersFieldArray';
+import { loadPartnerNames } from '../../../../reducers/partnerNames';
+import PartnersForm from '../../../forms/fields/projectFields/partnersField/partnersFieldArray';
 
 const messages = {
 

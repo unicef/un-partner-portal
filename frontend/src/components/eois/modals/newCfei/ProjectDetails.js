@@ -3,12 +3,12 @@ import { FormSection } from 'redux-form';
 import PropTypes from 'prop-types';
 
 import Typography from 'material-ui/Typography';
-import SectorForm from '../../forms/fields/projectFields/sectorField/sectorFieldArray';
-import SelectPopulationOfConcern from '../../forms/fields/newCfeiFields/selectPopulationOfConcern';
-import * as fields from './commonFields';
-import GridColumn from '../../common/grid/gridColumn';
-import GridRow from '../../common/grid/gridRow';
-import LocationForm from '../../forms/fields/projectFields/locationField/locationFieldArray';
+import SectorForm from '../../../forms/fields/projectFields/sectorField/sectorFieldArray';
+import SelectPopulationOfConcern from '../../../forms/fields/newCfeiFields/selectPopulationOfConcern';
+import * as fields from '../../../forms/fields/projectFields/commonFields';
+import GridColumn from '../../../common/grid/gridColumn';
+import GridRow from '../../../common/grid/gridRow';
+import LocationForm from '../../../forms/fields/projectFields/locationField/locationFieldArray';
 
 const messages = {
   projectDetails: 'Project Details',

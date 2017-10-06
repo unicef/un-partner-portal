@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
-import Loader from '../../common/loader';
-import ControlledModal from '../../common/modals/controlledModal';
-import { newCfeiProcessed, newCfeiFailure } from '../../../reducers/newCfei';
+import Loader from '../../../common/loader';
+import ControlledModal from '../../../common/modals/controlledModal';
+import { newCfeiProcessed, newCfeiFailure } from '../../../../reducers/newCfei';
 import CallPartnersForm from './callPartnersForm';
 
 const messages = {
