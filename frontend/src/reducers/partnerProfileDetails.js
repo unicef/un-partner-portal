@@ -21,12 +21,12 @@ const initialState = {
   other_info: null,
 };
 
-export const loadPartnerDetails = partnerId => (dispatch) => {
+export const loadPartnerDetails = partnerId => (dispatch, getState) => {
   dispatch(loadDetailsStarted());
   return getPartnerProfileDetails(partnerId)
     .then((details) => {
       dispatch(loadDetailsEnded());
-      dispatch(loadDetailsSuccess(details));
+      dispatch(loadDetailsSuccess(details, getState));
     })
     .catch((error) => {
       dispatch(loadDetailsEnded());
@@ -39,7 +39,7 @@ const extractSector = list => ({
   areas: list.map(area => area.specialization.id.toString()),
   years: list[0].years });
 
-const groupSpecializationsByCategory = R.compose(
+export const groupSpecializationsByCategory = R.compose(
   R.map(extractSector),
   R.groupWith((a, b) => equalAtPaths(['specialization', 'category', 'id'])),
 );

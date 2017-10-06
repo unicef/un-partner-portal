@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import SelectForm from '../../selectForm';
-import { selectNormalizedPopulations } from '../../../../store';
+import { selectNormalizedPopulationsOfConcernGroups } from '../../../../store';
 
 const messages = {
   label: 'Intended populations of concern (only for UNHCR)',
@@ -22,5 +22,5 @@ SelectPopulationOfConcern.propTypes = {
 };
 
 export default connect(state => ({
-  values: selectNormalizedPopulations(state),
+  values: selectNormalizedPopulationsOfConcernGroups(state),
 }))(SelectPopulationOfConcern);

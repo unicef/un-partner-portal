@@ -24,7 +24,6 @@ import applicationsNotesList from './reducers/applicationsNotesList';
 import applicationsUnsolicitedList from './reducers/applicationsUnsolicitedList';
 import applicationsDirectList from './reducers/applicationsDirectList';
 import conceptNote from './reducers/conceptNote';
-import population from './reducers/population';
 import partnerInfo from './reducers/partnerInfo';
 import organizationProfileNav from './reducers/organizationProfileNav';
 import organizationProfile from './reducers/organizationProfile';
@@ -34,7 +33,8 @@ import sectors, * as sectorsSelectors from './reducers/sectors';
 import partnersApplicationsList from './reducers/partnersApplicationsList';
 import partnersPreselectionList from './reducers/partnersPreselectionList';
 import selectionCriteria from './reducers/selectionCriteria';
-import partnerNames from './reducers/partnerNames';
+import partnerNames, * as partnerNamesSelector from './reducers/partnerNames';
+import applicationDetails, * as applicationDetailsSelector from './reducers/applicationDetails';
 
 const mainReducer = combineReducers({
   cfei,
@@ -61,13 +61,13 @@ const mainReducer = combineReducers({
   agencyPartnerProfileNav,
   agencyPartnerProfile,
   form: formReducer,
-  population,
   routing: routerReducer,
   sectors,
   partnersApplicationsList,
   partnersPreselectionList,
   selectionCriteria,
   partnerNames,
+  applicationDetails,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -105,7 +105,7 @@ export const selectNormalizedWorkingLanguages = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['working-languages']);
 
 export const selectNormalizedPopulationsOfConcernGroups = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['population-of-concerns-groups']);
+  mapValuesForSelectionField(state.partnerProfileConfig['population-of-concern']);
 
 export const selectNormalizedStaffGlobalyChoices = state =>
   mapValuesForSelectionSortValue(state.partnerProfileConfig['staff-globaly-choices']);
@@ -115,9 +115,6 @@ export const selectNormalizedBudgets = state =>
 
 export const selectNormalizedPartnerDonors = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['partner-donors']);
-
-export const selectNormalizedPopulations = state =>
-  mapValuesForSelectionField(state.population);
 
 export const mapSectorsToSelection = state =>
   mapValuesForSelectionField(sectorsSelectors.selectAllSectors(state.sectors));
@@ -143,6 +140,21 @@ export const selectCfeiTitle = (state, id) =>
 
 export const mapSelectCriteriaToSelection = state =>
   mapValuesForSelectionField(state.selectionCriteria)
-;
+  ;
 export const mapPartnersNamesToSelection = state =>
   mapValuesForSelectionField(state.partnerNames);
+
+export const selectPartnerName = (state, id) =>
+  partnerNamesSelector.selectPartnerName(state.partnerNames, id);
+
+export const selectApplicationStatus = (state, id) =>
+  applicationDetailsSelector.selectApplicationStatus(
+    state.applicationDetails.applicationDetails, id);
+
+export const selectApplicationPartnerName = (state, id) =>
+  applicationDetailsSelector.selectApplicationPartnerName(
+    state.applicationDetails.applicationDetails, id);
+
+export const selectApplication = (state, id) =>
+  applicationDetailsSelector.selectApplication(
+    state.applicationDetails.applicationDetails, id);
