@@ -55,7 +55,6 @@ export const addOpenCfei = body => (dispatch) => {
       dispatch(newCfeiSubmitted());
       dispatch(newCfeiProcessing());
       dispatch(loadCfei(PROJECT_TYPES.OPEN));
-      debugger
       return cfei;
     })
     .catch((error) => {
@@ -102,7 +101,7 @@ const saveErrorMsg = (state, action) => R.assoc(
   'error',
   {
     message: messages.postOpenFailure,
-    error: action.error,
+    error: action.error && action.error.message,
   },
   state);
 

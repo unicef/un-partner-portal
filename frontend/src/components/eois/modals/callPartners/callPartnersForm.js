@@ -32,7 +32,8 @@ const formCallPartners = reduxForm({
 })(CallPartnersForm);
 
 const mapStateToProps = (state, ownProps) => {
-  const { invited_partners = [] } = selectCfeiDetails(state, ownProps.id);
+  const cfei = selectCfeiDetails(state, ownProps.id) || {};
+  const { invited_partners = [] } = cfei;
   return {
     initialValues: { invited_partners },
   };

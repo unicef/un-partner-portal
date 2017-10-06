@@ -28,8 +28,9 @@ class CallPartnersModal extends Component {
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
-  onFormSubmit() {
+  onFormSubmit(values) {
     this.props.newCfeiProcessed();
+    this.props.updateCfei(values);
   }
 
   onDialogSubmit() {
@@ -73,6 +74,7 @@ CallPartnersModal.propTypes = {
   submit: PropTypes.func,
   newCfeiProcessed: PropTypes.func,
   newCfeiFailure: PropTypes.func,
+  updateCfei: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
