@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormSection } from 'redux-form';
 import PropTypes from 'prop-types';
 
 import Typography from 'material-ui/Typography';
@@ -21,20 +20,18 @@ const ProjectDetails = (props) => {
       <Typography type="headline">
         {messages.projectDetails}
       </Typography>
-      <FormSection name="eoi">
-        <GridColumn>
-          <fields.TitleField />
-          <LocationForm formName={formName} />
-          <fields.FocalPoint />
-          <SectorForm />
-          <SelectPopulationOfConcern />
-          <fields.Background />
-          <fields.OtherInfo />
-          <GridRow columns={4} >
-            {dateFields}
-          </GridRow>
-        </GridColumn>
-      </FormSection>
+      <GridColumn>
+        <fields.TitleField />
+        <LocationForm formName={formName} />
+        <fields.FocalPoint />
+        <SectorForm />
+        <SelectPopulationOfConcern />
+        <fields.Background />
+        <fields.OtherInfo />
+        <GridRow columns={4} >
+          {dateFields}
+        </GridRow>
+      </GridColumn>
     </GridColumn>
 
   );
