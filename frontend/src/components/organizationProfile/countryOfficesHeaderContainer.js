@@ -83,8 +83,8 @@ const mapDispatch = dispatch => ({
 });
 
 const mapStateToProps = state => ({
-  countryProfiles: state.countryProfiles.countryProfiles,
-  countryPresence: state.countryProfiles.countryPresence,
+  countryProfiles: R.path(['hq', 'country_profiles'], state.countryProfiles) || [],
+  countryPresence: R.path(['hq', 'country_presence'], state.countryProfiles) || [],
   selectedCountryId: state.countryProfiles.selectedCountryId,
 });
 
