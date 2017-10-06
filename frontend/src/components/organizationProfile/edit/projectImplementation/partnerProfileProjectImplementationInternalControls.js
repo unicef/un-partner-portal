@@ -115,7 +115,6 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
           limit={functionalResponsibility.length}
           fieldName="internal_controls"
           initial
-          initialCount={6}
           disableDeleting
           readOnly={readOnly}
           outerField={InternalControls(functionalResponsibility, readOnly)}

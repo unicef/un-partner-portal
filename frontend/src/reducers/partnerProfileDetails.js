@@ -44,21 +44,38 @@ const groupSpecializationsByCategory = R.compose(
   R.groupWith((a, b) => equalAtPaths(['specialization', 'category', 'id'])),
 );
 
+const normalizeSpecializations = (state) => {
+  const mergedExperiences = R.assoc('specializations',
+    groupSpecializationsByCategory(state.mandate_mission.experience.experiences),
+    state.mandate_mission.experience);
+
+  return R.assoc('experience', mergedExperiences, state.mandate_mission);
+};
+
+const normalizeCollaboration = (state) => {
+  const types = [
+    'Acc',
+    'Ref',
+  ];
+
+  const filterType = type => R.filter(evidence =>
+    evidence.mode === type, state.collaboration.collaboration_evidences);
+  const normalizedArray = R.map(filterType, types);
+
+  const mergedAccreditations = R.assocPath(['collaboration', 'accreditation', 'accreditations'], normalizedArray[0], state);
+
+  return R.assocPath(['collaboration', 'reference', 'references'], normalizedArray[1], mergedAccreditations);
+};
+
 const savePartnerProfileDetails = (state, action) => {
   const flatjson = flatten(action.partnerDetails);
 
   const mappedFields = R.mapObjIndexed((value, key) =>
     mapJsonSteps(key, value, flatjson), detailsStructure);
 
-  const mappedSectors =
-  groupSpecializationsByCategory(mappedFields.mandate_mission.experience.experiences);
+  const normalizedSpecializations = R.assoc('mandate_mission', normalizeSpecializations(mappedFields), mappedFields);
 
-  const mergedExperiences = R.assoc('specializations',
-    mappedSectors, mappedFields.mandate_mission.experience);
-
-  const mergedManadateMission = R.assoc('experience', mergedExperiences, mappedFields.mandate_mission);
-
-  return R.assoc('mandate_mission', mergedManadateMission, mappedFields);
+  return normalizeCollaboration(normalizedSpecializations);
 };
 
 

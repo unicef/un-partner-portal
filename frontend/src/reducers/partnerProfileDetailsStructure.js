@@ -113,11 +113,12 @@ const partnerDetailsStructure = {
       partnership_collaborate_institution_desc: null,
     },
     accreditation: {
-      collaboration_evidences: null,
+      accreditations: null,
     },
-    references: {
-      collaboration_evidences: null,
+    reference: {
+      references: null,
     },
+    collaboration_evidences: null,
   },
   project_impl: {
     banking_information: {
