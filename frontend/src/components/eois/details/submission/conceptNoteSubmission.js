@@ -80,12 +80,6 @@ const styleSheet = (theme) => {
       textDecoration: 'underline',
       color: theme.palette.primary[500],
     },
-    checked: {
-      color: theme.palette.secondary[500],
-    },
-    disabled: {
-      color: theme.palette.secondary[200],
-    },
   };
 };
 
@@ -195,10 +189,6 @@ class ConceptNoteSubmission extends Component {
         <div className={classes.checkboxContainer}>
           <div className={classes.alignVertical}>
             <Checkbox
-              classes={{
-                checked: classes.checked,
-                disabled: classes.disabled,
-              }}
               disabled={cnUploaded}
               checked={confirmProfile}
               onChange={(event, checked) => this.handleCheck(event, checked)}

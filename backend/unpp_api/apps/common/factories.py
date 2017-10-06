@@ -31,7 +31,7 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
 )
-from project.models import EOI, Application, AssessmentCriteria
+from project.models import EOI, Application
 from review.models import PartnerFlag, PartnerVerification
 from .consts import (
     PARTNER_TYPES,
@@ -607,6 +607,12 @@ class EOIFactory(factory.django.DjangoModelFactory):
     deadline_date = date.today()
     notif_results_date = date.today()
     # reviewers ... TODO when right time will come (when we need them - depending on endpoint)
+    assessments_criteria = [
+        {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'weight': 10},
+        {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'weight': 40},
+        {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'weight': 30},
+        {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 20}
+    ]
 
     class Meta:
         model = EOI
@@ -656,18 +662,6 @@ class EOIFactory(factory.django.DjangoModelFactory):
                 eoi=self,
                 submitter=get_partner_member(),
             )
-
-    @factory.post_generation
-    def assessments_criteria(self, create, extracted, **kwargs):
-        AssessmentCriteria.objects.create(
-            eoi=self,
-            options=[
-                {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'weight': 10},
-                {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'weight': 40},
-                {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'weight': 30},
-                {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 20}
-            ]
-        )
 
 
 class PartnerFlagFactory(factory.django.DjangoModelFactory):

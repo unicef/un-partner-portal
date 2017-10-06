@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^applications/(?P<application_id>\d+)/reviewers-status/',
         ReviewersStatusAPIView.as_view(),
         name="reviewers-status"),
-    url(r'^applications/(?P<application_id>\d+)/reviewer-assessments/(?P<pk>\d+)/',
+    url(r'^applications/(?P<application_id>\d+)/reviewer-assessments/(?P<reviewer_id>\d+)/',
         ReviewerAssessmentsAPIView.as_view(),
         name="reviewer-assessments"),
     url(r'^applications/(?P<application_id>\d+)/reviewer-assessments/',
