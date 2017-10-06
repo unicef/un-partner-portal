@@ -11,11 +11,3 @@ export const applicationStatuses = {
   Rej: 'Rejected',
   Pen: 'Pending',
 };
-
-export const organizationTypes = {
-  CBO: 'Community Based Organization (CBO)',
-  NGO: 'National NGO',
-  Int: 'International NGO (INGO)',
-  Aca: 'Academic Institution',
-  RCC: 'Red Cross/Red Crescent Movement',
-};

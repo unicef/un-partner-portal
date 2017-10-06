@@ -40,7 +40,7 @@ class ConfigPPAPIView(APIView):
             "functional-responsibilities": FUNCTIONAL_RESPONSIBILITY_CHOICES,
             "partner-donors": PARTNER_DONORS_CHOICES,
             "working-languages": WORKING_LAGNUAGES_CHOICES,
-            "population-of-concerns-groups": CONCERN_CHOICES,
+            "population-of-concern": CONCERN_CHOICES,
             "audit-types": AUDIT_TYPES,
             "formal-capacity-assessment": FORMAL_CAPACITY_ASSESSMENT,
             "partner-type": PARTNER_TYPES,

@@ -21,7 +21,8 @@ const savePartnerProfileOverview = (state, action) => {
     name: R.prop('legal_name', partnerDetails),
     verified: true,
     partnerId: R.path(['profile', 'id'], partnerDetails),
-    organisationType: R.prop('display_type', partnerDetails),
+    organisationType: wholeState.partnerProfileConfig['partner-type'][R.prop(
+      'display_type', partnerDetails)],
     operationCountry: wholeState.countries[R.path(['mailing_address', 'country'], partnerDetails)],
     location: R.path(['mailing_address', 'city'], partnerDetails),
     head: {
@@ -42,7 +43,7 @@ const savePartnerProfileOverview = (state, action) => {
     sectors: flatSectorsAndAreas(sectors, wholeState.sectors),
     yearOfEstablishment: R.path(['profile', 'registration_date'], partnerDetails),
     population: R.path(['mandate_mission', 'concern_groups'], partnerDetails).map(
-      item => wholeState.population[item]),
+      item => wholeState.partnerProfileConfig['population-of-concern'][item]),
     unExperience: (R.prop('collaborations_partnership', partnerDetails) || []).map(item => item.agency),
     budget: R.path(['budgets', '0', 'budget'], partnerDetails),
     keyResults: 'Yes',

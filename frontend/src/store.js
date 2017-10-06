@@ -24,7 +24,6 @@ import applicationsNotesList from './reducers/applicationsNotesList';
 import applicationsUnsolicitedList from './reducers/applicationsUnsolicitedList';
 import applicationsDirectList from './reducers/applicationsDirectList';
 import conceptNote from './reducers/conceptNote';
-import population from './reducers/population';
 import partnerInfo from './reducers/partnerInfo';
 import organizationProfileNav from './reducers/organizationProfileNav';
 import organizationProfile from './reducers/organizationProfile';
@@ -62,7 +61,6 @@ const mainReducer = combineReducers({
   agencyPartnerProfileNav,
   agencyPartnerProfile,
   form: formReducer,
-  population,
   routing: routerReducer,
   sectors,
   partnersApplicationsList,
@@ -107,7 +105,7 @@ export const selectNormalizedWorkingLanguages = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['working-languages']);
 
 export const selectNormalizedPopulationsOfConcernGroups = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['population-of-concerns-groups']);
+  mapValuesForSelectionField(state.partnerProfileConfig['population-of-concern']);
 
 export const selectNormalizedStaffGlobalyChoices = state =>
   mapValuesForSelectionSortValue(state.partnerProfileConfig['staff-globaly-choices']);
@@ -117,9 +115,6 @@ export const selectNormalizedBudgets = state =>
 
 export const selectNormalizedPartnerDonors = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['partner-donors']);
-
-export const selectNormalizedPopulations = state =>
-  mapValuesForSelectionField(state.population);
 
 export const mapSectorsToSelection = state =>
   mapValuesForSelectionField(sectorsSelectors.selectAllSectors(state.sectors));
