@@ -38,6 +38,7 @@ CfeiOverview.propTypes = {
 
 const formCfeiDetails = reduxForm({
   form: 'cfeiDetails',
+  enableReinitialize: true,
 })(CfeiOverview);
 
 const mapStateToProps = (state, ownProps) => ({
