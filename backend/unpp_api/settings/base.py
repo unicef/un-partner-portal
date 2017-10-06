@@ -184,11 +184,8 @@ LOGGING = {
     'handlers': {
         'default': {
             'level': 'DEBUG',
-            'class': 'common.utils.DeferredRotatingFileHandler',
-            'filename': 'django.log',  # Full path is created by DeferredRotatingFileHandler.
-            'maxBytes': 1024*1024*5,  # 5 MB
-            'backupCount': 5,
-            'formatter': 'standard'
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
         },
         'mail_admins': {
             'level': 'ERROR',
