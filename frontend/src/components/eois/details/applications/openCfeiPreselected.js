@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
+import ApplicationCnIdCell from '../../cells/applicationCnIdCell';
 import SelectableList from '../../../common/list/selectableList';
 import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
 import Compare from '../../buttons/compareButton';
@@ -29,6 +30,11 @@ const applicationsCells = ({ row, column }) => {
       redFlag={row.flagRed}
       name={row.name}
     />);
+  } else if (column.name === 'id') {
+    return (<ApplicationCnIdCell
+      id={row.id}
+    />
+    );
   } else if (column.name === 'your_score') {
     return (<PreselectedYourScore
       id={row.id}
@@ -46,11 +52,16 @@ const applicationsCells = ({ row, column }) => {
 };
 /* eslint-enable react/prop-types */
 class OpenCfeiPreselections extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
+  componentWillMount() {
     const { id, query } = this.props;
+    this.props.loadApplications(id, query);
+  }
 
+  shouldComponentUpdate(nextProps) {
+    const { id, query } = this.props;
     if (isQueryChanged(nextProps, query)) {
       this.props.loadApplications(id, nextProps.location.query);
+      return false;
     }
 
     return true;
@@ -93,7 +104,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadApplications: (id, params) => dispatch(loadApplications(id, params)),
+  loadApplications: (id, params) => dispatch(
+    loadApplications(id, { ...params, status: APPLICATION_STATUSES.PRE })),
 });
 
 

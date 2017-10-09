@@ -7,6 +7,7 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Tabs from 'material-ui/Tabs';
 import Typography from 'material-ui/Typography';
+import className from 'classnames';
 import CustomTab from '../common/customTab';
 import SpreadContent from '../common/spreadContent';
 
@@ -62,12 +63,21 @@ class HeaderNavigation extends Component {
       children,
       header,
       handleChange } = this.props;
-
+    const paddingClass = className(
+      {
+        [classes.alignItems]: tabs,
+        [classes.alignItemsPadding]: !tabs,
+      },
+    );
+    const actionsClass = className(
+      classes.right,
+      paddingClass,
+    );
     return (
       <div>
         <Grid align="center" className={classes.container} container>
           <SpreadContent >
-            <div className={tabs ? classes.alignItems : classes.alignItemsPadding}>
+            <div className={paddingClass}>
               { backButton
                 ? <IconButton onClick={handleBackButton}>
                   <KeyboardArrowLeft />
@@ -79,7 +89,7 @@ class HeaderNavigation extends Component {
                 </Typography>
                 : titleObject }
             </div>
-            <div className={classes.right}>
+            <div className={actionsClass} >
               {header}
             </div>
           </SpreadContent>
