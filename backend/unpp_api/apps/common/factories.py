@@ -248,7 +248,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def budgets(self, create, extracted, **kwargs):
-        for year in [date.today().year, date.today().year-1]:
+        # we want to have last 3 year (with current)
+        for year in [date.today().year, date.today().year-2]:
             budget, created = PartnerBudget.objects.get_or_create(
                 partner=self,
                 year=year,

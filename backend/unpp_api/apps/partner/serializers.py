@@ -246,10 +246,10 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     mailing_address = PartnerMailingAddressSerializer()
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
-    org_head = PartnerHeadOrganizationSerializer()
+    head_of_organization = PartnerHeadOrganizationSerializer()
     mandate_mission = PartnerMandateMissionSerializer()
     experiences = PartnerExperienceSerializer(many=True)
-    budgets = PartnerBudgetSerializer(many=True)
+    origin_budgets = PartnerBudgetSerializer(many=True)
     fund = PartnerFundingSerializer()
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
     collaborations_partnership_others = PartnerCollaborationPartnershipOtherSerializer(many=True)
@@ -280,10 +280,10 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "mailing_address",
             "directors",
             "authorised_officers",
-            "org_head",
+            "head_of_organization",
             "mandate_mission",
             "experiences",
-            "budgets",
+            "origin_budgets",
             "fund",
             "collaborations_partnership",
             "collaborations_partnership_others",
@@ -302,7 +302,7 @@ class PartnersListSerializer(serializers.ModelSerializer):
     acronym = serializers.SerializerMethodField()
     experience_working = serializers.SerializerMethodField()
     mailing_address = PartnerMailingAddressSerializer()
-    org_head = PartnerHeadOrganizationSerializer()
+    head_of_organization = PartnerHeadOrganizationSerializer()
     working_languages = serializers.ListField(source="profile.working_languages")
     experiences = PartnerExperienceSerializer(many=True)
 
@@ -318,7 +318,7 @@ class PartnersListSerializer(serializers.ModelSerializer):
             'experience_working',
 
             "mailing_address",
-            "org_head",
+            "head_of_organization",
             "working_languages",
             "experiences",
         )
@@ -333,7 +333,7 @@ class PartnersListSerializer(serializers.ModelSerializer):
 
 class PartnersListItemSerializer(serializers.ModelSerializer):
     mailing_address = PartnerMailingAddressSerializer()
-    org_head = PartnerHeadOrganizationSerializer()
+    head_of_organization = PartnerHeadOrganizationSerializer()
     working_languages = serializers.ListField(source="profile.working_languages")
     experiences = PartnerExperienceSerializer(many=True)
 
@@ -342,7 +342,7 @@ class PartnersListItemSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "mailing_address",
-            "org_head",
+            "head_of_organization",
             "working_languages",
             "experiences",
         )
@@ -385,7 +385,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     have_authorised_officers = serializers.BooleanField(source="profile.have_authorised_officers")
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
-    org_head = PartnerHeadOrganizationSerializer(read_only=True)
+    head_of_organization = PartnerHeadOrganizationSerializer(read_only=True)
     connectivity = serializers.BooleanField(source="profile.connectivity")
     connectivity_excuse = serializers.CharField(source="profile.connectivity_excuse")
     working_languages = serializers.ListField(source="profile.working_languages")
@@ -400,7 +400,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
             'have_authorised_officers',
             'directors',
             'authorised_officers',
-            'org_head',
+            'head_of_organization',
             'connectivity',
             'connectivity_excuse',
             'working_languages',

@@ -68,6 +68,20 @@ class Partner(TimeStampedModel):
     def country_profiles(self):
         return self.__class__.objects.filter(hq=self)
 
+    @property
+    def head_of_organization(self):
+        if self.is_hq:
+            return self.org_head
+        else:
+            return self.hq.org_head
+
+    @property
+    def origin_budgets(self):
+        if self.is_hq:
+            return self.budgets
+        else:
+            return self.hq.budgets
+
 
 class PartnerProfile(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="profile")

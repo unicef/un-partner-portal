@@ -160,8 +160,8 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['working_languages_other'], working_languages_other)
         self.assertEquals(response.data['connectivity_excuse'], connectivity_excuse)
         # org head can't be changed
-        self.assertTrue(response.data['org_head']['first_name'] != first_name)
-        self.assertTrue(response.data['org_head']['email'] != email)
+        self.assertTrue(response.data['head_of_organization']['first_name'] != first_name)
+        self.assertTrue(response.data['head_of_organization']['email'] != email)
         self.assertEquals(response.data['mailing_address']['website'], website)
         self.assertEquals(len(response.data['directors']), len(directors))
 
