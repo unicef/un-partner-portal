@@ -8,6 +8,10 @@ import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import PartnerProfileHeaderMenu from './partnerProfileHeaderMenu';
 import HeaderNavigation from '../../../components/common/headerNavigation';
+import {
+  loadPartnerDetails,
+} from '../../../reducers/partnerProfileDetails';
+
 
 const styleSheet = (theme) => {
   const paddingIcon = theme.spacing.unit;
@@ -65,6 +69,10 @@ class PartnerProfileHeader extends Component {
       index: 0,
     };
     this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentWillMount() {
+    this.props.loadPartnerDetails();
   }
 
   partnerTitle() {
@@ -130,6 +138,7 @@ PartnerProfileHeader.propTypes = {
   location: PropTypes.string.isRequired,
   partner: PropTypes.object.isRequired,
   partnerId: PropTypes.string.isRequired,
+  loadPartnerDetails: PropTypes.func,
 };
 
 PartnerTitle.propTypes = {
@@ -139,20 +148,21 @@ PartnerTitle.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   tabs: state.agencyPartnerProfileNav.tabs,
-  partner: state.agencyPartnerProfile[ownProps.params.id],
+  partner: state.agencyPartnerProfile[ownProps.params.id] || {},
   profile: state.organizationProfile[ownProps.params.id],
   partnerId: ownProps.params.id,
   location: ownProps.location.pathname,
 });
 
-const mapDispatchToProps = () => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   onItemClick: (id, path) => {
     history.push(path);
   },
+  loadPartnerDetails: () => dispatch(loadPartnerDetails(ownProps.params.id)),
 });
 
 const connectedPartnerProfile = connect(mapStateToProps, mapDispatchToProps)(PartnerProfileHeader);
-const connectedPartnerTitle = connect(mapStateToProps, mapDispatchToProps)(PartnerTitle);
+const connectedPartnerTitle = connect(mapStateToProps)(PartnerTitle);
 withStyles(styleSheet, { name: '' })(connectedPartnerTitle);
 
 export default withStyles(styleSheet, { name: 'PartnerProfileHeader' })(connectedPartnerProfile);

@@ -43,6 +43,7 @@ export const loadCfei = (project, filters) => (dispatch) => {
 
 const extractSector = list => ({
   sector: list[0].category.toString(), areas: list.map(area => area.id.toString()) });
+
 const groupSpecializationsByCategory = () =>
   R.compose(R.map(extractSector), R.groupWith(R.eqProps('category')));
 

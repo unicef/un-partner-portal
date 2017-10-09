@@ -26,6 +26,7 @@ const FileDownloadButton = (props) => {
   return (
     <div
       role="button"
+      tabIndex={0}
       className={classes.wrapContentButton}
       onClick={() => { window.open(fileUrl); }}
     >
