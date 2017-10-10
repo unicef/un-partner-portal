@@ -5,7 +5,6 @@ import { withStyles } from 'material-ui/styles';
 import List, { ListSubheader } from 'material-ui/List';
 import CountryProfileItem from './countryProfileItem';
 import { selectCountryId } from '../../../reducers/countryProfiles';
-import EoiCountryCell from '../../../components/eois/cells/eoiCountryCell';
 
 const messages = {
   choose: 'Choose country',
@@ -44,8 +43,7 @@ class CountryProfileList extends Component {
     const currentIndex = this.props.countries.indexOf(country);
     const list = new Array(this.props.countries.length).fill(false);
     list[currentIndex] = true;
-
-    this.props.setSelectedCountryId(country.id);
+    this.props.setSelectedCountryId(country);
 
     this.setState({
       checkedItems: list,
