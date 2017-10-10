@@ -16,8 +16,20 @@ class SanctionedItem(TimeStampedModel):
     data_id = models.IntegerField(db_index=True, unique=True)
     listed_on = models.DateField(null=True, blank=True)
     last_updated = models.DateField(null=True, blank=True)
-    check_names = ArrayField(models.CharField(max_length=255))
     metadata = JSONField(null=True, blank=True)
 
     def __str__(self):
         return "DATAID: {}".format(self.data_id)
+
+
+class SanctionedName(TimeStampedModel):
+    item = models.ForeignKey(SanctionedItem, related_name='check_names')
+    name = models.CharField(max_length=255)
+    is_primary = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = (('item', 'name'),)
+
+    def __str__(self):
+        return "Name: {}".format(self.name)
