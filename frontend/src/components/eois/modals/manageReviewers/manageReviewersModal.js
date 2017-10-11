@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { submit } from 'redux-form';
 import PropTypes from 'prop-types';
 import ControlledModal from '../../../common/modals/controlledModal';
 import ManageReviewersForm from './manageReviewers';
 
 const messages = {
-  title: 'Edit Expression of Interests',
+  title: 'Manage Reviewers',
   header: {
-    open: {
-      title: 'Choose reviewers for this CFEI',
-      body: 'Email wll be sent to selected accounts',
-    },
+    title: 'Choose reviewers for this CFEI',
+    body: 'Email wll be sent to selected accounts',
   },
   save: 'send',
 };
@@ -57,4 +57,13 @@ ManageReviewersModal.propTypes = {
   handleDialogClose: PropTypes.func,
 };
 
-export default ManageReviewersModal;
+const mapDispatchToProps = dispatch => ({
+  submit: () => dispatch(submit('manageReviewers')),
+});
+
+const containerManageReviewersModal = connect(
+  null,
+  mapDispatchToProps,
+)(ManageReviewersModal);
+
+export default containerManageReviewersModal;

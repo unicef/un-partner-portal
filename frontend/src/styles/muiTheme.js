@@ -43,19 +43,6 @@ const theme = {
         alignItems: 'center',
       },
     },
-    MuiRadio: {
-      checked: {
-        color: getColorTheme()[500],
-      },
-    },
-    MuiCheckbox: {
-      checked: {
-        color: getColorTheme()[500],
-      },
-      disabled: {
-        color: getColorTheme()[200],
-      },
-    },
     MuiList: {
       root: {
         width: '100%',
@@ -133,6 +120,22 @@ const getTheme = () => (
         green: '#72C300',
         red: '#EA4022',
         blue: '#0099FF',
+      },
+    },
+    overrides: {
+      ...theme.overrides,
+      MuiRadio: {
+        checked: {
+          color: getColorTheme()[500],
+        },
+      },
+      MuiCheckbox: {
+        checked: {
+          color: getColorTheme()[500],
+        },
+        disabled: {
+          color: getColorTheme()[200],
+        },
       },
     },
   }

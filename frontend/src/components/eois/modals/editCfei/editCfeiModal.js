@@ -27,14 +27,14 @@ class EditCfeiModal extends Component {
   }
 
   render() {
-    const { id, submit, dialogOpen, handleDialogClose } = this.props;
+    const { id, submit, dialogOpen, handleDialogClose, type } = this.props;
     return (
       <div>
         <ControlledModal
           maxWidth="md"
           title={messages.title}
           trigger={dialogOpen}
-          info={messages.header}
+          info={messages.header[type]}
           buttons={{
             flat: {
               handleClick: handleDialogClose,

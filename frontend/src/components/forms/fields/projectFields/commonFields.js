@@ -148,13 +148,11 @@ export const ProjectPartners = () => (<SelectForm
   }}
 />);
 
-export const Reviewers = props => (<SelectForm
+export const Reviewers = () => (<SelectForm
   label="Select users"
   fieldName="reviewers"
-  placeholder="Select users"
   values={FOCAL}
   selectFieldProps={{
     multiple: true,
   }}
-  {...props}
 />);
