@@ -1,6 +1,6 @@
 from django.db.models.base import Model
 from rest_framework import serializers
-from .models import AdminLevel1, Point, Sector, Specialization
+from .models import AdminLevel1, Point, Sector, Specialization, CommonFile
 
 
 class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
@@ -84,4 +84,11 @@ class PointSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Point
+        fields = "__all__"
+
+
+class CommonFileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CommonFile
         fields = "__all__"

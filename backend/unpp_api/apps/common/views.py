@@ -2,8 +2,10 @@ from __future__ import absolute_import
 from rest_framework import status as statuses
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import ConfigSectorSerializer
-from .models import Sector
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import IsAuthenticated
+from .serializers import ConfigSectorSerializer, CommonFileSerializer
+from .models import Sector, CommonFile
 from .countries import COUNTRIES_ALPHA2_CODE_DICT
 from .consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
@@ -59,3 +61,12 @@ class ConfigSectorsAPIView(APIView):
         """
         data = ConfigSectorSerializer(Sector.objects.all(), many=True).data
         return Response(data, status=statuses.HTTP_200_OK)
+
+
+class CommonFileCreateAPIView(CreateAPIView):
+    """
+    Create Common File
+    """
+    permission_classes = (IsAuthenticated, )
+    queryset = CommonFile.objects.all()
+    serializer_class = CommonFileSerializer

@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^api/admin/', include(admin.site.urls)),
     url(r'^api/accounts/', include('account.urls', namespace='accounts')),
     url(r'^api/config/', include('common.urls', namespace='config')),
+    url(r'^api/common/', include('common.urls', namespace='common')),
     url(r'^api/projects/', include('project.urls', namespace='projects')),
     url(r'^api/agencies/', include('agency.urls', namespace='agencies')),
     url(r'^api/partners/', include('partner.urls', namespace='partners')),
