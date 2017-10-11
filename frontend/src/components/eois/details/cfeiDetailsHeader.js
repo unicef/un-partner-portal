@@ -14,7 +14,7 @@ import {
   selectCfeiTitle,
 } from '../../../store';
 import { loadCfei } from '../../../reducers/cfeiDetails';
-import { projectApplicationExists } from '../../../reducers/conceptNote';
+import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
 import SubmissionTab from './submissionTab';
 
 const messages = {
@@ -34,6 +34,10 @@ class CfeiHeader extends Component {
   componentWillMount() {
     this.props.loadCfeiDetails();
     this.props.loadProjectApplication();
+  }
+
+  componentWillUnmount() {
+    this.props.uploadCnClearState();
   }
 
   updatePath() {
@@ -56,7 +60,7 @@ class CfeiHeader extends Component {
     history.push(`/cfei/${type}`);
   }
 
-  renderTabs() {
+  cfeiTabs() {
     return this.props.tabs.map((tab, index) => {
       if (index === 1) {
         return <SubmissionTab label={tab.label} key={index} checked={this.props.cnFile} />;
@@ -69,7 +73,6 @@ class CfeiHeader extends Component {
   renderContent(index) {
     const {
       title,
-      tabs,
       children,
       role,
       params: { type },
@@ -83,8 +86,7 @@ class CfeiHeader extends Component {
     return (<HeaderNavigation
       index={index}
       title={title}
-      customTabs={this.renderTabs()}
-      tabs={tabs}
+      customTabs={() => this.cfeiTabs()}
       header={<HeaderOptionsContainer role={role} type={type} />}
       handleChange={this.handleChange}
       backButton
@@ -119,6 +121,7 @@ CfeiHeader.propTypes = {
   loading: PropTypes.bool,
   loadCfeiDetails: PropTypes.func,
   loadProjectApplication: PropTypes.func,
+  uploadCnClearState: PropTypes.func.isRequired,
   error: PropTypes.object,
   cnFile: PropTypes.string,
 };
@@ -134,6 +137,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
+  uploadCnClearState: () => dispatch(clearLocalState()),
   loadCfeiDetails: () => dispatch(loadCfei(ownProps.params.id)),
   loadProjectApplication: () => dispatch(projectApplicationExists(ownProps.params.id)),
 });

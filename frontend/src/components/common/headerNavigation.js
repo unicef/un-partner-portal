@@ -60,8 +60,8 @@ class HeaderNavigation extends Component {
       titleObject,
       backButton,
       handleBackButton,
-      tabs,
       customTabs,
+      tabs,
       children,
       header,
       handleChange } = this.props;
@@ -96,10 +96,10 @@ class HeaderNavigation extends Component {
               {header}
             </div>
           </SpreadContent>
-          {tabs
+          {customTabs || tabs
             ? <div>
               <Tabs value={index} onChange={handleChange}>
-                {customTabs ? customTabs.map(tab => tab) : tabs}
+                {customTabs ? customTabs() : this.renderTabs()}
               </Tabs>
             </div>
             : null
@@ -119,7 +119,7 @@ HeaderNavigation.propTypes = {
   backButton: PropTypes.bool,
   handleBackButton: PropTypes.func,
   tabs: PropTypes.array,
-  customTabs: PropTypes.node,
+  customTabs: PropTypes.func,
   children: PropTypes.node,
   header: PropTypes.Component,
   handleChange: PropTypes.Func,
