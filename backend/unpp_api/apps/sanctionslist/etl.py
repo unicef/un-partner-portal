@@ -16,6 +16,15 @@ def parse_alias(alias):
         return alias['ALIAS_NAME']
 
 
+def parse_last_updated(last_updated):
+    if isinstance(last_updated, list):
+        last_updated = last_updated[0]
+    else:
+        last_updated = last_updated
+
+    return parser.parse(last_updated).date() if last_updated else None
+
+
 def normalize_person_names(person):
     normalized_names = []
     # Clean out first, second, third name
@@ -57,26 +66,30 @@ def normalize_entity_names(entity):
 
 def parse_unsc_individuals(indivs):
     for person in indivs:
-        # normalized_names = normalize_person_names(person)
         listed_on = parser.parse(person['LISTED_ON']).date()
-        # last_updated = parser.parse(person['LAST_DAY_UPDATED']).date()
+        last_updated = parse_last_updated(person['LAST_DAY_UPDATED']['VALUE'])
+
         obj, created = SanctionedItem.objects.update_or_create(
             sanctioned_type=SANCTION_LIST_TYPES.individual,
             data_id=int(person['DATAID']),
-            defaults={'listed_on': listed_on})
+            defaults={'listed_on': listed_on, 'last_updated': last_updated})
 
         for name in normalize_person_names(person):
-            SanctionedName.objects.get_or_create(item=obj, name=name)
+            obj, created = SanctionedName.objects.get_or_create(item=obj, name=name)
 
 
 def parse_unsc_entities(entities):
     for entity in entities:
         listed_on = parser.parse(entity['LISTED_ON']).date()
+        last_updated = parse_last_updated(entity['LAST_DAY_UPDATED']['VALUE'])
+
         obj, created = SanctionedItem.objects.update_or_create(
             sanctioned_type=SANCTION_LIST_TYPES.entity,
             data_id=int(entity['DATAID']),
-            defaults={'listed_on': listed_on})
+            defaults={'listed_on': listed_on, 'last_updated': last_updated})
 
+        # TODO - keep list of present names and deactivate those not present
+        # Holding off on now so everything isn't deactivated should some structure change
         for name in normalize_entity_names(entity):
             SanctionedName.objects.get_or_create(item=obj, name=name)
 
