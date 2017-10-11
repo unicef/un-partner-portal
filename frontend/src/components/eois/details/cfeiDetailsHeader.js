@@ -15,7 +15,6 @@ import {
 } from '../../../store';
 import { loadCfei } from '../../../reducers/cfeiDetails';
 import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
-import SubmissionTab from './submissionTab';
 
 const messages = {
   noCfei: 'Sorry but this cfei doesn\'t exist',
@@ -63,7 +62,7 @@ class CfeiHeader extends Component {
   cfeiTabs() {
     return this.props.tabs.map((tab, index) => {
       if (index === 1) {
-        return <SubmissionTab label={tab.label} key={index} checked={this.props.cnFile} />;
+        return <CustomTab label={tab.label} key={index} checked={this.props.cnFile} />;
       }
 
       return <CustomTab label={tab.label} key={index} />;
