@@ -10,6 +10,7 @@ import PreselectButton from '../../buttons/preselectButton';
 import GridRow from '../../../common/grid/gridRow';
 import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
 import ApplicationStatusCell from '../../cells/applicationStatusCell';
+import ApplicationCnIdCell from '../../cells/applicationCnIdCell';
 import { loadApplications } from '../../../../reducers/partnersApplicationsList';
 import { isQueryChanged } from '../../../../helpers/apiHelper';
 
@@ -36,6 +37,12 @@ const applicationsCells = ({ row, column }) => {
       name={row.name}
     />);
   }
+  if (column.name === 'id') {
+    return (<ApplicationCnIdCell
+      id={row.id}
+    />
+    );
+  }
   if (column.name === 'status') {
     return (<ApplicationStatusCell
       id={row.id}
@@ -49,11 +56,18 @@ const applicationsCells = ({ row, column }) => {
 };
 /* eslint-enable react/prop-types */
 class ApplicationsListContainer extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
+
+  componentWillMount() {
+    const { id, query } = this.props;
+    this.props.loadApplications(id, query);
+  }
+
+  shouldComponentUpdate(nextProps) {
     const { id, query } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
       this.props.loadApplications(id, nextProps.location.query);
+      return false;
     }
 
     return true;

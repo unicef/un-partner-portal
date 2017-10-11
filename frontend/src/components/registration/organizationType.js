@@ -12,6 +12,8 @@ import RadioForm from '../forms/radioForm';
 import SelectForm from '../forms/selectForm';
 import AlertDialog from '../common/alertDialog';
 
+import { selectNormalizedOrganizationTypes } from '../../store';
+
 const messages = {
   header: 'This portal is not intended for private sector companies, ' +
   'goverment ministries or agencies and individuals. ',
@@ -87,32 +89,9 @@ const RADIO_VALUES = [
   },
 ];
 
-const MENU_VALUES = [
-  {
-    value: 'CBO',
-    label: 'Community Based Organization (CBO)',
-  },
-  {
-    value: 'NGO',
-    label: 'National NGO',
-  },
-  {
-    value: 'Int',
-    label: 'International NGO (INGO)',
-  },
-  {
-    value: 'Aca',
-    label: 'Academic Institution',
-  },
-  {
-    value: 'RCC',
-    label: 'Red Cross/Red Crescent Movement',
-  },
-];
-
 
 const OrganizationTypes = (props) => {
-  const { classes, organization, office, reset } = props;
+  const { classes, organization, organizationTypes, office, reset } = props;
   return (
     <Grid item>
       <Grid item>
@@ -126,7 +105,7 @@ const OrganizationTypes = (props) => {
       <SelectForm
         fieldName={'json.partner.display_type'}
         label={messages.labels.organizationType}
-        values={MENU_VALUES}
+        values={organizationTypes}
         infoIcon
         infoText={messages.tooltip}
       />
@@ -166,6 +145,10 @@ OrganizationTypes.propTypes = {
    * function from redux form to reset form state
    */
   reset: PropTypes.func,
+  /**
+   * array of values for selection field
+   */
+  organizationTypes: PropTypes.array,
 };
 
 const selector = formValueSelector('registration');
@@ -173,6 +156,7 @@ const connectedOrganizationTypes = connect(
   state => ({
     office: selector(state, 'office'),
     organization: selector(state, 'json.partner.display_type'),
+    organizationTypes: selectNormalizedOrganizationTypes(state),
   }),
 )(OrganizationTypes);
 

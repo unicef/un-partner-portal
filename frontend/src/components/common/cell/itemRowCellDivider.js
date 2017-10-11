@@ -36,7 +36,10 @@ const ItemRowCellDivider = (props) => {
           <Typography color={labelSecondary ? 'secondary' : 'inherit'} type="body1" >{label}</Typography>
         </Grid>
         <Grid item xs={4} >
-          <Typography type="body1" >{content}</Typography>
+          { Array.isArray(content)
+            ? content.map(item => <Typography type="body1" >{item}</Typography>)
+            : <Typography type="body1" >{content}</Typography>
+          }
         </Grid>
       </Grid>
       {!divider

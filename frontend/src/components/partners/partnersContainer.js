@@ -20,11 +20,17 @@ const messages = {
 };
 
 class PartnersContainer extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
+  componentWillMount() {
+    const { query } = this.props;
+    this.props.loadPartners(query);
+  }
+
+  shouldComponentUpdate(nextProps) {
     const { query } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
       this.props.loadPartners(nextProps.location.query);
+      return false;
     }
 
     return true;

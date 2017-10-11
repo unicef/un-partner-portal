@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
+import Loader from '../../common/loader';
 
 const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 2;
@@ -28,7 +29,7 @@ class HeaderList extends Component {
   }
 
   render() {
-    const { classes, header } = this.props;
+    const { classes, header, loading } = this.props;
     return (
       <Paper>
         <Grid direction="column" className={classes.container} container spacing={0}>
@@ -38,7 +39,9 @@ class HeaderList extends Component {
               : header
             }
           </Grid>
-          {this.renderChildren()}
+          <Loader loading={loading} >
+            {this.renderChildren()}
+          </Loader>
         </Grid>
       </Paper>
     );
@@ -49,6 +52,7 @@ HeaderList.propTypes = {
   classes: PropTypes.object.isRequired,
   header: PropTypes.object,
   rows: PropTypes.func.isRequired,
+  loading: PropTypes.bool,
 };
 
 export default withStyles(styleSheet, { name: 'HeaderList' })(HeaderList);

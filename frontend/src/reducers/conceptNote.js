@@ -79,8 +79,7 @@ export default function conceptNoteReducer(state = initialState, action) {
       return stopLoading(state);
     }
     case UPLOAD_CN_STARTED: {
-      clearError(state);
-      return startLoading(state);
+      return startLoading(clearError(state));
     }
     case UPLOAD_CN_SUCCESS: {
       return saveReponse(state, action);

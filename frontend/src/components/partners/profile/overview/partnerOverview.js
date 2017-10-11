@@ -30,7 +30,7 @@ PartnerOverview.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  partner: state.agencyPartnerProfile[ownProps.params.id],
+  partner: state.agencyPartnerProfile[ownProps.params.id] || {},
 });
 
 export default connect(mapStateToProps)(PartnerOverview);
