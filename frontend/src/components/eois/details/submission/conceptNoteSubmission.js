@@ -25,7 +25,6 @@ const messages = {
   upload_2: 'You will be at risk of disqualification if the proper Concept Note formatting is not used',
   confirm: 'I confirm that my profile is up to date',
   lastUpdate: 'Last profile update:',
-  update: '12 Sep 2017',
   notSure: 'Not sure?',
   viewProfile: 'View your profile.',
   deadline: 'Application deadline: ',
@@ -162,7 +161,7 @@ class ConceptNoteSubmission extends Component {
     const { cnUploaded, fileSelectedLocal } = this.props;
 
     if (cnUploaded) {
-      return cnUploaded.cn.split('/').pop();
+      return cnUploaded.split('/').pop();
     } else if (fileSelectedLocal) {
       return fileSelectedLocal.name;
     }
@@ -190,7 +189,7 @@ class ConceptNoteSubmission extends Component {
           <div className={classes.alignVertical}>
             <Checkbox
               disabled={cnUploaded}
-              checked={confirmProfile}
+              checked={confirmProfile || cnUploaded}
               onChange={(event, checked) => this.handleCheck(event, checked)}
             />
             <div className={classes.paddingTop}>
@@ -279,12 +278,13 @@ ConceptNoteSubmission.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  partnerId: ownProps.params.id,
+  partnerId: state.partnerInfo.id,
   loader: state.conceptNote.loading,
   cnUploaded: state.conceptNote.cnFile,
   errorUpload: state.conceptNote.error,
   confirmProfile: state.conceptNote.confirmProfileUpdated,
   fileSelectedLocal: state.conceptNote.fileSelectedLocal,
+  deadline: state.cfeiDetails[ownProps.params.id].deadline_date,
 });
 
 const mapDispatch = (dispatch, ownProps) => {

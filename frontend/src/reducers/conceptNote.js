@@ -5,7 +5,7 @@ import {
   stopLoading,
   saveErrorMsg,
 } from './apiStatus';
-import { uploadConceptNote } from '../helpers/api/api';
+import { uploadConceptNote, getProjectApplication } from '../helpers/api/api';
 
 export const UPLOAD_CN_STARTED = 'UPLOAD_CN_STARTED';
 export const UPLOAD_CN_SUCCESS = 'UPLOAD_CN_SUCCESS';
@@ -17,6 +17,16 @@ export const UPLOAD_CN_CLEAR_ERROR = 'UPLOAD_CN_CLEAR_ERROR';
 export const UPLOAD_CN_CLEAR = 'UPLOAD_CN_CLEAR';
 export const UPLOAD_CN_LOCAL_FILE = 'UPLOAD_CN_LOCAL_FILE';
 
+export const PROJECT_APP_LOAD_STARTED = 'PROJECT_APP_LOAD_STARTED';
+export const PROJECT_APP_LOAD_SUCCESS = 'PROJECT_APP_LOAD_SUCCESS';
+export const PROJECT_APP_LOAD_FAILURE = 'PROJECT_APP_LOAD_FAILURE';
+export const PROJECT_APP_LOAD_ENDED = 'PROJECT_APP_LOAD_ENDED';
+
+export const projectAppLoadStarted = () => ({ type: PROJECT_APP_LOAD_STARTED });
+export const projectAppLoadSuccess = response => ({ type: PROJECT_APP_LOAD_SUCCESS, response });
+export const projectAppLoadFailure = error => ({ type: PROJECT_APP_LOAD_FAILURE, error });
+export const projectAppLoadEnded = () => ({ type: PROJECT_APP_LOAD_ENDED });
+
 export const uploadCnStarted = () => ({ type: UPLOAD_CN_STARTED });
 export const uploadCnSuccess = response => ({ type: UPLOAD_CN_SUCCESS, response });
 export const uploadCnFailure = error => ({ type: UPLOAD_CN_FAILURE, error });
@@ -26,8 +36,6 @@ export const deleteCn = () => ({ type: UPLOAD_CN_DELETE });
 export const clearLocalState = () => ({ type: UPLOAD_CN_CLEAR });
 export const selectLocalCnFile = file => ({ type: UPLOAD_CN_LOCAL_FILE, file });
 export const confirmProfileUpdated = confirmation => ({ type: UPLOAD_CN_CONFIRM, confirmation });
-
-const saveReponse = (state, action) => R.assoc('cnFile', action.response, state);
 
 const confirmProfile = (state, action) => R.assoc('confirmProfileUpdated', action.confirmation, state);
 
@@ -40,12 +48,33 @@ const clearConceptNoteState = (state) => {
   return R.assoc('cnFile', false, clearLocalFile);
 };
 
+const saveConceptNote = (state, action) => {
+  const file = R.assoc('cnFile', action.response.cn, state);
+  return R.assoc('created', action.response.created, file);
+};
+
+export const projectApplicationExists = partnerId => (dispatch) => {
+  dispatch(projectAppLoadStarted());
+
+  return getProjectApplication(partnerId)
+    .then((profiles) => {
+      dispatch(projectAppLoadEnded());
+      dispatch(projectAppLoadSuccess(profiles));
+    })
+    .catch((error) => {
+      dispatch(projectAppLoadEnded());
+      dispatch(projectAppLoadFailure(error));
+    });
+};
+
 const messages = {
   uploadFailed: 'Uploaded concept note failed, please try again.',
 };
 
 const initialState = {
   loading: false,
+  created: null,
+  loadingApplication: false,
   cnFile: null,
   confirmProfileUpdated: false,
   fileSelectedLocal: null,
@@ -82,7 +111,7 @@ export default function conceptNoteReducer(state = initialState, action) {
       return startLoading(clearError(state));
     }
     case UPLOAD_CN_SUCCESS: {
-      return saveReponse(state, action);
+      return saveConceptNote(state, action);
     }
     case UPLOAD_CN_CLEAR_ERROR: {
       return clearError(state);
@@ -98,6 +127,19 @@ export default function conceptNoteReducer(state = initialState, action) {
     }
     case UPLOAD_CN_CLEAR: {
       return clearConceptNoteState(state);
+    }
+    case PROJECT_APP_LOAD_FAILURE: {
+      return saveErrorMsg(state, action);
+    }
+    case PROJECT_APP_LOAD_ENDED: {
+      return stopLoading(state);
+    }
+    case PROJECT_APP_LOAD_STARTED: {
+      clearError(state);
+      return startLoading(state);
+    }
+    case PROJECT_APP_LOAD_SUCCESS: {
+      return saveConceptNote(state, action);
     }
     default:
       return state;
