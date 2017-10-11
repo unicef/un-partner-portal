@@ -16,12 +16,6 @@ const styleSheet = (theme) => {
       userSelect: 'none',
       padding: 0,
     },
-    checked: {
-      color: theme.palette.secondary[500],
-    },
-    disabled: {
-      color: theme.palette.secondary[200],
-    },
   };
 };
 
@@ -38,10 +32,6 @@ const CountryProfileItem = (props) => {
         checked={country.profile ? true : selected}
         disabled={country.profile}
         tabIndex="-1"
-        classes={{
-          checked: classes.checked,
-          disabled: classes.disabled,
-        }}
       />
 
       <ListItemText

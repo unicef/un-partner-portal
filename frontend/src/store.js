@@ -24,7 +24,6 @@ import applicationsNotesList from './reducers/applicationsNotesList';
 import applicationsUnsolicitedList from './reducers/applicationsUnsolicitedList';
 import applicationsDirectList from './reducers/applicationsDirectList';
 import conceptNote from './reducers/conceptNote';
-import population from './reducers/population';
 import partnerInfo from './reducers/partnerInfo';
 import organizationProfileNav from './reducers/organizationProfileNav';
 import organizationProfile from './reducers/organizationProfile';
@@ -62,7 +61,6 @@ const mainReducer = combineReducers({
   agencyPartnerProfileNav,
   agencyPartnerProfile,
   form: formReducer,
-  population,
   routing: routerReducer,
   sectors,
   partnersApplicationsList,
@@ -107,7 +105,7 @@ export const selectNormalizedWorkingLanguages = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['working-languages']);
 
 export const selectNormalizedPopulationsOfConcernGroups = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['population-of-concerns-groups']);
+  mapValuesForSelectionField(state.partnerProfileConfig['population-of-concern']);
 
 export const selectNormalizedStaffGlobalyChoices = state =>
   mapValuesForSelectionSortValue(state.partnerProfileConfig['staff-globaly-choices']);
@@ -115,8 +113,26 @@ export const selectNormalizedStaffGlobalyChoices = state =>
 export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices']);
 
+export const selectNormalizedAuditTypes = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['audit-types']);
+
+export const selectNormalizedCapacityAssessments = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['formal-capacity-assessment']);
+
 export const selectNormalizedPartnerDonors = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['partner-donors']);
+
+export const selectNormalizedMethodAccAdopted = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['method-acc-adopted-choices']);
+
+export const selectNormalizedFinancialControlSystem = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['financial-control-system-choices']);
+
+export const selectNormalizedFunctionalResponsibility = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['functional-responsibility-choices']);
+
+export const selectNormalizedPolicyArea = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['policy-area-choices']);
 
 export const selectNormalizedPopulations = state =>
   mapValuesForSelectionField(state.population);

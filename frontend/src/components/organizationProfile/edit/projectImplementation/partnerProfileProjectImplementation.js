@@ -1,5 +1,8 @@
 import React from 'react';
+import R from 'ramda';
 import PropTypes from 'prop-types';
+import { formValueSelector } from 'redux-form';
+import { connect } from 'react-redux';
 import PartnerProfileProjectImplementationManagement from './partnerProfileProjectImplementationManagement';
 import PartnerProfileProjectImplementationFinancialControls from './partnerProfileProjectImplementationFinancialControls';
 import PartnerProfileProjectImplementationInternalControls from './partnerProfileProjectImplementationInternalControls';
@@ -8,8 +11,8 @@ import PartnerProfileProjectImplementationAudit from './partnerProfileProjectImp
 import PartnerProfileProjectImplementationReporting from './partnerProfileProjectImplementationReporting';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 
-const STEPS = readOnly => [
-  {
+const STEPS = (readOnly, isCountryProfile) => {
+  const hqSteps = [{
     component: <PartnerProfileProjectImplementationManagement readOnly={readOnly} />,
     label: 'Programme Management',
     name: 'program_management',
@@ -22,12 +25,12 @@ const STEPS = readOnly => [
   {
     component: <PartnerProfileProjectImplementationInternalControls readOnly={readOnly} />,
     label: 'Internal Controls',
-    name: 'internalControls',
+    name: 'internal_control',
   },
   {
     component: <PartnerProfileProjectImplementationBankingInfo readOnly={readOnly} />,
     label: 'Banking Information',
-    name: 'bankingInformation',
+    name: 'banking_information',
   },
   {
     component: <PartnerProfileProjectImplementationAudit readOnly={readOnly} />,
@@ -37,24 +40,37 @@ const STEPS = readOnly => [
   {
     component: <PartnerProfileProjectImplementationReporting readOnly={readOnly} />,
     label: 'Reporting',
-    name: 'reporting',
-  },
-];
+    name: 'report',
+  }];
+
+  if (!isCountryProfile) {
+    return R.remove(3, 1, hqSteps);
+  }
+
+  return hqSteps;
+};
 
 const PartnerProfileProjectImplementation = (props) => {
-  const { readOnly } = props;
+  const { readOnly, isCountryProfile } = props;
 
   return (
     <PartnerProfileStepperContainer
       name="project_impl"
       readOnly={readOnly}
-      steps={STEPS(readOnly)}
+      steps={STEPS(readOnly, isCountryProfile)}
     />
   );
 };
 
 PartnerProfileProjectImplementation.propTypes = {
   readOnly: PropTypes.bool,
+  isCountryProfile: PropTypes.object.isRequired,
 };
 
-export default PartnerProfileProjectImplementation;
+const selector = formValueSelector('partnerProfile');
+export default connect(
+  state => ({
+    isCountryProfile: selector(state, 'identification.registration.hq'),
+  }),
+)(PartnerProfileProjectImplementation);
+
