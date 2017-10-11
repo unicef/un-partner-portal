@@ -82,6 +82,10 @@ export function postDirectCfei(body) {
   return authorizedPost('/projects/direct/', body);
 }
 
+export function patchCfei(body, id) {
+  return authorizedPatch(`/projects/${id}/`, body);
+}
+
 export function uploadConceptNote(projectId, body) {
   return authorizedPostUpload(`/projects/${projectId}/partner-applications/`, body);
 }

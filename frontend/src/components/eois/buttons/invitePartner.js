@@ -7,23 +7,19 @@ const messages = {
   text: 'Invite partner',
 };
 
-const editItem = (id) => {
-  console.log(`Partner Invite: ${id}`);
-};
-
 const EditItemIcon = (props) => {
-  const { id } = props;
+  const { handleClick } = props;
   return (
     <IconWithTextButton
       icon={<PersonAdd />}
       text={messages.text}
-      onClick={() => editItem(id)}
+      onClick={handleClick}
     />
   );
 };
 
 EditItemIcon.propTypes = {
-  id: PropTypes.string,
+  handleClick: PropTypes.func,
 };
 
 export default EditItemIcon;

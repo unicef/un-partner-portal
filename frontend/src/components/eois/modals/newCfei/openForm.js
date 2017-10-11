@@ -1,11 +1,11 @@
 import React from 'react';
-import { reduxForm, FormSection } from 'redux-form';
+import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
-import * as fields from './commonFields';
-import GridColumn from '../../common/grid/gridColumn';
+import * as fields from '../../../forms/fields/projectFields/commonFields';
+import GridColumn from '../../../common/grid/gridColumn';
 import ProjectDetails from './ProjectDetails';
-import SelectionField from '../../forms/fields/projectFields/selectionCriteria/selectionFieldArray';
+import SelectionField from '../../../forms/fields/projectFields/selectionCriteria/selectionFieldArray';
 
 const messages = {
   selectionCriteria: 'Selection Criteria',
