@@ -9,6 +9,8 @@ import Duplicate from '../../buttons/duplicateButton';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import AddInformedPartners from '../../modals/callPartners/addInformedPartners';
+import ManageReviewersModal from '../../modals/manageReviewers/manageReviewersModal';
+
 
 const edit = 'edit';
 const invite = 'invite';
@@ -35,7 +37,7 @@ const PartnerOpenHeaderOptions = (props) => {
             },
             {
               name: manage,
-              content: <Reviewers id={id} onClick={() => handleDialogOpen(manage)} />,
+              content: <Reviewers handleClick={() => handleDialogOpen(manage)} />,
             },
             {
               name: duplicate,
@@ -51,6 +53,11 @@ const PartnerOpenHeaderOptions = (props) => {
         handleDialogClose={handleDialogClose}
       />}
       {dialogOpen[invite] && <AddInformedPartners
+        id={id}
+        dialogOpen={dialogOpen}
+        handleDialogClose={handleDialogClose}
+      />}
+      {dialogOpen[manage] && <ManageReviewersModal
         id={id}
         dialogOpen={dialogOpen}
         handleDialogClose={handleDialogClose}
