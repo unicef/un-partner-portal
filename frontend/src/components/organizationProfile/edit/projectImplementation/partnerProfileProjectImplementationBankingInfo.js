@@ -1,73 +1,69 @@
 import React from 'react';
-import { FormSection } from 'redux-form';
-import Grid from 'material-ui/Grid';
+import { formValueSelector, FormSection } from 'redux-form';
 import PropTypes from 'prop-types';
-import SelectForm from '../../../forms/selectForm';
+import { connect } from 'react-redux';
+import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import { visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
+import GridColumn from '../../../common/grid/gridColumn';
 
-const BOOL_VAL = [
-  {
-    value: 'yes',
-    label: 'Yes',
-  },
-  {
-    value: 'no',
-    label: 'No',
-  },
-];
+const messages = {
+  hasBankAccount: 'Does the organization have a bank account?',
+  hasSeparateAccount: 'Does the organization currently maintain, or has it previously maintained, ' +
+            'a seperate interest-bearing account for UN funded projects that require a seperate ' +
+            'account?',
+  explain: 'Briefly explain the system used',
+};
 
 const PartnerProfileProjectImplementationBankingInfo = (props) => {
-  const { readOnly } = props;
+  const { readOnly, haveSeparateBankAccount } = props;
 
   return (
-    <FormSection name="bankingInformation">
-      <Grid item>
-        <Grid container direction="column" spacing={16}>
-          <Grid item>
-            <SelectForm
-              fieldName="hasBankAccount"
-              label="Does the organization have a bank account?"
-              values={BOOL_VAL}
-              optional
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-          <Grid item>
-            <SelectForm
-              fieldName="hasInterestAccount"
-              label={'Does the organization currently maintain, or has it previously maintained, ' +
-            'a seperate interest-bearing account for UN funded projects that require a seperate ' +
-            'account?'}
-              values={BOOL_VAL}
-              optional
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-          <Grid item sm={6} xs={12}>
-            <TextFieldForm
-              label="Briefly explain the system used"
-              placeholder="200 character maximum"
-              fieldName="bankingDescription"
-              textFieldProps={{
-                inputProps: {
-                  maxLength: '200',
-                },
-              }}
-              optional
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
+    <FormSection name="banking_information">
+      <GridColumn>
+        <RadioForm
+          fieldName={'have_bank_account'}
+          label={messages.hasBankAccount}
+          values={BOOL_VAL}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        <RadioForm
+          fieldName={'have_separate_bank_account'}
+          label={messages.hasSeparateAccount}
+          values={BOOL_VAL}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        {visibleIfNo(haveSeparateBankAccount)
+          ? <TextFieldForm
+            label={messages.explain}
+            fieldName="explain"
+            textFieldProps={{
+              inputProps: {
+                maxLength: '200',
+              },
+            }}
+            optional
+            warn
+            readOnly={readOnly}
+          />
+          : null}
+      </GridColumn>
     </FormSection>
   );
 };
 
 PartnerProfileProjectImplementationBankingInfo.propTypes = {
   readOnly: PropTypes.bool,
+  haveSeparateBankAccount: PropTypes.array,
 };
 
-export default PartnerProfileProjectImplementationBankingInfo;
+const selector = formValueSelector('partnerProfile');
+export default connect(
+  state => ({
+    haveSeparateBankAccount: selector(state, 'project_impl.banking_information.have_separate_bank_account'),
+  }),
+)(PartnerProfileProjectImplementationBankingInfo);

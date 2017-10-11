@@ -48,6 +48,14 @@ const theme = {
         color: getColorTheme()[500],
       },
     },
+    MuiCheckbox: {
+      checked: {
+        color: getColorTheme()[500],
+      },
+      disabled: {
+        color: getColorTheme()[200],
+      },
+    },
     MuiList: {
       root: {
         width: '100%',
@@ -110,6 +118,10 @@ const getTheme = () => (
       success: {
         primary: '#72C300',
         secondary: '#BEF078',
+      },
+      common: {
+        arrayFormOuter: '#F5F5F5',
+        arrayFormInner: '#E0E0E0',
       },
       eoiStatus: {
         completed: '#5B92E5',

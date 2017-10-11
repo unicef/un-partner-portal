@@ -113,13 +113,19 @@ const partnerDetailsStructure = {
       partnership_collaborate_institution_desc: null,
     },
     accreditation: {
-      collaboration_evidences: null,
+      accreditations: null,
     },
-    references: {
-      collaboration_evidences: null,
+    reference: {
+      references: null,
     },
+    collaboration_evidences: null,
   },
   project_impl: {
+    banking_information: {
+      have_bank_account: null,
+      have_separate_bank_account: null,
+      explain: null,
+    },
     program_management: {
       have_management_approach: null,
       management_approach_desc: null,
@@ -134,7 +140,7 @@ const partnerDetailsStructure = {
       have_system_track: null,
       financial_control_system_desc: null,
     },
-    internal_controls: {
+    internal_control: {
       internal_controls: null,
       experienced_staff: null,
       experienced_staff_desc: null,
@@ -142,6 +148,7 @@ const partnerDetailsStructure = {
     },
     audit: {
       regular_audited: null,
+      regular_audited_comment: null,
       org_audits: null,
       most_recent_audit_report: null,
       link_report: null,

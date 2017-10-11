@@ -2,40 +2,69 @@ import React from 'react';
 import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
-import SelectForm from '../../../forms/selectForm';
+import ArrayForm from '../../../forms/arrayForm';
+import DatePickerForm from '../../../forms/datePickerForm';
+import FileForm from '../../../forms/fileForm';
+import TextFieldForm from '../../../forms/textFieldForm';
 
+const messages = {
+  myReferences: 'My References',
+  reference: 'Reference',
+  date: 'Date Received',
+  referring: 'Name of referring organization',
+};
 
-const DONORS_MENU = [
-  {
-    value: '1',
-    label: 'Individuals',
-  },
-  {
-    value: '2',
-    label: 'United Nations Agency',
-  },
-  {
-    value: '3',
-    label: 'Governments',
-  },
-];
+const Reference = readOnly => member => (
+  <Grid container direction="row">
+    <Grid item sm={6} xs={12} >
+      <TextFieldForm
+        label={messages.referring}
+        fieldName={`${member}.organization_name`}
+        optional
+        warn
+        readOnly={readOnly}
+      />
+    </Grid>
+  </Grid>
+);
+
+const ReferenceInner = readOnly => member => (
+  <Grid container direction="row">
+    <Grid item sm={6} xs={12} >
+      <DatePickerForm
+        label={messages.date}
+        fieldName={`${member}.date_received`}
+        optional
+        warn
+        readOnly={readOnly}
+      />
+    </Grid>
+    <Grid item sm={6} xs={12} >
+      <FileForm
+        fieldName={`${member}.evidence_file`}
+        label={messages.reference}
+        optional
+        warn
+        readOnly={readOnly}
+      />
+    </Grid>
+  </Grid>
+);
 
 const PartnerProfileCollaborationReferences = (props) => {
   const { readOnly } = props;
-  return (
-    <FormSection name="references">
-      <Grid item>
-        <SelectForm
-          fieldName="donors"
-          label="Please select the type of donors that fund your agency"
-          values={DONORS_MENU}
-          onFieldChange={this.handleDonorFieldChange}
-          optional
-          warn
-          readOnly={readOnly}
-        />
-      </Grid>
-    </FormSection>
+
+  return (<FormSection name="reference">
+    <ArrayForm
+      label={messages.myReferences}
+      fieldName="references"
+      initial
+      limit={15}
+      readOnly={readOnly}
+      outerField={Reference(readOnly)}
+      innerField={ReferenceInner(readOnly)}
+    />
+  </FormSection>
   );
 };
 

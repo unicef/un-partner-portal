@@ -1,196 +1,174 @@
 import React from 'react';
-import { FormSection } from 'redux-form';
+import { formValueSelector, FormSection } from 'redux-form';
 import PropTypes from 'prop-types';
-import Paper from 'material-ui/Paper';
+import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
-
-import { FormLabel } from 'material-ui/Form';
-
 import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
+import SelectForm from '../../../forms/selectForm';
+import ArrayForm from '../../../forms/arrayForm';
+import GridColumn from '../../../common/grid/gridColumn';
+import { selectNormalizedPolicyArea, selectNormalizedFunctionalResponsibility } from '../../../../store';
 
-const BOOL_VAL = [
-  {
-    value: 'yes',
-    label: 'Yes',
-  },
-  {
-    value: 'no',
-    label: 'No',
-  },
-];
+const messages = {
+  areaOfResponsibilityDesc: 'Area of Responsibility - Has the organization instituted safeguards to ensure the following functional responsibilities are appropriately segregated?',
+  areaOfResponsibility: 'Area of Responsibility',
+  segregationOf: 'Segregation of Duties',
+  pleaseComment: 'Please comment',
+  experiencedStaff: 'Does the organization have an adequate number of experienced staff responsible for financial management in all operations?',
+  policyArea: 'Policy Area - Does the organization have formal documented policies applicable to all operations that cover the following areas?',
+  selectArea: 'Select Area',
+  documentedPolicies: 'Documented Policies?',
+};
 
-const PartnerProfileProjectImplementationInternalControls = (props) => {
-  const { readOnly } = props;
+const InternalControls = (values, readOnly, ...props) => (member, index, fields) => {
+  const chosenAreas = fields.getAll().map(field => field.area);
+  const ownArea = fields.get(index).area;
+  const newValues = values.filter(value =>
+    (ownArea === value.value) || !(chosenAreas.includes(value.value)));
 
   return (
-    <FormSection name="internalControls">
-      <Grid item>
-        <Grid container direction="column" spacing={16}>
-          <Grid item>
-            <FormLabel>{'For each of the following areas of responsibility has the organization instituted safeguards to ensure the following functional responsibilities are appropriately segregated?'}</FormLabel>
-          </Grid>
-          <Grid item>
-            <Paper elevation={4} style={{ maxWidth: '100%', padding: '1em 1em 3em' }}>
-              <Grid container direction="column">
-                <Grid item>
-                  <Grid container direction="column">
-                    <Grid item sm={6} xs={12}>
-                      <RadioForm
-                        fieldName="procurementSegregated"
-                        label="Procurement"
-                        values={BOOL_VAL}
-                        optional
-                        warn
-                        readOnly={readOnly}
-                      />
-                    </Grid>
-                    <Grid item sm={6} xs={12}>
-                      <TextFieldForm
-                        label="Please comment"
-                        placeholder="200 character maximum"
-                        fieldName="procurementDescription"
-                        textFieldProps={{
-                          inputProps: {
-                            maxLength: '200',
-                          },
-                        }}
-                        optional
-                        warn
-                        readOnly={readOnly}
-                      />
-                    </Grid>
-                    <div />
-                  </Grid>
-                </Grid>
-                <Grid item>
-                  <Grid container direction="column">
-                    <Grid item sm={6} xs={12}>
-                      <RadioForm
-                        fieldName="authorizationSegregated"
-                        label="Authorization to execute a transaction"
-                        values={BOOL_VAL}
-                        optional
-                        warn
-                        readOnly={readOnly}
-                      />
-                    </Grid>
-                    <Grid item sm={6} xs={12}>
-                      <TextFieldForm
-                        label="Please comment"
-                        placeholder="200 character maximum"
-                        fieldName="authorizationDescription"
-                        textFieldProps={{
-                          inputProps: {
-                            maxLength: '200',
-                          },
-                        }}
-                        optional
-                        warn
-                        readOnly={readOnly}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item>
-                  <Grid container direction="column">
-                    <Grid item sm={6} xs={12}>
-                      <RadioForm
-                        fieldName="transactionRecordingSegregated"
-                        label="Recording of a transaction"
-                        values={BOOL_VAL}
-                        optional
-                        warn
-                        readOnly={readOnly}
-                      />
-                    </Grid>
-                    <Grid item sm={6} xs={12}>
-                      <TextFieldForm
-                        label="Please comment"
-                        placeholder="200 character maximum"
-                        fieldName="transactionDescription"
-                        textFieldProps={{
-                          inputProps: {
-                            maxLength: '200',
-                          },
-                        }}
-                        optional
-                        warn
-                        readOnly={readOnly}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
-          <Grid item>
-            <Grid container direction="row">
-              <Grid item sm={6} xs={12}>
-                <RadioForm
-                  fieldName="adequateStaff"
-                  label={'Does the organization have an adequate number of experienced staff ' +
-                'responsible for financial management?'}
-                  values={BOOL_VAL}
-                  optional
-                  warn
-                  readOnly={readOnly}
-                />
-              </Grid>
-              <Grid item sm={6} xs={12}>
-                <TextFieldForm
-                  label="Please comment"
-                  placeholder="200 character maximum"
-                  fieldName="staffDescription"
-                  textFieldProps={{
-                    inputProps: {
-                      maxLength: '200',
-                    },
-                  }}
-                  optional
-                  warn
-                  readOnly={readOnly}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <FormLabel>{'Does the organization have formal documented policies applicable to all operations that cover the following policy areas?'}</FormLabel>
-          </Grid>
-          <Grid item>
-            <Paper elevation={4}>
-              <Grid container direction="column">
-                <Grid item sm={6} xs={12}>
-                  <RadioForm
-                    fieldName="documentedHR"
-                    label="Human Resources"
-                    values={BOOL_VAL}
-                    optional
-                    warn
-                    readOnly={readOnly}
-                  />
-                </Grid>
-                <Grid item sm={6} xs={12}>
-                  <RadioForm
-                    fieldName="documentedProcurement"
-                    label="Procurement"
-                    values={BOOL_VAL}
-                    optional
-                    warn
-                    readOnly={readOnly}
-                  />
-                </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
-        </Grid>
+    <Grid container>
+      <Grid item sm={6} xs={12}>
+        <SelectForm
+          fieldName={`${member}.functional_responsibility`}
+          label={messages.areaOfResponsibility}
+          values={newValues}
+          readOnly
+          optional
+          warn
+          {...props}
+        />
       </Grid>
+      <Grid item sm={6} xs={12}>
+        <RadioForm
+          fieldName={`${member}.segregation_duties`}
+          label={messages.segregationOf}
+          values={BOOL_VAL}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+      </Grid>
+    </Grid>
+  );
+};
+
+const CommentInner = (readOnly, ...props) => member => (
+  <TextFieldForm
+    label={messages.pleaseComment}
+    fieldName={`${member}.comment`}
+    textFieldProps={{
+      inputProps: {
+        maxLength: '200',
+      },
+    }}
+    optional
+    warn
+    readOnly={readOnly}
+    {...props}
+  />
+);
+
+const PolicyArea = (values, readOnly, ...props) => (member, index, fields) => {
+  const chosenAreas = fields.getAll().map(field => field.area);
+  const ownArea = fields.get(index).area;
+  const newValues = values.filter(value =>
+    (ownArea === value.value) || !(chosenAreas.includes(value.value)));
+
+  return (
+    <Grid container>
+      <Grid item sm={6} xs={12}>
+        <SelectForm
+          fieldName={`${member}.area`}
+          label={messages.areaOfResponsibility}
+          values={newValues}
+          readOnly={readOnly}
+          optional
+          warn
+          {...props}
+        />
+      </Grid>
+      <Grid item sm={6} xs={12}>
+        <RadioForm
+          fieldName={`${member}.document_policies`}
+          label={messages.documentedPolicies}
+          values={BOOL_VAL}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+      </Grid>
+    </Grid>
+  );
+};
+
+const PartnerProfileProjectImplementationInternalControls = (props) => {
+  const { readOnly, experiencedStaff, policyArea, functionalResponsibility } = props;
+
+  return (
+    <FormSection name="internal_control">
+      <GridColumn>
+        <ArrayForm
+          label={messages.policyArea}
+          limit={functionalResponsibility.length}
+          fieldName="internal_controls"
+          initial
+          disableDeleting
+          readOnly={readOnly}
+          outerField={InternalControls(functionalResponsibility, readOnly)}
+          innerField={CommentInner(readOnly)}
+        />
+        <RadioForm
+          fieldName="experienced_staff"
+          label={messages.experiencedStaff}
+          values={BOOL_VAL}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        {visibleIfYes(experiencedStaff)
+          ? <Grid item>
+            <TextFieldForm
+              label={messages.pleaseComment}
+              fieldName="experienced_staff_desc"
+              textFieldProps={{
+                inputProps: {
+                  maxLength: '200',
+                },
+              }}
+              optional
+              warn
+              readOnly={readOnly}
+            />
+          </Grid>
+          : null}
+        <ArrayForm
+          label={messages.policyArea}
+          limit={policyArea.length}
+          fieldName="area_policies"
+          initial
+          readOnly={readOnly}
+          outerField={PolicyArea(policyArea, readOnly)}
+        />
+      </GridColumn>
     </FormSection>
   );
 };
 
 PartnerProfileProjectImplementationInternalControls.propTypes = {
   readOnly: PropTypes.bool,
+  experiencedStaff: PropTypes.bool,
+  policyArea: PropTypes.array,
+  functionalResponsibility: PropTypes.array,
 };
 
-export default PartnerProfileProjectImplementationInternalControls;
+const selector = formValueSelector('partnerProfile');
+export default connect(
+  state => ({
+    experiencedStaff: selector(state, 'project_impl.internal_control.experienced_staff'),
+    policyArea: selectNormalizedPolicyArea(state),
+    functionalResponsibility: selectNormalizedFunctionalResponsibility(state),
+  }),
+)(PartnerProfileProjectImplementationInternalControls);

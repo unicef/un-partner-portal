@@ -19,6 +19,10 @@ from .consts import (
     PARTNER_TYPES,
     YEARS_OF_EXP_CHOICES,
     BUDGET_CHOICES,
+    METHOD_ACC_ADOPTED_CHOICES,
+    FINANCIAL_CONTROL_SYSTEM_CHOICES,
+    FUNCTIONAL_RESPONSIBILITY_CHOICES,
+    POLICY_AREA_CHOICES,
 )
 
 
@@ -49,6 +53,10 @@ class ConfigPPAPIView(APIView):
             "staff-globaly-choices": STAFF_GLOBALLY_CHOICES,
             "years-of-exp-choices": YEARS_OF_EXP_CHOICES,
             "budget-choices": BUDGET_CHOICES,
+            "method-acc-adopted-choices": METHOD_ACC_ADOPTED_CHOICES,
+            "financial-control-system-choices": FINANCIAL_CONTROL_SYSTEM_CHOICES,
+            "functional-responsibility-choices": FUNCTIONAL_RESPONSIBILITY_CHOICES,
+            "policy-area-choices": POLICY_AREA_CHOICES,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 
