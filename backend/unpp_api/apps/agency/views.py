@@ -8,8 +8,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from common.paginations import MediumPagination
 from common.permissions import IsAtLeastMemberReader
 from account.models import User
-from .serializers import (AgencySerializer, AgencyOfficeSerializer,
-                          AgencyUserSerializer)
+from account.serializers import AgencyUserSerializer
+from .serializers import AgencySerializer, AgencyOfficeSerializer
 from .models import Agency, AgencyOffice
 from .filters import AgencyUserFilter
 
