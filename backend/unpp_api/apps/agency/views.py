@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 
 from common.paginations import MediumPagination
 from common.permissions import IsAtLeastMemberReader
@@ -10,6 +11,7 @@ from account.models import User
 from .serializers import (AgencySerializer, AgencyOfficeSerializer,
                           AgencyUserSerializer)
 from .models import Agency, AgencyOffice
+from .filters import AgencyUserFilter
 
 
 class AgencyListAPIView(ListAPIView):
@@ -41,6 +43,8 @@ class AgencyMemberListAPIView(ListAPIView):
     serializer_class = AgencyUserSerializer
     pagination_class = MediumPagination
     permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
+    filter_backends = (DjangoFilterBackend, )
+    filter_class = AgencyUserFilter
 
     def get_queryset(self):
         return User.objects.filter(
