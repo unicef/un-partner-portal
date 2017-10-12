@@ -12,6 +12,7 @@ from common.factories import (
     OtherAgencyFactory,
     AgencyMemberFactory,
     EOIFactory,
+    UnsolicitedFactory,
 )
 from partner.models import Partner, PartnerMember
 
@@ -59,6 +60,9 @@ def generate_fake_data(quantity=4):
     for idx in xrange(0, quantity):
         EOIFactory(display_type=EOI_TYPES.direct, deadline_date=None)
     print "{} direct EOI objects created with applications".format(quantity)
+
+    UnsolicitedFactory.create_batch(quantity)
+    print "{} UnsolicitedFactory objects created".format(quantity)
 
     pm = PartnerMember.objects.first()
     pm.user = admin

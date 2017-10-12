@@ -293,7 +293,6 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
                 "cn": cn_template,
             }
             response = self.client.post(url, data=payload, format='multipart')
-
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], Application.objects.last().id)
         self.assertEquals(response.data['eoi'], eoi_id)
@@ -502,7 +501,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
                     },
                 ],
                 "title": "Unsolicited Project",
-                "agency_id": Agency.objects.first().id,
+                "agency": Agency.objects.first().id,
                 "specializations": Specialization.objects.all()[:3].values_list("id", flat=True),
                 "cn": cn_template,
             }

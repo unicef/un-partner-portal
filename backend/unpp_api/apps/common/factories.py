@@ -661,6 +661,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
             Application.objects.create(
                 partner=get_partner(),
                 eoi=self,
+                agency=self.agency,
                 submitter=get_agency_member(),
                 did_win=True,
                 did_accept=True,
@@ -673,6 +674,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
             Application.objects.create(
                 partner=get_partner(),
                 eoi=self,
+                agency=self.agency,
                 submitter=get_partner_member(),
             )
 
@@ -706,3 +708,20 @@ class PartnerVerificationFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = PartnerVerification
+
+
+class UnsolicitedFactory(factory.django.DjangoModelFactory):
+    is_unsolicited = True
+    partner = factory.LazyFunction(get_partner)
+    submitter = factory.LazyFunction(get_partner_member)
+    agency = factory.LazyFunction(get_random_agency)
+    proposal_of_eoi_details = {
+        'locations': [],
+        'specializations': [
+            Specialization.objects.all().order_by("?").first().id,
+        ],
+        'title': 'fake title'
+    }
+
+    class Meta:
+        model = Application

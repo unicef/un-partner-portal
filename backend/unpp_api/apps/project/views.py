@@ -38,6 +38,7 @@ from .serializers import (
     ReviewerAssessmentsSerializer,
     CreateUnsolicitedProjectSerializer,
     ApplicationPartnerOpenSerializer,
+    ApplicationPartnerDirectSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter
 
@@ -156,7 +157,9 @@ class ApplicationsPartnerAPIView(CreateAPIView):
     serializer_class = ApplicationFullSerializer
 
     def create(self, request, pk, *args, **kwargs):
-        request.data['eoi'] = pk
+        eoi = get_object_or_404(EOI, id=pk)
+        request.data['eoi'] = eoi.id
+        request.data['agency'] = eoi.agency.id
         request.data['submitter'] = request.user.id
         partner_member = PartnerMember.objects.filter(user=request.user).first()
         if partner_member:
@@ -296,7 +299,7 @@ class UnsolicitedProjectAPIView(CreateAPIView):
     serializer_class = CreateUnsolicitedProjectSerializer
 
 
-class ApplicationsPartnerOpenAPIView(ListAPIView):
+class AppsPartnerOpenAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, IsPartner)
     queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.open)
     serializer_class = ApplicationPartnerOpenSerializer
@@ -306,3 +309,8 @@ class ApplicationsPartnerOpenAPIView(ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id=self.request.active_partner)
+
+
+class AppsPartnerUnsolicitedAPIView(AppsPartnerOpenAPIView):
+    queryset = Application.objects.filter(is_unsolicited=True)
+    serializer_class = ApplicationPartnerDirectSerializer
