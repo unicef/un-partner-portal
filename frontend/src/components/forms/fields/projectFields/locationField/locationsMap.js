@@ -46,9 +46,30 @@ class LocationsMapBase extends Component {
     this.removeMarker = this.removeMarker.bind(this);
   }
 
+  componentWillMount() {
+    const { removeAllLocations, currentCountry } = this.props;
+
+    if (currentCountry) {
+      removeAllLocations();
+      this.geocoder.geocode({ address: currentCountry }, (results, status) => {
+        if (status === google.maps.GeocoderStatus.OK) {
+          this.setState({
+            pos: {
+              lat: results[0].geometry.location.lat(),
+              lng: results[0].geometry.location.lng(),
+            },
+            bounds: results[0].geometry.viewport,
+            rebound: true,
+          });
+        }
+      });
+    }
+  }
+
   componentWillUpdate(nextProps) {
     const { removeAllLocations, currentCountry } = this.props;
     const nextCountry = nextProps.currentCountry;
+
     if (currentCountry !== nextCountry) {
       removeAllLocations();
       this.geocoder.geocode({ address: nextCountry }, (results, status) => {
@@ -79,8 +100,10 @@ class LocationsMapBase extends Component {
   }
 
   mapClicked(mapProps, map, clickEvent) {
+    debugger;
     const { currentCountryCode, saveLocation } = this.props;
     this.geocoder.geocode({ location: clickEvent.latLng }, (results, status) => {
+      debugger
       if (status === google.maps.GeocoderStatus.OK && results) {
         let countryCode;
         let loc = results.find(location =>

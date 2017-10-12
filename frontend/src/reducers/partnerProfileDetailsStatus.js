@@ -16,13 +16,16 @@ const messages = {
 
 const startLoading = state => R.assoc('error', {}, R.assoc('loading', true, state));
 const stopLoading = state => R.assoc('loading', false, state);
-const saveErrorMsg = (state, action) => R.assoc(
-  'error',
-  {
-    message: messages.loadingFailure,
-    error: action.error,
-  },
-  state);
+const saveErrorMsg = (state, action) => {
+  debugger;
+  return R.assoc(
+    'error',
+    {
+      message: messages.loadingFailure,
+      error: action.error,
+    },
+    state);
+};
 
 export const loadDetailsStarted = () => ({ type: LOAD_DETAILS_STARTED });
 export const loadDetailsEnded = () => ({ type: LOAD_DETAILS_ENDED });
