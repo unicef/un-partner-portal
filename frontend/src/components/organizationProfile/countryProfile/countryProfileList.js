@@ -5,6 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import List, { ListSubheader } from 'material-ui/List';
 import CountryProfileItem from './countryProfileItem';
 import { selectCountryId } from '../../../reducers/countryProfiles';
+import EoiCountryCell from '../../../components/eois/cells/eoiCountryCell';
 
 const messages = {
   choose: 'Choose country',
