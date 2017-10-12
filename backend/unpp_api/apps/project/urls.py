@@ -11,6 +11,7 @@ from .views import (
     ApplicationsAgencyAPIView,
     ApplicationAPIView,
     ApplicationsListAPIView,
+    ApplicationsPartnerOpenAPIView,
     ReviewersStatusAPIView,
     ReviewerAssessmentsAPIView,
 )
@@ -36,4 +37,6 @@ urlpatterns = [
     url(r'^direct/$', DirectProjectAPIView.as_view(), name="direct"),
     url(r'^pins/$', PinProjectAPIView.as_view(), name="pins"),
     url(r'^unsolicited/$', UnsolicitedProjectAPIView.as_view(), name="unsolicited"),
+
+    url(r'^applications/open/$', ApplicationsPartnerOpenAPIView.as_view(), name="applications-open"),
 ]

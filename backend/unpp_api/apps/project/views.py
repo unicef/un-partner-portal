@@ -21,6 +21,7 @@ from common.permissions import (
     IsAtLeastMemberEditor,
     IsAtLeastAgencyMemberEditor,
     IsEOIReviewerAssessments,
+    IsPartner,
 )
 from partner.models import PartnerMember
 from .models import Assessment, Application, EOI, Pin
@@ -36,6 +37,7 @@ from .serializers import (
     ReviewersApplicationSerializer,
     ReviewerAssessmentsSerializer,
     CreateUnsolicitedProjectSerializer,
+    ApplicationPartnerOpenSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter
 
@@ -292,3 +294,15 @@ class UnsolicitedProjectAPIView(CreateAPIView):
     permission_classes = (IsAuthenticated, )
     queryset = Application.objects.all()
     serializer_class = CreateUnsolicitedProjectSerializer
+
+
+class ApplicationsPartnerOpenAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated, IsPartner)
+    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.open)
+    serializer_class = ApplicationPartnerOpenSerializer
+    pagination_class = SmallPagination
+    filter_backends = (DjangoFilterBackend, )
+    filter_class = ApplicationsFilter
+
+    def get_queryset(self, *args, **kwargs):
+        return self.queryset.filter(partner_id=self.request.active_partner)

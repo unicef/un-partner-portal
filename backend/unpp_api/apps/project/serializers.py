@@ -307,3 +307,26 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
             'date_reviewed',
             'note',
         )
+
+
+class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
+
+    project_title = serializers.CharField(source="eoi.title")
+    eoi_id = serializers.CharField(source="eoi.id")
+    agency_name = serializers.CharField(source="eoi.agency.name")
+    country = serializers.CharField(source="eoi.country_code")
+    specializations = SimpleSpecializationSerializer(source='eoi.specializations', many=True)
+    application_date = serializers.CharField(source="created")
+
+    class Meta:
+        model = Application
+        fields = (
+            'id',
+            'project_title',
+            'eoi_id',
+            'agency_name',
+            'country',
+            'specializations',
+            'application_date',
+            'status',
+        )

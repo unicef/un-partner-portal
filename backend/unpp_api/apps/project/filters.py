@@ -38,6 +38,7 @@ class ApplicationsFilter(django_filters.FilterSet):
     year = CharFilter(method='get_year')
     concern = CharFilter(method='get_concern')
     status = CharFilter(method='get_status')
+    agency = CharFilter(method='get_agency')
 
     class Meta:
         model = Application
@@ -63,3 +64,6 @@ class ApplicationsFilter(django_filters.FilterSet):
 
     def get_status(self, queryset, name, value):
         return queryset.filter(status=value)
+
+    def get_agency(self, queryset, name, value):
+        return queryset.filter(eoi__agency=value)
