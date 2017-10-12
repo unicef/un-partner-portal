@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from common.paginations import MediumPagination
 from common.permissions import IsAtLeastMemberReader
@@ -17,6 +18,7 @@ class AgencyListAPIView(ListAPIView):
     """
     serializer_class = AgencySerializer
     pagination_class = MediumPagination
+    permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
     queryset = Agency.objects.all()
 
 
@@ -26,7 +28,7 @@ class AgencyOfficeListAPIView(ListAPIView):
     """
     serializer_class = AgencyOfficeSerializer
     pagination_class = MediumPagination
-    permission_classes = (IsAtLeastMemberReader, )
+    permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
 
     def get_queryset(self):
         return AgencyOffice.objects.filter(agency_id=self.kwargs['pk'])
@@ -38,7 +40,7 @@ class AgencyMemberListAPIView(ListAPIView):
     """
     serializer_class = AgencyUserSerializer
     pagination_class = MediumPagination
-    permission_classes = (IsAtLeastMemberReader, )
+    permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
 
     def get_queryset(self):
         return User.objects.filter(
