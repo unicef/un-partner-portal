@@ -100,31 +100,16 @@ class LocationsMapBase extends Component {
   }
 
   mapClicked(mapProps, map, clickEvent) {
-    debugger;
-    const { currentCountryCode, saveLocation } = this.props;
-    this.geocoder.geocode({ location: clickEvent.latLng }, (results, status) => {
-      debugger
-      if (status === google.maps.GeocoderStatus.OK && results) {
-        let countryCode;
-        let loc = results.find(location =>
-          location.types.includes('administrative_area_level_1'));
-        if (loc === undefined) {
-          loc = results.pop();
-          countryCode = loc.address_components[0].short_name;
-        } else {
-          countryCode = loc.address_components[1].short_name;
+    const { readOnly } = this.props;
+    
+    if (!readOnly) {
+      const { currentCountryCode, saveLocation } = this.props;
+      this.geocoder.geocode({ location: clickEvent.latLng }, (results, status) => {
+        if (status === google.maps.GeocoderStatus.OK && results) {
+          saveLocation(clickEvent, currentCountryCode, results);
         }
-        if (countryCode !== currentCountryCode) return;
-        const newLocation = {
-          country_code: countryCode,
-          admin_level_1: { name: loc.address_components[0].long_name },
-          lat: clickEvent.latLng.lat().toFixed(5),
-          lon: clickEvent.latLng.lng().toFixed(5),
-          formatted_address: loc.formatted_address,
-        };
-        saveLocation(newLocation);
-      }
-    });
+      });
+    }
   }
 
   removeMarker(markerProps) {
@@ -212,6 +197,10 @@ LocationsMapBase.propTypes = {
    * bool to show map (also focused country name is required to show map)
    */
   showMap: PropTypes.bool,
+  /**
+   * bool to disable map clicks to read only mode
+   */
+  readOnly: PropTypes.bool,
 };
 
 export default withTheme(LocationsMapBase);

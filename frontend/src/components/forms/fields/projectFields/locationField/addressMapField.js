@@ -3,17 +3,14 @@ import { withRouter } from 'react-router';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { arrayPush, arrayRemove, formValueSelector, arrayRemoveAll } from 'redux-form';
+import { arrayPush, arrayRemove, formValueSelector } from 'redux-form';
 import Typography from 'material-ui/Typography';
-import SpreadContent from '../../../../common/spreadContent';
+import GridColumn from '../../../../common/grid/gridColumn';
 import LocationsMap from './locationsMap';
 
 
 const messages = {
-  label: 'Choose Admin 1 location(s) for this country - pick location(s) from the map ' +
-  '(optional). Remove locations by double-clicking the markers.',
-  showMap: 'show map',
-  hideMap: 'hide map',
+  label: 'Location of field office(s) in the country of operation - pick location(s) from the map.',
 };
 
 class LocationsMapField extends Component {
@@ -22,9 +19,28 @@ class LocationsMapField extends Component {
 
     this.saveLocation = this.saveLocation.bind(this);
     this.removeLocation = this.removeLocation.bind(this);
+    this.selectedLocations = this.selectedLocations.bind(this);
   }
 
-  saveLocation(newLocation) {
+  saveLocation(clickEvent, code, results) {
+    let countryCode;
+    let loc = results.find(location =>
+      location.types.includes('administrative_area_level_1'));
+    if (loc === undefined) {
+      loc = results.pop();
+      countryCode = loc.address_components[0].short_name;
+    } else {
+      countryCode = loc.address_components[1].short_name;
+    }
+    if (countryCode !== code) return;
+    const newLocation = {
+      country_code: countryCode,
+      admin_level_1: { name: loc.address_components[0].long_name },
+      lat: clickEvent.latLng.lat().toFixed(5),
+      lon: clickEvent.latLng.lng().toFixed(5),
+      formatted_address: loc.formatted_address,
+    };
+
     const { dispatch, name, formName } = this.props;
     dispatch(arrayPush(formName, `${name}`, newLocation));
   }
@@ -34,24 +50,33 @@ class LocationsMapField extends Component {
     dispatch(arrayRemove(formName, `${name}`, index));
   }
 
+  selectedLocations() {
+    const { currentLocations } = this.props;
+    return currentLocations.map(location =>
+      <Typography>{location.admin_level_1.name} </Typography>,
+    );
+  }
+
   render() {
-    const { countryCode, currentCountry, currentLocations } = this.props;
+    const { countryCode, currentCountry, readOnly, currentLocations } = this.props;
 
     return (
-      <div>
-        <SpreadContent>
+      <GridColumn>
+        <GridColumn>
           <Typography type="caption">{messages.label}</Typography>
-        </SpreadContent>
+          {this.selectedLocations(currentLocations)}
+        </GridColumn>
         <LocationsMap
           currentCountryCode={countryCode}
           currentCountry={currentCountry}
           locations={currentLocations}
           showMap
+          readOnly={readOnly}
           saveLocation={this.saveLocation}
           removeLocation={this.removeLocation}
           removeAllLocations={() => {}}
         />
-      </div>
+      </GridColumn>
     );
   }
 }
@@ -61,6 +86,7 @@ LocationsMapField.propTypes = {
   currentCountry: PropTypes.string,
   currentLocations: PropTypes.array,
   name: PropTypes.string,
+  readOnly: PropTypes.bool,
   formName: PropTypes.string,
   dispatch: PropTypes.func,
 };

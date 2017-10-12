@@ -37,6 +37,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
         <AddressFieldArray
           profileId={profileId}
           formName={'partnerProfile'}
+          readOnly={readOnly}
           name={'mandate_mission.country_presence.locations'}
         />
         {!isCountryProfile
