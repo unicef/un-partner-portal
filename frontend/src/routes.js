@@ -29,6 +29,7 @@ import partnerOverview from './components/partners/profile/overview/partnerOverv
 import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
 import settings from './components/agencySettings/agencySettings';
 import registration from './components/registration/registration';
+import login from './components/login/login';
 import mainContent from './components/common/mainContentWrapper';
 import dev from './components/dev';
 
@@ -98,6 +99,7 @@ const allRoutes = () => (
         <Route path="settings" component={settings} />
       </Route>
     </Route>
+    <Route path="/login" component={login} />
     <Route path="/registration" component={registration} />
     <Route path="/dev" component={dev} />
   </Router>

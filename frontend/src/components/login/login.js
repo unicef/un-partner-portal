@@ -1,15 +1,16 @@
 import React from 'react';
 
 import Card from '../common/card';
-import Stepper from './stepper';
+
+import LoginForm from './loginForm';
 
 const messages = {
-  title: 'Registration',
+  title: 'Login',
 };
 
 const Registration = () => (
   <Card title={messages.title}>
-    <Stepper />
+    <LoginForm />
   </Card>
 );
 

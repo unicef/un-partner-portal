@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
-import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
 
 import {
@@ -18,14 +17,6 @@ import Account from './account';
 import AlertDialog from '../common/alertDialog';
 import { loadCountries } from '../../reducers/countries';
 import { registerUser } from '../../reducers/session';
-
-
-const styleSheet = () => ({
-  root: {
-    maxWidth: '100%',
-    padding: '1em 1em 3em',
-  },
-});
 
 class RegistrationStepper extends React.Component {
   constructor(props) {
@@ -73,10 +64,9 @@ class RegistrationStepper extends React.Component {
 
 
   render() {
-    const { classes } = this.props;
     const { stepIndex } = this.state;
     return (
-      <div className={classes.root}>
+      <div>
         <Stepper linear activeStep={stepIndex} orientation="vertical">
           <Step>
             <StepLabel>Select type of your organization</StepLabel>
@@ -129,7 +119,6 @@ class RegistrationStepper extends React.Component {
 }
 RegistrationStepper.propTypes = {
   dispatch: PropTypes.func,
-  classes: PropTypes.object,
   /**
    * answers to all questions in declaration component, show dialog when at least one is false
    */
@@ -143,4 +132,4 @@ const connectedRegistrationStepper = connect(
   }),
 )(RegistrationStepper);
 
-export default withStyles(styleSheet, { name: 'RegistrationStepper' })(connectedRegistrationStepper);
+export default connectedRegistrationStepper;

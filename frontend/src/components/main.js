@@ -14,12 +14,12 @@ import getTheme, { muiOldTheme } from '../styles/muiTheme';
 class Main extends Component {
   componentWillMount() {
     let role = window.localStorage.role;
-
     if (!role) {
       window.localStorage.setItem('role', 'partner');
       role = 'partner';
     }
-    this.props.sessionInit(role);
+    const token = window.localStorage.token;
+    this.props.sessionInit({ role, token });
     this.props.loadCountries();
     this.props.loadPartnerConfig();
     this.props.loadSectors();
@@ -45,8 +45,8 @@ Main.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => ({
-  sessionInit: (role) => {
-    dispatch(initSession({ role }));
+  sessionInit: (session) => {
+    dispatch(initSession(session));
   },
   loadCountries: () => loadCountries(dispatch),
   loadSectors: () => dispatch(loadSectors()),

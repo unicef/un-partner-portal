@@ -49,7 +49,11 @@ function authorizedPostUpload(uri, body = {}) {
 
 // Accounts
 export function postRegistration(body) {
-  return post('/accounts/registration', body);
+  return post('/accounts/registration/', body);
+}
+
+export function login(body) {
+  return post('/rest-auth/login/', body);
 }
 
 // Config
