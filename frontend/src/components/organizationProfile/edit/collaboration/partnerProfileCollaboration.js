@@ -19,7 +19,7 @@ const STEPS = readOnly => [
   {
     component: <PartnerProfileCollaborationReferences readOnly={readOnly} />,
     label: 'References (optional)',
-    name: 'references',
+    name: 'reference',
   },
 ];
 

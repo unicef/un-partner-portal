@@ -26,8 +26,8 @@ const saveErrorMsg = (state, action) => R.assoc(
 
 export const loadDetailsStarted = () => ({ type: LOAD_DETAILS_STARTED });
 export const loadDetailsEnded = () => ({ type: LOAD_DETAILS_ENDED });
-export const loadDetailsSuccess = partnerDetails =>
-  ({ type: LOAD_DETAILS_SUCCESS, partnerDetails });
+export const loadDetailsSuccess = (partnerDetails, getState) =>
+  ({ type: LOAD_DETAILS_SUCCESS, partnerDetails, getState });
 export const loadDetailsFailure = error => ({ type: LOAD_DETAILS_FAILURE, error });
 
 export default function partnerProfileDetailsStatus(state = initialState, action) {

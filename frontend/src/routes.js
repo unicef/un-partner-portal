@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Router, Route, browserHistory, IndexRedirect } from 'react-router';
+import { Router, Route, browserHistory, IndexRedirect, Redirect } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import store from './store';
@@ -13,6 +13,8 @@ import cfeiOverview from './components/eois/details/overview/cfeiOverview';
 import cfeiSubmission from './components/eois/details/submission/cfeiSubmission';
 import cfeiContainer from './components/eois/cfeiContainer';
 import cfeiDetailsHeader from './components/eois/details/cfeiDetailsHeader';
+import applicationSummaryHeader from './components/eois/details/applications/applicationSummary/applicationSummaryHeader';
+import applicationSummaryContent from './components/eois/details/applications/applicationSummary/applicationSummaryContent';
 import dashboard from './components/dashboard/dashboard';
 import partnerApplicationsHeader from './components/applications/partnerApplicationsHeader';
 import partnerApplicationsNotes from './components/applications/notes/partnerApplicationsNotes';
@@ -53,6 +55,18 @@ const allRoutes = () => (
             <Route path="results" component={null} />
             <Route path="preselected" component={openCfeiPreselected} />
             <Route path="applications" component={openCfeiApplications} />ł
+          </Route>
+        </Route>
+        <Route component={applicationSummaryHeader} >
+          <Route component={mainContent} >
+            <Route
+              path="cfei/:type/:id/applications/:applicationId"
+              component={applicationSummaryContent}
+            />
+            <Redirect
+              path="cfei/:type/:id/preselected/:applicationId"
+              to="cfei/:type/:id/applications/:applicationId"
+            />
           </Route>
         </Route>
         <Route path="partner" component={partnersContainer} />

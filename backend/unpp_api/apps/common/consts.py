@@ -106,15 +106,6 @@ WORKING_LAGNUAGES_CHOICES = Choices(
     ('Oth', 'other', 'Other'),
 )
 
-CONCERN_GROUP_CHOICES = Choices(
-    ('Ref', 'Refugees', 'Refugees'),
-    ('Ast', 'Asylum', 'Asylum seekers '),
-    ('Int', 'internally', 'Internally displaced persons'),
-    ('Sta', 'stateless', 'Stateless'),
-    ('Ret', 'returning', 'Returning'),
-    ('Hos', 'host_country', 'Host Country'),
-)
-
 AUDIT_TYPES = Choices(
     ('Int', 'internal', 'Internal audit'),
     ('Fin', 'financial', 'Financial statement audit'),

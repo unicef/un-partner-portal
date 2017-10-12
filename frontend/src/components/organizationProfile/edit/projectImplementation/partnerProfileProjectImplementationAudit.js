@@ -2,60 +2,61 @@ import React from 'react';
 import { formValueSelector, FormSection } from 'redux-form';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import Grid from 'material-ui/Grid';
-
 import RadioForm from '../../../forms/radioForm';
+import FileForm from '../../../forms/fileForm';
 import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import { selectNormalizedAuditTypes, selectNormalizedCapacityAssessments } from '../../../../store';
+import { visibleIfYes, visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
+import GridColumn from '../../../common/grid/gridColumn';
 
-const BOOL_VAL = [
-  {
-    value: 'yes',
-    label: 'Yes',
-  },
-  {
-    value: 'no',
-    label: 'No',
-  },
-];
-
-const AUDIT_TYPES = [
-  {
-    value: '1',
-    label: 'Internal Audit',
-  },
-  {
-    value: '2',
-    label: 'Financial Statement Audit',
-  },
-  {
-    value: '3',
-    label: 'Donor Audit',
-  },
-];
+const messages = {
+  isRegularyAudited: 'Is the organization regularly audited?',
+  organizationUndergoes: 'Please indicate the type(s) of audits the organization undergoes?',
+  comment: 'Please comment',
+  copyOfRecentAudit: 'Copy of your most recent audit report',
+  insertLink: 'Or insert the link to the report from the organization\'s website',
+  accountabilityIssues: 'Were there any major accountability isses highlighted by audits in ' +
+                  'the past three years?',
+  formalCapacity: 'Has the organization undergone a formal capacity assessment?',
+  indicateAssessments: 'Please indicate which assessment(s)',
+  copyOfAssessment: 'Copy of the assessment report',
+};
 
 const PartnerProfileProjectImplementationAudit = (props) => {
-  const { hadCapacityAssessment, readOnly } = props;
+  const { auditTypes, capacityAssessments, hasCapacityAssessment, isRegularyAudited, accountabilityIssues, readOnly } = props;
 
   return (
     <FormSection name="audit">
-      <Grid container direction="column" spacing={16}>
-        <Grid item>
-          <RadioForm
-            fieldName="regular_audited"
-            label="Is the organization regularly audited?"
-            values={BOOL_VAL}
+      <GridColumn>
+        <RadioForm
+          fieldName="regular_audited"
+          label={messages.isRegularyAudited}
+          values={BOOL_VAL}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        {visibleIfNo(isRegularyAudited)
+          ? <TextFieldForm
+            label={messages.comment}
+            fieldName="regular_audited_comment"
+            textFieldProps={{
+              inputProps: {
+                maxLength: '200',
+              },
+            }}
             optional
             warn
             readOnly={readOnly}
           />
-        </Grid>
-        <Grid item>
-          <SelectForm
+          : null}
+        {visibleIfYes(isRegularyAudited)
+          ? <SelectForm
             fieldName="org_audits"
-            label="Please indicate the type(s) of audits the organization undergoes?"
-            values={AUDIT_TYPES}
+            label={messages.organizationUndergoes}
+            values={auditTypes}
             selectFieldProps={{
               multiple: true,
             }}
@@ -63,51 +64,42 @@ const PartnerProfileProjectImplementationAudit = (props) => {
             warn
             readOnly={readOnly}
           />
-        </Grid>
-        <Grid item>
-          <Grid container direction="row">
-            <Grid item sm={6} xs={12}>
-              <SelectForm
-                fieldName="most_recent_audit_report"
-                label="Copy of your most recent audit report"
-                values={AUDIT_TYPES}
-                optional
-                warn
-                readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item sm={6} xs={12}>
-              <TextFieldForm
-                label="Or insert the link to the report from the organization's website"
-                placeholder="200 character maximum"
-                fieldName="link_report"
-                textFieldProps={{
-                  inputProps: {
-                    maxLength: '200',
-                  },
-                }}
-                optional
-                warn
-                readOnly={readOnly}
-              />
-            </Grid>
+          : null}
+        <Grid container direction="row">
+          <Grid item sm={6} xs={12}>
+            <FileForm
+              fieldName="most_recent_audit_report"
+              label={messages.copyOfRecentAudit}
+              optional
+              warn
+              readOnly={readOnly}
+            />
+          </Grid>
+          <Grid item sm={6} xs={12}>
+            <TextFieldForm
+              label={messages.insertLink}
+              fieldName="link_report"
+              textFieldProps={{
+                inputProps: {
+                  maxLength: '200',
+                },
+              }}
+              optional
+              readOnly={readOnly}
+            />
           </Grid>
         </Grid>
-        <Grid item>
-          <RadioForm
-            fieldName="major_accountability_issues_highlighted"
-            label={'Were there any major accountability isses highlighted by audits in ' +
-                  'the past three years?'}
-            values={BOOL_VAL}
-            optional
-            warn
-            readOnly={readOnly}
-          />
-        </Grid>
-        <Grid item>
-          <TextFieldForm
-            label="Please comment"
-            placeholder="200 character maximum"
+        <RadioForm
+          fieldName="major_accountability_issues_highlighted"
+          label={messages.accountabilityIssues}
+          values={BOOL_VAL}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        {visibleIfYes(accountabilityIssues)
+          ? <TextFieldForm
+            label={messages.comment}
             fieldName="comment"
             textFieldProps={{
               inputProps: {
@@ -118,58 +110,59 @@ const PartnerProfileProjectImplementationAudit = (props) => {
             warn
             readOnly={readOnly}
           />
-        </Grid>
-        <Grid item>
-          <RadioForm
-            fieldName="capacity_assessment"
-            label="Has the organization undergone a formal capacity assessment?"
-            values={BOOL_VAL}
-            optional
-            warn
-            readOnly={readOnly}
-          />
-        </Grid>
-        {hadCapacityAssessment ?
-          <Grid item>
-            <Grid container direction="column" spacing={16}>
-              <Grid item>
-                <TextFieldForm
-                  label="Please indicate which assessment(s)"
-                  fieldName="formerLegalName"
-                  optional
-                  warn
-                  readOnly={readOnly}
-                />
-              </Grid>
-              <Grid item>
-                <TextFieldForm
-                  label="Copy of the assessment report"
-                  fieldName="formerLegalName"
-                  optional
-                  warn
-                  readOnly={readOnly}
-                /></Grid>
-            </Grid>
-          </Grid>
           : null}
-      </Grid>
+        <RadioForm
+          fieldName="capacity_assessment"
+          label={messages.formalCapacity}
+          values={BOOL_VAL}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        {visibleIfYes(hasCapacityAssessment)
+          ? <div>
+            <SelectForm
+              fieldName="assessments"
+              label={messages.indicateAssessments}
+              values={capacityAssessments}
+              selectFieldProps={{
+                multiple: true,
+              }}
+              optional
+              warn
+              readOnly={readOnly}
+            />
+            <FileForm
+              fieldName="assessment_report"
+              label={messages.copyOfAssessment}
+              optional
+              warn
+              readOnly={readOnly}
+            />
+          </div>
+          : null}
+      </GridColumn>
     </FormSection>
   );
 };
 
 PartnerProfileProjectImplementationAudit.propTypes = {
-  /**
-   * css classes
-   */
-  hadCapacityAssessment: PropTypes.bool,
-
   readOnly: PropTypes.bool,
+  auditTypes: PropTypes.array,
+  capacityAssessments: PropTypes.array,
+  isRegularyAudited: PropTypes.bool,
+  accountabilityIssues: PropTypes.bool,
+  hasCapacityAssessment: PropTypes.bool,
 };
 
 const selector = formValueSelector('partnerProfile');
 export default connect(
   state => ({
-    hadCapacityAssessment: selector(state, 'project_impl.audit.capacity_assessment'),
+    isRegularyAudited: selector(state, 'project_impl.audit.regular_audited'),
+    accountabilityIssues: selector(state, 'project_impl.audit.major_accountability_issues_highlighted'),
+    hasCapacityAssessment: selector(state, 'project_impl.audit.capacity_assessment'),
+    capacityAssessments: selectNormalizedCapacityAssessments(state),
+    auditTypes: selectNormalizedAuditTypes(state),
   }),
 )(PartnerProfileProjectImplementationAudit);
 

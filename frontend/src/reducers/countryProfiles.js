@@ -1,27 +1,52 @@
 import R from 'ramda';
+import { getPartnerOrganizationProfiles } from '../helpers/api/api';
+import {
+  clearError,
+  startLoading,
+  stopLoading,
+  saveErrorMsg,
+} from './apiStatus';
 
+
+export const PARTNER_PROFILES_LOAD_STARTED = 'PARTNER_PROFILES_LOAD_STARTED';
+export const PARTNER_PROFILES_LOAD_SUCCESS = 'PARTNER_PROFILES_LOAD_SUCCESS';
+export const PARTNER_PROFILES_LOAD_FAILURE = 'PARTNER_PROFILES_LOAD_FAILURE';
+export const PARTNER_PROFILES_LOAD_ENDED = 'PARTNER_PROFILES_LOAD_ENDED';
 export const LOAD_COUNTRY_PROFILES = 'LOAD_COUNTRY_PROFILES';
+
 export const SELECT_COUNTRY_ID = 'SELECT_COUNTRY_ID';
 export const CREATE_COUNTRY_PROFILE = 'CREATE_COUNTRY_PROFILE';
 export const INIT_COUNTRY_ID = -1;
 
+export const partnerProfilesLoadStarted = () => ({ type: PARTNER_PROFILES_LOAD_STARTED });
+export const partnerProfilesLoadSuccess = response => ({ type: PARTNER_PROFILES_LOAD_SUCCESS, response });
+export const partnerProfilesLoadFailure = error => ({ type: PARTNER_PROFILES_LOAD_FAILURE, error });
+export const partnerProfilesLoadEnded = () => ({ type: PARTNER_PROFILES_LOAD_ENDED });
+
+const saveProfiles = (state, action) => R.assoc('hq', action.response, state);
+
+const messages = {
+  loadFailed: 'Load partners failed.',
+};
+
 const initialState = {
-  countryPresence: [
-    { id: 1, name: 'Spain', profile: false },
-    { id: 2, name: 'Slovenia', profile: false },
-    { id: 3, name: 'Czech Republic', profile: false },
-    { id: 4, name: 'Portugal', profile: false },
-  ],
-  countryProfiles: [
-    { id: 5, name: 'Kenya', users: 25, update: '01 Jan 2016', completed: true, profile: true },
-    { id: 6, name: 'Syria', users: 1, update: '03 Jan 2017', completed: true, profile: true },
-    { id: 7, name: 'Germany', users: 2, update: '1 Dec 2015', completed: false, profile: true },
-    { id: 8, name: 'Irland', users: 2, update: '1 Aug 2016', completed: true, profile: true },
-    { id: 9, name: 'Ukraine', users: 2, update: '01 Aug 2016', completed: false, profile: true },
-    { id: 10, name: 'England', users: 2, update: '1 Aug 2016', completed: false, profile: true },
-    { id: 11, name: 'Poland', users: 105, update: '01 Aug 2017', completed: true, profile: true },
-  ],
+  hq: null,
   selectedCountryId: INIT_COUNTRY_ID,
+  loading: false,
+};
+
+
+export const loadPartnerProfiles = partnerId => (dispatch) => {
+  dispatch(partnerProfilesLoadStarted());
+  return getPartnerOrganizationProfiles(partnerId)
+    .then((profiles) => {
+      dispatch(partnerProfilesLoadEnded());
+      dispatch(partnerProfilesLoadSuccess(profiles));
+    })
+    .catch((error) => {
+      dispatch(partnerProfilesLoadEnded());
+      dispatch(partnerProfilesLoadFailure(error));
+    });
 };
 
 export const selectCountryId = countryId => ({ type: SELECT_COUNTRY_ID, countryId });
@@ -47,6 +72,19 @@ const addCountryProfile = (state) => {
 
 export default function countryProfilesReducer(state = initialState, action) {
   switch (action.type) {
+    case PARTNER_PROFILES_LOAD_FAILURE: {
+      return saveErrorMsg(state, action, messages.loadFailed);
+    }
+    case PARTNER_PROFILES_LOAD_ENDED: {
+      return stopLoading(state);
+    }
+    case PARTNER_PROFILES_LOAD_STARTED: {
+      clearError(state);
+      return startLoading(state);
+    }
+    case PARTNER_PROFILES_LOAD_SUCCESS: {
+      return saveProfiles(state, action);
+    }
     case SELECT_COUNTRY_ID: {
       return setSelectedCountryId(state, action.countryId);
     }

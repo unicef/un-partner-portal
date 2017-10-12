@@ -22,7 +22,6 @@ const PolarRadio = (props) => {
       label={label}
       values={BOOL}
       {...other}
-      normalize={JSON.parse}
     />
   );
 };
