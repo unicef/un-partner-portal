@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
 import {
   selectPartnerName,
   selectCfeiDetails,
@@ -31,7 +30,8 @@ class ApplicationSummaryHeader extends Component {
       if (application) {
         if (!partnerNameExists(application.partner)) {
           getPartnerNames().then((partnerNames) => {
-            savePartnerName(partnerNames[application.partner], application.id);
+            savePartnerName(partnerNames.find(
+              name => name.id === application.partner), application.id);
           });
         } else {
           savePartnerName(getPartnerNameFromState(application.partner), application.id);

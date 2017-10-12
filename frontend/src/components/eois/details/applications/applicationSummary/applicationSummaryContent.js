@@ -11,9 +11,7 @@ import {
   selectApplication,
   selectCfeiCriteria,
 } from '../../../../../store';
-import {
-  loadPartnerDetails,
-} from '../../../../../reducers/partnerProfileDetails';
+
 
 const messages = {
   cn: 'Concept Note',
@@ -46,11 +44,8 @@ const ApplicationSummaryContent = (props) => {
 
 ApplicationSummaryContent.propTypes = {
   application: PropTypes.object,
-  partner: PropTypes.string,
   partnerDetails: PropTypes.object,
   partnerLoading: PropTypes.bool,
-  dispatch: PropTypes.func,
-  eoi: PropTypes.func,
   cfeiCriteria: PropTypes.func,
 };
 

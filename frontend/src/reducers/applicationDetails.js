@@ -7,7 +7,6 @@ import applicationDetailsStatus, {
   loadApplicationDetailFailure,
   LOAD_APPLICATION_DETAIL_SUCCESS,
 } from './applicationDetailsStatus';
-import { selectPartnerName } from '../store';
 
 import { getApplicationDetails } from '../helpers/api/api';
 
@@ -36,14 +35,7 @@ export const loadApplication = id => (dispatch, getState) => {
 };
 
 const saveApplication = (state, action) => {
-  const application = R.assoc(
-    'partner_name',
-    selectPartnerName(
-      action.getState(),
-      action.application.id,
-    ),
-    action.application);
-  return R.assoc(application.id, application, state);
+  return R.assoc(action.application.id, action.application, state);
 };
 
 const saveNewApplicationPartnerName = (state, action) => {
