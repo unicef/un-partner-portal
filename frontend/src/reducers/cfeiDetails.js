@@ -39,6 +39,10 @@ export function selectCfeiTitle(state, id) {
   return state[id] ? state[id].title : '';
 }
 
+export function selectCfeiCriteria(state, id) {
+  return state[id] ? state[id].assessments_criteria : [];
+}
+
 const cfeiDetails = (state = initialState, action) => {
   switch (action.type) {
     case LOAD_CFEI_DETAIL_SUCCESS: {

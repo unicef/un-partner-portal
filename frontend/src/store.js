@@ -159,6 +159,9 @@ export const selectCfeiDetails = (state, id) =>
 export const selectCfeiTitle = (state, id) =>
   cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails.cfeiDetails, id);
 
+export const selectCfeiCriteria = (state, id) =>
+  cfeiDetailsSelector.selectCfeiCriteria(state.cfeiDetails.cfeiDetails, id);
+
 export const mapSelectCriteriaToSelection = state =>
   mapValuesForSelectionField(state.selectionCriteria)
   ;
@@ -174,6 +177,10 @@ export const selectApplicationStatus = (state, id) =>
 
 export const selectApplicationPartnerName = (state, id) =>
   applicationDetailsSelector.selectApplicationPartnerName(
+    state.applicationDetails.applicationDetails, id);
+
+export const selectApplicationProject = (state, id) =>
+  applicationDetailsSelector.selectApplicationProject(
     state.applicationDetails.applicationDetails, id);
 
 export const selectApplication = (state, id) =>

@@ -14,6 +14,7 @@ import cfeiSubmission from './components/eois/details/submission/cfeiSubmission'
 import cfeiContainer from './components/eois/cfeiContainer';
 import cfeiDetailsHeader from './components/eois/details/cfeiDetailsHeader';
 import applicationSummaryHeader from './components/eois/details/applications/applicationSummary/applicationSummaryHeader';
+import applicationSummaryContainer from './components/eois/details/applications/applicationSummary/applicationSummaryContainer';
 import applicationSummaryContent from './components/eois/details/applications/applicationSummary/applicationSummaryContent';
 import dashboard from './components/dashboard/dashboard';
 import partnerApplicationsHeader from './components/applications/partnerApplicationsHeader';
@@ -57,16 +58,18 @@ const allRoutes = () => (
             <Route path="applications" component={openCfeiApplications} />ł
           </Route>
         </Route>
-        <Route component={applicationSummaryHeader} >
-          <Route component={mainContent} >
-            <Route
-              path="cfei/:type/:id/applications/:applicationId"
-              component={applicationSummaryContent}
-            />
-            <Redirect
-              path="cfei/:type/:id/preselected/:applicationId"
-              to="cfei/:type/:id/applications/:applicationId"
-            />
+        <Route component={applicationSummaryContainer} >
+          <Route component={applicationSummaryHeader} >
+            <Route component={mainContent} >
+              <Route
+                path="cfei/:type/:id/applications/:applicationId"
+                component={applicationSummaryContent}
+              />
+              <Redirect
+                path="cfei/:type/:id/preselected/:applicationId"
+                to="cfei/:type/:id/applications/:applicationId"
+              />
+            </Route>
           </Route>
         </Route>
         <Route path="partner" component={partnersContainer} />

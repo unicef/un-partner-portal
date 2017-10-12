@@ -9,6 +9,7 @@ import PartnerOverview from '../../../../partners/profile/overview/partnerOvervi
 import ConceptNote from '../../overview/conceptNote';
 import {
   selectApplication,
+  selectCfeiCriteria,
 } from '../../../../../store';
 import {
   loadPartnerDetails,
@@ -18,36 +19,30 @@ const messages = {
   cn: 'Concept Note',
 };
 
-class ApplicationSummaryContent extends Component {
-  componentWillUpdate(nextProps) {
-    if (!this.props.partner && nextProps.partner) {
-      this.props.dispatch(loadPartnerDetails(nextProps.partner));
-    }
-  }
-
-  render() {
-    const { application, partnerDetails, partnerLoading } = this.props;
-    return (
-      <GridColumn spacing="8">
-        <Grid container direction="row">
-          <Grid item xs={12} sm={8}>
-            <PartnerOverview partner={partnerDetails} loading={partnerLoading} />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <ConceptNote
-              conceptNote={application.details}
-              loading={partnerLoading}
-              date={application.created}
-              title={messages.cn}
-            />
-          </Grid>
+const ApplicationSummaryContent = (props) => {
+  const { application, partnerDetails, partnerLoading, cfeiCriteria } = props;
+  console.log(cfeiCriteria)
+  return (
+    <GridColumn spacing="8">
+      <Grid container direction="row">
+        <Grid item xs={12} sm={8}>
+          <PartnerOverview partner={partnerDetails} loading={partnerLoading} />
         </Grid>
-        <Divider />
-      </GridColumn>
+        <Grid item xs={12} sm={4}>
+          <ConceptNote
+            conceptNote={application.details}
+            loading={partnerLoading}
+            date={application.created}
+            title={messages.cn}
+          />
+        </Grid>
+      </Grid>
+      <Divider />
+    </GridColumn>
 
-    );
-  }
-}
+  );
+};
+
 
 ApplicationSummaryContent.propTypes = {
   application: PropTypes.object,
@@ -55,17 +50,22 @@ ApplicationSummaryContent.propTypes = {
   partnerDetails: PropTypes.object,
   partnerLoading: PropTypes.bool,
   dispatch: PropTypes.func,
+  eoi: PropTypes.func,
+  cfeiCriteria: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const application = selectApplication(state, ownProps.params.applicationId) || {};
-  const { partner } = application;
+  const { partner, eoi } = application;
   const partnerDetails = R.prop(partner, state.agencyPartnerProfile);
+  const cfeiCriteria = selectCfeiCriteria(state, eoi);
   return {
     application,
     partner,
     partnerDetails,
     partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
+    cfeiCriteria,
+    eoi,
   };
 };
 

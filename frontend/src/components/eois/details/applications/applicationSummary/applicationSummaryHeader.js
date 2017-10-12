@@ -32,10 +32,6 @@ class ApplicationSummaryHeader extends Component {
     this.handleBackButton = this.handleBackButton.bind(this);
   }
 
-  componentWillMount() {
-    this.props.loadPartnerNames().then(this.props.loadApplication);
-  }
-
   handleBackButton() {
     const { params: { type, id } } = this.props;
     history.push(`/cfei/${type}/${id}/applications`);
@@ -83,9 +79,6 @@ ApplicationSummaryHeader.propTypes = {
   type: PropTypes.string,
   children: PropTypes.node,
   params: PropTypes.object,
-
-  loadPartnerNames: PropTypes.func,
-  loadApplication: PropTypes.func,
   error: PropTypes.object,
 };
 
@@ -96,14 +89,8 @@ const mapStateToProps = (state, ownProps) => ({
   error: state.applicationDetails.status.error,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  loadPartnerNames: () => dispatch(loadPartnerNames()),
-  loadApplication: () => dispatch(loadApplication(ownProps.params.applicationId)),
-});
-
 const containerApplicationSummaryHeader = connect(
   mapStateToProps,
-  mapDispatchToProps,
 )(ApplicationSummaryHeader);
 
 export default containerApplicationSummaryHeader;
