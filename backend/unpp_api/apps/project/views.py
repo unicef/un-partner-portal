@@ -38,9 +38,9 @@ from .serializers import (
     ReviewerAssessmentsSerializer,
     CreateUnsolicitedProjectSerializer,
     ApplicationPartnerOpenSerializer,
-    ApplicationPartnerDirectSerializer,
+    ApplicationPartnerUnsolicitedDirectSerializer,
 )
-from .filters import BaseProjectFilter, ApplicationsFilter
+from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
 
 
 class BaseProjectAPIView(ListCreateAPIView):
@@ -313,4 +313,9 @@ class AppsPartnerOpenAPIView(ListAPIView):
 
 class AppsPartnerUnsolicitedAPIView(AppsPartnerOpenAPIView):
     queryset = Application.objects.filter(is_unsolicited=True)
-    serializer_class = ApplicationPartnerDirectSerializer
+    serializer_class = ApplicationPartnerUnsolicitedDirectSerializer
+    filter_class = ApplicationsUnsolicitedFilter
+
+
+class AppsPartnerDirectAPIView(AppsPartnerUnsolicitedAPIView):
+    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct)

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.db.models import Q
 import django_filters
 from django_filters.filters import CharFilter
 from .models import EOI, Application
@@ -31,6 +32,7 @@ class BaseProjectFilter(django_filters.FilterSet):
 
 class ApplicationsFilter(django_filters.FilterSet):
 
+    project_title = CharFilter(method='get_project_title')
     legal_name = CharFilter(method='get_legal_name')
     country_code = CharFilter(method='get_country_code')
     location = CharFilter(method='get_location')
@@ -42,13 +44,16 @@ class ApplicationsFilter(django_filters.FilterSet):
 
     class Meta:
         model = Application
-        fields = ['legal_name', 'country_code', 'eoi', 'partner', 'status']
+        fields = ['project_title', 'legal_name', 'country_code', 'eoi', 'partner', 'status']
+
+    def get_project_title(self, queryset, name, value):
+        return queryset.filter(eoi__title__icontains=value)
 
     def get_legal_name(self, queryset, name, value):
         return queryset.filter(partner__legal_name__icontains=value)
 
     def get_country_code(self, queryset, name, value):
-        return queryset.filter(eoi__country_code=(value and value.upper()))
+        return queryset.filter(eoi__locations__admin_level_1__country_code=(value and value.upper()))
 
     def get_locations(self, queryset, name, value):
         return queryset.filter(eoi__locations__admin_level_1=value)
@@ -67,3 +72,43 @@ class ApplicationsFilter(django_filters.FilterSet):
 
     def get_agency(self, queryset, name, value):
         return queryset.filter(eoi__agency=value)
+
+
+class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
+
+    project_title = CharFilter(method='get_project_title')
+    country_code = CharFilter(method='get_country_code')
+    location = CharFilter(method='get_location')
+    specialization = CharFilter(method='get_specialization')
+    agency = CharFilter(method='get_agency')
+
+    class Meta:
+        model = Application
+        fields = ['project_title', 'country_code', 'location', 'specialization', 'agency']
+
+    def get_project_title(self, queryset, name, value):
+        return queryset.filter(
+            Q(proposal_of_eoi_details__contains={"title": value}) |  # unsolicited
+            Q(eoi__title__contains=value)  # direct selection - developed from unsolicited
+        )
+
+    def get_specialization(self, queryset, name, value):
+        return queryset.filter(
+            Q(proposal_of_eoi_details__contains={"specialization": [value]}) |  # unsolicited
+            Q(eoi__specializations=[value])  # direct selection - developed from unsolicited
+        )
+
+    def get_country_code(self, queryset, name, value):
+        return queryset.filter(
+            Q(locations_proposal_of_eoi__admin_level_1__country_code=value) |  # unsolicited
+            Q(eoi__locations__admin_level_1__country_code=value)  # direct selection - developed from unsolicited
+        )
+
+    def get_locations(self, queryset, name, value):
+        return queryset.filter(
+            Q(locations_proposal_of_eoi__admin_level_1=[value]) |  # unsolicited
+            Q(eoi__locations__admin_level_1=[value])  # direct selection - developed from unsolicited
+        )
+
+    def get_agency(self, queryset, name, value):
+        return queryset.filter(agency=value)
