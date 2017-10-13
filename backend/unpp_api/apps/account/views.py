@@ -30,35 +30,3 @@ class AccountRegisterAPIView(APIView):
 
         serializer.save()
         return Response(serializer.instance_json, status=statuses.HTTP_201_CREATED)
-
-
-class AccountLoginAPIView(APIView):
-
-    permission_classes = (AllowAny, )
-
-    def post(self, request, *args, **kwargs):
-        data = request.data
-
-        username = data.get('username', data.get('email'))
-        password = data.get('password')
-
-        user = authenticate(username=username, password=password)
-
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-
-                return Response(status=statuses.HTTP_200_OK)
-            else:
-                return Response(status=statuses.HTTP_401_UNAUTHORIZED)
-        else:
-            return Response(status=statuses.HTTP_401_UNAUTHORIZED)
-
-
-class AccountLogoutAPIView(APIView):
-
-    permission_classes = (AllowAny, )
-
-    def post(self, request):
-        logout(request)
-        return Response({}, status=statuses.HTTP_204_NO_CONTENT)

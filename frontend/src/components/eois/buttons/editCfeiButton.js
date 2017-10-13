@@ -7,23 +7,19 @@ const messages = {
   text: 'Edit',
 };
 
-const editItem = (id) => {
-  console.log(`Edit: ${id}`);
-};
-
-const EditItemIcon = (props) => {
-  const { id } = props;
+const EditCfeiButton = (props) => {
+  const { handleClick } = props;
   return (
     <IconWithTextButton
       icon={<Create />}
       text={messages.text}
-      onClick={() => editItem(id)}
+      onClick={handleClick}
     />
   );
 };
 
-EditItemIcon.propTypes = {
-  id: PropTypes.string,
+EditCfeiButton.propTypes = {
+  handleClick: PropTypes.func,
 };
 
-export default EditItemIcon;
+export default EditCfeiButton;

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 
 import Grid from 'material-ui/Grid';
-import NewCfeiModalButton from './modals/newCfeiModalButton';
+import NewCfeiModalButton from './modals/newCfei/newCfeiModalButton';
 import HeaderNavigation from '../common/headerNavigation';
 
 const messages = {

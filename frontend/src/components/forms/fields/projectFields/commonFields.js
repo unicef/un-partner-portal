@@ -1,9 +1,9 @@
 import React from 'react';
 
-import TextFieldForm from '../../forms/textFieldForm';
-import SelectForm from '../../forms/selectForm';
-import DatePickerForm from '../../forms/datePickerForm';
-import PolarRadio from '../../forms/fields/PolarRadio';
+import TextFieldForm from '../../textFieldForm';
+import SelectForm from '../../selectForm';
+import DatePickerForm from '../../datePickerForm';
+import PolarRadio from '../../fields/PolarRadio';
 
 
 const FOCAL = [
@@ -140,9 +140,18 @@ export const ProjectCountries = () => (<SelectForm
 />);
 
 export const ProjectPartners = () => (<SelectForm
-  fieldName="partners"
+  fieldName="invited_partners"
   label="Partners"
   values={PARTNERS}
+  selectFieldProps={{
+    multiple: true,
+  }}
+/>);
+
+export const Reviewers = () => (<SelectForm
+  label="Select users"
+  fieldName="reviewers"
+  values={FOCAL}
   selectFieldProps={{
     multiple: true,
   }}
