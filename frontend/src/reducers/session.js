@@ -7,6 +7,7 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const initialState = {
   role: undefined,
   user: undefined,
+  userId: '4',
   token: undefined,
   userStatus: undefined,
   userLogged: false,

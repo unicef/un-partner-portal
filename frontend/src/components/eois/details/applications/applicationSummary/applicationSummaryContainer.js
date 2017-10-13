@@ -36,7 +36,7 @@ class ApplicationSummaryHeader extends Component {
         } else {
           savePartnerName(getPartnerNameFromState(application.partner), application.id);
         }
-        if (!cfeiDetailsExists) getCfeiDetails(application.eoi);
+        if (!cfeiDetailsExists(application.eoi)) getCfeiDetails(application.eoi);
         getPartnerDetails(application.partner);
       }
     });

@@ -5,20 +5,27 @@ import applicationReviewsStatus, {
   loadApplicationReviewsEnded,
   loadApplicationReviewsSuccess,
   loadApplicationReviewsFailure,
-  LOAD_APPLICATION_DETAIL_SUCCESS,
+  LOAD_APPLICATION_REVIEWS_SUCCESS,
 } from './applicationReviewsStatus';
+import { toObject,
+  normalizeToId,
+  selectIndexWithDefaultNull } from './normalizationHelpers';
 
-import { getApplicationReviewss } from '../helpers/api/api';
+import { getApplicationReviews } from '../helpers/api/api';
 
-const initialState = {};
+const initialState = {
+  reviews: {},
+  assessments: {},
+  reviewers: {},
+};
 
 export const loadApplicationReviews = id => (dispatch, getState) => {
   dispatch(loadApplicationReviewsStarted());
-  return getApplicationReviewss(id)
-    .then((application) => {
+  return getApplicationReviews(id)
+    .then((reviews) => {
       dispatch(loadApplicationReviewsEnded());
-      dispatch(loadApplicationReviewsSuccess(id, getState));
-      return application;
+      dispatch(loadApplicationReviewsSuccess(reviews, id));
+      return reviews;
     })
     .catch((error) => {
       dispatch(loadApplicationReviewsEnded());
@@ -26,49 +33,48 @@ export const loadApplicationReviews = id => (dispatch, getState) => {
     });
 };
 
+const normalizeReviews = (state, applicationId, reviews) =>
+  R.forEach(
+    (item) => {
+      const assessmentId = item.assessment[0] ? item.assessment[0].id : null;
+      const reviewerId = item.id;
+      const newAssessment = toObject(normalizeToId, item.assessment);
+      state.assessments = R.merge(state.assessments, newAssessment);
+      const reviewer = normalizeToId(R.omit(['assessment'], item));
+      state.reviewers = R.merge(state.reviewers, reviewer);
+      state.reviews[applicationId] = R.merge(
+        state.reviews[applicationId],
+        { [reviewerId]: assessmentId },
+      );
+    }
+    , reviews);
+
 const saveReviews = (state, action) => {
-  return R.assoc(action.id, action.review, state);
+  const newState = R.clone(state);
+  normalizeReviews(newState, action.applicationId, action.reviews);
+  return newState;
 };
 
-export function selectApplication(state, id) {
-  return state[id] ? state[id] : null;
-}
+export const selectReview = (state, reviewId) =>
+  selectIndexWithDefaultNull(reviewId, state.data.reviews);
 
-export function selectApplicationStatus(state, id) {
-  return state[id] ? state[id].status : '';
-}
+export const selectReviewer = (state, reviewId) =>
+  selectIndexWithDefaultNull(reviewId, state.data.reviewers);
 
-export function selectApplicationPartnerName(state, id) {
-  return state[id] ? state[id].partner_name : '';
-}
+export const selectAssessment = (state, reviewId) =>
+  selectIndexWithDefaultNull(reviewId, state.data.assessments);
 
-export function selectApplicationProject(state, id) {
-  return state[id] ? state[id].eoi : null;
-}
-
-const saveApplicationSync = (state, action) => {
-  if (selectApplication(state, action.id)) return state;
-  const { id, name, status } = action;
-  return R.assoc(
-    id,
-    { id, status, partner_name: name },
-    state);
-};
+export const isAssesmentAdded = (state, assessmentId) =>
+  R.has(assessmentId, state.data.assessments);
 
 const applicationReviews = (state = initialState, action) => {
   switch (action.type) {
-    case LOAD_APPLICATION_DETAIL_SUCCESS: {
-      return saveApplication(state, action);
-    }
-    case LOAD_APPLICATION_SUMMARY: {
-      return saveApplicationSync(state, action);
-    }
-    case UPDATE_APPLICATION_PARTNER_NAME: {
-      return saveNewApplicationPartnerName(state, action);
+    case LOAD_APPLICATION_REVIEWS_SUCCESS: {
+      return saveReviews(state, action);
     }
     default:
       return state;
   }
 };
 
-export default combineReducers({ reviews: applicationReviews, status: applicationReviewsStatus });
+export default combineReducers({ data: applicationReviews, status: applicationReviewsStatus });

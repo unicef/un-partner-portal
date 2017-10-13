@@ -35,6 +35,7 @@ import partnersPreselectionList from './reducers/partnersPreselectionList';
 import selectionCriteria from './reducers/selectionCriteria';
 import partnerNames, * as partnerNamesSelector from './reducers/partnerNames';
 import applicationDetails, * as applicationDetailsSelector from './reducers/applicationDetails';
+import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
 
 const mainReducer = combineReducers({
   cfei,
@@ -68,6 +69,7 @@ const mainReducer = combineReducers({
   selectionCriteria,
   partnerNames,
   applicationDetails,
+  applicationReviews,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -163,8 +165,8 @@ export const selectCfeiCriteria = (state, id) =>
   cfeiDetailsSelector.selectCfeiCriteria(state.cfeiDetails.cfeiDetails, id);
 
 export const mapSelectCriteriaToSelection = state =>
-  mapValuesForSelectionField(state.selectionCriteria)
-  ;
+  mapValuesForSelectionField(state.selectionCriteria);
+
 export const mapPartnersNamesToSelection = state =>
   mapValuesForSelectionField(state.partnerNames);
 
@@ -186,3 +188,15 @@ export const selectApplicationProject = (state, id) =>
 export const selectApplication = (state, id) =>
   applicationDetailsSelector.selectApplication(
     state.applicationDetails.applicationDetails, id);
+
+export const selectReview = (state, reviewId) =>
+  applicationReviewsSelector.selectReview(state.applicationReviews, reviewId);
+
+export const selectReviewer = (state, reviewerId) =>
+  applicationReviewsSelector.selectReviewer(state.applicationReviews, reviewerId);
+
+export const selectAssessment = (state, assessmentId) =>
+  applicationReviewsSelector.selectAssessment(state.applicationReviews, assessmentId);
+
+export const isAssesmentAdded = (state, assessmentId) =>
+  applicationReviewsSelector.isAssesmentAdded(state.applicationReviews, assessmentId);

@@ -24,8 +24,8 @@ const messages = {
 export const errorToBeCleared = () => ({ type: CLEAR_APPLICATION_REVIEWS_ERROR });
 export const loadApplicationReviewsStarted = () => ({ type: LOAD_APPLICATION_REVIEWS_STARTED });
 export const loadApplicationReviewsEnded = () => ({ type: LOAD_APPLICATION_REVIEWS_ENDED });
-export const loadApplicationReviewsSuccess = (application, getState) => (
-  { type: LOAD_APPLICATION_REVIEWS_SUCCESS, application, getState });
+export const loadApplicationReviewsSuccess = (reviews, applicationId) => (
+  { type: LOAD_APPLICATION_REVIEWS_SUCCESS, reviews, applicationId });
 export const loadApplicationReviewsFailure = error => (
   { type: LOAD_APPLICATION_REVIEWS_FAILURE, error });
 

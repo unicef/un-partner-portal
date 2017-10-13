@@ -94,7 +94,7 @@ export function getOpenCfeiDetails(id) {
   return authorizedGet(`/projects/${id}`);
 }
 
-export function getApplicationReviewers(applicationId) {
+export function getApplicationReviews(applicationId) {
   return authorizedGet(`/projects/applications/${applicationId}/reviewers-status`);
 }
 

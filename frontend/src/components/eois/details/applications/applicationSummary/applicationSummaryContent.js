@@ -11,6 +11,7 @@ import {
   selectApplication,
   selectCfeiCriteria,
 } from '../../../../../store';
+import ReviewContentContainer from './reviewContent/reviewContentContainer';
 
 
 const messages = {
@@ -18,8 +19,7 @@ const messages = {
 };
 
 const ApplicationSummaryContent = (props) => {
-  const { application, partnerDetails, partnerLoading, cfeiCriteria } = props;
-  console.log(cfeiCriteria)
+  const { application, partnerDetails, partnerLoading, params: { applicationId } } = props;
   return (
     <GridColumn spacing="8">
       <Grid container direction="row">
@@ -36,6 +36,7 @@ const ApplicationSummaryContent = (props) => {
         </Grid>
       </Grid>
       <Divider />
+      <ReviewContentContainer applicationId={applicationId} />
     </GridColumn>
 
   );
@@ -46,7 +47,7 @@ ApplicationSummaryContent.propTypes = {
   application: PropTypes.object,
   partnerDetails: PropTypes.object,
   partnerLoading: PropTypes.bool,
-  cfeiCriteria: PropTypes.func,
+  params: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => {
