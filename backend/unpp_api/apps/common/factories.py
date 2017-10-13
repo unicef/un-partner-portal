@@ -161,13 +161,13 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 class AdminLevel1Factory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: "admin level 1 name {}".format(n))
+    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
 
     class Meta:
         model = AdminLevel1
 
 
 class PointFactory(factory.django.DjangoModelFactory):
-    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
     lat = random.randint(-180, 180)
     lon = random.randint(-180, 180)
     admin_level_1 = factory.SubFactory(AdminLevel1Factory)
@@ -609,7 +609,6 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
 
 class EOIFactory(factory.django.DjangoModelFactory):
     title = factory.Sequence(lambda n: "title {}".format(n))
-    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
     # locations ... TODO when right time will come (when we need them - depending on endpoint)
@@ -716,7 +715,6 @@ class UnsolicitedFactory(factory.django.DjangoModelFactory):
     submitter = factory.LazyFunction(get_partner_member)
     agency = factory.LazyFunction(get_random_agency)
     proposal_of_eoi_details = {
-        'locations': [],
         'specializations': [
             Specialization.objects.all().order_by("?").first().id,
         ],
