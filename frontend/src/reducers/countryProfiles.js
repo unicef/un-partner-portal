@@ -1,22 +1,30 @@
 import R from 'ramda';
-import { getPartnerOrganizationProfiles } from '../helpers/api/api';
+import { getPartnerOrganizationProfiles, createCountryProfile } from '../helpers/api/api';
 import {
   clearError,
-  startLoading,
-  stopLoading,
+  startLoadingField,
+  stopLoadingField,
   saveErrorMsg,
 } from './apiStatus';
 
+export const CREATE_PROFILE_LOAD_STARTED = 'CREATE_PROFILE_LOAD_STARTED';
+export const CREATE_PROFILE_LOAD_SUCCESS = 'CREATE_PROFILE_LOAD_SUCCESS';
+export const CREATE_PROFILE_LOAD_FAILURE = 'CREATE_PROFILELOAD_FAILURE';
+export const CREATE_PROFILE_LOAD_ENDED = 'CREATE_PROFILE_LOAD_ENDED';
 
 export const PARTNER_PROFILES_LOAD_STARTED = 'PARTNER_PROFILES_LOAD_STARTED';
 export const PARTNER_PROFILES_LOAD_SUCCESS = 'PARTNER_PROFILES_LOAD_SUCCESS';
 export const PARTNER_PROFILES_LOAD_FAILURE = 'PARTNER_PROFILES_LOAD_FAILURE';
 export const PARTNER_PROFILES_LOAD_ENDED = 'PARTNER_PROFILES_LOAD_ENDED';
-export const LOAD_COUNTRY_PROFILES = 'LOAD_COUNTRY_PROFILES';
 
 export const SELECT_COUNTRY_ID = 'SELECT_COUNTRY_ID';
 export const CREATE_COUNTRY_PROFILE = 'CREATE_COUNTRY_PROFILE';
 export const INIT_COUNTRY_ID = -1;
+
+export const createProfileLoadStarted = () => ({ type: CREATE_PROFILE_LOAD_STARTED });
+export const createProfileLoadSuccess = () => ({ type: CREATE_PROFILE_LOAD_SUCCESS, response });
+export const createProfileLoadFailure = error => ({ type: CREATE_PROFILE_LOAD_FAILURE, error });
+export const createProfileLoadEnded = () => ({ type: CREATE_PROFILE_LOAD_ENDED });
 
 export const partnerProfilesLoadStarted = () => ({ type: PARTNER_PROFILES_LOAD_STARTED });
 export const partnerProfilesLoadSuccess = response => ({ type: PARTNER_PROFILES_LOAD_SUCCESS, response });
@@ -27,14 +35,16 @@ const saveProfiles = (state, action) => R.assoc('hq', action.response, state);
 
 const messages = {
   loadFailed: 'Load partners failed.',
+  loadingPartnersField: 'loading',
+  loadingCreateProfile: 'createLoading',
 };
 
 const initialState = {
   hq: null,
   selectedCountryId: INIT_COUNTRY_ID,
   loading: false,
+  createLoading: false,
 };
-
 
 export const loadPartnerProfiles = partnerId => (dispatch) => {
   dispatch(partnerProfilesLoadStarted());
@@ -49,9 +59,26 @@ export const loadPartnerProfiles = partnerId => (dispatch) => {
     });
 };
 
-export const selectCountryId = countryId => ({ type: SELECT_COUNTRY_ID, countryId });
+export const newCountryProfile = partnerId => (dispatch, getState) => {
+  dispatch(createProfileLoadStarted());
+  const data = { chosen_country_to_create: [getState().countryProfiles.selectedCountryId] };
 
-export const createCountryProfile = () => ({ type: CREATE_COUNTRY_PROFILE });
+  return createCountryProfile(partnerId, data)
+    .then(() => {
+      dispatch(createProfileLoadEnded());
+      dispatch(createProfileLoadSuccess());
+    })
+    .catch((error) => {
+      dispatch(createProfileLoadEnded());
+      dispatch(createProfileLoadFailure(error));
+    });
+};
+
+export const createCountryAndRefresh = partnerId => dispatch =>
+  dispatch(newCountryProfile(partnerId)).then(() => dispatch(loadPartnerProfiles(partnerId)));
+
+
+export const selectCountryId = countryId => ({ type: SELECT_COUNTRY_ID, countryId });
 
 const setSelectedCountryId = (state, index) => R.assoc('selectedCountryId', index, state);
 
@@ -72,15 +99,24 @@ const addCountryProfile = (state) => {
 
 export default function countryProfilesReducer(state = initialState, action) {
   switch (action.type) {
+    case CREATE_PROFILE_LOAD_FAILURE:
     case PARTNER_PROFILES_LOAD_FAILURE: {
       return saveErrorMsg(state, action, messages.loadFailed);
     }
     case PARTNER_PROFILES_LOAD_ENDED: {
-      return stopLoading(state);
+      return stopLoadingField(state, messages.loadingPartnersField);
     }
     case PARTNER_PROFILES_LOAD_STARTED: {
       clearError(state);
-      return startLoading(state);
+      return startLoadingField(state, messages.loadingPartnersField);
+    }
+    case CREATE_PROFILE_LOAD_STARTED: {
+      clearError(state);
+      return startLoadingField(state, messages.loadingCreateProfile);
+    }
+    case CREATE_PROFILE_LOAD_ENDED: {
+      clearError(state);
+      return stopLoadingField(state, messages.loadingCreateProfile);
     }
     case PARTNER_PROFILES_LOAD_SUCCESS: {
       return saveProfiles(state, action);
