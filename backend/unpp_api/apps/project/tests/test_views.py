@@ -105,19 +105,16 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         ao = AgencyOffice.objects.first()
         payload = {
             'title': "EOI title",
-            'country_code': COUNTRIES_ALPHA2_CODE[0][0],
             'agency': ao.agency.id,
             'focal_points': [User.objects.first().id],
             'locations': [
                 {
-                    "country_code": 'IQ',
-                    "admin_level_1": {"name": "Baghdad"},
+                    "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
                     "lat": random.randint(-180, 180),
                     "lon": random.randint(-180, 180),
                 },
                 {
-                    "country_code": "FR",
-                    "admin_level_1": {"name": "Paris"},
+                    "admin_level_1": {"name": "Paris", "country_code": "FR"},
                     "lat": random.randint(-180, 180),
                     "lon": random.randint(-180, 180),
                 },
@@ -212,19 +209,16 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         payload = {
             'eoi': {
                 'title': "EOI title",
-                'country_code': COUNTRIES_ALPHA2_CODE[0][0],
                 'agency': ao.agency.id,
                 'focal_points': [User.objects.first().id],
                 'locations': [
                     {
-                        "country_code": 'IQ',
-                        "admin_level_1": {"name": "Baghdad"},
+                        "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
                     {
-                        "country_code": "FR",
-                        "admin_level_1": {"name": "Paris"},
+                        "admin_level_1": {"name": "Paris", "country_code": "FR"},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
@@ -488,14 +482,12 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
             payload = {
                 "locations": [
                     {
-                        "country_code": 'IQ',
-                        "admin_level_1": {"name": "Baghdad"},
+                        "admin_level_1": {"country_code": 'IQ', "name": "Baghdad"},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
                     {
-                        "country_code": "FR",
-                        "admin_level_1": {"name": "Paris"},
+                        "admin_level_1": {"country_code": "FR", "name": "Paris"},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
