@@ -116,6 +116,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
     'django_filters',
     # 'compressor',
     'django_common',
@@ -157,6 +159,15 @@ USERSWITCH_OPTIONS = {
         'django.contrib.auth.backends.ModelBackend',
     'css_inline':
         'position:fixed !important; bottom: 10px !important; left: 10px !important; opacity:0.50; z-index: 9999;',
+}
+
+# TODO - only enable TokenAuth for prod
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
 }
 
 
