@@ -52,7 +52,10 @@ class LocationsMapField extends Component {
 
   selectedLocations() {
     const { currentLocations } = this.props;
-    return currentLocations.map(location =>
+
+    const removeDuplicates = R.uniqWith((a, b) => a.admin_level_1.name === b.admin_level_1.name)(currentLocations);
+
+    return removeDuplicates.map(location =>
       <Typography>{location.admin_level_1.name} </Typography>,
     );
   }
