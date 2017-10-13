@@ -13,7 +13,6 @@ from common.consts import (
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     COMPLETED_REASON,
 )
-from common.countries import COUNTRIES_ALPHA2_CODE
 
 
 class EOI(TimeStampedModel):
@@ -24,7 +23,6 @@ class EOI(TimeStampedModel):
     display_type = models.CharField(max_length=3, choices=EOI_TYPES, default=EOI_TYPES.open)
     status = models.CharField(max_length=3, choices=EOI_STATUSES, default=EOI_STATUSES.open)
     title = models.CharField(max_length=255)
-    country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
     created_by = models.ForeignKey('account.User', related_name="expressions_of_interest")
     # focal_point - limited to users under agency
@@ -88,8 +86,9 @@ class Pin(TimeStampedModel):
 class Application(TimeStampedModel):
     is_unsolicited = models.BooleanField(default=False, verbose_name='Is unsolicited?')
     proposal_of_eoi_details = JSONField(
-        default=dict([('locations', []), ('title', ''), ('specializations', [])])
+        default=dict([('title', ''), ('specializations', [])])
     )
+    locations_proposal_of_eoi = models.ManyToManyField('common.Point', related_name="applications", blank=True)
     partner = models.ForeignKey('partner.Partner', related_name="applications")
     eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
     agency = models.ForeignKey('agency.Agency', related_name="applications")
@@ -98,6 +97,9 @@ class Application(TimeStampedModel):
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
+    # did_withdraw is only applicable if did_win is True
+    did_withdraw = models.BooleanField(default=False, verbose_name='Did accept?')
+    withdraw_reason = models.TextField(null=True, blank=True)  # reason why partner withdraw
     # These two (ds_justification_*) will be used as direct selection will create applications for DS EOIs.
     # hq information
     ds_justification_select = ArrayField(
