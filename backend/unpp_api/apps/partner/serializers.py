@@ -735,7 +735,6 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
             partner = Partner.objects.create(hq_id=hq_id, country_code=country_code)
             PartnerProfile.objects.create(partner=partner)
             PartnerMailingAddress.objects.create(partner=partner)
-            PartnerHeadOrganization.objects.create(partner=partner)
             PartnerAuditAssessment.objects.create(partner=partner)
             PartnerReporting.objects.create(partner=partner)
             PartnerMandateMission.objects.create(partner=partner)
