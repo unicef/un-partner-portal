@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-import { FormControl, FormLabel } from 'material-ui/Form';
+import { FormControl } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import FileUploadButton from '../common/buttons/fileUploadButton';
-import { renderFileDownload, renderFormControl } from '../../helpers/formHelper';
+import FileFormUploadButton from '../common/buttons/fileFormUploadButton';
+import { renderFileDownload } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
-
-const messages = {
-  download: 'Download',
-};
 
 const styleSheet = theme => ({
   root: {
@@ -75,7 +71,7 @@ class FileForm extends Component {
   }
 
   render() {
-    const { classes, fieldName, label, optional,
+    const { classes, fieldName, label, optional, formName, sectionName,
       validation, warn, readOnly, ...other } = this.props;
 
     return (
@@ -90,16 +86,19 @@ class FileForm extends Component {
                 optional={optional}
               />]
             :
-            <Field
-              name={fieldName}
-              component={renderFormControl}
-              validate={optional ? [] : [required].concat(validation || [])}
-              warn={warn ? [warning] : []}
-              {...other}
-            >
-              <FormLabel>{label}</FormLabel>
-              <FileUploadButton fileSelected={(file) => {}} />
-            </Field>
+            <div>
+              <Field
+                name={fieldName}
+                component={FileFormUploadButton}
+                fieldName={fieldName}
+                label={label}
+                sectionName={sectionName}
+                formName={formName}
+                validate={optional ? [] : [required].concat(validation || [])}
+                warn={warn ? [warning] : []}
+                {...other}
+              />
+            </div>
           }
         </FormControl>
       </Grid>
@@ -114,6 +113,14 @@ FileForm.propTypes = {
    * Name of the field used by react-form and as unique id.
    */
   fieldName: PropTypes.string.isRequired,
+  /**
+   * form name
+   */
+  formName: PropTypes.string.isRequired,
+  /**
+   * section name
+   */
+  sectionName: PropTypes.string.isRequired,
   /**
    * label used in field, also placeholder is built from it by adding 'Provide'
    */
