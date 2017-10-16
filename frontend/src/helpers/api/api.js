@@ -129,3 +129,7 @@ export function getPartnerOrganizationProfiles(id) {
   return authorizedGet(`/partners/${id}/org-profile`);
 }
 
+export function createCountryProfile(id, body) {
+  return authorizedPost(`/partners/${id}/country-profile/`, body);
+}
+

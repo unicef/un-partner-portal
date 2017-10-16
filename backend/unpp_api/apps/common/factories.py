@@ -8,7 +8,7 @@ import factory
 from factory import fuzzy
 from account.models import User, UserProfile
 from agency.models import OtherAgency, Agency, AgencyOffice, AgencyMember
-from common.models import Specialization, Point, AdminLevel1
+from common.models import Specialization, Point, AdminLevel1, CommonFile
 from partner.models import (
     Partner,
     PartnerProfile,
@@ -369,6 +369,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         )
         if created:
             filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+            cfile, created = CommonFile.objects.get_or_create(file_field=open(filename).read())
             profile.working_languages = get_country_list()
 
             profile.acronym = "acronym {}".format(self.id)
@@ -376,8 +377,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             profile.connectivity_excuse = "connectivity excuse {}".format(self.id)
             profile.year_establishment = date.today().year - random.randint(1, 30)
             profile.have_gov_doc = True
-            profile.gov_doc = open(filename).read()
-            profile.registration_doc = open(filename).read()
+            profile.gov_doc = cfile
+            profile.registration_doc = cfile
             profile.registration_date = date.today() - timedelta(days=random.randint(365, 3650))
             profile.registration_comment = "registration comment {}".format(self.id)
             profile.registration_number = "registration number {}".format(self.id)
@@ -402,6 +403,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def mandate_mission(self, create, extracted, **kwargs):
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        cfile, created = CommonFile.objects.get_or_create(file_field=open(filename).read())
         PartnerMandateMission.objects.create(
             partner=self,
             background_and_rationale="background and rationale {}".format(self.id),
@@ -413,6 +416,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             description="collaboration professional netwok {}".format(self.id),
             population_of_concern=True,
             ethic_safeguard_comment="fake comment {}".format(self.id),
+            governance_organigram=cfile,
+            ethic_safeguard_policy=cfile,
+            ethic_fraud_policy=cfile,
         )
 
     @factory.post_generation
@@ -426,10 +432,14 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def audit(self, create, extracted, **kwargs):
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        cfile, created = CommonFile.objects.get_or_create(file_field=open(filename).read())
         PartnerAuditAssessment.objects.create(
             partner=self,
             regular_audited_comment="fake regular audited comment {}".format(self.id),
             org_audits=[ORG_AUDIT_CHOICES.donor],
+            most_recent_audit_report=cfile,
+            assessment_report=cfile,
             link_report="http://fake.unicef.org/fake_uri{}".format(self.id),
             major_accountability_issues_highlighted=True,
             comment="fake comment {}".format(self.id),
@@ -438,11 +448,14 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def report(self, create, extracted, **kwargs):
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        cfile, created = CommonFile.objects.get_or_create(file_field=open(filename).read())
         PartnerReporting.objects.create(
             partner=self,
             key_result="fake key result {}".format(self.id),
             last_report=date.today(),
             link_report="Http://fake.unicef.org/fake_uri{}".format(self.id),
+            report=cfile
         )
 
     @factory.post_generation

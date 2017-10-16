@@ -160,8 +160,8 @@ export const selectCfeiTitle = (state, id) =>
   cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails.cfeiDetails, id);
 
 export const mapSelectCriteriaToSelection = state =>
-  mapValuesForSelectionField(state.selectionCriteria)
-  ;
+  mapValuesForSelectionField(state.selectionCriteria);
+
 export const mapPartnersNamesToSelection = state =>
   mapValuesForSelectionField(state.partnerNames);
 

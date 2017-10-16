@@ -24,7 +24,7 @@ class OrganizationProfile extends Component {
   }
 
   render() {
-    const { countryProfiles, hqProfile, loading } = this.props;
+    const { countryProfiles, hqProfile, loading, createLoading } = this.props;
 
     return (
       <div>
@@ -38,16 +38,17 @@ class OrganizationProfile extends Component {
 
           </GridColumn>
         </MainContentWrapper>
-        <Loader loading={loading} fullscreen />
+        <Loader loading={loading || createLoading} fullscreen />
       </div>
     );
   }
 }
 
-
 OrganizationProfile.propTypes = {
   hqProfile: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
+  createLoading: PropTypes.bool.isRequired,
+  partnerId: PropTypes.number.isRequired,
   countryProfiles: PropTypes.array,
   loadPartnerProfiles: PropTypes.func.isRequired,
 };
@@ -56,7 +57,8 @@ const mapStateToProps = state => ({
   hqProfile: R.path(['hq'], state.countryProfiles) || {},
   countryProfiles: R.path(['hq', 'country_profiles'], state.countryProfiles) || [],
   partnerId: state.partnerInfo.partner.id,
-  loading: state.agencyPartnersList.loading,
+  loading: state.countryProfiles.loading,
+  createLoading: state.countryProfiles.createLoading,
 });
 
 const mapDispatch = dispatch => ({
