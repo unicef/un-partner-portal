@@ -129,3 +129,7 @@ export function getPartnerProfileConfig() {
   return get('/config/partners/profile');
 }
 
+export function getPartnerOrganizationProfiles(id) {
+  return authorizedGet(`/partners/${id}/org-profile`);
+}
+

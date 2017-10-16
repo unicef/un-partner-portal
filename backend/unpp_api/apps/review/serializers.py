@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from rest_framework import serializers
 
-from agency.serializers import AgencyUserSerializer
+from account.serializers import AgencyUserSerializer
 from .models import PartnerFlag, PartnerVerification
 
 
