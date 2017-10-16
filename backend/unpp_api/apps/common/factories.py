@@ -58,6 +58,8 @@ from .countries import COUNTRIES_ALPHA2_CODE
 
 COUNTRIES = [x[0] for x in COUNTRIES_ALPHA2_CODE]
 
+filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+
 
 def get_random_agency():
     return random.choice([
@@ -368,8 +370,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             registration_number="reg-number {}".format(self.id),
         )
         if created:
-            filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-            cfile, created = CommonFile.objects.get_or_create(file_field=open(filename).read())
+            cfile = CommonFile.objects.create()
+            cfile.file_field.save('test.csv', open(filename))
             profile.working_languages = get_country_list()
 
             profile.acronym = "acronym {}".format(self.id)
@@ -403,8 +405,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def mandate_mission(self, create, extracted, **kwargs):
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        cfile, created = CommonFile.objects.get_or_create(file_field=open(filename).read())
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
+
         PartnerMandateMission.objects.create(
             partner=self,
             background_and_rationale="background and rationale {}".format(self.id),
@@ -432,8 +435,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def audit(self, create, extracted, **kwargs):
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        cfile, created = CommonFile.objects.get_or_create(file_field=open(filename).read())
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
         PartnerAuditAssessment.objects.create(
             partner=self,
             regular_audited_comment="fake regular audited comment {}".format(self.id),
@@ -448,8 +451,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def report(self, create, extracted, **kwargs):
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        cfile, created = CommonFile.objects.get_or_create(file_field=open(filename).read())
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
         PartnerReporting.objects.create(
             partner=self,
             key_result="fake key result {}".format(self.id),
@@ -460,19 +463,19 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def other_info(self, create, extracted, **kwargs):
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
         PartnerOtherInfo.objects.create(
             partner=self,
             info_to_share="fake info to share {}".format(self.id),
             confirm_data_updated=True,
+            org_logo=cfile,
         )
 
     @factory.post_generation
     def other_documents(self, create, extracted, **kwargs):
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        PartnerOtherDocument.objects.create(
-            partner=self,
-            document=open(filename).read(),
-        )
+        pod = PartnerOtherDocument.objects.create(partner=self)
+        pod.document.save('test.csv', open(filename))
 
     class Meta:
         model = Partner
