@@ -9,45 +9,45 @@ import { loadCountries } from '../reducers/countries';
 import { loadPartnerConfig } from '../reducers/partnerProfileConfig';
 import { loadSectors } from '../reducers/sectors';
 import getTheme, { muiOldTheme } from '../styles/muiTheme';
+import Loader from '../components/common/loader';
+import { SESSION_STATUS } from '../helpers/constants';
 
 
 class Main extends Component {
   componentWillMount() {
-    let role = window.localStorage.role;
-    if (!role) {
-      window.localStorage.setItem('role', 'partner');
-      role = 'partner';
-    }
-    const token = window.localStorage.token;
-    this.props.sessionInit({ role, token });
     this.props.loadCountries();
     this.props.loadPartnerConfig();
     this.props.loadSectors();
   }
 
   render() {
+    const { status, children } = this.props;
     return (
       <MuiThemeProvider theme={createMuiTheme(getTheme())}>
         <MuiThemeProviderLegacy muiTheme={muiOldTheme()}>
-          {this.props.children}
+          <Loader loading={status === SESSION_STATUS.CHANGING} fullScreen >
+            {(status === SESSION_STATUS.READY) ? children : null}
+          </Loader>
         </MuiThemeProviderLegacy>
-      </MuiThemeProvider>
-    );
+      </MuiThemeProvider>);
   }
 }
 
 Main.propTypes = {
-  sessionInit: PropTypes.func,
   loadCountries: PropTypes.func,
   loadPartnerConfig: PropTypes.func,
   loadSectors: PropTypes.func,
   children: PropTypes.node,
+  role: PropTypes.string,
+  status: PropTypes.string,
 };
 
+const mapStateToProps = state => ({
+  status: state.session.state,
+  role: state.session.role,
+});
+
 const mapDispatchToProps = dispatch => ({
-  sessionInit: (session) => {
-    dispatch(initSession(session));
-  },
   loadCountries: () => loadCountries(dispatch),
   loadSectors: () => dispatch(loadSectors()),
   loadPartnerConfig: () => dispatch(loadPartnerConfig()),
@@ -55,6 +55,6 @@ const mapDispatchToProps = dispatch => ({
 
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(Main);

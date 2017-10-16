@@ -4,11 +4,12 @@ import { reduxForm, SubmissionError } from 'redux-form';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
+import Snackbar from 'material-ui/Snackbar';
 import GridColumn from '../common/grid/gridColumn';
 import { loginUser } from '../../reducers/session';
 import TextFieldForm from '../forms/textFieldForm';
 import PasswordFieldForm from '../forms/passwordFieldForm';
-import Snackbar from 'material-ui/Snackbar';
+
 
 const handleLogin = (values, dispatch) => {
   return dispatch(loginUser(values)).catch((error) => {

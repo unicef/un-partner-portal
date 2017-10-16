@@ -28,3 +28,9 @@ export const APPLICATION_STATUSES = {
   REJ: 'Rej',
   PEN: 'Pen',
 };
+
+export const SESSION_STATUS = {
+  INITIAL: 'initial',
+  CHANGING: 'changing',
+  READY: 'ready',
+};

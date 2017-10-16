@@ -8,11 +8,11 @@ const messages = {
   title: 'Login',
 };
 
-const Registration = () => (
+const Login = () => (
   <Card title={messages.title}>
     <LoginForm />
   </Card>
 );
 
 
-export default Registration;
+export default Login;

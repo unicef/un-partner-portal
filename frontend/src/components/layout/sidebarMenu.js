@@ -8,10 +8,14 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import List from 'material-ui/List';
 import Divider from 'material-ui/Divider';
-import Paper from 'material-ui/Paper';
+import Typography from 'material-ui/Typography';
+import GridColumn from '../common/grid/gridColumn';
 
 import MenuLink from './menuLink';
 
+const messages = {
+  logged: 'Logged in as:',
+};
 
 const styleSheet = theme => ({
   sidebar: {
@@ -19,9 +23,10 @@ const styleSheet = theme => ({
     justifyContent: 'space-between',
   },
   logo: {
-    padding: 15,
-    margin: 'auto',
-    background: theme.palette.primary[500],
+    width: '100%',
+  },
+  innerLogo: {
+    padding: theme.spacing.unit * 2,
   },
   icon: {
     color: 'inherit',
@@ -39,7 +44,7 @@ const styleSheet = theme => ({
 });
 
 function sidebarMenu(props) {
-  const { classes, router: { location: { pathname } }, sidebar, onItemClick } = props;
+  const { classes, router: { location: { pathname } }, sidebar, onItemClick, user } = props;
   const links = sidebar.map((item, index) => {
     const link = (
       <MenuLink
@@ -69,9 +74,20 @@ function sidebarMenu(props) {
       <List>
         {links}
       </List>
-      <Paper className={classes.logo} elevation={0}>
-        User logo
-      </Paper>
+      <div className={classes.logo}>
+        <Divider />
+        <div className={classes.innerLogo}>
+          <GridColumn>
+            <Typography type="caption">
+              {messages.logged}
+            </Typography>
+            <Typography type="body2">
+              {user}
+            </Typography>
+          </GridColumn>
+        </div>
+        <Divider />
+      </div>
     </Grid>
 
   );
@@ -86,6 +102,7 @@ sidebarMenu.propTypes = {
 
 const mapStateToProps = state => ({
   sidebar: state.nav,
+  user: state.session.email,
 });
 
 const mapDispatchToProps = () => ({
