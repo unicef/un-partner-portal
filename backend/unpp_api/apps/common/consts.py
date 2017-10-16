@@ -232,3 +232,9 @@ SANCTION_LIST_TYPES = Choices(
     ('Ent', 'entity', 'Sanctioned Entity'),
     ('Ind', 'individual', 'Sanctioned Individual'),
 )
+
+SANCTION_MATCH_TYPES = Choices(
+    ('Usr', 'user', 'User Match'),
+    ('Brd', 'board', 'Board Match'),
+    ('Org', 'organization', 'Organization Name Match'),
+)

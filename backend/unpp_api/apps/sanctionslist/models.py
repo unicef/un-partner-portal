@@ -6,7 +6,7 @@ from django.db import models
 
 from model_utils.models import TimeStampedModel
 
-from common.consts import SANCTION_LIST_TYPES
+from common.consts import SANCTION_LIST_TYPES, SANCTION_MATCH_TYPES
 
 
 class SanctionedItem(TimeStampedModel):
@@ -33,3 +33,10 @@ class SanctionedName(TimeStampedModel):
 
     def __str__(self):
         return "Name: {}".format(self.name)
+
+
+class SanctionedNameMatch(TimeStampedModel):
+    name = models.ForeignKey(SanctionedName, related_name='matches')
+    can_ignore = models.BooleanField(default=False)
+    partner = models.ForeignKey('partner.Partner', related_name='sanction_matches')
+    match_type = models.CharField(max_length=3, choices=SANCTION_MATCH_TYPES)
