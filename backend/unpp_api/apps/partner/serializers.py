@@ -134,6 +134,11 @@ class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerHeadOrganization
         fields = "__all__"
+        read_only_fields = (
+            'first_name',
+            'last_name',
+            'email',
+        )
 
 
 class PartnerDirectorSerializer(serializers.ModelSerializer):
