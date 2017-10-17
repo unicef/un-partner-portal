@@ -12,11 +12,7 @@ import { formatDateForPrint } from '../../../helpers/dates';
 import WrappedCell from '../../common/cell/wrappedCell';
 
 const applicationCell = ({ row, column }) => {
-  if (column.name === 'is_direct') {
-    return (<DirectSelectionCell
-      directSelection={row.is_direct}
-    />);
-  } else if (column.name === 'submission_date') {
+  if (column.name === 'submission_date') {
     return <WrappedCell content={formatDateForPrint(row.submission_date)} />;
   } else if (column.name === 'id') {
     return (<ConceptNoteIDCell
