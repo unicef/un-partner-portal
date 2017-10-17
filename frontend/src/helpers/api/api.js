@@ -104,6 +104,18 @@ export function getApplicationDetails(id) {
   return authorizedGet(`/projects/application/${id}/`);
 }
 
+export function getApplicationConceptNotes() {
+  return authorizedGet('/projects/applications/open/');
+}
+
+export function getApplicationUnsolicitedConceptNotes() {
+  return authorizedGet('/projects/applications/unsolicited/');
+}
+
+export function getApplicationDirect() {
+  return authorizedGet('/projects/applications/direct/');
+}
+
 // Partners
 export function getPartnerProfileDetails(partnerId) {
   return authorizedGet(`/partners/${partnerId}`);

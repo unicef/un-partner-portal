@@ -113,6 +113,12 @@ export const selectNormalizedStaffGlobalyChoices = state =>
 export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices']);
 
+export const selectApplicationStatuses = (state) => {
+  const app = state.partnerProfileConfig['application-statuses'];
+  ;
+  return app;
+};
+
 export const selectNormalizedAuditTypes = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['audit-types']);
 

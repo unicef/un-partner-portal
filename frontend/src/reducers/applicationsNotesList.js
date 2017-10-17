@@ -1,219 +1,76 @@
-export const INIT_COUNTRY_ID = -1;
+import R from 'ramda';
+import { getApplicationConceptNotes } from '../helpers/api/api';
+import {
+  clearError,
+  startLoading,
+  stopLoading,
+  saveErrorMsg,
+} from './apiStatus';
+
+export const APPLICATIONS_CN_LOAD_STARTED = 'APPLICATIONS_CN_LOAD_STARTED';
+export const APPLICATIONS_CN_LOAD_SUCCESS = 'APPLICATIONS_CN_LOAD_SUCCESS';
+export const APPLICATIONS_CN_LOAD_FAILURE = 'APPLICATIONS_CN_LOAD_FAILURE';
+export const APPLICATIONS_CN_LOAD_ENDED = 'APPLICATIONS_CN_LOAD_ENDED';
+
+
+export const applicationsCnLoadStarted = () => ({ type: APPLICATIONS_CN_LOAD_STARTED });
+export const applicationsCnSuccess = response => ({ type: APPLICATIONS_CN_LOAD_SUCCESS, response });
+export const applicationsCnFailure = error => ({ type: APPLICATIONS_CN_LOAD_FAILURE, error });
+export const applicationsCnEnded = () => ({ type: APPLICATIONS_CN_LOAD_ENDED });
+
 
 const initialState = {
   columns: [
     { name: 'id', title: 'ID' },
     { name: 'project_title', title: 'Project Title', width: 200 },
-    { name: 'cfei_id', title: 'CFEI ID' },
-    { name: 'agency', title: 'Agency' },
+    { name: 'eoi_id', title: 'CFEI ID' },
+    { name: 'agency_name', title: 'Agency' },
     { name: 'country', title: 'Country' },
     { name: 'sector', title: 'Sector' },
-    { name: 'date', title: 'Application Date' },
+    { name: 'application_date', title: 'Application Date' },
     { name: 'status', title: 'Status' },
   ],
-  notes: [
-    { id: 'CN/0192',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '123/FF2',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Pending',
-    },
-    { id: 'CN/0190',
-      name: 'Partner 0',
-      project_title: 'Teaching students new language',
-      cfei_id: '21/AA/2',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      status: 'Offer Made',
-    },
-    { id: 'CN/603',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '123/FF2',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Offer Accepted',
-    },
-    { id: 'CN/0132',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '13/FA2',
-      agency: 'UNICEF',
-      country: 'Poland',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Offer Declined',
-    },
-    { id: 'CN/0192',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '123/FF2',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Pending',
-    },
-    { id: 'CN/0190',
-      name: 'Partner 0',
-      project_title: 'Teaching students new language',
-      cfei_id: '21/AA/2',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      status: 'Offer Made',
-    },
-    { id: 'CN/603',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '123/FF2',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Offer Accepted',
-    },
-    { id: 'CN/0132',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '13/FA2',
-      agency: 'UNICEF',
-      country: 'Poland',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Offer Declined',
-    }, { id: 'CN/0192',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '123/FF2',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Pending',
-    },
-    { id: 'CN/0190',
-      name: 'Partner 0',
-      project_title: 'Teaching students new language',
-      cfei_id: '21/AA/2',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      status: 'Offer Made',
-    },
-    { id: 'CN/603',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '123/FF2',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Offer Accepted',
-    },
-    { id: 'CN/0132',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '13/FA2',
-      agency: 'UNICEF',
-      country: 'Poland',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Offer Declined',
-    }, { id: 'CN/0192',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '123/FF2',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Pending',
-    },
-    { id: 'CN/0190',
-      name: 'Partner 0',
-      project_title: 'Teaching students new language',
-      cfei_id: '21/AA/2',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      status: 'Offer Made',
-    },
-    { id: 'CN/603',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '123/FF2',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Offer Accepted',
-    },
-    { id: 'CN/0132',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '13/FA2',
-      agency: 'UNICEF',
-      country: 'Poland',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Offer Declined',
-    }, { id: 'CN/0192',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '123/FF2',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Pending',
-    },
-    { id: 'CN/0190',
-      name: 'Partner 0',
-      project_title: 'Teaching students new language',
-      cfei_id: '21/AA/2',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      status: 'Offer Made',
-    },
-    { id: 'CN/603',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '123/FF2',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Offer Accepted',
-    },
-    { id: 'CN/0132',
-      name: 'Partner 0',
-      project_title: 'Capacity building for small rural farmers',
-      cfei_id: '13/FA2',
-      agency: 'UNICEF',
-      country: 'Poland',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      status: 'Offer Declined',
-    },
-  ],
+  loading: false,
+  conceptNotes: [],
+  totalCount: 0,
+};
+
+const saveApplicationsCn = (state, action) => {
+  const partners = R.assoc('conceptNotes', action.response.results, state);
+  return R.assoc('totalCount', action.response.count, partners);
+};
+
+const messages = {
+  loadFailed: 'Load applications failed.',
+};
+
+export const loadApplicationsCn = params => (dispatch) => {
+  dispatch(applicationsCnLoadStarted());
+  return getApplicationConceptNotes(params)
+    .then((applications) => {
+      dispatch(applicationsCnEnded());
+      dispatch(applicationsCnSuccess(applications));
+    })
+    .catch((error) => {
+      dispatch(applicationsCnEnded());
+      dispatch(applicationsCnFailure(error));
+    });
 };
 
 export default function applicationsNotesListReducer(state = initialState, action) {
   switch (action.type) {
+    case APPLICATIONS_CN_LOAD_FAILURE: {
+      return saveErrorMsg(state, action, messages.loadFailed);
+    }
+    case APPLICATIONS_CN_LOAD_ENDED: {
+      return stopLoading(state);
+    }
+    case APPLICATIONS_CN_LOAD_STARTED: {
+      return startLoading(clearError(state));
+    }
+    case APPLICATIONS_CN_LOAD_SUCCESS: {
+      return saveApplicationsCn(state, action);
+    }
     default:
       return state;
   }

@@ -1,212 +1,74 @@
-export const INIT_COUNTRY_ID = -1;
+import R from 'ramda';
+import { getApplicationUnsolicitedConceptNotes } from '../helpers/api/api';
+import {
+  clearError,
+  startLoading,
+  stopLoading,
+  saveErrorMsg,
+} from './apiStatus';
+
+export const APPLICATIONS_UCN_LOAD_STARTED = 'APPLICATIONS_UCN_LOAD_STARTED';
+export const APPLICATIONS_UCN_LOAD_SUCCESS = 'APPLICATIONS_UCN_LOAD_SUCCESS';
+export const APPLICATIONS_UCN_LOAD_FAILURE = 'APPLICATIONS_UCN_LOAD_FAILURE';
+export const APPLICATIONS_UCN_LOAD_ENDED = 'APPLICATIONS_UCN_LOAD_ENDED';
+
+export const applicationsUcnLoadStarted = () => ({ type: APPLICATIONS_UCN_LOAD_STARTED });
+export const applicationsUcnSuccess = response => ({ type: APPLICATIONS_UCN_LOAD_SUCCESS, response });
+export const applicationsUcnFailure = error => ({ type: APPLICATIONS_UCN_LOAD_FAILURE, error });
+export const applicationsUcnEnded = () => ({ type: APPLICATIONS_UCN_LOAD_ENDED });
+
 
 const initialState = {
   columns: [
-    { name: 'id', title: 'ID' },
+    { name: 'id', title: 'Concept Note ID' },
     { name: 'project_title', title: 'Project Title', width: 200 },
-    { name: 'agency', title: 'Agency' },
+    { name: 'agency_name', title: 'Agency' },
     { name: 'country', title: 'Country' },
     { name: 'sector', title: 'Sector' },
-    { name: 'date', title: 'Application Date' },
-    { name: 'direct_selection', title: 'Direct Selection' },
+    { name: 'submission_date', title: 'Submission Date' },
+    { name: 'is_direct', title: 'Direct Selection' },
   ],
-  notes: [
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: true,
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/603',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: true,
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/603',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: true,
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/603',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: true,
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/603',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: true,
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/603',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: true,
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/603',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: true,
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/603',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: false,
-    }, { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: true,
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      direct_selection: false,
-    },
-    { id: 'CN/603',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'England',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      direct_selection: false,
-    },
-  ],
+  loading: false,
+  unsolicited: [],
+  totalCount: 0,
+};
+
+const saveApplicationsUcn = (state, action) => {
+  const partners = R.assoc('unsolicited', action.response.results, state);
+  return R.assoc('totalCount', action.response.count, partners);
+};
+
+const messages = {
+  loadFailed: 'Load applications failed.',
+};
+
+export const loadApplicationsUcn = params => (dispatch) => {
+  dispatch(applicationsUcnLoadStarted());
+  return getApplicationUnsolicitedConceptNotes(params)
+    .then((applications) => {
+      dispatch(applicationsUcnEnded());
+      dispatch(applicationsUcnSuccess(applications));
+    })
+    .catch((error) => {
+      dispatch(applicationsUcnEnded());
+      dispatch(applicationsUcnFailure(error));
+    });
 };
 
 export default function applicationsUnsolicitedListReducer(state = initialState, action) {
   switch (action.type) {
+    case APPLICATIONS_UCN_LOAD_FAILURE: {
+      return saveErrorMsg(state, action, messages.loadFailed);
+    }
+    case APPLICATIONS_UCN_LOAD_ENDED: {
+      return stopLoading(state);
+    }
+    case APPLICATIONS_UCN_LOAD_STARTED: {
+      return startLoading(clearError(state));
+    }
+    case APPLICATIONS_UCN_LOAD_SUCCESS: {
+      return saveApplicationsUcn(state, action);
+    }
     default:
       return state;
   }
