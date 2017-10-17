@@ -101,6 +101,8 @@ const PartnerProfileIdentificationRegistration = (props) => {
                 <Grid item sm={4} xs={12}>
                   <FileForm
                     fieldName="registration_doc"
+                    formName="partnerProfile"
+                    sectionName="identification.registration"
                     label={messages.document}
                     optional
                     warn

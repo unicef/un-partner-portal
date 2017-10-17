@@ -8,50 +8,6 @@ import FileFormUploadButton from '../common/buttons/fileFormUploadButton';
 import { renderFileDownload } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
-const styleSheet = theme => ({
-  root: {
-    width: 0.1,
-    height: 0.1,
-    opacity: 0,
-    overflow: 'hidden',
-    position: 'absolute',
-    zIndex: -1,
-  },
-  iconLabel: {
-    alignItems: 'center',
-    minWidth: 72,
-    whiteSpace: 'nowrap',
-    overflow: 'hidden !important',
-    textOverflow: 'ellipsis',
-    display: 'inline-block',
-    width: '100%',
-  },
-  wrapContent: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  wrapContentButton: {
-    display: 'flex',
-    cursor: 'pointer',
-    alignItems: 'center',
-  },
-  downloadIcon: {
-    fill: theme.palette.secondary[700],
-    marginRight: 5,
-  },
-  FileNameField: {
-    minWidth: 72,
-    paddingBottom: theme.spacing.unit,
-    borderBottom: '1px solid',
-  },
-  icon: {
-    marginRight: theme.spacing.unit,
-  },
-  button: {
-    padding: '11px 0px',
-  },
-});
-
 class FileForm extends Component {
   constructor(props) {
     super(props);
@@ -71,7 +27,7 @@ class FileForm extends Component {
   }
 
   render() {
-    const { classes, fieldName, label, optional, formName, sectionName,
+    const { fieldName, label, optional, formName, sectionName,
       validation, warn, readOnly, ...other } = this.props;
 
     return (
@@ -108,7 +64,6 @@ class FileForm extends Component {
 
 
 FileForm.propTypes = {
-  classes: PropTypes.object,
   /**
    * Name of the field used by react-form and as unique id.
    */
@@ -156,4 +111,4 @@ FileForm.defaultProps = {
 };
 
 
-export default withStyles(styleSheet, { name: 'FileForm' })(FileForm);
+export default FileForm;

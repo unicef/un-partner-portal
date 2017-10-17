@@ -42,6 +42,8 @@ const PartnerProfileMandateGovernance = (props) => {
           readOnly={readOnly}
         />
         <FileForm
+          formName="partnerProfile"
+          sectionName="mandate_mission.governance"
           label={messages.organigram}
           fieldName="governance_organigram"
           optional
