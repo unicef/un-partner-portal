@@ -13,7 +13,7 @@ import {
   selectIndexWithDefaultNull,
 } from './normalizationHelpers';
 
-import { getApplicationReviews } from '../helpers/api/api';
+import { getApplicationReviews, postApplicationReview, putApplicationReview } from '../helpers/api/api';
 
 const initialState = {
   reviews: {},
@@ -34,21 +34,6 @@ export const loadApplicationReviews = id => (dispatch, getState) => {
       dispatch(loadApplicationReviewsFailure(error));
     });
 };
-
-export const updateApplicationReview = (applicationId, reviewerId, assessmentId) =>
-  (dispatch, getState) => {
-    dispatch(loadApplicationReviewsStarted());
-    return getApplicationReviews(id)
-      .then((reviews) => {
-        dispatch(loadApplicationReviewsEnded());
-        dispatch(loadApplicationReviewsSuccess(reviews, id));
-        return reviews;
-      })
-      .catch((error) => {
-        dispatch(loadApplicationReviewsEnded());
-        dispatch(loadApplicationReviewsFailure(error));
-      });
-  };
 
 const normalizeReviews = (state, applicationId, reviews) =>
   R.forEach(
@@ -83,6 +68,17 @@ export const selectAssessment = (state, reviewId) =>
 
 export const isAssesmentAdded = (state, assessmentId) =>
   R.has(assessmentId, state.data.assessments);
+
+export const updateApplicationReview = (applicationId, reviewerId, assessmentId, review) =>
+  (dispatch, getState) => {
+    return isAssesmentAdded(getState().applicationReviews, assessmentId)
+      ? postApplicationReview(applicationId, reviewerId, review)
+      : putApplicationReview(applicationId, reviewerId, review)
+        .then((newReview) => {
+          dispatch(loadApplicationReviews(applicationId));
+          return newReview;
+        });
+  };
 
 const applicationReviews = (state = initialState, action) => {
   switch (action.type) {

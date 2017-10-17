@@ -44,6 +44,16 @@ function authorizedPatch({ uri, params, body = {} }) {
     .then(response => response.data);
 }
 
+function authorizedPut({ uri, params, body = {} }) {
+  const token = store.getState().session.token;
+  const options = {
+    params,
+    headers: { Authorization: `token ${token}` },
+  };
+  return axios.put(`${host}${uri}`, body, options)
+    .then(response => response.data);
+}
+
 function authorizedPostUpload({ uri, body = {}, params }) {
   const token = store.getState().session.token;
   const options = {
@@ -118,7 +128,13 @@ export function getApplicationReviews(applicationId) {
 }
 
 export function postApplicationReview(applicationId, reviewerId, body) {
-  return authorizedGet({
+  return authorizedPost({
+    uri: `projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
+    body });
+}
+
+export function putApplicationReview(applicationId, reviewerId, body) {
+  return authorizedPut({
     uri: `projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
     body });
 }
