@@ -3,6 +3,22 @@ import store from '../../store';
 
 const host = '/api';
 
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === (`${name}=`)) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
 function get(uri, params = {}) {
   const options = { method: 'GET', params };
   return axios.get(`${host}${uri}`, options)
@@ -10,7 +26,10 @@ function get(uri, params = {}) {
 }
 
 function post(uri, body = {}) {
-  return axios.post(`${host}${uri}`, body)
+  const options = {
+    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+  };
+  return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
@@ -28,7 +47,10 @@ function authorizedPost({ uri, params, body = {} }) {
   const token = store.getState().session.token;
   const options = {
     params,
-    headers: { Authorization: `token ${token}` },
+    headers: {
+      Authorization: `token ${token}`,
+      'X-CSRFToken': getCookie('csrftoken'),
+    },
   };
   return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
@@ -38,7 +60,10 @@ function authorizedPatch({ uri, params, body = {} }) {
   const token = store.getState().session.token;
   const options = {
     params,
-    headers: { Authorization: `token ${token}` },
+    headers: {
+      Authorization: `token ${token}`,
+      'X-CSRFToken': getCookie('csrftoken'),
+    },
   };
   return axios.patch(`${host}${uri}`, body, options)
     .then(response => response.data);
@@ -51,6 +76,7 @@ function authorizedPostUpload({ uri, body = {}, params }) {
     headers: {
       'content-type': 'multipart/form-data',
       Authorization: `token ${token}`,
+      'X-CSRFToken': getCookie('csrftoken'),
     },
   };
   return axios.post(`${host}${uri}`, body, options)
