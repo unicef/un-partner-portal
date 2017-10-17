@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
+import EoiCountryCell from '../../components/eois/cells/eoiCountryCell';
 
 const messages = {
   profile: 'HQ Profile',
@@ -54,10 +55,12 @@ class OrganizationItem extends Component {
     this.state = {
       index: 0,
     };
+
+    this.handleOnClick = this.handleOnClick.bind(this);
   }
 
-  handleOnClick(isCountry) {
-    history.push('/profile/1/overview');
+  handleOnClick() {
+    history.push(`/profile/${this.props.profileId}/overview`);
   }
 
   render() {
@@ -71,7 +74,7 @@ class OrganizationItem extends Component {
       >
         <Grid item xs={5}>
           <Typography type={isCountryItem ? 'body1' : 'title'} color="inherit">
-            {title}
+            {isCountryItem ? <EoiCountryCell code={title} /> : title}
           </Typography>
         </Grid>
 
@@ -92,7 +95,7 @@ class OrganizationItem extends Component {
         </Grid>
 
         <Grid className={classes.right} item xs={1}>
-          <IconButton onClick={() => this.handleOnClick(isCountryItem)}>
+          <IconButton onClick={this.handleOnClick}>
             <KeyboardArrowRight />
           </IconButton>
         </Grid>
@@ -104,6 +107,7 @@ class OrganizationItem extends Component {
 OrganizationItem.propTypes = {
   classes: PropTypes.object.isRequired,
   isCountryItem: PropTypes.bool.isRequired,
+  profileId: PropTypes.number.isRequired,
   completed: PropTypes.bool,
   title: PropTypes.string.isRequired,
   users: PropTypes.number.isRequired,
@@ -111,6 +115,7 @@ OrganizationItem.propTypes = {
 };
 
 OrganizationItem.defaultProps = {
+  profileId: 0,
   isCountryItem: false,
   completed: true,
   title: messages.profile,

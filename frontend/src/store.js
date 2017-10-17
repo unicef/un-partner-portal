@@ -36,6 +36,7 @@ import selectionCriteria from './reducers/selectionCriteria';
 import partnerNames, * as partnerNamesSelector from './reducers/partnerNames';
 import applicationDetails, * as applicationDetailsSelector from './reducers/applicationDetails';
 import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
+import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers'
 
 const mainReducer = combineReducers({
   cfei,
@@ -70,6 +71,7 @@ const mainReducer = combineReducers({
   partnerNames,
   applicationDetails,
   applicationReviews,
+  agencyMembers,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -200,3 +202,7 @@ export const selectAssessment = (state, assessmentId) =>
 
 export const isAssesmentAdded = (state, assessmentId) =>
   applicationReviewsSelector.isAssesmentAdded(state.applicationReviews, assessmentId);
+
+export const mapFocalPointsReviewersToSelection = state =>
+  mapValuesForSelectionField(
+    agencyMembersSelectors.selectPossibleFocalPointsReviewers(state.agencyMembers));

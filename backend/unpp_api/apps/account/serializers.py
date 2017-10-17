@@ -98,3 +98,56 @@ class PartnerRegistrationSerializer(serializers.Serializer):
             "partner_member": PartnerMemberSerializer(instance=self.partner_member).data,
         }
         return self.instance_json
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    name = serializers.CharField(source='get_fullname')
+
+    class Meta:
+        model = User
+        fields = ('id', 'name', 'email',)
+
+
+class AgencyUserSerializer(UserSerializer):
+
+    agency_name = serializers.SerializerMethodField()
+    agency_id = serializers.SerializerMethodField()
+    office_name = serializers.SerializerMethodField()
+    role = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = UserSerializer.Meta.fields + ('agency_name',
+                                               'agency_id',
+                                               'role',
+                                               'office_name',)
+
+    def _agency_member(self, obj):
+        return obj.agency_members.get()
+
+    def get_role(self, obj):
+        return self._agency_member(obj).get_role_display()
+
+    def get_agency_name(self, obj):
+        return self._agency_member(obj).office.agency.name
+    
+    def get_agency_id(self, obj):
+        return self._agency_member(obj).office.agency.id
+
+    def get_office_name(self, obj):
+        return self._agency_member(obj).office.name
+
+
+class PartnerUserSerializer(UserSerializer):
+
+    partners = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = UserSerializer.Meta.fields + ('partners',)
+
+    def get_partners(self, obj):
+        partner_ids = obj.get_partner_ids_i_can_access()
+        return PartnerSerializer(Partner.objects.filter(id__in=partner_ids),
+                                 many=True).data

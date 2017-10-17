@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import PropTypes from 'prop-types';
 import ControlledModal from '../../../common/modals/controlledModal';
+import { updateCfei } from '../../../../reducers/newCfei';
 import ManageReviewersForm from './manageReviewers';
 
 const messages = {
@@ -23,6 +24,7 @@ class ManageReviewersModal extends Component {
 
   onFormSubmit(values) {
     this.props.handleDialogClose();
+    this.props.updateCfei(values);
   }
 
   render() {
@@ -54,10 +56,12 @@ ManageReviewersModal.propTypes = {
   dialogOpen: PropTypes.bool,
   id: PropTypes.string,
   submit: PropTypes.func,
+  updateCfei: PropTypes.func,
   handleDialogClose: PropTypes.func,
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  updateCfei: body => dispatch(updateCfei(body, ownProps.id)),
   submit: () => dispatch(submit('manageReviewers')),
 });
 

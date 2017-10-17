@@ -28,7 +28,7 @@ const ApplicationSummaryContent = (props) => {
         </Grid>
         <Grid item xs={12} sm={4}>
           <ConceptNote
-            conceptNote={application.details}
+            conceptNote={application.cn}
             loading={partnerLoading}
             date={application.created}
             title={messages.cn}

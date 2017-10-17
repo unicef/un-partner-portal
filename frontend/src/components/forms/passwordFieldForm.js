@@ -10,13 +10,9 @@ import { FormControl, FormLabel } from 'material-ui/Form';
 import IconButton from 'material-ui/IconButton';
 
 import { renderTextField } from '../../helpers/formHelper';
-import { required, password } from '../../helpers/validation';
+import { required } from '../../helpers/validation';
 
 const styleSheet = () => ({
-  root: {
-    position: 'relative',
-    display: 'inline-block',
-  },
   visibilityButton: {
     marginTop: 4,
     marginLeft: 8,
@@ -46,7 +42,7 @@ class PasswordFieldForm extends Component {
       optional, validation } = this.props;
     const { visible } = this.state;
     return (
-      <Grid item className={classes.root}>
+      <Grid item>
         <FormControl fullWidth>
           <FormLabel>{label}</FormLabel>
           <Field
@@ -54,7 +50,7 @@ class PasswordFieldForm extends Component {
             placeholder={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
             component={renderTextField}
             type={visible ? 'text' : 'password'}
-            validate={[password].concat(optional ? [] : [required].concat(validation || []))}
+            validate={optional ? [] : [required].concat(validation || [])}
             {...textFieldProps}
           />
           <IconButton

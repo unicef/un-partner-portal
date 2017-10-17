@@ -7,9 +7,11 @@ import applicationReviewsStatus, {
   loadApplicationReviewsFailure,
   LOAD_APPLICATION_REVIEWS_SUCCESS,
 } from './applicationReviewsStatus';
-import { toObject,
+import {
+  toObject,
   normalizeToId,
-  selectIndexWithDefaultNull } from './normalizationHelpers';
+  selectIndexWithDefaultNull,
+} from './normalizationHelpers';
 
 import { getApplicationReviews } from '../helpers/api/api';
 
@@ -32,6 +34,21 @@ export const loadApplicationReviews = id => (dispatch, getState) => {
       dispatch(loadApplicationReviewsFailure(error));
     });
 };
+
+export const updateApplicationReview = (applicationId, reviewerId, assessmentId) =>
+  (dispatch, getState) => {
+    dispatch(loadApplicationReviewsStarted());
+    return getApplicationReviews(id)
+      .then((reviews) => {
+        dispatch(loadApplicationReviewsEnded());
+        dispatch(loadApplicationReviewsSuccess(reviews, id));
+        return reviews;
+      })
+      .catch((error) => {
+        dispatch(loadApplicationReviewsEnded());
+        dispatch(loadApplicationReviewsFailure(error));
+      });
+  };
 
 const normalizeReviews = (state, applicationId, reviews) =>
   R.forEach(

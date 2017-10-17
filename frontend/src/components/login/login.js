@@ -1,17 +1,18 @@
 import React from 'react';
 
 import Card from '../common/card';
-import Stepper from './stepper';
+
+import LoginForm from './loginForm';
 
 const messages = {
-  title: 'Registration',
+  title: 'Login',
 };
 
-const Registration = () => (
+const Login = () => (
   <Card title={messages.title}>
-    <Stepper />
+    <LoginForm />
   </Card>
 );
 
 
-export default Registration;
+export default Login;

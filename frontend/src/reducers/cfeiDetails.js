@@ -27,7 +27,9 @@ export const loadCfei = id => (dispatch) => {
 };
 
 const saveCfei = (state, action) => {
-  const cfei = normalizeSingleCfei(action.cfei);
+  let cfei = normalizeSingleCfei(action.cfei);
+  cfei = R.assoc('reviewers', cfei.reviewers.map(String), cfei);
+  cfei = R.assoc('focal_points', cfei.focal_points.map(String), cfei);
   return R.assoc(cfei.id, cfei, state);
 };
 
