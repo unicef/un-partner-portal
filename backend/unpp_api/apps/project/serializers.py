@@ -349,6 +349,8 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     submission_date = serializers.CharField(source="created")
     is_direct = serializers.BooleanField(source="eoi.is_direct")
     partner_name = serializers.CharField(source="partner.legal_name")
+    has_yellow_flag = serializers.CharField(source="partner.has_yellow_flag")
+    has_red_flag = serializers.CharField(source="partner.has_red_flag")
 
     class Meta:
         model = Application
@@ -364,7 +366,8 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             'is_direct',
             'partner_name',
             'partner_is_verified',
-            'flags',
+            'has_yellow_flag',
+            'has_red_flag,'
         )
 
     def get_project_title(self, obj):
