@@ -1,10 +1,10 @@
-import R from 'ramda';
+import R from 'ramda'; 
 import {
   clearError,
   startLoading,
   stopLoading,
   saveErrorMsg,
-} from './apiStatus';
+} from './apiStatus'; 
 import { uploadConceptNote, getProjectApplication } from '../helpers/api/api';
 
 export const UPLOAD_CN_STARTED = 'UPLOAD_CN_STARTED';
@@ -15,17 +15,7 @@ export const UPLOAD_CN_DELETE = 'UPLOAD_CN_DELETE';
 export const UPLOAD_CN_CONFIRM = 'UPLOAD_CN_CONFIRM';
 export const UPLOAD_CN_CLEAR_ERROR = 'UPLOAD_CN_CLEAR_ERROR';
 export const UPLOAD_CN_CLEAR = 'UPLOAD_CN_CLEAR';
-export const UPLOAD_CN_LOCAL_FILE = 'UPLOAD_CN_LOCAL_FILE';
-
-export const PROJECT_APP_LOAD_STARTED = 'PROJECT_APP_LOAD_STARTED';
-export const PROJECT_APP_LOAD_SUCCESS = 'PROJECT_APP_LOAD_SUCCESS';
-export const PROJECT_APP_LOAD_FAILURE = 'PROJECT_APP_LOAD_FAILURE';
-export const PROJECT_APP_LOAD_ENDED = 'PROJECT_APP_LOAD_ENDED';
-
-export const projectAppLoadStarted = () => ({ type: PROJECT_APP_LOAD_STARTED });
-export const projectAppLoadSuccess = response => ({ type: PROJECT_APP_LOAD_SUCCESS, response });
-export const projectAppLoadFailure = error => ({ type: PROJECT_APP_LOAD_FAILURE, error });
-export const projectAppLoadEnded = () => ({ type: PROJECT_APP_LOAD_ENDED });
+export const UPLOAD_CN_LOCAL_FILE = 'UPLOAD_CN_LOCAL_FILE'; 
 
 export const uploadCnStarted = () => ({ type: UPLOAD_CN_STARTED });
 export const uploadCnSuccess = response => ({ type: UPLOAD_CN_SUCCESS, response });
@@ -54,16 +44,16 @@ const saveConceptNote = (state, action) => {
 };
 
 export const projectApplicationExists = partnerId => (dispatch) => {
-  dispatch(projectAppLoadStarted());
+  dispatch(uploadCnStarted());
 
   return getProjectApplication(partnerId)
     .then((profiles) => {
-      dispatch(projectAppLoadEnded());
-      dispatch(projectAppLoadSuccess(profiles));
+      dispatch(uploadCnEnded());
+      dispatch(uploadCnSuccess(profiles));
     })
     .catch((error) => {
-      dispatch(projectAppLoadEnded());
-      dispatch(projectAppLoadFailure(error));
+      dispatch(uploadCnEnded());
+      dispatch(uploadCnFailure(error));
     });
 };
 
@@ -127,19 +117,6 @@ export default function conceptNoteReducer(state = initialState, action) {
     }
     case UPLOAD_CN_CLEAR: {
       return clearConceptNoteState(state);
-    }
-    case PROJECT_APP_LOAD_FAILURE: {
-      return saveErrorMsg(state, action);
-    }
-    case PROJECT_APP_LOAD_ENDED: {
-      return stopLoading(state);
-    }
-    case PROJECT_APP_LOAD_STARTED: {
-      clearError(state);
-      return startLoading(state);
-    }
-    case PROJECT_APP_LOAD_SUCCESS: {
-      return saveConceptNote(state, action);
     }
     default:
       return state;

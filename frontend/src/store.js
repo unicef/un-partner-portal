@@ -35,7 +35,6 @@ import partnersPreselectionList from './reducers/partnersPreselectionList';
 import selectionCriteria from './reducers/selectionCriteria';
 import partnerNames, * as partnerNamesSelector from './reducers/partnerNames';
 import applicationDetails, * as applicationDetailsSelector from './reducers/applicationDetails';
-import projectAppliaction from './reducers/projectApplication';
 
 const mainReducer = combineReducers({
   cfei,
@@ -54,7 +53,6 @@ const mainReducer = combineReducers({
   countries,
   conceptNote,
   countryProfiles,
-  projectAppliaction,
   partnerInfo,
   partnerProfileConfig,
   partnerProfileEdit,
