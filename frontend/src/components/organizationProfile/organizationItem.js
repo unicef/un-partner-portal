@@ -55,6 +55,8 @@ class OrganizationItem extends Component {
     this.state = {
       index: 0,
     };
+
+    this.handleOnClick = this.handleOnClick.bind(this);
   }
 
   handleOnClick() {
@@ -93,7 +95,7 @@ class OrganizationItem extends Component {
         </Grid>
 
         <Grid className={classes.right} item xs={1}>
-          <IconButton onClick={() => this.handleOnClick()}>
+          <IconButton onClick={this.handleOnClick}>
             <KeyboardArrowRight />
           </IconButton>
         </Grid>
