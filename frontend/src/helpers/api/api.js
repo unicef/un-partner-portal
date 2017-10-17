@@ -120,7 +120,7 @@ export function getOpenCfeiApplications(id, filters) {
 }
 
 export function getProjectApplication(projectId) {
-  return authorizedGet(`/projects/${projectId}/partner-application/`);
+  return authorizedGet({ uri: `/projects/${projectId}/partner-application/` });
 }
 
 export function changeApplicationStatus(id, status) {
