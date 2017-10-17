@@ -20,6 +20,7 @@ const initialState = {
   userLogged: false,
   position: undefined,
   agencyName: undefined,
+  agencyId: undefined,
   officeName: undefined,
   partners: undefined,
   error: undefined,
@@ -57,6 +58,7 @@ export const loadUserData = () => (dispatch, getState) => {
         authorized: true,
         // agency specific field, but ok to have them undefined
         agencyName: response.agency_name,
+        agencyId: response.agency_id,
         position: response.role,
         officeName: response.office_name,
         // partner specific field, but ok to have them undefined
@@ -66,10 +68,16 @@ export const loadUserData = () => (dispatch, getState) => {
     })
     .catch((error) => {
       // TODO (marcindo) correct error handling for different scenarios
-      history.push('/login');
+      if (R.path(['response', 'status'], error) === 401) {
+        history.push('/login');
+        dispatch(initSession({
+          authorized: false,
+          role: ROLES.PARTNER,
+          error,
+        }));
+      }
+      // just save error somewhere for now
       dispatch(initSession({
-        authorized: false,
-        role: ROLES.PARTNER,
         error,
       }));
       dispatch(sessionReady(getState));

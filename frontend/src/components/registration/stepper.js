@@ -17,6 +17,7 @@ import Account from './account';
 import AlertDialog from '../common/alertDialog';
 import { loadCountries } from '../../reducers/countries';
 import { registerUser } from '../../reducers/session';
+import { loadPartnerConfig } from '../../reducers/partnerProfileConfig';
 
 class RegistrationStepper extends React.Component {
   constructor(props) {
@@ -32,7 +33,8 @@ class RegistrationStepper extends React.Component {
   }
 
   componentWillMount() {
-    loadCountries(this.props.dispatch);
+    this.props.loadCountries();
+    this.props.loadPartnerConfig();
   }
 
   handleNext() {
@@ -123,12 +125,18 @@ RegistrationStepper.propTypes = {
    * answers to all questions in declaration component, show dialog when at least one is false
    */
   answers: PropTypes.arrayOf(PropTypes.string),
+  loadPartnerConfig: PropTypes.func,
+  loadCountries: PropTypes.func,
 };
 
 const selector = formValueSelector('registration');
 const connectedRegistrationStepper = connect(
   state => ({
     answers: selector(state, 'questions'),
+  }),
+  dispatch => ({
+    loadCountries: () => loadCountries(dispatch),
+    loadPartnerConfig: () => dispatch(loadPartnerConfig()),
   }),
 )(RegistrationStepper);
 

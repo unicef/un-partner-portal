@@ -35,6 +35,7 @@ import partnersPreselectionList from './reducers/partnersPreselectionList';
 import selectionCriteria from './reducers/selectionCriteria';
 import partnerNames, * as partnerNamesSelector from './reducers/partnerNames';
 import applicationDetails, * as applicationDetailsSelector from './reducers/applicationDetails';
+import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers'
 
 const mainReducer = combineReducers({
   cfei,
@@ -68,6 +69,7 @@ const mainReducer = combineReducers({
   selectionCriteria,
   partnerNames,
   applicationDetails,
+  agencyMembers,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -160,8 +162,8 @@ export const selectCfeiTitle = (state, id) =>
   cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails.cfeiDetails, id);
 
 export const mapSelectCriteriaToSelection = state =>
-  mapValuesForSelectionField(state.selectionCriteria)
-  ;
+  mapValuesForSelectionField(state.selectionCriteria);
+
 export const mapPartnersNamesToSelection = state =>
   mapValuesForSelectionField(state.partnerNames);
 
@@ -179,3 +181,7 @@ export const selectApplicationPartnerName = (state, id) =>
 export const selectApplication = (state, id) =>
   applicationDetailsSelector.selectApplication(
     state.applicationDetails.applicationDetails, id);
+
+export const mapFocalPointsReviewersToSelection = state =>
+  mapValuesForSelectionField(
+    agencyMembersSelectors.selectPossibleFocalPointsReviewers(state.agencyMembers));

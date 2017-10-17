@@ -6,6 +6,7 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import store from './store';
 import main from './components/main';
 import auth from './components/auth';
+import nonAuth from './components/nonAuth';
 import mainLayout from './components/layout/mainLayout';
 import eoiHeader from './components/eois/eoiHeader';
 import openCfeiApplications from './components/eois/details/applications/openCfeiApplications';
@@ -101,10 +102,13 @@ const allRoutes = () => (
           <Route path="settings" component={settings} />
         </Route>
       </Route>
+    </Route>
+    <Route component={nonAuth}>
       <Route path="/login" component={login} />
       <Route path="/registration" component={registration} />
       <Route path="/dev" component={dev} />
     </Route>
+
   </Router>
 );
 

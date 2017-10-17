@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import MuiThemeProviderLegacy from 'material-ui-old/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import getTheme from './styles/muiTheme';
+
 import store from './store';
 import Router from './routes';
 

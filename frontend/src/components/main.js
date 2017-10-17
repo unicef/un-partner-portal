@@ -3,31 +3,30 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import MuiThemeProviderLegacy from 'material-ui-old/styles/MuiThemeProvider';
-
-import { initSession } from '../reducers/session';
+import { loadAgencyMembers } from '../reducers/agencyMembers';
 import { loadCountries } from '../reducers/countries';
 import { loadPartnerConfig } from '../reducers/partnerProfileConfig';
 import { loadSectors } from '../reducers/sectors';
 import getTheme, { muiOldTheme } from '../styles/muiTheme';
-import Loader from '../components/common/loader';
-import { SESSION_STATUS } from '../helpers/constants';
+
+import { ROLES } from '../helpers/constants';
 
 
 class Main extends Component {
   componentWillMount() {
-    this.props.loadCountries();
-    this.props.loadPartnerConfig();
-    this.props.loadSectors();
+    const { session, loadCountries, loadPartnerConfig, loadSectors, loadAgencyMembers} = this.props;
+    loadCountries();
+    loadPartnerConfig();
+    loadSectors();
+    if (session.role === ROLES.AGENCY) loadAgencyMembers(session.agencyId);
   }
 
   render() {
-    const { status, children } = this.props;
+    const { children } = this.props;
     return (
       <MuiThemeProvider theme={createMuiTheme(getTheme())}>
         <MuiThemeProviderLegacy muiTheme={muiOldTheme()}>
-          <Loader loading={status === SESSION_STATUS.CHANGING} fullScreen >
-            {(status === SESSION_STATUS.READY) ? children : null}
-          </Loader>
+          {children}
         </MuiThemeProviderLegacy>
       </MuiThemeProvider>);
   }
@@ -37,20 +36,22 @@ Main.propTypes = {
   loadCountries: PropTypes.func,
   loadPartnerConfig: PropTypes.func,
   loadSectors: PropTypes.func,
+  loadAgencyMembers: PropTypes.func,
   children: PropTypes.node,
-  role: PropTypes.string,
-  status: PropTypes.string,
+  session: PropTypes.object,
+
 };
 
 const mapStateToProps = state => ({
-  status: state.session.state,
-  role: state.session.role,
+  session: state.session,
+
 });
 
 const mapDispatchToProps = dispatch => ({
   loadCountries: () => loadCountries(dispatch),
   loadSectors: () => dispatch(loadSectors()),
   loadPartnerConfig: () => dispatch(loadPartnerConfig()),
+  loadAgencyMembers: agencyId => dispatch(loadAgencyMembers(agencyId)),
 });
 
 

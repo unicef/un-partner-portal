@@ -10,36 +10,33 @@ import getTheme, { muiOldTheme } from '../styles/muiTheme';
 import { SESSION_STATUS } from '../helpers/constants';
 import Loader from '../components/common/loader';
 
-
+// component for routes that don't need to authenthicate token on the backend like login 
+// and registration
 class Auth extends Component {
   componentWillMount() {
-    const { sessionInit, loadUserInfo } = this.props;
+    const { sessionInit } = this.props;
     let role = window.localStorage.role;
     if (!role) {
       role = 'partner';
       window.localStorage.setItem('role', role);
     }
-    const token = window.localStorage.token;
-    sessionInit({ role, token });
-    loadUserInfo();
+    sessionInit({ role });
   }
 
   render() {
-    const { status, children } = this.props;
+    const { children } = this.props;
     return (
-      <Loader loading={status === SESSION_STATUS.CHANGING} fullScreen >
-        {(status === SESSION_STATUS.READY) ? children : null}
-      </Loader>
-
-    );
+      <MuiThemeProvider theme={createMuiTheme(getTheme())}>
+        <MuiThemeProviderLegacy muiTheme={muiOldTheme()}>
+          {children}
+        </MuiThemeProviderLegacy>
+      </MuiThemeProvider>);
   }
 }
 
 Auth.propTypes = {
   sessionInit: PropTypes.func,
-  loadUserInfo: PropTypes.func,
   children: PropTypes.node,
-  status: PropTypes.string,
 };
 
 const mapStateToProps = state => ({
@@ -50,8 +47,6 @@ const mapDispatchToProps = dispatch => ({
   sessionInit: (session) => {
     dispatch(initSession(session));
   },
-  loadUserInfo: () => dispatch(loadUserData()),
-  loadCountries: () => loadCountries(dispatch),
 });
 
 

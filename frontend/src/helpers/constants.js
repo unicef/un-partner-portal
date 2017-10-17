@@ -34,3 +34,10 @@ export const SESSION_STATUS = {
   CHANGING: 'changing',
   READY: 'ready',
 };
+
+export const AGENCY_MEMBERS_POSITIONS = {
+  ADMINISTRATOR: 'Administrator',
+  EDITOR: 'Editor',
+  READER: 'Reader',
+};
+
