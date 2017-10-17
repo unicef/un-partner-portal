@@ -349,12 +349,14 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     submission_date = serializers.CharField(source="created")
     is_direct = serializers.BooleanField(source="eoi.is_direct")
     partner_name = serializers.CharField(source="partner.legal_name")
+    selected_source = serializers.CharField(source="eoi.selected_source")
 
     class Meta:
         model = Application
         fields = (
             'id',
             'project_title',
+            'selected_source',
             'eoi_id',
             'agency_name',
             'country',
