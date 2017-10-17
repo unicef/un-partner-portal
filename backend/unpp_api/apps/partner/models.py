@@ -100,9 +100,9 @@ class PartnerProfile(TimeStampedModel):
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
     have_gov_doc = models.BooleanField(default=False, verbose_name='Does the organization have a government document?')
-    gov_doc = models.FileField(null=True)
+    gov_doc = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="gov_docs")
     registration_to_operate_in_country = models.BooleanField(default=True)
-    registration_doc = models.FileField(null=True)
+    registration_doc = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="registration_docs")
     registration_date = models.DateField(null=True, blank=True)
     registration_comment = models.CharField(max_length=255, null=True, blank=True)
     registration_number = models.CharField(max_length=255, null=True, blank=True)
@@ -252,7 +252,8 @@ class PartnerAuditAssessment(TimeStampedModel):
         default=list,
         null=True
     )
-    most_recent_audit_report = models.FileField(null=True)
+    most_recent_audit_report = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name="most_recent_audit_reports")
     link_report = models.URLField()
     major_accountability_issues_highlighted = models.BooleanField(
         default=False, verbose_name="Were there any major accountability issues highlighted by audits in the past "
@@ -265,7 +266,8 @@ class PartnerAuditAssessment(TimeStampedModel):
         default=list,
         null=True
     )
-    assessment_report = models.FileField(null=True)
+    assessment_report = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name="assessment_reports")
 
     class Meta:
         ordering = ['id']
@@ -279,7 +281,7 @@ class PartnerReporting(TimeStampedModel):
     key_result = models.CharField(max_length=200, null=True, blank=True)
     publish_annual_reports = models.BooleanField(default=True)
     last_report = models.DateField(verbose_name='Date of most recent annual report', null=True, blank=True)
-    report = models.FileField(null=True)
+    report = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="reports")
     link_report = models.URLField()
 
     class Meta:
@@ -302,14 +304,17 @@ class PartnerMandateMission(TimeStampedModel):
         max_length=200, null=True, blank=True,
         verbose_name="Briefly describe the headquarters oversight of country/branch office operations including "
                      "any reporting requirements of the country/branch office to HQ")
-    governance_organigram = models.FileField(null=True)
+    governance_organigram = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name="governance_organigrams")
 
     # ethics
     ethic_safeguard = models.BooleanField(default=False)
-    ethic_safeguard_policy = models.FileField(null=True)
+    ethic_safeguard_policy = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name="ethic_safeguard_policies")
     ethic_safeguard_comment = models.CharField(max_length=200, null=True, blank=True)
     ethic_fraud = models.BooleanField(default=False)
-    ethic_fraud_policy = models.FileField(null=True)
+    ethic_fraud_policy = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name="ethic_fraud_policies")
     ethic_fraud_comment = models.CharField(max_length=200, null=True, blank=True)
 
     # population of concern
@@ -458,7 +463,8 @@ class PartnerCollaborationEvidence(TimeStampedModel):
     mode = models.CharField(max_length=3, choices=COLLABORATION_EVIDENCE_MODES)
     organization_name = models.CharField(max_length=200)
     date_received = models.DateField(verbose_name='Date Received')
-    evidence_file = models.FileField(null=True)
+    evidence_file = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name="collaboration_evidences")
 
     class Meta:
         ordering = ['id']
@@ -470,7 +476,8 @@ class PartnerCollaborationEvidence(TimeStampedModel):
 class PartnerOtherInfo(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="other_info")
     info_to_share = models.CharField(max_length=200)
-    org_logo = models.FileField(null=True)
+    org_logo = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name="others_info")
     confirm_data_updated = models.BooleanField(default=False)
 
     class Meta:

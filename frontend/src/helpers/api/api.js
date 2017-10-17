@@ -119,6 +119,10 @@ export function getOpenCfeiApplications(id, filters) {
   return authorizedGet({ uri: `/projects/${id}/applications`, params: filters });
 }
 
+export function getProjectApplication(projectId) {
+  return authorizedGet(`/projects/${projectId}/partner-application/`);
+}
+
 export function changeApplicationStatus(id, status) {
   return authorizedPatch({ uri: `/projects/application/${id}/`, body: { status } });
 }
@@ -146,6 +150,10 @@ export function getPartnerProfileConfig() {
 
 export function getPartnerOrganizationProfiles(id) {
   return authorizedGet({ uri: `/partners/${id}/org-profile` });
+}
+
+export function createCountryProfile(id, body) {
+  return authorizedPost({ uri: `/partners/${id}/country-profile/`, body });
 }
 
 // Agencies

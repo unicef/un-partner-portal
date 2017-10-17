@@ -425,12 +425,12 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
     governance_structure = serializers.CharField(source="mandate_mission.governance_structure")
     governance_hq = serializers.CharField(source="mandate_mission.governance_hq")
-    governance_organigram = serializers.FileField(source="mandate_mission.governance_organigram")
+    governance_organigram = serializers.CharField(source="mandate_mission.governance_organigram")
     ethic_safeguard = serializers.BooleanField(source="mandate_mission.ethic_safeguard")
-    ethic_safeguard_policy = serializers.FileField(source="mandate_mission.ethic_safeguard_policy")
+    ethic_safeguard_policy = serializers.CharField(source="mandate_mission.ethic_safeguard_policy")
     ethic_safeguard_comment = serializers.CharField(source="mandate_mission.ethic_safeguard_comment")
     ethic_fraud = serializers.BooleanField(source="mandate_mission.ethic_fraud")
-    ethic_fraud_policy = serializers.FileField(source="mandate_mission.ethic_fraud_policy")
+    ethic_fraud_policy = serializers.CharField(source="mandate_mission.ethic_fraud_policy")
     ethic_fraud_comment = serializers.CharField(source="mandate_mission.ethic_fraud_comment")
     population_of_concern = serializers.BooleanField(source="mandate_mission.population_of_concern")
     concern_groups = serializers.ListField(source="mandate_mission.concern_groups")
@@ -650,7 +650,7 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
 class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
     info_to_share = serializers.CharField(source="other_info.info_to_share")
-    org_logo = serializers.FileField(source="other_info.org_logo")
+    org_logo = serializers.CharField(source="other_info.org_logo")
     confirm_data_updated = serializers.BooleanField(source="other_info.confirm_data_updated")
 
     other_documents = PartnerOtherDocumentSerializer(many=True)

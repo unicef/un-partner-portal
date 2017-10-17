@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import ControlledModal from '../common/modals/controlledModal';
 import CountryOfficesHeader from './countryOfficesHeader';
 import CountryProfileList from './countryProfile/countryProfileList';
-import { selectCountryId, createCountryProfile, INIT_COUNTRY_ID } from '../../reducers/countryProfiles';
+import { selectCountryId, createCountryAndRefresh, INIT_COUNTRY_ID } from '../../reducers/countryProfiles';
+
 
 const messages = {
   countryDialogTitle: 'Create new country profile',
@@ -38,14 +39,22 @@ class CountryOfficesHeaderContainer extends React.Component {
     this.setState({ showCountryModal: false });
 
     if (this.props.selectedCountryId !== INIT_COUNTRY_ID) {
-      this.props.createCountryProfile();
+      this.props.newCountryProfile(this.props.partnerId, this.props.selectedCountryId);
       this.props.setSelectedCountryId(INIT_COUNTRY_ID);
     }
   }
 
-  render() {
+  mergeCountryProfiles() {
     const { countryPresence, countryProfiles } = this.props;
 
+    const filteredOutCreatedProfiles = R.filter(presenceCode =>
+      R.isEmpty(R.filter(profile =>
+        profile.country_code === presenceCode, countryProfiles)), countryPresence);
+    
+    return R.concat(filteredOutCreatedProfiles, countryProfiles);
+  }
+
+  render() {
     return (
       <div>
         <CountryOfficesHeader handleNewCountryClick={this.handleNewCountry} />
@@ -53,7 +62,7 @@ class CountryOfficesHeaderContainer extends React.Component {
           trigger={this.state.showCountryModal}
           title={messages.countryDialogTitle}
           info={{ title: messages.countryDialogInfo }}
-          content={<CountryProfileList countries={R.concat(countryPresence, countryProfiles)} />}
+          content={<CountryProfileList countries={this.mergeCountryProfiles()} />}
           buttons={{
             flat: {
               handleClick: this.handleDialogClose,
@@ -73,19 +82,21 @@ CountryOfficesHeaderContainer.propTypes = {
   countryProfiles: PropTypes.array.isRequired,
   countryPresence: PropTypes.array.isRequired,
   setSelectedCountryId: PropTypes.func.isRequired,
-  createCountryProfile: PropTypes.func.isRequired,
+  newCountryProfile: PropTypes.func.isRequired,
   selectedCountryId: PropTypes.number.isRequired,
+  partnerId: PropTypes.number.isRequired,
 };
 
 const mapDispatch = dispatch => ({
   setSelectedCountryId: countryId => dispatch(selectCountryId(countryId)),
-  createCountryProfile: () => dispatch(createCountryProfile()),
+  newCountryProfile: (partnerId, countryId) => dispatch(createCountryAndRefresh(partnerId, countryId)),
 });
 
 const mapStateToProps = state => ({
   countryProfiles: R.path(['hq', 'country_profiles'], state.countryProfiles) || [],
   countryPresence: R.path(['hq', 'country_presence'], state.countryProfiles) || [],
   selectedCountryId: state.countryProfiles.selectedCountryId,
+  partnerId: state.partnerInfo.partner.id,
 });
 
 export default connect(mapStateToProps, mapDispatch)(CountryOfficesHeaderContainer);

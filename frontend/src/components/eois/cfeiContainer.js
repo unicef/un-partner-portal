@@ -6,23 +6,23 @@ import Grid from 'material-ui/Grid';
 import { loadCfei } from '../../reducers/cfei';
 import EoiFilter from './filters/eoiFilter';
 import CfeiTableContainer from './cfeiTableContainer';
-
-export const columnData = [
-  { id: 'title', label: 'Project name' },
-  { id: 'country_code', label: 'Country' },
-  { id: 'sector', label: 'Sector' },
-  { id: 'agency', label: 'Agency' },
-  { id: 'deadline_date', label: 'Application deadline' },
-  { id: 'start_date', label: 'Project start date' },
-];
+import { isQueryChanged } from '../../helpers/apiHelper';
 
 class CfeiContainer extends Component {
   componentWillMount() {
-    this.props.loadCfei();
+    const { query, loadCfei, params: { type } } = this.props;
+    loadCfei(type, query);
   }
 
-  componentDidUpdate() {
-    this.props.loadCfei();
+  shouldComponentUpdate(nextProps) {
+    const { query, loadCfei, params: { type } } = this.props;
+    if (isQueryChanged(nextProps, query)) {
+      loadCfei(nextProps.params.type, nextProps.location.query);
+      return false;
+    } else if (type !== nextProps.params.type) {
+      loadCfei(nextProps.params.type, nextProps.location.query);
+    }
+    return true;
   }
 
   render() {
@@ -44,18 +44,17 @@ CfeiContainer.propTypes = {
   role: PropTypes.string,
   params: PropTypes.object,
   loadCfei: PropTypes.func,
+  query: PropTypes.object,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   role: state.session.role,
+  query: ownProps.location.query,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-  const { type, ...params } = ownProps.params;
-  return {
-    loadCfei: () => dispatch(loadCfei(type, params)),
-  };
-};
+const mapDispatchToProps = dispatch => ({
+  loadCfei: (type, query) => dispatch(loadCfei(type, query)),
+});
 
 export default connect(
   mapStateToProps,
