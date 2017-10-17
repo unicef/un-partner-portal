@@ -1,7 +1,8 @@
 import R from 'ramda';
-import { postOpenCfei, postDirectCfei } from '../helpers/api/api';
+import { postOpenCfei, postDirectCfei, patchCfei } from '../helpers/api/api';
 import { mergeListsFromObjectArray } from './normalizationHelpers';
 import { loadCfei } from './cfei';
+import { loadCfeiDetailSuccess } from './cfeiDetailsStatus';
 import { PROJECT_TYPES } from '../helpers/constants';
 
 export const NEW_CFEI_SUBMITTING = 'NEW_CFEI_SUBMITTING';
@@ -50,10 +51,11 @@ export const addOpenCfei = body => (dispatch) => {
   dispatch(newCfeiSubmitting());
   const preparedBody = prepareBody(body);
   return postOpenCfei(R.mergeWith(R.merge, preparedBody, mockData))
-    .then(() => {
+    .then((cfei) => {
       dispatch(newCfeiSubmitted());
       dispatch(newCfeiProcessing());
       dispatch(loadCfei(PROJECT_TYPES.OPEN));
+      return cfei;
     })
     .catch((error) => {
       dispatch(newCfeiSubmitted());
@@ -64,7 +66,9 @@ export const addOpenCfei = body => (dispatch) => {
 export const addDirectCfei = body => (dispatch) => {
   dispatch(newCfeiSubmitting());
   const preparedBody = prepareBody(body);
-  return postDirectCfei(R.mergeWith(R.merge, preparedBody, mockData))
+  const { applications, ...other } = preparedBody;
+  const finalBody = { applications, eoi: { ...other } };
+  return postDirectCfei(R.mergeWith(R.merge, finalBody, { eoi: mockData }))
     .then(() => {
       dispatch(newCfeiSubmitted());
       dispatch(loadCfei(PROJECT_TYPES.DIRECT));
@@ -75,6 +79,20 @@ export const addDirectCfei = body => (dispatch) => {
     });
 };
 
+export const updateCfei = (body, id) => (dispatch) => {
+  dispatch(newCfeiSubmitting());
+  return patchCfei(body, id)
+    .then((cfei) => {
+      dispatch(newCfeiSubmitted());
+      dispatch(loadCfeiDetailSuccess(cfei));
+    })
+    .catch((error) => {
+      dispatch(newCfeiSubmitted());
+      dispatch(newCfeiFailure(error));
+    });
+};
+
+
 const startSubmitting = state => R.assoc('error', {}, R.assoc('openCfeiSubmitting', true, state));
 const stopSubmitting = state => R.assoc('openCfeiSubmitting', false, state);
 const startProcessing = state => R.assoc('openCfeiProcessing', true, state);
@@ -83,7 +101,7 @@ const saveErrorMsg = (state, action) => R.assoc(
   'error',
   {
     message: messages.postOpenFailure,
-    error: action.error,
+    error: action.error && action.error.message,
   },
   state);
 

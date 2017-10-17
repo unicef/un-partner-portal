@@ -33,7 +33,7 @@ export const loadCfei = (project, filters) => (dispatch) => {
   return getCfei(project, filters)
     .then((cfei) => {
       dispatch(loadCfeiEnded());
-      dispatch(loadCfeiSuccess(cfei.results, project));
+      dispatch(loadCfeiSuccess(cfei.results, project, cfei.count));
     })
     .catch((error) => {
       dispatch(loadCfeiEnded());
@@ -62,13 +62,14 @@ const normalizeCfei = cfeis =>
 
 const saveCfei = (state, action) => {
   const cfei = normalizeCfei(action.cfei, action.getState);
+  const newState = R.assoc(`${action.project}Count`, action.count, state);
   switch (action.project) {
     case PROJECT_TYPES.OPEN:
-      return R.assoc(PROJECT_TYPES.OPEN, cfei, state);
+      return R.assoc(PROJECT_TYPES.OPEN, cfei, newState);
     case PROJECT_TYPES.PINNED:
-      return R.assoc(PROJECT_TYPES.PINNED, cfei, state);
+      return R.assoc(PROJECT_TYPES.PINNED, cfei, newState);
     case PROJECT_TYPES.DIRECT:
-      return R.assoc(PROJECT_TYPES.DIRECT, cfei, state);
+      return R.assoc(PROJECT_TYPES.DIRECT, cfei, newState);
     default:
       return state;
   }

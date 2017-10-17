@@ -1,9 +1,14 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 import PropTypes from 'prop-types';
 import OrganizationProfileOverviewHeader from './organizationProfileOverviewHeader';
 import HeaderNavigation from '../../../components/common/headerNavigation';
+
+const messages = {
+  hqProfile: 'HQ Profile',
+};
 
 class OrganizationProfileHeader extends Component {
   constructor(props) {
@@ -32,8 +37,8 @@ class OrganizationProfileHeader extends Component {
     const {
       tabs,
       children,
-      profile,
       partnerId,
+      countryName,
     } = this.props;
 
     const index = this.updatePath();
@@ -47,7 +52,7 @@ class OrganizationProfileHeader extends Component {
           children={children}
           handleBackButton={() => { history.goBack(); }}
           header={<OrganizationProfileOverviewHeader update="12 Aug 2017" handleEditClick={() => { history.push(`/profile/${partnerId}/edit`); }} />}
-          title={profile.name}
+          title={countryName}
           handleChange={this.handleChange}
         />
       </div>
@@ -58,17 +63,21 @@ class OrganizationProfileHeader extends Component {
 OrganizationProfileHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
-  profile: PropTypes.object.isRequired,
+  countryName: PropTypes.string,
   location: PropTypes.string.isRequired,
   partnerId: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  profile: state.organizationProfile[ownProps.params.id],
-  partnerId: ownProps.params.id,
-  location: ownProps.location.pathname,
-  tabs: state.organizationProfileNav,
-});
+const mapStateToProps = (state, ownProps) => {
+  const countryProfile = R.find(country => country.id === Number(ownProps.params.id), state.countryProfiles.hq.country_profiles);
+
+  return {
+    countryName: countryProfile ? state.countries[countryProfile.country_code] : messages.hqProfile,
+    partnerId: ownProps.params.id,
+    location: ownProps.location.pathname,
+    tabs: state.organizationProfileNav,
+  };
+};
 
 const mapDispatchToProps = () => ({
   onItemClick: (id, path) => {

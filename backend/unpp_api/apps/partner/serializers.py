@@ -61,6 +61,7 @@ class PartnerMemberSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'title',
+            'role',
         )
 
 
