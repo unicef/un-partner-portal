@@ -1,10 +1,10 @@
-import R from 'ramda'; 
+import R from 'ramda';
 import {
   clearError,
   startLoading,
   stopLoading,
   saveErrorMsg,
-} from './apiStatus'; 
+} from './apiStatus';
 import { uploadConceptNote, getProjectApplication } from '../helpers/api/api';
 
 export const UPLOAD_CN_STARTED = 'UPLOAD_CN_STARTED';
@@ -15,7 +15,7 @@ export const UPLOAD_CN_DELETE = 'UPLOAD_CN_DELETE';
 export const UPLOAD_CN_CONFIRM = 'UPLOAD_CN_CONFIRM';
 export const UPLOAD_CN_CLEAR_ERROR = 'UPLOAD_CN_CLEAR_ERROR';
 export const UPLOAD_CN_CLEAR = 'UPLOAD_CN_CLEAR';
-export const UPLOAD_CN_LOCAL_FILE = 'UPLOAD_CN_LOCAL_FILE'; 
+export const UPLOAD_CN_LOCAL_FILE = 'UPLOAD_CN_LOCAL_FILE';
 
 export const uploadCnStarted = () => ({ type: UPLOAD_CN_STARTED });
 export const uploadCnSuccess = response => ({ type: UPLOAD_CN_SUCCESS, response });
