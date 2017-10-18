@@ -18,6 +18,10 @@ const STEPS = readOnly =>
     },
   ];
 
+const onNextClick = (values) => {
+  debugger
+};
+
 const PartnerProfileIdentification = (props) => {
   const { readOnly } = props;
 
@@ -25,6 +29,7 @@ const PartnerProfileIdentification = (props) => {
     <PartnerProfileStepperContainer
       name="identification"
       steps={STEPS(readOnly)}
+      onNextClick={onNextClick}
       readOnly={readOnly}
     />);
 };
