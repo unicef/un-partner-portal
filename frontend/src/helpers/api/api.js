@@ -1,13 +1,8 @@
 import axios from 'axios';
+import store from '../../store';
 
-const host = '/api';
+const host = '/api'; 
 
-const authClient = axios.create({
-  auth: {
-    username: process.env.USERNAME,
-    password: process.env.PASSWORD,
-  },
-});
 // Internal help/generic functions
 function getCookie(name) {
   let cookieValue = null;
@@ -25,59 +20,82 @@ function getCookie(name) {
   return cookieValue;
 }
 
-
 function get(uri, params = {}) {
   const options = { method: 'GET', params };
   return axios.get(`${host}${uri}`, options)
     .then(response => response.data);
 }
 
-function authorizedGet(uri, params = {}) {
-  const options = { method: 'GET', params };
-  return authClient.get(`${host}${uri}`, options)
-    .then(response => response.data);
-}
-
 function post(uri, body = {}) {
-  return axios.post(`${host}${uri}`, body)
+  const options = {
+    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+  };
+  return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
-function authorizedPost(uri, body = {}) {
+function authorizedGet({ uri, params = {} }) {
+  const token = store.getState().session.token;
   const options = {
+    params,
+    headers: { Authorization: `token ${token}` },
+  };
+  return axios.get(`${host}${uri}`, options)
+    .then(response => response.data);
+}
+
+function authorizedPost({ uri, params, body = {} }) {
+  const token = store.getState().session.token;
+  const options = {
+    params,
     headers: {
+      Authorization: `token ${token}`,
       'X-CSRFToken': getCookie('csrftoken'),
     },
   };
-  return authClient.post(`${host}${uri}`, body, options)
+  return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
-function authorizedPatch(uri, body = {}) {
+function authorizedPatch({ uri, params, body = {} }) {
+  const token = store.getState().session.token;
   const options = {
+    params,
     headers: {
+      Authorization: `token ${token}`,
       'X-CSRFToken': getCookie('csrftoken'),
     },
   };
-  debugger;
-  return authClient.patch(`${host}${uri}`, body, options)
+  return axios.patch(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
-function authorizedPostUpload(uri, body = {}) {
-  const config = {
-    headers: { 'content-type': 'multipart/form-data',
-      'X-CSRFToken': getCookie('csrftoken') },
+function authorizedPostUpload({ uri, body = {}, params }) {
+  const token = store.getState().session.token;
+  const options = {
+    params,
+    headers: {
+      'content-type': 'multipart/form-data',
+      Authorization: `token ${token}`,
+      'X-CSRFToken': getCookie('csrftoken'),
+    },
   };
-
-  return authClient.post(`${host}${uri}`, body, config)
+  return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
 
 // Accounts
 export function postRegistration(body) {
-  return post('/accounts/registration', body);
+  return post('/accounts/registration/', body);
+}
+
+export function login(body) {
+  return post('/rest-auth/login/', body);
+}
+
+export function getUserData() {
+  return authorizedGet({ uri: '/accounts/me' });
 }
 
 // Config
@@ -90,32 +108,32 @@ export function getSectors() {
 }
 
 // Project
-export function getOpenCfei() {
-  return authorizedGet('/projects/open');
+export function getOpenCfei(filters) {
+  return authorizedGet({ uri: '/projects/open', params: filters });
 }
 
-export function getPinnedCfei() {
-  return authorizedGet('/projects/pins');
+export function getPinnedCfei(filters) {
+  return authorizedGet({ uri: '/projects/pins', params: filters });
 }
 
-export function getDirectCfei() {
-  return authorizedGet('/projects/direct');
+export function getDirectCfei(filters) {
+  return authorizedGet({ uri: '/projects/direct', params: filters });
 }
 
 export function postOpenCfei(body) {
-  return authorizedPost('/projects/open/', body);
+  return authorizedPost({ uri: '/projects/open/', body });
 }
 
 export function postDirectCfei(body) {
-  return authorizedPost('/projects/direct/', body);
+  return authorizedPost({ uri: '/projects/direct/', body });
 }
 
 export function patchCfei(body, id) {
-  return authorizedPatch(`/projects/${id}/`, body);
+  return authorizedPatch({ uri: `/projects/${id}/`, body });
 }
 
 export function uploadConceptNote(projectId, body) {
-  return authorizedPostUpload(`/projects/${projectId}/partner-applications/`, body);
+  return authorizedPostUpload({ uri: `/projects/${projectId}/partner-applications/`, body });
 }
 
 export function uploadCommonFile(body) {
@@ -123,30 +141,30 @@ export function uploadCommonFile(body) {
 }
 
 export function getOpenCfeiDetails(id) {
-  return authorizedGet(`/projects/${id}`);
+  return authorizedGet({ uri: `/projects/${id}` });
 }
 
 // Applications
 
 export function getOpenCfeiApplications(id, filters) {
-  return authorizedGet(`/projects/${id}/applications`, filters);
+  return authorizedGet({ uri: `/projects/${id}/applications`, params: filters });
 }
 
 export function getProjectApplication(projectId) {
-  return authorizedGet(`/projects/${projectId}/partner-application/`);
+  return authorizedGet({ uri: `/projects/${projectId}/partner-application/` });
 }
 
 export function changeApplicationStatus(id, status) {
-  return authorizedPatch(`/projects/application/${id}/`, { status });
+  return authorizedPatch({ uri: `/projects/application/${id}/`, body: { status } });
 }
 
 export function getApplicationDetails(id) {
-  return authorizedGet(`/projects/application/${id}/`);
+  return authorizedGet({ uri: `/projects/application/${id}/` });
 }
 
 // Partners
 export function getPartnerProfileDetails(partnerId) {
-  return authorizedGet(`/partners/${partnerId}`);
+  return authorizedGet({ uri: `/partners/${partnerId}` });
 }
 
 export function getPartnerNames() {
@@ -154,7 +172,7 @@ export function getPartnerNames() {
 }
 
 export function getPartnersList(params) {
-  return authorizedGet('/partners', params);
+  return authorizedGet({ uri: '/partners', params });
 }
 
 export function getPartnerProfileConfig() {
@@ -162,15 +180,19 @@ export function getPartnerProfileConfig() {
 }
 
 export function getPartnerOrganizationProfiles(id) {
-  return authorizedGet(`/partners/${id}/org-profile`);
+  return authorizedGet({ uri: `/partners/${id}/org-profile` });
 }
 
 export function createCountryProfile(id, body) {
-  return authorizedPost(`/partners/${id}/country-profile/`, body);
+  return authorizedPost({ uri: `/partners/${id}/country-profile/`, body });
 }
 
 export function patchPartnerProfileTab(partnerId, tabName, body) {
-  return authorizedPatch(`/partners/${partnerId}/${tabName}/`, body);
+  return authorizedPatch({ uri: `/partners/${partnerId}/${tabName}/`, body });
 }
 
-
+// Agencies
+export function getAgencyMembers(id, params = { page_size: 100 }) {
+  return authorizedGet({ uri: `/agencies/${id}/members`, params },
+  );
+}

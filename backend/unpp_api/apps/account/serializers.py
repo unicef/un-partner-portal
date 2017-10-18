@@ -112,12 +112,14 @@ class UserSerializer(serializers.ModelSerializer):
 class AgencyUserSerializer(UserSerializer):
 
     agency_name = serializers.SerializerMethodField()
+    agency_id = serializers.SerializerMethodField()
     office_name = serializers.SerializerMethodField()
     role = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = UserSerializer.Meta.fields + ('agency_name',
+                                               'agency_id',
                                                'role',
                                                'office_name',)
 
@@ -129,6 +131,9 @@ class AgencyUserSerializer(UserSerializer):
 
     def get_agency_name(self, obj):
         return self._agency_member(obj).office.agency.name
+    
+    def get_agency_id(self, obj):
+        return self._agency_member(obj).office.agency.id
 
     def get_office_name(self, obj):
         return self._agency_member(obj).office.name
