@@ -155,13 +155,13 @@ export function getApplicationReviews(applicationId) {
 
 export function postApplicationReview(applicationId, reviewerId, body) {
   return authorizedPost({
-    uri: `projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
+    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
     body });
 }
 
 export function putApplicationReview(applicationId, reviewerId, body) {
   return authorizedPut({
-    uri: `projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
+    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
     body });
 }
 

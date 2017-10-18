@@ -1,7 +1,10 @@
 import React from 'react';
 import R from 'ramda';
+import { browserHistory as history } from 'react-router';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
+import Grid from 'material-ui/Grid';
 import HeaderList from '../../../common/list/headerList';
 import PaddedContent from '../../../common/paddedContent';
 import ItemRowCell from '../../../common/cell/itemRowCell';
@@ -34,9 +37,10 @@ const labels = {
   budget: 'Annual Budget',
   results: 'Key results',
   mandate: 'Mandate and Mission',
+  viewProfile: 'view profile',
 };
 
-const fields = partner => (
+const fields = (partner, button) => (
   <PaddedContent>
     <ItemRowCellDivider label={labels.partnerName} content={R.prop('name', partner)} />
     <ItemRowCellDivider label={labels.partnerId} content={R.prop('partnerId', partner)} />
@@ -59,6 +63,16 @@ const fields = partner => (
     <ItemRowCellDivider label={labels.budget} content={R.prop('budget', partner)} />
     <ItemRowCellDivider label={labels.results} content={R.prop('keyResults', partner)} />
     <ItemRowCellDivider divider label={labels.mandate} content={R.prop('mandateMission', partner)} />
+    {button && <Grid container justify="flex-end">
+      <Grid item>
+        <Button
+          onClick={() => history.push(`/partner/${R.prop('partnerId', partner)}/details`)}
+          color="accent"
+        >
+          {labels.viewProfile}
+        </Button>
+      </Grid>
+    </Grid>}
   </PaddedContent>
 );
 
@@ -70,11 +84,11 @@ const summaryHeader = lastUpdate => (
 );
 
 const PartnerOverviewSummary = (props) => {
-  const { partner, loading } = props;
+  const { partner, loading, button } = props;
   return (
     <HeaderList
       header={summaryHeader(R.prop('lastUpdate', partner))}
-      rows={[fields(partner)]}
+      rows={[fields(partner, button)]}
       loading={loading}
     />);
 };
@@ -82,6 +96,7 @@ const PartnerOverviewSummary = (props) => {
 PartnerOverviewSummary.propTypes = {
   partner: PropTypes.object.isRequired,
   loading: PropTypes.bool,
+  button: PropTypes.bool,
 };
 
 PartnerOverviewSummary.defaultProps = {

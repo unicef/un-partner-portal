@@ -4,12 +4,11 @@ import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import { withRouter } from 'react-router';
 import ControlledModal from '../../../common/modals/controlledModal';
-import { updateCfei } from '../../../../reducers/newCfei';
+import { updateApplicationReview } from '../../../../reducers/applicationReviews';
 import AddReviewForm from './addReviewForm';
 import { selectApplicationPartnerName } from '../../../../store';
 
 const messages = {
-  title: 'Add review of the application',
   header: 'You are reviewing application of',
   save: 'save',
 };
@@ -23,16 +22,16 @@ class AddReviewModal extends Component {
 
   onFormSubmit(values) {
     this.props.handleDialogClose();
-    this.props.updateCfei(values);
+    this.props.updateApplicationReview(values);
   }
 
   render() {
-    const { id, submit, dialogOpen, handleDialogClose, partnerName } = this.props;
+    const { id, scores, title, submit, dialogOpen, handleDialogClose, partnerName } = this.props;
     return (
       <div>
         <ControlledModal
           maxWidth="md"
-          title={messages.title}
+          title={title}
           trigger={dialogOpen}
           info={{ title: `${messages.header}: ${partnerName}` }}
           buttons={{
@@ -44,7 +43,7 @@ class AddReviewModal extends Component {
               label: messages.save,
             },
           }}
-          content={<AddReviewForm id={id} onSubmit={this.onFormSubmit} />}
+          content={<AddReviewForm scores={scores} id={id} onSubmit={this.onFormSubmit} />}
         />
       </div >
     );
@@ -55,9 +54,11 @@ AddReviewModal.propTypes = {
   dialogOpen: PropTypes.bool,
   id: PropTypes.string,
   submit: PropTypes.func,
-  updateCfei: PropTypes.func,
+  updateApplicationReview: PropTypes.func,
   handleDialogClose: PropTypes.func,
   partnerName: PropTypes.string,
+  title: PropTypes.string,
+  scores: PropTypes.array,
 };
 
 
@@ -69,10 +70,14 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  updateCfei: body => dispatch(updateCfei(body, ownProps.id)),
-  submit: () => dispatch(submit('addReview')),
-});
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const { params: { applicationId }, reviewer, assessmentId } = ownProps;
+  return {
+    updateApplicationReview: body => dispatch(updateApplicationReview(
+      applicationId, reviewer, assessmentId, body)),
+    submit: () => dispatch(submit('addReview')),
+  };
+};
 
 const containerAddReviewModal = connect(
   mapStateToProps,

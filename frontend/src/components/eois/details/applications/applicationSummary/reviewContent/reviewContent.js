@@ -6,18 +6,23 @@ import { connect } from 'react-redux';
 import Divider from 'material-ui/Divider';
 import GridColumn from '../../../../../common/grid/gridColumn';
 import Reviews from './reviews';
+import TotalScore from './reviewTotalScore';
 
 const ReviewContent = (props) => {
-  const { applicationId } = props;
+  const { applicationId, isUserFocalPoint, isUserReviewer } = props;
   return (
     <GridColumn>
       <Grid container direction="row">
         <Grid item xs={12} sm={8}>
-          <Reviews applicationId={applicationId} />
+          <Reviews
+            applicationId={applicationId}
+            isUserFocalPoint={isUserFocalPoint}
+            isUserReviewer={isUserReviewer}
+          />
         </Grid>
-        <Grid item xs={12} sm={4}>
-
-        </Grid>
+        {isUserFocalPoint && <Grid item xs={12} sm={4}>
+          <TotalScore applicationId={applicationId} />
+        </Grid>}
       </Grid>
       <Divider />
     </GridColumn>

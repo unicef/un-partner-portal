@@ -10,8 +10,10 @@ import ConceptNote from '../../overview/conceptNote';
 import {
   selectApplication,
   selectCfeiCriteria,
+  isUserAFocalPoint,
+  isUserAReviewer,
 } from '../../../../../store';
-import ReviewContentContainer from './reviewContent/reviewContentContainer';
+import ReviewContent from './reviewContent/reviewContent';
 
 
 const messages = {
@@ -19,12 +21,19 @@ const messages = {
 };
 
 const ApplicationSummaryContent = (props) => {
-  const { application, partnerDetails, partnerLoading, params: { applicationId } } = props;
+  const { application,
+    partnerDetails,
+    partnerLoading,
+    params: { applicationId },
+    isUserFocalPoint,
+    isUserReviewer,
+    shouldSeeReviews,
+  } = props;
   return (
     <GridColumn spacing="8">
       <Grid container direction="row">
         <Grid item xs={12} sm={8}>
-          <PartnerOverview partner={partnerDetails} loading={partnerLoading} />
+          <PartnerOverview partner={partnerDetails} loading={partnerLoading} button />
         </Grid>
         <Grid item xs={12} sm={4}>
           <ConceptNote
@@ -36,7 +45,12 @@ const ApplicationSummaryContent = (props) => {
         </Grid>
       </Grid>
       <Divider />
-      <ReviewContentContainer applicationId={applicationId} />
+      {shouldSeeReviews && <ReviewContent
+        applicationId={applicationId}
+        isUserFocalPoint={isUserFocalPoint}
+        isUserReviewer={isUserReviewer}
+      />
+      }
     </GridColumn>
 
   );
@@ -48,6 +62,9 @@ ApplicationSummaryContent.propTypes = {
   partnerDetails: PropTypes.object,
   partnerLoading: PropTypes.bool,
   params: PropTypes.object,
+  shouldSeeReviews: PropTypes.bool,
+  isUserFocalPoint: PropTypes.bool,
+  isUserReviewer: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -55,6 +72,8 @@ const mapStateToProps = (state, ownProps) => {
   const { partner, eoi } = application;
   const partnerDetails = R.prop(partner, state.agencyPartnerProfile);
   const cfeiCriteria = selectCfeiCriteria(state, eoi);
+  const isUserFocalPoint = isUserAFocalPoint(state, eoi);
+  const isUserReviewer = isUserAReviewer(state, eoi);
   return {
     application,
     partner,
@@ -62,6 +81,9 @@ const mapStateToProps = (state, ownProps) => {
     partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
     cfeiCriteria,
     eoi,
+    shouldSeeReviews: isUserFocalPoint || isUserReviewer,
+    isUserFocalPoint,
+    isUserReviewer,
   };
 };
 

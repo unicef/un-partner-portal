@@ -12,7 +12,9 @@ export const password = value => (
     : 'Invalid password'
 );
 
-export const numerical = (min, max) => (value) => {
+export const numerical = (value) => {
+  const min = 1;
+  const max = 100;
   if (+value < min) return `Value is to small, min: ${min}`;
   else if (+value > max) return `Value is to large, max: ${max}`;
   return undefined;

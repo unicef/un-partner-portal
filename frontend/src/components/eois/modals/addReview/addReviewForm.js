@@ -1,24 +1,18 @@
 import React from 'react';
+import R from 'ramda';
 import { connect } from 'react-redux';
-import { reduxForm, FieldArray, Field } from 'redux-form';
+import { reduxForm, FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
-import {
-  FocalPoint,
-  StartDate,
-  EndDate,
-  DeadlineDate,
-  NotifyDate,
-} from '../../../forms/fields/projectFields/commonFields';
+import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import Grid from 'material-ui/Grid';
 import GridColumn from '../../../common/grid/gridColumn';
-import GridRow from '../../../common/grid/gridRow';
 import { selectCfeiCriteria, selectApplicationProject } from '../../../../store';
 import TextFieldForm from '../../../forms/textFieldForm';
 import SpreadContent from '../../../common/spreadContent';
-import { withStyles } from 'material-ui/styles';
+
 import { numerical } from '../../../../helpers/validation';
 
 const messages = {
@@ -32,38 +26,39 @@ const styleSheet = () => ({
   },
 });
 
-const renderCriteria = (criteria, allCriteria) => ({ fields }) => (
-  <div>
-    {fields.map((name, index) => (<div>
-      <Grid container direction="row" align="center" justify="center">
-        <Grid item xs={9}>
-          <Typography type="subheading">
-            {allCriteria[criteria[index].selection_criteria]}
-          </Typography>
-          <Typography type="caption">
-            {criteria[index].description}
-          </Typography>
-        </Grid>
-        <Grid item xs={3}>
-          <TextFieldForm
-            label=""
-            fieldName={`${name}.score`}
-            placeholder="Score..."
-            textFieldProps={{
-              inputProps: {
-                min: '1',
-                max: '100',
-                type: 'number',
-              },
-            }}
-            validation={[numerical(1, 100)]}
-          />
-        </Grid>
+const renderCriteria = ({ criteria, allCriteria, fields }) => (<div>
+  {fields.map((name, index) => (<div>
+    <Grid container direction="row" align="center" justify="center">
+      <Grid item xs={9}>
+        <Typography type="subheading">
+          {allCriteria[criteria[index].selection_criteria]}
+        </Typography>
+        <Typography type="caption">
+          {criteria[index].description}
+        </Typography>
       </Grid>
-      <Divider />
-    </div>))}
-  </div>
+      <Grid item xs={3}>
+        <TextFieldForm
+          label=""
+          fieldName={`${name}.score`}
+          placeholder="Score..."
+          textFieldProps={{
+            inputProps: {
+              min: '1',
+              max: '100',
+              type: 'number',
+            },
+          }}
+          normalize={value => parseInt(value)}
+          validation={[numerical]}
+        />
+      </Grid>
+    </Grid>
+    <Divider />
+  </div>))}
+</div>
 );
+
 
 const AddReview = (props) => {
   const { classes, handleSubmit, criteria, allCriteria } = props;
@@ -75,11 +70,17 @@ const AddReview = (props) => {
           <Typography type="caption">{messages.score}</Typography>
         </SpreadContent>
         <Divider />
-        <FieldArray name="scores" component={renderCriteria(criteria, allCriteria)} />
+        <FieldArray
+          name="scores"
+          component={renderCriteria}
+          criteria={criteria}
+          allCriteria={allCriteria}
+        />
         <TextFieldForm
           label="Notes (optional)"
-          fieldName="notes"
+          fieldName="note"
           placeholder="Enter any notes/comments"
+          optional
           {...props}
         />
       </GridColumn>
@@ -92,6 +93,9 @@ AddReview.propTypes = {
    * callback for form submit
    */
   handleSubmit: PropTypes.func.isRequired,
+  classes: PropTypes.object,
+  allCriteria: PropTypes.array,
+  criteria: PropTypes.object,
 };
 
 const formAddReview = reduxForm({
@@ -105,7 +109,9 @@ const mapStateToProps = (state, ownProps) => {
   return {
     criteria,
     allCriteria: state.selectionCriteria,
-    initialValues: { scores: criteria },
+    initialValues: {
+      scores: R.pathOr(criteria, ['scores', 'scores'], ownProps),
+      note: R.pathOr(null, ['scores', 'note'], ownProps) },
   };
 };
 

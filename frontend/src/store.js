@@ -36,7 +36,7 @@ import selectionCriteria from './reducers/selectionCriteria';
 import partnerNames, * as partnerNamesSelector from './reducers/partnerNames';
 import applicationDetails, * as applicationDetailsSelector from './reducers/applicationDetails';
 import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
-import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers'
+import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers';
 
 const mainReducer = combineReducers({
   cfei,
@@ -206,3 +206,9 @@ export const isAssesmentAdded = (state, assessmentId) =>
 export const mapFocalPointsReviewersToSelection = state =>
   mapValuesForSelectionField(
     agencyMembersSelectors.selectPossibleFocalPointsReviewers(state.agencyMembers));
+
+export const isUserAReviewer = (state, cfeiId) => cfeiDetailsSelector.isUserAReviewer(
+  state.cfeiDetails.cfeiDetails, cfeiId, state.session.userId);
+
+export const isUserAFocalPoint = (state, cfeiId) => cfeiDetailsSelector.isUserAFocalPoint(
+  state.cfeiDetails.cfeiDetails, cfeiId, state.session.userId);

@@ -13,14 +13,12 @@ const messages = {
 };
 
 const renderContent = (reviews) => {
-  if (!reviews) return [<EmptyContent />];
-  const a = R.map(key => (<SingleReview
-    key={key}
-    reviewer={key}
-    assessment={reviews[key]}
-  />),
-  R.keys(reviews));
-  return a;
+  if (R.isEmpty(reviews)) return [<EmptyContent />];
+  return R.map(([reviewer, assessment]) => (<SingleReview
+    key={reviewer}
+    reviewer={reviewer}
+    assessment={assessment}
+  />), reviews);
 };
 
 
@@ -37,13 +35,22 @@ const Reviews = (props) => {
 
 Reviews.propTypes = {
   loading: PropTypes.bool,
-  reviews: PropTypes.object,
+  reviews: PropTypes.array,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  loading: state.applicationReviews.status.loading,
-  reviews: selectReview(state, ownProps.applicationId),
-
-});
+const mapStateToProps = (state, ownProps) => {
+  const currentUser = state.session.userId;
+  const { applicationId, isUserFocalPoint } = ownProps;
+  let reviews = R.toPairs(selectReview(state, applicationId));
+  if (!isUserFocalPoint) {
+    reviews = R.filter(([reviewer]) => +reviewer === currentUser, reviews);
+  } else {
+    reviews = R.sort(([reviewer]) => +reviewer !== currentUser, reviews);
+  }
+  return {
+    loading: state.applicationReviews.status.loading,
+    reviews,
+  };
+};
 
 export default connect(mapStateToProps)(Reviews);

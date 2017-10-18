@@ -71,13 +71,14 @@ export const isAssesmentAdded = (state, assessmentId) =>
 
 export const updateApplicationReview = (applicationId, reviewerId, assessmentId, review) =>
   (dispatch, getState) => {
-    return isAssesmentAdded(getState().applicationReviews, assessmentId)
-      ? postApplicationReview(applicationId, reviewerId, review)
-      : putApplicationReview(applicationId, reviewerId, review)
-        .then((newReview) => {
-          dispatch(loadApplicationReviews(applicationId));
-          return newReview;
-        });
+    const method = isAssesmentAdded(getState().applicationReviews, assessmentId)
+      ? putApplicationReview
+      : postApplicationReview;
+    return method(applicationId, reviewerId, review)
+      .then((newReview) => {
+        dispatch(loadApplicationReviews(applicationId));
+        return newReview;
+      });
   };
 
 const applicationReviews = (state = initialState, action) => {

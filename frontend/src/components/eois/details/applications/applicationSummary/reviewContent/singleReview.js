@@ -8,43 +8,82 @@ import { selectReviewer, selectAssessment } from '../../../../../../store';
 import SpreadContent from '../../../../../common/spreadContent';
 import TextWithColor from '../../../../../common/textWithColorBackground';
 import AddReviewModalButton from './addReviewModalButton';
-
+import EditReviewModalButton from './editReviewModalButton';
+import SimpleCollapsableItem from '../../../../../common/simpleCollapsableItem';
+import ExpandedAssessment from './expandedAssessment';
 
 const messages = {
   you: 'You',
   date: 'Date of assessment',
   addReview: 'add review',
   notDone: 'NOT DONE',
+  score: 'Total score',
 };
 
 const styleSheet = () => ({
+  fullWidth: {
+    width: '100%',
+  },
   smallItem: {
     minWidth: '40%',
   },
+  smallItem2: {
+    minWidth: '45%',
+  },
 });
+
+export const calcTotalScore = assessmentInfo => assessmentInfo.scores.reduce((total, nextScore) => {
+  const newTotal = total + nextScore.score;
+  return newTotal;
+}, 0);
 
 const markAsYou = (text, name, isYou) =>
   `${name.first_name} ${name.last_name}${isYou ? ` (${messages.you})` : ''}`;
 
 const SingleReview = (props) => {
-  const { classes, reviewer, reviewerInfo, assessmentInfo, isReviewerCurrentUser } = props;
-  return (
-    <PaddedContent >
-      <SpreadContent >
-        <Typography>{markAsYou`${reviewerInfo}${isReviewerCurrentUser}`}</Typography>
-        {assessmentInfo
-          ? <div>
-            <Typography >{`${messages.date}: ${assessmentInfo.date_reviewed}`}</Typography>
-          </div>
-          : <SpreadContent notFullWidth className={classes.smallItem} >
-            <TextWithColor color="red" text={messages.notDone} />
-            <AddReviewModalButton reviewer={reviewer} />
+  const { classes,
+    reviewer,
+    reviewerInfo,
+    assessment,
+    assessmentInfo,
+    isReviewerCurrentUser } = props;
+  return assessmentInfo
+    ? (<SimpleCollapsableItem
+      title={
+        <PaddedContent className={classes.fullWidth}>
+          <SpreadContent>
+            <Typography>
+              {markAsYou`${reviewerInfo}${isReviewerCurrentUser}`}
+            </Typography>
+            <SpreadContent notFullWidth className={classes.smallItem2} >
+              <Typography type="caption" >
+                {`${messages.date}: ${assessmentInfo.date_reviewed}`}
+              </Typography>
+              <Typography type="body2">
+                {`${messages.score}: ${calcTotalScore(assessmentInfo)}`}
+              </Typography>
+              <EditReviewModalButton
+                icon
+                assessmentId={assessment}
+                scores={assessmentInfo}
+                reviewer={reviewer}
+              />
+            </SpreadContent>
           </SpreadContent>
-        }
-
+        </PaddedContent >}
+      component={<ExpandedAssessment assessmentInfo={assessmentInfo} />}
+    />)
+    : (<PaddedContent >
+      <SpreadContent>
+        <Typography>
+          {markAsYou`${reviewerInfo}${isReviewerCurrentUser}`}
+        </Typography>
+        <SpreadContent notFullWidth className={classes.smallItem} >
+          <TextWithColor color="red" text={messages.notDone} />
+          <AddReviewModalButton reviewer={reviewer} />
+        </SpreadContent>
       </SpreadContent>
-    </PaddedContent>
-  );
+    </PaddedContent >);
 };
 
 SingleReview.propTypes = {
@@ -53,13 +92,14 @@ SingleReview.propTypes = {
   reviewerInfo: PropTypes.object,
   assessmentInfo: PropTypes.object,
   isReviewerCurrentUser: PropTypes.bool,
+  assessment: PropTypes.number,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const reviewerInfo = selectReviewer(state, ownProps.reviewer);
   const assessmentInfo = ownProps.assessment && selectAssessment(state, ownProps.assessment);
   const currentUser = state.session.userId;
-  const isReviewerCurrentUser = ownProps.reviewer === currentUser;
+  const isReviewerCurrentUser = ownProps.reviewer == currentUser;
   return {
     reviewerInfo,
     assessmentInfo,

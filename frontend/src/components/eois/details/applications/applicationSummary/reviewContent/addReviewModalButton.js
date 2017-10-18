@@ -9,21 +9,23 @@ import withDialogHandling from '../../../../../common/hoc/withDialogHandling';
 
 const messages = {
   addReview: 'add review',
+  title: 'Add review of the application',
 };
 
 
 const AddReviewModalButton = (props) => {
-  const { reviewer, handleDialogClose, handleDialogOpen, dialogOpen } = props;
+  const { reviewer, handleDialogClose, handleDialogOpen, dialogOpen, ...other } = props;
   return (
     <Grid item>
       <Button
-        raised
         color="accent"
         onClick={handleDialogOpen}
+        {...other}
       >
         {messages.addReview}
       </Button>
       <AddReviewModal
+        title={messages.title}
         reviewer={reviewer}
         dialogOpen={dialogOpen}
         handleDialogClose={handleDialogClose}

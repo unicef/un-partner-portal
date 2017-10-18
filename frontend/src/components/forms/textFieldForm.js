@@ -17,6 +17,7 @@ function TextFieldForm(props) {
     optional,
     validation,
     warn,
+    normalize,
     readOnly,
   } = props;
 
@@ -38,6 +39,7 @@ function TextFieldForm(props) {
               placeholder={placeholder || `Provide ${label.toLowerCase()}`}
               component={renderTextField}
               validate={(optional ? [] : [required]).concat(validation || [])}
+              normalize={normalize}
               warn={warn && warning}
               {...textFieldProps}
             />]
@@ -81,6 +83,10 @@ TextFieldForm.propTypes = {
    * if form should be displayed in read only state
    */
   readOnly: PropTypes.bool,
+  /**
+   * for some text format, i.e. parseInt
+   */
+  normalization: PropTypes.func,
 };
 
 TextFieldForm.defaultProps = {

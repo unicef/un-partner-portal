@@ -19,6 +19,7 @@ export const loadCfei = id => (dispatch) => {
     .then((cfei) => {
       dispatch(loadCfeiDetailEnded());
       dispatch(loadCfeiDetailSuccess(cfei));
+      return cfei;
     })
     .catch((error) => {
       dispatch(loadCfeiDetailEnded());
@@ -43,6 +44,18 @@ export function selectCfeiTitle(state, id) {
 
 export function selectCfeiCriteria(state, id) {
   return state[id] ? state[id].assessments_criteria : [];
+}
+
+export function isUserAReviewer(state, cfeiId, userId) {
+  const cfei = R.prop(cfeiId, state);
+  if (cfei) return cfei.reviewers.includes(String(userId));
+  return false;
+}
+
+export function isUserAFocalPoint(state, cfeiId, userId) {
+  const cfei = R.prop(cfeiId, state);
+  if (cfei) return cfei.focal_points.includes(String(userId));
+  return false;
 }
 
 const cfeiDetails = (state = initialState, action) => {
