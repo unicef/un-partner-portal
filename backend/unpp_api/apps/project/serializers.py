@@ -320,7 +320,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
     eoi_id = serializers.CharField(source="eoi.id")
     agency_name = serializers.CharField(source="agency.name")
     country = serializers.SerializerMethodField()
-    specializations = SimpleSpecializationSerializer(source='eoi.specializations', many=True)
+    specializations = serializers.SerializerMethodField()
     application_date = serializers.CharField(source="created")
 
     class Meta:
@@ -338,6 +338,9 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
 
     def get_country(self, obj):
         return map(lambda x: x.get("country_code"), CountryPointSerializer(obj.eoi.locations, many=True).data)
+
+    def get_specializations(self, obj):
+        return obj.eoi.specializations.all().values_list('id', flat=True)
 
 
 class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer):
