@@ -26,7 +26,7 @@ const initialState = {
     { name: 'eoi_id', title: 'CFEI ID' },
     { name: 'agency_name', title: 'Agency' },
     { name: 'country', title: 'Country' },
-    { name: 'sector', title: 'Sector' },
+    { name: 'specializations', title: 'Sector' },
     { name: 'application_date', title: 'Application Date' },
     { name: 'status', title: 'Status' },
   ],

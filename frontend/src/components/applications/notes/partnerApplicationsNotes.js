@@ -5,13 +5,13 @@ import PropTypes from 'prop-types';
 import GridColumn from '../../common/grid/gridColumn';
 import PartnerApplicationsNotesFilter from './partnerApplicationsNotesFilter';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
-import ApplicationStatusCell from './applicationStatusCell';
+import ApplicationStatusCell from '../applicationStatusCell';
 import PaginatedList from '../../common/list/paginatedList';
 import WrappedCell from '../../common/cell/wrappedCell';
 import { loadApplicationsCn } from '../../../reducers/applicationsNotesList';
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import { formatDateForPrint } from '../../../helpers/dates';
-
+import SectorsCell from '../sectorsCell';
 /* eslint-disable react/prop-types */
 const applicationCell = ({ row, column }) => {
   if (column.name === 'id') {
@@ -22,6 +22,8 @@ const applicationCell = ({ row, column }) => {
     return <WrappedCell content={formatDateForPrint(row.application_date)} />;
   } else if (column.name === 'status') {
     return <ApplicationStatusCell appStatus={row.status} />;
+  } else if (column.name === 'specializations') {
+    return <SectorsCell specializations={row.specializations} />;
   }
 
   return undefined;

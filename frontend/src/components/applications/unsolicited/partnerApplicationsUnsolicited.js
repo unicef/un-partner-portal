@@ -12,7 +12,7 @@ import { loadApplicationsUcn } from '../../../reducers/applicationsUnsolicitedLi
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import { formatDateForPrint } from '../../../helpers/dates';
 import WrappedCell from '../../common/cell/wrappedCell';
-
+import SectorsCell from '../sectorsCell';
 /* eslint-disable react/prop-types */
 const applicationCell = ({ row, column }) => {
   if (column.name === 'is_direct') {
@@ -25,6 +25,8 @@ const applicationCell = ({ row, column }) => {
     return (<ConceptNoteIDCell
       id={row.id}
     />);
+  } else if (column.name === 'specializations') {
+    return <SectorsCell specializations={row.specializations} />;
   }
 
   return undefined;

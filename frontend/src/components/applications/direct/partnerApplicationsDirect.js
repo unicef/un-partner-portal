@@ -10,6 +10,8 @@ import { loadApplicationsDirect } from '../../../reducers/applicationsDirectList
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import { formatDateForPrint } from '../../../helpers/dates';
 import WrappedCell from '../../common/cell/wrappedCell';
+import ApplicationStatusCell from '../applicationStatusCell';
+import SectorsCell from '../sectorsCell';
 
 const applicationCell = ({ row, column }) => {
   if (column.name === 'submission_date') {
@@ -18,6 +20,10 @@ const applicationCell = ({ row, column }) => {
     return (<ConceptNoteIDCell
       id={row.id}
     />);
+  } else if (column.name === 'status') {
+    return <ApplicationStatusCell appStatus={row.status} />;
+  } else if (column.name === 'specializations') {
+    return <SectorsCell specializations={row.specializations} />;
   }
 
   return undefined;

@@ -24,7 +24,7 @@ const initialState = {
     { name: 'project_title', title: 'Project Title', width: 200 },
     { name: 'agency_name', title: 'Agency' },
     { name: 'country', title: 'Country' },
-    { name: 'sector', title: 'Sector' },
+    { name: 'specializations', title: 'Sector' },
     { name: 'submission_date', title: 'Submission Date' },
     { name: 'is_direct', title: 'Direct Selection' },
   ],
