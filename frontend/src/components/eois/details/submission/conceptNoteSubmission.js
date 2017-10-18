@@ -17,15 +17,14 @@ import OrganizationProfileContent from './modal/organizationProfileContent';
 import { uploadPartnerConceptNote,
   uploadCnclearError,
   confirmProfileUpdated,
-  selectLocalCnFile,
-  clearLocalState } from '../../../../reducers/conceptNote';
+  selectLocalCnFile } from '../../../../reducers/conceptNote';
+import { selectCfeiDetails } from '../../../../store';
 
 const messages = {
   upload_1: 'Please make sure to use the Concept Note template provided by the UN Agency that published this CFEI.',
   upload_2: 'You will be at risk of disqualification if the proper Concept Note formatting is not used',
   confirm: 'I confirm that my profile is up to date',
   lastUpdate: 'Last profile update:',
-  update: '12 Sep 2017',
   notSure: 'Not sure?',
   viewProfile: 'View your profile.',
   deadline: 'Application deadline: ',
@@ -100,10 +99,6 @@ class ConceptNoteSubmission extends Component {
     this.onDialogEdit = this.onDialogEdit.bind(this);
   }
 
-  componentWillUnmount() {
-    this.props.uploadCnClearState();
-  }
-
   onDialogClose() {
     this.setState({ openDialog: false });
   }
@@ -162,7 +157,7 @@ class ConceptNoteSubmission extends Component {
     const { cnUploaded, fileSelectedLocal } = this.props;
 
     if (cnUploaded) {
-      return cnUploaded.cn.split('/').pop();
+      return cnUploaded.split('/').pop();
     } else if (fileSelectedLocal) {
       return fileSelectedLocal.name;
     }
@@ -171,7 +166,7 @@ class ConceptNoteSubmission extends Component {
   }
 
   render() {
-    const { classes, loader, errorUpload,
+    const { classes, submitDate, deadlineDate, loader, errorUpload,
       cnUploaded, confirmProfile, fileSelectedLocal } = this.props;
 
     const { alert, openDialog, errorMsg } = this.state;
@@ -184,13 +179,13 @@ class ConceptNoteSubmission extends Component {
           {fileSelectedLocal || cnUploaded ? null : this.upload()}
         </div>
         <Typography className={classes.alignRight} type="caption">
-          {`${messages.deadline} ${messages.update}`}
+          {`${messages.deadline} ${formatDateForPrint(deadlineDate)}`}
         </Typography>
         <div className={classes.checkboxContainer}>
           <div className={classes.alignVertical}>
             <Checkbox
               disabled={cnUploaded}
-              checked={confirmProfile}
+              checked={confirmProfile || cnUploaded}
               onChange={(event, checked) => this.handleCheck(event, checked)}
             />
             <div className={classes.paddingTop}>
@@ -213,7 +208,7 @@ class ConceptNoteSubmission extends Component {
           <div className={classes.alignRight}>
             {cnUploaded
               ? <Typography type="body1">
-                {`${messages.submitted} ${formatDateForPrint(cnUploaded.created)}`}
+                {`${messages.submitted} ${formatDateForPrint(submitDate)}`}
               </Typography>
               : <Button onClick={() => this.handleSubmit()} color="accent">
                 {messages.submit}
@@ -270,22 +265,29 @@ ConceptNoteSubmission.propTypes = {
   uploadCnclearError: PropTypes.func.isRequired,
   uploadConfirmProfile: PropTypes.func.isRequired,
   uploadSelectedLocalFile: PropTypes.func.isRequired,
-  uploadCnClearState: PropTypes.func.isRequired,
   loader: PropTypes.bool.isRequired,
   errorUpload: PropTypes.object,
   cnUploaded: PropTypes.object,
+  deadlineDate: PropTypes.string,
+  submitDate: PropTypes.string,
   fileSelectedLocal: PropTypes.object,
   confirmProfile: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  partnerId: ownProps.params.id,
-  loader: state.conceptNote.loading,
-  cnUploaded: state.conceptNote.cnFile,
-  errorUpload: state.conceptNote.error,
-  confirmProfile: state.conceptNote.confirmProfileUpdated,
-  fileSelectedLocal: state.conceptNote.fileSelectedLocal,
-});
+const mapStateToProps = (state, ownProps) => {
+  const cfei = selectCfeiDetails(state, ownProps.params.id);
+
+  return {
+    partnerId: state.partnerInfo.id,
+    loader: state.conceptNote.loading,
+    cnUploaded: state.conceptNote.cnFile,
+    errorUpload: state.conceptNote.error,
+    confirmProfile: state.conceptNote.confirmProfileUpdated,
+    fileSelectedLocal: state.conceptNote.fileSelectedLocal,
+    submitDate: state.conceptNote.created,
+    deadlineDate: cfei ? cfei.deadline_date : {},
+  };
+};
 
 const mapDispatch = (dispatch, ownProps) => {
   const { id } = ownProps.params;
@@ -293,7 +295,6 @@ const mapDispatch = (dispatch, ownProps) => {
   return {
     uploadConceptNote: file => dispatch(uploadPartnerConceptNote(id, file)),
     uploadCnclearError: () => dispatch(uploadCnclearError()),
-    uploadCnClearState: () => dispatch(clearLocalState()),
     uploadConfirmProfile: confirmation => dispatch(confirmProfileUpdated(confirmation)),
     uploadSelectedLocalFile: file => dispatch(selectLocalCnFile(file)),
   };

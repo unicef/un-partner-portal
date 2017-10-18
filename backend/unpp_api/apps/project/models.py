@@ -118,11 +118,6 @@ class Application(TimeStampedModel):
         return "Application <pk:{}>".format(self.id)
 
     @property
-    def flags(self):
-        flag = self.partner.flags.last()
-        return flag and flag.flag_type
-
-    @property
     def partner_is_verified(self):
         verification = self.partner.verifications.last() or False
         return verification and verification.is_verified

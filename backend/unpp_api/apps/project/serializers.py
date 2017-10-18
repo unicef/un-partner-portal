@@ -5,6 +5,7 @@ from rest_framework import serializers
 from account.models import User
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES, EOI_TYPES
+from common.utils import get_countries_code_from_locations
 from common.serializers import SimpleSpecializationSerializer, PointSerializer, CountryPointSerializer
 from common.models import Point, AdminLevel1
 from partner.serializers import PartnerSerializer
@@ -39,7 +40,7 @@ class BaseProjectSerializer(serializers.ModelSerializer):
         return obj.created.date()
 
     def get_country_code(self, obj):
-        return map(lambda x: x.get("country_code"), CountryPointSerializer(obj.locations, many=True).data)
+        return get_countries_code_from_locations(obj.locations)
 
 
 class DirectProjectSerializer(BaseProjectSerializer):
@@ -337,7 +338,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
         )
 
     def get_country(self, obj):
-        return map(lambda x: x.get("country_code"), CountryPointSerializer(obj.eoi.locations, many=True).data)
+        return get_countries_code_from_locations(obj.locations)
 
 
 class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer):
@@ -349,6 +350,8 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     submission_date = serializers.CharField(source="created")
     is_direct = serializers.BooleanField(source="eoi.is_direct")
     partner_name = serializers.CharField(source="partner.legal_name")
+    has_yellow_flag = serializers.CharField(source="partner.has_yellow_flag")
+    has_red_flag = serializers.CharField(source="partner.has_red_flag")
 
     class Meta:
         model = Application
@@ -364,7 +367,8 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             'is_direct',
             'partner_name',
             'partner_is_verified',
-            'flags',
+            'has_yellow_flag',
+            'has_red_flag,'
         )
 
     def get_project_title(self, obj):
@@ -381,7 +385,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             country = obj.locations_proposal_of_eoi
         if country:
             # we expecting here few countries
-            return map(lambda x: x.get("country_code"), CountryPointSerializer(country, many=True).data)
+            return get_countries_code_from_locations(obj.locations)
         return None
 
     def get_specializations(self, obj):

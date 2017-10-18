@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+
+import React, { Component, createElement } from 'react';
 import PropTypes from 'prop-types';
 import { browserHistory as history } from 'react-router';
 import IconButton from 'material-ui/IconButton';
@@ -59,6 +60,7 @@ class HeaderNavigation extends Component {
       titleObject,
       backButton,
       handleBackButton,
+      customTabs,
       tabs,
       children,
       header,
@@ -73,6 +75,7 @@ class HeaderNavigation extends Component {
       classes.right,
       paddingClass,
     );
+    
     return (
       <div>
         <Grid align="center" className={classes.container} container>
@@ -93,10 +96,10 @@ class HeaderNavigation extends Component {
               {header}
             </div>
           </SpreadContent>
-          {tabs
+          {customTabs || tabs
             ? <div>
               <Tabs value={index} onChange={handleChange}>
-                {this.renderTabs()}
+                {customTabs ? customTabs() : this.renderTabs()}
               </Tabs>
             </div>
             : null
@@ -116,6 +119,7 @@ HeaderNavigation.propTypes = {
   backButton: PropTypes.bool,
   handleBackButton: PropTypes.func,
   tabs: PropTypes.array,
+  customTabs: PropTypes.func,
   children: PropTypes.node,
   header: PropTypes.Component,
   handleChange: PropTypes.Func,

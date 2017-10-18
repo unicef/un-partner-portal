@@ -15,7 +15,8 @@ urlpatterns = [
     url(r'^api/projects/', include('project.urls', namespace='projects')),
     url(r'^api/agencies/', include('agency.urls', namespace='agencies')),
     url(r'^api/partners/', include('partner.urls', namespace='partners')),
-    url(r'^api/partners/', include('review.urls', namespace='partner-reviews'))
+    url(r'^api/partners/', include('review.urls', namespace='partner-reviews')),
+    url(r'^api/rest-auth/', include('rest_auth.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.IS_DEV or settings.IS_STAGING:
