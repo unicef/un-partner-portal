@@ -6,7 +6,7 @@ const initialState = {};
 
 const loadCountriesSuccess = countries => ({ type: LOAD_COUNTRIES_SUCCESS, countries });
 
-export const loadCountries = (dispatch) => {
+export const loadCountries = () => (dispatch) => {
   if (!window.localStorage.countries) {
     return getCountries()
       .then((countries) => {
