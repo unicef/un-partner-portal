@@ -210,7 +210,6 @@ class CreateProjectSerializer(CreateEOISerializer):
 class ProjectUpdateSerializer(serializers.ModelSerializer):
 
     specializations = SimpleSpecializationSerializer(many=True)
-    # invited_partners = PartnerSerializer(many=True)
     locations = PointSerializer(many=True)
 
     class Meta:
