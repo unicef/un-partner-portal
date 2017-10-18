@@ -34,12 +34,14 @@ const PartnerProfileMandateCountryPresence = (props) => {
             readOnly={readOnly}
           />
           : null}
-        <AddressFieldArray
-          profileId={profileId}
-          formName={'partnerProfile'}
-          readOnly={readOnly}
-          name={'mandate_mission.country_presence.locations'}
-        />
+        {isCountryProfile
+          ? <AddressFieldArray
+            profileId={profileId}
+            formName={'partnerProfile'}
+            readOnly={readOnly}
+            name={'mandate_mission.country_presence.locations'}
+          />
+          : null}
         {!isCountryProfile
           ? <SelectForm
             fieldName="staff_globally"

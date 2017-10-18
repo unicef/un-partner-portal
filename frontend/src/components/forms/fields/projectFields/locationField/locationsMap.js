@@ -40,6 +40,7 @@ class LocationsMapBase extends Component {
       rebound: true,
     };
     this.geocoder = new google.maps.Geocoder();
+    this.initMap = this.initMap.bind(this);
     this.mapClicked = this.mapClicked.bind(this);
     this.onMarkerClick = this.onMarkerClick.bind(this);
     this.clearBounds = this.clearBounds.bind(this);
@@ -47,43 +48,19 @@ class LocationsMapBase extends Component {
   }
 
   componentWillMount() {
-    const { removeAllLocations, currentCountry } = this.props;
+    const { currentCountry } = this.props;
 
     if (currentCountry) {
-      removeAllLocations();
-      this.geocoder.geocode({ address: currentCountry }, (results, status) => {
-        if (status === google.maps.GeocoderStatus.OK) {
-          this.setState({
-            pos: {
-              lat: results[0].geometry.location.lat(),
-              lng: results[0].geometry.location.lng(),
-            },
-            bounds: results[0].geometry.viewport,
-            rebound: true,
-          });
-        }
-      });
+      this.initMap(currentCountry);
     }
   }
 
   componentWillUpdate(nextProps) {
-    const { removeAllLocations, currentCountry } = this.props;
+    const { currentCountry } = this.props;
     const nextCountry = nextProps.currentCountry;
 
     if (currentCountry !== nextCountry) {
-      removeAllLocations();
-      this.geocoder.geocode({ address: nextCountry }, (results, status) => {
-        if (status === google.maps.GeocoderStatus.OK) {
-          this.setState({
-            pos: {
-              lat: results[0].geometry.location.lat(),
-              lng: results[0].geometry.location.lng(),
-            },
-            bounds: results[0].geometry.viewport,
-            rebound: true,
-          });
-        }
-      });
+      this.initMap(nextCountry);
     }
   }
 
@@ -95,13 +72,31 @@ class LocationsMapBase extends Component {
     });
   }
 
+  initMap(country) {
+    const { removeAllLocations } = this.props;
+
+    removeAllLocations();
+    this.geocoder.geocode({ address: country }, (results, status) => {
+      if (status === google.maps.GeocoderStatus.OK) {
+        this.setState({
+          pos: {
+            lat: results[0].geometry.location.lat(),
+            lng: results[0].geometry.location.lng(),
+          },
+          bounds: results[0].geometry.viewport,
+          rebound: true,
+        });
+      }
+    });
+  }
+
   clearBounds() {
     this.setState({ rebound: false });
   }
 
   mapClicked(mapProps, map, clickEvent) {
     const { readOnly } = this.props;
-    
+
     if (!readOnly) {
       const { currentCountryCode, saveLocation } = this.props;
       this.geocoder.geocode({ location: clickEvent.latLng }, (results, status) => {
