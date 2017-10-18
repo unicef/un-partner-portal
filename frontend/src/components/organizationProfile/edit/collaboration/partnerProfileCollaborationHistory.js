@@ -15,7 +15,6 @@ const messages = {
   explainCollaboration: 'Briefly explain the collaboration with the agency selected (optional)',
   provideNumber: 'Please provide your Vendor/Partner Number (If applicable)',
   selectAgency: 'Select UN agency your organization has ever collaborated with (optional)',
-  indicateCollaboration: 'Please indicate if you have collaborated with any other UN Agency (optional)',
   hasCollaborated: 'Has the organization collaborated with a member of a cluster, professional ' +
             'network, consortium or any similar institution?',
   collaborationDesc: 'Please state which cluster, network or consortium and briefly explain the ' +

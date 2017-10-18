@@ -29,6 +29,7 @@ from common.consts import (
     ORG_AUDIT_CHOICES,
     AUDIT_ASSESMENT_CHOICES,
     BUDGET_CHOICES,
+    FLAG_TYPES,
 )
 
 
@@ -67,6 +68,14 @@ class Partner(TimeStampedModel):
     @property
     def country_profiles(self):
         return self.__class__.objects.filter(hq=self)
+
+    @property
+    def has_yellow_flag(self):
+        return self.flags.filter(flag_type=FLAG_TYPES.yellow).exists()
+
+    @property
+    def has_red_flag(self):
+        return self.flags.filter(flag_type=FLAG_TYPES.red).exists()
 
 
 class PartnerProfile(TimeStampedModel):

@@ -40,29 +40,27 @@ class LocationsMapBase extends Component {
       rebound: true,
     };
     this.geocoder = new google.maps.Geocoder();
+    this.initMap = this.initMap.bind(this);
     this.mapClicked = this.mapClicked.bind(this);
     this.onMarkerClick = this.onMarkerClick.bind(this);
     this.clearBounds = this.clearBounds.bind(this);
     this.removeMarker = this.removeMarker.bind(this);
   }
 
+  componentWillMount() {
+    const { currentCountry } = this.props;
+
+    if (currentCountry) {
+      this.initMap(currentCountry);
+    }
+  }
+
   componentWillUpdate(nextProps) {
-    const { removeAllLocations, currentCountry } = this.props;
+    const { currentCountry } = this.props;
     const nextCountry = nextProps.currentCountry;
+
     if (currentCountry !== nextCountry) {
-      removeAllLocations();
-      this.geocoder.geocode({ address: nextCountry }, (results, status) => {
-        if (status === google.maps.GeocoderStatus.OK) {
-          this.setState({
-            pos: {
-              lat: results[0].geometry.location.lat(),
-              lng: results[0].geometry.location.lng(),
-            },
-            bounds: results[0].geometry.viewport,
-            rebound: true,
-          });
-        }
-      });
+      this.initMap(nextCountry);
     }
   }
 
@@ -74,34 +72,57 @@ class LocationsMapBase extends Component {
     });
   }
 
+  initMap(country) {
+    const { removeAllLocations } = this.props;
+
+    removeAllLocations();
+    this.geocoder.geocode({ address: country }, (results, status) => {
+      if (status === google.maps.GeocoderStatus.OK) {
+        this.setState({
+          pos: {
+            lat: results[0].geometry.location.lat(),
+            lng: results[0].geometry.location.lng(),
+          },
+          bounds: results[0].geometry.viewport,
+          rebound: true,
+        });
+      }
+    });
+  }
+
   clearBounds() {
     this.setState({ rebound: false });
   }
 
   mapClicked(mapProps, map, clickEvent) {
-    const { currentCountryCode, saveLocation } = this.props;
-    this.geocoder.geocode({ location: clickEvent.latLng }, (results, status) => {
-      if (status === google.maps.GeocoderStatus.OK && results) {
-        let countryCode;
-        let loc = results.find(location =>
-          location.types.includes('administrative_area_level_1'));
-        if (loc === undefined) {
-          loc = results.pop();
-          countryCode = loc.address_components[0].short_name;
-        } else {
-          countryCode = loc.address_components[1].short_name;
+    const { readOnly } = this.props;
+
+    if (!readOnly) {
+      const { currentCountryCode, saveLocation } = this.props;
+      this.geocoder.geocode({ location: clickEvent.latLng }, (results, status) => {
+        if (status === google.maps.GeocoderStatus.OK && results) {
+          let countryCode;
+          let loc = results.find(location =>
+            location.types.includes('administrative_area_level_1'));
+          if (loc === undefined) {
+            loc = results.pop();
+            countryCode = loc.address_components[0].short_name;
+          } else {
+            countryCode = loc.address_components[1].short_name;
+          }
+          if (countryCode !== currentCountryCode) return;
+          const newLocation = {
+            country_code: countryCode,
+            admin_level_1: { name: loc.address_components[0].long_name },
+            lat: clickEvent.latLng.lat().toFixed(5),
+            lon: clickEvent.latLng.lng().toFixed(5),
+            formatted_address: loc.formatted_address,
+          };
+
+          saveLocation(newLocation);
         }
-        if (countryCode !== currentCountryCode) return;
-        const newLocation = {
-          country_code: countryCode,
-          admin_level_1: { name: loc.address_components[0].long_name },
-          lat: clickEvent.latLng.lat().toFixed(5),
-          lon: clickEvent.latLng.lng().toFixed(5),
-          formatted_address: loc.formatted_address,
-        };
-        saveLocation(newLocation);
-      }
-    });
+      });
+    }
   }
 
   removeMarker(markerProps) {
@@ -189,6 +210,10 @@ LocationsMapBase.propTypes = {
    * bool to show map (also focused country name is required to show map)
    */
   showMap: PropTypes.bool,
+  /**
+   * bool to disable map clicks to read only mode
+   */
+  readOnly: PropTypes.bool,
 };
 
 export default withTheme(LocationsMapBase);

@@ -78,6 +78,13 @@ class AdminLevel1Serializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class AdminLevel1CountrySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AdminLevel1
+        fields = ("country_code", )
+
+
 class PointSerializer(serializers.ModelSerializer):
 
     admin_level_1 = AdminLevel1Serializer()
@@ -91,4 +98,16 @@ class CommonFileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CommonFile
-        fields = "__all__"
+        fields = (
+            'id',
+            'file_field',
+        )
+
+
+class CountryPointSerializer(serializers.ModelSerializer):
+
+    country_code = serializers.CharField(source="admin_level_1.country_code")
+
+    class Meta:
+        model = Point
+        fields = ("country_code", )

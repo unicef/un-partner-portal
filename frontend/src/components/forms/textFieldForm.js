@@ -31,6 +31,7 @@ function TextFieldForm(props) {
               label={label}
               component={renderText}
               optional={optional}
+              {...textFieldProps}
             />]
           : [
             <FormLabel>{label}</FormLabel>,
