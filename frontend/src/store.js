@@ -113,11 +113,7 @@ export const selectNormalizedStaffGlobalyChoices = state =>
 export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices']);
 
-export const selectApplicationStatuses = (state) => {
-  const app = state.partnerProfileConfig['application-statuses'];
-  ;
-  return app;
-};
+export const selectApplicationStatuses = state => state.partnerProfileConfig['application-statuses'];
 
 export const selectNormalizedAuditTypes = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['audit-types']);
@@ -166,8 +162,8 @@ export const selectCfeiTitle = (state, id) =>
   cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails.cfeiDetails, id);
 
 export const mapSelectCriteriaToSelection = state =>
-  mapValuesForSelectionField(state.selectionCriteria);
-
+  mapValuesForSelectionField(state.selectionCriteria)
+  ;
 export const mapPartnersNamesToSelection = state =>
   mapValuesForSelectionField(state.partnerNames);
 
