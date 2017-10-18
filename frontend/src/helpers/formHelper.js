@@ -150,9 +150,9 @@ export const renderFileDownload = (props) => {
   return ({ input, label }) => (
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>
-      <div className={classes.wrapContent}>
-        <Attachment className={classes.icon} />
-        <Typography type="subheading" className={classes.iconLabel}>
+      <div >
+        <Attachment />
+        <Typography type="subheading" >
           {fileNameFromUrl(input.value)}
         </Typography>
 

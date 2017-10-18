@@ -30,6 +30,7 @@ import organizationProfileNav from './reducers/organizationProfileNav';
 import organizationProfile from './reducers/organizationProfile';
 import partnerApplicationsNav from './reducers/partnerApplicationsNav';
 import partnerProfileConfig from './reducers/partnerProfileConfig';
+import partnerProfileDetailsUpdate from './reducers/partnerProfileDetailsUpdate';
 import sectors, * as sectorsSelectors from './reducers/sectors';
 import partnersApplicationsList from './reducers/partnersApplicationsList';
 import partnersPreselectionList from './reducers/partnersPreselectionList';
@@ -59,6 +60,7 @@ const mainReducer = combineReducers({
   partnerProfileConfig,
   partnerProfileEdit,
   partnerProfileDetails,
+  partnerProfileDetailsUpdate,
   agencyPartnersList,
   agencyPartnerProfileNav,
   agencyPartnerProfile,

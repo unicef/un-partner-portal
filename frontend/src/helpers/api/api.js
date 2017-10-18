@@ -9,6 +9,22 @@ const authClient = axios.create({
   },
 });
 // Internal help/generic functions
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === (`${name}=`)) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
 
 function get(uri, params = {}) {
   const options = { method: 'GET', params };
@@ -28,18 +44,30 @@ function post(uri, body = {}) {
 }
 
 function authorizedPost(uri, body = {}) {
-  return authClient.post(`${host}${uri}`, body)
+  const options = {
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken'),
+    },
+  };
+  return authClient.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
 function authorizedPatch(uri, body = {}) {
-  return authClient.patch(`${host}${uri}`, body)
+  const options = {
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken'),
+    },
+  };
+  debugger;
+  return authClient.patch(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
 function authorizedPostUpload(uri, body = {}) {
   const config = {
-    headers: { 'content-type': 'multipart/form-data' },
+    headers: { 'content-type': 'multipart/form-data',
+      'X-CSRFToken': getCookie('csrftoken') },
   };
 
   return authClient.post(`${host}${uri}`, body, config)
@@ -140,4 +168,9 @@ export function getPartnerOrganizationProfiles(id) {
 export function createCountryProfile(id, body) {
   return authorizedPost(`/partners/${id}/country-profile/`, body);
 }
+
+export function patchPartnerProfileTab(partnerId, tabName, body) {
+  return authorizedPatch(`/partners/${partnerId}/${tabName}/`, body);
+}
+
 

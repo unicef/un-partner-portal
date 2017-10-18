@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
-import { reduxForm, FormSection, getFormSyncWarnings } from 'redux-form';
+import { reduxForm, submit, FormSection, getFormSyncWarnings, isSubmitting } from 'redux-form';
 import { connect } from 'react-redux';
 import PartnerProfileStepper from './partnerProfileStepper';
-import { changeTabToNext,
+import Loader from '../../common/loader';
+import {
   addIncompleteTab,
   removeIncompleteTab,
   addIncompleteStep,
@@ -17,7 +18,7 @@ class PartnerProfileStepperContainer extends Component {
 
   componentWillUpdate(nextProps) {
     const { name, isTabWarning, noTabWarning, isStepWarning, noStepWarning } = this.props;
-    console.log('NAME', name);
+
     if (!nextProps.warnings || !nextProps.warnings[name]) {
       noTabWarning(name);
       this.state.observedSteps.forEach(observedStep => noStepWarning(observedStep));
@@ -34,27 +35,29 @@ class PartnerProfileStepperContainer extends Component {
   }
 
   render() {
-    const { name, onNextClick, readOnly, steps, singleSection, last } = this.props;
+    const { name, handleSubmit, isSubmit, readOnly, submit, steps, singleSection, last } = this.props;
 
     return (
-      <form onSubmit={onNextClick}>
-        <FormSection name={name}>
-          <PartnerProfileStepper
-            handleSubmit={onNextClick}
-            steps={steps}
-            last={last}
-            readOnly={readOnly}
-            singleSection={singleSection}
-          />
-        </FormSection>
-      </form>
+      <Loader loading={isSubmit}>
+        <form onSubmit={handleSubmit}>
+          <FormSection name={name}>
+            <PartnerProfileStepper
+              handleSubmit={handleSubmit}
+              steps={steps}
+              last={last}
+              readOnly={readOnly}
+              singleSection={singleSection}
+            />
+          </FormSection>
+        </form>
+      </Loader>
     );
   }
 }
 
 PartnerProfileStepperContainer.propTypes = {
   name: PropTypes.string,
-  onNextClick: PropTypes.func,
+  handleSubmit: PropTypes.func,
   steps: PropTypes.arrayOf(PropTypes.objectOf({
     component: PropTypes.element,
     label: PropTypes.string,
@@ -65,12 +68,14 @@ PartnerProfileStepperContainer.propTypes = {
   isStepWarning: PropTypes.func,
   noStepWarning: PropTypes.func,
   last: PropTypes.bool,
+  isSubmit: PropTypes.bool,
   singleSection: PropTypes.bool,
   readOnly: PropTypes.bool,
 };
 
 const mapState = state => ({
   warnings: getFormSyncWarnings('partnerProfile')(state),
+  isSubmit: isSubmitting('partnerProfile')(state),
   initialValues: state.partnerProfileDetails.partnerProfileDetails,
 });
 
@@ -79,14 +84,13 @@ const mapDispatch = dispatch => ({
   noTabWarning: tabName => dispatch(removeIncompleteTab(tabName)),
   isStepWarning: stepName => dispatch(addIncompleteStep(stepName)),
   noStepWarning: stepName => dispatch(removeIncompleteStep(stepName)),
-  onNextClick: () => dispatch(changeTabToNext()),
+  submit: () => dispatch(submit('partnerProfile')),
 });
 
 const connectedPartnerProfileRedux = reduxForm({
   form: 'partnerProfile', // a unique identifier for this form
   enableReinitialize: true,
-  destroyOnUnmount: false,
-  forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
+  forceUnregisterOnUnmount: true,
 })(PartnerProfileStepperContainer);
 
 const connectedPartnerProfileStepper = connect(
