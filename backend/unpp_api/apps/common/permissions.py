@@ -114,4 +114,4 @@ class IsEOIReviewerAssessments(BasePermission):
 class IsPartner(BasePermission):
 
     def has_permission(self, request, view):
-        return request.user.is_partner_user()
+        return request.user.is_partner_user
