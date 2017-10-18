@@ -97,8 +97,9 @@ class Application(TimeStampedModel):
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
+    did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
     # did_withdraw is only applicable if did_win is True
-    did_withdraw = models.BooleanField(default=False, verbose_name='Did accept?')
+    did_withdraw = models.BooleanField(default=False, verbose_name='Did withdraw?')
     withdraw_reason = models.TextField(null=True, blank=True)  # reason why partner withdraw
     # These two (ds_justification_*) will be used as direct selection will create applications for DS EOIs.
     # hq information

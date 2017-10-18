@@ -338,7 +338,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
         )
 
     def get_country(self, obj):
-        return get_countries_code_from_locations(obj.locations)
+        return get_countries_code_from_locations(obj.eoi.locations)
 
 
 class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer):
@@ -385,7 +385,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             country = obj.locations_proposal_of_eoi
         if country:
             # we expecting here few countries
-            return get_countries_code_from_locations(obj.locations)
+            return get_countries_code_from_locations(country)
         return None
 
     def get_specializations(self, obj):
