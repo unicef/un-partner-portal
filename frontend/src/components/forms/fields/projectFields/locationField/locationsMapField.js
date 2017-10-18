@@ -32,25 +32,7 @@ class LocationsMapField extends Component {
     this.setState({ showMap: !this.state.showMap });
   }
 
-  saveLocation(clickEvent, code, results) {
-    let countryCode;
-    let loc = results.find(location =>
-      location.types.includes('administrative_area_level_1'));
-    if (loc === undefined) {
-      loc = results.pop();
-      countryCode = loc.address_components[0].short_name;
-    } else {
-      countryCode = loc.address_components[1].short_name;
-    }
-    if (countryCode !== code) return;
-    const newLocation = {
-      country_code: countryCode,
-      admin_level_1: { name: loc.address_components[0].long_name },
-      lat: clickEvent.latLng.lat().toFixed(5),
-      lon: clickEvent.latLng.lng().toFixed(5),
-      formatted_address: loc.formatted_address,
-    };
-
+  saveLocation(newLocation) {
     const { dispatch, name, formName } = this.props;
     dispatch(arrayPush(formName, `${name}.locations`, newLocation));
   }

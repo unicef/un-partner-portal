@@ -101,7 +101,25 @@ class LocationsMapBase extends Component {
       const { currentCountryCode, saveLocation } = this.props;
       this.geocoder.geocode({ location: clickEvent.latLng }, (results, status) => {
         if (status === google.maps.GeocoderStatus.OK && results) {
-          saveLocation(clickEvent, currentCountryCode, results);
+          let countryCode;
+          let loc = results.find(location =>
+            location.types.includes('administrative_area_level_1'));
+          if (loc === undefined) {
+            loc = results.pop();
+            countryCode = loc.address_components[0].short_name;
+          } else {
+            countryCode = loc.address_components[1].short_name;
+          }
+          if (countryCode !== currentCountryCode) return;
+          const newLocation = {
+            country_code: countryCode,
+            admin_level_1: { name: loc.address_components[0].long_name },
+            lat: clickEvent.latLng.lat().toFixed(5),
+            lon: clickEvent.latLng.lng().toFixed(5),
+            formatted_address: loc.formatted_address,
+          };
+
+          saveLocation(newLocation);
         }
       });
     }
