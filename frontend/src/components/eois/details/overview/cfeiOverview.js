@@ -11,14 +11,14 @@ import InformedPartners from './informedPartners';
 import { selectCfeiDetails } from '../../../../store';
 
 const CfeiOverview = (props) => {
-  const { params: { id } } = props;
+  const { params: { id, type } } = props;
   return (
     <form >
       <GridColumn >
         <Timeline id={id} />
         <Grid container direction="row">
           <Grid item xs={12} sm={8}>
-            <ProjectDetails />
+            <ProjectDetails type={type} />
           </Grid>
           <Grid item xs={12} sm={4}>
             <GridColumn >

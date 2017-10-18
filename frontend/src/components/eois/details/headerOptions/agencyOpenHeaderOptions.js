@@ -6,6 +6,7 @@ import EditButton from '../../buttons/editCfeiButton';
 import InviteButton from '../../buttons/invitePartner';
 import Reviewers from '../../buttons/manageReviewers';
 import Duplicate from '../../buttons/duplicateButton';
+import Complete from '../../buttons/completeCfeiButton';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import AddInformedPartners from '../../modals/callPartners/addInformedPartners';
@@ -16,6 +17,7 @@ const edit = 'edit';
 const invite = 'invite';
 const manage = 'manage';
 const duplicate = 'duplicate';
+const complete = 'complete';
 
 const PartnerOpenHeaderOptions = (props) => {
   const { params: { id },
@@ -24,6 +26,7 @@ const PartnerOpenHeaderOptions = (props) => {
     handleDialogOpen } = props;
   return (
     <div>
+      <Complete handleClick={() => handleDialogOpen(complete)} />
       <DropdownMenu
         options={
           [
@@ -58,6 +61,11 @@ const PartnerOpenHeaderOptions = (props) => {
         handleDialogClose={handleDialogClose}
       />}
       {dialogOpen[manage] && <ManageReviewersModal
+        id={id}
+        dialogOpen={dialogOpen}
+        handleDialogClose={handleDialogClose}
+      />}
+      {dialogOpen[complete] && <ManageReviewersModal
         id={id}
         dialogOpen={dialogOpen}
         handleDialogClose={handleDialogClose}
