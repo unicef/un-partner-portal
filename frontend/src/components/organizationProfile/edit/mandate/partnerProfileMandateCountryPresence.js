@@ -6,6 +6,7 @@ import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import { selectNormalizedCountries, selectNormalizedStaffGlobalyChoices } from '../../../../store';
 import GridColumn from '../../../common/grid/gridColumn';
+import AddressFieldArray from '../../../forms/fields/projectFields/locationField/addressFieldArray';
 
 const messages = {
   operate: 'Select the countries in which the organization operates',
@@ -15,7 +16,7 @@ const messages = {
 };
 
 const PartnerProfileMandateCountryPresence = (props) => {
-  const { readOnly, isCountryProfile, countries, staffGlobally } = props;
+  const { readOnly, isCountryProfile, countries, profileId, staffGlobally } = props;
 
   return (
     <FormSection name="country_presence">
@@ -33,6 +34,14 @@ const PartnerProfileMandateCountryPresence = (props) => {
             readOnly={readOnly}
           />
           : null}
+        {isCountryProfile
+          ? <AddressFieldArray
+            profileId={profileId}
+            formName={'partnerProfile'}
+            readOnly={readOnly}
+            name={'mandate_mission.country_presence.locations'}
+          />
+          : null}
         {!isCountryProfile
           ? <SelectForm
             fieldName="staff_globally"
@@ -45,7 +54,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
           : null}
         {isCountryProfile
           ? <SelectForm
-            fieldName="staff_country"
+            fieldName="staff_in_country"
             label={messages.staffCountry}
             values={staffGlobally}
             optional
@@ -56,7 +65,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
         {isCountryProfile
           ? <TextFieldForm
             label={messages.countryDescription}
-            fieldName="description"
+            fieldName="engagement_operate_desc"
             textFieldProps={{
               inputProps: {
                 maxLength: '200',
@@ -73,6 +82,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
 PartnerProfileMandateCountryPresence.propTypes = {
   readOnly: PropTypes.bool,
   isCountryProfile: PropTypes.object.isRequired,
+  profileId: PropTypes.string,
   countries: PropTypes.array.isRequired,
   staffGlobally: PropTypes.array.isRequired,
 };
