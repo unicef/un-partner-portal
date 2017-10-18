@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
-import Loader from '../../common/loader';
-import ControlledModal from '../../common/modals/controlledModal';
-import { newCfeiProcessed, newCfeiFailure } from '../../../reducers/newCfei';
+import Loader from '../../../common/loader';
+import ControlledModal from '../../../common/modals/controlledModal';
+import { newCfeiProcessed, newCfeiFailure, updateCfei } from '../../../../reducers/newCfei';
 import CallPartnersForm from './callPartnersForm';
 
 const messages = {
@@ -28,8 +28,9 @@ class CallPartnersModal extends Component {
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
-  onFormSubmit() {
+  onFormSubmit(values) {
     this.props.newCfeiProcessed();
+    this.props.updateCfei(values);
   }
 
   onDialogSubmit() {
@@ -73,6 +74,7 @@ CallPartnersModal.propTypes = {
   submit: PropTypes.func,
   newCfeiProcessed: PropTypes.func,
   newCfeiFailure: PropTypes.func,
+  updateCfei: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -80,9 +82,10 @@ const mapStateToProps = state => ({
   openDialog: state.newCfei.openCfeiProcessing,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   newCfeiProcessed: () => dispatch(newCfeiProcessed()),
   newCfeiFailure: () => dispatch(newCfeiFailure()),
+  updateCfei: body => dispatch(updateCfei(body, ownProps.id)),
   submit: () => dispatch(submit('callPartners')),
 });
 
