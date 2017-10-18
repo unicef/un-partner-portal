@@ -41,6 +41,8 @@ const AccreditationInner = readOnly => member => (
     </Grid>
     <Grid item sm={6} xs={12} >
       <FileForm
+        sectionName="collaboration.accreditation"
+        formName="partnerProfile"
         fieldName={`${member}.evidence_file`}
         label={messages.accreditation}
         optional
