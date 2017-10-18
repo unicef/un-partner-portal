@@ -122,6 +122,17 @@ class Application(TimeStampedModel):
         verification = self.partner.verifications.last() or False
         return verification and verification.is_verified
 
+    @property
+    def offer_status(self):
+        if self.did_withdraw:
+            return 'Offer Withdrawn'
+        elif self.did_accept:
+            return 'Offer Accepted'
+        elif self.did_decline:
+            return 'Offer Declined'
+        else:
+            return 'Offer Made'
+
 
 class ApplicationFeedback(TimeStampedModel):
     application = models.ForeignKey(Application, related_name="application_feedbacks")
