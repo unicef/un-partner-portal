@@ -1,4 +1,5 @@
 from django.utils.functional import SimpleLazyObject
+from django.conf import settings
 
 from partner.models import Partner
 
@@ -11,7 +12,10 @@ def get_actual_value(request):
             return Partner.objects.get(id=partner_id)
         except Partner.DoesNotExist:
             return None
-
+    # for easier development process
+    # should be removed when we finish whole logic for http headers (like: HTTP_ACTIVE_PARTNER)
+    if settings.IS_DEV:
+        return Partner.objects.first()
     return None
 
 class ActivePartnerMiddlewware(object):

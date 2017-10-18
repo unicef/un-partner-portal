@@ -12,6 +12,7 @@ class AdminLevel1(models.Model):
     Admin level 1 - is like California in USA or Mazowieckie in Poland
     """
     name = models.CharField(max_length=255)
+    country_code = models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE)
 
     class Meta:
         ordering = ['id']
@@ -21,7 +22,6 @@ class AdminLevel1(models.Model):
 
 
 class Point(models.Model):
-    country_code = models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE)
     lat = models.DecimalField(
         verbose_name='Latitude',
         null=True,
