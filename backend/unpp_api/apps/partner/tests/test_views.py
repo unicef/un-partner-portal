@@ -59,7 +59,7 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
         self.assertEquals(Partner.objects.filter(hq_id=partner.id).count(), expected_count)
         self.assertEquals(PartnerProfile.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerMailingAddress.objects.filter(partner__hq=partner).count(), expected_count)
-        self.assertEquals(PartnerHeadOrganization.objects.filter(partner__hq=partner).count(), expected_count)
+        self.assertEquals(PartnerHeadOrganization.objects.filter(partner__hq=partner).count(), 0)
         self.assertEquals(PartnerAuditAssessment.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerReporting.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerMandateMission.objects.filter(partner__hq=partner).count(), expected_count)

@@ -104,6 +104,10 @@ export function getOpenCfeiApplications(id, filters) {
   return authorizedGet(`/projects/${id}/applications`, filters);
 }
 
+export function getProjectApplication(projectId) {
+  return authorizedGet(`/projects/${projectId}/partner-application/`);
+}
+
 export function changeApplicationStatus(id, status) {
   return authorizedPatch(`/projects/application/${id}/`, { status });
 }
