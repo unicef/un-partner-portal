@@ -25,13 +25,12 @@ class SanctionedItem(TimeStampedModel):
 class SanctionedName(TimeStampedModel):
     item = models.ForeignKey(SanctionedItem, related_name='check_names')
     name = models.CharField(max_length=255)
-    is_primary = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         unique_together = (('item', 'name'),)
 
-    def __str__(self):
+    def __unicode__(self):
         return "Name: {}".format(self.name)
 
 
@@ -40,3 +39,8 @@ class SanctionedNameMatch(TimeStampedModel):
     can_ignore = models.BooleanField(default=False)
     partner = models.ForeignKey('partner.Partner', related_name='sanction_matches')
     match_type = models.CharField(max_length=3, choices=SANCTION_MATCH_TYPES)
+    match_text = models.TextField(null=True, blank=True)
+    can_ignore_text = models.TextField(null=True, blank=True)
+
+    def __unicode__(self):
+        return "Partner:{} Name:{}".format(self.partner, self.name)

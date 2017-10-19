@@ -69,13 +69,13 @@ def parse_unsc_individuals(indivs):
         listed_on = parser.parse(person['LISTED_ON']).date()
         last_updated = parse_last_updated(person['LAST_DAY_UPDATED']['VALUE'])
 
-        obj, created = SanctionedItem.objects.update_or_create(
+        item_inst, created = SanctionedItem.objects.update_or_create(
             sanctioned_type=SANCTION_LIST_TYPES.individual,
             data_id=int(person['DATAID']),
             defaults={'listed_on': listed_on, 'last_updated': last_updated})
 
         for name in normalize_person_names(person):
-            obj, created = SanctionedName.objects.get_or_create(item=obj, name=name)
+            SanctionedName.objects.get_or_create(item=item_inst, name=name)
 
 
 def parse_unsc_entities(entities):
@@ -83,7 +83,7 @@ def parse_unsc_entities(entities):
         listed_on = parser.parse(entity['LISTED_ON']).date()
         last_updated = parse_last_updated(entity['LAST_DAY_UPDATED']['VALUE'])
 
-        obj, created = SanctionedItem.objects.update_or_create(
+        item_inst, created = SanctionedItem.objects.update_or_create(
             sanctioned_type=SANCTION_LIST_TYPES.entity,
             data_id=int(entity['DATAID']),
             defaults={'listed_on': listed_on, 'last_updated': last_updated})
@@ -91,7 +91,7 @@ def parse_unsc_entities(entities):
         # TODO - keep list of present names and deactivate those not present
         # Holding off on now so everything isn't deactivated should some structure change
         for name in normalize_entity_names(entity):
-            SanctionedName.objects.get_or_create(item=obj, name=name)
+            SanctionedName.objects.get_or_create(item=item_inst, name=name)
 
 
 def parse_unsc_list():

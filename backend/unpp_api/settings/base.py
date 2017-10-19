@@ -17,6 +17,8 @@ sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 ADMINS = (
     ('Alerts', 'dev@unpp_api.com'),
 )
+DEFAULT_FROM_EMAIL = 'noreply@unpp.org'
+UN_SANCTIONS_LIST_EMAIL_ALERT = 'test@tivix.com'  # TODO - change to real one
 SITE_ID = 1
 TIME_ZONE = 'America/Los_Angeles'  # changed to UTC
 LANGUAGE_CODE = 'en-us'
