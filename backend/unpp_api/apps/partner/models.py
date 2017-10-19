@@ -475,6 +475,14 @@ class PartnerOtherInfo(TimeStampedModel):
     info_to_share = models.CharField(max_length=200)
     org_logo = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="others_info")
+
+    other_doc_1 = models.ForeignKey('common.CommonFile', null=True,
+                                    blank=True, related_name='other_info_doc_1')
+    other_doc_2 = models.ForeignKey('common.CommonFile', null=True,
+                                    blank=True, related_name='other_info_doc_2')
+    other_doc_3 = models.ForeignKey('common.CommonFile', null=True,
+                                    blank=True, related_name='other_info_doc_3')
+
     confirm_data_updated = models.BooleanField(default=False)
 
     class Meta:
@@ -482,20 +490,6 @@ class PartnerOtherInfo(TimeStampedModel):
 
     def __str__(self):
         return "PartnerOtherInfo <pk:{}>".format(self.id)
-
-
-class PartnerOtherDocument(TimeStampedModel):
-    """
-    Max to 3 other document that User can upload.
-    """
-    partner = models.ForeignKey(Partner, related_name="other_documents")
-    document = models.FileField(null=True)
-
-    class Meta:
-        ordering = ['id']
-
-    def __str__(self):
-        return "PartnerOtherDocument <pk:{}>".format(self.id)
 
 
 class PartnerMember(TimeStampedModel):

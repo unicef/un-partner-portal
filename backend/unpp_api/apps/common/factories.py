@@ -23,7 +23,6 @@ from partner.models import (
     PartnerCollaborationPartnership,
     PartnerCollaborationEvidence,
     PartnerOtherInfo,
-    PartnerOtherDocument,
     PartnerInternalControl,
     PartnerPolicyArea,
     PartnerAuditAssessment,
@@ -462,11 +461,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             confirm_data_updated=True,
             org_logo=cfile,
         )
-
-    @factory.post_generation
-    def other_documents(self, create, extracted, **kwargs):
-        pod = PartnerOtherDocument.objects.create(partner=self)
-        pod.document.save('test.csv', open(filename))
 
     class Meta:
         model = Partner

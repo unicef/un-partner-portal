@@ -27,7 +27,6 @@ from .models import (
     PartnerCollaborationPartnership,
     PartnerCollaborationEvidence,
     PartnerOtherInfo,
-    PartnerOtherDocument,
     PartnerInternalControl,
     PartnerPolicyArea,
     PartnerAuditAssessment,
@@ -217,13 +216,6 @@ class PartnerOtherInfoSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PartnerOtherDocumentSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = PartnerOtherDocument
-        fields = "__all__"
-
-
 class PartnerInternalControlSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -270,7 +262,6 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
     collaboration_evidences = PartnerCollaborationEvidenceSerializer(many=True)
     other_info = PartnerOtherInfoSerializer()
-    other_documents = PartnerOtherDocumentSerializer(many=True)
     internal_controls = PartnerInternalControlSerializer(many=True)
     area_policies = PartnerPolicyAreaSerializer(many=True)
     audit = PartnerAuditAssessmentSerializer()
@@ -672,7 +663,9 @@ class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serialize
     org_logo = CommonFileSerializer(source="other_info.org_logo")
     confirm_data_updated = serializers.BooleanField(source="other_info.confirm_data_updated")
 
-    other_documents = PartnerOtherDocumentSerializer(many=True)
+    other_doc_1 = CommonFileSerializer(source='other_info.other_doc_1')
+    other_doc_2 = CommonFileSerializer(source='other_info.other_doc_2')
+    other_doc_3 = CommonFileSerializer(source='other_info.other_doc_3')
 
     class Meta:
         model = Partner
@@ -680,11 +673,13 @@ class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serialize
             'info_to_share',
             'org_logo',
             'confirm_data_updated',
-            'other_documents',
+            'other_doc_1',
+            'other_doc_2',
+            'other_doc_3',
         )
 
     related_names = [
-        "other_info", "other_documents",
+        "other_info",
     ]
 
     @transaction.atomic
