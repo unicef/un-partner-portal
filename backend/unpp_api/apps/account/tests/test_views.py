@@ -60,7 +60,7 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
         self.assertEquals(response.data['user'].get("password"), None)
 
         # confirm that partner was created by logging in
-        url = reverse('accounts:login')
+        url = reverse('rest_login')
         response = self.client.post(url, data=self.data['user'], format='json')
         self.assertTrue(statuses.is_success(response.status_code))
 
@@ -78,12 +78,12 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
 
         # check if logout endpoint work correct
         # TODO: Split it! Make external test class when base test class will ne implemented
-        url = reverse('accounts:logout')
+        url = reverse('rest_logout')
         response = self.client.post(url, data={}, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
 
-        url = reverse('accounts:login')
+        url = reverse('rest_login')
         user_data = self.data['user']
         user_data['password'] = 'fail'
         response = self.client.post(url, data=user_data, format='json')
-        self.assertEqual(response.status_code, statuses.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)

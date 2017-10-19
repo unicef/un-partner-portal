@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import R from 'ramda';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
-
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import HeaderOptionsContainer from './headerOptions/headerOptionsContainer';
+import CustomTab from '../../common/customTab';
 import HeaderNavigation from '../../common/headerNavigation';
 import Loader from '../../common/loader';
 import {
@@ -13,6 +14,7 @@ import {
   selectCfeiTitle,
 } from '../../../store';
 import { loadCfei } from '../../../reducers/cfeiDetails';
+import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
 
 const messages = {
   noCfei: 'Sorry but this cfei doesn\'t exist',
@@ -30,6 +32,11 @@ class CfeiHeader extends Component {
 
   componentWillMount() {
     this.props.loadCfeiDetails();
+    this.props.loadProjectApplication();
+  }
+
+  componentWillUnmount() {
+    this.props.uploadCnClearState();
   }
 
   updatePath() {
@@ -52,10 +59,19 @@ class CfeiHeader extends Component {
     history.push(`/cfei/${type}`);
   }
 
+  cfeiTabs() {
+    return this.props.tabs.map((tab, index) => {
+      if (index === 1) {
+        return <CustomTab label={tab.label} key={index} checked={this.props.cnFile} />;
+      }
+
+      return <CustomTab label={tab.label} key={index} />;
+    });
+  }
+
   renderContent(index) {
     const {
       title,
-      tabs,
       children,
       role,
       params: { type },
@@ -69,7 +85,7 @@ class CfeiHeader extends Component {
     return (<HeaderNavigation
       index={index}
       title={title}
-      tabs={tabs}
+      customTabs={() => this.cfeiTabs()}
       header={<HeaderOptionsContainer role={role} type={type} />}
       handleChange={this.handleChange}
       backButton
@@ -103,7 +119,10 @@ CfeiHeader.propTypes = {
   location: PropTypes.string,
   loading: PropTypes.bool,
   loadCfeiDetails: PropTypes.func,
+  loadProjectApplication: PropTypes.func,
+  uploadCnClearState: PropTypes.func.isRequired,
   error: PropTypes.object,
+  cnFile: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -112,11 +131,14 @@ const mapStateToProps = (state, ownProps) => ({
   role: state.session.role,
   title: selectCfeiTitle(state, ownProps.params.id),
   loading: state.cfeiDetails.cfeiDetailsStatus.loading,
+  cnFile: state.conceptNote.cnFile,
   error: state.cfeiDetails.cfeiDetailsStatus.error,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
+  uploadCnClearState: () => dispatch(clearLocalState()),
   loadCfeiDetails: () => dispatch(loadCfei(ownProps.params.id)),
+  loadProjectApplication: () => dispatch(projectApplicationExists(ownProps.params.id)),
 });
 
 const containerCfeiHeader = connect(

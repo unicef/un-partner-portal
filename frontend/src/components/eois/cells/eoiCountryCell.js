@@ -6,9 +6,9 @@ import withCountryName from '../../common/hoc/withCountryName';
 const eoiCountryCell = (props) => {
   const { countryName } = props;
   return (
-    <div>
+    <span>
       {countryName}
-    </div>
+    </span>
   );
 };
 

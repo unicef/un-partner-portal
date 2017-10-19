@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import Grid from 'material-ui/Grid';
-import ControlledModal from '../../common/modals/controlledModal';
+import ControlledModal from '../../../common/modals/controlledModal';
 import OpenForm from './openForm';
 import DirectForm from './directForm';
-import { addDirectCfei, addOpenCfei } from '../../../reducers/newCfei';
-import CallPartnersModal from './callPartnersModal';
-import { PROJECT_TYPES } from '../../../helpers/constants';
+import { addDirectCfei, addOpenCfei } from '../../../../reducers/newCfei';
+import CallPartnersModal from '../callPartners/callPartnersModal';
+import { PROJECT_TYPES } from '../../../../helpers/constants';
 
 
 const messages = {
@@ -70,13 +70,17 @@ const getModal = (type) => {
 class NewCfeiModal extends Component {
   constructor(props) {
     super(props);
+    this.state = { id: null };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleDialogSubmit = this.handleDialogSubmit.bind(this);
   }
 
   handleSubmit(values) {
     this.props.onDialogClose();
-    this.props.postCfei(values);
+    this.props.postCfei(values).then(
+      (cfei) => {
+        this.setState({ id: cfei && cfei.id });
+      });
   }
 
   handleDialogSubmit() {
@@ -102,7 +106,7 @@ class NewCfeiModal extends Component {
           }}
           content={React.createElement(getModal(type), { onSubmit: this.handleSubmit })}
         />
-        { type === PROJECT_TYPES.OPEN && <CallPartnersModal />}
+        {type === PROJECT_TYPES.OPEN && <CallPartnersModal id={this.state.id} />}
       </Grid>
     );
   }

@@ -216,7 +216,7 @@ export const renderText = ({
   date,
   ...other
 }) => {
-  let value = input.value;
+  let value = input.value || (other.inputProps ? other.inputProps.initial : null);
 
   if (!value) value = '-';
   if (values) {

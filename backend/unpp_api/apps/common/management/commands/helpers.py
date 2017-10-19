@@ -50,6 +50,12 @@ def generate_fake_data(quantity=4):
     hq = Partner.objects.first()
     Partner.objects.exclude(id=hq.id).update(hq=hq)
     print "Partner HQ & Country Profiles"
+    for idx, code in enumerate(hq.country_presence):
+        if idx >= Partner.objects.filter(hq=hq).count():
+            break
+        partner = Partner.objects.filter(hq=hq)[idx]
+        partner.country_code = code
+        partner.save()
 
     PartnerMemberFactory.create_batch(quantity/2)
     print "{} PartnerMember objects created".format(quantity/2)

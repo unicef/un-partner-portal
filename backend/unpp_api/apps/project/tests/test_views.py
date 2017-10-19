@@ -368,13 +368,13 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
         payload = {
             "did_win": True,
-            "status": APPLICATION_STATUSES.rejected,
+            "status": APPLICATION_STATUSES.preselected,
             "justification_reason": "good reason",
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_win'])
-        self.assertEquals(response.data['status'], APPLICATION_STATUSES.rejected)
+        self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
 
         # accept offer
         payload = {
@@ -384,16 +384,29 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_accept'])
 
+        # accept offer
+        payload = {
+            "did_accept": False,
+            "did_decline": True,
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertFalse(response.data['did_accept'])
+        self.assertTrue(response.data['did_decline'])
+
         # withdraw
         reason = "They are better then You."
         payload = {
             "did_win": False,
-            "justification_reason": reason,
+            "did_withdraw": True,
+            "withdraw_reason": reason,
+            "status": APPLICATION_STATUSES.rejected,
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertFalse(response.data['did_win'])
-        self.assertEquals(response.data["justification_reason"], reason)
+        self.assertTrue(response.data['did_withdraw'])
+        self.assertEquals(response.data["withdraw_reason"], reason)
 
 
 class TestReviewerAssessmentsAPIView(BaseAPITestCase):

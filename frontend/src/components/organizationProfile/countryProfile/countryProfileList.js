@@ -43,8 +43,7 @@ class CountryProfileList extends Component {
     const currentIndex = this.props.countries.indexOf(country);
     const list = new Array(this.props.countries.length).fill(false);
     list[currentIndex] = true;
-
-    this.props.setSelectedCountryId(country.id);
+    this.props.setSelectedCountryId(country);
 
     this.setState({
       checkedItems: list,

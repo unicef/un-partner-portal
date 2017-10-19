@@ -8,7 +8,7 @@ from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
 )
 from common.countries import COUNTRIES_ALPHA2_CODE, COUNTRIES_ALPHA2_CODE_DICT
-from common.serializers import SpecializationSerializer, MixinPartnerRelatedSerializer
+from common.serializers import CommonFileSerializer, SpecializationSerializer, MixinPartnerRelatedSerializer
 from .models import (
     Partner,
     PartnerProfile,
@@ -61,6 +61,7 @@ class PartnerMemberSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'title',
+            'role',
         )
 
 
@@ -84,6 +85,9 @@ class PartnerFullSerializer(serializers.ModelSerializer):
 
 
 class PartnerFullProfilesSerializer(serializers.ModelSerializer):
+
+    gov_doc = CommonFileSerializer()
+    registration_doc = CommonFileSerializer()
 
     class Meta:
         model = PartnerProfile
@@ -130,6 +134,11 @@ class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerHeadOrganization
         fields = "__all__"
+        read_only_fields = (
+            'first_name',
+            'last_name',
+            'email',
+        )
 
 
 class PartnerDirectorSerializer(serializers.ModelSerializer):
@@ -147,6 +156,10 @@ class PartnerAuthorisedOfficerSerializer(serializers.ModelSerializer):
 
 
 class PartnerMandateMissionSerializer(serializers.ModelSerializer):
+
+    governance_organigram = CommonFileSerializer()
+    ethic_safeguard_policy = CommonFileSerializer()
+    ethic_fraud_policy = CommonFileSerializer()
 
     class Meta:
         model = PartnerMandateMission
@@ -194,12 +207,16 @@ class PartnerCollaborationPartnershipOtherSerializer(serializers.ModelSerializer
 
 class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
 
+    evidence_file = CommonFileSerializer()
+
     class Meta:
         model = PartnerCollaborationEvidence
         fields = "__all__"
 
 
 class PartnerOtherInfoSerializer(serializers.ModelSerializer):
+
+    org_logo = CommonFileSerializer()
 
     class Meta:
         model = PartnerOtherInfo
@@ -229,12 +246,17 @@ class PartnerPolicyAreaSerializer(serializers.ModelSerializer):
 
 class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
 
+    most_recent_audit_report = CommonFileSerializer()
+    assessment_report = CommonFileSerializer()
+
     class Meta:
         model = PartnerAuditAssessment
         fields = "__all__"
 
 
 class PartnerReportingSerializer(serializers.ModelSerializer):
+
+    report = CommonFileSerializer()
 
     class Meta:
         model = PartnerReporting

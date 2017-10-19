@@ -15,7 +15,7 @@ import {
   EndDate,
   DeadlineDate,
   NotifyDate,
-} from '../../modals/commonFields';
+} from '../../../forms/fields/projectFields/commonFields';
 import SpreadContent from '../../../common/spreadContent';
 
 const messages = {
