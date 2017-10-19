@@ -26,6 +26,8 @@ CACHES = {
 # change logging level to debug
 LOGGING['loggers']['']['level'] = 'DEBUG'
 LOGGING['loggers']['django.request']['level'] = 'DEBUG'
+LOGGING['handlers']['default']['class'] = 'common.utils.DeferredRotatingFileHandler'
+LOGGING['handlers']['default']['filename'] = 'django.log'  # Full path is created by DeferredRotatingFileHandler.
 
 extend_list_avoid_repeats(INSTALLED_APPS, [
     'django_extensions',

@@ -13,7 +13,6 @@ from agency.models import AgencyOffice, Agency
 from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
 from common.tests.base import BaseAPITestCase
-from common.countries import COUNTRIES_ALPHA2_CODE
 from common.factories import EOIFactory, AgencyMemberFactory, PartnerSimpleFactory, PartnerMemberFactory
 from common.models import Specialization
 from common.consts import (
