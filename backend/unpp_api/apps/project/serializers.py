@@ -347,7 +347,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
     eoi_id = serializers.CharField(source="eoi.id")
     agency_name = serializers.CharField(source="agency.name")
     country = serializers.SerializerMethodField()
-    specializations = SimpleSpecializationSerializer(source='eoi.specializations', many=True)
+    specializations = serializers.SerializerMethodField()
     application_date = serializers.CharField(source="created")
 
     class Meta:
@@ -366,6 +366,9 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
     def get_country(self, obj):
         return get_countries_code_from_queryset(obj.eoi.locations)
 
+    def get_specializations(self, obj):
+        return obj.eoi.specializations.all().values_list('id', flat=True)
+
 
 class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer):
 
@@ -376,14 +379,16 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     submission_date = serializers.CharField(source="created")
     is_direct = serializers.BooleanField(source="eoi.is_direct")
     partner_name = serializers.CharField(source="partner.legal_name")
-    has_yellow_flag = serializers.BooleanField(source="partner.has_yellow_flag")
-    has_red_flag = serializers.BooleanField(source="partner.has_red_flag")
+    selected_source = serializers.CharField(source="eoi.selected_source")
+    has_yellow_flag = serializers.CharField(source="partner.has_yellow_flag")
+    has_red_flag = serializers.CharField(source="partner.has_red_flag")
 
     class Meta:
         model = Application
         fields = (
             'id',
             'project_title',
+            'selected_source',
             'eoi_id',
             'agency_name',
             'country',

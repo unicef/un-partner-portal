@@ -3,58 +3,59 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import MuiThemeProviderLegacy from 'material-ui-old/styles/MuiThemeProvider';
-
-import { initSession } from '../reducers/session';
+import { loadAgencyMembers } from '../reducers/agencyMembers';
 import { loadCountries } from '../reducers/countries';
 import { loadPartnerConfig } from '../reducers/partnerProfileConfig';
 import { loadSectors } from '../reducers/sectors';
 import getTheme, { muiOldTheme } from '../styles/muiTheme';
 
+import { ROLES } from '../helpers/constants';
+
 
 class Main extends Component {
   componentWillMount() {
-    let role = window.localStorage.role;
-
-    if (!role) {
-      window.localStorage.setItem('role', 'partner');
-      role = 'partner';
-    }
-    this.props.sessionInit(role);
-    this.props.loadCountries();
-    this.props.loadPartnerConfig();
-    this.props.loadSectors();
+    const { session, loadCountries, loadPartnerConfig, loadSectors, loadAgencyMembers} = this.props;
+    loadCountries();
+    loadPartnerConfig();
+    loadSectors();
+    if (session.role === ROLES.AGENCY) loadAgencyMembers(session.agencyId);
   }
 
   render() {
+    const { children } = this.props;
     return (
       <MuiThemeProvider theme={createMuiTheme(getTheme())}>
         <MuiThemeProviderLegacy muiTheme={muiOldTheme()}>
-          {this.props.children}
+          {children}
         </MuiThemeProviderLegacy>
-      </MuiThemeProvider>
-    );
+      </MuiThemeProvider>);
   }
 }
 
 Main.propTypes = {
-  sessionInit: PropTypes.func,
   loadCountries: PropTypes.func,
   loadPartnerConfig: PropTypes.func,
   loadSectors: PropTypes.func,
+  loadAgencyMembers: PropTypes.func,
   children: PropTypes.node,
+  session: PropTypes.object,
+
 };
 
+const mapStateToProps = state => ({
+  session: state.session,
+
+});
+
 const mapDispatchToProps = dispatch => ({
-  sessionInit: (role) => {
-    dispatch(initSession({ role }));
-  },
-  loadCountries: () => loadCountries(dispatch),
+  loadCountries: () => dispatch(loadCountries()),
   loadSectors: () => dispatch(loadSectors()),
   loadPartnerConfig: () => dispatch(loadPartnerConfig()),
+  loadAgencyMembers: agencyId => dispatch(loadAgencyMembers(agencyId)),
 });
 
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(Main);

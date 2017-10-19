@@ -6,15 +6,8 @@ import { connect } from 'react-redux';
 
 
 const withCountryName = ComposedComponent => connect(
-  state => ({
-    countries: state.countries,
-  }),
-  null,
-  (stateProps, dispatchProps, ownProps) => ({
-    ...ownProps,
-    ...{
-      countryName: stateProps.countries[ownProps.code],
-    },
+  (state, ownProps) => ({
+    countryName: state.countries[ownProps.code],
   }),
 )(ComposedComponent);
 

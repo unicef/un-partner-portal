@@ -37,7 +37,7 @@ const prepareBody = (body) => {
   let newBody = R.clone(body);
   const flatSectors = mergeListsFromObjectArray(newBody.specializations, 'areas');
   newBody = R.assoc('specializations', flatSectors, body);
-  newBody = R.assoc('country_code', body.countries[0].country, newBody);
+  newBody = R.assoc('country_code', body.countries.map(country => country.country), newBody);
   newBody = R.assoc('locations',
     R.reduce(
       R.mergeDeepWith(R.concat),
@@ -47,10 +47,12 @@ const prepareBody = (body) => {
   return newBody;
 };
 
-export const addOpenCfei = body => (dispatch) => {
+export const addOpenCfei = body => (dispatch, getState) => {
   dispatch(newCfeiSubmitting());
+  const { agencyId, officeId } = getState().session;
   const preparedBody = prepareBody(body);
-  return postOpenCfei(R.mergeWith(R.merge, preparedBody, mockData))
+  return postOpenCfei(R.mergeWith(R.merge, preparedBody,
+    { agency: agencyId, agency_office: officeId }))
     .then((cfei) => {
       dispatch(newCfeiSubmitted());
       dispatch(newCfeiProcessing());
