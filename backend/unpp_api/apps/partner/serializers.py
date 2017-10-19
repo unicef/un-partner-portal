@@ -7,8 +7,12 @@ from common.consts import (
     METHOD_ACC_ADOPTED_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
 )
+from common.models import AdminLevel1, Point
 from common.countries import COUNTRIES_ALPHA2_CODE, COUNTRIES_ALPHA2_CODE_DICT
-from common.serializers import CommonFileSerializer, SpecializationSerializer, MixinPartnerRelatedSerializer
+from common.serializers import (CommonFileSerializer,
+                                SpecializationSerializer,
+                                MixinPartnerRelatedSerializer,
+                                PointSerializer)
 from .models import (
     Partner,
     PartnerProfile,
@@ -448,8 +452,8 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     security_desc = serializers.CharField(source="mandate_mission.security_desc")
 
     experiences = PartnerExperienceSerializer(many=True)
-    # location_of_office = PointSerializer()
-    # location_field_offices = PointSerializer(many=True)
+    location_of_office = PointSerializer()
+    location_field_offices = PointSerializer(many=True)
 
     class Meta:
         model = Partner
@@ -488,14 +492,21 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
 
+        location_field_offices = validated_data.pop('location_field_offices', [])
+        location_of_office = validated_data.pop('location_of_office', None)
         instance.country_presence = validated_data.get('country_presence', instance.country_presence)
         instance.staff_globally = validated_data.get('staff_globally', instance.staff_globally)
-        instance.location_of_office = validated_data.get('location_of_office', instance.location_of_office)
         instance.more_office_in_country = validated_data.get('more_office_in_country', instance.more_office_in_country)
-        instance.location_field_offices = validated_data.get('location_field_offices', instance.location_field_offices)
         instance.staff_in_country = validated_data.get('staff_in_country', instance.staff_in_country)
         instance.engagement_operate_desc = validated_data.get(
             'engagement_operate_desc', instance.engagement_operate_desc)
+
+        if location_of_office:
+            instance.location_of_office = Point.objects.get_or_create(**location_of_office)[0]
+
+        for location in location_field_offices:
+            point, created = Point.objects.get_or_create(**location)
+            self.instance.location_field_offices.add(point)
 
         instance.save()
 
