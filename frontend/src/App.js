@@ -1,29 +1,22 @@
 import React, { Component } from 'react';
-import { Provider } from 'react-redux'
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import { Router, browserHistory } from 'react-router'
-import { routeChanged } from './reducers/route'
-import getTheme from './styles/muiTheme';
+import { Provider } from 'react-redux';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+
 import store from './store';
-import RouterComponent from './routes';
+import Router from './routes';
 
-browserHistory.listen((location) => {
-  store.dispatch(routeChanged(location));
-});
-browserHistory.push(window.location.pathname);
+injectTapEventPlugin();
 
-
+// has to be React class otherwise react-scripts throw error
+// eslint-disable-next-line
 class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <MuiThemeProvider theme={createMuiTheme(getTheme())}>
-          <Router routes={RouterComponent} history={browserHistory}>
-          </Router>
-        </MuiThemeProvider>
+        <Router />
       </Provider>
-    )
+    );
   }
-};
+}
 
 export default App;

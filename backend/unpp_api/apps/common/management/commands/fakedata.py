@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from django.core.management.base import BaseCommand
 from .helpers import clean_up_data_in_db, generate_fake_data
 
+
 class Command(BaseCommand):
     help = 'Creates a set of ORM objects for development and stagging environment.'
 

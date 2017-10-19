@@ -5,7 +5,7 @@ from fabric.api import local
 def ssh(service):
     """
     ssh into running service container
-    :param service: ['django_api', 'polymer', 'proxy', 'db']
+    :param service: ['backend', 'frontend', 'proxy', 'db']
     """
     assert service in ['backend', 'frontend', 'proxy', 'db'], "%s is unrecognized service"
     if service == 'frontend':
@@ -56,7 +56,7 @@ def stop():
     local('docker-compose stop')
 
 
-def fixtures(quantity=5):
+def fixtures(quantity=4):
     """
     Load example data from fakedata management command.
     """
@@ -71,7 +71,15 @@ def make_db():
     """
     local('docker-compose exec backend python manage.py reset_db')
     local('docker-compose exec backend python manage.py migrate')
+    local('docker-compose exec backend python manage.py loaddata --app common initial.json')
     fixtures()
+
+
+def tests():
+    """
+    Run unit tests.
+    """
+    local('docker-compose exec backend python manage.py test --parallel')
 
 
 def remove_untagged_images():
@@ -79,3 +87,10 @@ def remove_untagged_images():
     Delete all untagged (<none>) images
     """
     local('docker rmi $(docker images | grep "^<none>" | awk "{print $3}")')
+
+
+def pep8():
+    """
+    Delete all untagged (<none>) images
+    """
+    local('docker-compose exec backend flake8 ./ --count')

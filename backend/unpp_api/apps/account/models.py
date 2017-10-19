@@ -4,7 +4,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 
-
 from model_utils.models import TimeStampedModel
 
 
@@ -15,6 +14,26 @@ class User(AbstractUser):
 
     def __str__(self):
         return "{} - User".format(self.get_fullname())
+
+    @property
+    def is_agency_user(self):
+        return self.agency_members.exists()
+
+    @property
+    def is_partner_user(self):
+        return self.partner_members.exists()
+
+    def get_partner_ids_i_can_access(self):
+        # Returns country partners if member of HQ (since no db relation there)
+        partner_members = self.partner_members.all()
+        partner_ids = []
+        for partner_member in partner_members:
+            partner_ids.append(partner_member.partner.id)
+            if partner_member.partner.is_hq:
+                partner_ids.extend(
+                    [p.id for p in partner_member.partner.country_profiles])
+
+        return partner_ids
 
     def get_fullname(self):
         return self.username

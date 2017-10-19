@@ -1,5 +1,20 @@
 FROM node:7.10.1-wheezy
 
+RUN echo "deb http://nginx.org/packages/debian/ wheezy nginx" >> /etc/apt/sources.list.d/nginx.list
+RUN apt-key adv --fetch-keys "http://nginx.org/keys/nginx_signing.key"
+
+RUN apt-get update
+RUN apt-get -y install nginx
+RUN rm -rf /etc/nginx/conf.d/*
+RUN mkdir -p /srv/www/
+
+ADD nginx.conf /etc/nginx/nginx.conf
+ADD nginx_site.conf /etc/nginx/conf.d/default.conf
+
+ADD entrypoint.sh /
+
+RUN chmod +x entrypoint.sh
+
 ADD package.json yarn.lock /tmp/
 
 ADD . /code/
@@ -12,10 +27,8 @@ RUN yarn install
 RUN rm -rf /code/node_modules
 RUN cp -a /tmp/node_modules /code/node_modules
 
-
 WORKDIR /code
-VOLUME /code
 
 
 EXPOSE 8080
-CMD ["yarn run build, node server.js"]
+CMD ["yarn run start"]

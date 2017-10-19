@@ -1,13 +1,15 @@
 from __future__ import absolute_import
-import os, sys
+import os
+import sys
 
 
 ####
 # Change per project
 ####
 PROJECT_NAME = 'unpp_api'
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = '/data'
+# project root and add "apps" to the path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 
 ####
 # Other settings
@@ -23,22 +25,18 @@ SECRET_KEY = '7mtv%enh%j6v23jl*y2kf!@@@=uj1x1e2yb^dpkr3l83s&amp;_7+_'
 DEFAULT_CHARSET = 'utf-8'
 ROOT_URLCONF = 'unpp_api.urls'
 
-# project root and add "apps" to the path
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
+DATA_VOLUME = '/data'
 
 UPLOADS_DIR_NAME = 'uploads'
-MEDIA_URL = '/%s/' % UPLOADS_DIR_NAME
-MEDIA_ROOT = os.path.join(BASE_DIR, '%s' % UPLOADS_DIR_NAME)
+MEDIA_URL = '/api/%s/' % UPLOADS_DIR_NAME
+MEDIA_ROOT = os.path.join(DATA_VOLUME, '%s' % UPLOADS_DIR_NAME)
+
 FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
 
 
 # static resources related. See documentation at: http://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/
 STATIC_URL = '/api/static/'
-STATIC_ROOT = '%s/staticserve' % BASE_DIR
-STATICFILES_DIRS = (
-    ('global', '%s/static' % PROJECT_ROOT),
-)
+STATIC_ROOT = '%s/staticserve' % DATA_VOLUME
 
 # static serving
 STATICFILES_FINDERS = (
@@ -50,7 +48,7 @@ STATICFILES_FINDERS = (
 )
 
 DEBUG = True
-IS_DEV = True
+IS_DEV = False
 IS_STAGING = False
 IS_PROD = False
 
@@ -58,6 +56,11 @@ IS_PROD = False
 ENV = os.getenv('ENV')
 if not ENV:
     raise Exception('Environment variable ENV is required!')
+
+# domains/hosts etc.
+DOMAIN_NAME = os.getenv('DJANGO_ALLOWED_HOST', 'localhost')
+WWW_ROOT = 'http://%s/' % DOMAIN_NAME
+ALLOWED_HOSTS = [DOMAIN_NAME]
 
 DATABASES = {
     'default': {
@@ -70,12 +73,13 @@ DATABASES = {
     }
 }
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'common.middleware.ActivePartnerMiddlewware',
 ]
 
 TEMPLATES = [
@@ -108,11 +112,19 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.staticfiles',
 
-    'compressor',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+    'django_filters',
+    # 'compressor',
     'django_common',
 
-    'account',
     'common',
+    'account',
+    'agency',
+    'partner',
+    'project',
+    'review',
 ]
 
 # auth / django-registration params
@@ -126,26 +138,34 @@ AUTHENTICATION_BACKENDS = [
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-if 'test' in sys.argv:
-    DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3', 'PASSWORD': '', 'USER': ''}
-
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc {infile} {outfile}'),
-)
-
-COMPRESS_CSS_FILTERS = [
-    #css minimizer
-    'compressor.filters.cssmin.CSSMinFilter',
-    'compressor.filters.css_default.CssAbsoluteFilter'
-]
-COMPRESS_JS_FILTERS = [
-    'compressor.filters.jsmin.JSMinFilter'
-]
+# COMPRESS_PRECOMPILERS = (
+#     ('text/less', 'lessc {infile} {outfile}'),
+# )
+#
+# COMPRESS_CSS_FILTERS = [
+#     # css minimizer
+#     'compressor.filters.cssmin.CSSMinFilter',
+#     'compressor.filters.css_default.CssAbsoluteFilter'
+# ]
+# COMPRESS_JS_FILTERS = [
+#     'compressor.filters.jsmin.JSMinFilter'
+# ]
 
 USERSWITCH_OPTIONS = {
-    'auth_backend': 'django.contrib.auth.backends.ModelBackend',
-    'css_inline': 'position:fixed !important; bottom: 10px !important; left: 10px !important; opacity:0.50; z-index: 9999;',
+    'auth_backend':
+        'django.contrib.auth.backends.ModelBackend',
+    'css_inline':
+        'position:fixed !important; bottom: 10px !important; left: 10px !important; opacity:0.50; z-index: 9999;',
 }
+
+# TODO - only enable TokenAuth for prod
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
+
 
 # helper function to extend all the common lists
 def extend_list_avoid_repeats(list_to_extend, extend_with):
@@ -154,7 +174,7 @@ def extend_list_avoid_repeats(list_to_extend, extend_with):
     list_to_extend.extend(filter(lambda x: not list_to_extend.count(x), extend_with))
 
 
-LOGS_PATH = os.path.join(BASE_DIR, PROJECT_NAME, 'logs')
+LOGS_PATH = os.path.join(DATA_VOLUME, PROJECT_NAME, 'logs')
 
 LOGGING = {
     'version': 1,
@@ -172,11 +192,8 @@ LOGGING = {
     'handlers': {
         'default': {
             'level': 'DEBUG',
-            'class': 'common.utils.DeferredRotatingFileHandler',
-            'filename': 'django.log',  # Full path is created by DeferredRotatingFileHandler.
-            'maxBytes': 1024*1024*5,  # 5 MB
-            'backupCount': 5,
-            'formatter': 'standard'
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
         },
         'mail_admins': {
             'level': 'ERROR',
