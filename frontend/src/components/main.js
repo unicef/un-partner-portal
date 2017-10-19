@@ -48,7 +48,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadCountries: () => loadCountries(dispatch),
+  loadCountries: () => dispatch(loadCountries()),
   loadSectors: () => dispatch(loadSectors()),
   loadPartnerConfig: () => dispatch(loadPartnerConfig()),
   loadAgencyMembers: agencyId => dispatch(loadAgencyMembers(agencyId)),
