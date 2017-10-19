@@ -21,7 +21,6 @@ from partner.models import (
     PartnerBudget,
     PartnerFunding,
     PartnerCollaborationPartnership,
-    PartnerCollaborationPartnershipOther,
     PartnerCollaborationEvidence,
     PartnerOtherInfo,
     PartnerOtherDocument,
@@ -268,14 +267,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         )
         self.collaborations_partnership.add(partnership)
 
-    @factory.post_generation
-    def collaborations_partnership_others(self, create, extracted, **kwargs):
-        partnership, created = PartnerCollaborationPartnershipOther.objects.get_or_create(
-            partner=self,
-            created_by=User.objects.first(),
-            other_agency=OtherAgency.objects.all().order_by("?").first(),
-        )
-        self.collaborations_partnership_others.add(partnership)
 
     @factory.post_generation
     def collaboration_evidences(self, create, extracted, **kwargs):

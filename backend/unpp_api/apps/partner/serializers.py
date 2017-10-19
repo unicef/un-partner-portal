@@ -21,7 +21,6 @@ from .models import (
     PartnerBudget,
     PartnerFunding,
     PartnerCollaborationPartnership,
-    PartnerCollaborationPartnershipOther,
     PartnerCollaborationEvidence,
     PartnerOtherInfo,
     PartnerOtherDocument,
@@ -196,15 +195,6 @@ class PartnerCollaborationPartnershipSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PartnerCollaborationPartnershipOtherSerializer(serializers.ModelSerializer):
-
-    other_agency = OtherAgencySerializer()
-
-    class Meta:
-        model = PartnerCollaborationPartnershipOther
-        fields = "__all__"
-
-
 class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
 
     evidence_file = CommonFileSerializer()
@@ -274,7 +264,6 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     budgets = PartnerBudgetSerializer(many=True)
     fund = PartnerFundingSerializer()
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
-    collaborations_partnership_others = PartnerCollaborationPartnershipOtherSerializer(many=True)
     collaboration_evidences = PartnerCollaborationEvidenceSerializer(many=True)
     other_info = PartnerOtherInfoSerializer()
     other_documents = PartnerOtherDocumentSerializer(many=True)
@@ -308,7 +297,6 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "budgets",
             "fund",
             "collaborations_partnership",
-            "collaborations_partnership_others",
             "collaboration_evidences",
             "other_info",
             "other_documents",
@@ -411,8 +399,8 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     connectivity = serializers.BooleanField(source="profile.connectivity")
     connectivity_excuse = serializers.CharField(source="profile.connectivity_excuse")
     working_languages = serializers.ListField(source="profile.working_languages")
-    working_languages_other = serializers.ChoiceField(
-        source="profile.working_languages_other", choices=COUNTRIES_ALPHA2_CODE)
+    working_languages_other = serializers.CharField(
+        source="profile.working_languages_other")
 
     class Meta:
         model = Partner
@@ -546,7 +534,6 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
 class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
-    collaborations_partnership_others = PartnerCollaborationPartnershipOtherSerializer(many=True)
 
     partnership_collaborate_institution = serializers.BooleanField(
         source="profile.partnership_collaborate_institution")
@@ -559,16 +546,13 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
         model = Partner
         fields = (
             'collaborations_partnership',
-            'collaborations_partnership_others',
-
             'partnership_collaborate_institution',
             'partnership_collaborate_institution_desc',
-
             'collaboration_evidences',
         )
 
     related_names = [
-        "profile", "collaborations_partnership", "collaborations_partnership_others", "collaboration_evidences"
+        "profile", "collaborations_partnership", "collaboration_evidences"
     ]
 
     @transaction.atomic
