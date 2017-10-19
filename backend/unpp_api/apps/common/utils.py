@@ -29,4 +29,4 @@ class DeferredRotatingFileHandler(RotatingFileHandler):
 
 
 def get_countries_code_from_locations(locations):
-    return map(lambda x: x.get("country_code"), CountryPointSerializer(locations, many=True).data)
+    return list(set(map(lambda x: x.get("country_code"), CountryPointSerializer(locations, many=True).data)))

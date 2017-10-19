@@ -112,8 +112,9 @@ class LocationsMapBase extends Component {
           }
           if (countryCode !== currentCountryCode) return;
           const newLocation = {
-            country_code: countryCode,
-            admin_level_1: { name: loc.address_components[0].long_name },
+            admin_level_1: {
+              name: loc.address_components[0].long_name,
+              country_code: countryCode },
             lat: clickEvent.latLng.lat().toFixed(5),
             lon: clickEvent.latLng.lng().toFixed(5),
             formatted_address: loc.formatted_address,

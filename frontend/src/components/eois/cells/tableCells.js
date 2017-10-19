@@ -13,7 +13,12 @@ export default type => ({ row, column }) => {
   } else if (column.name === 'country_code') {
     return (
       <TableCell >
-        <EoiCountryCell code={row.country_code} />
+        {row.country_code.map(code =>
+          (<span>
+            <EoiCountryCell code={code} />
+            {', '}
+          </span>),
+        )}
       </TableCell>);
   } else if (column.name === 'specializations') {
     return (
