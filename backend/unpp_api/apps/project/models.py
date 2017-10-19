@@ -124,6 +124,8 @@ class Application(TimeStampedModel):
 
     @property
     def offer_status(self):
+        if not self.did_win:
+            return 'No Offer Made'
         if self.did_withdraw:
             return 'Offer Withdrawn'
         elif self.did_accept:
