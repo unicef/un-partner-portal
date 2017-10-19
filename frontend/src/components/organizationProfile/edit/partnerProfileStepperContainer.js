@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
-import { reduxForm, submit, FormSection, getFormSyncWarnings, isSubmitting } from 'redux-form';
+import Snackbar from 'material-ui/Snackbar';
+import { reduxForm, submit, FormSection, getFormSyncWarnings, getFormSubmitErrors, clearSubmitErrors } from 'redux-form';
 import { connect } from 'react-redux';
 import PartnerProfileStepper from './partnerProfileStepper';
 import Loader from '../../common/loader';
@@ -12,6 +13,12 @@ import {
   removeIncompleteStep } from '../../../reducers/partnerProfileEdit';
 
 class PartnerProfileStepperContainer extends Component {
+  constructor(props) {
+    super(props);
+
+    this.handleErrorClose = this.handleErrorClose.bind(this);
+  }
+
   componentWillMount() {
     this.setState({ observedSteps: this.props.steps.map(step => step.name) });
   }
@@ -34,23 +41,41 @@ class PartnerProfileStepperContainer extends Component {
     }
   }
 
+  handleErrorClose() {
+    const { clearError } = this.props;
+    clearError();
+  }
+
   render() {
-    const { name, handleSubmit, isSubmit, readOnly, submit, steps, singleSection, last } = this.props;
+    const { name, handleSubmit, readOnly, submitting, 
+      steps, singleSection, last, error } = this.props;
 
     return (
-      <Loader loading={isSubmit}>
-        <form onSubmit={handleSubmit}>
-          <FormSection name={name}>
-            <PartnerProfileStepper
-              handleSubmit={handleSubmit}
-              steps={steps}
-              last={last}
-              readOnly={readOnly}
-              singleSection={singleSection}
-            />
-          </FormSection>
-        </form>
-      </Loader>
+      <div>
+        <Loader loading={submitting}>
+          <form onSubmit={handleSubmit}>
+            <FormSection name={name}>
+              <PartnerProfileStepper
+                handleSubmit={handleSubmit}
+                steps={steps}
+                last={last}
+                readOnly={readOnly}
+                singleSection={singleSection}
+              />
+            </FormSection>
+          </form>
+        </Loader>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={error}
+          message={error}
+          autoHideDuration={6e3}
+          onRequestClose={this.handleErrorClose}
+        />
+      </div>
     );
   }
 }
@@ -67,15 +92,17 @@ PartnerProfileStepperContainer.propTypes = {
   noTabWarning: PropTypes.func,
   isStepWarning: PropTypes.func,
   noStepWarning: PropTypes.func,
+  clearError: PropTypes.func,
+  error: PropTypes.string,
   last: PropTypes.bool,
-  isSubmit: PropTypes.bool,
+  submitting: PropTypes.bool,
   singleSection: PropTypes.bool,
   readOnly: PropTypes.bool,
 };
 
 const mapState = state => ({
   warnings: getFormSyncWarnings('partnerProfile')(state),
-  isSubmit: isSubmitting('partnerProfile')(state),
+  error: getFormSubmitErrors('partnerProfile')(state),
   initialValues: state.partnerProfileDetails.partnerProfileDetails,
 });
 
@@ -85,6 +112,7 @@ const mapDispatch = dispatch => ({
   isStepWarning: stepName => dispatch(addIncompleteStep(stepName)),
   noStepWarning: stepName => dispatch(removeIncompleteStep(stepName)),
   submit: () => dispatch(submit('partnerProfile')),
+  clearError: () => dispatch(clearSubmitErrors('partnerProfile')),
 });
 
 const connectedPartnerProfileRedux = reduxForm({

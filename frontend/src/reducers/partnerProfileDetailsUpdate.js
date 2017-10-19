@@ -34,17 +34,7 @@ export const patchDetailsFailure = error => ({ type: PATCH_DETAILS_FAILURE, erro
 export const patchPartnerProfile = (partnerId, tabName, body) => (dispatch) => {
   dispatch(patchDetailsStarted());
 
-  return patchPartnerProfileTab(partnerId, tabName, body)
-    .then((response) => {
-      dispatch(patchDetailsSuccess(response));
-      dispatch(patchDetailsEnded());
-      console.log("SUCCESS");
-    })
-    .catch((error) => {
-        console.log("ERROR", error);
-      dispatch(patchDetailsFailure(error));
-      dispatch(patchDetailsEnded());
-    });
+  return patchPartnerProfileTab(partnerId, tabName, body);
 };
 
 export default function partnerProfileDetailsStatus(state = initialState, action) {

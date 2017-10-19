@@ -9,7 +9,6 @@ import Attachment from 'material-ui-icons/Attachment';
 import DateRange from 'material-ui-icons/DateRange';
 import DatePicker from 'material-ui-old/DatePicker';
 import Typography from 'material-ui/Typography';
-import FileDownloadButton from '../components/common/buttons/fileDownloadButton';
 import RadioGroupRow from '../components/common/radio/radioGroupRow';
 import RadioHeight from '../components/common/radio/radioHeight';
 import { formatDateForPrint } from './dates';
@@ -25,19 +24,19 @@ export const fileNameFromUrl = (url) => {
 
 export const BOOL_VAL = [
   {
-    value: 'yes',
+    value: true,
     label: 'Yes',
   },
   {
-    value: 'no',
+    value: false,
     label: 'No',
   },
 ];
 
 const transformBool = (value) => {
-  if (typeof (value) === 'boolean' && value) {
+  if (typeof (value) === 'boolean' && value || value === 'true') {
     return BOOL_VAL[0].value;
-  } else if (typeof (value) === 'boolean' && !value) {
+  } else if (typeof (value) === 'boolean' && !value || value === 'false') {
     return BOOL_VAL[1].value;
   }
 
@@ -114,7 +113,7 @@ export const renderRadioField = ({ input, label, meta: { touched, error, warning
       <FormLabel>{label}</FormLabel>
       <RadioGroupRow
         selectedValue={transformBool(input.value)}
-        onChange={(event, value) => input.onChange(value)}
+        onChange={(event, value) => { input.onChange(transformBool(value)); }}
       >
         {options.map((value, index) => (
           <FormControlLabel
@@ -143,23 +142,22 @@ export const renderCheckbox = ({
   />
 );
 
-/* eslint-disable jsx-a11y/interactive-supports-focus */
-export const renderFileDownload = (props) => {
-  const { classes } = props;
-
-  return ({ input, label }) => (
-    <FormControl fullWidth>
-      <FormLabel>{label}</FormLabel>
-      <div >
-        <Attachment />
-        <Typography type="subheading" >
-          {fileNameFromUrl(input.value)}
-        </Typography>
-
-      </div>
-      <FileDownloadButton fileUrl={input.value} />
-    </FormControl>);
-};
+export const renderFileDownload = () => ({ input, label }) => (<FormControl fullWidth>
+  <FormLabel>{label}</FormLabel>
+  <div style={{ display: 'flex', alignItems: 'center' }}>
+    {input.value.file_field && <Attachment style={{ marginRight: 5 }} />}
+    <div
+      type="subheading"
+      role="button"
+      tabIndex={0}
+      onClick={() => { window.open(input.value.file_field); }}
+    >
+      <Typography >
+        {fileNameFromUrl(input.value.file_field)}
+      </Typography>
+    </div>
+  </div>
+</FormControl>);
 
 export const renderTextField = ({
   name,

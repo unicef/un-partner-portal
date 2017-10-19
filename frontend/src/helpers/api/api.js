@@ -1,7 +1,7 @@
 import axios from 'axios';
 import store from '../../store';
 
-const host = '/api'; 
+const host = '/api';
 
 // Internal help/generic functions
 function getCookie(name) {
@@ -100,7 +100,7 @@ export function getUserData() {
 
 // Config
 export function getCountries() {
-  return get('/config/countries');
+  return get({ uri: '/config/countries' });
 }
 
 export function getSectors() {
@@ -137,7 +137,7 @@ export function uploadConceptNote(projectId, body) {
 }
 
 export function uploadCommonFile(body) {
-  return authorizedPostUpload('/common/file/', body);
+  return authorizedPostUpload({ uri: '/common/file/', body });
 }
 
 export function getOpenCfeiDetails(id) {
