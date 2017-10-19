@@ -7,11 +7,9 @@ import { updateCfei } from '../../../../reducers/newCfei';
 import CompleteCfeiForm from './completeCfeiForm';
 
 const messages = {
-  title: 'Edit Expression of Interests',
-  header: {
-    open: { title: 'This is an open selection' },
-  },
-  save: 'save',
+  title: 'Are you sure you want to complete this CFEI?',
+  header: { title: 'Email will be sent to all participating Partners.' },
+  save: 'complete',
 };
 
 
@@ -23,18 +21,20 @@ class CompleteCfeiModal extends Component {
 
   onFormSubmit(values) {
     this.props.handleDialogClose();
-    this.props.updateCfei(values);
+    this.props.updateCfei({ ...values, status: 'Com' });
   }
 
   render() {
-    const { id, submit, dialogOpen, handleDialogClose, type } = this.props;
+    const { id, submit, dialogOpen, handleDialogClose } = this.props;
     return (
       <div>
         <ControlledModal
           maxWidth="md"
+          fullWidth
           title={messages.title}
           trigger={dialogOpen}
-          info={messages.header[type]}
+          info={messages.header}
+          minWidth={40}
           buttons={{
             flat: {
               handleClick: handleDialogClose,

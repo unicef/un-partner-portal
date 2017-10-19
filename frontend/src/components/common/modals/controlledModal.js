@@ -36,9 +36,9 @@ const messages = {
 
 const ControlledModal = (props) => {
   const { classes, removeContentPadding, trigger, title,
-    info, content, buttons, topBottomPadding } = props;
+    info, content, buttons, topBottomPadding, ...other } = props;
   return (
-    <Dialog open={trigger} >
+    <Dialog open={trigger} {...other} >
       <DialogTitle
         className={classes.dialogTitle}
         disableTypography

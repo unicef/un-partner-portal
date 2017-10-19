@@ -90,13 +90,17 @@ export const renderSelectField = ({
   </SelectField>
 );
 
-export const renderRadioField = ({ input, label, meta: { touched, error, warning }, options }) => (
+export const renderRadioField = ({ input,
+  label,
+  meta: { touched, error, warning },
+  options, ...other }) => (
   <div>
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>
       <RadioGroupRow
         selectedValue={transformBool(input.value)}
         onChange={(event, value) => input.onChange(value)}
+        {...other}
       >
         {options.map((value, index) => (
           <FormControlLabel
