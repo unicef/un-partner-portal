@@ -36,7 +36,7 @@ def format_to_full_name(first_name, last_name):
     return " ".join(full_name.split())
 
 
-
+# TODO - modify to be flexible for scanning one partner at a time for registration check needed
 def scan_all_partners():
     # Filter Out All Partners who have an active sanction match
     for partner in Partner.objects.filter(is_active=True).exclude(
