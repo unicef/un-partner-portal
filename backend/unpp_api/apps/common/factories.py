@@ -58,6 +58,8 @@ from .countries import COUNTRIES_ALPHA2_CODE
 
 COUNTRIES = [x[0] for x in COUNTRIES_ALPHA2_CODE]
 
+filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+
 
 def get_random_agency():
     return random.choice([
@@ -161,13 +163,13 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 class AdminLevel1Factory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: "admin level 1 name {}".format(n))
+    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
 
     class Meta:
         model = AdminLevel1
 
 
 class PointFactory(factory.django.DjangoModelFactory):
-    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
     lat = random.randint(-180, 180)
     lon = random.randint(-180, 180)
     admin_level_1 = factory.SubFactory(AdminLevel1Factory)
@@ -368,8 +370,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             registration_number="reg-number {}".format(self.id),
         )
         if created:
-            filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-            cfile, created = CommonFile.objects.get_or_create(file_field=open(filename).read())
+            cfile = CommonFile.objects.create()
+            cfile.file_field.save('test.csv', open(filename))
             profile.working_languages = get_country_list()
 
             profile.acronym = "acronym {}".format(self.id)
@@ -403,8 +405,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def mandate_mission(self, create, extracted, **kwargs):
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        cfile, created = CommonFile.objects.get_or_create(file_field=open(filename).read())
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
+
         PartnerMandateMission.objects.create(
             partner=self,
             background_and_rationale="background and rationale {}".format(self.id),
@@ -432,8 +435,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def audit(self, create, extracted, **kwargs):
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        cfile, created = CommonFile.objects.get_or_create(file_field=open(filename).read())
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
         PartnerAuditAssessment.objects.create(
             partner=self,
             regular_audited_comment="fake regular audited comment {}".format(self.id),
@@ -448,8 +451,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def report(self, create, extracted, **kwargs):
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        cfile, created = CommonFile.objects.get_or_create(file_field=open(filename).read())
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
         PartnerReporting.objects.create(
             partner=self,
             key_result="fake key result {}".format(self.id),
@@ -460,19 +463,19 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def other_info(self, create, extracted, **kwargs):
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
         PartnerOtherInfo.objects.create(
             partner=self,
             info_to_share="fake info to share {}".format(self.id),
             confirm_data_updated=True,
+            org_logo=cfile,
         )
 
     @factory.post_generation
     def other_documents(self, create, extracted, **kwargs):
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        PartnerOtherDocument.objects.create(
-            partner=self,
-            document=open(filename).read(),
-        )
+        pod = PartnerOtherDocument.objects.create(partner=self)
+        pod.document.save('test.csv', open(filename))
 
     class Meta:
         model = Partner
@@ -609,7 +612,6 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
 
 class EOIFactory(factory.django.DjangoModelFactory):
     title = factory.Sequence(lambda n: "title {}".format(n))
-    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
     # locations ... TODO when right time will come (when we need them - depending on endpoint)
@@ -661,6 +663,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
             Application.objects.create(
                 partner=get_partner(),
                 eoi=self,
+                agency=self.agency,
                 submitter=get_agency_member(),
                 did_win=True,
                 did_accept=True,
@@ -673,6 +676,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
             Application.objects.create(
                 partner=get_partner(),
                 eoi=self,
+                agency=self.agency,
                 submitter=get_partner_member(),
             )
 
@@ -706,3 +710,19 @@ class PartnerVerificationFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = PartnerVerification
+
+
+class UnsolicitedFactory(factory.django.DjangoModelFactory):
+    is_unsolicited = True
+    partner = factory.LazyFunction(get_partner)
+    submitter = factory.LazyFunction(get_partner_member)
+    agency = factory.LazyFunction(get_random_agency)
+    proposal_of_eoi_details = {
+        'specializations': [
+            Specialization.objects.all().order_by("?").first().id,
+        ],
+        'title': 'fake title'
+    }
+
+    class Meta:
+        model = Application

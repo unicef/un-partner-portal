@@ -1,5 +1,4 @@
 
-import { SESSION_INIT } from './session';
 
 const initialState = {
   tabs: [
@@ -11,9 +10,6 @@ const initialState = {
 
 export default function partnerApplicationsNavReducer(state = initialState, action) {
   switch (action.type) {
-    case SESSION_INIT: {
-      return state;
-    }
     default:
       return state;
   }

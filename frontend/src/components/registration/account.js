@@ -4,7 +4,7 @@ import Grid from 'material-ui/Grid';
 
 import TextFieldForm from '../forms/textFieldForm';
 import PasswordFieldForm from '../forms/passwordFieldForm';
-import { email } from '../../helpers/validation';
+import { email, password } from '../../helpers/validation';
 
 
 class Account extends Component {
@@ -63,6 +63,7 @@ class Account extends Component {
                   textFieldProps={{
                     helperText: 'Use at least 8 characters, include both an uppercase, letter and a number.',
                   }}
+                  validation={[password]}
                 />
               </Grid>
             </Grid>

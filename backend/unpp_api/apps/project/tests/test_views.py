@@ -105,19 +105,16 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         ao = AgencyOffice.objects.first()
         payload = {
             'title': "EOI title",
-            'country_code': COUNTRIES_ALPHA2_CODE[0][0],
             'agency': ao.agency.id,
             'focal_points': [User.objects.first().id],
             'locations': [
                 {
-                    "country_code": 'IQ',
-                    "admin_level_1": {"name": "Baghdad"},
+                    "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
                     "lat": random.randint(-180, 180),
                     "lon": random.randint(-180, 180),
                 },
                 {
-                    "country_code": "FR",
-                    "admin_level_1": {"name": "Paris"},
+                    "admin_level_1": {"name": "Paris", "country_code": "FR"},
                     "lat": random.randint(-180, 180),
                     "lon": random.randint(-180, 180),
                 },
@@ -212,19 +209,16 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         payload = {
             'eoi': {
                 'title': "EOI title",
-                'country_code': COUNTRIES_ALPHA2_CODE[0][0],
                 'agency': ao.agency.id,
                 'focal_points': [User.objects.first().id],
                 'locations': [
                     {
-                        "country_code": 'IQ',
-                        "admin_level_1": {"name": "Baghdad"},
+                        "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
                     {
-                        "country_code": "FR",
-                        "admin_level_1": {"name": "Paris"},
+                        "admin_level_1": {"name": "Paris", "country_code": "FR"},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
@@ -293,7 +287,6 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
                 "cn": cn_template,
             }
             response = self.client.post(url, data=payload, format='multipart')
-
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], Application.objects.last().id)
         self.assertEquals(response.data['eoi'], eoi_id)
@@ -375,13 +368,13 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
         payload = {
             "did_win": True,
-            "status": APPLICATION_STATUSES.rejected,
+            "status": APPLICATION_STATUSES.preselected,
             "justification_reason": "good reason",
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_win'])
-        self.assertEquals(response.data['status'], APPLICATION_STATUSES.rejected)
+        self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
 
         # accept offer
         payload = {
@@ -391,16 +384,29 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_accept'])
 
+        # accept offer
+        payload = {
+            "did_accept": False,
+            "did_decline": True,
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertFalse(response.data['did_accept'])
+        self.assertTrue(response.data['did_decline'])
+
         # withdraw
         reason = "They are better then You."
         payload = {
             "did_win": False,
-            "justification_reason": reason,
+            "did_withdraw": True,
+            "withdraw_reason": reason,
+            "status": APPLICATION_STATUSES.rejected,
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertFalse(response.data['did_win'])
-        self.assertEquals(response.data["justification_reason"], reason)
+        self.assertTrue(response.data['did_withdraw'])
+        self.assertEquals(response.data["withdraw_reason"], reason)
 
 
 class TestReviewerAssessmentsAPIView(BaseAPITestCase):
@@ -489,20 +495,18 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
             payload = {
                 "locations": [
                     {
-                        "country_code": 'IQ',
-                        "admin_level_1": {"name": "Baghdad"},
+                        "admin_level_1": {"country_code": 'IQ', "name": "Baghdad"},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
                     {
-                        "country_code": "FR",
-                        "admin_level_1": {"name": "Paris"},
+                        "admin_level_1": {"country_code": "FR", "name": "Paris"},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
                 ],
                 "title": "Unsolicited Project",
-                "agency_id": Agency.objects.first().id,
+                "agency": Agency.objects.first().id,
                 "specializations": Specialization.objects.all()[:3].values_list("id", flat=True),
                 "cn": cn_template,
             }
