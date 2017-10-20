@@ -14,9 +14,11 @@ def get_actual_value(request):
             return None
     # for easier development process
     # should be removed when we finish whole logic for http headers (like: HTTP_ACTIVE_PARTNER)
-    if settings.IS_DEV:
-        return Partner.objects.first()
-    return None
+    # TODO
+    return Partner.objects.first()
+    # if settings.IS_DEV:
+    #     return Partner.objects.first()
+    # return None
 
 class ActivePartnerMiddlewware(object):
     def __init__(self, get_response):
