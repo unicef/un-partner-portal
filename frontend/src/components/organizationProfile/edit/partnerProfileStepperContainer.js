@@ -48,7 +48,7 @@ class PartnerProfileStepperContainer extends Component {
 
   render() {
     const { name, handleSubmit, readOnly, submitting, 
-      steps, singleSection, last, error } = this.props;
+      steps, singleSection, last, error, handleExit, handleNext } = this.props;
 
     return (
       <div>
@@ -57,6 +57,8 @@ class PartnerProfileStepperContainer extends Component {
             <FormSection name={name}>
               <PartnerProfileStepper
                 handleSubmit={handleSubmit}
+                handleNext={handleNext}
+                handleExit={handleExit}
                 steps={steps}
                 last={last}
                 readOnly={readOnly}
@@ -96,6 +98,8 @@ PartnerProfileStepperContainer.propTypes = {
   error: PropTypes.string,
   last: PropTypes.bool,
   submitting: PropTypes.bool,
+  handleNext: PropTypes.func,
+  handleExit: PropTypes.func,
   singleSection: PropTypes.bool,
   readOnly: PropTypes.bool,
 };
@@ -111,7 +115,6 @@ const mapDispatch = dispatch => ({
   noTabWarning: tabName => dispatch(removeIncompleteTab(tabName)),
   isStepWarning: stepName => dispatch(addIncompleteStep(stepName)),
   noStepWarning: stepName => dispatch(removeIncompleteStep(stepName)),
-  submit: () => dispatch(submit('partnerProfile')),
   clearError: () => dispatch(clearSubmitErrors('partnerProfile')),
 });
 

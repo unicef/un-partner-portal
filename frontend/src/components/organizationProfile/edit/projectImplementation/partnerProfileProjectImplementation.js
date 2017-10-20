@@ -1,10 +1,9 @@
 import R from 'ramda';
 import PropTypes from 'prop-types';
-import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { withRouter } from 'react-router';
-import { getFormInitialValues, SubmissionError } from 'redux-form';
+import { withRouter, browserHistory as history } from 'react-router';
+import { getFormInitialValues, SubmissionError, formValueSelector } from 'redux-form';
 import PartnerProfileProjectImplementationManagement from './partnerProfileProjectImplementationManagement';
 import PartnerProfileProjectImplementationFinancialControls from './partnerProfileProjectImplementationFinancialControls';
 import PartnerProfileProjectImplementationInternalControls from './partnerProfileProjectImplementationInternalControls';
@@ -62,18 +61,41 @@ class PartnerProfileProjectImplementation extends Component {
   constructor(props) {
     super(props);
 
-    this.onNextClick = this.onNextClick.bind(this);
+    this.state = {
+      actionOnSubmit: {},
+    };
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleNext = this.handleNext.bind(this);
+    this.handleExit = this.handleExit.bind(this);
   }
 
-  onNextClick(formValues) {
-    const { initialValues, updateTab, partnerId,
-      changeTab, loadPartnerProfileDetails } = this.props;
+  onSubmit() {
+    const { partnerId, changeTab } = this.props;
+
+    if (this.state.actionOnSubmit === 'next') {
+      changeTab();
+    } else if (this.state.actionOnSubmit === 'exit') {
+      history.push(`/profile/${partnerId}/overview`);
+    }
+  }
+
+  handleNext() {
+    this.setState({ actionOnSubmit: 'next' });
+  }
+
+  handleExit() {
+    this.setState({ actionOnSubmit: 'exit' });
+  }
+
+  handleSubmit(formValues) {
+    const { initialValues, updateTab, partnerId, loadPartnerProfileDetails } = this.props;
 
     const projectImplementation = flatten(formValues.project_impl);
     const initprojectImplementation = flatten(initialValues.project_impl);
 
     return updateTab(partnerId, 'project-implementation', changedValues(initprojectImplementation, projectImplementation))
-      .then(() => loadPartnerProfileDetails(partnerId).then(() => changeTab()))
+      .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
       .catch((error) => {
         const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
 
@@ -91,8 +113,9 @@ class PartnerProfileProjectImplementation extends Component {
       <PartnerProfileStepperContainer
         name="project_impl"
         readOnly={readOnly}
-        onSubmit={this.onNextClick}
-        onNextClick={this.onNextClick}
+        handleNext={this.handleNext}
+        handleExit={this.handleExit}
+        onSubmit={this.handleSubmit}
         steps={STEPS(readOnly, isCountryProfile)}
       />
     );
@@ -123,7 +146,8 @@ const mapDispatch = dispatch => ({
   dispatch,
 });
 
-const connectedPartnerProfileProjectImplementation = connect(mapState, mapDispatch)(PartnerProfileProjectImplementation);
+const connectedPartnerProfileProjectImplementation =
+  connect(mapState, mapDispatch)(PartnerProfileProjectImplementation);
 
 export default withRouter(connectedPartnerProfileProjectImplementation);
 

@@ -95,7 +95,7 @@ class FileFormUploadButton extends Component {
   render() {
     const { classes, fieldName, deleteDisabled, fileUrl, input, label, loading } = this.props;
     const { warning } = this.props.meta;
-    const url = R.is(Object, input.value) ? input.value.file_field : fileUrl;
+    const url = R.is(String, input.value) ? input.value : fileUrl;
 
     return (
       <FormControl>

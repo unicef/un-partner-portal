@@ -149,15 +149,15 @@ export const renderCheckbox = ({
 export const renderFileDownload = () => ({ input, label }) => (<FormControl fullWidth>
   <FormLabel>{label}</FormLabel>
   <div style={{ display: 'flex', alignItems: 'center' }}>
-    {input.value.file_field && <Attachment style={{ marginRight: 5 }} />}
+    {input.value && <Attachment style={{ marginRight: 5 }} />}
     <div
       type="subheading"
       role="button"
       tabIndex={0}
-      onClick={() => { window.open(input.value.file_field); }}
+      onClick={() => { window.open(input.value); }}
     >
       <Typography >
-        {fileNameFromUrl(input.value.file_field)}
+        {fileNameFromUrl(input.value)}
       </Typography>
     </div>
   </div>
