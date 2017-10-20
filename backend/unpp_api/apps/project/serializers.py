@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import transaction
 from rest_framework import serializers
 from account.models import User
+from account.serializers import AgencyUserSerializer
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES, EOI_TYPES
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
@@ -11,7 +12,7 @@ from common.models import Point, AdminLevel1
 from partner.serializers import PartnerSerializer
 
 from partner.models import Partner, PartnerMember
-from .models import EOI, Application, Assessment
+from .models import EOI, Application, Assessment, ApplicationFeedback
 
 
 class BaseProjectSerializer(serializers.ModelSerializer):
@@ -421,3 +422,11 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             # has been updated to direct selected
             return obj.eoi.specializations.all().values_list('id', flat=True)
         return obj.proposal_of_eoi_details.get('specializations')
+
+
+class ApplicationFeedbackSerializer(serializers.ModelSerializer):
+    provider = AgencyUserSerializer(read_only=True)
+
+    class Meta:
+        model = ApplicationFeedback
+        fields = ('id', 'feedback', 'provider', 'created')

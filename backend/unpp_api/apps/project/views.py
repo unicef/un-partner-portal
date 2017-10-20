@@ -24,7 +24,7 @@ from common.permissions import (
     IsPartner,
 )
 from partner.models import PartnerMember
-from .models import Assessment, Application, EOI, Pin
+from .models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from .serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
@@ -39,6 +39,7 @@ from .serializers import (
     CreateUnsolicitedProjectSerializer,
     ApplicationPartnerOpenSerializer,
     ApplicationPartnerUnsolicitedDirectSerializer,
+    ApplicationFeedbackSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
 
@@ -319,3 +320,16 @@ class AppsPartnerUnsolicitedAPIView(AppsPartnerOpenAPIView):
 
 class AppsPartnerDirectAPIView(AppsPartnerUnsolicitedAPIView):
     queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct)
+
+
+class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
+    serializer_class = ApplicationFeedbackSerializer
+    pagination_class = SmallPagination
+    permission_classes = (IsAuthenticated,)  # TODO - tighten up permisions
+
+    def get_queryset(self):
+        return ApplicationFeedback.objects.filter(application=self.kwargs['pk'])
+
+    def perform_create(self, serializer):
+        serializer.save(provider=self.request.user,
+                        application_id=self.kwargs['pk'])
