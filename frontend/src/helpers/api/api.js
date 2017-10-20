@@ -188,6 +188,18 @@ export function getApplicationDetails(id) {
   return authorizedGet({ uri: `/projects/application/${id}/` });
 }
 
+export function getApplicationConceptNotes() {
+  return authorizedGet({ uri: '/projects/applications/open/' });
+}
+
+export function getApplicationUnsolicitedConceptNotes() {
+  return authorizedGet({ uri: '/projects/applications/unsolicited/' });
+}
+
+export function getApplicationDirect() {
+  return authorizedGet({ uri: '/projects/applications/direct/' });
+}
+
 // Partners
 export function getPartnerProfileDetails(partnerId) {
   return authorizedGet({ uri: `/partners/${partnerId}` });
