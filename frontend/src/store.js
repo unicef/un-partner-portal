@@ -170,6 +170,12 @@ export const selectCfeiTitle = (state, id) =>
 export const selectCfeiCriteria = (state, id) =>
   cfeiDetailsSelector.selectCfeiCriteria(state.cfeiDetails.cfeiDetails, id);
 
+export const selectCfeiStatus = (state, id) =>
+  cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.cfeiDetails, id);
+
+export const isCfeiCompleted = (state, id) =>
+  cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.cfeiDetails, id);
+
 export const mapSelectCriteriaToSelection = state =>
   mapValuesForSelectionField(state.selectionCriteria)
   ;
@@ -216,3 +222,6 @@ export const isUserAReviewer = (state, cfeiId) => cfeiDetailsSelector.isUserARev
 
 export const isUserAFocalPoint = (state, cfeiId) => cfeiDetailsSelector.isUserAFocalPoint(
   state.cfeiDetails.cfeiDetails, cfeiId, state.session.userId);
+
+export const selectNormalizedCompletionReasons = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['completed-reason']);

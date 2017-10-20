@@ -23,7 +23,11 @@ from .consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     POLICY_AREA_CHOICES,
+<<<<<<< HEAD
     APPLICATION_STATUSES,
+=======
+    COMPLETED_REASON,
+>>>>>>> develop
 )
 
 
@@ -59,6 +63,7 @@ class ConfigPPAPIView(APIView):
             "functional-responsibility-choices": FUNCTIONAL_RESPONSIBILITY_CHOICES,
             "policy-area-choices": POLICY_AREA_CHOICES,
             "application-statuses": APPLICATION_STATUSES,
+            "completed-reason": COMPLETED_REASON,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

@@ -4,19 +4,16 @@ import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import ControlledModal from '../../../common/modals/controlledModal';
 import { updateCfei } from '../../../../reducers/newCfei';
-import EditCfeiForm from './editCfeiForm';
+import CompleteCfeiForm from './completeCfeiForm';
 
 const messages = {
-  title: 'Edit Expression of Interests',
-  header: {
-    open: { title: 'This is an open selection' },
-    direct: { title: 'This is an direct CFEI' },
-  },
-  save: 'save',
+  title: 'Are you sure you want to complete this CFEI?',
+  header: { title: 'Email will be sent to all participating Partners.' },
+  save: 'complete',
 };
 
 
-class EditCfeiModal extends Component {
+class CompleteCfeiModal extends Component {
   constructor(props) {
     super(props);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -24,18 +21,20 @@ class EditCfeiModal extends Component {
 
   onFormSubmit(values) {
     this.props.handleDialogClose();
-    this.props.updateCfei(values);
+    this.props.updateCfei({ ...values, status: 'Com' });
   }
 
   render() {
-    const { id, submit, dialogOpen, handleDialogClose, type } = this.props;
+    const { id, submit, dialogOpen, handleDialogClose } = this.props;
     return (
       <div>
         <ControlledModal
           maxWidth="md"
+          fullWidth
           title={messages.title}
           trigger={dialogOpen}
-          info={messages.header[type]}
+          info={messages.header}
+          minWidth={40}
           buttons={{
             flat: {
               handleClick: handleDialogClose,
@@ -45,20 +44,19 @@ class EditCfeiModal extends Component {
               label: messages.save,
             },
           }}
-          content={<EditCfeiForm id={id} onSubmit={this.onFormSubmit} type={type} />}
+          content={<CompleteCfeiForm id={id} onSubmit={this.onFormSubmit} />}
         />
       </div >
     );
   }
 }
 
-EditCfeiModal.propTypes = {
+CompleteCfeiModal.propTypes = {
   dialogOpen: PropTypes.bool,
   id: PropTypes.string,
   submit: PropTypes.func,
   updateCfei: PropTypes.func,
   handleDialogClose: PropTypes.func,
-  type: PropTypes.string,
 };
 
 const mapStateToProps = state => ({
@@ -67,12 +65,12 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   updateCfei: body => dispatch(updateCfei(body, ownProps.id)),
-  submit: () => dispatch(submit('editCfei')),
+  submit: () => dispatch(submit('completeCfei')),
 });
 
-const containerEditCfeiModal = connect(
+const containerCompleteCfeiModal = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(EditCfeiModal);
+)(CompleteCfeiModal);
 
-export default containerEditCfeiModal;
+export default containerCompleteCfeiModal;

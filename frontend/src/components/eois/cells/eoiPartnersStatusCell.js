@@ -47,7 +47,7 @@ const EoiPartnerStatusCell = (props) => {
 
   return (
     <div data-tip data-for={`${id}-partner-status-tooltip`}>
-      <EoiStatusCell id={status} />
+      <EoiStatusCell status={status} />
       { partners && <Tooltip
         id={`${id}-partner-status-tooltip`}
         text={renderExpandedCell(partners, classes)}
