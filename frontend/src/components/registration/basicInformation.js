@@ -35,11 +35,11 @@ const BasicInformation = (props) => {
         </Grid>
         <Grid item sm={6} xs={12}>
           <PolarRadio
-            fieldName="legalNameChange"
+            fieldName="json.partner_profile.legal_name_change"
             label="Has the Organization had a legal name change?"
           />
         </Grid>
-        {legalNameChange === 'yes' &&
+        {legalNameChange === 'true' &&
             (<TextFieldForm
               label="Organization's former Legal Name"
               fieldName="json.partner_profile.former_legal_name"
@@ -57,14 +57,14 @@ const BasicInformation = (props) => {
               <TextFieldForm
                 label="Head of Organization's First Name"
                 placeholder="Provide First Name"
-                fieldName="json.partner_profile.org_head_first_name"
+                fieldName="json.partner_head_organization.first_name"
               />
             </Grid>
             <Grid item sm={6} xs={12}>
               <TextFieldForm
                 label="Head of Organization's Last Name"
                 placeholder="Provide Last Name"
-                fieldName="json.partner_profile.org_head_last_name"
+                fieldName="json.partner_head_organization.last_name"
               />
             </Grid>
           </Grid>
@@ -73,7 +73,7 @@ const BasicInformation = (props) => {
           <TextFieldForm
             label="Head of Organization's Email"
             placeholder="Provide Email"
-            fieldName="json.partner_profile.org_head_email"
+            fieldName="json.partner_head_organization.head_email"
             validation={[email]}
           />
         </Grid>
@@ -93,7 +93,7 @@ BasicInformation.propTypes = {
 const selector = formValueSelector('registration');
 const connectedBasicInformation = connect(
   state => ({
-    legalNameChange: selector(state, 'legalNameChange'),
+    legalNameChange: selector(state, 'json.partner_profile.legal_name_change'),
     countries: selectNormalizedCountries(state),
   }),
 )(BasicInformation);
