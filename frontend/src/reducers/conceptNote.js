@@ -6,6 +6,7 @@ import {
   saveErrorMsg,
 } from './apiStatus';
 import { uploadConceptNote, getProjectApplication } from '../helpers/api/api';
+import { loadPartnerApplication } from './partnerApplicationDetails';
 
 export const UPLOAD_CN_STARTED = 'UPLOAD_CN_STARTED';
 export const UPLOAD_CN_SUCCESS = 'UPLOAD_CN_SUCCESS';
@@ -50,6 +51,7 @@ export const projectApplicationExists = partnerId => (dispatch) => {
     .then((profiles) => {
       dispatch(uploadCnEnded());
       dispatch(uploadCnSuccess(profiles));
+      dispatch(loadPartnerApplication(partnerId, profiles));
     })
     .catch((error) => {
       dispatch(uploadCnEnded());

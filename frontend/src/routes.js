@@ -35,7 +35,7 @@ import registration from './components/registration/registration';
 import login from './components/login/login';
 import mainContent from './components/common/mainContentWrapper';
 import dev from './components/dev';
-
+import results from './components/eois/details/overview/results/results';
 
 const history = syncHistoryWithStore(browserHistory, store);
 
@@ -57,7 +57,7 @@ const allRoutes = () => (
               <Route path="overview" component={cfeiOverview} />
               <Route path="feedback" component={null} />
               <Route path="submission" component={cfeiSubmission} />
-              <Route path="results" component={null} />
+              <Route path="results" component={results} />
               <Route path="preselected" component={openCfeiPreselected} />
               <Route path="applications" component={openCfeiApplications} />ł
             </Route>

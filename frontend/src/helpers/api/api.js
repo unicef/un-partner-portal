@@ -183,6 +183,10 @@ export function getApplicationDetails(id) {
   return authorizedGet({ uri: `/projects/application/${id}/` });
 }
 
+export function patchApplication(id, body) {
+  return authorizedPatch({ uri: `/projects/application/${id}/`, body });
+}
+
 // Partners
 export function getPartnerProfileDetails(partnerId) {
   return authorizedGet({ uri: `/partners/${partnerId}` });

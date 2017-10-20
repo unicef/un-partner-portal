@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import R from 'ramda';
 import Typography from 'material-ui/Typography';
+
 import HeaderList from '../../../../../common/list/headerList';
 import { selectReview, selectAssessment } from '../../../../../../store';
 import EmptyContent from '../../../../../common/emptyContent';
@@ -14,21 +15,35 @@ const messages = {
   title: 'Total score',
   assessmentMade: (text, madeReviews, totalReviewers) =>
     `Assessment made by ${madeReviews} of ${totalReviewers} agency users`,
+  justification: 'Justification',
 };
 
-const renderContent = (loading, madeReviews, totalReviewers) => {
+const renderContent = (loading, madeReviews, totalReviewers, justReason) => {
   if (loading) return [<EmptyContent />];
-  return (
+  const content = (
     [<PaddedContent>
       <Typography >
         {messages.assessmentMade`${madeReviews}${totalReviewers}`}
       </Typography>
-    </PaddedContent>]
-  );
+    </PaddedContent>,
+    ]);
+  if (justReason) {
+    content.push(
+      <PaddedContent>
+        <Typography type="caption" >
+          {messages.justification}
+        </Typography>
+        <Typography >
+          {justReason}
+        </Typography>
+      </PaddedContent>,
+    );
+  }
+  return content;
 };
 
 const ReviewsTotalScore = (props) => {
-  const { loading, totalCount, madeReviews, totalReviewers } = props;
+  const { loading, totalCount, madeReviews, totalReviewers, justReason } = props;
   return (
     <HeaderList
       header={<SpreadContent>
@@ -42,7 +57,7 @@ const ReviewsTotalScore = (props) => {
       </SpreadContent>
       }
       loading={loading}
-      rows={renderContent(loading, madeReviews, totalReviewers)}
+      rows={renderContent(loading, madeReviews, totalReviewers, justReason)}
     />
   );
 };
@@ -52,6 +67,7 @@ ReviewsTotalScore.propTypes = {
   totalCount: PropTypes.number,
   madeReviews: PropTypes.number,
   totalReviewers: PropTypes.number,
+  justReason: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -60,7 +76,7 @@ const mapStateToProps = (state, ownProps) => {
   let totalCount = 0;
   let madeReviews = 0;
   const totalReviewers = reviews.length;
-  reviews.forEach(([reviewer, assessment]) => {
+  reviews.forEach(([_, assessment]) => {
     if (assessment) {
       const assessmentInfo = selectAssessment(state, assessment);
       totalCount += calcTotalScore(assessmentInfo);

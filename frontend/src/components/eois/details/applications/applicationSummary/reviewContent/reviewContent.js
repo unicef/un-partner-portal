@@ -1,15 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import Grid from 'material-ui/Grid';
-import { connect } from 'react-redux';
 import Divider from 'material-ui/Divider';
 import GridColumn from '../../../../../common/grid/gridColumn';
 import Reviews from './reviews';
 import TotalScore from './reviewTotalScore';
 
 const ReviewContent = (props) => {
-  const { applicationId, isUserFocalPoint, isUserReviewer } = props;
+  const { applicationId, isUserFocalPoint, isUserReviewer, justReason } = props;
   return (
     <GridColumn>
       <Grid container direction="row">
@@ -21,7 +20,7 @@ const ReviewContent = (props) => {
           />
         </Grid>
         {isUserFocalPoint && <Grid item xs={12} sm={4}>
-          <TotalScore applicationId={applicationId} />
+          <TotalScore applicationId={applicationId} justReason={justReason} />
         </Grid>}
       </Grid>
       <Divider />
@@ -29,9 +28,11 @@ const ReviewContent = (props) => {
   );
 };
 
+ReviewContent.propTypes = {
+  applicationId: PropTypes.string,
+  isUserFocalPoint: PropTypes.bool,
+  isUserReviewer: PropTypes.bool,
+  justReason: PropTypes.string,
+};
 
-const mapStateToProps = (state, ownProps) => ({
-
-});
-
-export default connect(mapStateToProps)(ReviewContent);
+export default ReviewContent;

@@ -37,6 +37,7 @@ import partnerNames, * as partnerNamesSelector from './reducers/partnerNames';
 import applicationDetails, * as applicationDetailsSelector from './reducers/applicationDetails';
 import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
 import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers';
+import partnerAppDetails, * as partnerAppDetailsSelector from './reducers/partnerApplicationDetails';
 
 const mainReducer = combineReducers({
   cfei,
@@ -72,6 +73,7 @@ const mainReducer = combineReducers({
   applicationDetails,
   applicationReviews,
   agencyMembers,
+  partnerAppDetails,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -221,3 +223,6 @@ export const isUserAFocalPoint = (state, cfeiId) => cfeiDetailsSelector.isUserAF
 
 export const selectNormalizedCompletionReasons = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['completed-reason']);
+
+export const selectPartnerApplicationDetails = (state, cfeiId) =>
+  partnerAppDetailsSelector.selectApplication(state.partnerAppDetails, cfeiId);
