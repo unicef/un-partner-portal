@@ -294,7 +294,6 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "collaborations_partnership",
             "collaboration_evidences",
             "other_info",
-            "other_documents",
             "internal_controls",
             "area_policies",
             "audit",
