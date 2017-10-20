@@ -24,6 +24,7 @@ import applicationsNotesList from './reducers/applicationsNotesList';
 import applicationsUnsolicitedList from './reducers/applicationsUnsolicitedList';
 import applicationsDirectList from './reducers/applicationsDirectList';
 import conceptNote from './reducers/conceptNote';
+import commonFileUpload from './reducers/commonFileUpload';
 import partnerInfo from './reducers/partnerInfo';
 import organizationProfileNav from './reducers/organizationProfileNav';
 import organizationProfile from './reducers/organizationProfile';
@@ -56,6 +57,7 @@ const mainReducer = combineReducers({
   countries,
   conceptNote,
   countryProfiles,
+  commonFileUpload,
   partnerInfo,
   partnerProfileConfig,
   partnerProfileEdit,
