@@ -32,17 +32,19 @@ class HeaderList extends Component {
     const { classes, header, loading } = this.props;
     return (
       <Paper>
-        <Grid direction="column" className={classes.container} container spacing={0}>
+        <div>
           <Grid className={classes.header} item>
             {(typeof header === 'function')
               ? React.createElement(header)
               : header
             }
           </Grid>
-          <Loader loading={loading} >
-            {this.renderChildren()}
-          </Loader>
-        </Grid>
+          <Grid item>
+            <Loader loading={loading} >
+              {this.renderChildren()}
+            </Loader>
+          </Grid>
+        </div>
       </Paper>
     );
   }

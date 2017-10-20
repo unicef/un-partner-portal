@@ -201,7 +201,8 @@ export const renderNumberField = ({
       />
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        {((touched && error) || warning || rangeError) && <FormHelperText error>{error || warning || rangeError}</FormHelperText>}
+        {((touched && error) || warning || rangeError) &&
+        <FormHelperText error>{error || warning || rangeError}</FormHelperText>}
         {other.inputProps && other.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
       </div>
     </div>);

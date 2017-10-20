@@ -13,6 +13,7 @@ const loadPartnerNamesSuccess = names => ({ type: LOAD_PATNER_NAMES_SUCCESS, nam
 export const loadPartnerNames = () => dispatch => getPartnerNames()
   .then((names) => {
     dispatch(loadPartnerNamesSuccess(names));
+    return names;
   });
 
 export const selectPartnerName = (state, id) => {

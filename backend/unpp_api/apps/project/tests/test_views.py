@@ -13,7 +13,6 @@ from agency.models import AgencyOffice, Agency
 from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
 from common.tests.base import BaseAPITestCase
-from common.countries import COUNTRIES_ALPHA2_CODE
 from common.factories import EOIFactory, AgencyMemberFactory, PartnerSimpleFactory, PartnerMemberFactory
 from common.models import Specialization
 from common.consts import (
@@ -145,25 +144,24 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         url = reverse('projects:eoi-detail', kwargs={"pk": eoi.id})
         payload = {
             "invited_partners": [
-                {"id": Partner.objects.first().id},
-                {"id": Partner.objects.last().id},
+                Partner.objects.first().id, Partner.objects.last().id
             ]
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], eoi.id)
-        self.assertTrue(Partner.objects.first().id in map(lambda x: x['id'], response.data['invited_partners']))
+        self.assertTrue(Partner.objects.first().id in response.data['invited_partners'])
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
 
         payload = {
             "invited_partners": [
-                {"id": Partner.objects.last().id},
+                Partner.objects.last().id,
             ]
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], eoi.id)
-        self.assertTrue(Partner.objects.last().id in map(lambda x: x['id'], response.data['invited_partners']))
+        self.assertTrue(Partner.objects.last().id in response.data['invited_partners'])
         self.assertTrue(Partner.objects.count(), 1)
         self.assertTrue(len(response.data['invited_partners']), 1)
 
