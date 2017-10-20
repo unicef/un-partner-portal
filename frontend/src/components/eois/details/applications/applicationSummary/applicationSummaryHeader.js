@@ -58,7 +58,7 @@ class ApplicationSummaryHeader extends Component {
       }
       return <AwardApplicationButton disabled={loading} applicationId={applicationId} />;
     } else if (isUserReviewer) {
-      if (R.has(user, reviews)) {
+      if (R.prop(user, reviews)) {
         return (<EditReviewModalButton
           assessmentId={reviews[user]}
           scores={getAssessment(reviews[user])}
@@ -79,6 +79,7 @@ class ApplicationSummaryHeader extends Component {
       params: { type },
       error,
     } = this.props;
+    console.log(partner)
     if (error.notFound) {
       return <Typography >{messages.noApplication}</Typography>;
     } else if (error.message) {

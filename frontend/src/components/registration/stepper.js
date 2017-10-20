@@ -61,7 +61,7 @@ class RegistrationStepper extends React.Component {
   }
 
   handleSubmit(values) {
-    registerUser(this.props.dispatch, values.json);
+    this.props.registerUser(values.json);
   }
 
 
@@ -137,6 +137,7 @@ const connectedRegistrationStepper = connect(
   dispatch => ({
     loadCountries: () => dispatch(loadCountries()),
     loadPartnerConfig: () => dispatch(loadPartnerConfig()),
+    registerUser: values => dispatch(registerUser(values)),
   }),
 )(RegistrationStepper);
 

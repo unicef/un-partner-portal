@@ -96,7 +96,7 @@ function authorizedPostUpload({ uri, body = {}, params }) {
 
 // Accounts
 export function postRegistration(body) {
-  return post('/accounts/registration/', body);
+  return post('/accounts/registration', body);
 }
 
 export function login(body) {
