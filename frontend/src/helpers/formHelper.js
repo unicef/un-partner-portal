@@ -15,7 +15,7 @@ import RadioHeight from '../components/common/radio/radioHeight';
 import { formatDateForPrint } from './dates';
 import { numerical } from '../helpers/validation';
 
-const fileNameFromUrl = (url) => {
+export const fileNameFromUrl = (url) => {
   if (url) {
     return url.split('/').pop();
   }
@@ -57,6 +57,24 @@ export const visibleIfYes = (value) => {
   return false;
 };
 
+export const renderFormControlWithLabel = ({
+  className,
+  label,
+  meta: { touched, error, warning },
+  input,
+  ...other
+}) => (
+  <div>
+    <FormLabel>{label}</FormLabel>
+    <FormControl
+      className={className}
+      {...input}
+      {...other}
+    />
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>
+);
+
 export const renderFormControl = ({
   className,
   label,
@@ -90,13 +108,17 @@ export const renderSelectField = ({
   </SelectField>
 );
 
-export const renderRadioField = ({ input, label, meta: { touched, error, warning }, options }) => (
+export const renderRadioField = ({ input,
+  label,
+  meta: { touched, error, warning },
+  options, ...other }) => (
   <div>
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>
       <RadioGroupRow
         selectedValue={transformBool(input.value)}
         onChange={(event, value) => input.onChange(value)}
+        {...other}
       >
         {options.map((value, index) => (
           <FormControlLabel
@@ -128,7 +150,6 @@ export const renderCheckbox = ({
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 export const renderFileDownload = (props) => {
   const { classes } = props;
-
   return ({ input, label }) => (
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>

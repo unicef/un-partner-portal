@@ -9,63 +9,82 @@ import PartnerOverview from '../../../../partners/profile/overview/partnerOvervi
 import ConceptNote from '../../overview/conceptNote';
 import {
   selectApplication,
+  selectCfeiCriteria,
+  isUserAFocalPoint,
+  isUserAReviewer,
 } from '../../../../../store';
-import {
-  loadPartnerDetails,
-} from '../../../../../reducers/partnerProfileDetails';
+import ReviewContent from './reviewContent/reviewContent';
+
 
 const messages = {
   cn: 'Concept Note',
 };
 
-class ApplicationSummaryContent extends Component {
-  componentWillUpdate(nextProps) {
-    if (!this.props.partner && nextProps.partner) {
-      this.props.dispatch(loadPartnerDetails(nextProps.partner));
-    }
-  }
-
-  render() {
-    const { application, partnerDetails, partnerLoading } = this.props;
-    return (
-      <GridColumn spacing="8">
-        <Grid container direction="row">
-          <Grid item xs={12} sm={8}>
-            <PartnerOverview partner={partnerDetails} loading={partnerLoading} />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <ConceptNote
-              conceptNote={application.details}
-              loading={partnerLoading}
-              date={application.created}
-              title={messages.cn}
-            />
-          </Grid>
+const ApplicationSummaryContent = (props) => {
+  const { application,
+    partnerDetails,
+    partnerLoading,
+    params: { applicationId },
+    isUserFocalPoint,
+    isUserReviewer,
+    shouldSeeReviews,
+  } = props;
+  return (
+    <GridColumn spacing="8">
+      <Grid container direction="row">
+        <Grid item xs={12} sm={8}>
+          <PartnerOverview partner={partnerDetails} loading={partnerLoading} button />
         </Grid>
-        <Divider />
-      </GridColumn>
+        <Grid item xs={12} sm={4}>
+          <ConceptNote
+            conceptNote={application.cn}
+            loading={partnerLoading}
+            date={application.created}
+            title={messages.cn}
+          />
+        </Grid>
+      </Grid>
+      <Divider />
+      {shouldSeeReviews && <ReviewContent
+        applicationId={applicationId}
+        isUserFocalPoint={isUserFocalPoint}
+        isUserReviewer={isUserReviewer}
+        justReason={application.justification_reason}
+      />
+      }
+    </GridColumn>
 
-    );
-  }
-}
+  );
+};
+
 
 ApplicationSummaryContent.propTypes = {
   application: PropTypes.object,
-  partner: PropTypes.string,
   partnerDetails: PropTypes.object,
   partnerLoading: PropTypes.bool,
-  dispatch: PropTypes.func,
+  params: PropTypes.object,
+  shouldSeeReviews: PropTypes.bool,
+  isUserFocalPoint: PropTypes.bool,
+  isUserReviewer: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const application = selectApplication(state, ownProps.params.applicationId) || {};
-  const { partner } = application;
+  const { partner, eoi } = application;
   const partnerDetails = R.prop(partner, state.agencyPartnerProfile);
+  const cfeiCriteria = selectCfeiCriteria(state, eoi);
+  const isUserFocalPoint = isUserAFocalPoint(state, eoi);
+  const isUserReviewer = isUserAReviewer(state, eoi);
   return {
     application,
     partner,
     partnerDetails,
     partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
+    cfeiCriteria,
+    eoi,
+    shouldSeeReviews: isUserFocalPoint || isUserReviewer,
+    isUserFocalPoint,
+    isUserReviewer,
   };
 };
 

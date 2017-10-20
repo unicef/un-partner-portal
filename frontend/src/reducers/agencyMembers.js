@@ -1,5 +1,5 @@
-import { getAgencyMembers } from '../helpers/api/api';
 import R from 'ramda';
+import { getAgencyMembers } from '../helpers/api/api';
 import { extractIds, flattenToId, toObject, flattenToObjectKey } from './normalizationHelpers';
 import { AGENCY_MEMBERS_POSITIONS } from '../helpers/constants';
 
@@ -16,9 +16,9 @@ const loadAgencyMembersSuccess = members => ({ type: LOAD_AGENCY_MEMBERS_SUCCESS
 
 const getMembers = (pick, sortedMembers, allMembers) =>
   R.pick(R.flatten(R.props(pick, sortedMembers)), allMembers);
-const getAdminMembers = R.curry(getMembers)(['Administrator']);
-const getEditMembers = R.curry(getMembers)(['Editor']);
-const getPossibleFocalPointsReviewers = R.curry(getMembers)(['Administrator', 'Editor']);
+const getAdminMembers = R.curry(getMembers)([ADMINISTRATOR]);
+const getEditMembers = R.curry(getMembers)([EDITOR]);
+const getPossibleFocalPointsReviewers = R.curry(getMembers)([ADMINISTRATOR, EDITOR]);
 
 export const loadAgencyMembers = agencyId => dispatch => getAgencyMembers(agencyId)
   .then((response) => {

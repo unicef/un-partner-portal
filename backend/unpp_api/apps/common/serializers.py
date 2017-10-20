@@ -1,5 +1,6 @@
 from django.db.models.base import Model
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from .models import AdminLevel1, Point, Sector, Specialization, CommonFile
 
 
@@ -95,6 +96,26 @@ class PointSerializer(serializers.ModelSerializer):
 
 
 class CommonFileSerializer(serializers.ModelSerializer):
+
+    def to_representation(self, obj):
+        rep = super(CommonFileSerializer, self).to_representation(obj)
+        return rep['file_field']
+
+    def to_internal_value(self, data):
+        try:
+            return CommonFile.objects.get(id=int(data))
+        except:
+            raise ValidationError('No File Exists with this ID')
+
+    class Meta:
+        model = CommonFile
+        fields = (
+            'id',
+            'file_field',
+        )
+
+
+class CommonFileUploadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CommonFile

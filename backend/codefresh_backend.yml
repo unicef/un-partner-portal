@@ -42,3 +42,4 @@ steps:
             branch:
                 only: 
                     - develop
+                    - master

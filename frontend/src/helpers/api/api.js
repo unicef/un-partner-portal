@@ -69,6 +69,16 @@ function authorizedPatch({ uri, params, body = {} }) {
     .then(response => response.data);
 }
 
+function authorizedPut({ uri, params, body = {} }) {
+  const token = store.getState().session.token;
+  const options = {
+    params,
+    headers: { Authorization: `token ${token}` },
+  };
+  return axios.put(`${host}${uri}`, body, options)
+    .then(response => response.data);
+}
+
 function authorizedPostUpload({ uri, body = {}, params }) {
   const token = store.getState().session.token;
   const options = {
@@ -135,8 +145,28 @@ export function uploadConceptNote(projectId, body) {
   return authorizedPostUpload({ uri: `/projects/${projectId}/partner-applications/`, body });
 }
 
+export function uploadCommonFile(body) {
+  return authorizedPostUpload({ uri: '/common/file/', body });
+}
+
 export function getOpenCfeiDetails(id) {
   return authorizedGet({ uri: `/projects/${id}` });
+}
+
+export function getApplicationReviews(applicationId) {
+  return authorizedGet({ uri: `/projects/applications/${applicationId}/reviewers-status` });
+}
+
+export function postApplicationReview(applicationId, reviewerId, body) {
+  return authorizedPost({
+    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
+    body });
+}
+
+export function putApplicationReview(applicationId, reviewerId, body) {
+  return authorizedPut({
+    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
+    body });
 }
 
 // Applications
@@ -155,6 +185,22 @@ export function changeApplicationStatus(id, status) {
 
 export function getApplicationDetails(id) {
   return authorizedGet({ uri: `/projects/application/${id}/` });
+}
+
+export function patchApplication(id, body) {
+  return authorizedPatch({ uri: `/projects/application/${id}/`, body });
+}
+
+export function getApplicationConceptNotes() {
+  return authorizedGet({ uri: '/projects/applications/open/' });
+}
+
+export function getApplicationUnsolicitedConceptNotes() {
+  return authorizedGet({ uri: '/projects/applications/unsolicited/' });
+}
+
+export function getApplicationDirect() {
+  return authorizedGet({ uri: '/projects/applications/direct/' });
 }
 
 // Partners
