@@ -41,7 +41,7 @@ class Partner(TimeStampedModel):
     is_active = models.BooleanField(default=True)
     # hq information
     country_presence = ArrayField(
-        models.CharField(max_length=2, choices=WORKING_LAGNUAGES_CHOICES),
+        models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE),
         default=list,
         null=True
     )
@@ -92,7 +92,7 @@ class PartnerProfile(TimeStampedModel):
         default=list,
         null=True
     )
-    working_languages_other = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
+    working_languages_other = models.CharField(max_length=100, null=True, blank=True)
     flagged = models.BooleanField(default=False)  # not sure do we need this attr
     # authorised_officials
     have_board_directors = models.BooleanField(
@@ -451,18 +451,6 @@ class PartnerCollaborationPartnership(TimeStampedModel):
         return "PartnerCollaborationPartnership <pk:{}>".format(self.id)
 
 
-class PartnerCollaborationPartnershipOther(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', related_name="collaborations_partnership_others")
-    partner = models.ForeignKey(Partner, related_name="collaborations_partnership_others")
-    other_agency = models.ForeignKey('agency.OtherAgency', related_name="collaborations_partnership_others")
-
-    class Meta:
-        ordering = ['id']
-
-    def __str__(self):
-        return "PartnerCollaborationPartnershipOther <pk:{}>".format(self.id)
-
-
 class PartnerCollaborationEvidence(TimeStampedModel):
     """
     Accreditation & References
@@ -487,6 +475,14 @@ class PartnerOtherInfo(TimeStampedModel):
     info_to_share = models.CharField(max_length=200)
     org_logo = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="others_info")
+
+    other_doc_1 = models.ForeignKey('common.CommonFile', null=True,
+                                    blank=True, related_name='other_info_doc_1')
+    other_doc_2 = models.ForeignKey('common.CommonFile', null=True,
+                                    blank=True, related_name='other_info_doc_2')
+    other_doc_3 = models.ForeignKey('common.CommonFile', null=True,
+                                    blank=True, related_name='other_info_doc_3')
+
     confirm_data_updated = models.BooleanField(default=False)
 
     class Meta:
@@ -494,20 +490,6 @@ class PartnerOtherInfo(TimeStampedModel):
 
     def __str__(self):
         return "PartnerOtherInfo <pk:{}>".format(self.id)
-
-
-class PartnerOtherDocument(TimeStampedModel):
-    """
-    Max to 3 other document that User can upload.
-    """
-    partner = models.ForeignKey(Partner, related_name="other_documents")
-    document = models.FileField(null=True)
-
-    class Meta:
-        ordering = ['id']
-
-    def __str__(self):
-        return "PartnerOtherDocument <pk:{}>".format(self.id)
 
 
 class PartnerMember(TimeStampedModel):
