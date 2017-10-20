@@ -146,7 +146,6 @@ export const renderCheckbox = ({
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 export const renderFileDownload = (props) => {
   const { classes } = props;
-
   return ({ input, label }) => (
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>

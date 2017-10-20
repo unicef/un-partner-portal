@@ -75,7 +75,7 @@ class HeaderNavigation extends Component {
       classes.right,
       paddingClass,
     );
-    
+
     return (
       <div>
         <Grid align="center" className={classes.container} container>

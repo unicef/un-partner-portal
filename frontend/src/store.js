@@ -36,7 +36,8 @@ import partnersPreselectionList from './reducers/partnersPreselectionList';
 import selectionCriteria from './reducers/selectionCriteria';
 import partnerNames, * as partnerNamesSelector from './reducers/partnerNames';
 import applicationDetails, * as applicationDetailsSelector from './reducers/applicationDetails';
-import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers'
+import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
+import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers';
 
 const mainReducer = combineReducers({
   cfei,
@@ -71,6 +72,7 @@ const mainReducer = combineReducers({
   selectionCriteria,
   partnerNames,
   applicationDetails,
+  applicationReviews,
   agencyMembers,
 });
 
@@ -165,6 +167,9 @@ export const selectCfeiDetails = (state, id) =>
 export const selectCfeiTitle = (state, id) =>
   cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails.cfeiDetails, id);
 
+export const selectCfeiCriteria = (state, id) =>
+  cfeiDetailsSelector.selectCfeiCriteria(state.cfeiDetails.cfeiDetails, id);
+
 export const mapSelectCriteriaToSelection = state =>
   mapValuesForSelectionField(state.selectionCriteria)
   ;
@@ -182,10 +187,32 @@ export const selectApplicationPartnerName = (state, id) =>
   applicationDetailsSelector.selectApplicationPartnerName(
     state.applicationDetails.applicationDetails, id);
 
+export const selectApplicationProject = (state, id) =>
+  applicationDetailsSelector.selectApplicationProject(
+    state.applicationDetails.applicationDetails, id);
+
 export const selectApplication = (state, id) =>
   applicationDetailsSelector.selectApplication(
     state.applicationDetails.applicationDetails, id);
 
+export const selectReview = (state, reviewId) =>
+  applicationReviewsSelector.selectReview(state.applicationReviews, reviewId);
+
+export const selectReviewer = (state, reviewerId) =>
+  applicationReviewsSelector.selectReviewer(state.applicationReviews, reviewerId);
+
+export const selectAssessment = (state, assessmentId) =>
+  applicationReviewsSelector.selectAssessment(state.applicationReviews, assessmentId);
+
+export const isAssesmentAdded = (state, assessmentId) =>
+  applicationReviewsSelector.isAssesmentAdded(state.applicationReviews, assessmentId);
+
 export const mapFocalPointsReviewersToSelection = state =>
   mapValuesForSelectionField(
     agencyMembersSelectors.selectPossibleFocalPointsReviewers(state.agencyMembers));
+
+export const isUserAReviewer = (state, cfeiId) => cfeiDetailsSelector.isUserAReviewer(
+  state.cfeiDetails.cfeiDetails, cfeiId, state.session.userId);
+
+export const isUserAFocalPoint = (state, cfeiId) => cfeiDetailsSelector.isUserAFocalPoint(
+  state.cfeiDetails.cfeiDetails, cfeiId, state.session.userId);
