@@ -125,6 +125,7 @@ INSTALLED_APPS = [
     'partner',
     'project',
     'review',
+    'notification',
 ]
 
 # auth / django-registration params
@@ -219,3 +220,14 @@ LOGGING = {
         },
     }
 }
+
+# Sendgrid stuff
+EMAIL_BACKEND = DOMAIN_NAME
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+
+NOREPLY_EMAIL_ADDRESS = 'no-reply@unicef.org'
