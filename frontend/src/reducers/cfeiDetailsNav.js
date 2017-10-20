@@ -1,5 +1,5 @@
 import R from 'ramda';
-import { SESSION_INIT } from './session';
+import { SESSION_READY } from './session';
 import { PARTNER, AGENCY, filterItems } from './nav';
 import { PROJECT_TYPES, DETAILS_ITEMS } from '../helpers/constants';
 
@@ -47,8 +47,8 @@ export const selectItemsByType = (state, type) =>
 
 export default function cfeiNavReducer(state = initialState, action) {
   switch (action.type) {
-    case SESSION_INIT: {
-      return filterItems(state, action.session.role);
+    case SESSION_READY: {
+      return filterItems(initialState, action.getState().session.role);
     }
     default:
       return state;

@@ -97,8 +97,9 @@ class Application(TimeStampedModel):
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
+    did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
     # did_withdraw is only applicable if did_win is True
-    did_withdraw = models.BooleanField(default=False, verbose_name='Did accept?')
+    did_withdraw = models.BooleanField(default=False, verbose_name='Did withdraw?')
     withdraw_reason = models.TextField(null=True, blank=True)  # reason why partner withdraw
     # These two (ds_justification_*) will be used as direct selection will create applications for DS EOIs.
     # hq information
@@ -117,14 +118,22 @@ class Application(TimeStampedModel):
         return "Application <pk:{}>".format(self.id)
 
     @property
-    def flags(self):
-        flag = self.partner.flags.last()
-        return flag and flag.flag_type
-
-    @property
     def partner_is_verified(self):
         verification = self.partner.verifications.last() or False
         return verification and verification.is_verified
+
+    @property
+    def offer_status(self):
+        if not self.did_win:
+            return 'No Offer Made'
+        if self.did_withdraw:
+            return 'Offer Withdrawn'
+        elif self.did_accept:
+            return 'Offer Accepted'
+        elif self.did_decline:
+            return 'Offer Declined'
+        else:
+            return 'Offer Made'
 
 
 class ApplicationFeedback(TimeStampedModel):

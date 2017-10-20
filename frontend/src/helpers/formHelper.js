@@ -15,7 +15,7 @@ import RadioHeight from '../components/common/radio/radioHeight';
 import { formatDateForPrint } from './dates';
 import { numerical } from '../helpers/validation';
 
-const fileNameFromUrl = (url) => {
+export const fileNameFromUrl = (url) => {
   if (url) {
     return url.split('/').pop();
   }
@@ -56,6 +56,24 @@ export const visibleIfYes = (value) => {
 
   return false;
 };
+
+export const renderFormControlWithLabel = ({
+  className,
+  label,
+  meta: { touched, error, warning },
+  input,
+  ...other
+}) => (
+  <div>
+    <FormLabel>{label}</FormLabel>
+    <FormControl
+      className={className}
+      {...input}
+      {...other}
+    />
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>
+);
 
 export const renderFormControl = ({
   className,
@@ -216,7 +234,7 @@ export const renderText = ({
   date,
   ...other
 }) => {
-  let value = input.value;
+  let value = input.value || (other.inputProps ? other.inputProps.initial : null);
 
   if (!value) value = '-';
   if (values) {

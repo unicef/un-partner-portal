@@ -98,7 +98,10 @@ class CommonFileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CommonFile
-        fields = "__all__"
+        fields = (
+            'id',
+            'file_field',
+        )
 
 
 class CountryPointSerializer(serializers.ModelSerializer):

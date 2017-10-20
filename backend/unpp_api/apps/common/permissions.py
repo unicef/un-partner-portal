@@ -114,9 +114,4 @@ class IsEOIReviewerAssessments(BasePermission):
 class IsPartner(BasePermission):
 
     def has_permission(self, request, view):
-        try:
-            PartnerMember.objects.get(user=request.user)
-        except PartnerMember.DoesNotExist:
-            return False
-        else:
-            return True
+        return request.user.is_partner_user

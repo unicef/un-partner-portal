@@ -24,6 +24,7 @@ import applicationsNotesList from './reducers/applicationsNotesList';
 import applicationsUnsolicitedList from './reducers/applicationsUnsolicitedList';
 import applicationsDirectList from './reducers/applicationsDirectList';
 import conceptNote from './reducers/conceptNote';
+import commonFileUpload from './reducers/commonFileUpload';
 import partnerInfo from './reducers/partnerInfo';
 import organizationProfileNav from './reducers/organizationProfileNav';
 import organizationProfile from './reducers/organizationProfile';
@@ -35,6 +36,7 @@ import partnersPreselectionList from './reducers/partnersPreselectionList';
 import selectionCriteria from './reducers/selectionCriteria';
 import partnerNames, * as partnerNamesSelector from './reducers/partnerNames';
 import applicationDetails, * as applicationDetailsSelector from './reducers/applicationDetails';
+import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers'
 
 const mainReducer = combineReducers({
   cfei,
@@ -53,6 +55,7 @@ const mainReducer = combineReducers({
   countries,
   conceptNote,
   countryProfiles,
+  commonFileUpload,
   partnerInfo,
   partnerProfileConfig,
   partnerProfileEdit,
@@ -68,6 +71,7 @@ const mainReducer = combineReducers({
   selectionCriteria,
   partnerNames,
   applicationDetails,
+  agencyMembers,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -181,3 +185,7 @@ export const selectApplicationPartnerName = (state, id) =>
 export const selectApplication = (state, id) =>
   applicationDetailsSelector.selectApplication(
     state.applicationDetails.applicationDetails, id);
+
+export const mapFocalPointsReviewersToSelection = state =>
+  mapValuesForSelectionField(
+    agencyMembersSelectors.selectPossibleFocalPointsReviewers(state.agencyMembers));
