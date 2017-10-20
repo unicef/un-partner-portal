@@ -8,8 +8,8 @@ const commonFile = {
   error: { },
 };
 
-export const successLoading = (action, state) => R.assoc(action.fieldName, R.assoc('loading', true, state[action.fieldName]), state);
-export const stopLoading = (action, state) => R.assoc(action.fieldName, R.assoc('loading', false, state[action.fieldName]), state);
+export const successLoading = (state, action) => R.assoc(action.fieldName, R.assoc('loading', true, state[action.fieldName]), state);
+export const stopLoading = (state, action) => R.assoc(action.fieldName, R.assoc('loading', false, state[action.fieldName]), state);
 export const saveErrorMsg = (state, action, message) =>
   R.assoc(action.fieldName, R.assoc('error', { message, error: action.error }, state[action.fieldName]), state);
 
@@ -36,21 +36,20 @@ const messages = {
 
 const initialState = [];
 
-const startLoading = (action, state) => {
+const startLoading = (state, action) => {
   const newCommonFile = R.clone(commonFile);
   return R.assoc(action.fieldName, R.assoc('loading', true, newCommonFile), state);
 };
 
-const clearFile = (action, state) => {
+const clearFile = (state, action) => {
   const newCommonFile = R.clone(commonFile);
   return R.assoc(action.fieldName, newCommonFile, state);
 };
 
-const removeFile = (action, state) => R.dissoc(action.fieldName, state);
+const removeFile = (state, action) => R.dissoc(action.fieldName, state);
 
-const saveReponse = (action, state) => {
+const saveReponse = (state, action) => {
   const fileUrl = R.assoc(action.fieldName, R.assoc('fileUrl', action.response.file_field, state[action.fieldName]), state);
-
   return R.assoc(action.fieldName, R.assoc('fileId', action.response.id, fileUrl[action.fieldName]), fileUrl);
 };
 
@@ -85,19 +84,19 @@ export default function commonFileUploadReducer(state = initialState, action) {
       return saveErrorMsg(state, action, messages.uploadFailed);
     }
     case UPLOAD_FILE_ENDED: {
-      return stopLoading(action, state);
+      return stopLoading(state, action);
     }
     case UPLOAD_FILE_STARTED: {
-      return startLoading(action, state);
+      return startLoading(state, action);
     }
     case UPLOAD_FILE_SUCCESS: {
-      return saveReponse(action, state);
+      return saveReponse(state, action);
     }
     case UPLOAD_FILE_CLEAR: {
-      return clearFile(action, state);
+      return clearFile(state, action);
     }
     case UPLOAD_FILE_REMOVE: {
-      return removeFile(action, state);
+      return removeFile(state, action);
     }
     default:
       return state;
