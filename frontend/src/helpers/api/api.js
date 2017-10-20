@@ -146,7 +146,7 @@ export function uploadConceptNote(projectId, body) {
 }
 
 export function uploadCommonFile(body) {
-  return authorizedPostUpload('/common/file/', body);
+  return authorizedPostUpload({ uri: '/common/file/', body });
 }
 
 export function getOpenCfeiDetails(id) {
@@ -185,6 +185,18 @@ export function changeApplicationStatus(id, status) {
 
 export function getApplicationDetails(id) {
   return authorizedGet({ uri: `/projects/application/${id}/` });
+}
+
+export function getApplicationConceptNotes() {
+  return authorizedGet({ uri: '/projects/applications/open/' });
+}
+
+export function getApplicationUnsolicitedConceptNotes() {
+  return authorizedGet({ uri: '/projects/applications/unsolicited/' });
+}
+
+export function getApplicationDirect() {
+  return authorizedGet({ uri: '/projects/applications/direct/' });
 }
 
 // Partners
