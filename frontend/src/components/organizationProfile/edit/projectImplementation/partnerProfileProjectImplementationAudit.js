@@ -68,6 +68,8 @@ const PartnerProfileProjectImplementationAudit = (props) => {
         <Grid container direction="row">
           <Grid item sm={6} xs={12}>
             <FileForm
+              sectionName="project_impl.audit"
+              formName="partnerProfile"
               fieldName="most_recent_audit_report"
               label={messages.copyOfRecentAudit}
               optional
@@ -133,6 +135,8 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               readOnly={readOnly}
             />
             <FileForm
+              formName="partnerProfile"
+              sectionName="project_impl.audit"
               fieldName="assessment_report"
               label={messages.copyOfAssessment}
               optional

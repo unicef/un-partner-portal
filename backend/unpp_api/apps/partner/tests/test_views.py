@@ -272,7 +272,6 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         text = 'test'
         payload = response.data
-        del payload['collaborations_partnership_others']
         del payload['collaboration_evidences']
         collaborations_partnership = response.data['collaborations_partnership']
         for collaboration_partnership in collaborations_partnership:
