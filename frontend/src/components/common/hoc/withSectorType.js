@@ -5,16 +5,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 const withSectorType = ComposedComponent => connect(
-  state => ({
-    sectors: state.sectors.allSectors,
-    bySector: state.sectors.bySector,
-  }),
-  null,
-  (stateProps, dispatchProps, ownProps) => ({
-    ...ownProps,
-    ...{
-      sector: stateProps.sectors[ownProps.sectorId],
-    },
+  (state, ownProps) => ({
+    sector: state.sectors.allSectors[ownProps.sectorId],
   }),
 )(ComposedComponent);
 

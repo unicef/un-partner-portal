@@ -6,15 +6,8 @@ import { connect } from 'react-redux';
 import { selectApplicationStatuses } from '../../../store';
 
 const withApplicationStatus = ComposedComponent => connect(
-  state => ({
-    statuses: selectApplicationStatuses(state),
-  }),
-  null,
-  (stateProps, dispatchProps, ownProps) => ({
-    ...ownProps,
-    ...{
-      status: stateProps.statuses[ownProps.appStatus],
-    },
+  (state, ownProps) => ({
+    status: selectApplicationStatuses(state)[ownProps.appStatus],
   }),
 )(ComposedComponent);
 
