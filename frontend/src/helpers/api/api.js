@@ -187,7 +187,7 @@ export function getPartnersList(params) {
 }
 
 export function getPartnerProfileConfig() {
-  return get({ uri: '/config/partners/profile' });
+  return get('/config/partners/profile');
 }
 
 export function getPartnerOrganizationProfiles(id) {
