@@ -234,7 +234,6 @@ class CreateProjectSerializer(CreateEOISerializer):
 class ProjectUpdateSerializer(serializers.ModelSerializer):
 
     specializations = SimpleSpecializationSerializer(many=True)
-    invited_partners = PartnerSerializer(many=True)
     locations = PointSerializer(many=True)
 
     class Meta:
@@ -275,12 +274,12 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             del validated_data['invited_partners']
             # user can add and remove on update - here we remove partners that are not in list
             for partner in instance.invited_partners.all():
-                if partner.id not in map(lambda x: x['id'], self.initial_data.get('invited_partners', [])):
+                if partner.id not in self.initial_data.get('invited_partners', []):
                     instance.invited_partners.remove(partner)
 
         instance = super(ProjectUpdateSerializer, self).update(instance, validated_data)
         for invited_partner in self.initial_data.get('invited_partners', []):
-            instance.invited_partners.add(Partner.objects.get(id=invited_partner['id']))
+            instance.invited_partners.add(Partner.objects.get(id=invited_partner))
         instance.save()
 
         return instance
