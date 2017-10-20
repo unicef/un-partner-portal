@@ -4,10 +4,12 @@ import requests
 import xmltodict
 from dateutil import parser
 
+from django.conf import settings
+
 from common.consts import SANCTION_LIST_TYPES
 from .models import SanctionedItem, SanctionedName
 
-SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
+
 ACCEPTED_QUALITIES = ['Good', 'a.k.a.']
 
 
@@ -95,7 +97,7 @@ def parse_unsc_entities(entities):
 
 
 def parse_unsc_list():
-    response = requests.get(SANCTIONS_LIST_URL)
+    response = requests.get(settings.SANCTIONS_LIST_URL)
     dict_response = xmltodict.parse(response.content)
     consolidated_list = dict_response['CONSOLIDATED_LIST']
     parse_unsc_entities(consolidated_list['ENTITIES']['ENTITY'])

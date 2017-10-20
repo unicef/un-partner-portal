@@ -19,6 +19,7 @@ ADMINS = (
 )
 DEFAULT_FROM_EMAIL = 'noreply@unpp.org'
 UN_SANCTIONS_LIST_EMAIL_ALERT = 'test@tivix.com'  # TODO - change to real one
+SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
 SITE_ID = 1
 TIME_ZONE = 'America/Los_Angeles'  # changed to UTC
 LANGUAGE_CODE = 'en-us'
