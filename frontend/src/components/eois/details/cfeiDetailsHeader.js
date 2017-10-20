@@ -74,7 +74,7 @@ class CfeiHeader extends Component {
       title,
       children,
       role,
-      params: { type },
+      params: { type, id },
       error,
     } = this.props;
     if (error.notFound) {
@@ -86,7 +86,7 @@ class CfeiHeader extends Component {
       index={index}
       title={title}
       customTabs={() => this.cfeiTabs()}
-      header={<HeaderOptionsContainer role={role} type={type} />}
+      header={<HeaderOptionsContainer role={role} type={type} id={id} />}
       handleChange={this.handleChange}
       backButton
       handleBackButton={this.handleBackButton}

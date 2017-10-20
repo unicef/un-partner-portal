@@ -12,18 +12,20 @@ import {
 import GridColumn from '../../../common/grid/gridColumn';
 import GridRow from '../../../common/grid/gridRow';
 import { selectCfeiDetails } from '../../../../store';
+import { PROJECT_TYPES } from '../../../../helpers/constants';
 
 
 const EditCfeiForm = (props) => {
-  const { handleSubmit } = props;
+  const { handleSubmit, type } = props;
+  const isOpen = type === PROJECT_TYPES.OPEN;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <GridRow columns={4} >
           <StartDate />
           <EndDate />
-          <DeadlineDate />
-          <NotifyDate />
+          {isOpen && <DeadlineDate />}
+          {isOpen && <NotifyDate />}
         </GridRow>
         <FocalPoint />
       </GridColumn>
@@ -37,6 +39,10 @@ EditCfeiForm.propTypes = {
    * callback for form submit
    */
   handleSubmit: PropTypes.func.isRequired,
+  /**
+   * type of the project, direct, open, unsolicited
+   */
+  type: PropTypes.string,
 };
 
 const formEditCfei = reduxForm({

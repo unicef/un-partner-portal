@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { combineReducers } from 'redux';
 import R from 'ramda';
 import cfeiDetailsStatus, {
@@ -35,15 +36,28 @@ const saveCfei = (state, action) => {
 };
 
 export function selectCfeiDetail(state, id) {
-  return state[id] || null;
+  const { [id]: cfei = null } = state;
+  return cfei;
 }
 
 export function selectCfeiTitle(state, id) {
-  return state[id] ? state[id].title : '';
+  const { [id]: { title = '' } = {} } = state;
+  return title;
+}
+
+export function selectCfeiStatus(state, id) {
+  const { [id]: { status = null } = {} } = state;
+  return status;
+}
+
+export function isCfeiCompleted(state, id) {
+  const { [id]: { completed_reason = null } = {} } = state;
+  return !!completed_reason;
 }
 
 export function selectCfeiCriteria(state, id) {
-  return state[id] ? state[id].assessments_criteria : [];
+  const { [id]: { assessments_criteria = [] } = {} } = state;
+  return assessments_criteria;
 }
 
 export function isUserAReviewer(state, cfeiId, userId) {

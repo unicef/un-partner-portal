@@ -25,7 +25,7 @@ const EoiStatusWithIconsCell = (props) => {
           displayTooltip={simple || !item.pinned}
           iconClass={!simple && item.pinned ? classes.pinnedIcon : ''}
         />
-        : <EoiStatusCell id={item.status} />
+        : <EoiStatusCell status={item.status} />
       }
     </div>
   );

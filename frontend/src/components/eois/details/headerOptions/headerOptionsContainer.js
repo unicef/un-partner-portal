@@ -1,30 +1,48 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { connect } from 'react-redux';
+import Grid from 'material-ui/Grid';
 import { PROJECT_TYPES, ROLES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
 import AgencyOpenHeaderOptions from './agencyOpenHeaderOptions';
-
-const renderHeaderOptions = (role, type) => {
-  if (type === PROJECT_TYPES.OPEN) {
-    if (role === ROLES.AGENCY) {
-      return <AgencyOpenHeaderOptions />;
-    } else if (role === ROLES.PARTNER) {
-      return <PartnerOpenHeaderOptions />;
-    }
-  }
-};
+import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
+import EoiStatusCell from '../../cells/eoiStatusCell';
+import { selectCfeiStatus, isCfeiCompleted } from '../../../../store';
+import SpreadContent from '../../../common/spreadContent';
+import GridRow from '../../../common/grid/gridRow';
 
 const HeaderOptionsContainer = (props) => {
-  const { role, type } = props;
-  return (<div>
-    {renderHeaderOptions(role, type)}
-  </div>);
+  const { role, type, cfeiCompleted, cfeiStatus } = props;
+  let options;
+  console.log(cfeiCompleted)
+  if (type === PROJECT_TYPES.OPEN) {
+    if (role === ROLES.AGENCY) {
+      options = <AgencyOpenHeaderOptions cfeiCompleted={cfeiCompleted} />;
+    } else if (role === ROLES.PARTNER) {
+      options = <PartnerOpenHeaderOptions />;
+    }
+  } else if (type === PROJECT_TYPES.DIRECT) {
+    options = <AgencyDirectHeaderOptions cfeiCompleted={cfeiCompleted} />;
+  }
+  return (<GridRow justify="center" align="center">
+    <EoiStatusCell status={cfeiStatus} />
+    {options}
+  </GridRow>);
 };
 
 HeaderOptionsContainer.propTypes = {
   role: PropTypes.string,
   type: PropTypes.string,
+  cfeiCompleted: PropTypes.bool,
+  cfeiStatus: PropTypes.string,
 };
 
-export default HeaderOptionsContainer;
+const mapStateToProps = (state, ownProps) => ({
+  cfeiCompleted: isCfeiCompleted(state, ownProps.id),
+  cfeiStatus: selectCfeiStatus(state, ownProps.id),
+});
+
+
+export default connect(
+  mapStateToProps,
+)(HeaderOptionsContainer);
