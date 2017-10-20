@@ -135,7 +135,7 @@ const connectedRegistrationStepper = connect(
     answers: selector(state, 'questions'),
   }),
   dispatch => ({
-    loadCountries: () => loadCountries(dispatch),
+    loadCountries: () => dispatch(loadCountries()),
     loadPartnerConfig: () => dispatch(loadPartnerConfig()),
   }),
 )(RegistrationStepper);

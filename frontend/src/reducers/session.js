@@ -22,6 +22,7 @@ const initialState = {
   agencyName: undefined,
   agencyId: undefined,
   officeName: undefined,
+  officeId: undefined,
   partners: undefined,
   error: undefined,
   email: undefined,
@@ -61,6 +62,7 @@ export const loadUserData = () => (dispatch, getState) => {
         agencyId: response.agency_id,
         position: response.role,
         officeName: response.office_name,
+        officeId: response.office_id,
         // partner specific field, but ok to have them undefined
         partners: response.partners,
       }));

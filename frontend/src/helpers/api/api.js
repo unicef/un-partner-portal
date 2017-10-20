@@ -145,6 +145,10 @@ export function uploadConceptNote(projectId, body) {
   return authorizedPostUpload({ uri: `/projects/${projectId}/partner-applications/`, body });
 }
 
+export function uploadCommonFile(body) {
+  return authorizedPostUpload('/common/file/', body);
+}
+
 export function getOpenCfeiDetails(id) {
   return authorizedGet({ uri: `/projects/${id}` });
 }
