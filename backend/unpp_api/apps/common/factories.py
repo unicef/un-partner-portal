@@ -21,10 +21,8 @@ from partner.models import (
     PartnerBudget,
     PartnerFunding,
     PartnerCollaborationPartnership,
-    PartnerCollaborationPartnershipOther,
     PartnerCollaborationEvidence,
     PartnerOtherInfo,
-    PartnerOtherDocument,
     PartnerInternalControl,
     PartnerPolicyArea,
     PartnerAuditAssessment,
@@ -268,14 +266,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         )
         self.collaborations_partnership.add(partnership)
 
-    @factory.post_generation
-    def collaborations_partnership_others(self, create, extracted, **kwargs):
-        partnership, created = PartnerCollaborationPartnershipOther.objects.get_or_create(
-            partner=self,
-            created_by=User.objects.first(),
-            other_agency=OtherAgency.objects.all().order_by("?").first(),
-        )
-        self.collaborations_partnership_others.add(partnership)
 
     @factory.post_generation
     def collaboration_evidences(self, create, extracted, **kwargs):
@@ -471,11 +461,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             confirm_data_updated=True,
             org_logo=cfile,
         )
-
-    @factory.post_generation
-    def other_documents(self, create, extracted, **kwargs):
-        pod = PartnerOtherDocument.objects.create(partner=self)
-        pod.document.save('test.csv', open(filename))
 
     class Meta:
         model = Partner

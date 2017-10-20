@@ -6,9 +6,11 @@ from .models import (
     Point,
     Sector,
     Specialization,
+    CommonFile,
 )
 
 admin.site.register(AdminLevel1)
 admin.site.register(Point)
 admin.site.register(Sector)
 admin.site.register(Specialization)
+admin.site.register(CommonFile)

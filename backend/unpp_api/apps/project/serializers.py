@@ -168,7 +168,6 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         validated_data['eoi']['display_type'] = EOI_TYPES.direct
         eoi = EOI.objects.create(**validated_data['eoi'])
         for location in locations:
-            location['admin_level_1'], created = AdminLevel1.objects.get_or_create(**location['admin_level_1'])
             point, created = Point.objects.get_or_create(**location)
             eoi.locations.add(point)
 
@@ -218,7 +217,6 @@ class CreateProjectSerializer(CreateEOISerializer):
         self.instance = EOI.objects.create(**validated_data)
 
         for location in locations:
-            location['admin_level_1'], created = AdminLevel1.objects.get_or_create(**location['admin_level_1'])
             point, created = Point.objects.get_or_create(**location)
             self.instance.locations.add(point)
 
