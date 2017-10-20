@@ -49,6 +49,7 @@ const ApplicationSummaryContent = (props) => {
         applicationId={applicationId}
         isUserFocalPoint={isUserFocalPoint}
         isUserReviewer={isUserReviewer}
+        justReason={application.justification_reason}
       />
       }
     </GridColumn>

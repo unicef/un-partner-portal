@@ -22,6 +22,8 @@ import ApplicationStatusText from '../applicationStatusText';
 import GridRow from '../../../../common/grid/gridRow';
 import EditReviewModalButton from './reviewContent/editReviewModalButton';
 import AddReviewModalButton from './reviewContent/addReviewModalButton';
+import AwardApplicationButton from '../../../buttons/awardApplicationButton';
+import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 
 const messages = {
   header: 'Application from :',
@@ -47,10 +49,14 @@ class ApplicationSummaryHeader extends Component {
       reviews,
       user,
       getAssessment,
+      params: { applicationId },
+      didWin,
     } = this.props;
     if (isUserFocalPoint) {
-      return (
-        <Button disabled={loading} raised color="accent">{messages.button}</Button>);
+      if (didWin) {
+        return <WithdrawApplicationButton disabled={loading} applicationId={applicationId} />;
+      }
+      return <AwardApplicationButton disabled={loading} applicationId={applicationId} />;
     } else if (isUserReviewer) {
       if (R.has(user, reviews)) {
         return (<EditReviewModalButton
@@ -113,12 +119,13 @@ ApplicationSummaryHeader.propTypes = {
   isUserReviewer: PropTypes.bool,
   reviews: PropTypes.object,
   getAssessment: PropTypes.func,
+  didWin: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const application = selectApplication(state, ownProps.params.applicationId) || {};
   const reviews = selectReview(state, ownProps.params.applicationId) || {};
-  const { eoi } = application;
+  const { eoi, did_win, did_withdraw } = application;
   return {
     status: selectApplicationStatus(state, ownProps.params.applicationId),
     partner: selectApplicationPartnerName(state, ownProps.params.applicationId),
@@ -129,6 +136,8 @@ const mapStateToProps = (state, ownProps) => {
     isUserReviewer: isUserAReviewer(state, eoi),
     reviews,
     user: state.session.userId,
+    didWin: did_win,
+    didWithdraw: did_withdraw,
   };
 };
 

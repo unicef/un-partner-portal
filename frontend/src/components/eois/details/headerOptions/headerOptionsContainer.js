@@ -14,7 +14,6 @@ import GridRow from '../../../common/grid/gridRow';
 const HeaderOptionsContainer = (props) => {
   const { role, type, cfeiCompleted, cfeiStatus } = props;
   let options;
-  console.log(cfeiCompleted)
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
       options = <AgencyOpenHeaderOptions cfeiCompleted={cfeiCompleted} />;
