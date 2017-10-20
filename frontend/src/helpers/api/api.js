@@ -100,7 +100,7 @@ export function getUserData() {
 
 // Config
 export function getCountries() {
-  return get({ uri: '/config/countries' });
+  return get('/config/countries');
 }
 
 export function getSectors() {

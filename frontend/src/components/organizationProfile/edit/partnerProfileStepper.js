@@ -59,7 +59,7 @@ class partnerProfileStepper extends Component {
               <Grid item>
                 <Button
                   raised={last}
-                  onTouchTap={handlePrev}
+                  onTouchTap={handleSubmit}
                 >
                   {labels.exit}
                 </Button>

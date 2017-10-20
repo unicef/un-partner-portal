@@ -132,15 +132,14 @@ export const renderCheckbox = ({
   name,
   className,
   disabled,
-  value,
-}) => (
-  <Checkbox
-    className={className}
-    id={name}
-    disabled={disabled}
-    checked={value}
-  />
-);
+  input,
+}) => (<Checkbox
+  className={className}
+  id={name}
+  disabled={disabled}
+  checked={input.value}
+  onChange={(event, value) => { input.onChange(transformBool(value)); }}
+/>);
 
 export const renderFileDownload = () => ({ input, label }) => (<FormControl fullWidth>
   <FormLabel>{label}</FormLabel>

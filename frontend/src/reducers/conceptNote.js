@@ -52,6 +52,7 @@ export const projectApplicationExists = partnerId => (dispatch) => {
       dispatch(uploadCnSuccess(profiles));
     })
     .catch((error) => {
+      debugger
       dispatch(uploadCnEnded());
       dispatch(uploadCnFailure(error));
     });
@@ -84,6 +85,7 @@ export const uploadPartnerConceptNote = projectId => (dispatch, getState) => {
       dispatch(selectLocalCnFile(null));
     })
     .catch((error) => {
+      debugger
       dispatch(uploadCnFailure(error));
       dispatch(uploadCnEnded());
     });

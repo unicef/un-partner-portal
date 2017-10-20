@@ -13,6 +13,7 @@ import { changeTabToNext } from '../../../../reducers/partnerProfileEdit';
 import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsUpdate';
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
+import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
 
 const STEPS = readOnly =>
   [
@@ -53,15 +54,14 @@ class PartnerProfileContactInfo extends Component {
 
 
   onNextClick(formValues) {
-    const { initialValues, updateTab, partnerId, changeTab } = this.props;
+    const { initialValues, updateTab, partnerId,
+      changeTab, loadPartnerProfileDetails } = this.props;
 
     const mailing = flatten(formValues.mailing);
     const initMailing = flatten(initialValues.mailing);
-debugger
+
     return updateTab(partnerId, 'contact-information', changedValues(initMailing, mailing))
-      .then(() => {
-        changeTab();
-      })
+      .then(() => loadPartnerProfileDetails(partnerId).then(() => changeTab()))
       .catch((error) => {
         const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
 
@@ -90,6 +90,7 @@ PartnerProfileContactInfo.propTypes = {
   partnerId: PropTypes.string,
   updateTab: PropTypes.func,
   initialValues: PropTypes.object,
+  loadPartnerProfileDetails: PropTypes.func,
   changeTab: PropTypes.func,
 };
 
@@ -100,10 +101,12 @@ const mapState = (state, ownProps) => ({
 
 const mapDispatch = dispatch => ({
   changeTab: () => dispatch(changeTabToNext()),
+  loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
   updateTab: (partnerId, tabName, body) => dispatch(patchPartnerProfile(partnerId, tabName, body)),
   dispatch,
 });
 
-const connectedPartnerProfileContactInfo = connect(mapState, mapDispatch)(PartnerProfileContactInfo);
+const connectedPartnerProfileContactInfo =
+  connect(mapState, mapDispatch)(PartnerProfileContactInfo);
 
 export default withRouter(connectedPartnerProfileContactInfo);

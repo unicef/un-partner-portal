@@ -99,7 +99,7 @@ class FileFormUploadButton extends Component {
 
     return (
       <FormControl>
-        <FormLabel>{label}</FormLabel>
+        {label && <FormLabel>{label}</FormLabel>}
         <div>
           <input
             onChange={this.handleChange}

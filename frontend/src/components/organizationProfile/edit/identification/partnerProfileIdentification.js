@@ -10,6 +10,7 @@ import { changeTabToNext } from '../../../../reducers/partnerProfileEdit';
 import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsUpdate';
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
+import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
 
 const STEPS = readOnly =>
   [
@@ -34,15 +35,13 @@ class PartnerProfileIdentification extends Component {
   }
 
   onNextClick(formValues) {
-    const { initialValues, updateTab, partnerId, changeTab } = this.props;
+    const { initialValues, updateTab, partnerId, changeTab, loadPartnerProfileDetails } = this.props;
 
     const identification = flatten(formValues.identification);
     const initIndetification = flatten(initialValues.identification);
 
     return updateTab(partnerId, 'identification', changedValues(initIndetification, identification))
-      .then(() => {
-        changeTab();
-      })
+      .then(() => loadPartnerProfileDetails(partnerId).then(() => changeTab()))
       .catch((error) => {
         const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
 
@@ -71,6 +70,7 @@ PartnerProfileIdentification.propTypes = {
   readOnly: PropTypes.bool,
   partnerId: PropTypes.string,
   updateTab: PropTypes.func,
+  loadPartnerProfileDetails: PropTypes.func,
   initialValues: PropTypes.object,
   changeTab: PropTypes.func,
 };
@@ -82,6 +82,7 @@ const mapState = (state, ownProps) => ({
 
 const mapDispatch = dispatch => ({
   changeTab: () => dispatch(changeTabToNext()),
+  loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
   updateTab: (partnerId, tabName, body) => dispatch(patchPartnerProfile(partnerId, tabName, body)),
   dispatch,
 });
