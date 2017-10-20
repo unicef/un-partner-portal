@@ -27,7 +27,7 @@ class Auth extends Component {
   render() {
     const { status, children } = this.props;
     return (
-      <Loader loading={status === SESSION_STATUS.CHANGING} fullScreen >
+      <Loader loading={status === SESSION_STATUS.CHANGING} fullscreen replaceContent >
         {(status === SESSION_STATUS.READY) ? children : null}
       </Loader>
 

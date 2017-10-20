@@ -7,15 +7,18 @@ import applicationDetailsStatus, {
   loadApplicationDetailFailure,
   LOAD_APPLICATION_DETAIL_SUCCESS,
 } from './applicationDetailsStatus';
-import { selectPartnerName } from '../store';
 
 import { getApplicationDetails } from '../helpers/api/api';
 
 const initialState = {};
 export const LOAD_APPLICATION_SUMMARY = 'LOAD_APPLICATION_SUMMARY';
+export const UPDATE_APPLICATION_PARTNER_NAME = 'UPDATE_APPLICATION_PARTNER_NAME';
 
 export const loadApplicationSummary = (id, status, name) => (
   { type: LOAD_APPLICATION_SUMMARY, id, status, name });
+
+export const updateApplicationPartnerName = (partnerName, id) => (
+  { type: UPDATE_APPLICATION_PARTNER_NAME, partnerName, id });
 
 export const loadApplication = id => (dispatch, getState) => {
   dispatch(loadApplicationDetailStarted());
@@ -23,6 +26,7 @@ export const loadApplication = id => (dispatch, getState) => {
     .then((application) => {
       dispatch(loadApplicationDetailEnded());
       dispatch(loadApplicationDetailSuccess(application, getState));
+      return application;
     })
     .catch((error) => {
       dispatch(loadApplicationDetailEnded());
@@ -31,14 +35,15 @@ export const loadApplication = id => (dispatch, getState) => {
 };
 
 const saveApplication = (state, action) => {
+  return R.assoc(action.application.id, action.application, state);
+};
+
+const saveNewApplicationPartnerName = (state, action) => {
   const application = R.assoc(
     'partner_name',
-    selectPartnerName(
-      action.getState(),
-      action.application.id,
-    ),
-    action.application);
-  return R.assoc(application.id, application, state);
+    action.partnerName.legal_name,
+    state[action.id]);
+  return R.assoc(action.id, application, state);
 };
 
 export function selectApplication(state, id) {
@@ -51,6 +56,10 @@ export function selectApplicationStatus(state, id) {
 
 export function selectApplicationPartnerName(state, id) {
   return state[id] ? state[id].partner_name : '';
+}
+
+export function selectApplicationProject(state, id) {
+  return state[id] ? state[id].eoi : null;
 }
 
 const saveApplicationSync = (state, action) => {
@@ -69,6 +78,9 @@ const applicationDetails = (state = initialState, action) => {
     }
     case LOAD_APPLICATION_SUMMARY: {
       return saveApplicationSync(state, action);
+    }
+    case UPDATE_APPLICATION_PARTNER_NAME: {
+      return saveNewApplicationPartnerName(state, action);
     }
     default:
       return state;
