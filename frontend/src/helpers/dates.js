@@ -10,4 +10,7 @@ export const dayDifference = (firstDate, secondDate) =>
 
 export const normalizeDate = date => moment(date).format(FORMAT).toString();
 
-export const formatDateForPrint = date => moment(date).format(printFormat).toString();
+export const formatDateForPrint = (date) => {
+  if (!date) return null;
+  return moment(date).format(printFormat).toString();
+};

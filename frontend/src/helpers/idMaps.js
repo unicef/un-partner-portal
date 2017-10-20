@@ -11,3 +11,9 @@ export const applicationStatuses = {
   Rej: 'Rejected',
   Pen: 'Pending',
 };
+
+export const projectStatuses = {
+  Ope: 'Open',
+  Clo: 'Closed/Under Review',
+  Com: 'Completed',
+};

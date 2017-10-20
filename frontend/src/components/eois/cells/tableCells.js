@@ -33,7 +33,7 @@ export default type => ({ row, column }) => {
   } else if (column.name === 'status' && type === 'open') {
     return (
       <TableCell >
-        <EoiStatusCell id={row.status} />
+        <EoiStatusCell status={row.status} />
       </TableCell>);
   } else if (column.name === 'status' && type === 'direct') {
     return (
