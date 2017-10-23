@@ -21,19 +21,20 @@ const CfeiOverview = (props) => {
   return (
     <form >
       <GridColumn >
-        <Timeline id={id} />
+        {type === PROJECT_TYPES.OPEN && <Timeline id={id} />}
         <Grid container direction="row">
           <Grid item xs={12} sm={8}>
             <ProjectDetails type={type} />
           </Grid>
           <Grid item xs={12} sm={4}>
             <GridColumn >
-              {role === ROLES.PARTNER && <ConceptNote title={messages.cn} conceptNote={cn} />}
+              {role === ROLES.PARTNER
+                && type === PROJECT_TYPES.OPEN
+                && <ConceptNote title={messages.cn} conceptNote={cn} />}
               {type === PROJECT_TYPES.OPEN
                 && <SelectionCriteria id={id} />}
               {role === ROLES.AGENCY
                 && <InformedPartners id={id} />}
-              
             </GridColumn>
           </Grid>
         </Grid>
