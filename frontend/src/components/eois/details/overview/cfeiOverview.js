@@ -9,9 +9,15 @@ import ProjectDetails from './projectDetails';
 import SelectionCriteria from './selectionCriteria';
 import InformedPartners from './informedPartners';
 import { selectCfeiDetails } from '../../../../store';
+import { ROLES, PROJECT_TYPES } from '../../../../helpers/constants';
+import ConceptNote from './conceptNote';
+
+const messages = {
+  cn: 'Concept Note Template',
+};
 
 const CfeiOverview = (props) => {
-  const { params: { id, type } } = props;
+  const { params: { id, type }, role, cn } = props;
   return (
     <form >
       <GridColumn >
@@ -22,8 +28,12 @@ const CfeiOverview = (props) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <GridColumn >
-              <SelectionCriteria id={id} />
-              <InformedPartners id={id} />
+              {role === ROLES.PARTNER && <ConceptNote title={messages.cn} conceptNote={cn} />}
+              {type === PROJECT_TYPES.OPEN
+                && <SelectionCriteria id={id} />}
+              {role === ROLES.AGENCY
+                && <InformedPartners id={id} />}
+              
             </GridColumn>
           </Grid>
         </Grid>
@@ -34,6 +44,8 @@ const CfeiOverview = (props) => {
 
 CfeiOverview.propTypes = {
   params: PropTypes.object,
+  role: PropTypes.string,
+  cn: PropTypes.string,
 };
 
 const formCfeiDetails = reduxForm({
@@ -41,9 +53,16 @@ const formCfeiDetails = reduxForm({
   enableReinitialize: true,
 })(CfeiOverview);
 
-const mapStateToProps = (state, ownProps) => ({
-  initialValues: selectCfeiDetails(state, ownProps.params.id),
-});
+const mapStateToProps = (state, ownProps) => {
+  const cfei = selectCfeiDetails(state, ownProps.params.id);
+  const { cn = null } = cfei ? cfei : {};
+  return {
+    initialValues: selectCfeiDetails(state, ownProps.params.id),
+    cn,
+    role: state.session.role,
+  };
+};
+
 
 export default connect(
   mapStateToProps,

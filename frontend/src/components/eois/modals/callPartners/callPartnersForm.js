@@ -3,7 +3,7 @@ import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { ProjectPartners } from '../../../forms/fields/projectFields/commonFields';
+import ProjectPartners from '../../../forms/fields/projectFields/partnersField/ProjectPartners';
 import GridColumn from '../../../common/grid/gridColumn';
 import { selectCfeiDetails } from '../../../../store';
 

@@ -11,28 +11,29 @@ const messages = {
 };
 
 const title = () => (
-  <Typography type="subheading" >{messages.title}</Typography>
+  <Typography type="headline" >{messages.title}</Typography>
 );
 
-const renderRow = partners => partners.map(partner => (
+const renderRow = (partners, partnerNames) => partners.map(partner => (
   <PaddedContent>
-    <Typography type="subheading">{partner.legal_name}</Typography>
+    <Typography type="subheading">{partnerNames[partner]}</Typography>
   </PaddedContent>
 ));
 
 
 const InformedPartners = (props) => {
-  const { partners } = props;
+  const { partners, partnerNames } = props;
   return (
     <HeaderList
       header={title}
-      rows={renderRow(partners)}
+      rows={renderRow(partners, partnerNames)}
     />
   );
 };
 
 InformedPartners.propTypes = {
   partners: PropTypes.array,
+  partnerNames: PropTypes.object,
 };
 
 
@@ -40,6 +41,7 @@ const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
   return {
     partners: cfei ? cfei.invited_partners : [],
+    partnerNames: state.partnerNames || {},
   };
 };
 
