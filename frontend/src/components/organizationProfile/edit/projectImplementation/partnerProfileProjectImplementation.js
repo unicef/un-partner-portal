@@ -1,8 +1,9 @@
-import React from 'react';
 import R from 'ramda';
 import PropTypes from 'prop-types';
-import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
+import React, { Component } from 'react';
+import { withRouter, browserHistory as history } from 'react-router';
+import { getFormInitialValues, SubmissionError, formValueSelector } from 'redux-form';
 import PartnerProfileProjectImplementationManagement from './partnerProfileProjectImplementationManagement';
 import PartnerProfileProjectImplementationFinancialControls from './partnerProfileProjectImplementationFinancialControls';
 import PartnerProfileProjectImplementationInternalControls from './partnerProfileProjectImplementationInternalControls';
@@ -10,6 +11,11 @@ import PartnerProfileProjectImplementationBankingInfo from './partnerProfileProj
 import PartnerProfileProjectImplementationAudit from './partnerProfileProjectImplementationAudit';
 import PartnerProfileProjectImplementationReporting from './partnerProfileProjectImplementationReporting';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
+import { changeTabToNext } from '../../../../reducers/partnerProfileEdit';
+import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsUpdate';
+import { flatten } from '../../../../helpers/jsonMapper';
+import { changedValues } from '../../../../helpers/apiHelper';
+import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
 
 const STEPS = (readOnly, isCountryProfile) => {
   const hqSteps = [{
@@ -50,27 +56,98 @@ const STEPS = (readOnly, isCountryProfile) => {
   return hqSteps;
 };
 
-const PartnerProfileProjectImplementation = (props) => {
-  const { readOnly, isCountryProfile } = props;
 
-  return (
-    <PartnerProfileStepperContainer
-      name="project_impl"
-      readOnly={readOnly}
-      steps={STEPS(readOnly, isCountryProfile)}
-    />
-  );
-};
+class PartnerProfileProjectImplementation extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      actionOnSubmit: {},
+    };
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleNext = this.handleNext.bind(this);
+    this.handleExit = this.handleExit.bind(this);
+  }
+
+  onSubmit() {
+    const { partnerId, changeTab } = this.props;
+
+    if (this.state.actionOnSubmit === 'next') {
+      changeTab();
+    } else if (this.state.actionOnSubmit === 'exit') {
+      history.push(`/profile/${partnerId}/overview`);
+    }
+  }
+
+  handleNext() {
+    this.setState({ actionOnSubmit: 'next' });
+  }
+
+  handleExit() {
+    this.setState({ actionOnSubmit: 'exit' });
+  }
+
+  handleSubmit(formValues) {
+    const { initialValues, updateTab, partnerId, loadPartnerProfileDetails } = this.props;
+
+    const projectImplementation = flatten(formValues.project_impl);
+    const initprojectImplementation = flatten(initialValues.project_impl);
+
+    return updateTab(partnerId, 'project-implementation', changedValues(initprojectImplementation, projectImplementation))
+      .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
+      .catch((error) => {
+        const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
+
+        throw new SubmissionError({
+          ...error.response.data,
+          _error: errorMsg,
+        });
+      });
+  }
+
+  render() {
+    const { readOnly, isCountryProfile } = this.props;
+
+    return (
+      <PartnerProfileStepperContainer
+        name="project_impl"
+        readOnly={readOnly}
+        handleNext={this.handleNext}
+        handleExit={this.handleExit}
+        onSubmit={this.handleSubmit}
+        steps={STEPS(readOnly, isCountryProfile)}
+      />
+    );
+  }
+}
 
 PartnerProfileProjectImplementation.propTypes = {
   readOnly: PropTypes.bool,
   isCountryProfile: PropTypes.object.isRequired,
+  partnerId: PropTypes.string,
+  updateTab: PropTypes.func,
+  initialValues: PropTypes.object,
+  loadPartnerProfileDetails: PropTypes.func,
+  changeTab: PropTypes.func,
 };
 
 const selector = formValueSelector('partnerProfile');
-export default connect(
-  state => ({
-    isCountryProfile: selector(state, 'identification.registration.hq'),
-  }),
-)(PartnerProfileProjectImplementation);
+const mapState = (state, ownProps) => ({
+  isCountryProfile: selector(state, 'identification.registration.hq'),
+  partnerId: ownProps.params.id,
+  initialValues: getFormInitialValues('partnerProfile')(state),
+});
+
+const mapDispatch = dispatch => ({
+  changeTab: () => dispatch(changeTabToNext()),
+  loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
+  updateTab: (partnerId, tabName, body) => dispatch(patchPartnerProfile(partnerId, tabName, body)),
+  dispatch,
+});
+
+const connectedPartnerProfileProjectImplementation =
+  connect(mapState, mapDispatch)(PartnerProfileProjectImplementation);
+
+export default withRouter(connectedPartnerProfileProjectImplementation);
 

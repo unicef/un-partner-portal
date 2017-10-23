@@ -117,15 +117,6 @@ export const ProjectCountries = () => (<SelectForm
   values={COUNTRIES}
 />);
 
-export const ProjectPartners = () => (<SelectForm
-  fieldName="invited_partners"
-  label="Partners"
-  values={PARTNERS}
-  selectFieldProps={{
-    multiple: true,
-  }}
-/>);
-
 export const FocalPoint = props => (<AgencyMembersField
   label="Project/Programme Focal Point(s)"
   fieldName="focal_points"

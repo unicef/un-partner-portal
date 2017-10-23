@@ -24,3 +24,11 @@ export const updatePageNumber = (pageNumber, pathName, query) => {
     query: R.merge(query, { page: pageNumber + 1 }),
   });
 };
+
+export const changedValues = (initialValues, values) => {
+  const diffFields = R.mapObjIndexed((num, key, obj) => R.equals(values[key], obj[key]), initialValues);
+  const filtered = R.keys(R.filter((item) => { if (!item) return !item; }, diffFields));
+  const merged = R.mergeAll(R.map(item => R.objOf(item, values[item]), filtered));
+
+  return merged;
+};
