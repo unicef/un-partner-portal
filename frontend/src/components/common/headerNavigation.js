@@ -31,8 +31,14 @@ const styleSheet = (theme) => {
     },
     alignItemsPadding: {
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-end',
       paddingBottom: `${padding}px`,
+    },
+    flex: {
+      alignItems: 'flex-end',
+    },
+    backButtonHeight: {
+      height: 24,
     },
   };
 };
@@ -79,10 +85,10 @@ class HeaderNavigation extends Component {
     return (
       <div>
         <Grid align="center" className={classes.container} container>
-          <SpreadContent >
+          <SpreadContent className={classes.flex} >
             <div className={paddingClass}>
               { backButton
-                ? <IconButton onClick={handleBackButton}>
+                ? <IconButton className={classes.backButtonHeight} onClick={handleBackButton}>
                   <KeyboardArrowLeft />
                 </IconButton>
                 : null }

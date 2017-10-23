@@ -1,20 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withRouter, browserHistory as history } from 'react-router';
+import { withRouter, browserHistory as history, Link } from 'react-router';
 import Typography from 'material-ui/Typography';
 import { TableCell } from 'material-ui/Table';
 
-const onClick = id => () => {
-  const loc = history.getCurrentLocation().pathname;
-  history.push(`${loc}/${id}`);
-};
-
 const EoiNameCell = (props) => {
-  const { title, id } = props;
+  const { title, id, params: { type } } = props;
 
   return (
-    <TableCell first limited onClick={onClick(id)}>
-      <Typography color="accent">
+    <TableCell first limited>
+      <Typography
+        component={Link}
+        color="accent"
+        to={`/cfei/${type}/${id}`}
+      >
         {title}
       </Typography>
     </TableCell>
@@ -24,6 +23,7 @@ const EoiNameCell = (props) => {
 EoiNameCell.propTypes = {
   title: PropTypes.string.isRequired,
   id: PropTypes.string,
+  params: PropTypes.object,
 };
 
 export default withRouter(EoiNameCell);
