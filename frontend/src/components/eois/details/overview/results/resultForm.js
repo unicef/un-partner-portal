@@ -10,9 +10,8 @@ import CheckCircle from 'material-ui-icons/CheckCircle';
 import RemoveCircle from 'material-ui-icons/RemoveCircle';
 import PaddedContent from '../../../../common/paddedContent';
 import TextFieldForm from '../../../../forms/textFieldForm';
-import RadioForm from '../../../../forms/radioForm';
 import { updateApplication } from '../../../../../reducers/partnerApplicationDetails';
-
+import ResultRadio from './resultRadio';
 
 const styleSheet = theme => ({
   container: {
@@ -45,17 +44,6 @@ const messages = {
   button: 'send',
 };
 
-const confirmValues = [
-  {
-    value: 'true',
-    label: 'I confirm',
-  },
-  {
-    value: 'false',
-    label: 'I decline',
-  },
-];
-
 const handleConfirmationSubmit = (values, dispatch, props) => {
   const body = JSON.parse(values.confirmation)
     ? { did_accept: true, did_decline: false }
@@ -82,10 +70,7 @@ const showForm = (accepted, declined, classes, handleSubmit) => {
   return (
     <div>
       <Typography>{messages.labels.confirm}</Typography>
-      <RadioForm
-        fieldName="confirmation"
-        values={confirmValues}
-      />
+      <ResultRadio />
       <Grid container justify="flex-end">
         <Grid item>
           <Button
