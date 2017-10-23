@@ -7,7 +7,7 @@ upstream frontend {
 }
 
 server {
-    listen      80;
+    listen      80 default;
 
     location /api/ {
       uwsgi_pass backend;
@@ -15,7 +15,7 @@ server {
     }
 
     location / {
-      try_files $uri @frontend;
+      try_files $uri $uri/ @frontend;
     }
 
     location @frontend {
