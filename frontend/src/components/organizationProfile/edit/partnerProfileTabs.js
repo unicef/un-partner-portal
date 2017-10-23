@@ -41,6 +41,7 @@ const PartnerProfileTabs = (props) => {
   const { classes, tabsList, currentTab, onTabClick } = props;
   return (
     <div className={classes.root}>
+      
       <AppBar
         position="static"
         color="inherit"
