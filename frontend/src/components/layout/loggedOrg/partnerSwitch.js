@@ -41,11 +41,13 @@ class PartnerSwitch extends Component {
   }
 
   handleRequestClose(partner) {
-    this.props.saveNewCurrentPartner({
-      partnerId: partner.id,
-      partnerCountry: partner.country_code,
-      partnerName: partner.legal_name,
-    });
+    if (partner.id) {
+      this.props.saveNewCurrentPartner({
+        partnerId: partner.id,
+        partnerCountry: partner.country_code,
+        partnerName: partner.legal_name,
+      });
+    }
     this.setState({ open: false });
   }
 
@@ -54,6 +56,7 @@ class PartnerSwitch extends Component {
       <MenuItem
         key={partner.id}
         onClick={() => this.handleRequestClose(partner)}
+        selected={partner.id === this.props.partnerId}
       >
         <Typography type="body2">
           {`${partner.legal_name}, ${countries[partner.country_code]} `}
@@ -104,7 +107,7 @@ PartnerSwitch.propTypes = {
   countries: PropTypes.object,
   name: PropTypes.string,
   saveNewCurrentPartner: PropTypes.func,
-
+  partnerId: PropTypes.number,
 };
 
 const mapStateToProps = state => ({
@@ -112,6 +115,7 @@ const mapStateToProps = state => ({
   partners: state.session.partners,
   partnerCountry: state.countries[state.session.partnerCountry],
   countries: state.countries,
+  partnerId: state.session.partnerId,
 });
 
 const mapDispatchToProps = dispatch => ({
