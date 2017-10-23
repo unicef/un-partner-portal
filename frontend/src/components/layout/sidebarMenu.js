@@ -8,14 +8,8 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import List from 'material-ui/List';
 import Divider from 'material-ui/Divider';
-import Typography from 'material-ui/Typography';
-import GridColumn from '../common/grid/gridColumn';
-
+import LoggedOrg from './loggedOrg/loggedOrg';
 import MenuLink from './menuLink';
-
-const messages = {
-  logged: 'Logged in as:',
-};
 
 const styleSheet = theme => ({
   sidebar: {
@@ -44,7 +38,7 @@ const styleSheet = theme => ({
 });
 
 function sidebarMenu(props) {
-  const { classes, router: { location: { pathname } }, sidebar, onItemClick, user } = props;
+  const { classes, router: { location: { pathname } }, sidebar, onItemClick } = props;
   const links = sidebar.map((item, index) => {
     const link = (
       <MenuLink
@@ -77,14 +71,7 @@ function sidebarMenu(props) {
       <div className={classes.logo}>
         <Divider />
         <div className={classes.innerLogo}>
-          <GridColumn>
-            <Typography type="caption">
-              {messages.logged}
-            </Typography>
-            <Typography type="body2">
-              {user}
-            </Typography>
-          </GridColumn>
+          <LoggedOrg />
         </div>
         <Divider />
       </div>
@@ -102,7 +89,6 @@ sidebarMenu.propTypes = {
 
 const mapStateToProps = state => ({
   sidebar: state.nav,
-  user: state.session.email,
 });
 
 const mapDispatchToProps = () => ({

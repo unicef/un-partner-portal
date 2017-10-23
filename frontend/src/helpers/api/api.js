@@ -20,75 +20,72 @@ function getCookie(name) {
   return cookieValue;
 }
 
+function buildHeaders(authorize = false, extraHeaders = {}) {
+  const token = store.getState().session.token;
+  const partnerId = store.getState().session.partnerId;
+  let headers = {};
+  if (authorize) headers = { ...headers, Authorization: `token ${token}` };
+  if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };
+  return { ...headers, ...extraHeaders };
+}
+
 function get(uri, params = {}) {
-  const options = { method: 'GET', params };
+  const options = { method: 'GET', params, headers: buildHeaders() };
   return axios.get(`${host}${uri}`, options)
     .then(response => response.data);
 }
 
 function post(uri, body = {}) {
   const options = {
-    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+    headers: buildHeaders(false, { 'X-CSRFToken': getCookie('csrftoken') }),
   };
   return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
 function authorizedGet({ uri, params = {} }) {
-  const token = store.getState().session.token;
   const options = {
     params,
-    headers: { Authorization: `token ${token}` },
+    headers: buildHeaders(true),
   };
   return axios.get(`${host}${uri}`, options)
     .then(response => response.data);
 }
 
 function authorizedPost({ uri, params, body = {} }) {
-  const token = store.getState().session.token;
   const options = {
     params,
-    headers: {
-      Authorization: `token ${token}`,
-      'X-CSRFToken': getCookie('csrftoken'),
-    },
+    headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
   };
   return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
 function authorizedPatch({ uri, params, body = {} }) {
-  const token = store.getState().session.token;
   const options = {
     params,
-    headers: {
-      Authorization: `token ${token}`,
-      'X-CSRFToken': getCookie('csrftoken'),
-    },
+    headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
   };
   return axios.patch(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
 function authorizedPut({ uri, params, body = {} }) {
-  const token = store.getState().session.token;
   const options = {
     params,
-    headers: { Authorization: `token ${token}` },
+    headers: buildHeaders(true),
   };
   return axios.put(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
 function authorizedPostUpload({ uri, body = {}, params }) {
-  const token = store.getState().session.token;
   const options = {
     params,
-    headers: {
+    headers: buildHeaders(true, {
       'content-type': 'multipart/form-data',
-      Authorization: `token ${token}`,
       'X-CSRFToken': getCookie('csrftoken'),
-    },
+    }),
   };
   return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
@@ -105,7 +102,7 @@ export function login(body) {
 }
 
 export function getUserData() {
-  return authorizedGet({ uri: '/accounts/me' });
+  return authorizedGet({ uri: '/accounts/me/' });
 }
 
 // Config
