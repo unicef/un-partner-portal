@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { withRouter, browserHistory as history } from 'react-router';
 import { connect } from 'react-redux';
@@ -66,8 +67,15 @@ class PartnerProfileCollaboration extends Component {
   handleSubmit(formValues) {
     const { initialValues, updateTab, partnerId, loadPartnerProfileDetails } = this.props;
 
-    const collaboration = flatten(formValues.collaboration);
-    const initCollaboration = flatten(initialValues.collaboration);
+    const unflattenColl = R.dissoc('collaboration_evidences', formValues.collaboration);
+    const unflattenCollInit = R.dissoc('collaboration_evidences', initialValues.collaboration);
+
+    const accreditation = R.map(item => R.assoc('mode', 'Acc', item), unflattenColl.accreditation.accreditations);
+    const reference = R.map(item => R.assoc('mode', 'Ref', item), unflattenColl.reference.references);
+    const mergedEvidences = R.concat(accreditation, reference);
+
+    const collaboration = flatten(R.assoc('collaboration_evidences', mergedEvidences, unflattenColl));
+    const initCollaboration = flatten(R.assoc('collaboration_evidences', mergedEvidences, unflattenCollInit));
 
     return updateTab(partnerId, 'collaboration', changedValues(initCollaboration, collaboration))
       .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))

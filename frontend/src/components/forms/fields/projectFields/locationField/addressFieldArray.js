@@ -38,10 +38,10 @@ const LocationFieldArray = (props) => {
   const { formName, readOnly, name, country, loaded, ...other } = props;
   return (<ArrayForm
     limit={1}
-    label={messages.location}
     initial
+    label={messages.location}
     disableAdding
-    fieldName="location_field_offices"
+    fieldName="array_tmp_field"
     outerField={countryName(country)}
     innerField={Locations(formName, name, loaded, readOnly, ...other)}
     {...other}

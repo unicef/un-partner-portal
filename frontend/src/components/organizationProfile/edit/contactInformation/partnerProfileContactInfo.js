@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { withRouter, browserHistory as history } from 'react-router';
 import { connect } from 'react-redux';
@@ -79,8 +80,13 @@ class PartnerProfileContactInfo extends Component {
   handleSubmit(formValues) {
     const { initialValues, updateTab, partnerId, loadPartnerProfileDetails } = this.props;
 
-    const mailing = flatten(formValues.mailing);
-    const initMailing = flatten(initialValues.mailing);
+    const unflattenMailing = R.dissocPath('address', formValues.mailing);
+    const unflattenMailingInit = R.dissocPath('address', initialValues.mailing);
+    const address = formValues.mailing.address;
+    const addressInit = initialValues.mailing.address;
+
+    const mailing = R.assoc('mailing_address', address, flatten(unflattenMailing));
+    const initMailing = R.assoc('mailing_address', addressInit, flatten(unflattenMailingInit));
 
     return updateTab(partnerId, 'contact-information', changedValues(initMailing, mailing))
       .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))

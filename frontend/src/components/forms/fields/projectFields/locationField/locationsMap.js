@@ -117,9 +117,7 @@ class LocationsMapBase extends Component {
               country_code: countryCode },
             lat: clickEvent.latLng.lat().toFixed(5),
             lon: clickEvent.latLng.lng().toFixed(5),
-            formatted_address: loc.formatted_address,
           };
-
           saveLocation(newLocation);
         }
       });
