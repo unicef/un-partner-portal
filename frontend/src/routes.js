@@ -23,10 +23,11 @@ import partnerApplicationsHeader from './components/applications/partnerApplicat
 import partnerApplicationsNotes from './components/applications/notes/partnerApplicationsNotes';
 import partnerApplicationsDirect from './components/applications/direct/partnerApplicationsDirect';
 import partnerApplicationsUnsolicited from './components/applications/unsolicited/partnerApplicationsUnsolicited';
-import organizationProfileEdit from './components/organizationProfile/edit/tabsContainer';
 import organizationProfile from './components/organizationProfile/organizationProfile';
 import organizationProfileHeader from './components/organizationProfile/profile/organizationProfileHeader';
 import partnersContainer from './components/partners/partnersContainer';
+import partnerProfileEdit from './components/organizationProfile/edit/partnerProfileEdit';
+import TabsContainer from './components/organizationProfile/edit/tabsContainer';
 import partnerProfileHeader from './components/partners/profile/partnerProfileHeader';
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
 import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
@@ -94,7 +95,12 @@ const allRoutes = () => (
             </Route>
           </Route>
           <Route path="profile" component={organizationProfile} />
-          <Route path="profile/:id/edit" component={organizationProfileEdit} />
+          <Route path="profile/:id/edit" component={partnerProfileEdit}>
+            <IndexRedirect to="identification" />
+            <Route component={mainContent} >
+              <Route path=":type" component={TabsContainer} />
+            </Route>
+          </Route>
           <Route path="profile/:id" component={organizationProfileHeader} >
             <IndexRedirect to="overview" />
             <Route component={mainContent} >

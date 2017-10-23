@@ -60,10 +60,13 @@ class PartnerProfileContactInfo extends Component {
   }
 
   onSubmit() {
-    const { partnerId, changeTab } = this.props;
+    const { partnerId, tabs, params: { type } } = this.props;
 
     if (this.state.actionOnSubmit === 'next') {
-      changeTab();
+      const index = tabs.findIndex(itab => itab.path === type);
+      history.push({
+        pathname: `/profile/${partnerId}/edit/${tabs[index + 1].path}`,
+      });
     } else if (this.state.actionOnSubmit === 'exit') {
       history.push(`/profile/${partnerId}/overview`);
     }
@@ -120,10 +123,12 @@ PartnerProfileContactInfo.propTypes = {
   updateTab: PropTypes.func,
   initialValues: PropTypes.object,
   loadPartnerProfileDetails: PropTypes.func,
-  changeTab: PropTypes.func,
+  params: PropTypes.object,
+  tabs: PropTypes.array,
 };
 
 const mapState = (state, ownProps) => ({
+  tabs: state.partnerProfileDetailsNav.tabs,
   partnerId: ownProps.params.id,
   initialValues: getFormInitialValues('partnerProfile')(state),
 });
