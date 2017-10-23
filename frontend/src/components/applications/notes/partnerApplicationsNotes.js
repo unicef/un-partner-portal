@@ -12,11 +12,15 @@ import { loadApplicationsCn } from '../../../reducers/applicationsNotesList';
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import { formatDateForPrint } from '../../../helpers/dates';
 import SectorsCell from '../sectorsCell';
+import { PROJECT_TYPES } from '../../../helpers/constants';
+
 /* eslint-disable react/prop-types */
 const applicationCell = ({ row, column }) => {
   if (column.name === 'id') {
     return (<ConceptNoteIDCell
+      cfeiId={row.eoi_id}
       id={row.id}
+      type={PROJECT_TYPES.OPEN}
     />);
   } else if (column.name === 'application_date') {
     return <WrappedCell content={formatDateForPrint(row.application_date)} />;
