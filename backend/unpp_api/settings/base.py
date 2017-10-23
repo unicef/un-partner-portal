@@ -17,6 +17,9 @@ sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 ADMINS = (
     ('Alerts', 'dev@unpp_api.com'),
 )
+DEFAULT_FROM_EMAIL = 'noreply@unpp.org'
+UN_SANCTIONS_LIST_EMAIL_ALERT = 'test@tivix.com'  # TODO - change to real one
+SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
 SITE_ID = 1
 TIME_ZONE = 'America/Los_Angeles'  # changed to UTC
 LANGUAGE_CODE = 'en-us'
@@ -126,6 +129,7 @@ INSTALLED_APPS = [
     'project',
     'review',
     'notification',
+    'sanctionslist',
 ]
 
 # auth / django-registration params
@@ -229,5 +233,3 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
-
-NOREPLY_EMAIL_ADDRESS = 'no-reply@unicef.org'

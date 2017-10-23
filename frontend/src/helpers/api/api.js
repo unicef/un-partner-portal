@@ -1,48 +1,93 @@
 import axios from 'axios';
+import store from '../../store';
 
 const host = '/api';
 
-const authClient = axios.create({
-  auth: {
-    username: process.env.USERNAME,
-    password: process.env.PASSWORD,
-  },
-});
 // Internal help/generic functions
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === (`${name}=`)) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+function buildHeaders(authorize = false, extraHeaders = {}) {
+  const token = store.getState().session.token;
+  const partnerId = store.getState().session.partnerId;
+  let headers = {};
+  if (authorize) headers = { ...headers, Authorization: `token ${token}` };
+  if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };
+  return { ...headers, ...extraHeaders };
+}
 
 function get(uri, params = {}) {
-  const options = { method: 'GET', params };
+  const options = { method: 'GET', params, headers: buildHeaders() };
   return axios.get(`${host}${uri}`, options)
     .then(response => response.data);
 }
 
-function authorizedGet(uri, params = {}) {
-  const options = { method: 'GET', params };
-  return authClient.get(`${host}${uri}`, options)
-    .then(response => response.data);
-}
-
 function post(uri, body = {}) {
-  return axios.post(`${host}${uri}`, body)
-    .then(response => response.data);
-}
-
-function authorizedPost(uri, body = {}) {
-  return authClient.post(`${host}${uri}`, body)
-    .then(response => response.data);
-}
-
-function authorizedPatch(uri, body = {}) {
-  return authClient.patch(`${host}${uri}`, body)
-    .then(response => response.data);
-}
-
-function authorizedPostUpload(uri, body = {}) {
-  const config = {
-    headers: { 'content-type': 'multipart/form-data' },
+  const options = {
+    headers: buildHeaders(false, { 'X-CSRFToken': getCookie('csrftoken') }),
   };
+  return axios.post(`${host}${uri}`, body, options)
+    .then(response => response.data);
+}
 
-  return authClient.post(`${host}${uri}`, body, config)
+function authorizedGet({ uri, params = {} }) {
+  const options = {
+    params,
+    headers: buildHeaders(true),
+  };
+  return axios.get(`${host}${uri}`, options)
+    .then(response => response.data);
+}
+
+function authorizedPost({ uri, params, body = {} }) {
+  const options = {
+    params,
+    headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
+  };
+  return axios.post(`${host}${uri}`, body, options)
+    .then(response => response.data);
+}
+
+function authorizedPatch({ uri, params, body = {} }) {
+  const options = {
+    params,
+    headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
+  };
+  return axios.patch(`${host}${uri}`, body, options)
+    .then(response => response.data);
+}
+
+function authorizedPut({ uri, params, body = {} }) {
+  const options = {
+    params,
+    headers: buildHeaders(true),
+  };
+  return axios.put(`${host}${uri}`, body, options)
+    .then(response => response.data);
+}
+
+function authorizedPostUpload({ uri, body = {}, params }) {
+  const options = {
+    params,
+    headers: buildHeaders(true, {
+      'content-type': 'multipart/form-data',
+      'X-CSRFToken': getCookie('csrftoken'),
+    }),
+  };
+  return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
@@ -50,6 +95,14 @@ function authorizedPostUpload(uri, body = {}) {
 // Accounts
 export function postRegistration(body) {
   return post('/accounts/registration', body);
+}
+
+export function login(body) {
+  return post('/rest-auth/login/', body);
+}
+
+export function getUserData() {
+  return authorizedGet({ uri: '/accounts/me/' });
 }
 
 // Config
@@ -62,59 +115,95 @@ export function getSectors() {
 }
 
 // Project
-export function getOpenCfei() {
-  return authorizedGet('/projects/open');
+export function getOpenCfei(filters) {
+  return authorizedGet({ uri: '/projects/open', params: filters });
 }
 
-export function getPinnedCfei() {
-  return authorizedGet('/projects/pins');
+export function getPinnedCfei(filters) {
+  return authorizedGet({ uri: '/projects/pins', params: filters });
 }
 
-export function getDirectCfei() {
-  return authorizedGet('/projects/direct');
+export function getDirectCfei(filters) {
+  return authorizedGet({ uri: '/projects/direct', params: filters });
 }
 
 export function postOpenCfei(body) {
-  return authorizedPost('/projects/open/', body);
+  return authorizedPost({ uri: '/projects/open/', body });
 }
 
 export function postDirectCfei(body) {
-  return authorizedPost('/projects/direct/', body);
+  return authorizedPost({ uri: '/projects/direct/', body });
 }
 
 export function patchCfei(body, id) {
-  return authorizedPatch(`/projects/${id}/`, body);
+  return authorizedPatch({ uri: `/projects/${id}/`, body });
 }
 
 export function uploadConceptNote(projectId, body) {
-  return authorizedPostUpload(`/projects/${projectId}/partner-applications/`, body);
+  return authorizedPostUpload({ uri: `/projects/${projectId}/partner-applications/`, body });
+}
+
+export function uploadCommonFile(body) {
+  return authorizedPostUpload({ uri: '/common/file/', body });
 }
 
 export function getOpenCfeiDetails(id) {
-  return authorizedGet(`/projects/${id}`);
+  return authorizedGet({ uri: `/projects/${id}` });
+}
+
+export function getApplicationReviews(applicationId) {
+  return authorizedGet({ uri: `/projects/applications/${applicationId}/reviewers-status` });
+}
+
+export function postApplicationReview(applicationId, reviewerId, body) {
+  return authorizedPost({
+    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
+    body });
+}
+
+export function putApplicationReview(applicationId, reviewerId, body) {
+  return authorizedPut({
+    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
+    body });
 }
 
 // Applications
 
 export function getOpenCfeiApplications(id, filters) {
-  return authorizedGet(`/projects/${id}/applications`, filters);
+  return authorizedGet({ uri: `/projects/${id}/applications`, params: filters });
 }
 
 export function getProjectApplication(projectId) {
-  return authorizedGet(`/projects/${projectId}/partner-application/`);
+  return authorizedGet({ uri: `/projects/${projectId}/partner-application/` });
 }
 
 export function changeApplicationStatus(id, status) {
-  return authorizedPatch(`/projects/application/${id}/`, { status });
+  return authorizedPatch({ uri: `/projects/application/${id}/`, body: { status } });
 }
 
 export function getApplicationDetails(id) {
-  return authorizedGet(`/projects/application/${id}/`);
+  return authorizedGet({ uri: `/projects/application/${id}/` });
+}
+
+export function patchApplication(id, body) {
+  return authorizedPatch({ uri: `/projects/application/${id}/`, body });
+}
+
+export function getApplicationConceptNotes() {
+  return authorizedGet({ uri: '/projects/applications/open/' });
+}
+
+export function getApplicationUnsolicitedConceptNotes() {
+  return authorizedGet({ uri: '/projects/applications/unsolicited/' });
+}
+
+export function getApplicationDirect() {
+  return authorizedGet({ uri: '/projects/applications/direct/' });
 }
 
 // Partners
 export function getPartnerProfileDetails(partnerId) {
-  return authorizedGet(`/partners/${partnerId}`);
+  return authorizedGet({ uri: `/partners/${partnerId}` });
 }
 
 export function getPartnerNames() {
@@ -122,7 +211,7 @@ export function getPartnerNames() {
 }
 
 export function getPartnersList(params) {
-  return authorizedGet('/partners', params);
+  return authorizedGet({ uri: '/partners', params });
 }
 
 export function getPartnerProfileConfig() {
@@ -130,10 +219,19 @@ export function getPartnerProfileConfig() {
 }
 
 export function getPartnerOrganizationProfiles(id) {
-  return authorizedGet(`/partners/${id}/org-profile`);
+  return authorizedGet({ uri: `/partners/${id}/org-profile` });
 }
 
 export function createCountryProfile(id, body) {
-  return authorizedPost(`/partners/${id}/country-profile/`, body);
+  return authorizedPost({ uri: `/partners/${id}/country-profile/`, body });
 }
 
+export function patchPartnerProfileTab(partnerId, tabName, body) {
+  return authorizedPatch({ uri: `/partners/${partnerId}/${tabName}/`, body });
+}
+
+// Agencies
+export function getAgencyMembers(id, params = { page_size: 100 }) {
+  return authorizedGet({ uri: `/agencies/${id}/members`, params },
+  );
+}

@@ -154,7 +154,7 @@ const partnerDetailsStructure = {
       regular_audited_comment: null,
       org_audits: null,
       most_recent_audit_report: null,
-      link_report: null,
+      audit_link_report: null,
       major_accountability_issues_highlighted: null,
       comment: null,
       capacity_assessment: null,
@@ -172,7 +172,9 @@ const partnerDetailsStructure = {
   other_info: {
     info: {
       info_to_share: null,
-      other_documents: null,
+      other_doc_1: null,
+      other_doc_2: null,
+      other_doc_3: null,
       org_logo: null,
       confirm_data_updated: null,
     },

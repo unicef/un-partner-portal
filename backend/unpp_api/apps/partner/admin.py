@@ -12,7 +12,6 @@ from .models import (
     PartnerBudget,
     PartnerFunding,
     PartnerCollaborationPartnership,
-    PartnerCollaborationPartnershipOther,
     PartnerCollaborationEvidence,
     PartnerOtherInfo,
     PartnerMember,
@@ -29,7 +28,6 @@ admin.site.register(PartnerInternalControl)
 admin.site.register(PartnerBudget)
 admin.site.register(PartnerFunding)
 admin.site.register(PartnerCollaborationPartnership)
-admin.site.register(PartnerCollaborationPartnershipOther)
 admin.site.register(PartnerCollaborationEvidence)
 admin.site.register(PartnerOtherInfo)
 admin.site.register(PartnerMember)

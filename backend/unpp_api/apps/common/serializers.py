@@ -1,5 +1,6 @@
 from django.db.models.base import Model
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from .models import AdminLevel1, Point, Sector, Specialization, CommonFile
 
 
@@ -14,7 +15,13 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                 _id = getattr(instance, related_name).id
                 getattr(instance, related_name).__class__.objects.filter(id=_id).update(**validated_data[related_name])
             else:
-                # ForeignKey related to partner - RelatedManager object
+                # user can add and remove on update
+                for related_item in getattr(instance, related_name).all():
+                    if related_item.id not in map(lambda x: x.get("id"), self.initial_data.get(related_name, [])):
+                        # here we remove related item that is not in list - so we don't need it!
+                        related_item.delete()
+
+                # ForeignKey related to partner - RelatedManager object - here we add or update if exist related item
                 for data in self.initial_data.get(related_name, []):
                     _id = data.get("id")
                     if _id:
@@ -95,6 +102,26 @@ class PointSerializer(serializers.ModelSerializer):
 
 
 class CommonFileSerializer(serializers.ModelSerializer):
+
+    def to_representation(self, obj):
+        rep = super(CommonFileSerializer, self).to_representation(obj)
+        return rep['file_field']
+
+    def to_internal_value(self, data):
+        try:
+            return CommonFile.objects.get(id=int(data))
+        except:
+            raise ValidationError('No File Exists with this ID')
+
+    class Meta:
+        model = CommonFile
+        fields = (
+            'id',
+            'file_field',
+        )
+
+
+class CommonFileUploadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CommonFile

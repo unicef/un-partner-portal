@@ -1,5 +1,5 @@
 
-import { SESSION_INIT } from './session';
+import { SESSION_READY } from './session';
 import { PARTNER, AGENCY, filterItems } from './nav';
 import { PROJECT_TYPES } from '../helpers/constants';
 
@@ -13,8 +13,8 @@ const initialState = [
 
 export default function cfeiNavReducer(state = initialState, action) {
   switch (action.type) {
-    case SESSION_INIT: {
-      return filterItems(state, action.session.role);
+    case SESSION_READY: {
+      return filterItems(initialState, action.getState().session.role);
     }
     default:
       return state;

@@ -48,6 +48,8 @@ const PartnerProfileMandateEthics = (props) => {
           : null}
         {visibleIfYes(ethicsSafeguard)
           ? <FileForm
+            formName="partnerProfile"
+            sectionName="mandate_mission.ethics"
             fieldName="ethic_safeguard_policy"
             label={messages.policy}
             optional
@@ -80,6 +82,8 @@ const PartnerProfileMandateEthics = (props) => {
           : null}
         {visibleIfYes(ethicsFraud)
           ? <FileForm
+            formName="partnerProfile"
+            sectionName="mandate_mission.ethics"
             fieldName="ethic_fraud_policy"
             label={messages.policy}
             optional

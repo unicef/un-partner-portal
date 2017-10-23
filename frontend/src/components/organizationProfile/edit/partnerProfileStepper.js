@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
+import { submit, FormSection, getFormSyncWarnings, getFormSubmitErrors, clearSubmitErrors } from 'redux-form';
 import Button from 'material-ui/Button';
 import ProfileStepContainer from './profileStepContainer';
 import {
@@ -29,7 +31,7 @@ const labels = {
 
 class partnerProfileStepper extends Component {
   render() {
-    const { classes, readOnly, handleSubmit, handlePrev, singleSection, steps, last } = this.props;
+    const { classes, readOnly, handleSubmit, submitForm, handleNext, handleExit, singleSection, steps, last } = this.props;
 
     const sections = steps.map((item, index) => {
       const section = (
@@ -51,7 +53,7 @@ class partnerProfileStepper extends Component {
                 <Button
                   color="accent"
                   raised
-                  onTouchTap={handleSubmit}
+                  onTouchTap={() => { submitForm(); handleNext(); }}
                 >
                   {labels.continue}
                 </Button>
@@ -59,7 +61,7 @@ class partnerProfileStepper extends Component {
               <Grid item>
                 <Button
                   raised={last}
-                  onTouchTap={handlePrev}
+                  onTouchTap={() => { submitForm(); handleExit(); }}
                 >
                   {labels.exit}
                 </Button>
@@ -82,7 +84,8 @@ partnerProfileStepper.propTypes = {
   /**
    * callback for 'back' button
    */
-  handlePrev: PropTypes.func,
+  handleNext: PropTypes.func,
+  handleExit: PropTypes.func,
   /**
    * component to be wrapped
    */
@@ -101,4 +104,16 @@ partnerProfileStepper.propTypes = {
   singleSection: PropTypes.bool,
 };
 
-export default withStyles(styleSheet, { name: 'partnerProfileStepper' })(partnerProfileStepper);
+
+const mapState = (state, ownProps) => ({
+
+});
+
+const mapDispatch = dispatch => ({
+  submitForm: () => dispatch(submit('partnerProfile')),
+  dispatch,
+});
+
+const connectedpartnerProfileStepper = connect(mapState, mapDispatch)(partnerProfileStepper);
+
+export default withStyles(styleSheet, { name: 'partnerProfileStepper' })(connectedpartnerProfileStepper);

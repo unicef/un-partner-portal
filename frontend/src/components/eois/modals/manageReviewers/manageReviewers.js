@@ -1,9 +1,11 @@
 import React from 'react';
 import { reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   Reviewers,
 } from '../../../forms/fields/projectFields/commonFields';
+import { selectCfeiDetails } from '../../../../store';
 
 const ManageReviewersForm = (props) => {
   const { handleSubmit } = props;
@@ -21,8 +23,19 @@ ManageReviewersForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
 };
 
+const mapStateToProps = (state, ownProps) => {
+  const { reviewers } = selectCfeiDetails(state, ownProps.id);
+  return {
+    initialValues: {
+      reviewers,
+    },
+  };
+};
+
 const formManageReviewers = reduxForm({
   form: 'manageReviewers',
 })(ManageReviewersForm);
 
-export default formManageReviewers;
+export default connect(
+  mapStateToProps,
+)(formManageReviewers);

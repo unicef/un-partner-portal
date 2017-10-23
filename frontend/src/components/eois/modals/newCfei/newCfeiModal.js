@@ -79,7 +79,7 @@ class NewCfeiModal extends Component {
     this.props.onDialogClose();
     this.props.postCfei(values).then(
       (cfei) => {
-        this.setState({ id: cfei.id });
+        this.setState({ id: cfei && cfei.id });
       });
   }
 

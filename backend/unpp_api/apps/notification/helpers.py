@@ -7,7 +7,7 @@ from django.template import Context, Template
 
 
 def send_notification(subject, body, cc=[]):
-    send_mail(subject, body, settings.NOREPLY_EMAIL_ADDRESS, cc)
+    send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, cc)
 
 
 def get_template_as_str(filename, context):

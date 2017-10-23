@@ -4,18 +4,7 @@ import TextFieldForm from '../../textFieldForm';
 import SelectForm from '../../selectForm';
 import DatePickerForm from '../../datePickerForm';
 import PolarRadio from '../../fields/PolarRadio';
-
-
-const FOCAL = [
-  {
-    value: 1,
-    label: 'Main',
-  },
-  {
-    value: 2,
-    label: 'Second',
-  },
-];
+import AgencyMembersField from './agencyMembersFields/agencyMembersField';
 
 const COUNTRIES = [
   {
@@ -47,17 +36,6 @@ export const TitleField = props => (<TextFieldForm
   label="Project Title"
   fieldName="title"
   placeholder="Enter Project Title"
-  {...props}
-/>);
-
-export const FocalPoint = props => (<SelectForm
-  label="Project/Programme Focal Point(s)"
-  fieldName="focal_points"
-  placeholder="Select the name of the Focal Point"
-  values={FOCAL}
-  selectFieldProps={{
-    multiple: true,
-  }}
   {...props}
 />);
 
@@ -139,20 +117,14 @@ export const ProjectCountries = () => (<SelectForm
   values={COUNTRIES}
 />);
 
-export const ProjectPartners = () => (<SelectForm
-  fieldName="invited_partners"
-  label="Partners"
-  values={PARTNERS}
-  selectFieldProps={{
-    multiple: true,
-  }}
+export const FocalPoint = props => (<AgencyMembersField
+  label="Project/Programme Focal Point(s)"
+  fieldName="focal_points"
+  placeholder="Select the name of the Focal Point"
+  {...props}
 />);
 
-export const Reviewers = () => (<SelectForm
+export const Reviewers = () => (<AgencyMembersField
   label="Select users"
   fieldName="reviewers"
-  values={FOCAL}
-  selectFieldProps={{
-    multiple: true,
-  }}
 />);
