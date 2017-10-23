@@ -35,7 +35,7 @@ loggedOrg.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  name: state.session.officeName || state.session.partnerName,
+  name: state.session.agencyName || state.session.partnerName,
   role: state.session.role,
 });
 

@@ -68,7 +68,7 @@ export const loadUserData = () => (dispatch, getState) => {
         officeId: response.office_id,
         // partner specific field, but ok to have them undefined
         partners: response.partners,
-        partnerCountry: ROLES.PARTNER ? R.prop('country_code', R.head(response.partners)) : null,
+        partnerCountry: role === ROLES.PARTNER ? R.prop('country_code', R.head(response.partners)) : null,
         partnerId: role === ROLES.PARTNER ? R.prop('id', R.head(response.partners)) : null,
         partnerName: role === ROLES.PARTNER ? R.prop('legal_name', R.head(response.partners)) : null,
       }));
@@ -86,7 +86,7 @@ export const loadUserData = () => (dispatch, getState) => {
       }
       // just save error somewhere for now
       dispatch(initSession({
-        error,
+        error: error.message,
       }));
       dispatch(sessionReady(getState));
     });
