@@ -382,7 +382,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_accept'])
 
-        # accept offer
+        # decline offer
         payload = {
             "did_accept": False,
             "did_decline": True,

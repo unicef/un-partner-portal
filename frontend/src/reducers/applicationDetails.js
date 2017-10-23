@@ -8,7 +8,7 @@ import applicationDetailsStatus, {
   LOAD_APPLICATION_DETAIL_SUCCESS,
 } from './applicationDetailsStatus';
 
-import { getApplicationDetails } from '../helpers/api/api';
+import { getApplicationDetails, patchApplication } from '../helpers/api/api';
 
 const initialState = {};
 export const LOAD_APPLICATION_SUMMARY = 'LOAD_APPLICATION_SUMMARY';
@@ -34,9 +34,15 @@ export const loadApplication = id => (dispatch, getState) => {
     });
 };
 
-const saveApplication = (state, action) => {
-  return R.assoc(action.application.id, action.application, state);
-};
+export const updateApplication = (applicationId, body) => (dispatch, getState) =>
+  patchApplication(applicationId, body)
+    .then((application) => {
+      dispatch(loadApplicationDetailSuccess(application, getState));
+      return application;
+    });
+
+const saveApplication = (state, action) =>
+  R.assoc(action.application.id, R.mergeDeepRight(state[action.application.id], action.application), state);
 
 const saveNewApplicationPartnerName = (state, action) => {
   const application = R.assoc(

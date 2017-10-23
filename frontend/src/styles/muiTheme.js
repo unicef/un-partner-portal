@@ -109,6 +109,8 @@ const getTheme = () => (
       common: {
         arrayFormOuter: '#F5F5F5',
         arrayFormInner: '#E0E0E0',
+        lightGreyBackground: '#F5F5F5',
+        statusOk: '#189a58',
       },
       eoiStatus: {
         completed: '#5B92E5',
