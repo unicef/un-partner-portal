@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import TextFieldForm from '../../../forms/textFieldForm';
 import RadioForm from '../../../forms/radioForm';
 import GridColumn from '../../../common/grid/gridColumn';
-import GridRow from '../../../common/grid/gridRow';
 import { selectNormalizedCompletionReasons } from '../../../../store';
 
 const messages = {

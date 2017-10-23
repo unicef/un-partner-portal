@@ -97,7 +97,7 @@ function authorizedPostUpload({ uri, body = {}, params }) {
 
 // Accounts
 export function postRegistration(body) {
-  return post('/accounts/registration/', body);
+  return post('/accounts/registration', body);
 }
 
 export function login(body) {
@@ -186,6 +186,10 @@ export function changeApplicationStatus(id, status) {
 
 export function getApplicationDetails(id) {
   return authorizedGet({ uri: `/projects/application/${id}/` });
+}
+
+export function patchApplication(id, body) {
+  return authorizedPatch({ uri: `/projects/application/${id}/`, body });
 }
 
 export function getApplicationConceptNotes() {
