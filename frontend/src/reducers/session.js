@@ -33,6 +33,9 @@ export const initSession = session => ({ type: SESSION_CHANGE, session });
 export const sessionInitializing = () => ({ type: SESSION_CHANGE,
   session: { state: SESSION_STATUS.CHANGING } });
 
+export const sessionChange = session => ({ type: SESSION_CHANGE,
+  session: { ...session, state: SESSION_STATUS.READY } });
+
 export const sessionReady = getState => ({ type: SESSION_READY,
   session: { state: SESSION_STATUS.READY },
   getState });
@@ -65,6 +68,9 @@ export const loadUserData = () => (dispatch, getState) => {
         officeId: response.office_id,
         // partner specific field, but ok to have them undefined
         partners: response.partners,
+        partnerCountry: ROLES.PARTNER ? R.prop('country_code', R.head(response.partners)) : null,
+        partnerId: role === ROLES.PARTNER ? R.prop('id', R.head(response.partners)) : null,
+        partnerName: role === ROLES.PARTNER ? R.prop('legal_name', R.head(response.partners)) : null,
       }));
       dispatch(sessionReady(getState));
     })
