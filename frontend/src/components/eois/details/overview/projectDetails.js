@@ -67,7 +67,7 @@ Fields.propTypes = {
 
 const title = () => (
   <SpreadContent>
-    <Typography type="subheading" >{messages.title}</Typography>
+    <Typography type="headline" >{messages.title}</Typography>
     <TextField
       fieldName="id"
       label={messages.labels.id}

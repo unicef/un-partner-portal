@@ -3,6 +3,7 @@ import store from '../../store';
 
 const host = '/api';
 
+// Internal help/generic functions
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
@@ -223,6 +224,10 @@ export function getPartnerOrganizationProfiles(id) {
 
 export function createCountryProfile(id, body) {
   return authorizedPost({ uri: `/partners/${id}/country-profile/`, body });
+}
+
+export function patchPartnerProfileTab(partnerId, tabName, body) {
+  return authorizedPatch({ uri: `/partners/${partnerId}/${tabName}/`, body });
 }
 
 // Agencies

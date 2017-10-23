@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -86,17 +87,19 @@ class FileFormUploadButton extends Component {
   }
 
   handleRemove() {
-    const { clearFile, fieldName } = this.props;
+    const { clearFile, dispatch, fieldName, formName, sectionName } = this.props;
     clearFile(fieldName);
+    dispatch(change(formName, `${sectionName}.${fieldName}`, null));
   }
 
   render() {
-    const { classes, fieldName, deleteDisabled, fileUrl, label, loading } = this.props;
+    const { classes, fieldName, deleteDisabled, fileUrl, input, label, loading } = this.props;
     const { warning } = this.props.meta;
+    const url = R.is(String, input.value) ? input.value : fileUrl;
 
     return (
       <FormControl>
-        <FormLabel>{label}</FormLabel>
+        {label && <FormLabel>{label}</FormLabel>}
         <div>
           <input
             onChange={this.handleChange}
@@ -106,7 +109,7 @@ class FileFormUploadButton extends Component {
             ref={(field) => { this.refInput = field; }}
             type="file"
           />
-          {!fileUrl
+          {!url
             ? <div>
               <Button dense color="accent" >
                 <label className={classes.iconLabel} htmlFor={`${fieldName}-input`}>
@@ -129,9 +132,9 @@ class FileFormUploadButton extends Component {
                   role="button"
                   tabIndex={0}
                   className={classes.link}
-                  onClick={() => { window.open(fileUrl); }}
+                  onClick={() => { window.open(url); }}
                 >
-                  {fileNameFromUrl(fileUrl)}
+                  {fileNameFromUrl(url)}
                 </div>
                 {!deleteDisabled && <IconButton onClick={() => this.handleRemove()}>
                   <Close className={classes.removeIcon} />
@@ -149,6 +152,7 @@ FileFormUploadButton.propTypes = {
   fieldName: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   fileAdded: PropTypes.object,
+  input: PropTypes.object,
   deleteDisabled: PropTypes.bool,
   loading: PropTypes.bool,
   fileUrl: PropTypes.string,

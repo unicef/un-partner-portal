@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import { FormControl } from 'material-ui/Form';
-import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import FileFormUploadButton from '../common/buttons/fileFormUploadButton';
 import { renderFileDownload } from '../../helpers/formHelper';
