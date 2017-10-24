@@ -1,0 +1,35 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import Typography from 'material-ui/Typography';
+import { connect } from 'react-redux';
+import HeaderList from '../../../../common/list/headerList';
+import { selectCfeiDetails } from '../../../../../store';
+import ResponseForm from './responseForm';
+
+const messages = {
+  title: 'My Response',
+};
+
+
+const MyResponse = (props) => {
+  const { application, status } = props;
+  return (<HeaderList
+    header={<Typography type="headline" >{messages.title}</Typography>}
+    rows={[<ResponseForm application={application} status={status} />]}
+  />);
+};
+
+MyResponse.propTypes = {
+  status: PropTypes.string,
+  application: PropTypes.object,
+};
+
+const mapStateToProps = (state, ownProps) => {
+  const cfei = selectCfeiDetails(state, ownProps.cfeiId) || {};
+  const { status } = cfei;
+  return {
+    status,
+  };
+};
+
+export default connect(mapStateToProps)(MyResponse);

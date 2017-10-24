@@ -29,7 +29,7 @@ const Fields = (application, notifDate) => {
 const Result = (props) => {
   const { application, notifDate } = props;
   return (<HeaderList
-    header={<Typography type="subheading" >{messages.title}</Typography>}
+    header={<Typography type="headline" >{messages.title}</Typography>}
     rows={[Fields(application, notifDate)]}
   />);
 };

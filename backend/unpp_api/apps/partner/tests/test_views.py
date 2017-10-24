@@ -19,7 +19,7 @@ from partner.models import (
     PartnerOtherInfo,
     PartnerInternalControl,
 )
-from common.models import Point
+from common.models import Point, CommonFile
 from common.tests.base import BaseAPITestCase
 from common.factories import (
     AgencyFactory,
@@ -187,9 +187,21 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             self.assertEquals(director['first_name'], first_name)
             self.assertEquals(director['authorized'], True)
 
-        for authorised_officer in response.data['authorised_officers']:
+        authorised_officers = response.data['authorised_officers']
+        for authorised_officer in authorised_officers:
             self.assertEquals(authorised_officer['first_name'], first_name)
             self.assertEquals(authorised_officer['email'], email)
+
+        payload = {
+            'connectivity_excuse': 'one field to patch'
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['connectivity_excuse'], payload['connectivity_excuse'])
+        self.assertEquals(partner.authorised_officers.count(), len(authorised_officers))
+        for authorised_officer in partner.authorised_officers.all():
+            self.assertEquals(authorised_officer.first_name, first_name)
+            self.assertEquals(authorised_officer.email, email)
 
     def test_mandate_mission(self):
         url = reverse('common:file')
@@ -272,7 +284,11 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         text = 'test'
         payload = response.data
-        del payload['collaboration_evidences']
+        payload['collaboration_evidences'] = [
+            {
+                "evidence_file_id": CommonFile.objects.first().id,
+            }
+        ]
         collaborations_partnership = response.data['collaborations_partnership']
         for collaboration_partnership in collaborations_partnership:
             collaboration_partnership['description'] = text
