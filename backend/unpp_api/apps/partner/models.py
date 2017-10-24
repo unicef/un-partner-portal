@@ -459,7 +459,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
     partner = models.ForeignKey(Partner, related_name="collaboration_evidences")
     mode = models.CharField(max_length=3, choices=COLLABORATION_EVIDENCE_MODES)
     organization_name = models.CharField(max_length=200)
-    date_received = models.DateField(verbose_name='Date Received')
+    date_received = models.DateField(verbose_name='Date Received', auto_now=True)
     evidence_file = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="collaboration_evidences")
 

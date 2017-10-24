@@ -22,6 +22,7 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                         getattr(instance, related_name).filter(id=_id).update(**data)
                     else:
                         data['partner_id'] = instance.id
+                        data['created_by'] = self.context['request'].user
                         getattr(instance, related_name).create(**data)
 
 
