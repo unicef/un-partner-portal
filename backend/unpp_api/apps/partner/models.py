@@ -211,6 +211,7 @@ class PartnerHeadOrganization(TimeStampedModel):
 
 
 class PartnerDirector(TimeStampedModel):
+    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="directors")
     partner = models.ForeignKey(Partner, related_name="directors")
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
@@ -225,6 +226,7 @@ class PartnerDirector(TimeStampedModel):
 
 
 class PartnerAuthorisedOfficer(TimeStampedModel):
+    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="authorised_officers")
     partner = models.ForeignKey(Partner, related_name="authorised_officers")
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
@@ -241,6 +243,7 @@ class PartnerAuthorisedOfficer(TimeStampedModel):
 
 
 class PartnerPolicyArea(TimeStampedModel):
+    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="area_policies")
     partner = models.ForeignKey(Partner, related_name="area_policies")
     area = models.CharField(max_length=3, choices=POLICY_AREA_CHOICES)
     document_policies = models.BooleanField(default=True)
@@ -372,6 +375,7 @@ class PartnerMandateMission(TimeStampedModel):
 
 
 class PartnerExperience(TimeStampedModel):
+    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="experiences")
     partner = models.ForeignKey(Partner, related_name="experiences")
     specialization = models.ForeignKey('common.Specialization', related_name="partner_experiences")
     years = models.CharField(
@@ -404,6 +408,7 @@ class PartnerInternalControl(TimeStampedModel):
 
 
 class PartnerBudget(TimeStampedModel):
+    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="budgets")
     partner = models.ForeignKey(Partner, related_name="budgets")
     year = models.PositiveSmallIntegerField(
         "Weight in percentage",
@@ -471,6 +476,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
 
 
 class PartnerOtherInfo(TimeStampedModel):
+    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="other_info")
     partner = models.OneToOneField(Partner, related_name="other_info")
     info_to_share = models.CharField(max_length=200)
     org_logo = models.ForeignKey(
