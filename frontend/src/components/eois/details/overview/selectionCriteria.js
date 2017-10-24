@@ -12,7 +12,7 @@ const messages = {
 };
 
 const title = () => (
-  <Typography type="subheading" >{messages.title}</Typography>
+  <Typography type="headline" >{messages.title}</Typography>
 );
 
 const renderRow = (criterias, allCriteria) => criterias.map(selection => (<PaddedContent>
