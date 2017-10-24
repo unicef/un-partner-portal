@@ -40,6 +40,7 @@ import applicationDetails, * as applicationDetailsSelector from './reducers/appl
 import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
 import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers';
 import partnerAppDetails, * as partnerAppDetailsSelector from './reducers/partnerApplicationDetails';
+import partnerVerifications from './reducers/partnerVerifications';
 
 const mainReducer = combineReducers({
   cfei,
@@ -78,6 +79,7 @@ const mainReducer = combineReducers({
   applicationReviews,
   agencyMembers,
   partnerAppDetails,
+  partnerVerifications,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];

@@ -239,6 +239,7 @@ class ConceptNoteSubmission extends Component {
           maxWidth="md"
           title={messages.countryProfile}
           trigger={openDialog}
+          handleDialogClose={this.onDialogClose}
           buttons={{
             flat: {
               handleClick: this.onDialogClose,

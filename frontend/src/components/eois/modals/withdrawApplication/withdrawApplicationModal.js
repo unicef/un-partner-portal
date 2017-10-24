@@ -36,6 +36,7 @@ class awardApplicationModal extends Component {
           maxWidth="md"
           title={messages.title}
           trigger={dialogOpen}
+          handleDialogClose={handleDialogClose}
           info={{ title: messages.header }}
           buttons={{
             flat: {

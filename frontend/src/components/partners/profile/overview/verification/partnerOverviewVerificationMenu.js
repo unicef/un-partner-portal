@@ -9,7 +9,6 @@ import AddVerificationModal from '../../modals/addVerificationModal/addVerificat
 
 const PartnerOverviewVerificationMenu = (props) => {
   const { params: { id }, dialogOpen, handleDialogClose, handleDialogOpen } = props;
-  console.log(dialogOpen)
   return (
     <div>
       <DropdownMenu

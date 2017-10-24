@@ -62,6 +62,7 @@ class CountryOfficesHeaderContainer extends React.Component {
           trigger={this.state.showCountryModal}
           title={messages.countryDialogTitle}
           info={{ title: messages.countryDialogInfo }}
+          handleDialogClose={this.handleDialogClose}
           content={<CountryProfileList countries={this.mergeCountryProfiles()} />}
           buttons={{
             flat: {

@@ -66,6 +66,7 @@ class CfeiSubmission extends Component {
           maxWidth="md"
           title={messages.confirmQuestion}
           trigger={open}
+          handleDialogClose={this.onDialogClose}
           buttons={{
             flat: {
               handleClick: this.onDialogClose,

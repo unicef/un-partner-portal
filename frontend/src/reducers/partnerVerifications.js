@@ -35,14 +35,19 @@ export const loadPartnerVerifications = id => (dispatch) => {
 
 const normalizeVerification = result => R.assoc('submitter', result.submitter.id, result);
 const saveVerifications = (state, action) => {
-  const verifications = R.map(normalizeVerification(action.verifications));
+  const verifications = R.map(normalizeVerification, action.verifications);
   const mostRecentVerification = R.clone(R.head(verifications));
   return R.assoc(action.partnerId, { mostRecentVerification, verifications }, state);
 };
 
-const saveSingleVerification = () => {
-  debugger
-}
+const saveSingleVerification = (state, action) => {
+  const verification = normalizeVerification(action.verification);
+  let currentVerifications = state[action.partnerId];
+  currentVerifications = R.prepend(verification, currentVerifications);
+  return R.assoc(action.partnerId,
+    { mostRecentVerification: verification, verifications: currentVerifications },
+    state);
+};
 
 export const selectReview = (state, reviewId) =>
   selectIndexWithDefaultNull(reviewId, state.data.reviews);
