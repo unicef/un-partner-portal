@@ -2,7 +2,9 @@
 from __future__ import unicode_literals
 from django.db.models import Q
 import django_filters
-from django_filters.filters import CharFilter
+from django_filters.filters import CharFilter, DateFilter, BooleanFilter
+
+from common.consts import EOI_STATUSES
 from .models import EOI, Application
 
 
@@ -12,10 +14,16 @@ class BaseProjectFilter(django_filters.FilterSet):
     country_code = CharFilter(method='get_country_code')
     locations = CharFilter(method='get_locations')
     specializations = CharFilter(method='get_specializations')
+    active = BooleanFilter(method='get_active')
+    posted_from_date = DateFilter(name='created',
+                                  lookup_expr=('gt'))
+    posted_to_date = DateFilter(name='created',
+                                lookup_expr=('lt'))
+    selected_source = CharFilter(lookup_expr=('iexact'))
 
     class Meta:
         model = EOI
-        fields = ['title', 'country_code', 'locations', 'specializations', 'status']
+        fields = ['title', 'country_code', 'locations', 'specializations', 'agency', 'active', 'selected_source',]
 
     def get_title(self, queryset, name, value):
         return queryset.filter(title__icontains=value)
@@ -28,6 +36,11 @@ class BaseProjectFilter(django_filters.FilterSet):
 
     def get_specializations(self, queryset, name, value):
         return queryset.filter(specializations=value)
+
+    def get_active(self, queryset, name, value):
+        if value:
+            return queryset.filter(status=EOI_STATUSES.open)
+        return queryset.filter(status=EOI_STATUSES.completed)
 
 
 class ApplicationsFilter(django_filters.FilterSet):

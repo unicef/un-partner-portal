@@ -22,6 +22,7 @@ from common.consts import (
     APPLICATION_STATUSES,
     COMPLETED_REASON,
     EOI_TYPES,
+    EOI_STATUSES,
 )
 from project.views import PinProjectAPIView
 
@@ -183,11 +184,14 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         justification = "mission completed"
         payload = {
             "justification": justification,
-            "completed_reason": COMPLETED_REASON.canceled
+            "completed_reason": COMPLETED_REASON.canceled,
+            "status": EOI_STATUSES.completed
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.canceled)
+        self.assertTrue(response.data['completed_date'])
+        self.assertEquals(response.data['status'], EOI_STATUSES.completed)
         self.assertEquals(response.data['justification'], justification)
 
 
