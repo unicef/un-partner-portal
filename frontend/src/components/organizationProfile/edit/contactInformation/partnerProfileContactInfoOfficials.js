@@ -13,6 +13,8 @@ import GridColumn from '../../../common/grid/gridColumn';
 const messages = {
   boardOfDirectors: 'Does your organization have a board of director(s)?',
   authorisedOfficers: 'Does your organization have a authorised officer(s)?',
+  directos: 'Board of Director(s)',
+  officers: 'Authorised Officer(s)',
 };
 
 const directorForm = (director, readOnly) => (
@@ -51,7 +53,7 @@ const directorForm = (director, readOnly) => (
 
 const authorisedOfficerForm = (officer, readOnly) => (
   <GridColumn>
-    <GridRow columns={4}>
+    <GridRow columns={3}>
       <TextFieldForm
         fieldName={`${officer}.first_name`}
         label="First Name"
@@ -74,7 +76,7 @@ const authorisedOfficerForm = (officer, readOnly) => (
         readOnly={readOnly}
       />
     </GridRow>
-    <GridRow columns={4}>
+    <GridRow columns={3}>
       <TextFieldForm
         fieldName={`${officer}.telephone`}
         label="First Name"
@@ -119,6 +121,7 @@ const PartnerProfileContactInfoOfficials = (props) => {
         <ArrayForm
           limit={15}
           initial
+          label={messages.directos}
           fieldName="directors"
           outerField={director => directorForm(director, readOnly)}
           readOnly={readOnly}
@@ -134,11 +137,11 @@ const PartnerProfileContactInfoOfficials = (props) => {
           readOnly={readOnly}
         />
       </Grid>
-
       {visibleIfYes(hasAuthorisedOfficers) && <Grid item sm={12} xs={12}>
         <ArrayForm
           limit={15}
           initial
+          label={messages.officers}
           fieldName="authorised_officers"
           outerField={officer => authorisedOfficerForm(officer, readOnly)}
           readOnly={readOnly}

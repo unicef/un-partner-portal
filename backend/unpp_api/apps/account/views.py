@@ -1,14 +1,19 @@
 import logging
 
 from django.contrib.auth import authenticate, login, logout
+from django.http import Http404
+
 from rest_framework import status as statuses
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.generics import RetrieveAPIView
 
 from .serializers import (
     RegisterSimpleAccountSerializer,
     PartnerRegistrationSerializer,
+    AgencyUserSerializer,
+    PartnerUserSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -32,33 +37,16 @@ class AccountRegisterAPIView(APIView):
         return Response(serializer.instance_json, status=statuses.HTTP_201_CREATED)
 
 
-class AccountLoginAPIView(APIView):
+class AccountCurrentUserRetrieveAPIView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated, )
 
-    permission_classes = (AllowAny, )
-
-    def post(self, request, *args, **kwargs):
-        data = request.data
-
-        username = data.get('username', data.get('email'))
-        password = data.get('password')
-
-        user = authenticate(username=username, password=password)
-
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-
-                return Response(status=statuses.HTTP_200_OK)
-            else:
-                return Response(status=statuses.HTTP_401_UNAUTHORIZED)
-        else:
-            return Response(status=statuses.HTTP_401_UNAUTHORIZED)
+    def get_serializer_class(self):
+        if self.request.user.is_agency_user:
+            return AgencyUserSerializer
+        if self.request.user.is_partner_user:
+            return PartnerUserSerializer
+        raise Http404('User has no relation to agency or partners')
 
 
-class AccountLogoutAPIView(APIView):
-
-    permission_classes = (AllowAny, )
-
-    def post(self, request):
-        logout(request)
-        return Response({}, status=statuses.HTTP_204_NO_CONTENT)
+    def get_object(self):
+        return self.request.user

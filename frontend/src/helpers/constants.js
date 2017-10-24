@@ -21,6 +21,7 @@ export const DETAILS_ITEMS = {
   RESULTS: 'results',
   PRESELECTED: 'preselected',
   APPLICATIONS: 'applications',
+  RESPONSE: 'response',
 };
 
 export const APPLICATION_STATUSES = {
@@ -28,3 +29,22 @@ export const APPLICATION_STATUSES = {
   REJ: 'Rej',
   PEN: 'Pen',
 };
+
+export const SESSION_STATUS = {
+  INITIAL: 'initial',
+  CHANGING: 'changing',
+  READY: 'ready',
+};
+
+export const AGENCY_MEMBERS_POSITIONS = {
+  ADMINISTRATOR: 'Administrator',
+  EDITOR: 'Editor',
+  READER: 'Reader',
+};
+
+export const PROJECT_STATUSES = {
+  OPE: 'Ope',
+  CLO: 'Clo',
+  COM: 'Com',
+};
+

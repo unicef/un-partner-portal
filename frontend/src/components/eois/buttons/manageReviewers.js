@@ -7,23 +7,20 @@ const messages = {
   text: 'Manage Reviewers',
 };
 
-const editItem = (id) => {
-  console.log(`Reviewers: ${id}`);
-};
 
 const EditItemIcon = (props) => {
-  const { id } = props;
+  const { handleClick } = props;
   return (
     <IconWithTextButton
       icon={<People />}
       text={messages.text}
-      onClick={() => editItem(id)}
+      onClick={handleClick}
     />
   );
 };
 
 EditItemIcon.propTypes = {
-  id: PropTypes.string,
+  handleClick: PropTypes.func,
 };
 
 export default EditItemIcon;

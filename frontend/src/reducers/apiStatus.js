@@ -12,3 +12,8 @@ export const saveErrorMsg = (state, action, message) => R.assoc(
   },
   state);
 
+export const startLoadingField = (state, field) => R.assoc(field, true, state);
+export const successLoadingField = (state, field) => R.assoc(field, true, state);
+export const stopLoadingField = (state, field) => R.assoc(field, false, state);
+
+

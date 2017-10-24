@@ -8,7 +8,7 @@ import factory
 from factory import fuzzy
 from account.models import User, UserProfile
 from agency.models import OtherAgency, Agency, AgencyOffice, AgencyMember
-from common.models import Specialization, Point, AdminLevel1
+from common.models import Specialization, Point, AdminLevel1, CommonFile
 from partner.models import (
     Partner,
     PartnerProfile,
@@ -21,17 +21,15 @@ from partner.models import (
     PartnerBudget,
     PartnerFunding,
     PartnerCollaborationPartnership,
-    PartnerCollaborationPartnershipOther,
     PartnerCollaborationEvidence,
     PartnerOtherInfo,
-    PartnerOtherDocument,
     PartnerInternalControl,
     PartnerPolicyArea,
     PartnerAuditAssessment,
     PartnerReporting,
     PartnerMember,
 )
-from project.models import EOI, Application, AssessmentCriteria
+from project.models import EOI, Application
 from review.models import PartnerFlag, PartnerVerification
 from .consts import (
     PARTNER_TYPES,
@@ -57,6 +55,8 @@ from .countries import COUNTRIES_ALPHA2_CODE
 
 
 COUNTRIES = [x[0] for x in COUNTRIES_ALPHA2_CODE]
+
+filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
 
 
 def get_random_agency():
@@ -161,13 +161,13 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 class AdminLevel1Factory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: "admin level 1 name {}".format(n))
+    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
 
     class Meta:
         model = AdminLevel1
 
 
 class PointFactory(factory.django.DjangoModelFactory):
-    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
     lat = random.randint(-180, 180)
     lon = random.randint(-180, 180)
     admin_level_1 = factory.SubFactory(AdminLevel1Factory)
@@ -249,7 +249,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     @factory.post_generation
     def budgets(self, create, extracted, **kwargs):
         # we want to have last 3 year (with current)
-        for year in [date.today().year, date.today().year-2]:
+        for year in [date.today().year, date.today().year-1, date.today().year-2]:
             budget, created = PartnerBudget.objects.get_or_create(
                 partner=self,
                 year=year,
@@ -267,34 +267,29 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         )
         self.collaborations_partnership.add(partnership)
 
-    @factory.post_generation
-    def collaborations_partnership_others(self, create, extracted, **kwargs):
-        partnership, created = PartnerCollaborationPartnershipOther.objects.get_or_create(
-            partner=self,
-            created_by=User.objects.first(),
-            other_agency=OtherAgency.objects.all().order_by("?").first(),
-        )
-        self.collaborations_partnership_others.add(partnership)
 
     @factory.post_generation
     def collaboration_evidences(self, create, extracted, **kwargs):
-        accreditation, created = PartnerCollaborationEvidence.objects.get_or_create(
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
+
+        PartnerCollaborationEvidence.objects.create(
             partner=self,
             created_by=User.objects.first(),
             mode=COLLABORATION_EVIDENCE_MODES.accreditation,
             organization_name="accreditation organization name",
+            evidence_file=cfile,
             date_received=date.today()
         )
-        self.collaboration_evidences.add(accreditation)
 
-        reference, created = PartnerCollaborationEvidence.objects.get_or_create(
+        PartnerCollaborationEvidence.objects.create(
             partner=self,
             created_by=User.objects.first(),
             mode=COLLABORATION_EVIDENCE_MODES.reference,
             organization_name="reference organization name",
+            evidence_file=cfile,
             date_received=date.today()
         )
-        self.collaboration_evidences.add(reference)
 
     @factory.post_generation
     def internal_controls(self, create, extracted, **kwargs):
@@ -369,7 +364,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             registration_number="reg-number {}".format(self.id),
         )
         if created:
-            filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+            cfile = CommonFile.objects.create()
+            cfile.file_field.save('test.csv', open(filename))
             profile.working_languages = get_country_list()
 
             profile.acronym = "acronym {}".format(self.id)
@@ -377,8 +373,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             profile.connectivity_excuse = "connectivity excuse {}".format(self.id)
             profile.year_establishment = date.today().year - random.randint(1, 30)
             profile.have_gov_doc = True
-            profile.gov_doc = open(filename).read()
-            profile.registration_doc = open(filename).read()
+            profile.gov_doc = cfile
+            profile.registration_doc = cfile
             profile.registration_date = date.today() - timedelta(days=random.randint(365, 3650))
             profile.registration_comment = "registration comment {}".format(self.id)
             profile.registration_number = "registration number {}".format(self.id)
@@ -403,6 +399,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def mandate_mission(self, create, extracted, **kwargs):
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
+
         PartnerMandateMission.objects.create(
             partner=self,
             background_and_rationale="background and rationale {}".format(self.id),
@@ -414,6 +413,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             description="collaboration professional netwok {}".format(self.id),
             population_of_concern=True,
             ethic_safeguard_comment="fake comment {}".format(self.id),
+            governance_organigram=cfile,
+            ethic_safeguard_policy=cfile,
+            ethic_fraud_policy=cfile,
         )
 
     @factory.post_generation
@@ -427,10 +429,14 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def audit(self, create, extracted, **kwargs):
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
         PartnerAuditAssessment.objects.create(
             partner=self,
             regular_audited_comment="fake regular audited comment {}".format(self.id),
             org_audits=[ORG_AUDIT_CHOICES.donor],
+            most_recent_audit_report=cfile,
+            assessment_report=cfile,
             link_report="http://fake.unicef.org/fake_uri{}".format(self.id),
             major_accountability_issues_highlighted=True,
             comment="fake comment {}".format(self.id),
@@ -439,27 +445,28 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def report(self, create, extracted, **kwargs):
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
         PartnerReporting.objects.create(
             partner=self,
             key_result="fake key result {}".format(self.id),
             last_report=date.today(),
             link_report="Http://fake.unicef.org/fake_uri{}".format(self.id),
+            report=cfile
         )
 
     @factory.post_generation
     def other_info(self, create, extracted, **kwargs):
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
         PartnerOtherInfo.objects.create(
             partner=self,
             info_to_share="fake info to share {}".format(self.id),
             confirm_data_updated=True,
-        )
-
-    @factory.post_generation
-    def other_documents(self, create, extracted, **kwargs):
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        PartnerOtherDocument.objects.create(
-            partner=self,
-            document=open(filename).read(),
+            org_logo=cfile,
+            other_doc_1=cfile,
+            other_doc_2=cfile,
+            other_doc_3=cfile,
         )
 
     class Meta:
@@ -597,7 +604,6 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
 
 class EOIFactory(factory.django.DjangoModelFactory):
     title = factory.Sequence(lambda n: "title {}".format(n))
-    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
     # locations ... TODO when right time will come (when we need them - depending on endpoint)
@@ -608,6 +614,12 @@ class EOIFactory(factory.django.DjangoModelFactory):
     deadline_date = date.today()
     notif_results_date = date.today()
     # reviewers ... TODO when right time will come (when we need them - depending on endpoint)
+    assessments_criteria = [
+        {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'weight': 10},
+        {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'weight': 40},
+        {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'weight': 30},
+        {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 20}
+    ]
 
     class Meta:
         model = EOI
@@ -643,6 +655,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
             Application.objects.create(
                 partner=get_partner(),
                 eoi=self,
+                agency=self.agency,
                 submitter=get_agency_member(),
                 did_win=True,
                 did_accept=True,
@@ -655,20 +668,9 @@ class EOIFactory(factory.django.DjangoModelFactory):
             Application.objects.create(
                 partner=get_partner(),
                 eoi=self,
+                agency=self.agency,
                 submitter=get_partner_member(),
             )
-
-    @factory.post_generation
-    def assessments_criteria(self, create, extracted, **kwargs):
-        AssessmentCriteria.objects.create(
-            eoi=self,
-            options=[
-                {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'weight': 10},
-                {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'weight': 40},
-                {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'weight': 30},
-                {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 20}
-            ]
-        )
 
 
 class PartnerFlagFactory(factory.django.DjangoModelFactory):
@@ -700,3 +702,19 @@ class PartnerVerificationFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = PartnerVerification
+
+
+class UnsolicitedFactory(factory.django.DjangoModelFactory):
+    is_unsolicited = True
+    partner = factory.LazyFunction(get_partner)
+    submitter = factory.LazyFunction(get_partner_member)
+    agency = factory.LazyFunction(get_random_agency)
+    proposal_of_eoi_details = {
+        'specializations': [
+            Specialization.objects.all().order_by("?").first().id,
+        ],
+        'title': 'fake title'
+    }
+
+    class Meta:
+        model = Application

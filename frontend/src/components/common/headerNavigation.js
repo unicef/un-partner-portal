@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+
+import React, { Component, createElement } from 'react';
 import PropTypes from 'prop-types';
 import { browserHistory as history } from 'react-router';
 import IconButton from 'material-ui/IconButton';
@@ -7,6 +8,7 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Tabs from 'material-ui/Tabs';
 import Typography from 'material-ui/Typography';
+import className from 'classnames';
 import CustomTab from '../common/customTab';
 import SpreadContent from '../common/spreadContent';
 
@@ -58,16 +60,27 @@ class HeaderNavigation extends Component {
       titleObject,
       backButton,
       handleBackButton,
+      customTabs,
       tabs,
       children,
       header,
       handleChange } = this.props;
+    const paddingClass = className(
+      {
+        [classes.alignItems]: tabs,
+        [classes.alignItemsPadding]: !tabs,
+      },
+    );
+    const actionsClass = className(
+      classes.right,
+      paddingClass,
+    );
 
     return (
       <div>
         <Grid align="center" className={classes.container} container>
           <SpreadContent >
-            <div className={tabs ? classes.alignItems : classes.alignItemsPadding}>
+            <div className={paddingClass}>
               { backButton
                 ? <IconButton onClick={handleBackButton}>
                   <KeyboardArrowLeft />
@@ -79,14 +92,14 @@ class HeaderNavigation extends Component {
                 </Typography>
                 : titleObject }
             </div>
-            <div className={classes.right}>
+            <div className={actionsClass} >
               {header}
             </div>
           </SpreadContent>
-          {tabs
+          {customTabs || tabs
             ? <div>
               <Tabs value={index} onChange={handleChange}>
-                {this.renderTabs()}
+                {customTabs ? customTabs() : this.renderTabs()}
               </Tabs>
             </div>
             : null
@@ -106,6 +119,7 @@ HeaderNavigation.propTypes = {
   backButton: PropTypes.bool,
   handleBackButton: PropTypes.func,
   tabs: PropTypes.array,
+  customTabs: PropTypes.func,
   children: PropTypes.node,
   header: PropTypes.Component,
   handleChange: PropTypes.Func,

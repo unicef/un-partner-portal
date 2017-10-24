@@ -1,8 +1,10 @@
+import R from 'ramda';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import { ListItem, ListItemText } from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
+import EoiCountryCell from '../../../components/eois/cells/eoiCountryCell';
 
 const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 2;
@@ -15,12 +17,6 @@ const styleSheet = (theme) => {
     default: {
       userSelect: 'none',
       padding: 0,
-    },
-    checked: {
-      color: theme.palette.secondary[500],
-    },
-    disabled: {
-      color: theme.palette.secondary[200],
     },
   };
 };
@@ -35,19 +31,15 @@ const CountryProfileItem = (props) => {
       onClick={() => handleToggle(country)}
     >
       <Checkbox
-        checked={country.profile ? true : selected}
-        disabled={country.profile}
+        checked={R.is(Object, country) ? true : selected}
+        disabled={R.is(Object, country)}
         tabIndex="-1"
-        classes={{
-          checked: classes.checked,
-          disabled: classes.disabled,
-        }}
       />
 
       <ListItemText
         disableTypography
         classes={{ root: classes.default }}
-        primary={country.name}
+        primary={<EoiCountryCell code={R.is(Object, country) ? country.country_code : country} />}
       />
 
     </ListItem>

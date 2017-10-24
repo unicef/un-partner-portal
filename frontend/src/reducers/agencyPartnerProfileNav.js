@@ -1,6 +1,4 @@
 
-import { SESSION_INIT } from './session';
-
 const initialState = {
   tabs: [
     { path: 'overview', label: 'Overview', name: 'a' },
@@ -12,9 +10,6 @@ const initialState = {
 
 export default function agencyPartnerProfileNavReducer(state = initialState, action) {
   switch (action.type) {
-    case SESSION_INIT: {
-      return state;
-    }
     default:
       return state;
   }

@@ -23,20 +23,15 @@ const styleSheet = theme => ({
   },
 });
 
-const partnerStatuses = {
-  Acc: 'Accepted',
-  Dec: 'Declined',
-};
-
 const renderExpandedCell = (partners, classes) => (
   <div>
     <Typography type="body2" className={classes.mainText} align="left">
       Partner status:
     </Typography>
-    { partners.map(partner => (
+    { partners.map(partnerStatus => (
       <Typography className={classes.text} align="left">
-        {`${partner.partner.legal_name}
-${partnerStatuses[partner.status]}`}
+        {`${partnerStatus.legal_name}
+${partnerStatus.offer_status}`}
       </Typography>
     ))}
   </div>
@@ -47,7 +42,7 @@ const EoiPartnerStatusCell = (props) => {
 
   return (
     <div data-tip data-for={`${id}-partner-status-tooltip`}>
-      <EoiStatusCell id={status} />
+      <EoiStatusCell status={status} />
       { partners && <Tooltip
         id={`${id}-partner-status-tooltip`}
         text={renderExpandedCell(partners, classes)}

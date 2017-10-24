@@ -24,8 +24,8 @@ const messages = {
 export const errorToBeCleared = () => ({ type: CLEAR_CFEI_ERROR });
 export const loadCfeiStarted = () => ({ type: LOAD_CFEI_STARTED });
 export const loadCfeiEnded = () => ({ type: LOAD_CFEI_ENDED });
-export const loadCfeiSuccess = (cfei, project) => (
-  { type: LOAD_CFEI_SUCCESS, cfei, project });
+export const loadCfeiSuccess = (cfei, project, count) => (
+  { type: LOAD_CFEI_SUCCESS, cfei, project, count });
 export const loadCfeiFailure = error => ({ type: LOAD_CFEI_FAILURE, error });
 
 export default function cfeiStatus(state = initialState, action) {
@@ -34,8 +34,7 @@ export default function cfeiStatus(state = initialState, action) {
       return saveErrorMsg(state, action, messages);
     }
     case LOAD_CFEI_STARTED: {
-      clearError(state);
-      return startLoading(state);
+      return startLoading(clearError(state));
     }
     case LOAD_CFEI_ENDED: {
       return stopLoading(state);

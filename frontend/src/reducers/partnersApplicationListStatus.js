@@ -43,8 +43,7 @@ export default function applicationListStatus(state = initialState, action) {
       return saveErrorMsg(state, action);
     }
     case LOAD_APPLICATION_LIST_STARTED: {
-      clearError(state);
-      return startLoading(state);
+      return startLoading(clearError(state));
     }
     case LOAD_APPLICATION_LIST_ENDED: {
       return stopLoading(state);

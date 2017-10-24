@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import HeaderList from '../../components/common/list/headerList';
 import OrganizationItem from './organizationItem';
 import CountryOfficesHeaderContainer from './countryOfficesHeaderContainer';
@@ -8,25 +7,23 @@ import CountryOfficesHeaderContainer from './countryOfficesHeaderContainer';
 const countryOfficesItems = profiles => profiles.map(item =>
   (<OrganizationItem
     isCountryItem
-    title={item.name}
+    profileId={item.id}
+    title={item.country_code}
     users={item.users}
-    update={item.update}
     completed={item.completed}
   />));
 
-const CountryOfficesList = props => (
-  <HeaderList
-    header={<CountryOfficesHeaderContainer />}
-    rows={countryOfficesItems(props.countryProfiles)}
-  />
-);
+const CountryOfficesList = (props) => {
+  const { profiles } = props;
 
-CountryOfficesList.propTypes = {
-  countryProfiles: PropTypes.array.isRequired,
+  return (<HeaderList
+    header={<CountryOfficesHeaderContainer />}
+    rows={countryOfficesItems(profiles)}
+  />);
 };
 
-const mapStateToProps = state => ({
-  countryProfiles: state.countryProfiles.countryProfiles,
-});
+CountryOfficesList.propTypes = {
+  profiles: PropTypes.array.isRequired,
+};
 
-export default connect(mapStateToProps)(CountryOfficesList);
+export default CountryOfficesList;

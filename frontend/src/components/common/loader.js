@@ -27,11 +27,21 @@ const styleSheet = theme => ({
 });
 
 const Loader = (props) => {
-  const { classes, children, loading, fullscreen } = props;
+  const { classes, children, loading, fullscreen, replaceContent } = props;
   const className = classNames({
     [classes.root]: loading,
     [classes.Fullscreen]: fullscreen,
   });
+  if (replaceContent) {
+    return loading ? <div className={className}>
+      <CircularProgress
+        className={classes.spinner}
+        color="accent"
+        size={50}
+      />
+    </div>
+      : children;
+  }
   return (
     <div className={className}>
       {loading && <CircularProgress
@@ -49,6 +59,7 @@ Loader.propTypes = {
   children: PropTypes.element,
   loading: PropTypes.bool,
   fullscreen: PropTypes.bool,
+  replaceContent: PropTypes.bool,
 };
 
 

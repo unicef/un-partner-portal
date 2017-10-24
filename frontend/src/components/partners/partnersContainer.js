@@ -1,4 +1,3 @@
-import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -20,11 +19,17 @@ const messages = {
 };
 
 class PartnersContainer extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
+  componentWillMount() {
+    const { query } = this.props;
+    this.props.loadPartners(query);
+  }
+
+  shouldComponentUpdate(nextProps) {
     const { query } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
       this.props.loadPartners(nextProps.location.query);
+      return false;
     }
 
     return true;

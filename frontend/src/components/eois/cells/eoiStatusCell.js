@@ -1,17 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-
 import { withStyles } from 'material-ui/styles';
-
+import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import SvgIcon from 'material-ui/SvgIcon';
+import { projectStatuses } from '../../../helpers/idMaps';
+import SpreadContent from '../../common/spreadContent';
 
-const STATUSES = {
-  Ope: 'Open',
-  Clo: 'Closed/Under Review',
-  Com: 'Completed',
-};
 
 const styleSheet = theme => ({
   Ope: {
@@ -23,12 +19,6 @@ const styleSheet = theme => ({
   Com: {
     color: theme.palette.eoiStatus.completed,
   },
-  mainText: {
-    color: theme.palette.grey[300],
-    fontWeight: 400,
-    fontSize: 12,
-    padding: '4px 8px',
-  },
   text: {
     whiteSpace: 'normal',
     maxWidth: 80,
@@ -36,8 +26,8 @@ const styleSheet = theme => ({
 });
 
 const EoiStatusCell = (props) => {
-  const { classes, id } = props;
-  const colorClass = classNames(classes[id]);
+  const { classes, status } = props;
+  const colorClass = classNames(classes[status]);
   return (
     <Grid container direction="row" align="center" wrap="nowrap" spacing={8}>
       <Grid item >
@@ -46,7 +36,9 @@ const EoiStatusCell = (props) => {
         </SvgIcon>
       </Grid>
       <Grid item className={classes.text}>
-        {STATUSES[id]}
+        <Typography type="body1" color="inherit">
+          {projectStatuses[status]}
+        </Typography>
       </Grid>
     </Grid>
   );
@@ -54,7 +46,7 @@ const EoiStatusCell = (props) => {
 
 EoiStatusCell.propTypes = {
   classes: PropTypes.object.isRequired,
-  id: PropTypes.string.isRequired,
+  status: PropTypes.string.isRequired,
 };
 
 export default withStyles(styleSheet, { name: 'EoiStatusCell' })(EoiStatusCell);

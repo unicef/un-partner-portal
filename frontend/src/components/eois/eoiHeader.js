@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 
 import Grid from 'material-ui/Grid';
-import NewCfeiModalButton from './modals/newCfeiModalButton';
+import NewCfeiModalButton from './modals/newCfei/newCfeiModalButton';
 import HeaderNavigation from '../common/headerNavigation';
 
 const messages = {
@@ -32,8 +32,11 @@ class CfeiHeader extends Component {
   }
 
   handleChange(event, index) {
-    const { tabs } = this.props;
-    history.push(`/cfei/${tabs[index].path}`);
+    const { tabs, location } = this.props;
+    history.push({
+      pathname: `/cfei/${tabs[index].path}`,
+      query: location.query,
+    });
   }
 
   render() {
@@ -65,21 +68,17 @@ CfeiHeader.propTypes = {
   children: PropTypes.node,
   role: PropTypes.string,
   params: PropTypes.object,
+  location: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  location: ownProps.location.pathname,
+  location: ownProps.location,
   tabs: state.cfeiNav,
   role: state.session.role,
 });
 
-const mapDispatchToProps = dispatch => ({
-  onTabChange: index => dispatch(ActiveItem(index)),
-});
-
 const containerCfeiHeader = connect(
   mapStateToProps,
-  mapDispatchToProps,
 )(CfeiHeader);
 
 export default containerCfeiHeader;

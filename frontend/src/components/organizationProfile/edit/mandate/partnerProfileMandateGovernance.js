@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormSection } from 'redux-form';
-
-import Grid from 'material-ui/Grid';
 import GridColumn from '../../../common/grid/gridColumn';
 import TextFieldForm from '../../../forms/textFieldForm';
 import FileForm from '../../../forms/fileForm';
@@ -44,6 +42,8 @@ const PartnerProfileMandateGovernance = (props) => {
           readOnly={readOnly}
         />
         <FileForm
+          formName="partnerProfile"
+          sectionName="mandate_mission.governance"
           label={messages.organigram}
           fieldName="governance_organigram"
           optional

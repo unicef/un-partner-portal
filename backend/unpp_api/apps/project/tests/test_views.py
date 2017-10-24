@@ -13,7 +13,6 @@ from agency.models import AgencyOffice, Agency
 from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
 from common.tests.base import BaseAPITestCase
-from common.countries import COUNTRIES_ALPHA2_CODE
 from common.factories import EOIFactory, AgencyMemberFactory, PartnerSimpleFactory, PartnerMemberFactory
 from common.models import Specialization
 from common.consts import (
@@ -104,73 +103,65 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
     def test_create_patch_project(self):
         ao = AgencyOffice.objects.first()
         payload = {
-            'eoi': {
-                'title': "EOI title",
-                'country_code': COUNTRIES_ALPHA2_CODE[0][0],
-                'agency': ao.agency.id,
-                'focal_points': [User.objects.first().id],
-                'locations': [
-                    {
-                        "country_code": 'IQ',
-                        "admin_level_1": {"name": "Baghdad"},
-                        "lat": random.randint(-180, 180),
-                        "lon": random.randint(-180, 180),
-                    },
-                    {
-                        "country_code": "FR",
-                        "admin_level_1": {"name": "Paris"},
-                        "lat": random.randint(-180, 180),
-                        "lon": random.randint(-180, 180),
-                    },
-                ],
-                'agency_office': ao.id,
-                'specializations': Specialization.objects.all().values_list('id', flat=True)[:2],
-                'description': 'Brief background of the project',
-                'other_information': 'Other information',
-                'start_date': date.today(),
-                'end_date': date.today(),
-                'deadline_date': date.today(),
-                'notif_results_date': date.today(),
-                'has_weighting': True,
-            },
-            'assessment_criterias': {
-                'options': [
-                    {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'weight': 10},
-                    {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'weight': 40},
-                ],
-            }
+            'title': "EOI title",
+            'agency': ao.agency.id,
+            'focal_points': [User.objects.first().id],
+            'locations': [
+                {
+                    "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
+                    "lat": random.randint(-180, 180),
+                    "lon": random.randint(-180, 180),
+                },
+                {
+                    "admin_level_1": {"name": "Paris", "country_code": "FR"},
+                    "lat": random.randint(-180, 180),
+                    "lon": random.randint(-180, 180),
+                },
+            ],
+            'agency_office': ao.id,
+            'specializations': Specialization.objects.all().values_list('id', flat=True)[:2],
+            'description': 'Brief background of the project',
+            'other_information': 'Other information',
+            'start_date': date.today(),
+            'end_date': date.today(),
+            'deadline_date': date.today(),
+            'notif_results_date': date.today(),
+            'has_weighting': True,
+            'assessment_criterias': [
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'weight': 10},
+                {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'weight': 40},
+            ],
         }
 
         response = self.client.post(self.url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
-        self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
-        self.assertEquals(response.data['eoi']['created_by'], self.user.id)
-        self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
+        eoi = EOI.objects.last()
+        self.assertEquals(response.data['title'], payload['title'])
+        self.assertEquals(eoi.created_by.id, self.user.id)
+        self.assertEquals(response.data['id'], eoi.id)
 
         # invite partners
-        eoi_id = response.data['eoi']['id']
-        url = reverse('projects:eoi-detail', kwargs={"pk": eoi_id})
+        url = reverse('projects:eoi-detail', kwargs={"pk": eoi.id})
         payload = {
             "invited_partners": [
-                {"id": Partner.objects.first().id},
-                {"id": Partner.objects.last().id},
+                Partner.objects.first().id, Partner.objects.last().id
             ]
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
-        self.assertEquals(response.data['id'], eoi_id)
-        self.assertTrue(Partner.objects.first().id in map(lambda x: x['id'], response.data['invited_partners']))
+        self.assertEquals(response.data['id'], eoi.id)
+        self.assertTrue(Partner.objects.first().id in response.data['invited_partners'])
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
 
         payload = {
             "invited_partners": [
-                {"id": Partner.objects.last().id},
+                Partner.objects.last().id,
             ]
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
-        self.assertEquals(response.data['id'], eoi_id)
-        self.assertTrue(Partner.objects.last().id in map(lambda x: x['id'], response.data['invited_partners']))
+        self.assertEquals(response.data['id'], eoi.id)
+        self.assertTrue(Partner.objects.last().id in response.data['invited_partners'])
         self.assertTrue(Partner.objects.count(), 1)
         self.assertTrue(len(response.data['invited_partners']), 1)
 
@@ -216,19 +207,16 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         payload = {
             'eoi': {
                 'title': "EOI title",
-                'country_code': COUNTRIES_ALPHA2_CODE[0][0],
                 'agency': ao.agency.id,
                 'focal_points': [User.objects.first().id],
                 'locations': [
                     {
-                        "country_code": 'IQ',
-                        "admin_level_1": {"name": "Baghdad"},
+                        "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
                     {
-                        "country_code": "FR",
-                        "admin_level_1": {"name": "Paris"},
+                        "admin_level_1": {"name": "Paris", "country_code": "FR"},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
@@ -297,7 +285,6 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
                 "cn": cn_template,
             }
             response = self.client.post(url, data=payload, format='multipart')
-
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], Application.objects.last().id)
         self.assertEquals(response.data['eoi'], eoi_id)
@@ -379,13 +366,13 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
         payload = {
             "did_win": True,
-            "status": APPLICATION_STATUSES.rejected,
+            "status": APPLICATION_STATUSES.preselected,
             "justification_reason": "good reason",
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_win'])
-        self.assertEquals(response.data['status'], APPLICATION_STATUSES.rejected)
+        self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
 
         # accept offer
         payload = {
@@ -395,16 +382,29 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_accept'])
 
+        # decline offer
+        payload = {
+            "did_accept": False,
+            "did_decline": True,
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertFalse(response.data['did_accept'])
+        self.assertTrue(response.data['did_decline'])
+
         # withdraw
         reason = "They are better then You."
         payload = {
             "did_win": False,
-            "justification_reason": reason,
+            "did_withdraw": True,
+            "withdraw_reason": reason,
+            "status": APPLICATION_STATUSES.rejected,
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertFalse(response.data['did_win'])
-        self.assertEquals(response.data["justification_reason"], reason)
+        self.assertTrue(response.data['did_withdraw'])
+        self.assertEquals(response.data["withdraw_reason"], reason)
 
 
 class TestReviewerAssessmentsAPIView(BaseAPITestCase):
@@ -426,6 +426,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             'projects:reviewer-assessments',
             kwargs={
                 "application_id": app.id,
+                "reviewer_id": self.user.id,
             }
         )
         note = 'I like this application, has strong sides...'
@@ -457,7 +458,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             'projects:reviewer-assessments',
             kwargs={
                 "application_id": Application.objects.first().id,
-                "pk": assessment_id,
+                "reviewer_id": self.user.id,
             }
         )
         payload = {
@@ -492,20 +493,18 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
             payload = {
                 "locations": [
                     {
-                        "country_code": 'IQ',
-                        "admin_level_1": {"name": "Baghdad"},
+                        "admin_level_1": {"country_code": 'IQ', "name": "Baghdad"},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
                     {
-                        "country_code": "FR",
-                        "admin_level_1": {"name": "Paris"},
+                        "admin_level_1": {"country_code": "FR", "name": "Paris"},
                         "lat": random.randint(-180, 180),
                         "lon": random.randint(-180, 180),
                     },
                 ],
                 "title": "Unsolicited Project",
-                "agency_id": Agency.objects.first().id,
+                "agency": Agency.objects.first().id,
                 "specializations": Specialization.objects.all()[:3].values_list("id", flat=True),
                 "cn": cn_template,
             }

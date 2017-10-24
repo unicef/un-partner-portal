@@ -5,7 +5,8 @@ import {
   stopLoading,
   saveErrorMsg,
 } from './apiStatus';
-import { uploadConceptNote } from '../helpers/api/api';
+import { uploadConceptNote, getProjectApplication } from '../helpers/api/api';
+import { loadPartnerApplication } from './partnerApplicationDetails';
 
 export const UPLOAD_CN_STARTED = 'UPLOAD_CN_STARTED';
 export const UPLOAD_CN_SUCCESS = 'UPLOAD_CN_SUCCESS';
@@ -27,8 +28,6 @@ export const clearLocalState = () => ({ type: UPLOAD_CN_CLEAR });
 export const selectLocalCnFile = file => ({ type: UPLOAD_CN_LOCAL_FILE, file });
 export const confirmProfileUpdated = confirmation => ({ type: UPLOAD_CN_CONFIRM, confirmation });
 
-const saveReponse = (state, action) => R.assoc('cnFile', action.response, state);
-
 const confirmProfile = (state, action) => R.assoc('confirmProfileUpdated', action.confirmation, state);
 
 const selectFileLocal = (state, action) => R.assoc('fileSelectedLocal', action.file, state);
@@ -40,12 +39,34 @@ const clearConceptNoteState = (state) => {
   return R.assoc('cnFile', false, clearLocalFile);
 };
 
+const saveConceptNote = (state, action) => {
+  const file = R.assoc('cnFile', action.response.cn, state);
+  return R.assoc('created', action.response.created, file);
+};
+
+export const projectApplicationExists = partnerId => (dispatch) => {
+  dispatch(uploadCnStarted());
+
+  return getProjectApplication(partnerId)
+    .then((profiles) => {
+      dispatch(uploadCnEnded());
+      dispatch(uploadCnSuccess(profiles));
+      dispatch(loadPartnerApplication(partnerId, profiles));
+    })
+    .catch((error) => {
+      dispatch(uploadCnEnded());
+      dispatch(uploadCnFailure(error));
+    });
+};
+
 const messages = {
   uploadFailed: 'Uploaded concept note failed, please try again.',
 };
 
 const initialState = {
   loading: false,
+  created: null,
+  loadingApplication: false,
   cnFile: null,
   confirmProfileUpdated: false,
   fileSelectedLocal: null,
@@ -79,11 +100,10 @@ export default function conceptNoteReducer(state = initialState, action) {
       return stopLoading(state);
     }
     case UPLOAD_CN_STARTED: {
-      clearError(state);
-      return startLoading(state);
+      return startLoading(clearError(state));
     }
     case UPLOAD_CN_SUCCESS: {
-      return saveReponse(state, action);
+      return saveConceptNote(state, action);
     }
     case UPLOAD_CN_CLEAR_ERROR: {
       return clearError(state);

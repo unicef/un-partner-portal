@@ -12,6 +12,7 @@ from common.factories import (
     OtherAgencyFactory,
     AgencyMemberFactory,
     EOIFactory,
+    UnsolicitedFactory,
 )
 from partner.models import Partner, PartnerMember
 
@@ -49,6 +50,12 @@ def generate_fake_data(quantity=4):
     hq = Partner.objects.first()
     Partner.objects.exclude(id=hq.id).update(hq=hq)
     print "Partner HQ & Country Profiles"
+    for idx, code in enumerate(hq.country_presence):
+        if idx >= Partner.objects.filter(hq=hq).count():
+            break
+        partner = Partner.objects.filter(hq=hq)[idx]
+        partner.country_code = code
+        partner.save()
 
     PartnerMemberFactory.create_batch(quantity/2)
     print "{} PartnerMember objects created".format(quantity/2)
@@ -59,6 +66,9 @@ def generate_fake_data(quantity=4):
     for idx in xrange(0, quantity):
         EOIFactory(display_type=EOI_TYPES.direct, deadline_date=None)
     print "{} direct EOI objects created with applications".format(quantity)
+
+    UnsolicitedFactory.create_batch(quantity)
+    print "{} UnsolicitedFactory objects created".format(quantity)
 
     pm = PartnerMember.objects.first()
     pm.user = admin

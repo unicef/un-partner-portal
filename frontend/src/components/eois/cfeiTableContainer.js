@@ -3,12 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
 import Snackbar from 'material-ui/Snackbar';
-import RegularTable from '../common/table/regularTable';
-import {
-  renderPartnerOpenCells,
-  renderAgencyOpenCells,
-  renderAgencyDirectCells,
-} from './cells/tableCells';
+import PaginatedList from '../common/list/paginatedList';
+import RenderProjectCells from './cells/tableCells';
 
 import {
   openAgencyColumns,
@@ -18,18 +14,6 @@ import {
 import { errorToBeCleared } from '../../reducers/cfeiStatus';
 
 class CfeiTableContainer extends Component {
-  static getCellsRenderer(role, type) {
-    if (role === 'partner'
-      && (type === 'open' || type === 'pinned')) {
-      return renderPartnerOpenCells;
-    } else if (type === 'open') {
-      return renderAgencyOpenCells;
-    } else if (type === 'direct') {
-      return renderAgencyDirectCells;
-    }
-    return () => null;
-  }
-
   // should be moved to state but hold until new table is added
   static getColumnData(role, type) {
     if (role === 'partner'
@@ -59,14 +43,15 @@ class CfeiTableContainer extends Component {
   }
 
   render() {
-    const { cfei, loading, errorMsg, role, type } = this.props;
+    const { cfei, loading, errorMsg, role, type, count } = this.props;
     const { alert } = this.state;
     return (
       <Grid item>
-        <RegularTable
-          data={cfei}
-          columnData={CfeiTableContainer.getColumnData(role, type)}
-          renderTableCells={CfeiTableContainer.getCellsRenderer(role, type)}
+        <PaginatedList
+          items={cfei}
+          itemsCount={count}
+          columns={CfeiTableContainer.getColumnData(role, type)}
+          templateCell={RenderProjectCells(type)}
           loading={loading}
         />
         <Snackbar
@@ -91,11 +76,13 @@ CfeiTableContainer.propTypes = {
   role: PropTypes.string,
   type: PropTypes.string,
   clearError: PropTypes.func,
+  count: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   role: state.session.role,
   cfei: state.cfei.cfei[ownProps.type],
+  count: state.cfei.cfei[`${ownProps.type}Count`],
   loading: state.cfei.cfeiStatus.loading,
   errorMsg: state.cfei.cfeiStatus.error.message,
 });

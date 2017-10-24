@@ -5,7 +5,7 @@ import {
   flattenToObjectKey,
 } from './normalizationHelpers';
 
-const initialState = null;
+const initialState = {};
 const LOAD_PATNER_NAMES_SUCCESS = 'LOAD_PATNER_NAMES_SUCCESS';
 
 const loadPartnerNamesSuccess = names => ({ type: LOAD_PATNER_NAMES_SUCCESS, names });
@@ -13,7 +13,13 @@ const loadPartnerNamesSuccess = names => ({ type: LOAD_PATNER_NAMES_SUCCESS, nam
 export const loadPartnerNames = () => dispatch => getPartnerNames()
   .then((names) => {
     dispatch(loadPartnerNamesSuccess(names));
+    return names;
   });
+
+export const selectPartnerName = (state, id) => {
+  const partner = state[id] || '';
+  return partner;
+};
 
 const savePartnerNames = action => toObject(flattenToObjectKey('legal_name'), action.names);
 

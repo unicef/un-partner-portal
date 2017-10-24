@@ -17,6 +17,9 @@ sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 ADMINS = (
     ('Alerts', 'dev@unpp_api.com'),
 )
+DEFAULT_FROM_EMAIL = 'noreply@unpp.org'
+UN_SANCTIONS_LIST_EMAIL_ALERT = 'test@tivix.com'  # TODO - change to real one
+SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
 SITE_ID = 1
 TIME_ZONE = 'America/Los_Angeles'  # changed to UTC
 LANGUAGE_CODE = 'en-us'
@@ -28,7 +31,7 @@ ROOT_URLCONF = 'unpp_api.urls'
 DATA_VOLUME = '/data'
 
 UPLOADS_DIR_NAME = 'uploads'
-MEDIA_URL = '/%s/' % UPLOADS_DIR_NAME
+MEDIA_URL = '/api/%s/' % UPLOADS_DIR_NAME
 MEDIA_ROOT = os.path.join(DATA_VOLUME, '%s' % UPLOADS_DIR_NAME)
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
@@ -37,9 +40,6 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
 # static resources related. See documentation at: http://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/
 STATIC_URL = '/api/static/'
 STATIC_ROOT = '%s/staticserve' % DATA_VOLUME
-# STATICFILES_DIRS = (
-#     ('global', '%s/static' % PROJECT_ROOT),
-# )
 
 # static serving
 STATICFILES_FINDERS = (
@@ -76,12 +76,13 @@ DATABASES = {
     }
 }
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'common.middleware.ActivePartnerMiddlewware',
 ]
 
 TEMPLATES = [
@@ -115,6 +116,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
     'django_filters',
     # 'compressor',
     'django_common',
@@ -125,6 +128,8 @@ INSTALLED_APPS = [
     'partner',
     'project',
     'review',
+    'notification',
+    'sanctionslist',
 ]
 
 # auth / django-registration params
@@ -158,6 +163,14 @@ USERSWITCH_OPTIONS = {
         'position:fixed !important; bottom: 10px !important; left: 10px !important; opacity:0.50; z-index: 9999;',
 }
 
+# TODO - only enable TokenAuth for prod
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
+
 
 # helper function to extend all the common lists
 def extend_list_avoid_repeats(list_to_extend, extend_with):
@@ -184,11 +197,8 @@ LOGGING = {
     'handlers': {
         'default': {
             'level': 'DEBUG',
-            'class': 'common.utils.DeferredRotatingFileHandler',
-            'filename': 'django.log',  # Full path is created by DeferredRotatingFileHandler.
-            'maxBytes': 1024*1024*5,  # 5 MB
-            'backupCount': 5,
-            'formatter': 'standard'
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -214,3 +224,12 @@ LOGGING = {
         },
     }
 }
+
+# Sendgrid stuff
+EMAIL_BACKEND = DOMAIN_NAME
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True

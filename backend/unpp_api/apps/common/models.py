@@ -3,7 +3,18 @@ from __future__ import unicode_literals
 from decimal import Decimal
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from model_utils.models import TimeStampedModel
 from .countries import COUNTRIES_ALPHA2_CODE
+
+
+class PointQuerySet(models.QuerySet):
+
+    def get_or_create(self, lat, lon, admin_level_1):
+        admin_inst, created = AdminLevel1.objects.get_or_create(**admin_level_1)
+        qs = self.filter(lat=lat, lon=lon, admin_level_1=admin_inst)
+        if qs.exists():
+            return qs.first(), False
+        return self.create(lat=lat, lon=lon, admin_level_1=admin_inst), True
 
 
 class AdminLevel1(models.Model):
@@ -11,6 +22,7 @@ class AdminLevel1(models.Model):
     Admin level 1 - is like California in USA or Mazowieckie in Poland
     """
     name = models.CharField(max_length=255)
+    country_code = models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE)
 
     class Meta:
         ordering = ['id']
@@ -20,7 +32,6 @@ class AdminLevel1(models.Model):
 
 
 class Point(models.Model):
-    country_code = models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE)
     lat = models.DecimalField(
         verbose_name='Latitude',
         null=True,
@@ -38,6 +49,8 @@ class Point(models.Model):
         validators=[MinValueValidator(Decimal(-180)), MaxValueValidator(Decimal(180))]
     )
     admin_level_1 = models.ForeignKey(AdminLevel1, related_name="points")
+
+    objects = PointQuerySet.as_manager()
 
     class Meta:
         ordering = ['id']
@@ -71,3 +84,13 @@ class Specialization(models.Model):
 
     def __str__(self):
         return "Specialization: {} <pk:{}>".format(self.name, self.id)
+
+
+class CommonFile(TimeStampedModel):
+    file_field = models.FileField()
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "CommonFile <pk:{}>".format(self.id)

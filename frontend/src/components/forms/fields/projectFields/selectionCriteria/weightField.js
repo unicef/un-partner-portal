@@ -15,7 +15,7 @@ const messages = {
 
 const WeightField = (props) => {
   const { name, hasWeighting, disabled, ...other } = props;
-  return hasWeighting ? (<Grid item xs={12} sm={4}>
+  return (hasWeighting === 'true') ? (<Grid item xs={12} sm={4}>
     <TextFieldForm
       label={messages.labels.weight}
       fieldName={`${name}.weight`}
@@ -23,10 +23,11 @@ const WeightField = (props) => {
         inputProps: {
           min: '1',
           max: '100',
+          type: 'number',
         },
         disabled,
       }}
-      validation={[numerical(1, 100)]}
+      validation={[numerical]}
       {...other}
     />
   </Grid>) : null;

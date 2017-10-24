@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import transaction
 from rest_framework import serializers
 
@@ -16,6 +17,7 @@ from partner.models import (
     PartnerOtherInfo,
     PartnerInternalControl,
     PartnerMember,
+    PartnerBudget,
 )
 
 from partner.serializers import (
@@ -83,6 +85,11 @@ class PartnerRegistrationSerializer(serializers.Serializer):
             )
         PartnerInternalControl.objects.bulk_create(responsibilities)
 
+        budgets = []
+        for year in [date.today().year, date.today().year-1, date.today().year-2]:
+            budgets.append(PartnerBudget(partner=self.partner, year=year))
+        PartnerBudget.objects.bulk_create(budgets)
+
         partner_member = validated_data['partner_member']
         partner_member['partner_id'] = self.partner.id
         partner_member['user_id'] = self.user.id
@@ -98,3 +105,61 @@ class PartnerRegistrationSerializer(serializers.Serializer):
             "partner_member": PartnerMemberSerializer(instance=self.partner_member).data,
         }
         return self.instance_json
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    name = serializers.CharField(source='get_fullname')
+
+    class Meta:
+        model = User
+        fields = ('id', 'name', 'email',)
+
+
+class AgencyUserSerializer(UserSerializer):
+
+    agency_name = serializers.SerializerMethodField()
+    agency_id = serializers.SerializerMethodField()
+    office_name = serializers.SerializerMethodField()
+    office_id = serializers.SerializerMethodField()
+    role = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = UserSerializer.Meta.fields + ('agency_name',
+                                               'agency_id',
+                                               'role',
+                                               'office_name',
+                                               'office_id',)
+
+    def _agency_member(self, obj):
+        return obj.agency_members.get()
+
+    def get_role(self, obj):
+        return self._agency_member(obj).get_role_display()
+
+    def get_agency_name(self, obj):
+        return self._agency_member(obj).office.agency.name
+
+    def get_agency_id(self, obj):
+        return self._agency_member(obj).office.agency.id
+
+    def get_office_name(self, obj):
+        return self._agency_member(obj).office.name
+
+    def get_office_id(self, obj):
+        return self._agency_member(obj).office.id
+
+
+class PartnerUserSerializer(UserSerializer):
+
+    partners = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = UserSerializer.Meta.fields + ('partners',)
+
+    def get_partners(self, obj):
+        partner_ids = obj.get_partner_ids_i_can_access()
+        return PartnerSerializer(Partner.objects.filter(id__in=partner_ids),
+                                 many=True).data

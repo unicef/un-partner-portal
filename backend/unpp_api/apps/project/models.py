@@ -13,7 +13,6 @@ from common.consts import (
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     COMPLETED_REASON,
 )
-from common.countries import COUNTRIES_ALPHA2_CODE
 
 
 class EOI(TimeStampedModel):
@@ -24,7 +23,6 @@ class EOI(TimeStampedModel):
     display_type = models.CharField(max_length=3, choices=EOI_TYPES, default=EOI_TYPES.open)
     status = models.CharField(max_length=3, choices=EOI_STATUSES, default=EOI_STATUSES.open)
     title = models.CharField(max_length=255)
-    country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
     created_by = models.ForeignKey('account.User', related_name="expressions_of_interest")
     # focal_point - limited to users under agency
@@ -52,12 +50,13 @@ class EOI(TimeStampedModel):
     justification = models.TextField(null=True, blank=True)  # closed or completed
     completed_reason = models.CharField(max_length=3, choices=COMPLETED_REASON, null=True, blank=True)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
+    assessments_criteria = JSONField(default=dict([('selection_criteria', ''), ('weight', 0)]))
 
     class Meta:
         ordering = ['id']
 
     def __str__(self):
-        return "EOI: {} <pk:{}>".format(self.title, self.id)
+        return "EOI {} <pk:{}>".format(self.title, self.id)
 
     @property
     def is_direct(self):
@@ -87,15 +86,21 @@ class Pin(TimeStampedModel):
 class Application(TimeStampedModel):
     is_unsolicited = models.BooleanField(default=False, verbose_name='Is unsolicited?')
     proposal_of_eoi_details = JSONField(
-        default=dict([('locations', []), ('title', ''), ('agency_id', None), ('specializations', [])])
+        default=dict([('title', ''), ('specializations', [])])
     )
+    locations_proposal_of_eoi = models.ManyToManyField('common.Point', related_name="applications", blank=True)
     partner = models.ForeignKey('partner.Partner', related_name="applications")
     eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
+    agency = models.ForeignKey('agency.Agency', related_name="applications")
     submitter = models.ForeignKey('account.User', related_name="applications")
     cn = models.FileField()
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
+    did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
+    # did_withdraw is only applicable if did_win is True
+    did_withdraw = models.BooleanField(default=False, verbose_name='Did withdraw?')
+    withdraw_reason = models.TextField(null=True, blank=True)  # reason why partner withdraw
     # These two (ds_justification_*) will be used as direct selection will create applications for DS EOIs.
     # hq information
     ds_justification_select = ArrayField(
@@ -112,6 +117,24 @@ class Application(TimeStampedModel):
     def __str__(self):
         return "Application <pk:{}>".format(self.id)
 
+    @property
+    def partner_is_verified(self):
+        verification = self.partner.verifications.last() or False
+        return verification and verification.is_verified
+
+    @property
+    def offer_status(self):
+        if not self.did_win:
+            return 'No Offer Made'
+        if self.did_withdraw:
+            return 'Offer Withdrawn'
+        elif self.did_accept:
+            return 'Offer Accepted'
+        elif self.did_decline:
+            return 'Offer Declined'
+        else:
+            return 'Offer Made'
+
 
 class ApplicationFeedback(TimeStampedModel):
     application = models.ForeignKey(Application, related_name="application_feedbacks")
@@ -125,20 +148,9 @@ class ApplicationFeedback(TimeStampedModel):
         return "ApplicationFeedback <pk:{}>".format(self.id)
 
 
-class AssessmentCriteria(TimeStampedModel):
-    eoi = models.OneToOneField(EOI, related_name="assessments_criteria")
-    # selection_criteria -> SELECTION_CRITERIA_CHOICES
-    options = JSONField(default=dict([('selection_criteria', ''), ('weight', 0)]))
-
-    class Meta:
-        ordering = ['id']
-
-    def __str__(self):
-        return "AssessmentCriteria <pk:{}>".format(self.id)
-
-
 class Assessment(TimeStampedModel):
-    criteria = models.ForeignKey(AssessmentCriteria, related_name="assessments")
+    created_by = models.ForeignKey('account.User', related_name="assessments_creator")
+    modified_by = models.ForeignKey('account.User', related_name="assessments_editor", null=True, blank=True)
     reviewer = models.ForeignKey('account.User', related_name="assessments")
     application = models.ForeignKey(Application, related_name="assessments")
     scores = JSONField(default=[dict((('selection_criteria', None), ('score', 0)))])

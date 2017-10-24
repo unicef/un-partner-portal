@@ -19,7 +19,7 @@ from partner.models import (
     PartnerOtherInfo,
     PartnerInternalControl,
 )
-from common.models import Point
+from common.models import Point, CommonFile
 from common.tests.base import BaseAPITestCase
 from common.factories import (
     AgencyFactory,
@@ -59,7 +59,7 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
         self.assertEquals(Partner.objects.filter(hq_id=partner.id).count(), expected_count)
         self.assertEquals(PartnerProfile.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerMailingAddress.objects.filter(partner__hq=partner).count(), expected_count)
-        self.assertEquals(PartnerHeadOrganization.objects.filter(partner__hq=partner).count(), expected_count)
+        self.assertEquals(PartnerHeadOrganization.objects.filter(partner__hq=partner).count(), 0)
         self.assertEquals(PartnerAuditAssessment.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerReporting.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerMandateMission.objects.filter(partner__hq=partner).count(), expected_count)
@@ -84,21 +84,39 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         profile = PartnerProfile.objects.first()
         year_establishment = 2015
         registration_date = '2016-01-01'
-        url = reverse('partners:identification', kwargs={"pk": profile.id})
+        url = reverse('common:file')
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        with open(filename) as gov_doc:
-            with open(filename) as registration_doc:
-                payload = {
-                    'year_establishment': year_establishment,
-                    'have_gov_doc': True,
-                    'gov_doc': gov_doc,
-                    'registration_to_operate_in_country': True,
-                    'registration_doc': registration_doc,
-                    'registration_date': registration_date,
-                    'registration_comment': 'test comment',
-                    'registration_number': '123/2016',
-                }
-                response = self.client.put(url, data=payload, format='multipart')
+        with open(filename) as doc:
+            payload = {
+                "file_field": doc
+            }
+            response = self.client.post(url, data=payload, format='multipart')
+
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(response.data['id'] is not None)
+        gov_doc_id = response.data['id']
+
+        with open(filename) as doc:
+            payload = {
+                "file_field": doc
+            }
+            response = self.client.post(url, data=payload, format='multipart')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(response.data['id'] is not None)
+        registration_doc_id = response.data['id']
+
+        url = reverse('partners:identification', kwargs={"pk": profile.id})
+        payload = {
+            'year_establishment': year_establishment,
+            'have_gov_doc': True,
+            'gov_doc': gov_doc_id,
+            'registration_to_operate_in_country': True,
+            'registration_doc': registration_doc_id,
+            'registration_date': registration_date,
+            'registration_comment': 'test comment',
+            'registration_number': '123/2016',
+        }
+        response = self.client.put(url, data=payload, format='json')
 
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['year_establishment'], year_establishment)
@@ -169,40 +187,59 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             self.assertEquals(director['first_name'], first_name)
             self.assertEquals(director['authorized'], True)
 
-        for authorised_officer in response.data['authorised_officers']:
+        authorised_officers = response.data['authorised_officers']
+        for authorised_officer in authorised_officers:
             self.assertEquals(authorised_officer['first_name'], first_name)
             self.assertEquals(authorised_officer['email'], email)
 
+        payload = {
+            'connectivity_excuse': 'one field to patch'
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['connectivity_excuse'], payload['connectivity_excuse'])
+        self.assertEquals(partner.authorised_officers.count(), len(authorised_officers))
+        for authorised_officer in partner.authorised_officers.all():
+            self.assertEquals(authorised_officer.first_name, first_name)
+            self.assertEquals(authorised_officer.email, email)
+
     def test_mandate_mission(self):
+        url = reverse('common:file')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        with open(filename) as doc:
+            payload = {
+                "file_field": doc
+            }
+            response = self.client.post(url, data=payload, format='multipart')
+
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(response.data['id'] is not None)
+        file_id = response.data['id']
+
         partner = Partner.objects.first()
         url = reverse('partners:mandate-mission', kwargs={"pk": partner.id})
 
         response = self.client.get(url, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
 
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        with open(filename) as fraud_policy,\
-                open(filename) as safeguard_policy,\
-                open(filename) as governance_organigram:
-            comment = "unit test desc"
-            payload = {
-                'security_desc': comment,
-                'ethic_fraud': True,
-                'ethic_fraud_comment': comment,
-                'ethic_fraud_policy': fraud_policy,
-                'security_high_risk_locations': True,
-                'security_high_risk_policy': True,
-                'population_of_concern': True,
-                'ethic_safeguard': True,
-                'ethic_safeguard_comment': comment,
-                'ethic_safeguard_policy': safeguard_policy,
-                'location_of_office': Point.objects.first().id,
-                'location_field_offices': [Point.objects.first().id],
-                'governance_organigram': governance_organigram,
-            }
+        comment = "unit test desc"
+        payload = {
+            'security_desc': comment,
+            'ethic_fraud': True,
+            'ethic_fraud_comment': comment,
+            'ethic_fraud_policy': file_id,
+            'security_high_risk_locations': True,
+            'security_high_risk_policy': True,
+            'population_of_concern': True,
+            'ethic_safeguard': True,
+            'ethic_safeguard_comment': comment,
+            'ethic_safeguard_policy': file_id,
+            'location_of_office': Point.objects.first().id,
+            'location_field_offices': [Point.objects.first().id],
+            'governance_organigram': file_id,
+        }
 
-            response = self.client.patch(url, data=payload, format='multipart')
-
+        response = self.client.patch(url, data=payload, format='multipart')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['ethic_safeguard_comment'], comment)
         self.assertEquals(response.data['security_desc'], comment)
@@ -247,8 +284,11 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         text = 'test'
         payload = response.data
-        del payload['collaborations_partnership_others']
-        del payload['collaboration_evidences']
+        payload['collaboration_evidences'] = [
+            {
+                "evidence_file_id": CommonFile.objects.first().id,
+            }
+        ]
         collaborations_partnership = response.data['collaborations_partnership']
         for collaboration_partnership in collaborations_partnership:
             collaboration_partnership['description'] = text
@@ -298,21 +338,31 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             self.assertEquals(ic['comment'], text)
 
     def test_other_info(self):
+        url = reverse('common:file')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        with open(filename) as doc:
+            payload = {
+                "file_field": doc
+            }
+            response = self.client.post(url, data=payload, format='multipart')
+
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(response.data['id'] is not None)
+        file_id = response.data['id']
+
         partner = Partner.objects.first()
         url = reverse('partners:other-info', kwargs={"pk": partner.id})
 
         response = self.client.get(url, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
 
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
         text = 'test'
-        with open(filename) as org_logo:
-            payload = {
-                'info_to_share': text,
-                'org_logo': org_logo,
-                'confirm_data_updated': True,
-            }
-            response = self.client.patch(url, data=payload, format='multipart')
+        payload = {
+            'info_to_share': text,
+            'org_logo': file_id,
+            'confirm_data_updated': True,
+        }
+        response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['info_to_share'], text)
         self.assertTrue(response.data['org_logo'] is not None)

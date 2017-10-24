@@ -2,8 +2,10 @@ from __future__ import absolute_import
 from rest_framework import status as statuses
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import ConfigSectorSerializer
-from .models import Sector
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import IsAuthenticated
+from .serializers import ConfigSectorSerializer, CommonFileUploadSerializer
+from .models import Sector, CommonFile
 from .countries import COUNTRIES_ALPHA2_CODE_DICT
 from .consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
@@ -11,11 +13,18 @@ from .consts import (
     STAFF_GLOBALLY_CHOICES,
     PARTNER_DONORS_CHOICES,
     WORKING_LAGNUAGES_CHOICES,
-    CONCERN_GROUP_CHOICES,
+    CONCERN_CHOICES,
     AUDIT_TYPES,
     FORMAL_CAPACITY_ASSESSMENT,
     PARTNER_TYPES,
     YEARS_OF_EXP_CHOICES,
+    BUDGET_CHOICES,
+    METHOD_ACC_ADOPTED_CHOICES,
+    FINANCIAL_CONTROL_SYSTEM_CHOICES,
+    FUNCTIONAL_RESPONSIBILITY_CHOICES,
+    POLICY_AREA_CHOICES,
+    APPLICATION_STATUSES,
+    COMPLETED_REASON,
 )
 
 
@@ -39,12 +48,19 @@ class ConfigPPAPIView(APIView):
             "functional-responsibilities": FUNCTIONAL_RESPONSIBILITY_CHOICES,
             "partner-donors": PARTNER_DONORS_CHOICES,
             "working-languages": WORKING_LAGNUAGES_CHOICES,
-            "population-of-concerns-groups": CONCERN_GROUP_CHOICES,
+            "population-of-concern": CONCERN_CHOICES,
             "audit-types": AUDIT_TYPES,
             "formal-capacity-assessment": FORMAL_CAPACITY_ASSESSMENT,
             "partner-type": PARTNER_TYPES,
             "staff-globaly-choices": STAFF_GLOBALLY_CHOICES,
             "years-of-exp-choices": YEARS_OF_EXP_CHOICES,
+            "budget-choices": BUDGET_CHOICES,
+            "method-acc-adopted-choices": METHOD_ACC_ADOPTED_CHOICES,
+            "financial-control-system-choices": FINANCIAL_CONTROL_SYSTEM_CHOICES,
+            "functional-responsibility-choices": FUNCTIONAL_RESPONSIBILITY_CHOICES,
+            "policy-area-choices": POLICY_AREA_CHOICES,
+            "application-statuses": APPLICATION_STATUSES,
+            "completed-reason": COMPLETED_REASON,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 
@@ -57,3 +73,12 @@ class ConfigSectorsAPIView(APIView):
         """
         data = ConfigSectorSerializer(Sector.objects.all(), many=True).data
         return Response(data, status=statuses.HTTP_200_OK)
+
+
+class CommonFileCreateAPIView(CreateAPIView):
+    """
+    Create Common File
+    """
+    permission_classes = (IsAuthenticated, )
+    queryset = CommonFile.objects.all()
+    serializer_class = CommonFileUploadSerializer

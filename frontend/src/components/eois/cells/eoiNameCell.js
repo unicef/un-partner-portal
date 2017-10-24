@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter, browserHistory as history } from 'react-router';
 import Typography from 'material-ui/Typography';
-import TableCell from './tableCell';
+import { TableCell } from 'material-ui/Table';
 
 const onClick = id => () => {
   const loc = history.getCurrentLocation().pathname;

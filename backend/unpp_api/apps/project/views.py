@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
-from rest_framework.generics import ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import (
+    ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
+)
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -18,9 +21,10 @@ from common.permissions import (
     IsAtLeastMemberEditor,
     IsAtLeastAgencyMemberEditor,
     IsEOIReviewerAssessments,
+    IsPartner,
 )
 from partner.models import PartnerMember
-from .models import Assessment, Application, EOI, Pin
+from .models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from .serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
@@ -33,11 +37,14 @@ from .serializers import (
     ReviewersApplicationSerializer,
     ReviewerAssessmentsSerializer,
     CreateUnsolicitedProjectSerializer,
+    ApplicationPartnerOpenSerializer,
+    ApplicationPartnerUnsolicitedDirectSerializer,
+    ApplicationFeedbackSerializer,
 )
-from .filters import BaseProjectFilter, ApplicationsFilter
+from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
 
 
-class BaseProjectAPIView(ListAPIView):
+class BaseProjectAPIView(ListCreateAPIView):
     """
     Base endpoint for Call of Expression of Interest.
     """
@@ -59,13 +66,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
         return self.queryset.filter(display_type=EOI_TYPES.open)
 
     def post(self, request, *args, **kwargs):
-        data = request.data or {}
-        try:
-            data['eoi']['created_by'] = request.user.id
-        except Exception:
-            pass  # serializer.is_valid() will take care of right response
-
-        serializer = CreateProjectSerializer(data=request.data)
+        serializer = CreateProjectSerializer(data=request.data, context={'request': request})
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
@@ -157,12 +158,37 @@ class ApplicationsPartnerAPIView(CreateAPIView):
     serializer_class = ApplicationFullSerializer
 
     def create(self, request, pk, *args, **kwargs):
-        request.data['eoi'] = pk
+        eoi = get_object_or_404(EOI, id=pk)
+        request.data['eoi'] = eoi.id
+        request.data['agency'] = eoi.agency.id
         request.data['submitter'] = request.user.id
         partner_member = PartnerMember.objects.filter(user=request.user).first()
         if partner_member:
             request.data['partner'] = partner_member.partner.id
         return super(ApplicationsPartnerAPIView, self).create(request, *args, **kwargs)
+
+
+class ApplicationPartnerAPIView(RetrieveAPIView):
+    """
+    Create Application for open EOI by partner.
+    """
+    permission_classes = (IsAuthenticated, )
+    queryset = Application.objects.all()
+    serializer_class = ApplicationFullSerializer
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        eoi_id = self.kwargs.get(self.lookup_field)
+        partner_member = PartnerMember.objects.filter(user=self.request.user).first()
+        if partner_member:
+            partner = partner_member.partner
+            obj = get_object_or_404(queryset, **{
+                'partner': partner,
+                'eoi_id': eoi_id,
+            })
+            self.check_object_permissions(self.request, obj)
+            return obj
+        return Application.objects.none()
 
 
 class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
@@ -207,42 +233,63 @@ class ReviewersStatusAPIView(ListAPIView):
     lookup_url_kwarg = 'application_id'
 
     def get_queryset(self, *args, **kwargs):
-        application_id = self.kwargs.get('application_id')
+        application_id = self.kwargs.get(self.lookup_url_kwarg)
         app = get_object_or_404(Application.objects.select_related('eoi'),
                                 pk=application_id)
         return User.objects.filter(pk__in=app.eoi.reviewers.all().values_list("pk"))
 
 
 class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
+    """
+    Only reviewers, EOI creator & focal points are allowed to create/modify assessments.
+    """
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor, IsEOIReviewerAssessments)
     queryset = Assessment.objects.all()
     serializer_class = ReviewerAssessmentsSerializer
-    lookup_field = 'pk'
+    lookup_field = 'reviewer_id'
     lookup_url_kwarg = 'application_id'
 
-    def set_bunch_of_required_data(self, request, application_id):
-        app = get_object_or_404(Application.objects.select_related('eoi', 'eoi__assessments_criteria'),
-                                pk=application_id)
-        request.data['criteria'] = app.eoi.assessments_criteria.id
-        request.data['reviewer'] = request.user.id
+    def set_bunch_of_required_data(self, request):
+        reviewer_id = request.parser_context.get('kwargs', {}).get(self.lookup_field)
+        application_id = request.parser_context.get('kwargs', {}).get(self.lookup_url_kwarg)
+        request.data['reviewer'] = reviewer_id
         request.data['application'] = application_id
 
+    def check_complex_permissions(self, request):
+        # only reviewer can create assessment
+        application_id = request.parser_context.get('kwargs', {}).get('application_id')
+        app = Application.objects.select_related('eoi').get(id=application_id)
+        eoi = app.eoi
+        if eoi.reviewers.filter(id=request.user.id).exists():
+            return
+        raise PermissionDenied
+
     def create(self, request, application_id, *args, **kwargs):
-        self.set_bunch_of_required_data(request, application_id)
+        self.set_bunch_of_required_data(request)
+        request.data['created_by'] = request.user.id
         return super(ReviewerAssessmentsAPIView, self).create(request, application_id, *args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-        application_id = self.kwargs.get('application_id')
+        application_id = self.kwargs.get(self.lookup_url_kwarg)
         return Assessment.objects.filter(application_id=application_id)
 
     def get_object(self):
+        """
+            we have defined:
+                unique_together = (("reviewer", "application"), )
+            so get will return only one item by given reviewer & application
+        """
         queryset = self.filter_queryset(self.get_queryset())
-        obj = get_object_or_404(queryset, **{self.lookup_field: self.kwargs.get(self.lookup_field)})
+        obj = get_object_or_404(queryset, **{
+            self.lookup_field: self.kwargs.get(self.lookup_field),
+            self.lookup_url_kwarg: self.kwargs.get(self.lookup_url_kwarg),
+        })
         self.check_object_permissions(self.request, obj)
         return obj
 
     def update(self, request, application_id, *args, **kwargs):
-        self.set_bunch_of_required_data(request, application_id)
+        self.set_bunch_of_required_data(request)
+        request.data['modified_by'] = request.user.id
         return super(ReviewerAssessmentsAPIView, self).update(request, application_id, *args, **kwargs)
 
 
@@ -251,3 +298,38 @@ class UnsolicitedProjectAPIView(CreateAPIView):
     permission_classes = (IsAuthenticated, )
     queryset = Application.objects.all()
     serializer_class = CreateUnsolicitedProjectSerializer
+
+
+class AppsPartnerOpenAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated, IsPartner)
+    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.open)
+    serializer_class = ApplicationPartnerOpenSerializer
+    pagination_class = SmallPagination
+    filter_backends = (DjangoFilterBackend, )
+    filter_class = ApplicationsFilter
+
+    def get_queryset(self, *args, **kwargs):
+        return self.queryset.filter(partner_id=self.request.active_partner)
+
+
+class AppsPartnerUnsolicitedAPIView(AppsPartnerOpenAPIView):
+    queryset = Application.objects.filter(is_unsolicited=True)
+    serializer_class = ApplicationPartnerUnsolicitedDirectSerializer
+    filter_class = ApplicationsUnsolicitedFilter
+
+
+class AppsPartnerDirectAPIView(AppsPartnerUnsolicitedAPIView):
+    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct)
+
+
+class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
+    serializer_class = ApplicationFeedbackSerializer
+    pagination_class = SmallPagination
+    permission_classes = (IsAuthenticated,)  # TODO - tighten up permisions
+
+    def get_queryset(self):
+        return ApplicationFeedback.objects.filter(application=self.kwargs['pk'])
+
+    def perform_create(self, serializer):
+        serializer.save(provider=self.request.user,
+                        application_id=self.kwargs['pk'])

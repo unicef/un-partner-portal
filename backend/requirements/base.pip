@@ -15,12 +15,16 @@ django-common-helpers==0.9.1
 # REST framework
 djangorestframework==3.6.3
 django-filter==1.0.4
+django-rest-auth==0.9.2
 
 # Other Python packages
 psycopg2==2.7.1
 django-model-utils==2.6.1  # latest 3.0.0 but need to check changes
 django-mptt==0.8.6
 python-json-logger==0.1.7
+xmltodict==0.11.0
+requests==2.18.4
+python-dateutil==2.6.1
 
 # Testing
 astroid==1.5.2

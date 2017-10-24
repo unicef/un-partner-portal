@@ -83,11 +83,14 @@ const partnerDetailsStructure = {
     },
     populations_of_concern: {
       population_of_concern: null,
-      concern_groups: null,
+      concern_groupas: null,
     },
     country_presence: {
       country_presence: null,
       staff_globally: null,
+      staff_in_country: null,
+      engagement_operate_desc: null,
+      location_field_offices: null,
     },
     security: {
       security_high_risk_locations: null,
@@ -96,7 +99,9 @@ const partnerDetailsStructure = {
     },
   },
   fund: {
-    budgets: null,
+    budgets: {
+      budgets: null,
+    },
     major_donors: {
       source_core_funding: null,
       main_donors_list: null,
@@ -111,13 +116,19 @@ const partnerDetailsStructure = {
       partnership_collaborate_institution_desc: null,
     },
     accreditation: {
-      collaboration_evidences: null,
+      accreditations: null,
     },
-    references: {
-      collaboration_evidences: null,
+    reference: {
+      references: null,
     },
+    collaboration_evidences: null,
   },
   project_impl: {
+    banking_information: {
+      have_bank_account: null,
+      have_separate_bank_account: null,
+      explain: null,
+    },
     program_management: {
       have_management_approach: null,
       management_approach_desc: null,
@@ -132,7 +143,7 @@ const partnerDetailsStructure = {
       have_system_track: null,
       financial_control_system_desc: null,
     },
-    internal_controls: {
+    internal_control: {
       internal_controls: null,
       experienced_staff: null,
       experienced_staff_desc: null,
@@ -140,9 +151,10 @@ const partnerDetailsStructure = {
     },
     audit: {
       regular_audited: null,
+      regular_audited_comment: null,
       org_audits: null,
       most_recent_audit_report: null,
-      link_report: null,
+      audit_link_report: null,
       major_accountability_issues_highlighted: null,
       comment: null,
       capacity_assessment: null,
@@ -160,7 +172,9 @@ const partnerDetailsStructure = {
   other_info: {
     info: {
       info_to_share: null,
-      other_documents: null,
+      other_doc_1: null,
+      other_doc_2: null,
+      other_doc_3: null,
       org_logo: null,
       confirm_data_updated: null,
     },

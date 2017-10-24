@@ -1,7 +1,8 @@
 import R from 'ramda';
-import { postOpenCfei, postDirectCfei } from '../helpers/api/api';
+import { postOpenCfei, postDirectCfei, patchCfei } from '../helpers/api/api';
 import { mergeListsFromObjectArray } from './normalizationHelpers';
 import { loadCfei } from './cfei';
+import { loadCfeiDetailSuccess } from './cfeiDetailsStatus';
 import { PROJECT_TYPES } from '../helpers/constants';
 
 export const NEW_CFEI_SUBMITTING = 'NEW_CFEI_SUBMITTING';
@@ -16,10 +17,8 @@ const messages = {
 };
 
 const mockData = {
-  eoi: {
-    agency: 1,
-    agency_office: 1,
-  },
+  agency: 1,
+  agency_office: 1,
 };
 
 const initialState = {
@@ -36,35 +35,29 @@ export const newCfeiFailure = () => ({ type: NEW_CFEI_FAILURE });
 
 const prepareBody = (body) => {
   let newBody = R.clone(body);
-  const flatSectors = mergeListsFromObjectArray(newBody.eoi.specializations, 'areas');
-  newBody.eoi = R.assoc('specializations', flatSectors, body.eoi);
-  newBody = R.assocPath(['eoi', 'country_code'], body.eoi.countries[0].country, newBody);
-  newBody = R.assocPath(
-    ['eoi', 'locations'],
+  const flatSectors = mergeListsFromObjectArray(newBody.specializations, 'areas');
+  newBody = R.assoc('specializations', flatSectors, body);
+  newBody = R.assoc('country_code', body.countries.map(country => country.country), newBody);
+  newBody = R.assoc('locations',
     R.reduce(
       R.mergeDeepWith(R.concat),
       0,
-      body.eoi.countries,
+      body.countries,
     ).locations, newBody);
   return newBody;
 };
 
-const prepareCriteria = criteria =>
-  R.map(criterium => R.assoc('scale', 'Std', criterium), criteria);
-
-
-export const addOpenCfei = body => (dispatch) => {
+export const addOpenCfei = body => (dispatch, getState) => {
   dispatch(newCfeiSubmitting());
-  let preparedBody = prepareBody(body);
-  preparedBody = R.assoc(
-    'assessment_criterias',
-    prepareCriteria(preparedBody.assessment_criterias),
-    preparedBody);
-  return postOpenCfei(R.mergeWith(R.merge, preparedBody, mockData))
-    .then(() => {
+  const { agencyId, officeId } = getState().session;
+  const preparedBody = prepareBody(body);
+  return postOpenCfei(R.mergeWith(R.merge, preparedBody,
+    { agency: agencyId, agency_office: officeId }))
+    .then((cfei) => {
       dispatch(newCfeiSubmitted());
       dispatch(newCfeiProcessing());
       dispatch(loadCfei(PROJECT_TYPES.OPEN));
+      return cfei;
     })
     .catch((error) => {
       dispatch(newCfeiSubmitted());
@@ -75,7 +68,9 @@ export const addOpenCfei = body => (dispatch) => {
 export const addDirectCfei = body => (dispatch) => {
   dispatch(newCfeiSubmitting());
   const preparedBody = prepareBody(body);
-  return postDirectCfei(R.mergeWith(R.merge, preparedBody, mockData))
+  const { applications, ...other } = preparedBody;
+  const finalBody = { applications, eoi: { ...other } };
+  return postDirectCfei(R.mergeWith(R.merge, finalBody, { eoi: mockData }))
     .then(() => {
       dispatch(newCfeiSubmitted());
       dispatch(loadCfei(PROJECT_TYPES.DIRECT));
@@ -86,6 +81,20 @@ export const addDirectCfei = body => (dispatch) => {
     });
 };
 
+export const updateCfei = (body, id) => (dispatch) => {
+  dispatch(newCfeiSubmitting());
+  return patchCfei(body, id)
+    .then((cfei) => {
+      dispatch(newCfeiSubmitted());
+      dispatch(loadCfeiDetailSuccess(cfei));
+    })
+    .catch((error) => {
+      dispatch(newCfeiSubmitted());
+      dispatch(newCfeiFailure(error));
+    });
+};
+
+
 const startSubmitting = state => R.assoc('error', {}, R.assoc('openCfeiSubmitting', true, state));
 const stopSubmitting = state => R.assoc('openCfeiSubmitting', false, state);
 const startProcessing = state => R.assoc('openCfeiProcessing', true, state);
@@ -94,7 +103,7 @@ const saveErrorMsg = (state, action) => R.assoc(
   'error',
   {
     message: messages.postOpenFailure,
-    error: action.error,
+    error: action.error && action.error.message,
   },
   state);
 

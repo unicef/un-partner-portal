@@ -1,36 +1,80 @@
 import React from 'react';
-import { FormSection } from 'redux-form';
+import { formValueSelector, FormSection } from 'redux-form';
+import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
 import RadioForm from '../../../forms/radioForm';
 import FileForm from '../../../forms/fileForm';
 import DatePickerForm from '../../../forms/datePickerForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
+import GridColumn from '../../../common/grid/gridColumn';
 
-const BOOL_VAL = [
-  {
-    value: 'yes',
-    label: 'Yes',
-  },
-  {
-    value: 'no',
-    label: 'No',
-  },
-];
-
+const messages = {
+  keyResults: 'Briefly explain the key results achieved by your organization over the last year',
+  publishAnnualReports: 'Does the organization publish annual reports?',
+  dateOfReport: 'Date of most recent annual report',
+  mostRecentReport: 'Copy of your most rescent audit report',
+  link: 'Or link to the report form the organization\'s website',
+};
 
 const PartnerProfileProjectImplementationReporting = (props) => {
-  const { readOnly } = props;
+  const { readOnly, publishReports } = props;
 
   return (
     <FormSection name="report">
-      <Grid item>
-        <Grid container direction="column" spacing={16}>
-          <Grid item>
+      <GridColumn>
+        <TextFieldForm
+          label={messages.keyResults}
+          fieldName="key_result"
+          textFieldProps={{
+            inputProps: {
+              maxLength: '200',
+            },
+          }}
+          optional
+          warn
+          readOnly={readOnly}
+        />
+        <Grid container direction="row">
+          <Grid item sm={6} xs={12}>
+            <RadioForm
+              fieldName="publish_annual_reports"
+              label={messages.publishAnnualReports}
+              values={BOOL_VAL}
+              optional
+              warn
+              readOnly={readOnly}
+            />
+          </Grid>
+          {visibleIfYes(publishReports)
+            ? <Grid item sm={6} xs={12}>
+              <DatePickerForm
+                label={messages.dateOfReport}
+                fieldName="last_report"
+                optional
+                warn
+                readOnly={readOnly}
+              />
+            </Grid>
+            : <Grid item sm={6} xs={12} />}
+        </Grid>
+        <Grid container direction="row">
+          <Grid item sm={6} xs={12}>
+            <FileForm
+              formName="partnerProfile"
+              sectionName="project_impl.report"
+              label={messages.mostRecentReport}
+              fieldName="report"
+              optional
+              warn
+              readOnly={readOnly}
+            />
+          </Grid>
+          <Grid item sm={6} xs={12}>
             <TextFieldForm
-              label="Briefly explain the key results achieved by your organization over the last year"
-              placeholder="200 character maximum"
-              fieldName="key_result"
+              label={messages.link}
+              fieldName="link_report"
               textFieldProps={{
                 inputProps: {
                   maxLength: '200',
@@ -41,66 +85,20 @@ const PartnerProfileProjectImplementationReporting = (props) => {
               readOnly={readOnly}
             />
           </Grid>
-          <Grid item>
-            <Grid container direction="row">
-              <Grid item sm={6} xs={12}>
-                <RadioForm
-                  fieldName="publish_annual_reports"
-                  label="Does the organization publish annual reports?"
-                  values={BOOL_VAL}
-                  optional
-                  warn
-                  readOnly={readOnly}
-                />
-              </Grid>
-              <Grid item sm={6} xs={12}>
-                <DatePickerForm
-                  label="Date of most recent annual report"
-                  fieldName="last_report"
-                  placeholder="Provide Date"
-                  optional
-                  warn
-                  readOnly={readOnly}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <Grid container direction="row">
-              <Grid item sm={6} xs={12}>
-                <FileForm
-                  label="Copy of your most rescent audit report"
-                  placeholder="UPLOAD FILE"
-                  fieldName="report"
-                  optional
-                  warn
-                />
-              </Grid>
-              <Grid item sm={6} xs={12}>
-                <TextFieldForm
-                  label="Or link to the report form the organization's website"
-                  placeholder="200 character maximum"
-                  fieldName="link_report"
-                  textFieldProps={{
-                    inputProps: {
-                      maxLength: '200',
-                    },
-                  }}
-                  optional
-                  warn
-                  readOnly={readOnly}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
         </Grid>
-      </Grid>
+      </GridColumn>
     </FormSection>
   );
 };
 
 PartnerProfileProjectImplementationReporting.propTypes = {
   readOnly: PropTypes.bool,
+  publishReports: PropTypes.bool,
 };
 
-export default PartnerProfileProjectImplementationReporting;
+const selector = formValueSelector('partnerProfile');
+export default connect(
+  state => ({
+    publishReports: selector(state, 'project_impl.report.publish_annual_reports'),
+  }),
+)(PartnerProfileProjectImplementationReporting);
