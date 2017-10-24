@@ -1,13 +1,11 @@
-import R from 'ramda';
 import React, { Component } from 'react';
-import Typography from 'material-ui/Typography';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 import CustomTab from '../../common/customTab';
 import HeaderNavigation from '../../common/headerNavigation';
 import { loadPartnerDetails } from '../../../reducers/partnerProfileDetails';
-import { loadPartnerProfiles } from '../../../reducers/countryProfiles';
+import Loader from '../../../components/common/loader';
 
 const messages = {
   edit: 'Edit Profile',
@@ -25,7 +23,9 @@ class PartnerProfileEdit extends Component {
   }
 
   componentWillMount() {
-    this.props.loadPartnerDetails();
+    if (!this.props.partnerProfile.identification) {
+      this.props.loadPartnerDetails();
+    }
   }
 
   updatePath() {
@@ -41,7 +41,9 @@ class PartnerProfileEdit extends Component {
   partnerProfileTabs() {
     const { tabs, incompleteTabs } = this.props;
 
-    return tabs.map((tab, index) => <CustomTab label={tab.label} key={index} warn={incompleteTabs.includes(tab.name)} />);
+    return tabs.map((tab, index) =>
+      <CustomTab label={tab.label} key={index} warn={incompleteTabs.includes(tab.name)} />,
+    );
   }
 
   handleChange(event, index) {
@@ -52,20 +54,24 @@ class PartnerProfileEdit extends Component {
   }
 
   render() {
-    const { countryName, children, params: { type, id },
+    const { countryName, partnerLoading, children, params: { type, id },
     } = this.props;
+
     const index = this.updatePath();
     return (
-      <HeaderNavigation
-        index={index}
-        subTitle={messages.edit}
-        title={countryName}
-        customTabs={() => this.partnerProfileTabs()}
-        backButton
-        handleChange={this.handleChange}
-      >
-        {(index !== -1) && children}
-      </HeaderNavigation>
+      <div>
+        <HeaderNavigation
+          index={index}
+          subTitle={messages.edit}
+          title={countryName}
+          customTabs={() => this.partnerProfileTabs()}
+          backButton
+          handleChange={this.handleChange}
+        >
+          {(index !== -1) && children}
+        </HeaderNavigation>
+        <Loader loading={partnerLoading} fullscreen />
+      </div>
     );
   }
 }
@@ -78,22 +84,18 @@ PartnerProfileEdit.propTypes = {
   countryName: PropTypes.string,
   partnerId: PropTypes.string,
   loadPartnerDetails: PropTypes.func.isRequired,
+  partnerProfile: PropTypes.object,
+  partnerLoading: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => {
-  let countryProfile = null;
-  if (state.countryProfiles.h) {
-    countryProfile = R.find(country => country.id === Number(ownProps.params.id),
-      state.countryProfiles.hq.country_profiles);
-  }
-
-  return {
-    countryName: countryProfile ? state.countries[countryProfile.country_code] : messages.hqProfile,
-    tabs: state.partnerProfileDetailsNav.tabs,
-    partnerId: ownProps.params.id,
-    incompleteTabs: state.partnerProfileEdit.incompleteTabs,
-  };
-};
+const mapStateToProps = (state, ownProps) => ({
+  partnerProfile: state.partnerProfileDetails.partnerProfileDetails,
+  partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
+  countryName: state.session.partnerCountry ? state.countries[state.session.partnerCountry] : messages.hqProfile,
+  tabs: state.partnerProfileDetailsNav.tabs,
+  partnerId: ownProps.params.id,
+  incompleteTabs: state.partnerProfileEdit.incompleteTabs,
+});
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onItemClick: (id, path) => {

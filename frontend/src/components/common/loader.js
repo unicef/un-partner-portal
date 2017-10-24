@@ -13,7 +13,7 @@ const styleSheet = theme => ({
     height: '100%',
   },
   Fullscreen: {
-    position: 'absolute',
+    position: 'fixed',
     backgroundColor: theme.palette.common.lightBlack,
     top: 0,
     left: 0,
