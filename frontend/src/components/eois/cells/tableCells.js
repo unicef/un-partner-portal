@@ -33,7 +33,7 @@ export default type => ({ row, column }) => {
   } else if (column.name === 'status' && type === 'open') {
     return (
       <TableCell >
-        <EoiStatusCell id={row.status} />
+        <EoiStatusCell status={row.status} />
       </TableCell>);
   } else if (column.name === 'status' && type === 'direct') {
     return (
@@ -41,13 +41,13 @@ export default type => ({ row, column }) => {
         <EoiPartnersStatusCell
           status={row.status}
           id={row.id}
-          partners={row.selected_partners}
+          partners={row.partner_offer_status}
         />
       </TableCell>);
   } else if (column.name === 'selected_partners') {
     return (
       <TableCell >
-        <EoiPartnersCell partners={row.selected_partners || []} />
+        <EoiPartnersCell partners={row.invited_partners || []} />
       </TableCell>);
   }
   return undefined;

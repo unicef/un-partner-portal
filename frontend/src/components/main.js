@@ -7,6 +7,7 @@ import { loadAgencyMembers } from '../reducers/agencyMembers';
 import { loadCountries } from '../reducers/countries';
 import { loadPartnerConfig } from '../reducers/partnerProfileConfig';
 import { loadSectors } from '../reducers/sectors';
+import { loadPartnerNames } from '../reducers/partnerNames';
 import getTheme, { muiOldTheme } from '../styles/muiTheme';
 
 import { ROLES } from '../helpers/constants';
@@ -14,11 +15,20 @@ import { ROLES } from '../helpers/constants';
 
 class Main extends Component {
   componentWillMount() {
-    const { session, loadCountries, loadPartnerConfig, loadSectors, loadAgencyMembers} = this.props;
+    const { session,
+      loadCountries,
+      loadPartnerConfig,
+      loadSectors,
+      loadAgencyMembers,
+      getPartnerNames,
+    } = this.props;
     loadCountries();
     loadPartnerConfig();
     loadSectors();
-    if (session.role === ROLES.AGENCY) loadAgencyMembers(session.agencyId);
+    if (session.role === ROLES.AGENCY) {
+      loadAgencyMembers(session.agencyId);
+      getPartnerNames();
+    }
   }
 
   render() {
@@ -39,7 +49,7 @@ Main.propTypes = {
   loadAgencyMembers: PropTypes.func,
   children: PropTypes.node,
   session: PropTypes.object,
-
+  getPartnerNames: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -52,6 +62,7 @@ const mapDispatchToProps = dispatch => ({
   loadSectors: () => dispatch(loadSectors()),
   loadPartnerConfig: () => dispatch(loadPartnerConfig()),
   loadAgencyMembers: agencyId => dispatch(loadAgencyMembers(agencyId)),
+  getPartnerNames: () => dispatch(loadPartnerNames()),
 });
 
 

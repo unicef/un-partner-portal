@@ -8,14 +8,17 @@ export const styleSheet = () => ({
     display: 'flex',
     flexDirection: 'row',
   },
+  column: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
 });
 
 const RadioGroupRow = (props) => {
-  const { classes, selectedValue, onChange, children, ...other } = props;
-
+  const { classes, selectedValue, onChange, children, column, ...other } = props;
   return (<RadioGroup
     {...other}
-    className={classes.row}
+    className={column ? classes.column : classes.row}
     value={selectedValue}
     onChange={(event, value) => onChange(event, value)}
   >
@@ -25,12 +28,10 @@ const RadioGroupRow = (props) => {
 
 RadioGroupRow.propTypes = {
   classes: PropTypes.object,
-
   selectedValue: PropTypes.string,
-
   onChange: PropTypes.func,
-
   children: PropTypes.element,
+  column: PropTypes.array,
 };
 
 export default withStyles(styleSheet, { name: 'RadioGroupRow' })(RadioGroupRow);

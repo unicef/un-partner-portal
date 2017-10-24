@@ -37,10 +37,16 @@ from .models import (
 
 class PartnerSerializer(serializers.ModelSerializer):
 
+    is_hq = serializers.BooleanField(read_only=True)
+    logo = CommonFileSerializer(source='other_info.org_logo',
+                                read_only=True)
+
     class Meta:
         model = Partner
         fields = (
             'id',
+            'is_hq',
+            'logo',
             'legal_name',
             'country_code',
         )
@@ -294,7 +300,6 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "collaborations_partnership",
             "collaboration_evidences",
             "other_info",
-            "other_documents",
             "internal_controls",
             "area_policies",
             "audit",

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import transaction
 from rest_framework import serializers
 from account.models import User
+from account.serializers import AgencyUserSerializer
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES, EOI_TYPES
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
@@ -11,7 +12,7 @@ from common.models import Point, AdminLevel1
 from partner.serializers import PartnerSerializer
 
 from partner.models import Partner, PartnerMember
-from .models import EOI, Application, Assessment
+from .models import EOI, Application, Assessment, ApplicationFeedback
 
 
 class BaseProjectSerializer(serializers.ModelSerializer):
@@ -232,7 +233,6 @@ class CreateProjectSerializer(CreateEOISerializer):
 class ProjectUpdateSerializer(serializers.ModelSerializer):
 
     specializations = SimpleSpecializationSerializer(many=True)
-    invited_partners = PartnerSerializer(many=True)
     locations = PointSerializer(many=True)
 
     class Meta:
@@ -273,12 +273,12 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             del validated_data['invited_partners']
             # user can add and remove on update - here we remove partners that are not in list
             for partner in instance.invited_partners.all():
-                if partner.id not in map(lambda x: x['id'], self.initial_data.get('invited_partners', [])):
+                if partner.id not in self.initial_data.get('invited_partners', []):
                     instance.invited_partners.remove(partner)
 
         instance = super(ProjectUpdateSerializer, self).update(instance, validated_data)
         for invited_partner in self.initial_data.get('invited_partners', []):
-            instance.invited_partners.add(Partner.objects.get(id=invited_partner['id']))
+            instance.invited_partners.add(Partner.objects.get(id=invited_partner))
         instance.save()
 
         return instance
@@ -422,3 +422,11 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             # has been updated to direct selected
             return obj.eoi.specializations.all().values_list('id', flat=True)
         return obj.proposal_of_eoi_details.get('specializations')
+
+
+class ApplicationFeedbackSerializer(serializers.ModelSerializer):
+    provider = AgencyUserSerializer(read_only=True)
+
+    class Meta:
+        model = ApplicationFeedback
+        fields = ('id', 'feedback', 'provider', 'created')

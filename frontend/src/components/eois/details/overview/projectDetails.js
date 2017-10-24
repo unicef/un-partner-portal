@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import SectorForm from '../../../forms/fields/projectFields/sectorField/sectorFieldArray';
 import GridColumn from '../../../common/grid/gridColumn';
@@ -17,6 +18,7 @@ import {
   NotifyDate,
 } from '../../../forms/fields/projectFields/commonFields';
 import SpreadContent from '../../../common/spreadContent';
+import { PROJECT_TYPES } from '../../../../helpers/constants';
 
 const messages = {
   title: 'Project Details',
@@ -28,7 +30,7 @@ const messages = {
 
 };
 
-const Fields = () => (
+const Fields = ({ type }) => (
   <PaddedContent>
     <GridColumn >
       <TitleField readOnly />
@@ -50,17 +52,22 @@ const Fields = () => (
         <StartDate readOnly />
         <EndDate readOnly />
       </GridRow>
-      <GridRow columns={2} >
+      {type === PROJECT_TYPES.OPEN && <GridRow columns={2} >
         <DeadlineDate readOnly />
         <NotifyDate readOnly />
-      </GridRow>
+      </GridRow>}
     </GridColumn>
   </PaddedContent>
 );
 
+Fields.propTypes = {
+  type: PropTypes.string,
+};
+
+
 const title = () => (
   <SpreadContent>
-    <Typography type="subheading" >{messages.title}</Typography>
+    <Typography type="headline" >{messages.title}</Typography>
     <TextField
       fieldName="id"
       label={messages.labels.id}
@@ -69,12 +76,15 @@ const title = () => (
   </SpreadContent>
 );
 
-const ProjectDetails = () => (
+const ProjectDetails = ({ type }) => (
   <HeaderList
     header={title}
-    rows={[<Fields />]}
+    rows={[<Fields type={type} />]}
   />
-
 );
+
+ProjectDetails.propTypes = {
+  type: PropTypes.string,
+};
 
 export default ProjectDetails;

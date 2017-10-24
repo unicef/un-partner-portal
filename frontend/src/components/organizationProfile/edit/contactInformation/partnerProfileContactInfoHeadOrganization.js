@@ -37,6 +37,7 @@ const PartnerProfileContactInfoHeadOrganization = (props) => {
         <TextFieldForm
           label={messages.jobTitle}
           fieldName="job_title"
+          optional
           readOnly={readOnly}
         />
       </Grid>
@@ -44,6 +45,7 @@ const PartnerProfileContactInfoHeadOrganization = (props) => {
         <TextFieldForm
           label={messages.telephone}
           fieldName="telephone"
+          optional
           readOnly={readOnly}
         />
       </Grid>
@@ -53,6 +55,7 @@ const PartnerProfileContactInfoHeadOrganization = (props) => {
         <TextFieldForm
           label={messages.mobile}
           fieldName="mobile"
+          optional
           readOnly={readOnly}
         />
       </Grid>
@@ -60,6 +63,7 @@ const PartnerProfileContactInfoHeadOrganization = (props) => {
         <TextFieldForm
           label={messages.fax}
           fieldName="fax"
+          optional
           readOnly={readOnly}
         />
       </Grid>

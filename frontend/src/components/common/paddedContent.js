@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import ClassName from 'classnames';
 
 const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 2;
@@ -17,9 +18,15 @@ const styleSheet = (theme) => {
 };
 
 const PaddedContent = (props) => {
-  const { classes, children, big } = props;
+  const { classes, children, big, className: classNameProp } = props;
+  const className = ClassName(
+    { [classes.containerBig]: big,
+      [classes.container]: !big,
+    },
+    classNameProp,
+  );
   return (
-    <div className={big ? classes.containerBig : classes.container} >
+    <div className={className} >
       {children}
     </div>
   );
@@ -29,6 +36,7 @@ PaddedContent.propTypes = {
   classes: PropTypes.object.isRequired,
   children: PropTypes.node,
   big: PropTypes.bool,
+  className: PropTypes.object,
 };
 
 export default withStyles(styleSheet, { name: 'PaddedContent' })(PaddedContent);

@@ -10,6 +10,7 @@ const messages = {
   title: 'Edit Expression of Interests',
   header: {
     open: { title: 'This is an open selection' },
+    direct: { title: 'This is an direct CFEI' },
   },
   save: 'save',
 };
@@ -44,7 +45,7 @@ class EditCfeiModal extends Component {
               label: messages.save,
             },
           }}
-          content={<EditCfeiForm id={id} onSubmit={this.onFormSubmit} />}
+          content={<EditCfeiForm id={id} onSubmit={this.onFormSubmit} type={type} />}
         />
       </div >
     );
@@ -57,6 +58,7 @@ EditCfeiModal.propTypes = {
   submit: PropTypes.func,
   updateCfei: PropTypes.func,
   handleDialogClose: PropTypes.func,
+  type: PropTypes.string,
 };
 
 const mapStateToProps = state => ({

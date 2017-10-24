@@ -94,7 +94,6 @@ class CollapsableItem extends Component {
               </div>
               : null
             }
-
             <IconButton onClick={handleEditMode}>
               <ModeEdit className={classes.editIcon} />
             </IconButton>
