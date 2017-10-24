@@ -75,6 +75,7 @@ class PartnerProfileHeader extends Component {
 
   componentWillMount() {
     this.props.loadPartnerDetails();
+    this.props.loadPartnerVerifications();
   }
 
   partnerTitle() {
@@ -141,6 +142,7 @@ PartnerProfileHeader.propTypes = {
   partner: PropTypes.object.isRequired,
   partnerId: PropTypes.string.isRequired,
   loadPartnerDetails: PropTypes.func,
+  loadPartnerVerifications: PropTypes.func,
 };
 
 PartnerTitle.propTypes = {
@@ -161,7 +163,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     history.push(path);
   },
   loadPartnerDetails: () => dispatch(loadPartnerDetails(ownProps.params.id)),
-  loadPartnerVerifications: () => dispatch()
+  loadPartnerVerifications: () => dispatch(loadPartnerVerifications(ownProps.params.id)),
 });
 
 const connectedPartnerProfile = connect(mapStateToProps, mapDispatchToProps)(PartnerProfileHeader);

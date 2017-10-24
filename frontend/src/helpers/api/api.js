@@ -212,6 +212,14 @@ export function createCountryProfile(id, body) {
   return authorizedPost({ uri: `/partners/${id}/country-profile/`, body });
 }
 
+export function getPartnerVerifications(id) {
+  return authorizedGet({ uri: `/partners/${id}/verifications` });
+}
+
+export function postPartnerVerifications(id, body) {
+  return authorizedPost({ uri: `/partners/${id}/verifications/`, body });
+}
+
 // Agencies
 export function getAgencyMembers(id, params = { page_size: 100 }) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params },

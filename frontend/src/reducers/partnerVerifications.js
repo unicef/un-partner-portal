@@ -56,7 +56,7 @@ export const selectAssessment = (state, reviewId) =>
 export const isAssesmentAdded = (state, assessmentId) =>
   R.has(assessmentId, state.data.assessments);
 
-export const updateApplicationReview = (partnerId, body) =>
+export const updatePartnerVerifications = (partnerId, body) =>
   dispatch => postPartnerVerifications(partnerId, body)
     .then((newVerification) => {
       dispatch(addSingleVerification(partnerId, newVerification));
