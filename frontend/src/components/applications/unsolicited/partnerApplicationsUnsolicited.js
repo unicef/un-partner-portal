@@ -13,6 +13,8 @@ import { isQueryChanged } from '../../../helpers/apiHelper';
 import { formatDateForPrint } from '../../../helpers/dates';
 import WrappedCell from '../../common/cell/wrappedCell';
 import SectorsCell from '../sectorsCell';
+import { PROJECT_TYPES } from '../../../helpers/constants';
+
 /* eslint-disable react/prop-types */
 const applicationCell = ({ row, column }) => {
   if (column.name === 'is_direct') {
@@ -23,7 +25,9 @@ const applicationCell = ({ row, column }) => {
     return <WrappedCell content={formatDateForPrint(row.submission_date)} />;
   } else if (column.name === 'id') {
     return (<ConceptNoteIDCell
+      cfeiId={row.eoi_id}
       id={row.id}
+      type={PROJECT_TYPES.UNSOLICITED}
     />);
   } else if (column.name === 'specializations') {
     return <SectorsCell specializations={row.specializations} />;

@@ -40,6 +40,12 @@ const initialState = [
     roles: [PARTNER, AGENCY],
     types: [PROJECT_TYPES.OPEN],
   },
+  {
+    path: DETAILS_ITEMS.RESPONSE,
+    label: 'response',
+    roles: [PARTNER],
+    types: [PROJECT_TYPES.DIRECT],
+  },
 ];
 
 export const selectItemsByType = (state, type) =>
