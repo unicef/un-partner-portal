@@ -11,7 +11,9 @@ import HeaderNavigation from '../../../components/common/headerNavigation';
 import {
   loadPartnerDetails,
 } from '../../../reducers/partnerProfileDetails';
-
+import {
+  loadPartnerVerifications,
+} from '../../../reducers/partnerVerifications';
 
 const styleSheet = (theme) => {
   const paddingIcon = theme.spacing.unit;
@@ -159,6 +161,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     history.push(path);
   },
   loadPartnerDetails: () => dispatch(loadPartnerDetails(ownProps.params.id)),
+  loadPartnerVerifications: () => dispatch()
 });
 
 const connectedPartnerProfile = connect(mapStateToProps, mapDispatchToProps)(PartnerProfileHeader);

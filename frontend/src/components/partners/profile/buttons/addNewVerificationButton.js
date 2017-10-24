@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Cancel from 'material-ui-icons/Cancel';
+import Add from 'material-ui-icons/Add';
 import IconWithTextButton from '../../../common/iconWithTextButton';
 
 const messages = {
@@ -15,7 +15,7 @@ const AddNewVerificationButton = (props) => {
   const { id } = props;
   return (
     <IconWithTextButton
-      icon={<Cancel />}
+      icon={<Add />}
       text={messages.text}
       onClick={() => addNewVerification(id)}
     />
