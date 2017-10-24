@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.db import transaction
 from rest_framework import serializers
-
-from agency.serializers import OtherAgencySerializer
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
@@ -188,6 +188,10 @@ class PartnerBudgetSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerBudget
         fields = "__all__"
+        read_only_fields = (
+            "year",
+            "partner"
+        )
 
 
 class PartnerFundingSerializer(serializers.ModelSerializer):

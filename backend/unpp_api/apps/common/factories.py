@@ -248,14 +248,11 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def budgets(self, create, extracted, **kwargs):
-        # we want to have last 3 year (with current)
+        # we want to have last 3 years (with current)
+        _budgets = []
         for year in [date.today().year, date.today().year-1, date.today().year-2]:
-            budget, created = PartnerBudget.objects.get_or_create(
-                partner=self,
-                year=year,
-                budget=get_budget_choice()
-            )
-            self.budgets.add(budget)
+            _budgets.append(PartnerBudget(partner=self, year=year, budget=get_budget_choice()))
+        PartnerBudget.objects.bulk_create(_budgets)
 
     @factory.post_generation
     def collaborations_partnership(self, create, extracted, **kwargs):
@@ -266,7 +263,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             description="description"
         )
         self.collaborations_partnership.add(partnership)
-
 
     @factory.post_generation
     def collaboration_evidences(self, create, extracted, **kwargs):

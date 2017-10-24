@@ -257,23 +257,22 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         text = 'test text'
         payload = response.data
-        budgets = response.data['budgets']
-        for budget in budgets:
-            budget['year'] -= 1
-        budgets.append({
-            'partner': partner.id,
-            'year': date.today().year,
-            'budget': BUDGET_CHOICES.more,
-        })
+        budgets = []
+        for budget in response.data['budgets']:
+            budgets.append({
+                "id": budget['id'], 'budget': BUDGET_CHOICES.more
+            })
         payload['budgets'] = budgets
         payload['main_donors_list'] = text
         payload['source_core_funding'] = text
 
-        response = self.client.put(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['main_donors_list'], text)
         self.assertEquals(response.data['source_core_funding'], text)
         self.assertEquals(len(response.data['budgets']), len(budgets))
+        for budget in response.data['budgets']:
+            self.assertEquals(budget['budget'], BUDGET_CHOICES.more)
 
     def test_collaboration(self):
         partner = Partner.objects.first()

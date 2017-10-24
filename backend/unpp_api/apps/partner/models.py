@@ -431,7 +431,8 @@ class PartnerBudget(TimeStampedModel):
     budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, default=BUDGET_CHOICES.less)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['partner', '-year']
+        unique_together = (("year", "partner"), )
 
     def __str__(self):
         return "PartnerBudget {} <pk:{}>".format(self.year, self.id)
