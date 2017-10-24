@@ -51,7 +51,6 @@ class PartnerSwitch extends Component {
     }
     this.setState({ open: false });
     const loc = history.getCurrentLocation();
-    // loc.state = { partnerChange: true };
     this.props.startRefresh();
     history.push('/');
     setTimeout(() => {
