@@ -15,11 +15,10 @@ def feed_alert(source, subject, body, context):
         description=body,
         source=source
     )
-    NotifiedUser.objects.create(
-        notification=notification,
-        did_read=False,
-        recipient_id=context.get('notified_user_id'),
-    )
+    notified_users = []
+    for recipient_id in context.get('notified_users_pks'):
+        notified_users.append(NotifiedUser(notification=notification, did_read=False, recipient_id=recipient_id))
+    NotifiedUser.objects.bulk_create(notified_users)
 
 
 def send_notification(subject, body, cc=[]):
