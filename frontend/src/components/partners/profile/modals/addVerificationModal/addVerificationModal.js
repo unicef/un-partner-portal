@@ -22,8 +22,9 @@ class AddVerificationModal extends Component {
   }
 
   onFormSubmit(values) {
+    debugger
     this.props.handleDialogClose();
-    this.props.updateApplicationReview(values);
+    this.props.addVerification(values);
   }
 
   render() {
@@ -55,7 +56,7 @@ AddVerificationModal.propTypes = {
   dialogOpen: PropTypes.bool,
   id: PropTypes.string,
   submit: PropTypes.func,
-  updateApplicationReview: PropTypes.func,
+  addVerification: PropTypes.func,
   handleDialogClose: PropTypes.func,
   partnerName: PropTypes.string,
   title: PropTypes.string,

@@ -1,120 +1,80 @@
 import React from 'react';
-import R from 'ramda';
-import { connect } from 'react-redux';
-import { reduxForm, FieldArray } from 'redux-form';
+import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router';
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
-import Grid from 'material-ui/Grid';
 import GridColumn from '../../../../common/grid/gridColumn';
-import { selectCfeiCriteria, selectApplicationProject } from '../../../../../store';
-import TextFieldForm from '../../../../forms/textFieldForm';
-import SpreadContent from '../../../../common/spreadContent';
+import VerificationQuestion from './verificationQuestion';
 
-import { numerical } from '../../../../../helpers/validation';
 
 const messages = {
-  criteria: 'Criteria',
-  score: 'Your score',
+  certUpload: 'Has CSO uploaded its valid, non-expired registration certificate issued by the ' +
+  'correct goverment body?',
+  mmConsistent: 'Are the CSO\'s mandate and mission consistent with that of the UN?',
+  indicateResults: 'Do the CSO\'s key results achieved indicate abillity to deliver programme ' +
+  'results?',
+  repRisk: 'Has a potential reputational risk issue been identified from public or other sources?',
+  yellowFlag: 'Does the CSO have a "yellow" flag in its profile, indication reputational risk?',
 };
 
-const styleSheet = () => ({
-  spread: {
-    minWidth: 500,
+
+const verificationQuestions = [
+  {
+    question: messages.certUpload,
+    questionFieldName: 'is_cert_uploaded',
+    commentFieldName: 'cert_uploaded_comment',
   },
-});
+  {
+    question: messages.mmConsistent,
+    questionFieldName: 'is_mm_consistent',
+    commentFieldName: 'mm_consistent_comment',
+  },
+  {
+    question: messages.indicateResults,
+    questionFieldName: 'is_indicate_results',
+    commentFieldName: 'indicate_results_comment',
+  },
+  {
+    question: messages.repRisk,
+    questionFieldName: 'is_rep_risk',
+    commentFieldName: 'rep_risk_comment',
+  },
+  {
+    question: messages.yellowFlag,
+    questionFieldName: 'is_yellow_flag',
+    commentFieldName: 'yellow_flag_comment',
+  },
+];
 
-const renderCriteria = ({ criteria, allCriteria, fields }) => (<div>
-  {fields.map((name, index) => (<div>
-    <Grid container direction="row" align="center" justify="center">
-      <Grid item xs={9}>
-        <Typography type="subheading">
-          {allCriteria[criteria[index].selection_criteria]}
-        </Typography>
-        <Typography type="caption">
-          {criteria[index].description}
-        </Typography>
-      </Grid>
-      <Grid item xs={3}>
-        <TextFieldForm
-          label=""
-          fieldName={`${name}.score`}
-          placeholder="Score..."
-          textFieldProps={{
-            inputProps: {
-              min: '1',
-              max: '100',
-              type: 'number',
-            },
-          }}
-          normalize={value => parseInt(value)}
-          validation={[numerical]}
-        />
-      </Grid>
-    </Grid>
+const renderQuestions = questions => (
+  questions.map(({ question, questionFieldName, commentFieldName }) => (<GridColumn>
+    <VerificationQuestion
+      question={question}
+      questionFieldName={questionFieldName}
+      commentFieldName={commentFieldName}
+    />
     <Divider />
-  </div>))}
-</div>
-);
+  </GridColumn>),
+  ));
 
-
-const AddReview = (props) => {
-  const { classes, handleSubmit, criteria, allCriteria } = props;
+const AddVerification = (props) => {
+  const { handleSubmit } = props;
   return (
     <form onSubmit={handleSubmit}>
-      <GridColumn>
-        <SpreadContent className={classes.spread}>
-          <Typography type="caption">{messages.criteria}</Typography>
-          <Typography type="caption">{messages.score}</Typography>
-        </SpreadContent>
-        <Divider />
-        <FieldArray
-          name="scores"
-          component={renderCriteria}
-          criteria={criteria}
-          allCriteria={allCriteria}
-        />
-        <TextFieldForm
-          label="Notes (optional)"
-          fieldName="note"
-          placeholder="Enter any notes/comments"
-          optional
-          {...props}
-        />
-      </GridColumn>
+      {renderQuestions(verificationQuestions)}
     </form >
   );
 };
 
-AddReview.propTypes = {
+AddVerification.propTypes = {
   /**
-   * callback for form submit
-   */
+     * callback for form submit
+     */
   handleSubmit: PropTypes.func.isRequired,
   classes: PropTypes.object,
-  allCriteria: PropTypes.array,
-  criteria: PropTypes.object,
 };
 
-const formAddReview = reduxForm({
-  form: 'addReview',
-})(AddReview);
+const formAddVerification = reduxForm({
+  form: 'addVerification',
+})(AddVerification);
 
-const mapStateToProps = (state, ownProps) => {
-  const { applicationId } = ownProps.params;
-  const eoi = selectApplicationProject(state, applicationId);
-  const criteria = selectCfeiCriteria(state, eoi);
-  return {
-    criteria,
-    allCriteria: state.selectionCriteria,
-    initialValues: {
-      scores: R.pathOr(criteria, ['scores', 'scores'], ownProps),
-      note: R.pathOr(null, ['scores', 'note'], ownProps) },
-  };
-};
-
-export default withRouter(connect(
-  mapStateToProps,
-)(withStyles(styleSheet)(formAddReview)));
+export default formAddVerification;
