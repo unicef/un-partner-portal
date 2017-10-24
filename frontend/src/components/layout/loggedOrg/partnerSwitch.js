@@ -7,6 +7,7 @@ import IconButton from 'material-ui/IconButton';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
+import { browserHistory as history, withRouter } from 'react-router';
 import GridRow from '../../common/grid/gridRow';
 import { sessionChange } from '../../../reducers/session';
 
@@ -49,6 +50,9 @@ class PartnerSwitch extends Component {
       });
     }
     this.setState({ open: false });
+    const loc = history.getCurrentLocation();
+    //debugger
+    history.push(history.getCurrentLocation().pathname);
   }
 
   renderMenuItems(partners, countries) {
