@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import transaction
 from rest_framework import serializers
 
@@ -16,6 +17,7 @@ from partner.models import (
     PartnerOtherInfo,
     PartnerInternalControl,
     PartnerMember,
+    PartnerBudget,
 )
 
 from partner.serializers import (
@@ -82,6 +84,11 @@ class PartnerRegistrationSerializer(serializers.Serializer):
                 PartnerInternalControl(partner=self.partner, functional_responsibility=responsibility)
             )
         PartnerInternalControl.objects.bulk_create(responsibilities)
+
+        budgets = []
+        for year in [date.today().year, date.today().year-1, date.today().year-2]:
+            budgets.append(PartnerBudget(partner=self.partner, year=year))
+        PartnerBudget.objects.bulk_create(budgets)
 
         partner_member = validated_data['partner_member']
         partner_member['partner_id'] = self.partner.id

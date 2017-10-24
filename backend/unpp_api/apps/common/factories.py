@@ -248,7 +248,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def budgets(self, create, extracted, **kwargs):
-        for year in [date.today().year, date.today().year-1]:
+        # we want to have last 3 year (with current)
+        for year in [date.today().year, date.today().year-1, date.today().year-2]:
             budget, created = PartnerBudget.objects.get_or_create(
                 partner=self,
                 year=year,
@@ -269,23 +270,26 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def collaboration_evidences(self, create, extracted, **kwargs):
-        accreditation, created = PartnerCollaborationEvidence.objects.get_or_create(
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
+
+        PartnerCollaborationEvidence.objects.create(
             partner=self,
             created_by=User.objects.first(),
             mode=COLLABORATION_EVIDENCE_MODES.accreditation,
             organization_name="accreditation organization name",
+            evidence_file=cfile,
             date_received=date.today()
         )
-        self.collaboration_evidences.add(accreditation)
 
-        reference, created = PartnerCollaborationEvidence.objects.get_or_create(
+        PartnerCollaborationEvidence.objects.create(
             partner=self,
             created_by=User.objects.first(),
             mode=COLLABORATION_EVIDENCE_MODES.reference,
             organization_name="reference organization name",
+            evidence_file=cfile,
             date_received=date.today()
         )
-        self.collaboration_evidences.add(reference)
 
     @factory.post_generation
     def internal_controls(self, create, extracted, **kwargs):
@@ -460,6 +464,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             info_to_share="fake info to share {}".format(self.id),
             confirm_data_updated=True,
             org_logo=cfile,
+            other_doc_1=cfile,
+            other_doc_2=cfile,
+            other_doc_3=cfile,
         )
 
     class Meta:

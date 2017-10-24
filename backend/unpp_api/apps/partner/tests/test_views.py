@@ -19,7 +19,7 @@ from partner.models import (
     PartnerOtherInfo,
     PartnerInternalControl,
 )
-from common.models import Point
+from common.models import Point, CommonFile
 from common.tests.base import BaseAPITestCase
 from common.factories import (
     AgencyFactory,
@@ -272,7 +272,11 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         text = 'test'
         payload = response.data
-        del payload['collaboration_evidences']
+        payload['collaboration_evidences'] = [
+            {
+                "evidence_file_id": CommonFile.objects.first().id,
+            }
+        ]
         collaborations_partnership = response.data['collaborations_partnership']
         for collaboration_partnership in collaborations_partnership:
             collaboration_partnership['description'] = text
