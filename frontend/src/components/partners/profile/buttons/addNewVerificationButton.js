@@ -7,23 +7,19 @@ const messages = {
   text: 'Add new verification',
 };
 
-const addNewVerification = (id) => {
-  console.log(`Add new verification: ${id}`);
-};
-
 const AddNewVerificationButton = (props) => {
-  const { id } = props;
+  const { handleClick } = props;
   return (
     <IconWithTextButton
       icon={<Add />}
       text={messages.text}
-      onClick={() => addNewVerification(id)}
+      onClick={handleClick}
     />
   );
 };
 
 AddNewVerificationButton.propTypes = {
-  id: PropTypes.string,
+  handleClick: PropTypes.func,
 };
 
 export default AddNewVerificationButton;

@@ -2,9 +2,9 @@ import React from 'react';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
-import GridColumn from '../../../common/grid/gridColumn';
-import HeaderList from '../../../common/list/headerList';
-import PaddedContent from '../../../common/paddedContent';
+import GridColumn from '../../../../common/grid/gridColumn';
+import HeaderList from '../../../../common/list/headerList';
+import PaddedContent from '../../../../common/paddedContent';
 import PartnerOverviewVerificationMenu from './partnerOverviewVerificationMenu';
 
 const messages = {

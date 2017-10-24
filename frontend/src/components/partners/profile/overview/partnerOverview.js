@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GridColumn from '../../../common/grid/gridColumn';
 import PartnerOverviewSummary from './partnerOverviewSummary';
-import PartnerOverviewVerification from './partnerOverviewVerification';
+import PartnerOverviewVerification from './verification/partnerOverviewVerification';
 import PartnerOverviewFlag from './partnerOverviewFlag';
 
 const PartnerOverview = (props) => {
