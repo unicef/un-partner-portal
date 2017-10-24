@@ -7,8 +7,9 @@ import IconButton from 'material-ui/IconButton';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
+import { browserHistory as history, withRouter } from 'react-router';
 import GridRow from '../../common/grid/gridRow';
-import { sessionChange } from '../../../reducers/session';
+import { sessionChange, sessionInitializing } from '../../../reducers/session';
 
 const styleSheet = theme => ({
   expand: {
@@ -49,6 +50,13 @@ class PartnerSwitch extends Component {
       });
     }
     this.setState({ open: false });
+    const loc = history.getCurrentLocation();
+    this.props.startRefresh();
+    history.push('/');
+    setTimeout(() => {
+      history.push(loc);
+      this.props.stopRefresh();
+    }, 100);
   }
 
   renderMenuItems(partners, countries) {
@@ -120,6 +128,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   saveNewCurrentPartner: session => dispatch(sessionChange(session)),
+  startRefresh: () => dispatch(sessionInitializing()),
+  stopRefresh: () => dispatch(sessionChange()),
 });
 
 export default connect(
