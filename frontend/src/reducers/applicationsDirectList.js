@@ -1,218 +1,75 @@
-export const INIT_COUNTRY_ID = -1;
+import R from 'ramda';
+import { getApplicationDirect } from '../helpers/api/api';
+import {
+  clearError,
+  startLoading,
+  stopLoading,
+  saveErrorMsg,
+} from './apiStatus';
+
+export const APPLICATIONS_DIRECT_LOAD_STARTED = 'APPLICATIONS_DIRECT_LOAD_STARTED';
+export const APPLICATIONS_DIRECT_LOAD_SUCCESS = 'APPLICATIONS_DIRECT_LOAD_SUCCESS';
+export const APPLICATIONS_DIRECT_LOAD_FAILURE = 'APPLICATIONS_DIRECT_LOAD_FAILURE';
+export const APPLICATIONS_DIRECT_LOAD_ENDED = 'APPLICATIONS_DIRECT_LOAD_ENDED';
+
+export const applicationsDirectLoadStarted = () => ({ type: APPLICATIONS_DIRECT_LOAD_STARTED });
+export const applicationsDirectSuccess = response => ({ type: APPLICATIONS_DIRECT_LOAD_SUCCESS, response });
+export const applicationsDirectFailure = error => ({ type: APPLICATIONS_DIRECT_LOAD_FAILURE, error });
+export const applicationsDirectEnded = () => ({ type: APPLICATIONS_DIRECT_LOAD_ENDED });
+
 
 const initialState = {
   columns: [
-    { name: 'id', title: 'ID' },
+    { name: 'id', title: 'Concept Note ID' },
     { name: 'project_title', title: 'Project Title', width: 200 },
-    { name: 'agency', title: 'Agency' },
+    { name: 'agency_name', title: 'Agency' },
     { name: 'country', title: 'Country' },
-    { name: 'sector', title: 'Sector' },
-    { name: 'date', title: 'Application Date' },
-    { name: 'selection_source', title: 'Direct Selection Source' },
+    { name: 'specializations', title: 'Sector' },
+    { name: 'submission_date', title: 'Submission Date' },
+    { name: 'selected_source', title: 'Direct Selection Source' },
     { name: 'status', title: 'Status' },
   ],
-  notes: [
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      selection_source: 'CSO-Initiated',
-      status: 'Offer Made',
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Accepted',
-    },
+  loading: false,
+  direct: [],
+  totalCount: 0,
+};
 
-    { id: 'AN/001',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Declined',
-    },
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      selection_source: 'CSO-Initiated',
-      status: 'Offer Made',
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Accepted',
-    },
+const saveApplicationsDirect = (state, action) => {
+  const partners = R.assoc('direct', action.response.results, state);
+  return R.assoc('totalCount', action.response.count, partners);
+};
 
-    { id: 'AN/001',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Declined',
-    },
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      selection_source: 'CSO-Initiated',
-      status: 'Offer Made',
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Accepted',
-    },
+const messages = {
+  loadFailed: 'Load applications failed.',
+};
 
-    { id: 'AN/001',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Declined',
-    },
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      selection_source: 'CSO-Initiated',
-      status: 'Offer Made',
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Accepted',
-    },
-
-    { id: 'AN/001',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Declined',
-    },
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      selection_source: 'CSO-Initiated',
-      status: 'Offer Made',
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Accepted',
-    },
-
-    { id: 'AN/001',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Declined',
-    },
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      selection_source: 'CSO-Initiated',
-      status: 'Offer Made',
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Accepted',
-    },
-
-    { id: 'AN/001',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Declined',
-    },
-    { id: 'CN/0192',
-      project_title: 'Capacity building for small rural farmers',
-      agency: 'UNICEF',
-      country: 'Kenya',
-      sector: 'Food Security',
-      date: '30 Sep 2017',
-      selection_source: 'CSO-Initiated',
-      status: 'Offer Made',
-    },
-    { id: 'CN/0190',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Accepted',
-    },
-
-    { id: 'AN/001',
-      project_title: 'Teaching students new language',
-      agency: 'WFP',
-      country: 'Spain',
-      sector: 'Education',
-      date: '1 Oct 2017',
-      selection_source: 'UN-Initiated',
-      status: 'Offer Declined',
-    },
-  ],
+export const loadApplicationsDirect = params => (dispatch) => {
+  dispatch(applicationsDirectLoadStarted());
+  return getApplicationDirect(params)
+    .then((applications) => {
+      dispatch(applicationsDirectEnded());
+      dispatch(applicationsDirectSuccess(applications));
+    })
+    .catch((error) => {
+      dispatch(applicationsDirectEnded());
+      dispatch(applicationsDirectFailure(error));
+    });
 };
 
 export default function applicationsDirectListReducer(state = initialState, action) {
   switch (action.type) {
+    case APPLICATIONS_DIRECT_LOAD_FAILURE: {
+      return saveErrorMsg(state, action, messages.loadFailed);
+    }
+    case APPLICATIONS_DIRECT_LOAD_ENDED: {
+      return stopLoading(state);
+    }
+    case APPLICATIONS_DIRECT_LOAD_STARTED: {
+      return startLoading(clearError(state));
+    }
+    case APPLICATIONS_DIRECT_LOAD_SUCCESS: {
+      return saveApplicationsDirect(state, action);
+    }
     default:
       return state;
   }

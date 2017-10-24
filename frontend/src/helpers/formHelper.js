@@ -9,13 +9,12 @@ import Attachment from 'material-ui-icons/Attachment';
 import DateRange from 'material-ui-icons/DateRange';
 import DatePicker from 'material-ui-old/DatePicker';
 import Typography from 'material-ui/Typography';
-import FileDownloadButton from '../components/common/buttons/fileDownloadButton';
 import RadioGroupRow from '../components/common/radio/radioGroupRow';
 import RadioHeight from '../components/common/radio/radioHeight';
 import { formatDateForPrint } from './dates';
 import { numerical } from '../helpers/validation';
 
-const fileNameFromUrl = (url) => {
+export const fileNameFromUrl = (url) => {
   if (url) {
     return url.split('/').pop();
   }
@@ -25,19 +24,19 @@ const fileNameFromUrl = (url) => {
 
 export const BOOL_VAL = [
   {
-    value: 'yes',
+    value: true,
     label: 'Yes',
   },
   {
-    value: 'no',
+    value: false,
     label: 'No',
   },
 ];
 
 const transformBool = (value) => {
-  if (typeof (value) === 'boolean' && value) {
+  if (typeof (value) === 'boolean' && value || value === 'true') {
     return BOOL_VAL[0].value;
-  } else if (typeof (value) === 'boolean' && !value) {
+  } else if (typeof (value) === 'boolean' && !value || value === 'false') {
     return BOOL_VAL[1].value;
   }
 
@@ -56,6 +55,24 @@ export const visibleIfYes = (value) => {
 
   return false;
 };
+
+export const renderFormControlWithLabel = ({
+  className,
+  label,
+  meta: { touched, error, warning },
+  input,
+  ...other
+}) => (
+  <div>
+    <FormLabel>{label}</FormLabel>
+    <FormControl
+      className={className}
+      {...input}
+      {...other}
+    />
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>
+);
 
 export const renderFormControl = ({
   className,
@@ -93,13 +110,14 @@ export const renderSelectField = ({
 export const renderRadioField = ({ input,
   label,
   meta: { touched, error, warning },
-  options, ...other }) => (
+  options, ...other
+}) => (
   <div>
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>
       <RadioGroupRow
         selectedValue={transformBool(input.value)}
-        onChange={(event, value) => input.onChange(value)}
+        onChange={(event, value) => { input.onChange(transformBool(value)); }}
         {...other}
       >
         {options.map((value, index) => (
@@ -108,10 +126,10 @@ export const renderRadioField = ({ input,
             value={value.value}
             control={<RadioHeight />}
             label={value.label}
-          />))}
-      </RadioGroupRow>
+          />))}</RadioGroupRow>
     </FormControl>
-    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+    {((touched && error) || warning) &&
+    <FormHelperText error>{error || warning}</FormHelperText>}
   </div>
 );
 
@@ -119,32 +137,31 @@ export const renderCheckbox = ({
   name,
   className,
   disabled,
-  value,
-}) => (
-  <Checkbox
-    className={className}
-    id={name}
-    disabled={disabled}
-    checked={value}
-  />
-);
+  input,
+}) => (<Checkbox
+  className={className}
+  id={name}
+  disabled={disabled}
+  checked={input.value}
+  onChange={(event, value) => { input.onChange(transformBool(value)); }}
+/>);
 
-/* eslint-disable jsx-a11y/interactive-supports-focus */
-export const renderFileDownload = (props) => {
-  const { classes } = props;
-  return ({ input, label }) => (
-    <FormControl fullWidth>
-      <FormLabel>{label}</FormLabel>
-      <div className={classes.wrapContent}>
-        <Attachment className={classes.icon} />
-        <Typography type="subheading" className={classes.iconLabel}>
-          {fileNameFromUrl(input.value)}
-        </Typography>
-
-      </div>
-      <FileDownloadButton fileUrl={input.value} />
-    </FormControl>);
-};
+export const renderFileDownload = () => ({ input, label }) => (<FormControl fullWidth>
+  <FormLabel>{label}</FormLabel>
+  <div style={{ display: 'flex', alignItems: 'center' }}>
+    {input.value && <Attachment style={{ marginRight: 5 }} />}
+    <div
+      type="subheading"
+      role="button"
+      tabIndex={0}
+      onClick={() => { window.open(input.value); }}
+    >
+      <Typography >
+        {fileNameFromUrl(input.value)}
+      </Typography>
+    </div>
+  </div>
+</FormControl>);
 
 export const renderTextField = ({
   name,
@@ -189,7 +206,8 @@ export const renderNumberField = ({
       />
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        {((touched && error) || warning || rangeError) && <FormHelperText error>{error || warning || rangeError}</FormHelperText>}
+        {((touched && error) || warning || rangeError) &&
+        <FormHelperText error>{error || warning || rangeError}</FormHelperText>}
         {other.inputProps && other.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
       </div>
     </div>);

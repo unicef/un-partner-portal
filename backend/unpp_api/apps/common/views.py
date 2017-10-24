@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
-from .serializers import ConfigSectorSerializer, CommonFileSerializer
+from .serializers import ConfigSectorSerializer, CommonFileUploadSerializer
 from .models import Sector, CommonFile
 from .countries import COUNTRIES_ALPHA2_CODE_DICT
 from .consts import (
@@ -23,6 +23,7 @@ from .consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     POLICY_AREA_CHOICES,
+    APPLICATION_STATUSES,
     COMPLETED_REASON,
 )
 
@@ -58,6 +59,7 @@ class ConfigPPAPIView(APIView):
             "financial-control-system-choices": FINANCIAL_CONTROL_SYSTEM_CHOICES,
             "functional-responsibility-choices": FUNCTIONAL_RESPONSIBILITY_CHOICES,
             "policy-area-choices": POLICY_AREA_CHOICES,
+            "application-statuses": APPLICATION_STATUSES,
             "completed-reason": COMPLETED_REASON,
         }
         return Response(data, status=statuses.HTTP_200_OK)
@@ -79,4 +81,4 @@ class CommonFileCreateAPIView(CreateAPIView):
     """
     permission_classes = (IsAuthenticated, )
     queryset = CommonFile.objects.all()
-    serializer_class = CommonFileSerializer
+    serializer_class = CommonFileUploadSerializer

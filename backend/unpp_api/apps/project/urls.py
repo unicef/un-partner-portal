@@ -16,6 +16,7 @@ from .views import (
     AppsPartnerDirectAPIView,
     ReviewersStatusAPIView,
     ReviewerAssessmentsAPIView,
+    ApplicationFeedbackListCreateAPIView,
 )
 
 
@@ -34,6 +35,7 @@ urlpatterns = [
         ReviewerAssessmentsAPIView.as_view(),
         name="reviewer-assessments"),
     url(r'^application/(?P<pk>\d+)/$', ApplicationAPIView.as_view(), name="application"),
+    url(r'^application/(?P<pk>\d+)/feedback/$', ApplicationFeedbackListCreateAPIView.as_view(), name="application-feedback"),
     url(r'^(?P<pk>\d+)/applications/$', ApplicationsListAPIView.as_view(), name="applications"),
     url(r'^open/$', OpenProjectAPIView.as_view(), name="open"),
     url(r'^direct/$', DirectProjectAPIView.as_view(), name="direct"),

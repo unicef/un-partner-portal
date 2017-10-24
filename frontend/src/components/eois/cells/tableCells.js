@@ -13,7 +13,12 @@ export default type => ({ row, column }) => {
   } else if (column.name === 'country_code') {
     return (
       <TableCell >
-        <EoiCountryCell code={row.country_code} />
+        {row.country_code.map(code =>
+          (<span>
+            <EoiCountryCell code={code} />
+            {', '}
+          </span>),
+        )}
       </TableCell>);
   } else if (column.name === 'specializations') {
     return (
@@ -36,13 +41,13 @@ export default type => ({ row, column }) => {
         <EoiPartnersStatusCell
           status={row.status}
           id={row.id}
-          partners={row.selected_partners}
+          partners={row.partner_offer_status}
         />
       </TableCell>);
   } else if (column.name === 'selected_partners') {
     return (
       <TableCell >
-        <EoiPartnersCell partners={row.selected_partners || []} />
+        <EoiPartnersCell partners={row.invited_partners || []} />
       </TableCell>);
   }
   return undefined;

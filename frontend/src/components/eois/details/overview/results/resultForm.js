@@ -16,10 +16,10 @@ import { updateApplication } from '../../../../../reducers/partnerApplicationDet
 
 const styleSheet = theme => ({
   container: {
-    background: '#F6F6F6',
+    background: theme.palette.common.lightGreyBackground,
   },
   checked: {
-    fill: '#189a58',
+    fill: theme.palette.common.statusOk,
     margin: `0 0 0 ${theme.spacing.unit / 2}px`,
   },
   declined: {

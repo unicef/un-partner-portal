@@ -3,6 +3,7 @@ import store from '../../store';
 
 const host = '/api';
 
+// Internal help/generic functions
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
@@ -19,75 +20,72 @@ function getCookie(name) {
   return cookieValue;
 }
 
+function buildHeaders(authorize = false, extraHeaders = {}) {
+  const token = store.getState().session.token;
+  const partnerId = store.getState().session.partnerId;
+  let headers = {};
+  if (authorize) headers = { ...headers, Authorization: `token ${token}` };
+  if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };
+  return { ...headers, ...extraHeaders };
+}
+
 function get(uri, params = {}) {
-  const options = { method: 'GET', params };
+  const options = { method: 'GET', params, headers: buildHeaders() };
   return axios.get(`${host}${uri}`, options)
     .then(response => response.data);
 }
 
 function post(uri, body = {}) {
   const options = {
-    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+    headers: buildHeaders(false, { 'X-CSRFToken': getCookie('csrftoken') }),
   };
   return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
 function authorizedGet({ uri, params = {} }) {
-  const token = store.getState().session.token;
   const options = {
     params,
-    headers: { Authorization: `token ${token}` },
+    headers: buildHeaders(true),
   };
   return axios.get(`${host}${uri}`, options)
     .then(response => response.data);
 }
 
 function authorizedPost({ uri, params, body = {} }) {
-  const token = store.getState().session.token;
   const options = {
     params,
-    headers: {
-      Authorization: `token ${token}`,
-      'X-CSRFToken': getCookie('csrftoken'),
-    },
+    headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
   };
   return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
 function authorizedPatch({ uri, params, body = {} }) {
-  const token = store.getState().session.token;
   const options = {
     params,
-    headers: {
-      Authorization: `token ${token}`,
-      'X-CSRFToken': getCookie('csrftoken'),
-    },
+    headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
   };
   return axios.patch(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
 function authorizedPut({ uri, params, body = {} }) {
-  const token = store.getState().session.token;
   const options = {
     params,
-    headers: { Authorization: `token ${token}` },
+    headers: buildHeaders(true),
   };
   return axios.put(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
 
 function authorizedPostUpload({ uri, body = {}, params }) {
-  const token = store.getState().session.token;
   const options = {
     params,
-    headers: {
+    headers: buildHeaders(true, {
       'content-type': 'multipart/form-data',
-      Authorization: `token ${token}`,
       'X-CSRFToken': getCookie('csrftoken'),
-    },
+    }),
   };
   return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
@@ -96,7 +94,7 @@ function authorizedPostUpload({ uri, body = {}, params }) {
 
 // Accounts
 export function postRegistration(body) {
-  return post('/accounts/registration/', body);
+  return post('/accounts/registration', body);
 }
 
 export function login(body) {
@@ -104,7 +102,7 @@ export function login(body) {
 }
 
 export function getUserData() {
-  return authorizedGet({ uri: '/accounts/me' });
+  return authorizedGet({ uri: '/accounts/me/' });
 }
 
 // Config
@@ -143,6 +141,10 @@ export function patchCfei(body, id) {
 
 export function uploadConceptNote(projectId, body) {
   return authorizedPostUpload({ uri: `/projects/${projectId}/partner-applications/`, body });
+}
+
+export function uploadCommonFile(body) {
+  return authorizedPostUpload({ uri: '/common/file/', body });
 }
 
 export function getOpenCfeiDetails(id) {
@@ -187,6 +189,18 @@ export function patchApplication(id, body) {
   return authorizedPatch({ uri: `/projects/application/${id}/`, body });
 }
 
+export function getApplicationConceptNotes() {
+  return authorizedGet({ uri: '/projects/applications/open/' });
+}
+
+export function getApplicationUnsolicitedConceptNotes() {
+  return authorizedGet({ uri: '/projects/applications/unsolicited/' });
+}
+
+export function getApplicationDirect() {
+  return authorizedGet({ uri: '/projects/applications/direct/' });
+}
+
 // Partners
 export function getPartnerProfileDetails(partnerId) {
   return authorizedGet({ uri: `/partners/${partnerId}` });
@@ -218,6 +232,10 @@ export function getPartnerVerifications(id) {
 
 export function postPartnerVerifications(id, body) {
   return authorizedPost({ uri: `/partners/${id}/verifications/`, body });
+}
+
+export function patchPartnerProfileTab(partnerId, tabName, body) {
+  return authorizedPatch({ uri: `/partners/${partnerId}/${tabName}/`, body });
 }
 
 // Agencies

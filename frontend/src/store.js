@@ -24,11 +24,13 @@ import applicationsNotesList from './reducers/applicationsNotesList';
 import applicationsUnsolicitedList from './reducers/applicationsUnsolicitedList';
 import applicationsDirectList from './reducers/applicationsDirectList';
 import conceptNote from './reducers/conceptNote';
+import commonFileUpload from './reducers/commonFileUpload';
 import partnerInfo from './reducers/partnerInfo';
 import organizationProfileNav from './reducers/organizationProfileNav';
 import organizationProfile from './reducers/organizationProfile';
 import partnerApplicationsNav from './reducers/partnerApplicationsNav';
 import partnerProfileConfig from './reducers/partnerProfileConfig';
+import partnerProfileDetailsUpdate from './reducers/partnerProfileDetailsUpdate';
 import sectors, * as sectorsSelectors from './reducers/sectors';
 import partnersApplicationsList from './reducers/partnersApplicationsList';
 import partnersPreselectionList from './reducers/partnersPreselectionList';
@@ -56,10 +58,12 @@ const mainReducer = combineReducers({
   countries,
   conceptNote,
   countryProfiles,
+  commonFileUpload,
   partnerInfo,
   partnerProfileConfig,
   partnerProfileEdit,
   partnerProfileDetails,
+  partnerProfileDetailsUpdate,
   agencyPartnersList,
   agencyPartnerProfileNav,
   agencyPartnerProfile,
@@ -119,6 +123,8 @@ export const selectNormalizedStaffGlobalyChoices = state =>
 export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices']);
 
+export const selectApplicationStatuses = state => state.partnerProfileConfig['application-statuses'];
+
 export const selectNormalizedAuditTypes = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['audit-types']);
 
@@ -175,8 +181,8 @@ export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.cfeiDetails, id);
 
 export const mapSelectCriteriaToSelection = state =>
-  mapValuesForSelectionField(state.selectionCriteria);
-
+  mapValuesForSelectionField(state.selectionCriteria)
+  ;
 export const mapPartnersNamesToSelection = state =>
   mapValuesForSelectionField(state.partnerNames);
 

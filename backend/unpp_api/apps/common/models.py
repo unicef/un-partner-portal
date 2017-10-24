@@ -7,6 +7,16 @@ from model_utils.models import TimeStampedModel
 from .countries import COUNTRIES_ALPHA2_CODE
 
 
+class PointQuerySet(models.QuerySet):
+
+    def get_or_create(self, lat, lon, admin_level_1):
+        admin_inst, created = AdminLevel1.objects.get_or_create(**admin_level_1)
+        qs = self.filter(lat=lat, lon=lon, admin_level_1=admin_inst)
+        if qs.exists():
+            return qs.first(), False
+        return self.create(lat=lat, lon=lon, admin_level_1=admin_inst), True
+
+
 class AdminLevel1(models.Model):
     """
     Admin level 1 - is like California in USA or Mazowieckie in Poland
@@ -39,6 +49,8 @@ class Point(models.Model):
         validators=[MinValueValidator(Decimal(-180)), MaxValueValidator(Decimal(180))]
     )
     admin_level_1 = models.ForeignKey(AdminLevel1, related_name="points")
+
+    objects = PointQuerySet.as_manager()
 
     class Meta:
         ordering = ['id']

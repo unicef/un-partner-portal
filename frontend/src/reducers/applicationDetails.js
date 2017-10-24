@@ -42,7 +42,7 @@ export const updateApplication = (applicationId, body) => (dispatch, getState) =
     });
 
 const saveApplication = (state, action) =>
-  R.assoc(action.application.id, action.application, state);
+  R.assoc(action.application.id, R.mergeDeepRight(state[action.application.id], action.application), state);
 
 const saveNewApplicationPartnerName = (state, action) => {
   const application = R.assoc(
