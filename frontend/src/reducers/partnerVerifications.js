@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import R from 'ramda';
-import applicationReviewsStatus, {
+import partnerVerificationsStatus, {
   loadPartnerVerificationsStarted,
   loadPartnerVerificationsEnded,
   loadPartnerVerificationsSuccess,
@@ -8,7 +8,7 @@ import applicationReviewsStatus, {
   LOAD_PARTNER_VERIFICATIONS_SUCCESS,
 } from './partnerVerificationStatus';
 import {
-  selectIndexWithDefaultNull,
+  selectIndexWithDefaultEmptyObject,
 } from './normalizationHelpers';
 
 import { getPartnerVerifications, postPartnerVerifications } from '../helpers/api/api';
@@ -25,7 +25,7 @@ export const loadPartnerVerifications = id => (dispatch) => {
   return getPartnerVerifications(id)
     .then((response) => {
       dispatch(loadPartnerVerificationsEnded());
-      dispatch(loadPartnerVerificationsSuccess(response.results, id));
+      dispatch(loadPartnerVerificationsSuccess(response.results, id, response.count - 1));
     })
     .catch((error) => {
       dispatch(loadPartnerVerificationsEnded());
@@ -33,33 +33,43 @@ export const loadPartnerVerifications = id => (dispatch) => {
     });
 };
 
-const normalizeVerification = result => R.assoc('submitter', result.submitter.id, result);
 const saveVerifications = (state, action) => {
-  const verifications = R.map(normalizeVerification, action.verifications);
+  const verifications = action.verifications;
   const mostRecentVerification = R.clone(R.head(verifications));
-  return R.assoc(action.partnerId, { mostRecentVerification, verifications }, state);
-};
-
-const saveSingleVerification = (state, action) => {
-  const verification = normalizeVerification(action.verification);
-  let currentVerifications = state[action.partnerId];
-  currentVerifications = R.prepend(verification, currentVerifications);
   return R.assoc(action.partnerId,
-    { mostRecentVerification: verification, verifications: currentVerifications },
+    { mostRecentVerification, verifications, previousCount: action.count },
     state);
 };
 
-export const selectReview = (state, reviewId) =>
-  selectIndexWithDefaultNull(reviewId, state.data.reviews);
+const saveSingleVerification = (state, action) => {
+  const verification = action.verification;
+  let currentVerifications = state[action.partnerId].verifications;
+  currentVerifications = R.prepend(verification, currentVerifications);
+  return R.assoc(action.partnerId,
+    { mostRecentVerification: verification,
+      verifications: currentVerifications,
+      previousCount: state[action.partnerId].previousCount,
+    },
+    state);
+};
 
-export const selectReviewer = (state, reviewId) =>
-  selectIndexWithDefaultNull(reviewId, state.data.reviewers);
+export const selectVerifications = (state, partnerId) => {
+  const mainVerif = selectIndexWithDefaultEmptyObject(partnerId, state.data);
+  const { verifications = [] } = mainVerif;
+  return R.drop(1, verifications);
+};
 
-export const selectAssessment = (state, reviewId) =>
-  selectIndexWithDefaultNull(reviewId, state.data.assessments);
+export const selectMostRecentVerification = (state, partnerId) => {
+  const mainVerif = selectIndexWithDefaultEmptyObject(partnerId, state.data);
+  const { mostRecentVerification = [] } = mainVerif;
+  return mostRecentVerification;
+};
 
-export const isAssesmentAdded = (state, assessmentId) =>
-  R.has(assessmentId, state.data.assessments);
+export const selectPreviousVerificationsCount = (state, partnerId) => {
+  const mainVerif = selectIndexWithDefaultEmptyObject(partnerId, state.data);
+  const { previousCount = 0 } = mainVerif;
+  return previousCount;
+};
 
 export const updatePartnerVerifications = (partnerId, body) =>
   dispatch => postPartnerVerifications(partnerId, body)
@@ -68,7 +78,7 @@ export const updatePartnerVerifications = (partnerId, body) =>
       return newVerification;
     });
 
-const applicationReviews = (state = initialState, action) => {
+const partnerVerifications = (state = initialState, action) => {
   switch (action.type) {
     case LOAD_PARTNER_VERIFICATIONS_SUCCESS: {
       return saveVerifications(state, action);
@@ -81,5 +91,5 @@ const applicationReviews = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ data: applicationReviews, status: applicationReviewsStatus });
+export default combineReducers({ data: partnerVerifications, status: partnerVerificationsStatus });
 

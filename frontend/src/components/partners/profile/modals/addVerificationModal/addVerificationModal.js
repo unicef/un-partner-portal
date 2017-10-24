@@ -29,7 +29,6 @@ class AddVerificationModal extends Component {
   }
 
   onFormSubmit(values) {
-
     this.setState({ submitting: true });
     this.props.addVerification(values).then((verification) => {
       this.setState({ verification });
@@ -47,7 +46,7 @@ class AddVerificationModal extends Component {
   render() {
     const { submit, dialogOpen, handleDialogClose, partnerName } = this.props;
     const { submitting, verification, error } = this.state;
-    console.log(submitting, verification)
+    console.log(submitting, verification);
     return (
       <div>
         {!submitting && <ControlledModal

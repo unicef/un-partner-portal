@@ -40,7 +40,7 @@ import applicationDetails, * as applicationDetailsSelector from './reducers/appl
 import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
 import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers';
 import partnerAppDetails, * as partnerAppDetailsSelector from './reducers/partnerApplicationDetails';
-import partnerVerifications from './reducers/partnerVerifications';
+import partnerVerifications, * as partnerVerificationsSelector from './reducers/partnerVerifications';
 
 const mainReducer = combineReducers({
   cfei,
@@ -234,3 +234,13 @@ export const selectNormalizedCompletionReasons = state =>
 
 export const selectPartnerApplicationDetails = (state, cfeiId) =>
   partnerAppDetailsSelector.selectApplication(state.partnerAppDetails, cfeiId);
+
+export const selectPartnerVerifications = (state, partnerId) =>
+  partnerVerificationsSelector.selectVerifications(state.partnerVerifications, partnerId);
+
+export const selectMostRecentVerification = (state, partnerId) =>
+  partnerVerificationsSelector.selectMostRecentVerification(state.partnerVerifications, partnerId);
+
+export const selectPreviousVerificationCount = (state, partnerId) =>
+  partnerVerificationsSelector.selectPreviousVerificationsCount(state.partnerVerifications,
+    partnerId);

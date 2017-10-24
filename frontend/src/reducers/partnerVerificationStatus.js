@@ -24,8 +24,8 @@ const messages = {
 export const errorToBeCleared = () => ({ type: CLEAR_PARTNER_VERIFICATIONS_ERROR });
 export const loadPartnerVerificationsStarted = () => ({ type: LOAD_PARTNER_VERIFICATIONS_STARTED });
 export const loadPartnerVerificationsEnded = () => ({ type: LOAD_PARTNER_VERIFICATIONS_ENDED });
-export const loadPartnerVerificationsSuccess = (verifications, partnerId) => (
-  { type: LOAD_PARTNER_VERIFICATIONS_SUCCESS, verifications, partnerId });
+export const loadPartnerVerificationsSuccess = (verifications, partnerId, count) => (
+  { type: LOAD_PARTNER_VERIFICATIONS_SUCCESS, verifications, partnerId, count });
 export const loadPartnerVerificationsFailure = error => (
   { type: LOAD_PARTNER_VERIFICATIONS_FAILURE, error });
 

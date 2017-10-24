@@ -8,7 +8,7 @@ import PartnerOverviewVerification from './verification/partnerOverviewVerificat
 import PartnerOverviewFlag from './partnerOverviewFlag';
 
 const PartnerOverview = (props) => {
-  const { partner } = props;
+  const { partner, params: { id } } = props;
 
   return (
 
@@ -18,7 +18,7 @@ const PartnerOverview = (props) => {
       </Grid>
       <Grid item xs={12} sm={4}>
         <GridColumn>
-          <PartnerOverviewVerification partner={partner} />
+          <PartnerOverviewVerification partnerId={id} />
           <PartnerOverviewFlag partner={partner} />
         </GridColumn>
       </Grid>
@@ -27,6 +27,7 @@ const PartnerOverview = (props) => {
 
 PartnerOverview.propTypes = {
   partner: PropTypes.object.isRequired,
+  params: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({

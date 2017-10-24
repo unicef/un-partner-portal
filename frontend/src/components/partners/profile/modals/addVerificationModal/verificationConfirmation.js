@@ -11,11 +11,13 @@ import PaddedContent from '../../../../common/paddedContent';
 import VerificationIcon from '../../icons/verificationIcon';
 import Loader from '../../../../common/loader';
 import EmptyContent from '../../../../common/emptyContent';
+import { isPartnerVerified } from '../../../../../helpers/verificationUtils';
 
 const messages = {
   status: 'Verification status: ',
   verified: 'Verified',
   unverified: 'Unverified',
+  error: 'Verification failed, please try again',
 };
 
 const styleSheet = (theme) => {
@@ -28,13 +30,18 @@ const styleSheet = (theme) => {
     questionMargin: {
       marginRight: spacing,
     },
+    extraWidth: {
+      width: '30vw',
+    },
   };
 };
 
 const VerificationConfirmation = (props) => {
   const { classes, loading, verification, error } = props;
+  let verified = null;
+  if (verification) verified = verification.is_verified;
   return (
-    <PaddedContent big>
+    <PaddedContent big className={classes.extraWidth}>
       <GridColumn align="center">
         <Typography type="body2">
           {messages.status}
@@ -42,12 +49,16 @@ const VerificationConfirmation = (props) => {
         <Loader loading={loading}>
           {loading
             ? <EmptyContent />
-            : <SpreadContent>
-              <VerificationIcon verified={true} />
-              <Typography type="headline">
-                {messages.unverified}
+            : error
+              ? <Typography type="headline">
+                {messages.error}
               </Typography>
-            </SpreadContent>
+              : <SpreadContent>
+                <VerificationIcon verified={verified} />
+                <Typography type="headline">
+                  {verified ? messages.verified : messages.unverified}
+                </Typography>
+              </SpreadContent>
           }
         </Loader>
       </GridColumn>
@@ -57,9 +68,9 @@ const VerificationConfirmation = (props) => {
 
 VerificationConfirmation.propTypes = {
   classes: PropTypes.object,
-  question: PropTypes.string,
-  questionFieldName: PropTypes.string,
-  commentFieldName: PropTypes.string,
+  loading: PropTypes.bool,
+  verification: PropTypes.object,
+  error: PropTypes.object,
 };
 
 export default withStyles(styleSheet, { name: 'VerificationConfirmation' })(VerificationConfirmation);
