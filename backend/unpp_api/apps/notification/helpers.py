@@ -1,9 +1,25 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
+from django.db import transaction
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template import Context, Template
+from .models import Notification, NotifiedUser
+
+
+@transaction.atomic
+def feed_alert(source, subject, body, context):
+    notification = Notification.objects.create(
+        name=subject,
+        description=body,
+        source=source
+    )
+    NotifiedUser.objects.create(
+        notification=notification,
+        did_read=False,
+        recipient_id=context.get('notified_user_id'),
+    )
 
 
 def send_notification(subject, body, cc=[]):
@@ -18,90 +34,120 @@ def get_template_as_str(filename, context):
 
 
 def send_account_approval_activated_create_profile(context, cc):
+    source = 'account_approval_activated_create_profile'
     subject = "Title"
-    body = get_template_as_str('account_approval_activated_create_profile', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_account_approval_activated_sent_to_head_org(context, cc):
+    source = 'account_approval_activated_sent_to_head_org'
     subject = "Title"
-    body = get_template_as_str('account_approval_activated_sent_to_head_org', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_account_approval_rejection_application_duplicate(context, cc):
+    source = 'account_approval_rejection_application_duplicate'
     subject = "Title"
-    body = get_template_as_str('account_approval_rejection_application_duplicate', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_account_approval_rejection_sanctions_list(context, cc):
+    source = 'account_approval_rejection_application_duplicate'
     subject = "Title"
-    body = get_template_as_str('account_approval_rejection_sanctions_list', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_account_creation_rejection(context, cc):
+    source = 'account_approval_rejection_application_duplicate'
     subject = "Title"
-    body = get_template_as_str('account_creation_rejection', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_cancel_cfei(context, cc):
+    source = 'cancel_CFEI'
     subject = "Title"
-    body = get_template_as_str('cancel_CFEI', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_cn_assessment(context, cc):
+    source = 'CN_Assessment'
     subject = "Title"
-    body = get_template_as_str('CN_Assessment', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_cn_assessment_not_successful(context, cc):
+    source = 'cn_assessment_not_successful'
     subject = "Title"
-    body = get_template_as_str('cn_assessment_not_successful', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_cn_assessment_successful(context, cc):
+    source = 'CN_Assessment_successful'
     subject = "Title"
-    body = get_template_as_str('CN_Assessment_successful', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_cn_submission(context, cc):
+    source = 'CN_Submission'
     subject = "Title"
-    body = get_template_as_str('CN_Submission', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_cn_unsolicited(context, cc):
+    source = 'CN_Unsolicited'
     subject = "Title"
-    body = get_template_as_str('CN_Unsolicited', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_direct_selection_un_initiated(context, cc):
+    source = 'direct_selection_UN_initiated'
     subject = "Title"
-    body = get_template_as_str('direct_selection_UN_initiated', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_direct_selection_via_ucn(context, cc):
+    source = 'direct_selection_via_UCN'
     subject = "Title"
-    body = get_template_as_str('direct_selection_via_UCN', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_new_cfei_inviting(context, cc):
+    source = 'New_CFEI_inviting'
     subject = "Title"
-    body = get_template_as_str('New_CFEI_inviting', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)
 
 
 def send_update_cfei_prev_invited_submited_app(context, cc):
+    source = 'Update_CFEI_prev_invited_submited_app'
     subject = "Title"
-    body = get_template_as_str('Update_CFEI_prev_invited_submited_app', context)
+    body = get_template_as_str(source, context)
     send_notification(subject, body, cc)
+    feed_alert(source, subject, body, context)

@@ -8,7 +8,7 @@ from model_utils.models import TimeStampedModel
 class Notification(TimeStampedModel):
     name = models.CharField(max_length=255)
     description = models.TextField()
-    source = None
+    source = models.CharField(max_length=255)
 
     def __str__(self):
         return "Notification {}".format(self.name)
@@ -16,8 +16,8 @@ class Notification(TimeStampedModel):
 
 class NotifiedUser(TimeStampedModel):
     notification = models.ForeignKey(Notification, related_name="notified")
-    did_read = models.BooleanField()
-    recipient = models.ForeignKey("common.User", related_name="notified")
+    did_read = models.BooleanField(default=False)
+    recipient = models.ForeignKey("account.User", related_name="notified")
 
     def __str__(self):
         return "Notified User <{}>".format(self.id)
