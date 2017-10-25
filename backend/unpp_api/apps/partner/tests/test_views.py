@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
-from datetime import date
 
 from django.urls import reverse
 from django.conf import settings
@@ -18,6 +17,7 @@ from partner.models import (
     PartnerFunding,
     PartnerOtherInfo,
     PartnerInternalControl,
+    PartnerBudget,
 )
 from common.models import Point, CommonFile
 from common.tests.base import BaseAPITestCase
@@ -178,8 +178,8 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['working_languages_other'], working_languages_other)
         self.assertEquals(response.data['connectivity_excuse'], connectivity_excuse)
         # org head can't be changed
-        self.assertTrue(response.data['org_head']['first_name'] != first_name)
-        self.assertTrue(response.data['org_head']['email'] != email)
+        self.assertTrue(response.data['head_of_organization']['first_name'] != first_name)
+        self.assertTrue(response.data['head_of_organization']['email'] != email)
         self.assertEquals(response.data['mailing_address']['website'], website)
         self.assertEquals(len(response.data['directors']), len(directors))
 
@@ -257,23 +257,50 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         text = 'test text'
         payload = response.data
-        budgets = response.data['budgets']
-        for budget in budgets:
-            budget['year'] -= 1
-        budgets.append({
-            'partner': partner.id,
-            'year': date.today().year,
-            'budget': BUDGET_CHOICES.more,
-        })
-        payload['budgets'] = budgets
+        origin_budgets = response.data['origin_budgets']
+        budgets = []
+        for budget in origin_budgets:
+            budgets.append({
+                "id": budget['id'], 'budget': BUDGET_CHOICES.more
+            })
+        payload['origin_budgets'] = budgets
         payload['main_donors_list'] = text
         payload['source_core_funding'] = text
 
-        response = self.client.put(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['main_donors_list'], text)
         self.assertEquals(response.data['source_core_funding'], text)
-        self.assertEquals(len(response.data['budgets']), len(budgets))
+        self.assertEquals(len(response.data['origin_budgets']), len(budgets))
+        for budget in response.data['origin_budgets']:
+            self.assertEquals(budget['budget'], BUDGET_CHOICES.more)
+
+        # change budget on country profile
+
+        url = reverse('partners:country-profile', kwargs={"pk": partner.id})
+        payload = {
+            'chosen_country_to_create': [partner.country_presence[0]],
+        }
+        response = self.client.post(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        country_partner = Partner.objects.last()
+        self.assertEquals(partner.id, country_partner.hq.id)
+        url = reverse('partners:funding', kwargs={"pk": country_partner.id})
+
+        for budget in origin_budgets:
+            budgets.append({
+                "id": budget['id'], 'budget': BUDGET_CHOICES.less
+            })
+        payload = {
+            'origin_budgets': budgets,
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        for budget in country_partner.origin_budgets.all():
+            self.assertEquals(budget.budget, BUDGET_CHOICES.less)
+        for budget in partner.origin_budgets.all():
+            self.assertEquals(budget.budget, BUDGET_CHOICES.less)
+        self.assertEquals(PartnerBudget.objects.count(), 3)
 
     def test_collaboration(self):
         partner = Partner.objects.first()

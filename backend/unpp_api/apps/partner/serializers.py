@@ -1,14 +1,14 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.db import transaction
 from rest_framework import serializers
-
-from agency.serializers import OtherAgencySerializer
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
 )
-from common.models import AdminLevel1, Point, CommonFile
-from common.countries import COUNTRIES_ALPHA2_CODE, COUNTRIES_ALPHA2_CODE_DICT
+from common.models import Point
+from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (CommonFileSerializer,
                                 SpecializationSerializer,
                                 MixinPartnerRelatedSerializer,
@@ -188,6 +188,10 @@ class PartnerBudgetSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerBudget
         fields = "__all__"
+        read_only_fields = (
+            "year",
+            "partner"
+        )
 
 
 class PartnerFundingSerializer(serializers.ModelSerializer):
@@ -260,10 +264,10 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     mailing_address = PartnerMailingAddressSerializer()
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
-    org_head = PartnerHeadOrganizationSerializer()
+    head_of_organization = PartnerHeadOrganizationSerializer()
     mandate_mission = PartnerMandateMissionSerializer()
     experiences = PartnerExperienceSerializer(many=True)
-    budgets = PartnerBudgetSerializer(many=True)
+    origin_budgets = PartnerBudgetSerializer(many=True)
     fund = PartnerFundingSerializer()
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
     collaboration_evidences = PartnerCollaborationEvidenceSerializer(many=True)
@@ -292,10 +296,10 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "mailing_address",
             "directors",
             "authorised_officers",
-            "org_head",
+            "head_of_organization",
             "mandate_mission",
             "experiences",
-            "budgets",
+            "origin_budgets",
             "fund",
             "collaborations_partnership",
             "collaboration_evidences",
@@ -312,7 +316,7 @@ class PartnersListSerializer(serializers.ModelSerializer):
     acronym = serializers.SerializerMethodField()
     experience_working = serializers.SerializerMethodField()
     mailing_address = PartnerMailingAddressSerializer()
-    org_head = PartnerHeadOrganizationSerializer()
+    head_of_organization = PartnerHeadOrganizationSerializer()
     working_languages = serializers.ListField(source="profile.working_languages")
     experiences = PartnerExperienceSerializer(many=True)
 
@@ -328,7 +332,7 @@ class PartnersListSerializer(serializers.ModelSerializer):
             'experience_working',
 
             "mailing_address",
-            "org_head",
+            "head_of_organization",
             "working_languages",
             "experiences",
         )
@@ -343,7 +347,7 @@ class PartnersListSerializer(serializers.ModelSerializer):
 
 class PartnersListItemSerializer(serializers.ModelSerializer):
     mailing_address = PartnerMailingAddressSerializer()
-    org_head = PartnerHeadOrganizationSerializer()
+    head_of_organization = PartnerHeadOrganizationSerializer()
     working_languages = serializers.ListField(source="profile.working_languages")
     experiences = PartnerExperienceSerializer(many=True)
 
@@ -352,7 +356,7 @@ class PartnersListItemSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "mailing_address",
-            "org_head",
+            "head_of_organization",
             "working_languages",
             "experiences",
         )
@@ -397,7 +401,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     have_authorised_officers = serializers.BooleanField(source="profile.have_authorised_officers")
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
-    org_head = PartnerHeadOrganizationSerializer(read_only=True)
+    head_of_organization = PartnerHeadOrganizationSerializer(read_only=True)
     connectivity = serializers.BooleanField(source="profile.connectivity")
     connectivity_excuse = serializers.CharField(source="profile.connectivity_excuse")
     working_languages = serializers.ListField(source="profile.working_languages")
@@ -412,7 +416,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
             'have_authorised_officers',
             'directors',
             'authorised_officers',
-            'org_head',
+            'head_of_organization',
             'connectivity',
             'connectivity_excuse',
             'working_languages',
@@ -515,7 +519,7 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
 
 class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
-    budgets = PartnerBudgetSerializer(many=True)
+    origin_budgets = PartnerBudgetSerializer(many=True)
     major_donors = serializers.ListField(source="fund.major_donors")
     source_core_funding = serializers.CharField(source="fund.source_core_funding")
     main_donors_list = serializers.CharField(source="fund.main_donors_list")
@@ -523,14 +527,14 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
     class Meta:
         model = Partner
         fields = (
-            'budgets',
+            'origin_budgets',
             'major_donors',
             'main_donors_list',
             'source_core_funding',
         )
 
     related_names = [
-        "fund", "budgets"
+        "fund", "origin_budgets"
     ]
 
     @transaction.atomic

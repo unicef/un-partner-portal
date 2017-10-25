@@ -70,6 +70,19 @@ class Partner(TimeStampedModel):
         return self.__class__.objects.filter(hq=self)
 
     @property
+    def head_of_organization(self):
+        if self.is_hq:
+            return self.org_head
+        else:
+            return self.hq.org_head
+
+    @property
+    def origin_budgets(self):
+        if self.is_hq:
+            return self.budgets
+        else:
+            return self.hq.budgets
+
     def has_yellow_flag(self):
         return self.flags.filter(flag_type=FLAG_TYPES.yellow).exists()
 
@@ -418,7 +431,8 @@ class PartnerBudget(TimeStampedModel):
     budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, default=BUDGET_CHOICES.less)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['partner', '-year']
+        unique_together = (("year", "partner"), )
 
     def __str__(self):
         return "PartnerBudget {} <pk:{}>".format(self.year, self.id)
