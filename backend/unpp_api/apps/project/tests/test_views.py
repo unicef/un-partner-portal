@@ -89,10 +89,12 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
 
     quantity = 2
     url = reverse('projects:open')
+    user_type = 'agency'
 
     def setUp(self):
         super(TestOpenProjectsAPITestCase, self).setUp()
         AgencyMemberFactory.create_batch(self.quantity)
+        PartnerMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
 
     def test_open_project(self):
