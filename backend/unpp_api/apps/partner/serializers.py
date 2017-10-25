@@ -216,6 +216,9 @@ class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
 class PartnerOtherInfoSerializer(serializers.ModelSerializer):
 
     org_logo = CommonFileSerializer()
+    other_doc_1 = CommonFileSerializer()
+    other_doc_2 = CommonFileSerializer()
+    other_doc_3 = CommonFileSerializer()
 
     class Meta:
         model = PartnerOtherInfo

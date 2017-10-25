@@ -10,7 +10,6 @@ import PartnerProfileContactInfoOfficials from './partnerProfileContactInfoOffic
 import PartnerProfileContactInfoLanguages from './partnerProfileContactInfoLanguages';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 import PartnerProfileContactInfoHeadOrganization from './partnerProfileContactInfoHeadOrganization';
-import { changeTabToNext } from '../../../../reducers/partnerProfileEdit';
 import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsUpdate';
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
@@ -134,7 +133,6 @@ const mapState = (state, ownProps) => ({
 });
 
 const mapDispatch = dispatch => ({
-  changeTab: () => dispatch(changeTabToNext()),
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
   updateTab: (partnerId, tabName, body) => dispatch(patchPartnerProfile(partnerId, tabName, body)),
   dispatch,

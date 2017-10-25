@@ -83,7 +83,7 @@ const partnerDetailsStructure = {
     },
     populations_of_concern: {
       population_of_concern: null,
-      concern_groupas: null,
+      concern_groups: null,
     },
     country_presence: {
       country_presence: null,
