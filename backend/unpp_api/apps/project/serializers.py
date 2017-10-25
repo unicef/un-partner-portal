@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import datetime
+
 from django.db import transaction
+
 from rest_framework import serializers
+
 from account.models import User
 from account.serializers import AgencyUserSerializer
 from agency.serializers import AgencySerializer
-from common.consts import APPLICATION_STATUSES, EOI_TYPES
+from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import SimpleSpecializationSerializer, PointSerializer
 from common.models import Point, AdminLevel1
@@ -35,6 +40,7 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'end_date',
             'deadline_date',
             'status',
+            'completed_date',
         )
 
     def get_created(self, obj):
@@ -250,7 +256,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'notif_results_date',
             'justification',
             'completed_reason',
-
+            'completed_date',
             'display_type',
             'status',
             'title',
@@ -266,7 +272,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'reviewers',
             'selected_source',
         )
-        read_only_fields = ('created', )
+        read_only_fields = ('created', 'completed_date',)
 
     def update(self, instance, validated_data):
         if 'invited_partners' in validated_data:
@@ -279,6 +285,10 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
         instance = super(ProjectUpdateSerializer, self).update(instance, validated_data)
         for invited_partner in self.initial_data.get('invited_partners', []):
             instance.invited_partners.add(Partner.objects.get(id=invited_partner))
+
+        if instance.status == EOI_STATUSES.completed:
+            instance.completed_date = datetime.datetime.now()
+
         instance.save()
 
         return instance

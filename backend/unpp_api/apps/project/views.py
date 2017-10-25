@@ -55,7 +55,8 @@ class BaseProjectAPIView(ListCreateAPIView):
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = BaseProjectFilter
-    ordering_fields = ('deadline_date', 'start_date', 'status')
+    ordering_fields = ('deadline_date', 'created', 'start_date',
+                       'status', 'completed_date')
 
 
 class OpenProjectAPIView(BaseProjectAPIView):
