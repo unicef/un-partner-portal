@@ -15,6 +15,9 @@ const styleSheet = theme => ({
       color: theme.palette.secondary[500],
     },
   },
+  buttonHeight: {
+    height: 24,
+  },
 });
 
 class DropdownMenu extends React.Component {
@@ -42,6 +45,7 @@ class DropdownMenu extends React.Component {
     return (
       <div>
         <IconButton
+          className={classes.buttonHeight}
           aria-label="More"
           aria-owns={open ? 'long-menu' : null}
           aria-haspopup="true"
