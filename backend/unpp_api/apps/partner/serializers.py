@@ -48,6 +48,7 @@ class PartnerSerializer(serializers.ModelSerializer):
             'logo',
             'legal_name',
             'country_code',
+            'display_type',
         )
 
 
