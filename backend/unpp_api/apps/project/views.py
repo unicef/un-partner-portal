@@ -317,7 +317,7 @@ class AppsPartnerOpenAPIView(ListAPIView):
     filter_class = ApplicationsFilter
 
     def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(partner_id=self.request.active_partner)
+        return self.queryset.filter(partner_id=self.request.active_partner.id)
 
 
 class AppsPartnerUnsolicitedAPIView(AppsPartnerOpenAPIView):
