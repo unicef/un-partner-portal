@@ -29,25 +29,27 @@ export const loadApplicationFeedback = (applicationId, params) => (dispatch, get
     });
 };
 
-const saveFeedback = (state, action) => {
-  const { feedback = [] } = selectIndexWithDefaultEmptyObject(action.applicationId, state);
-  const newFeedback = R.concat(feedback, R.difference(action.feedback, feedback));
-  return R.assoc(action.applicationId, { feedback: newFeedback, count: action.count }, state);
-};
+const saveFeedback = (state, action) =>
+  R.assoc(action.applicationId, { feedback: action.feedback, count: action.count }, state);
 
 export const selectFeedback = (state, applicationId) => {
   const { feedback = [] } = selectIndexWithDefaultEmptyObject(applicationId, state.data);
   return feedback;
 };
 
+export const selectCount = (state, applicationId) => {
+  const { count = 0 } = selectIndexWithDefaultEmptyObject(applicationId, state.data);
+  return count;
+};
+
 export const updateApplicationFeedback = (applicationId, feedback) =>
   (dispatch, getState) => postApplicationFeedback(applicationId, feedback)
     .then((newFeedback) => {
-      dispatch(loadApplicationFeedbackSuccess([newFeedback], applicationId));
+      dispatch(loadApplicationFeedback(applicationId));
       return newFeedback;
     });
 
-const applicationFeedback = (state = initialState, action) => {
+const applicationFeedback = (state = initialState, action, params) => {
   switch (action.type) {
     case LOAD_APPLICATION_FEEDBACK_SUCCESS: {
       return saveFeedback(state, action);

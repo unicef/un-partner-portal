@@ -23,7 +23,7 @@ const styleSheet = (theme) => {
 class HeaderList extends Component {
   renderChildren() {
     return this.props.rows.map(item =>
-      (<div><Divider />
+      (<div className={this.props.classes.container}><Divider />
         {item}
       </div>));
   }

@@ -237,3 +237,7 @@ export const selectPartnerApplicationDetails = (state, cfeiId) =>
 
 export const selectApplicationFeedback = (state, applicationId) =>
   applicationFeedbackSelector.selectFeedback(state.applicationFeedback, applicationId);
+
+export const selectApplicationFeedbackCount = (state, applicationId) =>
+  applicationFeedbackSelector.selectCount(state.applicationFeedback, applicationId);
+

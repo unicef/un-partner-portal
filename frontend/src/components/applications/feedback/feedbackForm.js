@@ -1,35 +1,24 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import R from 'ramda';
-import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
-import Divider from 'material-ui/Divider';
 import Grid from 'material-ui/Grid';
 import { reduxForm } from 'redux-form';
-import HeaderList from '../../common/list/headerList';
-import { selectApplicationFeedback } from '../../../store';
-import { loadApplicationFeedback, updateApplicationFeedback } from '../../../reducers/applicationFeedback';
-import SpreadContent from '../../common/spreadContent';
-import PaddedContent from '../../common/paddedContent';
+import { updateApplicationFeedback } from '../../../reducers/applicationFeedback';
 import TextField from '../../forms/textFieldForm';
-import GridColumn from '../../common/grid/gridColumn';
-import { formatDateForPrint } from '../../../helpers/dates';
-import { ROLES } from '../../../helpers/constants';
 
 const messages = {
   placeholder: 'Provide optional feedback',
   button: 'send',
 };
 
-const handleSubmit = (values, dispatch, ownProps) => {
-  ownProps.postFeedback(values);
-};
+const handleSubmit = (values, dispatch, ownProps) =>
+  ownProps.postFeedback({ feedback: values[`feedback_${ownProps.applicationId}`] }).then(() => {
+    ownProps.reset();
+  });
 
-
-const Feedback = ({ handleSubmit }) => (<form onSubmit={handleSubmit}>
+const Feedback = ({ handleSubmit, applicationId }) => (<form onSubmit={handleSubmit}>
   <TextField
-    fieldName="feedback"
+    fieldName={`feedback_${applicationId}`}
     placeholder={messages.placeholder}
     optional
   />
