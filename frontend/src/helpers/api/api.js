@@ -151,22 +151,6 @@ export function getOpenCfeiDetails(id) {
   return authorizedGet({ uri: `/projects/${id}` });
 }
 
-export function getApplicationReviews(applicationId) {
-  return authorizedGet({ uri: `/projects/applications/${applicationId}/reviewers-status` });
-}
-
-export function postApplicationReview(applicationId, reviewerId, body) {
-  return authorizedPost({
-    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
-    body });
-}
-
-export function putApplicationReview(applicationId, reviewerId, body) {
-  return authorizedPut({
-    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
-    body });
-}
-
 // Applications
 
 export function getOpenCfeiApplications(id, filters) {
@@ -200,6 +184,35 @@ export function getApplicationUnsolicitedConceptNotes() {
 export function getApplicationDirect() {
   return authorizedGet({ uri: '/projects/applications/direct/' });
 }
+
+export function getApplicationReviews(applicationId) {
+  return authorizedGet({ uri: `/projects/applications/${applicationId}/reviewers-status` });
+}
+
+export function postApplicationReview(applicationId, reviewerId, body) {
+  return authorizedPost({
+    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
+    body });
+}
+
+export function putApplicationReview(applicationId, reviewerId, body) {
+  return authorizedPut({
+    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
+    body });
+}
+
+export function getApplicationFeedback(applicationId, params) {
+  return authorizedGet({
+    uri: `/projects/application/${applicationId}/feedback/`,
+    params });
+}
+
+export function postApplicationFeedback(applicationId, body) {
+  return authorizedPost({
+    uri: `/projects/application/${applicationId}/feedback/`,
+    body });
+}
+
 
 // Partners
 export function getPartnerProfileDetails(partnerId) {
