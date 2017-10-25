@@ -17,21 +17,6 @@ const COUNTRIES = [
   },
 ];
 
-const PARTNERS = [
-  {
-    value: 1,
-    label: 'Partner1',
-  },
-  {
-    value: 2,
-    label: 'Partner2',
-  },
-  {
-    value: 3,
-    label: 'Partner3',
-  },
-];
-
 export const TitleField = props => (<TextFieldForm
   label="Project Title"
   fieldName="title"
