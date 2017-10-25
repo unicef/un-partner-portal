@@ -56,7 +56,7 @@ OrganizationProfile.propTypes = {
 const mapStateToProps = state => ({
   hqProfile: R.path(['hq'], state.countryProfiles) || {},
   countryProfiles: R.path(['hq', 'country_profiles'], state.countryProfiles) || [],
-  partnerId: state.partnerInfo.partner.id,
+  partnerId: state.session.partnerId,
   loading: state.countryProfiles.loading,
   createLoading: state.countryProfiles.createLoading,
 });

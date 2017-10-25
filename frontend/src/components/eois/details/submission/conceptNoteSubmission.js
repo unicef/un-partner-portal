@@ -278,7 +278,7 @@ const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.params.id);
 
   return {
-    partnerId: state.partnerInfo.id,
+    partnerId: state.session.partnerId,
     loader: state.conceptNote.loading,
     cnUploaded: state.conceptNote.cnFile,
     errorUpload: state.conceptNote.error,

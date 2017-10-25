@@ -39,6 +39,12 @@ const messages = {
 };
 
 class OrganizationProfileOverview extends Component {
+  componentWillMount() {
+    const { partnerId } = this.props;
+
+    this.props.loadPartnerProfileDetails(partnerId);
+  }
+
   handleEditMode(sectionIndex) {
     const { partnerId } = this.props;
 
@@ -46,9 +52,6 @@ class OrganizationProfileOverview extends Component {
     history.push(`/profile/${partnerId}/edit`);
   }
 
-  componentWillMount() {
-    this.props.loadPartnerProfileDetails();
-  }
 
   render() {
     return (
@@ -77,18 +80,12 @@ OrganizationProfileOverview.propTypes = {
   loadPartnerProfileDetails: PropTypes.func,
 };
 
-const mapDispatch = (dispatch, ownProps) => {
-  const { id } = ownProps.params;
-
-  return {
-    changeTab: index => dispatch(changeTab(index)),
-    loadPartnerProfileDetails: () => dispatch(loadPartnerDetails(id)),
-  };
-};
-
-const mapStateToProps = (state, ownProps) => ({
-  partnerId: ownProps.params.id,
+const mapDispatch = dispatch => ({
+  changeTab: index => dispatch(changeTab(index)),
+  loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
 });
+
+const mapStateToProps = (state, ownProps) => ({ partnerId: ownProps.params.id });
 
 const connectedOrganizationProfileOverview = connect(
   mapStateToProps, mapDispatch)(OrganizationProfileOverview);

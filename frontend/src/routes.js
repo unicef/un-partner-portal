@@ -40,6 +40,13 @@ import results from './components/eois/details/overview/results/results';
 
 const history = syncHistoryWithStore(browserHistory, store);
 
+function checkPartnerType(nextState, replace) {
+  const state = store.getState();
+  if (!state.session.isHq) {
+    replace({ pathname: `profile/${state.session.partnerId}/overview` });
+  }
+}
+
 const allRoutes = () => (
   <Router history={history}>
     <Route component={auth}>
@@ -94,7 +101,7 @@ const allRoutes = () => (
               <Route path="direct" component={partnerApplicationsDirect} />
             </Route>
           </Route>
-          <Route path="profile" component={organizationProfile} />
+          <Route path="profile" onEnter={checkPartnerType} component={organizationProfile} />
           <Route path="profile/:id/edit" component={partnerProfileEdit}>
             <IndexRedirect to="identification" />
             <Route component={mainContent} >
@@ -119,5 +126,4 @@ const allRoutes = () => (
     </Route>
   </Router >
 );
-
 export default allRoutes;

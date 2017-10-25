@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -66,6 +67,7 @@ class PartnerProfileEdit extends Component {
           title={countryName}
           customTabs={() => this.partnerProfileTabs()}
           backButton
+          handleBackButton={() => { history.goBack(); }}
           handleChange={this.handleChange}
         >
           {(index !== -1) && children}
@@ -88,14 +90,18 @@ PartnerProfileEdit.propTypes = {
   partnerLoading: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  partnerProfile: state.partnerProfileDetails.partnerProfileDetails,
-  partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
-  countryName: state.session.partnerCountry ? state.countries[state.session.partnerCountry] : messages.hqProfile,
-  tabs: state.partnerProfileDetailsNav.tabs,
-  partnerId: ownProps.params.id,
-  incompleteTabs: state.partnerProfileEdit.incompleteTabs,
-});
+const mapStateToProps = (state, ownProps) => {
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners);
+  
+  return {
+    partnerProfile: state.partnerProfileDetails.partnerProfileDetails,
+    partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
+    countryName: partner.is_hq ? messages.hqProfile : state.countries[partner.country_code],
+    tabs: state.partnerProfileDetailsNav.tabs,
+    partnerId: ownProps.params.id,
+    incompleteTabs: state.partnerProfileEdit.incompleteTabs,
+  };
+};
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onItemClick: (id, path) => {
