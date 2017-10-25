@@ -45,22 +45,23 @@ const verificationQuestions = [
   },
 ];
 
-const renderQuestions = questions => (
+const renderQuestions = (questions, readOnly) => (
   questions.map(({ question, questionFieldName, commentFieldName }) => (<GridColumn>
     <VerificationQuestion
       question={question}
       questionFieldName={questionFieldName}
       commentFieldName={commentFieldName}
+      readOnly={readOnly}
     />
     <Divider />
   </GridColumn>),
   ));
 
 const AddVerification = (props) => {
-  const { handleSubmit } = props;
+  const { handleSubmit, readOnly } = props;
   return (
     <form onSubmit={handleSubmit}>
-      {renderQuestions(verificationQuestions)}
+      {renderQuestions(verificationQuestions, readOnly)}
     </form >
   );
 };
@@ -70,7 +71,7 @@ AddVerification.propTypes = {
      * callback for form submit
      */
   handleSubmit: PropTypes.func.isRequired,
-  classes: PropTypes.object,
+  readOnly: PropTypes.bool,
 };
 
 const formAddVerification = reduxForm({

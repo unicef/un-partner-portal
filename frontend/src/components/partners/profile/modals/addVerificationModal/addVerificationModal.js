@@ -46,7 +46,6 @@ class AddVerificationModal extends Component {
   render() {
     const { submit, dialogOpen, handleDialogClose, partnerName } = this.props;
     const { submitting, verification, error } = this.state;
-    console.log(submitting, verification);
     return (
       <div>
         {!submitting && <ControlledModal

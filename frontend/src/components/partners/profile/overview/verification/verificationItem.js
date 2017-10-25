@@ -4,17 +4,11 @@ import R from 'ramda';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
-import SpreadContent from '../../../../common/spreadContent';
-import PolarRadio from '../../../../forms/fields/PolarRadio';
-import TextForm from '../../../../forms/textFieldForm';
 import GridColumn from '../../../../common/grid/gridColumn';
-import GridRow from '../../../../common/grid/gridRow';
-import PaddedContent from '../../../../common/paddedContent';
 import VerificationIcon from '../../icons/verificationIcon';
-import Loader from '../../../../common/loader';
-import EmptyContent from '../../../../common/emptyContent';
 import { countGoodAnswers } from '../../../../../helpers/verificationUtils';
 import { formatDateForPrint } from '../../../../../helpers/dates';
+import VerificationDetails from '../../buttons/viewVerificationSummaryButton';
 
 const messages = {
   verified: 'Verified',
@@ -56,6 +50,11 @@ const VerificationItem = (props) => {
         {verification.is_verified === false && <Typography type="caption">
           {`${messages.questions} ${countGoodAnswers(verification)}/5`}
         </Typography>}
+        <Grid container justify="flex-end">
+          <Grid item>
+            <VerificationDetails verification={verification} />
+          </Grid>
+        </Grid>
       </GridColumn>
     </Grid>
   );

@@ -28,14 +28,14 @@ const styleSheet = (theme) => {
 };
 
 const VerificationQuestion = (props) => {
-  const { classes, question, questionFieldName, commentFieldName } = props;
+  const { classes, question, questionFieldName, commentFieldName, readOnly } = props;
   return (
     <GridColumn>
       <SpreadContent className={`${classes.padding} ${classes.background}`}>
         <Typography type="body2" className={classes.questionMargin}>
           {question}
         </Typography>
-        <PolarRadio fieldName={questionFieldName} />
+        <PolarRadio fieldName={questionFieldName} readOnly={readOnly} />
       </SpreadContent>
       <div className={classes.padding}>
         <TextForm
@@ -47,6 +47,7 @@ const VerificationQuestion = (props) => {
               maxLength: '300',
             },
           }}
+          readOnly={readOnly}
           optional
         />
       </div>
@@ -59,6 +60,7 @@ VerificationQuestion.propTypes = {
   question: PropTypes.string,
   questionFieldName: PropTypes.string,
   commentFieldName: PropTypes.string,
-}
+  readOnly: PropTypes.bool,
+};
 
 export default withStyles(styleSheet, { name: 'VerificationQuestion' })(VerificationQuestion);
