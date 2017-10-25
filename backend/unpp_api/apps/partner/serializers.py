@@ -7,8 +7,8 @@ from common.consts import (
     METHOD_ACC_ADOPTED_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
 )
-from common.models import AdminLevel1, Point, CommonFile
-from common.countries import COUNTRIES_ALPHA2_CODE, COUNTRIES_ALPHA2_CODE_DICT
+from common.models import Point
+from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (CommonFileSerializer,
                                 SpecializationSerializer,
                                 MixinPartnerRelatedSerializer,
@@ -519,7 +519,7 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
 
 class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
-    budgets = PartnerBudgetSerializer(many=True)
+    origin_budgets = PartnerBudgetSerializer(many=True)
     major_donors = serializers.ListField(source="fund.major_donors")
     source_core_funding = serializers.CharField(source="fund.source_core_funding")
     main_donors_list = serializers.CharField(source="fund.main_donors_list")
@@ -527,14 +527,14 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
     class Meta:
         model = Partner
         fields = (
-            'budgets',
+            'origin_budgets',
             'major_donors',
             'main_donors_list',
             'source_core_funding',
         )
 
     related_names = [
-        "fund", "budgets"
+        "fund", "origin_budgets"
     ]
 
     @transaction.atomic
