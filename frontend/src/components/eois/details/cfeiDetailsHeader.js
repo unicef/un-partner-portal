@@ -12,9 +12,11 @@ import Loader from '../../common/loader';
 import {
   selectCfeiDetailsItemsByType,
   selectCfeiTitle,
+  selectCfeiStatus,
 } from '../../../store';
 import { loadCfei } from '../../../reducers/cfeiDetails';
 import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
+import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
 
 const messages = {
   noCfei: 'Sorry but this cfei doesn\'t exist',
@@ -84,7 +86,7 @@ class CfeiHeader extends Component {
     }
     return (<HeaderNavigation
       index={index}
-      title={title}
+      titleObject={<CfeiDetailsHeaderProjectType type={type} title={title} />}
       customTabs={() => this.cfeiTabs()}
       header={<HeaderOptionsContainer role={role} type={type} id={id} />}
       handleChange={this.handleChange}
@@ -123,6 +125,7 @@ CfeiHeader.propTypes = {
   uploadCnClearState: PropTypes.func.isRequired,
   error: PropTypes.object,
   cnFile: PropTypes.string,
+  type: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -130,6 +133,7 @@ const mapStateToProps = (state, ownProps) => ({
   tabs: selectCfeiDetailsItemsByType(state, ownProps.params.type),
   role: state.session.role,
   title: selectCfeiTitle(state, ownProps.params.id),
+  type: ownProps.params.type,
   loading: state.cfeiDetails.cfeiDetailsStatus.loading,
   cnFile: state.conceptNote.cnFile,
   error: state.cfeiDetails.cfeiDetailsStatus.error,
