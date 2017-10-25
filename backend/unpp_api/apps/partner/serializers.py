@@ -1,7 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
 
-from agency.serializers import OtherAgencySerializer
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
@@ -37,12 +36,19 @@ from .models import (
 
 class PartnerSerializer(serializers.ModelSerializer):
 
+    is_hq = serializers.BooleanField(read_only=True)
+    logo = CommonFileSerializer(source='other_info.org_logo',
+                                read_only=True)
+
     class Meta:
         model = Partner
         fields = (
             'id',
+            'is_hq',
+            'logo',
             'legal_name',
             'country_code',
+            'display_type',
         )
 
 

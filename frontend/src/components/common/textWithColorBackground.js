@@ -2,29 +2,54 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
+import ClassName from 'classnames';
 
 
 const styleSheet = (theme) => {
+  const white = 'rgba(255, 255, 255, 1)';
   return {
     margin: {
       padding: `4px ${theme.spacing.unit * 1}px`,
       textAlign: 'center',
+      width: 'fit-content',
     },
     red: {
       backgroundColor: theme.palette.error[800],
-      color: theme.palette.getContrastText(theme.palette.error[800]),
+      color: white,
+    },
+    orange: {
+      backgroundColor: theme.palette.common.orange,
+      color: white,
+    },
+    purple: {
+      backgroundColor: theme.palette.common.purple,
+      color: white,
+    },
+    blue: {
+      backgroundColor: theme.palette.common.blue,
+      color: white,
     },
   };
 };
 
-const TextWithColorBackground = ({ classes, color, text, ...textProps }) => (
-  <Typography type="caption" className={`${classes.margin} ${classes[color]}`} {...textProps}> {text} </Typography>
-);
+const TextWithColorBackground = ({ classes,
+  color,
+  text,
+  className: classNameProp,
+  ...textProps }) => {
+  const className = ClassName(
+    classes.margin,
+    classes[color],
+    classNameProp,
+  );
+  return <Typography type="caption" className={className} {...textProps}> {text} </Typography>
+};
 
 TextWithColorBackground.propTypes = {
   classes: PropTypes.object,
   color: PropTypes.string,
   text: PropTypes.string,
+  className: PropTypes.object,
 };
 
 export default withStyles(styleSheet, { name: 'TextWithColorBackground' })(TextWithColorBackground);

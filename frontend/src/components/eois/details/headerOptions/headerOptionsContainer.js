@@ -1,14 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Grid from 'material-ui/Grid';
 import { PROJECT_TYPES, ROLES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
 import AgencyOpenHeaderOptions from './agencyOpenHeaderOptions';
 import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
 import EoiStatusCell from '../../cells/eoiStatusCell';
 import { selectCfeiStatus, isCfeiCompleted } from '../../../../store';
-import SpreadContent from '../../../common/spreadContent';
 import GridRow from '../../../common/grid/gridRow';
 
 const HeaderOptionsContainer = (props) => {
@@ -20,7 +18,7 @@ const HeaderOptionsContainer = (props) => {
     } else if (role === ROLES.PARTNER) {
       options = <PartnerOpenHeaderOptions />;
     }
-  } else if (type === PROJECT_TYPES.DIRECT) {
+  } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
     options = <AgencyDirectHeaderOptions cfeiCompleted={cfeiCompleted} />;
   }
   return (<GridRow justify="center" align="center">

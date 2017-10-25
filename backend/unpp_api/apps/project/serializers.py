@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import datetime
+
 from django.db import transaction
+
 from rest_framework import serializers
+
 from account.models import User
 from account.serializers import AgencyUserSerializer
 from agency.serializers import AgencySerializer
-from common.consts import APPLICATION_STATUSES, EOI_TYPES
+from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import SimpleSpecializationSerializer, PointSerializer
 from common.models import Point, AdminLevel1
@@ -35,6 +40,7 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'end_date',
             'deadline_date',
             'status',
+            'completed_date',
         )
 
     def get_created(self, obj):
@@ -250,7 +256,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'notif_results_date',
             'justification',
             'completed_reason',
-
+            'completed_date',
             'display_type',
             'status',
             'title',
@@ -266,7 +272,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'reviewers',
             'selected_source',
         )
-        read_only_fields = ('created', )
+        read_only_fields = ('created', 'completed_date',)
 
     def update(self, instance, validated_data):
         if 'invited_partners' in validated_data:
@@ -279,6 +285,10 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
         instance = super(ProjectUpdateSerializer, self).update(instance, validated_data)
         for invited_partner in self.initial_data.get('invited_partners', []):
             instance.invited_partners.add(Partner.objects.get(id=invited_partner))
+
+        if instance.status == EOI_STATUSES.completed:
+            instance.completed_date = datetime.datetime.now()
+
         instance.save()
 
         return instance
@@ -378,8 +388,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     is_direct = serializers.BooleanField(source="eoi.is_direct")
     partner_name = serializers.CharField(source="partner.legal_name")
     selected_source = serializers.CharField(source="eoi.selected_source")
-    has_yellow_flag = serializers.CharField(source="partner.has_yellow_flag")
-    has_red_flag = serializers.CharField(source="partner.has_red_flag")
+
 
     class Meta:
         model = Application
@@ -395,9 +404,6 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             'status',
             'is_direct',
             'partner_name',
-            'partner_is_verified',
-            'has_yellow_flag',
-            'has_red_flag',
         )
 
     def get_project_title(self, obj):
@@ -423,6 +429,17 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             return obj.eoi.specializations.all().values_list('id', flat=True)
         return obj.proposal_of_eoi_details.get('specializations')
 
+
+class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirectSerializer):
+
+    has_yellow_flag = serializers.BooleanField(source="partner.has_yellow_flag")
+    has_red_flag = serializers.BooleanField(source="partner.has_red_flag")
+
+    class Meta:
+        model = Application
+        fields = ApplicationPartnerUnsolicitedDirectSerializer.Meta.fields + ('has_red_flag',
+                                                                              'has_yellow_flag',
+                                                                              'partner_is_verified',)
 
 class ApplicationFeedbackSerializer(serializers.ModelSerializer):
     provider = AgencyUserSerializer(read_only=True)

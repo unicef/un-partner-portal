@@ -30,12 +30,13 @@ import partnersContainer from './components/partners/partnersContainer';
 import partnerProfileHeader from './components/partners/profile/partnerProfileHeader';
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
 import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
-import settings from './components/agencySettings/agencySettings';
+import agencyMembersContainer from './components/settings/agencyMembersContainer';
 import registration from './components/registration/registration';
 import login from './components/login/login';
 import mainContent from './components/common/mainContentWrapper';
 import dev from './components/dev';
-import results from './components/eois/details/overview/results/results';
+import cfeiOpenResults from './components/eois/details/overview/results/results';
+import cfeiDirectResponse from './components/eois/details/overview/results/response';
 
 const history = syncHistoryWithStore(browserHistory, store);
 
@@ -57,9 +58,10 @@ const allRoutes = () => (
               <Route path="overview" component={cfeiOverview} />
               <Route path="feedback" component={null} />
               <Route path="submission" component={cfeiSubmission} />
-              <Route path="results" component={results} />
+              <Route path="results" component={cfeiOpenResults} />
               <Route path="preselected" component={openCfeiPreselected} />
-              <Route path="applications" component={openCfeiApplications} />ł
+              <Route path="applications" component={openCfeiApplications} />
+              <Route path="response" component={cfeiDirectResponse} />
             </Route>
           </Route>
           <Route component={applicationSummaryContainer} >
@@ -102,7 +104,7 @@ const allRoutes = () => (
               <Route path="users" component={null} />
             </Route>
           </Route>
-          <Route path="settings" component={settings} />
+          <Route path="settings" component={agencyMembersContainer} />
         </Route>
       </Route>
     </Route>

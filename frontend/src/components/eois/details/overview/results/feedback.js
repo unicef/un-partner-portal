@@ -25,7 +25,7 @@ Fields.propTypes = {
 
 const ProjectDetails = ({ feedback }) => (
   <HeaderList
-    header={<Typography type="subheading" >{messages.title}</Typography>}
+    header={<Typography type="headline" >{messages.title}</Typography>}
     rows={[<Fields type={feedback} />]}
   />
 );
