@@ -82,7 +82,7 @@ OrganizationProfileContent.propTypes = {
 
 const mapStateToProps = state => ({
   profileName: state.psession.name,
-  verifiedStatus: state.partnerInfo.partner.verified,
+  verifiedStatus: false,
 });
 
 const connectedOrganizationProfileContent = connect(
