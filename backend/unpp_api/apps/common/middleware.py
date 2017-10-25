@@ -18,6 +18,7 @@ def get_actual_value(request):
         return Partner.objects.first()
     return None
 
+
 class ActivePartnerMiddlewware(object):
     def __init__(self, get_response):
         self.get_response = get_response

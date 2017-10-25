@@ -5,7 +5,6 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 from common.consts import SANCTION_LIST_TYPES, SANCTION_MATCH_TYPES
-from account.models import User
 from partner.models import Partner
 from .models import SanctionedName, SanctionedNameMatch
 
@@ -30,7 +29,9 @@ def create_sanctions_match(name_matches_qs, partner, match_type, match_text):
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
                   [settings.UN_SANCTIONS_LIST_EMAIL_ALERT])
 
-xstr = lambda s: s or ""
+xstr = (lambda s: s or "")
+
+
 def format_to_full_name(first_name, last_name):
     full_name = '{} {}'.format(xstr(first_name), xstr(last_name))
     return " ".join(full_name.split())
@@ -43,13 +44,11 @@ def scan_all_partners():
             sanction_matches__can_ignore=False):
 
         # Partner Org Legal Name
-        matched_names = filter_sanctions_names(partner.legal_name,
-                                              SANCTION_LIST_TYPES.entity,
-                                              partner)
+        matched_names = filter_sanctions_names(
+            partner.legal_name, SANCTION_LIST_TYPES.entity, partner)
 
         create_sanctions_match(matched_names, partner, SANCTION_MATCH_TYPES.organization,
                                "Match found on the partners organization legal name")
-
 
         # TODO - come back and changes all first/last to full name once changes are in
 
@@ -60,7 +59,10 @@ def scan_all_partners():
             matched_names = filter_sanctions_names(full_name,
                                                    SANCTION_LIST_TYPES.individual,
                                                    partner)
-            create_sanctions_match(matched_names, partner, SANCTION_MATCH_TYPES.board, "Match found for head of organization")
+            create_sanctions_match(matched_names,
+                                   partner,
+                                   SANCTION_MATCH_TYPES.board,
+                                   "Match found for head of organization")
 
         # Partner Directors
         for director in partner.directors.all():

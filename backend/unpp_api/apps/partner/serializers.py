@@ -1,7 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
 
-from agency.serializers import OtherAgencySerializer
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
