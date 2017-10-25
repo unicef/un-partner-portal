@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db.models import Q
 import django_filters
 from django_filters.filters import CharFilter, DateFilter, BooleanFilter
+from django_filters.widgets import BooleanWidget
 
 from common.consts import EOI_STATUSES
 from .models import EOI, Application
@@ -14,7 +15,7 @@ class BaseProjectFilter(django_filters.FilterSet):
     country_code = CharFilter(method='get_country_code')
     locations = CharFilter(method='get_locations')
     specializations = CharFilter(method='get_specializations')
-    active = BooleanFilter(method='get_active')
+    active = BooleanFilter(method='get_active', widget=BooleanWidget())
     posted_from_date = DateFilter(name='created',
                                   lookup_expr=('gt'))
     posted_to_date = DateFilter(name='created',
@@ -23,7 +24,7 @@ class BaseProjectFilter(django_filters.FilterSet):
 
     class Meta:
         model = EOI
-        fields = ['title', 'country_code', 'locations', 'specializations', 'agency', 'active', 'selected_source',]
+        fields = ['title', 'country_code', 'locations', 'specializations', 'agency', 'active', 'selected_source']
 
     def get_title(self, queryset, name, value):
         return queryset.filter(title__icontains=value)
