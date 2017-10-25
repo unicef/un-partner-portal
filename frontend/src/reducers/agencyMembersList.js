@@ -54,10 +54,6 @@ export const loadMembersList = (agencyId, params) => (dispatch) => {
 };
 
 export default function agencyMembersListReducer(state = initialState, action) {
-  if (!action) {
-    return state;
-  }
-
   switch (action.type) {
     case MEMBERS_LOAD_FAILURE: {
       return saveErrorMsg(state, action, messages.loadFailed);
