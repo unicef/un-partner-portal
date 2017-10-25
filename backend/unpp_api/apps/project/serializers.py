@@ -125,6 +125,12 @@ class CreateDirectApplicationNoCNSerializer(serializers.ModelSerializer):
         exclude = ("cn", )
 
 
+class ApplicationPartnerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Application
+        fields = ('id', 'cn', 'created')
+
 class ApplicationFullSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -234,6 +240,61 @@ class CreateProjectSerializer(CreateEOISerializer):
             self.instance.focal_points.add(focal_point)
 
         return self.instance
+
+
+class PartnerProjectSerializer(serializers.ModelSerializer):
+
+    agency = serializers.CharField(source='agency.name')
+    specializations = SimpleSpecializationSerializer(many=True)
+    locations = PointSerializer(many=True)
+    is_pinned = serializers.SerializerMethodField()
+    application = serializers.SerializerMethodField()
+
+    # TODO - cut down on some of these fields. partners should not get back this data
+    # Frontend currently breaks if doesn't receive all
+    class Meta:
+        model = EOI
+        fields = (
+            'id',
+            'specializations',
+            'invited_partners',
+            'locations',
+            'assessments_criteria',
+            'created',
+            'start_date',
+            'end_date',
+            'deadline_date',
+            'notif_results_date',
+            'justification',
+            'completed_reason',
+            'completed_date',
+            'display_type',
+            'status',
+            'title',
+            'agency',
+            'created_by',
+            'focal_points',
+            'agency_office',
+            'cn_template',
+            'description',
+            'goal',
+            'other_information',
+            'has_weighting',
+            'reviewers',
+            'selected_source',
+            'is_pinned',
+            'application',
+        )
+        read_only_fields = fields
+
+    def get_is_pinned(self, obj):
+        return obj.pins.filter(partner=self.context['request'].active_partner.id).exists()
+
+    def get_application(self, obj):
+        qs = obj.applications.filter(partner=self.context['request'].active_partner.id)
+        if qs.exists():
+            return ApplicationPartnerSerializer(qs.get()).data
+        return None
 
 
 class ProjectUpdateSerializer(serializers.ModelSerializer):
