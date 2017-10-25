@@ -21,6 +21,7 @@ export const DETAILS_ITEMS = {
   RESULTS: 'results',
   PRESELECTED: 'preselected',
   APPLICATIONS: 'applications',
+  RESPONSE: 'response',
 };
 
 export const APPLICATION_STATUSES = {
@@ -39,5 +40,11 @@ export const AGENCY_MEMBERS_POSITIONS = {
   ADMINISTRATOR: 'Administrator',
   EDITOR: 'Editor',
   READER: 'Reader',
+};
+
+export const PROJECT_STATUSES = {
+  OPE: 'Ope',
+  CLO: 'Clo',
+  COM: 'Com',
 };
 

@@ -12,13 +12,16 @@ import { formatDateForPrint } from '../../../helpers/dates';
 import WrappedCell from '../../common/cell/wrappedCell';
 import ApplicationStatusCell from '../applicationStatusCell';
 import SectorsCell from '../sectorsCell';
+import { PROJECT_TYPES } from '../../../helpers/constants';
 
 const applicationCell = ({ row, column }) => {
   if (column.name === 'submission_date') {
     return <WrappedCell content={formatDateForPrint(row.submission_date)} />;
   } else if (column.name === 'id') {
     return (<ConceptNoteIDCell
+      cfeiId={row.eoi_id}
       id={row.id}
+      type={PROJECT_TYPES.DIRECT}
     />);
   } else if (column.name === 'status') {
     return <ApplicationStatusCell appStatus={row.status} />;
