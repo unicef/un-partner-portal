@@ -378,8 +378,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     is_direct = serializers.BooleanField(source="eoi.is_direct")
     partner_name = serializers.CharField(source="partner.legal_name")
     selected_source = serializers.CharField(source="eoi.selected_source")
-    has_yellow_flag = serializers.CharField(source="partner.has_yellow_flag")
-    has_red_flag = serializers.CharField(source="partner.has_red_flag")
+
 
     class Meta:
         model = Application
@@ -395,9 +394,6 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             'status',
             'is_direct',
             'partner_name',
-            'partner_is_verified',
-            'has_yellow_flag',
-            'has_red_flag',
         )
 
     def get_project_title(self, obj):
@@ -423,6 +419,17 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             return obj.eoi.specializations.all().values_list('id', flat=True)
         return obj.proposal_of_eoi_details.get('specializations')
 
+
+class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirectSerializer):
+
+    has_yellow_flag = serializers.BooleanField(source="partner.has_yellow_flag")
+    has_red_flag = serializers.BooleanField(source="partner.has_red_flag")
+
+    class Meta:
+        model = Application
+        fields = ApplicationPartnerUnsolicitedDirectSerializer.Meta.fields + ('has_red_flag',
+                                                                              'has_yellow_flag',
+                                                                              'partner_is_verified',)
 
 class ApplicationFeedbackSerializer(serializers.ModelSerializer):
     provider = AgencyUserSerializer(read_only=True)

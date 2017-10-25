@@ -32,6 +32,7 @@ from .serializers import (
     CreateDirectProjectSerializer,
     ProjectUpdateSerializer,
     ApplicationFullSerializer,
+    AgencyUnsolicitedApplicationSerializer,
     CreateDirectApplicationNoCNSerializer,
     ApplicationsListSerializer,
     ReviewersApplicationSerializer,
@@ -293,11 +294,17 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         return super(ReviewerAssessmentsAPIView, self).update(request, application_id, *args, **kwargs)
 
 
-class UnsolicitedProjectAPIView(CreateAPIView):
+class UnsolicitedProjectAPIView(ListCreateAPIView):
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = (IsAuthenticated, )
-    queryset = Application.objects.all()
-    serializer_class = CreateUnsolicitedProjectSerializer
+    queryset = Application.objects.filter(is_unsolicited=True)
+    pagination_class = SmallPagination
+    filter_class = ApplicationsUnsolicitedFilter
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            return CreateUnsolicitedProjectSerializer
+        return AgencyUnsolicitedApplicationSerializer
 
 
 class AppsPartnerOpenAPIView(ListAPIView):
