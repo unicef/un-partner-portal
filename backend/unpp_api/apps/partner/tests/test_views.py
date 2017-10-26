@@ -227,7 +227,6 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         comment = "unit test desc"
         experience = PartnerExperience.objects.filter(partner=partner).first()
         point = Point.objects.first()
-        location_of_office_old_name = point.admin_level_1.name
         payload = {
             'security_desc': comment,
             'ethic_fraud': True,
@@ -280,7 +279,6 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertEquals(len(response.data['location_field_offices']), 1)
         self.assertEquals(response.data['location_field_offices'][0]['id'], point.id)
         self.assertEquals(response.data['location_of_office']['id'], point.id+1)
-
 
     def test_funding(self):
         partner = Partner.objects.first()

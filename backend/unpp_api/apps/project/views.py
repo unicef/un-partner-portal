@@ -42,6 +42,7 @@ from .serializers import (
     ApplicationPartnerOpenSerializer,
     ApplicationPartnerUnsolicitedDirectSerializer,
     ApplicationFeedbackSerializer,
+    ConvertUnsolicitedSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
 
@@ -351,3 +352,9 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(provider=self.request.user,
                         application_id=self.kwargs['pk'])
+
+
+class ConvertUnsolicitedAPIView(CreateAPIView):
+    serializer_class = ConvertUnsolicitedSerializer
+    queryset = Application.objects.all()
+    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
