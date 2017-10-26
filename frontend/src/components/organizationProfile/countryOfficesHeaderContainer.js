@@ -97,7 +97,7 @@ const mapStateToProps = state => ({
   countryProfiles: R.path(['hq', 'country_profiles'], state.countryProfiles) || [],
   countryPresence: R.path(['hq', 'country_presence'], state.countryProfiles) || [],
   selectedCountryId: state.countryProfiles.selectedCountryId,
-  partnerId: state.partnerInfo.partner.id,
+  partnerId: state.session.partnerId,
 });
 
 export default connect(mapStateToProps, mapDispatch)(CountryOfficesHeaderContainer);

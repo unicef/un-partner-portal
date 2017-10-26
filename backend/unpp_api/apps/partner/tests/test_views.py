@@ -18,6 +18,7 @@ from partner.models import (
     PartnerFunding,
     PartnerOtherInfo,
     PartnerInternalControl,
+    PartnerExperience,
 )
 from common.models import Point, CommonFile
 from common.tests.base import BaseAPITestCase
@@ -31,6 +32,7 @@ from common.factories import (
 from common.consts import (
     BUDGET_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
+    YEARS_OF_EXP_CHOICES,
 )
 
 
@@ -223,6 +225,9 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
 
         comment = "unit test desc"
+        experience = PartnerExperience.objects.filter(partner=partner).first()
+        point = Point.objects.first()
+        location_of_office_old_name = point.admin_level_1.name
         payload = {
             'security_desc': comment,
             'ethic_fraud': True,
@@ -234,12 +239,34 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             'ethic_safeguard': True,
             'ethic_safeguard_comment': comment,
             'ethic_safeguard_policy': file_id,
-            'location_of_office': Point.objects.first().id,
-            'location_field_offices': [Point.objects.first().id],
+            'location_of_office': {
+                'lat': point.lat,
+                'lon': point.lon,
+                'admin_level_1': {
+                    'name': 'location_of_office',
+                    'country_code': point.admin_level_1.country_code,
+                }
+            },
+            'location_field_offices': [
+                {
+                    'id': point.id,
+                    'lat': point.lat,
+                    'lon': point.lon,
+                    'admin_level_1': {
+                        'id': point.admin_level_1.id,
+                        'name': 'location_of_office',
+                        'country_code': point.admin_level_1.country_code,
+                    },
+                },
+            ],
             'governance_organigram': file_id,
+            'experiences': [
+                {'id': experience.id, 'years': YEARS_OF_EXP_CHOICES.more_10},
+                {'specialization_id': 1, 'years': YEARS_OF_EXP_CHOICES.more_10}
+            ]
         }
 
-        response = self.client.patch(url, data=payload, format='multipart')
+        response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['ethic_safeguard_comment'], comment)
         self.assertEquals(response.data['security_desc'], comment)
@@ -247,6 +274,13 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertTrue(response.data['security_high_risk_locations'])
         self.assertTrue(response.data['security_high_risk_policy'])
         self.assertTrue(response.data['population_of_concern'])
+        self.assertEquals(len(response.data['experiences']), 2)
+        self.assertEquals(response.data['experiences'][0]['years'], YEARS_OF_EXP_CHOICES.more_10)
+        self.assertEquals(response.data['experiences'][1]['years'], YEARS_OF_EXP_CHOICES.more_10)
+        self.assertEquals(len(response.data['location_field_offices']), 1)
+        self.assertEquals(response.data['location_field_offices'][0]['id'], point.id)
+        self.assertEquals(response.data['location_of_office']['id'], point.id+1)
+
 
     def test_funding(self):
         partner = Partner.objects.first()

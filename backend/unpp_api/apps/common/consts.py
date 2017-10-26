@@ -130,7 +130,7 @@ YEARS_OF_EXP_CHOICES = Choices(
     ('Y01', 'less_1', 'Less than 1 year'),
     ('Y15', 'years15', '1-5 years'),
     ('Y51', 'years510', '5-10 years'),
-    ('Y10', 'years10', '10+ years'),
+    ('Y10', 'more_10', '10+ years'),
 )
 
 CONCERN_CHOICES = Choices(

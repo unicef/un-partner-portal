@@ -139,7 +139,6 @@ PartnerTitle.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   tabs: state.agencyPartnerProfileNav.tabs,
   partner: state.agencyPartnerProfile[ownProps.params.id] || {},
-  profile: state.organizationProfile[ownProps.params.id],
   partnerId: ownProps.params.id,
   location: ownProps.location.pathname,
 });

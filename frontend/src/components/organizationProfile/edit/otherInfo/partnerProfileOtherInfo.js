@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { getFormInitialValues, SubmissionError } from 'redux-form';
 import PartnerProfileOtherInfoContent from './partnerProfileOtherInfoContent';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
-import { changeTabToNext } from '../../../../reducers/partnerProfileEdit';
 import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsUpdate';
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
@@ -33,10 +32,13 @@ class PartnerProfileOtherInfo extends Component {
   }
 
   onSubmit() {
-    const { partnerId, changeTab } = this.props;
+    const { partnerId, tabs, params: { type } } = this.props;
 
     if (this.state.actionOnSubmit === 'next') {
-      changeTab();
+      const index = tabs.findIndex(itab => itab.path === type);
+      history.push({
+        pathname: `/profile/${partnerId}/edit/${tabs[index + 1].path}`,
+      });
     } else if (this.state.actionOnSubmit === 'exit') {
       history.push(`/profile/${partnerId}/overview`);
     }
@@ -92,16 +94,17 @@ PartnerProfileOtherInfo.propTypes = {
   updateTab: PropTypes.func,
   initialValues: PropTypes.object,
   loadPartnerProfileDetails: PropTypes.func,
-  changeTab: PropTypes.func,
+  params: PropTypes.object,
+  tabs: PropTypes.array,
 };
 
 const mapState = (state, ownProps) => ({
   partnerId: ownProps.params.id,
+  tabs: state.partnerProfileDetailsNav.tabs,
   initialValues: getFormInitialValues('partnerProfile')(state),
 });
 
 const mapDispatch = dispatch => ({
-  changeTab: () => dispatch(changeTabToNext()),
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
   updateTab: (partnerId, tabName, body) => dispatch(patchPartnerProfile(partnerId, tabName, body)),
   dispatch,

@@ -26,12 +26,11 @@ import applicationsUnsolicitedList from './reducers/applicationsUnsolicitedList'
 import applicationsDirectList from './reducers/applicationsDirectList';
 import conceptNote from './reducers/conceptNote';
 import commonFileUpload from './reducers/commonFileUpload';
-import partnerInfo from './reducers/partnerInfo';
 import organizationProfileNav from './reducers/organizationProfileNav';
-import organizationProfile from './reducers/organizationProfile';
 import partnerApplicationsNav from './reducers/partnerApplicationsNav';
 import partnerProfileConfig from './reducers/partnerProfileConfig';
 import partnerProfileDetailsUpdate from './reducers/partnerProfileDetailsUpdate';
+import partnerProfileDetailsNav from './reducers/partnerProfileDetailsNav';
 import sectors, * as sectorsSelectors from './reducers/sectors';
 import partnersApplicationsList from './reducers/partnersApplicationsList';
 import partnersPreselectionList from './reducers/partnersPreselectionList';
@@ -49,7 +48,6 @@ const mainReducer = combineReducers({
   cfeiDetails,
   cfeiDetailsNav,
   newCfei,
-  organizationProfile,
   organizationProfileNav,
   partnerApplicationsNav,
   applicationsNotesList,
@@ -61,10 +59,10 @@ const mainReducer = combineReducers({
   conceptNote,
   countryProfiles,
   commonFileUpload,
-  partnerInfo,
   partnerProfileConfig,
   partnerProfileEdit,
   partnerProfileDetails,
+  partnerProfileDetailsNav,
   partnerProfileDetailsUpdate,
   agencyMembersList,
   agencyPartnersList,
