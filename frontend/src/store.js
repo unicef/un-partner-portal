@@ -184,6 +184,9 @@ export const selectCfeiStatus = (state, id) =>
 export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.cfeiDetails, id);
 
+  export const isCfeiPinned = (state, id) =>
+  cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.cfeiDetails, id);
+
 export const mapSelectCriteriaToSelection = state =>
   mapValuesForSelectionField(state.selectionCriteria);
 

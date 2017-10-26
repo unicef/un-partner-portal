@@ -77,7 +77,6 @@ export const loadUserData = () => (dispatch, getState) => {
       dispatch(sessionReady(getState));
     })
     .catch((error) => {
-      debugger
       // TODO (marcindo) correct error handling for different scenarios
       if (R.path(['response', 'status'], error) === 401) {
         history.push('/login');

@@ -1,9 +1,10 @@
 import R from 'ramda';
 import { browserHistory as history } from 'react-router';
-import { postOpenCfei, postDirectCfei, patchCfei, postUnsolicitedCN } from '../helpers/api/api';
+import { postOpenCfei, postDirectCfei, patchCfei, postUnsolicitedCN, patchPinnedCfei } from '../helpers/api/api';
 import { mergeListsFromObjectArray } from './normalizationHelpers';
 import { loadCfei } from './cfei';
 import { loadCfeiDetailSuccess } from './cfeiDetailsStatus';
+import * as cfeiDetails from './cfeiDetails';
 import { PROJECT_TYPES } from '../helpers/constants';
 import { loadApplicationsUcn } from './applicationsUnsolicitedList';
 
@@ -108,6 +109,19 @@ export const updateCfei = (body, id) => (dispatch) => {
     })
     .catch((error) => {
       dispatch(newCfeiSubmitted());
+      dispatch(newCfeiFailure(error));
+    });
+};
+
+export const changePinStatusCfei = (id, isPinned) => (dispatch) => {
+  return patchPinnedCfei({
+    eoi_ids: [id],
+    pin: !isPinned,
+  })
+    .then(() => {
+      dispatch(cfeiDetails.loadCfei(id));
+    })
+    .catch((error) => {
       dispatch(newCfeiFailure(error));
     });
 };

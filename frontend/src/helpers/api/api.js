@@ -171,6 +171,10 @@ export function getUnsolicitedCN(params) {
   return authorizedGet({ uri: '/projects/unsolicited', params });
 }
 
+export function patchPinnedCfei(body) {
+  return authorizedPatch({ uri: '/projects/pins/', body });
+}
+
 // Applications
 
 export function getOpenCfeiApplications(id, filters) {
