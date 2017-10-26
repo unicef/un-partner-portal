@@ -83,8 +83,9 @@ const connected = connect(
     const selector = formValueSelector(ownProps.formName);
     const locations = selector(state, ownProps.name);
     const currentLocations = locations ? R.filter(item => !R.isEmpty(item), locations) : [];
-    const currentCountry = state.session.partnerCountry ? state.countries[state.session.partnerCountry] : messages.hqProfile;
-    const countryCode = state.session.partnerCountry ? state.session.partnerCountry : {};
+    const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners);
+    const currentCountry = partner ? state.countries[partner.country_code] : null;
+    const countryCode = partner ? partner.country_code : {};
 
     return {
       countryCode,

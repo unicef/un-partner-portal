@@ -31,7 +31,7 @@ import TabsContainer from './components/organizationProfile/edit/tabsContainer';
 import partnerProfileHeader from './components/partners/profile/partnerProfileHeader';
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
 import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
-import settings from './components/agencySettings/agencySettings';
+import agencyMembersContainer from './components/settings/agencyMembersContainer';
 import registration from './components/registration/registration';
 import login from './components/login/login';
 import mainContent from './components/common/mainContentWrapper';
@@ -117,7 +117,7 @@ const allRoutes = () => (
               <Route path="users" component={null} />
             </Route>
           </Route>
-          <Route path="settings" component={settings} />
+          <Route path="settings" component={agencyMembersContainer} />
         </Route>
       </Route>
     </Route>

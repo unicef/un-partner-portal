@@ -53,10 +53,6 @@ export const loadPartnersList = params => (dispatch) => {
 };
 
 export default function agencyPartnersListReducer(state = initialState, action) {
-  if (!action) {
-    return state;
-  }
-
   switch (action.type) {
     case PARTNERS_LOAD_FAILURE: {
       return saveErrorMsg(state, action, messages.loadFailed);

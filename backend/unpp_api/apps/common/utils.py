@@ -30,6 +30,7 @@ def get_countries_code_from_queryset(queryset):
     from .serializers import CountryPointSerializer
     return map(lambda x: x.get("country_code"), CountryPointSerializer(queryset, many=True).data)
 
+
 def get_partners_name_from_queryset(queryset):
     from partner.serializers import PartnerShortSerializer
     return map(lambda x: x.get("legal_name"), PartnerShortSerializer(queryset, many=True).data)

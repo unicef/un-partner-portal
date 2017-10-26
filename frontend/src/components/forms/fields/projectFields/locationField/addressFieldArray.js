@@ -63,8 +63,8 @@ const WrappedLocationFieldArray = GoogleApiWrapper({
 
 const connected = connect(
   (state, ownProps) => {
-    const countryProfile = R.find(country => country.id === Number(ownProps.params.id), state.countryProfiles.hq.country_profiles);
-    const country = countryProfile ? state.countries[countryProfile.country_code] : {};
+    const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners);
+    const country = partner.is_hq ? messages.hqProfile : state.countries[partner.country_code];
 
     return {
       country,

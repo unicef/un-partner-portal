@@ -20,6 +20,7 @@ import cfeiDetailsNav, { selectItemsByType } from './reducers/cfeiDetailsNav';
 import agencyPartnersList from './reducers/agencyPartnersList';
 import agencyPartnerProfileNav from './reducers/agencyPartnerProfileNav';
 import agencyPartnerProfile from './reducers/agencyPartnerProfile';
+import agencyMembersList from './reducers/agencyMembersList';
 import applicationsNotesList from './reducers/applicationsNotesList';
 import applicationsUnsolicitedList from './reducers/applicationsUnsolicitedList';
 import applicationsDirectList from './reducers/applicationsDirectList';
@@ -62,6 +63,7 @@ const mainReducer = combineReducers({
   partnerProfileDetails,
   partnerProfileDetailsNav,
   partnerProfileDetailsUpdate,
+  agencyMembersList,
   agencyPartnersList,
   agencyPartnerProfileNav,
   agencyPartnerProfile,
