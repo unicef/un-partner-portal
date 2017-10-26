@@ -650,6 +650,8 @@ class EOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def applications(self, create, extracted, **kwargs):
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
         if self.status == EOI_TYPES.direct:
             Application.objects.create(
                 partner=get_partner(),
@@ -668,6 +670,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
                 partner=get_partner(),
                 eoi=self,
                 agency=self.agency,
+                cn=cfile,
                 submitter=get_partner_member(),
             )
 
