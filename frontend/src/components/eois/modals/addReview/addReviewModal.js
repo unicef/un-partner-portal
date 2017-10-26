@@ -33,6 +33,7 @@ class AddReviewModal extends Component {
           maxWidth="md"
           title={title}
           trigger={dialogOpen}
+          handleDialogClose={this.onDialogClose}
           info={{ title: `${messages.header}: ${partnerName}` }}
           buttons={{
             flat: {

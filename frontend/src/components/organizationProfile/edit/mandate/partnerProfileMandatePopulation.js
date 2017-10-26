@@ -10,6 +10,7 @@ import { selectNormalizedPopulationsOfConcernGroups } from '../../../../store';
 
 const messages = {
   populationOfConcern: 'Does your organization work with populations of concern as defined by UNHCR?',
+  concernGroups: 'Please indicate which group(s)',
 };
 
 const PartnerProfileMandatePopulation = (props) => {
@@ -29,7 +30,7 @@ const PartnerProfileMandatePopulation = (props) => {
         {visibleIfYes(populationOfConcern)
         && <SelectForm
           fieldName="concern_groups"
-          label="Please indicate which group(s)"
+          label={messages.concernGroups}
           values={populationsOfConcernGroups}
           selectFieldProps={{
             multiple: true,

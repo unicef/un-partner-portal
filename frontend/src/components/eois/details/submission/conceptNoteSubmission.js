@@ -226,6 +226,7 @@ class ConceptNoteSubmission extends Component {
           maxWidth="md"
           title={messages.countryProfile}
           trigger={openDialog}
+          handleDialogClose={this.onDialogClose}
           buttons={{
             flat: {
               handleClick: this.onDialogClose,
@@ -265,7 +266,7 @@ const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.params.id);
 
   return {
-    partnerId: state.partnerInfo.id,
+    partnerId: state.session.partnerId,
     loader: state.conceptNote.loading,
     cnUploaded: state.conceptNote.cnFile,
     errorUpload: state.conceptNote.error,

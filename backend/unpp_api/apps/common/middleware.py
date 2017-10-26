@@ -5,7 +5,7 @@ from partner.models import Partner
 
 
 def get_actual_value(request):
-    partner_id = request.META.get('HTTP_ACTIVE_PARTNER', None)
+    partner_id = request.META.get('HTTP_PARTNER_ID', None)
 
     if partner_id:
         try:

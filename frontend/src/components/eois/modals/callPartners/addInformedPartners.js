@@ -40,6 +40,7 @@ class CallPartnersModal extends Component {
           maxWidth="md"
           title={messages.title}
           trigger={dialogOpen}
+          handleDialogClose={this.onDialogClose}
           info={messages.header}
           buttons={{
             flat: {

@@ -26,6 +26,7 @@ const initialState = {
   partners: undefined,
   error: undefined,
   email: undefined,
+  isHq: undefined,
 };
 
 export const initSession = session => ({ type: SESSION_CHANGE, session });
@@ -71,10 +72,12 @@ export const loadUserData = () => (dispatch, getState) => {
         partnerCountry: role === ROLES.PARTNER ? R.prop('country_code', R.head(response.partners)) : null,
         partnerId: role === ROLES.PARTNER ? R.prop('id', R.head(response.partners)) : null,
         partnerName: role === ROLES.PARTNER ? R.prop('legal_name', R.head(response.partners)) : null,
+        isHq: role === ROLES.PARTNER ? R.prop('is_hq', R.head(response.partners)) : null,
       }));
       dispatch(sessionReady(getState));
     })
     .catch((error) => {
+      debugger
       // TODO (marcindo) correct error handling for different scenarios
       if (R.path(['response', 'status'], error) === 401) {
         history.push('/login');

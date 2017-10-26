@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import PartnerProfileIdentificationBasicInfo from './partnerProfileIdentificationBasicInfo';
 import PartnerProfileIdentificationRegistration from './partnerProfileIdentificationRegistration';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
-import { changeTabToNext } from '../../../../reducers/partnerProfileEdit';
 import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsUpdate';
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
@@ -41,10 +40,13 @@ class PartnerProfileIdentification extends Component {
   }
 
   onSubmit() {
-    const { partnerId, changeTab } = this.props;
+    const { partnerId, tabs, params: { type } } = this.props;
 
     if (this.state.actionOnSubmit === 'next') {
-      changeTab();
+      const index = tabs.findIndex(itab => itab.path === type);
+      history.push({
+        pathname: `/profile/${partnerId}/edit/${tabs[index + 1].path}`,
+      });
     } else if (this.state.actionOnSubmit === 'exit') {
       history.push(`/profile/${partnerId}/overview`);
     }
@@ -97,22 +99,24 @@ PartnerProfileIdentification.propTypes = {
   updateTab: PropTypes.func,
   loadPartnerProfileDetails: PropTypes.func,
   initialValues: PropTypes.object,
-  changeTab: PropTypes.func,
+  params: PropTypes.object,
+  tabs: PropTypes.array,
 };
 
 const mapState = (state, ownProps) => ({
   partnerId: ownProps.params.id,
+  tabs: state.partnerProfileDetailsNav.tabs,
   initialValues: getFormInitialValues('partnerProfile')(state),
 });
 
 const mapDispatch = dispatch => ({
-  changeTab: () => dispatch(changeTabToNext()),
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
   updateTab: (partnerId, tabName, body) => dispatch(patchPartnerProfile(partnerId, tabName, body)),
   dispatch,
 });
 
-const connectedPartnerProfileIdentification = connect(mapState, mapDispatch)(PartnerProfileIdentification);
+const connectedPartnerProfileIdentification =
+  connect(mapState, mapDispatch)(PartnerProfileIdentification);
 
 export default withRouter(connectedPartnerProfileIdentification);
 

@@ -1,5 +1,5 @@
 
-import React, { Component, createElement } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { browserHistory as history } from 'react-router';
 import IconButton from 'material-ui/IconButton';
@@ -104,7 +104,12 @@ class HeaderNavigation extends Component {
           </SpreadContent>
           {customTabs || tabs
             ? <div>
-              <Tabs value={index} onChange={handleChange}>
+              <Tabs
+                scrollable
+                value={index}
+                scrollButtons="off"
+                onChange={handleChange}
+              >
                 {customTabs ? customTabs() : this.renderTabs()}
               </Tabs>
             </div>
