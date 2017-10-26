@@ -35,7 +35,7 @@ class VerificationContent extends Component {
         <PaddedContent>
           <VerificationItem verification={mostRecentVerification} />
         </PaddedContent>
-        {previousCount && <SimpleCollapsableItem
+        {previousCount > 0 && <SimpleCollapsableItem
           title={<Typography type="caption">{`${messages.previous}: ${previousCount}`}</Typography>}
           component={<PreviousVerificationsList verifications={verifications} />}
         />}

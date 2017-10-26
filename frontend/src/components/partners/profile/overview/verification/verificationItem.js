@@ -16,6 +16,7 @@ const messages = {
   pending: 'Pending Verification ',
   by: 'by',
   questions: 'Verification questions:',
+  neverVerified: 'New Organization Profile'
 };
 
 const verifiedText = (status) => {
@@ -25,14 +26,15 @@ const verifiedText = (status) => {
 };
 
 const VerificationItem = (props) => {
-  const { verification } = props;
+  const { verification = {} } = props;
+  console.log(verification)
   return (
     <Grid item>
       <GridColumn>
         <Grid container direction="row" justify="space-between" align="center">
           <Grid item>
             <Grid container>
-              <VerificationIcon verified={verification.is_verified} />
+              <VerificationIcon verified={R.prop('is_verified', verification)} />
               <Typography type="body2">
                 {verifiedText(verification.is_verified)}
               </Typography>
@@ -45,16 +47,18 @@ const VerificationItem = (props) => {
           </Grid>
         </Grid>
         <Typography type="caption">
-          {`${messages.by} ${R.path(['submitter', 'name'], verification)} ${R.path(['submitter', 'agency_name'], verification)}`}
+          {!R.isEmpty(verification)
+            ? `${messages.by} ${R.path(['submitter', 'name'], verification)} ${R.path(['submitter', 'agency_name'], verification)}`
+            : messages.neverVerified}
         </Typography>
         {verification.is_verified === false && <Typography type="caption">
           {`${messages.questions} ${countGoodAnswers(verification)}/5`}
         </Typography>}
-        <Grid container justify="flex-end">
+        {!R.isEmpty(verification) && <Grid container justify="flex-end">
           <Grid item>
             <VerificationDetails verification={verification} />
           </Grid>
-        </Grid>
+        </Grid> }
       </GridColumn>
     </Grid>
   );

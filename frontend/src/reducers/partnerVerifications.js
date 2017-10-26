@@ -35,7 +35,7 @@ export const loadPartnerVerifications = id => (dispatch) => {
 
 const saveVerifications = (state, action) => {
   const verifications = action.verifications;
-  const mostRecentVerification = R.clone(R.head(verifications));
+  const mostRecentVerification = R.clone(selectIndexWithDefaultEmptyObject(0, verifications));
   return R.assoc(action.partnerId,
     { mostRecentVerification, verifications, previousCount: action.count },
     state);

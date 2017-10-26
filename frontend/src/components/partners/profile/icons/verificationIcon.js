@@ -14,7 +14,7 @@ const styleSheet = theme => ({
     margin: `0 0 0 ${theme.spacing.unit}px`,
   },
   iconVerified: {
-    fill: '#009A54',
+    fill: theme.palette.common.statusOk,
     margin: `0 0 0 ${theme.spacing.unit}px`,
   },
   iconUnverified: {
@@ -28,8 +28,8 @@ const VerificationIcon = (props) => {
   const className = classname({
     [classes.iconVerified]: verified === true,
     [classes.iconUnverified]: verified === false,
-    [classes.iconNotVerified]: verified === null,
-  })
+    [classes.iconNotVerified]: verified === (null || undefined),
+  });
   return <VerifiedUser className={className} />;
 };
 
