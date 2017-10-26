@@ -52,6 +52,9 @@ class EOI(TimeStampedModel):
     completed_date = models.DateTimeField(null=True, blank=True)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
     assessments_criteria = JSONField(default=dict([('selection_criteria', ''), ('weight', 0)]))
+    review_summary_comment = models.TextField(null=True, blank=True)
+    review_summary_attachment = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name='review_summary_attachments')
 
     class Meta:
         ordering = ['id']

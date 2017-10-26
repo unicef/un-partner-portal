@@ -13,10 +13,10 @@ from account.serializers import AgencyUserSerializer, IDUserSerializer
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
-from common.serializers import SimpleSpecializationSerializer, PointSerializer
+from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer
 from common.models import Point
 
-from partner.models import Partner, PartnerMember
+from partner.models import Partner
 from .models import EOI, Application, Assessment, ApplicationFeedback
 
 
@@ -130,6 +130,7 @@ class ApplicationPartnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
         fields = ('id', 'cn', 'created')
+
 
 class ApplicationFullSerializer(serializers.ModelSerializer):
 
@@ -586,3 +587,14 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         )
 
         return ds_app
+
+
+class ReviewSummarySerializer(serializers.ModelSerializer):
+
+    review_summary_attachment = CommonFileSerializer()
+
+    class Meta:
+        model = EOI
+        fields = (
+            'review_summary_comment', 'review_summary_attachment'
+        )

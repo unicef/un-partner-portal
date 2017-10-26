@@ -43,6 +43,7 @@ from .serializers import (
     ApplicationPartnerUnsolicitedDirectSerializer,
     ApplicationFeedbackSerializer,
     ConvertUnsolicitedSerializer,
+    ReviewSummarySerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
 
@@ -358,3 +359,12 @@ class ConvertUnsolicitedAPIView(CreateAPIView):
     serializer_class = ConvertUnsolicitedSerializer
     queryset = Application.objects.all()
     permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+
+
+class ReviewSummaryAPIView(RetrieveUpdateAPIView):
+    """
+    Endpoint for review summary - comment & attachement
+    """
+    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor,)
+    serializer_class = ReviewSummarySerializer
+    queryset = EOI.objects.all()

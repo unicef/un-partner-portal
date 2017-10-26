@@ -18,6 +18,7 @@ from .views import (
     ReviewerAssessmentsAPIView,
     ApplicationFeedbackListCreateAPIView,
     ConvertUnsolicitedAPIView,
+    ReviewSummaryAPIView,
 )
 
 
@@ -26,6 +27,7 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/partner-applications/$', ApplicationsPartnerAPIView.as_view(), name="partner-applications"),
     url(r'^(?P<pk>\d+)/partner-application/$', ApplicationPartnerAPIView.as_view(), name="partner-application"),
     url(r'^(?P<pk>\d+)/agency-applications/$', ApplicationsAgencyAPIView.as_view(), name="agency-applications"),
+    url(r'^(?P<pk>\d+)/review-summary/$', ReviewSummaryAPIView.as_view(), name="review-summary"),
     url(r'^applications/(?P<application_id>\d+)/reviewers-status/',
         ReviewersStatusAPIView.as_view(),
         name="reviewers-status"),

@@ -25,12 +25,3 @@ class PartnerVerificationSerializer(serializers.ModelSerializer):
         model = PartnerVerification
         read_only_fields = ('submitter', 'is_verified', )
         exclude = ('partner', )
-
-
-class ReviewSummarySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = PartnerFlag
-        read_only_fields = (
-            'partner', 'flag_type', 'submitter', 'is_verified', 'contact_person', 'contact_phone', 'contact_email'
-        )
