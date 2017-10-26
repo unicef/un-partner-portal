@@ -493,8 +493,9 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
     quantity = 1
 
     def test_create(self):
-        url = reverse('projects:unsolicited')
+        url = reverse('projects:applications-unsolicited')
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        partner_id = Partner.objects.first().id
         with open(filename) as cn_template:
             payload = {
                 "locations": [
@@ -514,7 +515,8 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
                 "specializations": Specialization.objects.all()[:3].values_list("id", flat=True),
                 "cn": cn_template,
             }
-            response = self.client.post(url, data=payload, format='multipart')
+            response = self.client.post(url, data=payload, format='multipart',
+                                        header={'Partner-ID': partner_id})
 
         self.assertTrue(statuses.is_success(response.status_code))
         app = Application.objects.last()
