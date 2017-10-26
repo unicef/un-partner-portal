@@ -35,6 +35,7 @@ class ManageReviewersModal extends Component {
           maxWidth="md"
           title={messages.title}
           trigger={dialogOpen}
+          handleDialogClose={handleDialogClose}
           info={messages.header}
           buttons={{
             flat: {

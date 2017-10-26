@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 import { withStyles } from 'material-ui/styles';
-import VerifiedUser from 'material-ui-icons/VerifiedUser';
 import Flag from 'material-ui-icons/Flag';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
@@ -11,7 +10,10 @@ import HeaderNavigation from '../../../components/common/headerNavigation';
 import {
   loadPartnerDetails,
 } from '../../../reducers/partnerProfileDetails';
-
+import {
+  loadPartnerVerifications,
+} from '../../../reducers/partnerVerifications';
+import VerificationIcon from '../profile/icons/verificationIcon';
 
 const styleSheet = (theme) => {
   const paddingIcon = theme.spacing.unit;
@@ -20,18 +22,6 @@ const styleSheet = (theme) => {
     alignCenter: {
       display: 'flex',
       alignItems: 'center',
-    },
-    iconNotVerified: {
-      fill: theme.palette.primary[500],
-      width: 20,
-      height: 20,
-      margin: `0 0 0 ${paddingIcon}px`,
-    },
-    iconVerified: {
-      fill: '#009A54',
-      width: 20,
-      height: 20,
-      margin: `0 0 0 ${paddingIcon}px`,
     },
     iconYellow: {
       fill: '#FFC400',
@@ -56,7 +46,7 @@ const PartnerTitle = (props) => {
       <Typography type="headline">
         {partner.name}
       </Typography>
-      <VerifiedUser className={partner.verified ? classes.iconVerified : classes.iconNotVerified} />
+      <VerificationIcon verified={partner.verified} />
       {partner.flagYellow && <Flag className={classes.iconYellow} />}
       {partner.flagRed && <Flag className={classes.iconRed} />}
     </div>);
@@ -73,6 +63,7 @@ class PartnerProfileHeader extends Component {
 
   componentWillMount() {
     this.props.loadPartnerDetails();
+    this.props.loadPartnerVerifications();
   }
 
   partnerTitle() {
@@ -83,9 +74,7 @@ class PartnerProfileHeader extends Component {
         <Typography type="headline">
           {partner.name}
         </Typography>
-        <VerifiedUser
-          className={partner.verified ? classes.iconVerified : classes.iconNotVerified}
-        />
+        <VerificationIcon verified={partner.verified} />
         {partner.flagYellow && <Flag className={classes.iconYellow} />}
         {partner.flagRed && <Flag className={classes.iconRed} />}
       </div>);
@@ -139,6 +128,7 @@ PartnerProfileHeader.propTypes = {
   partner: PropTypes.object.isRequired,
   partnerId: PropTypes.string.isRequired,
   loadPartnerDetails: PropTypes.func,
+  loadPartnerVerifications: PropTypes.func,
 };
 
 PartnerTitle.propTypes = {
@@ -159,6 +149,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     history.push(path);
   },
   loadPartnerDetails: () => dispatch(loadPartnerDetails(ownProps.params.id)),
+  loadPartnerVerifications: () => dispatch(loadPartnerVerifications(ownProps.params.id)),
 });
 
 const connectedPartnerProfile = connect(mapStateToProps, mapDispatchToProps)(PartnerProfileHeader);

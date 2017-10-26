@@ -230,6 +230,14 @@ export function createCountryProfile(id, body) {
   return authorizedPost({ uri: `/partners/${id}/country-profile/`, body });
 }
 
+export function getPartnerVerifications(id) {
+  return authorizedGet({ uri: `/partners/${id}/verifications` });
+}
+
+export function postPartnerVerifications(id, body) {
+  return authorizedPost({ uri: `/partners/${id}/verifications/`, body });
+}
+
 export function patchPartnerProfileTab(partnerId, tabName, body) {
   return authorizedPatch({ uri: `/partners/${partnerId}/${tabName}/`, body });
 }
