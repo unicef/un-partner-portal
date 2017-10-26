@@ -1,9 +1,12 @@
 import R from 'ramda';
-import { postOpenCfei, postDirectCfei, patchCfei } from '../helpers/api/api';
+import { browserHistory as history } from 'react-router';
+import { postOpenCfei, postDirectCfei, patchCfei, postUnsolicitedCN } from '../helpers/api/api';
 import { mergeListsFromObjectArray } from './normalizationHelpers';
 import { loadCfei } from './cfei';
 import { loadCfeiDetailSuccess } from './cfeiDetailsStatus';
 import { PROJECT_TYPES } from '../helpers/constants';
+import { loadApplicationsUcn } from './applicationsUnsolicitedList';
+
 
 export const NEW_CFEI_SUBMITTING = 'NEW_CFEI_SUBMITTING';
 export const NEW_CFEI_SUBMITTED = 'NEW_CFEI_SUBMITTED';
@@ -74,6 +77,21 @@ export const addDirectCfei = body => (dispatch) => {
     .then(() => {
       dispatch(newCfeiSubmitted());
       dispatch(loadCfei(PROJECT_TYPES.DIRECT));
+    })
+    .catch((error) => {
+      dispatch(newCfeiSubmitted());
+      dispatch(newCfeiFailure(error));
+    });
+};
+
+export const addUnsolicitedCN = body => (dispatch) => {
+  dispatch(newCfeiSubmitting());
+  const preparedBody = prepareBody(body);
+  const params = history.getCurrentLocation().query;
+  return postUnsolicitedCN(preparedBody)
+    .then(() => {
+      dispatch(newCfeiSubmitted());
+      dispatch(loadApplicationsUcn(params));
     })
     .catch((error) => {
       dispatch(newCfeiSubmitted());
