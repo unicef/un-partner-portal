@@ -21,6 +21,7 @@ import {
 } from '../../../../reducers/conceptNote';
 import { selectCfeiDetails } from '../../../../store';
 import CnFileSection from './cnFileSection';
+import PaddedContent from '../../../common/paddedContent';
 
 const messages = {
   confirm: 'I confirm that my profile is up to date',
@@ -153,15 +154,17 @@ class ConceptNoteSubmission extends Component {
     const { alert, openDialog, errorMsg } = this.state;
     return (
       <div >
-        <CnFileSection
-          component={<FileUploadButton
-            fileAdded={this.fileName()}
-            fieldName={'concept-note'}
-            fileSelected={file => this.fileSelect(file)}
-            deleteDisabled={cnUploaded}
-          />}
-          displayHint={fileSelectedLocal || cnUploaded}
-        />
+        <PaddedContent>
+          <CnFileSection
+            component={<FileUploadButton
+              fileAdded={this.fileName()}
+              fieldName={'concept-note'}
+              fileSelected={file => this.fileSelect(file)}
+              deleteDisabled={cnUploaded}
+            />}
+            displayHint={fileSelectedLocal || cnUploaded}
+          />
+        </PaddedContent>
         <Typography className={classes.alignRight} type="caption">
           {`${messages.deadline} ${formatDateForPrint(deadlineDate)}`}
         </Typography>

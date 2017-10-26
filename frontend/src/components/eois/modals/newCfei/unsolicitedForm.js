@@ -8,6 +8,8 @@ import SectorForm from '../../../forms/fields/projectFields/sectorField/sectorFi
 import LocationForm from '../../../forms/fields/projectFields/locationField/locationFieldArray';
 import CnFileSection from '../../details/submission/cnFileSection';
 import FileForm from '../../../forms/fileForm';
+import UCNAgencies from '../../../forms/fields/projectFields/UcnAgencies';
+import ProfileConfirmation from '../../../organizationProfile/common/profileConfirmation';
 
 const messages = {
   cn: 'Concept Note',
@@ -15,13 +17,14 @@ const messages = {
 };
 
 const OpenForm = (props) => {
-  const { handleSubmit, form } = props;
+  const { handleSubmit, form, handleConfirmation } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <Typography type="headline">
           {messages.projectDetails}
         </Typography>
+        <UCNAgencies />
         <fields.TitleField />
         <LocationForm formName={form} />
         <SectorForm />
@@ -35,6 +38,7 @@ const OpenForm = (props) => {
           displayHint={false}
         />
       </GridColumn>
+      <ProfileConfirmation onChange={handleConfirmation} />
     </form >
   );
 };
@@ -45,6 +49,7 @@ OpenForm.propTypes = {
    */
   handleSubmit: PropTypes.func.isRequired,
   form: PropTypes.string,
+  handleConfirmation: PropTypes.func,
 
 };
 

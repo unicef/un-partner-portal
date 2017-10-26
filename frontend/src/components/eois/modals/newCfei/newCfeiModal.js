@@ -45,6 +45,8 @@ const getFormName = (type) => {
       return 'newOpenCfei';
     case PROJECT_TYPES.DIRECT:
       return 'newDirectCfei';
+    case PROJECT_TYPES.UNSOLICITED:
+      return 'newUnsolicitedCN';
   }
 };
 
@@ -83,9 +85,10 @@ const getModal = (type) => {
 class NewCfeiModal extends Component {
   constructor(props) {
     super(props);
-    this.state = { id: null };
+    this.state = { id: null, disabled: props.type === PROJECT_TYPES.UNSOLICITED };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleDialogSubmit = this.handleDialogSubmit.bind(this);
+    this.handleConfirmation = this.handleConfirmation.bind(this);
   }
 
   handleSubmit(values) {
@@ -98,6 +101,10 @@ class NewCfeiModal extends Component {
 
   handleDialogSubmit() {
     this.props.submit();
+  }
+
+  handleConfirmation() {
+    this.setState({ disabled: !this.state.disabled });
   }
 
   render() {
@@ -115,9 +122,12 @@ class NewCfeiModal extends Component {
             },
             raised: {
               handleClick: this.handleDialogSubmit,
+              disabled: this.state.disabled,
             },
           }}
-          content={React.createElement(getModal(type), { onSubmit: this.handleSubmit })}
+          content={React.createElement(getModal(type), {
+            onSubmit: this.handleSubmit,
+            handleConfirmation: this.handleConfirmation })}
         />
         {type === PROJECT_TYPES.OPEN && <CallPartnersModal id={this.state.id} />}
       </Grid>

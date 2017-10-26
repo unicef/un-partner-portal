@@ -12,14 +12,13 @@ const messages = {
 
 const styleSheet = (theme) => {
   const paddingNormal = theme.spacing.unit;
-  const padding = theme.spacing.unit * 3;
+  const padding = theme.spacing.unit * 2;
 
   return {
     paddingBottom: {
       padding: `0px 0px ${paddingNormal}px 0px`,
     },
     alignCenter: {
-      margin: `${padding}px ${padding}px 0px ${padding}px`,
       padding: `${padding}px ${padding}px ${padding}px ${padding}px`,
       textAlign: 'center',
       background: theme.palette.primary[300],

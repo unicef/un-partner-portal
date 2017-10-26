@@ -239,3 +239,8 @@ export function getAgencyMembers(id, params = { page_size: 100 }) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params },
   );
 }
+
+export function getAgencies(params = { page_size: 100 }) {
+  return authorizedGet({ uri: '/agencies/', params },
+  );
+}
