@@ -35,6 +35,7 @@ class EditCfeiModal extends Component {
           maxWidth="md"
           title={messages.title}
           trigger={dialogOpen}
+          handleDialogClose={handleDialogClose}
           info={messages.header[type]}
           buttons={{
             flat: {

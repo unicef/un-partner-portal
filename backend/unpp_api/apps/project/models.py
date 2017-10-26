@@ -109,6 +109,9 @@ class Application(TimeStampedModel):
         default=list,
         null=True
     )
+    # Applies when application converted to EOI. Only applicable if this is unsolicited
+    eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion",
+                                         null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
 
     class Meta:

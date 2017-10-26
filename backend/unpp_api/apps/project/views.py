@@ -29,6 +29,7 @@ from .serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
     CreateProjectSerializer,
+    PartnerProjectSerializer,
     CreateDirectProjectSerializer,
     ProjectUpdateSerializer,
     ApplicationFullSerializer,
@@ -41,6 +42,7 @@ from .serializers import (
     ApplicationPartnerOpenSerializer,
     ApplicationPartnerUnsolicitedDirectSerializer,
     ApplicationFeedbackSerializer,
+    ConvertUnsolicitedSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
 
@@ -82,6 +84,11 @@ class EOIAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
     serializer_class = ProjectUpdateSerializer
     queryset = EOI.objects.all()
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.user.is_agency_user:
+            return ProjectUpdateSerializer
+        return PartnerProjectSerializer
 
 
 class DirectProjectAPIView(BaseProjectAPIView):
@@ -299,6 +306,7 @@ class UnsolicitedProjectAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, )
     queryset = Application.objects.filter(is_unsolicited=True)
     pagination_class = SmallPagination
+    filter_backends = (DjangoFilterBackend, )
     filter_class = ApplicationsUnsolicitedFilter
     serializer_class = AgencyUnsolicitedApplicationSerializer
 
@@ -312,7 +320,7 @@ class AppsPartnerOpenAPIView(ListAPIView):
     filter_class = ApplicationsFilter
 
     def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(partner_id=self.request.active_partner)
+        return self.queryset.filter(partner_id=self.request.active_partner.id)
 
 
 class AppsPartnerUnsolicitedAPIView(ListCreateAPIView):
@@ -344,3 +352,9 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(provider=self.request.user,
                         application_id=self.kwargs['pk'])
+
+
+class ConvertUnsolicitedAPIView(CreateAPIView):
+    serializer_class = ConvertUnsolicitedSerializer
+    queryset = Application.objects.all()
+    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)

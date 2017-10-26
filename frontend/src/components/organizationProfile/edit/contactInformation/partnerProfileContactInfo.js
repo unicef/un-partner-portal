@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { withRouter, browserHistory as history } from 'react-router';
 import { connect } from 'react-redux';
@@ -9,7 +10,6 @@ import PartnerProfileContactInfoOfficials from './partnerProfileContactInfoOffic
 import PartnerProfileContactInfoLanguages from './partnerProfileContactInfoLanguages';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 import PartnerProfileContactInfoHeadOrganization from './partnerProfileContactInfoHeadOrganization';
-import { changeTabToNext } from '../../../../reducers/partnerProfileEdit';
 import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsUpdate';
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
@@ -59,10 +59,13 @@ class PartnerProfileContactInfo extends Component {
   }
 
   onSubmit() {
-    const { partnerId, changeTab } = this.props;
+    const { partnerId, tabs, params: { type } } = this.props;
 
     if (this.state.actionOnSubmit === 'next') {
-      changeTab();
+      const index = tabs.findIndex(itab => itab.path === type);
+      history.push({
+        pathname: `/profile/${partnerId}/edit/${tabs[index + 1].path}`,
+      });
     } else if (this.state.actionOnSubmit === 'exit') {
       history.push(`/profile/${partnerId}/overview`);
     }
@@ -79,8 +82,13 @@ class PartnerProfileContactInfo extends Component {
   handleSubmit(formValues) {
     const { initialValues, updateTab, partnerId, loadPartnerProfileDetails } = this.props;
 
-    const mailing = flatten(formValues.mailing);
-    const initMailing = flatten(initialValues.mailing);
+    const unflattenMailing = R.dissocPath('address', formValues.mailing);
+    const unflattenMailingInit = R.dissocPath('address', initialValues.mailing);
+    const address = formValues.mailing.address;
+    const addressInit = initialValues.mailing.address;
+
+    const mailing = R.assoc('mailing_address', address, flatten(unflattenMailing));
+    const initMailing = R.assoc('mailing_address', addressInit, flatten(unflattenMailingInit));
 
     return updateTab(partnerId, 'contact-information', changedValues(initMailing, mailing))
       .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
@@ -114,16 +122,17 @@ PartnerProfileContactInfo.propTypes = {
   updateTab: PropTypes.func,
   initialValues: PropTypes.object,
   loadPartnerProfileDetails: PropTypes.func,
-  changeTab: PropTypes.func,
+  params: PropTypes.object,
+  tabs: PropTypes.array,
 };
 
 const mapState = (state, ownProps) => ({
+  tabs: state.partnerProfileDetailsNav.tabs,
   partnerId: ownProps.params.id,
   initialValues: getFormInitialValues('partnerProfile')(state),
 });
 
 const mapDispatch = dispatch => ({
-  changeTab: () => dispatch(changeTabToNext()),
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
   updateTab: (partnerId, tabName, body) => dispatch(patchPartnerProfile(partnerId, tabName, body)),
   dispatch,

@@ -37,11 +37,12 @@ export const loadPartnerDetails = partnerId => (dispatch, getState) => {
 const extractSector = list => ({
   sector: list[0].specialization.category.id.toString(),
   areas: list.map(area => area.specialization.id.toString()),
-  years: list[0].years });
+  years: list[0].years,
+});
 
 export const groupSpecializationsByCategory = R.compose(
   R.map(extractSector),
-  R.groupWith((a, b) => equalAtPaths(['specialization', 'category', 'id'])),
+  R.groupWith(equalAtPaths(['specialization', 'category', 'id'])),
 );
 
 const normalizeSpecializations = (state) => {
