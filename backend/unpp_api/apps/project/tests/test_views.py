@@ -548,6 +548,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         }
         response = self.client.post(url, data=payload, format='json')
         eoi = EOI.objects.last()
+        self.assertEquals(EOI.objects.count(), 1)
         self.assertEquals(eoi.other_information, payload['other_information'])
         self.assertEquals(eoi.description, payload['description'])
         self.assertEquals(eoi.start_date, start_date)
@@ -556,3 +557,4 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         self.assertEquals(eoi.status, EOI_STATUSES.open)
         self.assertEquals(eoi.focal_points.all().count(), len(focal_points))
         self.assertEquals(eoi.created_by, user)
+        self.assertEquals(Application.objects.count(), 2)

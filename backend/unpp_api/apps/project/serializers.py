@@ -491,6 +491,19 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
             eoi.locations.add(location)
 
         app.ds_justification_select = ds_justification_select
-        app.eoi = eoi
+        app.eoi_converted = eoi
         app.save()
-        return app
+
+        ds_app = Application.objects.create(
+            partner=app.partner,
+            eoi=eoi,
+            agency=eoi.agency,
+            submitter=app.submitter,
+            status=APPLICATION_STATUSES.pending,
+            did_win=True,
+            did_accept=False,
+            ds_justification_select=ds_justification_select,
+            justification_reason=app.justification_reason
+        )
+
+        return ds_app
