@@ -29,6 +29,7 @@ from .serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
     CreateProjectSerializer,
+    PartnerProjectSerializer,
     CreateDirectProjectSerializer,
     ProjectUpdateSerializer,
     ApplicationFullSerializer,
@@ -82,6 +83,11 @@ class EOIAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
     serializer_class = ProjectUpdateSerializer
     queryset = EOI.objects.all()
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.user.is_agency_user:
+            return ProjectUpdateSerializer
+        return PartnerProjectSerializer
 
 
 class DirectProjectAPIView(BaseProjectAPIView):
