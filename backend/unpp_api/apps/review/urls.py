@@ -4,6 +4,7 @@ from .views import (
     PartnerFlagListCreateAPIView,
     PartnerVerificationListCreateAPIView,
     PartnerFlagRetrieveUpdateAPIView,
+    ReviewSummaryAPIView,
     PartnerVerificationRetrieveUpdateAPIView
 )
 
@@ -17,4 +18,6 @@ urlpatterns = [
         PartnerFlagRetrieveUpdateAPIView.as_view(), name="flags-detail"),
     url(r'^(?P<partner_id>\d+)/verifications/(?P<pk>\d+)/$',
         PartnerVerificationRetrieveUpdateAPIView.as_view(), name="verifications-detail"),
+    url(r'^(?P<partner_id>\d+)/review-summary/(?P<pk>\d+)/$',
+        ReviewSummaryAPIView.as_view(), name="review-summary"),
 ]

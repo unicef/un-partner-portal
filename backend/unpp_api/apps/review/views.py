@@ -6,7 +6,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
 from common.paginations import SmallPagination
 from common.permissions import IsAtLeastAgencyMemberEditor
-from .serializers import PartnerFlagSerializer, PartnerVerificationSerializer
+from .serializers import PartnerFlagSerializer, PartnerVerificationSerializer, ReviewSummarySerializer
 from .models import PartnerFlag, PartnerVerification
 
 
@@ -59,7 +59,6 @@ class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
                                      partial=True)
 
 
-
 class PartnerVerificationRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     """
     Endpoint for updating valid status. Only accepts is_valid
@@ -76,3 +75,15 @@ class PartnerVerificationRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         return PartnerVerificationSerializer(verification,
                                              data={'is_valid': kwargs['data'].get('is_valid', verification.is_valid)},
                                              partial=True)
+
+
+class  ReviewSummaryAPIView(RetrieveUpdateAPIView):
+    """
+    Endpoint for review summary - comment & attachement
+    """
+    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor,)
+    serializer_class = ReviewSummarySerializer
+    queryset = PartnerFlag.objects.all()
+
+    # def get_queryset(self):
+    #     return PartnerFlag.objects.filter(partner=self.kwargs['partner_id'])
