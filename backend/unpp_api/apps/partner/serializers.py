@@ -6,8 +6,8 @@ from common.consts import (
     METHOD_ACC_ADOPTED_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
 )
-from common.models import AdminLevel1, Point, CommonFile
-from common.countries import COUNTRIES_ALPHA2_CODE, COUNTRIES_ALPHA2_CODE_DICT
+from common.models import Point
+from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (CommonFileSerializer,
                                 SpecializationSerializer,
                                 MixinPartnerRelatedSerializer,

@@ -490,7 +490,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
 
     quantity = 1
 
-    def test_create(self):
+    def test_create_convert(self):
         url = reverse('projects:unsolicited')
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
         with open(filename) as cn_template:
@@ -525,3 +525,34 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
                 app.proposal_of_eoi_details['specializations'][idx],
                 str(payload['specializations'][idx])
             )
+        self.client.logout()
+
+        # create agency members for focal_points and agency member to convert
+        AgencyMemberFactory.create_batch(4)
+
+        user = User.objects.filter(agency_members__isnull=False).first()
+        self.client.login(username=user.username, password='test')
+
+        url = reverse('projects:convert-unsolicited', kwargs={'pk': response.data['id']})
+        start_date = date.today()
+        end_date = date.today() + timedelta(days=30)
+        focal_points = [x for x in User.objects.filter(agency_members__isnull=False).values("id")[1:]]
+        payload = {
+            'ds_justification_select': [JUSTIFICATION_FOR_DIRECT_SELECTION.other],
+            'justification': 'Explain justification for creating direct selection',
+            'focal_points': focal_points,
+            'description': 'Provide brief background of the project',
+            'other_information': 'Provide other information',
+            'start_date': str(start_date),
+            'end_date': str(end_date),
+        }
+        response = self.client.post(url, data=payload, format='json')
+        eoi = EOI.objects.last()
+        self.assertEquals(eoi.other_information, payload['other_information'])
+        self.assertEquals(eoi.description, payload['description'])
+        self.assertEquals(eoi.start_date, start_date)
+        self.assertEquals(eoi.end_date, end_date)
+        self.assertEquals(eoi.display_type, EOI_TYPES.direct)
+        self.assertEquals(eoi.status, EOI_STATUSES.open)
+        self.assertEquals(eoi.focal_points.all().count(), len(focal_points))
+        self.assertEquals(eoi.created_by, user)
