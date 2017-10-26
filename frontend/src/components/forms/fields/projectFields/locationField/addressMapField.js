@@ -24,6 +24,7 @@ class LocationsMapField extends Component {
 
   saveLocation(newLocation) {
     const { dispatch, name, formName } = this.props;
+
     dispatch(arrayPush(formName, `${name}`, newLocation));
   }
 
@@ -38,7 +39,7 @@ class LocationsMapField extends Component {
     const removeDuplicates = R.uniqWith((a, b) => a.admin_level_1.name === b.admin_level_1.name)(currentLocations);
 
     return removeDuplicates.map(location =>
-      <Typography>{location.admin_level_1.name} </Typography>,
+      <Typography>{location.admin_level_1 && location.admin_level_1.name} </Typography>,
     );
   }
 
@@ -81,10 +82,10 @@ const connected = connect(
   (state, ownProps) => {
     const selector = formValueSelector(ownProps.formName);
     const locations = selector(state, ownProps.name);
-    const currentLocations = locations || [];
-    const countryProfile = R.find(country => country.id === Number(ownProps.params.id), state.countryProfiles.hq.country_profiles);
-    const currentCountry = countryProfile ? state.countries[countryProfile.country_code] : {};
-    const countryCode = countryProfile ? countryProfile.country_code : {};
+    const currentLocations = locations ? R.filter(item => !R.isEmpty(item), locations) : [];
+    const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners);
+    const currentCountry = partner ? state.countries[partner.country_code] : null;
+    const countryCode = partner ? partner.country_code : {};
 
     return {
       countryCode,

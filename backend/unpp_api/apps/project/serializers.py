@@ -432,12 +432,17 @@ class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirect
 
     has_yellow_flag = serializers.BooleanField(source="partner.has_yellow_flag")
     has_red_flag = serializers.BooleanField(source="partner.has_red_flag")
+    is_ds_converted = serializers.SerializerMethodField()
 
     class Meta:
         model = Application
         fields = ApplicationPartnerUnsolicitedDirectSerializer.Meta.fields + ('has_red_flag',
                                                                               'has_yellow_flag',
-                                                                              'partner_is_verified',)
+                                                                              'partner_is_verified',
+                                                                              'is_ds_converted')
+
+    def get_is_ds_converted(self, obj):
+        return not obj.eoi_converted is None
 
 
 class ApplicationFeedbackSerializer(serializers.ModelSerializer):

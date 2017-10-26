@@ -301,6 +301,7 @@ class UnsolicitedProjectAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticated, )
     queryset = Application.objects.filter(is_unsolicited=True)
     pagination_class = SmallPagination
+    filter_backends = (DjangoFilterBackend, )
     filter_class = ApplicationsUnsolicitedFilter
 
     def get_serializer_class(self, *args, **kwargs):

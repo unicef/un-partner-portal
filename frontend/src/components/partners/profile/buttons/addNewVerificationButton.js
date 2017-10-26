@@ -1,29 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Cancel from 'material-ui-icons/Cancel';
+import Add from 'material-ui-icons/Add';
 import IconWithTextButton from '../../../common/iconWithTextButton';
 
 const messages = {
   text: 'Add new verification',
 };
 
-const addNewVerification = (id) => {
-  console.log(`Add new verification: ${id}`);
-};
-
 const AddNewVerificationButton = (props) => {
-  const { id } = props;
+  const { handleClick } = props;
   return (
     <IconWithTextButton
-      icon={<Cancel />}
+      icon={<Add />}
       text={messages.text}
-      onClick={() => addNewVerification(id)}
+      onClick={handleClick}
     />
   );
 };
 
 AddNewVerificationButton.propTypes = {
-  id: PropTypes.string,
+  handleClick: PropTypes.func,
 };
 
 export default AddNewVerificationButton;

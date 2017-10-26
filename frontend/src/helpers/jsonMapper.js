@@ -28,11 +28,9 @@ export const flatten = (data) => {
   const result = {};
 
   function recurse(cur, prop) {
-    if (prop === 'gov_doc') { }
-
     if (Object(cur) !== cur) {
       result[prop] = cur;
-    } else if (Array.isArray(cur) || prop === 'gov_doc' || prop === 'registration_doc') {
+    } else if (Array.isArray(cur)) {
       result[prop] = cur;
     } else {
       let isEmpty = true;

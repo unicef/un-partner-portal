@@ -41,6 +41,8 @@ const ReferenceInner = readOnly => member => (
     </Grid>
     <Grid item sm={6} xs={12} >
       <FileForm
+        sectionName="collaboration.reference"
+        formName="partnerProfile"
         fieldName={`${member}.evidence_file`}
         label={messages.reference}
         optional

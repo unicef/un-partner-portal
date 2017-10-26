@@ -95,6 +95,7 @@ class NewCfeiModal extends Component {
           maxWidth="md"
           title={messages.title}
           trigger={open}
+          handleDialogClose={onDialogClose}
           info={getInfo(type)}
           buttons={{
             flat: {

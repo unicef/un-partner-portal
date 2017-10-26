@@ -23,10 +23,11 @@ import partnerApplicationsHeader from './components/applications/partnerApplicat
 import partnerApplicationsNotes from './components/applications/notes/partnerApplicationsNotes';
 import partnerApplicationsDirect from './components/applications/direct/partnerApplicationsDirect';
 import partnerApplicationsUnsolicited from './components/applications/unsolicited/partnerApplicationsUnsolicited';
-import organizationProfileEdit from './components/organizationProfile/edit/tabsContainer';
 import organizationProfile from './components/organizationProfile/organizationProfile';
 import organizationProfileHeader from './components/organizationProfile/profile/organizationProfileHeader';
 import partnersContainer from './components/partners/partnersContainer';
+import partnerProfileEdit from './components/organizationProfile/edit/partnerProfileEdit';
+import TabsContainer from './components/organizationProfile/edit/tabsContainer';
 import partnerProfileHeader from './components/partners/profile/partnerProfileHeader';
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
 import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
@@ -39,6 +40,14 @@ import cfeiOpenResults from './components/eois/details/overview/results/results'
 import cfeiDirectResponse from './components/eois/details/overview/results/response';
 
 const history = syncHistoryWithStore(browserHistory, store);
+
+function checkPartnerType(nextState, replace) {
+  const state = store.getState();
+
+  if (!state.session.isHq && state.session.authorized) {
+    replace({ pathname: `profile/${state.session.partnerId}/overview` });
+  }
+}
 
 const allRoutes = () => (
   <Router history={history}>
@@ -95,8 +104,13 @@ const allRoutes = () => (
               <Route path="direct" component={partnerApplicationsDirect} />
             </Route>
           </Route>
-          <Route path="profile" component={organizationProfile} />
-          <Route path="profile/:id/edit" component={organizationProfileEdit} />
+          <Route path="profile" onEnter={checkPartnerType} component={organizationProfile} />
+          <Route path="profile/:id/edit" component={partnerProfileEdit}>
+            <IndexRedirect to="identification" />
+            <Route component={mainContent} >
+              <Route path=":type" component={TabsContainer} />
+            </Route>
+          </Route>
           <Route path="profile/:id" component={organizationProfileHeader} >
             <IndexRedirect to="overview" />
             <Route component={mainContent} >
@@ -115,5 +129,4 @@ const allRoutes = () => (
     </Route>
   </Router >
 );
-
 export default allRoutes;
