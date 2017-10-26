@@ -10,7 +10,7 @@ from rest_framework import serializers
 from account.models import User
 from account.serializers import AgencyUserSerializer, IDUserSerializer
 from agency.serializers import AgencySerializer
-from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES
+from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import SimpleSpecializationSerializer, PointSerializer
 from common.models import Point
@@ -442,7 +442,7 @@ class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirect
                                                                               'is_ds_converted')
 
     def get_is_ds_converted(self, obj):
-        return not obj.eoi_converted is None
+        return obj.eoi_converted is not None
 
 
 class ApplicationFeedbackSerializer(serializers.ModelSerializer):
@@ -454,6 +454,8 @@ class ApplicationFeedbackSerializer(serializers.ModelSerializer):
 
 
 class ConvertUnsolicitedSerializer(serializers.Serializer):
+    RESTRICTION_MSG = 'Unsolicited concept note already converted to a direct selection project.'
+
     ds_justification_select = serializers.ListField()
     justification = serializers.CharField(source="eoi.justification")
     focal_points = IDUserSerializer(many=True, source="eoi.focal_points")
@@ -464,6 +466,12 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
 
     class Meta:
         model = Application
+
+    def validate(self, data):
+        id = self.context['request'].parser_context.get('kwargs', {}).get('pk')
+        if Application.objects.get(id=id).eoi_converted is not None:
+            raise serializers.ValidationError(self.RESTRICTION_MSG)
+        return super(ConvertUnsolicitedSerializer, self).validate(data)
 
     @transaction.atomic
     def create(self, validated_data):
@@ -482,6 +490,8 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         eoi.agency = app.agency
         # we can use get direct because agent have one agency office
         eoi.agency_office = submitter.agency_members.get().office
+        eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
+
         eoi.save()
         for focal_point in focal_points:
             eoi.focal_points.add(focal_point['id'])

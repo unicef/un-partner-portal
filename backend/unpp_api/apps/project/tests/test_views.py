@@ -25,6 +25,7 @@ from common.consts import (
     EOI_STATUSES,
 )
 from project.views import PinProjectAPIView
+from project.serializers import ConvertUnsolicitedSerializer
 
 
 class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
@@ -547,6 +548,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
             'end_date': str(end_date),
         }
         response = self.client.post(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
         eoi = EOI.objects.last()
         self.assertEquals(EOI.objects.count(), 1)
         self.assertEquals(eoi.other_information, payload['other_information'])
@@ -558,3 +560,8 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         self.assertEquals(eoi.focal_points.all().count(), len(focal_points))
         self.assertEquals(eoi.created_by, user)
         self.assertEquals(Application.objects.count(), 2)
+
+        # try to convert again
+        response = self.client.post(url, data=payload, format='json')
+        self.assertFalse(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['non_field_errors'], [ConvertUnsolicitedSerializer.RESTRICTION_MSG])
