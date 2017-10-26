@@ -95,6 +95,7 @@ class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
     location = CharFilter(method='get_location')
     specialization = CharFilter(method='get_specialization')
     agency = CharFilter(method='get_agency')
+    ds_converted = BooleanFilter(method='get_ds_converted', widget=BooleanWidget())
 
     class Meta:
         model = Application
@@ -126,3 +127,6 @@ class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
 
     def get_agency(self, queryset, name, value):
         return queryset.filter(agency=value)
+
+    def get_ds_converted(self, queryset, name, value):
+        return queryset.filter(eoi_converted__isnull=(not value))
