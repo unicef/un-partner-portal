@@ -53,7 +53,7 @@ class CfeiHeader extends Component {
           index={index}
           title={messages[role]}
           tabs={tabs}
-          header={!id && type && role === 'agency' && <NewCfeiModalButton />}
+          header={!id && type && role === 'agency' && <NewCfeiModalButton type={type} />}
           handleChange={this.handleChange}
         >
           {(index !== -1) && children}

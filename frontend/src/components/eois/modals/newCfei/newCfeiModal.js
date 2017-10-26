@@ -6,6 +6,7 @@ import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
 import OpenForm from './openForm';
 import DirectForm from './directForm';
+import UnsolicitedForm from './unsolicitedForm';
 import { addDirectCfei, addOpenCfei } from '../../../../reducers/newCfei';
 import CallPartnersModal from '../callPartners/callPartnersModal';
 import { PROJECT_TYPES } from '../../../../helpers/constants';
@@ -13,6 +14,7 @@ import { PROJECT_TYPES } from '../../../../helpers/constants';
 
 const messages = {
   title: 'Create new Call for Expressions of Interests',
+  unsolicitedTitle: 'Submit new Unsolicited Concept Note',
   header: {
     open: {
       title: 'This CFEI is for open selections.',
@@ -25,6 +27,15 @@ const messages = {
     },
   },
 
+};
+
+const getTitle = (type) => {
+  switch (type) {
+    case PROJECT_TYPES.UNSOLICITED:
+      return messages.unsolicitedTitle;
+    default:
+      return messages.title;
+  }
 };
 
 const getFormName = (type) => {
@@ -64,6 +75,8 @@ const getModal = (type) => {
       return OpenForm;
     case PROJECT_TYPES.DIRECT:
       return DirectForm;
+    case PROJECT_TYPES.UNSOLICITED:
+      return UnsolicitedForm;
   }
 };
 
@@ -93,9 +106,9 @@ class NewCfeiModal extends Component {
       <Grid item>
         <ControlledModal
           maxWidth="md"
-          title={messages.title}
+          title={getTitle(type)}
           trigger={open}
-          info={getInfo(type)}
+          info={type === PROJECT_TYPES.UNSOLICITED ? null : getInfo(type)}
           buttons={{
             flat: {
               handleClick: onDialogClose,
