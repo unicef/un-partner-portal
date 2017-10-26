@@ -116,6 +116,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'email',)
 
 
+class IDUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('id', )
+
+
 class AgencyUserSerializer(UserSerializer):
 
     agency_name = serializers.SerializerMethodField()

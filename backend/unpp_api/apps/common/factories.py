@@ -596,6 +596,7 @@ class AgencyOfficeFactory(factory.django.DjangoModelFactory):
 class AgencyMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     office = factory.SubFactory(AgencyOfficeFactory)
+    role = MEMBER_ROLES.editor
 
     class Meta:
         model = AgencyMember

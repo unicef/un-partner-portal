@@ -28,6 +28,7 @@ from .serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
     CreateProjectSerializer,
+    PartnerProjectSerializer,
     CreateDirectProjectSerializer,
     ProjectUpdateSerializer,
     ApplicationFullSerializer,
@@ -40,6 +41,7 @@ from .serializers import (
     ApplicationPartnerOpenSerializer,
     ApplicationPartnerUnsolicitedDirectSerializer,
     ApplicationFeedbackSerializer,
+    ConvertUnsolicitedSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
 
@@ -81,6 +83,11 @@ class EOIAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
     serializer_class = ProjectUpdateSerializer
     queryset = EOI.objects.all()
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.user.is_agency_user:
+            return ProjectUpdateSerializer
+        return PartnerProjectSerializer
 
 
 class DirectProjectAPIView(BaseProjectAPIView):
@@ -293,17 +300,13 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         return super(ReviewerAssessmentsAPIView, self).update(request, application_id, *args, **kwargs)
 
 
-class UnsolicitedProjectAPIView(ListCreateAPIView):
+class UnsolicitedProjectAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, )
     queryset = Application.objects.filter(is_unsolicited=True)
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
     filter_class = ApplicationsUnsolicitedFilter
-
-    def get_serializer_class(self, *args, **kwargs):
-        if self.request.method == 'POST':
-            return CreateUnsolicitedProjectSerializer
-        return AgencyUnsolicitedApplicationSerializer
+    serializer_class = AgencyUnsolicitedApplicationSerializer
 
 
 class AppsPartnerOpenAPIView(ListAPIView):
@@ -318,10 +321,17 @@ class AppsPartnerOpenAPIView(ListAPIView):
         return self.queryset.filter(partner_id=self.request.active_partner.id)
 
 
-class AppsPartnerUnsolicitedAPIView(AppsPartnerOpenAPIView):
+class AppsPartnerUnsolicitedAPIView(ListCreateAPIView):
+    permission_classes = (IsAuthenticated, IsPartner)
     queryset = Application.objects.filter(is_unsolicited=True)
-    serializer_class = ApplicationPartnerUnsolicitedDirectSerializer
     filter_class = ApplicationsUnsolicitedFilter
+    pagination_class = SmallPagination
+    filter_backends = (DjangoFilterBackend, )
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            return CreateUnsolicitedProjectSerializer
+        return ApplicationPartnerUnsolicitedDirectSerializer
 
 
 class AppsPartnerDirectAPIView(AppsPartnerUnsolicitedAPIView):
@@ -339,3 +349,9 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(provider=self.request.user,
                         application_id=self.kwargs['pk'])
+
+
+class ConvertUnsolicitedAPIView(CreateAPIView):
+    serializer_class = ConvertUnsolicitedSerializer
+    queryset = Application.objects.all()
+    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)

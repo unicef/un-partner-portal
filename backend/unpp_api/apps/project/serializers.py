@@ -4,17 +4,18 @@ from __future__ import unicode_literals
 import datetime
 
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
-from account.serializers import AgencyUserSerializer
+from account.serializers import AgencyUserSerializer, IDUserSerializer
 from agency.serializers import AgencySerializer
-from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES
+from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer
-from common.models import Point, AdminLevel1
+from common.models import Point
 from partner.serializers import PartnerSerializer
 
 from partner.models import Partner, PartnerMember
@@ -126,6 +127,12 @@ class CreateDirectApplicationNoCNSerializer(serializers.ModelSerializer):
         read_only_fields = ('submitter', 'eoi', 'agency',)
 
 
+class ApplicationPartnerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Application
+        fields = ('id', 'cn', 'created')
+
 class ApplicationFullSerializer(serializers.ModelSerializer):
 
     cn = CommonFileSerializer()
@@ -147,11 +154,10 @@ class CreateUnsolicitedProjectSerializer(serializers.Serializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        # TODO: Will need to get the current partner from the header (since it can be switched as HQ user)
-        partner = PartnerMember.objects.get(user=self.context['request'].user).partner
+        partner = self.context['request'].active_partner
         app = Application.objects.create(
             is_unsolicited=True,
-            partner=partner,
+            partner_id=partner.id,
             eoi=None,
             agency_id=validated_data['agency'],
             submitter=self.context['request'].user,
@@ -238,6 +244,61 @@ class CreateProjectSerializer(CreateEOISerializer):
             self.instance.focal_points.add(focal_point)
 
         return self.instance
+
+
+class PartnerProjectSerializer(serializers.ModelSerializer):
+
+    agency = serializers.CharField(source='agency.name')
+    specializations = SimpleSpecializationSerializer(many=True)
+    locations = PointSerializer(many=True)
+    is_pinned = serializers.SerializerMethodField()
+    application = serializers.SerializerMethodField()
+
+    # TODO - cut down on some of these fields. partners should not get back this data
+    # Frontend currently breaks if doesn't receive all
+    class Meta:
+        model = EOI
+        fields = (
+            'id',
+            'specializations',
+            'invited_partners',
+            'locations',
+            'assessments_criteria',
+            'created',
+            'start_date',
+            'end_date',
+            'deadline_date',
+            'notif_results_date',
+            'justification',
+            'completed_reason',
+            'completed_date',
+            'display_type',
+            'status',
+            'title',
+            'agency',
+            'created_by',
+            'focal_points',
+            'agency_office',
+            'cn_template',
+            'description',
+            'goal',
+            'other_information',
+            'has_weighting',
+            'reviewers',
+            'selected_source',
+            'is_pinned',
+            'application',
+        )
+        read_only_fields = fields
+
+    def get_is_pinned(self, obj):
+        return obj.pins.filter(partner=self.context['request'].active_partner.id).exists()
+
+    def get_application(self, obj):
+        qs = obj.applications.filter(partner=self.context['request'].active_partner.id)
+        if qs.exists():
+            return ApplicationPartnerSerializer(qs.get()).data
+        return None
 
 
 class ProjectUpdateSerializer(serializers.ModelSerializer):
@@ -390,10 +451,9 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
     submission_date = serializers.CharField(source="created")
-    is_direct = serializers.BooleanField(source="eoi.is_direct")
+    is_direct = serializers.SerializerMethodField()
     partner_name = serializers.CharField(source="partner.legal_name")
     selected_source = serializers.CharField(source="eoi.selected_source")
-
 
     class Meta:
         model = Application
@@ -434,6 +494,9 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             return obj.eoi.specializations.all().values_list('id', flat=True)
         return obj.proposal_of_eoi_details.get('specializations')
 
+    def get_is_direct(self, obj):
+        return obj.eoi_converted is not None
+
 
 class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirectSerializer):
 
@@ -449,7 +512,8 @@ class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirect
                                                                               'is_ds_converted')
 
     def get_is_ds_converted(self, obj):
-        return not obj.eoi_converted is None
+        return obj.eoi_converted is not None
+
 
 class ApplicationFeedbackSerializer(serializers.ModelSerializer):
     provider = AgencyUserSerializer(read_only=True)
@@ -457,3 +521,74 @@ class ApplicationFeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApplicationFeedback
         fields = ('id', 'feedback', 'provider', 'created')
+
+
+class ConvertUnsolicitedSerializer(serializers.Serializer):
+    RESTRICTION_MSG = 'Unsolicited concept note already converted to a direct selection project.'
+
+    ds_justification_select = serializers.ListField()
+    justification = serializers.CharField(source="eoi.justification")
+    focal_points = IDUserSerializer(many=True, source="eoi.focal_points")
+    description = serializers.CharField(source="eoi.description")
+    other_information = serializers.CharField(source="eoi.other_information")
+    start_date = serializers.DateField(source="eoi.start_date")
+    end_date = serializers.DateField(source="eoi.end_date")
+
+    class Meta:
+        model = Application
+
+    def validate(self, data):
+        id = self.context['request'].parser_context.get('kwargs', {}).get('pk')
+        if Application.objects.get(id=id).eoi_converted is not None:
+            raise serializers.ValidationError(self.RESTRICTION_MSG)
+        return super(ConvertUnsolicitedSerializer, self).validate(data)
+
+    @transaction.atomic
+    def create(self, validated_data):
+        ds_justification_select = validated_data.pop('ds_justification_select')
+        focal_points = self.initial_data.get('focal_points', [])
+        del validated_data['eoi']['focal_points']
+        submitter = self.context['request'].user
+        app_id = self.context['request'].parser_context['kwargs']['pk']
+        app = get_object_or_404(
+            Application,
+            id=app_id,
+            is_unsolicited=True,
+            eoi_converted__isnull=True
+        )
+
+        eoi = EOI(**validated_data['eoi'])
+        eoi.created_by = submitter
+        eoi.display_type = EOI_TYPES.direct
+        eoi.status = EOI_STATUSES.open
+        eoi.title = app.proposal_of_eoi_details.get('title')
+        eoi.agency = app.agency
+        # we can use get direct because agent have one agency office
+        eoi.agency_office = submitter.agency_members.get().office
+        eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
+
+        eoi.save()
+        for focal_point in focal_points:
+            eoi.focal_points.add(focal_point['id'])
+        for specialization in app.proposal_of_eoi_details.get('specializations', []):
+            eoi.specializations.add(specialization)
+        for location in app.locations_proposal_of_eoi.all():
+            eoi.locations.add(location)
+
+        app.ds_justification_select = ds_justification_select
+        app.eoi_converted = eoi
+        app.save()
+
+        ds_app = Application.objects.create(
+            partner=app.partner,
+            eoi=eoi,
+            agency=eoi.agency,
+            submitter=app.submitter,
+            status=APPLICATION_STATUSES.pending,
+            did_win=True,
+            did_accept=False,
+            ds_justification_select=ds_justification_select,
+            justification_reason=app.justification_reason
+        )
+
+        return ds_app
