@@ -8,8 +8,6 @@ from .serializers import ConfigSectorSerializer, CommonFileUploadSerializer
 from .models import Sector, CommonFile
 from .countries import COUNTRIES_ALPHA2_CODE_DICT
 from .consts import (
-    FINANCIAL_CONTROL_SYSTEM_CHOICES,
-    FUNCTIONAL_RESPONSIBILITY_CHOICES,
     STAFF_GLOBALLY_CHOICES,
     PARTNER_DONORS_CHOICES,
     WORKING_LAGNUAGES_CHOICES,

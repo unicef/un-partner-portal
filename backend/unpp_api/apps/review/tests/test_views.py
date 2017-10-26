@@ -10,7 +10,6 @@ from partner.models import Partner
 from review.models import PartnerFlag, PartnerVerification
 
 
-
 class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
     user_type = 'agency'
@@ -90,12 +89,10 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
         response = self.client.post(url, data=payload, format='json')
         self.assertEquals(response.data['is_verified'], True)
 
-
         # Test Unverified status
         payload['is_rep_risk'] = True
         response = self.client.post(url, data=payload, format='json')
         self.assertEquals(response.data['is_verified'], False)
-
 
     def test_verification_update(self):
         verification = PartnerVerification.objects.filter(is_valid=True).first()

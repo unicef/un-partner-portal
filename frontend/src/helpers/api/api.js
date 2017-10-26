@@ -214,6 +214,10 @@ export function getPartnersList(params) {
   return authorizedGet({ uri: '/partners', params });
 }
 
+export function getMembersList(id, params) {
+  return authorizedGet({ uri: `/agencies/${id}/members`, params });
+}
+
 export function getPartnerProfileConfig() {
   return get('/config/partners/profile');
 }

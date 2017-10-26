@@ -32,6 +32,7 @@ from .serializers import (
     CreateDirectProjectSerializer,
     ProjectUpdateSerializer,
     ApplicationFullSerializer,
+    AgencyUnsolicitedApplicationSerializer,
     CreateDirectApplicationNoCNSerializer,
     ApplicationsListSerializer,
     ReviewersApplicationSerializer,
@@ -54,7 +55,8 @@ class BaseProjectAPIView(ListCreateAPIView):
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = BaseProjectFilter
-    ordering_fields = ('deadline_date', 'start_date', 'status')
+    ordering_fields = ('deadline_date', 'created', 'start_date',
+                       'status', 'completed_date')
 
 
 class OpenProjectAPIView(BaseProjectAPIView):
@@ -293,11 +295,17 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         return super(ReviewerAssessmentsAPIView, self).update(request, application_id, *args, **kwargs)
 
 
-class UnsolicitedProjectAPIView(CreateAPIView):
+class UnsolicitedProjectAPIView(ListCreateAPIView):
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = (IsAuthenticated, )
-    queryset = Application.objects.all()
-    serializer_class = CreateUnsolicitedProjectSerializer
+    queryset = Application.objects.filter(is_unsolicited=True)
+    pagination_class = SmallPagination
+    filter_class = ApplicationsUnsolicitedFilter
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            return CreateUnsolicitedProjectSerializer
+        return AgencyUnsolicitedApplicationSerializer
 
 
 class AppsPartnerOpenAPIView(ListAPIView):
@@ -309,7 +317,7 @@ class AppsPartnerOpenAPIView(ListAPIView):
     filter_class = ApplicationsFilter
 
     def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(partner_id=self.request.active_partner)
+        return self.queryset.filter(partner_id=self.request.active_partner.id)
 
 
 class AppsPartnerUnsolicitedAPIView(AppsPartnerOpenAPIView):

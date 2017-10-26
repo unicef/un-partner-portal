@@ -1,7 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
 
-from agency.serializers import OtherAgencySerializer
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
@@ -49,6 +48,7 @@ class PartnerSerializer(serializers.ModelSerializer):
             'logo',
             'legal_name',
             'country_code',
+            'display_type',
         )
 
 
@@ -275,6 +275,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     area_policies = PartnerPolicyAreaSerializer(many=True)
     audit = PartnerAuditAssessmentSerializer()
     report = PartnerReportingSerializer()
+    location_field_offices = PointSerializer(many=True)
 
     class Meta:
         model = Partner
