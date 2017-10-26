@@ -4,16 +4,12 @@ import { connect } from 'react-redux';
 import SelectForm from '../../../selectForm';
 import { mapPartnersNamesToSelection } from '../../../../../store';
 
-const messages = {
-  label: 'Partners',
-};
-
 const ProjectPartners = (props) => {
-  const { name, partners, ...other } = props;
+  const { fieldName, label, partners, ...other } = props;
   return (
     <SelectForm
-      fieldName="invited_partners"
-      label={messages.label}
+      fieldName={fieldName}
+      label={label}
       values={partners}
       selectFieldProps={{
         multiple: true,
@@ -24,7 +20,8 @@ const ProjectPartners = (props) => {
 };
 
 ProjectPartners.propTypes = {
-  name: PropTypes.string,
+  fieldName: PropTypes.string,
+  label: PropTypes.string,
   partners: PropTypes.arrayOf(
     PropTypes.objectOf(
       {

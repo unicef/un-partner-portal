@@ -238,7 +238,6 @@ export const renderText = ({
   ...other
 }) => {
   let value = input.value || (other.inputProps ? other.inputProps.initial : null);
-
   if (!value) value = '-';
   if (values) {
     value = R.filter((val) => {

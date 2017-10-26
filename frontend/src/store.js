@@ -41,7 +41,7 @@ import applicationDetails, * as applicationDetailsSelector from './reducers/appl
 import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
 import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers';
 import partnerAppDetails, * as partnerAppDetailsSelector from './reducers/partnerApplicationDetails';
-import agencies, {selectAgenciesName} from './reducers/agencies';
+import agencies, { selectAgenciesName } from './reducers/agencies';
 
 const mainReducer = combineReducers({
   cfei,
@@ -98,8 +98,13 @@ export default createStore(
   ),
 );
 
+const makeFormItem = (list) => {
+  let [value, label] = list;
+  if (!isNaN(value)) value = Number(value);
+  return { value, label };
+};
+
 const mapValuesForSelectionField = (state, compareField = 'label') => {
-  const makeFormItem = list => R.zipObj(['value', 'label'], list);
   const compare = (a, b) => a[compareField].localeCompare(b[compareField]);
   return R.sort(compare, R.map(makeFormItem, R.toPairs(state)));
 };

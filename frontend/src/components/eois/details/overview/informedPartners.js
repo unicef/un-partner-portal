@@ -45,6 +45,10 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
+InformedPartners.defaultProps = {
+  partners: [],
+};
+
 export default connect(
   mapStateToProps,
 )(InformedPartners);
