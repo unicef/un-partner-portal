@@ -384,7 +384,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
     submission_date = serializers.CharField(source="created")
-    is_direct = serializers.BooleanField(source="eoi.is_direct")
+    is_direct = serializers.SerializerMethodField()
     partner_name = serializers.CharField(source="partner.legal_name")
     selected_source = serializers.CharField(source="eoi.selected_source")
 
@@ -426,6 +426,9 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             # has been updated to direct selected
             return obj.eoi.specializations.all().values_list('id', flat=True)
         return obj.proposal_of_eoi_details.get('specializations')
+
+    def get_is_direct(self, obj):
+        return obj.eoi_converted is not None
 
 
 class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirectSerializer):
