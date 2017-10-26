@@ -31,7 +31,6 @@ export const unsolicitedAgencyColumns = [
   { name: 'project_title', title: 'Project name' },
   { name: 'agency_name', title: 'Agency' },
   { name: 'partner_name', title: 'Partner' },
-  { name: 'verification', title: 'Verification & Flagging' },
   { name: 'country', title: 'Country' },
   { name: 'specializations', title: 'Sector & Area of specialization' },
   { name: 'submission_date', title: 'Submission date' },
