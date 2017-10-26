@@ -62,7 +62,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  loadPartnerProfiles: partnerId => dispatch(loadPartnerProfiles(partnerId)),
+  loadPartnerProfiles: partnerId => dispatch(loadPartnerProfiles(partnerId, false)),
 });
 
 const connectedOrganizationProfile = connect(mapStateToProps, mapDispatch)(OrganizationProfile);

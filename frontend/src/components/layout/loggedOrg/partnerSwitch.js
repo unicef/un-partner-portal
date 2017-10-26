@@ -49,15 +49,18 @@ class PartnerSwitch extends Component {
         partnerName: partner.legal_name,
         isHq: partner.is_hq,
       });
+
+      this.setState({ open: false });
+      const loc = history.getCurrentLocation();
+      this.props.startRefresh();
+      history.push('/');
+      setTimeout(() => {
+        history.push(loc);
+        this.props.stopRefresh();
+      }, 100);
     }
+
     this.setState({ open: false });
-    const loc = history.getCurrentLocation();
-    this.props.startRefresh();
-    history.push('/');
-    setTimeout(() => {
-      history.push(loc);
-      this.props.stopRefresh();
-    }, 100);
   }
 
   renderMenuItems(partners, countries) {

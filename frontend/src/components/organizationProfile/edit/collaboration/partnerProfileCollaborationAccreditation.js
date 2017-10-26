@@ -43,7 +43,7 @@ const AccreditationInner = readOnly => member => (
       <FileForm
         sectionName="collaboration.accreditation"
         formName="partnerProfile"
-        fieldName={`${member}.evidence_file_id`}
+        fieldName={`${member}.evidence_file`}
         label={messages.accreditation}
         optional
         warn

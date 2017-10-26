@@ -43,7 +43,7 @@ const ReferenceInner = readOnly => member => (
       <FileForm
         sectionName="collaboration.reference"
         formName="partnerProfile"
-        fieldName={`${member}.evidence_file_id`}
+        fieldName={`${member}.evidence_file`}
         label={messages.reference}
         optional
         warn

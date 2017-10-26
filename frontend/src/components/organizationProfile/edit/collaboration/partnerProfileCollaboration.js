@@ -72,12 +72,19 @@ class PartnerProfileCollaboration extends Component {
     const unflattenColl = R.dissoc('collaboration_evidences', formValues.collaboration);
     const unflattenCollInit = R.dissoc('collaboration_evidences', initialValues.collaboration);
 
-    const accreditation = R.map(item => R.assoc('mode', 'Acc', item), unflattenColl.accreditation.accreditations);
-    const reference = R.map(item => R.assoc('mode', 'Ref', item), unflattenColl.reference.references);
-    const mergedEvidences = R.concat(accreditation, reference);
+    const accreditation = R.map(item => R.dissoc('evidence_file', R.assoc('evidence_file_id', item.evidence_file,
+      R.assoc('mode', 'Acc', item))), unflattenColl.accreditation.accreditations);
+    const reference = R.map(item => R.dissoc('evidence_file', R.assoc('evidence_file_id', item.evidence_file,
+      R.assoc('mode', 'Ref', item))), unflattenColl.reference.references);
+    const mergedEvidences = R.map((item) => {
+      if (!R.is(Number, item.evidence_file_id)) {
+        return R.dissoc('evidence_file_id', item);
+      }
+      return item;
+    }, R.concat(accreditation, reference));
 
     const collaboration = flatten(R.assoc('collaboration_evidences', mergedEvidences, unflattenColl));
-    const initCollaboration = flatten(R.assoc('collaboration_evidences', mergedEvidences, unflattenCollInit));
+    const initCollaboration = flatten(R.assoc('collaboration_evidences', [], unflattenCollInit));
 
     return updateTab(partnerId, 'collaboration', changedValues(initCollaboration, collaboration))
       .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))

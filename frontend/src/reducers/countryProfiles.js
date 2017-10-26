@@ -1,5 +1,6 @@
 import R from 'ramda';
 import { getPartnerOrganizationProfiles, createCountryProfile } from '../helpers/api/api';
+import { sessionChange } from './session';
 import {
   clearError,
   startLoadingField,
@@ -46,12 +47,19 @@ const initialState = {
   createLoading: false,
 };
 
-export const loadPartnerProfiles = partnerId => (dispatch) => {
+export const loadPartnerProfiles = (partnerId, addToSession) => (dispatch, getState) => {
+  const session = getState().session;
+
   dispatch(partnerProfilesLoadStarted());
   return getPartnerOrganizationProfiles(partnerId)
     .then((profiles) => {
       dispatch(partnerProfilesLoadEnded());
       dispatch(partnerProfilesLoadSuccess(profiles));
+
+      if (addToSession) {
+        const partners = R.unionWith(R.eqBy(R.prop('id')), session.partners, profiles.country_profiles);
+        dispatch(sessionChange(R.assoc('partners', partners, session)));
+      }
     })
     .catch((error) => {
       dispatch(partnerProfilesLoadEnded());
@@ -75,7 +83,7 @@ export const newCountryProfile = partnerId => (dispatch, getState) => {
 };
 
 export const createCountryAndRefresh = partnerId => dispatch =>
-  dispatch(newCountryProfile(partnerId)).then(() => dispatch(loadPartnerProfiles(partnerId)));
+  dispatch(newCountryProfile(partnerId)).then(() => dispatch(loadPartnerProfiles(partnerId, true)));
 
 
 export const selectCountryId = countryId => ({ type: SELECT_COUNTRY_ID, countryId });

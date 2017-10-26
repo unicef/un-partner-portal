@@ -95,13 +95,14 @@ class PartnerProfileMandate extends Component {
     const mandateMission = flatten(formValues.mandate_mission);
     const initMandateMission = flatten(initialValues.mandate_mission);
 
-    const next = [{ specialization: { id: 55 }, years: 'Y01' }];
+    const convertExperiences = R.flatten(R.map(item => R.map(area => R.assoc('years',
+      item.years, R.objOf('specialization_id', area)), item.areas), mandateMission.specializations));
 
     const changed = changedValues(initMandateMission, mandateMission);
 
-    const replaced = R.assoc('experiences', next, changed);
+    const assocExperiences = R.assoc('experiences', convertExperiences, changed);
 
-    return updateTab(partnerId, 'mandate-mission', replaced)
+    return updateTab(partnerId, 'mandate-mission', assocExperiences)
       .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
       .catch((error) => {
         const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
