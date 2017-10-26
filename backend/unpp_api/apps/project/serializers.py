@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import datetime
 
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 
@@ -543,7 +544,12 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         del validated_data['eoi']['focal_points']
         submitter = self.context['request'].user
         app_id = self.context['request'].parser_context['kwargs']['pk']
-        app = Application.objects.get(pk=app_id)
+        app = get_object_or_404(
+            Application,
+            id=app_id,
+            is_unsolicited=True,
+            eoi_converted__isnull=True
+        )
 
         eoi = EOI(**validated_data['eoi'])
         eoi.created_by = submitter
