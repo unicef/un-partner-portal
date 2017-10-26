@@ -1,6 +1,6 @@
 import R from 'ramda';
 import { combineReducers } from 'redux';
-import { getOpenCfei, getPinnedCfei, getDirectCfei } from '../helpers/api/api';
+import { getOpenCfei, getPinnedCfei, getDirectCfei, getUnsolicitedCN } from '../helpers/api/api';
 import cfeiStatus, {
   loadCfeiStarted,
   loadCfeiEnded,
@@ -25,6 +25,8 @@ const getCfei = (project, filters) => {
       return getPinnedCfei(filters);
     case PROJECT_TYPES.DIRECT:
       return getDirectCfei(filters);
+    case PROJECT_TYPES.UNSOLICITED:
+      return getUnsolicitedCN(filters);
   }
 };
 
@@ -36,6 +38,7 @@ export const loadCfei = (project, filters) => (dispatch) => {
       dispatch(loadCfeiSuccess(cfei.results, project, cfei.count));
     })
     .catch((error) => {
+      debugger
       dispatch(loadCfeiEnded());
       dispatch(loadCfeiFailure(error));
     });

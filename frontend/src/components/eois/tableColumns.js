@@ -26,3 +26,15 @@ export const directAgencyColumns = [
   { name: 'selected_source', title: 'Direct Selection Source' },
   { name: 'status', title: 'Status' },
 ];
+
+export const unsolicitedAgencyColumns = [
+  { name: 'project_title', title: 'Project name' },
+  { name: 'agency_name', title: 'Agency' },
+  { name: 'partner_name', title: 'Partner' },
+  { name: 'verification', title: 'Verification & Flagging' },
+  { name: 'country', title: 'Country' },
+  { name: 'specializations', title: 'Sector & Area of specialization' },
+  { name: 'submission_date', title: 'Submission date' },
+  { name: 'is_direct', title: 'Direct Selection' },
+];
+

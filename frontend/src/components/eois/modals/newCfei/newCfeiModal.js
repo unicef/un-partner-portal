@@ -7,7 +7,7 @@ import ControlledModal from '../../../common/modals/controlledModal';
 import OpenForm from './openForm';
 import DirectForm from './directForm';
 import UnsolicitedForm from './unsolicitedForm';
-import { addDirectCfei, addOpenCfei } from '../../../../reducers/newCfei';
+import { addDirectCfei, addOpenCfei, addUnsolicitedCN } from '../../../../reducers/newCfei';
 import CallPartnersModal from '../callPartners/callPartnersModal';
 import { PROJECT_TYPES } from '../../../../helpers/constants';
 
@@ -67,6 +67,8 @@ const getPostMethod = (type) => {
       return addOpenCfei;
     case PROJECT_TYPES.DIRECT:
       return addDirectCfei;
+    case PROJECT_TYPES.UNSOLICITED:
+      return addUnsolicitedCN;
   }
 };
 

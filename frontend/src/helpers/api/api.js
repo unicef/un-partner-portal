@@ -167,6 +167,10 @@ export function putApplicationReview(applicationId, reviewerId, body) {
     body });
 }
 
+export function getUnsolicitedCN(params) {
+  return authorizedGet({ uri: '/projects/unsolicited', params });
+}
+
 // Applications
 
 export function getOpenCfeiApplications(id, filters) {
@@ -199,6 +203,10 @@ export function getApplicationUnsolicitedConceptNotes() {
 
 export function getApplicationDirect() {
   return authorizedGet({ uri: '/projects/applications/direct/' });
+}
+
+export function postUnsolicitedCN(body) {
+  return authorizedPostUpload({ uri: '/projects/applications/unsolicited/', body });
 }
 
 // Partners
