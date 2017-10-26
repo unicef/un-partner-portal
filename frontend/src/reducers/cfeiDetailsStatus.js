@@ -9,6 +9,7 @@ export const CLEAR_CFEI_DETAIL_ERROR = 'CLEAR_CFEI_DETAIL_ERROR';
 export const LOAD_CFEI_DETAIL_STARTED = 'LOAD_CFEI_DETAIL_STARTED';
 export const LOAD_CFEI_DETAIL_ENDED = 'LOAD_CFEI_DETAIL_ENDED';
 export const LOAD_CFEI_DETAIL_SUCCESS = 'LOAD_CFEI_DETAIL_SUCCESS';
+export const LOAD_UCN_DETAIL_SUCCESS = 'LOAD_UCN_DETAIL_SUCCESS';
 export const LOAD_CFEI_DETAIL_FAILURE = 'LOAD_CFEI_DETAIL_FAILURE';
 
 const initialState = {
@@ -26,6 +27,8 @@ export const loadCfeiDetailStarted = () => ({ type: LOAD_CFEI_DETAIL_STARTED });
 export const loadCfeiDetailEnded = () => ({ type: LOAD_CFEI_DETAIL_ENDED });
 export const loadCfeiDetailSuccess = cfei => (
   { type: LOAD_CFEI_DETAIL_SUCCESS, cfei });
+export const loadUCNDetailSuccess = ucn => (
+  { type: LOAD_UCN_DETAIL_SUCCESS, ucn });
 export const loadCfeiDetailFailure = error => ({ type: LOAD_CFEI_DETAIL_FAILURE, error });
 
 export const saveErrorMsg = (state, action) => R.assoc(

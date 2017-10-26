@@ -7,10 +7,11 @@ import cfeiDetailsStatus, {
   loadCfeiDetailSuccess,
   loadCfeiDetailFailure,
   LOAD_CFEI_DETAIL_SUCCESS,
+  LOAD_UCN_DETAIL_SUCCESS
 } from './cfeiDetailsStatus';
 import { } from './apiStatus';
 import { normalizeSingleCfei } from './cfei';
-import { getOpenCfeiDetails } from '../helpers/api/api';
+import { getOpenCfeiDetails, getApplicationDetails } from '../helpers/api/api';
 
 const initialState = {};
 
@@ -20,6 +21,20 @@ export const loadCfei = id => (dispatch) => {
     .then((cfei) => {
       dispatch(loadCfeiDetailEnded());
       dispatch(loadCfeiDetailSuccess(cfei));
+      return cfei;
+    })
+    .catch((error) => {
+      dispatch(loadCfeiDetailEnded());
+      dispatch(loadCfeiDetailFailure(error));
+    });
+};
+
+export const loadUnsolicitedCfei = id => (dispatch) => {
+  dispatch(loadCfeiDetailStarted());
+  return getApplicationDetails(id)
+    .then((cfei) => {
+      dispatch(loadCfeiDetailEnded());
+      dispatch(loadUCNDetailSuccess(cfei));
       return cfei;
     })
     .catch((error) => {
