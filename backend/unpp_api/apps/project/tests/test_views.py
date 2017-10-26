@@ -90,10 +90,12 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
 
     quantity = 2
     url = reverse('projects:open')
+    user_type = 'agency'
 
     def setUp(self):
         super(TestOpenProjectsAPITestCase, self).setUp()
         AgencyMemberFactory.create_batch(self.quantity)
+        PartnerMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
 
     def test_open_project(self):
@@ -492,8 +494,9 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
     quantity = 1
 
     def test_create_convert(self):
-        url = reverse('projects:unsolicited')
+        url = reverse('projects:applications-unsolicited')
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        partner_id = Partner.objects.first().id
         with open(filename) as cn_template:
             payload = {
                 "locations": [
@@ -513,7 +516,8 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
                 "specializations": Specialization.objects.all()[:3].values_list("id", flat=True),
                 "cn": cn_template,
             }
-            response = self.client.post(url, data=payload, format='multipart')
+            response = self.client.post(url, data=payload, format='multipart',
+                                        header={'Partner-ID': partner_id})
 
         self.assertTrue(statuses.is_success(response.status_code))
         app = Application.objects.last()
