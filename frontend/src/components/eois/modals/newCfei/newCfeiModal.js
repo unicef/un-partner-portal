@@ -93,6 +93,12 @@ class NewCfeiModal extends Component {
     this.handleConfirmation = this.handleConfirmation.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.open && !nextProps.open) {
+      this.setState({ disabled: this.props.type === PROJECT_TYPES.UNSOLICITED });
+    }
+  }
+
   handleSubmit(values) {
     this.props.onDialogClose();
     this.props.postCfei(values).then(
