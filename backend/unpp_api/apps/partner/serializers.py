@@ -272,6 +272,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     area_policies = PartnerPolicyAreaSerializer(many=True)
     audit = PartnerAuditAssessmentSerializer()
     report = PartnerReportingSerializer()
+    location_field_offices = PointSerializer(many=True)
 
     class Meta:
         model = Partner
