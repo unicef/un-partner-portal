@@ -214,6 +214,10 @@ export function getPartnersList(params) {
   return authorizedGet({ uri: '/partners', params });
 }
 
+export function getMembersList(id, params) {
+  return authorizedGet({ uri: `/agencies/${id}/members`, params });
+}
+
 export function getPartnerProfileConfig() {
   return get('/config/partners/profile');
 }
@@ -224,6 +228,14 @@ export function getPartnerOrganizationProfiles(id) {
 
 export function createCountryProfile(id, body) {
   return authorizedPost({ uri: `/partners/${id}/country-profile/`, body });
+}
+
+export function getPartnerVerifications(id) {
+  return authorizedGet({ uri: `/partners/${id}/verifications` });
+}
+
+export function postPartnerVerifications(id, body) {
+  return authorizedPost({ uri: `/partners/${id}/verifications/`, body });
 }
 
 export function patchPartnerProfileTab(partnerId, tabName, body) {

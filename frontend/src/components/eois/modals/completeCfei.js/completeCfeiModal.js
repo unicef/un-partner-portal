@@ -33,6 +33,7 @@ class CompleteCfeiModal extends Component {
           fullWidth
           title={messages.title}
           trigger={dialogOpen}
+          handleDialogClose={handleDialogClose}
           info={messages.header}
           minWidth={40}
           buttons={{

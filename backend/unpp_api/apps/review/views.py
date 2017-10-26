@@ -69,7 +69,6 @@ class PartnerVerificationRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     def get_queryset(self):
         return PartnerVerification.objects.filter(partner=self.kwargs['partner_id'])
 
-
     def get_serializer(self, *args, **kwargs):
         verification = self.get_object()
         return PartnerVerificationSerializer(verification,

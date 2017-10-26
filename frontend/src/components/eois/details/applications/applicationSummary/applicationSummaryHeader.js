@@ -79,7 +79,6 @@ class ApplicationSummaryHeader extends Component {
       params: { type },
       error,
     } = this.props;
-    console.log(partner)
     if (error.notFound) {
       return <Typography >{messages.noApplication}</Typography>;
     } else if (error.message) {

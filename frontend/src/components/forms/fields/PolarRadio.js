@@ -5,11 +5,11 @@ import RadioForm from '../radioForm';
 
 const BOOL = [
   {
-    value: 'true',
+    value: true,
     label: 'Yes',
   },
   {
-    value: 'false',
+    value: false,
     label: 'No',
   },
 ];

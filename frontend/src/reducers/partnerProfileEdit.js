@@ -1,6 +1,5 @@
 import R from 'ramda';
 
-export const NEXT_TAB = 'NEXT_TAB';
 export const CHANGE_TAB = 'CHANGE_TAB';
 export const ADD_INCOMPLETE_TAB = 'ADD_INCOMPLETE_TAB';
 export const REMOVE_INCOMPLETE_TAB = 'REMOVE_INCOMPLETE_TAB';
@@ -13,7 +12,6 @@ const initialState = {
   incompleteSteps: [],
 };
 
-export const changeTabToNext = () => ({ type: NEXT_TAB });
 export const changeTab = newTab => ({ type: CHANGE_TAB, newTab });
 export const addIncompleteTab = tabName => ({ type: ADD_INCOMPLETE_TAB, tabName });
 export const removeIncompleteTab = tabName => ({ type: REMOVE_INCOMPLETE_TAB, tabName });
@@ -45,10 +43,6 @@ const unsetIncompleteStep = (state, stepName) => {
 
 export default function sessionReducer(state = initialState, action) {
   switch (action.type) {
-    case NEXT_TAB: {
-      const newTab = state.currentTab + 1;
-      return setCurrentTab(state, newTab);
-    }
     case CHANGE_TAB: {
       return setCurrentTab(state, action.newTab);
     }

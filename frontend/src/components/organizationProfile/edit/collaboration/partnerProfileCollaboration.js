@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { withRouter, browserHistory as history } from 'react-router';
 import { connect } from 'react-redux';
@@ -7,7 +8,6 @@ import PartnerProfileCollaborationHistory from './partnerProfileCollaborationHis
 import PartnerProfileCollaborationAccreditation from './partnerProfileCollaborationAccreditation';
 import PartnerProfileCollaborationReferences from './partnerProfileCollaborationReferences';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
-import { changeTabToNext } from '../../../../reducers/partnerProfileEdit';
 import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsUpdate';
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
@@ -46,10 +46,13 @@ class PartnerProfileCollaboration extends Component {
   }
 
   onSubmit() {
-    const { partnerId, changeTab } = this.props;
+    const { partnerId, tabs, params: { type } } = this.props;
 
     if (this.state.actionOnSubmit === 'next') {
-      changeTab();
+      const index = tabs.findIndex(itab => itab.path === type);
+      history.push({
+        pathname: `/profile/${partnerId}/edit/${tabs[index + 1].path}`,
+      });
     } else if (this.state.actionOnSubmit === 'exit') {
       history.push(`/profile/${partnerId}/overview`);
     }
@@ -66,8 +69,22 @@ class PartnerProfileCollaboration extends Component {
   handleSubmit(formValues) {
     const { initialValues, updateTab, partnerId, loadPartnerProfileDetails } = this.props;
 
-    const collaboration = flatten(formValues.collaboration);
-    const initCollaboration = flatten(initialValues.collaboration);
+    const unflattenColl = R.dissoc('collaboration_evidences', formValues.collaboration);
+    const unflattenCollInit = R.dissoc('collaboration_evidences', initialValues.collaboration);
+
+    const accreditation = R.map(item => R.dissoc('evidence_file', R.assoc('evidence_file_id', item.evidence_file,
+      R.assoc('mode', 'Acc', item))), unflattenColl.accreditation.accreditations);
+    const reference = R.map(item => R.dissoc('evidence_file', R.assoc('evidence_file_id', item.evidence_file,
+      R.assoc('mode', 'Ref', item))), unflattenColl.reference.references);
+    const mergedEvidences = R.map((item) => {
+      if (!R.is(Number, item.evidence_file_id)) {
+        return R.dissoc('evidence_file_id', item);
+      }
+      return item;
+    }, R.concat(accreditation, reference));
+
+    const collaboration = flatten(R.assoc('collaboration_evidences', mergedEvidences, unflattenColl));
+    const initCollaboration = flatten(R.assoc('collaboration_evidences', [], unflattenCollInit));
 
     return updateTab(partnerId, 'collaboration', changedValues(initCollaboration, collaboration))
       .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
@@ -102,16 +119,17 @@ PartnerProfileCollaboration.propTypes = {
   updateTab: PropTypes.func,
   initialValues: PropTypes.object,
   loadPartnerProfileDetails: PropTypes.func,
-  changeTab: PropTypes.func,
+  tabs: PropTypes.array,
+  params: PropTypes.object,
 };
 
 const mapState = (state, ownProps) => ({
   partnerId: ownProps.params.id,
+  tabs: state.partnerProfileDetailsNav.tabs,
   initialValues: getFormInitialValues('partnerProfile')(state),
 });
 
 const mapDispatch = dispatch => ({
-  changeTab: () => dispatch(changeTabToNext()),
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
   updateTab: (partnerId, tabName, body) => dispatch(patchPartnerProfile(partnerId, tabName, body)),
   dispatch,

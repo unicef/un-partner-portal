@@ -267,7 +267,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         )
         self.collaborations_partnership.add(partnership)
 
-
     @factory.post_generation
     def collaboration_evidences(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
@@ -597,6 +596,7 @@ class AgencyOfficeFactory(factory.django.DjangoModelFactory):
 class AgencyMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     office = factory.SubFactory(AgencyOfficeFactory)
+    role = MEMBER_ROLES.editor
 
     class Meta:
         model = AgencyMember
