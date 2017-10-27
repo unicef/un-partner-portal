@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from account.models import User
 from .models import Agency, OtherAgency, AgencyOffice
 
 

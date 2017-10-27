@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { withRouter, browserHistory as history } from 'react-router';
 import { connect } from 'react-redux';
@@ -11,7 +12,6 @@ import PartnerProfileMandatePopulation from './partnerProfileMandatePopulation';
 import PartnerProfileMandateCountryPresence from './partnerProfileMandateCountryPresence';
 import PartnerProfileMandateSecurity from './partnerProfileMandateSecurity';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
-import { changeTabToNext } from '../../../../reducers/partnerProfileEdit';
 import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsUpdate';
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
@@ -69,10 +69,13 @@ class PartnerProfileMandate extends Component {
   }
 
   onSubmit() {
-    const { partnerId, changeTab } = this.props;
+    const { partnerId, tabs, params: { type } } = this.props;
 
     if (this.state.actionOnSubmit === 'next') {
-      changeTab();
+      const index = tabs.findIndex(itab => itab.path === type);
+      history.push({
+        pathname: `/profile/${partnerId}/edit/${tabs[index + 1].path}`,
+      });
     } else if (this.state.actionOnSubmit === 'exit') {
       history.push(`/profile/${partnerId}/overview`);
     }
@@ -92,7 +95,14 @@ class PartnerProfileMandate extends Component {
     const mandateMission = flatten(formValues.mandate_mission);
     const initMandateMission = flatten(initialValues.mandate_mission);
 
-    return updateTab(partnerId, 'mandate-mission', changedValues(initMandateMission, mandateMission))
+    const convertExperiences = R.flatten(R.map(item => R.map(area => R.assoc('years',
+      item.years, R.objOf('specialization_id', area)), item.areas), mandateMission.specializations));
+
+    const changed = changedValues(initMandateMission, mandateMission);
+
+    const assocExperiences = R.assoc('experiences', convertExperiences, changed);
+
+    return updateTab(partnerId, 'mandate-mission', assocExperiences)
       .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
       .catch((error) => {
         const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
@@ -125,16 +135,17 @@ PartnerProfileMandate.propTypes = {
   updateTab: PropTypes.func,
   initialValues: PropTypes.object,
   loadPartnerProfileDetails: PropTypes.func,
-  changeTab: PropTypes.func,
+  params: PropTypes.object,
+  tabs: PropTypes.array,
 };
 
 const mapState = (state, ownProps) => ({
   partnerId: ownProps.params.id,
+  tabs: state.partnerProfileDetailsNav.tabs,
   initialValues: getFormInitialValues('partnerProfile')(state),
 });
 
 const mapDispatch = dispatch => ({
-  changeTab: () => dispatch(changeTabToNext()),
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
   updateTab: (partnerId, tabName, body) => dispatch(patchPartnerProfile(partnerId, tabName, body)),
   dispatch,

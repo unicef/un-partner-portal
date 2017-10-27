@@ -279,7 +279,6 @@ export const renderBool = ({
 }) => {
   let value = 'No';
   if (input.value) value = 'Yes';
-
   return (
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>

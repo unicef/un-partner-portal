@@ -5,24 +5,30 @@ import Grid from 'material-ui/Grid';
 import Snackbar from 'material-ui/Snackbar';
 import PaginatedList from '../common/list/paginatedList';
 import RenderProjectCells from './cells/tableCells';
-
+import { PROJECT_TYPES, ROLES} from '../../helpers/constants';
 import {
   openAgencyColumns,
   openPartnerColumns,
   directAgencyColumns,
+  unsolicitedAgencyColumns,
 } from './tableColumns';
 import { errorToBeCleared } from '../../reducers/cfeiStatus';
+
+const { OPEN, DIRECT, PINNED, UNSOLICITED } = PROJECT_TYPES;
+const { PARTNER } = ROLES;
 
 class CfeiTableContainer extends Component {
   // should be moved to state but hold until new table is added
   static getColumnData(role, type) {
-    if (role === 'partner'
-      && (type === 'open' || type === 'pinned')) {
+    if (role === PARTNER
+      && (type === OPEN || type === PINNED)) {
       return openPartnerColumns;
-    } else if (type === 'open') {
+    } else if (type === OPEN) {
       return openAgencyColumns;
-    } else if (type === 'direct') {
+    } else if (type === DIRECT) {
       return directAgencyColumns;
+    } else if (type === UNSOLICITED) {
+      return unsolicitedAgencyColumns;
     }
     return () => null;
   }

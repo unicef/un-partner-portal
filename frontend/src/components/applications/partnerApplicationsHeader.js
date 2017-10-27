@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 import Typography from 'material-ui/Typography';
 import HeaderNavigation from '../common/headerNavigation';
+import { PROJECT_TYPES } from '../../helpers/constants';
+import NewCfeiModalButton from '../eois/modals/newCfei/newCfeiModalButton';
 
 const messages = {
   applications: 'Your Applications',
@@ -38,6 +40,8 @@ class PartnerApplicationsHeader extends Component {
     const {
       tabs,
       children,
+      params: { id },
+      location,
     } = this.props;
     const index = this.updatePath();
     return (
@@ -46,6 +50,8 @@ class PartnerApplicationsHeader extends Component {
         title={messages.applications}
         tabs={tabs}
         handleChange={this.handleChange}
+        header={!id && location.match('^/applications/unsolicited')
+          && <NewCfeiModalButton type={PROJECT_TYPES.UNSOLICITED} />}
         handleBackButton={() => { history.goBack(); }}
         backButton
       >
@@ -59,6 +65,7 @@ PartnerApplicationsHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
   location: PropTypes.string,
+  params: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({

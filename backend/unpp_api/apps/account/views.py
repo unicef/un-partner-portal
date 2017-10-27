@@ -1,6 +1,5 @@
 import logging
 
-from django.contrib.auth import authenticate, login, logout
 from django.http import Http404
 
 from rest_framework import status as statuses
@@ -46,7 +45,6 @@ class AccountCurrentUserRetrieveAPIView(RetrieveAPIView):
         if self.request.user.is_partner_user:
             return PartnerUserSerializer
         raise Http404('User has no relation to agency or partners')
-
 
     def get_object(self):
         return self.request.user

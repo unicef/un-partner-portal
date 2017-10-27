@@ -51,6 +51,7 @@ class CallPartnersModal extends Component {
           title={messages.title}
           trigger={openDialog}
           info={messages.header}
+          handleDialogClose={this.onDialogClose}
           buttons={{
             flat: {
               handleClick: this.onDialogClose,

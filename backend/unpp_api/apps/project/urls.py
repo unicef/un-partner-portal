@@ -17,6 +17,7 @@ from .views import (
     ReviewersStatusAPIView,
     ReviewerAssessmentsAPIView,
     ApplicationFeedbackListCreateAPIView,
+    ConvertUnsolicitedAPIView,
 )
 
 
@@ -35,13 +36,17 @@ urlpatterns = [
         ReviewerAssessmentsAPIView.as_view(),
         name="reviewer-assessments"),
     url(r'^application/(?P<pk>\d+)/$', ApplicationAPIView.as_view(), name="application"),
-    url(r'^application/(?P<pk>\d+)/feedback/$', ApplicationFeedbackListCreateAPIView.as_view(), name="application-feedback"),
+    url(r'^application/(?P<pk>\d+)/feedback/$',
+        ApplicationFeedbackListCreateAPIView.as_view(),
+        name="application-feedback"),
     url(r'^(?P<pk>\d+)/applications/$', ApplicationsListAPIView.as_view(), name="applications"),
     url(r'^open/$', OpenProjectAPIView.as_view(), name="open"),
     url(r'^direct/$', DirectProjectAPIView.as_view(), name="direct"),
     url(r'^pins/$', PinProjectAPIView.as_view(), name="pins"),
     url(r'^unsolicited/$', UnsolicitedProjectAPIView.as_view(), name="unsolicited"),
-
+    url(r'^application/(?P<pk>\d+)/convert-unsolicited/$',
+        ConvertUnsolicitedAPIView.as_view(),
+        name="convert-unsolicited"),
     url(r'^applications/open/$', AppsPartnerOpenAPIView.as_view(), name="applications-open"),
     url(r'^applications/unsolicited/$', AppsPartnerUnsolicitedAPIView.as_view(), name="applications-unsolicited"),
     url(r'^applications/direct/$', AppsPartnerDirectAPIView.as_view(), name="applications-direct"),

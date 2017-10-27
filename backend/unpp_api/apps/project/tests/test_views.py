@@ -22,8 +22,10 @@ from common.consts import (
     APPLICATION_STATUSES,
     COMPLETED_REASON,
     EOI_TYPES,
+    EOI_STATUSES,
 )
 from project.views import PinProjectAPIView
+from project.serializers import ConvertUnsolicitedSerializer
 
 
 class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
@@ -88,10 +90,12 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
 
     quantity = 2
     url = reverse('projects:open')
+    user_type = 'agency'
 
     def setUp(self):
         super(TestOpenProjectsAPITestCase, self).setUp()
         AgencyMemberFactory.create_batch(self.quantity)
+        PartnerMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
 
     def test_open_project(self):
@@ -183,11 +187,14 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         justification = "mission completed"
         payload = {
             "justification": justification,
-            "completed_reason": COMPLETED_REASON.canceled
+            "completed_reason": COMPLETED_REASON.canceled,
+            "status": EOI_STATUSES.completed
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.canceled)
+        self.assertTrue(response.data['completed_date'])
+        self.assertEquals(response.data['status'], EOI_STATUSES.completed)
         self.assertEquals(response.data['justification'], justification)
 
 
@@ -486,9 +493,10 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
 
     quantity = 1
 
-    def test_create(self):
-        url = reverse('projects:unsolicited')
+    def test_create_convert(self):
+        url = reverse('projects:applications-unsolicited')
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        partner_id = Partner.objects.first().id
         with open(filename) as cn_template:
             payload = {
                 "locations": [
@@ -508,7 +516,8 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
                 "specializations": Specialization.objects.all()[:3].values_list("id", flat=True),
                 "cn": cn_template,
             }
-            response = self.client.post(url, data=payload, format='multipart')
+            response = self.client.post(url, data=payload, format='multipart',
+                                        header={'Partner-ID': partner_id})
 
         self.assertTrue(statuses.is_success(response.status_code))
         app = Application.objects.last()
@@ -521,3 +530,42 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
                 app.proposal_of_eoi_details['specializations'][idx],
                 str(payload['specializations'][idx])
             )
+        self.client.logout()
+
+        # create agency members for focal_points and agency member to convert
+        AgencyMemberFactory.create_batch(4)
+
+        user = User.objects.filter(agency_members__isnull=False).first()
+        self.client.login(username=user.username, password='test')
+
+        url = reverse('projects:convert-unsolicited', kwargs={'pk': response.data['id']})
+        start_date = date.today()
+        end_date = date.today() + timedelta(days=30)
+        focal_points = [x for x in User.objects.filter(agency_members__isnull=False).values("id")[1:]]
+        payload = {
+            'ds_justification_select': [JUSTIFICATION_FOR_DIRECT_SELECTION.other],
+            'justification': 'Explain justification for creating direct selection',
+            'focal_points': focal_points,
+            'description': 'Provide brief background of the project',
+            'other_information': 'Provide other information',
+            'start_date': str(start_date),
+            'end_date': str(end_date),
+        }
+        response = self.client.post(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        eoi = EOI.objects.last()
+        self.assertEquals(EOI.objects.count(), 1)
+        self.assertEquals(eoi.other_information, payload['other_information'])
+        self.assertEquals(eoi.description, payload['description'])
+        self.assertEquals(eoi.start_date, start_date)
+        self.assertEquals(eoi.end_date, end_date)
+        self.assertEquals(eoi.display_type, EOI_TYPES.direct)
+        self.assertEquals(eoi.status, EOI_STATUSES.open)
+        self.assertEquals(eoi.focal_points.all().count(), len(focal_points))
+        self.assertEquals(eoi.created_by, user)
+        self.assertEquals(Application.objects.count(), 2)
+
+        # try to convert again
+        response = self.client.post(url, data=payload, format='json')
+        self.assertFalse(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['non_field_errors'], [ConvertUnsolicitedSerializer.RESTRICTION_MSG])

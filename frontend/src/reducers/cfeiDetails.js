@@ -30,8 +30,8 @@ export const loadCfei = id => (dispatch) => {
 
 const saveCfei = (state, action) => {
   let cfei = normalizeSingleCfei(action.cfei);
-  cfei = R.assoc('reviewers', cfei.reviewers.map(String), cfei);
-  cfei = R.assoc('focal_points', cfei.focal_points.map(String), cfei);
+  if (cfei.reviewers) cfei = R.assoc('reviewers', cfei.reviewers.map(String), cfei);
+  if (cfei.focal_points) cfei = R.assoc('focal_points', cfei.focal_points.map(String), cfei);
   return R.assoc(cfei.id, cfei, state);
 };
 
@@ -53,6 +53,11 @@ export function selectCfeiStatus(state, id) {
 export function isCfeiCompleted(state, id) {
   const { [id]: { completed_reason = null } = {} } = state;
   return !!completed_reason;
+}
+
+export function isCfeiPinned(state, id) {
+  const { [id]: { is_pinned = null } = {} } = state;
+  return is_pinned;
 }
 
 export function selectCfeiCriteria(state, id) {

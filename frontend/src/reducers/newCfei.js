@@ -1,9 +1,13 @@
 import R from 'ramda';
-import { postOpenCfei, postDirectCfei, patchCfei } from '../helpers/api/api';
+import { browserHistory as history } from 'react-router';
+import { postOpenCfei, postDirectCfei, patchCfei, postUnsolicitedCN, patchPinnedCfei } from '../helpers/api/api';
 import { mergeListsFromObjectArray } from './normalizationHelpers';
 import { loadCfei } from './cfei';
 import { loadCfeiDetailSuccess } from './cfeiDetailsStatus';
+import * as cfeiDetails from './cfeiDetails';
 import { PROJECT_TYPES } from '../helpers/constants';
+import { loadApplicationsUcn } from './applicationsUnsolicitedList';
+
 
 export const NEW_CFEI_SUBMITTING = 'NEW_CFEI_SUBMITTING';
 export const NEW_CFEI_SUBMITTED = 'NEW_CFEI_SUBMITTED';
@@ -81,6 +85,21 @@ export const addDirectCfei = body => (dispatch) => {
     });
 };
 
+export const addUnsolicitedCN = body => (dispatch) => {
+  dispatch(newCfeiSubmitting());
+  const preparedBody = prepareBody(body);
+  const params = history.getCurrentLocation().query;
+  return postUnsolicitedCN(preparedBody)
+    .then(() => {
+      dispatch(newCfeiSubmitted());
+      dispatch(loadApplicationsUcn(params));
+    })
+    .catch((error) => {
+      dispatch(newCfeiSubmitted());
+      dispatch(newCfeiFailure(error));
+    });
+};
+
 export const updateCfei = (body, id) => (dispatch) => {
   dispatch(newCfeiSubmitting());
   return patchCfei(body, id)
@@ -90,6 +109,19 @@ export const updateCfei = (body, id) => (dispatch) => {
     })
     .catch((error) => {
       dispatch(newCfeiSubmitted());
+      dispatch(newCfeiFailure(error));
+    });
+};
+
+export const changePinStatusCfei = (id, isPinned) => (dispatch) => {
+  return patchPinnedCfei({
+    eoi_ids: [id],
+    pin: !isPinned,
+  })
+    .then(() => {
+      dispatch(cfeiDetails.loadCfei(id));
+    })
+    .catch((error) => {
       dispatch(newCfeiFailure(error));
     });
 };

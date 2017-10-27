@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GridColumn from '../../../common/grid/gridColumn';
 import PartnerOverviewSummary from './partnerOverviewSummary';
-import PartnerOverviewVerification from './partnerOverviewVerification';
+import PartnerOverviewVerification from './verification/partnerOverviewVerification';
 import PartnerOverviewFlag from './partnerOverviewFlag';
 
 const PartnerOverview = (props) => {
-  const { partner } = props;
+  const { partner, params: { id } } = props;
 
   return (
 
@@ -18,7 +18,7 @@ const PartnerOverview = (props) => {
       </Grid>
       <Grid item xs={12} sm={4}>
         <GridColumn>
-          <PartnerOverviewVerification partner={partner} />
+          <PartnerOverviewVerification partnerId={id} />
           <PartnerOverviewFlag partner={partner} />
         </GridColumn>
       </Grid>
@@ -27,10 +27,12 @@ const PartnerOverview = (props) => {
 
 PartnerOverview.propTypes = {
   partner: PropTypes.object.isRequired,
+  params: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   partner: state.agencyPartnerProfile[ownProps.params.id] || {},
 });
+
 
 export default connect(mapStateToProps)(PartnerOverview);

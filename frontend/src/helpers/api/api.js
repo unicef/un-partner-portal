@@ -151,8 +151,15 @@ export function getOpenCfeiDetails(id) {
   return authorizedGet({ uri: `/projects/${id}` });
 }
 
-// Applications
+export function getUnsolicitedCN(params) {
+  return authorizedGet({ uri: '/projects/unsolicited', params });
+}
 
+export function patchPinnedCfei(body) {
+  return authorizedPatch({ uri: '/projects/pins/', body });
+}
+
+// Applications
 export function getOpenCfeiApplications(id, filters) {
   return authorizedGet({ uri: `/projects/${id}/applications`, params: filters });
 }
@@ -213,6 +220,9 @@ export function postApplicationFeedback(applicationId, body) {
     body });
 }
 
+export function postUnsolicitedCN(body) {
+  return authorizedPostUpload({ uri: '/projects/applications/unsolicited/', body });
+}
 
 // Partners
 export function getPartnerProfileDetails(partnerId) {
@@ -227,6 +237,10 @@ export function getPartnersList(params) {
   return authorizedGet({ uri: '/partners', params });
 }
 
+export function getMembersList(id, params) {
+  return authorizedGet({ uri: `/agencies/${id}/members`, params });
+}
+
 export function getPartnerProfileConfig() {
   return get('/config/partners/profile');
 }
@@ -239,6 +253,14 @@ export function createCountryProfile(id, body) {
   return authorizedPost({ uri: `/partners/${id}/country-profile/`, body });
 }
 
+export function getPartnerVerifications(id) {
+  return authorizedGet({ uri: `/partners/${id}/verifications` });
+}
+
+export function postPartnerVerifications(id, body) {
+  return authorizedPost({ uri: `/partners/${id}/verifications/`, body });
+}
+
 export function patchPartnerProfileTab(partnerId, tabName, body) {
   return authorizedPatch({ uri: `/partners/${partnerId}/${tabName}/`, body });
 }
@@ -246,5 +268,10 @@ export function patchPartnerProfileTab(partnerId, tabName, body) {
 // Agencies
 export function getAgencyMembers(id, params = { page_size: 100 }) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params },
+  );
+}
+
+export function getAgencies(params = { page_size: 100 }) {
+  return authorizedGet({ uri: '/agencies/', params },
   );
 }

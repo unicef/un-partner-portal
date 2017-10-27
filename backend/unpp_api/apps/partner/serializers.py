@@ -1,14 +1,13 @@
 from django.db import transaction
 from rest_framework import serializers
 
-from agency.serializers import OtherAgencySerializer
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
 )
-from common.models import AdminLevel1, Point, CommonFile
-from common.countries import COUNTRIES_ALPHA2_CODE, COUNTRIES_ALPHA2_CODE_DICT
+from common.models import Point, AdminLevel1
+from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (CommonFileSerializer,
                                 SpecializationSerializer,
                                 MixinPartnerRelatedSerializer,
@@ -49,6 +48,7 @@ class PartnerSerializer(serializers.ModelSerializer):
             'logo',
             'legal_name',
             'country_code',
+            'display_type',
         )
 
 
@@ -176,7 +176,7 @@ class PartnerMandateMissionSerializer(serializers.ModelSerializer):
 
 class PartnerExperienceSerializer(serializers.ModelSerializer):
 
-    specialization = SpecializationSerializer()
+    specialization = SpecializationSerializer(read_only=True)
 
     class Meta:
         model = PartnerExperience
@@ -216,6 +216,9 @@ class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
 class PartnerOtherInfoSerializer(serializers.ModelSerializer):
 
     org_logo = CommonFileSerializer()
+    other_doc_1 = CommonFileSerializer()
+    other_doc_2 = CommonFileSerializer()
+    other_doc_3 = CommonFileSerializer()
 
     class Meta:
         model = PartnerOtherInfo
@@ -272,6 +275,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     area_policies = PartnerPolicyAreaSerializer(many=True)
     audit = PartnerAuditAssessmentSerializer()
     report = PartnerReportingSerializer()
+    location_field_offices = PointSerializer(many=True)
 
     class Meta:
         model = Partner
@@ -490,8 +494,8 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
 
-        location_field_offices = validated_data.pop('location_field_offices', [])
-        location_of_office = validated_data.pop('location_of_office', None)
+        location_field_offices = self.initial_data.get('location_field_offices', [])
+        location_of_office = self.initial_data.get('location_of_office')
         instance.country_presence = validated_data.get('country_presence', instance.country_presence)
         instance.staff_globally = validated_data.get('staff_globally', instance.staff_globally)
         instance.more_office_in_country = validated_data.get('more_office_in_country', instance.more_office_in_country)
@@ -500,11 +504,40 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
             'engagement_operate_desc', instance.engagement_operate_desc)
 
         if location_of_office:
-            instance.location_of_office = Point.objects.get_or_create(**location_of_office)[0]
+            if 'admin_level_1' in location_of_office:
+                admin_level_1 = location_of_office.pop('admin_level_1')
+                id = admin_level_1.pop('id', None)
+                if id is not None:
+                    AdminLevel1.objects.filter(id=id).update(**admin_level_1)
+                else:
+                    al, created = AdminLevel1.objects.get_or_create(**admin_level_1)
 
-        for location in location_field_offices:
-            point, created = Point.objects.get_or_create(**location)
-            self.instance.location_field_offices.add(point)
+            if 'id' in location_of_office:
+                id = location_of_office.pop('id')
+                Point.objects.filter(id=id).update(**location_of_office)
+                instance.location_of_office_id = id
+            else:
+                location_of_office['admin_level_1'] = al
+                point = Point.objects.create(**location_of_office)
+                instance.location_of_office_id = point
+
+        for location_of_office in location_field_offices:
+            if 'admin_level_1' in location_of_office:
+                admin_level_1 = location_of_office.pop('admin_level_1')
+                id = admin_level_1.pop('id', None)
+                if id is not None:
+                    AdminLevel1.objects.filter(id=id).update(**admin_level_1)
+                else:
+                    al, created = AdminLevel1.objects.get_or_create(**admin_level_1)
+
+            if 'id' in location_of_office:
+                id = location_of_office.pop('id')
+                Point.objects.filter(id=id).update(**location_of_office)
+                self.instance.location_field_offices.add(id)
+            else:
+                location_of_office['admin_level_1'] = al
+                point = Point.objects.create(**location_of_office)
+                self.instance.location_field_offices.add(point)
 
         instance.save()
 
