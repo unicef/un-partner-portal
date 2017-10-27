@@ -6,6 +6,9 @@ import EoiStatusCell from './eoiStatusCell';
 import EoiCountryCell from './eoiCountryCell';
 import EoiPartnersCell from './eoiPartnersCell';
 import EoiNameCell from './eoiNameCell';
+import UnsolicitedSectorCell from './unsolicitedSectorCell';
+import IsDirectCell from './isDirectCell';
+import { formatDateForPrint } from '../../../helpers/dates';
 
 export default type => ({ row, column }) => {
   if (column.name === 'title') {
@@ -20,10 +23,15 @@ export default type => ({ row, column }) => {
           </span>),
         )}
       </TableCell>);
-  } else if (column.name === 'specializations') {
+  } else if (column.name === 'specializations' && type !== 'unsolicited') {
     return (
       <TableCell >
         <EoiSectorCell data={row.specializations} id={row.id} />
+      </TableCell>);
+  } else if (column.name === 'specializations' && type === 'unsolicited') {
+    return (
+      <TableCell >
+        <UnsolicitedSectorCell data={row.specializations} id={row.id} />
       </TableCell>);
   } else if (column.name === 'agency') {
     return (
@@ -49,6 +57,17 @@ export default type => ({ row, column }) => {
       <TableCell >
         <EoiPartnersCell partners={row.invited_partners || []} />
       </TableCell>);
+  } else if (column.name === 'submission_date') {
+    return (
+      <TableCell >
+        {formatDateForPrint(row.submission_date)}
+      </TableCell>);
+  } else if (column.name === 'is_direct') {
+    return (
+      <TableCell >
+        <IsDirectCell isDirect={row.is_direct} />
+      </TableCell>);
   }
+
   return undefined;
 };

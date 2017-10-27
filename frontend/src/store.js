@@ -40,6 +40,7 @@ import applicationDetails, * as applicationDetailsSelector from './reducers/appl
 import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
 import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers';
 import partnerAppDetails, * as partnerAppDetailsSelector from './reducers/partnerApplicationDetails';
+import agencies, {selectAgenciesName} from './reducers/agencies';
 import partnerVerifications, * as partnerVerificationsSelector from './reducers/partnerVerifications';
 
 const mainReducer = combineReducers({
@@ -79,6 +80,7 @@ const mainReducer = combineReducers({
   applicationReviews,
   agencyMembers,
   partnerAppDetails,
+  agencies,
   partnerVerifications,
 });
 
@@ -182,9 +184,12 @@ export const selectCfeiStatus = (state, id) =>
 export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.cfeiDetails, id);
 
+  export const isCfeiPinned = (state, id) =>
+  cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.cfeiDetails, id);
+
 export const mapSelectCriteriaToSelection = state =>
-  mapValuesForSelectionField(state.selectionCriteria)
-  ;
+  mapValuesForSelectionField(state.selectionCriteria);
+
 export const mapPartnersNamesToSelection = state =>
   mapValuesForSelectionField(state.partnerNames);
 
@@ -234,6 +239,9 @@ export const selectNormalizedCompletionReasons = state =>
 
 export const selectPartnerApplicationDetails = (state, cfeiId) =>
   partnerAppDetailsSelector.selectApplication(state.partnerAppDetails, cfeiId);
+
+export const mapAgenciesNamesToSelection = state =>
+  mapValuesForSelectionField(state.agencies);
 
 export const selectPartnerVerifications = (state, partnerId) =>
   partnerVerificationsSelector.selectVerifications(state.partnerVerifications, partnerId);
