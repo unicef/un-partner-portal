@@ -14,9 +14,11 @@ import {
   selectCfeiTitle,
   selectCfeiStatus,
 } from '../../../store';
-import { loadCfei } from '../../../reducers/cfeiDetails';
+import { loadCfei, loadUnsolicitedCfei } from '../../../reducers/cfeiDetails';
 import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
 import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
+import { ROLES, PROJECT_TYPES } from '../../../helpers/constants';
+
 
 const messages = {
   noCfei: 'Sorry but this cfei doesn\'t exist',
@@ -33,8 +35,10 @@ class CfeiHeader extends Component {
   }
 
   componentWillMount() {
-    this.props.loadCfeiDetails();
-    this.props.loadProjectApplication();
+    const { role, type, loadCfeiDetails, loadProjectApplication, loadUCN } = this.props;
+    if (role === ROLES.PARTNER) loadProjectApplication();
+    if (type === PROJECT_TYPES.UNSOLICITED) loadUCN();
+    else loadCfeiDetails();
   }
 
   componentWillUnmount() {
@@ -126,6 +130,7 @@ CfeiHeader.propTypes = {
   error: PropTypes.object,
   cnFile: PropTypes.string,
   type: PropTypes.string,
+  loadUCN: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -143,6 +148,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   uploadCnClearState: () => dispatch(clearLocalState()),
   loadCfeiDetails: () => dispatch(loadCfei(ownProps.params.id)),
   loadProjectApplication: () => dispatch(projectApplicationExists(ownProps.params.id)),
+  loadUCN: () => dispatch(loadUnsolicitedCfei(ownProps.params.id)),
 });
 
 const containerCfeiHeader = connect(

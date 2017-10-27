@@ -98,7 +98,6 @@ class ResultForm extends Component {
   showForm() {
     const { accepted, declined, status } = this.props;
     const { change } = this.state;
-    console.log(status)
     if (accepted) {
       return (<div>
         <Typography>{messages.confirmed}</Typography>

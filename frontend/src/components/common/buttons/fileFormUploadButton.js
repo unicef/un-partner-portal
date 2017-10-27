@@ -7,7 +7,6 @@ import Typography from 'material-ui/Typography';
 import { FormControl, FormHelperText, FormLabel } from 'material-ui/Form';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
-import { change } from 'redux-form';
 import { CircularProgress } from 'material-ui/Progress';
 import Close from 'material-ui-icons/Close';
 import FileUpload from 'material-ui-icons/FileUpload';
@@ -53,32 +52,20 @@ class FileFormUploadButton extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
-    this.saveFileId = this.saveFileId.bind(this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.fileId !== nextProps.fileId) {
-      this.saveFileId(nextProps.fileId);
-    }
   }
 
   componentWillUnmount() {
     this.props.removeFile(this.props.fieldName);
   }
 
-  saveFileId(fileId) {
-    const { dispatch, fieldName, formName, sectionName } = this.props;
-
-    dispatch(change(formName, `${sectionName}.${fieldName}`, fileId));
-  }
-
   handleChange() {
-    const { fileAdded, fieldName } = this.props;
+    const { fileAdded, fieldName, input: { onChange } } = this.props;
     const [file] = this.refInput.files;
 
 
     if (file) {
-      this.props.uploadFile(fieldName, file);
+      this.props.uploadFile(fieldName, file).then(id =>
+        onChange(id));
     } else if (!fileAdded) {
       this.handleRemove();
     }
@@ -87,16 +74,15 @@ class FileFormUploadButton extends Component {
   }
 
   handleRemove() {
-    const { clearFile, dispatch, fieldName, formName, sectionName } = this.props;
+    const { clearFile, fieldName, input: { onChange } } = this.props;
     clearFile(fieldName);
-    dispatch(change(formName, `${sectionName}.${fieldName}`, null));
+    onChange(null);
   }
 
   render() {
     const { classes, fieldName, deleteDisabled, fileUrl, input, label, loading } = this.props;
     const { warning } = this.props.meta;
     const url = R.is(String, input.value) ? input.value : fileUrl;
-
     return (
       <FormControl>
         {label && <FormLabel>{label}</FormLabel>}
@@ -156,15 +142,11 @@ FileFormUploadButton.propTypes = {
   deleteDisabled: PropTypes.bool,
   loading: PropTypes.bool,
   fileUrl: PropTypes.string,
-  fileId: PropTypes.string,
-  formName: PropTypes.string,
   warning: PropTypes.string,
   meta: PropTypes.object,
-  sectionName: PropTypes.string,
   uploadFile: PropTypes.func.isRequired,
   clearFile: PropTypes.func.isRequired,
   removeFile: PropTypes.func.isRequired,
-  dispatch: PropTypes.func,
 };
 
 FileFormUploadButton.defaultProps = {
@@ -178,7 +160,6 @@ const mapStateToProps = (state, ownProps) => {
   return {
     loading: files[fieldName] ? files[fieldName].loading : false,
     fileUrl: files[fieldName] ? files[fieldName].fileUrl : null,
-    fileId: files[fieldName] ? files[fieldName].fileId : null,
   };
 };
 

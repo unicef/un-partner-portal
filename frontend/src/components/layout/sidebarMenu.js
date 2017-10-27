@@ -14,7 +14,7 @@ import MenuLink from './menuLink';
 const styleSheet = theme => ({
   sidebar: {
     height: '100%',
-    justifyContent: 'space-between',
+    alignContent: 'space-between',
   },
   logo: {
     width: '100%',

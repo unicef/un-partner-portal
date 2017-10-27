@@ -140,7 +140,7 @@ export function patchCfei(body, id) {
 }
 
 export function uploadConceptNote(projectId, body) {
-  return authorizedPostUpload({ uri: `/projects/${projectId}/partner-applications/`, body });
+  return authorizedPost({ uri: `/projects/${projectId}/partner-applications/`, body });
 }
 
 export function uploadCommonFile(body) {
@@ -151,24 +151,15 @@ export function getOpenCfeiDetails(id) {
   return authorizedGet({ uri: `/projects/${id}` });
 }
 
-export function getApplicationReviews(applicationId) {
-  return authorizedGet({ uri: `/projects/applications/${applicationId}/reviewers-status` });
+export function getUnsolicitedCN(params) {
+  return authorizedGet({ uri: '/projects/unsolicited', params });
 }
 
-export function postApplicationReview(applicationId, reviewerId, body) {
-  return authorizedPost({
-    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
-    body });
-}
-
-export function putApplicationReview(applicationId, reviewerId, body) {
-  return authorizedPut({
-    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
-    body });
+export function patchPinnedCfei(body) {
+  return authorizedPatch({ uri: '/projects/pins/', body });
 }
 
 // Applications
-
 export function getOpenCfeiApplications(id, filters) {
   return authorizedGet({ uri: `/projects/${id}/applications`, params: filters });
 }
@@ -199,6 +190,38 @@ export function getApplicationUnsolicitedConceptNotes() {
 
 export function getApplicationDirect() {
   return authorizedGet({ uri: '/projects/applications/direct/' });
+}
+
+export function getApplicationReviews(applicationId) {
+  return authorizedGet({ uri: `/projects/applications/${applicationId}/reviewers-status` });
+}
+
+export function postApplicationReview(applicationId, reviewerId, body) {
+  return authorizedPost({
+    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
+    body });
+}
+
+export function putApplicationReview(applicationId, reviewerId, body) {
+  return authorizedPut({
+    uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
+    body });
+}
+
+export function getApplicationFeedback(applicationId, params) {
+  return authorizedGet({
+    uri: `/projects/application/${applicationId}/feedback/`,
+    params });
+}
+
+export function postApplicationFeedback(applicationId, body) {
+  return authorizedPost({
+    uri: `/projects/application/${applicationId}/feedback/`,
+    body });
+}
+
+export function postUnsolicitedCN(body) {
+  return authorizedPost({ uri: '/projects/applications/unsolicited/', body });
 }
 
 // Partners
@@ -245,5 +268,10 @@ export function patchPartnerProfileTab(partnerId, tabName, body) {
 // Agencies
 export function getAgencyMembers(id, params = { page_size: 100 }) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params },
+  );
+}
+
+export function getAgencies(params = { page_size: 100 }) {
+  return authorizedGet({ uri: '/agencies/', params },
   );
 }

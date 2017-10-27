@@ -14,6 +14,7 @@ import {
   isUserAReviewer,
 } from '../../../../../store';
 import ReviewContent from './reviewContent/reviewContent';
+import Feedback from '../../../../applications/feedback/feedbackContainer';
 
 
 const messages = {
@@ -52,6 +53,7 @@ const ApplicationSummaryContent = (props) => {
         justReason={application.justification_reason}
       />
       }
+      <Feedback applicationId={applicationId} />
     </GridColumn>
 
   );

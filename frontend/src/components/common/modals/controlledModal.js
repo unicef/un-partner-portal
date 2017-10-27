@@ -30,6 +30,8 @@ const styleSheet = (theme) => {
     },
     closeButton: {
       color: theme.palette.getContrastText(theme.palette.secondary[500]),
+      width: 24,
+      height: 24,
     },
   };
 };
@@ -72,11 +74,20 @@ const ControlledModal = (props) => {
       </DialogContent>
 
       <DialogActions>
-        {buttons.flat && <Button onTouchTap={buttons.flat.handleClick} color="accent">
-          {buttons.flat.label || messages.cancel}
+        {buttons.flat && <Button
+          onTouchTap={buttons.flat.handleClick}
+          color="accent"
+          disabled={buttons.flat.disabled}
+        >
+          {buttons.flat.label || messages.cancel }
         </Button>
         }
-        {buttons.raised && <Button onTouchTap={buttons.raised.handleClick} raised color="accent">
+        {buttons.raised && <Button
+          onTouchTap={buttons.raised.handleClick}
+          raised
+          color="accent"
+          disabled={buttons.raised.disabled}
+        >
           {buttons.raised.label || messages.ok}
         </Button>
         }

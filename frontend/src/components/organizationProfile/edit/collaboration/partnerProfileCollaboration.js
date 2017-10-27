@@ -76,6 +76,7 @@ class PartnerProfileCollaboration extends Component {
       R.assoc('mode', 'Acc', item))), unflattenColl.accreditation.accreditations);
     const reference = R.map(item => R.dissoc('evidence_file', R.assoc('evidence_file_id', item.evidence_file,
       R.assoc('mode', 'Ref', item))), unflattenColl.reference.references);
+
     const mergedEvidences = R.map((item) => {
       if (!R.is(Number, item.evidence_file_id)) {
         return R.dissoc('evidence_file_id', item);
@@ -83,7 +84,10 @@ class PartnerProfileCollaboration extends Component {
       return item;
     }, R.concat(accreditation, reference));
 
-    const collaboration = flatten(R.assoc('collaboration_evidences', mergedEvidences, unflattenColl));
+    const historyPartnership = R.map(item => R.dissoc('agency', R.assoc('agency_id', item.agency, item)), unflattenColl.history.collaborations_partnership);
+    const changedHistory = R.assocPath(['history', 'collaborations_partnership'], historyPartnership, unflattenColl);
+
+    const collaboration = flatten(R.assoc('collaboration_evidences', mergedEvidences, changedHistory));
     const initCollaboration = flatten(R.assoc('collaboration_evidences', [], unflattenCollInit));
 
     return updateTab(partnerId, 'collaboration', changedValues(initCollaboration, collaboration))

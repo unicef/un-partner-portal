@@ -6,11 +6,13 @@ import cfeiDetailsStatus, {
   loadCfeiDetailEnded,
   loadCfeiDetailSuccess,
   loadCfeiDetailFailure,
+  loadUCNDetailSuccess,
   LOAD_CFEI_DETAIL_SUCCESS,
+  LOAD_UCN_DETAIL_SUCCESS,
 } from './cfeiDetailsStatus';
 import { } from './apiStatus';
 import { normalizeSingleCfei } from './cfei';
-import { getOpenCfeiDetails } from '../helpers/api/api';
+import { getOpenCfeiDetails, getApplicationDetails } from '../helpers/api/api';
 
 const initialState = {};
 
@@ -28,11 +30,61 @@ export const loadCfei = id => (dispatch) => {
     });
 };
 
+export const loadUnsolicitedCfei = id => (dispatch) => {
+  dispatch(loadCfeiDetailStarted());
+  return getApplicationDetails(id)
+    .then((cfei) => {
+      dispatch(loadCfeiDetailEnded());
+      dispatch(loadUCNDetailSuccess(cfei));
+      return cfei;
+    })
+    .catch((error) => {
+      dispatch(loadCfeiDetailEnded());
+      dispatch(loadCfeiDetailFailure(error));
+    });
+};
+
+const mergeCountries = (k, l, r) => {
+  if (k === 'adminLevel') {
+    if (l.includes(r)) return l;
+    return `${l}, ${r}`;
+  }
+  return l;
+};
+
+const mapLocations = R.map(location =>
+  ({
+    country: location.admin_level_1.country_code,
+    adminLevel: location.admin_level_1.name,
+  }),
+);
+
+const normalizeLocations = R.compose(
+  R.map(R.reduce(R.mergeDeepWithKey(mergeCountries), {})),
+  R.groupWith(R.eqProps('country')),
+  mapLocations,
+);
+
 const saveCfei = (state, action) => {
   let cfei = normalizeSingleCfei(action.cfei);
-  if (cfei.reviewers) cfei = R.assoc('reviewers', cfei.reviewers.map(String), cfei);
-  if (cfei.focal_points) cfei = R.assoc('focal_points', cfei.focal_points.map(String), cfei);
+  cfei = R.assoc('locations', normalizeLocations(cfei.locations), cfei);
   return R.assoc(cfei.id, cfei, state);
+};
+
+const saveUCN = (state, action) => {
+  // let cfei = normalizeSingleCfei(action.cfei);
+  const { ucn } = action;
+  const newUCN = {
+    id: ucn.id,
+    partner_name: [ucn.partner],
+    display_type: 1,
+    title: R.path(['proposal_of_eoi_details', 'title'], ucn),
+    locations: ucn.locations_proposal_of_eoi,
+    specializations: R.path(['proposal_of_eoi_details', 'specializations'], ucn),
+    agency: ucn.agency,
+    cn: ucn.cn,
+  };
+  return R.assoc(ucn.id, newUCN, state);
 };
 
 export function selectCfeiDetail(state, id) {
@@ -55,6 +107,11 @@ export function isCfeiCompleted(state, id) {
   return !!completed_reason;
 }
 
+export function isCfeiPinned(state, id) {
+  const { [id]: { is_pinned = null } = {} } = state;
+  return is_pinned;
+}
+
 export function selectCfeiCriteria(state, id) {
   const { [id]: { assessments_criteria = [] } = {} } = state;
   return assessments_criteria;
@@ -62,13 +119,13 @@ export function selectCfeiCriteria(state, id) {
 
 export function isUserAReviewer(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
-  if (cfei) return cfei.reviewers.includes(String(userId));
+  if (cfei) return cfei.reviewers.includes(userId);
   return false;
 }
 
 export function isUserAFocalPoint(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
-  if (cfei) return cfei.focal_points.includes(String(userId));
+  if (cfei) return cfei.focal_points.includes(userId);
   return false;
 }
 
@@ -76,6 +133,9 @@ const cfeiDetails = (state = initialState, action) => {
   switch (action.type) {
     case LOAD_CFEI_DETAIL_SUCCESS: {
       return saveCfei(state, action);
+    }
+    case LOAD_UCN_DETAIL_SUCCESS: {
+      return saveUCN(state, action);
     }
     default:
       return state;

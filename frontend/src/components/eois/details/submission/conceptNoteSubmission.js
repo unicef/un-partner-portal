@@ -2,27 +2,26 @@ import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { browserHistory as history, withRouter } from 'react-router';
+import { reduxForm, formValueSelector } from 'redux-form';
+import { withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
-import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/Button';
 import Snackbar from 'material-ui/Snackbar';
 import { formatDateForPrint } from '../../../../helpers/dates';
 import Loader from '../../../common/loader';
-import PaddedContent from '../../../common/paddedContent';
-import FileUploadButton from '../../../common/buttons/fileUploadButton';
-import ControlledModal from '../../../common/modals/controlledModal';
-import OrganizationProfileContent from './modal/organizationProfileContent';
-import { uploadPartnerConceptNote,
+import {
+  uploadPartnerConceptNote,
   uploadCnclearError,
-  confirmProfileUpdated,
-  selectLocalCnFile } from '../../../../reducers/conceptNote';
-import { selectCfeiDetails } from '../../../../store';
+  selectLocalCnFile,
+} from '../../../../reducers/conceptNote';
+import { selectCfeiDetails, selectPartnerApplicationDetails } from '../../../../store';
+import CnFileSection from './cnFileSection';
+import PaddedContent from '../../../common/paddedContent';
+import FileForm from '../../../forms/fileForm';
+import ProfileConfirmation from '../../../organizationProfile/common/profileConfirmation';
 
 const messages = {
-  upload_1: 'Please make sure to use the Concept Note template provided by the UN Agency that published this CFEI.',
-  upload_2: 'You will be at risk of disqualification if the proper Concept Note formatting is not used',
   confirm: 'I confirm that my profile is up to date',
   lastUpdate: 'Last profile update:',
   notSure: 'Not sure?',
@@ -39,45 +38,12 @@ const messages = {
 
 const styleSheet = (theme) => {
   const paddingNormal = theme.spacing.unit;
-  const paddingSmall = theme.spacing.unit * 2;
-  const padding = theme.spacing.unit * 3;
-
   return {
-    icon: {
-      marginRight: theme.spacing.unit,
-    },
-    checkboxContainer: {
-      padding: `${paddingSmall}px ${paddingNormal}px ${padding}px ${paddingNormal}px`,
-    },
-    paddingTop: {
-      padding: '12px 0px 0px 0px',
-    },
-    paddingBottom: {
-      padding: `0px 0px ${paddingNormal}px 0px`,
-    },
     alignRight: {
-      margin: `${paddingNormal}px ${padding}px 0px 0px`,
+      margin: `${paddingNormal}px 0px 0px 0px`,
       justifyContent: 'flex-end',
       alignItems: 'right',
       display: 'flex',
-    },
-    alignVertical: {
-      display: 'flex',
-      alignItems: 'top',
-    },
-    alignCenter: {
-      margin: `${padding}px ${padding}px 0px ${padding}px`,
-      padding: `${padding}px ${padding}px ${padding}px ${padding}px`,
-      textAlign: 'center',
-      background: theme.palette.primary[300],
-    },
-    captionStyle: {
-      color: theme.palette.primary[500],
-    },
-    labelUnderline: {
-      cursor: 'pointer',
-      textDecoration: 'underline',
-      color: theme.palette.primary[500],
     },
   };
 };
@@ -87,49 +53,17 @@ class ConceptNoteSubmission extends Component {
     super(props);
 
     this.state = {
+      checked: false,
       errorMsg: null,
       alert: false,
-      openDialog: false };
-    this.fileSelect = this.fileSelect.bind(this);
+    };
     this.handleCheck = this.handleCheck.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.onDialogClose = this.onDialogClose.bind(this);
-    this.onDialogOpen = this.onDialogOpen.bind(this);
-    this.onDialogEdit = this.onDialogEdit.bind(this);
-  }
-
-  onDialogClose() {
-    this.setState({ openDialog: false });
-  }
-
-  onDialogEdit() {
-    const { partnerId } = this.props;
-
-    history.push(`/profile/${partnerId}/edit`);
-  }
-
-  onDialogOpen() {
-    this.setState({ openDialog: true });
   }
 
   handleCheck(event, checked) {
-    this.props.uploadConfirmProfile(checked);
-  }
-
-  fileSelect(file) {
-    this.props.uploadSelectedLocalFile(file);
-  }
-
-  upload() {
-    const { classes } = this.props;
-    return (
-      <PaddedContent>
-        <Typography className={classes.paddingBottom} type="caption">
-          {messages.upload_1}
-        </Typography>
-        <Typography type="caption">{messages.upload_2}</Typography>
-      </PaddedContent>);
+    this.setState({ checked });
   }
 
   handleDialogClose() {
@@ -137,84 +71,42 @@ class ConceptNoteSubmission extends Component {
     this.setState({ alert: false });
   }
 
-  handleSubmit() {
-    const { confirmProfile, fileSelectedLocal } = this.props;
-
-    if (!fileSelectedLocal) {
-      this.setState({ errorMsg: messages.fileError });
-      this.setState({ alert: true });
-    } else if (!confirmProfile) {
-      this.setState({ errorMsg: messages.confirmError });
-      this.setState({ alert: true });
-    }
-
-    if (fileSelectedLocal && confirmProfile) {
-      this.props.uploadConceptNote();
-    }
-  }
-
-  fileName() {
-    const { cnUploaded, fileSelectedLocal } = this.props;
-
-    if (cnUploaded) {
-      return cnUploaded.split('/').pop();
-    } else if (fileSelectedLocal) {
-      return fileSelectedLocal.name;
-    }
-
-    return null;
+  handleSubmit(values) {
+    this.props.uploadConceptNote(values);
   }
 
   render() {
     const { classes, submitDate, deadlineDate, loader, errorUpload,
-      cnUploaded, confirmProfile, fileSelectedLocal } = this.props;
-
-    const { alert, openDialog, errorMsg } = this.state;
+      cnUploaded, handleSubmit, cn } = this.props;
+    const { alert, errorMsg, checked } = this.state;
     return (
-      <div >
-        <div className={classes.alignCenter}>
-          <div>
-            <FileUploadButton fileAdded={this.fileName()} fieldName={'concept-note'} fileSelected={file => this.fileSelect(file)} deleteDisabled={cnUploaded} />
-          </div>
-          {fileSelectedLocal || cnUploaded ? null : this.upload()}
-        </div>
-        <Typography className={classes.alignRight} type="caption">
-          {`${messages.deadline} ${formatDateForPrint(deadlineDate)}`}
-        </Typography>
-        <div className={classes.checkboxContainer}>
-          <div className={classes.alignVertical}>
-            <Checkbox
-              disabled={cnUploaded}
-              checked={confirmProfile || cnUploaded}
-              onChange={(event, checked) => this.handleCheck(event, checked)}
-            />
-            <div className={classes.paddingTop}>
-              <Typography type="body1">{messages.confirm}</Typography>
-              <div className={classes.alignVertical}>
-                <Typography className={classes.captionStyle} type="body1">
-                  {`${messages.lastUpdate} ${messages.update}. ${messages.notSure} `}
-                </Typography>
-                &nbsp;
-                <Typography
-                  onClick={() => this.onDialogOpen()}
-                  className={classes.labelUnderline}
-                  type="body1"
-                >
-                  {messages.viewProfile}
-                </Typography>
-              </div>
-            </div>
-          </div>
+      <form onSubmit={handleSubmit(this.handleSubmit)}>
+        <PaddedContent>
+          <CnFileSection
+            component={<FileForm
+              fieldName="cn"
+              deleteDisabled={cnUploaded}
+            />}
+            displayHint={cn}
+          />
+          <Typography className={classes.alignRight} type="caption">
+            {`${messages.deadline} ${formatDateForPrint(deadlineDate)}`}
+          </Typography>
+          <ProfileConfirmation onChange={(event, check) => this.handleCheck(event, check)} />
           <div className={classes.alignRight}>
             {cnUploaded
               ? <Typography type="body1">
                 {`${messages.submitted} ${formatDateForPrint(submitDate)}`}
               </Typography>
-              : <Button onClick={() => this.handleSubmit()} color="accent">
+              : <Button
+                onClick={handleSubmit(this.handleSubmit)}
+                color="accent"
+                disabled={!checked}
+              >
                 {messages.submit}
               </Button>}
           </div>
-        </div>
+        </PaddedContent>
         <Snackbar
           anchorOrigin={{
             vertical: 'bottom',
@@ -235,59 +127,43 @@ class ConceptNoteSubmission extends Component {
           autoHideDuration={6e3}
           onRequestClose={this.handleDialogClose}
         />
-        <ControlledModal
-          maxWidth="md"
-          title={messages.countryProfile}
-          trigger={openDialog}
-          handleDialogClose={this.onDialogClose}
-          buttons={{
-            flat: {
-              handleClick: this.onDialogClose,
-              label: messages.close,
-            },
-            raised: {
-              handleClick: this.onDialogEdit,
-              label: messages.editProfile,
-            },
-          }}
-          removeContentPadding
-          content={<OrganizationProfileContent />}
-        />
         <Loader loading={loader} fullscreen />
-      </div>
+      </form >
     );
   }
 }
 
 ConceptNoteSubmission.propTypes = {
   classes: PropTypes.object.isRequired,
-  partnerId: PropTypes.string,
   uploadConceptNote: PropTypes.func.isRequired,
   uploadCnclearError: PropTypes.func.isRequired,
-  uploadConfirmProfile: PropTypes.func.isRequired,
-  uploadSelectedLocalFile: PropTypes.func.isRequired,
   loader: PropTypes.bool.isRequired,
   errorUpload: PropTypes.object,
   cnUploaded: PropTypes.object,
   deadlineDate: PropTypes.string,
   submitDate: PropTypes.string,
-  fileSelectedLocal: PropTypes.object,
-  confirmProfile: PropTypes.bool.isRequired,
+  handleSubmit: PropTypes.func,
+  cn: PropTypes.number,
 };
+
+const formConceptNoteSubmission = reduxForm({
+  form: 'CNSubmission',
+})(ConceptNoteSubmission);
+const selector = formValueSelector('CNSubmission');
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.params.id);
-
-  return {
-    partnerId: state.session.partnerId,
+  const application = selectPartnerApplicationDetails(state, ownProps.params.id);
+  const { cn, created } = application;
+  let props = {
     loader: state.conceptNote.loading,
     cnUploaded: state.conceptNote.cnFile,
     errorUpload: state.conceptNote.error,
-    confirmProfile: state.conceptNote.confirmProfileUpdated,
-    fileSelectedLocal: state.conceptNote.fileSelectedLocal,
-    submitDate: state.conceptNote.created,
     deadlineDate: cfei ? cfei.deadline_date : {},
+    cn: selector(state, 'cn'),
   };
+  if (cn) props = { ...props, initialValues: { cn }, submitDate: created };
+  return props;
 };
 
 const mapDispatch = (dispatch, ownProps) => {
@@ -296,12 +172,11 @@ const mapDispatch = (dispatch, ownProps) => {
   return {
     uploadConceptNote: file => dispatch(uploadPartnerConceptNote(id, file)),
     uploadCnclearError: () => dispatch(uploadCnclearError()),
-    uploadConfirmProfile: confirmation => dispatch(confirmProfileUpdated(confirmation)),
     uploadSelectedLocalFile: file => dispatch(selectLocalCnFile(file)),
   };
 };
 
-const connectedConceptNoteSubmission = connect(mapStateToProps, mapDispatch)(ConceptNoteSubmission);
+const connectedConceptNoteSubmission = connect(mapStateToProps, mapDispatch)(formConceptNoteSubmission);
 const withRouterConceptNoteSubmission = withRouter(connectedConceptNoteSubmission);
 
 export default withStyles(styleSheet, { name: 'ConceptNoteSubmission' })(withRouterConceptNoteSubmission);
