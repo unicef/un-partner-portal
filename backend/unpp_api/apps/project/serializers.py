@@ -666,7 +666,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
             })
         for assessment_criteria in obj.eoi.assessments_criteria:
             key = assessment_criteria['selection_criteria']
-            weight = assessment_criteria['weight']
+            weight = assessment_criteria.get('weight', 1)
 
             criterion_final_score = 0
             for assessment in assessments:
