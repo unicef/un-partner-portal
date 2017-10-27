@@ -8,7 +8,7 @@ import SectorForm from '../../../forms/fields/projectFields/sectorField/sectorFi
 import LocationForm from '../../../forms/fields/projectFields/locationField/locationFieldArray';
 import CnFileSection from '../../details/submission/cnFileSection';
 import FileForm from '../../../forms/fileForm';
-import UCNAgencies from '../../../forms/fields/projectFields/UcnAgencies';
+import Agencies from '../../../forms/fields/projectFields/agencies';
 import ProfileConfirmation from '../../../organizationProfile/common/profileConfirmation';
 
 const messages = {
@@ -24,7 +24,7 @@ const OpenForm = (props) => {
         <Typography type="headline">
           {messages.projectDetails}
         </Typography>
-        <UCNAgencies />
+        <Agencies fieldName="agency" />
         <fields.TitleField />
         <LocationForm formName={form} />
         <SectorForm />

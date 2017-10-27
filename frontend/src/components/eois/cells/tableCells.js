@@ -11,8 +11,8 @@ import IsDirectCell from './isDirectCell';
 import { formatDateForPrint } from '../../../helpers/dates';
 
 export default type => ({ row, column }) => {
-  if (column.name === 'title') {
-    return <EoiNameCell title={row.title} id={row.id} />;
+  if (column.name === 'title' || column.name === 'project_title') {
+    return <EoiNameCell title={row.title || row.project_title} id={row.id} />;
   } else if (column.name === 'country_code') {
     return (
       <TableCell >
