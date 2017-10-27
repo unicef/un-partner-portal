@@ -74,6 +74,14 @@ class EOI(TimeStampedModel):
     def contains_the_winners(self):
         return self.applications.filter(did_win=True).exists()
 
+    def get_assessment_criteria_as_dict(self):
+        output = {}
+        for criteria in self.assessments_criteria:
+            copied_criteria = criteria.copy()
+            criteria_name = copied_criteria.pop('selection_criteria')
+            output[criteria_name] = copied_criteria
+        return output
+
 
 class Pin(TimeStampedModel):
     eoi = models.ForeignKey(EOI, related_name="pins")
@@ -145,6 +153,25 @@ class Application(TimeStampedModel):
         else:
             return 'Offer Made'
 
+    # RETURNS [{u'Cos': {u'scores': [23, 13], u'weight': 30}, u'avg': 23..]
+    def get_scores_by_selection_criteria(self):
+        assessments_criteria = self.eoi.get_assessment_criteria_as_dict()
+        for assessment in self.assessments.all():
+            for key, val in assessment.get_scores_as_dict().iteritems():
+                assessments_criteria[key].setdefault('scores', []).append(val['score'])
+
+        for key in assessments_criteria.keys():
+            scores = assessments_criteria[key]['scores']
+            assessments_criteria[key]['avg'] = sum(scores) / float(len(scores))
+
+        return assessments_criteria
+
+    @property
+    def average_total_score(self):
+        assessments_qs = self.assessments.all()
+        return assessments_qs.first().total_score
+        return sum([x.total_score for x in assessments_qs]) / assessments_qs.count()
+
 
 class ApplicationFeedback(TimeStampedModel):
     application = models.ForeignKey(Application, related_name="application_feedbacks")
@@ -179,5 +206,23 @@ class Assessment(TimeStampedModel):
     @property
     def total_score(self):
         if self.__total_score is None:
-            self.__total_score = sum([x['score'] for x in self.scores])
+            app_eoi = self.application.eoi
+            if not app_eoi.has_weighting:
+                self.__total_score = sum([x['score'] for x in self.scores])
+            else:
+                assessment_weights = app_eoi.get_assessment_criteria_as_dict()
+                comb_dict = assessment_weights.copy()
+                for k, v in self.get_scores_as_dict().iteritems():
+                    comb_dict[k]['score'] = v['score']
+
+                self.__total_score = sum([(v['score']*(v['weight']/100.0)) for k, v in comb_dict.iteritems()])
+
         return self.__total_score
+
+    def get_scores_as_dict(self):
+        output = {}
+        for score in self.scores:
+            copied_score = score.copy()
+            criteria_name = copied_score.pop('selection_criteria')
+            output[criteria_name] = copied_score
+        return output

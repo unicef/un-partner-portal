@@ -675,33 +675,19 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
         assessments_count = obj.assessments.count()
         assessments = obj.assessments.all()
         notes = []
-        criteria = []
         for assessment in assessments:
             notes.append({
                 'note': assessment.note,
                 'reviewer': assessment.reviewer.get_user_name(),
             })
-        for assessment_criteria in obj.eoi.assessments_criteria:
-            key = assessment_criteria['selection_criteria']
-            weight = assessment_criteria.get('weight', 1)
 
-            criterion_final_score = 0
-            for assessment in assessments:
-                score = 0
-                for item in assessment.scores:
-                    if item['selection_criteria'] == key:
-                        score = item['score']
-                        break
-                criterion_final_score += score * weight
-            if assessments_count > 0:
-                average_score = criterion_final_score / assessments_count
-            else:
-                average_score = 0
-            criteria.append({key: average_score})
 
         return {
-            'criteria': criteria,
+            'criteria': obj.get_scores_by_selection_criteria(),
             'notes': notes,
+            'avg_total_score': obj.average_total_score,
+            'assessment_count': assessments_count,
+
         }
 
     def get_partner_notified(self, obj):
