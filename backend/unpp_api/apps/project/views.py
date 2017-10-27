@@ -8,7 +8,6 @@ from rest_framework.generics import (
 )
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.filters import OrderingFilter
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -166,15 +165,12 @@ class ApplicationsPartnerAPIView(CreateAPIView):
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
-    def create(self, request, pk, *args, **kwargs):
-        eoi = get_object_or_404(EOI, id=pk)
-        request.data['eoi'] = eoi.id
-        request.data['agency'] = eoi.agency.id
-        request.data['submitter'] = request.user.id
-        partner_member = PartnerMember.objects.filter(user=request.user).first()
-        if partner_member:
-            request.data['partner'] = partner_member.partner.id
-        return super(ApplicationsPartnerAPIView, self).create(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        eoi = get_object_or_404(EOI, id=self.kwargs['pk'])
+        serializer.save(eoi=eoi,
+                        submitter_id=self.request.user.id,
+                        partner_id=self.request.active_partner.id,
+                        agency=eoi.agency)
 
 
 class ApplicationPartnerAPIView(RetrieveAPIView):
@@ -208,9 +204,11 @@ class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
     queryset = Application.objects.all()
     serializer_class = CreateDirectApplicationNoCNSerializer
 
-    def create(self, request, pk, *args, **kwargs):
-        request.data['did_win'] = True
-        return super(ApplicationsAgencyAPIView, self).create(request, pk, *args, **kwargs)
+    def perform_create(self, serializer):
+        eoi = get_object_or_404(EOI, id=self.kwargs['pk'])
+        serializer.save(did_win=True, eoi=eoi,
+                        submitter_id=self.request.user.id,
+                        agency=eoi.agency)
 
 
 class ApplicationAPIView(RetrieveUpdateAPIView):
@@ -325,7 +323,6 @@ class AppsPartnerOpenAPIView(ListAPIView):
 
 class AppsPartnerUnsolicitedAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticated, IsPartner)
-    parser_classes = (MultiPartParser, FormParser)
     queryset = Application.objects.filter(is_unsolicited=True)
     filter_class = ApplicationsUnsolicitedFilter
     pagination_class = SmallPagination

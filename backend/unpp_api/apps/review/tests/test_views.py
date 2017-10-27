@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 
 from django.urls import reverse
 
+from rest_framework import status as statuses
+
 from common.consts import FLAG_TYPES
 from common.tests.base import BaseAPITestCase
 from common.factories import PartnerSimpleFactory, PartnerFlagFactory, PartnerVerificationFactory
@@ -34,6 +36,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         }
 
         response = self.client.post(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['submitter']['name'], self.user.get_fullname())
         self.assertEquals(response.data['flag_type'], FLAG_TYPES.yellow)
         self.assertEquals(response.data['is_valid'], True)

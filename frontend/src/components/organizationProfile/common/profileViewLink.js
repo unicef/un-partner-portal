@@ -42,6 +42,7 @@ let ProfileViewLink = (props) => {
         maxWidth="md"
         title={messages.countryProfile}
         trigger={dialogOpen}
+        handleDialogClose={handleDialogClose}
         buttons={{
           flat: {
             handleClick: handleDialogClose,

@@ -7,14 +7,16 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
 from account.serializers import AgencyUserSerializer, IDUserSerializer
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
-from common.serializers import SimpleSpecializationSerializer, PointSerializer
+from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer
 from common.models import Point
+from partner.serializers import PartnerSerializer
 
 from partner.models import Partner, PartnerMember
 from .models import EOI, Application, Assessment, ApplicationFeedback
@@ -117,12 +119,12 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
         model = Application
         exclude = ("cn", "eoi", "agency", "submitter")
 
-
 class CreateDirectApplicationNoCNSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Application
         exclude = ("cn", )
+        read_only_fields = ('submitter', 'eoi', 'agency',)
 
 
 class ApplicationPartnerSerializer(serializers.ModelSerializer):
@@ -133,9 +135,12 @@ class ApplicationPartnerSerializer(serializers.ModelSerializer):
 
 class ApplicationFullSerializer(serializers.ModelSerializer):
 
+    cn = CommonFileSerializer()
+
     class Meta:
         model = Application
         fields = '__all__'
+        read_only_fields = ('eoi', 'submitter', 'partner', 'agency',)
 
 
 class CreateUnsolicitedProjectSerializer(serializers.Serializer):
@@ -145,7 +150,7 @@ class CreateUnsolicitedProjectSerializer(serializers.Serializer):
     title = serializers.CharField(source="eoi.title")
     agency = serializers.CharField()
     specializations = serializers.ListField(source="eoi.specializations")
-    cn = serializers.FileField()
+    cn = CommonFileSerializer()
 
     @transaction.atomic
     def create(self, validated_data):
@@ -358,6 +363,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
     type_org = serializers.CharField(source="partner.display_type")
+    cn = CommonFileSerializer()
 
     class Meta:
         model = Application
