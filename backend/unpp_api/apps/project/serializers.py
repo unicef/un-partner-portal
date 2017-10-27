@@ -623,7 +623,7 @@ class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
         eoi_id = self.context['request'].parser_context['kwargs'][lookup_field]
         if self.__apps_count is None:
             eoi = get_object_or_404(EOI, id=eoi_id)
-            self.__apps_count = eoi.applications.count()
+            self.__apps_count = eoi.applications.filter(status=APPLICATION_STATUSES.preselected).count()
 
         obj.assessments.filter()
         asses_count = Assessment.objects.filter(reviewer=obj, application__eoi_id=eoi_id).count()
