@@ -76,6 +76,7 @@ class PartnerProfileCollaboration extends Component {
       R.assoc('mode', 'Acc', item))), unflattenColl.accreditation.accreditations);
     const reference = R.map(item => R.dissoc('evidence_file', R.assoc('evidence_file_id', item.evidence_file,
       R.assoc('mode', 'Ref', item))), unflattenColl.reference.references);
+
     const mergedEvidences = R.map((item) => {
       if (!R.is(Number, item.evidence_file_id)) {
         return R.dissoc('evidence_file_id', item);
@@ -83,13 +84,13 @@ class PartnerProfileCollaboration extends Component {
       return item;
     }, R.concat(accreditation, reference));
 
-    const collaboration = flatten(R.assoc('collaboration_evidences', mergedEvidences, unflattenColl));
+    const historyPartnership = R.map(item => R.dissoc('agency', R.assoc('agency_id', item.agency, item)), unflattenColl.history.collaborations_partnership);
+    const changedHistory = R.assocPath(['history', 'collaborations_partnership'], historyPartnership, unflattenColl);
+
+    const collaboration = flatten(R.assoc('collaboration_evidences', mergedEvidences, changedHistory));
     const initCollaboration = flatten(R.assoc('collaboration_evidences', [], unflattenCollInit));
-    const changed = changedValues(initCollaboration, collaboration);
 
-    const hist = [{ description: 'aa', agency_id: 2 },{ description: 'bb', agency_id: 2 } , { description: 'cc', agency_id: 2 }];
-
-    return updateTab(partnerId, 'collaboration', R.assoc('collaborations_partnership', hist, changed))
+    return updateTab(partnerId, 'collaboration', changedValues(initCollaboration, collaboration))
       .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
       .catch((error) => {
         const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';

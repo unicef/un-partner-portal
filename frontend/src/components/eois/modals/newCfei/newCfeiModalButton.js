@@ -10,11 +10,12 @@ import withDialogHandling from '../../../common/hoc/withDialogHandling';
 const messages = {
   open: 'New cfei',
   direct: 'new direct selection',
+  unsolicited: 'New UCN'
 };
 
 
 const NewCfeiModalButton = (props) => {
-  const { params: { type }, handleDialogClose, handleDialogOpen, dialogOpen } = props;
+  const { type, handleDialogClose, handleDialogOpen, dialogOpen } = props;
   return (
     <Grid item>
       <Button
@@ -32,7 +33,7 @@ const NewCfeiModalButton = (props) => {
 
 
 NewCfeiModalButton.propTypes = {
-  params: PropTypes.Object,
+  type: PropTypes.string,
   dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,

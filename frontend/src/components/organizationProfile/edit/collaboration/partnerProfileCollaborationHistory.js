@@ -7,8 +7,8 @@ import ArrayForm from '../../../forms/arrayForm';
 import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import GridColumn from '../../../common/grid/gridColumn';
 import RadioForm from '../../../forms/radioForm';
-import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import AgencySelectField from '../../../forms/fields/projectFields/agencySelectField';
 
 const messages = {
   myPartnership: 'My Partnership',
@@ -21,26 +21,17 @@ const messages = {
             'collaboration',
 };
 
-const AgencySelection = (values, readOnly, ...props) => (member, index, fields) => {
-  const chosenAreas = fields.getAll().map(field => field.area);
-  const ownArea = fields.get(index).area;
-  const newValues = values.filter(value =>
-    (ownArea === value.value) || !(chosenAreas.includes(value.value)));
-
-  return (
-    <GridColumn>
-      <SelectForm
-        fieldName={`${member}.area`}
-        label={messages.selectAgency}
-        values={newValues}
-        readOnly={readOnly}
-        optional
-        warn
-        {...props}
-      />
-    </GridColumn>
-  );
-};
+const AgencySelection = (values, readOnly, ...props) => (member, index, fields) => (
+  <GridColumn>
+    <AgencySelectField
+      fieldName={`${member}.agency`}
+      label={messages.selectAgency}
+      readOnly={readOnly}
+      optional
+      warn
+    />
+  </GridColumn>
+);
 
 const PartnershipInner = (readOnly, ...props) => member => (
   <div>

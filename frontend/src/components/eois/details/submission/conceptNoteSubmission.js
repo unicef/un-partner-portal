@@ -10,19 +10,20 @@ import Button from 'material-ui/Button';
 import Snackbar from 'material-ui/Snackbar';
 import { formatDateForPrint } from '../../../../helpers/dates';
 import Loader from '../../../common/loader';
-import PaddedContent from '../../../common/paddedContent';
 import FileUploadButton from '../../../common/buttons/fileUploadButton';
 import ControlledModal from '../../../common/modals/controlledModal';
 import OrganizationProfileContent from './modal/organizationProfileContent';
-import { uploadPartnerConceptNote,
+import {
+  uploadPartnerConceptNote,
   uploadCnclearError,
   confirmProfileUpdated,
-  selectLocalCnFile } from '../../../../reducers/conceptNote';
+  selectLocalCnFile,
+} from '../../../../reducers/conceptNote';
 import { selectCfeiDetails } from '../../../../store';
+import CnFileSection from './cnFileSection';
+import PaddedContent from '../../../common/paddedContent';
 
 const messages = {
-  upload_1: 'Please make sure to use the Concept Note template provided by the UN Agency that published this CFEI.',
-  upload_2: 'You will be at risk of disqualification if the proper Concept Note formatting is not used',
   confirm: 'I confirm that my profile is up to date',
   lastUpdate: 'Last profile update:',
   notSure: 'Not sure?',
@@ -52,9 +53,6 @@ const styleSheet = (theme) => {
     paddingTop: {
       padding: '12px 0px 0px 0px',
     },
-    paddingBottom: {
-      padding: `0px 0px ${paddingNormal}px 0px`,
-    },
     alignRight: {
       margin: `${paddingNormal}px ${padding}px 0px 0px`,
       justifyContent: 'flex-end',
@@ -64,12 +62,6 @@ const styleSheet = (theme) => {
     alignVertical: {
       display: 'flex',
       alignItems: 'top',
-    },
-    alignCenter: {
-      margin: `${padding}px ${padding}px 0px ${padding}px`,
-      padding: `${padding}px ${padding}px ${padding}px ${padding}px`,
-      textAlign: 'center',
-      background: theme.palette.primary[300],
     },
     captionStyle: {
       color: theme.palette.primary[500],
@@ -89,7 +81,8 @@ class ConceptNoteSubmission extends Component {
     this.state = {
       errorMsg: null,
       alert: false,
-      openDialog: false };
+      openDialog: false,
+    };
     this.fileSelect = this.fileSelect.bind(this);
     this.handleCheck = this.handleCheck.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
@@ -119,17 +112,6 @@ class ConceptNoteSubmission extends Component {
 
   fileSelect(file) {
     this.props.uploadSelectedLocalFile(file);
-  }
-
-  upload() {
-    const { classes } = this.props;
-    return (
-      <PaddedContent>
-        <Typography className={classes.paddingBottom} type="caption">
-          {messages.upload_1}
-        </Typography>
-        <Typography type="caption">{messages.upload_2}</Typography>
-      </PaddedContent>);
   }
 
   handleDialogClose() {
@@ -172,12 +154,17 @@ class ConceptNoteSubmission extends Component {
     const { alert, openDialog, errorMsg } = this.state;
     return (
       <div >
-        <div className={classes.alignCenter}>
-          <div>
-            <FileUploadButton fileAdded={this.fileName()} fieldName={'concept-note'} fileSelected={file => this.fileSelect(file)} deleteDisabled={cnUploaded} />
-          </div>
-          {fileSelectedLocal || cnUploaded ? null : this.upload()}
-        </div>
+        <PaddedContent>
+          <CnFileSection
+            component={<FileUploadButton
+              fileAdded={this.fileName()}
+              fieldName={'concept-note'}
+              fileSelected={file => this.fileSelect(file)}
+              deleteDisabled={cnUploaded}
+            />}
+            displayHint={fileSelectedLocal || cnUploaded}
+          />
+        </PaddedContent>
         <Typography className={classes.alignRight} type="caption">
           {`${messages.deadline} ${formatDateForPrint(deadlineDate)}`}
         </Typography>
@@ -254,7 +241,7 @@ class ConceptNoteSubmission extends Component {
           content={<OrganizationProfileContent />}
         />
         <Loader loading={loader} fullscreen />
-      </div>
+      </div >
     );
   }
 }

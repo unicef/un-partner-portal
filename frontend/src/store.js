@@ -41,6 +41,7 @@ import applicationReviews, * as applicationReviewsSelector from './reducers/appl
 import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers';
 import partnerAppDetails, * as partnerAppDetailsSelector from './reducers/partnerApplicationDetails';
 import partnerVerifications, * as partnerVerificationsSelector from './reducers/partnerVerifications';
+import agencies from './reducers/agencies';
 
 const mainReducer = combineReducers({
   cfei,
@@ -80,6 +81,7 @@ const mainReducer = combineReducers({
   agencyMembers,
   partnerAppDetails,
   partnerVerifications,
+  agencies,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -183,8 +185,8 @@ export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.cfeiDetails, id);
 
 export const mapSelectCriteriaToSelection = state =>
-  mapValuesForSelectionField(state.selectionCriteria)
-  ;
+  mapValuesForSelectionField(state.selectionCriteria);
+
 export const mapPartnersNamesToSelection = state =>
   mapValuesForSelectionField(state.partnerNames);
 
@@ -244,3 +246,5 @@ export const selectMostRecentVerification = (state, partnerId) =>
 export const selectPreviousVerificationCount = (state, partnerId) =>
   partnerVerificationsSelector.selectPreviousVerificationsCount(state.partnerVerifications,
     partnerId);
+
+export const mapAgenciesNamesToSelection = state => mapValuesForSelectionField(state.agencies);

@@ -6,13 +6,15 @@ import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
 import OpenForm from './openForm';
 import DirectForm from './directForm';
-import { addDirectCfei, addOpenCfei } from '../../../../reducers/newCfei';
+import UnsolicitedForm from './unsolicitedForm';
+import { addDirectCfei, addOpenCfei, addUnsolicitedCN } from '../../../../reducers/newCfei';
 import CallPartnersModal from '../callPartners/callPartnersModal';
 import { PROJECT_TYPES } from '../../../../helpers/constants';
 
 
 const messages = {
   title: 'Create new Call for Expressions of Interests',
+  unsolicitedTitle: 'Submit new Unsolicited Concept Note',
   header: {
     open: {
       title: 'This CFEI is for open selections.',
@@ -27,6 +29,15 @@ const messages = {
 
 };
 
+const getTitle = (type) => {
+  switch (type) {
+    case PROJECT_TYPES.UNSOLICITED:
+      return messages.unsolicitedTitle;
+    default:
+      return messages.title;
+  }
+};
+
 const getFormName = (type) => {
   switch (type) {
     case PROJECT_TYPES.OPEN:
@@ -34,6 +45,8 @@ const getFormName = (type) => {
       return 'newOpenCfei';
     case PROJECT_TYPES.DIRECT:
       return 'newDirectCfei';
+    case PROJECT_TYPES.UNSOLICITED:
+      return 'newUnsolicitedCN';
   }
 };
 
@@ -54,6 +67,8 @@ const getPostMethod = (type) => {
       return addOpenCfei;
     case PROJECT_TYPES.DIRECT:
       return addDirectCfei;
+    case PROJECT_TYPES.UNSOLICITED:
+      return addUnsolicitedCN;
   }
 };
 
@@ -64,15 +79,24 @@ const getModal = (type) => {
       return OpenForm;
     case PROJECT_TYPES.DIRECT:
       return DirectForm;
+    case PROJECT_TYPES.UNSOLICITED:
+      return UnsolicitedForm;
   }
 };
 
 class NewCfeiModal extends Component {
   constructor(props) {
     super(props);
-    this.state = { id: null };
+    this.state = { id: null, disabled: props.type === PROJECT_TYPES.UNSOLICITED };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleDialogSubmit = this.handleDialogSubmit.bind(this);
+    this.handleConfirmation = this.handleConfirmation.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.open && !nextProps.open) {
+      this.setState({ disabled: this.props.type === PROJECT_TYPES.UNSOLICITED });
+    }
   }
 
   handleSubmit(values) {
@@ -87,25 +111,32 @@ class NewCfeiModal extends Component {
     this.props.submit();
   }
 
+  handleConfirmation() {
+    this.setState({ disabled: !this.state.disabled });
+  }
+
   render() {
     const { open, type, onDialogClose } = this.props;
     return (
       <Grid item>
         <ControlledModal
           maxWidth="md"
-          title={messages.title}
+          title={getTitle(type)}
           trigger={open}
           handleDialogClose={onDialogClose}
-          info={getInfo(type)}
+          info={type === PROJECT_TYPES.UNSOLICITED ? null : getInfo(type)}
           buttons={{
             flat: {
               handleClick: onDialogClose,
             },
             raised: {
               handleClick: this.handleDialogSubmit,
+              disabled: this.state.disabled,
             },
           }}
-          content={React.createElement(getModal(type), { onSubmit: this.handleSubmit })}
+          content={React.createElement(getModal(type), {
+            onSubmit: this.handleSubmit,
+            handleConfirmation: this.handleConfirmation })}
         />
         {type === PROJECT_TYPES.OPEN && <CallPartnersModal id={this.state.id} />}
       </Grid>
