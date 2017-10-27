@@ -111,8 +111,6 @@ const mapValuesForSelectionField = (state, compareField = 'label') => {
   return R.sort(compare, R.map(makeFormItem, R.toPairs(state)));
 };
 
-const mapValuesForSelectionSortValue = state => mapValuesForSelectionField(state, 'value');
-
 export const selectNormalizedCountries = state =>
   mapValuesForSelectionField(state.countries);
 
@@ -120,7 +118,7 @@ export const selectNormalizedOrganizationTypes = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['partner-type']);
 
 export const selectNormalizedYearsOfExperience = state =>
-  mapValuesForSelectionSortValue(state.partnerProfileConfig['years-of-exp-choices']);
+  mapValuesForSelectionField(state.partnerProfileConfig['years-of-exp-choices']);
 
 export const selectNormalizedWorkingLanguages = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['working-languages']);
@@ -129,7 +127,7 @@ export const selectNormalizedPopulationsOfConcernGroups = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['population-of-concern']);
 
 export const selectNormalizedStaffGlobalyChoices = state =>
-  mapValuesForSelectionSortValue(state.partnerProfileConfig['staff-globaly-choices']);
+  mapValuesForSelectionField(state.partnerProfileConfig['staff-globaly-choices']);
 
 export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices']);
@@ -253,9 +251,6 @@ export const selectApplicationFeedback = (state, applicationId) =>
 export const selectApplicationFeedbackCount = (state, applicationId) =>
   applicationFeedbackSelector.selectCount(state.applicationFeedback, applicationId);
 
-export const mapAgenciesNamesToSelection = state =>
-  mapValuesForSelectionField(state.agencies);
-
 export const selectPartnerVerifications = (state, partnerId) =>
   partnerVerificationsSelector.selectVerifications(state.partnerVerifications, partnerId);
 
@@ -265,3 +260,6 @@ export const selectMostRecentVerification = (state, partnerId) =>
 export const selectPreviousVerificationCount = (state, partnerId) =>
   partnerVerificationsSelector.selectPreviousVerificationsCount(state.partnerVerifications,
     partnerId);
+
+export const mapAgenciesNamesToSelection = state => mapValuesForSelectionField(state.agencies);
+

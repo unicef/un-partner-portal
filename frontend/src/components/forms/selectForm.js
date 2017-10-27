@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-
 import InfoIcon from 'material-ui-icons/Info';
 import Grid from 'material-ui/Grid';
 import { MenuItem } from 'material-ui-old/Menu';

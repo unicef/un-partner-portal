@@ -27,6 +27,7 @@ const initialState = {
   error: undefined,
   email: undefined,
   isHq: undefined,
+  displayType: undefined,
 };
 
 export const initSession = session => ({ type: SESSION_CHANGE, session });
@@ -73,6 +74,7 @@ export const loadUserData = () => (dispatch, getState) => {
         partnerId: role === ROLES.PARTNER ? R.prop('id', R.head(response.partners)) : null,
         partnerName: role === ROLES.PARTNER ? R.prop('legal_name', R.head(response.partners)) : null,
         isHq: role === ROLES.PARTNER ? R.prop('is_hq', R.head(response.partners)) : null,
+        displayType: role === ROLES.PARTNER ? R.prop('display_type', R.head(response.partners)) : null,
       }));
       dispatch(sessionReady(getState));
     })
