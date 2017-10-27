@@ -14,6 +14,7 @@ import {
   isUserAReviewer,
 } from '../../../../../store';
 import ReviewContent from './reviewContent/reviewContent';
+import Feedback from '../../../../applications/feedback/feedbackContainer';
 
 
 const messages = {
@@ -52,6 +53,7 @@ const ApplicationSummaryContent = (props) => {
         justReason={application.justification_reason}
       />
       }
+      <Feedback applicationId={applicationId} />
     </GridColumn>
 
   );
@@ -70,8 +72,8 @@ ApplicationSummaryContent.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const application = selectApplication(state, ownProps.params.applicationId) || {};
-  const { partner, eoi } = application;
-  const partnerDetails = R.prop(partner, state.agencyPartnerProfile);
+  const { partner = {}, eoi } = application;
+  const partnerDetails = R.prop(partner.id, state.agencyPartnerProfile);
   const cfeiCriteria = selectCfeiCriteria(state, eoi);
   const isUserFocalPoint = isUserAFocalPoint(state, eoi);
   const isUserReviewer = isUserAReviewer(state, eoi);

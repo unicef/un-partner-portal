@@ -2,9 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import classNames from 'classnames';
+import IconButton from 'material-ui/IconButton';
+import Close from 'material-ui-icons/Clear';
 import { withStyles } from 'material-ui/styles';
 import Dialog, { DialogContent, DialogTitle, DialogActions } from 'material-ui/Dialog';
 import ModalContentHeader from './modalContentHeader';
+import SpreadContent from '../spreadContent';
 
 const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 4;
@@ -25,6 +28,11 @@ const styleSheet = (theme) => {
       paddingTop: `${padding}px`,
       paddingBottom: `${padding}px`,
     },
+    closeButton: {
+      color: theme.palette.getContrastText(theme.palette.secondary[500]),
+      width: 24,
+      height: 24,
+    },
   };
 };
 
@@ -36,14 +44,19 @@ const messages = {
 
 const ControlledModal = (props) => {
   const { classes, removeContentPadding, trigger, title,
-    info, content, buttons, topBottomPadding, ...other } = props;
+    info, content, buttons, topBottomPadding, handleDialogClose, ...other } = props;
   return (
     <Dialog open={trigger} {...other} >
       <DialogTitle
         className={classes.dialogTitle}
         disableTypography
       >
-        {title}
+        <SpreadContent>
+          {title}
+          <IconButton className={classes.closeButton} onClick={handleDialogClose}>
+            <Close />
+          </IconButton>
+        </SpreadContent>
       </DialogTitle>
 
       {info && <ModalContentHeader
@@ -61,11 +74,20 @@ const ControlledModal = (props) => {
       </DialogContent>
 
       <DialogActions>
-        {buttons.flat && <Button onTouchTap={buttons.flat.handleClick} color="accent">
+        {buttons.flat && <Button
+          onTouchTap={buttons.flat.handleClick}
+          color="accent"
+          disabled={buttons.flat.disabled}
+        >
           {buttons.flat.label || messages.cancel }
         </Button>
         }
-        {buttons.raised && <Button onTouchTap={buttons.raised.handleClick} raised color="accent">
+        {buttons.raised && <Button
+          onTouchTap={buttons.raised.handleClick}
+          raised
+          color="accent"
+          disabled={buttons.raised.disabled}
+        >
           {buttons.raised.label || messages.ok}
         </Button>
         }
@@ -101,9 +123,13 @@ ControlledModal.propTypes = {
    */
   removeContentPadding: PropTypes.bool,
   /**
-   * Add top bottom padding for text content 
+   * Add top bottom padding for text content
    */
   topBottomPadding: PropTypes.bool,
+  /**
+   * Handle dialog close function
+   */
+  handleDialogClose: PropTypes.func,
 
 
   classes: PropTypes.object.isRequired,

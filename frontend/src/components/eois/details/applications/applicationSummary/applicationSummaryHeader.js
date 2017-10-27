@@ -79,7 +79,6 @@ class ApplicationSummaryHeader extends Component {
       params: { type },
       error,
     } = this.props;
-    console.log(partner)
     if (error.notFound) {
       return <Typography >{messages.noApplication}</Typography>;
     } else if (error.message) {
@@ -126,10 +125,10 @@ ApplicationSummaryHeader.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   const application = selectApplication(state, ownProps.params.applicationId) || {};
   const reviews = selectReview(state, ownProps.params.applicationId) || {};
-  const { eoi, did_win, did_withdraw } = application;
+  const { eoi, did_win, did_withdraw, partner: { legal_name } = {} } = application;
   return {
     status: selectApplicationStatus(state, ownProps.params.applicationId),
-    partner: selectApplicationPartnerName(state, ownProps.params.applicationId),
+    partner: legal_name,
     getAssessment: id => selectAssessment(state, id),
     loading: state.applicationDetails.status.loading,
     error: state.applicationDetails.status.error,

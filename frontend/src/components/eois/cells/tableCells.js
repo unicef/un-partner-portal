@@ -6,10 +6,12 @@ import EoiStatusCell from './eoiStatusCell';
 import EoiCountryCell from './eoiCountryCell';
 import EoiPartnersCell from './eoiPartnersCell';
 import EoiNameCell from './eoiNameCell';
+import IsDirectCell from './isDirectCell';
+import { formatDateForPrint } from '../../../helpers/dates';
 
 export default type => ({ row, column }) => {
-  if (column.name === 'title') {
-    return <EoiNameCell title={row.title} id={row.id} />;
+  if (column.name === 'title' || column.name === 'project_title') {
+    return <EoiNameCell title={row.title || row.project_title} id={row.id} />;
   } else if (column.name === 'country_code') {
     return (
       <TableCell >
@@ -49,6 +51,17 @@ export default type => ({ row, column }) => {
       <TableCell >
         <EoiPartnersCell partners={row.invited_partners || []} />
       </TableCell>);
+  } else if (column.name === 'submission_date') {
+    return (
+      <TableCell >
+        {formatDateForPrint(row.submission_date)}
+      </TableCell>);
+  } else if (column.name === 'is_direct') {
+    return (
+      <TableCell >
+        <IsDirectCell isDirect={row.is_direct} />
+      </TableCell>);
   }
+
   return undefined;
 };

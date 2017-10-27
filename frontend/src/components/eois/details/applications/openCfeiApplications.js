@@ -69,7 +69,6 @@ class ApplicationsListContainer extends Component {
       this.props.loadApplications(id, nextProps.location.query);
       return false;
     }
-
     return true;
   }
 

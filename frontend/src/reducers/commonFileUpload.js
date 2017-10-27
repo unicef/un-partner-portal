@@ -71,6 +71,7 @@ export const uploadFile = (fieldName, file) => (dispatch) => {
     .then((response) => {
       dispatch(uploadFileSuccess(fieldName, response));
       dispatch(uploadFileEnded(fieldName));
+      return response.id;
     })
     .catch((error) => {
       dispatch(uploadFileFailure(fieldName, error));

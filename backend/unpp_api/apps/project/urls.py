@@ -17,6 +17,10 @@ from .views import (
     ReviewersStatusAPIView,
     ReviewerAssessmentsAPIView,
     ApplicationFeedbackListCreateAPIView,
+    ConvertUnsolicitedAPIView,
+    ReviewSummaryAPIView,
+    EOIReviewersAssessmentsListAPIView,
+    AwardedPartnersListAPIView,
 )
 
 
@@ -25,6 +29,7 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/partner-applications/$', ApplicationsPartnerAPIView.as_view(), name="partner-applications"),
     url(r'^(?P<pk>\d+)/partner-application/$', ApplicationPartnerAPIView.as_view(), name="partner-application"),
     url(r'^(?P<pk>\d+)/agency-applications/$', ApplicationsAgencyAPIView.as_view(), name="agency-applications"),
+    url(r'^(?P<pk>\d+)/review-summary/$', ReviewSummaryAPIView.as_view(), name="review-summary"),
     url(r'^applications/(?P<application_id>\d+)/reviewers-status/',
         ReviewersStatusAPIView.as_view(),
         name="reviewers-status"),
@@ -34,6 +39,12 @@ urlpatterns = [
     url(r'^applications/(?P<application_id>\d+)/reviewer-assessments/',
         ReviewerAssessmentsAPIView.as_view(),
         name="reviewer-assessments"),
+    url(r'^(?P<eoi_id>\d+)/applications/reviewers/',
+        EOIReviewersAssessmentsListAPIView.as_view(),
+        name="eoi-reviewers-assessments"),
+    url(r'^(?P<eoi_id>\d+)/applications/awarded-partners/',
+        AwardedPartnersListAPIView.as_view(),
+        name="applications-awarded-partners"),
     url(r'^application/(?P<pk>\d+)/$', ApplicationAPIView.as_view(), name="application"),
     url(r'^application/(?P<pk>\d+)/feedback/$',
         ApplicationFeedbackListCreateAPIView.as_view(),
@@ -43,7 +54,9 @@ urlpatterns = [
     url(r'^direct/$', DirectProjectAPIView.as_view(), name="direct"),
     url(r'^pins/$', PinProjectAPIView.as_view(), name="pins"),
     url(r'^unsolicited/$', UnsolicitedProjectAPIView.as_view(), name="unsolicited"),
-
+    url(r'^application/(?P<pk>\d+)/convert-unsolicited/$',
+        ConvertUnsolicitedAPIView.as_view(),
+        name="convert-unsolicited"),
     url(r'^applications/open/$', AppsPartnerOpenAPIView.as_view(), name="applications-open"),
     url(r'^applications/unsolicited/$', AppsPartnerUnsolicitedAPIView.as_view(), name="applications-unsolicited"),
     url(r'^applications/direct/$', AppsPartnerDirectAPIView.as_view(), name="applications-direct"),

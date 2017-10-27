@@ -52,6 +52,9 @@ class EOI(TimeStampedModel):
     completed_date = models.DateTimeField(null=True, blank=True)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
     assessments_criteria = JSONField(default=dict([('selection_criteria', ''), ('weight', 0)]))
+    review_summary_comment = models.TextField(null=True, blank=True)
+    review_summary_attachment = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name='review_summary_attachments')
 
     class Meta:
         ordering = ['id']
@@ -70,6 +73,14 @@ class EOI(TimeStampedModel):
     @property
     def contains_the_winners(self):
         return self.applications.filter(did_win=True).exists()
+
+    def get_assessment_criteria_as_dict(self):
+        output = {}
+        for criteria in self.assessments_criteria:
+            copied_criteria = criteria.copy()
+            criteria_name = copied_criteria.pop('selection_criteria')
+            output[criteria_name] = copied_criteria
+        return output
 
 
 class Pin(TimeStampedModel):
@@ -94,10 +105,13 @@ class Application(TimeStampedModel):
     eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
     agency = models.ForeignKey('agency.Agency', related_name="applications")
     submitter = models.ForeignKey('account.User', related_name="applications")
-    cn = models.FileField()
+    cn = models.ForeignKey('common.CommonFile', related_name="concept_notes", null=True, blank=True)
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
+    did_accept_date = models.DateField(null=True, blank=True)
+    accept_notification = models.OneToOneField(
+        'notification.Notification', related_name="accept_notification", null=True, blank=True)
     did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
     # did_withdraw is only applicable if did_win is True
     did_withdraw = models.BooleanField(default=False, verbose_name='Did withdraw?')
@@ -109,6 +123,9 @@ class Application(TimeStampedModel):
         default=list,
         null=True
     )
+    # Applies when application converted to EOI. Only applicable if this is unsolicited
+    eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion",
+                                         null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
 
     class Meta:
@@ -135,6 +152,24 @@ class Application(TimeStampedModel):
             return 'Offer Declined'
         else:
             return 'Offer Made'
+
+    # RETURNS [{u'Cos': {u'scores': [23, 13], u'weight': 30}, u'avg': 23..]
+    def get_scores_by_selection_criteria(self):
+        assessments_criteria = self.eoi.get_assessment_criteria_as_dict()
+        for assessment in self.assessments.all():
+            for key, val in assessment.get_scores_as_dict().iteritems():
+                assessments_criteria[key].setdefault('scores', []).append(val['score'])
+
+        for key in assessments_criteria.keys():
+            scores = assessments_criteria[key]['scores']
+            assessments_criteria[key]['avg'] = sum(scores) / float(len(scores))
+
+        return assessments_criteria
+
+    @property
+    def average_total_score(self):
+        assessments_qs = self.assessments.all()
+        return sum([x.total_score for x in assessments_qs]) / float(assessments_qs.count())
 
 
 class ApplicationFeedback(TimeStampedModel):
@@ -170,5 +205,23 @@ class Assessment(TimeStampedModel):
     @property
     def total_score(self):
         if self.__total_score is None:
-            self.__total_score = sum([x['score'] for x in self.scores])
+            app_eoi = self.application.eoi
+            if not app_eoi.has_weighting:
+                self.__total_score = sum([x['score'] for x in self.scores])
+            else:
+                assessment_weights = app_eoi.get_assessment_criteria_as_dict()
+                comb_dict = assessment_weights.copy()
+                for k, v in self.get_scores_as_dict().iteritems():
+                    comb_dict[k]['score'] = v['score']
+
+                self.__total_score = sum([(v['score']*(v['weight']/100.0)) for k, v in comb_dict.iteritems()])
+
         return self.__total_score
+
+    def get_scores_as_dict(self):
+        output = {}
+        for score in self.scores:
+            copied_score = score.copy()
+            criteria_name = copied_score.pop('selection_criteria')
+            output[criteria_name] = copied_score
+        return output

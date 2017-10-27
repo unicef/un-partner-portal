@@ -41,7 +41,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     deadline: cfei && cfei.deadline_date,
     start: cfei && cfei.start_date,
-    posted: cfei && cfei.created_date,
+    posted: cfei && cfei.created,
     notif: cfei && cfei.notif_results_date,
   };
 };

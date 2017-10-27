@@ -7,13 +7,16 @@ import ProjectPartners from '../../../forms/fields/projectFields/partnersField/P
 import GridColumn from '../../../common/grid/gridColumn';
 import { selectCfeiDetails } from '../../../../store';
 
+const messages = {
+  label: 'Partners',
+};
 
 const CallPartnersForm = (props) => {
   const { handleSubmit } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
-        <ProjectPartners />
+        <ProjectPartners fieldName={'invited_partners'} label={messages.label} />
       </GridColumn>
     </form >
   );

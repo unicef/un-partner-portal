@@ -238,7 +238,6 @@ export const renderText = ({
   ...other
 }) => {
   let value = input.value || (other.inputProps ? other.inputProps.initial : null);
-
   if (!value) value = '-';
   if (values) {
     value = R.filter((val) => {
@@ -279,7 +278,6 @@ export const renderBool = ({
 }) => {
   let value = 'No';
   if (input.value) value = 'Yes';
-
   return (
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>

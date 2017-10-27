@@ -26,12 +26,11 @@ import applicationsUnsolicitedList from './reducers/applicationsUnsolicitedList'
 import applicationsDirectList from './reducers/applicationsDirectList';
 import conceptNote from './reducers/conceptNote';
 import commonFileUpload from './reducers/commonFileUpload';
-import partnerInfo from './reducers/partnerInfo';
 import organizationProfileNav from './reducers/organizationProfileNav';
-import organizationProfile from './reducers/organizationProfile';
 import partnerApplicationsNav from './reducers/partnerApplicationsNav';
 import partnerProfileConfig from './reducers/partnerProfileConfig';
 import partnerProfileDetailsUpdate from './reducers/partnerProfileDetailsUpdate';
+import partnerProfileDetailsNav from './reducers/partnerProfileDetailsNav';
 import sectors, * as sectorsSelectors from './reducers/sectors';
 import partnersApplicationsList from './reducers/partnersApplicationsList';
 import partnersPreselectionList from './reducers/partnersPreselectionList';
@@ -41,6 +40,9 @@ import applicationDetails, * as applicationDetailsSelector from './reducers/appl
 import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
 import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers';
 import partnerAppDetails, * as partnerAppDetailsSelector from './reducers/partnerApplicationDetails';
+import agencies from './reducers/agencies';
+import applicationFeedback, * as applicationFeedbackSelector from './reducers/applicationFeedback';
+import partnerVerifications, * as partnerVerificationsSelector from './reducers/partnerVerifications';
 
 const mainReducer = combineReducers({
   cfei,
@@ -48,7 +50,6 @@ const mainReducer = combineReducers({
   cfeiDetails,
   cfeiDetailsNav,
   newCfei,
-  organizationProfile,
   organizationProfileNav,
   partnerApplicationsNav,
   applicationsNotesList,
@@ -60,10 +61,10 @@ const mainReducer = combineReducers({
   conceptNote,
   countryProfiles,
   commonFileUpload,
-  partnerInfo,
   partnerProfileConfig,
   partnerProfileEdit,
   partnerProfileDetails,
+  partnerProfileDetailsNav,
   partnerProfileDetailsUpdate,
   agencyMembersList,
   agencyPartnersList,
@@ -80,6 +81,9 @@ const mainReducer = combineReducers({
   applicationReviews,
   agencyMembers,
   partnerAppDetails,
+  applicationFeedback,
+  agencies,
+  partnerVerifications,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -96,13 +100,16 @@ export default createStore(
   ),
 );
 
+const makeFormItem = (list) => {
+  let [value, label] = list;
+  if (!isNaN(value)) value = Number(value);
+  return { value, label };
+};
+
 const mapValuesForSelectionField = (state, compareField = 'label') => {
-  const makeFormItem = list => R.zipObj(['value', 'label'], list);
   const compare = (a, b) => a[compareField].localeCompare(b[compareField]);
   return R.sort(compare, R.map(makeFormItem, R.toPairs(state)));
 };
-
-const mapValuesForSelectionSortValue = state => mapValuesForSelectionField(state, 'value');
 
 export const selectNormalizedCountries = state =>
   mapValuesForSelectionField(state.countries);
@@ -111,7 +118,7 @@ export const selectNormalizedOrganizationTypes = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['partner-type']);
 
 export const selectNormalizedYearsOfExperience = state =>
-  mapValuesForSelectionSortValue(state.partnerProfileConfig['years-of-exp-choices']);
+  mapValuesForSelectionField(state.partnerProfileConfig['years-of-exp-choices']);
 
 export const selectNormalizedWorkingLanguages = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['working-languages']);
@@ -120,7 +127,7 @@ export const selectNormalizedPopulationsOfConcernGroups = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['population-of-concern']);
 
 export const selectNormalizedStaffGlobalyChoices = state =>
-  mapValuesForSelectionSortValue(state.partnerProfileConfig['staff-globaly-choices']);
+  mapValuesForSelectionField(state.partnerProfileConfig['staff-globaly-choices']);
 
 export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices']);
@@ -182,9 +189,12 @@ export const selectCfeiStatus = (state, id) =>
 export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.cfeiDetails, id);
 
+export const isCfeiPinned = (state, id) =>
+  cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.cfeiDetails, id);
+
 export const mapSelectCriteriaToSelection = state =>
-  mapValuesForSelectionField(state.selectionCriteria)
-  ;
+  mapValuesForSelectionField(state.selectionCriteria);
+
 export const mapPartnersNamesToSelection = state =>
   mapValuesForSelectionField(state.partnerNames);
 
@@ -234,3 +244,22 @@ export const selectNormalizedCompletionReasons = state =>
 
 export const selectPartnerApplicationDetails = (state, cfeiId) =>
   partnerAppDetailsSelector.selectApplication(state.partnerAppDetails, cfeiId);
+
+export const selectApplicationFeedback = (state, applicationId) =>
+  applicationFeedbackSelector.selectFeedback(state.applicationFeedback, applicationId);
+
+export const selectApplicationFeedbackCount = (state, applicationId) =>
+  applicationFeedbackSelector.selectCount(state.applicationFeedback, applicationId);
+
+export const selectPartnerVerifications = (state, partnerId) =>
+  partnerVerificationsSelector.selectVerifications(state.partnerVerifications, partnerId);
+
+export const selectMostRecentVerification = (state, partnerId) =>
+  partnerVerificationsSelector.selectMostRecentVerification(state.partnerVerifications, partnerId);
+
+export const selectPreviousVerificationCount = (state, partnerId) =>
+  partnerVerificationsSelector.selectPreviousVerificationsCount(state.partnerVerifications,
+    partnerId);
+
+export const mapAgenciesNamesToSelection = state => mapValuesForSelectionField(state.agencies);
+

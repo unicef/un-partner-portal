@@ -1,12 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
-import Button from 'material-ui/Button';
-import Snackbar from 'material-ui/Snackbar';
-import { formatDateForPrint } from '../../../helpers/dates';
 import ProfileViewLink from './profileViewLink';
 
 const messages = {
@@ -54,6 +50,13 @@ const ProfileConfirmation = (props) => {
       </div>
     </div>
   );
+};
+
+ProfileConfirmation.propTypes = {
+  classes: PropTypes.object,
+  disabled: PropTypes.bool,
+  checked: PropTypes.bool,
+  onChange: PropTypes.func,
 };
 
 export default withStyles(styleSheet, { name: 'ProfileConfirmation' })(ProfileConfirmation);

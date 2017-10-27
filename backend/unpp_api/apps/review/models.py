@@ -21,7 +21,7 @@ class PartnerFlag(TimeStampedModel):
     contact_person = models.CharField(max_length=255, null=True, blank=True)
     contact_phone = models.CharField(max_length=16, null=True, blank=True)
     contact_email = models.EmailField(null=True, blank=True)
-    attachment = models.FileField(null=True, blank=True)
+    attachment = models.ForeignKey('common.CommonFile', related_name="flag_attachments", null=True, blank=True)
 
     class Meta:
         ordering = ['id']

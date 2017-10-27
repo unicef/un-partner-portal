@@ -21,11 +21,12 @@ class OrganizationProfileHeader extends Component {
 
   updatePath() {
     const { tabs, location, partnerId } = this.props;
-    if (tabs.findIndex(tab => location.match(`^/profile/${partnerId}/${tab.path}`)) === -1) {
+
+    if (tabs.findIndex(tab => location.match(`^/profile/${partnerId}/${tab.path}`) || location.match(`profile/${partnerId}/${tab.path}`)) === -1) {
       history.push('/');
     }
 
-    return tabs.findIndex(tab => location.match(`^/profile/${partnerId}/${tab.path}`));
+    return tabs.findIndex(tab => location.match(`^/profile/${partnerId}/${tab.path}`) || location.match(`profile/${partnerId}/${tab.path}`));
   }
 
   handleChange(event, index) {
@@ -69,10 +70,10 @@ OrganizationProfileHeader.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const countryProfile = R.find(country => country.id === Number(ownProps.params.id), state.countryProfiles.hq.country_profiles);
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners);
 
   return {
-    countryName: countryProfile ? state.countries[countryProfile.country_code] : messages.hqProfile,
+    countryName: partner.is_hq ? messages.hqProfile : state.countries[partner.country_code],
     partnerId: ownProps.params.id,
     location: ownProps.location.pathname,
     tabs: state.organizationProfileNav,
