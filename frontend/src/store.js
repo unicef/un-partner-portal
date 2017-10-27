@@ -80,8 +80,8 @@ const mainReducer = combineReducers({
   applicationReviews,
   agencyMembers,
   partnerAppDetails,
-  partnerVerifications,
   agencies,
+  partnerVerifications,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -184,6 +184,9 @@ export const selectCfeiStatus = (state, id) =>
 export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.cfeiDetails, id);
 
+  export const isCfeiPinned = (state, id) =>
+  cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.cfeiDetails, id);
+
 export const mapSelectCriteriaToSelection = state =>
   mapValuesForSelectionField(state.selectionCriteria);
 
@@ -248,3 +251,4 @@ export const selectPreviousVerificationCount = (state, partnerId) =>
     partnerId);
 
 export const mapAgenciesNamesToSelection = state => mapValuesForSelectionField(state.agencies);
+

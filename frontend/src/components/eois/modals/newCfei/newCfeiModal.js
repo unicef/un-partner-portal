@@ -123,8 +123,8 @@ class NewCfeiModal extends Component {
           maxWidth="md"
           title={getTitle(type)}
           trigger={open}
-          handleDialogClose={onDialogClose}
           info={type === PROJECT_TYPES.UNSOLICITED ? null : getInfo(type)}
+          handleDialogClose={onDialogClose}
           buttons={{
             flat: {
               handleClick: onDialogClose,
