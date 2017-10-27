@@ -8,7 +8,7 @@ import SectorForm from '../../../forms/fields/projectFields/sectorField/sectorFi
 import LocationForm from '../../../forms/fields/projectFields/locationField/locationFieldArray';
 import CnFileSection from '../../details/submission/cnFileSection';
 import FileForm from '../../../forms/fileForm';
-import AgencySelectField from '../../../forms/fields/projectFields/agencySelectField';
+import AgencySelectField from '../../../forms/fields/projectFields/agencies';
 import ProfileConfirmation from '../../../organizationProfile/common/profileConfirmation';
 
 const messages = {

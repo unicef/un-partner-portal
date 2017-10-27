@@ -8,9 +8,10 @@ import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
 import EoiStatusCell from '../../cells/eoiStatusCell';
 import { selectCfeiStatus, isCfeiCompleted } from '../../../../store';
 import GridRow from '../../../common/grid/gridRow';
+import ConvertToDS from '../../buttons/convertToDirectSelection';
 
 const HeaderOptionsContainer = (props) => {
-  const { role, type, cfeiCompleted, cfeiStatus } = props;
+  const { role, type, cfeiCompleted, cfeiStatus, id } = props;
   let options;
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
@@ -21,6 +22,7 @@ const HeaderOptionsContainer = (props) => {
   } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
     options = <AgencyDirectHeaderOptions cfeiCompleted={cfeiCompleted} />;
   }
+  if (type === PROJECT_TYPES.UNSOLICITED) return <ConvertToDS id={id} />;
   return (<GridRow justify="center" align="center">
     <EoiStatusCell status={cfeiStatus} />
     {options}
@@ -32,6 +34,7 @@ HeaderOptionsContainer.propTypes = {
   type: PropTypes.string,
   cfeiCompleted: PropTypes.bool,
   cfeiStatus: PropTypes.string,
+  id: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({

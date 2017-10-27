@@ -44,7 +44,7 @@ const history = syncHistoryWithStore(browserHistory, store);
 function checkPartnerType(nextState, replace) {
   const state = store.getState();
 
-  if ((!state.session.isHq && state.displayType !== 'Int') && state.session.authorized) {
+  if (!state.session.isHq && state.session.authorized) {
     replace({ pathname: `profile/${state.session.partnerId}/overview` });
   }
 }

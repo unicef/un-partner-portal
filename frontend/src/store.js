@@ -98,13 +98,16 @@ export default createStore(
   ),
 );
 
+const makeFormItem = (list) => {
+  let [value, label] = list;
+  if (!isNaN(value)) value = Number(value);
+  return { value, label };
+};
+
 const mapValuesForSelectionField = (state, compareField = 'label') => {
-  const makeFormItem = list => R.zipObj(['value', 'label'], list);
   const compare = (a, b) => a[compareField].localeCompare(b[compareField]);
   return R.sort(compare, R.map(makeFormItem, R.toPairs(state)));
 };
-
-const mapValuesForSelectionSortValue = state => mapValuesForSelectionField(state, 'value');
 
 export const selectNormalizedCountries = state =>
   mapValuesForSelectionField(state.countries);
@@ -113,7 +116,7 @@ export const selectNormalizedOrganizationTypes = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['partner-type']);
 
 export const selectNormalizedYearsOfExperience = state =>
-  mapValuesForSelectionSortValue(state.partnerProfileConfig['years-of-exp-choices']);
+  mapValuesForSelectionField(state.partnerProfileConfig['years-of-exp-choices']);
 
 export const selectNormalizedWorkingLanguages = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['working-languages']);
@@ -122,7 +125,7 @@ export const selectNormalizedPopulationsOfConcernGroups = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['population-of-concern']);
 
 export const selectNormalizedStaffGlobalyChoices = state =>
-  mapValuesForSelectionSortValue(state.partnerProfileConfig['staff-globaly-choices']);
+  mapValuesForSelectionField(state.partnerProfileConfig['staff-globaly-choices']);
 
 export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices']);

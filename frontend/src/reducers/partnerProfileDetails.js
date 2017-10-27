@@ -35,8 +35,8 @@ export const loadPartnerDetails = partnerId => (dispatch, getState) => {
 };
 
 const extractSector = list => ({
-  sector: list[0].specialization.category.id.toString(),
-  areas: list.map(area => area.specialization.id.toString()),
+  sector: list[0].specialization.category.id,
+  areas: list.map(area => area.specialization.id),
   years: list[0].years,
 });
 

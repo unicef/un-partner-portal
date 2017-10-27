@@ -8,7 +8,7 @@ import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import GridColumn from '../../../common/grid/gridColumn';
 import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
-import AgencySelectField from '../../../forms/fields/projectFields/agencySelectField';
+import AgencySelectField from '../../../forms/fields/projectFields/agencies';
 
 const messages = {
   myPartnership: 'My Partnership',

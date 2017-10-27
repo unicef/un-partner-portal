@@ -5,34 +5,31 @@ import SelectForm from '../../selectForm';
 import { mapAgenciesNamesToSelection } from '../../../../store';
 import { loadAgenciesNames } from '../../../../reducers/agencies';
 
-class AgencySelectField extends Component {
+const messages = {
+  label: 'Agency',
+};
+
+class Agencies extends Component {
   componentWillMount() {
     this.props.loadAgencies();
   }
 
   render() {
-    const { name, fieldName, readOnly, warn, optional, label, agencies, ...other } = this.props;
+    const { fieldName, label, agencies, ...other } = this.props;
     return (
       <SelectForm
         fieldName={fieldName}
         label={label}
-        readOnly={readOnly}
         values={agencies}
-        optional={optional}
-        warn={warn}
         {...other}
       />
     );
   }
 }
 
-AgencySelectField.propTypes = {
-  name: PropTypes.string,
+Agencies.propTypes = {
   fieldName: PropTypes.string,
   label: PropTypes.string,
-  readOnly: PropTypes.bool,
-  warn: PropTypes.bool,
-  optional: PropTypes.bool,
   agencies: PropTypes.arrayOf(
     PropTypes.objectOf(
       {
@@ -45,9 +42,13 @@ AgencySelectField.propTypes = {
   loadAgencies: PropTypes.array,
 };
 
+Agencies.defaultProps = {
+  label: messages.label,
+};
+
 export default connect(
   state => ({ agencies: mapAgenciesNamesToSelection(state) }),
   dispatch => ({
     loadAgencies: () => dispatch(loadAgenciesNames()),
   }),
-)(AgencySelectField);
+)(Agencies);
