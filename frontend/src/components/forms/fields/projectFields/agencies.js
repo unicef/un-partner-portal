@@ -9,17 +9,17 @@ const messages = {
   label: 'Agency',
 };
 
-class ProjectPartners extends Component {
+class Agencies extends Component {
   componentWillMount() {
     this.props.loadAgencies();
   }
 
   render() {
-    const { name, agencies, ...other } = this.props;
+    const { fieldName, label, agencies, ...other } = this.props;
     return (
       <SelectForm
-        fieldName="agency"
-        label={messages.label}
+        fieldName={fieldName}
+        label={label}
         values={agencies}
         {...other}
       />
@@ -27,8 +27,9 @@ class ProjectPartners extends Component {
   }
 }
 
-ProjectPartners.propTypes = {
-  name: PropTypes.string,
+Agencies.propTypes = {
+  fieldName: PropTypes.string,
+  label: PropTypes.string,
   agencies: PropTypes.arrayOf(
     PropTypes.objectOf(
       {
@@ -41,9 +42,13 @@ ProjectPartners.propTypes = {
   loadAgencies: PropTypes.array,
 };
 
+Agencies.defaultProps = {
+  label: messages.label,
+};
+
 export default connect(
   state => ({ agencies: mapAgenciesNamesToSelection(state) }),
   dispatch => ({
     loadAgencies: () => dispatch(loadAgenciesNames()),
   }),
-)(ProjectPartners);
+)(Agencies);
