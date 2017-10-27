@@ -152,11 +152,15 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
     proposal_of_eoi_details = ProposalEOIDetailsSerializer(read_only=True)
     locations_proposal_of_eoi = PointSerializer(many=True, read_only=True)
     submitter = UserSerializer(read_only=True)
+    is_direct = serializers.SerializerMethodField()
 
     class Meta:
         model = Application
         fields = '__all__'
         read_only_fields = ('eoi',)
+
+    def get_is_direct(self, obj):
+        return obj.eoi_converted is not None
 
 
 class CreateUnsolicitedProjectSerializer(serializers.Serializer):
