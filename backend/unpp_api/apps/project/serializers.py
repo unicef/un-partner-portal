@@ -7,7 +7,6 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
 from account.serializers import AgencyUserSerializer, IDUserSerializer, UserSerializer
@@ -17,8 +16,7 @@ from common.utils import get_countries_code_from_queryset, get_partners_name_fro
 from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer
 from common.models import Point, Specialization
 from partner.serializers import PartnerSerializer
-
-from partner.models import Partner, PartnerMember
+from partner.models import Partner
 from .models import EOI, Application, Assessment, ApplicationFeedback
 
 
@@ -609,3 +607,91 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         )
 
         return ds_app
+
+
+class ReviewSummarySerializer(serializers.ModelSerializer):
+
+    review_summary_attachment = CommonFileSerializer()
+
+    class Meta:
+        model = EOI
+        fields = (
+            'review_summary_comment', 'review_summary_attachment'
+        )
+
+
+class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
+    __apps_count = None
+    user_id = serializers.CharField(source='id')
+    user_name = serializers.CharField(source='get_user_name')
+    assessments = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'user_id',
+            'user_name',
+            'assessments',
+        )
+
+    def get_assessments(self, obj):
+        lookup_field = self.context['view'].lookup_field
+        eoi_id = self.context['request'].parser_context['kwargs'][lookup_field]
+        if self.__apps_count is None:
+            eoi = get_object_or_404(EOI, id=eoi_id)
+            self.__apps_count = eoi.applications.filter(status=APPLICATION_STATUSES.preselected).count()
+
+        obj.assessments.filter()
+        asses_count = Assessment.objects.filter(reviewer=obj, application__eoi_id=eoi_id).count()
+
+        return {
+            'counts': "{}/{}".format(asses_count, self.__apps_count),
+            'send_reminder': not (self.__apps_count == asses_count),
+            'eoi_id': eoi_id,  # use full for front-end to easier construct send reminder url
+        }
+
+
+class AwardedPartnersSerializer(serializers.ModelSerializer):
+
+    partner_id = serializers.CharField(source='partner.id')
+    partner_name = serializers.CharField(source='partner.legal_name')
+
+    partner_notified = serializers.SerializerMethodField()
+    partner_accepted_date = serializers.SerializerMethodField()
+
+    body = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Application
+        fields = (
+            'partner_id',
+            'partner_name',
+            'partner_notified',
+            'partner_accepted_date',
+            'body',
+        )
+
+    def get_body(self, obj):
+        assessments_count = obj.assessments.count()
+        assessments = obj.assessments.all()
+        notes = []
+        for assessment in assessments:
+            notes.append({
+                'note': assessment.note,
+                'reviewer': assessment.reviewer.get_user_name(),
+            })
+
+
+        return {
+            'criteria': obj.get_scores_by_selection_criteria(),
+            'notes': notes,
+            'avg_total_score': obj.average_total_score,
+            'assessment_count': assessments_count,
+
+        }
+
+    def get_partner_notified(self, obj):
+        return obj.accept_notification and obj.accept_notification.created
+
+    def get_partner_accepted_date(self, obj):
+        return obj.did_accept_date and obj.did_accept_date

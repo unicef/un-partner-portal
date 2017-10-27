@@ -391,6 +391,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_accept'])
+        self.assertEquals(response.data['did_accept_date'], str(date.today()))
 
         # decline offer
         payload = {
@@ -573,3 +574,43 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         response = self.client.post(url, data=payload, format='json')
         self.assertFalse(statuses.is_success(response.status_code))
         self.assertEquals(response.data['non_field_errors'], [ConvertUnsolicitedSerializer.RESTRICTION_MSG])
+
+
+class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
+
+    user_type = 'agency'
+
+    def test_add_review(self):
+        url = reverse('common:file')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        with open(filename) as doc:
+            payload = {
+                "file_field": doc
+            }
+            response = self.client.post(url, data=payload, format='multipart')
+
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(response.data['id'] is not None)
+        file_id = response.data['id']
+
+        PartnerMemberFactory()  # eoi is creating applications that need partner member
+        EOIFactory(created_by=self.user)
+        eoi = EOI.objects.first()
+        url = reverse('projects:review-summary', kwargs={"pk": eoi.id})
+        payload = {
+            'review_summary_comment': "comment",
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['review_summary_comment'], payload['review_summary_comment'])
+
+        payload = {
+            'review_summary_comment': "comment",
+            'review_summary_attachment': file_id
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['review_summary_comment'], payload['review_summary_comment'])
+        self.assertTrue(
+            response.data['review_summary_attachment'].find(CommonFile.objects.get(pk=file_id).file_field.url) > 0
+        )
