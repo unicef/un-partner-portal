@@ -107,6 +107,11 @@ export function isCfeiCompleted(state, id) {
   return !!completed_reason;
 }
 
+export function isCfeiPinned(state, id) {
+  const { [id]: { is_pinned = null } = {} } = state;
+  return is_pinned;
+}
+
 export function selectCfeiCriteria(state, id) {
   const { [id]: { assessments_criteria = [] } = {} } = state;
   return assessments_criteria;

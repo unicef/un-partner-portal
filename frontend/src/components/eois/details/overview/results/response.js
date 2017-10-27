@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import MyResponse from './myResponse';
-import Feedback from './feedback';
+import Feedback from '../../../../applications/feedback/feedbackContainer';
 import { selectPartnerApplicationDetails } from '../../../../../store';
 import { ROLES } from '../../../../../helpers/constants';
 
@@ -13,7 +13,7 @@ const Results = (props) => {
     return (
       <Grid container direction="row">
         <Grid item xs={12} sm={8}>
-          <Feedback feedback={application.feedback} />
+          <Feedback applicationId={application.id} />
         </Grid>
         <Grid item xs={12} sm={4}>
           <MyResponse cfeiId={id} application={application} />
