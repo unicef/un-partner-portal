@@ -656,6 +656,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
         )
 
     def get_body(self, obj):
+        assessments_count = obj.assessments.count()
         assessments = obj.assessments.all()
         notes = []
         criteria = []
@@ -676,7 +677,11 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
                         score = item['score']
                         break
                 criterion_final_score += score * weight
-            criteria.append({key: criterion_final_score})
+            if assessments_count > 0:
+                average_score = criterion_final_score / assessments_count
+            else:
+                average_score = 0
+            criteria.append({key: average_score})
 
         return {
             'criteria': criteria,
