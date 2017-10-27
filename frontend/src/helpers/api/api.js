@@ -140,7 +140,7 @@ export function patchCfei(body, id) {
 }
 
 export function uploadConceptNote(projectId, body) {
-  return authorizedPostUpload({ uri: `/projects/${projectId}/partner-applications/`, body });
+  return authorizedPost({ uri: `/projects/${projectId}/partner-applications/`, body });
 }
 
 export function uploadCommonFile(body) {

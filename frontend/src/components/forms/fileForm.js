@@ -27,7 +27,7 @@ class FileForm extends Component {
 
   render() {
     const { fieldName, label, optional, formName, sectionName,
-      validation, warn, readOnly, ...other } = this.props;
+      validation, warn, readOnly, deleteDisabled, ...other } = this.props;
 
     return (
       <Grid item>
@@ -49,6 +49,7 @@ class FileForm extends Component {
                 label={label}
                 sectionName={sectionName}
                 formName={formName}
+                deleteDisabled={deleteDisabled}
                 validate={optional ? [] : [required].concat(validation || [])}
                 warn={warn ? [warning] : []}
                 {...other}
@@ -103,6 +104,10 @@ FileForm.propTypes = {
    * read only mode
    */
   readOnly: PropTypes.bool,
+  /** 
+   * Don't display 'X' button
+   */
+  deleteDisabled: PropTypes.bool,
 };
 
 FileForm.defaultProps = {
