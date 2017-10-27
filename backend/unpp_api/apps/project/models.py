@@ -101,6 +101,9 @@ class Application(TimeStampedModel):
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
+    did_accept_date = models.DateField(null=True, blank=True)
+    accept_notification = models.OneToOneField(
+        'notification.Notification', related_name="accept_notification", null=True, blank=True)
     did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
     # did_withdraw is only applicable if did_win is True
     did_withdraw = models.BooleanField(default=False, verbose_name='Did withdraw?')

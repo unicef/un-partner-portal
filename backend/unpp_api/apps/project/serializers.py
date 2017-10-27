@@ -7,7 +7,6 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
 from account.serializers import AgencyUserSerializer, IDUserSerializer
@@ -16,7 +15,6 @@ from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer
 from common.models import Point
-from partner.serializers import PartnerSerializer
 
 from partner.models import Partner
 from .models import EOI, Application, Assessment, ApplicationFeedback
@@ -635,3 +633,58 @@ class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
             'send_reminder': not (self.__apps_count == asses_count),
             'eoi_id': eoi_id,  # use full for front-end to easier construct send reminder url
         }
+
+
+class AwardedPartnersSerializer(serializers.ModelSerializer):
+
+    partner_id = serializers.CharField(source='partner.id')
+    partner_name = serializers.CharField(source='partner.legal_name')
+
+    partner_notified = serializers.SerializerMethodField()
+    partner_accepted_date = serializers.SerializerMethodField()
+
+    body = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Application
+        fields = (
+            'partner_id',
+            'partner_name',
+            'partner_notified',
+            'partner_accepted_date',
+            'body',
+        )
+
+    def get_body(self, obj):
+        assessments = obj.assessments.all()
+        notes = []
+        criteria = []
+        for assessment in assessments:
+            notes.append({
+                'note': assessment.note,
+                'reviewer': assessment.reviewer.get_user_name(),
+            })
+        for assessment_criteria in obj.eoi.assessments_criteria:
+            key = assessment_criteria['selection_criteria']
+            weight = assessment_criteria['weight']
+
+            criterion_final_score = 0
+            for assessment in assessments:
+                score = 0
+                for item in assessment.scores:
+                    if item['selection_criteria'] == key:
+                        score = item['score']
+                        break
+                criterion_final_score += score * weight
+            criteria.append({key: criterion_final_score})
+
+        return {
+            'criteria': criteria,
+            'notes': notes,
+        }
+
+    def get_partner_notified(self, obj):
+        return obj.accept_notification and obj.accept_notification.created
+
+    def get_partner_accepted_date(self, obj):
+        return obj.did_accept_date and obj.did_accept_date

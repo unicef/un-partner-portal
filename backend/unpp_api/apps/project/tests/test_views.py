@@ -391,6 +391,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_accept'])
+        self.assertEquals(response.data['did_accept_date'], str(date.today()))
 
         # decline offer
         payload = {
