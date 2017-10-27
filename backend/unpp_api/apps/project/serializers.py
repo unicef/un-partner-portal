@@ -10,12 +10,12 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
-from account.serializers import AgencyUserSerializer, IDUserSerializer
+from account.serializers import AgencyUserSerializer, IDUserSerializer, UserSerializer
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer
-from common.models import Point
+from common.models import Point, Specialization
 from partner.serializers import PartnerSerializer
 
 from partner.models import Partner, PartnerMember
@@ -133,14 +133,30 @@ class ApplicationPartnerSerializer(serializers.ModelSerializer):
         model = Application
         fields = ('id', 'cn', 'created')
 
+
+class ProposalEOIDetailsSerializer(serializers.Serializer):
+    specializations = serializers.SerializerMethodField()
+    title = serializers.CharField()
+
+    def get_specializations(self, obj):
+        return SimpleSpecializationSerializer(Specialization.objects.filter(id__in=obj.get('specializations')),
+                                              many=True).data
+
+
+# TODO - break this up into different serializers for different purposes
 class ApplicationFullSerializer(serializers.ModelSerializer):
 
     cn = CommonFileSerializer()
+    partner = PartnerSerializer(read_only=True)
+    agency = AgencySerializer(read_only=True)
+    proposal_of_eoi_details = ProposalEOIDetailsSerializer(read_only=True)
+    locations_proposal_of_eoi = PointSerializer(many=True, read_only=True)
+    submitter = UserSerializer(read_only=True)
 
     class Meta:
         model = Application
         fields = '__all__'
-        read_only_fields = ('eoi', 'submitter', 'partner', 'agency',)
+        read_only_fields = ('eoi',)
 
 
 class CreateUnsolicitedProjectSerializer(serializers.Serializer):
@@ -472,9 +488,6 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
         )
 
     def get_project_title(self, obj):
-        if obj.eoi:
-            # has been updated to direct selected
-            return obj.eoi.title
         return obj.proposal_of_eoi_details.get('title')
 
     def get_country(self, obj):
@@ -488,11 +501,11 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             return get_countries_code_from_queryset(country)
         return None
 
+    # TODO - need to make field names between here and application details the same
+    # application details uses nested under proposal_of_eoi_details
     def get_specializations(self, obj):
-        if obj.eoi:
-            # has been updated to direct selected
-            return obj.eoi.specializations.all().values_list('id', flat=True)
-        return obj.proposal_of_eoi_details.get('specializations')
+        return SimpleSpecializationSerializer(Specialization.objects.filter(id__in=obj.proposal_of_eoi_details.get('specializations')),
+                                              many=True).data
 
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
