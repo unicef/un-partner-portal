@@ -8,13 +8,12 @@ import SectorForm from '../../../forms/fields/projectFields/sectorField/sectorFi
 import LocationForm from '../../../forms/fields/projectFields/locationField/locationFieldArray';
 import CnFileSection from '../../details/submission/cnFileSection';
 import FileForm from '../../../forms/fileForm';
-import AgencySelectField from '../../../forms/fields/projectFields/agencies';
+import Agencies from '../../../forms/fields/projectFields/agencies';
 import ProfileConfirmation from '../../../organizationProfile/common/profileConfirmation';
 
 const messages = {
   cn: 'Concept Note',
   projectDetails: 'Project Details',
-  agency: 'Agency',
 };
 
 const OpenForm = (props) => {
@@ -25,10 +24,7 @@ const OpenForm = (props) => {
         <Typography type="headline">
           {messages.projectDetails}
         </Typography>
-        <AgencySelectField
-          fieldName="agency"
-          label={messages.agency}
-        />
+        <Agencies fieldName="agency" />
         <fields.TitleField />
         <LocationForm formName={form} />
         <SectorForm />

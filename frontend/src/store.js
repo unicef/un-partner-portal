@@ -40,8 +40,9 @@ import applicationDetails, * as applicationDetailsSelector from './reducers/appl
 import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
 import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers';
 import partnerAppDetails, * as partnerAppDetailsSelector from './reducers/partnerApplicationDetails';
-import partnerVerifications, * as partnerVerificationsSelector from './reducers/partnerVerifications';
 import agencies from './reducers/agencies';
+import applicationFeedback, * as applicationFeedbackSelector from './reducers/applicationFeedback';
+import partnerVerifications, * as partnerVerificationsSelector from './reducers/partnerVerifications';
 
 const mainReducer = combineReducers({
   cfei,
@@ -80,6 +81,7 @@ const mainReducer = combineReducers({
   applicationReviews,
   agencyMembers,
   partnerAppDetails,
+  applicationFeedback,
   agencies,
   partnerVerifications,
 });
@@ -187,7 +189,7 @@ export const selectCfeiStatus = (state, id) =>
 export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.cfeiDetails, id);
 
-  export const isCfeiPinned = (state, id) =>
+export const isCfeiPinned = (state, id) =>
   cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.cfeiDetails, id);
 
 export const mapSelectCriteriaToSelection = state =>
@@ -242,6 +244,12 @@ export const selectNormalizedCompletionReasons = state =>
 
 export const selectPartnerApplicationDetails = (state, cfeiId) =>
   partnerAppDetailsSelector.selectApplication(state.partnerAppDetails, cfeiId);
+
+export const selectApplicationFeedback = (state, applicationId) =>
+  applicationFeedbackSelector.selectFeedback(state.applicationFeedback, applicationId);
+
+export const selectApplicationFeedbackCount = (state, applicationId) =>
+  applicationFeedbackSelector.selectCount(state.applicationFeedback, applicationId);
 
 export const selectPartnerVerifications = (state, partnerId) =>
   partnerVerificationsSelector.selectVerifications(state.partnerVerifications, partnerId);

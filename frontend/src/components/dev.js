@@ -2,17 +2,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Feedback from './applications/feedback/feedbackContainer';
 
 
 class Dev extends Component {
   render() {
     return (
       <div>
-        <ArrayForm
-          limit={15}
-          fieldName="countries"
-          outerField={Sector}
-          innerField={Area}
+        <Feedback
+          applicationId={1}
         />
       </div>
 

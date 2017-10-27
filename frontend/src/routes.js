@@ -38,6 +38,7 @@ import mainContent from './components/common/mainContentWrapper';
 import dev from './components/dev';
 import cfeiOpenResults from './components/eois/details/overview/results/results';
 import cfeiDirectResponse from './components/eois/details/overview/results/response';
+import cfeiFeedback from './components/eois/details/overview/feedback';
 
 const history = syncHistoryWithStore(browserHistory, store);
 
@@ -65,7 +66,7 @@ const allRoutes = () => (
             <IndexRedirect to="overview" />
             <Route component={mainContent} >
               <Route path="overview" component={cfeiOverview} />
-              <Route path="feedback" component={null} />
+              <Route path="feedback" component={cfeiFeedback} />
               <Route path="submission" component={cfeiSubmission} />
               <Route path="results" component={cfeiOpenResults} />
               <Route path="preselected" component={openCfeiPreselected} />
