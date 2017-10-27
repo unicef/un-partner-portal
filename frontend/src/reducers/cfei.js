@@ -64,9 +64,7 @@ const normalizeCfei = cfeis =>
   );
 
 const saveCfei = (state, action) => {
-  const cfei = (action.project === PROJECT_TYPES.UNSOLICITED)
-    ? action.cfei
-    : normalizeCfei(action.cfei, action.getState);
+  const cfei = normalizeCfei(action.cfei, action.getState);
   const newState = R.assoc(`${action.project}Count`, action.count, state);
   return R.assoc(action.project, cfei, newState);
 };
