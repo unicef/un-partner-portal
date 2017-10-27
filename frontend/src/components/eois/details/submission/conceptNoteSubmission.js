@@ -3,16 +3,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
-import { browserHistory as history, withRouter } from 'react-router';
+import { withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
-import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/Button';
 import Snackbar from 'material-ui/Snackbar';
 import { formatDateForPrint } from '../../../../helpers/dates';
 import Loader from '../../../common/loader';
-import ControlledModal from '../../../common/modals/controlledModal';
-import OrganizationProfileContent from './modal/organizationProfileContent';
 import {
   uploadPartnerConceptNote,
   uploadCnclearError,
@@ -41,36 +38,12 @@ const messages = {
 
 const styleSheet = (theme) => {
   const paddingNormal = theme.spacing.unit;
-  const paddingSmall = theme.spacing.unit * 2;
-  const padding = theme.spacing.unit * 3;
-
   return {
-    icon: {
-      marginRight: theme.spacing.unit,
-    },
-    checkboxContainer: {
-      padding: `${paddingSmall}px ${paddingNormal}px ${padding}px ${paddingNormal}px`,
-    },
-    paddingTop: {
-      padding: '12px 0px 0px 0px',
-    },
     alignRight: {
-      margin: `${paddingNormal}px ${padding}px 0px 0px`,
+      margin: `${paddingNormal}px 0px 0px 0px`,
       justifyContent: 'flex-end',
       alignItems: 'right',
       display: 'flex',
-    },
-    alignVertical: {
-      display: 'flex',
-      alignItems: 'top',
-    },
-    captionStyle: {
-      color: theme.palette.primary[500],
-    },
-    labelUnderline: {
-      cursor: 'pointer',
-      textDecoration: 'underline',
-      color: theme.palette.primary[500],
     },
   };
 };
@@ -83,7 +56,6 @@ class ConceptNoteSubmission extends Component {
       checked: false,
       errorMsg: null,
       alert: false,
-      openDialog: false,
     };
     this.handleCheck = this.handleCheck.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
@@ -106,7 +78,6 @@ class ConceptNoteSubmission extends Component {
   render() {
     const { classes, submitDate, deadlineDate, loader, errorUpload,
       cnUploaded, handleSubmit, cn } = this.props;
-    console.log(errorUpload)
     const { alert, errorMsg, checked } = this.state;
     return (
       <form onSubmit={handleSubmit(this.handleSubmit)}>

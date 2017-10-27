@@ -210,7 +210,7 @@ export function getApplicationDirect() {
 }
 
 export function postUnsolicitedCN(body) {
-  return authorizedPostUpload({ uri: '/projects/applications/unsolicited/', body });
+  return authorizedPost({ uri: '/projects/applications/unsolicited/', body });
 }
 
 // Partners
