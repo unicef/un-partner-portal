@@ -72,8 +72,8 @@ ApplicationSummaryContent.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const application = selectApplication(state, ownProps.params.applicationId) || {};
-  const { partner, eoi } = application;
-  const partnerDetails = R.prop(partner, state.agencyPartnerProfile);
+  const { partner = {}, eoi } = application;
+  const partnerDetails = R.prop(partner.id, state.agencyPartnerProfile);
   const cfeiCriteria = selectCfeiCriteria(state, eoi);
   const isUserFocalPoint = isUserAFocalPoint(state, eoi);
   const isUserReviewer = isUserAReviewer(state, eoi);
