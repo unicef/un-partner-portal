@@ -220,10 +220,12 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
-    def update(self, request, *args, **kwargs):
-        if 'did_accept' in request.data and request.data['did_accept']:
-            request.data['did_accept_date'] = date.today()
-        return super(ApplicationAPIView, self).update(request, *args, **kwargs)
+    def perform_update(self, serializer):
+        if serializer.validated_data.get('did_accept', False) and \
+                serializer.instance.did_accept_date is None:
+            serializer.save(did_accept_date=date.today())
+        else:
+            serializer.save()
 
 
 class ApplicationsListAPIView(ListAPIView):
