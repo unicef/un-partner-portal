@@ -382,6 +382,8 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
     legal_name = serializers.CharField(source="partner.legal_name")
     type_org = serializers.CharField(source="partner.display_type")
     cn = CommonFileSerializer()
+    your_score = serializers.SerializerMethodField()
+    review_progress = serializers.SerializerMethodField()
 
     class Meta:
         model = Application
@@ -391,7 +393,20 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'type_org',
             'status',
             'cn',
+            'average_total_score',
+            'your_score',
+            'review_progress',
         )
+
+    def get_your_score(self, obj):
+        assess_qs = obj.assessments.filter(reviewer=self.context['request'].user)
+        if assess_qs.exists():
+            assessment = assess_qs.first()
+            return assessment.total_score
+        return None
+
+    def get_review_progress(self, obj):
+        return "{}/{}".format(obj.assessments.count(), obj.eoi.reviewers.count())
 
 
 class ReviewersApplicationSerializer(serializers.ModelSerializer):
