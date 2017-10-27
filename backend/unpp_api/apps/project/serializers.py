@@ -598,3 +598,34 @@ class ReviewSummarySerializer(serializers.ModelSerializer):
         fields = (
             'review_summary_comment', 'review_summary_attachment'
         )
+
+
+class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
+    __apps_count = None
+    user_id = serializers.CharField(source='id')
+    user_name = serializers.CharField(source='get_user_name')
+    assessments = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'user_id',
+            'user_name',
+            'assessments',
+        )
+
+    def get_assessments(self, obj):
+        lookup_field = self.context['view'].lookup_field
+        eoi_id = self.context['request'].parser_context['kwargs'][lookup_field]
+        if self.__apps_count is None:
+            eoi = get_object_or_404(EOI, id=eoi_id)
+            self.__apps_count = eoi.applications.count()
+
+        obj.assessments.filter()
+        asses_count = Assessment.objects.filter(reviewer=obj, application__eoi_id=eoi_id).count()
+
+        return {
+            'counts': "{}/{}".format(asses_count, self.__apps_count),
+            'send_reminder': not (self.__apps_count == asses_count),
+            'eoi_id': eoi_id,  # use full for front-end to easier construct send reminder url
+        }

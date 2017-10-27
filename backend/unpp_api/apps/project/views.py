@@ -44,6 +44,7 @@ from .serializers import (
     ApplicationFeedbackSerializer,
     ConvertUnsolicitedSerializer,
     ReviewSummarySerializer,
+    EOIReviewersAssessmentsSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
 
@@ -368,3 +369,17 @@ class ReviewSummaryAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor,)
     serializer_class = ReviewSummarySerializer
     queryset = EOI.objects.all()
+
+
+class EOIReviewersAssessmentsListAPIView(ListCreateAPIView):
+    """
+    Reviewers with they assessments - summary
+    """
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    queryset = User.objects.all()
+    serializer_class = EOIReviewersAssessmentsSerializer
+    lookup_field = 'eoi_id'
+
+    def get_queryset(self):
+        eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
+        return eoi.reviewers.all()

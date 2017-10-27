@@ -19,6 +19,7 @@ from .views import (
     ApplicationFeedbackListCreateAPIView,
     ConvertUnsolicitedAPIView,
     ReviewSummaryAPIView,
+    EOIReviewersAssessmentsListAPIView,
 )
 
 
@@ -37,6 +38,9 @@ urlpatterns = [
     url(r'^applications/(?P<application_id>\d+)/reviewer-assessments/',
         ReviewerAssessmentsAPIView.as_view(),
         name="reviewer-assessments"),
+    url(r'^(?P<eoi_id>\d+)/applications/reviewers/',
+        EOIReviewersAssessmentsListAPIView.as_view(),
+        name="eoi-reviewers-assessments"),
     url(r'^application/(?P<pk>\d+)/$', ApplicationAPIView.as_view(), name="application"),
     url(r'^application/(?P<pk>\d+)/feedback/$',
         ApplicationFeedbackListCreateAPIView.as_view(),
