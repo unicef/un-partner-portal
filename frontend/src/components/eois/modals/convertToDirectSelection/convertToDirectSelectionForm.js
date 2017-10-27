@@ -12,7 +12,7 @@ const messages = {
   reason: 'Choose reason of completing this CFEI',
 };
 
-const CompleteCfeiForm = (props) => {
+const ConvertToDirectSelectionForm = (props) => {
   const { handleSubmit, completionReasons } = props;
   return (
     <form onSubmit={handleSubmit}>
@@ -21,20 +21,14 @@ const CompleteCfeiForm = (props) => {
           fieldName="justification"
           label={messages.justification}
           placeholder="Enter comment..."
-        />
-        <RadioForm
-          fieldName="completed_reason"
-          label={messages.reason}
-          values={completionReasons}
-          column
-        />
+        /> 
       </GridColumn>
 
     </form >
   );
 };
 
-CompleteCfeiForm.propTypes = {
+ConvertToDirectSelectionForm.propTypes = {
   /**
    * callback for form submit
    */
@@ -42,9 +36,9 @@ CompleteCfeiForm.propTypes = {
   completionReasons: PropTypes.array,
 };
 
-const formEditCfei = reduxForm({
+const formConvertToDirectSelectionForm = reduxForm({
   form: 'completeCfei',
-})(CompleteCfeiForm);
+})(ConvertToDirectSelectionForm);
 
 const mapStateToProps = state => ({
   completionReasons: selectNormalizedCompletionReasons(state),
@@ -52,4 +46,4 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-)(formEditCfei);
+)(formConvertToDirectSelectionForm);

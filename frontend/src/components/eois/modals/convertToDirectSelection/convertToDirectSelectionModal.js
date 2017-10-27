@@ -9,7 +9,7 @@ import ConvertToDirectSelectionForm from './convertToDirectSelectionForm';
 const messages = {
   title: 'Convert to Direct Selection',
   header: { title: 'This is direct selection for proposal submitted by Partner:' },
-  save: 'complete',
+  save: 'save',
 };
 
 

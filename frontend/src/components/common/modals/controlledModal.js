@@ -30,6 +30,8 @@ const styleSheet = (theme) => {
     },
     closeButton: {
       color: theme.palette.getContrastText(theme.palette.secondary[500]),
+      width: 24,
+      height: 24,
     },
   };
 };
