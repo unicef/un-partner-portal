@@ -21,7 +21,7 @@ import {
   DeadlineDate,
   NotifyDate,
 } from '../../../forms/fields/projectFields/commonFields';
-import LocationFieldReadOnlyArray from '../../../forms/fields/projectFields/locationField/locationFieldReadOnlyArray'
+import LocationFieldReadOnlyArray from '../../../forms/fields/projectFields/locationField/locationFieldReadOnlyArray';
 import SpreadContent from '../../../common/spreadContent';
 import { PROJECT_TYPES, ROLES } from '../../../../helpers/constants';
 import OrganizationTypes from '../../../forms/fields/projectFields/organizationType';
@@ -64,7 +64,7 @@ const Fields = ({ type, role, partner }) => {
         />}
         <LocationFieldReadOnlyArray />
         <SectorForm readOnly />
-        <Grid container justify="flex-end">
+        {role === ROLES.AGENCY && <Grid container justify="flex-end">
           <Grid item>
             <Button
               onClick={() => history.push(`/partner/${partner}/details`)}
@@ -73,7 +73,7 @@ const Fields = ({ type, role, partner }) => {
               {messages.labels.viewProfile}
             </Button>
           </Grid>
-        </Grid>
+        </Grid>}
       </GridColumn>
     </PaddedContent>);
   }
