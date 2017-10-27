@@ -9,10 +9,8 @@ import {
 } from '../../../../../store';
 import {
   loadApplication,
-  updateApplicationPartnerName,
 } from '../../../../../reducers/applicationDetails';
 import { loadApplicationReviews } from '../../../../../reducers/applicationReviews';
-import { loadPartnerNames } from '../../../../../reducers/partnerNames';
 import {
   loadCfei,
 } from '../../../../../reducers/cfeiDetails';
@@ -23,35 +21,23 @@ import {
 class ApplicationSummaryHeader extends Component {
   componentWillMount() {
     const {
-      getPartnerNames,
       getApplication,
-      partnerNameExists,
       cfeiDetailsExists,
-      savePartnerName,
       getCfeiDetails,
       getPartnerDetails,
-      getPartnerNameFromState,
       shouldGetReviews,
       downloadReviews,
       user,
     } = this.props;
     getApplication().then((application) => {
       if (application) {
-        if (!partnerNameExists(application.partner)) {
-          getPartnerNames().then((partnerNames) => {
-            savePartnerName(partnerNames.find(
-              name => name.id === application.partner), application.id);
-          });
-        } else {
-          savePartnerName(getPartnerNameFromState(application.partner), application.id);
-        }
         if (!cfeiDetailsExists(application.eoi)) {
           getCfeiDetails(application.eoi).then((cfei) => {
             const { focal_points, reviewers } = cfei;
             if (focal_points.includes(user) || reviewers.includes(user)) downloadReviews();
           });
         } else if (shouldGetReviews(application.eoi)) downloadReviews();
-        getPartnerDetails(application.partner);
+        getPartnerDetails(application.partner.id);
       }
     });
   }
@@ -63,14 +49,10 @@ class ApplicationSummaryHeader extends Component {
 }
 
 ApplicationSummaryHeader.propTypes = {
-  partnerNameExists: PropTypes.bool,
   cfeiDetailsExists: PropTypes.bool,
-  getPartnerNameFromState: PropTypes.func,
-  getPartnerNames: PropTypes.func,
   getApplication: PropTypes.func,
   getCfeiDetails: PropTypes.func,
   getPartnerDetails: PropTypes.func,
-  savePartnerName: PropTypes.func,
   shouldGetReviews: PropTypes.func,
   downloadReviews: PropTypes.func,
   user: PropTypes.number,
@@ -86,11 +68,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  getPartnerNames: () => dispatch(loadPartnerNames()),
   getApplication: () => dispatch(loadApplication(ownProps.params.applicationId)),
   getCfeiDetails: eoi => dispatch(loadCfei(eoi)),
   getPartnerDetails: partner => dispatch(loadPartnerDetails(partner)),
-  savePartnerName: (name, id) => dispatch(updateApplicationPartnerName(name, id)),
   downloadReviews: () => dispatch(loadApplicationReviews(ownProps.params.applicationId)),
 });
 

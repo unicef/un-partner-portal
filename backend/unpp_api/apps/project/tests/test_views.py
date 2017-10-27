@@ -296,7 +296,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], Application.objects.last().id)
         self.assertEquals(response.data['eoi'], eoi_id)
-        self.assertEquals(response.data['submitter'], self.user.id)
+        self.assertEquals(response.data['submitter']['id'], self.user.id)
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
 
