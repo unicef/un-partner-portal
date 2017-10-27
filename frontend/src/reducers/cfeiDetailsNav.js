@@ -17,6 +17,12 @@ const initialState = [
     types: [PROJECT_TYPES.DIRECT, PROJECT_TYPES.UNSOLICITED],
   },
   {
+    path: DETAILS_ITEMS.FEEDBACK,
+    label: 'Feedback',
+    roles: [PARTNER],
+    types: [PROJECT_TYPES.UNSOLICITED],
+  },
+  {
     path: DETAILS_ITEMS.SUBMISSION,
     label: 'concept note submission',
     roles: [PARTNER],
