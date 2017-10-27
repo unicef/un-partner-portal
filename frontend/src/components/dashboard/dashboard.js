@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default () => {
-  return (
-    <div>Dashboard</div>
-  )
-}
+export default () => (
+  <div>
+      Dashboard
+  </div>
+);
