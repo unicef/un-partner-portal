@@ -54,7 +54,11 @@ class ApplicationSummaryHeader extends Component {
     } = this.props;
     if (isUserFocalPoint) {
       if (didWin) {
-        return <WithdrawApplicationButton disabled={loading} applicationId={applicationId} />;
+        return (<WithdrawApplicationButton
+          raised
+          disabled={loading}
+          applicationId={applicationId}
+        />);
       }
       return <AwardApplicationButton disabled={loading} applicationId={applicationId} />;
     } else if (isUserReviewer) {

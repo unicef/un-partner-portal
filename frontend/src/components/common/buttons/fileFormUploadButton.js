@@ -80,8 +80,15 @@ class FileFormUploadButton extends Component {
   }
 
   render() {
-    const { classes, fieldName, deleteDisabled, fileUrl, input, label, loading } = this.props;
-    const { warning } = this.props.meta;
+    const {
+      classes,
+      meta: { touched, error, warning },
+      fieldName,
+      deleteDisabled,
+      fileUrl,
+      input,
+      label,
+      loading } = this.props;
     const url = R.is(String, input.value) ? input.value : fileUrl;
     return (
       <FormControl>
@@ -128,6 +135,8 @@ class FileFormUploadButton extends Component {
               </Typography>
             </div>}
         </div>
+        {touched && (error || warning)
+          && <FormHelperText error>{touched && (error || warning)}</FormHelperText>}
       </FormControl>
     );
   }

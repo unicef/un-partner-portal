@@ -110,6 +110,7 @@ const getTheme = () => (
         arrayFormOuter: '#F5F5F5',
         arrayFormInner: '#E0E0E0',
         lightGreyBackground: '#F5F5F5',
+        darkGreyBackground: '#EEEEEE',
         statusOk: '#189a58',
         orange: '#F39C38',
         purple: '#A996D8',

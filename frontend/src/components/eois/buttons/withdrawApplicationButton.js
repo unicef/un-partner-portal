@@ -17,7 +17,6 @@ const WithdrawApplicationButton = (props) => {
   return (
     <Grid item>
       <Button
-        raised
         color="accent"
         onClick={handleDialogOpen}
         {...other}
