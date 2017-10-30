@@ -46,6 +46,7 @@ from .serializers import (
     ReviewSummarySerializer,
     EOIReviewersAssessmentsSerializer,
     AwardedPartnersSerializer,
+    CompareSelectedSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
 
@@ -400,3 +401,19 @@ class AwardedPartnersListAPIView(ListAPIView):
         eoi_id = self.kwargs['eoi_id']
         return Application.objects.filter(
             did_win=True, did_decline=False, did_withdraw=False, eoi_id=eoi_id)
+
+
+class CompareSelectedListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = CompareSelectedSerializer
+
+    def get_queryset(self):
+        eoi_id = self.kwargs['eoi_id']
+        query = Application.objects.select_related("partner").filter(eoi_id=eoi_id)
+
+        partner_ids = self.request.query_params.get("partner_ids")
+        if partner_ids is not None:
+            ids = filter(lambda x: x.isdigit(), partner_ids.split(","))
+            query = query.filter(partner__in=ids)
+
+        return query
