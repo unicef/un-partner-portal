@@ -1,9 +1,10 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import ControlledModal from '../../../common/modals/controlledModal';
-import { updateCfei } from '../../../../reducers/newCfei';
+import { convertCnToDS } from '../../../../reducers/cnConvertToDS';
 import ConvertToDirectSelectionForm from './convertToDirectSelectionForm';
 
 const messages = {
@@ -21,7 +22,9 @@ class ConvertToDirectSelectionModal extends Component {
 
   onFormSubmit(values) {
     this.props.handleDialogClose();
-    this.props.convertToDS({ ...values, status: 'Com' });
+    const focal = R.assoc('focal_points', [{ id: values.focal_points }], values);
+
+    this.props.convertToDS(focal);
   }
 
   render() {
@@ -65,7 +68,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  convertToDS: body => dispatch(updateCfei(body, ownProps.id)),
+  convertToDS: body => dispatch(convertCnToDS(body, ownProps.id)),
   submit: () => dispatch(submit('convertToDS')),
 });
 

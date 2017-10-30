@@ -8,7 +8,7 @@ import Duplicate from '../../buttons/duplicateButton';
 import Complete from '../../buttons/completeCfeiButton';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
-import CompleteCfeiModal from '../../modals/completeCfei.js/completeCfeiModal';
+import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
 
 const edit = 'edit';
 const duplicate = 'duplicate';
