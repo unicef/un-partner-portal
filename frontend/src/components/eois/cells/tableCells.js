@@ -6,7 +6,6 @@ import EoiStatusCell from './eoiStatusCell';
 import EoiCountryCell from './eoiCountryCell';
 import EoiPartnersCell from './eoiPartnersCell';
 import EoiNameCell from './eoiNameCell';
-import UnsolicitedSectorCell from './unsolicitedSectorCell';
 import IsDirectCell from './isDirectCell';
 import { formatDateForPrint } from '../../../helpers/dates';
 
@@ -23,15 +22,10 @@ export default type => ({ row, column }) => {
           </span>),
         )}
       </TableCell>);
-  } else if (column.name === 'specializations' && type !== 'unsolicited') {
+  } else if (column.name === 'specializations') {
     return (
       <TableCell >
         <EoiSectorCell data={row.specializations} id={row.id} />
-      </TableCell>);
-  } else if (column.name === 'specializations' && type === 'unsolicited') {
-    return (
-      <TableCell >
-        <UnsolicitedSectorCell data={row.specializations} id={row.id} />
       </TableCell>);
   } else if (column.name === 'agency') {
     return (

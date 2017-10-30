@@ -46,7 +46,6 @@ const saveConceptNote = (state, action) => {
 
 export const projectApplicationExists = partnerId => (dispatch) => {
   dispatch(uploadCnStarted());
-
   return getProjectApplication(partnerId)
     .then((profiles) => {
       dispatch(uploadCnEnded());
@@ -55,7 +54,6 @@ export const projectApplicationExists = partnerId => (dispatch) => {
     })
     .catch((error) => {
       dispatch(uploadCnEnded());
-      dispatch(uploadCnFailure(error));
     });
 };
 
@@ -73,17 +71,13 @@ const initialState = {
   error: { },
 };
 
-export const uploadPartnerConceptNote = projectId => (dispatch, getState) => {
-  const formData = new FormData();
-  formData.append('cn', getState().conceptNote.fileSelectedLocal);
-
+export const uploadPartnerConceptNote = (projectId, file) => (dispatch, getState) => {
   dispatch(uploadCnStarted());
-
-  return uploadConceptNote(projectId, formData)
+  return uploadConceptNote(projectId, file)
     .then((response) => {
       dispatch(uploadCnSuccess(response));
       dispatch(uploadCnEnded());
-      dispatch(selectLocalCnFile(null));
+      dispatch(loadPartnerApplication(projectId, response));
     })
     .catch((error) => {
       dispatch(uploadCnFailure(error));

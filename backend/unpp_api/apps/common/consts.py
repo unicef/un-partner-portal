@@ -127,10 +127,10 @@ MAILING_TYPES = Choices(
 )
 
 YEARS_OF_EXP_CHOICES = Choices(
-    ('Y01', 'less_1', 'Less than 1 year'),
-    ('Y15', 'years15', '1-5 years'),
-    ('Y51', 'years510', '5-10 years'),
-    ('Y10', 'more_10', '10+ years'),
+    ('YE1', 'less_1', 'Less than 1 year'),
+    ('YE2', 'years15', '1-5 years'),
+    ('YE3', 'years510', '5-10 years'),
+    ('YE4', 'more_10', '10+ years'),
 )
 
 CONCERN_CHOICES = Choices(
@@ -143,13 +143,13 @@ CONCERN_CHOICES = Choices(
 )
 
 STAFF_GLOBALLY_CHOICES = Choices(
-    ('005', 'to50', '1 to 50'),
-    ('010', 'to100', '51 to 100'),
-    ('020', 'to200', '101 to 200'),
-    ('050', 'to500', '201 to 500'),
-    ('100', 'to1000', '501 to 1000'),
-    ('500', 'to5000', '1001 to 5000'),
-    ('Mor', 'more5000', 'more than 5000'),
+    ('SG1', 'to50', '1 to 50'),
+    ('SG2', 'to100', '51 to 100'),
+    ('SG3', 'to200', '101 to 200'),
+    ('SG4', 'to500', '201 to 500'),
+    ('SG5', 'to1000', '501 to 1000'),
+    ('SG6', 'to5000', '1001 to 5000'),
+    ('SG7', 'more5000', 'more than 5000'),
 )
 
 POLICY_AREA_CHOICES = Choices(
@@ -215,12 +215,12 @@ COMPLETED_REASON = Choices(
 )
 
 BUDGET_CHOICES = Choices(
-    ('Les', 'less', "Less than $500,000"),
-    ('002', '_2', "$500,001 to $2,000,000"),
-    ('010', '_10', "$2,000,001 to $10,000,000"),
-    ('100', '_100', "$10,000,001 to $100,000,000"),
-    ('01m', '_1m', "$100,000,001 to $1,000,000,000"),
-    ('Mor', 'more', "More than $1,000,000,000"),
+    ('B01', 'less', "Less than $500,000"),
+    ('B02', '_2', "$500,001 to $2,000,000"),
+    ('B03', '_10', "$2,000,001 to $10,000,000"),
+    ('B04', '_100', "$10,000,001 to $100,000,000"),
+    ('B05', '_1m', "$100,000,001 to $1,000,000,000"),
+    ('B06', 'more', "More than $1,000,000,000"),
 )
 
 FLAG_TYPES = Choices(

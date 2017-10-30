@@ -81,7 +81,7 @@ OrganizationProfileContent.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  profileName: state.psession.name,
+  profileName: state.session.name,
   verifiedStatus: false,
 });
 

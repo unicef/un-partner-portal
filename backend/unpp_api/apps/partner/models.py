@@ -63,7 +63,7 @@ class Partner(TimeStampedModel):
 
     @property
     def is_hq(self):
-        return self.hq in [None, '']
+        return self.hq in [None, ''] and self.display_type == PARTNER_TYPES.international
 
     @property
     def country_profiles(self):
