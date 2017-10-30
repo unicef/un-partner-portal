@@ -30,6 +30,7 @@ class CompareApplicationsModal extends Component {
           title={messages.title}
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
+          removeContentPadding
           buttons={{ }}
           content={<CompareApplicationsContentContainer partners={partners} />}
         />
