@@ -1,8 +1,10 @@
+import R from 'ramda';
 import React from 'react';
 import { formValueSelector, FormSection } from 'redux-form';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
+import { withRouter } from 'react-router';
 import { visibleIfYes, visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
 import RadioForm from '../../../forms/radioForm';
 import FileForm from '../../../forms/fileForm';
@@ -136,12 +138,14 @@ PartnerProfileIdentificationRegistration.propTypes = {
 };
 
 const selector = formValueSelector('partnerProfile');
-const ConnectedPartnerProfileIdentificationRegistration = connect(
-  state => ({
-    isRegistered: selector(state, 'identification.registration.registration_to_operate_in_country'),
-    isCountryProfile: selector(state, 'identification.registration.hq'),
-    hasGovDoc: selector(state, 'identification.registration.have_gov_doc'),
-  }),
-)(PartnerProfileIdentificationRegistration);
+const connected = connect((state, ownProps) => {
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners);
 
-export default ConnectedPartnerProfileIdentificationRegistration;
+  return {
+    isCountryProfile: partner ? partner.is_hq : false,
+    isRegistered: selector(state, 'identification.registration.registration_to_operate_in_country'),
+    hasGovDoc: selector(state, 'identification.registration.have_gov_doc'),
+  };
+}, null)(PartnerProfileIdentificationRegistration);
+
+export default withRouter(connected);
