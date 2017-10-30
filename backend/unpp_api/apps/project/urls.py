@@ -43,7 +43,7 @@ urlpatterns = [
     url(r'^(?P<eoi_id>\d+)/applications/reviewers/$',
         EOIReviewersAssessmentsListAPIView.as_view(),
         name="eoi-reviewers-assessments"),
-    url(r'^(?P<eoi_id>\d+)/applications/reviewers/(?P<reviewer_id>\d+)/$',
+    url(r'^(?P<eoi_id>\d+)/applications/reviewers/(?P<reviewer_id>\d+)/notify/$',
         EOIReviewersAssessmentsNotifyAPIView.as_view(),
         name="eoi-reviewers-assessments-notify"),
     url(r'^(?P<eoi_id>\d+)/applications/awarded-partners/',
