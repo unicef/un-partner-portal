@@ -101,6 +101,7 @@ class DirectProjectAPIView(BaseProjectAPIView):
 
     serializer_class = DirectProjectSerializer
 
+    # TODO - can remove. not using?
     def get_partners_pks(self):
         # Partner Member can have many partners! This case is under construction and can change in future!
         return PartnerMember.objects.filter(user=self.request.user).values_list('partner', flat=True)
@@ -133,8 +134,7 @@ class PinProjectAPIView(BaseProjectAPIView):
     ERROR_MSG_WRONG_PARAMS = "Couldn't properly identify input parameters like 'eoi_ids' and 'pin'."
 
     def get_queryset(self):
-        member = get_object_or_404(PartnerMember, user=self.request.user)
-        return self.queryset.filter(pins__partner=member.partner)
+        return self.queryset.filter(pins__partner_id=self.request.active_partner.id)
 
     def patch(self, request, *args, **kwargs):
         eoi_ids = request.data.get("eoi_ids")
@@ -144,15 +144,15 @@ class PinProjectAPIView(BaseProjectAPIView):
                 {"error": self.ERROR_MSG_WRONG_EOI_PKS},
                 status=statuses.HTTP_400_BAD_REQUEST
             )
-        partner = PartnerMember.objects.get(user=request.user).partner
+        partner_id = self.request.active_partner.id
         if pin and len(eoi_ids) > 0:
             pins = []
             for eoi in eoi_ids:
-                pins.append(Pin(eoi_id=eoi, partner=partner, pinned_by=request.user))
+                pins.append(Pin(eoi_id=eoi, partner_id=partner_id, pinned_by=request.user))
             Pin.objects.bulk_create(pins)
             return Response({"eoi_ids": eoi_ids}, status=statuses.HTTP_201_CREATED)
         elif pin is False and len(eoi_ids) > 0:
-            Pin.objects.filter(eoi_id__in=eoi_ids, partner=partner, pinned_by=request.user).delete()
+            Pin.objects.filter(eoi_id__in=eoi_ids, partner_id=partner_id, pinned_by=request.user).delete()
             return Response(status=statuses.HTTP_204_NO_CONTENT)
         else:
             return Response(
@@ -188,11 +188,10 @@ class ApplicationPartnerAPIView(RetrieveAPIView):
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
         eoi_id = self.kwargs.get(self.lookup_field)
-        partner_member = PartnerMember.objects.filter(user=self.request.user).first()
-        if partner_member:
-            partner = partner_member.partner
+        partner_id = self.request.active_partner.id
+        if partner_id:
             obj = get_object_or_404(queryset, **{
-                'partner': partner,
+                'partner_id': partner_id,
                 'eoi_id': eoi_id,
             })
             self.check_object_permissions(self.request, obj)
@@ -344,9 +343,15 @@ class AppsPartnerUnsolicitedAPIView(ListCreateAPIView):
             return CreateUnsolicitedProjectSerializer
         return ApplicationPartnerUnsolicitedDirectSerializer
 
+    def get_queryset(self, *args, **kwargs):
+        return self.queryset.filter(partner_id=self.request.active_partner.id)
+
 
 class AppsPartnerDirectAPIView(AppsPartnerUnsolicitedAPIView):
     queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct)
+
+    def get_queryset(self, *args, **kwargs):
+        return self.queryset.filter(partner_id=self.request.active_partner.id)
 
 
 class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
