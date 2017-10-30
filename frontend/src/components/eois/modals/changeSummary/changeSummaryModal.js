@@ -5,6 +5,8 @@ import { submit, SubmissionError } from 'redux-form';
 import ControlledModal from '../../../common/modals/controlledModal';
 import { updateReviewSummary } from '../../../../reducers/cfeiReviewSummary';
 import ChangeSummaryForm from './changeSummaryForm';
+import { changedValues } from '../../../../helpers/apiHelper';
+import { selectCfeiReviewSummary } from '../../../../store';
 
 const messages = {
   title: (_, edit) => `${edit ? 'Edit' : 'Add'} Review Summary`,
@@ -20,8 +22,9 @@ class ChangeSummaryModal extends Component {
   }
 
   onFormSubmit(values) {
-    return this.props.updateReviewSummary(values)
-      .then(() => this.props.handleDialogClose())
+    const { handleDialogClose, updateReviewSummary, initSummary } = this.props;
+    return updateReviewSummary(changedValues(initSummary, values))
+      .then(() => handleDialogClose())
       .catch((error) => {
         const errorMsg = messages.error;
         throw new SubmissionError({
@@ -69,7 +72,12 @@ ChangeSummaryModal.propTypes = {
   edit: PropTypes.bool,
   updateReviewSummary: PropTypes.func,
   handleDialogClose: PropTypes.func,
+  initSummary: PropTypes.object,
 };
+
+const mapStateToProps = (state, ownProps) => ({
+  initSummary: selectCfeiReviewSummary(state, ownProps.cfeiId),
+});
 
 
 const mapDispatchToProps = (dispatch, ownProps) => {
@@ -78,11 +86,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     updateReviewSummary: body => dispatch(updateReviewSummary(
       cfeiId, body)),
     submit: () => dispatch(submit('changeSummary')),
-    clearError: () => dispatch(clearSubmitErrors('changeSummary')),
   };
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(ChangeSummaryModal);
