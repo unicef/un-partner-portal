@@ -4,6 +4,7 @@ from datetime import date
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
+from rest_framework.views import APIView
 from rest_framework.generics import (
     ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
 )
@@ -389,6 +390,27 @@ class EOIReviewersAssessmentsListAPIView(ListAPIView):
     def get_queryset(self):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
         return eoi.reviewers.all()
+
+
+class EOIReviewersAssessmentsNotifyAPIView(APIView):
+    """
+    Created Notification to reminder users
+    """
+
+    NOTIFICATION_MESSAGE_SENT = "Notification message sent successfully"
+    NOTIFICATION_MESSAGE_WAIT = "Notification message sent recently. Need to wait 24 hours."
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+
+    def post(self, request, *args, **kwargs):
+        eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
+        user = get_object_or_404(eoi.reviewers.all(), id=self.kwargs['reviewer_id'])
+        #TODO - send notification reminder email w/ notification enhancement
+
+        return Response(
+            {"success": self.NOTIFICATION_MESSAGE_SENT},
+            status=statuses.HTTP_201_CREATED
+        )
 
 
 class AwardedPartnersListAPIView(ListAPIView):
