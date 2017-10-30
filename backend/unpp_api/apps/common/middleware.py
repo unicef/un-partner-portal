@@ -1,5 +1,4 @@
 from django.utils.functional import SimpleLazyObject
-from django.conf import settings
 
 from partner.models import Partner
 
