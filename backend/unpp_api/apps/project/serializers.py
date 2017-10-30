@@ -679,7 +679,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
 
     partner_id = serializers.CharField(source='partner.id')
     partner_name = serializers.CharField(source='partner.legal_name')
-
+    cn = CommonFileSerializer()
     partner_notified = serializers.SerializerMethodField()
     partner_accepted_date = serializers.SerializerMethodField()
 
@@ -690,6 +690,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
         fields = (
             'partner_id',
             'partner_name',
+            'cn',
             'partner_notified',
             'partner_accepted_date',
             'body',
