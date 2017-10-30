@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from datetime import date
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
@@ -42,6 +43,9 @@ from .serializers import (
     ApplicationPartnerUnsolicitedDirectSerializer,
     ApplicationFeedbackSerializer,
     ConvertUnsolicitedSerializer,
+    ReviewSummarySerializer,
+    EOIReviewersAssessmentsSerializer,
+    AwardedPartnersSerializer,
 )
 from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
 
@@ -216,6 +220,13 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
+    def perform_update(self, serializer):
+        if serializer.validated_data.get('did_accept', False) and \
+                serializer.instance.did_accept_date is None:
+            serializer.save(did_accept_date=date.today())
+        else:
+            serializer.save()
+
 
 class ApplicationsListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
@@ -355,3 +366,37 @@ class ConvertUnsolicitedAPIView(CreateAPIView):
     serializer_class = ConvertUnsolicitedSerializer
     queryset = Application.objects.all()
     permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+
+
+class ReviewSummaryAPIView(RetrieveUpdateAPIView):
+    """
+    Endpoint for review summary - comment & attachement
+    """
+    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor,)
+    serializer_class = ReviewSummarySerializer
+    queryset = EOI.objects.all()
+
+
+class EOIReviewersAssessmentsListAPIView(ListAPIView):
+    """
+    Reviewers with they assessments - summary
+    """
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    queryset = User.objects.all()
+    serializer_class = EOIReviewersAssessmentsSerializer
+    lookup_field = 'eoi_id'
+
+    def get_queryset(self):
+        eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
+        return eoi.reviewers.all()
+
+
+class AwardedPartnersListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = AwardedPartnersSerializer
+    lookup_field = 'eoi_id'
+
+    def get_queryset(self):
+        eoi_id = self.kwargs['eoi_id']
+        return Application.objects.filter(
+            did_win=True, did_decline=False, did_withdraw=False, eoi_id=eoi_id)

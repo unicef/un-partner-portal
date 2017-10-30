@@ -45,7 +45,7 @@ export const loadCfei = (project, filters) => (dispatch) => {
 };
 
 const extractSector = list => ({
-  sector: list[0].category.toString(), areas: list.map(area => area.id.toString()) });
+  sector: list[0].category, areas: list.map(area => area.id) });
 
 const groupSpecializationsByCategory = () =>
   R.compose(R.map(extractSector), R.groupWith(R.eqProps('category')));
@@ -64,9 +64,7 @@ const normalizeCfei = cfeis =>
   );
 
 const saveCfei = (state, action) => {
-  const cfei = (action.project === PROJECT_TYPES.UNSOLICITED)
-    ? action.cfei
-    : normalizeCfei(action.cfei, action.getState);
+  const cfei = normalizeCfei(action.cfei, action.getState);
   const newState = R.assoc(`${action.project}Count`, action.count, state);
   return R.assoc(action.project, cfei, newState);
 };

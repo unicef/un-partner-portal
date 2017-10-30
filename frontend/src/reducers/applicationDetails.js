@@ -17,9 +17,6 @@ export const UPDATE_APPLICATION_PARTNER_NAME = 'UPDATE_APPLICATION_PARTNER_NAME'
 export const loadApplicationSummary = (id, status, name) => (
   { type: LOAD_APPLICATION_SUMMARY, id, status, name });
 
-export const updateApplicationPartnerName = (partnerName, id) => (
-  { type: UPDATE_APPLICATION_PARTNER_NAME, partnerName, id });
-
 export const loadApplication = id => (dispatch, getState) => {
   dispatch(loadApplicationDetailStarted());
   return getApplicationDetails(id)
@@ -44,14 +41,6 @@ export const updateApplication = (applicationId, body) => (dispatch, getState) =
 const saveApplication = (state, action) =>
   R.assoc(action.application.id, R.mergeDeepRight(state[action.application.id], action.application), state);
 
-const saveNewApplicationPartnerName = (state, action) => {
-  const application = R.assoc(
-    'partner_name',
-    action.partnerName.legal_name,
-    state[action.id]);
-  return R.assoc(action.id, application, state);
-};
-
 export function selectApplication(state, id) {
   return state[id] ? state[id] : null;
 }
@@ -61,7 +50,7 @@ export function selectApplicationStatus(state, id) {
 }
 
 export function selectApplicationPartnerName(state, id) {
-  return state[id] ? state[id].partner_name : '';
+  return state[id] ? state[id].partner.legal_name : '';
 }
 
 export function selectApplicationProject(state, id) {
@@ -84,9 +73,6 @@ const applicationDetails = (state = initialState, action) => {
     }
     case LOAD_APPLICATION_SUMMARY: {
       return saveApplicationSync(state, action);
-    }
-    case UPDATE_APPLICATION_PARTNER_NAME: {
-      return saveNewApplicationPartnerName(state, action);
     }
     default:
       return state;

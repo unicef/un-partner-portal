@@ -7,18 +7,16 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
-from account.serializers import AgencyUserSerializer, IDUserSerializer
+from account.serializers import AgencyUserSerializer, IDUserSerializer, UserSerializer
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer
-from common.models import Point
+from common.models import Point, Specialization
 from partner.serializers import PartnerSerializer
-
-from partner.models import Partner, PartnerMember
+from partner.models import Partner
 from .models import EOI, Application, Assessment, ApplicationFeedback
 
 
@@ -133,14 +131,34 @@ class ApplicationPartnerSerializer(serializers.ModelSerializer):
         model = Application
         fields = ('id', 'cn', 'created')
 
+
+class ProposalEOIDetailsSerializer(serializers.Serializer):
+    specializations = serializers.SerializerMethodField()
+    title = serializers.CharField()
+
+    def get_specializations(self, obj):
+        return SimpleSpecializationSerializer(Specialization.objects.filter(id__in=obj.get('specializations')),
+                                              many=True).data
+
+
+# TODO - break this up into different serializers for different purposes
 class ApplicationFullSerializer(serializers.ModelSerializer):
 
     cn = CommonFileSerializer()
+    partner = PartnerSerializer(read_only=True)
+    agency = AgencySerializer(read_only=True)
+    proposal_of_eoi_details = ProposalEOIDetailsSerializer(read_only=True)
+    locations_proposal_of_eoi = PointSerializer(many=True, read_only=True)
+    submitter = UserSerializer(read_only=True)
+    is_direct = serializers.SerializerMethodField()
 
     class Meta:
         model = Application
         fields = '__all__'
-        read_only_fields = ('eoi', 'submitter', 'partner', 'agency',)
+        read_only_fields = ('eoi',)
+
+    def get_is_direct(self, obj):
+        return obj.eoi_converted is not None
 
 
 class CreateUnsolicitedProjectSerializer(serializers.Serializer):
@@ -472,9 +490,6 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
         )
 
     def get_project_title(self, obj):
-        if obj.eoi:
-            # has been updated to direct selected
-            return obj.eoi.title
         return obj.proposal_of_eoi_details.get('title')
 
     def get_country(self, obj):
@@ -488,11 +503,11 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             return get_countries_code_from_queryset(country)
         return None
 
+    # TODO - need to make field names between here and application details the same
+    # application details uses nested under proposal_of_eoi_details
     def get_specializations(self, obj):
-        if obj.eoi:
-            # has been updated to direct selected
-            return obj.eoi.specializations.all().values_list('id', flat=True)
-        return obj.proposal_of_eoi_details.get('specializations')
+        return SimpleSpecializationSerializer(Specialization.objects.filter(id__in=obj.proposal_of_eoi_details.get('specializations')),
+                                              many=True).data
 
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
@@ -592,3 +607,91 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         )
 
         return ds_app
+
+
+class ReviewSummarySerializer(serializers.ModelSerializer):
+
+    review_summary_attachment = CommonFileSerializer()
+
+    class Meta:
+        model = EOI
+        fields = (
+            'review_summary_comment', 'review_summary_attachment'
+        )
+
+
+class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
+    __apps_count = None
+    user_id = serializers.CharField(source='id')
+    user_name = serializers.CharField(source='get_user_name')
+    assessments = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'user_id',
+            'user_name',
+            'assessments',
+        )
+
+    def get_assessments(self, obj):
+        lookup_field = self.context['view'].lookup_field
+        eoi_id = self.context['request'].parser_context['kwargs'][lookup_field]
+        if self.__apps_count is None:
+            eoi = get_object_or_404(EOI, id=eoi_id)
+            self.__apps_count = eoi.applications.filter(status=APPLICATION_STATUSES.preselected).count()
+
+        obj.assessments.filter()
+        asses_count = Assessment.objects.filter(reviewer=obj, application__eoi_id=eoi_id).count()
+
+        return {
+            'counts': "{}/{}".format(asses_count, self.__apps_count),
+            'send_reminder': not (self.__apps_count == asses_count),
+            'eoi_id': eoi_id,  # use full for front-end to easier construct send reminder url
+        }
+
+
+class AwardedPartnersSerializer(serializers.ModelSerializer):
+
+    partner_id = serializers.CharField(source='partner.id')
+    partner_name = serializers.CharField(source='partner.legal_name')
+
+    partner_notified = serializers.SerializerMethodField()
+    partner_accepted_date = serializers.SerializerMethodField()
+
+    body = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Application
+        fields = (
+            'partner_id',
+            'partner_name',
+            'partner_notified',
+            'partner_accepted_date',
+            'body',
+        )
+
+    def get_body(self, obj):
+        assessments_count = obj.assessments.count()
+        assessments = obj.assessments.all()
+        notes = []
+        for assessment in assessments:
+            notes.append({
+                'note': assessment.note,
+                'reviewer': assessment.reviewer.get_user_name(),
+            })
+
+
+        return {
+            'criteria': obj.get_scores_by_selection_criteria(),
+            'notes': notes,
+            'avg_total_score': obj.average_total_score,
+            'assessment_count': assessments_count,
+
+        }
+
+    def get_partner_notified(self, obj):
+        return obj.accept_notification and obj.accept_notification.created
+
+    def get_partner_accepted_date(self, obj):
+        return obj.did_accept_date and obj.did_accept_date
