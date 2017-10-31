@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
-from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -33,16 +32,16 @@ class NotificationsAPIView(ListAPIView):
         return Response(msg)
 
 
-class NotificationAPIView(RetrieveUpdateAPIView):
+class NotificationAPIView(RetrieveAPIView):
     permission_classes = (IsAuthenticated, IsNotifiedOwner)
     serializer_class = NotificationSerializer
     queryset = Notification.objects.all()
 
-    def get_object(self):
-        obj = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
-        self.check_object_permissions(self.request, obj)
-        notified = obj.notified.filter(recipient=self.request.user).get()  # one notified per user
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        notified = instance.notified.filter(recipient=self.request.user).get()  # one notified per user
         if notified.did_read is False:
             notified.did_read = True
             notified.save()
-        return obj
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
