@@ -22,9 +22,10 @@ const messages = {
     status: 'Status',
     sector: 'Sector & Area of specialization',
     agency: 'Agency',
-    data: 'Data Posted - choose date range',
+    direct: 'Direct Selection Source',
   },
   clear: 'clear',
+  clear: 'submit',
 };
 
 const styleSheet = theme => ({
