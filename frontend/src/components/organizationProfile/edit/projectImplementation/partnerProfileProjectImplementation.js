@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { withRouter, browserHistory as history } from 'react-router';
-import { getFormInitialValues, SubmissionError, formValueSelector } from 'redux-form';
+import { getFormInitialValues, SubmissionError } from 'redux-form';
 import PartnerProfileProjectImplementationManagement from './partnerProfileProjectImplementationManagement';
 import PartnerProfileProjectImplementationFinancialControls from './partnerProfileProjectImplementationFinancialControls';
 import PartnerProfileProjectImplementationInternalControls from './partnerProfileProjectImplementationInternalControls';
@@ -135,13 +135,16 @@ PartnerProfileProjectImplementation.propTypes = {
   tabs: PropTypes.array,
 };
 
-const selector = formValueSelector('partnerProfile');
-const mapState = (state, ownProps) => ({
-  isCountryProfile: selector(state, 'identification.registration.hq'),
-  partnerId: ownProps.params.id,
-  tabs: state.partnerProfileDetailsNav.tabs,
-  initialValues: getFormInitialValues('partnerProfile')(state),
-});
+const mapState = (state, ownProps) => {
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners);
+
+  return {
+    isCountryProfile: partner ? partner.is_hq : false,
+    partnerId: ownProps.params.id,
+    tabs: state.partnerProfileDetailsNav.tabs,
+    initialValues: getFormInitialValues('partnerProfile')(state),
+  };
+};
 
 const mapDispatch = dispatch => ({
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
