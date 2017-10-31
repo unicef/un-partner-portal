@@ -22,10 +22,13 @@ const styleSheet = (theme) => {
 
 class HeaderList extends Component {
   renderChildren() {
-    return this.props.rows.map(item =>
-      (<div className={this.props.classes.container}><Divider />
-        {item}
-      </div>));
+    if (Array.isArray(this.props.rows)) {
+      return this.props.rows.map(item =>
+        (<div className={this.props.classes.container}><Divider />
+          {item}
+        </div>));
+    }
+    return this.props.rows;
   }
 
   render() {

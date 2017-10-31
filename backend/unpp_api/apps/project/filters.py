@@ -30,7 +30,7 @@ class BaseProjectFilter(django_filters.FilterSet):
         return queryset.filter(title__icontains=value)
 
     def get_country_code(self, queryset, name, value):
-        return queryset.filter(country_code=(value and value.upper()))
+        return queryset.filter(locations__admin_level_1__country_code=(value and value.upper()))
 
     def get_locations(self, queryset, name, value):
         return queryset.filter(locations__admin_level_1=value)
