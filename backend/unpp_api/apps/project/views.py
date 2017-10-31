@@ -411,9 +411,11 @@ class CompareSelectedListAPIView(ListAPIView):
         eoi_id = self.kwargs['eoi_id']
         query = Application.objects.select_related("partner").filter(eoi_id=eoi_id)
 
-        partner_ids = self.request.query_params.get("partner_ids")
-        if partner_ids is not None:
-            ids = filter(lambda x: x.isdigit(), partner_ids.split(","))
-            query = query.filter(partner__in=ids)
+        application_ids = self.request.query_params.get("application_ids")
+        if application_ids is not None:
+            ids = filter(lambda x: x.isdigit(), application_ids.split(","))
+            query = query.filter(id__in=ids)
+        else:
+            query.none()
 
         return query
