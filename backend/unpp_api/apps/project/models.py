@@ -67,6 +67,10 @@ class EOI(TimeStampedModel):
         return self.display_type == EOI_TYPES.direct
 
     @property
+    def is_completed(self):
+        return self.completed_reason is not None
+
+    @property
     def is_overdue_deadline(self):
         return self.deadline_date < date.today()
 

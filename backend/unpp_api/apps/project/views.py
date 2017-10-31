@@ -24,6 +24,11 @@ from common.permissions import (
     IsEOIReviewerAssessments,
     IsPartner,
 )
+from notification.helpers import (
+    send_notification_cfei_completed,
+    send_notification_application_updated,
+    send_notificiation_application_created,
+)
 from partner.models import PartnerMember
 from .models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from .serializers import (
@@ -48,6 +53,7 @@ from .serializers import (
     EOIReviewersAssessmentsSerializer,
     AwardedPartnersSerializer,
 )
+
 from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
 
 
@@ -93,6 +99,13 @@ class EOIAPIView(RetrieveUpdateAPIView):
         if self.request.user.is_agency_user:
             return ProjectUpdateSerializer
         return PartnerProjectSerializer
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+
+        if instance.is_completed:
+            send_notification_cfei_completed(instance)
+
 
 
 class DirectProjectAPIView(BaseProjectAPIView):
@@ -172,10 +185,12 @@ class ApplicationsPartnerAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         eoi = get_object_or_404(EOI, id=self.kwargs['pk'])
-        serializer.save(eoi=eoi,
-                        submitter_id=self.request.user.id,
-                        partner_id=self.request.active_partner.id,
-                        agency=eoi.agency)
+        instance = serializer.save(eoi=eoi,
+                                   submitter_id=self.request.user.id,
+                                   partner_id=self.request.active_partner.id,
+                                   agency=eoi.agency)
+
+        send_notificiation_application_created(instance)
 
 
 class ApplicationPartnerAPIView(RetrieveAPIView):
@@ -210,9 +225,12 @@ class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
 
     def perform_create(self, serializer):
         eoi = get_object_or_404(EOI, id=self.kwargs['pk'])
-        serializer.save(did_win=True, eoi=eoi,
-                        submitter_id=self.request.user.id,
-                        agency=eoi.agency)
+        instance = serializer.save(did_win=True,
+                                   eoi=eoi,
+                                   submitter_id=self.request.user.id,
+                                   agency=eoi.agency)
+
+        send_notificiation_application_created(instance)
 
 
 class ApplicationAPIView(RetrieveUpdateAPIView):
@@ -223,9 +241,12 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         if serializer.validated_data.get('did_accept', False) and \
                 serializer.instance.did_accept_date is None:
-            serializer.save(did_accept_date=date.today())
+            instance = serializer.save(did_accept_date=date.today())
         else:
-            serializer.save()
+            instance = serializer.save()
+
+        send_notification_application_updated(instance)
+
 
 
 class ApplicationsListAPIView(ListAPIView):
@@ -347,6 +368,11 @@ class AppsPartnerUnsolicitedAPIView(ListCreateAPIView):
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id=self.request.active_partner.id)
 
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        send_notificiation_application_created(instance)
+
+
 
 class AppsPartnerDirectAPIView(AppsPartnerUnsolicitedAPIView):
     queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct)
@@ -372,6 +398,10 @@ class ConvertUnsolicitedAPIView(CreateAPIView):
     serializer_class = ConvertUnsolicitedSerializer
     queryset = Application.objects.all()
     permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        send_notificiation_application_created(instance)
 
 
 class ReviewSummaryAPIView(RetrieveUpdateAPIView):
