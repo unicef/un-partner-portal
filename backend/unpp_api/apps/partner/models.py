@@ -81,6 +81,13 @@ class Partner(TimeStampedModel):
     def is_verified(self):
         return self.verifications.filter(is_verified=True).exists()
 
+    @property
+    def flagging_status(self):
+        return {
+            'yellow': self.flags.filter(flag_type=FLAG_TYPES.yellow).count(),
+            'red': self.flags.filter(flag_type=FLAG_TYPES.red).count(),
+        }
+
 
 class PartnerProfile(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="profile")

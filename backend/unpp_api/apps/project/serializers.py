@@ -701,7 +701,7 @@ class CompareSelectedSerializer(serializers.ModelSerializer):
     partner_name = serializers.CharField(source='partner.legal_name')
     total_assessment_score = serializers.IntegerField(source='average_total_score')
     verification_status = serializers.BooleanField(source="partner.is_verified")
-    flagging_status = serializers.SerializerMethodField()
+    flagging_status = serializers.JSONField(source="partner.flagging_status")
     annual_budget = serializers.SerializerMethodField()
     un_exp = serializers.SerializerMethodField()
     # key_results = TODO or rm
