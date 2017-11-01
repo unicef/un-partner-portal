@@ -4,6 +4,8 @@ from rest_framework import serializers
 
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
+    MEMBER_ROLES,
+    MEMBER_STATUSES,
 )
 from partner.models import (
     Partner,
@@ -93,6 +95,8 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         partner_member = validated_data['partner_member']
         partner_member['partner_id'] = self.partner.id
         partner_member['user_id'] = self.user.id
+        partner_member['role'] = MEMBER_ROLES.admin
+        partner_member['status'] = MEMBER_STATUSES.active
         self.partner_member = PartnerMember.objects.create(**validated_data['partner_member'])
 
         user_data = RegisterSimpleAccountSerializer(instance=self.user).data

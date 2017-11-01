@@ -5,7 +5,7 @@ import Grid from 'material-ui/Grid';
 import Result from './result';
 import Feedback from '../../../../applications/feedback/feedbackContainer';
 import { selectPartnerApplicationDetails } from '../../../../../store';
-
+import AgencyResults from './agencyResults/resultsContainer';
 import { ROLES } from '../../../../../helpers/constants';
 
 const Results = (props) => {
@@ -22,7 +22,7 @@ const Results = (props) => {
       </Grid>
     );
   }
-  return <div />;
+  return <AgencyResults id={id} />;
 };
 
 Results.propTypes = {

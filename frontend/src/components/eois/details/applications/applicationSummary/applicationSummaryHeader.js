@@ -57,6 +57,7 @@ class ApplicationSummaryHeader extends Component {
       if (didWin) {
         return (<WithdrawApplicationButton
           disabled={disabled}
+          raised
           applicationId={applicationId}
         />);
       }

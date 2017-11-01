@@ -383,6 +383,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
     type_org = serializers.CharField(source="partner.display_type")
     cn = CommonFileSerializer()
     your_score = serializers.SerializerMethodField()
+    your_score_breakdown = serializers.SerializerMethodField()
     review_progress = serializers.SerializerMethodField()
 
     class Meta:
@@ -395,15 +396,23 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'cn',
             'average_total_score',
             'your_score',
+            'your_score_breakdown',
             'review_progress',
         )
 
-    def get_your_score(self, obj):
+    def _get_my_assessment(self, obj):
         assess_qs = obj.assessments.filter(reviewer=self.context['request'].user)
         if assess_qs.exists():
-            assessment = assess_qs.first()
-            return assessment.total_score
+            return assess_qs.first()
         return None
+
+    def get_your_score(self, obj):
+        my_assessment = self._get_my_assessment(obj)
+        return my_assessment.total_score if my_assessment else None
+
+    def get_your_score_breakdown(self, obj):
+        my_assessment = self._get_my_assessment(obj)
+        return my_assessment.get_scores_as_dict() if my_assessment else None
 
     def get_review_progress(self, obj):
         return "{}/{}".format(obj.assessments.count(), obj.eoi.reviewers.count())
@@ -670,7 +679,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
 
     partner_id = serializers.CharField(source='partner.id')
     partner_name = serializers.CharField(source='partner.legal_name')
-
+    cn = CommonFileSerializer()
     partner_notified = serializers.SerializerMethodField()
     partner_accepted_date = serializers.SerializerMethodField()
 
@@ -681,6 +690,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
         fields = (
             'partner_id',
             'partner_name',
+            'cn',
             'partner_notified',
             'partner_accepted_date',
             'body',

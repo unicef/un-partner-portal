@@ -30,7 +30,7 @@ class BaseProjectFilter(django_filters.FilterSet):
         return queryset.filter(title__icontains=value)
 
     def get_country_code(self, queryset, name, value):
-        return queryset.filter(country_code=(value and value.upper()))
+        return queryset.filter(locations__admin_level_1__country_code=(value and value.upper()))
 
     def get_locations(self, queryset, name, value):
         return queryset.filter(locations__admin_level_1=value)
@@ -103,7 +103,7 @@ class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
 
     def get_project_title(self, queryset, name, value):
         return queryset.filter(
-            Q(proposal_of_eoi_details__contains={"title": value}) |  # unsolicited
+            Q(proposal_of_eoi_details__title__icontains=value) |  # unsolicited
             Q(eoi__title__contains=value)  # direct selection - developed from unsolicited
         )
 

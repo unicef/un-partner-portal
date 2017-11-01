@@ -1,6 +1,8 @@
+import R from 'ramda';
 import React from 'react';
 import { formValueSelector, FormSection } from 'redux-form';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
@@ -88,9 +90,15 @@ PartnerProfileMandateCountryPresence.propTypes = {
 };
 
 const selector = formValueSelector('partnerProfile');
-export default connect(
-  state => ({
+const connected = connect((state, ownProps) => {
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners);
+
+  return {
+    isCountryProfile: partner ? partner.is_hq : false,
+
     countries: selectNormalizedCountries(state),
     staffGlobally: selectNormalizedStaffGlobalyChoices(state),
-    isCountryProfile: selector(state, 'identification.registration.hq'),
-  }))(PartnerProfileMandateCountryPresence);
+  };
+}, null)(PartnerProfileMandateCountryPresence);
+
+export default withRouter(connected);
