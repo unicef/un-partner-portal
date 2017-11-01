@@ -28,6 +28,7 @@ from notification.helpers import (
     send_notification_cfei_completed,
     send_notification_application_updated,
     send_notificiation_application_created,
+    send_notification
 )
 from partner.models import PartnerMember
 from .models import Assessment, Application, EOI, Pin, ApplicationFeedback
@@ -101,7 +102,15 @@ class EOIAPIView(RetrieveUpdateAPIView):
         return PartnerProjectSerializer
 
     def perform_update(self, serializer):
+        eoi = self.get_object()
+        curr_invited_parters = list(eoi.invited_partners.all().values_list('id', flat=True))
+
         instance = serializer.save()
+
+        for partner in instance.invited_partners.all():
+            if partner.id not in curr_invited_parters:
+                send_notification('cfei_invitation', eoi, partner.get_users(),
+                                  check_sent_for_source=False)
 
         if instance.is_completed:
             send_notification_cfei_completed(instance)

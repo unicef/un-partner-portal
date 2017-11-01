@@ -63,7 +63,7 @@ NOTIFICATION_KINDS = {
     },
 
     'cfei_invitation': {
-            'template_name': 'New_CFEI_inviting',
+            'template_name': 'New_CFEI_Inviting',
             'subject': ''
     },
 

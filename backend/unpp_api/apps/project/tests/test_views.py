@@ -158,7 +158,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['id'], eoi.id)
         self.assertTrue(Partner.objects.first().id in response.data['invited_partners'])
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
-
+        self.assertEqual(len(mail.outbox), 1)
         payload = {
             "invited_partners": [
                 Partner.objects.last().id,
@@ -385,7 +385,6 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
         self.assertEqual(len(mail.outbox), 1)
-        print mail.outbox[0].message()
 
         # accept offer
         payload = {

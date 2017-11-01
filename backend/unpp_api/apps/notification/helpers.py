@@ -27,10 +27,21 @@ def feed_alert(source, subject, body, users, obj):
     NotifiedUser.objects.bulk_create(notified_users)
 
 
-def send_notification(source, obj, users, context=None, send_in_feed=True):
+def send_notification(source, obj, users, context=None, send_in_feed=True,
+                      check_sent_for_source=True):
+    """
+        source - key of dict in notification + unique check against
+        obj - object directly associated w/ notification. generic fk to it
+        users - users who are receiving notif
+        context - context to provide to template for email or body of notif
+        send_in_feed - create notification feed element
+        check_sent_for_source - checks to confirm no duplicates are sent for source + object. false bypasses
 
-    if notif_already_sent(obj, source):
-        return
+    """
+
+    if check_sent_for_source:
+        if notif_already_sent(obj, source):
+            return
 
     notif_dict = NOTIFICATION_KINDS.get(source)
 
@@ -150,12 +161,6 @@ def send_account_approval_rejection_sanctions_list(context, users, obj=None):
 
 def send_account_creation_rejection(context, users, obj=None):
     source = 'account_approval_rejection_application_duplicate'
-    subject = "Title"
-    send_notification(subject, source, context, obj, users)
-
-
-def send_new_cfei_inviting(context, users, obj=None):
-    source = 'New_CFEI_inviting'
     subject = "Title"
     send_notification(subject, source, context, obj, users)
 

@@ -79,7 +79,7 @@ class Partner(TimeStampedModel):
         return self.flags.filter(flag_type=FLAG_TYPES.red).exists()
 
     def get_users(self):
-        return User.objects.filter(partner_members__partner=application.partner)
+        return User.objects.filter(partner_members__partner=self)
 
 
 
