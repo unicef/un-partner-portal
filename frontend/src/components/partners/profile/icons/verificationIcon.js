@@ -11,15 +11,15 @@ import { withStyles } from 'material-ui/styles';
 const styleSheet = theme => ({
   iconNotVerified: {
     fill: theme.palette.primary[500],
-    margin: `0 0 0 ${theme.spacing.unit}px`,
+    margin: 0,
   },
   iconVerified: {
     fill: theme.palette.common.statusOk,
-    margin: `0 0 0 ${theme.spacing.unit}px`,
+    margin: 0,
   },
   iconUnverified: {
     fill: theme.palette.error[500],
-    margin: `0 0 0 ${theme.spacing.unit}px`,
+    margin: 0,
   },
 });
 

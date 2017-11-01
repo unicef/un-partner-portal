@@ -14,7 +14,7 @@ const CompareButton = (props) => {
   return (
     <div>
       <IconWithTooltipButton
-        id={1}
+        id={id}
         icon={<Compare />}
         name="compare"
         text={messages.text}
@@ -22,7 +22,7 @@ const CompareButton = (props) => {
         {...other}
       />
       <CompareModal
-        partners={rows}
+        applications={rows.map(row => row.id)}
         dialogOpen={dialogOpen}
         handleDialogClose={handleDialogClose}
       />
@@ -36,10 +36,6 @@ CompareButton.propTypes = {
   dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
-};
-
-CompareButton.defaultProps = {
-  id: 1,
 };
 
 export default withDialogHandling(CompareButton);
