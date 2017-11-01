@@ -45,7 +45,6 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
         return EOI.objects.filter(created__gte=self._get_days_ago_date(),
                                   display_type=EOI_TYPES.open).count()
 
-
     def get_num_cn_to_score(self, obj):
         user = self.context['request'].user
         open_eois_as_reviewer = user.eoi_as_reviewer.filter(completed_reason=None,
@@ -53,7 +52,6 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
 
         applications = Application.objects.filter(eoi__in=open_eois_as_reviewer).exclude(assessments__reviewer=user)
         return applications.count()
-
 
     def get_partner_breakdown(self, obj):
         return {
@@ -67,7 +65,11 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Agency
-        fields = "__all__"
+        fields = ('new_partners_last_15_count',
+                  'new_partners_last_15_by_day_count',
+                  'new_cfei_last_15_by_day_count',
+                  'num_cn_to_score',
+                  'partner_breakdown',)
 
 class PartnerDashboardSerializer(serializers.ModelSerializer):
 
