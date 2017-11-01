@@ -127,6 +127,10 @@ const getTheme = () => (
         red: '#EA4022',
         blue: '#0099FF',
       },
+      flags: {
+        red: '#D50000',
+        yellow: '#FFC400',
+      },
     },
     overrides: {
       ...theme.overrides,

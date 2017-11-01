@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Typography from 'material-ui/Typography';
 import HeaderList from '../../../../common/list/headerList';
 import PartnerOverviewVerificationMenu from './partnerOverviewVerificationMenu';
-import { AGENCY_MEMBERS_POSITIONS } from '../../../../../helpers/constants';
+import { isUserAgencyReader } from '../../../../../helpers/authHelpers';
 import VerificationContent from './verificationContent';
 
 const messages = {
@@ -42,7 +42,7 @@ PartnerOverviewVerification.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  menuVisible: state.session.position !== AGENCY_MEMBERS_POSITIONS.READER,
+  menuVisible: !isUserAgencyReader(state),
 });
 
 export default connect(mapStateToProps)(PartnerOverviewVerification);
