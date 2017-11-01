@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import GridColumn from '../../../common/grid/gridColumn';
 import PartnerOverviewSummary from './partnerOverviewSummary';
 import PartnerOverviewVerification from './verification/partnerOverviewVerification';
-import PartnerOverviewFlag from './partnerOverviewFlag';
+import PartnerOverviewFlag from './flags/partnerOverviewFlag';
 
 const PartnerOverview = (props) => {
   const { partner, params: { id } } = props;
@@ -19,7 +19,7 @@ const PartnerOverview = (props) => {
       <Grid item xs={12} sm={4}>
         <GridColumn>
           <PartnerOverviewVerification partnerId={id} />
-          <PartnerOverviewFlag partner={partner} />
+          <PartnerOverviewFlag partnerId={id} partner={partner} />
         </GridColumn>
       </Grid>
     </Grid>);
