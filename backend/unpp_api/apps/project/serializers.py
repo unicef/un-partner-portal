@@ -11,7 +11,7 @@ from rest_framework import serializers
 from account.models import User
 from account.serializers import AgencyUserSerializer, IDUserSerializer, UserSerializer
 from agency.serializers import AgencySerializer
-from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
+from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE, FLAG_TYPES
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer
 from common.models import Point, Specialization
@@ -706,13 +706,11 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
                 'reviewer': assessment.reviewer.get_user_name(),
             })
 
-
         return {
             'criteria': obj.get_scores_by_selection_criteria(),
             'notes': notes,
             'avg_total_score': obj.average_total_score,
             'assessment_count': assessments_count,
-
         }
 
     def get_partner_notified(self, obj):
@@ -720,3 +718,41 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
 
     def get_partner_accepted_date(self, obj):
         return obj.did_accept_date and obj.did_accept_date
+
+
+class CompareSelectedSerializer(serializers.ModelSerializer):
+
+    partner_id = serializers.IntegerField(source='partner.id')
+    partner_name = serializers.CharField(source='partner.legal_name')
+    total_assessment_score = serializers.IntegerField(source='average_total_score')
+    verification_status = serializers.BooleanField(source="partner.is_verified")
+    flagging_status = serializers.JSONField(source="partner.flagging_status")
+    annual_budget = serializers.SerializerMethodField()
+    un_exp = serializers.SerializerMethodField()
+    # key_results = TODO or rm
+
+    class Meta:
+        model = Application
+        fields = (
+            'partner_id',
+            'partner_name',
+            'eoi_id',
+            'total_assessment_score',
+            'verification_status',
+            'flagging_status',
+            'un_exp',
+            'annual_budget',
+            # 'key_results',
+        )
+
+    def get_flagging_status(self, obj):
+        return {
+            'yellow': obj.partner.flags.filter(flag_type=FLAG_TYPES.yellow).count(),
+            'red': obj.partner.flags.filter(flag_type=FLAG_TYPES.red).count(),
+        }
+
+    def get_annual_budget(self, obj):
+        return obj.partner.profile.annual_budget
+
+    def get_un_exp(self, obj):
+        return ", ".join(obj.partner.collaborations_partnership.all().values_list('agency__name', flat=True))

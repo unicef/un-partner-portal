@@ -22,6 +22,7 @@ from .views import (
     EOIReviewersAssessmentsListAPIView,
     AwardedPartnersListAPIView,
     EOIReviewersAssessmentsNotifyAPIView,
+    CompareSelectedListAPIView,
 )
 
 
@@ -46,6 +47,9 @@ urlpatterns = [
     url(r'^(?P<eoi_id>\d+)/applications/reviewers/(?P<reviewer_id>\d+)/notify/$',
         EOIReviewersAssessmentsNotifyAPIView.as_view(),
         name="eoi-reviewers-assessments-notify"),
+    url(r'^(?P<eoi_id>\d+)/applications/compare-selected/',
+        CompareSelectedListAPIView.as_view(),
+        name="compare-selected"),
     url(r'^(?P<eoi_id>\d+)/applications/awarded-partners/',
         AwardedPartnersListAPIView.as_view(),
         name="applications-awarded-partners"),
