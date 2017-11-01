@@ -6,6 +6,7 @@ from datetime import date, timedelta
 
 from django.urls import reverse
 from django.conf import settings
+from django.core import mail
 from rest_framework import status as statuses
 
 from account.models import User
@@ -383,6 +384,8 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
+        self.assertEqual(len(mail.outbox), 1)
+        print mail.outbox[0].message()
 
         # accept offer
         payload = {
