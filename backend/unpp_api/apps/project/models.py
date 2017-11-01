@@ -63,6 +63,10 @@ class EOI(TimeStampedModel):
         return "EOI {} <pk:{}>".format(self.title, self.id)
 
     @property
+    def is_open(self):
+        return self.display_type == EOI_TYPES.open
+
+    @property
     def is_direct(self):
         return self.display_type == EOI_TYPES.direct
 
@@ -99,6 +103,14 @@ class Pin(TimeStampedModel):
         return "Pin <pk:{}> (eoi:{})".format(self.id, self.eoi_id)
 
 
+class ApplicationQuerySet(models.QuerySet):
+    def winners(self):
+        return self.filter(did_win=True, did_accept=True, did_withdraw=False)
+
+    def losers(self):
+        return self.filter(did_win=False)
+
+
 class Application(TimeStampedModel):
     is_unsolicited = models.BooleanField(default=False, verbose_name='Is unsolicited?')
     proposal_of_eoi_details = JSONField(
@@ -131,6 +143,8 @@ class Application(TimeStampedModel):
     eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion",
                                          null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
+
+    objects = ApplicationQuerySet.as_manager()
 
     class Meta:
         ordering = ['id']
