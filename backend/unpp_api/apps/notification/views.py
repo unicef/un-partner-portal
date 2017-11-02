@@ -6,6 +6,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from common.paginations import MediumPagination
 from .serializers import NotifiedUserSerializer, NotificationSerializer, NotifiedSerializer
 from .models import NotifiedUser, Notification
 from .permissions import IsNotifiedOwner
@@ -15,6 +16,7 @@ class NotificationsAPIView(ListAPIView):
 
     permission_classes = (IsAuthenticated, )
     serializer_class = NotifiedUserSerializer
+    pagination_class = MediumPagination
 
     def get_queryset(self):
         return NotifiedUser.objects.filter(recipient=self.request.user)
