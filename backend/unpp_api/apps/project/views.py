@@ -25,6 +25,7 @@ from common.permissions import (
     IsPartner,
 )
 from notification.helpers import (
+    get_partner_users_for_app_qs,
     send_notification_cfei_completed,
     send_notification_application_updated,
     send_notificiation_application_created,
@@ -87,7 +88,14 @@ class OpenProjectAPIView(BaseProjectAPIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
 
-        serializer.save()
+        instance = serializer.save()
+
+        if instance.reviewers.exists():
+            send_notification('agency_cfei_reviewers_selected', instance,
+                              instance.reviewers.all())
+
+
+
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
 
@@ -105,14 +113,44 @@ class EOIAPIView(RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         eoi = self.get_object()
         curr_invited_parters = list(eoi.invited_partners.all().values_list('id', flat=True))
+        current_deadline = eoi.deadline_date
+        current_reviewers = list(eoi.reviewers.all().values_list('id', flat=True))
 
         instance = serializer.save()
 
+        # New partners added
         for partner in instance.invited_partners.all():
             if partner.id not in curr_invited_parters:
+                context = {
+                    'eoi_url': eoi.get_absolute_url()
+                }
                 send_notification('cfei_invitation', eoi, partner.get_users(),
-                                  check_sent_for_source=False)
+                                  check_sent_for_source=False, context=context)
 
+        # Deadline Changed
+        if current_deadline != instance.deadline_date:
+            users = get_partner_users_for_app_qs(instance.applications.all())
+            context = {
+                'initial_date': current_deadline,
+                'revised_date': instance.deadline_date,
+                'eoi_url': eoi.get_absolute_url()
+            }
+            send_notification('cfei_update_prev', eoi, users, context=context)
+
+
+        # New Reviewers Added
+        new_reviewers = []
+        for reviewer in instance.reviewers.all():
+            if reviewer.id not in current_reviewers:
+                new_reviewers.append(reviewer.id)
+
+            if new_reviewers:
+                send_notification('agency_cfei_reviewers_selected', eoi,
+                                  User.objects.filter(id__in=new_reviewers))
+
+
+
+        # Completed
         if instance.is_completed:
             send_notification_cfei_completed(instance)
 

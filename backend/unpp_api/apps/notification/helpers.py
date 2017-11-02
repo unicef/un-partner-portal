@@ -96,7 +96,7 @@ def send_notification_cfei_completed(eoi):
     if eoi.completed_reason == COMPLETED_REASON.no_candidate:
         # TODO - perhaps a different message?
         users = get_partner_users_for_app_qs(eoi.applications.all())
-        send_notification('cfei_cancel', eoi, users)
+        send_notification('cfei_application_lost', eoi, users)
 
 
 def send_notification_application_updated(application):
@@ -126,7 +126,16 @@ def send_notificiation_application_created(application):
 
         if application.eoi.is_direct and application.eoi.unsolicited_conversion:
             users = get_notify_partner_users_for_application(application)
-            send_notification('direct_select_un_int', application, users)
+            send_notification('direct_select_un_int', application, users,
+                              context={'eoi_title': application.eoi.title})
+
+        # Alert Agency Users if accept / decline
+        if application.did_win:
+            if application.did_accept or application.did_decline:
+                notify_ids = list(application.eoi.focal_points.all().values_list('id', flat=True))
+                notify_ids.append(application.eoi.created_by.id)
+                notify_users = User.objects.filter(id__in=notify_ids).distinct()
+                send_notification('agency_application_decision_made', application, notify_users)
 
     else:
         if application.is_unsolicited:
@@ -135,37 +144,36 @@ def send_notificiation_application_created(application):
 
 
 # TODO - below
-def send_account_approval_activated_create_profile(context, users, obj=None):
-    source = 'account_approval_activated_create_profile'
-    subject = "Title"
-    send_notification(subject, source, context, obj, users)
+# def send_account_approval_activated_create_profile(context, users, obj=None):
+#     source = 'account_approval_activated_create_profile'
+#     subject = "Title"
+#     send_notification(subject, source, context, obj, users)
 
 
-def send_account_approval_activated_sent_to_head_org(context, users, obj=None):
-    source = 'account_approval_activated_sent_to_head_org'
-    subject = "Title"
-    send_notification(subject, source, context, obj, users)
+# def send_account_approval_activated_sent_to_head_org(context, users, obj=None):
+#     source = 'account_approval_activated_sent_to_head_org'
+#     subject = "Title"
+#     send_notification(subject, source, context, obj, users)
 
 
-def send_account_approval_rejection_application_duplicate(context, users, obj=None):
-    source = 'account_approval_rejection_application_duplicate'
-    subject = "Title"
-    send_notification(subject, source, context, obj, users)
+# def send_account_approval_rejection_application_duplicate(context, users, obj=None):
+#     source = 'account_approval_rejection_application_duplicate'
+#     subject = "Title"
+#     send_notification(subject, source, context, obj, users)
 
 
-def send_account_approval_rejection_sanctions_list(context, users, obj=None):
-    source = 'account_approval_rejection_application_duplicate'
-    subject = "Title"
-    send_notification(subject, source, context, obj, users)
+# def send_account_approval_rejection_sanctions_list(context, users, obj=None):
+#     source = 'account_approval_rejection_application_duplicate'
+#     subject = "Title"
+#     send_notification(subject, source, context, obj, users)
 
 
-def send_account_creation_rejection(context, users, obj=None):
-    source = 'account_approval_rejection_application_duplicate'
-    subject = "Title"
-    send_notification(subject, source, context, obj, users)
+# def send_account_creation_rejection(context, users, obj=None):
+#     source = 'account_approval_rejection_application_duplicate'
+#     subject = "Title"
+#     send_notification(subject, source, context, obj, users)
 
 
-def send_update_cfei_prev_invited_submited_app(context, users, obj=None):
-    source = 'Update_CFEI_prev_invited_submited_app'
-    subject = "Title"
-    send_notification(subject, source, context, obj, users)
+# TODO
+# Agency deadline
+# Agency accept/decline response from partners

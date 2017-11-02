@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from datetime import date
 
+from django.conf import settings
 from django.db import models
 from django.contrib.postgres.fields import ArrayField, JSONField
 from model_utils.models import TimeStampedModel
@@ -89,6 +90,9 @@ class EOI(TimeStampedModel):
             criteria_name = copied_criteria.pop('selection_criteria')
             output[criteria_name] = copied_criteria
         return output
+
+    def get_absolute_url(self):
+        return "{}cfei/open/1/overview".format(settings.FRONTEND_URL)
 
 
 class Pin(TimeStampedModel):

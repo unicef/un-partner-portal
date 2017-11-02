@@ -159,7 +159,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['id'], eoi.id)
         self.assertTrue(Partner.objects.first().id in response.data['invited_partners'])
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
-        self.assertEqual(len(mail.outbox), 1)
+
         payload = {
             "invited_partners": [
                 Partner.objects.last().id,
@@ -171,6 +171,8 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(Partner.objects.last().id in response.data['invited_partners'])
         self.assertTrue(Partner.objects.count(), 1)
         self.assertTrue(len(response.data['invited_partners']), 1)
+        self.assertEqual(len(mail.outbox), 1)
+        mail.outbox = []
 
         # edit EOI - dates & focal point(s)
         payload = {
