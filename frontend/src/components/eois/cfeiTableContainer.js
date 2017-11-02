@@ -5,7 +5,7 @@ import Grid from 'material-ui/Grid';
 import Snackbar from 'material-ui/Snackbar';
 import PaginatedList from '../common/list/paginatedList';
 import RenderProjectCells from './cells/tableCells';
-import WithSortingState from '../common/hoc/withSortingState';
+import TableWithStateInUrl from '../common/hoc/tableWithStateInUrl';
 import { PROJECT_TYPES, ROLES } from '../../helpers/constants';
 import {
   openAgencyColumns,
@@ -54,15 +54,13 @@ class CfeiTableContainer extends Component {
     const { alert } = this.state;
     return (
       <Grid item>
-        <WithSortingState
-          component={
-            <PaginatedList
-              items={cfei}
-              itemsCount={count}
-              columns={CfeiTableContainer.getColumnData(role, type)}
-              templateCell={RenderProjectCells(type)}
-              loading={loading}
-            />}
+        <TableWithStateInUrl
+          component={PaginatedList}
+          items={cfei}
+          itemsCount={count}
+          columns={CfeiTableContainer.getColumnData(role, type)}
+          templateCell={RenderProjectCells(type)}
+          loading={loading}
         />
         <Snackbar
           anchorOrigin={{
