@@ -14,6 +14,7 @@ from common.consts import (
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     COMPLETED_REASON,
 )
+from common.utils import get_countries_code_from_queryset
 
 
 class EOI(TimeStampedModel):
@@ -156,6 +157,33 @@ class Application(TimeStampedModel):
 
     def __str__(self):
         return "Application <pk:{}>".format(self.id)
+
+    @property
+    def cfei_type(self):
+        if self.is_unsolicited:
+            return 'Unsolicited Concept Note'
+        elif self.eoi.is_open:
+            return 'Open Selection'
+        elif self.eoi.is_direct:
+            return 'Direct Selection'
+
+    @property
+    def project_title(self):
+        if self.is_unsolicited:
+            return self.proposal_of_eoi_details.get('title')
+        else:
+            return self.eoi.title
+
+    @property
+    def countries(self):
+        if self.is_unsolicited:
+            country = self.locations_proposal_of_eoi
+        else:
+            country = self.eoi.locations
+        if country:
+            # we expecting here few countries
+            return get_countries_code_from_queryset(country)
+        return None
 
     @property
     def partner_is_verified(self):

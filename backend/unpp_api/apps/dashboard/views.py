@@ -9,8 +9,9 @@ from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from common.permissions import IsAtLeastMemberReader
-from common.paginations import MediumPagination
-from project.serializers import ApplicationFullSerializer
+from common.mixins import PartnerIdsMixin
+from common.paginations import MediumPagination, SmallPagination
+from project.serializers import ApplicationFullSerializer, SubmittedCNSerializer, PendingOffersSerializer
 from project.models import Application
 from .serializers import AgencyDashboardSerializer, PartnerDashboardSerializer
 
@@ -66,7 +67,36 @@ class ApplicationsPartnerDecisionsListAPIView(ListAPIView):
         user = self.request.user
         agency = user.get_agency()
         won_applications = Application.objects.filter(eoi__agency=agency,
-                                                      did_win=True,
-                                                      did_accept_date__gte=date_N_days_ago).exclude(is_unsolicited=True)
+                                                      did_accept_date__gte=date_N_days_ago,
+                                                      did_win=True).exclude(is_unsolicited=True)
 
         return won_applications.filter(did_accept=True) | won_applications.filter(did_decline=True)
+
+
+class SubmittedCNListAPIView(PartnerIdsMixin, ListAPIView):
+    """
+    Returns list of partner submitted concept notes
+    """
+    serializer_class = SubmittedCNSerializer
+    permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
+    pagination_class = SmallPagination
+
+    def get_queryset(self):
+        return Application.objects.filter(partner_id__in=self.get_partner_ids())
+
+
+class PendingOffersListAPIView(PartnerIdsMixin, ListAPIView):
+    """
+    Returns list of pending offers for partner
+    """
+    serializer_class = PendingOffersSerializer
+    permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
+    pagination_class = SmallPagination
+
+    def get_queryset(self):
+        return Application.objects.filter(
+            did_win=True,
+            did_accept_date__isnull=True,
+            did_decline=False,
+            partner_id__in=self.get_partner_ids()
+        )

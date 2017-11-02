@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-from datetime import datetime, timedelta
-
-from django.db.models import Count
+from datetime import datetime, date, timedelta
 
 from rest_framework import serializers
 
 from common.consts import EOI_TYPES, PARTNER_TYPES
+from common.mixins import PartnerIdsMixin
+from common.models import Sector
 from partner.models import Partner
 from agency.models import Agency
-from project.models import EOI, Application
+from project.models import EOI, Application, Pin
 
 
 class AgencyDashboardSerializer(serializers.ModelSerializer):
@@ -36,8 +35,8 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
     def get_new_partners_last_15_by_day_count(self, obj):
         all_dates = self.get_partners_since_days_ago().dates('created', 'day')
         dates_dict = {}
-        for date in all_dates:
-            dates_dict[str(date)] = self.get_partners_since_days_ago().filter(created__contains=date).count()
+        for _date in all_dates:
+            dates_dict[str(_date)] = self.get_partners_since_days_ago().filter(created__contains=date).count()
 
         return dates_dict
 
@@ -50,14 +49,16 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
         open_eois_as_reviewer = user.eoi_as_reviewer.filter(completed_reason=None,
                                                             completed_date=None)
 
-        applications = Application.objects.filter(eoi__in=open_eois_as_reviewer).exclude(assessments__reviewer=user)
+        applications = Application.objects.filter(
+            eoi__in=open_eois_as_reviewer).exclude(assessments__reviewer=user)
         return applications.count()
 
     def get_partner_breakdown(self, obj):
         return {
             PARTNER_TYPES.cbo: Partner.objects.filter(display_type=PARTNER_TYPES.cbo).count(),
             PARTNER_TYPES.national: Partner.objects.filter(display_type=PARTNER_TYPES.national).count(),
-            PARTNER_TYPES.international: Partner.objects.filter(display_type=PARTNER_TYPES.international).exclude(hq__isnull=False).count(),
+            PARTNER_TYPES.international: Partner.objects.filter(
+                display_type=PARTNER_TYPES.international).exclude(hq__isnull=False).count(),
             PARTNER_TYPES.academic: Partner.objects.filter(display_type=PARTNER_TYPES.academic).count(),
             PARTNER_TYPES.red_cross: Partner.objects.filter(display_type=PARTNER_TYPES.red_cross).count(),
 
@@ -71,8 +72,66 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
                   'num_cn_to_score',
                   'partner_breakdown',)
 
-class PartnerDashboardSerializer(serializers.ModelSerializer):
+
+class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
+
+    DAYS_AGO = 10
+
+    new_cfei_by_sectors_last_days_ago = serializers.SerializerMethodField()
+    num_of_submitted_cn = serializers.SerializerMethodField()
+    num_of_pinned_cfei = serializers.SerializerMethodField()
+    num_of_awards = serializers.SerializerMethodField()
+    last_profile_update = serializers.SerializerMethodField()
 
     class Meta:
         model = Partner
-        fields = "__all__"
+        fields = (
+            'new_cfei_by_sectors_last_days_ago',
+            'num_of_submitted_cn',
+            'num_of_pinned_cfei',
+            'num_of_awards',
+            'last_profile_update',
+        )
+
+    def get_new_cfei_by_sectors_last_days_ago(self, obj):
+        cfei_new = EOI.objects.filter(
+            start_date__gte=(date.today()-timedelta(days=self.DAYS_AGO))
+        ).values_list('specializations__category__name', 'id').distinct()
+        mapped = map(lambda x: x[0], cfei_new)
+        result = {}
+        for sector in Sector.objects.all():
+            result[sector.name] = mapped.count(sector.name)
+        return result
+
+    def get_num_of_submitted_cn(self, obj):
+        return Application.objects.filter(partner_id__in=self.get_partner_ids()).count()
+
+    def get_num_of_pinned_cfei(self, obj):
+        return Pin.objects.filter(
+            eoi__deadline_date__gte=date.today(),
+            eoi__deadline_date__lte=(date.today()+timedelta(days=self.DAYS_AGO)),
+            partner_id__in=self.get_partner_ids(),
+        ).count()
+
+    def get_num_of_awards(self, obj):
+        return Application.objects.filter(did_win=True, partner_id__in=self.get_partner_ids()).count()
+
+    def get_last_profile_update(self, obj):
+        # one to one
+        updates = [
+            obj.modified, obj.profile.modified, obj.mailing_address.modified, obj.org_head.modified,
+            obj.audit.modified, obj.report.modified, obj.mandate_mission.modified, obj.fund.modified,
+            obj.other_info.modified
+        ]
+        # FK
+        updates.extend(obj.directors.values_list("modified", flat=True))
+        updates.extend(obj.authorised_officers.values_list("modified", flat=True))
+        updates.extend(obj.area_policies.values_list("modified", flat=True))
+        updates.extend(obj.experiences.values_list("modified", flat=True))
+        updates.extend(obj.internal_controls.values_list("modified", flat=True))
+        updates.extend(obj.budgets.values_list("modified", flat=True))
+        updates.extend(obj.collaborations_partnership.values_list("modified", flat=True))
+        updates.extend(obj.collaboration_evidences.values_list("modified", flat=True))
+
+        updates.sort()
+        return updates[-1]
