@@ -73,7 +73,7 @@ function authorizedPatch({ uri, params, body = {} }) {
 function authorizedPut({ uri, params, body = {} }) {
   const options = {
     params,
-    headers: buildHeaders(true),
+    headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
   };
   return axios.put(`${host}${uri}`, body, options)
     .then(response => response.data);
@@ -139,6 +139,10 @@ export function patchCfei(body, id) {
   return authorizedPatch({ uri: `/projects/${id}/`, body });
 }
 
+export function convertCnToDirectSelection(body, id) {
+  return authorizedPost({ uri: `/projects/application/${id}/convert-unsolicited/`, body });
+}
+
 export function uploadConceptNote(projectId, body) {
   return authorizedPost({ uri: `/projects/${projectId}/partner-applications/`, body });
 }
@@ -157,6 +161,22 @@ export function getUnsolicitedCN(params) {
 
 export function patchPinnedCfei(body) {
   return authorizedPatch({ uri: '/projects/pins/', body });
+}
+
+export function getCfeiReviewSummary(id) {
+  return authorizedGet({ uri: `/projects/${id}/review-summary/` });
+}
+
+export function putCfeiReviewSummary(id, body) {
+  return authorizedPatch({ uri: `/projects/${id}/review-summary/`, body });
+}
+
+export function getCfeiAwardedPartners(id) {
+  return authorizedGet({ uri: `/projects/${id}/applications/awarded-partners/` });
+}
+
+export function getCfeiReviewers(id) {
+  return authorizedGet({ uri: `/projects/${id}/applications/reviewers/` });
 }
 
 // Applications

@@ -12,7 +12,7 @@ import PaddedContent from '../../../../../common/paddedContent';
 import { calcTotalScore } from './singleReview';
 
 const messages = {
-  title: 'Total score',
+  title: 'Average Total score',
   assessmentMade: (text, madeReviews, totalReviewers) =>
     `Assessment made by ${madeReviews} of ${totalReviewers} agency users`,
   justification: 'Justification',
@@ -83,6 +83,7 @@ const mapStateToProps = (state, ownProps) => {
       madeReviews += 1;
     }
   });
+  totalCount = totalReviewers > 0 ? +(totalCount / totalReviewers).toFixed(2) : 0;
   return {
     loading: state.applicationReviews.status.loading,
     totalCount,

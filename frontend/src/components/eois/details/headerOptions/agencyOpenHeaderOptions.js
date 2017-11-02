@@ -12,7 +12,7 @@ import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHa
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import AddInformedPartners from '../../modals/callPartners/addInformedPartners';
 import ManageReviewersModal from '../../modals/manageReviewers/manageReviewersModal';
-import CompleteCfeiModal from '../../modals/completeCfei.js/completeCfeiModal';
+import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
 
 const edit = 'edit';
 const invite = 'invite';

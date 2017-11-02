@@ -43,6 +43,10 @@ import partnerAppDetails, * as partnerAppDetailsSelector from './reducers/partne
 import agencies from './reducers/agencies';
 import applicationFeedback, * as applicationFeedbackSelector from './reducers/applicationFeedback';
 import partnerVerifications, * as partnerVerificationsSelector from './reducers/partnerVerifications';
+import cfeiReviewSummary, { selectReviewSummary } from './reducers/cfeiReviewSummary';
+import cfeiAwardedPartners, { selectAwardedPartners } from './reducers/cfeiAwardedPartners';
+import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
+
 
 const mainReducer = combineReducers({
   cfei,
@@ -84,6 +88,9 @@ const mainReducer = combineReducers({
   applicationFeedback,
   agencies,
   partnerVerifications,
+  cfeiReviewSummary,
+  cfeiAwardedPartners,
+  cfeiReviewers,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -131,6 +138,9 @@ export const selectNormalizedStaffGlobalyChoices = state =>
 
 export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices']);
+
+export const selectNormalizedDirectJustification = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-justifications']);
 
 export const selectApplicationStatuses = state => state.partnerProfileConfig['application-statuses'];
 
@@ -185,6 +195,9 @@ export const selectCfeiCriteria = (state, id) =>
 
 export const selectCfeiStatus = (state, id) =>
   cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.cfeiDetails, id);
+
+  export const selectCfeiConverted = (state, id) =>
+  cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.cfeiDetails, id);
 
 export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.cfeiDetails, id);
@@ -263,3 +276,11 @@ export const selectPreviousVerificationCount = (state, partnerId) =>
 
 export const mapAgenciesNamesToSelection = state => mapValuesForSelectionField(state.agencies);
 
+export const selectCfeiReviewSummary = (state, cfeiId) =>
+  selectReviewSummary(state.cfeiReviewSummary.data, cfeiId);
+
+export const selectCfeiReviewers = (state, cfeiId) =>
+  selectReviewers(state.cfeiReviewers.data, cfeiId);
+
+export const selectCfeiAwardedPartners = (state, cfeiId) =>
+  selectAwardedPartners(state.cfeiAwardedPartners.data, cfeiId);

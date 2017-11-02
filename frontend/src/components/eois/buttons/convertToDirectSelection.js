@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import withDialogHandling from '../../common/hoc/withDialogHandling';
+import ConvertToDirectSelectionModal from '../modals/convertToDirectSelection/convertToDirectSelectionModal';
 
 const messages = {
   label: 'Convert to DS',
@@ -21,6 +22,11 @@ const ConvertToDS = (props) => {
       >
         {messages.label}
       </Button>
+      <ConvertToDirectSelectionModal
+        id={id}
+        dialogOpen={dialogOpen}
+        handleDialogClose={handleDialogClose}
+      />
     </Grid>
 
   );

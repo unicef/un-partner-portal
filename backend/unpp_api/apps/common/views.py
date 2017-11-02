@@ -1,12 +1,18 @@
 from __future__ import absolute_import
+
 from rest_framework import status as statuses
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
-from .serializers import ConfigSectorSerializer, CommonFileUploadSerializer
-from .models import Sector, CommonFile
+from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
+from .serializers import (ConfigSectorSerializer, CommonFileUploadSerializer,
+                          AdminLevel1Serializer)
+from .models import Sector, CommonFile, AdminLevel1
 from .countries import COUNTRIES_ALPHA2_CODE_DICT
+from .paginations import MediumPagination
 from .consts import (
     STAFF_GLOBALLY_CHOICES,
     PARTNER_DONORS_CHOICES,
@@ -23,6 +29,7 @@ from .consts import (
     POLICY_AREA_CHOICES,
     APPLICATION_STATUSES,
     COMPLETED_REASON,
+    JUSTIFICATION_FOR_DIRECT_SELECTION,
 )
 
 
@@ -33,6 +40,15 @@ class ConfigCountriesAPIView(APIView):
         Return list of defined countries in backend.
         """
         return Response(COUNTRIES_ALPHA2_CODE_DICT, status=statuses.HTTP_200_OK)
+
+
+class ConfigAdminLevel1ListAPIView(ListAPIView):
+    serializer_class = AdminLevel1Serializer
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    queryset = AdminLevel1.objects.all()
+    filter_fields = ('country_code', )
+    search_fields = ('name', )
+    pagination_class = MediumPagination
 
 
 class ConfigPPAPIView(APIView):
@@ -59,6 +75,7 @@ class ConfigPPAPIView(APIView):
             "policy-area-choices": POLICY_AREA_CHOICES,
             "application-statuses": APPLICATION_STATUSES,
             "completed-reason": COMPLETED_REASON,
+            "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 
