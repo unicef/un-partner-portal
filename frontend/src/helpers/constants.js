@@ -48,3 +48,7 @@ export const PROJECT_STATUSES = {
   COM: 'Com',
 };
 
+export const FLAGS = {
+  YELLOW: 'Yel',
+  RED: 'Red',
+};

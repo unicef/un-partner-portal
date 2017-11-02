@@ -73,6 +73,7 @@ const saveCfei = (state, action) => {
 
 const saveUCN = (state, action) => {
   const { ucn } = action;
+
   const newUCN = {
     id: ucn.id,
     partner_name: ucn.partner.id,
@@ -82,6 +83,7 @@ const saveUCN = (state, action) => {
     specializations: R.path(['proposal_of_eoi_details', 'specializations'], ucn),
     agency: ucn.agency,
     cn: ucn.cn,
+    eoiConverted: ucn.eoi_converted,
   };
   return R.assoc(ucn.id, normalizeSingleCfei(newUCN), state);
 };
@@ -99,6 +101,11 @@ export function selectCfeiTitle(state, id) {
 export function selectCfeiStatus(state, id) {
   const { [id]: { status = null } = {} } = state;
   return status;
+}
+
+export function selectCfeiConverted(state, id) {
+  const { [id]: { eoiConverted = null } = {} } = state;
+  return eoiConverted;
 }
 
 export function isCfeiCompleted(state, id) {
