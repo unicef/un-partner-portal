@@ -11,30 +11,50 @@ import ListOfOpenCfeisContainer from './listOfOpenCfeisContainer';
 import NewPartners from './newPartners';
 import NumberOfPartners from './numberOfPartners';
 import PartnerDecisions from './partnerDecisions';
+import Loader from '../../common/loader';
 
 const AgencyDashboard = (props) => {
-  const { } = props;
-
+  const { loading,
+    dashboard: {
+      new_partners_last_15_count: newPartnersCount,
+      new_partners_last_15_by_day_count: newPartnersByDayCount,
+      new_cfei_last_15_by_day_count: newCfeiCount,
+      num_cn_to_score: numCNToScore,
+      partner_breakdown: partnerBreakdown,
+    } } = props;
   return (
     <GridColumn>
       <Grid container direction="row">
         <Grid item xs={12} sm={8}>
           <GridColumn>
-            <NewPartners number={145} />
+            <Loader loading={loading} >
+              <NewPartners number={newPartnersCount} dayBreakdown={newPartnersByDayCount} />
+            </Loader>
             <GridRow>
-              <NumberOfNewCfeis number={2} />
-              <NumberOfConceptNotes number={31} />
+              <Loader loading={loading} >
+                <NumberOfNewCfeis number={newCfeiCount} />
+              </Loader>
+              <Loader loading={loading} >
+                <NumberOfConceptNotes number={numCNToScore} />
+              </Loader>
             </GridRow>
           </GridColumn>
         </Grid>
         <Grid item xs={12} sm={4}>
-          <NumberOfPartners />
+          <Loader loading={loading} >
+            <NumberOfPartners partnerBreakdown={partnerBreakdown} />
+          </Loader>
         </Grid>
       </Grid>
       <ListOfConceptNotesContainer />
       <ListOfOpenCfeisContainer />
       <PartnerDecisions />
     </GridColumn>);
+};
+
+AgencyDashboard.propTypes = {
+  loading: PropTypes.bool,
+  dashboard: PropTypes.object,
 };
 
 

@@ -46,6 +46,7 @@ import partnerVerifications, * as partnerVerificationsSelector from './reducers/
 import cfeiReviewSummary, { selectReviewSummary } from './reducers/cfeiReviewSummary';
 import cfeiAwardedPartners, { selectAwardedPartners } from './reducers/cfeiAwardedPartners';
 import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
+import dashboard from './reducers/dashboard';
 
 
 const mainReducer = combineReducers({
@@ -91,6 +92,7 @@ const mainReducer = combineReducers({
   cfeiReviewSummary,
   cfeiAwardedPartners,
   cfeiReviewers,
+  dashboard,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];

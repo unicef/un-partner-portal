@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { browserHistory as history, withRouter } from 'react-router';
 import { Grid, TableView, TableHeaderRow, TableRowDetail, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import { withStyles } from 'material-ui/styles';
-import { PagingState, RowDetailState } from '@devexpress/dx-react-grid';
+import { PagingState, SortingState, RowDetailState } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import ListLoader from './listLoader';
@@ -29,9 +29,10 @@ const styleSheet = (theme) => {
 class PaginatedList extends Component {
   constructor(props) {
     super(props);
-
+    this.state = { sorting: [{ columnName: 'title', direction: 'desc' }] };
     this.changeExpandedDetails = expandedRows => this.setState({ expandedRows });
     this.onPageSize = this.onPageSize.bind(this);
+    this.changeSorting = this.changeSorting.bind(this);
   }
 
   componentWillMount() {
@@ -63,6 +64,12 @@ class PaginatedList extends Component {
     </Typography></div>);
   }
 
+  changeSorting(sorting) {
+    this.setState({
+      sorting,
+    });
+  }
+
   render() {
     const { items, columns, templateCell, expandable, expandedCell,
       itemsCount, pageSize, pageNumber, loading, pathName, query } = this.props;
@@ -76,6 +83,10 @@ class PaginatedList extends Component {
           columns={columns}
           headerPlaceholderTemplate={() => this.navigationHeader()}
         >
+          <SortingState
+            sorting={this.state.sorting}
+            onSortingChange={this.changeSorting}
+          />
           <PagingState
             currentPage={pageNumber - 1}
             pageSize={pageSize}
@@ -90,7 +101,7 @@ class PaginatedList extends Component {
           <TableView
             tableCellTemplate={templateCell}
           />
-          <TableHeaderRow />
+          <TableHeaderRow allowSorting />
 
           {expandable &&
           <TableRowDetail template={({ row }) => expandedCell(row)} />}

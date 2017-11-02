@@ -5,11 +5,20 @@ import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
+import { toPairs, isEmpty, map } from 'ramda';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 import { Link } from 'react-router';
 import GridRow from '../../common/grid/gridRow';
-import GridColumn from '../../common/grid/gridColumn';
 import PaddedContent from '../../common/paddedContent';
-import EmptyContent from '../../common/emptyContent';
+import { formatDateForChart } from '../../../helpers/dates';
 
 const messages = {
   title: 'Number Of New Partners',
@@ -25,7 +34,13 @@ const styleSheet = theme => ({
 
 
 const NewPartners = (props) => {
-  const { number, classes } = props;
+  const { number, classes, dayBreakdown = {} } = props;
+  let data;
+  if (!isEmpty(dayBreakdown)) {
+    data = map(
+      ([date, count]) => ({ date: formatDateForChart(date), count }),
+      toPairs(dayBreakdown));
+  }
   return (
     <Paper>
       <PaddedContent>
@@ -40,7 +55,18 @@ const NewPartners = (props) => {
             </Grid>
           </Grid>
         </GridRow>
-        <EmptyContent />
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart
+            data={data}
+            margin={{ left: 0, right: 16, top: 16 }}
+          >
+            <XAxis dataKey="date" />
+            <YAxis />
+            <CartesianGrid strokeDasharray="3 3" />
+            <Tooltip />
+            <Line type="monotone" dataKey="count" stroke="#2196f3" activeDot={{ r: 8 }} />
+          </LineChart>
+        </ResponsiveContainer>
         <Grid container justify="flex-end">
           <Grid item>
             <Button component={Link} to="/partner/" color="accent">{messages.button}</Button>
@@ -54,6 +80,7 @@ const NewPartners = (props) => {
 NewPartners.propTypes = {
   number: PropTypes.number,
   classes: PropTypes.object,
+  dayBreakdown: PropTypes.array,
 };
 
 export default withStyles(styleSheet, { name: 'NewPartners;' })(NewPartners);
