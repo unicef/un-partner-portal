@@ -8,7 +8,6 @@ import { withStyles } from 'material-ui/styles';
 const styleSheet = theme => ({
   root: {
     position: 'relative',
-    display: 'flex',
     width: '100%',
     height: '100%',
   },
@@ -20,7 +19,7 @@ const styleSheet = theme => ({
     zIndex: 1,
   },
   spinner: {
-    position: 'absolute',
+    position: 'fixed',
     left: 'calc(50% - 25px)',
     top: 'calc(50% - 25px)',
   },
