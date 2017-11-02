@@ -752,6 +752,8 @@ class CompareSelectedSerializer(serializers.ModelSerializer):
             'total_assessment_score',
             'un_exp',
             'annual_budget',
+            'verification_status',
+            'flagging_status',
             # 'key_results',
         )
 
