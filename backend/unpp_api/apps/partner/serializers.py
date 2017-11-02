@@ -1,4 +1,4 @@
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from rest_framework import serializers
 
 from common.consts import (
@@ -202,6 +202,7 @@ class PartnerCollaborationPartnershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerCollaborationPartnership
         fields = "__all__"
+        read_only_fields = ('partner', 'agency')
 
 
 class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
@@ -508,7 +509,11 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
                 admin_level_1 = location_of_office.pop('admin_level_1')
                 id = admin_level_1.pop('id', None)
                 if id is not None:
-                    AdminLevel1.objects.filter(id=id).update(**admin_level_1)
+                    al = AdminLevel1.objects.filter(**admin_level_1).first()  # can be only one!
+                    if al is None:  # because name & country name is unique
+                        AdminLevel1.objects.filter(id=id).update(**admin_level_1)
+                    else:
+                        location_of_office['admin_level_1'] = al.id
                 else:
                     al, created = AdminLevel1.objects.get_or_create(**admin_level_1)
 
@@ -526,7 +531,11 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
                 admin_level_1 = location_of_office.pop('admin_level_1')
                 id = admin_level_1.pop('id', None)
                 if id is not None:
-                    AdminLevel1.objects.filter(id=id).update(**admin_level_1)
+                    al = AdminLevel1.objects.filter(**admin_level_1).first()  # can be only one!
+                    if al is None:
+                        AdminLevel1.objects.filter(id=id).update(**admin_level_1)
+                    else:
+                        location_of_office['admin_level_1'] = al.id
                 else:
                     al, created = AdminLevel1.objects.get_or_create(**admin_level_1)
 

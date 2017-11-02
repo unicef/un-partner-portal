@@ -451,6 +451,7 @@ class PartnerCollaborationPartnership(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
+        unique_together = (('partner', 'agency'), )
 
     def __str__(self):
         return "PartnerCollaborationPartnership <pk:{}>".format(self.id)
