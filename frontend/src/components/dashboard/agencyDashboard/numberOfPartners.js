@@ -10,6 +10,7 @@ import Typography from 'material-ui/Typography';
 import GridColumn from '../../common/grid/gridColumn';
 import PaddedContent from '../../common/paddedContent';
 import SpreadContent from '../../common/spreadContent';
+import DonutChart from '../../common/charts/pieChart';
 
 const messages = {
   title: 'Number Of Partners',
@@ -44,22 +45,7 @@ const NumberOfPartners = (props) => {
         <GridColumn>
           <Typography type="headline">{messages.title}</Typography>
           <Typography type="caption">{messages.caption}</Typography>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={data}
-                labelLine={false}
-                outerRadius={100}
-                innerRadius="80%"
-                legendType="line"
-              >
-                <Label value={total} content={renderLabel} position="center" />
-                {
-                  data.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)
-                }
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
+          <DonutChart colors={COLORS} label={total} data={data} />
           {data.map(({ name, value }, index) => (
             <div key={`name_${index}`}>
               <GridColumn spacing={8}>

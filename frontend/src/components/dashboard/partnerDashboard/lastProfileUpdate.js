@@ -30,7 +30,12 @@ const LastProfileUpdate = (props) => {
         <GridRow>
           <Typography type="headline">{messages.title}</Typography>
           <GridColumn align="flex-end">
-            <Typography className={classes.date} type="headline">{formatDateForPrint(date)}</Typography>
+            <Typography
+              className={classes.date}
+              type="headline"
+            >
+              {formatDateForPrint(date)}
+            </Typography>
             <Button component={Link} to="/profile/" color="accent">{messages.button}</Button>
           </GridColumn>
         </GridRow>

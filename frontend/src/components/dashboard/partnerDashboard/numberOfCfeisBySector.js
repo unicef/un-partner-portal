@@ -7,7 +7,6 @@ import Divider from 'material-ui/Divider';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 import { Link } from 'react-router';
-import GridRow from '../../common/grid/gridRow';
 import GridColumn from '../../common/grid/gridColumn';
 import PaddedContent from '../../common/paddedContent';
 import EmptyContent from '../../common/emptyContent';
