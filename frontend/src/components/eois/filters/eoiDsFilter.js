@@ -5,16 +5,13 @@ import { reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import { browserHistory as history, withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
-import { FormControl, FormLabel } from 'material-ui/Form';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
-import DatePickerForm from '../../forms/datePickerForm';
 import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
-import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
-import { selectNormalizedSpecializations, selectNormalizedCountries } from '../../../store';
+import { selectNormalizedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
 import resetChanges from './eoiHelper';
 
 const messages = {
@@ -26,9 +23,7 @@ const messages = {
     status: 'Status',
     sector: 'Sector & Area of specialization',
     agency: 'Agency',
-    fromDate: 'From date',
-    toDate: 'To date',
-    date: 'Date posted - choose date range',
+    direct: 'Direct Selection Source',
   },
   clear: 'clear',
   submit: 'submit',
@@ -44,6 +39,7 @@ const styleSheet = theme => ({
     justifyContent: 'flex-end',
   },
 });
+
 
 export const STATUS_VAL = [
   {
@@ -75,25 +71,18 @@ class EoiFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { title, agency, active, country_code, specializations,
-      posted_from_date, posted_to_date, locations } = values;
+    const { title, agency, active, country_code, specializations, selected_source } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
-        title,
-        agency,
-        active,
-        country_code,
-        specializations,
-        posted_from_date,
-        posted_to_date,
-        locations }),
+        title, agency, active, country_code, specializations, selected_source,
+      }),
     });
   }
 
   render() {
-    const { classes, countries, specs, handleSubmit, reset } = this.props;
+    const { classes, countries, directSources, specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -116,11 +105,11 @@ class EoiFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <AdminOneLocation
-                fieldName="locations"
-                formName="tableFilter"
-                observeFieldName="country_code"
+              <SelectForm
+                fieldName="sector"
                 label={messages.labels.location}
+                placeholder={messages.choose}
+                values={[]}
                 optional
               />
             </Grid>
@@ -143,7 +132,7 @@ class EoiFilter extends Component {
                 optional
               />
             </Grid>
-            <Grid item sm={4} xs={12}>
+            <Grid item sm={2} xs={12}>
               <Agencies
                 fieldName="agency"
                 label={messages.labels.agency}
@@ -151,27 +140,16 @@ class EoiFilter extends Component {
                 optional
               />
             </Grid>
-          </Grid>
-          <FormControl fullWidth>
-            <FormLabel>{messages.labels.date}</FormLabel>
-            <Grid container direction="row" >
-              <Grid item sm={3} xs={12} >
-                <DatePickerForm
-                  placeholder={messages.labels.fromDate}
-                  fieldName="posted_from_date"
-                  optional
-                />
-              </Grid>
-              <Grid item sm={3} xs={12} >
-                <DatePickerForm
-                  placeholder={messages.labels.toDate}
-                  fieldName="posted_to_date"
-                  optional
-                />
-              </Grid>
+            <Grid item sm={2} xs={12}>
+              <SelectForm
+                fieldName="selected_source"
+                label={messages.labels.direct}
+                placeholder={messages.choose}
+                values={directSources}
+                optional
+              />
             </Grid>
-          </FormControl>
-
+          </Grid>
           <Grid item className={classes.button}>
             <Button
               color="accent"
@@ -200,6 +178,7 @@ EoiFilter.propTypes = {
   classes: PropTypes.object.isRequired,
   countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
+  directSources: PropTypes.array.isRequired,
   pathName: PropTypes.string,
   query: PropTypes.object,
 };
@@ -213,14 +192,14 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { country_code } = { } } = ownProps.location;
   const { query: { agency } = { } } = ownProps.location;
   const { query: { active } = { } } = ownProps.location;
-  const { query: { locations } = { } } = ownProps.location;
   const { query: { specializations } = { } } = ownProps.location;
-  const { query: { posted_from_date } = { } } = ownProps.location;
-  const { query: { posted_to_date } = { } } = ownProps.location;
+  const { query: { selected_source } = { } } = ownProps.location;
+
 
   return {
     countries: selectNormalizedCountries(state),
     specs: selectNormalizedSpecializations(state),
+    directSources: selectNormalizedDirectSelectionSource(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {
@@ -228,10 +207,8 @@ const mapStateToProps = (state, ownProps) => {
       country_code,
       agency,
       active,
-      locations,
       specializations,
-      posted_from_date,
-      posted_to_date,
+      selected_source,
     },
   };
 };

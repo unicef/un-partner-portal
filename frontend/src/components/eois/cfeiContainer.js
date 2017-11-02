@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
-
 import { loadCfei } from '../../reducers/cfei';
+import EoiUnFilter from './filters/eoiUnFilter';
 import EoiFilter from './filters/eoiFilter';
+import EoiDsFilter from './filters/eoiDsFilter';
 import CfeiTableContainer from './cfeiTableContainer';
 import { isQueryChanged } from '../../helpers/apiHelper';
 
@@ -27,10 +28,13 @@ class CfeiContainer extends Component {
 
   render() {
     const { role, params: { type } } = this.props;
+
     return (
       <Grid container direction="column" spacing={40}>
         <Grid item>
-          <EoiFilter />
+          {type === 'open' && <EoiFilter />}
+          {type === 'direct' && <EoiDsFilter />}
+          {type === 'unsolicited' && <EoiUnFilter />}
         </Grid>
         <Grid item>
           <CfeiTableContainer role={role} type={type} />

@@ -308,3 +308,7 @@ export function getAgencies(params = { page_size: 100 }) {
   return authorizedGet({ uri: '/agencies/', params },
   );
 }
+
+export function getAdminOneLocations(countryCode) {
+  return authorizedGet({ uri: '/common/admin-levels', params: countryCode });
+}

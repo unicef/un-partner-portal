@@ -5,7 +5,7 @@ import Grid from 'material-ui/Grid';
 import Snackbar from 'material-ui/Snackbar';
 import PaginatedList from '../common/list/paginatedList';
 import RenderProjectCells from './cells/tableCells';
-import { PROJECT_TYPES, ROLES} from '../../helpers/constants';
+import { PROJECT_TYPES, ROLES } from '../../helpers/constants';
 import {
   openAgencyColumns,
   openPartnerColumns,
@@ -56,6 +56,7 @@ class CfeiTableContainer extends Component {
         <PaginatedList
           items={cfei}
           itemsCount={count}
+          allowSorting
           columns={CfeiTableContainer.getColumnData(role, type)}
           templateCell={RenderProjectCells(type)}
           loading={loading}
