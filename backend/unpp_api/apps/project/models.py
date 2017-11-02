@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from datetime import date
 
+from django.conf import settings
 from django.db import models
 from django.contrib.postgres.fields import ArrayField, JSONField
 from model_utils.models import TimeStampedModel
@@ -63,8 +64,16 @@ class EOI(TimeStampedModel):
         return "EOI {} <pk:{}>".format(self.title, self.id)
 
     @property
+    def is_open(self):
+        return self.display_type == EOI_TYPES.open
+
+    @property
     def is_direct(self):
         return self.display_type == EOI_TYPES.direct
+
+    @property
+    def is_completed(self):
+        return self.completed_reason is not None
 
     @property
     def is_overdue_deadline(self):
@@ -82,6 +91,9 @@ class EOI(TimeStampedModel):
             output[criteria_name] = copied_criteria
         return output
 
+    def get_absolute_url(self):
+        return "{}cfei/open/1/overview".format(settings.FRONTEND_URL)
+
 
 class Pin(TimeStampedModel):
     eoi = models.ForeignKey(EOI, related_name="pins")
@@ -93,6 +105,14 @@ class Pin(TimeStampedModel):
 
     def __str__(self):
         return "Pin <pk:{}> (eoi:{})".format(self.id, self.eoi_id)
+
+
+class ApplicationQuerySet(models.QuerySet):
+    def winners(self):
+        return self.filter(did_win=True, did_accept=True, did_withdraw=False)
+
+    def losers(self):
+        return self.filter(did_win=False)
 
 
 class Application(TimeStampedModel):
@@ -127,6 +147,8 @@ class Application(TimeStampedModel):
     eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion",
                                          null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
+
+    objects = ApplicationQuerySet.as_manager()
 
     class Meta:
         ordering = ['id']

@@ -11,6 +11,7 @@ IS_DEV = True
 DOMAIN_NAME = 'localhost:8000'
 WWW_ROOT = 'http://%s/' % DOMAIN_NAME
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+FRONTEND_URL = 'http://127.0.0.1:8080/'
 
 # other
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

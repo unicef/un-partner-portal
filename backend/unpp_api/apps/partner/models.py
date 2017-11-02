@@ -7,6 +7,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator
 from model_utils.models import TimeStampedModel
 
+from account.models import User
 from common.validators import MaxCurrentYearValidator
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.consts import (
@@ -76,6 +77,9 @@ class Partner(TimeStampedModel):
     @property
     def has_red_flag(self):
         return self.flags.filter(flag_type=FLAG_TYPES.red).exists()
+
+    def get_users(self):
+        return User.objects.filter(partner_members__partner=self)
 
     @property
     def is_verified(self):
