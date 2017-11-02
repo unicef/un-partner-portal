@@ -29,7 +29,7 @@ const styleSheet = (theme) => {
 class PaginatedList extends Component {
   constructor(props) {
     super(props);
-    this.state = { };
+  
     this.changeExpandedDetails = expandedRows => this.setState({ expandedRows });
     this.onPageSize = this.onPageSize.bind(this);
     this.changeSorting = this.changeSorting.bind(this);
@@ -75,8 +75,8 @@ class PaginatedList extends Component {
   }
 
   render() {
-    const { items, columns, templateCell, expandable, expandedCell, allowSorting,
-      itemsCount, pageSize, pageNumber, loading, pathName, query } = this.props;
+    const { items, columns, templateCell, expandable, expandedCell,
+      itemsCount, pageSize, pageNumber, loading, pathName, query, sorting, allowSorting, changeSorting, } = this.props;
 
     return (
       <ListLoader
@@ -88,8 +88,8 @@ class PaginatedList extends Component {
           headerPlaceholderTemplate={() => this.navigationHeader()}
         >
           {allowSorting && <SortingState
-            sorting={this.state.sorting}
-            onSortingChange={this.changeSorting}
+            sorting={sorting}
+            onSortingChange={changeSorting}
           /> }
           <PagingState
             currentPage={pageNumber - 1}
@@ -126,7 +126,6 @@ PaginatedList.propTypes = {
   columns: PropTypes.array.isRequired,
   templateCell: PropTypes.func.isRequired,
   expandable: PropTypes.bool,
-  allowSorting: PropTypes.bool,
   expandedCell: PropTypes.func,
   loading: PropTypes.bool,
   pageSize: PropTypes.number.isRequired,
