@@ -75,11 +75,8 @@ class ConfigPPAPIView(APIView):
             "policy-area-choices": POLICY_AREA_CHOICES,
             "application-statuses": APPLICATION_STATUSES,
             "completed-reason": COMPLETED_REASON,
-<<<<<<< HEAD
             "direct-selection-source": DIRECT_SELECTION_SOURCE,
-=======
             "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,
->>>>>>> develop
         }
         return Response(data, status=statuses.HTTP_200_OK)
 
