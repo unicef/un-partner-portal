@@ -30,6 +30,7 @@ from project.serializers import ConvertUnsolicitedSerializer
 
 filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
 
+
 class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
 
     def test_pin_unpin_project_wrong_eois(self):

@@ -81,6 +81,19 @@ class Partner(TimeStampedModel):
     def get_users(self):
         return User.objects.filter(partner_members__partner=self)
 
+    @property
+    def is_verified(self):
+        if not self.verifications.exists():
+            return None
+        else:
+            return self.verifications.filter(is_verified=True).exists()
+
+    @property
+    def flagging_status(self):
+        return {
+            'yellow': self.flags.filter(flag_type=FLAG_TYPES.yellow).count(),
+            'red': self.flags.filter(flag_type=FLAG_TYPES.red).count(),
+        }
 
 
 class PartnerProfile(TimeStampedModel):
@@ -170,7 +183,9 @@ class PartnerProfile(TimeStampedModel):
 
     @property
     def annual_budget(self):
-        return PartnerBudget.objects.filter(partner=self, year=date.today().year).values_list('budget', flat=True) or 0
+        budget = self.partner.budgets.filter(year=date.today().year).first()
+        if budget is not None:
+            return budget.budget
 
 
 class PartnerMailingAddress(TimeStampedModel):

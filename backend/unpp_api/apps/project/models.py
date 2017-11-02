@@ -187,7 +187,10 @@ class Application(TimeStampedModel):
     @property
     def average_total_score(self):
         assessments_qs = self.assessments.all()
-        return sum([x.total_score for x in assessments_qs]) / float(assessments_qs.count())
+        count = assessments_qs.count()
+        if count != 0:
+            return sum([x.total_score for x in assessments_qs]) / count  # we expect to have integer
+        return 0
 
 
 class ApplicationFeedback(TimeStampedModel):

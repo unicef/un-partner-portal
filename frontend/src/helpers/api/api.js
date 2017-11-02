@@ -139,6 +139,10 @@ export function patchCfei(body, id) {
   return authorizedPatch({ uri: `/projects/${id}/`, body });
 }
 
+export function convertCnToDirectSelection(body, id) {
+  return authorizedPost({ uri: `/projects/application/${id}/convert-unsolicited/`, body });
+}
+
 export function uploadConceptNote(projectId, body) {
   return authorizedPost({ uri: `/projects/${projectId}/partner-applications/`, body });
 }
@@ -280,6 +284,19 @@ export function postPartnerVerifications(id, body) {
 export function patchPartnerProfileTab(partnerId, tabName, body) {
   return authorizedPatch({ uri: `/partners/${partnerId}/${tabName}/`, body });
 }
+
+export function getPartnerFlags(id, params) {
+  return authorizedGet({ uri: `/partners/${id}/flags/`, params });
+}
+
+export function postPartnerFlags(id, body) {
+  return authorizedPost({ uri: `/partners/${id}/flags/`, body });
+}
+
+export function patchPartnerFlags(id, body) {
+  return authorizedPatch({ uri: `/partners/${id}/flags/`, body });
+}
+
 
 // Agencies
 export function getAgencyMembers(id, params = { page_size: 100 }) {

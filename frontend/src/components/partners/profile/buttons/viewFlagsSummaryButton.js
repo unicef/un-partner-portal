@@ -2,28 +2,28 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
-import withDialogHandling from '../../common/hoc/withDialogHandling';
-import ConvertToDirectSelectionModal from '../modals/convertToDirectSelection/convertToDirectSelectionModal';
+import ViewDetailsModal from '../modals/flagsSummaryModal/flagsSummaryModal';
+import withDialogHandling from '../../../common/hoc/withDialogHandling';
 
 const messages = {
-  label: 'Convert to DS',
+  label: 'view details',
 };
 
 
-const ConvertToDS = (props) => {
-  const { id, handleDialogClose, handleDialogOpen, dialogOpen, ...other } = props;
+const ViewFlagsSummaryButton = (props) => {
+  const { yelFlag, redFlag, handleDialogClose, handleDialogOpen, dialogOpen } = props;
+
   return (
     <Grid item>
       <Button
-        raised
         color="accent"
         onClick={handleDialogOpen}
-        {...other}
       >
         {messages.label}
       </Button>
-      <ConvertToDirectSelectionModal
-        id={id}
+      <ViewDetailsModal
+        yelFlag={yelFlag}
+        redFlag={redFlag}
         dialogOpen={dialogOpen}
         handleDialogClose={handleDialogClose}
       />
@@ -33,12 +33,12 @@ const ConvertToDS = (props) => {
 };
 
 
-ConvertToDS.propTypes = {
-  id: PropTypes.string,
+ViewFlagsSummaryButton.propTypes = {
+  verification: PropTypes.object,
   dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
 };
 
 
-export default withDialogHandling(ConvertToDS);
+export default withDialogHandling(ViewFlagsSummaryButton);

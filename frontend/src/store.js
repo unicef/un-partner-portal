@@ -4,6 +4,7 @@ import { reducer as formReducer } from 'redux-form';
 import thunk from 'redux-thunk';
 import R from 'ramda';
 import { routerReducer, routerMiddleware } from 'react-router-redux';
+
 import { browserHistory } from 'react-router';
 
 import cfei from './reducers/cfei';
@@ -46,7 +47,7 @@ import partnerVerifications, * as partnerVerificationsSelector from './reducers/
 import cfeiReviewSummary, { selectReviewSummary } from './reducers/cfeiReviewSummary';
 import cfeiAwardedPartners, { selectAwardedPartners } from './reducers/cfeiAwardedPartners';
 import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
-
+import partnerFlags, * as partnerFlagsSelector from './reducers/partnerFlags';
 
 const mainReducer = combineReducers({
   cfei,
@@ -91,6 +92,7 @@ const mainReducer = combineReducers({
   cfeiReviewSummary,
   cfeiAwardedPartners,
   cfeiReviewers,
+  partnerFlags,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -138,6 +140,9 @@ export const selectNormalizedStaffGlobalyChoices = state =>
 
 export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices']);
+
+export const selectNormalizedDirectJustification = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-justifications']);
 
 export const selectApplicationStatuses = state => state.partnerProfileConfig['application-statuses'];
 
@@ -192,6 +197,9 @@ export const selectCfeiCriteria = (state, id) =>
 
 export const selectCfeiStatus = (state, id) =>
   cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.cfeiDetails, id);
+
+  export const selectCfeiConverted = (state, id) =>
+  cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.cfeiDetails, id);
 
 export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.cfeiDetails, id);
@@ -278,3 +286,9 @@ export const selectCfeiReviewers = (state, cfeiId) =>
 
 export const selectCfeiAwardedPartners = (state, cfeiId) =>
   selectAwardedPartners(state.cfeiAwardedPartners.data, cfeiId);
+
+export const selectPartnerFlags = (state, partnerId) =>
+  partnerFlagsSelector.selectPartnerFlags(state.partnerFlags, partnerId);
+
+export const selectPartnerFlagsCount = (state, partnerId) =>
+  partnerFlagsSelector.selectPartnerFlagsCount(state.partnerFlags, partnerId);
