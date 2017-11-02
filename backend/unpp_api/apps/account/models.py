@@ -23,6 +23,10 @@ class User(AbstractUser):
     def is_partner_user(self):
         return self.partner_members.exists()
 
+    def get_agency(self):
+        if self.is_agency_user:
+            return self.agency_members.first().office.agency
+
     def get_partner_ids_i_can_access(self):
         # Returns country partners if member of HQ (since no db relation there)
         partner_members = self.partner_members.all()
