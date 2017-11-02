@@ -1,6 +1,9 @@
 from datetime import date
+
 from django.db import transaction
+
 from rest_framework import serializers
+from rest_auth.serializers import LoginSerializer
 
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
@@ -174,3 +177,14 @@ class PartnerUserSerializer(UserSerializer):
         partner_ids = obj.get_partner_ids_i_can_access()
         return PartnerSerializer(Partner.objects.filter(id__in=partner_ids),
                                  many=True).data
+
+
+class CustomLoginSerializer(LoginSerializer):
+
+    def validate(self, attrs):
+        sup_attrs = super(CustomLoginSerializer, self).validate(attrs)
+        user = sup_attrs['user']
+        if user.is_partner_user:
+            if user.is_account_locked:
+                raise serializers.ValidationError('Account is Currently Locked')
+        return sup_attrs
