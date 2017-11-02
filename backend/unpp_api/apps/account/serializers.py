@@ -168,7 +168,7 @@ class PartnerUserSerializer(UserSerializer):
 
     class Meta:
         model = User
-        fields = UserSerializer.Meta.fields + ('partners',)
+        fields = UserSerializer.Meta.fields + ('partners', 'is_account_locked',)
 
     def get_partners(self, obj):
         partner_ids = obj.get_partner_ids_i_can_access()
