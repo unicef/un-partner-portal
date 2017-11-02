@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from common.permissions import IsAtLeastMemberReader
 from common.mixins import PartnerIdsMixin
 from common.paginations import MediumPagination, SmallPagination
-from project.serializers import ApplicationFullSerializer, SubmittedCNSerializer, PendingOffersSerializer
+from project.serializers import ApplicationFullEOISerializer, SubmittedCNSerializer, PendingOffersSerializer
 from project.models import Application
 from .serializers import AgencyDashboardSerializer, PartnerDashboardSerializer
 
@@ -42,7 +42,7 @@ class ApplicationsToScoreListAPIView(ListAPIView):
     Returns list of applications needing scoring for agency user
     """
 
-    serializer_class = ApplicationFullSerializer
+    serializer_class = ApplicationFullEOISerializer
     permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
     pagination_class = MediumPagination
 
@@ -58,7 +58,7 @@ class ApplicationsPartnerDecisionsListAPIView(ListAPIView):
     """
 
     DAYS_AGO = 5
-    serializer_class = ApplicationFullSerializer
+    serializer_class = ApplicationFullEOISerializer
     permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
     pagination_class = MediumPagination
 

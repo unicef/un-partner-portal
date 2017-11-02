@@ -155,6 +155,7 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
     submitter = UserSerializer(read_only=True)
     is_direct = serializers.SerializerMethodField()
 
+
     class Meta:
         model = Application
         fields = '__all__'
@@ -162,6 +163,10 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
 
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
+
+
+class ApplicationFullEOISerializer(ApplicationFullSerializer):
+    eoi = BaseProjectSerializer(read_only=True)
 
 
 class CreateUnsolicitedProjectSerializer(serializers.Serializer):
