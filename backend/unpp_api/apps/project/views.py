@@ -18,6 +18,7 @@ from account.models import User
 from common.consts import EOI_TYPES
 from common.paginations import SmallPagination
 from common.permissions import (
+    IsAgencyMemberUser,
     IsAtLeastMemberReader,
     IsAtLeastMemberEditor,
     IsAtLeastAgencyMemberEditor,
@@ -41,6 +42,7 @@ from .serializers import (
     CreateDirectProjectSerializer,
     ProjectUpdateSerializer,
     ApplicationFullSerializer,
+    ApplicationFullEOISerializer,
     AgencyUnsolicitedApplicationSerializer,
     CreateDirectApplicationNoCNSerializer,
     ApplicationsListSerializer,
@@ -223,7 +225,19 @@ class PinProjectAPIView(BaseProjectAPIView):
             )
 
 
-class ApplicationsPartnerAPIView(CreateAPIView):
+class AgencyApplicationListAPIView(ListAPIView):
+    """
+    Endpoint to allow agencies to get applications
+    """
+    permission_classes = (IsAgencyMemberUser,)
+    queryset = Application.objects.all()
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_class = ApplicationsFilter
+    serializer_class = ApplicationFullEOISerializer
+    pagination_class = SmallPagination
+
+
+class PartnerEOIApplicationCreateAPIView(CreateAPIView):
     """
     Create Application for open EOI by partner.
     """
@@ -241,7 +255,7 @@ class ApplicationsPartnerAPIView(CreateAPIView):
         send_notificiation_application_created(instance)
 
 
-class ApplicationPartnerAPIView(RetrieveAPIView):
+class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
     """
     Create Application for open EOI by partner.
     """
@@ -263,7 +277,7 @@ class ApplicationPartnerAPIView(RetrieveAPIView):
         return Application.objects.none()
 
 
-class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
+class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
     """
     Create Application for direct EOI by agency.
     """
@@ -296,8 +310,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
         send_notification_application_updated(instance)
 
 
-
-class ApplicationsListAPIView(ListAPIView):
+class EOIApplicationsListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
     queryset = Application.objects.all()
     serializer_class = ApplicationsListSerializer
@@ -389,7 +402,7 @@ class UnsolicitedProjectAPIView(ListAPIView):
     serializer_class = AgencyUnsolicitedApplicationSerializer
 
 
-class AppsPartnerOpenAPIView(ListAPIView):
+class PartnerApplicationOpenListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, IsPartner)
     queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.open)
     serializer_class = ApplicationPartnerOpenSerializer
@@ -401,7 +414,7 @@ class AppsPartnerOpenAPIView(ListAPIView):
         return self.queryset.filter(partner_id=self.request.active_partner.id)
 
 
-class AppsPartnerUnsolicitedAPIView(ListCreateAPIView):
+class PartnerApplicationUnsolicitedListCreateAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticated, IsPartner)
     queryset = Application.objects.filter(is_unsolicited=True)
     filter_class = ApplicationsUnsolicitedFilter
@@ -421,8 +434,7 @@ class AppsPartnerUnsolicitedAPIView(ListCreateAPIView):
         send_notificiation_application_created(instance)
 
 
-
-class AppsPartnerDirectAPIView(AppsPartnerUnsolicitedAPIView):
+class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedListCreateAPIView):
     queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct)
 
     def get_queryset(self, *args, **kwargs):
