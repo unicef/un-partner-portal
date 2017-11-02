@@ -28,7 +28,7 @@ const VerificationIcon = (props) => {
   const className = classname({
     [classes.iconVerified]: verified === true,
     [classes.iconUnverified]: verified === false,
-    [classes.iconNotVerified]: verified === (null || undefined),
+    [classes.iconNotVerified]: verified === null || verified === undefined,
   });
   return <VerifiedUser className={className} />;
 };
