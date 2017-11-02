@@ -285,6 +285,19 @@ export function patchPartnerProfileTab(partnerId, tabName, body) {
   return authorizedPatch({ uri: `/partners/${partnerId}/${tabName}/`, body });
 }
 
+export function getPartnerFlags(id, params) {
+  return authorizedGet({ uri: `/partners/${id}/flags/`, params });
+}
+
+export function postPartnerFlags(id, body) {
+  return authorizedPost({ uri: `/partners/${id}/flags/`, body });
+}
+
+export function patchPartnerFlags(id, body) {
+  return authorizedPatch({ uri: `/partners/${id}/flags/`, body });
+}
+
+
 // Agencies
 export function getAgencyMembers(id, params = { page_size: 100 }) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params },

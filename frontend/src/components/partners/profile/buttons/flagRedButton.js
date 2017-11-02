@@ -1,44 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import Flag from 'material-ui-icons/Flag';
 import IconWithTextButton from '../../../common/iconWithTextButton';
-
-const styleSheet = (theme) => {
-  const paddingIcon = theme.spacing.unit;
-
-  return {
-    iconRed: {
-      fill: '#D50000',
-      width: 20,
-      height: 20,
-      margin: `0 ${paddingIcon}px 0 0`,
-    },
-  };
-};
+import FlagIcon from '../icons/flagIcon';
+import { FLAGS } from '../../../../helpers/constants';
 
 const messages = {
   text: 'Add red flag',
 };
 
-const flagRed = (id) => {
-  console.log(`Add red flag: ${id}`);
-};
 
 const FlagRedButton = (props) => {
-  const { classes, id } = props;
+  const { handleClick } = props;
   return (
     <IconWithTextButton
-      icon={<Flag className={classes.iconRed} />}
+      icon={<FlagIcon color={FLAGS.RED} />}
       text={messages.text}
-      onClick={() => flagRed(id)}
+      onClick={handleClick}
     />
   );
 };
 
 FlagRedButton.propTypes = {
-  classes: PropTypes.object.isRequired,
-  id: PropTypes.string,
+  handleClick: PropTypes.func,
 };
 
-export default withStyles(styleSheet, { name: 'FlagRedButton' })(FlagRedButton);
+export default FlagRedButton;

@@ -4,6 +4,7 @@ import { reducer as formReducer } from 'redux-form';
 import thunk from 'redux-thunk';
 import R from 'ramda';
 import { routerReducer, routerMiddleware } from 'react-router-redux';
+
 import { browserHistory } from 'react-router';
 
 import cfei from './reducers/cfei';
@@ -47,7 +48,7 @@ import partnerVerifications, * as partnerVerificationsSelector from './reducers/
 import cfeiReviewSummary, { selectReviewSummary } from './reducers/cfeiReviewSummary';
 import cfeiAwardedPartners, { selectAwardedPartners } from './reducers/cfeiAwardedPartners';
 import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
-
+import partnerFlags, * as partnerFlagsSelector from './reducers/partnerFlags';
 
 const mainReducer = combineReducers({
   cfei,
@@ -93,6 +94,7 @@ const mainReducer = combineReducers({
   cfeiReviewSummary,
   cfeiAwardedPartners,
   cfeiReviewers,
+  partnerFlags,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -292,3 +294,9 @@ export const selectCfeiReviewers = (state, cfeiId) =>
 
 export const selectCfeiAwardedPartners = (state, cfeiId) =>
   selectAwardedPartners(state.cfeiAwardedPartners.data, cfeiId);
+
+export const selectPartnerFlags = (state, partnerId) =>
+  partnerFlagsSelector.selectPartnerFlags(state.partnerFlags, partnerId);
+
+export const selectPartnerFlagsCount = (state, partnerId) =>
+  partnerFlagsSelector.selectPartnerFlagsCount(state.partnerFlags, partnerId);
