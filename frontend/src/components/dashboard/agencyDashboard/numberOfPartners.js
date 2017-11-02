@@ -2,18 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Paper from 'material-ui/Paper';
 import { connect } from 'react-redux';
-import Button from 'material-ui/Button';
-import { PieChart, Pie, Sector, Cell, ResponsiveContainer, Label } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Label } from 'recharts';
 import { toPairs, isEmpty, map } from 'ramda';
 import Grid from 'material-ui/Grid';
 import Divider from 'material-ui/Divider';
 import Typography from 'material-ui/Typography';
-import { withStyles } from 'material-ui/styles';
-import { Link } from 'react-router';
-import GridRow from '../../common/grid/gridRow';
 import GridColumn from '../../common/grid/gridColumn';
 import PaddedContent from '../../common/paddedContent';
-import EmptyContent from '../../common/emptyContent';
 import SpreadContent from '../../common/spreadContent';
 
 const messages = {

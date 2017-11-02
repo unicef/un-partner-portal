@@ -1,7 +1,6 @@
 import React from 'react';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import GridColumn from '../../common/grid/gridColumn';
 import GridRow from '../../common/grid/gridRow';
 import NumberOfNewCfeis from './numberOfNewCfeis';
