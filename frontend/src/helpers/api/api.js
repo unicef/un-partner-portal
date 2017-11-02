@@ -293,8 +293,8 @@ export function postPartnerFlags(id, body) {
   return authorizedPost({ uri: `/partners/${id}/flags/`, body });
 }
 
-export function patchPartnerFlags(id, body) {
-  return authorizedPatch({ uri: `/partners/${id}/flags/`, body });
+export function patchPartnerFlags(id, body, flagId) {
+  return authorizedPatch({ uri: `/partners/${id}/flags/${flagId}/`, body });
 }
 
 
