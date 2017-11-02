@@ -8,6 +8,7 @@ import PartnerApplicationsNotesFilter from './partnerApplicationsUnsolicitedFilt
 import DirectSelectionCell from './directSelectionCell';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
 import PaginatedList from '../../common/list/paginatedList';
+import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
 import { loadApplicationsUcn } from '../../../reducers/applicationsUnsolicitedList';
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import { formatDateForPrint } from '../../../helpers/dates';
@@ -59,7 +60,8 @@ class PartnerApplicationsUnsolicited extends Component {
     return (
       <GridColumn spacing={24}>
         <PartnerApplicationsNotesFilter />
-        <PaginatedList
+        <TableWithStateInUrl
+          component={PaginatedList}
           items={items}
           columns={columns}
           loading={loading}
