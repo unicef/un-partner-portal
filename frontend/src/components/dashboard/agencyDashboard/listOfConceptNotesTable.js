@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import { TableCell } from 'material-ui/Table';
+import Typography from 'material-ui/Typography';
 import { loadApplicationsToScore } from '../../../reducers/applicationsToScore';
 import PaginatedList from '../../common/list/paginatedList';
 import TableWithLocalState from '../../common/hoc/tableWithLocalState';
 import { formatDateForPrint } from '../../../helpers/dates';
-import { TableCell } from 'material-ui/Table';
-import Typography from 'material-ui/Typography';
 
 
 const columns = [
@@ -32,10 +32,15 @@ const renderCells = ({ row, column }) => {
   } else if (column.name === 'deadline_date') {
     return (
       <TableCell >
-        {formatDateForPrint(row.submission_date)}
+        {formatDateForPrint(row.deadline_date)}
       </TableCell>);
   }
   return undefined;
+};
+
+renderCells.propTypes = {
+  row: PropTypes.object,
+  column: PropTypes.object,
 };
 
 
@@ -61,7 +66,10 @@ class ListOfConceptNotesTable extends Component {
 }
 
 ListOfConceptNotesTable.propTypes = {
-
+  loading: PropTypes.string,
+  data: PropTypes.array,
+  loadApplications: PropTypes.func,
+  itemsCount: PropTypes.number,
 };
 
 const mapStateToProps = state => ({

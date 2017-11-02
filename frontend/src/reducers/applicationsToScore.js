@@ -9,7 +9,10 @@ import ApplicationsToScoreStatus, {
 
 import { getApplicationsToScore } from '../helpers/api/api';
 
-const initialState = {};
+const initialState = {
+  applications: [],
+  count: 0,
+};
 
 export const loadApplicationsToScore = params => (dispatch) => {
   dispatch(loadApplicationsToScoreStarted());
@@ -25,10 +28,24 @@ export const loadApplicationsToScore = params => (dispatch) => {
     });
 };
 
+export const saveApplications = (action) => {
+  const { applications, count } = action;
+  const newApplications = applications.map(({ eoi: {
+    title,
+    id,
+    deadline_date,
+  } }) => ({
+    title,
+    id,
+    deadline_date,
+  }));
+  return { applications: newApplications, count };
+};
+
 const ApplicationsToScore = (state = initialState, action) => {
   switch (action.type) {
     case LOAD_APPLICATIONS_TO_SCORE_SUCCESS: {
-      return { applications: action.applications, count: action.count };
+      return saveApplications(action);
     }
     default:
       return state;
