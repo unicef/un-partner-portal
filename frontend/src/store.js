@@ -36,6 +36,7 @@ import sectors, * as sectorsSelectors from './reducers/sectors';
 import partnersApplicationsList from './reducers/partnersApplicationsList';
 import partnersPreselectionList from './reducers/partnersPreselectionList';
 import selectionCriteria from './reducers/selectionCriteria';
+import adminOneLocation from './reducers/adminOneLocation';
 import partnerNames, * as partnerNamesSelector from './reducers/partnerNames';
 import applicationDetails, * as applicationDetailsSelector from './reducers/applicationDetails';
 import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
@@ -49,6 +50,7 @@ import cfeiAwardedPartners, { selectAwardedPartners } from './reducers/cfeiAward
 import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
 import dashboard from './reducers/dashboard';
 import partnerFlags, * as partnerFlagsSelector from './reducers/partnerFlags';
+import applicationsToScore from './reducers/applicationsToScore';
 
 const mainReducer = combineReducers({
   cfei,
@@ -61,6 +63,7 @@ const mainReducer = combineReducers({
   applicationsNotesList,
   applicationsUnsolicitedList,
   applicationsDirectList,
+  adminOneLocation,
   nav,
   session,
   countries,
@@ -95,6 +98,7 @@ const mainReducer = combineReducers({
   cfeiReviewers,
   dashboard,
   partnerFlags,
+  applicationsToScore,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -169,6 +173,12 @@ export const selectNormalizedFunctionalResponsibility = state =>
 export const selectNormalizedPolicyArea = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['policy-area-choices']);
 
+export const selectNormalizedDirectSelectionSource = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-source']);
+
+export const selectNormalizedSpecializations = state =>
+  mapValuesForSelectionField(state.sectors.allSpecializations);
+
 export const selectNormalizedPopulations = state =>
   mapValuesForSelectionField(state.population);
 
@@ -200,7 +210,7 @@ export const selectCfeiCriteria = (state, id) =>
 export const selectCfeiStatus = (state, id) =>
   cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.cfeiDetails, id);
 
-  export const selectCfeiConverted = (state, id) =>
+export const selectCfeiConverted = (state, id) =>
   cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.cfeiDetails, id);
 
 export const isCfeiCompleted = (state, id) =>

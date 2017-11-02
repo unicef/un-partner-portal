@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import R from 'ramda';
 import DashboardStatus, {
   loadDashboardStarted,
   loadDashboardEnded,

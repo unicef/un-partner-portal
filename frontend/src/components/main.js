@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import MuiThemeProviderLegacy from 'material-ui-old/styles/MuiThemeProvider';
 import { loadAgencyMembers } from '../reducers/agencyMembers';

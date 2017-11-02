@@ -46,7 +46,7 @@ const AgencyDashboard = (props) => {
         </Grid>
       </Grid>
       <ListOfConceptNotesContainer />
-      <ListOfOpenCfeisContainer />
+      {/* <ListOfOpenCfeisContainer /> */}
       <PartnerDecisions />
     </GridColumn>);
 };

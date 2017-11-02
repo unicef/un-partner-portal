@@ -32,37 +32,38 @@ class DatePickerForm extends Component {
     } = this.props;
     return (
       <Grid item>
-        <FormControl fullWidth>
-          {readOnly
-            ? <Field
+
+        {readOnly
+          ? <Field
+            name={fieldName}
+            label={label}
+            component={renderText}
+            optional={optional}
+            date
+          />
+          : <FormControl fullWidth>
+            {label ? <FormLabel>{label}</FormLabel> : null}
+            <Field
               name={fieldName}
-              label={label}
-              component={renderText}
-              optional={optional}
-              date
+              component={readOnly ? renderText : renderDatePicker}
+              validate={optional ? [] : [required].concat(validation || [])}
+              hintText={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
+              warn={warn && warning}
+              format={(value) => {
+                if (value && value !== 'Invalid date') return new Date(`${value}T00:00:00.000Z`);
+                return value;
+              }}
+              formatDate={formatDateForPrint}
+              normalize={normalizeDate}
+              textFieldStyle={{
+                width: '100%',
+                'line-height': null,
+                height: 40,
+              }}
+              {...datePickerProps}
             />
-            : [<FormLabel>{label}</FormLabel>,
-              <Field
-                name={fieldName}
-                component={readOnly ? renderText : renderDatePicker}
-                validate={optional ? [] : [required].concat(validation || [])}
-                hintText={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
-                warn={warn && warning}
-                format={(value) => {
-                  if (value && value !== 'Invalid date') return new Date(`${value}T00:00:00.000Z`);
-                  return value;
-                }}
-                formatDate={formatDateForPrint}
-                normalize={normalizeDate}
-                textFieldStyle={{
-                  width: '100%',
-                  'line-height': null,
-                  height: 40,
-                }}
-                {...datePickerProps}
-              />]
-          }
-        </FormControl>
+          </FormControl>
+        }
       </Grid>
     );
   }

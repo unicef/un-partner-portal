@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import HeaderList from '../../common/list/headerList';
-import EmptyContent from '../../common/emptyContent';
+import ListOfConceptNotesTable from './listOfConceptNotesTable';
 
 
 const messages = {
@@ -16,7 +16,7 @@ const ListOfConceptNotesContainer = (props) => {
     <HeaderList
       header={<Typography type="headline" >{messages.title}</Typography>}
       loading={loading}
-      rows={[<EmptyContent />]}
+      rows={[<ListOfConceptNotesTable />]}
     />
   );
 };

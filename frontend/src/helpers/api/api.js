@@ -318,3 +318,10 @@ export function getApplicationsDecissions() {
   return authorizedGet({ uri: '/dashboard/applications-decisions/' });
 }
 
+export function getApplicationsToScore(params) {
+  return authorizedGet({ uri: '/dashboard/applications-to-score/', params });
+}
+
+export function getAdminOneLocations(countryCode) {
+  return authorizedGet({ uri: '/common/admin-levels', params: countryCode });
+}
