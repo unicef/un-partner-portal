@@ -762,3 +762,41 @@ class CompareSelectedSerializer(serializers.ModelSerializer):
 
     def get_un_exp(self, obj):
         return ", ".join(obj.partner.collaborations_partnership.all().values_list('agency__name', flat=True))
+
+
+class SubmittedCNSerializer(serializers.ModelSerializer):
+    cn_id = serializers.IntegerField(source='id')
+    agency_name = serializers.CharField(source="agency.name")
+    specializations = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Application
+        fields = (
+            'cn_id',
+            'project_title',
+            'cfei_type',
+            'agency_name',
+            'countries',
+            'specializations',
+            'offer_status'
+        )
+
+    def get_specializations(self, obj):
+        if obj.is_unsolicited:
+            query = Specialization.objects.filter(id__in=obj.proposal_of_eoi_details.get('specializations'))
+        else:
+            query = obj.eoi.specializations.all()
+        return SimpleSpecializationSerializer(query, many=True).data
+
+
+class PendingOffersSerializer(SubmittedCNSerializer):
+    class Meta:
+        model = Application
+        fields = (
+            'cn_id',
+            'project_title',
+            'cfei_type',
+            'agency_name',
+            'countries',
+            'specializations',
+        )
