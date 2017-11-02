@@ -495,8 +495,8 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
 
-        location_field_offices = self.initial_data.get('location_field_offices', [])
-        location_of_office = self.initial_data.get('location_of_office')
+        location_field_offices = validated_data.get('location_field_offices', [])
+        location_of_office = validated_data.get('location_of_office')
         instance.country_presence = validated_data.get('country_presence', instance.country_presence)
         instance.staff_globally = validated_data.get('staff_globally', instance.staff_globally)
         instance.more_office_in_country = validated_data.get('more_office_in_country', instance.more_office_in_country)
@@ -505,48 +505,13 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
             'engagement_operate_desc', instance.engagement_operate_desc)
 
         if location_of_office:
-            if 'admin_level_1' in location_of_office:
-                admin_level_1 = location_of_office.pop('admin_level_1')
-                id = admin_level_1.pop('id', None)
-                if id is not None:
-                    al = AdminLevel1.objects.filter(**admin_level_1).first()  # can be only one!
-                    if al is None:  # because name & country name is unique
-                        AdminLevel1.objects.filter(id=id).update(**admin_level_1)
-                    else:
-                        location_of_office['admin_level_1'] = al.id
-                else:
-                    al, created = AdminLevel1.objects.get_or_create(**admin_level_1)
+            point, created = Point.objects.get_or_create(**location_of_office)
+            instance.location_of_office_id = point
 
-            if 'id' in location_of_office:
-                id = location_of_office.pop('id')
-                Point.objects.filter(id=id).update(**location_of_office)
-                instance.location_of_office_id = id
-            else:
-                location_of_office['admin_level_1'] = al
-                point = Point.objects.create(**location_of_office)
-                instance.location_of_office_id = point
-
+        self.instance.location_field_offices.clear()
         for location_of_office in location_field_offices:
-            if 'admin_level_1' in location_of_office:
-                admin_level_1 = location_of_office.pop('admin_level_1')
-                id = admin_level_1.pop('id', None)
-                if id is not None:
-                    al = AdminLevel1.objects.filter(**admin_level_1).first()  # can be only one!
-                    if al is None:
-                        AdminLevel1.objects.filter(id=id).update(**admin_level_1)
-                    else:
-                        location_of_office['admin_level_1'] = al.id
-                else:
-                    al, created = AdminLevel1.objects.get_or_create(**admin_level_1)
-
-            if 'id' in location_of_office:
-                id = location_of_office.pop('id')
-                Point.objects.filter(id=id).update(**location_of_office)
-                self.instance.location_field_offices.add(id)
-            else:
-                location_of_office['admin_level_1'] = al
-                point = Point.objects.create(**location_of_office)
-                self.instance.location_field_offices.add(point)
+            point, created = Point.objects.get_or_create(**location_of_office)
+            self.instance.location_field_offices.add(point)
 
         instance.save()
 
