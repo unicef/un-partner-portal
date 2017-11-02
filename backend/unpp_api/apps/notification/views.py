@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -37,11 +38,10 @@ class NotificationAPIView(RetrieveAPIView):
     serializer_class = NotificationSerializer
     queryset = Notification.objects.all()
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        notified = instance.notified.filter(recipient=self.request.user).get()  # one notified per user
-        if notified.did_read is False:
+    def patch(self, request, pk, *args, **kwargs):
+        notified = get_object_or_404(NotifiedUser.objects.select_related('notification'), notification_id=pk)
+        if 'did_read' in request.data and request.data['did_read'] and notified.did_read is False:
             notified.did_read = True
             notified.save()
-        serializer = self.get_serializer(instance)
+        serializer = self.get_serializer(notified.notification)
         return Response(serializer.data)
