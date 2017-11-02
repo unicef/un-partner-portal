@@ -136,7 +136,7 @@ PartnerProfileProjectImplementation.propTypes = {
 };
 
 const mapState = (state, ownProps) => {
-  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners);
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
 
   return {
     isCountryProfile: partner ? partner.is_hq : false,
