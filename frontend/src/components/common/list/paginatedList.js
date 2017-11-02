@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { browserHistory as history, withRouter } from 'react-router';
 import { Grid, TableView, TableHeaderRow, TableRowDetail, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import { withStyles } from 'material-ui/styles';
-import { PagingState, RowDetailState } from '@devexpress/dx-react-grid';
+import { PagingState, SortingState, RowDetailState } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import ListLoader from './listLoader';
-import { calculatePaginatedPage, updatePageNumberSize, updatePageNumber } from '../../../helpers/apiHelper';
+import { calculatePaginatedPage, updatePageNumberSize, updatePageNumber, updateOrder } from '../../../helpers/apiHelper';
 
 const table = {
   allowedPageSizes: [5, 10, 15],
@@ -29,14 +29,14 @@ const styleSheet = (theme) => {
 class PaginatedList extends Component {
   constructor(props) {
     super(props);
-
+    this.state = { };
     this.changeExpandedDetails = expandedRows => this.setState({ expandedRows });
     this.onPageSize = this.onPageSize.bind(this);
+    this.changeSorting = this.changeSorting.bind(this);
   }
 
   componentWillMount() {
     const { pathName, query } = this.props;
-
     history.push({
       pathname: pathName,
       query: R.merge(query, { page: 1, page_size: 10 }),
@@ -63,8 +63,19 @@ class PaginatedList extends Component {
     </Typography></div>);
   }
 
+  changeSorting(sorting) {
+    const { pathName, query } = this.props;
+
+    this.setState({
+      sorting,
+    });
+
+    const direction = sorting[0].direction === 'desc' ? '-' : '';
+    updateOrder(sorting[0].columnName, direction, pathName, query);
+  }
+
   render() {
-    const { items, columns, templateCell, expandable, expandedCell,
+    const { items, columns, templateCell, expandable, expandedCell, allowSorting,
       itemsCount, pageSize, pageNumber, loading, pathName, query } = this.props;
 
     return (
@@ -76,6 +87,10 @@ class PaginatedList extends Component {
           columns={columns}
           headerPlaceholderTemplate={() => this.navigationHeader()}
         >
+          {allowSorting && <SortingState
+            sorting={this.state.sorting}
+            onSortingChange={this.changeSorting}
+          /> }
           <PagingState
             currentPage={pageNumber - 1}
             pageSize={pageSize}
@@ -90,7 +105,7 @@ class PaginatedList extends Component {
           <TableView
             tableCellTemplate={templateCell}
           />
-          <TableHeaderRow />
+          <TableHeaderRow allowSorting={allowSorting} />
 
           {expandable &&
           <TableRowDetail template={({ row }) => expandedCell(row)} />}
@@ -111,6 +126,7 @@ PaginatedList.propTypes = {
   columns: PropTypes.array.isRequired,
   templateCell: PropTypes.func.isRequired,
   expandable: PropTypes.bool,
+  allowSorting: PropTypes.bool,
   expandedCell: PropTypes.func,
   loading: PropTypes.bool,
   pageSize: PropTypes.number.isRequired,

@@ -103,8 +103,8 @@ class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
 
     def get_project_title(self, queryset, name, value):
         return queryset.filter(
-            Q(proposal_of_eoi_details__contains={"title": value}) |  # unsolicited
-            Q(eoi__title__contains=value)  # direct selection - developed from unsolicited
+            Q(proposal_of_eoi_details__icontains={"title": value}) |  # unsolicited
+            Q(eoi__title__icontains=value)  # direct selection - developed from unsolicited
         )
 
     def get_specialization(self, queryset, name, value):

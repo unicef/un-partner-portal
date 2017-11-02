@@ -29,8 +29,8 @@ from .consts import (
     POLICY_AREA_CHOICES,
     APPLICATION_STATUSES,
     COMPLETED_REASON,
+    DIRECT_SELECTION_SOURCE
 )
-
 
 class ConfigCountriesAPIView(APIView):
 
@@ -74,6 +74,7 @@ class ConfigPPAPIView(APIView):
             "policy-area-choices": POLICY_AREA_CHOICES,
             "application-statuses": APPLICATION_STATUSES,
             "completed-reason": COMPLETED_REASON,
+            "direct-selection-source": DIRECT_SELECTION_SOURCE,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 
