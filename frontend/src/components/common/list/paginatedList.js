@@ -17,7 +17,6 @@ const styleSheet = (theme) => {
   return {
     container: {
       padding: `${paddingSmall}px 0 ${paddingSmall}px ${paddingMedium}px`,
-      backgroundColor: theme.palette.primary[100],
     },
   };
 };
