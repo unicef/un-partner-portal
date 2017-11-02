@@ -4,6 +4,7 @@ from datetime import date
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
+from rest_framework.views import APIView
 from rest_framework.generics import (
     ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
 )
@@ -22,6 +23,13 @@ from common.permissions import (
     IsAtLeastAgencyMemberEditor,
     IsEOIReviewerAssessments,
     IsPartner,
+)
+from notification.helpers import (
+    get_partner_users_for_app_qs,
+    send_notification_cfei_completed,
+    send_notification_application_updated,
+    send_notificiation_application_created,
+    send_notification
 )
 from partner.models import PartnerMember
 from .models import Assessment, Application, EOI, Pin, ApplicationFeedback
@@ -46,7 +54,9 @@ from .serializers import (
     ReviewSummarySerializer,
     EOIReviewersAssessmentsSerializer,
     AwardedPartnersSerializer,
+    CompareSelectedSerializer,
 )
+
 from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
 
 
@@ -78,7 +88,14 @@ class OpenProjectAPIView(BaseProjectAPIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
 
-        serializer.save()
+        instance = serializer.save()
+
+        if instance.reviewers.exists():
+            send_notification('agency_cfei_reviewers_selected', instance,
+                              instance.reviewers.all())
+
+
+
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
 
@@ -93,6 +110,51 @@ class EOIAPIView(RetrieveUpdateAPIView):
             return ProjectUpdateSerializer
         return PartnerProjectSerializer
 
+    def perform_update(self, serializer):
+        eoi = self.get_object()
+        curr_invited_parters = list(eoi.invited_partners.all().values_list('id', flat=True))
+        current_deadline = eoi.deadline_date
+        current_reviewers = list(eoi.reviewers.all().values_list('id', flat=True))
+
+        instance = serializer.save()
+
+        # New partners added
+        for partner in instance.invited_partners.all():
+            if partner.id not in curr_invited_parters:
+                context = {
+                    'eoi_url': eoi.get_absolute_url()
+                }
+                send_notification('cfei_invitation', eoi, partner.get_users(),
+                                  check_sent_for_source=False, context=context)
+
+        # Deadline Changed
+        if current_deadline != instance.deadline_date:
+            users = get_partner_users_for_app_qs(instance.applications.all())
+            context = {
+                'initial_date': current_deadline,
+                'revised_date': instance.deadline_date,
+                'eoi_url': eoi.get_absolute_url()
+            }
+            send_notification('cfei_update_prev', eoi, users, context=context)
+
+
+        # New Reviewers Added
+        new_reviewers = []
+        for reviewer in instance.reviewers.all():
+            if reviewer.id not in current_reviewers:
+                new_reviewers.append(reviewer.id)
+
+            if new_reviewers:
+                send_notification('agency_cfei_reviewers_selected', eoi,
+                                  User.objects.filter(id__in=new_reviewers))
+
+
+
+        # Completed
+        if instance.is_completed:
+            send_notification_cfei_completed(instance)
+
+
 
 class DirectProjectAPIView(BaseProjectAPIView):
     """
@@ -101,6 +163,7 @@ class DirectProjectAPIView(BaseProjectAPIView):
 
     serializer_class = DirectProjectSerializer
 
+    # TODO - can remove. not using?
     def get_partners_pks(self):
         # Partner Member can have many partners! This case is under construction and can change in future!
         return PartnerMember.objects.filter(user=self.request.user).values_list('partner', flat=True)
@@ -133,8 +196,7 @@ class PinProjectAPIView(BaseProjectAPIView):
     ERROR_MSG_WRONG_PARAMS = "Couldn't properly identify input parameters like 'eoi_ids' and 'pin'."
 
     def get_queryset(self):
-        member = get_object_or_404(PartnerMember, user=self.request.user)
-        return self.queryset.filter(pins__partner=member.partner)
+        return self.queryset.filter(pins__partner_id=self.request.active_partner.id)
 
     def patch(self, request, *args, **kwargs):
         eoi_ids = request.data.get("eoi_ids")
@@ -144,15 +206,15 @@ class PinProjectAPIView(BaseProjectAPIView):
                 {"error": self.ERROR_MSG_WRONG_EOI_PKS},
                 status=statuses.HTTP_400_BAD_REQUEST
             )
-        partner = PartnerMember.objects.get(user=request.user).partner
+        partner_id = self.request.active_partner.id
         if pin and len(eoi_ids) > 0:
             pins = []
             for eoi in eoi_ids:
-                pins.append(Pin(eoi_id=eoi, partner=partner, pinned_by=request.user))
+                pins.append(Pin(eoi_id=eoi, partner_id=partner_id, pinned_by=request.user))
             Pin.objects.bulk_create(pins)
             return Response({"eoi_ids": eoi_ids}, status=statuses.HTTP_201_CREATED)
         elif pin is False and len(eoi_ids) > 0:
-            Pin.objects.filter(eoi_id__in=eoi_ids, partner=partner, pinned_by=request.user).delete()
+            Pin.objects.filter(eoi_id__in=eoi_ids, partner_id=partner_id, pinned_by=request.user).delete()
             return Response(status=statuses.HTTP_204_NO_CONTENT)
         else:
             return Response(
@@ -171,10 +233,12 @@ class ApplicationsPartnerAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         eoi = get_object_or_404(EOI, id=self.kwargs['pk'])
-        serializer.save(eoi=eoi,
-                        submitter_id=self.request.user.id,
-                        partner_id=self.request.active_partner.id,
-                        agency=eoi.agency)
+        instance = serializer.save(eoi=eoi,
+                                   submitter_id=self.request.user.id,
+                                   partner_id=self.request.active_partner.id,
+                                   agency=eoi.agency)
+
+        send_notificiation_application_created(instance)
 
 
 class ApplicationPartnerAPIView(RetrieveAPIView):
@@ -188,11 +252,10 @@ class ApplicationPartnerAPIView(RetrieveAPIView):
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
         eoi_id = self.kwargs.get(self.lookup_field)
-        partner_member = PartnerMember.objects.filter(user=self.request.user).first()
-        if partner_member:
-            partner = partner_member.partner
+        partner_id = self.request.active_partner.id
+        if partner_id:
             obj = get_object_or_404(queryset, **{
-                'partner': partner,
+                'partner_id': partner_id,
                 'eoi_id': eoi_id,
             })
             self.check_object_permissions(self.request, obj)
@@ -210,9 +273,12 @@ class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
 
     def perform_create(self, serializer):
         eoi = get_object_or_404(EOI, id=self.kwargs['pk'])
-        serializer.save(did_win=True, eoi=eoi,
-                        submitter_id=self.request.user.id,
-                        agency=eoi.agency)
+        instance = serializer.save(did_win=True,
+                                   eoi=eoi,
+                                   submitter_id=self.request.user.id,
+                                   agency=eoi.agency)
+
+        send_notificiation_application_created(instance)
 
 
 class ApplicationAPIView(RetrieveUpdateAPIView):
@@ -223,9 +289,12 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         if serializer.validated_data.get('did_accept', False) and \
                 serializer.instance.did_accept_date is None:
-            serializer.save(did_accept_date=date.today())
+            instance = serializer.save(did_accept_date=date.today())
         else:
-            serializer.save()
+            instance = serializer.save()
+
+        send_notification_application_updated(instance)
+
 
 
 class ApplicationsListAPIView(ListAPIView):
@@ -344,9 +413,20 @@ class AppsPartnerUnsolicitedAPIView(ListCreateAPIView):
             return CreateUnsolicitedProjectSerializer
         return ApplicationPartnerUnsolicitedDirectSerializer
 
+    def get_queryset(self, *args, **kwargs):
+        return self.queryset.filter(partner_id=self.request.active_partner.id)
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        send_notificiation_application_created(instance)
+
+
 
 class AppsPartnerDirectAPIView(AppsPartnerUnsolicitedAPIView):
     queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct)
+
+    def get_queryset(self, *args, **kwargs):
+        return self.queryset.filter(partner_id=self.request.active_partner.id)
 
 
 class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
@@ -366,6 +446,10 @@ class ConvertUnsolicitedAPIView(CreateAPIView):
     serializer_class = ConvertUnsolicitedSerializer
     queryset = Application.objects.all()
     permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        send_notificiation_application_created(instance)
 
 
 class ReviewSummaryAPIView(RetrieveUpdateAPIView):
@@ -391,6 +475,27 @@ class EOIReviewersAssessmentsListAPIView(ListAPIView):
         return eoi.reviewers.all()
 
 
+class EOIReviewersAssessmentsNotifyAPIView(APIView):
+    """
+    Created Notification to reminder users
+    """
+
+    NOTIFICATION_MESSAGE_SENT = "Notification message sent successfully"
+    NOTIFICATION_MESSAGE_WAIT = "Notification message sent recently. Need to wait 24 hours."
+
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+
+    def post(self, request, *args, **kwargs):
+        eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
+        user = get_object_or_404(eoi.reviewers.all(), id=self.kwargs['reviewer_id'])
+        #TODO - send notification reminder email w/ notification enhancement
+
+        return Response(
+            {"success": self.NOTIFICATION_MESSAGE_SENT},
+            status=statuses.HTTP_201_CREATED
+        )
+
+
 class AwardedPartnersListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
     serializer_class = AwardedPartnersSerializer
@@ -400,3 +505,21 @@ class AwardedPartnersListAPIView(ListAPIView):
         eoi_id = self.kwargs['eoi_id']
         return Application.objects.filter(
             did_win=True, did_decline=False, did_withdraw=False, eoi_id=eoi_id)
+
+
+class CompareSelectedListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    serializer_class = CompareSelectedSerializer
+
+    def get_queryset(self):
+        eoi_id = self.kwargs['eoi_id']
+        query = Application.objects.select_related("partner").filter(eoi_id=eoi_id)
+
+        application_ids = self.request.query_params.get("application_ids")
+        if application_ids is not None:
+            ids = filter(lambda x: x.isdigit(), application_ids.split(","))
+            query = query.filter(id__in=ids)
+        else:
+            query.none()
+
+        return query

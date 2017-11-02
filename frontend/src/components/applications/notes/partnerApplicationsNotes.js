@@ -13,6 +13,7 @@ import { isQueryChanged } from '../../../helpers/apiHelper';
 import { formatDateForPrint } from '../../../helpers/dates';
 import SectorsCell from '../sectorsCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
+import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
 
 /* eslint-disable react/prop-types */
 const applicationCell = ({ row, column }) => {
@@ -57,7 +58,8 @@ class PartnerApplicationsNotes extends Component {
     return (
       <GridColumn spacing={24}>
         <PartnerApplicationsNotesFilter />
-        <PaginatedList
+        <TableWithStateInUrl
+          component={PaginatedList}
           items={notes}
           itemsCount={itemsTotal}
           columns={notesColumns}

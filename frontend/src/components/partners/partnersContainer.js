@@ -8,6 +8,7 @@ import HeaderNavigation from '../../components/common/headerNavigation';
 import PartnerFilter from './partnerFilter';
 import PartnerProfileNameCell from './partnerProfileNameCell';
 import PaginatedList from '../common/list/paginatedList';
+import TableWithStateInUrl from '../common/hoc/tableWithStateInUrl';
 import PartnerProfileDetailItem from './partnerProfileDetailItem';
 import { loadPartnersList } from '../../reducers/agencyPartnersList';
 import PartnerProfileCountryCell from './partnerProfileCountryCell';
@@ -68,7 +69,8 @@ class PartnersContainer extends Component {
               <PartnerFilter />
             </Grid>
             <Grid item>
-              <PaginatedList
+              <TableWithStateInUrl
+                component={PaginatedList}
                 items={partners}
                 columns={columns}
                 itemsCount={totalCount}

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import R from 'ramda';
-import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import GridColumn from '../../../../common/grid/gridColumn';
@@ -16,7 +15,7 @@ const messages = {
   pending: 'Pending Verification ',
   by: 'by',
   questions: 'Verification questions:',
-  neverVerified: 'New Organization Profile'
+  neverVerified: 'New Organization Profile',
 };
 
 const verifiedText = (status) => {
@@ -27,7 +26,6 @@ const verifiedText = (status) => {
 
 const VerificationItem = (props) => {
   const { verification = {} } = props;
-  console.log(verification)
   return (
     <Grid item>
       <GridColumn>

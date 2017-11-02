@@ -28,7 +28,7 @@ class DeferredRotatingFileHandler(RotatingFileHandler):
 
 def get_countries_code_from_queryset(queryset):
     from .serializers import CountryPointSerializer
-    return map(lambda x: x.get("country_code"), CountryPointSerializer(queryset, many=True).data)
+    return list(set(map(lambda x: x.get("country_code"), CountryPointSerializer(queryset, many=True).data)))
 
 
 def get_partners_name_from_queryset(queryset):

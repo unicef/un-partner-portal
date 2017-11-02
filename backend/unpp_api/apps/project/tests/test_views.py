@@ -6,6 +6,7 @@ from datetime import date, timedelta
 
 from django.urls import reverse
 from django.conf import settings
+from django.core import mail
 from rest_framework import status as statuses
 
 from account.models import User
@@ -28,6 +29,7 @@ from project.views import PinProjectAPIView
 from project.serializers import ConvertUnsolicitedSerializer
 
 filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+
 
 class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
 
@@ -169,6 +171,8 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(Partner.objects.last().id in response.data['invited_partners'])
         self.assertTrue(Partner.objects.count(), 1)
         self.assertTrue(len(response.data['invited_partners']), 1)
+        self.assertEqual(len(mail.outbox), 1)
+        mail.outbox = []
 
         # edit EOI - dates & focal point(s)
         payload = {
@@ -383,6 +387,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
+        self.assertEqual(len(mail.outbox), 1)
 
         # accept offer
         payload = {

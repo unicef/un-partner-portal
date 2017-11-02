@@ -73,7 +73,7 @@ function authorizedPatch({ uri, params, body = {} }) {
 function authorizedPut({ uri, params, body = {} }) {
   const options = {
     params,
-    headers: buildHeaders(true),
+    headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
   };
   return axios.put(`${host}${uri}`, body, options)
     .then(response => response.data);
@@ -139,6 +139,10 @@ export function patchCfei(body, id) {
   return authorizedPatch({ uri: `/projects/${id}/`, body });
 }
 
+export function convertCnToDirectSelection(body, id) {
+  return authorizedPost({ uri: `/projects/application/${id}/convert-unsolicited/`, body });
+}
+
 export function uploadConceptNote(projectId, body) {
   return authorizedPost({ uri: `/projects/${projectId}/partner-applications/`, body });
 }
@@ -157,6 +161,22 @@ export function getUnsolicitedCN(params) {
 
 export function patchPinnedCfei(body) {
   return authorizedPatch({ uri: '/projects/pins/', body });
+}
+
+export function getCfeiReviewSummary(id) {
+  return authorizedGet({ uri: `/projects/${id}/review-summary/` });
+}
+
+export function putCfeiReviewSummary(id, body) {
+  return authorizedPatch({ uri: `/projects/${id}/review-summary/`, body });
+}
+
+export function getCfeiAwardedPartners(id) {
+  return authorizedGet({ uri: `/projects/${id}/applications/awarded-partners/` });
+}
+
+export function getCfeiReviewers(id) {
+  return authorizedGet({ uri: `/projects/${id}/applications/reviewers/` });
 }
 
 // Applications
@@ -265,6 +285,19 @@ export function patchPartnerProfileTab(partnerId, tabName, body) {
   return authorizedPatch({ uri: `/partners/${partnerId}/${tabName}/`, body });
 }
 
+export function getPartnerFlags(id, params) {
+  return authorizedGet({ uri: `/partners/${id}/flags/`, params });
+}
+
+export function postPartnerFlags(id, body) {
+  return authorizedPost({ uri: `/partners/${id}/flags/`, body });
+}
+
+export function patchPartnerFlags(id, body) {
+  return authorizedPatch({ uri: `/partners/${id}/flags/`, body });
+}
+
+
 // Agencies
 export function getAgencyMembers(id, params = { page_size: 100 }) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params },
@@ -274,4 +307,8 @@ export function getAgencyMembers(id, params = { page_size: 100 }) {
 export function getAgencies(params = { page_size: 100 }) {
   return authorizedGet({ uri: '/agencies/', params },
   );
+}
+
+export function getAdminOneLocations(countryCode) {
+  return authorizedGet({ uri: '/common/admin-levels', params: countryCode });
 }

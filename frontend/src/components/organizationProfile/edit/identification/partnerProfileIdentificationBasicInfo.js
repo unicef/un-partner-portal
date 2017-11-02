@@ -1,5 +1,7 @@
+import R from 'ramda';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router';
 import { FormSection } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import { connect } from 'react-redux';
@@ -16,8 +18,10 @@ const messages = {
   organizationType: 'Type of organization',
 };
 
+const isReadOnly = (isHq, displayType) => !(!isHq && displayType === 'Int');
+
 const PartnerProfileIdentificationBasicInfo = (props) => {
-  const { countries, organizationTypes } = props;
+  const { isCountryProfile, displayType, countries, organizationTypes } = props;
 
   return (
     <FormSection name="basic">
@@ -28,7 +32,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
             fieldName="legal_name"
             optional
             warn
-            readOnly
+            readOnly={isReadOnly(isCountryProfile, displayType)}
           />
           <Grid item sm={6} xs={12}>
             <TextFieldForm
@@ -36,7 +40,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               fieldName="alias_name"
               optional
               warn
-              readOnly
+              readOnly={isReadOnly(isCountryProfile, displayType)}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
@@ -45,7 +49,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               fieldName="acronym"
               optional
               warn
-              readOnly
+              readOnly={isReadOnly(isCountryProfile, displayType)}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
@@ -54,7 +58,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               fieldName="former_legal_name"
               optional
               warn
-              readOnly
+              readOnly={isReadOnly(isCountryProfile, displayType)}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
@@ -64,7 +68,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               values={countries}
               optional
               warn
-              readOnly
+              readOnly={isReadOnly(isCountryProfile, displayType)}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
@@ -74,7 +78,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               values={organizationTypes}
               optional
               warn
-              readOnly
+              readOnly={isReadOnly(isCountryProfile, displayType)}
             />
           </Grid>
         </Grid>
@@ -88,8 +92,17 @@ PartnerProfileIdentificationBasicInfo.propTypes = {
   organizationTypes: PropTypes.array.isRequired,
 };
 
-export default connect(state => ({
-  countries: selectNormalizedCountries(state),
-  organizationTypes: selectNormalizedOrganizationTypes(state),
-}))(PartnerProfileIdentificationBasicInfo);
+
+const connected = connect((state, ownProps) => {
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
+
+  return {
+    isCountryProfile: partner ? partner.is_hq : false,
+    displayType: partner ? partner.display_type : null,
+    countries: selectNormalizedCountries(state),
+    organizationTypes: selectNormalizedOrganizationTypes(state),
+  };
+}, null)(PartnerProfileIdentificationBasicInfo);
+
+export default withRouter(connected);
 
