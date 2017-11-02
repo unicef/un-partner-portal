@@ -75,14 +75,8 @@ class EoiFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { title } = values;
-    const { agency } = values;
-    const { active } = values;
-    const { country_code } = values;
-    const { specializations } = values;
-    const { posted_from_date } = values;
-    const { posted_to_date } = values;
-    const { locations } = values;
+    const { title, agency, active, country_code, specializations,
+      posted_from_date, posted_to_date, locations } = values;
 
     history.push({
       pathname: pathName,

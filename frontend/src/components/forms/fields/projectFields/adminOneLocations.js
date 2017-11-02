@@ -35,6 +35,10 @@ class Agencies extends Component {
         fieldName={fieldName}
         label={label}
         values={locations}
+        selectFieldProps={{
+          disabled: !this.props.countryCode || !this.locations,
+        }}
+
         {...other}
       />
     );
