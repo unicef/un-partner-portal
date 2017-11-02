@@ -15,7 +15,7 @@ from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer
 from common.models import Point, Specialization
-from partner.serializers import PartnerSerializer, PartnerStatusSerializer
+from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer
 from partner.models import Partner
 from .models import EOI, Application, Assessment, ApplicationFeedback
 
@@ -53,13 +53,13 @@ class BaseProjectSerializer(serializers.ModelSerializer):
 class ApplicationsPartnerStatusSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
-    partner_statuses = PartnerStatusSerializer(source="partner", read_only=True)
+    partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
 
     class Meta:
         model = Application
         fields = (
             'legal_name',
-            'partner_statuses',
+            'partner_additional',
             'offer_status',
         )
 
@@ -383,7 +383,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
 class ApplicationsListSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
-    partner_statuses = PartnerStatusSerializer(source="partner", read_only=True)
+    partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
     type_org = serializers.CharField(source="partner.display_type")
     cn = CommonFileSerializer()
     your_score = serializers.SerializerMethodField()
@@ -395,7 +395,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'legal_name',
-            'partner_statuses',
+            'partner_additional',
             'type_org',
             'status',
             'cn',
@@ -500,7 +500,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     submission_date = serializers.CharField(source="created")
     is_direct = serializers.SerializerMethodField()
     partner_name = serializers.CharField(source="partner.legal_name")
-    partner_statuses = PartnerStatusSerializer(source="partner", read_only=True)
+    partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
     selected_source = serializers.CharField(source="eoi.selected_source")
 
     class Meta:
@@ -517,7 +517,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             'status',
             'is_direct',
             'partner_name',
-            'partner_statuses',
+            'partner_additional',
         )
 
     def get_project_title(self, obj):
@@ -686,7 +686,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
 
     partner_id = serializers.CharField(source='partner.id')
     partner_name = serializers.CharField(source='partner.legal_name')
-    partner_statuses = PartnerStatusSerializer(source="partner", read_only=True)
+    partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
 
     cn = CommonFileSerializer()
     partner_notified = serializers.SerializerMethodField()
@@ -699,7 +699,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
         fields = (
             'partner_id',
             'partner_name',
-            'partner_statuses',
+            'partner_additional',
             'cn',
             'partner_notified',
             'partner_accepted_date',
@@ -734,7 +734,7 @@ class CompareSelectedSerializer(serializers.ModelSerializer):
 
     partner_id = serializers.IntegerField(source='partner.id')
     partner_name = serializers.CharField(source='partner.legal_name')
-    partner_statuses = PartnerStatusSerializer(source="partner", read_only=True)
+    partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
     total_assessment_score = serializers.IntegerField(source='average_total_score')
     verification_status = serializers.BooleanField(source="partner.is_verified")
     flagging_status = serializers.JSONField(source="partner.flagging_status")
@@ -747,7 +747,7 @@ class CompareSelectedSerializer(serializers.ModelSerializer):
         fields = (
             'partner_id',
             'partner_name',
-            'partner_statuses',
+            'partner_additional',
             'eoi_id',
             'total_assessment_score',
             'un_exp',

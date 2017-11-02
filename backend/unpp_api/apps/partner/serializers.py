@@ -34,7 +34,7 @@ from .models import (
 )
 
 
-class PartnerStatusSerializer(serializers.ModelSerializer):
+class PartnerAdditionalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Partner
@@ -51,7 +51,7 @@ class PartnerSerializer(serializers.ModelSerializer):
     is_hq = serializers.BooleanField(read_only=True)
     logo = CommonFileSerializer(source='other_info.org_logo',
                                 read_only=True)
-    partner_statuses = serializers.SerializerMethodField()
+    partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
 
     class Meta:
         model = Partner
@@ -62,27 +62,21 @@ class PartnerSerializer(serializers.ModelSerializer):
             'legal_name',
             'country_code',
             'display_type',
-            'partner_statuses',
+            'partner_additional',
         )
-
-    def get_partner_statuses(self, obj):
-        return PartnerStatusSerializer(instance=obj).data
 
 
 class PartnerShortSerializer(serializers.ModelSerializer):
 
-    partner_statuses = serializers.SerializerMethodField()
+    partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
 
     class Meta:
         model = Partner
         fields = (
             'id',
             'legal_name',
-            'partner_statuses',
+            'partner_additional',
         )
-
-    def get_partner_statuses(self, obj):
-        return PartnerStatusSerializer(instance=obj).data
 
 
 class PartnerMemberSerializer(serializers.ModelSerializer):
@@ -127,7 +121,7 @@ class PartnerFullProfilesSerializer(serializers.ModelSerializer):
 
 class OrganizationProfileSerializer(serializers.ModelSerializer):
 
-    partner_statuses = serializers.SerializerMethodField()
+    partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
     country_profiles = PartnerSerializer(many=True)
     users = serializers.IntegerField(source='partner_members.count')
 
@@ -135,7 +129,7 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
         model = Partner
         fields = (
             'id',
-            'partner_statuses',
+            'partner_additional',
             'legal_name',
             'country_code',
             'is_hq',
@@ -144,9 +138,6 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
             'users',
             'modified',
         )
-
-    def get_partner_statuses(self, obj):
-        return PartnerStatusSerializer(instance=obj).data
 
 
 class PartnerMailingAddressSerializer(serializers.ModelSerializer):
@@ -287,7 +278,7 @@ class PartnerReportingSerializer(serializers.ModelSerializer):
 
 
 class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
-    partner_statuses = serializers.SerializerMethodField()
+    partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
     profile = PartnerFullProfilesSerializer()
     mailing_address = PartnerMailingAddressSerializer()
     directors = PartnerDirectorSerializer(many=True)
@@ -311,7 +302,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
         fields = (
             'legal_name',
             'display_type',
-            'partner_statuses',
+            'partner_additional',
             'hq',
             'country_code',
             'is_active',
@@ -340,13 +331,10 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "report",
         )
 
-    def get_partner_statuses(self, obj):
-        return PartnerStatusSerializer(instance=obj).data
-
 
 class PartnersListSerializer(serializers.ModelSerializer):
 
-    partner_statuses = serializers.SerializerMethodField()
+    partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
     acronym = serializers.SerializerMethodField()
     experience_working = serializers.SerializerMethodField()
     mailing_address = PartnerMailingAddressSerializer()
@@ -359,7 +347,7 @@ class PartnersListSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'legal_name',
-            'partner_statuses',
+            'partner_additional',
             'acronym',
             'display_type',
             'country_code',
@@ -371,9 +359,6 @@ class PartnersListSerializer(serializers.ModelSerializer):
             "working_languages",
             "experiences",
         )
-
-    def get_partner_statuses(self, obj):
-        return PartnerStatusSerializer(instance=obj).data
 
     def get_acronym(self, obj):
         return obj.profile.acronym
@@ -403,7 +388,7 @@ class PartnersListItemSerializer(serializers.ModelSerializer):
 class PartnerIdentificationSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name", read_only=True)
-    partner_statuses = PartnerStatusSerializer(source="partner", read_only=True)
+    partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
     alias_name = serializers.CharField(read_only=True)
     acronym = serializers.CharField(read_only=True)
     former_legal_name = serializers.CharField(read_only=True)
@@ -416,7 +401,7 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
         model = PartnerProfile
         fields = (
             'legal_name',
-            'partner_statuses',
+            'partner_additional',
             'alias_name',
             'acronym',
             'former_legal_name',
