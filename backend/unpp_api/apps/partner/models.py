@@ -79,7 +79,10 @@ class Partner(TimeStampedModel):
 
     @property
     def is_verified(self):
-        return self.verifications.filter(is_verified=True).exists()
+        if not self.verifications.exists():
+            return None
+        else:
+            return self.verifications.filter(is_verified=True).exists()
 
     @property
     def flagging_status(self):
