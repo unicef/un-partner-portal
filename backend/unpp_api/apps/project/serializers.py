@@ -750,6 +750,8 @@ class CompareSelectedSerializer(serializers.ModelSerializer):
             'partner_additional',
             'eoi_id',
             'total_assessment_score',
+            'verification_status',
+            'flagging_status',
             'un_exp',
             'annual_budget',
             # 'key_results',
