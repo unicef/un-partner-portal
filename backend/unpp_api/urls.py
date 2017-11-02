@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^api/partners/', include('partner.urls', namespace='partners')),
     url(r'^api/partners/', include('review.urls', namespace='partner-reviews')),
     url(r'^api/notifications/', include('notification.urls', namespace='notifications')),
+    url(r'^api/dashboard/', include('dashboard.urls', namespace='dashboard')),
     url(r'^api/rest-auth/', include('rest_auth.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
