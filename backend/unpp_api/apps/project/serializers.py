@@ -154,6 +154,7 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
     locations_proposal_of_eoi = PointSerializer(many=True, read_only=True)
     submitter = UserSerializer(read_only=True)
     is_direct = serializers.SerializerMethodField()
+    cfei_type = serializers.CharField(read_only=True)
 
 
     class Meta:

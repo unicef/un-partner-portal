@@ -244,6 +244,10 @@ export function postUnsolicitedCN(body) {
   return authorizedPost({ uri: '/projects/applications/unsolicited/', body });
 }
 
+export function getApplicationComparison(id, params) {
+  return authorizedGet({ uri: `/projects/${id}/applications/compare-selected/`, params });
+}
+
 // Partners
 export function getPartnerProfileDetails(partnerId) {
   return authorizedGet({ uri: `/partners/${partnerId}` });
@@ -293,8 +297,8 @@ export function postPartnerFlags(id, body) {
   return authorizedPost({ uri: `/partners/${id}/flags/`, body });
 }
 
-export function patchPartnerFlags(id, body) {
-  return authorizedPatch({ uri: `/partners/${id}/flags/`, body });
+export function patchPartnerFlags(id, body, flagId) {
+  return authorizedPatch({ uri: `/partners/${id}/flags/${flagId}/`, body });
 }
 
 
@@ -314,7 +318,7 @@ export function getDashboard() {
   return authorizedGet({ uri: '/dashboard/' });
 }
 
-export function getApplicationsDecissions() {
+export function getApplicationsDecisions() {
   return authorizedGet({ uri: '/dashboard/applications-decisions/' });
 }
 

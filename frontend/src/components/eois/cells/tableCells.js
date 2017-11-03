@@ -18,7 +18,7 @@ export default type => ({ row, column }) => {
         {row.country_code.map((code, index) =>
           (<span>
             <EoiCountryCell code={code} />
-            {(index === row.county_code.length - 1) ? '' : ', '}
+            {(index === row.country_code.length - 1) ? '' : ', '}
           </span>),
         )}
       </TableCell>);

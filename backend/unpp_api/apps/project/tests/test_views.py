@@ -307,12 +307,10 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         payload = {
             "cn": cfile.id,
         }
-
-        # TODO - come back to fixing this. Constraint is at DB level, so error is raised but doesn't return this response
-        # response = self.client.post(url, data=payload, format='json')
-        # self.assertFalse(statuses.is_success(response.status_code))
-        # # expected_msgs = ['The fields eoi, partner must make a unique set.']
-        # self.assertEquals(response.data['non_field_errors'], expected_msgs)
+        response = self.client.post(url, data=payload, format='json')
+        self.assertFalse(statuses.is_success(response.status_code))
+        expected_msgs = ['The fields eoi, partner must make a unique set.']
+        self.assertEquals(response.data['non_field_errors'], expected_msgs)
 
         url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
         payload = {

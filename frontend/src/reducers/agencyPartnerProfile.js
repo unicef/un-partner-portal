@@ -48,8 +48,7 @@ const savePartnerProfileOverview = (state, action) => {
     budget: R.path(['budgets', '0', 'budget'], partnerDetails),
     keyResults: 'Yes',
     mandateMission: R.path(['mandate_mission', 'description'], partnerDetails),
-    partnerStatuses: R.prop('partner_statuses', partnerDetails),
-
+    partnerStatus: R.prop('partner_additional', partnerDetails),
   };
   return R.assoc(R.path(['profile', 'id'], partnerDetails), profileOverview, state);
 };
