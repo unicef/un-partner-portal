@@ -28,15 +28,21 @@ class Agencies extends Component {
     }
   }
 
+
   render() {
     const { fieldName, label, locations, ...other } = this.props;
+    let loc = locations;
+
+    if (!locations) {
+      loc = [];
+    }
     return (
       <SelectForm
         fieldName={fieldName}
         label={label}
         values={locations}
         selectFieldProps={{
-          disabled: !this.props.countryCode || !this.locations,
+          disabled: !this.props.countryCode || loc.length === 0,
         }}
 
         {...other}
