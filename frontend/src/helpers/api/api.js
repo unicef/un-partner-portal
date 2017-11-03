@@ -248,6 +248,10 @@ export function getPartnerApplications(params) {
   return authorizedGet({ uri: '/projects/applications', params });
 }
 
+export function getApplicationComparison(id, params) {
+  return authorizedGet({ uri: `/projects/${id}/applications/compare-selected/`, params });
+}
+
 // Partners
 export function getPartnerProfileDetails(partnerId) {
   return authorizedGet({ uri: `/partners/${partnerId}` });
@@ -297,8 +301,8 @@ export function postPartnerFlags(id, body) {
   return authorizedPost({ uri: `/partners/${id}/flags/`, body });
 }
 
-export function patchPartnerFlags(id, body) {
-  return authorizedPatch({ uri: `/partners/${id}/flags/`, body });
+export function patchPartnerFlags(id, body, flagId) {
+  return authorizedPatch({ uri: `/partners/${id}/flags/${flagId}/`, body });
 }
 
 

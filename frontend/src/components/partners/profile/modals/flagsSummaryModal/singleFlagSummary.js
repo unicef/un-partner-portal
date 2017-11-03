@@ -2,6 +2,7 @@ import React from 'react';
 import { reduxForm } from 'redux-form';
 import Divider from 'material-ui/Divider';
 import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
 import GridColumn from '../../../../common/grid/gridColumn';
 import GridRow from '../../../../common/grid/gridRow';
 import { email } from '../../../../../helpers/validation';
@@ -23,12 +24,18 @@ const messages = {
   valid: 'This flag is no longer valid',
 };
 
+const styleSheet = () => ({
+  whiteDrop: {
+    opacity: 0.5,
+  },
+});
+
 const SingleFlagSummary = (props) => {
-  const { flag } = props;
+  const { flag, classes } = props;
   return (
     <form>
       <SingleFlagSummaryHeader flag={flag} />
-      <PaddedContent>
+      <PaddedContent className={flag.is_valid === false && classes.whiteDrop}>
         <GridColumn>
           <TextFieldForm
             label={messages.comments}
@@ -65,16 +72,16 @@ const SingleFlagSummary = (props) => {
           <Divider />
         </GridColumn>
       </PaddedContent>
-
     </form >
   );
 };
 
 SingleFlagSummary.propTypes = {
   flag: PropTypes.object,
+  classes: PropTypes.object,
 };
 
 const formSingleFlagSummary = reduxForm({
 })(SingleFlagSummary);
 
-export default formSingleFlagSummary;
+export default withStyles(styleSheet)(formSingleFlagSummary);

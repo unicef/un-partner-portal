@@ -36,7 +36,7 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
         all_dates = self.get_partners_since_days_ago().dates('created', 'day')
         dates_dict = {}
         for _date in all_dates:
-            dates_dict[str(_date)] = self.get_partners_since_days_ago().filter(created__contains=date).count()
+            dates_dict[str(_date)] = self.get_partners_since_days_ago().filter(created__contains=_date).count()
 
         return dates_dict
 

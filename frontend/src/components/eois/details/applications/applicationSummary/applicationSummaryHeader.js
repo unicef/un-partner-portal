@@ -6,13 +6,11 @@ import { browserHistory as history } from 'react-router';
 
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
 
 import HeaderNavigation from '../../../../common/headerNavigation';
 import {
   selectApplication,
   selectApplicationStatus,
-  selectApplicationPartnerName,
   isUserAFocalPoint,
   isUserAReviewer,
   selectReview,
@@ -24,6 +22,7 @@ import EditReviewModalButton from './reviewContent/editReviewModalButton';
 import AddReviewModalButton from './reviewContent/addReviewModalButton';
 import AwardApplicationButton from '../../../buttons/awardApplicationButton';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
+import { APPLICATION_STATUSES } from '../../../../../helpers/constants';
 
 const messages = {
   header: 'Application from :',
@@ -48,29 +47,38 @@ class ApplicationSummaryHeader extends Component {
       isUserReviewer,
       reviews,
       user,
+      status,
       getAssessment,
       params: { applicationId },
       didWin,
     } = this.props;
+    const disabled = loading || status !== APPLICATION_STATUSES.PRE;
     if (isUserFocalPoint) {
       if (didWin) {
         return (<WithdrawApplicationButton
+          disabled={disabled}
           raised
-          disabled={loading}
           applicationId={applicationId}
         />);
       }
-      return <AwardApplicationButton disabled={loading} applicationId={applicationId} />;
+      return (<AwardApplicationButton
+        disabled={disabled}
+        applicationId={applicationId}
+      />);
     } else if (isUserReviewer) {
       if (R.prop(user, reviews)) {
         return (<EditReviewModalButton
           assessmentId={reviews[user]}
           scores={getAssessment(reviews[user])}
           reviewer={user}
-          disabled={loading}
+          disabled={disabled}
         />);
       }
-      return (<AddReviewModalButton raised reviewer={user} disabled={loading} />);
+      return (<AddReviewModalButton
+        raised
+        reviewer={user}
+        disabled={disabled}
+      />);
     }
     return <div />;
   }

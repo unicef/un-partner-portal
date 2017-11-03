@@ -245,13 +245,20 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
+    def post(self, request, pk, *args, **kwargs):
+        self.eoi = get_object_or_404(EOI, id=pk)
+        if Application.objects.filter(eoi=self.eoi, partner_id=self.request.active_partner.id).exists():
+            return Response(
+                {'non_field_errors': ['The fields eoi, partner must make a unique set.']},
+                status=statuses.HTTP_400_BAD_REQUEST
+            )
+        return super(PartnerEOIApplicationCreateAPIView, self).post(request, pk, *args, **kwargs)
+
     def perform_create(self, serializer):
-        eoi = get_object_or_404(EOI, id=self.kwargs['pk'])
-        instance = serializer.save(eoi=eoi,
+        instance = serializer.save(eoi=self.eoi,
                                    submitter_id=self.request.user.id,
                                    partner_id=self.request.active_partner.id,
-                                   agency=eoi.agency)
-
+                                   agency=self.eoi.agency)
         send_notificiation_application_created(instance)
 
 

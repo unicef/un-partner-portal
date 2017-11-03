@@ -15,6 +15,7 @@ import {
 } from '../../../../../store';
 import ReviewContent from './reviewContent/reviewContent';
 import Feedback from '../../../../applications/feedback/feedbackContainer';
+import { APPLICATION_STATUSES } from '../../../../../helpers/constants';
 
 
 const messages = {
@@ -72,8 +73,8 @@ ApplicationSummaryContent.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const application = selectApplication(state, ownProps.params.applicationId) || {};
-  const { partner = {}, eoi } = application;
-  const partnerDetails = R.prop(partner.id, state.agencyPartnerProfile);
+  const { partner, eoi, status } = application;
+  const partnerDetails = R.prop(partner, state.agencyPartnerProfile);
   const cfeiCriteria = selectCfeiCriteria(state, eoi);
   const isUserFocalPoint = isUserAFocalPoint(state, eoi);
   const isUserReviewer = isUserAReviewer(state, eoi);
@@ -84,7 +85,7 @@ const mapStateToProps = (state, ownProps) => {
     partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
     cfeiCriteria,
     eoi,
-    shouldSeeReviews: isUserFocalPoint || isUserReviewer,
+    shouldSeeReviews: (isUserFocalPoint || isUserReviewer) && status === APPLICATION_STATUSES.PRE,
     isUserFocalPoint,
     isUserReviewer,
   };

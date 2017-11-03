@@ -23,3 +23,5 @@ export const equalAtPaths = path => (a, b) => R.equals(R.path(path, a), R.path(p
 export const selectIndexWithDefaultNull = R.propOr(null);
 export const selectIndexWithDefaultEmptyObject = R.propOr({});
 export const selectIndexWithDefaultEmptyArray = R.propOr([]);
+
+export const pluckAll = R.compose(R.juxt, R.map(R.pluck));

@@ -37,6 +37,9 @@ const styleSheet = theme => ({
   spacing: {
     marginLeft: theme.spacing.unit,
   },
+  whiteDrop: {
+    opacity: 0.5,
+  },
 });
 
 class SingleFlagSummaryHeader extends Component {
@@ -57,7 +60,7 @@ class SingleFlagSummaryHeader extends Component {
   }
 
   handleSaveClick() {
-    this.props.invalidateFlag();
+    this.props.invalidateFlag(this.props.flag.id);
     this.setState({ expanded: false });
   }
 
@@ -71,7 +74,7 @@ class SingleFlagSummaryHeader extends Component {
     return (
       <div>
         <PaddedContent className={classes.lightGrey}>
-          <SpreadContent>
+          <SpreadContent className={flag.is_valid === false && classes.whiteDrop}>
             <div className={classes.flexBox}>
               <FlagIcon color={flag.flag_type} />
               <Typography>
@@ -144,7 +147,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  invalidateFlag: () => dispatch(updatePartnerFlags(ownProps.params.id, { is_valid: false }, true)),
+  invalidateFlag: flagId => dispatch(updatePartnerFlags(ownProps.params.id, { is_valid: false }, true, flagId)),
 });
 
 export default withRouter(connect(

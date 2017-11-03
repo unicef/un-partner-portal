@@ -4,6 +4,7 @@ import { browserHistory as history } from 'react-router';
 import { withStyles } from 'material-ui/styles';
 import Flag from 'material-ui-icons/Flag';
 import PropTypes from 'prop-types';
+import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import PartnerProfileHeaderMenu from './partnerProfileHeaderMenu';
 import HeaderNavigation from '../../../components/common/headerNavigation';
@@ -14,42 +15,30 @@ import {
   loadPartnerVerifications,
 } from '../../../reducers/partnerVerifications';
 import VerificationIcon from '../profile/icons/verificationIcon';
-
-const styleSheet = (theme) => {
-  const paddingIcon = theme.spacing.unit;
-
-  return {
-    alignCenter: {
-      display: 'flex',
-      alignItems: 'center',
-    },
-    iconYellow: {
-      fill: '#FFC400',
-      width: 20,
-      height: 20,
-      margin: `0 ${paddingIcon}px 0 0`,
-    },
-    iconRed: {
-      fill: '#D50000',
-      width: 20,
-      height: 20,
-      margin: `0 ${paddingIcon}px 0 0`,
-    },
-  };
-};
+import FlaggingStatus from '../profile/common/flaggingStatus';
 
 const PartnerTitle = (props) => {
-  const { classes, partner } = props;
-
+  const {
+    partner: {
+      name,
+      partnerStatus: { is_verified, flagging_status: flags = {},
+      } = {},
+    } = {},
+  } = props;
   return (
-    <div className={classes.alignCenter}>
-      <Typography type="headline">
-        {partner.name}
-      </Typography>
-      <VerificationIcon verified={partner.verified} />
-      {partner.flagYellow && <Flag className={classes.iconYellow} />}
-      {partner.flagRed && <Flag className={classes.iconRed} />}
-    </div>);
+    <Grid container align="center">
+      <Grid item>
+        <Typography type="headline">
+          {name}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <VerificationIcon verified={is_verified} />
+      </Grid>
+      <Grid item>
+        <FlaggingStatus flags={flags} />
+      </Grid>
+    </Grid>);
 };
 
 class PartnerProfileHeader extends Component {
@@ -64,20 +53,6 @@ class PartnerProfileHeader extends Component {
   componentWillMount() {
     this.props.loadPartnerDetails();
     this.props.loadPartnerVerifications();
-  }
-
-  partnerTitle() {
-    const { classes, partner } = this.props;
-
-    return (
-      <div className={classes.alignCenter}>
-        <Typography type="headline">
-          {partner.name}
-        </Typography>
-        <VerificationIcon verified={partner.verified} />
-        {partner.flagYellow && <Flag className={classes.iconYellow} />}
-        {partner.flagRed && <Flag className={classes.iconRed} />}
-      </div>);
   }
 
   updatePath() {
@@ -101,7 +76,6 @@ class PartnerProfileHeader extends Component {
     } = this.props;
 
     const index = this.updatePath();
-
     return (
       <div>
         <HeaderNavigation
@@ -121,18 +95,15 @@ class PartnerProfileHeader extends Component {
 }
 
 PartnerProfileHeader.propTypes = {
-  classes: PropTypes.object.isRequired,
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
   location: PropTypes.string.isRequired,
-  partner: PropTypes.object.isRequired,
   partnerId: PropTypes.string.isRequired,
   loadPartnerDetails: PropTypes.func,
   loadPartnerVerifications: PropTypes.func,
 };
 
 PartnerTitle.propTypes = {
-  classes: PropTypes.object.isRequired,
   partner: PropTypes.object.isRequired,
 };
 
@@ -152,8 +123,5 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 const connectedPartnerProfile = connect(mapStateToProps, mapDispatchToProps)(PartnerProfileHeader);
-const connectedPartnerTitle = connect(mapStateToProps)(PartnerTitle);
-withStyles(styleSheet, { name: '' })(connectedPartnerTitle);
 
-export default withStyles(styleSheet, { name: 'PartnerProfileHeader' })(connectedPartnerProfile);
-
+export default connectedPartnerProfile;
