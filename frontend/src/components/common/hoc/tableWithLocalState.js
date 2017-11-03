@@ -15,6 +15,10 @@ class TableWithLocalState extends Component {
     this.changePageNumber = this.changePageNumber.bind(this);
   }
 
+  componentWillMount() {
+    this.props.loadingFunction(this.state);
+  }
+
   changePageSize(pageSize) {
     const { itemsCount, loadingFunction } = this.props;
     const { page } = this.state;
@@ -40,7 +44,7 @@ class TableWithLocalState extends Component {
   }
 
   render() {
-    const { component: WrappedComponent, pageSize, pageNumber, ...other } = this.props;
+    const { component: WrappedComponent, ...other } = this.props;
     return (<WrappedComponent
       {...other}
       allowSorting
@@ -56,8 +60,6 @@ class TableWithLocalState extends Component {
 
 TableWithLocalState.propTypes = {
   component: PropTypes.element,
-  pageSize: PropTypes.number,
-  pageNumber: PropTypes.number,
   itemsCount: PropTypes.number,
   loadingFunction: PropTypes.func,
 };

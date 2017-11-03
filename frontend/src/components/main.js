@@ -15,6 +15,14 @@ import { ROLES } from '../helpers/constants';
 
 
 class Main extends Component {
+  constructor() {
+    super();
+    this.state = {
+      configLoaded: false,
+      error: null,
+    };
+  }
+
   componentWillMount() {
     const { session,
       loadCountries,
@@ -23,13 +31,22 @@ class Main extends Component {
       loadAgencyMembers,
       getPartnerNames,
     } = this.props;
-    loadCountries();
-    loadPartnerConfig();
-    loadSectors();
+    const configPromises = [
+      loadCountries(),
+      loadPartnerConfig(),
+      loadSectors(),
+    ];
     if (session.role === ROLES.AGENCY) {
-      loadAgencyMembers(session.agencyId);
-      getPartnerNames();
+      configPromises.concat([
+        loadAgencyMembers(session.agencyId),
+        getPartnerNames(),
+      ]);
     }
+    Promise.all(configPromises).then(() => {
+      this.setState({ configLoaded: true });
+    }).catch((error) => {
+      this.setState({ error });
+    });
   }
 
   render() {
@@ -37,7 +54,7 @@ class Main extends Component {
     return (
       <MuiThemeProvider theme={createMuiTheme(getTheme())}>
         <MuiThemeProviderLegacy muiTheme={muiOldTheme()}>
-          {children}
+          {this.state.configLoaded && children}
         </MuiThemeProviderLegacy>
       </MuiThemeProvider>);
   }

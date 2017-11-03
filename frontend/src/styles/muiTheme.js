@@ -4,6 +4,8 @@ import grey from 'material-ui/colors/grey';
 import getMuiTheme from 'material-ui-old/styles/getMuiTheme';
 import store from '../store';
 
+export const chartColors = ['#668DDB', '#F7C848', '#ADEAC0', '#A996D8', '#EE7635'];
+
 const getColorTheme = () => {
   const role = store.getState().session.role;
   return (role && role === 'agency')
@@ -115,6 +117,7 @@ const getTheme = () => (
         orange: '#F39C38',
         purple: '#A996D8',
         blue: '#87B0EE',
+        green: '#72C300',
       },
       eoiStatus: {
         completed: '#5B92E5',

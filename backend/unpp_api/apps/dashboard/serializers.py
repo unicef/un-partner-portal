@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from datetime import datetime, date, timedelta
 
+from django.db.models import Count
 from rest_framework import serializers
 
 from common.consts import EOI_TYPES, PARTNER_TYPES
@@ -104,7 +105,15 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
         return result
 
     def get_num_of_submitted_cn(self, obj):
-        return Application.objects.filter(partner_id__in=self.get_partner_ids()).count()
+        details = Agency.objects.filter(applications__partner_id__in=self.get_partner_ids()).annotate(
+            count=Count('applications')).values('name', 'count')
+        count = 0
+        if len(details) > 0:
+            count = reduce(lambda x,y: x['count']+y['count'], details)
+        return {
+            'details': details,
+            'count': count
+        }
 
     def get_num_of_pinned_cfei(self, obj):
         return Pin.objects.filter(

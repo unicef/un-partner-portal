@@ -15,10 +15,10 @@ export default type => ({ row, column }) => {
   } else if (column.name === 'country_code') {
     return (
       <TableCell >
-        {row.country_code.map(code =>
+        {row.country_code.map((code, index) =>
           (<span>
             <EoiCountryCell code={code} />
-            {', '}
+            {(index === row.country_code.length - 1) ? '' : ', '}
           </span>),
         )}
       </TableCell>);

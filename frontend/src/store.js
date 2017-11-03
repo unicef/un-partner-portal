@@ -48,8 +48,13 @@ import partnerVerifications, * as partnerVerificationsSelector from './reducers/
 import cfeiReviewSummary, { selectReviewSummary } from './reducers/cfeiReviewSummary';
 import cfeiAwardedPartners, { selectAwardedPartners } from './reducers/cfeiAwardedPartners';
 import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
+import dashboard from './reducers/dashboard';
 import partnerFlags, * as partnerFlagsSelector from './reducers/partnerFlags';
 import agencyPartnerApplicationList from './reducers/agencyPartnerApplicationList';
+import applicationsToScore from './reducers/applicationsToScore';
+import pendingOffers from './reducers/pendingOffers';
+import submittedCN from './reducers/submittedCN';
+import applicationDecisions from './reducers/applicationsDecisions';
 import applicationComparison from './reducers/applicationsComparison';
 
 const mainReducer = combineReducers({
@@ -97,7 +102,12 @@ const mainReducer = combineReducers({
   cfeiReviewSummary,
   cfeiAwardedPartners,
   cfeiReviewers,
+  dashboard,
   partnerFlags,
+  applicationsToScore,
+  pendingOffers,
+  submittedCN,
+  applicationDecisions,
   applicationComparison,
 });
 
