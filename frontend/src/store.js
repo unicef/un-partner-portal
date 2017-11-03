@@ -49,6 +49,7 @@ import cfeiReviewSummary, { selectReviewSummary } from './reducers/cfeiReviewSum
 import cfeiAwardedPartners, { selectAwardedPartners } from './reducers/cfeiAwardedPartners';
 import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
 import partnerFlags, * as partnerFlagsSelector from './reducers/partnerFlags';
+import agencyPartnerApplicationList from './reducers/agencyPartnerApplicationList';
 
 const mainReducer = combineReducers({
   cfei,
@@ -90,6 +91,7 @@ const mainReducer = combineReducers({
   partnerAppDetails,
   applicationFeedback,
   agencies,
+  agencyPartnerApplicationList,
   partnerVerifications,
   cfeiReviewSummary,
   cfeiAwardedPartners,
@@ -206,7 +208,7 @@ export const selectCfeiCriteria = (state, id) =>
 export const selectCfeiStatus = (state, id) =>
   cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.cfeiDetails, id);
 
-  export const selectCfeiConverted = (state, id) =>
+export const selectCfeiConverted = (state, id) =>
   cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.cfeiDetails, id);
 
 export const isCfeiCompleted = (state, id) =>

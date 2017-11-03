@@ -3,18 +3,18 @@ import { connect } from 'react-redux';
 import React from 'react';
 import { TableCell } from 'material-ui/Table';
 import PropTypes from 'prop-types';
-import SectorItem from './sectorItem';
+import SectorItem from '../../components/applications/sectorItem';
 
-const selectSectorsBySpecializations = (sectors, spec) =>
-  R.uniq(R.flatten(R.map(item => R.keys(item), R.map(sp => R.filter(item => R.contains(sp, item), sectors), spec))));
+const selectSectorsBySpecializations = spec =>
+  R.uniq(R.map(item => item.sector, spec));
 
 const SectorsCell = (props) => {
-  const { sectors, specializations } = props;
+  const { specializations } = props;
+  const uniqueSectors = selectSectorsBySpecializations(specializations);
 
-  const uniqueSpecializations = selectSectorsBySpecializations(sectors, specializations);
   return (
     <TableCell>
-      {uniqueSpecializations.map(item => (
+      {uniqueSectors.map(item => (
         <SectorItem sectorId={item} />
       ))}
     </TableCell>
@@ -23,7 +23,6 @@ const SectorsCell = (props) => {
 
 SectorsCell.propTypes = {
   specializations: PropTypes.array.isRequired,
-  sectors: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => ({

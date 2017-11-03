@@ -244,6 +244,10 @@ export function postUnsolicitedCN(body) {
   return authorizedPost({ uri: '/projects/applications/unsolicited/', body });
 }
 
+export function getPartnerApplications(params) {
+  return authorizedGet({ uri: '/projects/applications', params });
+}
+
 // Partners
 export function getPartnerProfileDetails(partnerId) {
   return authorizedGet({ uri: `/partners/${partnerId}` });
