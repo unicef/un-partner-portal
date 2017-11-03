@@ -26,6 +26,7 @@ class AdminLevel1(models.Model):
 
     class Meta:
         ordering = ['id']
+        unique_together = (('name', 'country_code'), )
 
     def __str__(self):
         return "AdminLevel1 <pk:{}>".format(self.id)
