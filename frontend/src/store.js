@@ -48,7 +48,10 @@ import partnerVerifications, * as partnerVerificationsSelector from './reducers/
 import cfeiReviewSummary, { selectReviewSummary } from './reducers/cfeiReviewSummary';
 import cfeiAwardedPartners, { selectAwardedPartners } from './reducers/cfeiAwardedPartners';
 import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
+import dashboard from './reducers/dashboard';
 import partnerFlags, * as partnerFlagsSelector from './reducers/partnerFlags';
+import applicationsToScore from './reducers/applicationsToScore';
+import applicationDecisions from './reducers/applicationsDecisions';
 import applicationComparison from './reducers/applicationsComparison';
 
 const mainReducer = combineReducers({
@@ -95,7 +98,10 @@ const mainReducer = combineReducers({
   cfeiReviewSummary,
   cfeiAwardedPartners,
   cfeiReviewers,
+  dashboard,
   partnerFlags,
+  applicationsToScore,
+  applicationDecisions,
   applicationComparison,
 });
 
@@ -208,7 +214,7 @@ export const selectCfeiCriteria = (state, id) =>
 export const selectCfeiStatus = (state, id) =>
   cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.cfeiDetails, id);
 
-  export const selectCfeiConverted = (state, id) =>
+export const selectCfeiConverted = (state, id) =>
   cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.cfeiDetails, id);
 
 export const isCfeiCompleted = (state, id) =>

@@ -313,6 +313,19 @@ export function getAgencies(params = { page_size: 100 }) {
   );
 }
 
+// Dashboard
+export function getDashboard() {
+  return authorizedGet({ uri: '/dashboard/' });
+}
+
+export function getApplicationsDecisions() {
+  return authorizedGet({ uri: '/dashboard/applications-decisions/' });
+}
+
+export function getApplicationsToScore(params) {
+  return authorizedGet({ uri: '/dashboard/applications-to-score/', params });
+}
+
 export function getAdminOneLocations(countryCode) {
   return authorizedGet({ uri: '/common/admin-levels', params: countryCode });
 }
