@@ -8,9 +8,9 @@ import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 import { toPairs, isEmpty, map } from 'ramda';
 import { Link } from 'react-router';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import GridColumn from '../../common/grid/gridColumn';
 import PaddedContent from '../../common/paddedContent';
+import VerticalBarChart from '../../common/charts/verticalBarChart';
 
 const messages = {
   title: 'Number Of New CFEIs by Sector',
@@ -25,37 +25,12 @@ const styleSheet = theme => ({
   },
 });
 
-const renderLabel = data => ({ index, x, y, width, height }) => (<text
-  className="recharts-text recharts-label"
-  y={y + (height * 0.75)}
-  x={x + 8}
-  height={height}
-  width={width}
-  textAnchor="start"
->
-  <Typography type="caption" component="tspan" >{data[index].sectorName}</Typography>
-</text>);
-const getPath = (x, y, width, height) => {
-  return `M${x},${y + height}
-          C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3} ${x + width / 2}, ${y}
-          C${x + width / 2},${y + height / 3} ${x + 2 * width / 3},${y + height} ${x + width}, ${y + height}
-          Z`;
-};
-
-const renderBar = (props) => {
-  const { fill, x, y, width, height } = props;
-
-  return (<path d={getPath(x, y, width, height)} stroke="none" fill={fill}/>)
-
-};
-
-
 const NumberOfCfeisBySector = (props) => {
   const { newCfeiBySectors = {} } = props;
   let data;
   if (!isEmpty(newCfeiBySectors)) {
     data = map(
-      ([sector, count]) => ({ sectorName: sector, count }),
+      ([sector, count]) => ({ name: sector, count }),
       toPairs(newCfeiBySectors));
   }
   return (
@@ -65,19 +40,12 @@ const NumberOfCfeisBySector = (props) => {
           <Typography type="headline">{messages.title}</Typography>
           <Typography type="caption">{messages.caption}</Typography>
           <Divider />
-          <ResponsiveContainer width="100%" height={500}>
-            <BarChart
-              data={data}
-              margin={{ left: 16, right: 16, top: 16 }}
-              layout="vertical"
-              barCategoryGap={8}
-            >
-              <XAxis type="number" hide />
-              <YAxis dataKey="sectorName" type="category" hide />
-              <Tooltip />
-              <Bar dataKey="count" shape={renderBar} fill="#DCC0E4" label={renderLabel(data)} barSize={24} />
-            </BarChart>
-          </ResponsiveContainer>
+          <VerticalBarChart
+            data={data}
+            containerProps={{ width: '100%', height: 500 }}
+            barChartProps={{ margin: { left: 0, right: 16, top: 16 }, barCategoryGap: 8 }}
+            barProps={{ fill: '#DCC0E4', barSize: 24 }}
+          />
           <Grid container justify="flex-end">
             <Grid item>
               <Button component={Link} to="/cfei/open/" color="accent">{messages.button}</Button>
