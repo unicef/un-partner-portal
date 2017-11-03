@@ -51,6 +51,8 @@ import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
 import dashboard from './reducers/dashboard';
 import partnerFlags, * as partnerFlagsSelector from './reducers/partnerFlags';
 import applicationsToScore from './reducers/applicationsToScore';
+import pendingOffers from './reducers/pendingOffers';
+import submittedCN from './reducers/submittedCN';
 
 const mainReducer = combineReducers({
   cfei,
@@ -99,6 +101,8 @@ const mainReducer = combineReducers({
   dashboard,
   partnerFlags,
   applicationsToScore,
+  pendingOffers,
+  submittedCN,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
