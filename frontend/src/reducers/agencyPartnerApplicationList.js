@@ -36,7 +36,7 @@ const saveMembers = (state, action) => {
 };
 
 const messages = {
-  loadFailed: 'Load members failed.',
+  loadFailed: 'Load partner applications failed.',
 };
 
 const initialState = {
