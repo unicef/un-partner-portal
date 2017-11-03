@@ -10,6 +10,7 @@ import partnerVerificationsStatus, {
 import {
   selectIndexWithDefaultEmptyObject,
 } from './normalizationHelpers';
+import { loadPartnerDetails } from './partnerProfileDetails';
 
 import { getPartnerVerifications, postPartnerVerifications } from '../helpers/api/api';
 
@@ -74,7 +75,8 @@ export const selectPreviousVerificationsCount = (state, partnerId) => {
 export const updatePartnerVerifications = (partnerId, body) =>
   dispatch => postPartnerVerifications(partnerId, body)
     .then((newVerification) => {
-      dispatch(addSingleVerification(partnerId, newVerification));
+      dispatch(loadPartnerVerifications(partnerId));
+      dispatch(loadPartnerDetails(partnerId));
       return newVerification;
     });
 
