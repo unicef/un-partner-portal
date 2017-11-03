@@ -37,60 +37,64 @@ def format_to_full_name(first_name, last_name):
     return " ".join(full_name.split())
 
 
-# TODO - modify to be flexible for scanning one partner at a time for registration check needed
-def scan_all_partners():
+def sanctions_scan_partner(partner):
+
+    # Partner Org Legal Name
+    matched_names = filter_sanctions_names(
+        partner.legal_name, SANCTION_LIST_TYPES.entity, partner)
+
+    create_sanctions_match(matched_names, partner, SANCTION_MATCH_TYPES.organization,
+                           "Match found on the partners organization legal name")
+
+    # TODO - come back and changes all first/last to full name once changes are in
+
+    # Partner Heads
+    if partner.org_head:
+        full_name = format_to_full_name(partner.org_head.first_name,
+                                        partner.org_head.last_name)
+        matched_names = filter_sanctions_names(full_name,
+                                               SANCTION_LIST_TYPES.individual,
+                                               partner)
+        create_sanctions_match(matched_names,
+                               partner,
+                               SANCTION_MATCH_TYPES.board,
+                               "Match found for head of organization")
+
+    # Partner Directors
+    for director in partner.directors.all():
+        full_name = format_to_full_name(director.first_name, director.last_name)
+        matched_names = filter_sanctions_names(full_name,
+                                               SANCTION_LIST_TYPES.individual,
+                                               partner)
+        create_sanctions_match(matched_names, partner,
+                               SANCTION_MATCH_TYPES.board,
+                               "Match found for Director on organization")
+
+    # Partner Authorized Officers
+    for officer in partner.authorised_officers.all():
+        full_name = format_to_full_name(officer.first_name, officer.last_name)
+        matched_names = filter_sanctions_names(full_name,
+                                               SANCTION_LIST_TYPES.individual,
+                                               partner)
+        create_sanctions_match(matched_names, partner,
+                               SANCTION_MATCH_TYPES.board,
+                               "Match found for Authorized Officer on organization")
+
+    # Partner Users
+    for partner_member in partner.partner_members.all():
+        full_name = format_to_full_name(partner_member.user.first_name, partner_member.user.last_name)
+        matched_names = filter_sanctions_names(full_name,
+                                               SANCTION_LIST_TYPES.individual,
+                                               partner)
+
+        create_sanctions_match(matched_names, partner,
+                               SANCTION_MATCH_TYPES.user,
+                               "Match found for User on organization")
+
+
+def sanctions_scan_all_partners():
     # Filter Out All Partners who have an active sanction match
     for partner in Partner.objects.filter(is_active=True).exclude(
             sanction_matches__can_ignore=False):
 
-        # Partner Org Legal Name
-        matched_names = filter_sanctions_names(
-            partner.legal_name, SANCTION_LIST_TYPES.entity, partner)
-
-        create_sanctions_match(matched_names, partner, SANCTION_MATCH_TYPES.organization,
-                               "Match found on the partners organization legal name")
-
-        # TODO - come back and changes all first/last to full name once changes are in
-
-        # Partner Heads
-        if partner.org_head:
-            full_name = format_to_full_name(partner.org_head.first_name,
-                                            partner.org_head.last_name)
-            matched_names = filter_sanctions_names(full_name,
-                                                   SANCTION_LIST_TYPES.individual,
-                                                   partner)
-            create_sanctions_match(matched_names,
-                                   partner,
-                                   SANCTION_MATCH_TYPES.board,
-                                   "Match found for head of organization")
-
-        # Partner Directors
-        for director in partner.directors.all():
-            full_name = format_to_full_name(director.first_name, director.last_name)
-            matched_names = filter_sanctions_names(full_name,
-                                                   SANCTION_LIST_TYPES.individual,
-                                                   partner)
-            create_sanctions_match(matched_names, partner,
-                                   SANCTION_MATCH_TYPES.board,
-                                   "Match found for Director on organization")
-
-        # Partner Authorized Officers
-        for officer in partner.authorised_officers.all():
-            full_name = format_to_full_name(officer.first_name, officer.last_name)
-            matched_names = filter_sanctions_names(full_name,
-                                                   SANCTION_LIST_TYPES.individual,
-                                                   partner)
-            create_sanctions_match(matched_names, partner,
-                                   SANCTION_MATCH_TYPES.board,
-                                   "Match found for Authorized Officer on organization")
-
-        # Partner Users
-        for partner_member in partner.partner_members.all():
-            full_name = format_to_full_name(partner_member.user.first_name, partner_member.user.last_name)
-            matched_names = filter_sanctions_names(full_name,
-                                                   SANCTION_LIST_TYPES.individual,
-                                                   partner)
-
-            create_sanctions_match(matched_names, partner,
-                                   SANCTION_MATCH_TYPES.user,
-                                   "Match found for User on organization")
+        sanctions_scan_partner(partner)

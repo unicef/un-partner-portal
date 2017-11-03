@@ -58,7 +58,7 @@ class ApplicationsFilter(django_filters.FilterSet):
 
     class Meta:
         model = Application
-        fields = ['project_title', 'legal_name', 'country_code', 'eoi', 'partner', 'status']
+        fields = ['project_title', 'legal_name', 'country_code', 'eoi', 'partner', 'status', 'did_win']
 
     def get_project_title(self, queryset, name, value):
         return queryset.filter(eoi__title__icontains=value)

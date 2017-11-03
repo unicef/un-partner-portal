@@ -77,7 +77,6 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
                           len(list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values)))
 
         # check if logout endpoint work correct
-        # TODO: Split it! Make external test class when base test class will ne implemented
         url = reverse('rest_logout')
         response = self.client.post(url, data={}, format='json')
         self.assertTrue(statuses.is_success(response.status_code))

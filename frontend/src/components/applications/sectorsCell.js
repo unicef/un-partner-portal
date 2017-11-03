@@ -10,6 +10,7 @@ const selectSectorsBySpecializations = (sectors, spec) =>
 
 const SectorsCell = (props) => {
   const { sectors, specializations } = props;
+
   const uniqueSpecializations = selectSectorsBySpecializations(sectors, specializations);
   return (
     <TableCell>

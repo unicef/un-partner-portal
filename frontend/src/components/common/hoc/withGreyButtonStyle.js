@@ -23,7 +23,6 @@ const WithGreyColor = disabled => Component => withStyles(styleSheet, { name: 'W
   />),
 );
 
-
 WithGreyColor.propTypes = {
   classes: PropTypes.object,
   component: PropTypes.component,
