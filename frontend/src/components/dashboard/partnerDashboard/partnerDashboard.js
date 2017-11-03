@@ -15,12 +15,11 @@ const PartnerDashboard = (props) => {
   const { loading,
     dashboard: {
       new_cfei_by_sectors_last_days_ago: newCfeiBySectors,
-      number_of_submitted_cn: numSubmittedCN,
+      num_of_submitted_cn: { count: numSubmittedCN, details: numSubmittedCNByAgency } = {},
       num_of_pinned_cfei: numPinnedCfei,
       num_of_awards: numAwards,
       last_profile_update: lastUpdate,
     } } = props;
-
   return (
     <GridColumn>
       <GridRow columns={3}>
@@ -28,7 +27,10 @@ const PartnerDashboard = (props) => {
           <NumberOfCfeisBySector newCfeiBySectors={newCfeiBySectors} />
         </Loader>
         <Loader loading={loading} >
-          <NumberOfSubmittedCN />
+          <NumberOfSubmittedCN
+            numSubmittedCN={numSubmittedCN}
+            numSubmittedCNByAgency={numSubmittedCNByAgency}
+          />
         </Loader>
         <GridColumn>
           <Loader loading={loading} >
