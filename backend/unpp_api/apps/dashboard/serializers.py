@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from datetime import datetime, date, timedelta
 
+from django.db.models import Count
 from rest_framework import serializers
 
 from common.consts import EOI_TYPES, PARTNER_TYPES
@@ -79,6 +80,7 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
 
     new_cfei_by_sectors_last_days_ago = serializers.SerializerMethodField()
     num_of_submitted_cn = serializers.SerializerMethodField()
+    num_of_submitted_cn_count = serializers.SerializerMethodField()
     num_of_pinned_cfei = serializers.SerializerMethodField()
     num_of_awards = serializers.SerializerMethodField()
     last_profile_update = serializers.SerializerMethodField()
@@ -88,6 +90,7 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
         fields = (
             'new_cfei_by_sectors_last_days_ago',
             'num_of_submitted_cn',
+            'num_of_submitted_cn_count',
             'num_of_pinned_cfei',
             'num_of_awards',
             'last_profile_update',
@@ -104,6 +107,10 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
         return result
 
     def get_num_of_submitted_cn(self, obj):
+        return Agency.objects.filter(applications__partner_id__in=self.get_partner_ids()).annotate(
+            count=Count('applications')).values('name', 'count')
+
+    def get_num_of_submitted_cn_count(self, obj):
         return Application.objects.filter(partner_id__in=self.get_partner_ids()).count()
 
     def get_num_of_pinned_cfei(self, obj):
