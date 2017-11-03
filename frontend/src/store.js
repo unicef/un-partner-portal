@@ -51,6 +51,8 @@ import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
 import dashboard from './reducers/dashboard';
 import partnerFlags, * as partnerFlagsSelector from './reducers/partnerFlags';
 import applicationsToScore from './reducers/applicationsToScore';
+import pendingOffers from './reducers/pendingOffers';
+import submittedCN from './reducers/submittedCN';
 import applicationDecisions from './reducers/applicationsDecisions';
 import applicationComparison from './reducers/applicationsComparison';
 
@@ -101,6 +103,8 @@ const mainReducer = combineReducers({
   dashboard,
   partnerFlags,
   applicationsToScore,
+  pendingOffers,
+  submittedCN,
   applicationDecisions,
   applicationComparison,
 });

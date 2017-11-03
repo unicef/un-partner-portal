@@ -6,15 +6,17 @@ import Grid from 'material-ui/Grid';
 import Divider from 'material-ui/Divider';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
+import { toPairs, isEmpty, map } from 'ramda';
 import { Link } from 'react-router';
 import GridColumn from '../../common/grid/gridColumn';
 import PaddedContent from '../../common/paddedContent';
-import EmptyContent from '../../common/emptyContent';
+import VerticalBarChart from '../../common/charts/verticalBarChart';
 
 const messages = {
   title: 'Number Of New CFEIs by Sector',
   caption: 'from past 10 days',
   button: 'view all',
+  number: 'number',
 };
 
 const styleSheet = theme => ({
@@ -23,9 +25,14 @@ const styleSheet = theme => ({
   },
 });
 
-
-const NewPartners = (props) => {
-  const { number, classes } = props;
+const NumberOfCfeisBySector = (props) => {
+  const { newCfeiBySectors = {} } = props;
+  let data;
+  if (!isEmpty(newCfeiBySectors)) {
+    data = map(
+      ([sector, count]) => ({ name: sector, count }),
+      toPairs(newCfeiBySectors));
+  }
   return (
     <Paper>
       <PaddedContent>
@@ -33,7 +40,12 @@ const NewPartners = (props) => {
           <Typography type="headline">{messages.title}</Typography>
           <Typography type="caption">{messages.caption}</Typography>
           <Divider />
-          <EmptyContent />
+          <VerticalBarChart
+            data={data}
+            containerProps={{ width: '100%', height: 500 }}
+            barChartProps={{ margin: { left: 0, right: 16, top: 16 }, barCategoryGap: 8 }}
+            barProps={{ fill: '#DCC0E4', barSize: 24 }}
+          />
           <Grid container justify="flex-end">
             <Grid item>
               <Button component={Link} to="/cfei/open/" color="accent">{messages.button}</Button>
@@ -45,9 +57,8 @@ const NewPartners = (props) => {
   );
 };
 
-NewPartners.propTypes = {
-  number: PropTypes.number,
-  classes: PropTypes.object,
+NumberOfCfeisBySector.propTypes = {
+  newCfeiBySectors: PropTypes.object,
 };
 
-export default withStyles(styleSheet, { name: 'NewPartners;' })(NewPartners);
+export default withStyles(styleSheet, { name: 'NumberOfCfeisBySector;' })(NumberOfCfeisBySector);

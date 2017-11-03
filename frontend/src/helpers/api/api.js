@@ -326,6 +326,14 @@ export function getApplicationsToScore(params) {
   return authorizedGet({ uri: '/dashboard/applications-to-score/', params });
 }
 
+export function getSubmittedCN(params) {
+  return authorizedGet({ uri: '/dashboard/submitted-cn/', params });
+}
+
+export function getPendingOffers(params) {
+  return authorizedGet({ uri: '/dashboard/pending-offers/', params });
+}
+
 export function getAdminOneLocations(countryCode) {
   return authorizedGet({ uri: '/common/admin-levels', params: countryCode });
 }

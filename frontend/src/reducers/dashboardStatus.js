@@ -33,7 +33,7 @@ export const saveErrorMsg = (state, action) => R.assoc(
   'error',
   {
     message: messages.loadingFailure,
-    error: action.error,
+    error: action.error || R.path(['error', 'message'], action),
   },
   state);
 
