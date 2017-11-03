@@ -2,31 +2,40 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Compare from 'material-ui-icons/CompareArrows';
 import IconWithTooltipButton from '../../common/iconWithTooltipButton';
+import withDialogHandling from '../../common/hoc/withDialogHandling';
+import CompareModal from '../modals/compareApplications/compareApplicationsModal';
 
 const messages = {
   text: 'Compare',
 };
 
-const compare = (id) => {
-  console.log(`Compare: ${id}`);
-};
-
 const CompareButton = (props) => {
-  const { id, ...other } = props;
+  const { id, rows, handleDialogClose, handleDialogOpen, dialogOpen, ...other } = props;
   return (
-    <IconWithTooltipButton
-      id={id}
-      icon={<Compare />}
-      name="compare"
-      text={messages.text}
-      onClick={() => compare(id)}
-      {...other}
-    />
+    <div>
+      <IconWithTooltipButton
+        id={id}
+        icon={<Compare />}
+        name="compare"
+        text={messages.text}
+        onClick={handleDialogOpen}
+        {...other}
+      />
+      <CompareModal
+        applications={rows.map(row => row.id)}
+        dialogOpen={dialogOpen}
+        handleDialogClose={handleDialogClose}
+      />
+    </div>
   );
 };
 
 CompareButton.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
+  rows: PropTypes.array,
+  dialogOpen: PropTypes.bool,
+  handleDialogClose: PropTypes.func,
+  handleDialogOpen: PropTypes.func,
 };
 
-export default CompareButton;
+export default withDialogHandling(CompareButton);

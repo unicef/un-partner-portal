@@ -52,6 +52,7 @@ import dashboard from './reducers/dashboard';
 import partnerFlags, * as partnerFlagsSelector from './reducers/partnerFlags';
 import applicationsToScore from './reducers/applicationsToScore';
 import applicationDecisions from './reducers/applicationsDecisions';
+import applicationComparison from './reducers/applicationsComparison';
 
 const mainReducer = combineReducers({
   cfei,
@@ -101,6 +102,7 @@ const mainReducer = combineReducers({
   partnerFlags,
   applicationsToScore,
   applicationDecisions,
+  applicationComparison,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];

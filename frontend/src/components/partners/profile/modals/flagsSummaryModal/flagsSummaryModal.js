@@ -1,16 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import R from 'ramda';
-import { connect } from 'react-redux';
-import { submit } from 'redux-form';
-import { withRouter } from 'react-router';
-import Typography from 'material-ui/Typography';
 import ControlledModal from '../../../../common/modals/controlledModal';
-import { updatePartnerVerifications } from '../../../../../reducers/partnerVerifications';
-import { formatDateForPrint } from '../../../../../helpers/dates';
-import GridColumn from '../../../../common/grid/gridColumn';
-import SpreadContent from '../../../../common/spreadContent';
-import {selectPartnerFlags, selectPartnerFlagsCount} from '../../../../../store';
 import FlagSummaryContainer from './flagsSummaryContainer';
 
 const messages = {

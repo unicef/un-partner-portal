@@ -171,6 +171,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     )
 }
+REST_AUTH_SERIALIZERS = {
+    'LOGIN_SERIALIZER': 'account.serializers.CustomLoginSerializer'
+}
 
 
 # helper function to extend all the common lists

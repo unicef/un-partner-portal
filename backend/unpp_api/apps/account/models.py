@@ -23,6 +23,15 @@ class User(AbstractUser):
     def is_partner_user(self):
         return self.partner_members.exists()
 
+    @property
+    def is_account_locked(self):
+        from partner.models import Partner
+        # If associated w/ any partners accounts who are locked
+        if self.is_partner_user:
+            partner_ids = self.get_partner_ids_i_can_access()
+            return Partner.objects.filter(id__in=partner_ids, is_locked=True).exists()
+        return False
+
     def get_agency(self):
         if self.is_agency_user:
             return self.agency_members.first().office.agency

@@ -103,6 +103,7 @@ class Pin(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
+        unique_together = (('eoi', 'partner'), )
 
     def __str__(self):
         return "Pin <pk:{}> (eoi:{})".format(self.id, self.eoi_id)

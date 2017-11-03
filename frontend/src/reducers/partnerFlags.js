@@ -26,9 +26,9 @@ export const loadPartnerFlags = (partnerId, params) => (dispatch) => {
     });
 };
 
-export const updatePartnerFlags = (partnerId, body, edit) => (dispatch) => {
+export const updatePartnerFlags = (partnerId, body, edit, flagId) => (dispatch) => {
   const method = edit ? patchPartnerFlags : postPartnerFlags;
-  return method(partnerId, body)
+  return method(partnerId, body, flagId)
     .then((flag) => {
       dispatch(loadPartnerFlags(partnerId));
       return flag;

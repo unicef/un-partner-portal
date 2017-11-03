@@ -75,7 +75,6 @@ class SelectableList extends Component {
     const secondTmp = (pageSize * (pageNumber));
 
     const secondRange = secondTmp > itemsCount ? itemsCount : secondTmp;
-
     return (<div>
       {selected.length > 0
         ? <SelectedHeader numSelected={selected.length} >
