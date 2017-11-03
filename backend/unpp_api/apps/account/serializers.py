@@ -1,9 +1,14 @@
 from datetime import date
+
 from django.db import transaction
+
 from rest_framework import serializers
+from rest_auth.serializers import LoginSerializer
 
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
+    MEMBER_ROLES,
+    MEMBER_STATUSES,
 )
 from partner.models import (
     Partner,
@@ -93,6 +98,8 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         partner_member = validated_data['partner_member']
         partner_member['partner_id'] = self.partner.id
         partner_member['user_id'] = self.user.id
+        partner_member['role'] = MEMBER_ROLES.admin
+        partner_member['status'] = MEMBER_STATUSES.active
         self.partner_member = PartnerMember.objects.create(**validated_data['partner_member'])
 
         user_data = RegisterSimpleAccountSerializer(instance=self.user).data
@@ -164,9 +171,20 @@ class PartnerUserSerializer(UserSerializer):
 
     class Meta:
         model = User
-        fields = UserSerializer.Meta.fields + ('partners',)
+        fields = UserSerializer.Meta.fields + ('partners', 'is_account_locked',)
 
     def get_partners(self, obj):
         partner_ids = obj.get_partner_ids_i_can_access()
         return PartnerSerializer(Partner.objects.filter(id__in=partner_ids),
                                  many=True).data
+
+
+class CustomLoginSerializer(LoginSerializer):
+
+    def validate(self, attrs):
+        sup_attrs = super(CustomLoginSerializer, self).validate(attrs)
+        user = sup_attrs['user']
+        if user.is_partner_user:
+            if user.is_account_locked:
+                raise serializers.ValidationError('Account is Currently Locked')
+        return sup_attrs

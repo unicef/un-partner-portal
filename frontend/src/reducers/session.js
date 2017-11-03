@@ -55,7 +55,7 @@ export const loadUserData = () => (dispatch, getState) => {
     .then((response) => {
       const role = response.agency_name ? ROLES.AGENCY : ROLES.PARTNER;
       window.localStorage.setItem('role', role);
-      dispatch(initSession({
+      const sessionObject = {
         role,
         name: response.name,
         userId: response.id,
@@ -75,8 +75,10 @@ export const loadUserData = () => (dispatch, getState) => {
         partnerName: role === ROLES.PARTNER ? R.prop('legal_name', R.head(response.partners)) : null,
         isHq: role === ROLES.PARTNER ? R.prop('is_hq', R.head(response.partners)) : null,
         displayType: role === ROLES.PARTNER ? R.prop('display_type', R.head(response.partners)) : null,
-      }));
+      };
+      dispatch(initSession(sessionObject));
       dispatch(sessionReady(getState));
+      return sessionObject;
     })
     .catch((error) => {
       // TODO (marcindo) correct error handling for different scenarios

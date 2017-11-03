@@ -64,6 +64,7 @@ if not ENV:
 DOMAIN_NAME = os.getenv('DJANGO_ALLOWED_HOST', 'localhost')
 WWW_ROOT = 'http://%s/' % DOMAIN_NAME
 ALLOWED_HOSTS = [DOMAIN_NAME]
+FRONTEND_URL = 'http://127.0.0.1:8080/'
 
 DATABASES = {
     'default': {
@@ -170,6 +171,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     )
 }
+REST_AUTH_SERIALIZERS = {
+    'LOGIN_SERIALIZER': 'account.serializers.CustomLoginSerializer'
+}
 
 
 # helper function to extend all the common lists
@@ -224,12 +228,3 @@ LOGGING = {
         },
     }
 }
-
-# Sendgrid stuff
-EMAIL_BACKEND = DOMAIN_NAME
-
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = True

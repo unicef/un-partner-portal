@@ -15,7 +15,7 @@ from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer
 from common.models import Point, Specialization
-from partner.serializers import PartnerSerializer
+from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer
 from partner.models import Partner
 from .models import EOI, Application, Assessment, ApplicationFeedback
 
@@ -53,11 +53,13 @@ class BaseProjectSerializer(serializers.ModelSerializer):
 class ApplicationsPartnerStatusSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
+    partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
 
     class Meta:
         model = Application
         fields = (
             'legal_name',
+            'partner_additional',
             'offer_status',
         )
 
@@ -117,6 +119,7 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
         model = Application
         exclude = ("cn", "eoi", "agency", "submitter")
 
+
 class CreateDirectApplicationNoCNSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -151,6 +154,8 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
     locations_proposal_of_eoi = PointSerializer(many=True, read_only=True)
     submitter = UserSerializer(read_only=True)
     is_direct = serializers.SerializerMethodField()
+    cfei_type = serializers.CharField(read_only=True)
+
 
     class Meta:
         model = Application
@@ -159,6 +164,10 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
 
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
+
+
+class ApplicationFullEOISerializer(ApplicationFullSerializer):
+    eoi = BaseProjectSerializer(read_only=True)
 
 
 class CreateUnsolicitedProjectSerializer(serializers.Serializer):
@@ -380,6 +389,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
 class ApplicationsListSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
+    partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
     type_org = serializers.CharField(source="partner.display_type")
     cn = CommonFileSerializer()
     your_score = serializers.SerializerMethodField()
@@ -391,6 +401,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'legal_name',
+            'partner_additional',
             'type_org',
             'status',
             'cn',
@@ -495,6 +506,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     submission_date = serializers.CharField(source="created")
     is_direct = serializers.SerializerMethodField()
     partner_name = serializers.CharField(source="partner.legal_name")
+    partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
     selected_source = serializers.CharField(source="eoi.selected_source")
 
     class Meta:
@@ -511,6 +523,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             'status',
             'is_direct',
             'partner_name',
+            'partner_additional',
         )
 
     def get_project_title(self, obj):
@@ -530,8 +543,8 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     # TODO - need to make field names between here and application details the same
     # application details uses nested under proposal_of_eoi_details
     def get_specializations(self, obj):
-        return SimpleSpecializationSerializer(Specialization.objects.filter(id__in=obj.proposal_of_eoi_details.get('specializations')),
-                                              many=True).data
+        return SimpleSpecializationSerializer(
+            Specialization.objects.filter(id__in=obj.proposal_of_eoi_details.get('specializations')), many=True).data
 
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
@@ -679,6 +692,8 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
 
     partner_id = serializers.CharField(source='partner.id')
     partner_name = serializers.CharField(source='partner.legal_name')
+    partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
+
     cn = CommonFileSerializer()
     partner_notified = serializers.SerializerMethodField()
     partner_accepted_date = serializers.SerializerMethodField()
@@ -690,6 +705,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
         fields = (
             'partner_id',
             'partner_name',
+            'partner_additional',
             'cn',
             'partner_notified',
             'partner_accepted_date',
@@ -706,13 +722,11 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
                 'reviewer': assessment.reviewer.get_user_name(),
             })
 
-
         return {
             'criteria': obj.get_scores_by_selection_criteria(),
             'notes': notes,
             'avg_total_score': obj.average_total_score,
             'assessment_count': assessments_count,
-
         }
 
     def get_partner_notified(self, obj):
@@ -720,3 +734,77 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
 
     def get_partner_accepted_date(self, obj):
         return obj.did_accept_date and obj.did_accept_date
+
+
+class CompareSelectedSerializer(serializers.ModelSerializer):
+
+    partner_id = serializers.IntegerField(source='partner.id')
+    partner_name = serializers.CharField(source='partner.legal_name')
+    partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
+    total_assessment_score = serializers.IntegerField(source='average_total_score')
+    verification_status = serializers.BooleanField(source="partner.is_verified")
+    flagging_status = serializers.JSONField(source="partner.flagging_status")
+    annual_budget = serializers.SerializerMethodField()
+    un_exp = serializers.SerializerMethodField()
+    # key_results = TODO or rm
+
+    class Meta:
+        model = Application
+        fields = (
+            'partner_id',
+            'partner_name',
+            'partner_additional',
+            'eoi_id',
+            'total_assessment_score',
+            'verification_status',
+            'flagging_status',
+            'un_exp',
+            'annual_budget',
+            'verification_status',
+            'flagging_status',
+            # 'key_results',
+        )
+
+    def get_annual_budget(self, obj):
+        return obj.partner.profile.annual_budget
+
+    def get_un_exp(self, obj):
+        return ", ".join(obj.partner.collaborations_partnership.all().values_list('agency__name', flat=True))
+
+
+class SubmittedCNSerializer(serializers.ModelSerializer):
+    cn_id = serializers.IntegerField(source='id')
+    agency_name = serializers.CharField(source="agency.name")
+    specializations = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Application
+        fields = (
+            'cn_id',
+            'project_title',
+            'cfei_type',
+            'agency_name',
+            'countries',
+            'specializations',
+            'offer_status'
+        )
+
+    def get_specializations(self, obj):
+        if obj.is_unsolicited:
+            query = Specialization.objects.filter(id__in=obj.proposal_of_eoi_details.get('specializations'))
+        else:
+            query = obj.eoi.specializations.all()
+        return SimpleSpecializationSerializer(query, many=True).data
+
+
+class PendingOffersSerializer(SubmittedCNSerializer):
+    class Meta:
+        model = Application
+        fields = (
+            'cn_id',
+            'project_title',
+            'cfei_type',
+            'agency_name',
+            'countries',
+            'specializations',
+        )

@@ -7,6 +7,7 @@ import MainContentWrapper from '../../components/common/mainContentWrapper';
 import HeaderNavigation from '../../components/common/headerNavigation';
 import AgencyMembersFilter from './agencyMembersFilter';
 import PaginatedList from '../common/list/paginatedList';
+import TableWithStateInUrl from '../common/hoc/tableWithStateInUrl';
 import { loadMembersList } from '../../reducers/agencyMembersList';
 import { isQueryChanged } from '../../helpers/apiHelper';
 
@@ -41,7 +42,8 @@ class AgencyMembersContainer extends Component {
               <AgencyMembersFilter />
             </Grid>
             <Grid item>
-              <PaginatedList
+              <TableWithStateInUrl
+                component={PaginatedList}
                 items={members}
                 columns={columns}
                 itemsCount={totalCount}

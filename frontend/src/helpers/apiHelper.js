@@ -18,6 +18,13 @@ export const updatePageNumberSize = (pageNumber, pageSize, pathName, query) => {
   });
 };
 
+export const updateOrder = (column, direction, pathName, query) => {
+  history.push({
+    pathname: pathName,
+    query: R.merge(query, { ordering: direction + column }),
+  });
+};
+
 export const updatePageNumber = (pageNumber, pathName, query) => {
   history.push({
     pathname: pathName,

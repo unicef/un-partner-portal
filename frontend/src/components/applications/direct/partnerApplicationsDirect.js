@@ -13,6 +13,7 @@ import WrappedCell from '../../common/cell/wrappedCell';
 import ApplicationStatusCell from '../applicationStatusCell';
 import SectorsCell from '../sectorsCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
+import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
 
 const applicationCell = ({ row, column }) => {
   if (column.name === 'submission_date') {
@@ -55,7 +56,8 @@ class PartnerApplicationsDirect extends Component {
     return (
       <GridColumn container direction="column" spacing={24}>
         <PartnerApplicationsDirectFilter />
-        <PaginatedList
+        <TableWithStateInUrl
+          component={PaginatedList}
           items={items}
           columns={columns}
           loading={loading}

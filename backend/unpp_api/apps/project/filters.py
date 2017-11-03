@@ -58,7 +58,7 @@ class ApplicationsFilter(django_filters.FilterSet):
 
     class Meta:
         model = Application
-        fields = ['project_title', 'legal_name', 'country_code', 'eoi', 'partner', 'status']
+        fields = ['project_title', 'legal_name', 'country_code', 'eoi', 'partner', 'status', 'did_win']
 
     def get_project_title(self, queryset, name, value):
         return queryset.filter(eoi__title__icontains=value)
@@ -103,8 +103,8 @@ class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
 
     def get_project_title(self, queryset, name, value):
         return queryset.filter(
-            Q(proposal_of_eoi_details__contains={"title": value}) |  # unsolicited
-            Q(eoi__title__contains=value)  # direct selection - developed from unsolicited
+            Q(proposal_of_eoi_details__icontains={"title": value}) |  # unsolicited
+            Q(eoi__title__icontains=value)  # direct selection - developed from unsolicited
         )
 
     def get_specialization(self, queryset, name, value):

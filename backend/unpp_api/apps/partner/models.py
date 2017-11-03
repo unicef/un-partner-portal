@@ -7,6 +7,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator
 from model_utils.models import TimeStampedModel
 
+from account.models import User
 from common.validators import MaxCurrentYearValidator
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.consts import (
@@ -39,6 +40,7 @@ class Partner(TimeStampedModel):
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children')
     country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
     is_active = models.BooleanField(default=True)
+    is_locked = models.BooleanField(default=False)
     # hq information
     country_presence = ArrayField(
         models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE),
@@ -76,6 +78,27 @@ class Partner(TimeStampedModel):
     @property
     def has_red_flag(self):
         return self.flags.filter(flag_type=FLAG_TYPES.red).exists()
+
+    def get_users(self):
+        return User.objects.filter(partner_members__partner=self)
+
+    @property
+    def is_verified(self):
+        if not self.verifications.exists():
+            return None
+        else:
+            return self.verifications.filter(is_verified=True).exists()
+
+    @property
+    def has_sanction_match(self):
+        return self.sanction_matches.filter(can_ignore=False).exists()
+
+    @property
+    def flagging_status(self):
+        return {
+            'yellow': self.flags.filter(flag_type=FLAG_TYPES.yellow).count(),
+            'red': self.flags.filter(flag_type=FLAG_TYPES.red).count(),
+        }
 
 
 class PartnerProfile(TimeStampedModel):
@@ -165,7 +188,9 @@ class PartnerProfile(TimeStampedModel):
 
     @property
     def annual_budget(self):
-        return PartnerBudget.objects.filter(partner=self, year=date.today().year).values_list('budget', flat=True) or 0
+        budget = self.partner.budgets.filter(year=date.today().year).first()
+        if budget is not None:
+            return budget.budget
 
 
 class PartnerMailingAddress(TimeStampedModel):
