@@ -16,7 +16,6 @@ const messages = {
 
 const styleSheet = theme => ({
   lightGrey: {
-    // width: '100%',
     minWidth: '50vw',
     background: theme.palette.common.lightGreyBackground,
   },
