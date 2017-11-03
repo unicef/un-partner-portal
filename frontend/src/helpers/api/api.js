@@ -314,7 +314,7 @@ export function getDashboard() {
   return authorizedGet({ uri: '/dashboard/' });
 }
 
-export function getApplicationsDecissions() {
+export function getApplicationsDecisions() {
   return authorizedGet({ uri: '/dashboard/applications-decisions/' });
 }
 

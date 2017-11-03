@@ -1,5 +1,5 @@
 import R from 'ramda';
-import { getApplicationsDecissions } from '../helpers/api/api';
+import { getApplicationsDecisions } from '../helpers/api/api';
 import {
   clearError,
   startLoading,
@@ -13,26 +13,32 @@ export const APP_DEC_LOAD_FAILURE = 'APP_DEC_LOAD_FAILURE';
 export const APP_DEC_LOAD_ENDED = 'APP_DEC_LOAD_ENDED';
 
 export const appDecLoadStarted = () => ({ type: APP_DEC_LOAD_STARTED });
-export const appDecLoadSuccess = response => ({ type: APP_DEC_LOAD_SUCCESS, response });
+export const appDecLoadSuccess = (results, count) =>
+  ({ type: APP_DEC_LOAD_SUCCESS, results, count });
 export const appDecLoadFailure = error => ({ type: APP_DEC_LOAD_FAILURE, error });
 export const appDecLoadEnded = () => ({ type: APP_DEC_LOAD_ENDED });
 
 const saveAppDec = (state, action) => {
-  return action.response.results;
+  return R.merge(state, { decisions: action.results, count: action.count });
 };
 
 const messages = {
   loadFailed: 'Load application decissions failed.',
 };
 
-const initialState = [];
+const initialState = {
+  loading: false,
+  error: null,
+  count: 0,
+  decisions: [],
+};
 
-export const loadApplicationDecissions = params => (dispatch) => {
+export const loadApplicationDecisions = params => (dispatch) => {
   dispatch(appDecLoadStarted());
-  return getApplicationsDecissions(params)
-    .then((cfei) => {
+  return getApplicationsDecisions(params)
+    .then(({ results, count }) => {
       dispatch(appDecLoadEnded());
-      dispatch(appDecLoadSuccess(cfei));
+      dispatch(appDecLoadSuccess(results, count));
     })
     .catch((error) => {
       dispatch(appDecLoadEnded());

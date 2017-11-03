@@ -115,6 +115,7 @@ const getTheme = () => (
         orange: '#F39C38',
         purple: '#A996D8',
         blue: '#87B0EE',
+        green: '#72C300',
       },
       eoiStatus: {
         completed: '#5B92E5',
