@@ -1,5 +1,6 @@
 import React from 'react';
 import Grid from 'material-ui/Grid';
+import R from 'ramda';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
@@ -10,6 +11,7 @@ import SpreadContent from '../../../../common/spreadContent';
 import PartnerOverviewFlagMenu from './partnerOverviewFlagMenu';
 import { isUserAgencyReader } from '../../../../../helpers/authHelpers';
 import FlagSummaryButton from '../../buttons/viewFlagsSummaryButton';
+import FlaggingStatus from '../../common/flaggingStatus';
 
 const messages = {
   flagStatus: 'Flag status',
@@ -17,19 +19,17 @@ const messages = {
   none: 'None',
 };
 
-const flags = (displayMenu, flagItems) => (
+const flags = (displayMenu, flagItems = {}) => (
   <PaddedContent>
     <GridColumn />
     <SpreadContent>
-      {displayMenu && <FlagSummaryButton flagItems={flagItems} />}
+      <FlaggingStatus flags={flagItems} noFlagText />
+      {(flagItems.yellow > 0 || flagItems.red > 0)
+        && displayMenu
+        && <FlagSummaryButton flagItems={flagItems} />}
     </SpreadContent>
   </PaddedContent>
 );
-
-const none = () => (
-  <PaddedContent big>
-    {messages.none}
-  </PaddedContent>);
 
 const flagHeader = displayMenu => (
   <Grid container align="center" justify="space-between" direction="row">
@@ -42,13 +42,13 @@ const flagHeader = displayMenu => (
   </Grid>);
 
 const PartnerOverviewFlag = (props) => {
-  const { partner, displayMenu, flagItems } = props;
-  const flagItemstemp = { yel: 1, red: 2}
+  const { partner, displayMenu } = props;
+  const flagItems = R.path(['partnerStatus', 'flagging_status'], partner);
   return (
     <div>
       <HeaderList
         header={flagHeader(displayMenu, flagItems)}
-        rows={flagItemstemp ? flags(displayMenu) : [none()]}
+        rows={flags(displayMenu, flagItems)}
       />
     </div>);
 };
@@ -56,7 +56,6 @@ const PartnerOverviewFlag = (props) => {
 
 PartnerOverviewFlag.propTypes = {
   partner: PropTypes.object.isRequired,
-  flagItems: PropTypes.array,
   displayMenu: PropTypes.bool,
 };
 

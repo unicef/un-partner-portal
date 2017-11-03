@@ -20,7 +20,7 @@ const renderExpandedCell = data => data.map((score, index) => (
 
 const ApplicationStatusCell = (props) => {
   const { id, score } = props;
-  const localScore = (score && score.total) || '-';
+  const localScore = (score && score) || '-';
   return (
     <TableCell data-tip data-for={`${id}-your-score-tooltip`}>
       {localScore}

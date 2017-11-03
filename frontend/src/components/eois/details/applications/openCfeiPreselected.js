@@ -15,10 +15,9 @@ import { isQueryChanged } from '../../../../helpers/apiHelper';
 /* eslint-disable react/prop-types */
 const HeaderActions = (props) => {
   const { rows } = props;
-  const ids = rows.map(row => row.id);
-  const CompareButton = WithGreyColor(Compare);
+  const CompareButton = WithGreyColor()(Compare);
   return (
-    <CompareButton id={ids} />
+    <CompareButton rows={rows} />
   );
 };
 

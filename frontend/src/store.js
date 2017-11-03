@@ -49,6 +49,7 @@ import cfeiReviewSummary, { selectReviewSummary } from './reducers/cfeiReviewSum
 import cfeiAwardedPartners, { selectAwardedPartners } from './reducers/cfeiAwardedPartners';
 import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
 import partnerFlags, * as partnerFlagsSelector from './reducers/partnerFlags';
+import applicationComparison from './reducers/applicationsComparison';
 
 const mainReducer = combineReducers({
   cfei,
@@ -95,6 +96,7 @@ const mainReducer = combineReducers({
   cfeiAwardedPartners,
   cfeiReviewers,
   partnerFlags,
+  applicationComparison,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
