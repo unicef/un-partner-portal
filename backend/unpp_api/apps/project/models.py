@@ -213,7 +213,7 @@ class Application(TimeStampedModel):
 
         for key in assessments_criteria.keys():
             scores = assessments_criteria[key].get('scores', 0)
-            if scores != 0:
+            if len(scores) != 0:
                 assessments_criteria[key]['avg'] = sum(scores) / (len(scores))
 
         return assessments_criteria
