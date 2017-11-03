@@ -58,28 +58,23 @@ class AgencyMembersContainer extends Component {
     const { applications, agencyName, columns, totalCount, loading } = this.props;
 
     return (
-      <div>
-        <Grid item>
-          <HeaderNavigation title={agencyName} />
-        </Grid>
-        <MainContentWrapper>
-          <Grid container direction="column" spacing={24}>
-            <Grid item>
-              <PartnerApplicationListFilter />
-            </Grid>
-            <Grid item>
-              <TableWithStateInUrl
-                component={PaginatedList}
-                items={applications}
-                columns={columns}
-                itemsCount={totalCount}
-                loading={loading}
-                templateCell={applicationCell}
-              />
-            </Grid>
+      <MainContentWrapper>
+        <Grid container direction="column" spacing={24}>
+          <Grid item>
+            <PartnerApplicationListFilter />
           </Grid>
-        </MainContentWrapper>
-      </div>
+          <Grid item>
+            <TableWithStateInUrl
+              component={PaginatedList}
+              items={applications}
+              columns={columns}
+              itemsCount={totalCount}
+              loading={loading}
+              templateCell={applicationCell}
+            />
+          </Grid>
+        </Grid>
+      </MainContentWrapper>
     );
   }
 }
