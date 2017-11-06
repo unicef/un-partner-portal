@@ -10,6 +10,7 @@ import NumberOfCfeisBySector from './numberOfCfeisBySector';
 import NumberOfPinnedCfei from './numberOfPinnedCfeis';
 import NumberOfSubmittedCN from './numberOfSubmittedConceptNotes';
 import Loader from '../../common/loader';
+import WelcomeModal from '../../layout/incompleteProfile/welcomeModal';
 
 const PartnerDashboard = (props) => {
   const { loading,
@@ -46,6 +47,7 @@ const PartnerDashboard = (props) => {
       </GridRow>
       <ListOfSubmittedCN />
       <ListOfPendingOffers />
+      <WelcomeModal />
     </GridColumn>);
 };
 
