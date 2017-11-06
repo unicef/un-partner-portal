@@ -15,6 +15,12 @@ const styleSheet = theme => ({
   },
   cardContainer: {
     minWidth: 300,
+    [theme.breakpoints.up('md')]: {
+      maxWidth: '50vw',
+    },
+    [theme.breakpoints.down('md')]: {
+      maxWidth: '100vw',
+    },
   },
   header: {
     color: theme.palette.primary[400],

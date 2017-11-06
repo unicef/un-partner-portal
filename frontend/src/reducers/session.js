@@ -28,19 +28,26 @@ const initialState = {
   email: undefined,
   isHq: undefined,
   displayType: undefined,
+  newlyRegistered: true,
 };
 
 export const initSession = session => ({ type: SESSION_CHANGE, session });
 
-export const sessionInitializing = () => ({ type: SESSION_CHANGE,
-  session: { state: SESSION_STATUS.CHANGING } });
+export const sessionInitializing = () => ({
+  type: SESSION_CHANGE,
+  session: { state: SESSION_STATUS.CHANGING },
+});
 
-export const sessionChange = session => ({ type: SESSION_CHANGE,
-  session: { ...session, state: SESSION_STATUS.READY } });
+export const sessionChange = session => ({
+  type: SESSION_CHANGE,
+  session: { ...session, state: SESSION_STATUS.READY }
+});
 
-export const sessionReady = getState => ({ type: SESSION_READY,
+export const sessionReady = getState => ({
+  type: SESSION_READY,
   session: { state: SESSION_STATUS.READY },
-  getState });
+  getState,
+});
 
 export const loginSuccess = session => ({ type: LOGIN_SUCCESS, session });
 
@@ -98,14 +105,6 @@ export const loadUserData = () => (dispatch, getState) => {
     });
 };
 
-export const registerUser = json => (dispatch) => {
-  postRegistration(json)
-    .then((response) => {
-      dispatch(loginSuccess({ role: ROLES.PARTNER, user: response.user.username }));
-      history.push('/');
-    });
-};
-
 export const loginUser = creds => dispatch => login(creds)
   .then((response) => {
     window.localStorage.setItem('token', response.key);
@@ -113,6 +112,15 @@ export const loginUser = creds => dispatch => login(creds)
     dispatch(loadUserData());
     history.push('/');
   });
+
+export const registerUser = json => (dispatch) => {
+  postRegistration(json)
+    .then(({ user: { email, username } }) => {
+      dispatch(loginSuccess({ role: ROLES.PARTNER, user: username }));
+      dispatch(sessionChange({ newlyRegistered: true }));
+      dispatch(loginUser({ email, password: R.path(['user', 'password'], json) }));
+    });
+};
 
 const setSession = (state, session) => R.mergeDeepRight(state, session);
 
