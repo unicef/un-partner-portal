@@ -28,7 +28,7 @@ const initialState = {
   email: undefined,
   isHq: undefined,
   displayType: undefined,
-  newlyRegistered: true,
+  newlyRegistered: false,
 };
 
 export const initSession = session => ({ type: SESSION_CHANGE, session });
@@ -40,7 +40,7 @@ export const sessionInitializing = () => ({
 
 export const sessionChange = session => ({
   type: SESSION_CHANGE,
-  session: { ...session, state: SESSION_STATUS.READY }
+  session: { ...session, state: SESSION_STATUS.READY },
 });
 
 export const sessionReady = getState => ({
