@@ -6,8 +6,11 @@ const CHART_FORMAT = 'MM/DD';
 
 export const getToday = () => moment().format(FORMAT);
 
-export const dayDifference = (firstDate, secondDate) =>
-  moment(firstDate).diff(secondDate, 'days');
+export const dayDifference = (firstDate, secondDate) => {
+  const fd = moment(firstDate).format(FORMAT);
+  const sd = moment(secondDate).format(FORMAT);
+  return moment(fd).diff(sd, 'days');
+};
 
 export const normalizeDate = date => moment(date).format(FORMAT).toString();
 
