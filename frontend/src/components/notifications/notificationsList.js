@@ -11,6 +11,7 @@ import { CircularProgress } from 'material-ui/Progress';
 import IconButton from 'material-ui/IconButton';
 import SpreadContent from '../../components/common/spreadContent';
 import Loader from '../../components/common/loader';
+import { formatDateForPrint } from '../../helpers/dates';
 import { loadNotificationsList, readNotification, readAllNotifications } from '../../reducers/notificationsList';
 
 const messages = {
@@ -106,7 +107,7 @@ class PartnerProfileIdentification extends Component {
               <Typography
                 type="caption"
               >
-                {'2 hours ago'}
+                {formatDateForPrint(item.notification.created)}
               </Typography>
               <Typography
                 type="subheading"
