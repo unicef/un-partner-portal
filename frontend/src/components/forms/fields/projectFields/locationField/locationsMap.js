@@ -139,7 +139,7 @@ class LocationsMapBase extends Component {
       <Marker
         label={index}
         index={index}
-        location={location.formatted_address}
+        location={location.admin_level_1.name}
         onClick={this.onMarkerClick}
         onDblclick={this.removeMarker}
         position={{ lat: location.lat, lng: location.lon }}

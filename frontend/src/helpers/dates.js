@@ -20,3 +20,6 @@ export const formatDateForChart = (date) => {
   if (!date) return null;
   return moment(date).format(CHART_FORMAT).toString();
 };
+
+export const formatDateForDatePicker = date => moment(date).toDate();
+
