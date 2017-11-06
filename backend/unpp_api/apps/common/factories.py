@@ -458,11 +458,13 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     def other_info(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
+        logo_file = CommonFile.objects.create()
+        logo_file.file_field.save('logo.png', open(filename))
         PartnerOtherInfo.objects.create(
             partner=self,
             info_to_share="fake info to share {}".format(self.id),
             confirm_data_updated=True,
-            org_logo=cfile,
+            org_logo=logo_file,
             other_doc_1=cfile,
             other_doc_2=cfile,
             other_doc_3=cfile,
