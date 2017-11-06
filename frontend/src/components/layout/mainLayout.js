@@ -10,7 +10,7 @@ import IconButton from 'material-ui/IconButton';
 import AccountIcon from 'material-ui-icons/AccountCircle';
 import LensIcon from 'material-ui-icons/Lens';
 import Badge from 'material-ui/Badge';
-
+import NotificationsList from '../notifications/notificationsList';
 import SidebarMenu from './sidebarMenu';
 
 // TODO check what can be done in muiTheme
@@ -125,12 +125,12 @@ class MainLayout extends Component {
           </Grid>
         </Grid>
         <Popover
-          id="switch-partner"
+          id="notifications"
           anchorEl={this.state.anchorEl}
           open={this.state.open}
           anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'left',
+            horizontal: 'right',
           }}
           transformOrigin={{
             vertical: 'top',
@@ -138,10 +138,7 @@ class MainLayout extends Component {
           }}
           onRequestClose={this.handleRequestClose}
         >
-
-          <Paper className={classes.paper}>
-            <SidebarMenu />
-          </Paper>
+          <NotificationsList />
         </Popover>
       </Grid>
     );
