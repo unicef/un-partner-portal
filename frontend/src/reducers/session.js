@@ -75,6 +75,7 @@ export const loadUserData = () => (dispatch, getState) => {
         partnerName: role === ROLES.PARTNER ? R.prop('legal_name', R.head(response.partners)) : null,
         isHq: role === ROLES.PARTNER ? R.prop('is_hq', R.head(response.partners)) : null,
         displayType: role === ROLES.PARTNER ? R.prop('display_type', R.head(response.partners)) : null,
+        logo: role === ROLES.PARTNER ? R.prop('logo', R.head(response.partners)) : null,
       };
       dispatch(initSession(sessionObject));
       dispatch(sessionReady(getState));

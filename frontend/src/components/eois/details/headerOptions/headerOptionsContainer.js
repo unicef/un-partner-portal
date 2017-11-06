@@ -12,7 +12,6 @@ import ConvertToDS from '../../buttons/convertToDirectSelection';
 
 const HeaderOptionsContainer = (props) => {
   const { role, type, cfeiCompleted, cfeiStatus, cfeiConverted, id, partnerId } = props;
-console.log("CO",cfeiConverted);
   let options;
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
