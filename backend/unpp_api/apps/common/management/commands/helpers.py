@@ -120,12 +120,17 @@ def generate_fake_data(quantity=50):
             # if someone will run fake date without clean database, their can be EOI with no applications
             continue
         app.did_win = True
-        app.did_accept_date = date.today()
-        if idx % 2:
-            app.did_accept = True
         if idx % 4:
+            app.decision_date = date.today()
             app.did_withdraw = True
             app.withdraw_reason = "fake reason"
+        elif idx % 2:
+            app.decision_date = date.today()
+            app.did_accept = True
+        elif idx % 7:
+            app.decision_date = date.today()
+            app.did_decline = True
+
         app.save()
 
     EOIFactory.create_batch(quantity, display_type=EOI_TYPES.direct, deadline_date=None)
