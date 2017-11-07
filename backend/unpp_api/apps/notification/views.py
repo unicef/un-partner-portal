@@ -41,7 +41,11 @@ class NotificationAPIView(RetrieveAPIView):
     queryset = Notification.objects.all()
 
     def patch(self, request, pk, *args, **kwargs):
-        notified = get_object_or_404(NotifiedUser.objects.select_related('notification'), notification_id=pk)
+        notified = get_object_or_404(
+            NotifiedUser.objects.select_related('notification'),
+            notification_id=pk,
+            recipient=request.user
+        )
         if 'did_read' in request.data and request.data['did_read'] and notified.did_read is False:
             notified.did_read = True
             notified.save()

@@ -269,6 +269,18 @@ export function getMembersList(id, params) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params });
 }
 
+export function getNotifications(params) {
+  return authorizedGet({ uri: '/notifications', params });
+}
+
+export function patchNotification(id, body) {
+  return authorizedPatch({ uri: `/notifications/${id}/`, body });
+}
+
+export function patchNotifications(body) {
+  return authorizedPatch({ uri: '/notifications/', body });
+}
+
 export function getPartnerProfileConfig() {
   return get('/config/partners/profile');
 }
