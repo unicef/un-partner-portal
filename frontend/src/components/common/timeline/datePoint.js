@@ -7,6 +7,14 @@ import className from 'classnames';
 import { formatDateForPrint } from '../../../helpers/dates';
 
 const styleSheet = theme => ({
+  container: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    zIndex: 2,
+  },
+  containerLeft: {
+    justifyContent: 'flex-start',
+  },
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -16,11 +24,8 @@ const styleSheet = theme => ({
   text: {
     minHeight: 48,
   },
-  bigItem: {
-    flexBasis: '55%',
-  },
-  smallItem: {
-    flexBasis: '15%',
+  fullWidth: {
+    flex: 1,
   },
   left: {
     alignItems: 'flex-start',
@@ -31,6 +36,7 @@ const styleSheet = theme => ({
   center: {
     alignItems: 'center',
   },
+
   green: {
     color: theme.palette.dateColors.green,
   },
@@ -53,6 +59,7 @@ const DatePoint = (props) => {
     flexSize,
     align,
     bold,
+    fullWidth,
     color } = props;
   const mainClass = className(
     classes.root,
@@ -61,8 +68,15 @@ const DatePoint = (props) => {
       [classes.left]: align === 'left',
       [classes.right]: align === 'right',
       [classes.center]: align === 'center',
+
     },
   );
+  const containerClass = className(
+    classes.container,
+    {
+      [classes.containerLeft]: align === 'left',
+      [classes.fullWidth]: fullWidth,
+    });
 
   const fontType = bold ? 'body2' : 'body1';
 
@@ -71,22 +85,24 @@ const DatePoint = (props) => {
   else if (align === 'right') viewBox = '-8 -4 16 16';
   return (
     <div
-      className={mainClass}
+      className={containerClass}
       style={{
-        'flex-basis': `${flexSize}%`,
+        'flex-basis': `${flexSize < 10 ? 10 : flexSize}%`,
       }}
     >
-      <Typography
-        type={fontType}
-        align={align}
-        className={classes.text}
-      >
-        {formatDateForPrint(date)}
-      </Typography>
-      <SvgIcon className={classes.firstIcon} viewBox={viewBox}>
-        <circle cx="4" cy="4" r="4" />
-      </SvgIcon>
-      <Typography type={fontType} align={align} className={classes.text}>{label}</Typography>
+      <div className={mainClass}>
+        <Typography
+          type={fontType}
+          align={align}
+          className={classes.text}
+        >
+          {formatDateForPrint(date)}
+        </Typography>
+        <SvgIcon className={classes.firstIcon} viewBox={viewBox}>
+          <circle cx="4" cy="4" r="4" />
+        </SvgIcon>
+        <Typography type={fontType} align={align} className={classes.text}>{label}</Typography>
+      </div>
     </div>
   );
 };
@@ -117,6 +133,10 @@ DatePoint.propTypes = {
    * string for point color, supported are red, green, dark and blue
    */
   color: PropTypes.string,
+  /**
+   * whether date element should take all remaining space
+   */
+  fullWidth: PropTypes.array,
 };
 
 

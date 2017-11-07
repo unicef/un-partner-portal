@@ -15,12 +15,13 @@ const messages = {
 };
 
 function loggedOrg(props) {
-  const { role, name } = props;
+  const { role, name, logo } = props;
   return (
     <GridColumn>
       <Typography type="caption">
         {messages.logged}
       </Typography>
+      {logo && <img alt={name} src={logo} />}
       {role === ROLES.AGENCY && <Typography type="body2">
         {name}
       </Typography>}
@@ -32,10 +33,12 @@ function loggedOrg(props) {
 loggedOrg.propTypes = {
   name: PropTypes.string,
   role: PropTypes.string,
+  logo: PropTypes.string,
 };
 
 const mapStateToProps = state => ({
   name: state.session.agencyName || state.session.partnerName,
+  logo: state.session.logo,
   role: state.session.role,
 });
 

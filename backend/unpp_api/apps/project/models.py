@@ -212,8 +212,9 @@ class Application(TimeStampedModel):
                 assessments_criteria[key].setdefault('scores', []).append(val['score'])
 
         for key in assessments_criteria.keys():
-            scores = assessments_criteria[key]['scores']
-            assessments_criteria[key]['avg'] = sum(scores) / float(len(scores))
+            scores = assessments_criteria[key].get('scores', [])
+            if len(scores) != 0:
+                assessments_criteria[key]['avg'] = sum(scores) / (len(scores))
 
         return assessments_criteria
 

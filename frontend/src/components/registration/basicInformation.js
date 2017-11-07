@@ -52,7 +52,7 @@ const BasicInformation = (props) => {
           infoText={messages.tooltip}
         />
         <Grid item>
-          <Grid container direction="row">
+          <Grid container direction="row" align="flex-end">
             <Grid item sm={6} xs={12}>
               <TextFieldForm
                 label="Head of Organization's First Name"
