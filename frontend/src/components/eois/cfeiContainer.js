@@ -5,9 +5,15 @@ import Grid from 'material-ui/Grid';
 import { loadCfei } from '../../reducers/cfei';
 import EoiUnFilter from './filters/eoiUnFilter';
 import EoiFilter from './filters/eoiFilter';
+import EoiPinnedFilter from './filters/eoiPinnedFilter';
+import EoiPartnerFilter from './filters/eoiPartnerFilter';
 import EoiDsFilter from './filters/eoiDsFilter';
 import CfeiTableContainer from './cfeiTableContainer';
 import { isQueryChanged } from '../../helpers/apiHelper';
+import { PROJECT_TYPES, ROLES } from '../../helpers/constants';
+
+const { PARTNER, AGENCY } = ROLES;
+const { OPEN, PINNED, DIRECT, UNSOLICITED } = PROJECT_TYPES;
 
 class CfeiContainer extends Component {
   componentWillMount() {
@@ -26,15 +32,35 @@ class CfeiContainer extends Component {
     return true;
   }
 
+  filter() {
+    const { role, params: { type } } = this.props;
+
+    if (role === PARTNER) {
+      if (type === OPEN) {
+        return <EoiPartnerFilter />;
+      } else if (type === PINNED) {
+        return <EoiPinnedFilter />;
+      }
+    } else if (role === AGENCY) {
+      if (type === OPEN) {
+        return <EoiFilter />;
+      } else if (type === DIRECT) {
+        return <EoiDsFilter />;
+      } else if (type === UNSOLICITED) {
+        return <EoiUnFilter />;
+      }
+    }
+
+    return null;
+  }
+
   render() {
     const { role, params: { type } } = this.props;
 
     return (
       <Grid container direction="column" spacing={40}>
         <Grid item>
-          {type === 'open' && <EoiFilter />}
-          {type === 'direct' && <EoiDsFilter />}
-          {type === 'unsolicited' && <EoiUnFilter />}
+          {this.filter()}
         </Grid>
         <Grid item>
           <CfeiTableContainer role={role} type={type} />
