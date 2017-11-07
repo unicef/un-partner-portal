@@ -67,6 +67,10 @@ class Partner(TimeStampedModel):
         return self.hq in [None, ''] and self.display_type == PARTNER_TYPES.international
 
     @property
+    def is_country_profile(self):
+        return self.hq not in [None, ''] and self.display_type == PARTNER_TYPES.international
+
+    @property
     def country_profiles(self):
         return self.__class__.objects.filter(hq=self)
 

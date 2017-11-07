@@ -14,7 +14,9 @@ from agency.models import AgencyOffice, Agency
 from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
 from common.tests.base import BaseAPITestCase
-from common.factories import EOIFactory, AgencyMemberFactory, PartnerSimpleFactory, PartnerMemberFactory
+from common.factories import (
+    EOIFactory, AgencyMemberFactory, PartnerSimpleFactory, PartnerMemberFactory, AgencyOfficeFactory, AgencyFactory
+)
 from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
@@ -52,6 +54,7 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestPinUnpinEOIAPITestCase, self).setUp()
+        AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
 
@@ -97,6 +100,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestOpenProjectsAPITestCase, self).setUp()
+        AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         PartnerMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
@@ -211,6 +215,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
     def setUp(self):
         super(TestDirectProjectsAPITestCase, self).setUp()
         PartnerSimpleFactory.create_batch(1)
+        AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
 
@@ -284,8 +289,9 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestPartnerApplicationsAPITestCase, self).setUp()
+        AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity, status='NoN')
+        EOIFactory.create_batch(self.quantity, display_type='NoN')
         PartnerSimpleFactory.create_batch(self.quantity)
 
     def test_create(self):
@@ -334,9 +340,10 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestAgencyApplicationsAPITestCase, self).setUp()
+        AgencyOfficeFactory.create_batch(self.quantity)
         PartnerSimpleFactory.create_batch(self.quantity)
         # status='NoN' - will not create applications
-        EOIFactory.create_batch(self.quantity, status='NoN')
+        EOIFactory.create_batch(self.quantity, display_type='NoN')
 
     def test_create(self):
         eoi_id = EOI.objects.first().id
@@ -354,10 +361,9 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
 class TestApplicationsAPITestCase(BaseAPITestCase):
 
-    quantity = 1
-
     def setUp(self):
         super(TestApplicationsAPITestCase, self).setUp()
+        AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
 
@@ -425,13 +431,14 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
 class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
-    quantity = 1
     user_type = 'agency'
     user_role = MEMBER_ROLES.editor
 
     initial_factories = [
         PartnerSimpleFactory,
         PartnerMemberFactory,
+        AgencyFactory,
+        AgencyOfficeFactory,
         AgencyMemberFactory,
         EOIFactory,
     ]
@@ -499,8 +506,6 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
 
 class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
-
-    quantity = 1
 
     def test_create_convert(self):
         url = reverse('projects:applications-unsolicited')
