@@ -15,7 +15,7 @@ sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 # Other settings
 ####
 ADMINS = (
-    ('Alerts', 'dev@unpp_api.com'),
+    ('Alerts', 'unicef-unpp@tivix.com'),
 )
 DEFAULT_FROM_EMAIL = 'noreply@unpp.org'
 UN_SANCTIONS_LIST_EMAIL_ALERT = 'test@tivix.com'  # TODO - change to real one
