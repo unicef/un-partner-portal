@@ -55,6 +55,7 @@ class ApplicationsFilter(django_filters.FilterSet):
     concern = CharFilter(method='get_concern')
     status = CharFilter(method='get_status')
     agency = CharFilter(method='get_agency')
+    did_win = BooleanFilter(widget=BooleanWidget())
 
     class Meta:
         model = Application

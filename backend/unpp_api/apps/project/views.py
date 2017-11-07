@@ -82,7 +82,14 @@ class OpenProjectAPIView(BaseProjectAPIView):
     """
 
     def get_queryset(self):
-        return self.queryset.filter(display_type=EOI_TYPES.open)
+        queryset = self.queryset.filter(display_type=EOI_TYPES.open)
+
+        if self.request.user.is_agency_user:
+            return queryset
+
+        today = date.today()
+
+        return queryset.filter(deadline_date__gte=today)
 
     def post(self, request, *args, **kwargs):
         serializer = CreateProjectSerializer(data=request.data, context={'request': request})
@@ -198,7 +205,11 @@ class PinProjectAPIView(BaseProjectAPIView):
     ERROR_MSG_WRONG_PARAMS = "Couldn't properly identify input parameters like 'eoi_ids' and 'pin'."
 
     def get_queryset(self):
-        return self.queryset.filter(pins__partner_id=self.request.active_partner.id).distinct()
+        today = date.today()
+        return self.queryset.filter(pins__partner_id=self.request.active_partner.id,
+                                    deadline_date__gte=today)\
+                            .distinct()
+
 
     def patch(self, request, *args, **kwargs):
         eoi_ids = request.data.get("eoi_ids")
