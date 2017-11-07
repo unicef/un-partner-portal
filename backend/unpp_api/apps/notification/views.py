@@ -19,7 +19,7 @@ class NotificationsAPIView(ListAPIView):
     pagination_class = MediumPagination
 
     def get_queryset(self):
-        return NotifiedUser.objects.filter(recipient=self.request.user, did_read=False)
+        return NotifiedUser.objects.select_related("notification").filter(recipient=self.request.user, did_read=False)
 
     def patch(self, request, *args, **kwargs):
         serializer = NotifiedSerializer(data=request.data)
