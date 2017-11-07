@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
-import { withRouter, browserHistory as history } from 'react-router';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ClearAll from 'material-ui-icons/ClearAll';
-import Close from 'material-ui-icons/Close';
+import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
-import Paper from 'material-ui/Paper';
-import { CircularProgress } from 'material-ui/Progress';
 import IconButton from 'material-ui/IconButton';
 import SpreadContent from '../../components/common/spreadContent';
 import Loader from '../../components/common/loader';
-import { formatDateForPrint } from '../../helpers/dates';
+import NotificationItem from './notificationItem';
 import { loadNotificationsList, readNotification, readAllNotifications } from '../../reducers/notificationsList';
 
 const messages = {
@@ -26,16 +23,8 @@ const styleSheet = (theme) => {
   const padding = theme.spacing.unit;
 
   return {
-    spinner: {
-      position: 'fixed',
-      left: 'calc(50% - 25px)',
-      top: 'calc(50% - 25px)',
-    },
     notification: {
       padding: `0px ${paddingSide}px ${paddingSide}px ${paddingSide}px`,
-    },
-    notificationItem: {
-      padding: `${paddingSide}px ${paddingSide}px ${paddingSide}px ${paddingSide}px`,
     },
     root: {
       width: '25vw',
@@ -49,10 +38,6 @@ const styleSheet = (theme) => {
       display: 'flex',
       alignItems: 'center',
       padding: `0px ${paddingSide}px ${padding}px ${paddingSide}px`,
-    },
-    wrapper: {
-      alignSelf: 'end',
-      display: 'flex',
     },
     icon: {
       marginLeft: 'auto',
@@ -68,7 +53,7 @@ const styleSheet = (theme) => {
 };
 
 
-class PartnerProfileIdentification extends Component {
+class NotificationsList extends Component {
   constructor(props) {
     super(props);
 
@@ -79,7 +64,6 @@ class PartnerProfileIdentification extends Component {
     this.handleReadNotification = this.handleReadNotification.bind(this);
     this.handleReadAll = this.handleReadAll.bind(this);
     this.handleMore = this.handleMore.bind(this);
-    this.notificationItem = this.notificationItem.bind(this);
   }
 
   componentWillMount() {
@@ -101,58 +85,6 @@ class PartnerProfileIdentification extends Component {
     const { loadNotifications } = this.props;
 
     loadNotifications(true);
-  }
-
-  notificationItem(item, itemPatch) {
-    const { classes } = this.props;
-
-    const isLoading = itemPatch ? itemPatch.loading : false;
-
-    return (
-      <div className={classes.notification}>
-        <Paper className={classes.notificationItem}>
-          <SpreadContent>
-            <div>
-              <Typography
-                type="caption"
-              >
-                {formatDateForPrint(item.notification.created)}
-              </Typography>
-              <Typography
-                type="subheading"
-              >
-                {item.notification.name}
-              </Typography>
-              <Typography
-                className={classes.description}
-                type="body1"
-              >
-                {item.notification.description}
-              </Typography>
-            </div>
-            <div className={classes.wrapper}>
-              {!item.did_read && !isLoading && <IconButton
-                className={classes.iconClose}
-                type="button"
-                title="Mark as read"
-                onClick={() => this.handleReadNotification(item.notification.id)}
-              ><Close />
-              </IconButton>}
-              {isLoading &&
-              <IconButton
-                disabled
-                className={classes.iconClose}
-              >
-                <CircularProgress
-                  color="accent"
-                  size={20}
-                />
-              </IconButton>}
-            </div>
-          </SpreadContent>
-        </Paper>
-
-      </div>);
   }
 
   render() {
@@ -180,7 +112,12 @@ class PartnerProfileIdentification extends Component {
         <Loader loading={loading} />
         <div className={classes.root}>
           {items.map(item =>
-            this.notificationItem(item, itemsPatch[item.notification.id]))}
+            (<NotificationItem
+              item={item}
+              itemPatch={itemsPatch[item.notification.id]}
+              handleReadNotification={this.handleReadNotification}
+            />),
+          )}
         </div>
         {next && !loading && <SpreadContent>
           <div />
@@ -193,7 +130,7 @@ class PartnerProfileIdentification extends Component {
   }
 }
 
-PartnerProfileIdentification.propTypes = {
+NotificationsList.propTypes = {
   classes: PropTypes.object,
   items: PropTypes.array,
   next: PropTypes.String,
@@ -218,9 +155,8 @@ const mapDispatch = dispatch => ({
   markNotification: id => dispatch(readNotification(id)),
 });
 
-const connectedPartnerProfileIdentification =
-  connect(mapState, mapDispatch)(PartnerProfileIdentification);
+const connectedNotificationsList =
+  connect(mapState, mapDispatch)(NotificationsList);
 
-
-export default withStyles(styleSheet, { name: 'NotificationsList' })(connectedPartnerProfileIdentification);
+export default withStyles(styleSheet, { name: 'NotificationsList' })(connectedNotificationsList);
 

@@ -36,7 +36,8 @@ export const notificationsLoadFailure = error => ({ type: NOTIFICATIONS_LOAD_FAI
 export const notificationsLoadEnded = () => ({ type: NOTIFICATIONS_LOAD_ENDED });
 
 const saveNotifications = (state, action) => {
-  const items = R.assoc('items', R.concat(action.response.results, state.items), state);
+  const mergedItems = R.uniqBy(item => item.id, R.concat(action.response.results, state.items));
+  const items = R.assoc('items', mergedItems, state);
   const next = R.assoc('next', action.response.next, items);
   return R.assoc('totalCount', action.response.count, next);
 };
