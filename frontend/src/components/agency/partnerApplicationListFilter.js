@@ -65,12 +65,12 @@ class PartnerApplicationListFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { project_title, agency, did_win, country_code, specializations, eoi } = values;
+    const { project_title, agency, did_win, country_code, specialization, eoi } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
-        project_title, agency, did_win, country_code, specializations, eoi,
+        project_title, agency, did_win, country_code, specialization, eoi,
       }),
     });
   }
@@ -102,7 +102,7 @@ class PartnerApplicationListFilter extends Component {
               <SelectForm
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
-                fieldName="specializations"
+                fieldName="specialization"
                 values={specs}
                 optional
               />
@@ -177,7 +177,7 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { country_code } = { } } = ownProps.location;
   const { query: { agency } = { } } = ownProps.location;
   const { query: { did_win } = { } } = ownProps.location;
-  const { query: { specializations } = { } } = ownProps.location;
+  const { query: { specialization } = { } } = ownProps.location;
   const { query: { eoi } = { } } = ownProps.location;
 
 
@@ -192,7 +192,7 @@ const mapStateToProps = (state, ownProps) => {
       country_code,
       agency,
       did_win,
-      specializations,
+      specialization,
       eoi,
     },
   };
