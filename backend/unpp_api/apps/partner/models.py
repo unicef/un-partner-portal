@@ -40,6 +40,7 @@ class Partner(TimeStampedModel):
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children')
     country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
     is_active = models.BooleanField(default=True)
+    is_locked = models.BooleanField(default=False)
     # hq information
     country_presence = ArrayField(
         models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE),
@@ -91,6 +92,10 @@ class Partner(TimeStampedModel):
             return None
         else:
             return self.verifications.filter(is_verified=True).exists()
+
+    @property
+    def has_sanction_match(self):
+        return self.sanction_matches.filter(can_ignore=False).exists()
 
     @property
     def flagging_status(self):
@@ -475,6 +480,7 @@ class PartnerCollaborationPartnership(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
+        unique_together = (('partner', 'agency'), )
 
     def __str__(self):
         return "PartnerCollaborationPartnership <pk:{}>".format(self.id)

@@ -17,7 +17,6 @@ const styleSheet = (theme) => {
   return {
     container: {
       padding: `${paddingSmall}px 0 ${paddingSmall}px ${paddingMedium}px`,
-      backgroundColor: theme.palette.primary[100],
     },
   };
 };
@@ -28,7 +27,6 @@ class PaginatedList extends Component {
     this.changeExpandedDetails = expandedRows => this.setState({ expandedRows });
   }
 
-
   navigationHeader() {
     const { classes, itemsCount, pageSize, pageNumber } = this.props;
     const firstRange = (pageSize * (pageNumber - 1)) + 1;
@@ -37,6 +35,12 @@ class PaginatedList extends Component {
     return (<div className={classes.container}><Typography type="title">
       {`${firstRange}-${secondRange} of ${itemsCount} results to show`}
     </Typography></div>);
+  }
+
+  changeSorting(sorting) {
+    this.setState({
+      sorting,
+    });
   }
 
   render() {

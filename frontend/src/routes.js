@@ -39,6 +39,7 @@ import dev from './components/dev';
 import cfeiOpenResults from './components/eois/details/overview/results/results';
 import cfeiDirectResponse from './components/eois/details/overview/results/response';
 import cfeiFeedback from './components/eois/details/overview/feedback';
+import partnerApplicationList from './components/agency/partnerApplicationList';
 
 const history = syncHistoryWithStore(browserHistory, store);
 
@@ -55,6 +56,7 @@ const allRoutes = () => (
     <Route component={auth}>
       <Route component={main}>
         <Route path="/" component={mainLayout} >
+          <IndexRedirect to="dashboard" />
           <Route path="dashboard" component={dashboard} />
           <Route path="cfei" component={eoiHeader} >
             <IndexRedirect to="open" />
@@ -94,7 +96,7 @@ const allRoutes = () => (
               <Route path="overview" component={partnerOverview} />
               <Route path="details" component={organizationProfileOverviewPaper} />
               <Route path="users" component={null} />
-              <Route path="applications" component={null} />
+              <Route path="applications" component={partnerApplicationList} />
             </Route>
           </Route>
           <Route path="applications" component={partnerApplicationsHeader} >

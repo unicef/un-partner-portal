@@ -8,6 +8,9 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.generics import RetrieveAPIView
 
+
+from partner.models import Partner
+from sanctionslist.scans import sanctions_scan_partner
 from .serializers import (
     RegisterSimpleAccountSerializer,
     PartnerRegistrationSerializer,
@@ -33,6 +36,16 @@ class AccountRegisterAPIView(APIView):
             return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
 
         serializer.save()
+
+        partner_id = serializer.instance_json['partner']['id']
+        partner = Partner.objects.get(id=partner_id)
+        sanctions_scan_partner(partner)
+
+        if partner.has_sanction_match:
+            partner.is_locked = True
+            partner.save()
+
+
         return Response(serializer.instance_json, status=statuses.HTTP_201_CREATED)
 
 

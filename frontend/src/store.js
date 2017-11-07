@@ -48,7 +48,15 @@ import partnerVerifications, * as partnerVerificationsSelector from './reducers/
 import cfeiReviewSummary, { selectReviewSummary } from './reducers/cfeiReviewSummary';
 import cfeiAwardedPartners, { selectAwardedPartners } from './reducers/cfeiAwardedPartners';
 import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
+import dashboard from './reducers/dashboard';
 import partnerFlags, * as partnerFlagsSelector from './reducers/partnerFlags';
+import agencyPartnerApplicationList from './reducers/agencyPartnerApplicationList';
+import applicationsToScore from './reducers/applicationsToScore';
+import pendingOffers from './reducers/pendingOffers';
+import submittedCN from './reducers/submittedCN';
+import applicationDecisions from './reducers/applicationsDecisions';
+import applicationComparison from './reducers/applicationsComparison';
+import notificationsList from './reducers/notificationsList';
 
 const mainReducer = combineReducers({
   cfei,
@@ -90,11 +98,19 @@ const mainReducer = combineReducers({
   partnerAppDetails,
   applicationFeedback,
   agencies,
+  agencyPartnerApplicationList,
   partnerVerifications,
   cfeiReviewSummary,
   cfeiAwardedPartners,
   cfeiReviewers,
+  dashboard,
   partnerFlags,
+  applicationsToScore,
+  pendingOffers,
+  submittedCN,
+  applicationDecisions,
+  applicationComparison,
+  notificationsList,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -206,7 +222,7 @@ export const selectCfeiCriteria = (state, id) =>
 export const selectCfeiStatus = (state, id) =>
   cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.cfeiDetails, id);
 
-  export const selectCfeiConverted = (state, id) =>
+export const selectCfeiConverted = (state, id) =>
   cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.cfeiDetails, id);
 
 export const isCfeiCompleted = (state, id) =>

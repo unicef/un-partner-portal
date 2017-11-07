@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { assoc } from 'ramda';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
-import { withRouter } from 'react-router';
+import { withRouter, browserHistory as history } from 'react-router';
 import ControlledModal from '../../../common/modals/controlledModal';
 import { updateApplication } from '../../../../reducers/applicationDetails';
 import AwardApplicationForm from './awardApplicationForm';
@@ -18,26 +19,34 @@ class awardApplicationModal extends Component {
   constructor(props) {
     super(props);
     this.onFormSubmit = this.onFormSubmit.bind(this);
+    this.handleDialogClose = this.handleDialogClose.bind(this);
   }
 
   onFormSubmit(values) {
-    this.props.handleDialogClose();
     this.props.updateApplication({ ...values, did_win: true });
+    this.handleDialogClose();
+  }
+
+  handleDialogClose() {
+    const loc = history.getCurrentLocation();
+    this.props.handleDialogClose();
+    history.push(assoc('hash', null, loc));
   }
 
   render() {
-    const { submit, dialogOpen, handleDialogClose } = this.props;
+    const { submit, dialogOpen, router } = this.props;
+    const hash = router.getCurrentLocation().hash;
     return (
       <div>
         <ControlledModal
           maxWidth="md"
           title={messages.title}
-          trigger={dialogOpen}
-          handleDialogClose={this.onDialogClose}
+          trigger={dialogOpen || hash === '#award-open'}
+          handleDialogClose={this.handleDialogClose}
           info={{ title: messages.header }}
           buttons={{
             flat: {
-              handleClick: handleDialogClose,
+              handleClick: this.handleDialogClose,
             },
             raised: {
               handleClick: submit,
@@ -56,6 +65,7 @@ awardApplicationModal.propTypes = {
   submit: PropTypes.func,
   handleDialogClose: PropTypes.func,
   updateApplication: PropTypes.func,
+  router: PropTypes.object,
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {

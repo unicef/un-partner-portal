@@ -15,7 +15,7 @@ const messages = {
 
 const WeightField = (props) => {
   const { name, hasWeighting, disabled, ...other } = props;
-  return (hasWeighting === 'true') ? (<Grid item xs={12} sm={4}>
+  return (hasWeighting) ? (<Grid item xs={12} sm={4}>
     <TextFieldForm
       label={messages.labels.weight}
       fieldName={`${name}.weight`}

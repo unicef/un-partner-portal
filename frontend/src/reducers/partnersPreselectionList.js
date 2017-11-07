@@ -7,7 +7,7 @@ const initialState = {
     { name: 'id', title: 'Concept Note ID' },
     { name: 'review_progress', title: 'Review progress' },
     { name: 'your_score', title: 'Your score' },
-    { name: 'total_score', title: 'Total Score' },
+    { name: 'average_total_score', title: 'Total Score' },
   ],
 };
 

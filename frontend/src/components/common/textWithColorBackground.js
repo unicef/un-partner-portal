@@ -29,12 +29,17 @@ const styleSheet = (theme) => {
       backgroundColor: theme.palette.common.blue,
       color: white,
     },
+    green: {
+      backgroundColor: theme.palette.common.green,
+      color: white,
+    },
   };
 };
 
 const TextWithColorBackground = ({ classes,
   color,
   text,
+  type,
   className: classNameProp,
   ...textProps }) => {
   const className = ClassName(
@@ -42,7 +47,7 @@ const TextWithColorBackground = ({ classes,
     classes[color],
     classNameProp,
   );
-  return <Typography type="caption" className={className} {...textProps}> {text} </Typography>
+  return <Typography type={type} className={className} {...textProps}> {text} </Typography>;
 };
 
 TextWithColorBackground.propTypes = {
@@ -50,6 +55,11 @@ TextWithColorBackground.propTypes = {
   color: PropTypes.string,
   text: PropTypes.string,
   className: PropTypes.object,
+  type: PropTypes.string,
+};
+
+TextWithColorBackground.defaultProps = {
+  type: 'caption',
 };
 
 export default withStyles(styleSheet, { name: 'TextWithColorBackground' })(TextWithColorBackground);

@@ -175,7 +175,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(Partner.objects.last().id in response.data['invited_partners'])
         self.assertTrue(Partner.objects.count(), 1)
         self.assertTrue(len(response.data['invited_partners']), 1)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertTrue(len(mail.outbox)>0)  # mail.outbox is in shared resource, can have also other mails
         mail.outbox = []
 
         # edit EOI - dates & focal point(s)
@@ -313,12 +313,10 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         payload = {
             "cn": cfile.id,
         }
-
-        # TODO - come back to fixing this. Constraint is at DB level, so error is raised but doesn't return this response
-        # response = self.client.post(url, data=payload, format='json')
-        # self.assertFalse(statuses.is_success(response.status_code))
-        # # expected_msgs = ['The fields eoi, partner must make a unique set.']
-        # self.assertEquals(response.data['non_field_errors'], expected_msgs)
+        response = self.client.post(url, data=payload, format='json')
+        self.assertFalse(statuses.is_success(response.status_code))
+        expected_msgs = ['The fields eoi, partner must make a unique set.']
+        self.assertEquals(response.data['non_field_errors'], expected_msgs)
 
         url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
         payload = {

@@ -14,7 +14,7 @@ import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
 const STEPS = readOnly =>
   [
     {
-      component: <PartnerProfileIdentificationBasicInfo />,
+      component: <PartnerProfileIdentificationBasicInfo readOnly={readOnly} />,
       label: 'Basic Information',
       name: 'basic',
     },

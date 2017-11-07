@@ -8,6 +8,14 @@ from .consts import POWER_MEMBER_ROLES, MEMBER_ROLES
 logger = logging.getLogger(__name__)
 
 
+class IsAgencyMemberUser(BasePermission):
+    def has_permission(self, request, user):
+        if not request.user.is_authenticated():
+            return False
+
+        return request.user.is_agency_user
+
+
 class IsAtLeastMemberReader(BasePermission):
     """
     Allows access only to user that has at least Reader role (Partner or Agency member).

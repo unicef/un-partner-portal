@@ -9,6 +9,7 @@ import PartnerFlagsStatus, {
 } from './partnerFlagsStatus';
 import { selectIndexWithDefaultEmptyObject } from './normalizationHelpers';
 import { getPartnerFlags, postPartnerFlags, patchPartnerFlags } from '../helpers/api/api';
+import { loadPartnerDetails } from './partnerProfileDetails';
 
 const initialState = {};
 
@@ -26,11 +27,12 @@ export const loadPartnerFlags = (partnerId, params) => (dispatch) => {
     });
 };
 
-export const updatePartnerFlags = (partnerId, body, edit) => (dispatch) => {
+export const updatePartnerFlags = (partnerId, body, edit, flagId) => (dispatch) => {
   const method = edit ? patchPartnerFlags : postPartnerFlags;
-  return method(partnerId, body)
+  return method(partnerId, body, flagId)
     .then((flag) => {
       dispatch(loadPartnerFlags(partnerId));
+      dispatch(loadPartnerDetails(partnerId));
       return flag;
     });
 };

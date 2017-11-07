@@ -18,6 +18,7 @@ from account.models import User
 from common.consts import EOI_TYPES
 from common.paginations import SmallPagination
 from common.permissions import (
+    IsAgencyMemberUser,
     IsAtLeastMemberReader,
     IsAtLeastMemberEditor,
     IsAtLeastAgencyMemberEditor,
@@ -41,6 +42,7 @@ from .serializers import (
     CreateDirectProjectSerializer,
     ProjectUpdateSerializer,
     ApplicationFullSerializer,
+    ApplicationFullEOISerializer,
     AgencyUnsolicitedApplicationSerializer,
     CreateDirectApplicationNoCNSerializer,
     ApplicationsListSerializer,
@@ -65,7 +67,7 @@ class BaseProjectAPIView(ListCreateAPIView):
     Base endpoint for Call of Expression of Interest.
     """
     permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
-    queryset = EOI.objects.prefetch_related("specializations", "agency")
+    queryset = EOI.objects.prefetch_related("specializations", "agency").distinct()
     serializer_class = BaseProjectSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
@@ -80,7 +82,14 @@ class OpenProjectAPIView(BaseProjectAPIView):
     """
 
     def get_queryset(self):
-        return self.queryset.filter(display_type=EOI_TYPES.open)
+        queryset = self.queryset.filter(display_type=EOI_TYPES.open)
+
+        if self.request.user.is_agency_user:
+            return queryset
+
+        today = date.today()
+
+        return queryset.filter(deadline_date__gte=today)
 
     def post(self, request, *args, **kwargs):
         serializer = CreateProjectSerializer(data=request.data, context={'request': request})
@@ -169,7 +178,7 @@ class DirectProjectAPIView(BaseProjectAPIView):
         return PartnerMember.objects.filter(user=self.request.user).values_list('partner', flat=True)
 
     def get_queryset(self):
-        return self.queryset.filter(display_type=EOI_TYPES.direct)
+        return self.queryset.filter(display_type=EOI_TYPES.direct).distinct()
 
     def post(self, request, *args, **kwargs):
         data = request.data or {}
@@ -196,7 +205,11 @@ class PinProjectAPIView(BaseProjectAPIView):
     ERROR_MSG_WRONG_PARAMS = "Couldn't properly identify input parameters like 'eoi_ids' and 'pin'."
 
     def get_queryset(self):
-        return self.queryset.filter(pins__partner_id=self.request.active_partner.id)
+        today = date.today()
+        return self.queryset.filter(pins__partner_id=self.request.active_partner.id,
+                                    deadline_date__gte=today)\
+                            .distinct()
+
 
     def patch(self, request, *args, **kwargs):
         eoi_ids = request.data.get("eoi_ids")
@@ -223,7 +236,19 @@ class PinProjectAPIView(BaseProjectAPIView):
             )
 
 
-class ApplicationsPartnerAPIView(CreateAPIView):
+class AgencyApplicationListAPIView(ListAPIView):
+    """
+    Endpoint to allow agencies to get applications
+    """
+    permission_classes = (IsAgencyMemberUser,)
+    queryset = Application.objects.all()
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_class = ApplicationsFilter
+    serializer_class = ApplicationFullEOISerializer
+    pagination_class = SmallPagination
+
+
+class PartnerEOIApplicationCreateAPIView(CreateAPIView):
     """
     Create Application for open EOI by partner.
     """
@@ -231,17 +256,24 @@ class ApplicationsPartnerAPIView(CreateAPIView):
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
+    def post(self, request, pk, *args, **kwargs):
+        self.eoi = get_object_or_404(EOI, id=pk)
+        if Application.objects.filter(eoi=self.eoi, partner_id=self.request.active_partner.id).exists():
+            return Response(
+                {'non_field_errors': ['The fields eoi, partner must make a unique set.']},
+                status=statuses.HTTP_400_BAD_REQUEST
+            )
+        return super(PartnerEOIApplicationCreateAPIView, self).post(request, pk, *args, **kwargs)
+
     def perform_create(self, serializer):
-        eoi = get_object_or_404(EOI, id=self.kwargs['pk'])
-        instance = serializer.save(eoi=eoi,
+        instance = serializer.save(eoi=self.eoi,
                                    submitter_id=self.request.user.id,
                                    partner_id=self.request.active_partner.id,
-                                   agency=eoi.agency)
-
+                                   agency=self.eoi.agency)
         send_notificiation_application_created(instance)
 
 
-class ApplicationPartnerAPIView(RetrieveAPIView):
+class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
     """
     Create Application for open EOI by partner.
     """
@@ -263,7 +295,7 @@ class ApplicationPartnerAPIView(RetrieveAPIView):
         return Application.objects.none()
 
 
-class ApplicationsAgencyAPIView(ApplicationsPartnerAPIView):
+class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
     """
     Create Application for direct EOI by agency.
     """
@@ -296,10 +328,9 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
         send_notification_application_updated(instance)
 
 
-
-class ApplicationsListAPIView(ListAPIView):
+class EOIApplicationsListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
-    queryset = Application.objects.all()
+    queryset = Application.objects.all().distinct()
     serializer_class = ApplicationsListSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
@@ -382,16 +413,16 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
 
 class UnsolicitedProjectAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, )
-    queryset = Application.objects.filter(is_unsolicited=True)
+    queryset = Application.objects.filter(is_unsolicited=True).distinct()
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
     filter_class = ApplicationsUnsolicitedFilter
     serializer_class = AgencyUnsolicitedApplicationSerializer
 
 
-class AppsPartnerOpenAPIView(ListAPIView):
+class PartnerApplicationOpenListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, IsPartner)
-    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.open)
+    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.open).distinct()
     serializer_class = ApplicationPartnerOpenSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
@@ -401,9 +432,9 @@ class AppsPartnerOpenAPIView(ListAPIView):
         return self.queryset.filter(partner_id=self.request.active_partner.id)
 
 
-class AppsPartnerUnsolicitedAPIView(ListCreateAPIView):
+class PartnerApplicationUnsolicitedListCreateAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticated, IsPartner)
-    queryset = Application.objects.filter(is_unsolicited=True)
+    queryset = Application.objects.filter(is_unsolicited=True).distinct()
     filter_class = ApplicationsUnsolicitedFilter
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
@@ -421,9 +452,8 @@ class AppsPartnerUnsolicitedAPIView(ListCreateAPIView):
         send_notificiation_application_created(instance)
 
 
-
-class AppsPartnerDirectAPIView(AppsPartnerUnsolicitedAPIView):
-    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct)
+class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedListCreateAPIView):
+    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct).distinct()
 
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id=self.request.active_partner.id)

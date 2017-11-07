@@ -48,6 +48,7 @@ class PartnerSwitch extends Component {
         partnerCountry: partner.country_code,
         partnerName: partner.legal_name,
         isHq: partner.is_hq,
+        logo: partner.logo,
       });
 
       this.setState({ open: false });
