@@ -67,7 +67,7 @@ class BaseProjectAPIView(ListCreateAPIView):
     Base endpoint for Call of Expression of Interest.
     """
     permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
-    queryset = EOI.objects.prefetch_related("specializations", "agency")
+    queryset = EOI.objects.prefetch_related("specializations", "agency").distinct()
     serializer_class = BaseProjectSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
@@ -82,7 +82,14 @@ class OpenProjectAPIView(BaseProjectAPIView):
     """
 
     def get_queryset(self):
-        return self.queryset.filter(display_type=EOI_TYPES.open)
+        queryset = self.queryset.filter(display_type=EOI_TYPES.open)
+
+        if self.request.user.is_agency_user:
+            return queryset
+
+        today = date.today()
+
+        return queryset.filter(deadline_date__gte=today)
 
     def post(self, request, *args, **kwargs):
         serializer = CreateProjectSerializer(data=request.data, context={'request': request})
@@ -171,7 +178,7 @@ class DirectProjectAPIView(BaseProjectAPIView):
         return PartnerMember.objects.filter(user=self.request.user).values_list('partner', flat=True)
 
     def get_queryset(self):
-        return self.queryset.filter(display_type=EOI_TYPES.direct)
+        return self.queryset.filter(display_type=EOI_TYPES.direct).distinct()
 
     def post(self, request, *args, **kwargs):
         data = request.data or {}
@@ -198,7 +205,11 @@ class PinProjectAPIView(BaseProjectAPIView):
     ERROR_MSG_WRONG_PARAMS = "Couldn't properly identify input parameters like 'eoi_ids' and 'pin'."
 
     def get_queryset(self):
-        return self.queryset.filter(pins__partner_id=self.request.active_partner.id)
+        today = date.today()
+        return self.queryset.filter(pins__partner_id=self.request.active_partner.id,
+                                    deadline_date__gte=today)\
+                            .distinct()
+
 
     def patch(self, request, *args, **kwargs):
         eoi_ids = request.data.get("eoi_ids")
@@ -319,7 +330,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
 
 class EOIApplicationsListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
-    queryset = Application.objects.all()
+    queryset = Application.objects.all().distinct()
     serializer_class = ApplicationsListSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
@@ -402,7 +413,7 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
 
 class UnsolicitedProjectAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, )
-    queryset = Application.objects.filter(is_unsolicited=True)
+    queryset = Application.objects.filter(is_unsolicited=True).distinct()
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
     filter_class = ApplicationsUnsolicitedFilter
@@ -411,7 +422,7 @@ class UnsolicitedProjectAPIView(ListAPIView):
 
 class PartnerApplicationOpenListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated, IsPartner)
-    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.open)
+    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.open).distinct()
     serializer_class = ApplicationPartnerOpenSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
@@ -423,7 +434,7 @@ class PartnerApplicationOpenListAPIView(ListAPIView):
 
 class PartnerApplicationUnsolicitedListCreateAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticated, IsPartner)
-    queryset = Application.objects.filter(is_unsolicited=True)
+    queryset = Application.objects.filter(is_unsolicited=True).distinct()
     filter_class = ApplicationsUnsolicitedFilter
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
@@ -442,7 +453,7 @@ class PartnerApplicationUnsolicitedListCreateAPIView(ListCreateAPIView):
 
 
 class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedListCreateAPIView):
-    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct)
+    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct).distinct()
 
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id=self.request.active_partner.id)

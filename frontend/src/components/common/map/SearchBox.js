@@ -20,10 +20,7 @@ class SearchBox extends Component {
         }
         const bounds = new google.maps.LatLngBounds();
         places.forEach((place) => {
-          if (!place.geometry) {
-            console.log('Returned place contains no geometry');
-            return;
-          }
+          if (!place.geometry) return;
 
           if (place.geometry.viewport) {
             // Only geocodes have viewport.

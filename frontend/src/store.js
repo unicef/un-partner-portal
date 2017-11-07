@@ -56,6 +56,7 @@ import pendingOffers from './reducers/pendingOffers';
 import submittedCN from './reducers/submittedCN';
 import applicationDecisions from './reducers/applicationsDecisions';
 import applicationComparison from './reducers/applicationsComparison';
+import notificationsList from './reducers/notificationsList';
 
 const mainReducer = combineReducers({
   cfei,
@@ -109,6 +110,7 @@ const mainReducer = combineReducers({
   submittedCN,
   applicationDecisions,
   applicationComparison,
+  notificationsList,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
