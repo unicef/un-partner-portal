@@ -26,16 +26,19 @@ export const clearPatchError = (state, action) =>
 
 export const notificationPatchStarted = id => ({ type: NOTIFICATION_PATCH_STARTED, id });
 export const notificationPatchSuccess = id => ({ type: NOTIFICATION_PATCH_SUCCESS, id });
-export const notificationPatchFailure = (error, id) => ({ type: NOTIFICATION_PATCH_FAILURE, error, id });
+export const notificationPatchFailure = (error, id) =>
+  ({ type: NOTIFICATION_PATCH_FAILURE, error, id });
 export const notificationPatchEnded = id => ({ type: NOTIFICATION_PATCH_ENDED, id });
 export const notificationsLoadStarted = () => ({ type: NOTIFICATIONS_LOAD_STARTED });
-export const notificationsLoadSuccess = response => ({ type: NOTIFICATIONS_LOAD_SUCCESS, response });
+export const notificationsLoadSuccess = response =>
+  ({ type: NOTIFICATIONS_LOAD_SUCCESS, response });
 export const notificationsLoadFailure = error => ({ type: NOTIFICATIONS_LOAD_FAILURE, error });
 export const notificationsLoadEnded = () => ({ type: NOTIFICATIONS_LOAD_ENDED });
 
 const saveNotifications = (state, action) => {
-  const members = R.assoc('items', action.response.results, state);
-  return R.assoc('totalCount', action.response.count, members);
+  const items = R.assoc('items', R.concat(action.response.results, state.items), state);
+  const next = R.assoc('next', action.response.next, items);
+  return R.assoc('totalCount', action.response.count, next);
 };
 
 const messages = {
@@ -51,9 +54,24 @@ const initialState = {
   itemsPatch: [],
 };
 
-export const loadNotificationsList = loadMore => (dispatch) => {
+const extractNextPage = (next) => {
+  if (next) {
+    return next.split('page=')[1].substring(0, 1);
+  }
+
+  return null;
+};
+
+export const loadNotificationsList = loadMore => (dispatch, getState) => {
   dispatch(notificationsLoadStarted());
-  return getNotifications(loadMore)
+  let nextPage = { page_size: null };
+
+  if (loadMore) {
+    const p = extractNextPage(getState().notificationsList.next);
+    nextPage = R.assoc('page', p, nextPage);
+  }
+
+  return getNotifications(nextPage)
     .then((notifications) => {
       dispatch(notificationsLoadEnded());
       dispatch(notificationsLoadSuccess(notifications));

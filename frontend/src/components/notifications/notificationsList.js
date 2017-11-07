@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import ClearAll from 'material-ui-icons/ClearAll';
 import Close from 'material-ui-icons/Close';
 import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import { CircularProgress } from 'material-ui/Progress';
@@ -17,6 +18,7 @@ import { loadNotificationsList, readNotification, readAllNotifications } from '.
 const messages = {
   notifications: 'Notifications',
   markAll: 'Mark all as read',
+  more: 'more',
 };
 
 const styleSheet = (theme) => {
@@ -76,11 +78,12 @@ class PartnerProfileIdentification extends Component {
 
     this.handleReadNotification = this.handleReadNotification.bind(this);
     this.handleReadAll = this.handleReadAll.bind(this);
+    this.handleMore = this.handleMore.bind(this);
     this.notificationItem = this.notificationItem.bind(this);
   }
 
   componentWillMount() {
-    this.props.loadNotifications();
+    this.props.loadNotifications(false);
   }
 
   handleReadNotification(id) {
@@ -92,6 +95,12 @@ class PartnerProfileIdentification extends Component {
   handleReadAll() {
     const { markAllNotifications } = this.props;
     markAllNotifications();
+  }
+
+  handleMore() {
+    const { loadNotifications } = this.props;
+
+    loadNotifications(true);
   }
 
   notificationItem(item, itemPatch) {
@@ -147,7 +156,7 @@ class PartnerProfileIdentification extends Component {
   }
 
   render() {
-    const { classes, loading, items, itemsPatch } = this.props;
+    const { classes, loading, items, itemsPatch, next } = this.props;
     return (
       <Paper className={classes.paper}>
         <div className={classes.header}>
@@ -173,6 +182,12 @@ class PartnerProfileIdentification extends Component {
           {items.map(item =>
             this.notificationItem(item, itemsPatch[item.notification.id]))}
         </div>
+        {next && !loading && <SpreadContent>
+          <div />
+          <Button color="accent" onClick={() => this.handleMore()}>
+            {messages.more}
+          </Button>
+        </SpreadContent>}
       </Paper>
     );
   }
@@ -181,6 +196,7 @@ class PartnerProfileIdentification extends Component {
 PartnerProfileIdentification.propTypes = {
   classes: PropTypes.object,
   items: PropTypes.array,
+  next: PropTypes.String,
   itemsPatch: PropTypes.array,
   loadNotifications: PropTypes.func,
   markNotification: PropTypes.func,
