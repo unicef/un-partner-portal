@@ -175,7 +175,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(Partner.objects.last().id in response.data['invited_partners'])
         self.assertTrue(Partner.objects.count(), 1)
         self.assertTrue(len(response.data['invited_partners']), 1)
-        self.assertTrue(len(mail.outbox)>0)  # mail.outbox is in shared resource, can have also other mails
+        self.assertTrue(len(mail.outbox) > 0)  # mail.outbox is in shared resource, can have also other mails
         mail.outbox = []
 
         # edit EOI - dates & focal point(s)
@@ -391,7 +391,8 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertTrue(len(mail.outbox) > 0)
+        mail.outbox = []
 
         # accept offer
         payload = {

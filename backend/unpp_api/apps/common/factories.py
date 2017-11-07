@@ -619,6 +619,14 @@ class EOIFactory(factory.django.DjangoModelFactory):
                         note='Note for application id: {}'.format(app.id)
                     )
 
+    @factory.post_generation
+    def locations(self, create, extracted, **kwargs):
+        count = random.randint(0, 3)
+        values = []
+        while count:
+            count -= 1
+            self.locations.add(PointFactory())
+
 
 class PartnerFlagFactory(factory.django.DjangoModelFactory):
     submitter = factory.LazyFunction(get_agency_member)
