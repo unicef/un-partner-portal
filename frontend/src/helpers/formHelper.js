@@ -169,8 +169,8 @@ export const renderTextField = ({
   meta: { touched, error, warning },
   input,
   ...other
-}) => (
-  <div>
+}) => {
+  return (<div>
     <TextField
       className={className}
       id={name}
@@ -184,6 +184,7 @@ export const renderTextField = ({
       {other.inputProps && other.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
     </div>
   </div>);
+}
 
 export const renderNumberField = ({
   name,

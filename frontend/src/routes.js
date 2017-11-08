@@ -55,6 +55,7 @@ const allRoutes = () => (
   <Router history={history}>
     <Route component={auth}>
       <Route component={main}>
+        <Route path="/dev" component={dev} />
         <Route path="/" component={mainLayout} >
           <Route path="dashboard" component={dashboard} />
           <Route path="cfei" component={eoiHeader} >
@@ -127,7 +128,6 @@ const allRoutes = () => (
     <Route component={nonAuth}>
       <Route path="/login" component={login} />
       <Route path="/registration" component={registration} />
-      <Route path="/dev" component={dev} />
     </Route>
   </Router >
 );
