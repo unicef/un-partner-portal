@@ -488,7 +488,7 @@ class EOIReviewersAssessmentsListAPIView(ListAPIView):
     """
     Reviewers with they assessments - summary
     """
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAgency, IsAtLeastMemberEditor)
     queryset = User.objects.all()
     serializer_class = EOIReviewersAssessmentsSerializer
     lookup_field = 'eoi_id'
@@ -506,7 +506,7 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
     NOTIFICATION_MESSAGE_SENT = "Notification message sent successfully"
     NOTIFICATION_MESSAGE_WAIT = "Notification message sent recently. Need to wait 24 hours."
 
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAgency, IsAtLeastMemberEditor)
 
     def post(self, request, *args, **kwargs):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
@@ -531,7 +531,7 @@ class AwardedPartnersListAPIView(ListAPIView):
 
 
 class CompareSelectedListAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAgency, IsAtLeastMemberEditor)
     serializer_class = CompareSelectedSerializer
 
     def get_queryset(self):
