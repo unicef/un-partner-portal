@@ -27,6 +27,7 @@ from common.permissions import (
     IsConvertUnsolicitedEditor,
     IsApplicationFeedbackPerm,
     IsPartner,
+    IsAgency,
 )
 from notification.helpers import (
     get_partner_users_for_app_qs,
@@ -519,7 +520,7 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
 
 
 class AwardedPartnersListAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAgency)
     serializer_class = AwardedPartnersSerializer
     lookup_field = 'eoi_id'
 

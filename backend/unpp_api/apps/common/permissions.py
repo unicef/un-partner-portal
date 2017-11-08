@@ -127,6 +127,12 @@ class IsPartner(BasePermission):
         return request.user.is_partner_user
 
 
+class IsAgency(BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user.is_agency_user
+
+
 class IsApplicationAPIEditor(IsAtLeastMemberReader):
 
     MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
@@ -144,12 +150,11 @@ class IsApplicationAPIEditor(IsAtLeastMemberReader):
                 return self.pass_at_least(am.role)
 
         else:
-            pm = PartnerMember.objects.filter(user=request.user).first()
             if app.partner.id in request.user.get_partner_ids_i_can_access():
                 if request.method == 'GET':
                     return True  # all
                 else:
-                    return self.pass_at_least(pm.role)
+                    return self.pass_at_least(request.user.member.role)
 
 
 class IsConvertUnsolicitedEditor(IsAtLeastMemberReader):
