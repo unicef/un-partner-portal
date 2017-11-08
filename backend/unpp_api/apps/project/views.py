@@ -337,7 +337,7 @@ class EOIApplicationsListAPIView(ListAPIView):
 
 
 class ReviewersStatusAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAgency, IsAtLeastMemberEditor)
     queryset = User.objects.all()
     serializer_class = ReviewersApplicationSerializer
     lookup_field = 'pk'
