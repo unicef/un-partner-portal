@@ -109,6 +109,7 @@ export const renderSelectField = ({
 
 export const renderRadioField = ({ input,
   label,
+  defaultValue,
   meta: { touched, error, warning },
   options, ...other
 }) => (
@@ -116,7 +117,7 @@ export const renderRadioField = ({ input,
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>
       <RadioGroupRow
-        selectedValue={transformBool(input.value)}
+        selectedValue={!R.isEmpty(input.value) ? transformBool(input.value) : defaultValue}
         onChange={(event, value) => { input.onChange(transformBool(value)); }}
         {...other}
       >
@@ -130,8 +131,7 @@ export const renderRadioField = ({ input,
     </FormControl>
     {((touched && error) || warning) &&
     <FormHelperText error>{error || warning}</FormHelperText>}
-  </div>
-);
+  </div>);
 
 export const renderCheckbox = ({
   name,

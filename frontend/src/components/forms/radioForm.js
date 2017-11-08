@@ -13,6 +13,7 @@ const RadioForm = (props) => {
     optional,
     validation,
     warn,
+    defaultValue,
     renderTextSelection,
     readOnly,
     ...other } = props;
@@ -34,6 +35,7 @@ const RadioForm = (props) => {
           label={label}
           validate={optional ? [] : [required].concat(validation || [])}
           warn={warn ? [warning] : []}
+          defaultValue={defaultValue}
           {...other}
         />}
     </Grid>
@@ -73,6 +75,8 @@ RadioForm.propTypes = {
   warn: PropTypes.bool,
 
   renderTextSelection: PropTypes.bool,
+
+  defaultValue: PropTypes.object,
 };
 
 export default RadioForm;

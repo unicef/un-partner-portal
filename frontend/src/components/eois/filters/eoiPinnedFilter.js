@@ -8,10 +8,10 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
-import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
-import { selectNormalizedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
+import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import { selectNormalizedSpecializations, selectNormalizedCountries } from '../../../store';
 import resetChanges from './eoiHelper';
 
 const messages = {
@@ -20,10 +20,8 @@ const messages = {
     search: 'Search',
     country: 'Country',
     location: 'Location - Admin 1',
-    status: 'Status',
     sector: 'Sector & Area of specialization',
     agency: 'Agency',
-    direct: 'Direct Selection Source',
   },
   clear: 'clear',
   submit: 'submit',
@@ -40,7 +38,6 @@ const styleSheet = theme => ({
   },
 });
 
-
 export const STATUS_VAL = [
   {
     value: true,
@@ -52,7 +49,7 @@ export const STATUS_VAL = [
   },
 ];
 
-class EoiFilter extends Component {
+class EoiPinnedFilter extends Component {
   constructor(props) {
     super(props);
 
@@ -66,31 +63,31 @@ class EoiFilter extends Component {
   componentWillMount() {
     const { pathName, query } = this.props;
     resetChanges(pathName, query);
-
-    history.push({
-      pathname: pathName,
-      query: R.merge(query,
-        { active: true, ordering: 'created' },
-      ),
-    });
   }
+ 
 
   onSearch(values) {
     const { pathName, query } = this.props;
-    // TODO - move order to paginated list wrapper
-    const { title, agency, active, country_code, specializations, selected_source } = values;
-    const ordering = active ? 'created' : '-completed_date';
+
+    const { title, agency, active, country_code, specializations,
+      posted_from_date, posted_to_date, locations } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
-        title, agency, active, ordering, country_code, specializations, selected_source,
-      }),
+        title,
+        agency,
+        active,
+        country_code,
+        specializations,
+        posted_from_date,
+        posted_to_date,
+        locations }),
     });
   }
 
   render() {
-    const { classes, countries, directSources, specs, handleSubmit, reset } = this.props;
+    const { classes, countries, specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -113,11 +110,11 @@ class EoiFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
-                fieldName="sector"
+              <AdminOneLocation
+                fieldName="locations"
+                formName="tableFilter"
+                observeFieldName="country_code"
                 label={messages.labels.location}
-                placeholder={messages.choose}
-                values={[]}
                 optional
               />
             </Grid>
@@ -133,28 +130,10 @@ class EoiFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <RadioForm
-                fieldName="active"
-                label={messages.labels.status}
-                values={STATUS_VAL}
-                defaultValue
-                optional
-              />
-            </Grid>
-            <Grid item sm={2} xs={12}>
               <Agencies
                 fieldName="agency"
                 label={messages.labels.agency}
                 placeholder={messages.choose}
-                optional
-              />
-            </Grid>
-            <Grid item sm={2} xs={12}>
-              <SelectForm
-                fieldName="selected_source"
-                label={messages.labels.direct}
-                placeholder={messages.choose}
-                values={directSources}
                 optional
               />
             </Grid>
@@ -179,7 +158,7 @@ class EoiFilter extends Component {
   }
 }
 
-EoiFilter.propTypes = {
+EoiPinnedFilter.propTypes = {
   /**
    *  reset function
    */
@@ -187,28 +166,27 @@ EoiFilter.propTypes = {
   classes: PropTypes.object.isRequired,
   countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
-  directSources: PropTypes.array.isRequired,
   pathName: PropTypes.string,
   query: PropTypes.object,
 };
 
-const formEoiFilter = reduxForm({
+const formEoiPinnedFilter = reduxForm({
   form: 'tableFilter',
-})(EoiFilter);
+})(EoiPinnedFilter);
 
 const mapStateToProps = (state, ownProps) => {
   const { query: { title } = { } } = ownProps.location;
   const { query: { country_code } = { } } = ownProps.location;
   const { query: { agency } = { } } = ownProps.location;
   const { query: { active } = { } } = ownProps.location;
+  const { query: { locations } = { } } = ownProps.location;
   const { query: { specializations } = { } } = ownProps.location;
-  const { query: { selected_source } = { } } = ownProps.location;
-
+  const { query: { posted_from_date } = { } } = ownProps.location;
+  const { query: { posted_to_date } = { } } = ownProps.location;
 
   return {
     countries: selectNormalizedCountries(state),
     specs: selectNormalizedSpecializations(state),
-    directSources: selectNormalizedDirectSelectionSource(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {
@@ -216,13 +194,15 @@ const mapStateToProps = (state, ownProps) => {
       country_code,
       agency,
       active,
+      locations,
       specializations,
-      selected_source,
+      posted_from_date,
+      posted_to_date,
     },
   };
 };
 
-const connected = connect(mapStateToProps, null)(formEoiFilter);
-const withRouterEoiFilter = withRouter(connected);
+const connected = connect(mapStateToProps, null)(formEoiPinnedFilter);
+const withRouterEoiPinnedFilter = withRouter(connected);
 
-export default (withStyles(styleSheet, { name: 'formEoiFilter' })(withRouterEoiFilter));
+export default (withStyles(styleSheet, { name: 'formEoiPinnedFilter' })(withRouterEoiPinnedFilter));
