@@ -202,3 +202,15 @@ class IsApplicationFeedbackPerm(IsAtLeastMemberReader):
         else:
             # agency reader can read
             return True
+
+
+class IsPartnerEOIApplicationCreate(IsAtLeastPartnerMemberEditor):
+
+    def has_permission(self, request, view):
+        if request.user.is_agency_user:
+            return False
+
+        if request.method != 'GET':
+            return self.pass_at_least(request.user.member.role)
+        else:
+            return True

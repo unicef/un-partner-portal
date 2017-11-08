@@ -26,6 +26,7 @@ from common.permissions import (
     IsApplicationAPIEditor,
     IsConvertUnsolicitedEditor,
     IsApplicationFeedbackPerm,
+    IsPartnerEOIApplicationCreate,
     IsPartner,
     IsAgency,
 )
@@ -245,7 +246,7 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
     """
     Create Application for open EOI by partner.
     """
-    permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
+    permission_classes = (IsAuthenticated, IsPartnerEOIApplicationCreate)
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
