@@ -1,7 +1,8 @@
 import logging
+from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
 from agency.models import AgencyMember
-from partner.models import PartnerMember
+from partner.models import Partner, PartnerMember
 from project.models import Application
 from .consts import POWER_MEMBER_ROLES, MEMBER_ROLES
 
@@ -9,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class IsAgencyMemberUser(BasePermission):
+
     def has_permission(self, request, user):
         if not request.user.is_authenticated():
             return False
@@ -23,15 +25,16 @@ class IsAtLeastMemberReader(BasePermission):
 
     MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.reader]
 
-    def pass_at_least(self, role):
+    def pass_at_least(self, role, min_power=None):
         """
         POWER_MEMBER_ROLES contain negative integers or zero to admin.
         In that case it's very easy to present is member power stronger (less negative) then expected.
         :param role: one of common.consts.MEMBER_ROLES
+        :param min_power: min power controlled by given extra param instead of const var
         :rtype Boolean
         """
         power = POWER_MEMBER_ROLES[role]
-        return power >= self.MIN_POWER
+        return power >= (self.MIN_POWER if min_power is not None else min_power)
 
     def has_permission(self, request, view):
         try:
@@ -123,3 +126,33 @@ class IsPartner(BasePermission):
 
     def has_permission(self, request, view):
         return request.user.is_partner_user
+
+
+class IsApplicationAPIEditor(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+
+    def has_permission(self, request, view):
+        app_id = request.parser_context.get('kwargs', {}).get(view.lookup_field)
+        app = get_object_or_404(Application.objects.select_related('eoi'), id=app_id)
+        am = AgencyMember.objects.filter(user=request.user).first()
+        if am is not None:
+            if app.agency != am.office.agency:
+                return False
+            if request.method == 'GET':
+                return True  # all
+            else:
+                return self.pass_at_least(am.role)
+
+        else:
+            pm = PartnerMember.objects.filter(user=request.user).first()
+
+            partner_ids = [request.active_partner.id]
+            if request.active_partner.is_hq:
+                partner_ids.extend(Partner.objects.filter(hq=request.active_partner).values_list('id', flat=True))
+
+            if app.partner.id in partner_ids:
+                if request.method == 'GET':
+                    return True  # all
+                else:
+                    return self.pass_at_least(pm.role)

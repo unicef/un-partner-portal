@@ -23,6 +23,7 @@ from common.permissions import (
     IsAtLeastMemberEditor,
     IsAtLeastAgencyMemberEditor,
     IsEOIReviewerAssessments,
+    IsApplicationAPIEditor,
     IsPartner,
 )
 from notification.helpers import (
@@ -314,7 +315,7 @@ class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
 
 
 class ApplicationAPIView(RetrieveUpdateAPIView):
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsApplicationAPIEditor)
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
