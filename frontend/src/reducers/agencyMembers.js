@@ -20,10 +20,12 @@ const getAdminMembers = R.curry(getMembers)([ADMINISTRATOR]);
 const getEditMembers = R.curry(getMembers)([EDITOR]);
 const getPossibleFocalPointsReviewers = R.curry(getMembers)([ADMINISTRATOR, EDITOR]);
 
-export const loadAgencyMembers = agencyId => dispatch => getAgencyMembers(agencyId)
-  .then((response) => {
-    dispatch(loadAgencyMembersSuccess(response.results));
-  });
+export const loadAgencyMembers = (agencyId, params) => dispatch =>
+  getAgencyMembers(agencyId, params)
+    .then((response) => {
+      dispatch(loadAgencyMembersSuccess(response.results));
+      return response.results;
+    });
 
 const saveMembers = members => ({
   sortedMembers: groupIdsByRole(members),
@@ -35,6 +37,13 @@ export const selectPossibleFocalPointsReviewers = (state) => {
   const { sortedMembers = {}, allMembersShort = {} } = state;
   return getPossibleFocalPointsReviewers(sortedMembers, allMembersShort);
 };
+
+export const loadAgencyMembersForAutoComplete = (agencyId, params) =>
+  getAgencyMembers(agencyId, params)
+    .then((response) => {
+      return selectPossibleFocalPointsReviewers(saveMembers(response.results));
+    });
+
 
 export default function agencyMembersReducer(state = initialState, action) {
   switch (action.type) {

@@ -131,7 +131,7 @@ const makeFormItem = (list) => {
   return { value, label };
 };
 
-const mapValuesForSelectionField = (state, compareField = 'label') => {
+export const mapValuesForSelectionField = (state, compareField = 'label') => {
   const compare = (a, b) => a[compareField].localeCompare(b[compareField]);
   return R.sort(compare, R.map(makeFormItem, R.toPairs(state)));
 };

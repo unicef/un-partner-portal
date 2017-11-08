@@ -87,7 +87,7 @@ TextFieldForm.propTypes = {
   /**
    * for some text format, i.e. parseInt
    */
-  normalization: PropTypes.func,
+  normalize: PropTypes.func,
 };
 
 TextFieldForm.defaultProps = {
