@@ -24,6 +24,7 @@ from common.permissions import (
     IsAtLeastAgencyMemberEditor,
     IsEOIReviewerAssessments,
     IsApplicationAPIEditor,
+    IsConvertUnsolicitedEditor,
     IsPartner,
 )
 from notification.helpers import (
@@ -476,7 +477,7 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
 class ConvertUnsolicitedAPIView(CreateAPIView):
     serializer_class = ConvertUnsolicitedSerializer
     queryset = Application.objects.all()
-    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+    permission_classes = (IsAuthenticated, IsConvertUnsolicitedEditor)
 
     def perform_create(self, serializer):
         instance = serializer.save()

@@ -151,3 +151,26 @@ class IsApplicationAPIEditor(IsAtLeastMemberReader):
                     return True  # all
                 else:
                     return self.pass_at_least(pm.role)
+
+
+class IsConvertUnsolicitedEditor(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+
+    def has_object_permission(self, request, view, obj):
+        if obj.is_unsolicited:
+            return True
+        return False
+
+    def has_permission(self, request, view):
+        if not request.user.is_agency_user:
+            return False
+
+        user_agency = request.user.get_agency()
+        member = request.user.member
+        app_id = request.parser_context.get('kwargs', {}).get(view.lookup_field)
+        app = get_object_or_404(Application.objects.select_related('eoi'), id=app_id)
+        if app.agency.id != user_agency.id:
+            return False
+
+        return self.pass_at_least(member.role)
