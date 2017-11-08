@@ -413,7 +413,7 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
 
 
 class UnsolicitedProjectAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsAgencyMemberUser)
     queryset = Application.objects.filter(is_unsolicited=True).distinct()
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
