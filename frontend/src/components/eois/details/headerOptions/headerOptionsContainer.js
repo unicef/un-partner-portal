@@ -22,7 +22,7 @@ const HeaderOptionsContainer = (props) => {
   } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
     options = <AgencyDirectHeaderOptions cfeiCompleted={cfeiCompleted} />;
   }
-  if (type === PROJECT_TYPES.UNSOLICITED) return !cfeiConverted ? <ConvertToDS partnerId={partnerId} id={id} /> : null;
+  if (type === PROJECT_TYPES.UNSOLICITED) return !cfeiConverted && role === ROLES.AGENCY ? <ConvertToDS partnerId={partnerId} id={id} /> : null;
   return (<GridRow justify="center" align="center">
     <EoiStatusCell status={cfeiStatus} />
     {options}
