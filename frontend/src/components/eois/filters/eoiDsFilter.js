@@ -77,7 +77,7 @@ class EoiFilter extends Component {
 
   onSearch(values) {
     const { pathName, query } = this.props;
-
+    // TODO - move order to paginated list wrapper
     const { title, agency, active, country_code, specializations, selected_source } = values;
     const ordering = active ? 'created' : '-completed_date';
 
