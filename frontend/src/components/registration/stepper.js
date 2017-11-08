@@ -46,7 +46,7 @@ class RegistrationStepper extends React.Component {
 
   handleNextQuestions() {
     const answers = this.props.answers;
-    if (answers && answers.some(answer => answer === 'false')) {
+    if (answers && answers.some(answer => answer === false)) {
       this.setState({ declarationAlert: true });
       return;
     }
@@ -120,13 +120,13 @@ class RegistrationStepper extends React.Component {
   }
 }
 RegistrationStepper.propTypes = {
+  dispatch: PropTypes.func,
   /**
    * answers to all questions in declaration component, show dialog when at least one is false
    */
   answers: PropTypes.arrayOf(PropTypes.string),
   loadPartnerConfig: PropTypes.func,
   loadCountries: PropTypes.func,
-  registerUser: PropTypes.func,
 };
 
 const selector = formValueSelector('registration');
