@@ -93,7 +93,7 @@ const authorisedOfficerForm = (officer, readOnly) => (
       />
       <TextFieldForm
         fieldName={`${officer}.email`}
-        label="Job Title/Position"
+        label="Email"
         optional
         warn
         readOnly={readOnly}
