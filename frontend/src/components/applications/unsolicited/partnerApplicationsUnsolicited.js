@@ -1,7 +1,6 @@
 import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { browserHistory as history } from 'react-router';
 import PropTypes from 'prop-types';
 import GridColumn from '../../common/grid/gridColumn';
 import PartnerApplicationsNotesFilter from './partnerApplicationsUnsolicitedFilter';

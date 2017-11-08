@@ -200,16 +200,16 @@ export function patchApplication(id, body) {
   return authorizedPatch({ uri: `/projects/application/${id}/`, body });
 }
 
-export function getApplicationConceptNotes() {
-  return authorizedGet({ uri: '/projects/applications/open/' });
+export function getApplicationConceptNotes(params) {
+  return authorizedGet({ uri: '/projects/applications/open/', params });
 }
 
-export function getApplicationUnsolicitedConceptNotes() {
-  return authorizedGet({ uri: '/projects/applications/unsolicited/' });
+export function getApplicationUnsolicitedConceptNotes(params) {
+  return authorizedGet({ uri: '/projects/applications/unsolicited/', params });
 }
 
-export function getApplicationDirect() {
-  return authorizedGet({ uri: '/projects/applications/direct/' });
+export function getApplicationDirect(params) {
+  return authorizedGet({ uri: '/projects/applications/direct/', params });
 }
 
 export function getApplicationReviews(applicationId) {

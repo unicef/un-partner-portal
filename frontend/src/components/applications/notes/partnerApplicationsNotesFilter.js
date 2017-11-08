@@ -1,204 +1,244 @@
-import React from 'react';
+import R from 'ramda';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
+import { browserHistory as history, withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
+import { FormControl, FormLabel } from 'material-ui/Form';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
+import DatePickerForm from '../../forms/datePickerForm';
+import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
+import Agencies from '../../forms/fields/projectFields/agencies';
+import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import { selectNormalizedSpecializations, selectNormalizedCountries, selectNormalizedApplicationStatuses } from '../../../store';
+import resetChanges from '../../eois/filters/eoiHelper';
 
 const messages = {
   choose: 'Choose',
   labels: {
     search: 'Search',
-    choose: 'Choose',
     country: 'Country',
-    admin_1: 'Location - Admin 1',
-    admin_1_placeholder: 'Choose Location - Admin 1',
-    sector_area: 'Sector & Area of specialization',
-    status: 'Status',
+    location: 'Location - Admin 1',
+    status: 'CFEI Status',
+    cnStatus: 'CN Status',
+    sector: 'Sector & Area of specialization',
     agency: 'Agency',
+    fromDate: 'From date',
+    toDate: 'To date',
+    date: 'Date posted - choose date range',
   },
   clear: 'clear',
+  submit: 'submit',
 };
-
-const ALL_MENU = [
-  {
-    value: 'all',
-    label: 'All',
-  },
-];
-
-const SECTOR_AREA_MENU = [
-  {
-    value: 'food',
-    label: 'Food Security',
-  },
-  {
-    value: 'education',
-    label: 'Education',
-  },
-];
-
-
-const COUNTRY_MENU = [
-  {
-    value: 'all',
-    label: 'All',
-  },
-  {
-    value: 'pl',
-    label: 'Poland',
-  },
-  {
-    value: 'fr',
-    label: 'France',
-  },
-  {
-    value: 'it',
-    label: 'Italy',
-  },
-];
-
-const STATUS_MENU = [
-  {
-    value: 'pending',
-    label: 'Pending',
-  },
-  {
-    value: 'rejected',
-    label: 'Rejected',
-  },
-  {
-    value: 'made',
-    label: 'Offer Made',
-  },
-
-  {
-    value: 'accepted',
-    label: 'Offer Accepted',
-  },
-  {
-    value: 'declined',
-    label: 'Offer Declined',
-  },
-];
-
-const AGENCY_MENU = [
-  {
-    value: 'unicef',
-    label: 'UNICEF',
-  },
-  {
-    value: 'wfp',
-    label: 'WFP',
-  },
-];
 
 const styleSheet = theme => ({
   filterContainer: {
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px`,
-    background: '#F6F6F6',
+    background: theme.palette.primary[300],
   },
   button: {
-    padding: `${theme.spacing.unit * 2}px 0px 0px 0px`,
-    textAlign: 'right',
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
 });
 
-const handleSubmit = (values) => {
+export const STATUS_VAL = [
+  {
+    value: true,
+    label: 'Active',
+  },
+  {
+    value: false,
+    label: 'Completed',
+  },
+];
 
-};
+class PartnerApplicationsNotesFilter extends Component {
+  constructor(props) {
+    super(props);
 
-const PartnerApplicationsNotesFilter = (props) => {
-  const { classes, handleSubmit, reset } = props;
-  return (
-    <form onSubmit={handleSubmit}>
-      <Grid item xs={12} className={classes.filterContainer} >
-        <Grid container direction="row" >
-          <Grid item sm={4} xs={12} >
-            <TextFieldForm
-              label={messages.labels.search}
-              placeholder={messages.labels.search}
-              fieldName="search"
-              optional
-            />
-          </Grid>
-          <Grid item sm={4} xs={12}>
-            <SelectForm
-              fieldName="country"
-              label={messages.labels.country}
-              values={COUNTRY_MENU}
-              optional
-            />
-          </Grid>
-          <Grid item sm={4} xs={12}>
-            <SelectForm
-              fieldName="admin_1"
-              label={messages.labels.admin_1}
-              placeholder={messages.labels.admin_1_placeholder}
-              values={[]}
-              optional
-            />
-          </Grid>
+    this.state = {
+      actionOnSubmit: {},
+    };
 
+    this.onSearch = this.onSearch.bind(this);
+  }
+
+  componentWillMount() {
+    const { pathName, query } = this.props;
+    resetChanges(pathName, query);
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { cfei_active: true },
+      ),
+    });
+  }
+
+  onSearch(values) {
+    const { pathName, query } = this.props;
+
+    const { project_title, agency, country_code, specialization,
+      posted_from_date, posted_to_date, cfei_active, status, locations } = values;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query, {
+        project_title,
+        agency,
+        status,
+        cfei_active,
+        country_code,
+        specialization,
+        posted_from_date,
+        posted_to_date,
+        locations }),
+    });
+  }
+
+  render() {
+    const { classes, countries, specs, handleSubmit, cnStatus, reset } = this.props;
+
+    return (
+      <form onSubmit={handleSubmit(this.onSearch)}>
+        <Grid item xs={12} className={classes.filterContainer} >
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12} >
+              <TextFieldForm
+                label={messages.labels.search}
+                placeholder={messages.labels.search}
+                fieldName="project_title"
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <SelectForm
+                fieldName="country_code"
+                label={messages.labels.country}
+                values={countries}
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <AdminOneLocation
+                fieldName="locations"
+                formName="tableFilter"
+                observeFieldName="country_code"
+                label={messages.labels.location}
+                optional
+              />
+            </Grid>
+          </Grid>
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12} >
+              <SelectForm
+                label={messages.labels.sector}
+                placeholder={messages.labels.choose}
+                fieldName="specialization"
+                values={specs}
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <RadioForm
+                fieldName="cfei_active"
+                label={messages.labels.status}
+                values={STATUS_VAL}
+                defaultValue
+                optional
+              />
+            </Grid>
+            <Grid item sm={2} xs={12}>
+              <SelectForm
+                label={messages.labels.cnStatus}
+                placeholder={messages.labels.choose}
+                fieldName="status"
+                values={cnStatus}
+                optional
+              />
+            </Grid>
+            <Grid item sm={2} xs={12}>
+              <Agencies
+                fieldName="agency"
+                label={messages.labels.agency}
+                optional
+              />
+            </Grid>
+          </Grid>
+          <Grid item className={classes.button}>
+            <Button
+              color="accent"
+              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+            >
+              {messages.clear}
+            </Button>
+            <Button
+              color="accent"
+              onTouchTap={handleSubmit(this.onSearch)}
+            >
+              {messages.labels.search}
+            </Button>
+          </Grid>
         </Grid>
-        <Grid container direction="row" >
-          <Grid item sm={4} xs={12} >
-            <SelectForm
-              fieldName="sector_area"
-              label={messages.labels.sector_area}
-              values={SECTOR_AREA_MENU}
-              placeholder={messages.labels.choose}
-              optional
-            />
-          </Grid>
-          <Grid item sm={2} xs={12}>
-            <SelectForm
-              fieldName="status"
-              label={messages.labels.status}
-              values={STATUS_MENU}
-              optional
-            />
-          </Grid>
-          <Grid item sm={2} xs={12}>
-            <SelectForm
-              fieldName="agency"
-              label={messages.labels.agency}
-              values={AGENCY_MENU}
-              optional
-            />
-          </Grid>
-
-          <Grid item sm={4} xs={12}>
-            <div className={classes.button}>
-              <Button
-
-                color="accent"
-                onTouchTap={reset}
-              >
-                {messages.clear}
-              </Button>
-            </div>
-          </Grid>
-        </Grid>
-      </Grid>
-    </form >
-  );
-};
+      </form >
+    );
+  }
+}
 
 PartnerApplicationsNotesFilter.propTypes = {
-  classes: PropTypes.object.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
   /**
    *  reset function
    */
   reset: PropTypes.func.isRequired,
+  classes: PropTypes.object.isRequired,
+  countries: PropTypes.array.isRequired,
+  specs: PropTypes.array.isRequired,
+  cnStatus: PropTypes.array.isRequired,
+  pathName: PropTypes.string,
+  query: PropTypes.object,
 };
 
 const formPartnerApplicationsNotesFilter = reduxForm({
-  form: 'partnerApplicationsNotesFilter',
-  handleSubmit,
+  form: 'tableFilter',
 })(PartnerApplicationsNotesFilter);
 
-export default withStyles(styleSheet, { name: 'PartnerApplicationsNotesFilter' })(formPartnerApplicationsNotesFilter);
+const mapStateToProps = (state, ownProps) => {
+  const { query: { project_title } = { } } = ownProps.location;
+  const { query: { country_code } = { } } = ownProps.location;
+  const { query: { agency } = { } } = ownProps.location;
+  const { query: { cfei_active } = { } } = ownProps.location;
+  const { query: { status } = { } } = ownProps.location;
+  const { query: { locations } = { } } = ownProps.location;
+  const { query: { specialization } = { } } = ownProps.location;
+  const { query: { posted_from_date } = { } } = ownProps.location;
+  const { query: { posted_to_date } = { } } = ownProps.location;
+
+  return {
+    countries: selectNormalizedCountries(state),
+    specs: selectNormalizedSpecializations(state),
+    cnStatus: selectNormalizedApplicationStatuses(state),
+    pathName: ownProps.location.pathname,
+    query: ownProps.location.query,
+    initialValues: {
+      project_title,
+      country_code,
+      agency,
+      cfei_active,
+      status,
+      locations,
+      specialization,
+      posted_from_date,
+      posted_to_date,
+    },
+  };
+};
+
+const connected = connect(mapStateToProps, null)(formPartnerApplicationsNotesFilter);
+const withRouterFilter = withRouter(connected);
+
+export default (withStyles(styleSheet, { name: 'PartnerApplicationsNotesFilter' })(withRouterFilter));

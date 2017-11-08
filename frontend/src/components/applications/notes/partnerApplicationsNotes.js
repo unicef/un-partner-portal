@@ -14,6 +14,7 @@ import { formatDateForPrint } from '../../../helpers/dates';
 import SectorsCell from '../sectorsCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
 import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
+import PartnerProfileCountriesCell from '../../partners/partnerProfileCountriesCell';
 
 /* eslint-disable react/prop-types */
 const applicationCell = ({ row, column }) => {
@@ -29,6 +30,9 @@ const applicationCell = ({ row, column }) => {
     return <ApplicationStatusCell appStatus={row.status} />;
   } else if (column.name === 'specializations') {
     return <SectorsCell specializations={row.specializations} />;
+  } else if (column.name === 'country') {
+    //debugger
+    return <PartnerProfileCountriesCell code={row.country} />;
   }
 
   return undefined;
