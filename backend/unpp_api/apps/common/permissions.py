@@ -146,12 +146,7 @@ class IsApplicationAPIEditor(IsAtLeastMemberReader):
 
         else:
             pm = PartnerMember.objects.filter(user=request.user).first()
-
-            partner_ids = [request.active_partner.id]
-            if request.active_partner.is_hq:
-                partner_ids.extend(Partner.objects.filter(hq=request.active_partner).values_list('id', flat=True))
-
-            if app.partner.id in partner_ids:
+            if app.partner.id in request.user.get_partner_ids_i_can_access():
                 if request.method == 'GET':
                     return True  # all
                 else:
