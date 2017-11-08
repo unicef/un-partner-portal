@@ -29,7 +29,7 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
 )
-from project.models import EOI, Application
+from project.models import EOI, Application, Assessment
 from review.models import PartnerFlag, PartnerVerification
 from .consts import (
     PARTNER_TYPES,
@@ -60,10 +60,11 @@ filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.
 
 
 def get_random_agency():
-    return random.choice([
-        Agency.objects.get_or_create(name='UNICEF')[0],
-        Agency.objects.get_or_create(name='World Food Program')[0],
-    ])
+    return Agency.objects.order_by("?").first()
+
+
+def get_random_agency_office():
+    return AgencyOffice.objects.order_by("?").first()
 
 
 def get_agency_member():
@@ -187,7 +188,7 @@ class PartnerSimpleFactory(factory.django.DjangoModelFactory):
 
 class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
-    display_type = PARTNER_TYPES.international
+    display_type = PARTNER_TYPES.cbo
     country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
 
     # hq information
@@ -199,7 +200,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def mailing_address(self, create, extracted, **kwargs):
-        PartnerMailingAddress.objects.get_or_create(
+        PartnerMailingAddress.objects.create(
             partner=self,
             street='fake street',
             city='fake city',
@@ -214,18 +215,17 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     @factory.post_generation
     def directors(self, create, extracted, **kwargs):
         for x in xrange(0, 2):
-            director, created = PartnerDirector.objects.get_or_create(
+            PartnerDirector.objects.create(
                 partner=self,
                 first_name=get_first_name(),
                 last_name=get_last_name(),
                 job_title=get_job_title(),
             )
-            self.directors.add(director)
 
     @factory.post_generation
     def authorised_officers(self, create, extracted, **kwargs):
         for x in xrange(0, 2):
-            officer, created = PartnerAuthorisedOfficer.objects.get_or_create(
+            PartnerAuthorisedOfficer.objects.create(
                 partner=self,
                 first_name=get_first_name(),
                 last_name=get_last_name(),
@@ -234,38 +234,34 @@ class PartnerFactory(factory.django.DjangoModelFactory):
                 fax='(123) 234 566',
                 email="office@partner.website.org",
             )
-            self.authorised_officers.add(officer)
 
     @factory.post_generation
     def experiences(self, create, extracted, **kwargs):
         for x in xrange(0, 2):
-            experience, created = PartnerExperience.objects.get_or_create(
+            PartnerExperience.objects.create(
                 partner=self,
                 specialization=Specialization.objects.all().order_by("?").first(),
                 years=get_year_of_exp()
             )
-            self.experiences.add(experience)
 
     @factory.post_generation
     def budgets(self, create, extracted, **kwargs):
         # we want to have last 3 year (with current)
         for year in [date.today().year, date.today().year-1, date.today().year-2]:
-            budget, created = PartnerBudget.objects.get_or_create(
+            PartnerBudget.objects.create(
                 partner=self,
                 year=year,
                 budget=get_budget_choice()
             )
-            self.budgets.add(budget)
 
     @factory.post_generation
     def collaborations_partnership(self, create, extracted, **kwargs):
-        partnership, created = PartnerCollaborationPartnership.objects.get_or_create(
+        PartnerCollaborationPartnership.objects.create(
             partner=self,
             created_by=User.objects.first(),
             agency=Agency.objects.all().order_by("?").first(),
             description="description"
         )
-        self.collaborations_partnership.add(partnership)
 
     @factory.post_generation
     def collaboration_evidences(self, create, extracted, **kwargs):
@@ -292,37 +288,37 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def internal_controls(self, create, extracted, **kwargs):
-        PartnerInternalControl.objects.get_or_create(
+        PartnerInternalControl.objects.create(
             partner=self,
             functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.procurement,
             segregation_duties=True,
             comment="fake comment"
         )
-        PartnerInternalControl.objects.get_or_create(
+        PartnerInternalControl.objects.create(
             partner=self,
             functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.authorization,
             segregation_duties=True,
             comment="fake comment"
         )
-        PartnerInternalControl.objects.get_or_create(
+        PartnerInternalControl.objects.create(
             partner=self,
             functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.recording,
             segregation_duties=True,
             comment="fake comment"
         )
-        PartnerInternalControl.objects.get_or_create(
+        PartnerInternalControl.objects.create(
             partner=self,
             functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.payment,
             segregation_duties=True,
             comment="fake comment"
         )
-        PartnerInternalControl.objects.get_or_create(
+        PartnerInternalControl.objects.create(
             partner=self,
             functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.custody,
             segregation_duties=True,
             comment="fake comment"
         )
-        PartnerInternalControl.objects.get_or_create(
+        PartnerInternalControl.objects.create(
             partner=self,
             functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.bank,
             segregation_duties=True,
@@ -331,22 +327,24 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def area_policies(self, create, extracted, **kwargs):
-        PartnerPolicyArea.objects.get_or_create(
+        PartnerPolicyArea.objects.create(
             partner=self,
             area=POLICY_AREA_CHOICES.human
         )
-        PartnerPolicyArea.objects.get_or_create(
+        PartnerPolicyArea.objects.create(
             partner=self,
             area=POLICY_AREA_CHOICES.procurement
         )
-        PartnerPolicyArea.objects.get_or_create(
+        PartnerPolicyArea.objects.create(
             partner=self,
             area=POLICY_AREA_CHOICES.asset
         )
 
     @factory.post_generation
     def org_head(self, create, extracted, **kwargs):
-        PartnerHeadOrganization.objects.get_or_create(
+        if self.is_country_profile:
+            return
+        PartnerHeadOrganization.objects.create(
             partner=self,
             first_name=get_first_name(),
             last_name=get_last_name(),
@@ -357,44 +355,43 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def profile(self, create, extracted, **kwargs):
-        profile, created = PartnerProfile.objects.get_or_create(
+        profile = PartnerProfile.objects.create(
             partner=self,
             alias_name="aliast name {}".format(self.id),
             registration_number="reg-number {}".format(self.id),
         )
-        if created:
-            cfile = CommonFile.objects.create()
-            cfile.file_field.save('test.csv', open(filename))
-            profile.working_languages = get_country_list()
+        cfile = CommonFile.objects.create()
+        cfile.file_field.save('test.csv', open(filename))
+        profile.working_languages = get_country_list()
 
-            profile.acronym = "acronym {}".format(self.id)
-            profile.former_legal_name = "former legal name {}".format(self.id)
-            profile.connectivity_excuse = "connectivity excuse {}".format(self.id)
-            profile.year_establishment = date.today().year - random.randint(1, 30)
-            profile.have_gov_doc = True
-            profile.gov_doc = cfile
-            profile.registration_doc = cfile
-            profile.registration_date = date.today() - timedelta(days=random.randint(365, 3650))
-            profile.registration_comment = "registration comment {}".format(self.id)
-            profile.registration_number = "registration number {}".format(self.id)
-            profile.explain = "explain {}".format(self.id)
-            profile.experienced_staff_desc = "experienced staff desc {}".format(self.id)
-            # programme management
-            profile.have_management_approach = True
-            profile.management_approach_desc = "management approach desc {}".format(self.id)
-            profile.have_system_monitoring = True
-            profile.system_monitoring_desc = "system monitoring desc {}".format(self.id)
-            profile.have_feedback_mechanism = True
-            profile.feedback_mechanism_desc = "feedback mechanism desc {}".format(self.id)
-            profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
-            profile.partnership_collaborate_institution_desc = "collaborate institution {}".format(self.id)
-            profile.explain = "explain {}".format(self.id)
-            # financial controls
-            profile.org_acc_system = FINANCIAL_CONTROL_SYSTEM_CHOICES.computerized
-            profile.have_system_track = True
-            profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
+        profile.acronym = "acronym {}".format(self.id)
+        profile.former_legal_name = "former legal name {}".format(self.id)
+        profile.connectivity_excuse = "connectivity excuse {}".format(self.id)
+        profile.year_establishment = date.today().year - random.randint(1, 30)
+        profile.have_gov_doc = True
+        profile.gov_doc = cfile
+        profile.registration_doc = cfile
+        profile.registration_date = date.today() - timedelta(days=random.randint(365, 3650))
+        profile.registration_comment = "registration comment {}".format(self.id)
+        profile.registration_number = "registration number {}".format(self.id)
+        profile.explain = "explain {}".format(self.id)
+        profile.experienced_staff_desc = "experienced staff desc {}".format(self.id)
+        # programme management
+        profile.have_management_approach = True
+        profile.management_approach_desc = "management approach desc {}".format(self.id)
+        profile.have_system_monitoring = True
+        profile.system_monitoring_desc = "system monitoring desc {}".format(self.id)
+        profile.have_feedback_mechanism = True
+        profile.feedback_mechanism_desc = "feedback mechanism desc {}".format(self.id)
+        profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
+        profile.partnership_collaborate_institution_desc = "collaborate institution {}".format(self.id)
+        profile.explain = "explain {}".format(self.id)
+        # financial controls
+        profile.org_acc_system = FINANCIAL_CONTROL_SYSTEM_CHOICES.computerized
+        profile.have_system_track = True
+        profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
 
-            profile.save()
+        profile.save()
 
     @factory.post_generation
     def mandate_mission(self, create, extracted, **kwargs):
@@ -458,11 +455,13 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     def other_info(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
+        logo_file = CommonFile.objects.create()
+        logo_file.file_field.save('logo.png', open(filename))
         PartnerOtherInfo.objects.create(
             partner=self,
             info_to_share="fake info to share {}".format(self.id),
             confirm_data_updated=True,
-            org_logo=cfile,
+            org_logo=logo_file,
             other_doc_1=cfile,
             other_doc_2=cfile,
             other_doc_3=cfile,
@@ -470,90 +469,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Partner
-
-
-class PartnerProfileFactory(factory.django.DjangoModelFactory):
-    partner = factory.Iterator(Partner.objects.all())
-    alias_name = factory.Sequence(lambda n: "aliast name {}".format(n))
-    working_languages = factory.LazyFunction(get_country_list)
-    registration_number = factory.Sequence(lambda n: "reg-number {}".format(n))
-
-    class Meta:
-        model = PartnerProfile
-
-
-class PartnerHeadOrganizationFactory(factory.django.DjangoModelFactory):
-    partner = factory.Iterator(Partner.objects.all())
-    first_name = factory.LazyFunction(get_first_name)
-    last_name = factory.LazyFunction(get_last_name)
-    email = factory.Sequence(lambda n: "fake-partner-head-{}@unicef.org".format(n))
-    job_title = factory.LazyFunction(get_job_title)
-    telephone = factory.Sequence(lambda n: "+48 22 568 03 0{}".format(n))
-
-    class Meta:
-        model = PartnerHeadOrganization
-
-
-class PartnerMandateMissionFactory(factory.django.DjangoModelFactory):
-    partner = factory.Iterator(Partner.objects.all())
-    background_and_rationale = factory.Sequence(lambda n: "background and rationale {}".format(n))
-    mandate_and_mission = factory.Sequence(lambda n: "mandate and mission {}".format(n))
-    governance_structure = factory.Sequence(lambda n: "governance structure {}".format(n))
-    governance_hq = factory.Sequence(lambda n: "reporting requirements of the country office to HQ {}".format(n))
-
-    concern_groups = factory.LazyFunction(get_concerns)
-    security_desc = factory.Sequence(lambda n: "rapid response {}".format(n))
-    description = factory.Sequence(lambda n: "collaboration professional netwok {}".format(n))
-
-    population_of_concern = True
-    ethic_safeguard_comment = factory.Sequence(lambda n: "fake comment {}".format(n))
-    governance_hq = factory.Sequence(lambda n: "headquarters oversight operations {}".format(n))
-    mandate_and_mission = factory.Sequence(lambda n: "fake mandate & mission {}".format(n))
-    background_and_rationale = factory.Sequence(lambda n: "fake background & rationale {}".format(n))
-
-    class Meta:
-        model = PartnerMandateMission
-
-
-class PartnerFundingFactory(factory.django.DjangoModelFactory):
-    partner = factory.Iterator(Partner.objects.all())
-
-    source_core_funding = factory.Sequence(lambda n: "source(s) of core funding {}".format(n))
-    major_donors = factory.LazyFunction(get_donors)
-    main_donors_list = factory.Sequence(lambda n: "list of main donors {}".format(n))
-
-    class Meta:
-        model = PartnerFunding
-
-
-class PartnerOtherInfoFactory(factory.django.DjangoModelFactory):
-    partner = factory.Iterator(Partner.objects.all())
-    info_to_share = factory.Sequence(lambda n: "info to share {}".format(n))
-
-    class Meta:
-        model = PartnerOtherInfo
-
-
-class PartnerAuditAssessmentFactory(factory.django.DjangoModelFactory):
-    partner = factory.Iterator(Partner.objects.all())
-    org_audits = [ORG_AUDIT_CHOICES.internal, ]
-    link_report = "www.link.report.org/example"
-    comment = factory.Sequence(lambda n: "comment {}".format(n))
-    assessments = [AUDIT_ASSESMENT_CHOICES.ocha, ]
-
-    class Meta:
-        model = PartnerAuditAssessment
-
-
-class PartnerReportingFactory(factory.django.DjangoModelFactory):
-
-    partner = factory.Iterator(Partner.objects.all())
-    key_result = factory.Sequence(lambda n: "key result {}".format(n))
-    last_report = date.today()
-    link_report = 'www.link.report.org'
-
-    class Meta:
-        model = PartnerReporting
 
 
 class PartnerMemberFactory(factory.django.DjangoModelFactory):
@@ -595,7 +510,7 @@ class AgencyOfficeFactory(factory.django.DjangoModelFactory):
 
 class AgencyMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
-    office = factory.SubFactory(AgencyOfficeFactory)
+    office = factory.LazyFunction(get_random_agency_office)
     role = MEMBER_ROLES.editor
 
     class Meta:
@@ -607,28 +522,40 @@ class EOIFactory(factory.django.DjangoModelFactory):
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
     # locations ... TODO when right time will come (when we need them - depending on endpoint)
-    agency_office = factory.SubFactory(AgencyOfficeFactory)
+    agency_office = factory.LazyFunction(get_random_agency_office)
     description = factory.Sequence(lambda n: "Brief background of the project {}".format(n))
     start_date = date.today()
-    end_date = date.today()
-    deadline_date = date.today()
-    notif_results_date = date.today()
-    # reviewers ... TODO when right time will come (when we need them - depending on endpoint)
-    assessments_criteria = [
-        {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'weight': 10},
-        {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'weight': 40},
-        {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'weight': 30},
-        {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 20}
-    ]
+    end_date = date.today()+timedelta(days=random.randint(90, 100))
+    deadline_date = date.today()+timedelta(days=random.randint(75, 85))
+    notif_results_date = date.today()+timedelta(days=random.randint(100, 111))
 
     class Meta:
         model = EOI
 
     @factory.post_generation
+    def assessments_criteria(self, create, extracted, **kwargs):
+        count = random.randint(4, 7)
+        values = []
+        while count:
+            count -= 1
+            criterion = random.choice(list(SELECTION_CRITERIA_CHOICES._db_values))
+            if criterion not in map(lambda x: x['selection_criteria'], values):
+                values.append(
+                    {'selection_criteria': criterion, 'weight': random.randint(1, 5)*10}
+                )
+        self.assessments_criteria = values
+        self.save()
+
+    @factory.post_generation
     def reviewers(self, create, extracted, **kwargs):
         agency_members = User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?")
-        self.reviewers.add(agency_members.first())
-        self.reviewers.add(agency_members.last())
+        count = random.randint(2, 4)
+        values = []
+        idx = agency_members.count()
+        while count and idx:
+            count -= 1
+            idx -= 1
+            self.reviewers.add(agency_members[idx])
 
     @factory.post_generation
     def focal_points(self, create, extracted, **kwargs):
@@ -653,33 +580,58 @@ class EOIFactory(factory.django.DjangoModelFactory):
     def applications(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
-        if self.status == EOI_TYPES.direct:
-            Application.objects.create(
-                partner=get_partner(),
-                eoi=self,
-                agency=self.agency,
-                submitter=get_agency_member(),
-                did_win=True,
-                did_accept=True,
-                ds_justification_select=[JUSTIFICATION_FOR_DIRECT_SELECTION.local],
-                justification_reason="good reason",
-            )
+        if self.display_type == EOI_TYPES.direct:
+            for partner in Partner.objects.all().order_by("?")[:settings.DEFAULT_FAKE_DATA_DIRECT_APPLICATIONS_COUNT]:
+                Application.objects.create(
+                    partner=partner,
+                    eoi=self,
+                    agency=self.agency,
+                    submitter=self.focal_points.first(),
+                    did_win=True,
+                    did_accept=True,
+                    ds_justification_select=[random.choice(list(JUSTIFICATION_FOR_DIRECT_SELECTION._db_values))],
+                    justification_reason="good reason",
+                )
             self.selected_source = DIRECT_SELECTION_SOURCE.cso
             self.save()
-        elif self.status == EOI_TYPES.open:
-            Application.objects.create(
-                partner=get_partner(),
-                eoi=self,
-                agency=self.agency,
-                cn=cfile,
-                submitter=get_partner_member(),
-            )
+
+        elif self.display_type == EOI_TYPES.open:
+            for partner in Partner.objects.all().order_by("?")[:settings.DEFAULT_FAKE_DATA_OPEN_APPLICATIONS_COUNT]:
+                app = Application.objects.create(
+                    partner=partner,
+                    eoi=self,
+                    agency=self.agency,
+                    cn=cfile,
+                    submitter=self.focal_points.first(),
+                )
+                for reviewer in self.reviewers.all():
+                    scores = []
+                    for criterion in self.assessments_criteria:
+                        scores.append(
+                            {'selection_criteria': criterion['selection_criteria'], 'score': random.randint(1, 10)}
+                        )
+                    Assessment.objects.create(
+                        created_by=reviewer,
+                        reviewer=reviewer,
+                        application=app,
+                        scores=scores,
+                        date_reviewed=date.today(),
+                        note='Note for application id: {}'.format(app.id)
+                    )
+
+    @factory.post_generation
+    def locations(self, create, extracted, **kwargs):
+        count = random.randint(0, 3)
+        values = []
+        while count:
+            count -= 1
+            self.locations.add(PointFactory())
 
 
 class PartnerFlagFactory(factory.django.DjangoModelFactory):
     submitter = factory.LazyFunction(get_agency_member)
     partner = factory.LazyFunction(get_partner)
-    contact_phone = factory.Sequence(lambda n: "+48 22 568 03 0{}".format(n))
+    contact_phone = factory.Sequence(lambda n: "+48 22 568030{}".format(n))
     contact_email = factory.Sequence(lambda n: "fake-contact-{}@unicef.org".format(n))
     comment = factory.Sequence(lambda n: "fake comment {}".format(n))
     contact_person = "Person Name"

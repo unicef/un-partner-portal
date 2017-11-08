@@ -46,7 +46,7 @@ class RegistrationStepper extends React.Component {
 
   handleNextQuestions() {
     const answers = this.props.answers;
-    if (answers && answers.some(answer => answer === 'false')) {
+    if (answers && answers.some(answer => answer === false)) {
       this.setState({ declarationAlert: true });
       return;
     }

@@ -70,19 +70,28 @@ class EoiFilter extends Component {
   componentWillMount() {
     const { pathName, query } = this.props;
     resetChanges(pathName, query);
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { active: true, ordering: 'deadline_date' },
+      ),
+    });
   }
 
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { title, agency, active, country_code, specializations,
-      posted_from_date, posted_to_date, locations } = values;
+    const { title, agency, country_code, specializations,
+      posted_from_date, posted_to_date, active, locations } = values;
+    const ordering = active ? 'deadline_date' : '-completed_date';
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         title,
         agency,
+        ordering,
         active,
         country_code,
         specializations,
@@ -140,6 +149,7 @@ class EoiFilter extends Component {
                 fieldName="active"
                 label={messages.labels.status}
                 values={STATUS_VAL}
+                defaultValue
                 optional
               />
             </Grid>

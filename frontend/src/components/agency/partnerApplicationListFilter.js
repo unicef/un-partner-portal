@@ -65,12 +65,12 @@ class PartnerApplicationListFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { title, agency, did_win, country_code, specializations, eoi_type } = values;
+    const { project_title, agency, did_win, country_code, specialization, eoi } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
-        title, agency, did_win, country_code, specializations, eoi_type,
+        project_title, agency, did_win, country_code, specialization, eoi,
       }),
     });
   }
@@ -86,7 +86,7 @@ class PartnerApplicationListFilter extends Component {
               <TextFieldForm
                 label={messages.labels.search}
                 placeholder={messages.labels.search}
-                fieldName="title"
+                fieldName="project_title"
                 optional
               />
             </Grid>
@@ -102,7 +102,7 @@ class PartnerApplicationListFilter extends Component {
               <SelectForm
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
-                fieldName="specializations"
+                fieldName="specialization"
                 values={specs}
                 optional
               />
@@ -113,7 +113,7 @@ class PartnerApplicationListFilter extends Component {
               <SelectForm
                 label={messages.labels.type}
                 placeholder={messages.labels.choose}
-                fieldName="eoi_type"
+                fieldName="eoi"
                 values={eoiTypes}
                 optional
               />
@@ -173,12 +173,12 @@ const formEoiFilter = reduxForm({
 })(PartnerApplicationListFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { title } = { } } = ownProps.location;
+  const { query: { project_title } = { } } = ownProps.location;
   const { query: { country_code } = { } } = ownProps.location;
   const { query: { agency } = { } } = ownProps.location;
   const { query: { did_win } = { } } = ownProps.location;
-  const { query: { specializations } = { } } = ownProps.location;
-  const { query: { eoi_type } = { } } = ownProps.location;
+  const { query: { specialization } = { } } = ownProps.location;
+  const { query: { eoi } = { } } = ownProps.location;
 
 
   return {
@@ -188,12 +188,12 @@ const mapStateToProps = (state, ownProps) => {
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {
-      title,
+      project_title,
       country_code,
       agency,
       did_win,
-      specializations,
-      eoi_type,
+      specialization,
+      eoi,
     },
   };
 };
