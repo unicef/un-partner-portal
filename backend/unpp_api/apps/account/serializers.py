@@ -179,6 +179,22 @@ class PartnerUserSerializer(UserSerializer):
                                  many=True).data
 
 
+class UserFullnameSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', )
+
+
+class PartnerMemberSerializer(serializers.ModelSerializer):
+
+    user = UserFullnameSerializer()
+
+    class Meta:
+        model = PartnerMember
+        fields = "__all__"
+
+
 class CustomLoginSerializer(LoginSerializer):
 
     def validate(self, attrs):
