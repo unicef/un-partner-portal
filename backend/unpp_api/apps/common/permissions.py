@@ -25,16 +25,15 @@ class IsAtLeastMemberReader(BasePermission):
 
     MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.reader]
 
-    def pass_at_least(self, role, min_power=None):
+    def pass_at_least(self, role):
         """
         POWER_MEMBER_ROLES contain negative integers or zero to admin.
         In that case it's very easy to present is member power stronger (less negative) then expected.
         :param role: one of common.consts.MEMBER_ROLES
-        :param min_power: min power controlled by given extra param instead of const var
         :rtype Boolean
         """
         power = POWER_MEMBER_ROLES[role]
-        return power >= (self.MIN_POWER if min_power is not None else min_power)
+        return power >= self.MIN_POWER
 
     def has_permission(self, request, view):
         try:
@@ -174,3 +173,27 @@ class IsConvertUnsolicitedEditor(IsAtLeastMemberReader):
             return False
 
         return self.pass_at_least(member.role)
+
+
+class IsApplicationFeedbackPerm(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+
+    def has_permission(self, request, view):
+        app_id = request.parser_context.get('kwargs', {}).get(view.lookup_field)
+        app = get_object_or_404(Application.objects.select_related('eoi'), id=app_id)
+
+        if request.user.is_partner_user:
+            if request.method == 'GET' and app.partner.id == request.user.member.parnter.id:
+                return True
+            return False
+
+        # agency
+        user_agency = request.user.get_agency()
+        if app.agency.id != user_agency.id:
+            return False
+        if request.method != 'GET':
+            return self.pass_at_least(request.user.member.role)  # editor & admin can post
+        else:
+            # agency reader can read
+            return True

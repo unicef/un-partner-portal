@@ -25,6 +25,7 @@ from common.permissions import (
     IsEOIReviewerAssessments,
     IsApplicationAPIEditor,
     IsConvertUnsolicitedEditor,
+    IsApplicationFeedbackPerm,
     IsPartner,
 )
 from notification.helpers import (
@@ -105,8 +106,6 @@ class OpenProjectAPIView(BaseProjectAPIView):
             send_notification('agency_cfei_reviewers_selected', instance,
                               instance.reviewers.all())
 
-
-
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
 
@@ -148,7 +147,6 @@ class EOIAPIView(RetrieveUpdateAPIView):
             }
             send_notification('cfei_update_prev', eoi, users, context=context)
 
-
         # New Reviewers Added
         new_reviewers = []
         for reviewer in instance.reviewers.all():
@@ -159,12 +157,9 @@ class EOIAPIView(RetrieveUpdateAPIView):
                 send_notification('agency_cfei_reviewers_selected', eoi,
                                   User.objects.filter(id__in=new_reviewers))
 
-
-
         # Completed
         if instance.is_completed:
             send_notification_cfei_completed(instance)
-
 
 
 class DirectProjectAPIView(BaseProjectAPIView):
@@ -173,11 +168,6 @@ class DirectProjectAPIView(BaseProjectAPIView):
     """
 
     serializer_class = DirectProjectSerializer
-
-    # TODO - can remove. not using?
-    def get_partners_pks(self):
-        # Partner Member can have many partners! This case is under construction and can change in future!
-        return PartnerMember.objects.filter(user=self.request.user).values_list('partner', flat=True)
 
     def get_queryset(self):
         return self.queryset.filter(display_type=EOI_TYPES.direct).distinct()
@@ -464,7 +454,7 @@ class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedLis
 class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
     serializer_class = ApplicationFeedbackSerializer
     pagination_class = SmallPagination
-    permission_classes = (IsAuthenticated,)  # TODO - tighten up permisions
+    permission_classes = (IsAuthenticated, IsApplicationFeedbackPerm)
 
     def get_queryset(self):
         return ApplicationFeedback.objects.filter(application=self.kwargs['pk'])
