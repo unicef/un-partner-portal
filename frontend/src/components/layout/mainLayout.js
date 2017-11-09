@@ -8,8 +8,7 @@ import Typography from 'material-ui/Typography';
 import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
 import AccountIcon from 'material-ui-icons/AccountCircle';
-import LensIcon from 'material-ui-icons/Lens';
-import Badge from 'material-ui/Badge';
+import BadgeIcon from './badgeIcon';
 import NotificationsList from '../notifications/notificationsList';
 import SidebarMenu from './sidebarMenu';
 
@@ -34,17 +33,9 @@ const styleSheet = theme => ({
   paper2: {
     height: '100%',
   },
-  badge: {
-    backgroundColor: 'red',
-    top: 5,
-    right: 5,
-    width: 18,
-    height: 18,
-  },
   iconBox: {
     width: 48,
     height: 48,
-    marginRight: 5,
   },
   headerIcon: {
     fill: theme.palette.primary[400],
@@ -98,15 +89,8 @@ class MainLayout extends Component {
                 justify="flex-end"
                 spacing={0}
               >
-                <Badge
-                  badgeContent=" "
-                  className={classes.iconBox}
-                  classes={{ badge: classes.badge }}
-                >
-                  <IconButton color="contrast" onClick={this.handleClick}>
-                    <LensIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
-                  </IconButton>
-                </Badge>
+                <BadgeIcon handleClick={this.handleClick} />
+
                 <IconButton color="contrast">
                   <AccountIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
                 </IconButton>
