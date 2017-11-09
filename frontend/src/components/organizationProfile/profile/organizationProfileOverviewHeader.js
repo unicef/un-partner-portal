@@ -24,6 +24,12 @@ const styleSheet = (theme) => {
       color: theme.palette.primary[400],
       padding: `0 ${padding}px 0 ${padding}px`,
     },
+    noPrint: {
+      '@media print': {
+        visibility: 'hidden',
+        display: 'none',
+      },
+    },
   };
 };
 
@@ -35,7 +41,7 @@ const OrganizationProfileOverviewHeader = (props) => {
       <div className={classes.text}>
         <Typography type="body1" color="inherit"> {messages.lastUpdate} {update}</Typography>
       </div>
-      <Button onClick={handleEditClick} raised color="accent">
+      <Button className={classes.noPrint} onClick={handleEditClick} raised color="accent">
         {messages.edit}
       </Button>
     </div>
