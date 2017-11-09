@@ -273,6 +273,20 @@ class CreateProjectSerializer(CreateEOISerializer):
         return self.instance
 
 
+class SelectedPartnersSerializer(serializers.ModelSerializer):
+    partner_id = serializers.CharField(source="partner.id")
+    partner_name = serializers.CharField(source="partner.legal_name")
+
+    class Meta:
+        model = Application
+        fields = (
+            'id',
+            'partner_id',
+            'partner_name',
+            'offer_status',
+        )
+
+
 class PartnerProjectSerializer(serializers.ModelSerializer):
 
     agency = serializers.CharField(source='agency.name')
@@ -280,6 +294,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
     locations = PointSerializer(many=True)
     is_pinned = serializers.SerializerMethodField()
     application = serializers.SerializerMethodField()
+    direct_selected_partners = serializers.SerializerMethodField()
 
     # TODO - cut down on some of these fields. partners should not get back this data
     # Frontend currently breaks if doesn't receive all
@@ -315,6 +330,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'selected_source',
             'is_pinned',
             'application',
+            'direct_selected_partners',
         )
         read_only_fields = fields
 
@@ -326,6 +342,13 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
         if qs.exists():
             return ApplicationPartnerSerializer(qs.get()).data
         return None
+
+    def get_direct_selected_partners(self, obj):
+        if obj.is_direct:
+            # this is used by agency
+            query = obj.applications.all()
+            return SelectedPartnersSerializer(query, many=True).data
+        return
 
 
 class ProjectUpdateSerializer(serializers.ModelSerializer):
