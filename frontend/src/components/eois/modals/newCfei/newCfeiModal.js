@@ -102,10 +102,8 @@ class NewCfeiModal extends Component {
   }
 
   handleSubmit(values) {
-    const { query } = this.props;
-debugger;
     this.props.onDialogClose();
-    this.props.postCfei(values, query).then(
+    this.props.postCfei(values).then(
       (cfei) => {
         this.setState({ id: cfei && cfei.id });
       });
@@ -154,20 +152,15 @@ NewCfeiModal.propTypes = {
   onDialogClose: PropTypes.func,
   postCfei: PropTypes.func,
   submit: PropTypes.func,
-  query: PropTypes.object,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  query: R.path(['location', 'query'], ownProps),
-});
-
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  postCfei: (values, query) => dispatch(getPostMethod(ownProps.type)(values)),
+  postCfei: values => dispatch(getPostMethod(ownProps.type)(values)),
   submit: () => dispatch(submit(getFormName(ownProps.type))),
 });
 
 const connected = connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps,
 )(NewCfeiModal);
 

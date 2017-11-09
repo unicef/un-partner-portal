@@ -43,7 +43,7 @@ class AgencyMembersContainer extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const { query, partner, params: { type } } = this.props;
+    const { query, partner } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
       this.props.loadApplications(R.merge(nextProps.location.query, { partner }));
@@ -54,7 +54,7 @@ class AgencyMembersContainer extends Component {
   }
 
   render() {
-    const { applications, agencyName, columns, totalCount, loading } = this.props;
+    const { applications, columns, totalCount, loading } = this.props;
 
     return (
       <MainContentWrapper>
@@ -85,7 +85,6 @@ AgencyMembersContainer.propTypes = {
   loadApplications: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   partner: PropTypes.string,
-  agencyName: PropTypes.string,
   query: PropTypes.object,
 };
 
