@@ -8,9 +8,6 @@ import Typography from 'material-ui/Typography';
 import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
 import AccountIcon from 'material-ui-icons/AccountCircle';
-import LensIcon from 'material-ui-icons/Lens';
-import NotificationsIcon from 'material-ui-icons/Notifications';
-import Badge from 'material-ui/Badge';
 import BadgeIcon from './badgeIcon';
 import NotificationsList from '../notifications/notificationsList';
 import SidebarMenu from './sidebarMenu';
@@ -35,15 +32,6 @@ const styleSheet = theme => ({
   },
   paper2: {
     height: '100%',
-  },
-  badge: {
-    backgroundColor: 'red',
-    right: 0,
-    top: 0,
-    width: 18,
-    height: 18,
-    position: 'absolute',
-    zIndex: 2,
   },
   iconBox: {
     width: 48,

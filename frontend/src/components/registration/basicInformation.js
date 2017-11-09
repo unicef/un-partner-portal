@@ -39,7 +39,7 @@ const BasicInformation = (props) => {
             label="Has the Organization had a legal name change?"
           />
         </Grid>
-        {legalNameChange === 'true' &&
+        {legalNameChange === true &&
             (<TextFieldForm
               label="Organization's former Legal Name"
               fieldName="json.partner_profile.former_legal_name"
