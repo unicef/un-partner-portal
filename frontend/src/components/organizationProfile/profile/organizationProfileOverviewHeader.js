@@ -3,6 +3,7 @@ import React from 'react';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
+import OrganizationProfileHeaderOptions from './organizationProfileHeaderOptions';
 
 const messages = {
   edit: 'Edit',
@@ -44,6 +45,7 @@ const OrganizationProfileOverviewHeader = (props) => {
       <Button className={classes.noPrint} onClick={handleEditClick} raised color="accent">
         {messages.edit}
       </Button>
+      <OrganizationProfileHeaderOptions className={classes.noPrint} />
     </div>
   );
 };
