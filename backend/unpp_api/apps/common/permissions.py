@@ -133,22 +133,19 @@ class IsAgency(BasePermission):
         return request.user.is_agency_user
 
 
-class IsPartnerOnNotGET(BasePermission):
+class IsAtLeastEditorPartnerOnNotGET(IsAtLeastMemberReader):
 
-    def has_permission(self, request, view):
-        if request.method != 'GET':
-            return request.user.is_partner_user
-        return True
-
-
-class IsRoleAdministratorOnNotGET(IsAtLeastMemberReader):
-
-    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.admin]
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
 
     def has_permission(self, request, view):
         if request.method != 'GET':
             return self.pass_at_least(request.user.member.role)
         return True
+
+
+class IsRoleAdministratorOnNotGET(IsAtLeastEditorPartnerOnNotGET):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.admin]
 
 
 class IsApplicationAPIEditor(IsAtLeastMemberReader):

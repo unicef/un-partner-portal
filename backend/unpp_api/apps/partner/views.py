@@ -7,7 +7,7 @@ from account.serializers import PartnerMemberSerializer
 from common.permissions import (
     IsAtLeastMemberEditor,
     IsPartner,
-    IsPartnerOnNotGET,
+    IsAtLeastEditorPartnerOnNotGET,
     IsRoleAdministratorOnNotGET,
 )
 from common.paginations import SmallPagination
@@ -78,49 +78,49 @@ class PartnerIdentificationAPIView(RetrieveUpdateAPIView):
     PartnerIdentificationAPIView endpoint return specific partner profile data via serializer,
     by given pk (PartnerProfile)
     """
-    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerIdentificationSerializer
     queryset = PartnerProfile.objects.all()
 
 
 class PartnerContactInformationAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerContactInformationSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerMandateMissionAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerProfileMandateMissionSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerFundingAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerProfileFundingSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerCollaborationAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerProfileCollaborationSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerProjectImplementationAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerProfileProjectImplementationSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerOtherInfoAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerProfileOtherInfoSerializer
     queryset = Partner.objects.all()
 
