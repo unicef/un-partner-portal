@@ -114,14 +114,12 @@ export const loginUser = creds => dispatch => login(creds)
     history.push('/');
   });
 
-export const registerUser = json => (dispatch) => {
-  postRegistration(json)
-    .then(({ user: { email, username } }) => {
-      dispatch(loginSuccess({ role: ROLES.PARTNER, user: username }));
-      dispatch(sessionChange({ newlyRegistered: true }));
-      dispatch(loginUser({ email, password: R.path(['user', 'password'], json) }));
-    });
-};
+export const registerUser = json => dispatch => postRegistration(json)
+  .then(({ user: { email, username } }) => {
+    dispatch(loginSuccess({ role: ROLES.PARTNER, user: username }));
+    dispatch(sessionChange({ newlyRegistered: true }));
+    dispatch(loginUser({ email, password: R.path(['user', 'password'], json) }));
+  });
 
 const setSession = (state, session) => R.mergeDeepRight(state, session);
 
