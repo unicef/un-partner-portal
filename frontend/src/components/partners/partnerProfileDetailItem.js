@@ -1,9 +1,12 @@
-import Grid from 'material-ui/Grid';
+import R from 'ramda';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import ItemColumnCell from '../common/cell/itemColumnCell';
-import ItemDynamicCell from '../common/cell/itemDynamicCell';
+import GridColumn from '../common/grid/gridColumn';
+import GridRow from '../common/grid/gridRow';
+import ItemWorkingLanguagesCell from '../common/cell/itemWorkingLanguagesCell';
+import ItemSectorsCell from '../common/cell/itemSectorsCell';
 import PaddedContent from '../common/paddedContent';
 
 const messages = {
@@ -57,48 +60,26 @@ const PartnerProfileDetailItem = (props) => {
   const { classes, partner } = props;
 
   if (partner) {
-    return (<Grid className={classes.container} container direction="column" spacing={0}>
-      <Grid item>
-        <Grid container>
-          <Grid xs={4} item>
-            <ItemColumnCell label={messages.mailing} content={partner.mail} />
-          </Grid>
-          <Grid xs={4} item>
-            <ItemColumnCell label={messages.phone} content={partner.phone} />
-          </Grid>
-          <Grid xs={4} item>
-            <ItemColumnCell label={messages.website} content={partner.website} />
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item>
-        <Grid container>
-          <Grid xs={4} item>
-            <ItemColumnCell label={messages.headName} content={partner.headName} />
-          </Grid>
-          <Grid xs={4} item>
-            <ItemColumnCell label={messages.headTitle} content={partner.headTitle} />
-          </Grid>
-          <Grid xs={4} item>
-            <ItemColumnCell label={messages.headEmail} content={partner.headEmail} />
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item>
-        <Grid container>
-          <Grid xs={12} item>
-            <ItemColumnCell label={messages.languages} content={partner.languages} />
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item>
-        <Grid container>
-          <Grid xs={12} item>
-            <ItemDynamicCell items={partner.sectors} classes={classes} />
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>);
+    return (
+      <GridColumn className={classes.container}>
+        <GridRow columns={3} spacing={24}>
+          <ItemColumnCell label={messages.mailing} content={R.path(['mailing_address', 'org_email'], partner)} />
+          <ItemColumnCell label={messages.phone} content={R.path(['mailing_address', 'telephone'], partner)} />
+          <ItemColumnCell label={messages.website} content={R.path(['mailing_address', 'website'], partner)} />
+        </GridRow>
+        <GridRow columns={3} spacing={24}>
+          <ItemColumnCell label={messages.headName} content={R.path(['org_head', 'first_name'], partner)} />
+          <ItemColumnCell label={messages.headTitle} content={R.path(['org_head', 'job_title'], partner)} />
+          <ItemColumnCell label={messages.headEmail} content={R.path(['org_head', 'email'], partner)} />
+        </GridRow>
+        <GridRow columns={1} spacing={24}>
+          <ItemWorkingLanguagesCell label={messages.languages} content={partner.working_languages} />
+        </GridRow>
+        <GridRow columns={1} spacing={24}>
+          <ItemSectorsCell label={messages.specialisation} content={partner.experiences} />
+        </GridRow>
+      </GridColumn>
+    );
   }
 
   return (<PaddedContent big>
