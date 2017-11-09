@@ -5,11 +5,9 @@ import { reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import { browserHistory as history, withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
-import { FormControl, FormLabel } from 'material-ui/Form';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
-import DatePickerForm from '../../forms/datePickerForm';
 import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
@@ -173,7 +171,7 @@ class PartnerApplicationsNotesFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); resetChanges(this.props.pathName); }}
             >
               {messages.clear}
             </Button>

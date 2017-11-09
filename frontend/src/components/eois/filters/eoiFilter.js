@@ -69,8 +69,7 @@ class EoiFilter extends Component {
 
   componentWillMount() {
     const { pathName, query } = this.props;
-    resetChanges(pathName, query);
-
+    
     history.push({
       pathname: pathName,
       query: R.merge(query,
@@ -185,7 +184,7 @@ class EoiFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); resetChanges(this.props.pathName); }}
             >
               {messages.clear}
             </Button>
@@ -215,7 +214,9 @@ EoiFilter.propTypes = {
 };
 
 const formEoiFilter = reduxForm({
-  form: 'tableFilter',
+  form: 'openFilter',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
 })(EoiFilter);
 
 const mapStateToProps = (state, ownProps) => {

@@ -11,6 +11,7 @@ import EoiDsFilter from './filters/eoiDsFilter';
 import CfeiTableContainer from './cfeiTableContainer';
 import { isQueryChanged } from '../../helpers/apiHelper';
 import { PROJECT_TYPES, ROLES } from '../../helpers/constants';
+import resetChanges from './filters/eoiHelper';
 
 const { PARTNER, AGENCY } = ROLES;
 const { OPEN, PINNED, DIRECT, UNSOLICITED } = PROJECT_TYPES;
@@ -23,11 +24,13 @@ class CfeiContainer extends Component {
 
   shouldComponentUpdate(nextProps) {
     const { query, loadCfei, params: { type } } = this.props;
+
     if (isQueryChanged(nextProps, query)) {
       loadCfei(nextProps.params.type, nextProps.location.query);
       return false;
     } else if (type !== nextProps.params.type) {
-      loadCfei(nextProps.params.type, nextProps.location.query);
+      const cleared = resetChanges(nextProps.location.pathname);
+      loadCfei(nextProps.params.type, cleared);
     }
     return true;
   }

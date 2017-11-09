@@ -139,7 +139,7 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); resetChanges(this.props.pathName); }}
             >
               {messages.clear}
             </Button>

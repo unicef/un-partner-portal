@@ -8,7 +8,6 @@ import { TableCell } from 'material-ui/Table';
 import CnCell from './cnCell';
 import TitleCell from './titleCell';
 import MainContentWrapper from '../../components/common/mainContentWrapper';
-import HeaderNavigation from '../../components/common/headerNavigation';
 import PartnerApplicationListFilter from './partnerApplicationListFilter';
 import PaginatedList from '../common/list/paginatedList';
 import TableWithStateInUrl from '../common/hoc/tableWithStateInUrl';
@@ -44,7 +43,7 @@ class AgencyMembersContainer extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const { query, partner } = this.props;
+    const { query, partner, params: { type } } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
       this.props.loadApplications(R.merge(nextProps.location.query, { partner }));

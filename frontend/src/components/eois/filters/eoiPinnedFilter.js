@@ -64,7 +64,7 @@ class EoiPinnedFilter extends Component {
     const { pathName, query } = this.props;
     resetChanges(pathName, query);
   }
- 
+
 
   onSearch(values) {
     const { pathName, query } = this.props;
@@ -141,7 +141,7 @@ class EoiPinnedFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); resetChanges(this.props.pathName); }}
             >
               {messages.clear}
             </Button>

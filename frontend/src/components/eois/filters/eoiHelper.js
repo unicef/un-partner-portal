@@ -1,14 +1,12 @@
 import { browserHistory as history } from 'react-router';
-import R from 'ramda';
 
-const resetChanges = (pathName, query) => {
-  const { page } = query;
-  const { page_size } = query;
-
+const resetChanges = (pathName) => {
   history.push({
     pathname: pathName,
-    query: { page, page_size },
+    query: { page: 1, page_size: 10 },
   });
+
+  return { page: 1, page_size: 10 };
 };
 
 export default resetChanges;

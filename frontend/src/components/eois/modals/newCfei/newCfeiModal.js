@@ -1,6 +1,8 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import { submit } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
@@ -100,8 +102,10 @@ class NewCfeiModal extends Component {
   }
 
   handleSubmit(values) {
+    const { query } = this.props;
+debugger;
     this.props.onDialogClose();
-    this.props.postCfei(values).then(
+    this.props.postCfei(values, query).then(
       (cfei) => {
         this.setState({ id: cfei && cfei.id });
       });
@@ -150,15 +154,22 @@ NewCfeiModal.propTypes = {
   onDialogClose: PropTypes.func,
   postCfei: PropTypes.func,
   submit: PropTypes.func,
+  query: PropTypes.object,
 };
 
+const mapStateToProps = (state, ownProps) => ({
+  query: R.path(['location', 'query'], ownProps),
+});
+
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  postCfei: values => dispatch(getPostMethod(ownProps.type)(values)),
+  postCfei: (values, query) => dispatch(getPostMethod(ownProps.type)(values)),
   submit: () => dispatch(submit(getFormName(ownProps.type))),
 });
 
-export default connect(
-  null,
+const connected = connect(
+  mapStateToProps,
   mapDispatchToProps,
 )(NewCfeiModal);
+
+export default withRouter(connected);
 
