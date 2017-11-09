@@ -133,6 +133,24 @@ class IsAgency(BasePermission):
         return request.user.is_agency_user
 
 
+class IsPartnerOnNotGET(BasePermission):
+
+    def has_permission(self, request, view):
+        if request.method != 'GET':
+            return request.user.is_partner_user
+        return True
+
+
+class IsRoleAdministratorOnNotGET(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.admin]
+
+    def has_permission(self, request, view):
+        if request.method != 'GET':
+            return self.pass_at_least(request.user.member.role)
+        return True
+
+
 class IsApplicationAPIEditor(IsAtLeastMemberReader):
 
     MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
@@ -214,3 +232,15 @@ class IsPartnerEOIApplicationCreate(IsAtLeastPartnerMemberEditor):
             return self.pass_at_least(request.user.member.role)
         else:
             return True
+
+
+class IsOpenProject(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+
+    def has_permission(self, request, view):
+        if request.method == 'GET':
+            return True  # all
+        elif request.user.is_agency_user:
+            return self.pass_at_least(request.user.member.role)
+        return False
