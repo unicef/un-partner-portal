@@ -48,6 +48,7 @@ const VerticalBarChart = (props) => {
           shape={renderBar}
           {...barProps}
           label={renderLabel(data)}
+          isAnimationActive={false}
         />
       </BarChart>
     </ResponsiveContainer>
