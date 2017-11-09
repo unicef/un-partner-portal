@@ -155,6 +155,7 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
     submitter = UserSerializer(read_only=True)
     is_direct = serializers.SerializerMethodField()
     cfei_type = serializers.CharField(read_only=True)
+    application_status = serializers.CharField(read_only=True)
 
 
     class Meta:
