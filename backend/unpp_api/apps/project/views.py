@@ -22,6 +22,7 @@ from common.permissions import (
     IsAtLeastMemberReader,
     IsAtLeastMemberEditor,
     IsAtLeastAgencyMemberEditor,
+    IsOpenProject,
     IsEOIReviewerAssessments,
     IsApplicationAPIEditor,
     IsConvertUnsolicitedEditor,
@@ -85,6 +86,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
     """
     Endpoint for getting OPEN Call of Expression of Interest.
     """
+    permission_classes = (IsAuthenticated, IsOpenProject)
 
     def get_queryset(self):
         queryset = self.queryset.filter(display_type=EOI_TYPES.open)

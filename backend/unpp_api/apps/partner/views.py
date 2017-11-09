@@ -4,7 +4,12 @@ from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView,
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from account.serializers import PartnerMemberSerializer
-from common.permissions import IsAtLeastMemberEditor
+from common.permissions import (
+    IsAtLeastMemberEditor,
+    IsPartner,
+    IsPartnerOnNotGET,
+    IsRoleAdministratorOnNotGET,
+)
 from common.paginations import SmallPagination
 from .serializers import (
     OrganizationProfileSerializer,
@@ -33,14 +38,14 @@ class OrganizationProfileAPIView(RetrieveAPIView):
     """
     Endpoint for getting Organization Profile.
     """
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, )
     serializer_class = OrganizationProfileSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerProfileAPIView(RetrieveAPIView):
 
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, )
     serializer_class = OrganizationProfileDetailsSerializer
     queryset = Partner.objects.all()
 
@@ -60,6 +65,7 @@ class PartnerShortListAPIView(ListAPIView):
     serializer_class = PartnerShortSerializer
 
 
+# TODO: it looks like we don't use this endpoint at all...
 class PartnersListItemAPIView(RetrieveAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
@@ -72,56 +78,56 @@ class PartnerIdentificationAPIView(RetrieveUpdateAPIView):
     PartnerIdentificationAPIView endpoint return specific partner profile data via serializer,
     by given pk (PartnerProfile)
     """
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
     serializer_class = PartnerIdentificationSerializer
     queryset = PartnerProfile.objects.all()
 
 
 class PartnerContactInformationAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
     serializer_class = PartnerContactInformationSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerMandateMissionAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
     serializer_class = PartnerProfileMandateMissionSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerFundingAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
     serializer_class = PartnerProfileFundingSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerCollaborationAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
     serializer_class = PartnerProfileCollaborationSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerProjectImplementationAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
     serializer_class = PartnerProfileProjectImplementationSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerOtherInfoAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsPartnerOnNotGET, IsAtLeastMemberEditor)
     serializer_class = PartnerProfileOtherInfoSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerCountryProfileAPIView(CreateAPIView, RetrieveAPIView):
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsPartner, IsRoleAdministratorOnNotGET)
     serializer_class = PartnerCountryProfileSerializer
     queryset = Partner.objects.all()
 
