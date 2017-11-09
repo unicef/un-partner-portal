@@ -12,6 +12,7 @@ export const NOTIFICATIONS_LOAD_SUCCESS = 'NOTIFICATIONS_LOAD_SUCCESS';
 export const NOTIFICATIONS_LOAD_FAILURE = 'NOTIFICATIONS_LOAD_FAILURE';
 export const NOTIFICATIONS_LOAD_ENDED = 'NOTIFICATIONS_LOAD_ENDED';
 
+export const NOTIFICATION_READ = 'NOTIFICATION_READ';
 export const NOTIFICATION_PATCH_STARTED = 'NOTIFICATION_PATCH_STARTED';
 export const NOTIFICATION_PATCH_SUCCESS = 'NOTIFICATION_PATCH_SUCCESS';
 export const NOTIFICATION_PATCH_FAILURE = 'NOTIFICATION_PATCH_FAILURE';
@@ -24,6 +25,7 @@ export const savePatchErrorMsg = (state, action, error) =>
 export const clearPatchError = (state, action) =>
   R.assoc('itemsPatch', R.assoc(action.id, { loading: false, error: {} }, state.itemsPatch), state);
 
+export const notificationRead = id => ({ type: NOTIFICATION_READ, id });
 export const notificationPatchStarted = id => ({ type: NOTIFICATION_PATCH_STARTED, id });
 export const notificationPatchSuccess = id => ({ type: NOTIFICATION_PATCH_SUCCESS, id });
 export const notificationPatchFailure = (error, id) =>
@@ -40,6 +42,19 @@ const saveNotifications = (state, action) => {
   const items = R.assoc('items', mergedItems, state);
   const next = R.assoc('next', action.response.next, items);
   return R.assoc('totalCount', action.response.count, next);
+};
+
+const removeNotification = (state, action) => {
+  let filtered = [];
+
+  if (action.id) {
+    filtered = R.filter(item => item.notification.id !== action.id, state.items);
+  } else {
+    filtered = R.filter(item => item.did_read, state.items);
+  }
+
+  const next = R.assoc('items', filtered, state);
+  return R.assoc('totalCount', action.id ? state.totalCount - 1 : 0, next);
 };
 
 const messages = {
@@ -90,8 +105,8 @@ export const readAllNotifications = () => (dispatch) => {
 
   return patchNotifications(read)
     .then((response) => {
+      dispatch(notificationPatchSuccess());
       dispatch(notificationsLoadEnded());
-      dispatch(loadNotificationsList(false));
     })
     .catch((error) => {
       dispatch(notificationPatchEnded());
@@ -106,9 +121,8 @@ export const readNotification = id => (dispatch) => {
 
   return patchNotification(id, read)
     .then((notifications) => {
-      dispatch(notificationPatchEnded(id));
-      dispatch(notificationPatchSuccess(notifications, id));
-      dispatch(loadNotificationsList(false));
+      dispatch(notificationPatchSuccess(id));
+      dispatch(notificationRead(id));
     })
     .catch((error) => {
       dispatch(notificationPatchEnded(id));
@@ -140,7 +154,7 @@ export default function notificationsListReducer(state = initialState, action) {
       return startPatchLoading(clearPatchError(state, action), action);
     }
     case NOTIFICATION_PATCH_SUCCESS: {
-      return state;
+      return removeNotification(state, action);
     }
     default:
       return state;

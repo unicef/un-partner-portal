@@ -8,8 +8,7 @@ import Typography from 'material-ui/Typography';
 import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
 import AccountIcon from 'material-ui-icons/AccountCircle';
-import LensIcon from 'material-ui-icons/Lens';
-import Badge from 'material-ui/Badge';
+import BadgeIcon from './badgeIcon';
 import NotificationsList from '../notifications/notificationsList';
 import SidebarMenu from './sidebarMenu';
 
@@ -34,20 +33,18 @@ const styleSheet = theme => ({
   paper2: {
     height: '100%',
   },
-  badge: {
-    backgroundColor: 'red',
-    top: 5,
-    right: 5,
-    width: 18,
-    height: 18,
-  },
   iconBox: {
     width: 48,
     height: 48,
-    marginRight: 5,
   },
   headerIcon: {
     fill: theme.palette.primary[400],
+  },
+
+  noPrint: {
+    '@media print': {
+      display: 'none',
+    },
   },
 });
 
@@ -75,7 +72,7 @@ class MainLayout extends Component {
     return (
       <Grid item >
         <Grid container spacing={0} className={classes.root}>
-          <Grid item sm={2} hidden={{ xsDown: true }}>
+          <Grid item sm={2} hidden={{ xsDown: true }} className={classes.noPrint}>
             <AppBar
               className={`${classes.header} ${classes.leftHeader}`}
               position="static"
@@ -86,7 +83,7 @@ class MainLayout extends Component {
               </Typography>
             </AppBar>
           </Grid>
-          <Grid item xs={12} sm={10}>
+          <Grid item xs={12} sm={10} className={classes.noPrint}>
             <AppBar
               className={`${classes.header} ${classes.rightHeader}`}
               position="static"
@@ -98,22 +95,15 @@ class MainLayout extends Component {
                 justify="flex-end"
                 spacing={0}
               >
-                <Badge
-                  badgeContent=" "
-                  className={classes.iconBox}
-                  classes={{ badge: classes.badge }}
-                >
-                  <IconButton color="contrast" onClick={this.handleClick}>
-                    <LensIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
-                  </IconButton>
-                </Badge>
+                <BadgeIcon handleClick={this.handleClick} />
+
                 <IconButton color="contrast">
                   <AccountIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
                 </IconButton>
               </Grid>
             </AppBar>
           </Grid>
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={2} className={classes.noPrint}>
             <Paper className={classes.paper}>
               <SidebarMenu />
             </Paper>
