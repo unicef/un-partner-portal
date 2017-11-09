@@ -14,7 +14,6 @@ class SearchBox extends Component {
       });
       searchBox.addListener('places_changed', () => {
         const places = searchBox.getPlaces();
-
         if (places.length === 0) {
           return;
         }
