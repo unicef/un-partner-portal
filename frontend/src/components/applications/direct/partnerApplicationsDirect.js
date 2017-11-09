@@ -14,6 +14,7 @@ import ApplicationStatusCell from '../applicationStatusCell';
 import SectorsCell from '../sectorsCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
 import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
+import PartnerProfileCountriesCell from '../../partners/partnerProfileCountriesCell';
 
 const applicationCell = ({ row, column }) => {
   if (column.name === 'submission_date') {
@@ -28,6 +29,8 @@ const applicationCell = ({ row, column }) => {
     return <ApplicationStatusCell appStatus={row.status} />;
   } else if (column.name === 'specializations') {
     return <SectorsCell specializations={row.specializations} />;
+  } else if (column.name === 'country') {
+    return <PartnerProfileCountriesCell countries={row.country} />;
   }
 
   return undefined;

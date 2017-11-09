@@ -31,8 +31,7 @@ const applicationCell = ({ row, column }) => {
   } else if (column.name === 'specializations') {
     return <SectorsCell specializations={row.specializations} />;
   } else if (column.name === 'country') {
-    //debugger
-    return <PartnerProfileCountriesCell code={row.country} />;
+    return <PartnerProfileCountriesCell countries={row.country} />;
   }
 
   return undefined;
