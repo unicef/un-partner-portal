@@ -12,7 +12,7 @@ const messages = {
     choose: 'Choose',
     country: 'Country',
     agency: 'Agency',
-    sector_area: 'Sector & Area of specialization',
+    sector_area: 'Sector & Area of Specialization',
   },
   clear: 'clear',
 };

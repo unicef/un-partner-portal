@@ -33,7 +33,7 @@ class PaginatedList extends Component {
     const secondTmp = (pageSize * (pageNumber));
     const secondRange = secondTmp > itemsCount ? itemsCount : secondTmp;
     return (<div className={classes.container}><Typography type="title">
-      {`${firstRange}-${secondRange} of ${itemsCount} results to show`}
+      {`${firstRange}-${secondRange} of ${itemsCount} results`}
     </Typography></div>);
   }
 

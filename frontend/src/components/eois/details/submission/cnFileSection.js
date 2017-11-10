@@ -6,8 +6,7 @@ import PaddedContent from '../../../common/paddedContent';
 
 
 const messages = {
-  upload_1: 'Please make sure to use the Concept Note template provided by the UN Agency that published this CFEI.',
-  upload_2: 'You will be at risk of disqualification if the proper Concept Note formatting is not used',
+  label: 'Please ensure that the Concept Note is submitted using the template provided by the UN agency that published the Call for Expressions of Interest. Concept notes not adhering to the agency-mandated template may be disqualified.',
 };
 
 const styleSheet = (theme) => {
@@ -27,13 +26,13 @@ const styleSheet = (theme) => {
 };
 
 const CnFileSection = (props) => {
-  const { classes, component, displayHint } = props;
+  const { classes, component, displayHint, label } = props;
   return (
     <div className={classes.alignCenter}>
       {component}
       {displayHint ? null : (<PaddedContent>
         <Typography className={classes.paddingBottom} type="caption">
-          {messages.upload_1}
+          {label || messages.label}
         </Typography>
         <Typography type="caption">{messages.upload_2}</Typography>
       </PaddedContent>)
@@ -46,7 +45,7 @@ CnFileSection.propTypes = {
   classes: PropTypes.object,
   component: PropTypes.element,
   displayHint: PropTypes.bool,
-
+  label: PropTypes.String,
 };
 
 export default withStyles(styleSheet, { name: 'CnFileSection' })(CnFileSection);

@@ -22,10 +22,10 @@ const messages = {
   labels: {
     search: 'Search',
     country: 'Country',
-    location: 'Location - Admin 1',
+    location: 'Location',
     status: 'Status',
-    sector: 'Sector & Area of specialization',
-    agency: 'Agency',
+    sector: 'Sector & Area of Specialization',
+    agency: 'UN Agency',
     fromDate: 'From date',
     toDate: 'To date',
     date: 'Date posted - choose date range',
@@ -52,7 +52,7 @@ export const STATUS_VAL = [
   },
   {
     value: false,
-    label: 'Completed',
+    label: 'Finalized',
   },
 ];
 

@@ -20,7 +20,7 @@ const STEPS = readOnly =>
     },
     {
       component: <PartnerProfileIdentificationRegistration readOnly={readOnly} />,
-      label: 'Registration of Organization',
+      label: 'Legal Status',
       name: 'registration',
     },
   ];

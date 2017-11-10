@@ -10,7 +10,7 @@ import { selectCfeiReviewSummary } from '../../../../store';
 
 const messages = {
   title: (_, edit) => `${edit ? 'Edit' : 'Add'} Review Summary`,
-  header: 'You can add comment and a attachment as a Review Summary',
+  header: 'You can provide comments or add an attachment to summarize the review process.',
   error: 'Sorry, update failed',
 };
 

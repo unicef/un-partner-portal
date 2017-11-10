@@ -11,7 +11,7 @@ import { formatDateForPrint } from '../../../helpers/dates';
 
 
 const columns = [
-  { name: 'title', title: 'Project name' },
+  { name: 'title', title: 'Project Title' },
   { name: 'id', title: 'Cfei ID' },
   { name: 'deadline_date', title: 'Notification of results deadline' },
 ];

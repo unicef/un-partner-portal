@@ -36,7 +36,7 @@ const SectorFieldArray = (props) => {
   const { sectors, readOnly, ...other } = props;
   return (
     <ArrayForm
-      label="Sectors and specialization"
+      label="Sector(s) and area(s) of specialization"
       limit={sectors.length}
       fieldName="specializations"
       initial

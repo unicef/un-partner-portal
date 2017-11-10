@@ -25,7 +25,7 @@ export const TitleField = props => (<TextFieldForm
 />);
 
 export const Background = props => (<TextFieldForm
-  label="Brief background of the project"
+  label="Project Background"
   fieldName="description"
   multiline
   textFieldProps={{

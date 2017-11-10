@@ -9,10 +9,9 @@ import GridColumn from '../../../common/grid/gridColumn';
 const messages = {
   otherInfo: 'Other information the organization may wish to share? (optional)',
   docs: 'Upload up to 3 documents that may be useful',
-  confirm: `The Partner confirms that the information provided in the Partner 
-  Profile is accurate to the best of its knowledge, and that any misrepresentations,
-   falsifications, or material omissions in the Partner Profile, whenever discovered, 
-   may result in disqualification from or termination of partnership with the UN.`,
+  confirm: `The organization confirms that the information provided in the profile is accurate to the best of its knowledge,
+   and understands that any misrepresentations, falsifications or material omissions in the profile, 
+   whenever discovered, may result in disqualification from or termination of partnership with the UN.`,
   orgLogo: 'Organization Logo',
 };
 

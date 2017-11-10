@@ -15,9 +15,8 @@ const messages = {
   title: 'Concept Note',
   confirm: 'Yes, DELETE',
   cancel: 'Cancel',
-  confirmQuestion: 'Are you sure you want to delete this Concept Note',
-  confirmMeesage: 'Your Concept Note will be removed from consideration upon deletion.' +
-  'You can still resubmit a new Concept Note before deadline if you choose to.',
+  confirmQuestion: 'Are you sure you want to delete this Concept Note?',
+  confirmMeesage: 'Your Concept Note, once deleted, will be removed from funding consideration. A new Concept Note may be uploaded as long as the application deadline has not expired.',
 };
 
 class CfeiSubmission extends Component {

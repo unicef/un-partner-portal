@@ -15,8 +15,10 @@ import AlertDialog from '../common/alertDialog';
 import { selectNormalizedOrganizationTypes } from '../../store';
 
 const messages = {
-  header: 'This portal is not intended for private sector companies, ' +
-  'goverment ministries or agencies and individuals. ',
+  header: 'The UN Partner Portal is solely intended for use by national NGOs, international NGOs, community based organizations,' +
+  'academic institutes, and Red Cross/Red Crescent societies. The UN Partner Portal' +
+  'is NOT intended for use by private sector companies, government ministries, or individuals.',
+  learn: ' Learn more.',
   tooltip: 'Community Based Organization (CBO): A community-based ' +
   'organization is a grass-root association with small organizational' +
   ' and management structure, focused on improving the lives and ' +
@@ -48,14 +50,13 @@ const messages = {
   'composed of the International Committee of the Red Cross (ICRC), ' +
   'the International Federation of Red Cross and Red Crescent ' +
   'Societies (IFRC) and 190 member Red Cross and Red Crescent Societies.',
-  alertDialog: 'You can not register your organization until a Headquarters ' +
-            'profile is completed. Please contact your ' +
-            'organization\'s HQ focal point to proceed',
+  alertDialog: 'Access to the UN Partner Portal for country (local) offices of international NGOs is granted by the offices’ headquarters, ' +
+   'who must first register an account for the organization. Please liaise with your organization’s headquarters for access.',
   labels: {
     organizationType: 'Type of organization',
     office: 'Indicate if you are',
   },
-  alertTitle: 'Warning',
+  alertTitle: 'Notice',
 };
 
 const styleSheet = theme => ({
@@ -98,7 +99,7 @@ const OrganizationTypes = (props) => {
         <div className={classes.info}>
           <Typography color="inherit" >
             {messages.header}
-            <a target="_blank" href="http://unicef.com" rel="noopener noreferrer">{messages.link}</a>
+            <a target="_blank" href="http://unicef.com" rel="noopener noreferrer">{messages.learn}</a>
           </Typography>
         </div>
       </Grid>

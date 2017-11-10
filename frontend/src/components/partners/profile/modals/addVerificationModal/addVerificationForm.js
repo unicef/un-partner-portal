@@ -7,13 +7,13 @@ import VerificationQuestion from './verificationQuestion';
 
 
 const messages = {
-  certUpload: 'Has CSO uploaded its valid, non-expired registration certificate issued by the ' +
+  certUpload: 'Has partner uploaded its valid, non-expired registration certificate issued by the ' +
   'correct goverment body?',
-  mmConsistent: 'Are the CSO\'s mandate and mission consistent with that of the UN?',
-  indicateResults: 'Do the CSO\'s key results achieved indicate abillity to deliver programme ' +
+  mmConsistent: 'Are the partner\'s mandate and mission consistent with that of the UN?',
+  indicateResults: 'Do the partner\'s key results achieved indicate abillity to deliver programme ' +
   'results?',
   repRisk: 'Has a potential reputational risk issue been identified from public or other sources?',
-  yellowFlag: 'Does the CSO have a "yellow" flag in its profile, indication reputational risk?',
+  yellowFlag: 'Does the partner have a "yellow" flag in its profile, indication reputational risk?',
 };
 
 
