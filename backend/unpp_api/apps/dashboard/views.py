@@ -67,7 +67,7 @@ class ApplicationsPartnerDecisionsListAPIView(ListAPIView):
         user = self.request.user
         agency = user.get_agency()
         won_applications = Application.objects.filter(eoi__agency=agency,
-                                                      did_accept_date__gte=date_N_days_ago,
+                                                      decision_date__gte=date_N_days_ago,
                                                       did_win=True).exclude(is_unsolicited=True)
 
         return won_applications.filter(did_accept=True) | won_applications.filter(did_decline=True)
@@ -96,7 +96,7 @@ class PendingOffersListAPIView(PartnerIdsMixin, ListAPIView):
     def get_queryset(self):
         return Application.objects.filter(
             did_win=True,
-            did_accept_date__isnull=True,
+            decision_date__isnull=True,
             did_decline=False,
             partner_id__in=self.get_partner_ids()
         )

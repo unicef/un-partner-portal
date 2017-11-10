@@ -115,7 +115,7 @@ const mapStateToProps = (state, ownProps) => {
       avg_total_score = 0,
       notes = [],
     } = {},
-    partner_accepted_date,
+    partner_decision_date,
     partner_notified,
   } = {},
   } = ownProps;
@@ -123,7 +123,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     allCriteria: state.selectionCriteria,
     notifDate: partner_notified,
-    acceptedDate: partner_accepted_date,
+    acceptedDate: partner_decision_date,
     criteriaMap,
     assessmentCount: assessment_count,
     avgTotalScore: +avg_total_score.toFixed(2),
