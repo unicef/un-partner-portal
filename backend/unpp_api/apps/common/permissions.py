@@ -139,7 +139,9 @@ class IsAtLeastEditorPartnerOnNotGET(IsAtLeastMemberReader):
 
     def has_permission(self, request, view):
         if request.method != 'GET':
-            return self.pass_at_least(request.user.member.role)
+            if request.user.is_partner_user:
+                return self.pass_at_least(request.user.member.role)
+            return False
         return True
 
 
