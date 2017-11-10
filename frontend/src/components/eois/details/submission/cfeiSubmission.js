@@ -16,7 +16,7 @@ const messages = {
   confirm: 'Yes, DELETE',
   cancel: 'Cancel',
   confirmQuestion: 'Are you sure you want to delete this Concept Note?',
-  confirmMeesage: 'Your Concept Note, once deleted, will be removed from funding consideration. A new Concept Note may be uploaded as long as the application deadline has not expired.',
+  confirmMeesage: 'Your unsolicited Concept Note, once deleted, will be removed from funding consideration. A new unsolicited Concept Note may be uploaded.',
 };
 
 class CfeiSubmission extends Component {
