@@ -131,7 +131,7 @@ class Application(TimeStampedModel):
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
-    decision_date = models.DateField(null=True, blank=True)
+    decision_date = models.DateField(null=True, blank=True)  # for accept or decline
     accept_notification = models.OneToOneField(
         'notification.Notification', related_name="accept_notification", null=True, blank=True)
     did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
