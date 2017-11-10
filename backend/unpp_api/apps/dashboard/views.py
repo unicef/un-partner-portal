@@ -8,7 +8,7 @@ from django.http import Http404
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from common.permissions import IsAtLeastMemberReader, IsAgency, IsPartner
+from common.permissions import IsAtLeastMemberReader, IsAgencyMemberUser, IsPartner
 from common.mixins import PartnerIdsMixin
 from common.paginations import MediumPagination, SmallPagination
 from project.serializers import ApplicationFullEOISerializer, SubmittedCNSerializer, PendingOffersSerializer
@@ -43,7 +43,7 @@ class ApplicationsToScoreListAPIView(ListAPIView):
     """
 
     serializer_class = ApplicationFullEOISerializer
-    permission_classes = (IsAuthenticated, IsAgency)
+    permission_classes = (IsAgencyMemberUser, )
     pagination_class = MediumPagination
 
     def get_queryset(self):
@@ -59,7 +59,7 @@ class ApplicationsPartnerDecisionsListAPIView(ListAPIView):
 
     DAYS_AGO = 5
     serializer_class = ApplicationFullEOISerializer
-    permission_classes = (IsAuthenticated, IsAgency)
+    permission_classes = (IsAgencyMemberUser, )
     pagination_class = MediumPagination
 
     def get_queryset(self):

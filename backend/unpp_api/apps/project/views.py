@@ -29,7 +29,6 @@ from common.permissions import (
     IsApplicationFeedbackPerm,
     IsPartnerEOIApplicationCreate,
     IsPartner,
-    IsAgency,
 )
 from notification.helpers import (
     get_partner_users_for_app_qs,
@@ -340,7 +339,7 @@ class EOIApplicationsListAPIView(ListAPIView):
 
 
 class ReviewersStatusAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, IsAgency, IsAtLeastMemberEditor)
+    permission_classes = (IsAgencyMemberUser, IsAtLeastMemberEditor)
     queryset = User.objects.all()
     serializer_class = ReviewersApplicationSerializer
     lookup_field = 'pk'
@@ -408,7 +407,7 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
 
 
 class UnsolicitedProjectAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, IsAgencyMemberUser)
+    permission_classes = (IsAgencyMemberUser, )
     queryset = Application.objects.filter(is_unsolicited=True).distinct()
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
@@ -491,7 +490,7 @@ class EOIReviewersAssessmentsListAPIView(ListAPIView):
     """
     Reviewers with they assessments - summary
     """
-    permission_classes = (IsAuthenticated, IsAgency, IsAtLeastMemberEditor)
+    permission_classes = (IsAgencyMemberUser, IsAtLeastMemberEditor)
     queryset = User.objects.all()
     serializer_class = EOIReviewersAssessmentsSerializer
     lookup_field = 'eoi_id'
@@ -509,7 +508,7 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
     NOTIFICATION_MESSAGE_SENT = "Notification message sent successfully"
     NOTIFICATION_MESSAGE_WAIT = "Notification message sent recently. Need to wait 24 hours."
 
-    permission_classes = (IsAuthenticated, IsAgency, IsAtLeastMemberEditor)
+    permission_classes = (IsAgencyMemberUser, IsAtLeastMemberEditor)
 
     def post(self, request, *args, **kwargs):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
@@ -523,7 +522,7 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
 
 
 class AwardedPartnersListAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, IsAgency)
+    permission_classes = (IsAgencyMemberUser, )
     serializer_class = AwardedPartnersSerializer
     lookup_field = 'eoi_id'
 
@@ -534,7 +533,7 @@ class AwardedPartnersListAPIView(ListAPIView):
 
 
 class CompareSelectedListAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, IsAgency, IsAtLeastMemberEditor)
+    permission_classes = (IsAgencyMemberUser, IsAtLeastMemberEditor)
     serializer_class = CompareSelectedSerializer
 
     def get_queryset(self):
