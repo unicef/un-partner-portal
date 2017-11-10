@@ -5,6 +5,7 @@ import SelectForm from '../../selectForm';
 import DatePickerForm from '../../datePickerForm';
 import PolarRadio from '../../fields/PolarRadio';
 import AgencyMembersField from './agencyMembersFields/agencyMembersField';
+import { endDate, startDate, notifResultsDate } from '../../../../helpers/validation';
 
 const COUNTRIES = [
   {
@@ -51,43 +52,46 @@ export const OtherInfo = props => (<TextFieldForm
   {...props}
 />);
 
-export const StartDate = props => (<DatePickerForm
+export const StartDate = ({ minDate, ...props }) => (<DatePickerForm
   label="Estimated Start Date"
   fieldName="start_date"
   placeholder="Pick a date"
   datePickerProps={{
-    minDate: new Date(),
+    minDate: (minDate && minDate !== 'Invalid date') ? new Date(minDate) : new Date(),
   }}
+  validation={[startDate]}
   {...props}
 />);
 
-export const EndDate = props => (<DatePickerForm
+export const EndDate = ({ minDate, ...props }) => (<DatePickerForm
   label="Estimated End Date"
   fieldName="end_date"
   placeholder="Pick a date"
   datePickerProps={{
-    minDate: new Date(),
+    minDate: (minDate && minDate !== 'Invalid date') ? new Date(minDate) : new Date(),
   }}
+  validation={[endDate]}
   {...props}
 />);
 
-export const DeadlineDate = props => (<DatePickerForm
+export const DeadlineDate = ({ minDate, ...props }) => (<DatePickerForm
   label="Application Deadline"
   fieldName="deadline_date"
   placeholder="Pick a date"
   datePickerProps={{
-    minDate: new Date(),
+    minDate: (minDate && minDate !== 'Invalid date') ? new Date(minDate) : new Date(),
   }}
   {...props}
 />);
 
-export const NotifyDate = props => (<DatePickerForm
+export const NotifyDate = ({ minDate, ...props }) => (<DatePickerForm
   label="Notification of Result"
   fieldName="notif_results_date"
   placeholder="Pick a date"
   datePickerProps={{
-    minDate: new Date(),
+    minDate: (minDate && minDate !== 'Invalid date') ? new Date(minDate) : new Date(),
   }}
+  validation={[notifResultsDate]}
   {...props}
 />);
 
