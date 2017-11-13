@@ -15,12 +15,14 @@ class Agencies extends Component {
   }
 
   render() {
-    const { fieldName, label, agencies, ...other } = this.props;
+    const { fieldName, label, agencies, agencyId, ...other } = this.props;
+
     return (
       <SelectForm
         fieldName={fieldName}
         label={label}
         values={agencies}
+        defaultValue={agencyId}
         {...other}
       />
     );
@@ -40,6 +42,7 @@ Agencies.propTypes = {
   ),
   disabled: PropTypes.bool,
   loadAgencies: PropTypes.array,
+  agencyId: PropTypes.string,
 };
 
 Agencies.defaultProps = {
@@ -47,7 +50,10 @@ Agencies.defaultProps = {
 };
 
 export default connect(
-  state => ({ agencies: mapAgenciesNamesToSelection(state) }),
+  state => ({
+    agencies: mapAgenciesNamesToSelection(state),
+    agencyId: state.session.agencyId,
+  }),
   dispatch => ({
     loadAgencies: () => dispatch(loadAgenciesNames()),
   }),
