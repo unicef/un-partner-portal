@@ -1,4 +1,5 @@
 import R from 'ramda';
+import { CancelToken } from 'axios';
 
 export const clearError = state => R.assoc('error', {}, state);
 export const startLoading = state => R.assoc('loading', true, state);
@@ -16,4 +17,8 @@ export const startLoadingField = (state, field) => R.assoc(field, true, state);
 export const successLoadingField = (state, field) => R.assoc(field, true, state);
 export const stopLoadingField = (state, field) => R.assoc(field, false, state);
 
-
+export const getNewRequestToken = (getState, name) => {
+  const currentCancelToken = R.path([name, 'status', 'cancelToken'], getState());
+  if (currentCancelToken) currentCancelToken.cancel();
+  return CancelToken.source();
+};

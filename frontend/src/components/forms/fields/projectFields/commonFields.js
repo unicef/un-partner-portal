@@ -1,21 +1,9 @@
 import React from 'react';
 
 import TextFieldForm from '../../textFieldForm';
-import SelectForm from '../../selectForm';
 import DatePickerForm from '../../datePickerForm';
 import PolarRadio from '../../fields/PolarRadio';
 import AgencyMembersField from './agencyMembersFields/agencyMembersField';
-
-const COUNTRIES = [
-  {
-    value: 'GB',
-    label: 'England',
-  },
-  {
-    value: 'KE',
-    label: 'Kenya',
-  },
-];
 
 export const TitleField = props => (<TextFieldForm
   label="Project Title"
@@ -94,12 +82,6 @@ export const NotifyDate = props => (<DatePickerForm
 export const Weighting = () => (<PolarRadio
   label="Is weighting relevant for this project?"
   fieldName="has_weighting"
-/>);
-
-export const ProjectCountries = () => (<SelectForm
-  fieldName="countries"
-  label="Country"
-  values={COUNTRIES}
 />);
 
 export const FocalPoint = props => (<AgencyMembersField

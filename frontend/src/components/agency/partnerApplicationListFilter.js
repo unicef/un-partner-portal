@@ -11,8 +11,9 @@ import SelectForm from '../forms/selectForm';
 import CheckboxForm from '../forms/checkboxForm';
 import TextFieldForm from '../forms/textFieldForm';
 import Agencies from '../forms/fields/projectFields/agencies';
-import { selectNormalizedSpecializations, selectNormalizedCountries } from '../../store';
+import { selectNormalizedSpecializations } from '../../store';
 import resetChanges from '../eois/filters/eoiHelper';
+import CountryField from '../forms/fields/projectFields/locationField/countryField';
 
 const messages = {
   choose: 'Choose',
@@ -76,7 +77,7 @@ class PartnerApplicationListFilter extends Component {
   }
 
   render() {
-    const { classes, countries, eoiTypes, specs, handleSubmit, reset } = this.props;
+    const { classes, eoiTypes, specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -91,10 +92,9 @@ class PartnerApplicationListFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
+              <CountryField
                 fieldName="country_code"
                 label={messages.labels.country}
-                values={countries}
                 optional
               />
             </Grid>
@@ -161,7 +161,6 @@ PartnerApplicationListFilter.propTypes = {
    */
   reset: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
-  countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
   eoiTypes: PropTypes.array.isRequired,
   pathName: PropTypes.string,
@@ -182,7 +181,6 @@ const mapStateToProps = (state, ownProps) => {
 
 
   return {
-    countries: selectNormalizedCountries(state),
     specs: selectNormalizedSpecializations(state),
     eoiTypes: [],
     pathName: ownProps.location.pathname,

@@ -8,20 +8,25 @@ import { Field } from 'redux-form';
 import { withStyles } from 'material-ui/styles';
 import { renderText, renderAutocomplete } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
-import { getSuggestions, getAsyncSuggestions, normalizeSuggestion } from './autocompleteHelpers/autocompleteFunctions';
+import { getSuggestions,
+  debouncedAsyncSuggestions,
+  normalizeSuggestion } from './autocompleteHelpers/autocompleteFunctions';
 
 const styles = theme => ({
+  root: {
+    flexGrow: 1,
+  },
   container: {
     flexGrow: 1,
     position: 'relative',
   },
   suggestionsContainerOpen: {
-    position: 'absolute',
+    position: 'inherit',
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit * 3,
     left: 0,
     right: 0,
-    zIndex: 99,
+    zIndex: 2000,
   },
   suggestion: {
     display: 'block',
@@ -39,11 +44,11 @@ const styles = theme => ({
 
 
 class AutocompleteField extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
       value: '',
-      multiValues: [],
+      multiValues: props.initialMultiValues || [],
       suggestions: [],
     };
     this.handleChange = this.handleChange.bind(this);
@@ -54,15 +59,27 @@ class AutocompleteField extends React.Component {
     this.parseFormValue = this.parseFormValue.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.multiple
+      && !this.props.initial
+      && nextProps.initial) {
+      this.setState({ value: nextProps.initial });
+    }
+    if (this.props.multiple
+        && this.props.initialMultiValues.length === 0
+        && nextProps.initialMultiValues.length !== 0) {
+      this.setState({ multiValues: nextProps.initialMultiValues });
+    }
+  }
+
   handleSuggestionsFetchRequested({ value }) {
     if (this.props.async) {
-      getAsyncSuggestions(value, this.props.asyncFunction).then(suggestions =>
+      debouncedAsyncSuggestions(value, this.props.asyncFunction).then(suggestions =>
         this.setState({ suggestions }),
       );
     } else {
       this.setState({
         suggestions: getSuggestions(value, this.props.suggestionsPool),
-
       });
     }
   }
@@ -113,7 +130,7 @@ class AutocompleteField extends React.Component {
       textFieldProps,
     } = this.props;
     return (
-      <div>
+      <div className={classes.root}>
         {readOnly
           ? <Field
             label={label}
@@ -196,7 +213,19 @@ AutocompleteField.propTypes = { /**
    * function to get async suggestions
    */
   asyncFunction: PropTypes.func,
+  /**
+   * initial text value
+   */
+  initial: PropTypes.string,
+  /**
+   * initial array of multiselect values
+   */
+  initialMultiValues: PropTypes.array,
   classes: PropTypes.object,
+};
+
+AutocompleteField.defaultProps = {
+  initialMultiValues: [],
 };
 
 export default withStyles(styles)(AutocompleteField);

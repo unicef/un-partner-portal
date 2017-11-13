@@ -1,5 +1,7 @@
 import { has, uniq } from 'ramda';
 
+const _ = require('lodash');
+
 export function getSuggestionValue(
   suggestion,
 ) {
@@ -60,7 +62,8 @@ export function getSuggestions(value, suggestionsPool) {
     });
 }
 
-export function getAsyncSuggestions(value, asyncFunc) {
+
+function getAsyncSuggestions(value, asyncFunc) {
   const inputValue = value.trim().toLowerCase();
   const inputLength = inputValue.length;
   return inputLength === 0
@@ -68,3 +71,5 @@ export function getAsyncSuggestions(value, asyncFunc) {
     : asyncFunc({ search: value, page_size: 5 }).then(response => response);
 }
 
+export const debouncedAsyncSuggestions = _.debounce(getAsyncSuggestions, 1000, {
+  leading: true });

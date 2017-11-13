@@ -43,12 +43,12 @@ function post(uri, body = {}) {
     .then(response => response.data);
 }
 
-function authorizedGet({ uri, params = {} }) {
-  const options = {
+function authorizedGet({ uri, params = {}, options }) {
+  const opt = {
     params,
     headers: buildHeaders(true),
   };
-  return axios.get(`${host}${uri}`, options)
+  return axios.get(`${host}${uri}`, { ...options, ...opt })
     .then(response => response.data);
 }
 
@@ -307,8 +307,8 @@ export function patchPartnerFlags(id, body, flagId) {
 
 
 // Agencies
-export function getAgencyMembers(id, params = { page_size: 100 }) {
-  return authorizedGet({ uri: `/agencies/${id}/members`, params },
+export function getAgencyMembers(id, params = { page_size: 100 }, options) {
+  return authorizedGet({ uri: `/agencies/${id}/members`, params, options },
   );
 }
 

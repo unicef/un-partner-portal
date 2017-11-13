@@ -1,13 +1,14 @@
 import R from 'ramda';
 import React from 'react';
-import { FormSection } from 'redux-form';
+import { FormSection, formValueSelector } from 'redux-form';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
-import { selectNormalizedCountries, selectNormalizedStaffGlobalyChoices } from '../../../../store';
+import { selectNormalizedStaffGlobalyChoices } from '../../../../store';
 import GridColumn from '../../../common/grid/gridColumn';
+import CountryField from '../../../forms/fields/projectFields/locationField/countryField';
 import AddressFieldArray from '../../../forms/fields/projectFields/locationField/addressFieldArray';
 
 const messages = {
@@ -19,15 +20,15 @@ const messages = {
 
 const PartnerProfileMandateCountryPresence = (props) => {
   const { readOnly, isCountryProfile, countries, profileId, staffGlobally } = props;
-
   return (
     <FormSection name="country_presence">
       <GridColumn removeNullChildren>
         {!isCountryProfile
-          ? <SelectForm
+          ? <CountryField
             fieldName="country_presence"
             label={messages.operate}
-            values={countries}
+            initialMulti={countries}
+            multiple
             selectFieldProps={{
               multiple: true,
             }}
@@ -89,13 +90,14 @@ PartnerProfileMandateCountryPresence.propTypes = {
   staffGlobally: PropTypes.array.isRequired,
 };
 
+const selector = formValueSelector('partnerProfile');
+
 const connected = connect((state, ownProps) => {
   const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
 
   return {
     isCountryProfile: partner ? partner.is_hq : false,
-
-    countries: selectNormalizedCountries(state),
+    countries: selector(state, 'mandate_mission.country_presence.country_presence'),
     staffGlobally: selectNormalizedStaffGlobalyChoices(state),
   };
 }, null)(PartnerProfileMandateCountryPresence);

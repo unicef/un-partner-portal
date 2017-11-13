@@ -16,7 +16,7 @@ import { PROJECT_TYPES } from '../../../../helpers/constants';
 
 
 const EditCfeiForm = (props) => {
-  const { handleSubmit, type } = props;
+  const { handleSubmit, type, focalPoints } = props;
   const isOpen = type === PROJECT_TYPES.OPEN;
   return (
     <form onSubmit={handleSubmit}>
@@ -27,7 +27,7 @@ const EditCfeiForm = (props) => {
           {isOpen && <DeadlineDate />}
           {isOpen && <NotifyDate />}
         </GridRow>
-        <FocalPoint />
+        <FocalPoint initialMultiValues={focalPoints} />
       </GridColumn>
 
     </form >
@@ -43,6 +43,7 @@ EditCfeiForm.propTypes = {
    * type of the project, direct, open, unsolicited
    */
   type: PropTypes.string,
+  focalPoints: PropTypes.array,
 };
 
 const formEditCfei = reduxForm({
@@ -63,6 +64,7 @@ const mapStateToProps = (state, ownProps) => {
       deadline_date,
       notif_results_date,
     },
+    focalPoints: focal_points,
   };
 };
 

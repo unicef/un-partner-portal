@@ -14,7 +14,8 @@ import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
-import { selectNormalizedSpecializations, selectNormalizedCountries } from '../../../store';
+import CountryField from '../../forms/fields/projectFields/locationField/countryField';
+import { selectNormalizedSpecializations } from '../../../store';
 import resetChanges from './eoiHelper';
 
 const messages = {
@@ -93,7 +94,7 @@ class EoiFilter extends Component {
   }
 
   render() {
-    const { classes, countries, specs, handleSubmit, reset } = this.props;
+    const { classes, specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -108,10 +109,9 @@ class EoiFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
+              <CountryField
                 fieldName="country_code"
                 label={messages.labels.country}
-                values={countries}
                 optional
               />
             </Grid>
@@ -198,7 +198,6 @@ EoiFilter.propTypes = {
    */
   reset: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
-  countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
   pathName: PropTypes.string,
   query: PropTypes.object,
@@ -219,7 +218,6 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { posted_to_date } = { } } = ownProps.location;
 
   return {
-    countries: selectNormalizedCountries(state),
     specs: selectNormalizedSpecializations(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,

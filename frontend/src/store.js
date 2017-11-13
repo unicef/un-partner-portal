@@ -268,7 +268,7 @@ export const isAssesmentAdded = (state, assessmentId) =>
 
 export const mapFocalPointsReviewersToSelection = state =>
   mapValuesForSelectionField(
-    agencyMembersSelectors.selectPossibleFocalPointsReviewers(state.agencyMembers));
+    agencyMembersSelectors.selectPossibleFocalPointsReviewers(state.agencyMembers.data));
 
 export const isUserAReviewer = (state, cfeiId) => cfeiDetailsSelector.isUserAReviewer(
   state.cfeiDetails.cfeiDetails, cfeiId, state.session.userId);

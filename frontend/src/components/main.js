@@ -28,7 +28,6 @@ class Main extends Component {
       loadCountries,
       loadPartnerConfig,
       loadSectors,
-      loadAgencyMembers,
       getPartnerNames,
     } = this.props;
     const configPromises = [
@@ -38,7 +37,6 @@ class Main extends Component {
     ];
     if (session.role === ROLES.AGENCY) {
       configPromises.concat([
-        loadAgencyMembers(session.agencyId),
         getPartnerNames(),
       ]);
     }
@@ -64,7 +62,6 @@ Main.propTypes = {
   loadCountries: PropTypes.func,
   loadPartnerConfig: PropTypes.func,
   loadSectors: PropTypes.func,
-  loadAgencyMembers: PropTypes.func,
   children: PropTypes.node,
   session: PropTypes.object,
   getPartnerNames: PropTypes.func,
@@ -79,7 +76,6 @@ const mapDispatchToProps = dispatch => ({
   loadCountries: () => dispatch(loadCountries()),
   loadSectors: () => dispatch(loadSectors()),
   loadPartnerConfig: () => dispatch(loadPartnerConfig()),
-  loadAgencyMembers: agencyId => dispatch(loadAgencyMembers(agencyId)),
   getPartnerNames: () => dispatch(loadPartnerNames()),
 });
 
