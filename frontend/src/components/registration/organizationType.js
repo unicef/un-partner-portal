@@ -32,14 +32,6 @@ const messages = {
   'mandate, technical expertise and management systems, and are ' +
   'comprised of a headquarters office and varying networks of ' +
   'regional and/or country-based offices.\n' +
-  'Intergovernmental / Multilateral / Bilateral Organization: ' +
-  'An intergovernmental or multilateral organization is an ' +
-  'organization formed pursuant to a multilateral act, such as a ' +
-  'treaty, the membership of which is composed primarily of ' +
-  'sovereign or member states or other intergovernmental ' +
-  'organizations. A bilateral organization is a government agency ' +
-  'that receives funding from the government in its home country, ' +
-  'and uses the funding to aid developing countries. \n' +
   'Academic institution: An academic institution is an educational ' +
   'institution with degree-conferring authority that is dedicated to ' +
   'education and research.\n' +

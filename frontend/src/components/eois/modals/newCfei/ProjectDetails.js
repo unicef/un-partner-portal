@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import Typography from 'material-ui/Typography';
 import SectorForm from '../../../forms/fields/projectFields/sectorField/sectorFieldArray';
@@ -14,7 +15,7 @@ const messages = {
 };
 
 const ProjectDetails = (props) => {
-  const { dateFields, formName } = props;
+  const { dateFields, formName, displayPopulation } = props;
   return (
     <GridColumn>
       <Typography type="headline">
@@ -25,8 +26,9 @@ const ProjectDetails = (props) => {
         <LocationForm formName={formName} />
         <fields.FocalPoint />
         <SectorForm />
-        <SelectPopulationOfConcern />
+        {displayPopulation && <SelectPopulationOfConcern />}
         <fields.Background />
+        <fields.Goal />
         <fields.OtherInfo />
         <GridRow columns={4} >
           {dateFields}
@@ -43,7 +45,12 @@ ProjectDetails.propTypes = {
    */
   dateFields: PropTypes.array,
   formName: PropTypes.string,
+  displayPopulation: PropTypes.bool,
 
 };
+const mapStateToProps = state => ({
+  displayPopulation: state.session.agencyName === 'UNHCR',
+});
 
-export default ProjectDetails;
+
+export default connect(mapStateToProps)(ProjectDetails);

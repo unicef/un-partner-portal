@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { formValueSelector } from 'redux-form';
+import { formValueSelector, SubmissionError } from 'redux-form';
 import PropTypes from 'prop-types';
 
 import {
@@ -18,6 +18,10 @@ import AlertDialog from '../common/alertDialog';
 import { loadCountries } from '../../reducers/countries';
 import { registerUser } from '../../reducers/session';
 import { loadPartnerConfig } from '../../reducers/partnerProfileConfig';
+
+const messages = {
+  error: 'Registration failed',
+};
 
 class RegistrationStepper extends React.Component {
   constructor(props) {
@@ -61,7 +65,16 @@ class RegistrationStepper extends React.Component {
   }
 
   handleSubmit(values) {
-    this.props.registerUser(values.json);
+    return this.props.registerUser(values.json).catch((error) => {
+      const errorMsg = messages.error;
+      if (error.response.data.user) {
+        this.setState({ stepIndex: 3 });
+      }
+      throw new SubmissionError({
+        json: { ...error.response.data },
+        _error: errorMsg,
+      });
+    });
   }
 
 
