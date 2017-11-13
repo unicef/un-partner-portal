@@ -65,7 +65,6 @@ class EoiFilter extends Component {
 
   componentWillMount() {
     const { pathName, query } = this.props;
-    resetChanges(pathName, query);
 
     history.push({
       pathname: pathName,
@@ -193,7 +192,9 @@ EoiFilter.propTypes = {
 };
 
 const formEoiFilter = reduxForm({
-  form: 'tableFilter',
+  form: 'directFilter',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
 })(EoiFilter);
 
 const mapStateToProps = (state, ownProps) => {

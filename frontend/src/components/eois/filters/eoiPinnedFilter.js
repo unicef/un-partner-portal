@@ -64,7 +64,7 @@ class EoiPinnedFilter extends Component {
     const { pathName, query } = this.props;
     resetChanges(pathName, query);
   }
- 
+
 
   onSearch(values) {
     const { pathName, query } = this.props;
