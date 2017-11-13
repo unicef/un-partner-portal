@@ -6,7 +6,7 @@ import EoiStatusCell from './eoiStatusCell';
 import EoiPartnersCell from './eoiPartnersCell';
 import EoiNameCell from './eoiNameCell';
 import IsDirectCell from './isDirectCell';
-import PartnerProfileCountriesCell from '../../partners/partnerProfileCountriesCell';
+import CountriesCell from '../../partners/countriesCell';
 import { formatDateForPrint } from '../../../helpers/dates';
 
 export default type => ({ row, column }) => {
@@ -14,7 +14,7 @@ export default type => ({ row, column }) => {
     return <EoiNameCell title={row.title || row.project_title} id={row.id} />;
   } else if (column.name === 'country_code') {
     return (
-      <PartnerProfileCountriesCell countries={row.country_code} />
+      <CountriesCell countries={row.country_code} />
     );
   } else if (column.name === 'specializations') {
     return (

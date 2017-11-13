@@ -4,7 +4,7 @@ import { TableCell } from 'material-ui/Table';
 import withCountryName from '../common/hoc/withCountryName';
 import EoiCountryCell from '../eois/cells/eoiCountryCell';
 
-const PartnerProfileCountriesCell = (props) => {
+const CountriesCell = (props) => {
   const { countries } = props;
 
   return (
@@ -14,8 +14,8 @@ const PartnerProfileCountriesCell = (props) => {
   );
 };
 
-PartnerProfileCountriesCell.propTypes = {
+CountriesCell.propTypes = {
   countries: PropTypes.array.isRequired,
 };
 
-export default withCountryName(PartnerProfileCountriesCell);
+export default withCountryName(CountriesCell);

@@ -16,7 +16,7 @@ import { formatDateForPrint } from '../../helpers/dates';
 import DirectSelectionCell from '../../components/applications/unsolicited/directSelectionCell';
 import { loadPartnerApplications } from '../../reducers/agencyPartnerApplicationList';
 import { isQueryChanged } from '../../helpers/apiHelper';
-import PartnerProfileCountriesCell from '../partners/partnerProfileCountriesCell';
+import CountriesCell from '../partners/countriesCell';
 
 const applicationCell = ({ row, column }) => {
   if (column.name === 'specializations') {
@@ -32,7 +32,7 @@ const applicationCell = ({ row, column }) => {
   } else if (column.name === 'title') {
     return <TitleCell type={row.cfei_type} eoiId={row.eoi_id} title={row.title} />;
   } else if (column.name === 'country_code') {
-    return <PartnerProfileCountriesCell countries={row.country_code} />;
+    return <CountriesCell countries={row.country_code} />;
   }
 
   return undefined;

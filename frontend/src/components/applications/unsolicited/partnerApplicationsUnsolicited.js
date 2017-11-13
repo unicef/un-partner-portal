@@ -14,7 +14,7 @@ import { formatDateForPrint } from '../../../helpers/dates';
 import WrappedCell from '../../common/cell/wrappedCell';
 import SectorsCell from '../sectorsCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
-import PartnerProfileCountriesCell from '../../partners/partnerProfileCountriesCell';
+import CountriesCell from '../../partners/countriesCell';
 
 /* eslint-disable react/prop-types */
 const applicationCell = ({ row, column }) => {
@@ -33,7 +33,7 @@ const applicationCell = ({ row, column }) => {
   } else if (column.name === 'specializations') {
     return <SectorsCell specializations={row.specializations} />;
   } else if (column.name === 'country') {
-    return <PartnerProfileCountriesCell countries={row.country} />;
+    return <CountriesCell countries={row.country} />;
   }
 
   return undefined;
