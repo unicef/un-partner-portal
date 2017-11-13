@@ -40,6 +40,12 @@ const styleSheet = theme => ({
   headerIcon: {
     fill: theme.palette.primary[400],
   },
+
+  noPrint: {
+    '@media print': {
+      display: 'none',
+    },
+  },
 });
 
 class MainLayout extends Component {
@@ -66,7 +72,7 @@ class MainLayout extends Component {
     return (
       <Grid item >
         <Grid container spacing={0} className={classes.root}>
-          <Grid item sm={2} hidden={{ xsDown: true }}>
+          <Grid item sm={2} hidden={{ xsDown: true }} className={classes.noPrint}>
             <AppBar
               className={`${classes.header} ${classes.leftHeader}`}
               position="static"
@@ -77,7 +83,7 @@ class MainLayout extends Component {
               </Typography>
             </AppBar>
           </Grid>
-          <Grid item xs={12} sm={10}>
+          <Grid item xs={12} sm={10} className={classes.noPrint}>
             <AppBar
               className={`${classes.header} ${classes.rightHeader}`}
               position="static"
@@ -97,7 +103,7 @@ class MainLayout extends Component {
               </Grid>
             </AppBar>
           </Grid>
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={2} className={classes.noPrint}>
             <Paper className={classes.paper}>
               <SidebarMenu />
             </Paper>

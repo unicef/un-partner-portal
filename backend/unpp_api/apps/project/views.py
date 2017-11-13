@@ -319,9 +319,10 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
     serializer_class = ApplicationFullSerializer
 
     def perform_update(self, serializer):
-        if serializer.validated_data.get('did_accept', False) and \
-                serializer.instance.did_accept_date is None:
-            instance = serializer.save(did_accept_date=date.today())
+        data = serializer.validated_data
+        if (data.get('did_accept', False) or data.get('did_decline', False)) and \
+                serializer.instance.decision_date is None:
+            instance = serializer.save(decision_date=date.today())
         else:
             instance = serializer.save()
 

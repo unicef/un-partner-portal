@@ -37,6 +37,19 @@ export const Background = props => (<TextFieldForm
   {...props}
 />);
 
+export const Goal = props => (<TextFieldForm
+  label="Goal, Objective, Expected Outcome and Results"
+  fieldName="goal"
+  multiline
+  textFieldProps={{
+    multiline: true,
+    inputProps: {
+      maxLength: '200',
+    },
+  }}
+  {...props}
+/>);
+
 export const OtherInfo = props => (<TextFieldForm
   label="Other information (optional)"
   fieldName="other_information"

@@ -16,6 +16,7 @@ import {
   FocalPoint,
   OtherInfo,
   Background,
+  Goal,
   StartDate,
   EndDate,
   DeadlineDate,
@@ -89,11 +90,7 @@ const Fields = ({ type, role, partner }) => {
         readOnly
       />
       <Background readOnly />
-      <TextField
-        fieldName="goal"
-        label={messages.labels.goal}
-        readOnly
-      />
+      <Goal readOnly />
       <OtherInfo readOnly />
       <GridRow columns={2} >
         <DeadlineDate readOnly />
