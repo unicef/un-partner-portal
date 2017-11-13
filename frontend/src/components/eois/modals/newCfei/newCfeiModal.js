@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import { submit } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
@@ -157,8 +158,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   submit: () => dispatch(submit(getFormName(ownProps.type))),
 });
 
-export default connect(
+const connected = connect(
   null,
   mapDispatchToProps,
 )(NewCfeiModal);
+
+export default withRouter(connected);
 
