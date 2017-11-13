@@ -288,6 +288,8 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
     locations = PointSerializer(many=True)
     is_pinned = serializers.SerializerMethodField()
     application = serializers.SerializerMethodField()
+    focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
+    reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
 
     # TODO - cut down on some of these fields. partners should not get back this data
     # Frontend currently breaks if doesn't receive all
@@ -313,6 +315,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'agency',
             'created_by',
             'focal_points',
+            'focal_points_detail',
             'agency_office',
             'cn_template',
             'description',
@@ -320,6 +323,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'other_information',
             'has_weighting',
             'reviewers',
+            'reviewers_detail',
             'selected_source',
             'is_pinned',
             'application',
@@ -340,6 +344,8 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
 
     specializations = SimpleSpecializationSerializer(many=True)
     locations = PointSerializer(many=True)
+    focal_points_detail = UserSerializer(read_only=True, many=True)
+    reviewers_detail = UserSerializer(read_only=True, many=True)
 
     class Meta:
         model = EOI
@@ -363,6 +369,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'agency',
             'created_by',
             'focal_points',
+            'focal_points_detail',
             'agency_office',
             'cn_template',
             'description',
@@ -370,6 +377,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'other_information',
             'has_weighting',
             'reviewers',
+            'reviewers_detail',
             'selected_source',
         )
         read_only_fields = ('created', 'completed_date',)
