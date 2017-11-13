@@ -7,7 +7,7 @@ from rest_framework import status as statuses
 
 from common.consts import FLAG_TYPES
 from common.tests.base import BaseAPITestCase
-from common.factories import PartnerSimpleFactory, PartnerFlagFactory, PartnerVerificationFactory
+from common.factories import PartnerSimpleFactory, PartnerFlagFactory, PartnerVerificationFactory, AgencyOfficeFactory
 from partner.models import Partner
 from review.models import PartnerFlag, PartnerVerification
 
@@ -18,8 +18,9 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestPartnerFlagAPITestCase, self).setUp()
-        PartnerSimpleFactory.create_batch(1)
-        PartnerFlagFactory.create_batch(1)
+        AgencyOfficeFactory.create_batch(self.quantity)
+        PartnerSimpleFactory.create_batch(self.quantity)
+        PartnerFlagFactory.create_batch(self.quantity)
 
     def test_create_flag(self):
         partner = Partner.objects.first()
@@ -67,8 +68,9 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestPartnerVerificationAPITestCase, self).setUp()
-        PartnerSimpleFactory.create_batch(1)
-        PartnerVerificationFactory.create_batch(1)
+        AgencyOfficeFactory.create_batch(self.quantity)
+        PartnerSimpleFactory.create_batch(self.quantity)
+        PartnerVerificationFactory.create_batch(self.quantity)
 
     def test_verification_create(self):
         partner = Partner.objects.first()

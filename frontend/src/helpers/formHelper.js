@@ -102,6 +102,7 @@ export const renderFormControl = ({
 
 export const renderSelectField = ({
   input,
+  defaultValue,
   meta: { touched, error, warning },
   children,
   ...other
@@ -109,6 +110,7 @@ export const renderSelectField = ({
   <SelectField
     errorText={(touched && error) || warning}
     {...input}
+    value={input.value || defaultValue}
     onChange={(event, index, value) => input.onChange(value)}
     {...other}
   >
@@ -118,6 +120,7 @@ export const renderSelectField = ({
 
 export const renderRadioField = ({ input,
   label,
+  defaultValue,
   meta: { touched, error, warning },
   options, ...other
 }) => (
@@ -125,7 +128,7 @@ export const renderRadioField = ({ input,
     <FormControl fullWidth>
       <FormLabel>{label}</FormLabel>
       <RadioGroupRow
-        selectedValue={transformBool(input.value)}
+        selectedValue={!R.isEmpty(input.value) ? transformBool(input.value) : defaultValue}
         onChange={(event, value) => { input.onChange(transformBool(value)); }}
         {...other}
       >
@@ -139,8 +142,7 @@ export const renderRadioField = ({ input,
     </FormControl>
     {((touched && error) || warning) &&
     <FormHelperText error>{error || warning}</FormHelperText>}
-  </div>
-);
+  </div>);
 
 export const renderCheckbox = ({
   name,
@@ -260,7 +262,7 @@ export const renderText = ({
 
   return (
     <FormControl fullWidth>
-      <FormLabel>{label}</FormLabel>
+      {label && <FormLabel>{label}</FormLabel>}
       <div style={{ display: 'flex', alignItems: 'center' }}>
         {date && <DateRange style={{
           marginRight: 5,

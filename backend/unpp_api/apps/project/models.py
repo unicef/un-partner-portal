@@ -131,7 +131,7 @@ class Application(TimeStampedModel):
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
-    did_accept_date = models.DateField(null=True, blank=True)
+    decision_date = models.DateField(null=True, blank=True)  # for accept or decline
     accept_notification = models.OneToOneField(
         'notification.Notification', related_name="accept_notification", null=True, blank=True)
     did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
@@ -269,7 +269,8 @@ class Assessment(TimeStampedModel):
                 for k, v in self.get_scores_as_dict().iteritems():
                     comb_dict[k]['score'] = v['score']
 
-                self.__total_score = sum([(v['score']*(v['weight']/100.0)) for k, v in comb_dict.iteritems()])
+                key_count = len(comb_dict.keys()) # Default if weight wasn't entered
+                self.__total_score = sum([(v['score']*(v.get('weight', key_count)/100.0)) for k, v in comb_dict.iteritems()])
 
         return self.__total_score
 

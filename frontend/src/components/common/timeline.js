@@ -23,11 +23,11 @@ const styleSheet = theme => ({
   },
 });
 
-const calcFill = (start, end) => {
-  const currentDate = getToday();
-  const maxDateRange = Math.abs(dayDifference(start, end));
-  const currentDayDifference = Math.abs(dayDifference(start, currentDate));
-  return Math.floor((currentDayDifference / maxDateRange) * 100);
+const calcDistance = (min, max, point) => {
+  const maxDateRange = Math.abs(dayDifference(min, max));
+  let currentDayDifference = dayDifference(min, point);
+  if (currentDayDifference === 0) currentDayDifference = 0;
+  return Math.abs(Math.floor((currentDayDifference / maxDateRange) * 100));
 };
 
 class Timeline extends Component {
@@ -43,7 +43,7 @@ class Timeline extends Component {
       deadlineDate,
       notificationDate,
       startDate } = this.props;
-    const fill = calcFill(postedDate, startDate);
+    const fill = calcDistance(postedDate, startDate, getToday());
     return (
       <div className={classes.root}>
         <div className={classes.icons}>
@@ -52,7 +52,7 @@ class Timeline extends Component {
             label="Posted"
             align="left"
             color="green"
-            flexSize={55}
+            flexSize={10}
           />
           <DatePoint
             bold
@@ -60,21 +60,22 @@ class Timeline extends Component {
             label="Application Deadline"
             align="center"
             color="red"
-            flexSize={15}
+            flexSize={calcDistance(postedDate, startDate, deadlineDate)}
           />
           <DatePoint
             date={notificationDate}
             label="Notification of results"
             align="center"
             color="blue"
-            flexSize={15}
+            flexSize={calcDistance(deadlineDate, startDate, notificationDate)}
           />
           <DatePoint
             date={startDate}
             label="Estimated start date"
             align="right"
             color="dark"
-            flexSize={15}
+            flexSize={'auto'}
+            fullWidth
           />
         </div>
         <LinearProgress className={classes.bar} mode="determinate" value={fill} />

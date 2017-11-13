@@ -19,10 +19,10 @@ const messages = {
   organizationType: 'Type of organization',
 };
 
-const isReadOnly = (isHq, displayType) => !(!isHq && displayType === 'Int');
+const isReadOnly = (isHq, displayType, readOnly) => readOnly || !(!isHq && displayType === 'Int');
 
 const PartnerProfileIdentificationBasicInfo = (props) => {
-  const { isCountryProfile, displayType, country, organizationTypes } = props;
+  const { isCountryProfile, displayType, readOnly, country, organizationTypes } = props;
 
   return (
     <FormSection name="basic">
@@ -33,7 +33,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
             fieldName="legal_name"
             optional
             warn
-            readOnly={isReadOnly(isCountryProfile, displayType)}
+            readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
           />
           <Grid item sm={6} xs={12}>
             <TextFieldForm
@@ -41,7 +41,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               fieldName="alias_name"
               optional
               warn
-              readOnly={isReadOnly(isCountryProfile, displayType)}
+              readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
@@ -50,7 +50,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               fieldName="acronym"
               optional
               warn
-              readOnly={isReadOnly(isCountryProfile, displayType)}
+              readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
@@ -59,7 +59,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               fieldName="former_legal_name"
               optional
               warn
-              readOnly={isReadOnly(isCountryProfile, displayType)}
+              readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
@@ -69,7 +69,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               initialValue={country}
               optional
               warn
-              readOnly={isReadOnly(isCountryProfile, displayType)}
+              readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
@@ -79,7 +79,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               values={organizationTypes}
               optional
               warn
-              readOnly={isReadOnly(isCountryProfile, displayType)}
+              readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
             />
           </Grid>
         </Grid>
@@ -90,6 +90,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
 
 PartnerProfileIdentificationBasicInfo.propTypes = {
   country: PropTypes.string,
+  readOnly: PropTypes.bool,
   organizationTypes: PropTypes.array.isRequired,
 };
 

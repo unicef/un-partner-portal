@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
+from account.serializers import PartnerMemberSerializer
 from common.permissions import IsAtLeastMemberEditor
 from common.paginations import SmallPagination
 from .serializers import (
@@ -24,6 +25,7 @@ from .filters import PartnersListFilter
 from .models import (
     Partner,
     PartnerProfile,
+    PartnerMember,
 )
 
 
@@ -56,6 +58,8 @@ class PartnersListAPIView(ListAPIView):
 class PartnerShortListAPIView(ListAPIView):
     queryset = Partner.objects.all()
     serializer_class = PartnerShortSerializer
+    filter_backends = (DjangoFilterBackend, )
+    filter_class = PartnersListFilter
 
 
 class PartnersListItemAPIView(RetrieveAPIView):
@@ -122,3 +126,16 @@ class PartnerCountryProfileAPIView(CreateAPIView, RetrieveAPIView):
     permission_classes = (IsAuthenticated, )
     serializer_class = PartnerCountryProfileSerializer
     queryset = Partner.objects.all()
+
+
+class PartnersMemberListAPIView(ListAPIView):
+
+    permission_classes = (IsAuthenticated, )
+    serializer_class = PartnerMemberSerializer
+    queryset = PartnerMember.objects.all()
+    pagination_class = SmallPagination
+    lookup_field = 'pk'
+
+    def get_queryset(self, *args, **kwargs):
+        partner_id = self.kwargs.get(self.lookup_field)
+        return self.queryset.filter(partner_id=partner_id)

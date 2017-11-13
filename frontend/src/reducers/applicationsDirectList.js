@@ -20,9 +20,9 @@ export const applicationsDirectEnded = () => ({ type: APPLICATIONS_DIRECT_LOAD_E
 
 const initialState = {
   columns: [
-    { name: 'id', title: 'Concept Note ID' },
+    { name: 'id', title: 'Application ID' },
     { name: 'project_title', title: 'Project Title', width: 200 },
-    { name: 'agency_name', title: 'Agency' },
+    { name: 'agency_name', title: 'UN Agency' },
     { name: 'country', title: 'Country' },
     { name: 'specializations', title: 'Sector' },
     { name: 'submission_date', title: 'Submission Date' },

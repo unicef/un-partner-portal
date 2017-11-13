@@ -8,7 +8,7 @@ import WithdrawApplicationModal from '../modals/withdrawApplication/withdrawAppl
 import withDialogHandling from '../../common/hoc/withDialogHandling';
 
 const messages = {
-  withdraw: 'withdraw',
+  withdraw: 'retract selection',
 };
 
 

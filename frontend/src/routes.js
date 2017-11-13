@@ -57,6 +57,7 @@ const allRoutes = () => (
       <Route component={main}>
         <Route path="/dev" component={dev} />
         <Route path="/" component={mainLayout} >
+          <IndexRedirect to="dashboard" />
           <Route path="dashboard" component={dashboard} />
           <Route path="cfei" component={eoiHeader} >
             <IndexRedirect to="open" />

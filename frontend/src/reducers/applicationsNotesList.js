@@ -24,7 +24,7 @@ const initialState = {
     { name: 'id', title: 'ID' },
     { name: 'project_title', title: 'Project Title', width: 200 },
     { name: 'eoi_id', title: 'CFEI ID' },
-    { name: 'agency_name', title: 'Agency' },
+    { name: 'agency_name', title: 'UN Agency' },
     { name: 'country', title: 'Country' },
     { name: 'specializations', title: 'Sector' },
     { name: 'application_date', title: 'Application Date' },

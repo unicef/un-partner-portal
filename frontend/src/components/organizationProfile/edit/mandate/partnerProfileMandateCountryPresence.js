@@ -94,10 +94,9 @@ const selector = formValueSelector('partnerProfile');
 
 const connected = connect((state, ownProps) => {
   const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
-
   return {
-    isCountryProfile: partner ? partner.is_hq : false,
     countries: selector(state, 'mandate_mission.country_presence.country_presence'),
+    isCountryProfile: partner ? !partner.is_hq : false,
     staffGlobally: selectNormalizedStaffGlobalyChoices(state),
   };
 }, null)(PartnerProfileMandateCountryPresence);

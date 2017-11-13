@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import classNames from 'classnames';
 import IconButton from 'material-ui/IconButton';
+import Typography from 'material-ui/Typography';
 import Close from 'material-ui-icons/Clear';
 import { withStyles } from 'material-ui/styles';
 import Dialog, { DialogContent, DialogTitle, DialogActions } from 'material-ui/Dialog';
@@ -52,7 +53,9 @@ const ControlledModal = (props) => {
         disableTypography
       >
         <SpreadContent>
-          {title}
+          <Typography type="title" color="inherit">
+            {title}
+          </Typography>
           <IconButton className={classes.closeButton} onClick={handleDialogClose}>
             <Close />
           </IconButton>
@@ -79,7 +82,7 @@ const ControlledModal = (props) => {
           color="accent"
           disabled={buttons.flat.disabled}
         >
-          {buttons.flat.label || messages.cancel }
+          {buttons.flat.label || messages.cancel}
         </Button>
         }
         {buttons.raised && <Button

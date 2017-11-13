@@ -55,6 +55,8 @@ class ApplicationsFilter(django_filters.FilterSet):
     concern = CharFilter(method='get_concern')
     status = CharFilter(method='get_status')
     agency = CharFilter(method='get_agency')
+    did_win = BooleanFilter(widget=BooleanWidget())
+    cfei_active = BooleanFilter(method='get_cfei_active', widget=BooleanWidget())
 
     class Meta:
         model = Application
@@ -87,6 +89,11 @@ class ApplicationsFilter(django_filters.FilterSet):
     def get_agency(self, queryset, name, value):
         return queryset.filter(eoi__agency=value)
 
+    def get_cfei_active(self, queryset, name, value):
+        if value:
+            return queryset.filter(eoi__status=EOI_STATUSES.open)
+        return queryset.filter(eoi__status=EOI_STATUSES.completed)
+
 
 class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
 
@@ -103,7 +110,7 @@ class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
 
     def get_project_title(self, queryset, name, value):
         return queryset.filter(
-            Q(proposal_of_eoi_details__icontains={"title": value}) |  # unsolicited
+            Q(proposal_of_eoi_details__title__icontains=value) |  # unsolicited
             Q(eoi__title__icontains=value)  # direct selection - developed from unsolicited
         )
 

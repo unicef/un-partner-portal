@@ -1,187 +1,203 @@
-import React from 'react';
+import R from 'ramda';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
+import { browserHistory as history, withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
 import TextFieldForm from '../../forms/textFieldForm';
+import Agencies from '../../forms/fields/projectFields/agencies';
+import { selectNormalizedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
+import resetChanges from '../../eois/filters/eoiHelper';
 
 const messages = {
   choose: 'Choose',
   labels: {
     search: 'Search',
-    choose: 'Choose',
     country: 'Country',
-    admin_1: 'Location - Admin 1',
-    admin_1_placeholder: 'Choose Location - Admin 1',
-    sector_area: 'Sector & Area of specialization',
+    location: 'Location',
+    sector: 'Sector & Area of Specialization',
     agency: 'Agency',
   },
   clear: 'clear',
+  submit: 'submit',
 };
-
-const SECTOR_AREA_MENU = [
-  {
-    value: 'food',
-    label: 'Food Security',
-  },
-  {
-    value: 'education',
-    label: 'Education',
-  },
-];
-
-
-const COUNTRY_MENU = [
-  {
-    value: 'all',
-    label: 'All',
-  },
-  {
-    value: 'pl',
-    label: 'Poland',
-  },
-  {
-    value: 'fr',
-    label: 'France',
-  },
-  {
-    value: 'it',
-    label: 'Italy',
-  },
-];
-
-const STATUS_MENU = [
-  {
-    value: 'pending',
-    label: 'Pending',
-  },
-  {
-    value: 'rejected',
-    label: 'Rejected',
-  },
-  {
-    value: 'made',
-    label: 'Offer Made',
-  },
-
-  {
-    value: 'accepted',
-    label: 'Offer Accepted',
-  },
-  {
-    value: 'declined',
-    label: 'Offer Declined',
-  },
-];
-
-const AGENCY_MENU = [
-  {
-    value: 'unicef',
-    label: 'UNICEF',
-  },
-  {
-    value: 'wfp',
-    label: 'WFP',
-  },
-];
 
 const styleSheet = theme => ({
   filterContainer: {
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px`,
-    background: '#F6F6F6',
+    background: theme.palette.primary[300],
   },
   button: {
-    padding: `${theme.spacing.unit * 2}px 0px 0px 0px`,
-    textAlign: 'right',
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
 });
 
-const handleSubmit = (values) => {
 
-};
+export const STATUS_VAL = [
+  {
+    value: true,
+    label: 'Active',
+  },
+  {
+    value: false,
+    label: 'Completed',
+  },
+];
 
-const PartnerApplicationsUnsolicitedFilter = (props) => {
-  const { classes, handleSubmit, reset } = props;
-  return (
-    <form onSubmit={handleSubmit}>
-      <Grid item xs={12} className={classes.filterContainer} >
-        <Grid container direction="row" >
-          <Grid item sm={4} xs={12} >
-            <TextFieldForm
-              label={messages.labels.search}
-              placeholder={messages.labels.search}
-              fieldName="search"
-              optional
-            />
-          </Grid>
-          <Grid item sm={4} xs={12}>
-            <SelectForm
-              fieldName="country"
-              label={messages.labels.country}
-              values={COUNTRY_MENU}
-              optional
-            />
-          </Grid>
-          <Grid item sm={4} xs={12}>
-            <SelectForm
-              fieldName="admin_1"
-              label={messages.labels.admin_1}
-              placeholder={messages.labels.admin_1_placeholder}
-              values={[]}
-              optional
-            />
-          </Grid>
+class PartnerApplicationsUnsolicitedFilter extends Component {
+  constructor(props) {
+    super(props);
 
+    this.state = {
+      actionOnSubmit: {},
+    };
+
+    this.onSearch = this.onSearch.bind(this);
+  }
+
+  componentWillMount() {
+    const { pathName, query } = this.props;
+    resetChanges(pathName, query);
+  }
+
+  onSearch(values) {
+    const { pathName, query } = this.props;
+
+    const { project_title, agency, active, country_code, specialization, selected_source, ds_converted } = values;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query, {
+        project_title,
+        agency,
+        active,
+        country_code,
+        specialization,
+        selected_source,
+        ds_converted,
+      }),
+    });
+  }
+
+  render() {
+    const { classes, countries, specs, handleSubmit, reset } = this.props;
+
+    return (
+      <form onSubmit={handleSubmit(this.onSearch)}>
+        <Grid item xs={12} className={classes.filterContainer} >
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12} >
+              <TextFieldForm
+                label={messages.labels.search}
+                placeholder={messages.labels.search}
+                fieldName="project_title"
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <SelectForm
+                fieldName="country_code"
+                label={messages.labels.country}
+                values={countries}
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <SelectForm
+                fieldName="sector"
+                label={messages.labels.location}
+                placeholder={messages.choose}
+                values={[]}
+                optional
+              />
+            </Grid>
+          </Grid>
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12} >
+              <SelectForm
+                label={messages.labels.sector}
+                placeholder={messages.choose}
+                fieldName="specialization"
+                values={specs}
+                optional
+              />
+            </Grid>
+            <Grid item sm={3} xs={12}>
+              <Agencies
+                fieldName="agency"
+                label={messages.labels.agency}
+                placeholder={messages.choose}
+                optional
+              />
+            </Grid>
+          </Grid>
+          <Grid item className={classes.button}>
+            <Button
+              color="accent"
+              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+            >
+              {messages.clear}
+            </Button>
+            <Button
+              color="accent"
+              onTouchTap={handleSubmit(this.onSearch)}
+            >
+              {messages.labels.search}
+            </Button>
+          </Grid>
         </Grid>
-        <Grid container direction="row" >
-          <Grid item sm={4} xs={12} >
-            <SelectForm
-              fieldName="sector_area"
-              label={messages.labels.sector_area}
-              values={SECTOR_AREA_MENU}
-              placeholder={messages.labels.choose}
-              optional
-            />
-          </Grid>
-          <Grid item sm={2} xs={12}>
-            <SelectForm
-              fieldName="agency"
-              label={messages.labels.agency}
-              values={AGENCY_MENU}
-              optional
-            />
-          </Grid>
-
-          <Grid item sm={6} xs={12}>
-            <div className={classes.button}>
-              <Button
-                color="accent"
-                onTouchTap={reset}
-              >
-                {messages.clear}
-              </Button>
-            </div>
-          </Grid>
-        </Grid>
-      </Grid>
-    </form >
-  );
-};
+      </form >
+    );
+  }
+}
 
 PartnerApplicationsUnsolicitedFilter.propTypes = {
-  classes: PropTypes.object.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
   /**
    *  reset function
    */
   reset: PropTypes.func.isRequired,
+  classes: PropTypes.object.isRequired,
+  countries: PropTypes.array.isRequired,
+  specs: PropTypes.array.isRequired,
+  pathName: PropTypes.string,
+  query: PropTypes.object,
 };
 
 const formPartnerApplicationsUnsolicitedFilter = reduxForm({
-  form: 'PartnerApplicationsUnsolicitedFilter',
-  handleSubmit,
+  form: 'tableFilter',
 })(PartnerApplicationsUnsolicitedFilter);
 
-export default withStyles(styleSheet, { name: 'PartnerApplicationsUnsolicitedFilter' })(formPartnerApplicationsUnsolicitedFilter);
+const mapStateToProps = (state, ownProps) => {
+  const { query: { project_title } = { } } = ownProps.location;
+  const { query: { country_code } = { } } = ownProps.location;
+  const { query: { agency } = { } } = ownProps.location;
+  const { query: { specialization } = { } } = ownProps.location;
+  const { query: { selected_source } = { } } = ownProps.location;
+  const { query: { ds_converted } = { } } = ownProps.location;
+
+  return {
+    countries: selectNormalizedCountries(state),
+    specs: selectNormalizedSpecializations(state),
+    directSources: selectNormalizedDirectSelectionSource(state),
+    pathName: ownProps.location.pathname,
+    query: ownProps.location.query,
+    initialValues: {
+      project_title,
+      country_code,
+      agency,
+      specialization,
+      selected_source,
+      ds_converted,
+    },
+  };
+};
+
+const connected = connect(mapStateToProps, null)(formPartnerApplicationsUnsolicitedFilter);
+const withRouterFilter = withRouter(connected);
+
+export default (withStyles(styleSheet, { name: 'PartnerApplicationsUnsolicitedFilter' })(withRouterFilter));

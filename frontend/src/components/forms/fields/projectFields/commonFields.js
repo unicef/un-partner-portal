@@ -13,8 +13,21 @@ export const TitleField = props => (<TextFieldForm
 />);
 
 export const Background = props => (<TextFieldForm
-  label="Brief background of the project"
+  label="Project Background"
   fieldName="description"
+  multiline
+  textFieldProps={{
+    multiline: true,
+    inputProps: {
+      maxLength: '200',
+    },
+  }}
+  {...props}
+/>);
+
+export const Goal = props => (<TextFieldForm
+  label="Goal, Objective, Expected Outcome and Results"
+  fieldName="goal"
   multiline
   textFieldProps={{
     multiline: true,

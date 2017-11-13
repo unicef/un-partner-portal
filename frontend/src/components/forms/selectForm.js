@@ -56,6 +56,7 @@ class SelectForm extends Component {
       warn,
       optional,
       validation,
+      defaultValue,
       readOnly,
     } = this.props;
     return (
@@ -81,6 +82,7 @@ class SelectForm extends Component {
                 hintText={placeholder || `Select ${label.toLowerCase()}`}
                 validate={optional ? [] : [required].concat(validation || [])}
                 warn={warn && warning}
+                defaultValue={defaultValue}
                 onChange={this.handleChange}
                 style={{
                   height: '56px',
@@ -178,6 +180,10 @@ SelectForm.propTypes = {
    * if form should be displayed in read only state
    */
   readOnly: PropTypes.bool,
+  /**
+   * default value String
+   */
+  defaultValue: PropTypes.string,
 };
 
 export default SelectForm;

@@ -9,8 +9,8 @@ import { selectCountryId, createCountryAndRefresh, INIT_COUNTRY_ID } from '../..
 
 
 const messages = {
-  countryDialogTitle: 'Create new country profile',
-  countryDialogInfo: 'You have ability to choose from countries selected in HQ Profile as a countries of presence. Disabled options suggest, that those profiles are already created.',
+  countryDialogTitle: 'Create new a country profile',
+  countryDialogInfo: 'You can grant access to your organization\'s country offices. If your organization has a country office in a country that is not shown below, you must first add that country in your headquarters profile.',
   create: 'Create',
 };
 

@@ -173,25 +173,33 @@ class ApplicationFullEOISerializer(ApplicationFullSerializer):
 class CreateUnsolicitedProjectSerializer(serializers.Serializer):
 
     id = serializers.CharField(source="pk", read_only=True)
-    locations = serializers.ListField(source="eoi.locations")
-    title = serializers.CharField(source="eoi.title")
-    agency = serializers.CharField()
-    specializations = serializers.ListField(source="eoi.specializations")
+    locations = PointSerializer(many=True, source='locations_proposal_of_eoi')
+    title = serializers.CharField(source='proposal_of_eoi_details.title')
+    agency = serializers.CharField(source='agency.id')
+    specializations = serializers.ListField(source='proposal_of_eoi_details.specializations')
     cn = CommonFileSerializer()
 
     @transaction.atomic
     def create(self, validated_data):
         partner = self.context['request'].active_partner
+        locations = validated_data.pop('locations_proposal_of_eoi', [])
+        agency = validated_data.pop('agency')
+
         app = Application.objects.create(
             is_unsolicited=True,
             partner_id=partner.id,
             eoi=None,
-            agency_id=validated_data['agency'],
+            agency_id=agency['id'],
             submitter=self.context['request'].user,
             status=APPLICATION_STATUSES.pending,
-            proposal_of_eoi_details=validated_data['eoi'],
+            proposal_of_eoi_details=validated_data['proposal_of_eoi_details'],
             cn=validated_data['cn'],
         )
+
+        for location in locations:
+            point, created = Point.objects.get_or_create(**location)
+            app.locations_proposal_of_eoi.add(point)
+
         return app
 
 
@@ -280,6 +288,8 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
     locations = PointSerializer(many=True)
     is_pinned = serializers.SerializerMethodField()
     application = serializers.SerializerMethodField()
+    focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
+    reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
 
     # TODO - cut down on some of these fields. partners should not get back this data
     # Frontend currently breaks if doesn't receive all
@@ -305,6 +315,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'agency',
             'created_by',
             'focal_points',
+            'focal_points_detail',
             'agency_office',
             'cn_template',
             'description',
@@ -312,6 +323,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'other_information',
             'has_weighting',
             'reviewers',
+            'reviewers_detail',
             'selected_source',
             'is_pinned',
             'application',
@@ -332,6 +344,8 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
 
     specializations = SimpleSpecializationSerializer(many=True)
     locations = PointSerializer(many=True)
+    focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
+    reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
 
     class Meta:
         model = EOI
@@ -355,6 +369,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'agency',
             'created_by',
             'focal_points',
+            'focal_points_detail',
             'agency_office',
             'cn_template',
             'description',
@@ -362,6 +377,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'other_information',
             'has_weighting',
             'reviewers',
+            'reviewers_detail',
             'selected_source',
         )
         read_only_fields = ('created', 'completed_date',)
@@ -696,7 +712,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
 
     cn = CommonFileSerializer()
     partner_notified = serializers.SerializerMethodField()
-    partner_accepted_date = serializers.SerializerMethodField()
+    partner_decision_date = serializers.SerializerMethodField()
 
     body = serializers.SerializerMethodField()
 
@@ -708,7 +724,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
             'partner_additional',
             'cn',
             'partner_notified',
-            'partner_accepted_date',
+            'partner_decision_date',
             'body',
         )
 
@@ -732,8 +748,8 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
     def get_partner_notified(self, obj):
         return obj.accept_notification and obj.accept_notification.created
 
-    def get_partner_accepted_date(self, obj):
-        return obj.did_accept_date and obj.did_accept_date
+    def get_partner_decision_date(self, obj):
+        return obj.decision_date
 
 
 class CompareSelectedSerializer(serializers.ModelSerializer):

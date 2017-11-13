@@ -20,9 +20,9 @@ const messages = {
   labels: {
     search: 'Search',
     country: 'Country',
-    location: 'Location - Admin 1',
+    location: 'Location',
     status: 'Status',
-    sector: 'Sector & Area of specialization',
+    sector: 'Sector & Area of Specialization',
     agency: 'Agency',
     direct: 'Direct Selection Source',
   },
@@ -49,7 +49,7 @@ export const STATUS_VAL = [
   },
   {
     value: false,
-    label: 'Completed',
+    label: 'Finalized',
   },
 ];
 
@@ -66,18 +66,25 @@ class EoiFilter extends Component {
 
   componentWillMount() {
     const { pathName, query } = this.props;
-    resetChanges(pathName, query);
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { active: true, ordering: 'created' },
+      ),
+    });
   }
 
   onSearch(values) {
     const { pathName, query } = this.props;
-
+    // TODO - move order to paginated list wrapper
     const { title, agency, active, country_code, specializations, selected_source } = values;
+    const ordering = active ? 'created' : '-completed_date';
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
-        title, agency, active, country_code, specializations, selected_source,
+        title, agency, active, ordering, country_code, specializations, selected_source,
       }),
     });
   }
@@ -129,6 +136,7 @@ class EoiFilter extends Component {
                 fieldName="active"
                 label={messages.labels.status}
                 values={STATUS_VAL}
+                defaultValue
                 optional
               />
             </Grid>
@@ -183,7 +191,9 @@ EoiFilter.propTypes = {
 };
 
 const formEoiFilter = reduxForm({
-  form: 'tableFilter',
+  form: 'directFilter',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
 })(EoiFilter);
 
 const mapStateToProps = (state, ownProps) => {

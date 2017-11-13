@@ -3,7 +3,9 @@ import os
 from django.conf import settings
 from rest_framework.test import APITestCase, APIClient
 from common.consts import MEMBER_ROLES
-from ..factories import PartnerSimpleFactory, PartnerMemberFactory, AgencyFactory, AgencyMemberFactory
+from ..factories import (
+    PartnerSimpleFactory, PartnerMemberFactory, AgencyFactory, AgencyOfficeFactory, AgencyMemberFactory
+)
 
 
 class BaseAPITestCase(APITestCase):
@@ -16,7 +18,7 @@ class BaseAPITestCase(APITestCase):
     with_session_login = True
     user_type = 'partner'  # or agency
     user_role = MEMBER_ROLES.admin
-    initial_factories = [AgencyFactory, PartnerSimpleFactory]
+    initial_factories = [AgencyFactory, AgencyOfficeFactory, PartnerSimpleFactory]
     quantity = 1
 
     def setUp(self):

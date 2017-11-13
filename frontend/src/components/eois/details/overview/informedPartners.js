@@ -7,7 +7,7 @@ import PaddedContent from '../../../common/paddedContent';
 import { selectCfeiDetails } from '../../../../store';
 
 const messages = {
-  title: 'Informed Partner(s)',
+  title: 'Invited Partner(s)',
 };
 
 const title = () => (

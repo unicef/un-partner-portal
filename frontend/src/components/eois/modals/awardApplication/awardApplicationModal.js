@@ -9,9 +9,9 @@ import { updateApplication } from '../../../../reducers/applicationDetails';
 import AwardApplicationForm from './awardApplicationForm';
 
 const messages = {
-  title: 'Award Concept Note',
+  title: 'Select Concept Note',
   header: 'Partner will be notified by e-mail. Provide justification for your decision',
-  award: 'award',
+  award: 'submit',
 };
 
 

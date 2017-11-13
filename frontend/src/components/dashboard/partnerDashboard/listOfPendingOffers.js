@@ -16,10 +16,10 @@ const messages = {
 };
 
 const columns = [
-  { name: 'cn_id', title: 'Concept Note ID' },
-  { name: 'project_title', title: 'Project title' },
-  { name: 'cfei_type', title: 'Type of CFEI' },
-  { name: 'agency_name', title: 'Agency' },
+  { name: 'cn_id', title: 'Application ID' },
+  { name: 'project_title', title: 'Project Title' },
+  { name: 'cfei_type', title: 'Offer Type' },
+  { name: 'agency_name', title: 'UN Agency' },
   { name: 'countries', title: 'Country' },
   { name: 'specializations', title: 'Sector & Area of Specialization' },
 ];

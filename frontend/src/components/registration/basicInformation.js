@@ -34,12 +34,20 @@ const BasicInformation = (props) => {
           />
         </Grid>
         <Grid item sm={6} xs={12}>
+          <TextFieldForm
+            label={'Acronym (If applicable)'}
+            placeholder="Provide acronym"
+            fieldName="acronym"
+            optional
+          />
+        </Grid>
+        <Grid item sm={6} xs={12}>
           <PolarRadio
             fieldName="json.partner_profile.legal_name_change"
             label="Has the Organization had a legal name change?"
           />
         </Grid>
-        {legalNameChange === 'true' &&
+        {legalNameChange === true &&
           (<TextFieldForm
             label="Organization's former Legal Name"
             fieldName="json.partner_profile.former_legal_name"
@@ -53,7 +61,7 @@ const BasicInformation = (props) => {
           />
         </Grid>
         <Grid item>
-          <Grid container direction="row">
+          <Grid container direction="row" align="flex-end">
             <Grid item sm={6} xs={12}>
               <TextFieldForm
                 label="Head of Organization's First Name"
@@ -72,7 +80,7 @@ const BasicInformation = (props) => {
         </Grid>
         <Grid item sm={6} xs={12}>
           <TextFieldForm
-            label="Head of Organization's Email"
+            label="E-mail of Head of Organization"
             placeholder="Provide Email"
             fieldName="json.partner_head_organization.head_email"
             validation={[email]}

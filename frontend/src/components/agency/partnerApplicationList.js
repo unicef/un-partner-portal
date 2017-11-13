@@ -8,7 +8,6 @@ import { TableCell } from 'material-ui/Table';
 import CnCell from './cnCell';
 import TitleCell from './titleCell';
 import MainContentWrapper from '../../components/common/mainContentWrapper';
-import HeaderNavigation from '../../components/common/headerNavigation';
 import PartnerApplicationListFilter from './partnerApplicationListFilter';
 import PaginatedList from '../common/list/paginatedList';
 import TableWithStateInUrl from '../common/hoc/tableWithStateInUrl';
@@ -17,6 +16,7 @@ import { formatDateForPrint } from '../../helpers/dates';
 import DirectSelectionCell from '../../components/applications/unsolicited/directSelectionCell';
 import { loadPartnerApplications } from '../../reducers/agencyPartnerApplicationList';
 import { isQueryChanged } from '../../helpers/apiHelper';
+import CountriesCell from '../partners/countriesCell';
 
 const applicationCell = ({ row, column }) => {
   if (column.name === 'specializations') {
@@ -31,6 +31,8 @@ const applicationCell = ({ row, column }) => {
     return <CnCell type={row.cfei_type} cnId={row.id} eoiId={row.eoi_id} />;
   } else if (column.name === 'title') {
     return <TitleCell type={row.cfei_type} eoiId={row.eoi_id} title={row.title} />;
+  } else if (column.name === 'country_code') {
+    return <CountriesCell countries={row.country_code} />;
   }
 
   return undefined;
@@ -55,7 +57,7 @@ class AgencyMembersContainer extends Component {
   }
 
   render() {
-    const { applications, agencyName, columns, totalCount, loading } = this.props;
+    const { applications, columns, totalCount, loading } = this.props;
 
     return (
       <MainContentWrapper>
@@ -86,7 +88,6 @@ AgencyMembersContainer.propTypes = {
   loadApplications: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   partner: PropTypes.string,
-  agencyName: PropTypes.string,
   query: PropTypes.object,
 };
 

@@ -53,6 +53,18 @@ const styleSheet = (theme) => {
         fill: '#8B8C8D',
       },
     },
+    print: {
+      display: 'none',
+      '@media print': {
+        display: 'block',
+      },
+    },
+    noPrint: {
+      '@media print': {
+        visibility: 'hidden',
+        display: 'none',
+      },
+    },
   };
 };
 
@@ -77,9 +89,10 @@ class CollapsableItem extends Component {
       <div>
         <div className={classes.alignItems}>
           <IconButton
-            className={classNames(classes.expand, {
-              [classes.expandOpen]: this.state.expanded,
-            })}
+            className={classNames(classes.expand,
+              classes.noPrint, {
+                [classes.expandOpen]: this.state.expanded,
+              })}
             onClick={this.handleExpandClick}
             aria-expanded={this.state.expanded}
             aria-label="Show more"
@@ -87,20 +100,25 @@ class CollapsableItem extends Component {
             <ExpandMoreIcon />
           </IconButton>
           {title}
-          <div className={classes.alignRight}>
+          <div className={`${classes.alignRight} ${classes.noPrint}`}>
             {warning ?
               <div className={classes.padding}>
                 <Warning className={classes.icon} />
               </div>
               : null
             }
-            <IconButton onClick={handleEditMode}>
+            <IconButton className={classes.noPrint} onClick={handleEditMode}>
               <ModeEdit className={classes.editIcon} />
             </IconButton>
           </div>
         </div>
-
-        <Collapse in={this.state.expanded} transitionDuration="auto" unmountOnExit>
+        <div className={`${classes.paddingContent} ${classes.print}`}>{component}</div>
+        <Collapse
+          className={classes.noPrint}
+          in={this.state.expanded}
+          transitionDuration="auto"
+          unmountOnExit
+        >
           <div className={classes.paddingContent}>{component}</div>
         </Collapse>
       </div>

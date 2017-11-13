@@ -21,6 +21,9 @@ const styleSheet = (theme) => {
       margin: '0',
       padding: `${padding}px ${biggerPadding}px 0 ${biggerPadding}px`,
       borderBottom: `2px ${theme.palette.grey[300]} solid`,
+      '@media print': {
+        borderBottom: '0',
+      },
     },
     alignItems: {
       display: 'flex',
@@ -39,6 +42,12 @@ const styleSheet = (theme) => {
     },
     backButtonHeight: {
       height: 24,
+    },
+    noPrint: {
+      '@media print': {
+        visibility: 'hidden',
+        display: 'none',
+      },
     },
   };
 };
@@ -88,7 +97,10 @@ class HeaderNavigation extends Component {
           <SpreadContent className={classes.flex} >
             <div className={paddingClass}>
               { backButton
-                ? <IconButton className={classes.backButtonHeight} onClick={handleBackButton}>
+                ? <IconButton
+                  className={`${classes.backButtonHeight} ${classes.noPrint}`}
+                  onClick={handleBackButton}
+                >
                   <KeyboardArrowLeft />
                 </IconButton>
                 : null }
@@ -103,7 +115,7 @@ class HeaderNavigation extends Component {
             </div>
           </SpreadContent>
           {customTabs || tabs
-            ? <div>
+            ? <div className={classes.noPrint}>
               <Tabs
                 scrollable
                 value={index}

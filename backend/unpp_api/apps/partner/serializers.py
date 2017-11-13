@@ -5,6 +5,7 @@ from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
+    PARTNER_TYPES,
 )
 from common.models import Point, AdminLevel1
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
@@ -784,7 +785,11 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         hq_id = self.context['request'].parser_context.get('kwargs', {}).get('pk')
         for country_code in validated_data['chosen_country_to_create']:
-            partner = Partner.objects.create(hq_id=hq_id, country_code=country_code)
+            partner = Partner.objects.create(
+                hq_id=hq_id,
+                country_code=country_code,
+                display_type=PARTNER_TYPES.international,
+            )
             PartnerProfile.objects.create(partner=partner)
             PartnerMailingAddress.objects.create(partner=partner)
             PartnerAuditAssessment.objects.create(partner=partner)
