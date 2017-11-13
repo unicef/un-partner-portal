@@ -145,7 +145,7 @@ export const selectNormalizedOrganizationTypes = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['partner-type']);
 
 export const selectNormalizedYearsOfExperience = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['years-of-exp-choices']);
+  mapValuesForSelectionField(state.partnerProfileConfig['years-of-exp-choices'], 'value');
 
 export const selectNormalizedWorkingLanguages = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['working-languages']);
@@ -157,7 +157,7 @@ export const selectNormalizedStaffGlobalyChoices = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['staff-globaly-choices']);
 
 export const selectNormalizedBudgets = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['budget-choices']);
+  mapValuesForSelectionField(state.partnerProfileConfig['budget-choices'], 'value');
 
 export const selectNormalizedDirectJustification = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-justifications']);
