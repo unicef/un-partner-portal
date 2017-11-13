@@ -344,8 +344,8 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
 
     specializations = SimpleSpecializationSerializer(many=True)
     locations = PointSerializer(many=True)
-    focal_points_detail = UserSerializer(read_only=True, many=True)
-    reviewers_detail = UserSerializer(read_only=True, many=True)
+    focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
+    reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
 
     class Meta:
         model = EOI
