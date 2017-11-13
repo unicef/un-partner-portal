@@ -184,7 +184,7 @@ class EoiFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName); }}
+              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
             >
               {messages.clear}
             </Button>

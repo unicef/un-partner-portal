@@ -29,7 +29,7 @@ class CfeiContainer extends Component {
       loadCfei(nextProps.params.type, nextProps.location.query);
       return false;
     } else if (type !== nextProps.params.type) {
-      const cleared = resetChanges(nextProps.location.pathname);
+      const cleared = resetChanges(nextProps.location.pathname, query);
       loadCfei(nextProps.params.type, cleared);
     }
     return true;
