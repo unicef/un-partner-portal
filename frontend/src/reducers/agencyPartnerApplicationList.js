@@ -41,14 +41,14 @@ const messages = {
 
 const initialState = {
   columns: [
-    { name: 'title', title: 'Project name' },
+    { name: 'title', title: 'Project Title' },
     { name: 'id', title: 'CN ID' },
     { name: 'cfei_type', title: 'Type of Application' },
-    { name: 'name', title: 'Agency' },
+    { name: 'name', title: 'UN Agency' },
     { name: 'country_code', title: 'Country' },
     { name: 'specializations', title: 'Sector' },
     { name: 'created', title: 'Submission/Received date' },
-    { name: 'did_win', title: 'Awarded' },
+    { name: 'did_win', title: 'Selected' },
   ],
   loading: false,
   totalCount: 0,

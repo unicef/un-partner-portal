@@ -17,7 +17,7 @@ const initialState = {
 };
 
 const messages = {
-  loadingFailure: 'Couldn\'t load awarded partners, ' +
+  loadingFailure: 'Couldn\'t load selected partners, ' +
   'please refresh page and try again',
 };
 

@@ -81,7 +81,7 @@ class SelectableList extends Component {
           <HeaderAction rows={R.values(R.pick(selected, rows))} />
         </SelectedHeader>
         : <div className={classes.container}><Typography type="title">
-          {`${firstRange}-${secondRange} of ${itemsCount} results to show`}
+          {`${firstRange}-${secondRange} of ${itemsCount} results`}
         </Typography></div>
       }
     </div>);

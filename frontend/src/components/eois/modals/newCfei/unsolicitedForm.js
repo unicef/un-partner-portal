@@ -14,6 +14,7 @@ import ProfileConfirmation from '../../../organizationProfile/common/profileConf
 const messages = {
   cn: 'Concept Note',
   projectDetails: 'Project Details',
+  cnLabel: 'Please ensure that you have used the concept note template provided by the UN agency to whom you are submitting this unsolicited concept note.',
 };
 
 const OpenForm = (props) => {
@@ -35,6 +36,7 @@ const OpenForm = (props) => {
           component={<FileForm
             fieldName="cn"
           />}
+          label={messages.cnLabel}
           displayHint={false}
         />
       </GridColumn>

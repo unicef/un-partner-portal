@@ -9,7 +9,7 @@ import HeaderNavigation from '../common/headerNavigation';
 
 const messages = {
   partner: 'Calls for Expressions of Interest',
-  agency: 'Expression of Interests',
+  agency: 'Expressions of Interest',
 };
 
 class CfeiHeader extends Component {

@@ -5,11 +5,11 @@ import RadioForm from '../../../../forms/radioForm';
 const confirmValues = [
   {
     value: true,
-    label: 'I confirm',
+    label: 'Yes, I accept',
   },
   {
     value: false,
-    label: 'I decline',
+    label: 'No, I decline',
   },
 ];
 

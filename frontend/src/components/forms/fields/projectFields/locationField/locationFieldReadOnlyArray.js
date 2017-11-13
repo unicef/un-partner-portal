@@ -6,7 +6,6 @@ import TextField from '../../../textFieldForm';
 
 const messages = {
   projectLocation: 'Project location',
-  adminLevel: 'Admin Level 1 Location(s)',
 };
 
 const Country = (name, index) => (
@@ -20,12 +19,10 @@ const Country = (name, index) => (
 const adminLevel = (name, index) => (
   <TextField
     fieldName={`${name}.adminLevel`}
-    label={messages.adminLevel}
     readOnly
     key={index}
   />
 );
-
 
 const LocationFieldArray = (props) => {
   const { ...other } = props;

@@ -10,8 +10,7 @@ import GridColumn from '../../../common/grid/gridColumn';
 const messages = {
   resultsBasedApproach: 'Does the organization use a results-based approach to managing programmes and projects?',
   resultsDescription: 'Please provide a brief description of your management approach',
-  monitoringSystem: 'Does your organization have a system for monitoring and evaluating ' +
-                'its projects & programmes?',
+  monitoringSystem: 'Does your organization have a system for monitoring and evaluating its programmes and projects?',
   meDescription: 'Briefly explain your M&E system',
   feedbackSystem: 'Does the organization have systems or procedures in place for ' +
                 'beneficaries to provide feedback on prject activities?',

@@ -1,7 +1,6 @@
 import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { browserHistory as history } from 'react-router';
 import PropTypes from 'prop-types';
 import GridColumn from '../../common/grid/gridColumn';
 import PartnerApplicationsNotesFilter from './partnerApplicationsUnsolicitedFilter';
@@ -15,6 +14,7 @@ import { formatDateForPrint } from '../../../helpers/dates';
 import WrappedCell from '../../common/cell/wrappedCell';
 import SectorsCell from '../sectorsCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
+import CountriesCell from '../../partners/countriesCell';
 
 /* eslint-disable react/prop-types */
 const applicationCell = ({ row, column }) => {
@@ -32,6 +32,8 @@ const applicationCell = ({ row, column }) => {
     />);
   } else if (column.name === 'specializations') {
     return <SectorsCell specializations={row.specializations} />;
+  } else if (column.name === 'country') {
+    return <CountriesCell countries={row.country} />;
   }
 
   return undefined;

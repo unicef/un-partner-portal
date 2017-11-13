@@ -19,10 +19,10 @@ const messages = {
   labels: {
     search: 'Search',
     country: 'Country',
-    location: 'Location - Admin 1',
-    sector: 'Sector & Area of specialization',
+    location: 'Location',
+    sector: 'Sector & Area of Specialization',
     agency: 'Agency',
-    show: 'Show only Converted to Direct Selections',
+    show: 'Show only those chosen for "direct selection"',
   },
   clear: 'clear',
   submit: 'submit',
@@ -47,7 +47,7 @@ export const STATUS_VAL = [
   },
   {
     value: false,
-    label: 'Completed',
+    label: 'Finalized',
   },
 ];
 
@@ -62,15 +62,11 @@ class EoiFilter extends Component {
     this.onSearch = this.onSearch.bind(this);
   }
 
-  componentWillMount() {
-    const { pathName, query } = this.props;
-    resetChanges(pathName, query);
-  }
-
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { project_title, agency, active, country_code, specialization, selected_source, ds_converted } = values;
+    const { project_title, agency, active, country_code,
+      specialization, selected_source, ds_converted } = values;
 
     history.push({
       pathname: pathName,
@@ -179,7 +175,9 @@ EoiFilter.propTypes = {
 };
 
 const formEoiFilter = reduxForm({
-  form: 'tableFilter',
+  form: 'unsolicitedFilter',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
 })(EoiFilter);
 
 const mapStateToProps = (state, ownProps) => {

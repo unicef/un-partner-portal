@@ -19,10 +19,10 @@ const messages = {
   labels: {
     search: 'Search',
     country: 'Country',
-    sector: 'Sector & Area of specialization',
+    sector: 'Sector & Area of Specialization',
     type: 'Type of Application',
     agency: 'Agency',
-    show: 'Show Only Awarded Applications',
+    show: 'Show Only Selected Applications',
   },
   clear: 'clear',
   submit: 'submit',
@@ -47,7 +47,7 @@ export const STATUS_VAL = [
   },
   {
     value: false,
-    label: 'Completed',
+    label: 'Finalized',
   },
 ];
 

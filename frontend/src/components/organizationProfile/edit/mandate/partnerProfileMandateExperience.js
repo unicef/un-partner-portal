@@ -10,7 +10,7 @@ import AreaField from '../../../forms/fields/projectFields/sectorField/areaField
 
 const messages = {
   sector: 'Sector',
-  sectorsAndSpecialization: 'Sectors and specialization',
+  sectorsAndSpecialization: 'Sectors, areas of specialization, and years of experience',
   years: 'Years of experience',
 };
 

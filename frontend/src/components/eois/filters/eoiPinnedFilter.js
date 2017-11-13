@@ -19,9 +19,9 @@ const messages = {
   labels: {
     search: 'Search',
     country: 'Country',
-    location: 'Location - Admin 1',
-    sector: 'Sector & Area of specialization',
-    agency: 'Agency',
+    location: 'Location',
+    sector: 'Sector & Area of Specialization',
+    agency: 'UN Agency',
   },
   clear: 'clear',
   submit: 'submit',
@@ -45,7 +45,7 @@ export const STATUS_VAL = [
   },
   {
     value: false,
-    label: 'Completed',
+    label: 'Finalized',
   },
 ];
 
@@ -64,7 +64,7 @@ class EoiPinnedFilter extends Component {
     const { pathName, query } = this.props;
     resetChanges(pathName, query);
   }
- 
+
 
   onSearch(values) {
     const { pathName, query } = this.props;

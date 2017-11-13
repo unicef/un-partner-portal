@@ -13,8 +13,8 @@ import PaddedContent from '../../common/paddedContent';
 import VerticalBarChart from '../../common/charts/verticalBarChart';
 
 const messages = {
-  title: 'Number Of New CFEIs by Sector',
-  caption: 'from past 10 days',
+  title: 'New Calls for Expressions of Interest by Sector',
+  caption: 'in last 10 days',
   button: 'view all',
   number: 'number',
 };

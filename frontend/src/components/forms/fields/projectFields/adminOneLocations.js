@@ -6,7 +6,7 @@ import { loadAdminOne } from '../../../../reducers/adminOneLocation';
 import SelectForm from '../../selectForm';
 
 const messages = {
-  label: 'Location Admin 1',
+  label: 'Location',
 };
 
 class Agencies extends Component {
@@ -39,7 +39,7 @@ class Agencies extends Component {
     return (
       <SelectForm
         fieldName={fieldName}
-        label={label}
+        label={messages.label}
         values={locations}
         selectFieldProps={{
           disabled: !this.props.countryCode || loc.length === 0,

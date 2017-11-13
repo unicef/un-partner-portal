@@ -4,13 +4,11 @@ import ControlledModal from '../../../common/modals/controlledModal';
 import CompareApplicationsContentContainer from './compareApplicationsContentContainer';
 
 const messages = {
-  title: 'Compare selected Concept Notes',
-
+  title: 'Compare concept notes',
 };
 
 
 class CompareApplicationsModal extends Component {
-
   render() {
     const { applications, dialogOpen, handleDialogClose } = this.props;
     return (
@@ -37,4 +35,4 @@ CompareApplicationsModal.propTypes = {
 
 
 export default CompareApplicationsModal;
-;
+

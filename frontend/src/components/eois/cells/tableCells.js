@@ -3,10 +3,10 @@ import { TableCell } from 'material-ui/Table';
 import EoiSectorCell from './eoiSectorCell';
 import EoiPartnersStatusCell from './eoiPartnersStatusCell';
 import EoiStatusCell from './eoiStatusCell';
-import EoiCountryCell from './eoiCountryCell';
 import EoiPartnersCell from './eoiPartnersCell';
 import EoiNameCell from './eoiNameCell';
 import IsDirectCell from './isDirectCell';
+import CountriesCell from '../../partners/countriesCell';
 import { formatDateForPrint } from '../../../helpers/dates';
 
 export default type => ({ row, column }) => {
@@ -14,14 +14,8 @@ export default type => ({ row, column }) => {
     return <EoiNameCell title={row.title || row.project_title} id={row.id} />;
   } else if (column.name === 'country_code') {
     return (
-      <TableCell >
-        {row.country_code.map((code, index) =>
-          (<span>
-            <EoiCountryCell code={code} />
-            {(index === row.country_code.length - 1) ? '' : ', '}
-          </span>),
-        )}
-      </TableCell>);
+      <CountriesCell countries={row.country_code} />
+    );
   } else if (column.name === 'specializations') {
     return (
       <TableCell >

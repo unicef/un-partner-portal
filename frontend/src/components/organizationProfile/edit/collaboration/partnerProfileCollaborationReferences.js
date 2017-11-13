@@ -8,7 +8,6 @@ import FileForm from '../../../forms/fileForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 
 const messages = {
-  myReferences: 'My References',
   reference: 'Reference',
   date: 'Date Received',
   referring: 'Name of referring organization',
@@ -58,7 +57,6 @@ const PartnerProfileCollaborationReferences = (props) => {
 
   return (<FormSection name="reference">
     <ArrayForm
-      label={messages.myReferences}
       fieldName="references"
       initial
       limit={15}
