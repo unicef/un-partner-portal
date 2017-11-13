@@ -65,6 +65,16 @@ class EOI(TimeStampedModel):
         return "EOI {} <pk:{}>".format(self.title, self.id)
 
     @property
+    def document_status(self):
+        today = date.today()
+        if self.is_completed:
+            return EOI_STATUSES.completed
+        elif self.is_completed is False and today < self.deadline_date:
+            return EOI_STATUSES.open
+        elif self.is_completed is False and today > self.deadline_date:
+            return EOI_STATUSES.closed
+
+    @property
     def is_open(self):
         return self.display_type == EOI_TYPES.open
 
