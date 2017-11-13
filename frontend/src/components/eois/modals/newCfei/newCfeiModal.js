@@ -22,8 +22,6 @@ const messages = {
   header: {
     open: {
       title: 'This CFEI is for open selections.',
-      body: 'If you would like to notify specific partners about this CFEI, you can select ' +
-      'their names on the next page of this form.',
     },
     direct: {
       title: 'This is a direct selection.',
