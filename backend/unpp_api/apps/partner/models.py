@@ -196,6 +196,73 @@ class PartnerProfile(TimeStampedModel):
         if budget is not None:
             return budget.budget
 
+    def identification_is_complete(self):
+        required_fields = {
+            'legal_name': self.partner.legal_name,
+            'country_code': self.partner.county_code,
+            'establishment_year': self.year_establishment
+        }
+
+        return all(required_fields.values())
+
+    def contact_is_complete(self):
+        required_fields = {
+            'sreet_or_pobox': self.partner.mailing_address.street or self.partner.mailing_address.po_box,
+            'city': self.partner.mailing_address.city,
+            'country': self.partner.mailing_address.country,
+            'zip_code': self.partner.mailing_address.zip_code,
+            'telephone': self.partner.mailing_address.telephone
+        }
+        return all(required_fields.values())
+
+    def mandatemission_complete(self):
+        required_fields = {
+            'proj_background_rationale': self.partner.mandate_mission.background_and_rationale,
+            'managate_and_mission': self.partner.mandate_mission.mandate_and_mission,
+            'governance_structure': self.partner.mandate_mission.governance_structure,
+            'governance_hq': self.partner.mandate_mission.governance_hq,
+            'governance_organigram': self.partner.mandate_mission.governance_organigram,
+            'staff_in_country': self.partner.staff_in_country,
+            'staff_globally': self.partner.staff_globally
+            # TODO - country presence for hq + country
+
+        }
+        if not self.partner.is_hq:
+            required_fields.pop('governance_hq')
+            required_fields.pop('staff_globally')
+
+        else:
+            required_fields.pop('staff_in_country')
+
+        return all(required_fields.values())
+
+    def funding_complete(self):
+        budgets = self.partner.budgets.all()
+        current_year_exists = budgets.filter(year=date.today().year).exists()
+        last_year_exists = budgets.filter(year=(current_year - 1)).exists()
+
+        required_fields = {
+            'budgets': current_year_exists and last_year_exists,
+            'main_donors': self.partner.fund.major_donors,
+            'main_donors_list': self.partner.fund.main_donors_list,
+            'source_core_funding': self.partner.fund.source_core_funding
+        }
+
+        return all(required_fields.values())
+
+    def collaboration_complete(self):
+        # TODO - how do we tell for this tab?
+        return True
+
+    def proj_impl_is_complete(self):
+        # TODO
+        return True
+
+    def other_info_is_complete(self):
+        # TODO
+        return True
+
+
 
 class PartnerMailingAddress(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="mailing_address")
