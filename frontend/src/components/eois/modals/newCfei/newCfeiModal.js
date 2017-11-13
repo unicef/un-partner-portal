@@ -12,7 +12,6 @@ import { addDirectCfei, addOpenCfei, addUnsolicitedCN } from '../../../../reduce
 import CallPartnersModal from '../callPartners/callPartnersModal';
 import { PROJECT_TYPES } from '../../../../helpers/constants';
 
-
 const messages = {
   title: {
     open: 'Create new Call for Expressions of Interests',

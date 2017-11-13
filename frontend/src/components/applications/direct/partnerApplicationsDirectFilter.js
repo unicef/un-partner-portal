@@ -22,7 +22,7 @@ const messages = {
     status: 'CFEI Status',
     cnStatus: 'CN Status',
     agency: 'Agency',
-    sector_area: 'Sector & Area of Specialization',
+    sector: 'Sector & Area of Specialization',
     fromDate: 'From date',
     toDate: 'To date',
     date: 'Date posted - choose date range',
@@ -110,7 +110,7 @@ class PartnerApplicationsNotesFilter extends Component {
             <Grid item sm={4} xs={12} >
               <SelectForm
                 label={messages.labels.sector}
-                placeholder={messages.labels.choose}
+                placeholder={messages.choose}
                 fieldName="specialization"
                 values={specs}
                 optional
