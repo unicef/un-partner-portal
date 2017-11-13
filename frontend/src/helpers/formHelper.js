@@ -250,7 +250,7 @@ export const renderText = ({
 
   return (
     <FormControl fullWidth>
-      <FormLabel>{label}</FormLabel>
+      {label && <FormLabel>{label}</FormLabel>}
       <div style={{ display: 'flex', alignItems: 'center' }}>
         {date && <DateRange style={{
           marginRight: 5,

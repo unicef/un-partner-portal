@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 
 const messages = {
-  text: 'Complete',
+  text: 'Finalize',
 };
 
 const EditCfeiButton = (props) => {

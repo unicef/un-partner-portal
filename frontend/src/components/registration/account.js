@@ -50,7 +50,7 @@ class Account extends Component {
             <Grid container direction="row">
               <Grid item sm={6} xs={12}>
                 <TextFieldForm
-                  label="E-mail address"
+                  label="Your E-mail Address"
                   placeholder="Provide E-mail"
                   fieldName="json.user.email"
                   validation={[email]}
@@ -61,7 +61,7 @@ class Account extends Component {
                   label="Password"
                   fieldName="json.user.password"
                   textFieldProps={{
-                    helperText: 'Use at least 8 characters, include both an uppercase, letter and a number.',
+                    helperText: 'Use at least 8 characters. Include at least one uppercase letter and one number.',
                   }}
                   validation={[password]}
                 />

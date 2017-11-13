@@ -10,7 +10,7 @@ import GridColumn from '../../common/grid/gridColumn';
 import PaddedContent from '../../common/paddedContent';
 
 const messages = {
-  title: 'Number Of Awards to Date',
+  title: 'Number of Offers to Date',
   button: 'view all',
 };
 

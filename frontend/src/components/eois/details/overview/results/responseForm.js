@@ -33,8 +33,7 @@ const styleSheet = theme => ({
 
 const messages = {
   title: 'Result',
-  change: 'You can change your decision until...',
-  confirm: 'You were direclty selected. Confirm your participation:',
+  confirm: 'Your organization has been identified for a potential partnership via “direct selection”. Would you like to accept and move forward?',
   confirmed: 'Selection confirmed',
   declined: 'Selection declined',
   button: 'send',
@@ -126,7 +125,6 @@ class ResultForm extends Component {
     return (
       <div>
         <Typography>{messages.confirm}</Typography>
-        <Typography type="caption">{messages.change}</Typography>
         {this.baseForm()}
       </div>
     );

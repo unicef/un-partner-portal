@@ -9,7 +9,7 @@ import TextFieldForm from '../../../forms/textFieldForm';
 import { selectNormalizedBudgets } from '../../../../store';
 
 const messages = {
-  annualBudget: 'What is your organization\'s annual budget (in USD) for the current and two previous fiscal years?',
+  annualBudget: 'What is your organization\'s annual budget (in USD) for the current and two previous years?',
   budget: 'Budget',
   year: 'Year',
 };

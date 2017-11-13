@@ -18,8 +18,8 @@ const messages = {
   labels: {
     search: 'Search',
     country: 'Country',
-    location: 'Location - Admin 1',
-    sector: 'Sector & Area of specialization',
+    location: 'Location',
+    sector: 'Sector & Area of Specialization',
     agency: 'Agency',
   },
   clear: 'clear',

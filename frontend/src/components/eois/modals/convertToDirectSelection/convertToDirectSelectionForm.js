@@ -14,9 +14,9 @@ const messages = {
   justification: 'Add justification for completing this CFEI',
   reason: 'Choose reason of completing this CFEI',
   justificationFor: 'Justification for Direct Selection',
-  pleaseState: 'Please state',
+  pleaseState: 'Justification summary',
   explain: 'Explain your justification for Direct Selection',
-  briefBackground: 'Brief background of the project',
+  briefBackground: 'Project Background',
   other: 'Other information (optional)',
   focal: 'Project / Programme Focal Point(s)',
   startDate: 'Estimated Start Date',
@@ -39,7 +39,7 @@ const ConvertToDirectSelectionForm = (props) => {
         />
         <TextFieldForm
           fieldName="justification"
-          label={messages.please}
+          label={messages.pleaseState}
           placeholder={messages.explain}
           textFieldProps={{
             inputProps: {

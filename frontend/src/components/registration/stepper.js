@@ -84,7 +84,7 @@ class RegistrationStepper extends React.Component {
       <div>
         <Stepper linear activeStep={stepIndex} orientation="vertical">
           <Step>
-            <StepLabel>Select type of your organization</StepLabel>
+            <StepLabel>Select type of organization</StepLabel>
             <StepContent>
               <RegistrationStep onSubmit={this.handleNext} first>
                 <OrganizationType />
@@ -92,7 +92,7 @@ class RegistrationStepper extends React.Component {
             </StepContent>
           </Step>
           <Step>
-            <StepLabel>Enter basic information</StepLabel>
+            <StepLabel>Enter basic identification information</StepLabel>
             <StepContent>
               <RegistrationStep onSubmit={this.handleNext} handlePrev={this.handlePrev}>
                 <BasicInformation />
@@ -100,7 +100,7 @@ class RegistrationStepper extends React.Component {
             </StepContent>
           </Step>
           <Step>
-            <StepLabel>Fill the Harmonized Due Dilligence Declaration</StepLabel>
+            <StepLabel>Fill the Partner Declaration</StepLabel>
             <StepContent>
               <RegistrationStep onSubmit={this.handleNextQuestions} handlePrev={this.handlePrev}>
                 <Declaration />

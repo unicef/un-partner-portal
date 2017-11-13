@@ -11,7 +11,7 @@ import { loadAwardedPartners } from '../../../../../../reducers/cfeiAwardedPartn
 import SingleAward from './singleAward';
 
 const messages = {
-  title: 'Awarded Partner(s)',
+  title: 'Selected Partner(s)',
   empty: 'No results yet',
 };
 

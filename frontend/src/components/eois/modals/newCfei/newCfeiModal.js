@@ -14,8 +14,11 @@ import { PROJECT_TYPES } from '../../../../helpers/constants';
 
 
 const messages = {
-  title: 'Create new Call for Expressions of Interests',
-  unsolicitedTitle: 'Submit new Unsolicited Concept Note',
+  title: {
+    open: 'Create new Call for Expressions of Interests',
+    direct: 'Create new direct selection',
+    unsolicited: 'Create new Unsolicited Concept Note',
+  },
   header: {
     open: {
       title: 'This CFEI is for open selections.',
@@ -24,7 +27,7 @@ const messages = {
     },
     direct: {
       title: 'This is a direct selection.',
-      body: 'You will need to select a Partner to save this form.',
+      body: 'In order to save this form, you will need to identify the partner(s).',
     },
   },
 
@@ -33,9 +36,13 @@ const messages = {
 const getTitle = (type) => {
   switch (type) {
     case PROJECT_TYPES.UNSOLICITED:
-      return messages.unsolicitedTitle;
+      return messages.title.unsolicited;
+    case PROJECT_TYPES.OPEN:
+      return messages.title.open;
+    case PROJECT_TYPES.DIRECT:
+      return messages.title.direct;
     default:
-      return messages.title;
+      return messages.title.direct;
   }
 };
 

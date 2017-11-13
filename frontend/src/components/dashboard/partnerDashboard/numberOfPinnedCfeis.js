@@ -10,8 +10,8 @@ import GridColumn from '../../common/grid/gridColumn';
 import PaddedContent from '../../common/paddedContent';
 
 const messages = {
-  title: 'Number Of Pinned CFEIs',
-  caption: 'with Application Deadline within 10 days',
+  title: 'Number Of Pinned Calls for Expressions of Interest',
+  caption: 'with approaching application deadline',
   button: 'view all',
 };
 

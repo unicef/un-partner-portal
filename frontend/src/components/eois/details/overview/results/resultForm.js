@@ -33,10 +33,10 @@ const styleSheet = theme => ({
 
 const messages = {
   title: 'Result',
-  expected: notifDate => `Results are expected to be made by: ${notifDate}`,
+  expected: notifDate => `Notification of results will be made by: ${notifDate}`,
   labels: {
     notif: 'Notification of Results Date',
-    chosen: 'Your application has been chosen!',
+    chosen: 'Your concept note has been selected for a potential partnership! Would you like to accept and move forward with your application?',
     confirm: 'Confirm your participation:',
     confirmed: 'Selection confirmed',
     declined: 'Selection declined',
@@ -69,7 +69,6 @@ const showForm = (accepted, declined, classes, handleSubmit) => {
   }
   return (
     <div>
-      <Typography>{messages.labels.confirm}</Typography>
       <ResultRadio />
       <Grid container justify="flex-end">
         <Grid item>

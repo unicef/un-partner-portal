@@ -19,10 +19,10 @@ const messages = {
   labels: {
     search: 'Search',
     country: 'Country',
-    location: 'Location - Admin 1',
-    sector: 'Sector & Area of specialization',
+    location: 'Location',
+    sector: 'Sector & Area of Specialization',
     agency: 'Agency',
-    show: 'Show only Converted to Direct Selections',
+    show: 'Show only those chosen for "direct selection"',
   },
   clear: 'clear',
   submit: 'submit',
@@ -47,7 +47,7 @@ export const STATUS_VAL = [
   },
   {
     value: false,
-    label: 'Completed',
+    label: 'Finalized',
   },
 ];
 

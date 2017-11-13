@@ -9,9 +9,9 @@ import PaddedContent from '../../common/paddedContent';
 
 const messages = {
   title: 'Welcome!',
-  text: 'Your organization is successfully registered to the UN Partner Portal! ' +
-  'You can view all Calls for Expression of Interests, but to submit a Concept Note, ' +
-  'you need to complete you organization profile.',
+  text: 'Your organization has now been successfully registered on the UN Partner Portal.' +
+  'You can now explore all the features of the Portal. Please note your organization must ' +
+  'complete its profile before it can submit applications for funding consideration.',
   cfeiButton: 'View calls for expressions of interest',
   profileButton: 'Complete Profile',
 };

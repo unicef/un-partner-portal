@@ -33,7 +33,7 @@ const messages = {
   labels: {
     id: 'CFEI ID:',
     issued: 'Issued by',
-    goal: 'Goal, Objective, Expected Outcome and Results',
+    goal: 'Expected Results',
     agency: 'Agency',
     partner: 'Organization\'s Legal Name',
     type: 'Type of Organization',
@@ -93,12 +93,12 @@ const Fields = ({ type, role, partner }) => {
       <Goal readOnly />
       <OtherInfo readOnly />
       <GridRow columns={2} >
-        <StartDate readOnly />
-        <EndDate readOnly />
-      </GridRow>
-      {type === PROJECT_TYPES.OPEN && <GridRow columns={2} >
         <DeadlineDate readOnly />
         <NotifyDate readOnly />
+      </GridRow>
+      {type === PROJECT_TYPES.OPEN && <GridRow columns={2} >
+        <StartDate readOnly />
+        <EndDate readOnly />
       </GridRow>}
     </GridColumn>
   </PaddedContent>);

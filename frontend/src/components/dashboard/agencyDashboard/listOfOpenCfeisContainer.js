@@ -7,7 +7,7 @@ import EmptyContent from '../../common/emptyContent';
 
 
 const messages = {
-  title: 'List of Open CFEIs',
+  title: 'List of Open Calls for Expressions of Interest',
 };
 
 const ListOfOpenCfeisContainer = (props) => {
