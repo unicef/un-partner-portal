@@ -93,6 +93,7 @@ export const renderFormControl = ({
 
 export const renderSelectField = ({
   input,
+  defaultValue,
   meta: { touched, error, warning },
   children,
   ...other
@@ -100,6 +101,7 @@ export const renderSelectField = ({
   <SelectField
     errorText={(touched && error) || warning}
     {...input}
+    value={input.value || defaultValue}
     onChange={(event, index, value) => input.onChange(value)}
     {...other}
   >
