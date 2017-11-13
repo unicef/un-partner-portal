@@ -26,7 +26,6 @@ const messages = {
 
 const ConvertToDirectSelectionForm = (props) => {
   const { handleSubmit, directJustifications, startDate } = props;
-  console.log(startDate)
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
