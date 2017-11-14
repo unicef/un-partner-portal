@@ -28,7 +28,7 @@ const initialState = {
     { name: 'country', title: 'Country' },
     { name: 'specializations', title: 'Sector' },
     { name: 'application_date', title: 'Application Date' },
-    { name: 'status', title: 'Status' },
+    { name: 'application_status', title: 'Status', width: 200 },
   ],
   loading: false,
   conceptNotes: [],

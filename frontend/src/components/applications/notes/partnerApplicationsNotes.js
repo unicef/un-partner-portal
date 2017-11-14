@@ -25,8 +25,6 @@ const applicationCell = ({ row, column }) => {
     />);
   } else if (column.name === 'application_date') {
     return <WrappedCell content={formatDateForPrint(row.application_date)} />;
-  } else if (column.name === 'status') {
-    return <ApplicationStatusCell appStatus={row.status} />;
   } else if (column.name === 'specializations') {
     return <SectorsCell specializations={row.specializations} />;
   }
