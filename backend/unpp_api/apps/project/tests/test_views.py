@@ -468,6 +468,12 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         app.eoi.reviewers.add(self.user)
 
         response = self.client.post(url, data=payload, format='json')
+        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertEquals(response.data['non_field_errors'], ['Assessment allowed once deadline is passed.'])
+        app.eoi.deadline_date = date.today() - timedelta(days=1)
+        app.eoi.save()
+
+        response = self.client.post(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['date_reviewed'], str(date.today()))
         self.assertEquals(response.data['reviewer'], self.user.id)

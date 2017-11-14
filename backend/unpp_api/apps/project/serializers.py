@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import datetime
+from datetime import datetime, date
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -411,7 +411,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
 
         if instance.completed_reason is None and validated_data.get('completed_reason') is not None and \
                 instance.completed_date is None and instance.is_completed is False:
-            instance.completed_date = datetime.datetime.now()
+            instance.completed_date = datetime.now()
             instance.is_completed = True
 
         instance = super(ProjectUpdateSerializer, self).update(instance, validated_data)
@@ -510,6 +510,14 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
             'date_reviewed',
             'note',
         )
+
+    def validate(self, data):
+        kwargs = self.context['request'].parser_context.get('kwargs', {})
+        application_id = kwargs.get(self.context['view'].lookup_url_kwarg)
+        app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
+        if date.today() <= app.eoi.deadline_date:
+            raise serializers.ValidationError("Assessment allowed once deadline is passed.")
+        return super(ReviewerAssessmentsSerializer, self).validate(data)
 
 
 class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
