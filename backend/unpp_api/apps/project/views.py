@@ -95,7 +95,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
         today = date.today()
 
-        return queryset.filter(deadline_date__gte=today)
+        return queryset.filter(deadline_date__gte=today, is_completed=False)
 
     def post(self, request, *args, **kwargs):
         serializer = CreateProjectSerializer(data=request.data, context={'request': request})
