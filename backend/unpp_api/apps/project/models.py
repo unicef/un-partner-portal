@@ -23,7 +23,6 @@ class EOI(TimeStampedModel):
     """
     # TODO: this model is very heavy !!! we should think to split fields like file texts to some "EOI_profil" ..
     display_type = models.CharField(max_length=3, choices=EOI_TYPES, default=EOI_TYPES.open)
-    status = models.CharField(max_length=3, choices=EOI_STATUSES, default=EOI_STATUSES.open)
     title = models.CharField(max_length=255)
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
     created_by = models.ForeignKey('account.User', related_name="expressions_of_interest")
@@ -52,6 +51,7 @@ class EOI(TimeStampedModel):
     justification = models.TextField(null=True, blank=True)  # closed or completed
     completed_reason = models.CharField(max_length=3, choices=COMPLETED_REASON, null=True, blank=True)
     completed_date = models.DateTimeField(null=True, blank=True)
+    is_completed = models.BooleanField(default=False)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
     assessments_criteria = JSONField(default=dict([('selection_criteria', ''), ('weight', 0)]))
     review_summary_comment = models.TextField(null=True, blank=True)
@@ -65,16 +65,22 @@ class EOI(TimeStampedModel):
         return "EOI {} <pk:{}>".format(self.title, self.id)
 
     @property
+    def status(self):
+        today = date.today()
+        if self.is_completed:
+            return EOI_STATUSES.completed
+        elif self.is_completed is False and self.deadline_date and today > self.deadline_date:
+            return EOI_STATUSES.closed
+        else:
+            return EOI_STATUSES.open
+
+    @property
     def is_open(self):
         return self.display_type == EOI_TYPES.open
 
     @property
     def is_direct(self):
         return self.display_type == EOI_TYPES.direct
-
-    @property
-    def is_completed(self):
-        return self.completed_reason is not None
 
     @property
     def is_overdue_deadline(self):
