@@ -1,5 +1,6 @@
 import React from 'react';
-import { reduxForm } from 'redux-form';
+import { reduxForm, formValueSelector } from 'redux-form';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import * as fields from '../../../forms/fields/projectFields/commonFields';
@@ -12,7 +13,7 @@ const messages = {
 };
 
 const OpenForm = (props) => {
-  const { handleSubmit } = props;
+  const { handleSubmit, start_date, end_date, deadline_date, notif_results_date } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
@@ -20,9 +21,9 @@ const OpenForm = (props) => {
           formName="newOpenCfei"
           dateFields={[
             <fields.DeadlineDate />,
-            <fields.NotifyDate />,
-            <fields.StartDate />,
-            <fields.EndDate />,
+            <fields.NotifyDate minDate={deadline_date} />,
+            <fields.StartDate minDate={notif_results_date} />,
+            <fields.EndDate minDate={start_date} />,
           ]}
         />
         <Typography type="headline">
@@ -40,9 +41,18 @@ OpenForm.propTypes = {
    * callback for form submit
    */
   handleSubmit: PropTypes.func.isRequired,
+  deadline_date: PropTypes.string,
+  notif_results_date: PropTypes.string,
+  start_date: PropTypes.string,
 
 };
 
+const selector = formValueSelector('newOpenCfei');
+
+const connectedOpenForm = connect(
+  state => selector(state, 'start_date', 'end_date', 'deadline_date', 'notif_results_date'),
+)(OpenForm);
+
 export default reduxForm({
   form: 'newOpenCfei',
-})(OpenForm);
+})(connectedOpenForm);

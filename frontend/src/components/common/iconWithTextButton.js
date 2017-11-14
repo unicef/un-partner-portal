@@ -22,7 +22,7 @@ const styleSheet = () => ({
 });
 
 const IconWithTextButton = (props) => {
-  const { classes, onClick, icon, text } = props;
+  const { classes, onClick, icon, text, textProps } = props;
   return (
     <BaseButton
       className={classes.base}
@@ -31,7 +31,7 @@ const IconWithTextButton = (props) => {
       disableRipple
     >
       {icon}
-      <Typography className={classes.text} color="inherit" >{text}</Typography>
+      <Typography className={classes.text} color="inherit" {...textProps}>{text}</Typography>
     </BaseButton>
   );
 };
@@ -41,6 +41,7 @@ IconWithTextButton.propTypes = {
   onClick: PropTypes.function,
   icon: PropTypes.component,
   text: PropTypes.string,
+  textProps: PropTypes.object,
 };
 
 export default withStyles(styleSheet, { name: 'IconWithTextButton' })(IconWithTextButton);
