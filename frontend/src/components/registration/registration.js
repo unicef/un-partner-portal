@@ -4,7 +4,7 @@ import Card from '../common/card';
 import Stepper from './stepper';
 
 const messages = {
-  title: 'Registration',
+  title: 'Registration Organization',
 };
 
 const Registration = () => (

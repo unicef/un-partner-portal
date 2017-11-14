@@ -12,7 +12,7 @@ import { chartColors } from '../../../styles/muiTheme';
 
 
 const messages = {
-  title: 'Number Of Submitted Concept Notes',
+  title: 'Number Of Applications Submitted by UN Agency',
 };
 
 const NumberOfSubmittedConceptNotes = (props) => {

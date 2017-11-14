@@ -12,7 +12,7 @@ import Loader from '../../../common/loader';
 const labels = {
   partner_name: 'Partner',
   id: 'Concept Note Id',
-  total_assessment_score: 'Total Assessment Score',
+  total_assessment_score: 'Average score',
   verification_status: 'Verification status',
   flagging_status: 'Flagging status',
   un_exp: 'UN Experience',

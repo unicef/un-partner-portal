@@ -15,7 +15,7 @@ const messages = {
     country: 'Country',
     verificationStatus: 'Verification Status',
     typeOfOrganization: 'Type of Organization',
-    sectorArea: 'Sector & Area of specialization',
+    sectorArea: 'Sector & Area of Specialization',
     populations: 'Populations of concern',
   },
   clear: 'clear',

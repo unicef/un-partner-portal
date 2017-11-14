@@ -8,7 +8,6 @@ import FileForm from '../../../forms/fileForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 
 const messages = {
-  myAccreditation: 'My Accreditation',
   accreditation: 'Accreditation',
   date: 'Date Received',
   certifying: 'Certifying/Accrediting Body',
@@ -58,7 +57,6 @@ const PartnerProfileCollaborationAccreditation = (props) => {
 
   return (<FormSection name="accreditation">
     <ArrayForm
-      label={messages.myAccreditation}
       fieldName="accreditations"
       initial
       limit={15}

@@ -17,16 +17,16 @@ const CompleteCfeiForm = (props) => {
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
-        <TextFieldForm
-          fieldName="justification"
-          label={messages.justification}
-          placeholder="Enter comment..."
-        />
         <RadioForm
           fieldName="completed_reason"
           label={messages.reason}
           values={completionReasons}
           column
+        />
+        <TextFieldForm
+          fieldName="justification"
+          label={messages.justification}
+          placeholder="Enter comment..."
         />
       </GridColumn>
 

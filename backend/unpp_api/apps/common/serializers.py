@@ -88,6 +88,7 @@ class AdminLevel1Serializer(serializers.ModelSerializer):
     class Meta:
         model = AdminLevel1
         fields = "__all__"
+        validators = []  # Validation handled in custom get or create on point
 
 
 class AdminLevel1CountrySerializer(serializers.ModelSerializer):

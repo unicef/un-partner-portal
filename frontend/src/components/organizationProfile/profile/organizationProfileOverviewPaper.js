@@ -1,12 +1,21 @@
 import React from 'react';
 import Paper from 'material-ui/Paper';
+import { withStyles } from 'material-ui/styles';
 import OrganizationProfileOverview from './organizationProfileOverview';
 
 
-const OrganizationProfileOverviewPaper = () => (
-  <Paper>
+const styleSheet = () => ({
+  print: {
+    '@media print': {
+      boxShadow: 'none',
+    },
+  },
+});
+
+const OrganizationProfileOverviewPaper = ({ classes }) => (
+  <Paper className={classes.print}>
     <OrganizationProfileOverview />
   </Paper>
 );
 
-export default (OrganizationProfileOverviewPaper);
+export default withStyles(styleSheet)(OrganizationProfileOverviewPaper);

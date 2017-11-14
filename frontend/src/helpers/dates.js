@@ -26,3 +26,4 @@ export const formatDateForChart = (date) => {
 
 export const formatDateForDatePicker = date => moment(date).toDate();
 
+export const isDateBefore = (first, second) => moment(first).isBefore(moment(second));

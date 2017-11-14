@@ -17,7 +17,7 @@ const initialState = {
   columns: [
     { name: 'legal_name', title: 'Organization\'s Legal Name' },
     { name: 'type_org', title: 'Type of Organization' },
-    { name: 'id', title: 'Concept Note ID' },
+    { name: 'id', title: 'Application ID' },
     { name: 'status', title: 'Status' },
   ],
   applications: [],

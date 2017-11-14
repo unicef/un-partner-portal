@@ -12,8 +12,7 @@ const messages = {
   header: {
     title: 'You can inform Partners registered to work in the country(ies) selected about this ' +
     'offer.',
-    body: 'Email will be sent to selected accounts with a copy of the CFEI inviting them to ' +
-    'apply.',
+    body: 'If you would like to invite specific partners registered in the portal to apply for the CFEI, enter their names below, and they will receive an e-mail notification.',
   },
   skip: 'skip',
   send: 'send',

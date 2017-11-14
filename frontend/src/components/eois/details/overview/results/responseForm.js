@@ -11,6 +11,7 @@ import { updateApplication } from '../../../../../reducers/partnerApplicationDet
 import ResultRadio from './resultRadio';
 import ProfileConfirmation from '../../../../organizationProfile/common/profileConfirmation';
 import { PROJECT_STATUSES } from '../../../../../helpers/constants';
+import { formatDateForPrint } from '../../../../../helpers/dates';
 
 const styleSheet = theme => ({
   container: {
@@ -32,13 +33,13 @@ const styleSheet = theme => ({
 
 const messages = {
   title: 'Result',
-  change: 'You can change your decision until...',
-  confirm: 'You were direclty selected. Confirm your participation:',
+  confirm: 'Your organization has been identified for a potential partnership via “direct selection”. Would you like to accept and move forward?',
   confirmed: 'Selection confirmed',
   declined: 'Selection declined',
   button: 'send',
   buttonChange: 'change',
   ended: 'This project is already closed/completed',
+  decision: 'Decision sent',
 };
 
 
@@ -96,11 +97,12 @@ class ResultForm extends Component {
   }
 
   showForm() {
-    const { accepted, declined, status } = this.props;
+    const { accepted, declined, status, decisionDate } = this.props;
     const { change } = this.state;
     if (accepted) {
       return (<div>
         <Typography>{messages.confirmed}</Typography>
+        <Typography type="caption">{`${messages.decision}: ${decisionDate}`}</Typography>
         {change
           ? this.baseForm()
           : button(this.handleDecisionChange,
@@ -110,6 +112,7 @@ class ResultForm extends Component {
     } else if (declined) {
       return (<div>
         <Typography>{messages.declined}</Typography>
+        <Typography type="caption">{`${messages.decision}: ${decisionDate}`}</Typography>
         {change
           ? this.baseForm()
           : button(this.handleDecisionChange,
@@ -122,7 +125,6 @@ class ResultForm extends Component {
     return (
       <div>
         <Typography>{messages.confirm}</Typography>
-        <Typography type="caption">{messages.change}</Typography>
         {this.baseForm()}
       </div>
     );
@@ -145,6 +147,7 @@ ResultForm.propTypes = {
   declined: PropTypes.bool,
   submitConfirmation: PropTypes.func,
   status: PropTypes.string,
+  decisionDate: PropTypes.string,
 };
 
 const formResult = reduxForm({
@@ -154,6 +157,7 @@ const formResult = reduxForm({
 const mapStateToProps = (state, ownProps) => ({
   accepted: ownProps.application.did_accept,
   declined: ownProps.application.did_decline,
+  decisionDate: formatDateForPrint(ownProps.application.decision_date),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

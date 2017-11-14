@@ -10,7 +10,7 @@ import LocationsMap from './locationsMap';
 
 
 const messages = {
-  label: 'Location of field office(s) in the country of operation - pick location(s) from the map.',
+  label: 'Location of office(s) in the country of operation - pick location(s) from the map.',
 };
 
 class LocationsMapField extends Component {

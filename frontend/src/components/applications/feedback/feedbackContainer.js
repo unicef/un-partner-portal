@@ -18,7 +18,7 @@ import Pagination from '../../common/pagination';
 import EmptyContent from '../../common/emptyContent';
 
 const messages = {
-  title: 'Feedback',
+  title: 'Comments',
   placeholder: 'Provide optional feedback',
   button: 'send',
   from: 'from',

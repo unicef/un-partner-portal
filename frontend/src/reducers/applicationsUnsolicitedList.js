@@ -20,13 +20,13 @@ export const applicationsUcnEnded = () => ({ type: APPLICATIONS_UCN_LOAD_ENDED }
 
 const initialState = {
   columns: [
-    { name: 'id', title: 'Concept Note ID' },
+    { name: 'id', title: 'Application ID' },
     { name: 'project_title', title: 'Project Title', width: 200 },
-    { name: 'agency_name', title: 'Agency' },
+    { name: 'agency_name', title: 'UN Agency' },
     { name: 'country', title: 'Country' },
     { name: 'specializations', title: 'Sector' },
     { name: 'submission_date', title: 'Submission Date' },
-    { name: 'is_direct', title: 'Direct Selection' },
+    { name: 'is_direct', title: 'Chosen for direct selection' },
   ],
   loading: false,
   unsolicited: [],

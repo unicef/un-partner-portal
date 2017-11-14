@@ -14,6 +14,7 @@ import { formatDateForPrint } from '../../../helpers/dates';
 import SectorsCell from '../sectorsCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
 import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
+import CountriesCell from '../../partners/countriesCell';
 
 /* eslint-disable react/prop-types */
 const applicationCell = ({ row, column }) => {
@@ -27,6 +28,8 @@ const applicationCell = ({ row, column }) => {
     return <WrappedCell content={formatDateForPrint(row.application_date)} />;
   } else if (column.name === 'specializations') {
     return <SectorsCell specializations={row.specializations} />;
+  } else if (column.name === 'country') {
+    return <CountriesCell countries={row.country} />;
   }
 
   return undefined;

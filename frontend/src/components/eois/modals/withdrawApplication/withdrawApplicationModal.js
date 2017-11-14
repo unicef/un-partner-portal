@@ -8,9 +8,9 @@ import { updateApplication } from '../../../../reducers/applicationDetails';
 import WithdrawApplicationForm from './withdrawApplicationForm';
 
 const messages = {
-  title: 'Are you sure you want to change your previous decision?',
-  header: 'Partner will be notified by e-mail. Provide justification for your decision',
-  withdraw: 'Yes, withdraw award',
+  title: 'Are you sure you want to retract the selection?',
+  header: 'Please confirm retraction of selection. The partner will be notified by e-mail.',
+  withdraw: 'Yes, retract selection',
 };
 
 

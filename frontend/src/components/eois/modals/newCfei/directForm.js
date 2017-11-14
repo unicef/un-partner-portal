@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { reduxForm } from 'redux-form';
+import { reduxForm, formValueSelector } from 'redux-form';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Typography from 'material-ui/Typography';
@@ -23,7 +23,7 @@ class DirectForm extends Component {
   }
 
   render() {
-    const { handleSubmit } = this.props;
+    const { handleSubmit, start_date } = this.props;
     return (
       <form onSubmit={handleSubmit}>
         <GridColumn>
@@ -31,7 +31,7 @@ class DirectForm extends Component {
             formName="newDirectCfei"
             dateFields={[
               <fields.StartDate />,
-              <fields.EndDate />,
+              <fields.EndDate minDate={start_date} />,
             ]}
           />
           <Typography type="headline">
@@ -50,15 +50,22 @@ DirectForm.propTypes = {
    */
   handleSubmit: PropTypes.func.isRequired,
   getPartnerNames: PropTypes.func,
+  start_date: PropTypes.string,
 
 };
+const selector = formValueSelector('newDirectCfei');
+
+const mapStateToProps = state => ({
+  start_date: selector(state, 'start_date'),
+});
+
 
 const mapDispatchToProps = dispatch => ({
   getPartnerNames: () => dispatch(loadPartnerNames()),
 });
 
 const connectedDirectForm = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(DirectForm);
 
