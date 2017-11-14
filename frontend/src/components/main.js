@@ -4,15 +4,10 @@ import { connect } from 'react-redux';
 
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import MuiThemeProviderLegacy from 'material-ui-old/styles/MuiThemeProvider';
-import { loadAgencyMembers } from '../reducers/agencyMembers';
 import { loadCountries } from '../reducers/countries';
 import { loadPartnerConfig } from '../reducers/partnerProfileConfig';
 import { loadSectors } from '../reducers/sectors';
-import { loadPartnerNames } from '../reducers/partnerNames';
 import getTheme, { muiOldTheme } from '../styles/muiTheme';
-
-import { ROLES } from '../helpers/constants';
-
 
 class Main extends Component {
   constructor() {
@@ -28,18 +23,12 @@ class Main extends Component {
       loadCountries,
       loadPartnerConfig,
       loadSectors,
-      getPartnerNames,
     } = this.props;
     const configPromises = [
       loadCountries(),
       loadPartnerConfig(),
       loadSectors(),
     ];
-    if (session.role === ROLES.AGENCY) {
-      configPromises.concat([
-        getPartnerNames(),
-      ]);
-    }
     Promise.all(configPromises).then(() => {
       this.setState({ configLoaded: true });
     }).catch((error) => {
@@ -64,7 +53,6 @@ Main.propTypes = {
   loadSectors: PropTypes.func,
   children: PropTypes.node,
   session: PropTypes.object,
-  getPartnerNames: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -76,7 +64,6 @@ const mapDispatchToProps = dispatch => ({
   loadCountries: () => dispatch(loadCountries()),
   loadSectors: () => dispatch(loadSectors()),
   loadPartnerConfig: () => dispatch(loadPartnerConfig()),
-  getPartnerNames: () => dispatch(loadPartnerNames()),
 });
 
 

@@ -33,9 +33,9 @@ ProjectPartners.defaultProps = {
 
 export default connect(
   null,
-  (dispatch, ownProps) => ({
+  dispatch => ({
     getPartners: params => dispatch(
-      loadPartnerNamesForAutoComplete({ country_code: ownProps.countries.join(','), ...params }))
+      loadPartnerNamesForAutoComplete({ ...params }))
       .then(results => mapValuesForSelectionField(results)),
   }),
 )(ProjectPartners);

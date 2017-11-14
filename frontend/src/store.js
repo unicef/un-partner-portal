@@ -240,9 +240,6 @@ export const mapSelectCriteriaToSelection = state =>
 export const mapPartnersNamesToSelection = state =>
   mapValuesForSelectionField(state.partnerNames);
 
-export const selectPartnerName = (state, id) =>
-  partnerNamesSelector.selectPartnerName(state.partnerNames, id);
-
 export const selectApplicationStatus = (state, id) =>
   applicationDetailsSelector.selectApplicationStatus(
     state.applicationDetails.applicationDetails, id);
