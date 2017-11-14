@@ -1,19 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import SelectForm from '../../../selectForm';
-import { mapPartnersNamesToSelection } from '../../../../../store';
+import AutocompleteForm from '../../../autoCompleteForm';
+import { mapValuesForSelectionField } from '../../../../../store';
+import { loadPartnerNamesForAutoComplete } from '../../../../../reducers/partnerNames';
 
 const ProjectPartners = (props) => {
-  const { fieldName, label, partners, ...other } = props;
+  const { fieldName, label, getPartners, ...other } = props;
   return (
-    <SelectForm
+    <AutocompleteForm
       fieldName={fieldName}
       label={label}
-      values={partners}
-      selectFieldProps={{
-        multiple: true,
-      }}
+      async
+      asyncFunction={getPartners}
+      multiple
+      search={'legal_name'}
       {...other}
     />
   );
@@ -22,18 +23,19 @@ const ProjectPartners = (props) => {
 ProjectPartners.propTypes = {
   fieldName: PropTypes.string,
   label: PropTypes.string,
-  partners: PropTypes.arrayOf(
-    PropTypes.objectOf(
-      {
-        value: PropTypes.string,
-        label: PropTypes.string,
-      },
-    ),
-  ),
+  getPartners: PropTypes.array,
   disabled: PropTypes.bool,
 };
 
+ProjectPartners.defaultProps = {
+  countries: [],
+};
+
 export default connect(
-  state => (
-    { partners: mapPartnersNamesToSelection(state) }),
+  null,
+  (dispatch, ownProps) => ({
+    getPartners: params => dispatch(
+      loadPartnerNamesForAutoComplete({ country_code: ownProps.countries.join(','), ...params }))
+      .then(results => mapValuesForSelectionField(results)),
+  }),
 )(ProjectPartners);

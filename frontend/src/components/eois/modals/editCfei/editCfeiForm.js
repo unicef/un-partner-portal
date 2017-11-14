@@ -1,4 +1,5 @@
 import React from 'react';
+import { pluck } from 'ramda';
 import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
@@ -52,6 +53,7 @@ const formEditCfei = reduxForm({
 
 const mapStateToProps = (state, ownProps) => {
   const { focal_points,
+    focal_points_detail,
     start_date,
     end_date,
     deadline_date,
@@ -64,7 +66,7 @@ const mapStateToProps = (state, ownProps) => {
       deadline_date,
       notif_results_date,
     },
-    focalPoints: focal_points,
+    focalPoints: pluck('name', focal_points_detail),
   };
 };
 

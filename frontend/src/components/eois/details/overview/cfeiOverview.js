@@ -1,4 +1,5 @@
 import React from 'react';
+import { pluck, assoc } from 'ramda';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
@@ -57,9 +58,9 @@ const formCfeiDetails = reduxForm({
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.params.id);
-  const { cn = null, partner_name = null } = cfei ? cfei : {};
+  const { cn = null, partner_name = null, focal_points_detail = [] } = cfei || {};
   return {
-    initialValues: selectCfeiDetails(state, ownProps.params.id),
+    initialValues: assoc('focal_points', pluck('name', focal_points_detail), cfei),
     cn,
     partner: partner_name,
     role: state.session.role,

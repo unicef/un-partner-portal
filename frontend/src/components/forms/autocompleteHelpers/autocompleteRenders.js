@@ -57,7 +57,7 @@ export function renderSuggestion(suggestion, { query, isHighlighted }) {
             ? (<Typography key={index} color="accent">
               {part.text}
             </Typography>)
-            : (<Typography key={index} >
+            : (<Typography key={index} style={{whiteSpace: 'pre-wrap'}}>
               {part.text}
             </Typography>)
         ))}

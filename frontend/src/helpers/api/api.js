@@ -29,9 +29,9 @@ function buildHeaders(authorize = false, extraHeaders = {}) {
   return { ...headers, ...extraHeaders };
 }
 
-function get(uri, params = {}) {
-  const options = { method: 'GET', params, headers: buildHeaders() };
-  return axios.get(`${host}${uri}`, options)
+function get(uri, params = {}, options) {
+  const opt = { method: 'GET', params, headers: buildHeaders() };
+  return axios.get(`${host}${uri}`, { ...opt, ...options })
     .then(response => response.data);
 }
 
@@ -257,8 +257,8 @@ export function getPartnerProfileDetails(partnerId) {
   return authorizedGet({ uri: `/partners/${partnerId}` });
 }
 
-export function getPartnerNames() {
-  return get('/partners/short');
+export function getPartnerNames(params, options) {
+  return get('/partners/short', params, options);
 }
 
 export function getPartnersList(params) {

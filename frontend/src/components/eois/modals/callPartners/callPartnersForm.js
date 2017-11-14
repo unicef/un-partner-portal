@@ -1,4 +1,5 @@
 import React from 'react';
+import R from 'ramda';
 import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -12,11 +13,16 @@ const messages = {
 };
 
 const CallPartnersForm = (props) => {
-  const { handleSubmit } = props;
+  const { handleSubmit, invitedPartners, countries } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
-        <ProjectPartners fieldName={'invited_partners'} label={messages.label} />
+        <ProjectPartners
+          fieldName={'invited_partners'}
+          label={messages.label}
+          initialMultiValues={invitedPartners}
+          countries={countries}
+        />
       </GridColumn>
     </form >
   );
@@ -27,6 +33,8 @@ CallPartnersForm.propTypes = {
    * callback for form submit
    */
   handleSubmit: PropTypes.func.isRequired,
+  invitedPartners: PropTypes.array,
+  countries: PropTypes.array,
 
 };
 
@@ -36,9 +44,12 @@ const formCallPartners = reduxForm({
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id) || {};
-  const { invited_partners = [] } = cfei;
+  const { invited_partners = [], locations = [] } = cfei;
+  const countries = R.pluck('country', locations);
   return {
     initialValues: { invited_partners },
+    invitedPartners: invited_partners,
+    countries,
   };
 };
 

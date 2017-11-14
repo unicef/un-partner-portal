@@ -1,18 +1,27 @@
 import R from 'ramda';
+import { combineReducers } from 'redux';
 import { getPartnerNames } from '../helpers/api/api';
 import {
   toObject,
   flattenToObjectKey,
 } from './normalizationHelpers';
 
+import { getNewRequestToken } from './apiStatus';
+import apiMeta, {
+  success,
+  loadStarted,
+  loadEnded,
+  loadSuccess,
+  loadFailure } from './apiMeta';
+
 const initialState = {};
 const LOAD_PATNER_NAMES_SUCCESS = 'LOAD_PATNER_NAMES_SUCCESS';
-
-const loadPartnerNamesSuccess = names => ({ type: LOAD_PATNER_NAMES_SUCCESS, names });
+const PARTNER_NAMES = 'PARTNER_NAMES';
+const tag = 'partnerNames';
 
 export const loadPartnerNames = () => dispatch => getPartnerNames()
   .then((names) => {
-    dispatch(loadPartnerNamesSuccess(names));
+    dispatch(loadSuccess(PARTNER_NAMES, names));
     return names;
   });
 
@@ -23,7 +32,22 @@ export const selectPartnerName = (state, id) => {
 
 const savePartnerNames = action => toObject(flattenToObjectKey('legal_name'), action.names);
 
-export default function (state = initialState, action) {
+export const loadPartnerNamesForAutoComplete = params => (dispatch, getState) => {
+  const newCancelToken = getNewRequestToken(getState, tag);
+  dispatch(loadStarted(PARTNER_NAMES, newCancelToken));
+  return getPartnerNames(
+    params,
+    { cancelToken: newCancelToken.token })
+    .then((response) => {
+      dispatch(loadEnded(PARTNER_NAMES));
+      return toObject(flattenToObjectKey('legal_name'), response);
+    }).catch((error) => {
+      dispatch(loadEnded(PARTNER_NAMES));
+      dispatch(loadFailure(PARTNER_NAMES, error));
+    });
+};
+
+function partnerNamesReducer(state = initialState, action) {
   switch (action.type) {
     case LOAD_PATNER_NAMES_SUCCESS: {
       return savePartnerNames(action);
@@ -32,3 +56,5 @@ export default function (state = initialState, action) {
       return state;
   }
 }
+
+export default combineReducers({ data: partnerNamesReducer, status: apiMeta(PARTNER_NAMES) });

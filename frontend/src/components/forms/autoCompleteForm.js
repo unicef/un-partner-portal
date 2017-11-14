@@ -9,8 +9,10 @@ import { withStyles } from 'material-ui/styles';
 import { renderText, renderAutocomplete } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 import { getSuggestions,
-  debouncedAsyncSuggestions,
+  getAsyncSuggestions,
   normalizeSuggestion } from './autocompleteHelpers/autocompleteFunctions';
+
+const _ = require('lodash');
 
 const styles = theme => ({
   root: {
@@ -57,6 +59,13 @@ class AutocompleteField extends React.Component {
     this.handleMultiChange = this.handleMultiChange.bind(this);
     this.handleMultiClear = this.handleMultiClear.bind(this);
     this.parseFormValue = this.parseFormValue.bind(this);
+    this.debounceSuggestionsFetch = _.debounce(
+      this.handleSuggestionsFetchRequested,
+      500,
+      {
+        leading: false,
+        trailing: true,
+      }).bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -74,9 +83,8 @@ class AutocompleteField extends React.Component {
 
   handleSuggestionsFetchRequested({ value }) {
     if (this.props.async) {
-      debouncedAsyncSuggestions(value, this.props.asyncFunction).then(suggestions =>
-        this.setState({ suggestions }),
-      );
+      getAsyncSuggestions(value, this.props.asyncFunction, this.props.search)
+        .then(suggestions => this.setState({ suggestions }));
     } else {
       this.setState({
         suggestions: getSuggestions(value, this.props.suggestionsPool),
@@ -98,7 +106,7 @@ class AutocompleteField extends React.Component {
 
   handleMultiChange(newValue) {
     this.setState({
-      multiValues: R.uniq(this.state.multiValues.concat(newValue)),
+      multiValues: this.state.multiValues.concat(newValue),
     });
   }
 
@@ -127,6 +135,7 @@ class AutocompleteField extends React.Component {
       validation,
       warn,
       multiple,
+      async,
       textFieldProps,
     } = this.props;
     return (
@@ -150,7 +159,9 @@ class AutocompleteField extends React.Component {
             classes={classes}
             parse={this.parseFormValue}
             suggestions={this.state.suggestions}
-            handleSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
+            handleSuggestionsFetchRequested={async
+              ? this.debounceSuggestionsFetch
+              : this.handleSuggestionsFetchRequested}
             handleSuggestionsClearRequested={this.handleSuggestionsClearRequested}
             handleChange={this.handleChange}
             fieldValue={this.state.value}
@@ -221,6 +232,10 @@ AutocompleteField.propTypes = { /**
    * initial array of multiselect values
    */
   initialMultiValues: PropTypes.array,
+  /**
+   * query param name for getting async suggestions
+   */
+  search: PropTypes.string,
   classes: PropTypes.object,
 };
 

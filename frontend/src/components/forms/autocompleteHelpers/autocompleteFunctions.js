@@ -1,4 +1,4 @@
-import { has, uniq } from 'ramda';
+import { has, uniq, any, equals } from 'ramda';
 
 const _ = require('lodash');
 
@@ -18,6 +18,7 @@ export function setSuggestionValue(
 }
 
 export function setMultipleSuggestionValue(
+  formValue,
   handleFieldChange,
   handleFormChange,
   handleMultiChange,
@@ -25,8 +26,10 @@ export function setMultipleSuggestionValue(
   { suggestion },
 ) {
   handleFieldChange(null, { newValue: '' });
-  handleMultiChange(suggestion.label);
-  handleFormChange(suggestion);
+  if (!any((equals(suggestion.value)), formValue)) {
+    handleMultiChange(suggestion.label);
+    handleFormChange(suggestion);
+  }
   return '';
 }
 
@@ -63,13 +66,13 @@ export function getSuggestions(value, suggestionsPool) {
 }
 
 
-function getAsyncSuggestions(value, asyncFunc) {
+export function getAsyncSuggestions(value, asyncFunc, search) {
   const inputValue = value.trim().toLowerCase();
   const inputLength = inputValue.length;
   return inputLength === 0
     ? []
-    : asyncFunc({ search: value, page_size: 5 }).then(response => response);
+    : asyncFunc({ [search]: value, page_size: 5 }).then(response => response);
 }
 
-export const debouncedAsyncSuggestions = _.debounce(getAsyncSuggestions, 1000, {
+export const debouncedAsyncSuggestions = _.debounce(getAsyncSuggestions, 500, {
   leading: true });

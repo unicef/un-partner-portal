@@ -104,7 +104,9 @@ export const FocalPoint = props => (<AgencyMembersField
   {...props}
 />);
 
-export const Reviewers = () => (<AgencyMembersField
+export const Reviewers = props => (<AgencyMembersField
   label="Select users"
   fieldName="reviewers"
+  placeholder="Search for users"
+  {...props}
 />);
