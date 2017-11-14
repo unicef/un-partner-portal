@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import connect from 'redux';
+import { connect } from 'react-redux';
 import Feedback from '../../../../applications/feedback/feedbackContainer';
 import GridColumn from '../../../../common/grid/gridColumn';
 import { ROLES } from '../../../../../helpers/constants';
