@@ -210,12 +210,11 @@ class Application(TimeStampedModel):
             return 'Application Under Review'
         elif not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.closed:
             return 'Application Unsuccessful'
-        elif self.did_win and self.did_decline is False and self.did_accept is False and self.did_accept_date is None:
+        elif self.did_win and self.did_decline is False and self.did_accept is False and self.decision_date is None:
             return 'Application Successful'
-        elif self.did_win and self.did_accept and self.did_accept_date is not None:
+        elif self.did_win and self.did_accept and self.decision_date is not None:
             return 'Selection Accepted'
-        # TODO: did_accept_date should be already called decision_date
-        elif self.did_win and self.did_decline:  # and self.did_accept_date is not None:
+        elif self.did_win and self.did_decline and self.decision_date is not None:
             return 'Selection Declined'
         elif self.did_win and self.did_withdraw:
             return 'Selection Retracted'
