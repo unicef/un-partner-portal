@@ -68,12 +68,12 @@ class EoiFilter extends Component {
   }
 
   componentWillMount() {
-    const { pathName, query } = this.props;
-    
+    const { pathName, query, agencyId } = this.props;
+
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { active: true, ordering: 'deadline_date' },
+        { active: true, ordering: 'deadline_date', agency: agencyId },
       ),
     });
   }
@@ -210,6 +210,7 @@ EoiFilter.propTypes = {
   countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
   pathName: PropTypes.string,
+  agencyId: PropTypes.string,
   query: PropTypes.object,
 };
 
@@ -232,6 +233,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     countries: selectNormalizedCountries(state),
     specs: selectNormalizedSpecializations(state),
+    agencyId: state.session.agencyId,
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {
