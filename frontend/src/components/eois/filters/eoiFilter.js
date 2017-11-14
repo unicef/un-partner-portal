@@ -69,7 +69,7 @@ class EoiFilter extends Component {
 
   componentWillMount() {
     const { pathName, query } = this.props;
-    
+
     history.push({
       pathname: pathName,
       query: R.merge(query,
@@ -77,6 +77,11 @@ class EoiFilter extends Component {
       ),
     });
   }
+
+  componentWillReceiveProps(nextProps) {
+    debugger
+  }
+
 
   onSearch(values) {
     const { pathName, query } = this.props;
