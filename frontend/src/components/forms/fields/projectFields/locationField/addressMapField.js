@@ -33,16 +33,6 @@ class LocationsMapField extends Component {
     dispatch(arrayRemove(formName, `${name}`, index));
   }
 
-  selectedLocations() {
-    const { currentLocations } = this.props;
-
-    const removeDuplicates = R.uniqWith((a, b) => a.admin_level_1.name === b.admin_level_1.name)(currentLocations);
-
-    return removeDuplicates.map(location =>
-      <Typography>{location.admin_level_1 && location.admin_level_1.name} </Typography>,
-    );
-  }
-
   render() {
     const { countryCode, currentCountry, readOnly, currentLocations } = this.props;
 
@@ -50,7 +40,6 @@ class LocationsMapField extends Component {
       <GridColumn>
         <GridColumn>
           <Typography type="caption">{messages.label}</Typography>
-          {this.selectedLocations(currentLocations)}
         </GridColumn>
         <LocationsMap
           currentCountryCode={countryCode}
