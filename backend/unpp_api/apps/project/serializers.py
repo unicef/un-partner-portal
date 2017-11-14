@@ -307,8 +307,9 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'justification',
             'completed_reason',
             'completed_date',
+            'is_completed',
             'display_type',
-            'document_status',
+            'status',
             'title',
             'agency',
             'created_by',
@@ -357,8 +358,9 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'justification',
             'completed_reason',
             'completed_date',
+            'is_completed',
             'display_type',
-            'document_status',
+            'status',
             'title',
             'agency',
             'created_by',
@@ -382,12 +384,14 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
                 if partner.id not in self.initial_data.get('invited_partners', []):
                     instance.invited_partners.remove(partner)
 
+        if instance.completed_reason is None and validated_data.get('completed_reason') is not None and \
+                instance.completed_date is None and instance.is_completed is False:
+            instance.completed_date = datetime.datetime.now()
+            instance.is_completed = True
+
         instance = super(ProjectUpdateSerializer, self).update(instance, validated_data)
         for invited_partner in self.initial_data.get('invited_partners', []):
             instance.invited_partners.add(Partner.objects.get(id=invited_partner))
-
-        if instance.status == EOI_STATUSES.completed:
-            instance.completed_date = datetime.datetime.now()
 
         instance.save()
 
@@ -620,7 +624,6 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         eoi = EOI(**validated_data['eoi'])
         eoi.created_by = submitter
         eoi.display_type = EOI_TYPES.direct
-        eoi.status = EOI_STATUSES.open
         eoi.title = app.proposal_of_eoi_details.get('title')
         eoi.agency = app.agency
         # we can use get direct because agent have one agency office
