@@ -515,7 +515,7 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
         kwargs = self.context['request'].parser_context.get('kwargs', {})
         application_id = kwargs.get(self.context['view'].lookup_url_kwarg)
         app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
-        if date.today() <= app.eoi.deadline_date:
+        if app.eoi.status != EOI_STATUSES.closed:
             raise serializers.ValidationError("Assessment allowed once deadline is passed.")
         return super(ReviewerAssessmentsSerializer, self).validate(data)
 
