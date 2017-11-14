@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
-import { Link } from 'react-router';
 import { TableCell } from 'material-ui/Table';
 import HeaderList from '../../common/list/headerList';
 import { loadPendingOffers } from '../../../reducers/pendingOffers';
