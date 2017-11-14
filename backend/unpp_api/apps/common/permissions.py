@@ -1,7 +1,8 @@
 import logging
+from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
 from agency.models import AgencyMember
-from partner.models import PartnerMember
+from partner.models import Partner, PartnerMember
 from project.models import Application
 from .consts import POWER_MEMBER_ROLES, MEMBER_ROLES
 
@@ -9,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class IsAgencyMemberUser(BasePermission):
+
     def has_permission(self, request, user):
         if not request.user.is_authenticated():
             return False
@@ -123,3 +125,121 @@ class IsPartner(BasePermission):
 
     def has_permission(self, request, view):
         return request.user.is_partner_user
+
+
+class IsAgency(BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user.is_agency_user
+
+
+class IsAtLeastEditorPartnerOnNotGET(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+
+    def has_permission(self, request, view):
+        if request.method != 'GET':
+            if request.user.is_partner_user:
+                return self.pass_at_least(request.user.member.role)
+            return False
+        return True
+
+
+class IsRoleAdministratorOnNotGET(IsAtLeastEditorPartnerOnNotGET):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.admin]
+
+
+class IsApplicationAPIEditor(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+
+    def has_permission(self, request, view):
+        app_id = request.parser_context.get('kwargs', {}).get(view.lookup_field)
+        app = get_object_or_404(Application.objects.select_related('eoi'), id=app_id)
+        am = AgencyMember.objects.filter(user=request.user).first()
+        if am is not None:
+            if app.agency != am.office.agency:
+                return False
+            if request.method == 'GET':
+                return True  # all
+            else:
+                return self.pass_at_least(am.role)
+
+        else:
+            if app.partner.id in request.user.get_partner_ids_i_can_access():
+                if request.method == 'GET':
+                    return True  # all
+                else:
+                    return self.pass_at_least(request.user.member.role)
+
+
+class IsConvertUnsolicitedEditor(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+
+    def has_object_permission(self, request, view, obj):
+        if obj.is_unsolicited:
+            return True
+        return False
+
+    def has_permission(self, request, view):
+        if not request.user.is_agency_user:
+            return False
+
+        user_agency = request.user.get_agency()
+        member = request.user.member
+        app_id = request.parser_context.get('kwargs', {}).get(view.lookup_field)
+        app = get_object_or_404(Application.objects.select_related('eoi'), id=app_id)
+        if app.agency.id != user_agency.id:
+            return False
+
+        return self.pass_at_least(member.role)
+
+
+class IsApplicationFeedbackPerm(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+
+    def has_permission(self, request, view):
+        app_id = request.parser_context.get('kwargs', {}).get(view.lookup_field)
+        app = get_object_or_404(Application.objects.select_related('eoi'), id=app_id)
+
+        if request.user.is_partner_user:
+            if request.method == 'GET' and app.partner.id == request.user.member.partner.id:
+                return True
+            return False
+
+        # agency
+        user_agency = request.user.get_agency()
+        if app.agency.id != user_agency.id:
+            return False
+        if request.method != 'GET':
+            return self.pass_at_least(request.user.member.role)  # editor & admin can post
+        else:
+            # agency reader can read
+            return True
+
+
+class IsPartnerEOIApplicationCreate(IsAtLeastPartnerMemberEditor):
+
+    def has_permission(self, request, view):
+        if request.user.is_agency_user:
+            return False
+
+        if request.method != 'GET':
+            return self.pass_at_least(request.user.member.role)
+        else:
+            return True
+
+
+class IsOpenProject(IsAtLeastMemberReader):
+
+    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+
+    def has_permission(self, request, view):
+        if request.method == 'GET':
+            return True  # all
+        elif request.user.is_agency_user:
+            return self.pass_at_least(request.user.member.role)
+        return False
