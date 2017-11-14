@@ -18,61 +18,37 @@ const messages = {
 };
 
 const directorForm = (director, readOnly) => (
-  <GridColumn>
-    <GridRow columns={4}>
-      <TextFieldForm
-        fieldName={`${director}.first_name`}
-        label="First Name"
-        optional
-        warn
-        readOnly={readOnly}
-      />
-      <TextFieldForm
-        fieldName={`${director}.last_name`}
-        label="Last Name"
-        optional
-        warn
-        readOnly={readOnly}
-      />
-      <TextFieldForm
-        fieldName={`${director}.job_title`}
-        label="Job Title/Position"
-        optional
-        warn
-        readOnly={readOnly}
-      />
-      <RadioForm
-        fieldName={`${director}.authorized`}
-        values={BOOL_VAL}
-        optional
-        warn
-        label="Authorised Officer?"
-        readOnly={readOnly}
-      />
-    </GridRow>
-    <GridRow columns={3}>
-      <TextFieldForm
-        fieldName={`${director}.telephone`}
-        label="Telephone"
-        optional
-        warn
-        readOnly={readOnly}
-      />
-      <TextFieldForm
-        fieldName={`${director}.fax`}
-        label="Fax (optional)"
-        optional
-        readOnly={readOnly}
-      />
-      <TextFieldForm
-        fieldName={`${director}.email`}
-        label="Email"
-        optional
-        warn
-        readOnly={readOnly}
-      />
-    </GridRow>
-  </GridColumn>
+  <GridRow columns={4}>
+    <TextFieldForm
+      fieldName={`${director}.first_name`}
+      label="First Name"
+      optional
+      warn
+      readOnly={readOnly}
+    />
+    <TextFieldForm
+      fieldName={`${director}.last_name`}
+      label="Last Name"
+      optional
+      warn
+      readOnly={readOnly}
+    />
+    <TextFieldForm
+      fieldName={`${director}.job_title`}
+      label="Job Title/Position"
+      optional
+      warn
+      readOnly={readOnly}
+    />
+    <RadioForm
+      fieldName={`${director}.authorized`}
+      values={BOOL_VAL}
+      optional
+      warn
+      label="Authorised Officer?"
+      readOnly={readOnly}
+    />
+  </GridRow>
 );
 
 const authorisedOfficerForm = (officer, readOnly) => (
