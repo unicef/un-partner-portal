@@ -501,6 +501,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
     specializations = serializers.SerializerMethodField()
     application_date = serializers.CharField(source="created")
 
+
     class Meta:
         model = Application
         fields = (
@@ -511,7 +512,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
             'country',
             'specializations',
             'application_date',
-            'status',
+            'application_status',
         )
 
     def get_country(self, obj):
@@ -519,6 +520,9 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
 
     def get_specializations(self, obj):
         return obj.eoi.specializations.all().values_list('id', flat=True)
+
+    def get_application_status(self, obj):
+        return obj.eoi.application_status
 
 
 class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer):
