@@ -6,7 +6,6 @@ from .views import (
     PinProjectAPIView,
     UnsolicitedProjectAPIView,
     EOIAPIView,
-    AgencyApplicationListAPIView,
     PartnerEOIApplicationCreateAPIView,
     PartnerEOIApplicationRetrieveAPIView,
     AgencyEOIApplicationCreateAPIView,
