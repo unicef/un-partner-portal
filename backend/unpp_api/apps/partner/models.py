@@ -213,7 +213,7 @@ class PartnerMailingAddress(TimeStampedModel):
     telephone = models.CharField(max_length=255, null=True, blank=True)
     fax = models.CharField(max_length=255, null=True, blank=True)
     website = models.URLField(null=True, blank=True)
-    org_email = models.EmailField()
+    org_email = models.EmailField(null=True, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -509,7 +509,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
 class PartnerOtherInfo(TimeStampedModel):
     created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="other_info")
     partner = models.OneToOneField(Partner, related_name="other_info")
-    info_to_share = models.CharField(max_length=200)
+    info_to_share = models.CharField(max_length=200, null=True, blank=True)
     org_logo = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="others_info")
     org_logo_thumbnail = models.ImageField(null=True, blank=True)
