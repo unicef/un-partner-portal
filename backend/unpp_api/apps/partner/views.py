@@ -58,6 +58,8 @@ class PartnersListAPIView(ListAPIView):
 class PartnerShortListAPIView(ListAPIView):
     queryset = Partner.objects.all()
     serializer_class = PartnerShortSerializer
+    filter_backends = (DjangoFilterBackend, )
+    filter_class = PartnersListFilter
 
 
 class PartnersListItemAPIView(RetrieveAPIView):
