@@ -78,10 +78,23 @@ class EoiFilter extends Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    debugger
-  }
+  shouldComponentUpdate(nextProps) {
+    if (R.isEmpty(nextProps.query)) {
+      const { pathname } = nextProps.location;
+      console.log(nextProps.location, this.props.location);
+      const activeQ = this.props.query.active ? this.props.query.active : true;
+      const ordering = activeQ ? 'deadline_date' : '-completed_date';
 
+      history.push({
+        pathname,
+        query: R.merge(this.props.query,
+          { active: activeQ, ordering },
+        ),
+      });
+    }
+
+    return true;
+  }
 
   onSearch(values) {
     const { pathName, query } = this.props;
@@ -102,6 +115,19 @@ class EoiFilter extends Component {
         posted_from_date,
         posted_to_date,
         locations }),
+    });
+  }
+
+  resetForm() {
+    const query = resetChanges(this.props.pathName, this.props.query);
+
+    const { pathName } = this.props;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { active: true, ordering: 'deadline_date' },
+      ),
     });
   }
 
@@ -189,7 +215,7 @@ class EoiFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>
