@@ -15,7 +15,13 @@ from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
 from common.tests.base import BaseAPITestCase
 from common.factories import (
-    EOIFactory, AgencyMemberFactory, PartnerSimpleFactory, PartnerMemberFactory, AgencyOfficeFactory, AgencyFactory
+    EOIFactory,
+    AgencyMemberFactory,
+    PartnerSimpleFactory,
+    PartnerMemberFactory,
+    AgencyOfficeFactory,
+    AgencyFactory,
+    PartnerVerificationFactory,
 )
 from common.models import Specialization, CommonFile
 from common.consts import (
@@ -365,7 +371,8 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         EOIFactory.create_batch(self.quantity)
 
     def test_read_update(self):
-        url = reverse('projects:application', kwargs={"pk": Application.objects.first().id})
+        app = Application.objects.first()
+        url = reverse('projects:application', kwargs={"pk": app.id})
         response = self.client.get(url, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], Application.objects.first().id)
@@ -376,6 +383,19 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "status": APPLICATION_STATUSES.preselected,
             "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.local],
         }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertEquals(response.data['non_field_errors'],
+                          ['Only Focal Point/Creator is allowed to pre-select/reject an application.'])
+
+        self.client.logout()
+        self.client.login(username=app.eoi.created_by.username, password='test')
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertEquals(response.data['non_field_errors'],
+                          ['You can not award an application if the profile has not been verified yet.'])
+
+        PartnerVerificationFactory(partner=app.partner, submitter=app.eoi.created_by)
+
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)

@@ -166,6 +166,34 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
 
+    def validate(self, data):
+        if self.context['request'].method in ['PATCH', 'PUT']:
+            kwargs = self.context['request'].parser_context.get('kwargs', {})
+            application_id = kwargs.get(self.context['view'].lookup_field)
+            app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
+
+            allowed_to_modify_status = \
+                list(app.eoi.focal_points.values_list('id', flat=True)) + [app.eoi.created_by_id]
+            if data.get("status") and self.context['request'].user.id not in allowed_to_modify_status:
+                raise serializers.ValidationError(
+                    "Only Focal Point/Creator is allowed to pre-select/reject an application.")
+
+            if app.eoi.is_completed:
+                raise serializers.ValidationError(
+                    "Since CEOI is completed, modification is forbidden.")
+
+            if not app.partner.is_verified:
+                raise serializers.ValidationError(
+                    "You can not award an application if the profile has not been verified yet.")
+            if app.partner.has_red_flag:
+                raise serializers.ValidationError(
+                    "You can not award an application if the profile has red flag.")
+            if app.eoi.reviewers.count() != Assessment.objects.filter(application=app).count():
+                raise serializers.ValidationError(
+                    "You can not award an application if all assessments have not been added for the application.")
+
+        return super(ApplicationFullSerializer, self).validate(data)
+
 
 class ApplicationFullEOISerializer(ApplicationFullSerializer):
     eoi = BaseProjectSerializer(read_only=True)
@@ -428,6 +456,19 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             query = obj.applications.all()
             return SelectedPartnersSerializer(query, many=True).data
         return
+
+    def validate(self, data):
+        if self.context['request'].method in ['PATCH', 'PUT']:
+            if self.instance.is_completed:
+                raise serializers.ValidationError(
+                    "CFEI is completed. Modify is forbidden.")
+            allowed_to_modify = \
+                list(self.instance.focal_points.values_list('id', flat=True)) + [self.instance.created_by_id]
+            if self.context['request'].user.id not in allowed_to_modify:
+                raise serializers.ValidationError(
+                    "Only Focal Point/Creator is allowed to modify a CFEI.")
+
+        return super(ProjectUpdateSerializer, self).validate(data)
 
 
 class ApplicationsListSerializer(serializers.ModelSerializer):
