@@ -841,7 +841,8 @@ class SubmittedCNSerializer(serializers.ModelSerializer):
             'agency_name',
             'countries',
             'specializations',
-            'offer_status'
+            'offer_status',
+            'eoi_id'
         )
 
     def get_specializations(self, obj):
@@ -862,4 +863,5 @@ class PendingOffersSerializer(SubmittedCNSerializer):
             'agency_name',
             'countries',
             'specializations',
+            'eoi_id'
         )

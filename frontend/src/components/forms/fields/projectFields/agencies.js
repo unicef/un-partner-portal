@@ -16,7 +16,7 @@ class Agencies extends Component {
 
   render() {
     const { fieldName, label, agencies, agencyId, ...other } = this.props;
-
+    
     return (
       <SelectForm
         fieldName={fieldName}
@@ -32,14 +32,7 @@ class Agencies extends Component {
 Agencies.propTypes = {
   fieldName: PropTypes.string,
   label: PropTypes.string,
-  agencies: PropTypes.arrayOf(
-    PropTypes.objectOf(
-      {
-        value: PropTypes.string,
-        label: PropTypes.string,
-      },
-    ),
-  ),
+  agencies: PropTypes.array,
   disabled: PropTypes.bool,
   loadAgencies: PropTypes.array,
   agencyId: PropTypes.string,

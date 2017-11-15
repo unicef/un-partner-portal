@@ -15,17 +15,17 @@ import { getApplicationFeedback, postApplicationFeedback } from '../helpers/api/
 
 const initialState = {};
 
-export const loadApplicationFeedback = (applicationId, params) => (dispatch, getState) => {
-  dispatch(loadApplicationFeedbackStarted());
+export const loadApplicationFeedback = (applicationId, params, key = 'default') => (dispatch, getState) => {
+  dispatch(loadApplicationFeedbackStarted(key));
   return getApplicationFeedback(applicationId, params)
     .then((feedback) => {
-      dispatch(loadApplicationFeedbackEnded());
+      dispatch(loadApplicationFeedbackEnded(key));
       dispatch(loadApplicationFeedbackSuccess(feedback.results, applicationId, feedback.count));
       return feedback;
     })
     .catch((error) => {
-      dispatch(loadApplicationFeedbackEnded());
-      dispatch(loadApplicationFeedbackFailure(error));
+      dispatch(loadApplicationFeedbackEnded(key));
+      dispatch(loadApplicationFeedbackFailure(error, key));
     });
 };
 
