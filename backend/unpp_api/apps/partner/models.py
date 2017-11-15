@@ -50,7 +50,7 @@ class Partner(TimeStampedModel):
     staff_globally = models.CharField(max_length=3, choices=STAFF_GLOBALLY_CHOICES, null=True, blank=True)
     # country profile information
     location_of_office = models.ForeignKey('common.Point', related_name="location_of_offices", null=True, blank=True)
-    more_office_in_country = models.BooleanField(default=True)
+    more_office_in_country = models.NullBooleanField()
     location_field_offices = models.ManyToManyField('common.Point', related_name="location_field_offices")
     staff_in_country = models.CharField(max_length=3, choices=STAFF_GLOBALLY_CHOICES, null=True, blank=True)
     engagement_operate_desc = models.CharField(
@@ -109,10 +109,10 @@ class PartnerProfile(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="profile")
     alias_name = models.CharField(max_length=255, null=True, blank=True)
     acronym = models.CharField(max_length=200, null=True, blank=True)
-    legal_name_change = models.BooleanField(default=False)
+    legal_name_change = models.NullBooleanField()
     former_legal_name = models.CharField(max_length=255, null=True, blank=True)
-    connectivity = models.BooleanField(default=False, verbose_name='Does the organization have reliable access to '
-                                                                   'internet in all of its operations?')
+    connectivity = models.NullBooleanField(
+        verbose_name='Does the organization have reliable access to internet in all of its operations?')
     connectivity_excuse = models.CharField(max_length=200, null=True, blank=True)
     working_languages = ArrayField(
         models.CharField(max_length=3, choices=WORKING_LAGNUAGES_CHOICES),
@@ -120,12 +120,11 @@ class PartnerProfile(TimeStampedModel):
         null=True
     )
     working_languages_other = models.CharField(max_length=100, null=True, blank=True)
-    flagged = models.BooleanField(default=False)  # not sure do we need this attr
     # authorised_officials
-    have_board_directors = models.BooleanField(
-        default=False, verbose_name="Does your organization have a board of directors?")
-    have_authorised_officers = models.BooleanField(
-        default=False, verbose_name="Does your organization have a authorised officers?")
+    have_board_directors = models.NullBooleanField(
+        verbose_name="Does your organization have a board of directors?")
+    have_authorised_officers = models.NullBooleanField(
+        verbose_name="Does your organization have a authorised officers?")
 
     # Registration of organization
     year_establishment = models.PositiveSmallIntegerField(
@@ -135,9 +134,9 @@ class PartnerProfile(TimeStampedModel):
         blank=True,
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
-    have_gov_doc = models.BooleanField(default=False, verbose_name='Does the organization have a government document?')
+    have_gov_doc = models.NullBooleanField(verbose_name='Does the organization have a government document?')
     gov_doc = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="gov_docs")
-    registration_to_operate_in_country = models.BooleanField(default=True)
+    registration_to_operate_in_country = models.NullBooleanField()
     registration_doc = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="registration_docs")
     registration_date = models.DateField(null=True, blank=True)
     registration_comment = models.CharField(max_length=255, null=True, blank=True)
@@ -162,13 +161,13 @@ class PartnerProfile(TimeStampedModel):
         choices=METHOD_ACC_ADOPTED_CHOICES,
         default=METHOD_ACC_ADOPTED_CHOICES.cash
     )
-    have_system_track = models.BooleanField(default=False)
+    have_system_track = models.NullBooleanField()
     financial_control_system_desc = models.CharField(max_length=200, null=True, blank=True)
 
     # internal control - other fields
-    experienced_staff = models.BooleanField(
-        default=False, verbose_name="Does the organization have an adequate number of experienced staff responsible "
-                                    "for financial management in all operations?")
+    experienced_staff = models.NullBooleanField(
+        verbose_name="Does the organization have an adequate number of experienced staff responsible "
+                     "for financial management in all operations?")
     experienced_staff_desc = models.CharField(max_length=200, null=True, blank=True)
 
     # collaborate
@@ -176,12 +175,11 @@ class PartnerProfile(TimeStampedModel):
     partnership_collaborate_institution_desc = models.CharField(max_length=200, null=True, blank=True)
 
     # Banking Information
-    have_bank_account = models.BooleanField(
-        default=False, verbose_name="Does the organization have a bank account?")
-    have_separate_bank_account = models.BooleanField(
-        default=False, verbose_name="Does the organization currently maintain, or has it previously maintained, "
-                                    "a separate, interest-bearing account for UN funded projects that require "
-                                    "a separate account?")
+    have_bank_account = models.NullBooleanField(
+        verbose_name="Does the organization have a bank account?")
+    have_separate_bank_account = models.NullBooleanField(
+        verbose_name="Does the organization currently maintain, or has it previously maintained, a separate, "
+                     "interest-bearing account for UN funded projects that require a separate account?")
     explain = models.CharField(max_length=200, null=True, blank=True, verbose_name="Please explain")
 
     class Meta:
@@ -226,7 +224,8 @@ class PartnerProfile(TimeStampedModel):
             'governance_hq': self.partner.mandate_mission.governance_hq,
             'governance_organigram': self.partner.mandate_mission.governance_organigram,
             'staff_in_country': self.partner.staff_in_country,
-            'staff_globally': self.partner.staff_globally
+            'staff_globally': self.partner.staff_globally,
+            'more_office_in_country': self.partner.more_office_in_country is not None,
             # TODO - country presence for hq + country
 
         }
@@ -370,7 +369,7 @@ class PartnerDirector(TimeStampedModel):
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
-    authorized = models.BooleanField(default=False)
+    authorized = models.NullBooleanField()
 
     class Meta:
         ordering = ['id']
@@ -400,7 +399,7 @@ class PartnerPolicyArea(TimeStampedModel):
     created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="area_policies")
     partner = models.ForeignKey(Partner, related_name="area_policies")
     area = models.CharField(max_length=3, choices=POLICY_AREA_CHOICES)
-    document_policies = models.BooleanField(default=True)
+    document_policies = models.NullBooleanField()
 
     class Meta:
         ordering = ['id']
@@ -411,7 +410,7 @@ class PartnerPolicyArea(TimeStampedModel):
 
 class PartnerAuditAssessment(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="audit")
-    regular_audited = models.BooleanField(default=True)
+    regular_audited = models.NullBooleanField()
     regular_audited_comment = models.CharField(max_length=200, null=True, blank=True)
     org_audits = ArrayField(
         models.CharField(max_length=3, choices=ORG_AUDIT_CHOICES),
@@ -421,12 +420,11 @@ class PartnerAuditAssessment(TimeStampedModel):
     most_recent_audit_report = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="most_recent_audit_reports")
     link_report = models.URLField()
-    major_accountability_issues_highlighted = models.BooleanField(
-        default=False, verbose_name="Were there any major accountability issues highlighted by audits in the past "
-                                    "three years?")
+    major_accountability_issues_highlighted = models.NullBooleanField(
+        verbose_name="Were there any major accountability issues highlighted by audits in the past three years?")
     comment = models.CharField(max_length=200, null=True, blank=True)
-    capacity_assessment = models.BooleanField(default=True, verbose_name="Has the organization undergone a formal "
-                                                                         "capacity assessment?")
+    capacity_assessment = models.NullBooleanField(
+        verbose_name="Has the organization undergone a formal capacity assessment?")
     assessments = ArrayField(
         models.CharField(max_length=3, choices=AUDIT_ASSESMENT_CHOICES),
         default=list,
@@ -445,7 +443,7 @@ class PartnerAuditAssessment(TimeStampedModel):
 class PartnerReporting(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="report")
     key_result = models.CharField(max_length=200, null=True, blank=True)
-    publish_annual_reports = models.BooleanField(default=True)
+    publish_annual_reports = models.NullBooleanField()
     last_report = models.DateField(verbose_name='Date of most recent annual report', null=True, blank=True)
     report = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="reports")
     link_report = models.URLField()
@@ -474,17 +472,17 @@ class PartnerMandateMission(TimeStampedModel):
         'common.CommonFile', null=True, blank=True, related_name="governance_organigrams")
 
     # ethics
-    ethic_safeguard = models.BooleanField(default=False)
+    ethic_safeguard = models.NullBooleanField()
     ethic_safeguard_policy = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="ethic_safeguard_policies")
     ethic_safeguard_comment = models.CharField(max_length=200, null=True, blank=True)
-    ethic_fraud = models.BooleanField(default=False)
+    ethic_fraud = models.NullBooleanField()
     ethic_fraud_policy = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="ethic_fraud_policies")
     ethic_fraud_comment = models.CharField(max_length=200, null=True, blank=True)
 
     # population of concern
-    population_of_concern = models.BooleanField(default=False)
+    population_of_concern = models.NullBooleanField()
     concern_groups = ArrayField(
         models.CharField(max_length=3, choices=CONCERN_CHOICES),
         default=list,
@@ -492,11 +490,11 @@ class PartnerMandateMission(TimeStampedModel):
     )
 
     # security
-    security_high_risk_locations = models.BooleanField(
-        default=False, verbose_name="Does the organization have the ability to work in high-risk security locations?")
-    security_high_risk_policy = models.BooleanField(
-        default=False, verbose_name="Does the organization have policies, procedures and practices related "
-                                    "to security risk management?")
+    security_high_risk_locations = models.NullBooleanField(
+        verbose_name="Does the organization have the ability to work in high-risk security locations?")
+    security_high_risk_policy = models.NullBooleanField(
+        verbose_name="Does the organization have policies, procedures and practices related "
+                     "to security risk management?")
     security_desc = models.CharField(
         max_length=200,
         null=True,
@@ -506,8 +504,7 @@ class PartnerMandateMission(TimeStampedModel):
     )
 
     # Collaboration
-    partnership_with_insitutions = models.BooleanField(
-        default=False,
+    partnership_with_insitutions = models.NullBooleanField(
         verbose_name=(
             'Has the organization collaborated with or a member of a cluster,'
             ' professional netwok, consortium or any similar insitutions?')
@@ -551,7 +548,7 @@ class PartnerInternalControl(TimeStampedModel):
         max_length=3,
         choices=FUNCTIONAL_RESPONSIBILITY_CHOICES,
     )
-    segregation_duties = models.BooleanField(default=False)
+    segregation_duties = models.NullBooleanField()
     comment = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
@@ -678,8 +675,8 @@ class PartnerReview(TimeStampedModel):
     performance_pm = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
     peformance_financial = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
     performance_com_eng = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
-    ethical_concerns = models.BooleanField(default=False, verbose_name='Ethical concerns?')
-    does_recommend = models.BooleanField(default=False, verbose_name='Does recommend?')
+    ethical_concerns = models.NullBooleanField(verbose_name='Ethical concerns?')
+    does_recommend = models.NullBooleanField(verbose_name='Does recommend?')
     comment = models.TextField()
 
     class Meta:
