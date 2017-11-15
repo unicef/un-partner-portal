@@ -144,11 +144,11 @@ class PartnerProfile(TimeStampedModel):
     registration_number = models.CharField(max_length=255, null=True, blank=True)
 
     # programme management
-    have_management_approach = models.BooleanField(default=False)  # results_based_approach
+    have_management_approach = models.NullBooleanField()  # results_based_approach
     management_approach_desc = models.CharField(max_length=200, null=True, blank=True)
-    have_system_monitoring = models.BooleanField(default=False)
+    have_system_monitoring = models.NullBooleanField()
     system_monitoring_desc = models.CharField(max_length=200, null=True, blank=True)
-    have_feedback_mechanism = models.BooleanField(default=False)
+    have_feedback_mechanism = models.NullBooleanField()
     feedback_mechanism_desc = models.CharField(max_length=200, null=True, blank=True)
 
     # financial controls
@@ -196,15 +196,17 @@ class PartnerProfile(TimeStampedModel):
         if budget is not None:
             return budget.budget
 
+    @property
     def identification_is_complete(self):
         required_fields = {
             'legal_name': self.partner.legal_name,
-            'country_code': self.partner.county_code,
+            'country_code': self.partner.country_code,
             'establishment_year': self.year_establishment
         }
 
         return all(required_fields.values())
 
+    @property
     def contact_is_complete(self):
         required_fields = {
             'sreet_or_pobox': self.partner.mailing_address.street or self.partner.mailing_address.po_box,
@@ -215,6 +217,7 @@ class PartnerProfile(TimeStampedModel):
         }
         return all(required_fields.values())
 
+    @property
     def mandatemission_complete(self):
         required_fields = {
             'proj_background_rationale': self.partner.mandate_mission.background_and_rationale,
@@ -236,6 +239,7 @@ class PartnerProfile(TimeStampedModel):
 
         return all(required_fields.values())
 
+    @property
     def funding_complete(self):
         budgets = self.partner.budgets.all()
         current_year_exists = budgets.filter(year=date.today().year).exists()
@@ -249,6 +253,7 @@ class PartnerProfile(TimeStampedModel):
 
         return all(required_fields.values())
 
+    @property
     def collaboration_complete(self):
         required_fields = {
             'collaborations_partnership': self.partner.collaborations_partnership.exists(),
@@ -263,10 +268,50 @@ class PartnerProfile(TimeStampedModel):
 
         return all(required_fields.values())
 
+    @property
     def proj_impl_is_complete(self):
-        # TODO
-        return True
+        required_fields = {
+            'have_management_approach': self.have_management_approach is not None,
+            'management_approach_desc':
+                self.management_approach_desc if self.have_management_approach is False else True,
+            'have_system_monitoring': self.have_system_monitoring is not None,
+            'system_monitoring_desc': self.system_monitoring_desc if self.have_system_monitoring is False else True,
+            'have_feedback_mechanism': self.have_feedback_mechanism is not None,
+            'feedback_mechanism_desc': self.feedback_mechanism_desc if self.have_feedback_mechanism is False else True,
+            'org_acc_system': self.org_acc_system,
+            'method_acc': self.method_acc,
+            'have_system_track': self.have_system_track is not None,
+            'financial_control_system_desc': self.financial_control_system_desc,
+            'internal_controls': self.partner.internal_controls.exists(),
+            'experienced_staff': self.experienced_staff is not None,
+            'experienced_staff_desc': self.experienced_staff_desc if self.experienced_staff is False else True,
+            'area_policies': self.partner.area_policies.exists(),
+            'have_bank_account': self.have_bank_account is not None,
+            'have_separate_bank_account': self.have_separate_bank_account is not None,
+            'explain': self.explain if self.have_separate_bank_account is False else True,
 
+            'regular_audited': self.partner.audit.regular_audited is not None,
+            'regular_audited_comment':
+                self.partner.audit.regular_audited_comment if self.partner.audit.regular_audited is False else True,
+            'org_audits': len(self.partner.audit.org_audits) > 0,
+            'most_recent_audit_report': self.partner.audit.most_recent_audit_report,
+            'audit_link_report': self.partner.audit.link_report,
+            'major_accountability_issues_highlighted':
+                self.partner.audit.major_accountability_issues_highlighted is not None,
+            'comment': self.partner.audit.comment if self.partner.audit.major_accountability_issues_highlighted is False else True,
+            'capacity_assessment': self.partner.audit.capacity_assessment is not None,
+            'assessments': len(self.partner.audit.assessments) > 0,
+            'assessment_report': self.partner.audit.assessment_report,
+
+            'key_result': self.partner.report.key_result,
+            'publish_annual_reports': self.partner.report.publish_annual_reports,
+            'publish_annual_reports_artifact':
+                self.partner.report.last_report or self.partner.report.report or self.partner.report.link_report,
+        }
+
+        return all(required_fields.values())
+
+    @property
     def other_info_is_complete(self):
         required_fields = {
             'info_to_share': self.partner.other_info.info_to_share,
