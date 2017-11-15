@@ -11,7 +11,7 @@ import SelectForm from '../forms/selectForm';
 import CheckboxForm from '../forms/checkboxForm';
 import TextFieldForm from '../forms/textFieldForm';
 import Agencies from '../forms/fields/projectFields/agencies';
-import { selectNormalizedSpecializations, selectNormalizedCountries } from '../../store';
+import { selectMappedSpecializations, selectNormalizedCountries } from '../../store';
 import resetChanges from '../eois/filters/eoiHelper';
 
 const messages = {
@@ -102,8 +102,9 @@ class PartnerApplicationListFilter extends Component {
               <SelectForm
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
-                fieldName="specialization"
+                fieldName="specializations"
                 values={specs}
+                sections
                 optional
               />
             </Grid>
@@ -173,17 +174,17 @@ const formEoiFilter = reduxForm({
 })(PartnerApplicationListFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { project_title } = { } } = ownProps.location;
-  const { query: { country_code } = { } } = ownProps.location;
-  const { query: { agency } = { } } = ownProps.location;
-  const { query: { did_win } = { } } = ownProps.location;
-  const { query: { specialization } = { } } = ownProps.location;
-  const { query: { eoi } = { } } = ownProps.location;
+  const { query: { project_title } = {} } = ownProps.location;
+  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { agency } = {} } = ownProps.location;
+  const { query: { did_win } = {} } = ownProps.location;
+  const { query: { specialization } = {} } = ownProps.location;
+  const { query: { eoi } = {} } = ownProps.location;
 
 
   return {
     countries: selectNormalizedCountries(state),
-    specs: selectNormalizedSpecializations(state),
+    specs: selectMappedSpecializations(state),
     eoiTypes: [],
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,

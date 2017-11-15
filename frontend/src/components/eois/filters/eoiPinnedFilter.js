@@ -11,7 +11,7 @@ import SelectForm from '../../forms/selectForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
-import { selectNormalizedSpecializations, selectNormalizedCountries } from '../../../store';
+import { selectMappedSpecializations, selectNormalizedCountries } from '../../../store';
 import resetChanges from './eoiHelper';
 
 const messages = {
@@ -82,7 +82,8 @@ class EoiPinnedFilter extends Component {
         specializations,
         posted_from_date,
         posted_to_date,
-        locations }),
+        locations
+      }),
     });
   }
 
@@ -126,6 +127,7 @@ class EoiPinnedFilter extends Component {
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
                 values={specs}
+                sections
                 optional
               />
             </Grid>
@@ -175,18 +177,18 @@ const formEoiPinnedFilter = reduxForm({
 })(EoiPinnedFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { title } = { } } = ownProps.location;
-  const { query: { country_code } = { } } = ownProps.location;
-  const { query: { agency } = { } } = ownProps.location;
-  const { query: { active } = { } } = ownProps.location;
-  const { query: { locations } = { } } = ownProps.location;
-  const { query: { specializations } = { } } = ownProps.location;
-  const { query: { posted_from_date } = { } } = ownProps.location;
-  const { query: { posted_to_date } = { } } = ownProps.location;
+  const { query: { title } = {} } = ownProps.location;
+  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { agency } = {} } = ownProps.location;
+  const { query: { active } = {} } = ownProps.location;
+  const { query: { locations } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
+  const { query: { posted_from_date } = {} } = ownProps.location;
+  const { query: { posted_to_date } = {} } = ownProps.location;
 
   return {
     countries: selectNormalizedCountries(state),
-    specs: selectNormalizedSpecializations(state),
+    specs: selectMappedSpecializations(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {

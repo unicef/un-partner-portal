@@ -14,7 +14,7 @@ import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
-import { selectNormalizedSpecializations, selectNormalizedCountries } from '../../../store';
+import { selectMappedSpecializations, selectNormalizedCountries } from '../../../store';
 import resetChanges from './eoiHelper';
 
 const messages = {
@@ -69,7 +69,6 @@ class EoiFilter extends Component {
 
   componentWillMount() {
     const { pathName, query } = this.props;
-    
     history.push({
       pathname: pathName,
       query: R.merge(query,
@@ -102,7 +101,6 @@ class EoiFilter extends Component {
 
   render() {
     const { classes, countries, specs, handleSubmit, reset } = this.props;
-
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
         <Grid item xs={12} className={classes.filterContainer} >
@@ -140,6 +138,7 @@ class EoiFilter extends Component {
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
                 values={specs}
+                sections
                 optional
               />
             </Grid>
@@ -231,7 +230,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     countries: selectNormalizedCountries(state),
-    specs: selectNormalizedSpecializations(state),
+    specs: selectMappedSpecializations(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {
