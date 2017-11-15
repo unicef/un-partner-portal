@@ -122,6 +122,7 @@ INSTALLED_APPS = [
     'django_filters',
     # 'compressor',
     'django_common',
+    'imagekit',
 
     'common',
     'account',

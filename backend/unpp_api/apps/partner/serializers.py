@@ -1,4 +1,4 @@
-from django.db import transaction, IntegrityError
+from django.db import transaction
 from rest_framework import serializers
 
 from common.consts import (
@@ -52,6 +52,7 @@ class PartnerSerializer(serializers.ModelSerializer):
     is_hq = serializers.BooleanField(read_only=True)
     logo = CommonFileSerializer(source='other_info.org_logo',
                                 read_only=True)
+    org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
 
     class Meta:
@@ -64,6 +65,7 @@ class PartnerSerializer(serializers.ModelSerializer):
             'country_code',
             'display_type',
             'partner_additional',
+            'org_logo_thumbnail',
         )
 
 

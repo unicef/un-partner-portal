@@ -22,7 +22,12 @@ from common.permissions import (
     IsAtLeastMemberReader,
     IsAtLeastMemberEditor,
     IsAtLeastAgencyMemberEditor,
+    IsOpenProject,
     IsEOIReviewerAssessments,
+    IsApplicationAPIEditor,
+    IsConvertUnsolicitedEditor,
+    IsApplicationFeedbackPerm,
+    IsPartnerEOIApplicationCreate,
     IsPartner,
 )
 from notification.helpers import (
@@ -80,6 +85,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
     """
     Endpoint for getting OPEN Call of Expression of Interest.
     """
+    permission_classes = (IsAuthenticated, IsOpenProject)
 
     def get_queryset(self):
         queryset = self.queryset.filter(display_type=EOI_TYPES.open)
@@ -89,7 +95,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
         today = date.today()
 
-        return queryset.filter(deadline_date__gte=today)
+        return queryset.filter(deadline_date__gte=today, is_completed=False)
 
     def post(self, request, *args, **kwargs):
         serializer = CreateProjectSerializer(data=request.data, context={'request': request})
@@ -102,8 +108,6 @@ class OpenProjectAPIView(BaseProjectAPIView):
         if instance.reviewers.exists():
             send_notification('agency_cfei_reviewers_selected', instance,
                               instance.reviewers.all())
-
-
 
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
@@ -146,7 +150,6 @@ class EOIAPIView(RetrieveUpdateAPIView):
             }
             send_notification('cfei_update_prev', eoi, users, context=context)
 
-
         # New Reviewers Added
         new_reviewers = []
         for reviewer in instance.reviewers.all():
@@ -157,12 +160,9 @@ class EOIAPIView(RetrieveUpdateAPIView):
                 send_notification('agency_cfei_reviewers_selected', eoi,
                                   User.objects.filter(id__in=new_reviewers))
 
-
-
         # Completed
         if instance.is_completed:
             send_notification_cfei_completed(instance)
-
 
 
 class DirectProjectAPIView(BaseProjectAPIView):
@@ -171,11 +171,6 @@ class DirectProjectAPIView(BaseProjectAPIView):
     """
 
     serializer_class = DirectProjectSerializer
-
-    # TODO - can remove. not using?
-    def get_partners_pks(self):
-        # Partner Member can have many partners! This case is under construction and can change in future!
-        return PartnerMember.objects.filter(user=self.request.user).values_list('partner', flat=True)
 
     def get_queryset(self):
         return self.queryset.filter(display_type=EOI_TYPES.direct).distinct()
@@ -252,7 +247,7 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
     """
     Create Application for open EOI by partner.
     """
-    permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
+    permission_classes = (IsAuthenticated, IsPartnerEOIApplicationCreate)
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
@@ -277,7 +272,7 @@ class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
     """
     Create Application for open EOI by partner.
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsPartner, IsAtLeastMemberEditor)
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
@@ -314,7 +309,7 @@ class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
 
 
 class ApplicationAPIView(RetrieveUpdateAPIView):
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsApplicationAPIEditor)
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
@@ -345,7 +340,7 @@ class EOIApplicationsListAPIView(ListAPIView):
 
 
 class ReviewersStatusAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAgencyMemberUser, IsAtLeastMemberEditor)
     queryset = User.objects.all()
     serializer_class = ReviewersApplicationSerializer
     lookup_field = 'pk'
@@ -413,7 +408,7 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
 
 
 class UnsolicitedProjectAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAgencyMemberUser, )
     queryset = Application.objects.filter(is_unsolicited=True).distinct()
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
@@ -463,7 +458,7 @@ class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedLis
 class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
     serializer_class = ApplicationFeedbackSerializer
     pagination_class = SmallPagination
-    permission_classes = (IsAuthenticated,)  # TODO - tighten up permisions
+    permission_classes = (IsAuthenticated, IsApplicationFeedbackPerm)
 
     def get_queryset(self):
         return ApplicationFeedback.objects.filter(application=self.kwargs['pk'])
@@ -476,7 +471,7 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
 class ConvertUnsolicitedAPIView(CreateAPIView):
     serializer_class = ConvertUnsolicitedSerializer
     queryset = Application.objects.all()
-    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+    permission_classes = (IsAuthenticated, IsConvertUnsolicitedEditor)
 
     def perform_create(self, serializer):
         instance = serializer.save()
@@ -496,7 +491,7 @@ class EOIReviewersAssessmentsListAPIView(ListAPIView):
     """
     Reviewers with they assessments - summary
     """
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAgencyMemberUser, IsAtLeastMemberEditor)
     queryset = User.objects.all()
     serializer_class = EOIReviewersAssessmentsSerializer
     lookup_field = 'eoi_id'
@@ -514,7 +509,7 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
     NOTIFICATION_MESSAGE_SENT = "Notification message sent successfully"
     NOTIFICATION_MESSAGE_WAIT = "Notification message sent recently. Need to wait 24 hours."
 
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAgencyMemberUser, IsAtLeastMemberEditor)
 
     def post(self, request, *args, **kwargs):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
@@ -528,7 +523,7 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
 
 
 class AwardedPartnersListAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAgencyMemberUser, )
     serializer_class = AwardedPartnersSerializer
     lookup_field = 'eoi_id'
 
@@ -539,7 +534,7 @@ class AwardedPartnersListAPIView(ListAPIView):
 
 
 class CompareSelectedListAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAgencyMemberUser, IsAtLeastMemberEditor)
     serializer_class = CompareSelectedSerializer
 
     def get_queryset(self):
