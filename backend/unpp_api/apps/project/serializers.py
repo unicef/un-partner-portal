@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import datetime
+from datetime import datetime, date
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -155,6 +155,7 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
     submitter = UserSerializer(read_only=True)
     is_direct = serializers.SerializerMethodField()
     cfei_type = serializers.CharField(read_only=True)
+    application_status = serializers.CharField(read_only=True)
 
 
     class Meta:
@@ -281,6 +282,20 @@ class CreateProjectSerializer(CreateEOISerializer):
         return self.instance
 
 
+class SelectedPartnersSerializer(serializers.ModelSerializer):
+    partner_id = serializers.CharField(source="partner.id")
+    partner_name = serializers.CharField(source="partner.legal_name")
+
+    class Meta:
+        model = Application
+        fields = (
+            'id',
+            'partner_id',
+            'partner_name',
+            'offer_status',
+        )
+
+
 class PartnerProjectSerializer(serializers.ModelSerializer):
 
     agency = serializers.CharField(source='agency.name')
@@ -309,6 +324,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'justification',
             'completed_reason',
             'completed_date',
+            'is_completed',
             'display_type',
             'status',
             'title',
@@ -344,6 +360,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
 
     specializations = SimpleSpecializationSerializer(many=True)
     locations = PointSerializer(many=True)
+    direct_selected_partners = serializers.SerializerMethodField()
     focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
     reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
 
@@ -363,6 +380,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'justification',
             'completed_reason',
             'completed_date',
+            'is_completed',
             'display_type',
             'status',
             'title',
@@ -379,6 +397,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'reviewers',
             'reviewers_detail',
             'selected_source',
+            'direct_selected_partners',
         )
         read_only_fields = ('created', 'completed_date',)
 
@@ -390,16 +409,25 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
                 if partner.id not in self.initial_data.get('invited_partners', []):
                     instance.invited_partners.remove(partner)
 
+        if instance.completed_reason is None and validated_data.get('completed_reason') is not None and \
+                instance.completed_date is None and instance.is_completed is False:
+            instance.completed_date = datetime.now()
+            instance.is_completed = True
+
         instance = super(ProjectUpdateSerializer, self).update(instance, validated_data)
         for invited_partner in self.initial_data.get('invited_partners', []):
             instance.invited_partners.add(Partner.objects.get(id=invited_partner))
 
-        if instance.status == EOI_STATUSES.completed:
-            instance.completed_date = datetime.datetime.now()
-
         instance.save()
 
         return instance
+
+    def get_direct_selected_partners(self, obj):
+        if obj.is_direct:
+            # this is used by agency
+            query = obj.applications.all()
+            return SelectedPartnersSerializer(query, many=True).data
+        return
 
 
 class ApplicationsListSerializer(serializers.ModelSerializer):
@@ -483,6 +511,14 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
             'note',
         )
 
+    def validate(self, data):
+        kwargs = self.context['request'].parser_context.get('kwargs', {})
+        application_id = kwargs.get(self.context['view'].lookup_url_kwarg)
+        app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
+        if app.eoi.status != EOI_STATUSES.closed:
+            raise serializers.ValidationError("Assessment allowed once deadline is passed.")
+        return super(ReviewerAssessmentsSerializer, self).validate(data)
+
 
 class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
 
@@ -492,6 +528,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
     application_date = serializers.CharField(source="created")
+
 
     class Meta:
         model = Application
@@ -503,7 +540,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
             'country',
             'specializations',
             'application_date',
-            'status',
+            'application_status',
         )
 
     def get_country(self, obj):
@@ -511,6 +548,9 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
 
     def get_specializations(self, obj):
         return obj.eoi.specializations.all().values_list('id', flat=True)
+
+    def get_application_status(self, obj):
+        return obj.eoi.application_status
 
 
 class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer):
@@ -628,7 +668,6 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         eoi = EOI(**validated_data['eoi'])
         eoi.created_by = submitter
         eoi.display_type = EOI_TYPES.direct
-        eoi.status = EOI_STATUSES.open
         eoi.title = app.proposal_of_eoi_details.get('title')
         eoi.agency = app.agency
         # we can use get direct because agent have one agency office

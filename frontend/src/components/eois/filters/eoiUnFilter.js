@@ -63,6 +63,17 @@ class EoiFilter extends Component {
     this.onSearch = this.onSearch.bind(this);
   }
 
+  componentWillMount() {
+    const { pathName, query, agencyId } = this.props;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { agency: agencyId },
+      ),
+    });
+  }
+
   onSearch(values) {
     const { pathName, query } = this.props;
 
@@ -173,6 +184,7 @@ EoiFilter.propTypes = {
   countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
   pathName: PropTypes.string,
+  agencyId: PropTypes.string,
   query: PropTypes.object,
 };
 
@@ -195,6 +207,7 @@ const mapStateToProps = (state, ownProps) => {
     specs: selectMappedSpecializations(state),
     directSources: selectNormalizedDirectSelectionSource(state),
     pathName: ownProps.location.pathname,
+    agencyId: state.session.agencyId,
     query: ownProps.location.query,
     initialValues: {
       project_title,
