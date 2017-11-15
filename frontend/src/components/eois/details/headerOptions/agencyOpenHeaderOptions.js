@@ -6,7 +6,6 @@ import SpreadContent from '../../../common/spreadContent';
 import EditButton from '../../buttons/editCfeiButton';
 import InviteButton from '../../buttons/invitePartner';
 import Reviewers from '../../buttons/manageReviewers';
-import Duplicate from '../../buttons/duplicateButton';
 import Complete from '../../buttons/completeCfeiButton';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
@@ -17,7 +16,6 @@ import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
 const edit = 'edit';
 const invite = 'invite';
 const manage = 'manage';
-const duplicate = 'duplicate';
 const complete = 'complete';
 
 const PartnerOpenHeaderOptions = (props) => {
@@ -43,10 +41,6 @@ const PartnerOpenHeaderOptions = (props) => {
             {
               name: manage,
               content: <Reviewers handleClick={() => handleDialogOpen(manage)} />,
-            },
-            {
-              name: duplicate,
-              content: <Duplicate id={id} onClick={() => handleDialogOpen(duplicate)} />,
             },
           ]
         }

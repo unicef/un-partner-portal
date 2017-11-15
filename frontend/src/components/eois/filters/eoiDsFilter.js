@@ -66,25 +66,66 @@ class EoiFilter extends Component {
   componentWillMount() {
     const { pathName, query, agencyId } = this.props;
 
+    const agency = this.props.query.agency ? this.props.query.agency : agencyId;
+    const active = this.props.query.active ? this.props.query.active : true;
+    const ordering = this.props.query.active === 'true' ? 'deadline_date' : '-completed_date';
+
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { active: true, ordering: 'created', agency: agencyId },
+        { active, ordering, agency },
       ),
     });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (R.isEmpty(nextProps.query)) {
+      const { pathname } = nextProps.location;
+
+      const ordering = this.props.query.active ? 'created' : '-completed_date';
+      const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
+
+      history.push({
+        pathname,
+        query: R.merge(this.props.query,
+          { active: this.props.query.active, ordering, agency: agencyQ },
+        ),
+      });
+    }
   }
 
   onSearch(values) {
     const { pathName, query } = this.props;
     // TODO - move order to paginated list wrapper
     const { title, agency, active, country_code, specializations, selected_source } = values;
-    const ordering = active ? 'created' : '-completed_date';
+
+    const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
+    const ordering = active === 'true' ? 'created' : '-completed_date';
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
-        title, agency, active, ordering, country_code, specializations, selected_source,
+        title,
+        agency: agencyQ,
+        active,
+        ordering,
+        country_code,
+        specializations,
+        selected_source,
       }),
+    });
+  }
+
+  resetForm() {
+    const query = resetChanges(this.props.pathName, this.props.query);
+
+    const { pathName, agencyId } = this.props;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { active: true, ordering: 'created', agency: agencyId },
+      ),
     });
   }
 
@@ -161,7 +202,7 @@ class EoiFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>
@@ -196,6 +237,7 @@ const formEoiFilter = reduxForm({
   form: 'directFilter',
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(EoiFilter);
 
 const mapStateToProps = (state, ownProps) => {
@@ -206,6 +248,7 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { specializations } = { } } = ownProps.location;
   const { query: { selected_source } = { } } = ownProps.location;
 
+  const agencyQ = Number(agency);
 
   return {
     countries: selectNormalizedCountries(state),
@@ -217,7 +260,7 @@ const mapStateToProps = (state, ownProps) => {
     initialValues: {
       title,
       country_code,
-      agency,
+      agency: agencyQ,
       active,
       specializations,
       selected_source,

@@ -172,6 +172,9 @@ EoiPinnedFilter.propTypes = {
 
 const formEoiPinnedFilter = reduxForm({
   form: 'tableFilter',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(EoiPinnedFilter);
 
 const mapStateToProps = (state, ownProps) => {
@@ -184,6 +187,8 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { posted_from_date } = { } } = ownProps.location;
   const { query: { posted_to_date } = { } } = ownProps.location;
 
+  const agencyQ = agency ? Number(agency) : agency;
+
   return {
     countries: selectNormalizedCountries(state),
     specs: selectNormalizedSpecializations(state),
@@ -192,7 +197,7 @@ const mapStateToProps = (state, ownProps) => {
     initialValues: {
       title,
       country_code,
-      agency,
+      agency: agencyQ,
       active,
       locations,
       specializations,

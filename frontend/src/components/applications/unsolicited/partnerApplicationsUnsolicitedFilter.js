@@ -63,7 +63,24 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
   componentWillMount() {
     const { pathName, query } = this.props;
     resetChanges(pathName, query);
+
+    history.push({
+      pathname: pathName,
+      query,
+    });
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (R.isEmpty(nextProps.query)) {
+      const { pathname } = nextProps.location;
+
+      history.push({
+        pathname,
+        query: this.props.query,
+      });
+    }
+  }
+
 
   onSearch(values) {
     const { pathName, query } = this.props;
@@ -170,6 +187,9 @@ PartnerApplicationsUnsolicitedFilter.propTypes = {
 
 const formPartnerApplicationsUnsolicitedFilter = reduxForm({
   form: 'tableFilter',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(PartnerApplicationsUnsolicitedFilter);
 
 const mapStateToProps = (state, ownProps) => {
@@ -180,6 +200,8 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { selected_source } = { } } = ownProps.location;
   const { query: { ds_converted } = { } } = ownProps.location;
 
+  const agencyQ = agency ? Number(agency) : agency;
+
   return {
     countries: selectNormalizedCountries(state),
     specs: selectNormalizedSpecializations(state),
@@ -189,7 +211,7 @@ const mapStateToProps = (state, ownProps) => {
     initialValues: {
       project_title,
       country_code,
-      agency,
+      agency: agencyQ,
       specialization,
       selected_source,
       ds_converted,
