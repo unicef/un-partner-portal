@@ -699,7 +699,8 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
 
 class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
-    info_to_share = serializers.CharField(source="other_info.info_to_share", required=False)
+    info_to_share = serializers.CharField(source="other_info.info_to_share", required=False,
+                                          allow_blank=True)
     org_logo = CommonFileSerializer(source="other_info.org_logo")
     confirm_data_updated = serializers.BooleanField(source="other_info.confirm_data_updated")
 
