@@ -13,28 +13,27 @@ const types = [
 
 const pathType = type => R.filter(item => item.type === type, types);
 
-const path = (type, eoiId) => {
+const path = (type, eoiId, cnId) => {
   const source = pathType(type)[0];
   if (source.path === 'open') {
     return `/cfei/open/${eoiId}/`;
   } else if (source.path === 'direct') {
     return `/cfei/direct/${eoiId}`;
   } else if (source.path === 'unsolicited') {
-    return `/cfei/unsolicited/${eoiId}`;
+    return `/cfei/unsolicited/${cnId}`;
   }
 };
 
 const CnCell = (props) => {
-  const { eoiId, type } = props;
-
+  const { eoiId, cnId, type } = props;
   return (
     <TableCell first limited>
       <Typography
         component={Link}
         color="accent"
-        to={path(type, eoiId)}
+        to={path(type, eoiId, cnId)}
       >
-        {eoiId}
+        {eoiId || cnId}
       </Typography>
     </TableCell>
   );

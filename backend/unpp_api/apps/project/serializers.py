@@ -824,4 +824,5 @@ class PendingOffersSerializer(SubmittedCNSerializer):
             'agency_name',
             'countries',
             'specializations',
+            'eoi_id'
         )

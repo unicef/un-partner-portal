@@ -27,7 +27,7 @@ const columns = [
 
 const renderCells = ({ row, column }) => {
   if (column.name === 'cn_id') {
-    return (<ApplicationIDCell type={row.cfei_type} eoiId={row.cn_id} />);
+    return (<ApplicationIDCell type={row.cfei_type} eoiId={row.eoi_id} cnId={row.cn_id} />);
   } else if (column.name === 'countries') {
     return (
       <TableCell >
