@@ -197,13 +197,12 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         payload = {
             "justification": justification,
             "completed_reason": COMPLETED_REASON.canceled,
-            "status": EOI_STATUSES.completed
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.canceled)
         self.assertTrue(response.data['completed_date'])
-        self.assertEquals(response.data['status'], EOI_STATUSES.completed)
+        self.assertTrue(response.data['is_completed'])
         self.assertEquals(response.data['justification'], justification)
 
 
@@ -467,6 +466,12 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
         # add logged agency member to eoi/application reviewers
         app.eoi.reviewers.add(self.user)
+
+        response = self.client.post(url, data=payload, format='json')
+        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertEquals(response.data['non_field_errors'], ['Assessment allowed once deadline is passed.'])
+        app.eoi.deadline_date = date.today() - timedelta(days=1)
+        app.eoi.save()
 
         response = self.client.post(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))

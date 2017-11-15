@@ -1,11 +1,26 @@
 import React, { Component } from 'react';
-
 import Grid from 'material-ui/Grid';
-
+import { withStyles } from 'material-ui/styles';
+import Typography from 'material-ui/Typography';
 import TextFieldForm from '../forms/textFieldForm';
 import PasswordFieldForm from '../forms/passwordFieldForm';
 import { email, password } from '../../helpers/validation';
 
+const messages = {
+  emailInfo: 'The e-mail address and password provided above will be required for you to log in to the UN Partner Portal.',
+};
+
+
+const styleSheet = theme => ({
+  infoBox: {
+    marginTop: `${theme.spacing.unit * 2}px`,
+    padding: `${theme.spacing.unit}px`,
+    background: theme.palette.common.gray,
+  },
+  info: {
+    color: theme.palette.common.grayText,
+  },
+});
 
 class Account extends Component {
   constructor(props) {
@@ -19,6 +34,8 @@ class Account extends Component {
   }
 
   render() {
+    const { classes } = this.props;
+
     return (
       <Grid item>
         <Grid container direction="column" spacing={16}>
@@ -67,6 +84,9 @@ class Account extends Component {
                 />
               </Grid>
             </Grid>
+            <Grid item>
+              <div className={classes.infoBox}> <Typography className={classes.info} type="body1">{messages.emailInfo}</Typography></div>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
@@ -74,4 +94,4 @@ class Account extends Component {
   }
 }
 
-export default Account;
+export default (withStyles(styleSheet, { name: 'Account' })(Account));

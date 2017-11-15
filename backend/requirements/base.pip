@@ -25,6 +25,7 @@ python-json-logger==0.1.7
 xmltodict==0.11.0
 requests==2.18.4
 python-dateutil==2.6.1
+django-imagekit==4.0.1
 
 # Testing
 astroid==1.5.2

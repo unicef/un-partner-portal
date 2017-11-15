@@ -1,4 +1,4 @@
-from django.db import transaction, IntegrityError
+from django.db import transaction
 from rest_framework import serializers
 
 from common.consts import (
@@ -6,6 +6,7 @@ from common.consts import (
     METHOD_ACC_ADOPTED_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     PARTNER_TYPES,
+    POLICY_AREA_CHOICES,
 )
 from common.models import Point, AdminLevel1
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
@@ -52,6 +53,7 @@ class PartnerSerializer(serializers.ModelSerializer):
     is_hq = serializers.BooleanField(read_only=True)
     logo = CommonFileSerializer(source='other_info.org_logo',
                                 read_only=True)
+    org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
 
     class Meta:
@@ -64,6 +66,7 @@ class PartnerSerializer(serializers.ModelSerializer):
             'country_code',
             'display_type',
             'partner_additional',
+            'org_logo_thumbnail',
         )
 
 
@@ -697,7 +700,8 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
 
 class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
-    info_to_share = serializers.CharField(source="other_info.info_to_share")
+    info_to_share = serializers.CharField(source="other_info.info_to_share", required=False,
+                                          allow_blank=True)
     org_logo = CommonFileSerializer(source="other_info.org_logo")
     confirm_data_updated = serializers.BooleanField(source="other_info.confirm_data_updated")
 
@@ -790,6 +794,7 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
                 country_code=country_code,
                 display_type=PARTNER_TYPES.international,
             )
+            # TODO - move this and partner create in account registration into one location
             PartnerProfile.objects.create(partner=partner)
             PartnerMailingAddress.objects.create(partner=partner)
             PartnerAuditAssessment.objects.create(partner=partner)
@@ -797,11 +802,18 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
             PartnerMandateMission.objects.create(partner=partner)
             PartnerFunding.objects.create(partner=partner)
             PartnerOtherInfo.objects.create(partner=partner)
+
             responsibilities = []
             for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
                 responsibilities.append(
                     PartnerInternalControl(partner=partner, functional_responsibility=responsibility)
                 )
             PartnerInternalControl.objects.bulk_create(responsibilities)
+
+            policy_areas = []
+            for policy_area in list(POLICY_AREA_CHOICES._db_values):
+                policy_areas.append(PartnerPolicyArea(partner=partner, area=policy_area))
+
+            PartnerPolicyArea.objects.bulk_create(policy_areas)
 
         return Partner.objects.get(pk=hq_id)  # we want to refresh changes after creating related models

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
+import { reduxForm, formValueSelector } from 'redux-form';
 import PropTypes from 'prop-types';
 import {
   FocalPoint,
@@ -16,16 +16,23 @@ import { PROJECT_TYPES } from '../../../../helpers/constants';
 
 
 const EditCfeiForm = (props) => {
-  const { handleSubmit, type } = props;
-  const isOpen = type === PROJECT_TYPES.OPEN;
+  const {
+    handleSubmit,
+    isOpen,
+    formDates: {
+      start_date: formStartDate,
+      deadline_date: formDeadline,
+      notif_results_date: formNotifDate,
+    },
+  } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <GridRow columns={4} >
-          <StartDate />
-          <EndDate />
+          <StartDate minDate={formNotifDate} />
+          <EndDate minDate={formStartDate} />
           {isOpen && <DeadlineDate />}
-          {isOpen && <NotifyDate />}
+          {isOpen && <NotifyDate minDate={formDeadline} />}
         </GridRow>
         <FocalPoint />
       </GridColumn>
@@ -42,27 +49,31 @@ EditCfeiForm.propTypes = {
   /**
    * type of the project, direct, open, unsolicited
    */
-  type: PropTypes.string,
+  isOpen: PropTypes.bool,
+  formDates: PropTypes.object,
 };
 
 const formEditCfei = reduxForm({
   form: 'editCfei',
 })(EditCfeiForm);
 
+const selector = formValueSelector('editCfei');
+
+
 const mapStateToProps = (state, ownProps) => {
+  const isOpen = ownProps.type === PROJECT_TYPES.OPEN;
   const { focal_points,
     start_date,
     end_date,
     deadline_date,
     notif_results_date } = selectCfeiDetails(state, ownProps.id);
+  let initialValues = { focal_points, start_date, end_date };
+  if (isOpen) initialValues = { ...initialValues, deadline_date, notif_results_date };
+  const formDates = selector(state, 'start_date', 'deadline_date', 'notif_results_date');
   return {
-    initialValues: {
-      focal_points,
-      start_date,
-      end_date,
-      deadline_date,
-      notif_results_date,
-    },
+    isOpen,
+    formDates,
+    initialValues,
   };
 };
 

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
 import R from 'ramda';
@@ -12,6 +12,7 @@ import {
   selectCfeiCriteria,
   isUserAFocalPoint,
   isUserAReviewer,
+  isUserACreator,
 } from '../../../../../store';
 import ReviewContent from './reviewContent/reviewContent';
 import Feedback from '../../../../applications/feedback/feedbackContainer';
@@ -30,9 +31,10 @@ const ApplicationSummaryContent = (props) => {
     isUserFocalPoint,
     isUserReviewer,
     shouldSeeReviews,
+    shouldAddFeedback,
   } = props;
   return (
-    <GridColumn spacing="8">
+    <GridColumn spacing="16">
       <Grid container direction="row">
         <Grid item xs={12} sm={8}>
           <PartnerOverview partner={partnerDetails} loading={partnerLoading} button />
@@ -54,7 +56,7 @@ const ApplicationSummaryContent = (props) => {
         justReason={application.justification_reason}
       />
       }
-      <Feedback applicationId={applicationId} />
+      <Feedback allowedToAdd={shouldAddFeedback} applicationId={applicationId} />
     </GridColumn>
 
   );
@@ -69,15 +71,17 @@ ApplicationSummaryContent.propTypes = {
   shouldSeeReviews: PropTypes.bool,
   isUserFocalPoint: PropTypes.bool,
   isUserReviewer: PropTypes.bool,
+  shouldAddFeedback: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const application = selectApplication(state, ownProps.params.applicationId) || {};
-  const { partner = {}, eoi, status } = application;
+  const { partner = {}, eoi, status, application_status } = application;
   const partnerDetails = R.prop(R.prop('id', partner), state.agencyPartnerProfile);
   const cfeiCriteria = selectCfeiCriteria(state, eoi);
   const isUserFocalPoint = isUserAFocalPoint(state, eoi);
   const isUserReviewer = isUserAReviewer(state, eoi);
+  const isUserCreator = isUserACreator(state, eoi);
   return {
     application,
     partner,
@@ -85,7 +89,10 @@ const mapStateToProps = (state, ownProps) => {
     partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
     cfeiCriteria,
     eoi,
-    shouldSeeReviews: (isUserFocalPoint || isUserReviewer) && status === APPLICATION_STATUSES.PRE,
+    shouldAddFeedback: isUserFocalPoint || isUserCreator,
+    shouldSeeReviews: (isUserFocalPoint || isUserReviewer)
+    && status === APPLICATION_STATUSES.PRE
+    && application_status === 'Application Under Review',
     isUserFocalPoint,
     isUserReviewer,
   };
