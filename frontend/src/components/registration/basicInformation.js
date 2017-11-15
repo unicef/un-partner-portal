@@ -81,7 +81,7 @@ const BasicInformation = (props) => {
           <TextFieldForm
             label="E-mail of Head of Organization"
             placeholder="Provide Email"
-            fieldName="json.partner_head_organization.head_email"
+            fieldName="json.partner_head_organization.email"
             validation={[email]}
           />
         </Grid>

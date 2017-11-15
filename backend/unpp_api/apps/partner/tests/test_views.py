@@ -377,7 +377,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
     def test_other_info(self):
         url = reverse('common:file')
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
         with open(filename) as doc:
             payload = {
                 "file_field": doc

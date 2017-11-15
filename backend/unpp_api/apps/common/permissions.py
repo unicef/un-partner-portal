@@ -206,7 +206,7 @@ class IsApplicationFeedbackPerm(IsAtLeastMemberReader):
         app = get_object_or_404(Application.objects.select_related('eoi'), id=app_id)
 
         if request.user.is_partner_user:
-            if request.method == 'GET' and app.partner.id == request.user.member.parnter.id:
+            if request.method == 'GET' and app.partner.id == request.user.member.partner.id:
                 return True
             return False
 

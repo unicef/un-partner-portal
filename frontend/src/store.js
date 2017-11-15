@@ -133,7 +133,7 @@ const makeFormItem = (list) => {
   return { value, label };
 };
 
-const mapValuesForSelectionField = (state, compareField = 'label') => {
+export const mapValuesForSelectionField = (state, compareField = 'label') => {
   const compare = (a, b) => a[compareField].localeCompare(b[compareField]);
   return R.sort(compare, R.map(makeFormItem, R.toPairs(state)));
 };
@@ -154,7 +154,7 @@ export const selectNormalizedPopulationsOfConcernGroups = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['population-of-concern']);
 
 export const selectNormalizedStaffGlobalyChoices = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['staff-globaly-choices']);
+  mapValuesForSelectionField(state.partnerProfileConfig['staff-globaly-choices'], 'value');
 
 export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices'], 'value');
@@ -209,6 +209,9 @@ export const selectSector = (state, id) =>
 
 export const selectSpecializations = (state, ids) =>
   sectorsSelectors.selectSpecializations(state.sectors, ids);
+
+export const selectMappedSpecializations = state =>
+  sectorsSelectors.selectMappedSpecializations(state.sectors);
 
 export const selectCfeiDetailsItemsByType = (state, type) =>
   selectItemsByType(state.cfeiDetailsNav, type);

@@ -14,7 +14,7 @@ import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
-import { selectNormalizedSpecializations, selectNormalizedCountries } from '../../../store';
+import { selectMappedSpecializations, selectNormalizedCountries } from '../../../store';
 import resetChanges from './eoiHelper';
 
 const messages = {
@@ -68,14 +68,35 @@ class EoiFilter extends Component {
   }
 
   componentWillMount() {
-    const { pathName, query } = this.props;
-    
+    const { pathName, query, agencyId } = this.props;
+
+    const agency = this.props.query.agency ? this.props.query.agency : agencyId;
+    const active = this.props.query.active ? this.props.query.active : true;
+    const ordering = this.props.query.active === 'true' ? 'deadline_date' : '-completed_date';
+
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { active: true, ordering: 'deadline_date' },
+        { active, ordering, agency },
       ),
     });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (R.isEmpty(nextProps.query)) {
+      const { pathname } = nextProps.location;
+
+      const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
+      const ordering = this.props.query.active === 'true' ? 'deadline_date' : '-completed_date';
+      const active = this.props.query.active ? this.props.query.active : true;
+
+      history.push({
+        pathname,
+        query: R.merge(this.props.query,
+          { active, ordering, agency: agencyQ },
+        ),
+      });
+    }
   }
 
   onSearch(values) {
@@ -83,13 +104,15 @@ class EoiFilter extends Component {
 
     const { title, agency, country_code, specializations,
       posted_from_date, posted_to_date, active, locations } = values;
-    const ordering = active ? 'deadline_date' : '-completed_date';
+
+    const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
+    const ordering = active === 'true' ? 'deadline_date' : '-completed_date';
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         title,
-        agency,
+        agency: agencyQ,
         ordering,
         active,
         country_code,
@@ -100,9 +123,21 @@ class EoiFilter extends Component {
     });
   }
 
+  resetForm() {
+    const query = resetChanges(this.props.pathName, this.props.query);
+
+    const { pathName, agencyId } = this.props;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { active: true, ordering: 'deadline_date', agency: agencyId },
+      ),
+    });
+  }
+
   render() {
     const { classes, countries, specs, handleSubmit, reset } = this.props;
-
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
         <Grid item xs={12} className={classes.filterContainer} >
@@ -140,6 +175,7 @@ class EoiFilter extends Component {
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
                 values={specs}
+                sections
                 optional
               />
             </Grid>
@@ -184,7 +220,7 @@ class EoiFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>
@@ -210,6 +246,7 @@ EoiFilter.propTypes = {
   countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
   pathName: PropTypes.string,
+  agencyId: PropTypes.string,
   query: PropTypes.object,
 };
 
@@ -217,6 +254,7 @@ const formEoiFilter = reduxForm({
   form: 'openFilter',
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(EoiFilter);
 
 const mapStateToProps = (state, ownProps) => {
@@ -229,15 +267,18 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { posted_from_date } = { } } = ownProps.location;
   const { query: { posted_to_date } = { } } = ownProps.location;
 
+  const agencyQ = Number(agency);
+
   return {
     countries: selectNormalizedCountries(state),
-    specs: selectNormalizedSpecializations(state),
+    specs: selectMappedSpecializations(state),
+    agencyId: state.session.agencyId,
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {
       title,
       country_code,
-      agency,
+      agency: agencyQ,
       active,
       locations,
       specializations,

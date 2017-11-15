@@ -73,6 +73,7 @@ const ConvertToDirectSelectionForm = (props) => {
               maxLength: '200',
             },
           }}
+          optional
         />
 
         <Grid container direction="row">

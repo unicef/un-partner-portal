@@ -12,7 +12,6 @@ import { addDirectCfei, addOpenCfei, addUnsolicitedCN } from '../../../../reduce
 import CallPartnersModal from '../callPartners/callPartnersModal';
 import { PROJECT_TYPES } from '../../../../helpers/constants';
 
-
 const messages = {
   title: {
     open: 'Create new Call for Expressions of Interests',
@@ -22,8 +21,6 @@ const messages = {
   header: {
     open: {
       title: 'This CFEI is for open selections.',
-      body: 'If you would like to notify specific partners about this CFEI, you can select ' +
-      'their names on the next page of this form.',
     },
     direct: {
       title: 'This is a direct selection.',
