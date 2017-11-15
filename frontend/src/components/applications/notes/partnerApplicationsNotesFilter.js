@@ -67,13 +67,30 @@ class PartnerApplicationsNotesFilter extends Component {
     const { pathName, query } = this.props;
     resetChanges(pathName, query);
 
+    const active = this.props.query.cfei_active ? this.props.query.cfei_active : true;
+
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { cfei_active: true },
+        { cfei_active: active },
       ),
     });
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (R.isEmpty(nextProps.query)) {
+      const { pathname } = nextProps.location;
+
+      const active = this.props.query.cfei_active ? this.props.query.cfei_active : true;
+      history.push({
+        pathname,
+        query: R.merge(this.props.query,
+          { cfei_active: active },
+        ),
+      });
+    }
+  }
+
 
   onSearch(values) {
     const { pathName, query } = this.props;
@@ -94,6 +111,20 @@ class PartnerApplicationsNotesFilter extends Component {
         posted_to_date,
         locations
       }),
+    });
+  }
+
+
+  resetForm() {
+    const query = resetChanges(this.props.pathName, this.props.query);
+
+    const { pathName } = this.props;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { cfei_active: true },
+      ),
     });
   }
 
@@ -170,7 +201,7 @@ class PartnerApplicationsNotesFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>
@@ -202,6 +233,9 @@ PartnerApplicationsNotesFilter.propTypes = {
 
 const formPartnerApplicationsNotesFilter = reduxForm({
   form: 'tableFilter',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(PartnerApplicationsNotesFilter);
 
 const mapStateToProps = (state, ownProps) => {
@@ -215,6 +249,8 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { posted_from_date } = {} } = ownProps.location;
   const { query: { posted_to_date } = {} } = ownProps.location;
 
+  const agencyQ = agency ? Number(agency) : agency;
+
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
@@ -224,7 +260,7 @@ const mapStateToProps = (state, ownProps) => {
     initialValues: {
       project_title,
       country_code,
-      agency,
+      agency: agencyQ,
       cfei_active,
       status,
       locations,

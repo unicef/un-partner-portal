@@ -65,13 +65,28 @@ class EoiFilter extends Component {
 
   componentWillMount() {
     const { pathName, query, agencyId } = this.props;
+    const agency = this.props.query.agency ? this.props.query.agency : agencyId;
 
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { agency: agencyId },
+        { agency },
       ),
     });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (R.isEmpty(nextProps.query)) {
+      const { pathname } = nextProps.location;
+      const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
+
+      history.push({
+        pathname,
+        query: R.merge(this.props.query,
+          { agency: agencyQ },
+        ),
+      });
+    }
   }
 
   onSearch(values) {
@@ -79,18 +94,32 @@ class EoiFilter extends Component {
 
     const { project_title, agency, active, country_code,
       specialization, selected_source, ds_converted } = values;
+    const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         project_title,
-        agency,
+        agency: agencyQ,
         active,
         country_code,
         specialization,
         selected_source,
         ds_converted,
       }),
+    });
+  }
+
+  resetForm() {
+    const query = resetChanges(this.props.pathName, this.props.query);
+
+    const { pathName, agencyId } = this.props;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { agency: agencyId },
+      ),
     });
   }
 
@@ -158,7 +187,7 @@ class EoiFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>
@@ -192,6 +221,7 @@ const formEoiFilter = reduxForm({
   form: 'unsolicitedFilter',
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(EoiFilter);
 
 const mapStateToProps = (state, ownProps) => {
@@ -201,6 +231,8 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { specialization } = {} } = ownProps.location;
   const { query: { selected_source } = {} } = ownProps.location;
   const { query: { ds_converted } = {} } = ownProps.location;
+
+  const agencyQ = Number(agency);
 
   return {
     countries: selectNormalizedCountries(state),
@@ -212,7 +244,7 @@ const mapStateToProps = (state, ownProps) => {
     initialValues: {
       project_title,
       country_code,
-      agency,
+      agency: agencyQ,
       specialization,
       selected_source,
       ds_converted,

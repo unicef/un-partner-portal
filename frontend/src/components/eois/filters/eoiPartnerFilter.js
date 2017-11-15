@@ -65,7 +65,17 @@ class EoiPartnerFilter extends Component {
     resetChanges(pathName, query);
   }
 
-   
+  componentWillReceiveProps(nextProps) {
+    if (R.isEmpty(nextProps.query)) {
+      const { pathname } = nextProps.location;
+
+      history.push({
+        pathname,
+        query: this.props.query,
+      });
+    }
+  }
+
   onSearch(values) {
     const { pathName, query } = this.props;
 
@@ -76,8 +86,8 @@ class EoiPartnerFilter extends Component {
       pathname: pathName,
       query: R.merge(query, {
         title,
-        agency,
         active,
+        agency,
         country_code,
         specializations,
         posted_from_date,
@@ -172,6 +182,9 @@ EoiPartnerFilter.propTypes = {
 
 const formEoiPartnerFilter = reduxForm({
   form: 'tableFilter',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(EoiPartnerFilter);
 
 const mapStateToProps = (state, ownProps) => {
@@ -184,6 +197,8 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { posted_from_date } = { } } = ownProps.location;
   const { query: { posted_to_date } = { } } = ownProps.location;
 
+  const agencyQ = agency ? Number(agency) : agency;
+
   return {
     countries: selectNormalizedCountries(state),
     specs: selectNormalizedSpecializations(state),
@@ -192,7 +207,7 @@ const mapStateToProps = (state, ownProps) => {
     initialValues: {
       title,
       country_code,
-      agency,
+      agency: agencyQ,
       active,
       locations,
       specializations,

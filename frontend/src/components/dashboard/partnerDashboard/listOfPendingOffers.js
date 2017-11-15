@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
-import { Link } from 'react-router';
 import { TableCell } from 'material-ui/Table';
 import HeaderList from '../../common/list/headerList';
 import { loadPendingOffers } from '../../../reducers/pendingOffers';
@@ -10,6 +9,7 @@ import PaginatedList from '../../common/list/paginatedList';
 import TableWithLocalState from '../../common/hoc/tableWithLocalState';
 import EoiCountryCell from '../../eois/cells/eoiCountryCell';
 import EoiSectorCell from '../../eois/cells/eoiSectorCell';
+import ApplicationIDCell from './applicationId';
 
 const messages = {
   title: 'List of Pending Offers',
@@ -26,16 +26,7 @@ const columns = [
 
 const renderCells = ({ row, column }) => {
   if (column.name === 'cn_id') {
-    return (
-      <TableCell >
-        <Typography
-          color="accent"
-          component={Link}
-          to={`/cfei/open/${row.cn_id}`}
-        >
-          {row.cn_id}
-        </Typography>
-      </TableCell>);
+    return (<ApplicationIDCell type={row.cfei_type} eoiId={row.eoi_id} cnId={row.cn_id} />);
   } else if (column.name === 'countries') {
     return (
       <TableCell >
