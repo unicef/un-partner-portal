@@ -268,8 +268,13 @@ class PartnerProfile(TimeStampedModel):
         return True
 
     def other_info_is_complete(self):
-        # TODO
-        return True
+        required_fields = {
+            'info_to_share': self.partner.other_info.info_to_share,
+            'org_logo': self.partner.other_info.org_logo,
+            'confirm_data_updated': self.partner.other_info.confirm_data_updated is not None,
+        }
+
+        return all(required_fields.values())
 
 
 class PartnerMailingAddress(TimeStampedModel):
@@ -594,7 +599,7 @@ class PartnerOtherInfo(TimeStampedModel):
     other_doc_3 = models.ForeignKey('common.CommonFile', null=True,
                                     blank=True, related_name='other_info_doc_3')
 
-    confirm_data_updated = models.BooleanField(default=False)
+    confirm_data_updated = models.NullBooleanField(default=False)
 
     class Meta:
         ordering = ['id']
