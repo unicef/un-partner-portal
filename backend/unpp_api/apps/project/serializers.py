@@ -60,7 +60,7 @@ class ApplicationsPartnerStatusSerializer(serializers.ModelSerializer):
         fields = (
             'legal_name',
             'partner_additional',
-            'offer_status',
+            'application_status',
         )
 
 
@@ -292,7 +292,7 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
             'id',
             'partner_id',
             'partner_name',
-            'offer_status',
+            'application_status',
         )
 
 
@@ -841,7 +841,7 @@ class SubmittedCNSerializer(serializers.ModelSerializer):
             'agency_name',
             'countries',
             'specializations',
-            'offer_status',
+            'application_status',
             'eoi_id'
         )
 
