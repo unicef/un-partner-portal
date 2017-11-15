@@ -105,6 +105,18 @@ class Partner(TimeStampedModel):
             'red': self.flags.filter(flag_type=FLAG_TYPES.red).count(),
         }
 
+    @property
+    def has_finished(self):
+        return all([
+            self.profile.identification_is_complete,
+            self.profile.contact_is_complete,
+            self.profile.mandatemission_complete,
+            self.profile.funding_complete,
+            self.profile.collaboration_complete,
+            self.profile.proj_impl_is_complete,
+            self.profile.other_info_is_complete,
+        ])
+
 
 class PartnerProfile(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="profile")
