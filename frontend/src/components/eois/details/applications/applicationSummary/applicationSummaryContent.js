@@ -32,7 +32,7 @@ const ApplicationSummaryContent = (props) => {
     shouldSeeReviews,
   } = props;
   return (
-    <GridColumn spacing="8">
+    <GridColumn spacing="16">
       <Grid container direction="row">
         <Grid item xs={12} sm={8}>
           <PartnerOverview partner={partnerDetails} loading={partnerLoading} button />
@@ -73,7 +73,7 @@ ApplicationSummaryContent.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const application = selectApplication(state, ownProps.params.applicationId) || {};
-  const { partner = {}, eoi, status } = application;
+  const { partner = {}, eoi, status, application_status } = application;
   const partnerDetails = R.prop(R.prop('id', partner), state.agencyPartnerProfile);
   const cfeiCriteria = selectCfeiCriteria(state, eoi);
   const isUserFocalPoint = isUserAFocalPoint(state, eoi);
@@ -85,7 +85,9 @@ const mapStateToProps = (state, ownProps) => {
     partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
     cfeiCriteria,
     eoi,
-    shouldSeeReviews: (isUserFocalPoint || isUserReviewer) && status === APPLICATION_STATUSES.PRE,
+    shouldSeeReviews: (isUserFocalPoint || isUserReviewer)
+    && status === APPLICATION_STATUSES.PRE
+    && application_status === 'Application Under Review',
     isUserFocalPoint,
     isUserReviewer,
   };
