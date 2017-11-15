@@ -10,7 +10,7 @@ import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
 import RadioForm from '../../forms/radioForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
-import { selectNormalizedSpecializations, selectNormalizedCountries, selectNormalizedApplicationStatuses } from '../../../store';
+import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedApplicationStatuses } from '../../../store';
 import resetChanges from '../../eois/filters/eoiHelper';
 
 const messages = {
@@ -105,7 +105,8 @@ class PartnerApplicationsNotesFilter extends Component {
         agency,
         cfei_active,
         country_code,
-        specialization }),
+        specialization
+      }),
     });
   }
 
@@ -140,9 +141,10 @@ class PartnerApplicationsNotesFilter extends Component {
             <Grid item sm={4} xs={12} >
               <SelectForm
                 label={messages.labels.sector}
-                placeholder={messages.choose}
-                fieldName="specialization"
+                placeholder={messages.labels.choose}
+                fieldName="specializations"
                 values={specs}
+                sections
                 optional
               />
             </Grid>
@@ -206,16 +208,16 @@ const formPartnerApplicationsNotesFilter = reduxForm({
 })(PartnerApplicationsNotesFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { country_code } = { } } = ownProps.location;
-  const { query: { agency } = { } } = ownProps.location;
-  const { query: { cfei_active } = { } } = ownProps.location;
-  const { query: { specialization } = { } } = ownProps.location;
+  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { agency } = {} } = ownProps.location;
+  const { query: { cfei_active } = {} } = ownProps.location;
+  const { query: { specialization } = {} } = ownProps.location;
 
   const agencyQ = agency ? Number(agency) : agency;
 
   return {
     countries: selectNormalizedCountries(state),
-    specs: selectNormalizedSpecializations(state),
+    specs: selectMappedSpecializations(state),
     cnStatus: selectNormalizedApplicationStatuses(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,

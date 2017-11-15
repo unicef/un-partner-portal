@@ -133,7 +133,7 @@ const makeFormItem = (list) => {
   return { value, label };
 };
 
-const mapValuesForSelectionField = (state, compareField = 'label') => {
+export const mapValuesForSelectionField = (state, compareField = 'label') => {
   const compare = (a, b) => a[compareField].localeCompare(b[compareField]);
   return R.sort(compare, R.map(makeFormItem, R.toPairs(state)));
 };
@@ -210,6 +210,9 @@ export const selectSector = (state, id) =>
 export const selectSpecializations = (state, ids) =>
   sectorsSelectors.selectSpecializations(state.sectors, ids);
 
+export const selectMappedSpecializations = state =>
+  sectorsSelectors.selectMappedSpecializations(state.sectors);
+
 export const selectCfeiDetailsItemsByType = (state, type) =>
   selectItemsByType(state.cfeiDetailsNav, type);
 
@@ -274,6 +277,9 @@ export const isAssesmentAdded = (state, assessmentId) =>
 export const mapFocalPointsReviewersToSelection = state =>
   mapValuesForSelectionField(
     agencyMembersSelectors.selectPossibleFocalPointsReviewers(state.agencyMembers));
+
+export const isUserACreator = (state, cfeiId) => cfeiDetailsSelector.isUserACreator(
+  state.cfeiDetails.cfeiDetails, cfeiId, state.session.userId);
 
 export const isUserAReviewer = (state, cfeiId) => cfeiDetailsSelector.isUserAReviewer(
   state.cfeiDetails.cfeiDetails, cfeiId, state.session.userId);

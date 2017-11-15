@@ -10,7 +10,8 @@ import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
-import { selectNormalizedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
+import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
 import resetChanges from '../../eois/filters/eoiHelper';
 
 const messages = {
@@ -125,11 +126,11 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
-                fieldName="sector"
+              <AdminOneLocation
+                fieldName="locations"
+                formName="tableFilter"
+                observeFieldName="country_code"
                 label={messages.labels.location}
-                placeholder={messages.choose}
-                values={[]}
                 optional
               />
             </Grid>
@@ -138,9 +139,10 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
             <Grid item sm={4} xs={12} >
               <SelectForm
                 label={messages.labels.sector}
-                placeholder={messages.choose}
-                fieldName="specialization"
+                placeholder={messages.labels.choose}
+                fieldName="specializations"
                 values={specs}
+                sections
                 optional
               />
             </Grid>
@@ -193,18 +195,18 @@ const formPartnerApplicationsUnsolicitedFilter = reduxForm({
 })(PartnerApplicationsUnsolicitedFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { project_title } = { } } = ownProps.location;
-  const { query: { country_code } = { } } = ownProps.location;
-  const { query: { agency } = { } } = ownProps.location;
-  const { query: { specialization } = { } } = ownProps.location;
-  const { query: { selected_source } = { } } = ownProps.location;
-  const { query: { ds_converted } = { } } = ownProps.location;
+  const { query: { project_title } = {} } = ownProps.location;
+  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { agency } = {} } = ownProps.location;
+  const { query: { specialization } = {} } = ownProps.location;
+  const { query: { selected_source } = {} } = ownProps.location;
+  const { query: { ds_converted } = {} } = ownProps.location;
 
   const agencyQ = agency ? Number(agency) : agency;
 
   return {
     countries: selectNormalizedCountries(state),
-    specs: selectNormalizedSpecializations(state),
+    specs: selectMappedSpecializations(state),
     directSources: selectNormalizedDirectSelectionSource(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,

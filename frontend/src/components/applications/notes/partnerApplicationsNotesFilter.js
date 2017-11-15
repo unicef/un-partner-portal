@@ -12,7 +12,7 @@ import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
-import { selectNormalizedSpecializations, selectNormalizedCountries, selectNormalizedApplicationStatuses } from '../../../store';
+import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedApplicationStatuses } from '../../../store';
 import resetChanges from '../../eois/filters/eoiHelper';
 
 const messages = {
@@ -109,7 +109,8 @@ class PartnerApplicationsNotesFilter extends Component {
         specialization,
         posted_from_date,
         posted_to_date,
-        locations }),
+        locations
+      }),
     });
   }
 
@@ -165,8 +166,9 @@ class PartnerApplicationsNotesFilter extends Component {
               <SelectForm
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
-                fieldName="specialization"
+                fieldName="specializations"
                 values={specs}
+                sections
                 optional
               />
             </Grid>
@@ -237,21 +239,21 @@ const formPartnerApplicationsNotesFilter = reduxForm({
 })(PartnerApplicationsNotesFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { project_title } = { } } = ownProps.location;
-  const { query: { country_code } = { } } = ownProps.location;
-  const { query: { agency } = { } } = ownProps.location;
-  const { query: { cfei_active } = { } } = ownProps.location;
-  const { query: { status } = { } } = ownProps.location;
-  const { query: { locations } = { } } = ownProps.location;
-  const { query: { specialization } = { } } = ownProps.location;
-  const { query: { posted_from_date } = { } } = ownProps.location;
-  const { query: { posted_to_date } = { } } = ownProps.location;
+  const { query: { project_title } = {} } = ownProps.location;
+  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { agency } = {} } = ownProps.location;
+  const { query: { cfei_active } = {} } = ownProps.location;
+  const { query: { status } = {} } = ownProps.location;
+  const { query: { locations } = {} } = ownProps.location;
+  const { query: { specialization } = {} } = ownProps.location;
+  const { query: { posted_from_date } = {} } = ownProps.location;
+  const { query: { posted_to_date } = {} } = ownProps.location;
 
   const agencyQ = agency ? Number(agency) : agency;
 
   return {
     countries: selectNormalizedCountries(state),
-    specs: selectNormalizedSpecializations(state),
+    specs: selectMappedSpecializations(state),
     cnStatus: selectNormalizedApplicationStatuses(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,

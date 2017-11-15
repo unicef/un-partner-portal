@@ -6,6 +6,10 @@ import { loadApplications } from '../../../../../reducers/partnersApplicationsLi
 import Loader from '../../../../common/loader';
 import EmptyContent from '../../../../common/emptyContent';
 import GridColumn from '../../../../common/grid/gridColumn';
+import {
+  isUserAFocalPoint,
+  isUserACreator,
+} from '../../../../../store';
 
 class DSFeedback extends Component {
   componentWillMount() {
@@ -13,7 +17,7 @@ class DSFeedback extends Component {
   }
 
   render() {
-    const { applications, loading } = this.props;
+    const { applications, loading, shouldAddFeedback } = this.props;
     if (loading) {
       return (<Loader loading={loading}>
         <EmptyContent />
@@ -26,6 +30,7 @@ class DSFeedback extends Component {
             key={application.id}
             applicationId={application.id}
             extraTitle={application.legal_name}
+            allowedToAdd={shouldAddFeedback}
           />))}
       </GridColumn>
     );
@@ -37,11 +42,13 @@ DSFeedback.propTypes = {
   applications: PropTypes.array,
   loading: PropTypes.func,
   loadApplications: PropTypes.func,
+  shouldAddFeedback: PropTypes.bool,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   applications: state.partnersApplicationsList.applicationsList.applications || [],
   loading: state.partnersApplicationsList.status.loading,
+  shouldAddFeedback: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
