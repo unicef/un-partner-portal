@@ -172,7 +172,7 @@ class PartnerProfile(TimeStampedModel):
     experienced_staff_desc = models.CharField(max_length=200, null=True, blank=True)
 
     # collaborate
-    partnership_collaborate_institution = models.BooleanField(default=False)
+    partnership_collaborate_institution = models.NullBooleanField()
     partnership_collaborate_institution_desc = models.CharField(max_length=200, null=True, blank=True)
 
     # Banking Information
@@ -239,10 +239,9 @@ class PartnerProfile(TimeStampedModel):
     def funding_complete(self):
         budgets = self.partner.budgets.all()
         current_year_exists = budgets.filter(year=date.today().year).exists()
-        last_year_exists = budgets.filter(year=(current_year - 1)).exists()
 
         required_fields = {
-            'budgets': current_year_exists and last_year_exists,
+            'budgets': current_year_exists and (budgets.count() >= 3),
             'main_donors': self.partner.fund.major_donors,
             'main_donors_list': self.partner.fund.main_donors_list,
             'source_core_funding': self.partner.fund.source_core_funding
@@ -251,8 +250,18 @@ class PartnerProfile(TimeStampedModel):
         return all(required_fields.values())
 
     def collaboration_complete(self):
-        # TODO - how do we tell for this tab?
-        return True
+        required_fields = {
+            'collaborations_partnership': self.partner.collaborations_partnership.exists(),
+            'collaboration_accreditation':
+                self.partner.collaboration_evidences.filter(mode=COLLABORATION_EVIDENCE_MODES.accreditation).exists(),
+            'collaboration_reference':
+                self.partner.collaboration_evidences.filter(mode=COLLABORATION_EVIDENCE_MODES.reference).exists(),
+            'partnership_collaborate_institution': self.partnership_collaborate_institution is not None,
+            'partnership_collaborate_institution_desc': \
+                self.partnership_collaborate_institution_desc not in ['', None],
+        }
+
+        return all(required_fields.values())
 
     def proj_impl_is_complete(self):
         # TODO
@@ -261,7 +270,6 @@ class PartnerProfile(TimeStampedModel):
     def other_info_is_complete(self):
         # TODO
         return True
-
 
 
 class PartnerMailingAddress(TimeStampedModel):
