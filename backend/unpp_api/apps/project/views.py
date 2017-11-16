@@ -546,7 +546,7 @@ class AwardedPartnersListAPIView(ListAPIView):
     def get_queryset(self):
         eoi_id = self.kwargs['eoi_id']
         return Application.objects.filter(
-            did_win=True, did_decline=False, did_withdraw=False, eoi_id=eoi_id)
+            did_win=True, did_decline=False, eoi_id=eoi_id)
 
 
 class CompareSelectedListAPIView(ListAPIView):
