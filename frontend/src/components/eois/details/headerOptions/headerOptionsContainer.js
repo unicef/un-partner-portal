@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Typography from 'material-ui/Typography';
 import { PROJECT_TYPES, ROLES, PROJECT_STATUSES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
 import AgencyOpenHeaderOptions from './agencyOpenHeaderOptions';
@@ -10,9 +11,11 @@ import EoiStatusCell from '../../cells/eoiStatusCell';
 import { selectCfeiStatus,
   isCfeiCompleted,
   selectCfeiConverted,
+  selectCfeiJustification,
   isUserAFocalPoint,
   isUserACreator,
 } from '../../../../store';
+import GridColumn from '../../../common/grid/gridColumn';
 import GridRow from '../../../common/grid/gridRow';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
 
@@ -24,6 +27,7 @@ const HeaderOptionsContainer = (props) => {
     cfeiConverted,
     id,
     partnerId,
+    completedJustification,
     allowedToEdit,
   } = props;
   let options;
@@ -45,6 +49,14 @@ const HeaderOptionsContainer = (props) => {
       ? <ConvertToDS partnerId={partnerId} id={id} />
       : null;
   }
+  if (cfeiCompleted) {
+    return (
+      <GridColumn spacing={0} justify="flex-end" align="flex-end">
+        <EoiStatusCell status={cfeiStatus} />
+        <Typography type="caption">{completedJustification}</Typography>
+      </GridColumn>);
+  }
+
   return (<GridRow justify="center" align="center">
     <EoiStatusCell status={cfeiStatus} />
     {options}
@@ -60,11 +72,13 @@ HeaderOptionsContainer.propTypes = {
   id: PropTypes.string,
   partnerId: PropTypes.string,
   allowedToEdit: PropTypes.bool,
+  completedJustification: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   cfeiCompleted: isCfeiCompleted(state, ownProps.id),
   cfeiStatus: selectCfeiStatus(state, ownProps.id),
+  completedJustification: selectCfeiJustification(state, ownProps.id),
   cfeiConverted: selectCfeiConverted(state, ownProps.id),
   allowedToEdit: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
 });
