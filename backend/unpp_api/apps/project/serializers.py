@@ -15,7 +15,7 @@ from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer
 from common.models import Point, Specialization
-from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer
+from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
 from .models import EOI, Application, Assessment, ApplicationFeedback
 
@@ -60,7 +60,7 @@ class ApplicationsPartnerStatusSerializer(serializers.ModelSerializer):
         fields = (
             'legal_name',
             'partner_additional',
-            'offer_status',
+            'application_status',
         )
 
 
@@ -325,7 +325,7 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
             'id',
             'partner_id',
             'partner_name',
-            'offer_status',
+            'application_status',
         )
 
 
@@ -346,7 +346,6 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'specializations',
-            'invited_partners',
             'locations',
             'assessments_criteria',
             'created',
@@ -389,11 +388,65 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
         return None
 
 
-class ProjectUpdateSerializer(serializers.ModelSerializer):
-
+class AgencyProjectReadSerializer(serializers.ModelSerializer):
     specializations = SimpleSpecializationSerializer(many=True)
     locations = PointSerializer(many=True)
     direct_selected_partners = serializers.SerializerMethodField()
+    focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
+    reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
+    invited_partners = PartnerShortSerializer(many=True)
+
+    class Meta:
+        model = EOI
+        fields = (
+            'id',
+            'specializations',
+            'invited_partners',
+            'locations',
+            'assessments_criteria',
+            'created',
+            'start_date',
+            'end_date',
+            'deadline_date',
+            'notif_results_date',
+            'justification',
+            'completed_reason',
+            'completed_date',
+            'is_completed',
+            'display_type',
+            'status',
+            'title',
+            'agency',
+            'created_by',
+            'focal_points',
+            'focal_points_detail',
+            'agency_office',
+            'cn_template',
+            'description',
+            'goal',
+            'other_information',
+            'has_weighting',
+            'reviewers',
+            'reviewers_detail',
+            'selected_source',
+            'direct_selected_partners',
+            'created',
+            'completed_date',
+        )
+
+    def get_direct_selected_partners(self, obj):
+        if obj.is_direct:
+            # this is used by agency
+            query = obj.applications.all()
+            return SelectedPartnersSerializer(query, many=True).data
+        return
+
+
+# TODO - clean up for what is only needed on create
+class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
+
+    specializations = SimpleSpecializationSerializer(many=True)
+    locations = PointSerializer(many=True)
     focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
     reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
 
@@ -430,8 +483,8 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             'reviewers',
             'reviewers_detail',
             'selected_source',
-            'direct_selected_partners',
         )
+
         read_only_fields = ('created', 'completed_date',)
 
     def update(self, instance, validated_data):
@@ -459,7 +512,7 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
             instance.completed_date = datetime.now()
             instance.is_completed = True
 
-        instance = super(ProjectUpdateSerializer, self).update(instance, validated_data)
+        instance = super(AgencyProjectUpdateSerializer, self).update(instance, validated_data)
         for invited_partner in self.initial_data.get('invited_partners', []):
             instance.invited_partners.add(Partner.objects.get(id=invited_partner))
 
@@ -472,13 +525,6 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
-
-    def get_direct_selected_partners(self, obj):
-        if obj.is_direct:
-            # this is used by agency
-            query = obj.applications.all()
-            return SelectedPartnersSerializer(query, many=True).data
-        return
 
     def validate(self, data):
         if self.context['request'].method in ['PATCH', 'PUT']:
@@ -495,7 +541,8 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Only Focal Point/Creator is allowed to modify a CFEI.")
 
-        return super(ProjectUpdateSerializer, self).validate(data)
+        return super(AgencyProjectUpdateSerializer, self).validate(data)
+
 
 
 class ApplicationsListSerializer(serializers.ModelSerializer):
@@ -909,7 +956,7 @@ class SubmittedCNSerializer(serializers.ModelSerializer):
             'agency_name',
             'countries',
             'specializations',
-            'offer_status',
+            'application_status',
             'eoi_id'
         )
 

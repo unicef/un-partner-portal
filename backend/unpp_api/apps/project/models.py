@@ -198,19 +198,6 @@ class Application(TimeStampedModel):
         return verification and verification.is_verified
 
     @property
-    def offer_status(self):
-        if not self.did_win:
-            return 'No Offer Made'
-        if self.did_withdraw:
-            return 'Offer Withdrawn'
-        elif self.did_accept:
-            return 'Offer Accepted'
-        elif self.did_decline:
-            return 'Offer Declined'
-        else:
-            return 'Offer Made'
-
-    @property
     def application_status(self):
         if not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.open:
             return 'Application Under Review'
@@ -224,7 +211,6 @@ class Application(TimeStampedModel):
             return 'Selection Declined'
         elif self.did_win and self.did_withdraw:
             return 'Selection Retracted'
-
 
     # RETURNS [{u'Cos': {u'scores': [23, 13], u'weight': 30}, u'avg': 23..]
     def get_scores_by_selection_criteria(self):
