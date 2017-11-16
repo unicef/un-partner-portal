@@ -147,9 +147,12 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
 
 class PartnerMailingAddressSerializer(serializers.ModelSerializer):
 
+    mailing_telephone = serializers.CharField(source="telephone")
+    mailing_fax = serializers.CharField(source="fax")
+
     class Meta:
         model = PartnerMailingAddress
-        fields = "__all__"
+        exclude = ("telephone", "fax")
 
 
 class PartnerHeadOrganizationRegisterSerializer(serializers.ModelSerializer):
@@ -160,8 +163,6 @@ class PartnerHeadOrganizationRegisterSerializer(serializers.ModelSerializer):
 
 
 class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
-
-    org_fax = serializers.CharField(source="fax")
 
     class Meta:
         model = PartnerHeadOrganization
@@ -268,10 +269,11 @@ class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
 
     most_recent_audit_report = CommonFileSerializer()
     assessment_report = CommonFileSerializer()
+    audit_link_report = serializers.URLField(source="link_report")
 
     class Meta:
         model = PartnerAuditAssessment
-        fields = "__all__"
+        exclude = ("link_report", )
 
 
 class PartnerReportingSerializer(serializers.ModelSerializer):
