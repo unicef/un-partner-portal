@@ -11,7 +11,7 @@ import SelectForm from '../forms/selectForm';
 import CheckboxForm from '../forms/checkboxForm';
 import TextFieldForm from '../forms/textFieldForm';
 import Agencies from '../forms/fields/projectFields/agencies';
-import { selectNormalizedSpecializations, selectNormalizedCountries } from '../../store';
+import { selectMappedSpecializations, selectNormalizedCountries } from '../../store';
 import resetChanges from '../eois/filters/eoiHelper';
 
 const messages = {
@@ -19,10 +19,10 @@ const messages = {
   labels: {
     search: 'Search',
     country: 'Country',
-    sector: 'Sector & Area of specialization',
+    sector: 'Sector & Area of Specialization',
     type: 'Type of Application',
     agency: 'Agency',
-    show: 'Show Only Awarded Applications',
+    show: 'Show Only Selected Applications',
   },
   clear: 'clear',
   submit: 'submit',
@@ -47,7 +47,7 @@ export const STATUS_VAL = [
   },
   {
     value: false,
-    label: 'Completed',
+    label: 'Finalized',
   },
 ];
 
@@ -62,16 +62,62 @@ class PartnerApplicationListFilter extends Component {
     this.onSearch = this.onSearch.bind(this);
   }
 
+  componentWillMount() {
+    const { pathName, query, agencyId } = this.props;
+
+    const agency = this.props.query.agency ? this.props.query.agency : agencyId;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { agency },
+      ),
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (R.isEmpty(nextProps.query)) {
+      const { pathname } = nextProps.location;
+      const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
+
+      history.push({
+        pathname,
+        query: R.merge(this.props.query,
+          { agency: agencyQ },
+        ),
+      });
+    }
+  }
+
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { title, agency, did_win, country_code, specializations, eoi_type } = values;
+    const { project_title, agency, did_win, country_code, specialization, eoi } = values;
+    const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
-        title, agency, did_win, country_code, specializations, eoi_type,
+        project_title,
+        agency: agencyQ,
+        did_win,
+        country_code,
+        specialization,
+        eoi,
       }),
+    });
+  }
+
+  resetForm() {
+    const query = resetChanges(this.props.pathName, this.props.query);
+
+    const { pathName, agencyId } = this.props;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { agency: agencyId },
+      ),
     });
   }
 
@@ -86,7 +132,7 @@ class PartnerApplicationListFilter extends Component {
               <TextFieldForm
                 label={messages.labels.search}
                 placeholder={messages.labels.search}
-                fieldName="title"
+                fieldName="project_title"
                 optional
               />
             </Grid>
@@ -104,6 +150,7 @@ class PartnerApplicationListFilter extends Component {
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
                 values={specs}
+                sections
                 optional
               />
             </Grid>
@@ -113,7 +160,7 @@ class PartnerApplicationListFilter extends Component {
               <SelectForm
                 label={messages.labels.type}
                 placeholder={messages.labels.choose}
-                fieldName="eoi_type"
+                fieldName="eoi"
                 values={eoiTypes}
                 optional
               />
@@ -138,7 +185,7 @@ class PartnerApplicationListFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>
@@ -166,34 +213,40 @@ PartnerApplicationListFilter.propTypes = {
   eoiTypes: PropTypes.array.isRequired,
   pathName: PropTypes.string,
   query: PropTypes.object,
+  agencyId: PropTypes.string,
 };
 
 const formEoiFilter = reduxForm({
   form: 'partnerApplicationsForm',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(PartnerApplicationListFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { title } = { } } = ownProps.location;
-  const { query: { country_code } = { } } = ownProps.location;
-  const { query: { agency } = { } } = ownProps.location;
-  const { query: { did_win } = { } } = ownProps.location;
-  const { query: { specializations } = { } } = ownProps.location;
-  const { query: { eoi_type } = { } } = ownProps.location;
+  const { query: { project_title } = {} } = ownProps.location;
+  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { agency } = {} } = ownProps.location;
+  const { query: { did_win } = {} } = ownProps.location;
+  const { query: { specialization } = {} } = ownProps.location;
+  const { query: { eoi } = {} } = ownProps.location;
 
+  const agencyQ = Number(agency);
 
   return {
     countries: selectNormalizedCountries(state),
-    specs: selectNormalizedSpecializations(state),
+    specs: selectMappedSpecializations(state),
     eoiTypes: [],
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
+    agencyId: state.session.agencyId,
     initialValues: {
-      title,
+      project_title,
       country_code,
-      agency,
+      agency: agencyQ,
       did_win,
-      specializations,
-      eoi_type,
+      specialization,
+      eoi,
     },
   };
 };

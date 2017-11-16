@@ -1,6 +1,6 @@
 import { browserHistory as history } from 'react-router';
 import R from 'ramda';
-import { postRegistration, login, getUserData } from '../helpers/api/api';
+import { postRegistration, login, logout, getUserData } from '../helpers/api/api';
 import { ROLES, SESSION_STATUS } from '../helpers/constants';
 
 export const SESSION_CHANGE = 'SESSION_CHANGE';
@@ -8,6 +8,7 @@ export const SESSION_READY = 'SESSION_READY';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const LOGIN_SUBMITTING = 'LOGIN_SUBMITTIN';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 
 const initialState = {
   role: undefined,
@@ -28,21 +29,30 @@ const initialState = {
   email: undefined,
   isHq: undefined,
   displayType: undefined,
+  newlyRegistered: false,
 };
 
 export const initSession = session => ({ type: SESSION_CHANGE, session });
 
-export const sessionInitializing = () => ({ type: SESSION_CHANGE,
-  session: { state: SESSION_STATUS.CHANGING } });
+export const sessionInitializing = () => ({
+  type: SESSION_CHANGE,
+  session: { state: SESSION_STATUS.CHANGING },
+});
 
-export const sessionChange = session => ({ type: SESSION_CHANGE,
-  session: { ...session, state: SESSION_STATUS.READY } });
+export const sessionChange = session => ({
+  type: SESSION_CHANGE,
+  session: { ...session, state: SESSION_STATUS.READY },
+});
 
-export const sessionReady = getState => ({ type: SESSION_READY,
+export const sessionReady = getState => ({
+  type: SESSION_READY,
   session: { state: SESSION_STATUS.READY },
-  getState });
+  getState,
+});
 
 export const loginSuccess = session => ({ type: LOGIN_SUCCESS, session });
+
+export const logoutSuccess = () => ({ type: LOGIN_SUCCESS });
 
 export const loadUserData = () => (dispatch, getState) => {
   const token = getState().session.token;
@@ -75,6 +85,7 @@ export const loadUserData = () => (dispatch, getState) => {
         partnerName: role === ROLES.PARTNER ? R.prop('legal_name', R.head(response.partners)) : null,
         isHq: role === ROLES.PARTNER ? R.prop('is_hq', R.head(response.partners)) : null,
         displayType: role === ROLES.PARTNER ? R.prop('display_type', R.head(response.partners)) : null,
+        logo: role === ROLES.PARTNER ? R.prop('logo', R.head(response.partners)) : null,
       };
       dispatch(initSession(sessionObject));
       dispatch(sessionReady(getState));
@@ -98,20 +109,30 @@ export const loadUserData = () => (dispatch, getState) => {
     });
 };
 
-export const registerUser = json => (dispatch) => {
-  postRegistration(json)
-    .then((response) => {
-      dispatch(loginSuccess({ role: ROLES.PARTNER, user: response.user.username }));
-      history.push('/');
-    });
-};
-
 export const loginUser = creds => dispatch => login(creds)
   .then((response) => {
     window.localStorage.setItem('token', response.key);
     dispatch(loginSuccess({ user: creds.email, token: response.key }));
     dispatch(loadUserData());
     history.push('/');
+  });
+
+export const logoutUser = () => dispatch => logout()
+  .then(() => {
+    window.localStorage.removeItem('token');
+    dispatch(logoutSuccess());
+    history.push('/login');
+  }).catch(() => {
+    window.localStorage.removeItem('token');
+    dispatch(logoutSuccess());
+    history.push('/login');
+  });
+
+export const registerUser = json => dispatch => postRegistration(json)
+  .then(({ user: { email, username } }) => {
+    dispatch(loginSuccess({ role: ROLES.PARTNER, user: username }));
+    dispatch(sessionChange({ newlyRegistered: true }));
+    dispatch(loginUser({ email, password: R.path(['user', 'password'], json) }));
   });
 
 const setSession = (state, session) => R.mergeDeepRight(state, session);
@@ -126,6 +147,9 @@ export default function sessionReducer(state = initialState, action) {
     }
     case LOGIN_SUCCESS: {
       return setSession(state, { userLogged: true, ...action.session });
+    }
+    case LOGOUT_SUCCESS: {
+      return initialState;
     }
     default:
       return state;

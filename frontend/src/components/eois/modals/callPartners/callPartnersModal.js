@@ -8,12 +8,12 @@ import { newCfeiProcessed, newCfeiFailure, updateCfei } from '../../../../reduce
 import CallPartnersForm from './callPartnersForm';
 
 const messages = {
-  title: 'New Expression of Interests was created. Do you want to notify specific partners?',
+  title: 'A new Call for Expressions of Interest was created.',
   header: {
     title: 'You can inform Partners registered to work in the country(ies) selected about this ' +
     'offer.',
-    body: 'Email will be sent to selected accounts with a copy of the CFEI inviting them to ' +
-    'apply. You can also skip this step.',
+    body: 'This CFEI will be publicly viewable to all, but you can also notify specific partners of this opportunity. If you would like to invite specific partners ' +
+    'registered in the portal to apply for the CFEI, enter their names below, and they will receive an e-mail notification. You can also skip this step.',
   },
   skip: 'skip',
   send: 'send',

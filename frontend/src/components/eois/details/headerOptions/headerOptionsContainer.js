@@ -12,7 +12,6 @@ import ConvertToDS from '../../buttons/convertToDirectSelection';
 
 const HeaderOptionsContainer = (props) => {
   const { role, type, cfeiCompleted, cfeiStatus, cfeiConverted, id, partnerId } = props;
-console.log("CO",cfeiConverted);
   let options;
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
@@ -23,7 +22,7 @@ console.log("CO",cfeiConverted);
   } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
     options = <AgencyDirectHeaderOptions cfeiCompleted={cfeiCompleted} />;
   }
-  if (type === PROJECT_TYPES.UNSOLICITED) return !cfeiConverted ? <ConvertToDS partnerId={partnerId} id={id} /> : null;
+  if (type === PROJECT_TYPES.UNSOLICITED) return !cfeiConverted && role === ROLES.AGENCY ? <ConvertToDS partnerId={partnerId} id={id} /> : null;
   return (<GridRow justify="center" align="center">
     <EoiStatusCell status={cfeiStatus} />
     {options}

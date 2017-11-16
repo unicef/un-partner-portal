@@ -6,11 +6,10 @@ import { withRouter } from 'react-router';
 import ControlledModal from '../../../../common/modals/controlledModal';
 import { updatePartnerVerifications } from '../../../../../reducers/partnerVerifications';
 import AddVerificationForm from './addVerificationForm';
-import { selectApplicationPartnerName } from '../../../../../store';
 import VerificationConfirmation from './verificationConfirmation';
 
 const messages = {
-  title: 'Verify a Partner\'s Organization Profile',
+  title: 'Verify partner\'s profile',
   header: 'You are verifying Organization Profile of',
   save: 'verify',
   confirmation: 'Confirmation',

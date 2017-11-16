@@ -1,10 +1,11 @@
-from django.db import transaction, IntegrityError
+from django.db import transaction
 from rest_framework import serializers
 
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
+    PARTNER_TYPES,
 )
 from common.models import Point, AdminLevel1
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
@@ -51,6 +52,7 @@ class PartnerSerializer(serializers.ModelSerializer):
     is_hq = serializers.BooleanField(read_only=True)
     logo = CommonFileSerializer(source='other_info.org_logo',
                                 read_only=True)
+    org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
 
     class Meta:
@@ -63,6 +65,7 @@ class PartnerSerializer(serializers.ModelSerializer):
             'country_code',
             'display_type',
             'partner_additional',
+            'org_logo_thumbnail',
         )
 
 
@@ -696,7 +699,8 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
 
 class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
-    info_to_share = serializers.CharField(source="other_info.info_to_share")
+    info_to_share = serializers.CharField(source="other_info.info_to_share", required=False,
+                                          allow_blank=True)
     org_logo = CommonFileSerializer(source="other_info.org_logo")
     confirm_data_updated = serializers.BooleanField(source="other_info.confirm_data_updated")
 
@@ -784,7 +788,11 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         hq_id = self.context['request'].parser_context.get('kwargs', {}).get('pk')
         for country_code in validated_data['chosen_country_to_create']:
-            partner = Partner.objects.create(hq_id=hq_id, country_code=country_code)
+            partner = Partner.objects.create(
+                hq_id=hq_id,
+                country_code=country_code,
+                display_type=PARTNER_TYPES.international,
+            )
             PartnerProfile.objects.create(partner=partner)
             PartnerMailingAddress.objects.create(partner=partner)
             PartnerAuditAssessment.objects.create(partner=partner)

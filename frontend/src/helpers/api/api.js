@@ -101,6 +101,10 @@ export function login(body) {
   return post('/rest-auth/login/', body);
 }
 
+export function logout() {
+  return post('/rest-auth/logout/');
+}
+
 export function getUserData() {
   return authorizedGet({ uri: '/accounts/me/' });
 }
@@ -200,16 +204,16 @@ export function patchApplication(id, body) {
   return authorizedPatch({ uri: `/projects/application/${id}/`, body });
 }
 
-export function getApplicationConceptNotes() {
-  return authorizedGet({ uri: '/projects/applications/open/' });
+export function getApplicationConceptNotes(params) {
+  return authorizedGet({ uri: '/projects/applications/open/', params });
 }
 
-export function getApplicationUnsolicitedConceptNotes() {
-  return authorizedGet({ uri: '/projects/applications/unsolicited/' });
+export function getApplicationUnsolicitedConceptNotes(params) {
+  return authorizedGet({ uri: '/projects/applications/unsolicited/', params });
 }
 
-export function getApplicationDirect() {
-  return authorizedGet({ uri: '/projects/applications/direct/' });
+export function getApplicationDirect(params) {
+  return authorizedGet({ uri: '/projects/applications/direct/', params });
 }
 
 export function getApplicationReviews(applicationId) {
@@ -267,6 +271,18 @@ export function getPartnersList(params) {
 
 export function getMembersList(id, params) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params });
+}
+
+export function getNotifications(params) {
+  return authorizedGet({ uri: '/notifications', params });
+}
+
+export function patchNotification(id, body) {
+  return authorizedPatch({ uri: `/notifications/${id}/`, body });
+}
+
+export function patchNotifications(body) {
+  return authorizedPatch({ uri: '/notifications/', body });
 }
 
 export function getPartnerProfileConfig() {

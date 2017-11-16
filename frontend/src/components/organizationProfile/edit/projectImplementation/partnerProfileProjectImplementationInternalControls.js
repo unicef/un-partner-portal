@@ -84,7 +84,7 @@ const PolicyArea = (values, readOnly, ...props) => (member, index, fields) => {
           fieldName={`${member}.area`}
           label={messages.areaOfResponsibility}
           values={newValues}
-          readOnly={readOnly}
+          readOnly
           optional
           warn
           {...props}
@@ -148,6 +148,7 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
           label={messages.policyArea}
           limit={policyArea.length}
           fieldName="area_policies"
+          disableDeleting
           initial
           readOnly={readOnly}
           outerField={PolicyArea(policyArea, readOnly)}

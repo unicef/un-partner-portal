@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import { submit } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
@@ -11,19 +12,19 @@ import { addDirectCfei, addOpenCfei, addUnsolicitedCN } from '../../../../reduce
 import CallPartnersModal from '../callPartners/callPartnersModal';
 import { PROJECT_TYPES } from '../../../../helpers/constants';
 
-
 const messages = {
-  title: 'Create new Call for Expressions of Interests',
-  unsolicitedTitle: 'Submit new Unsolicited Concept Note',
+  title: {
+    open: 'Create new Call for Expressions of Interests',
+    direct: 'Create new direct selection',
+    unsolicited: 'Create new Unsolicited Concept Note',
+  },
   header: {
     open: {
       title: 'This CFEI is for open selections.',
-      body: 'If you would like to notify specific partners about this CFEI, you can select ' +
-      'their names on the next page of this form.',
     },
     direct: {
       title: 'This is a direct selection.',
-      body: 'You will need to select a Partner to save this form.',
+      body: 'In order to save this form, you will need to identify the partner(s).',
     },
   },
 
@@ -32,9 +33,13 @@ const messages = {
 const getTitle = (type) => {
   switch (type) {
     case PROJECT_TYPES.UNSOLICITED:
-      return messages.unsolicitedTitle;
+      return messages.title.unsolicited;
+    case PROJECT_TYPES.OPEN:
+      return messages.title.open;
+    case PROJECT_TYPES.DIRECT:
+      return messages.title.direct;
     default:
-      return messages.title;
+      return messages.title.direct;
   }
 };
 
@@ -157,8 +162,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   submit: () => dispatch(submit(getFormName(ownProps.type))),
 });
 
-export default connect(
+const connected = connect(
   null,
   mapDispatchToProps,
 )(NewCfeiModal);
+
+export default withRouter(connected);
 

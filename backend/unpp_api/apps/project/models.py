@@ -23,7 +23,6 @@ class EOI(TimeStampedModel):
     """
     # TODO: this model is very heavy !!! we should think to split fields like file texts to some "EOI_profil" ..
     display_type = models.CharField(max_length=3, choices=EOI_TYPES, default=EOI_TYPES.open)
-    status = models.CharField(max_length=3, choices=EOI_STATUSES, default=EOI_STATUSES.open)
     title = models.CharField(max_length=255)
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
     created_by = models.ForeignKey('account.User', related_name="expressions_of_interest")
@@ -52,6 +51,7 @@ class EOI(TimeStampedModel):
     justification = models.TextField(null=True, blank=True)  # closed or completed
     completed_reason = models.CharField(max_length=3, choices=COMPLETED_REASON, null=True, blank=True)
     completed_date = models.DateTimeField(null=True, blank=True)
+    is_completed = models.BooleanField(default=False)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
     assessments_criteria = JSONField(default=dict([('selection_criteria', ''), ('weight', 0)]))
     review_summary_comment = models.TextField(null=True, blank=True)
@@ -65,16 +65,22 @@ class EOI(TimeStampedModel):
         return "EOI {} <pk:{}>".format(self.title, self.id)
 
     @property
+    def status(self):
+        today = date.today()
+        if self.is_completed:
+            return EOI_STATUSES.completed
+        elif self.is_completed is False and self.deadline_date and today > self.deadline_date:
+            return EOI_STATUSES.closed
+        else:
+            return EOI_STATUSES.open
+
+    @property
     def is_open(self):
         return self.display_type == EOI_TYPES.open
 
     @property
     def is_direct(self):
         return self.display_type == EOI_TYPES.direct
-
-    @property
-    def is_completed(self):
-        return self.completed_reason is not None
 
     @property
     def is_overdue_deadline(self):
@@ -131,7 +137,7 @@ class Application(TimeStampedModel):
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
-    did_accept_date = models.DateField(null=True, blank=True)
+    decision_date = models.DateField(null=True, blank=True)  # for accept or decline
     accept_notification = models.OneToOneField(
         'notification.Notification', related_name="accept_notification", null=True, blank=True)
     did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
@@ -204,6 +210,22 @@ class Application(TimeStampedModel):
         else:
             return 'Offer Made'
 
+    @property
+    def application_status(self):
+        if not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.open:
+            return 'Application Under Review'
+        elif not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.closed:
+            return 'Application Unsuccessful'
+        elif self.did_win and self.did_decline is False and self.did_accept is False and self.decision_date is None:
+            return 'Application Successful'
+        elif self.did_win and self.did_accept and self.decision_date is not None:
+            return 'Selection Accepted'
+        elif self.did_win and self.did_decline and self.decision_date is not None:
+            return 'Selection Declined'
+        elif self.did_win and self.did_withdraw:
+            return 'Selection Retracted'
+
+
     # RETURNS [{u'Cos': {u'scores': [23, 13], u'weight': 30}, u'avg': 23..]
     def get_scores_by_selection_criteria(self):
         assessments_criteria = self.eoi.get_assessment_criteria_as_dict()
@@ -269,7 +291,8 @@ class Assessment(TimeStampedModel):
                 for k, v in self.get_scores_as_dict().iteritems():
                     comb_dict[k]['score'] = v['score']
 
-                self.__total_score = sum([(v['score']*(v['weight']/100.0)) for k, v in comb_dict.iteritems()])
+                key_count = len(comb_dict.keys()) # Default if weight wasn't entered
+                self.__total_score = sum([(v['score']*(v.get('weight', key_count)/100.0)) for k, v in comb_dict.iteritems()])
 
         return self.__total_score
 

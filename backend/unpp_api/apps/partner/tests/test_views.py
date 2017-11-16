@@ -33,6 +33,7 @@ from common.consts import (
     BUDGET_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     YEARS_OF_EXP_CHOICES,
+    PARTNER_TYPES,
 )
 
 
@@ -58,7 +59,8 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
         response = self.client.post(url, data=payload, format='json')
         expected_count = len(chosen_country_to_create)
         self.assertTrue(statuses.is_success(response.status_code))
-        self.assertEquals(Partner.objects.filter(hq_id=partner.id).count(), expected_count)
+        self.assertEquals(Partner.objects.filter(hq_id=partner.id, display_type=PARTNER_TYPES.international).count(),
+                          expected_count)
         self.assertEquals(PartnerProfile.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerMailingAddress.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerHeadOrganization.objects.filter(partner__hq=partner).count(), 0)
@@ -375,7 +377,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
     def test_other_info(self):
         url = reverse('common:file')
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
         with open(filename) as doc:
             payload = {
                 "file_field": doc

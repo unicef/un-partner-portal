@@ -6,9 +6,8 @@ import withDialogHandling from '../../common/hoc/withDialogHandling';
 import ConvertToDirectSelectionModal from '../modals/convertToDirectSelection/convertToDirectSelectionModal';
 
 const messages = {
-  label: 'Convert to DS',
+  label: 'Convert to Direct Selection',
 };
-
 
 const ConvertToDS = (props) => {
   const { id, handleDialogClose, handleDialogOpen, dialogOpen, ...other } = props;

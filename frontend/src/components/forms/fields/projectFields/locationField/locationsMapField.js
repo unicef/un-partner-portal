@@ -10,7 +10,7 @@ import LocationsMap from './locationsMap';
 
 
 const messages = {
-  label: 'Choose Admin 1 location(s) for this country - pick location(s) from the map ' +
+  label: 'Choose location(s) for this country - pick location(s) from the map ' +
   '(optional). Remove locations by double-clicking the markers.',
   showMap: 'show map',
   hideMap: 'hide map',

@@ -30,7 +30,7 @@ NOTIFICATION_KINDS = {
     },
 
     'cfei_application_lost': {
-            'template_name': 'cn_assessment_not_successful',
+            'template_name': 'CN_Assessment_not_successful',
             'subject': 'Application Not Selected'
     },
 

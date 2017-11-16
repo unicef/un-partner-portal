@@ -15,7 +15,7 @@ const initialState = [
   { path: '/cfei', label: 'CFEIs', roles: [PARTNER, AGENCY], icon: cfeiIcon },
   { path: '/partner', label: 'Partners', roles: [AGENCY], icon: partnersIcon },
   { path: '/applications', label: 'Your Applications', roles: [PARTNER], icon: applicationsIcon },
-  { path: '/profile', label: 'Organization Profile', roles: [PARTNER], icon: settingsIcon },
+  { path: '/profile', label: 'Profile', roles: [PARTNER], icon: settingsIcon },
   { path: '/settings', label: 'Agency Settings', roles: [AGENCY], icon: settingsIcon },
 ];
 

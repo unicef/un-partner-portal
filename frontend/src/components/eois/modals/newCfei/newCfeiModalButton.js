@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
-
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import NewCfeiModal from './newCfeiModal';
@@ -10,7 +9,7 @@ import withDialogHandling from '../../../common/hoc/withDialogHandling';
 const messages = {
   open: 'New cfei',
   direct: 'new direct selection',
-  unsolicited: 'New UCN'
+  unsolicited: 'New Unsolicited Concept Note',
 };
 
 

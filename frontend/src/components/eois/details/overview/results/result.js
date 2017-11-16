@@ -10,7 +10,7 @@ import ResultForm from './resultForm';
 
 const messages = {
   title: 'Result',
-  expected: (_, notifDate) => `Results are expected to be made by: ${formatDateForPrint(notifDate)}`,
+  expected: (_, notifDate) => `Notification of results will be made by: ${formatDateForPrint(notifDate)}`,
 };
 
 

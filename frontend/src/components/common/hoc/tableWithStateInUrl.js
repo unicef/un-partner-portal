@@ -18,6 +18,8 @@ class TableWithStateInUrl extends Component {
     this.changeSorting = this.changeSorting.bind(this);
     this.changePageSize = this.changePageSize.bind(this);
     this.changePageNumber = this.changePageNumber.bind(this);
+
+    // TODO - move default order to this component
   }
 
   componentWillReceiveProps(nextProps) {

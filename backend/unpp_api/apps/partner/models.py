@@ -10,6 +10,7 @@ from model_utils.models import TimeStampedModel
 from account.models import User
 from common.validators import MaxCurrentYearValidator
 from common.countries import COUNTRIES_ALPHA2_CODE
+from common.utils import Thumbnail
 from common.consts import (
     SATISFACTION_SCALES,
     PARTNER_REVIEW_TYPES,
@@ -66,6 +67,10 @@ class Partner(TimeStampedModel):
     @property
     def is_hq(self):
         return self.hq in [None, ''] and self.display_type == PARTNER_TYPES.international
+
+    @property
+    def is_country_profile(self):
+        return self.hq not in [None, ''] and self.display_type == PARTNER_TYPES.international
 
     @property
     def country_profiles(self):
@@ -208,7 +213,7 @@ class PartnerMailingAddress(TimeStampedModel):
     telephone = models.CharField(max_length=255, null=True, blank=True)
     fax = models.CharField(max_length=255, null=True, blank=True)
     website = models.URLField(null=True, blank=True)
-    org_email = models.EmailField()
+    org_email = models.EmailField(null=True, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -504,9 +509,10 @@ class PartnerCollaborationEvidence(TimeStampedModel):
 class PartnerOtherInfo(TimeStampedModel):
     created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="other_info")
     partner = models.OneToOneField(Partner, related_name="other_info")
-    info_to_share = models.CharField(max_length=200)
+    info_to_share = models.CharField(max_length=200, null=True, blank=True)
     org_logo = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="others_info")
+    org_logo_thumbnail = models.ImageField(null=True, blank=True)
 
     other_doc_1 = models.ForeignKey('common.CommonFile', null=True,
                                     blank=True, related_name='other_info_doc_1')
@@ -522,6 +528,23 @@ class PartnerOtherInfo(TimeStampedModel):
 
     def __str__(self):
         return "PartnerOtherInfo <pk:{}>".format(self.id)
+
+    def save(self, *args, **kwargs):
+        super(PartnerOtherInfo, self).save(*args, **kwargs)
+        if self.org_logo is not None and self.org_logo_thumbnail.name is None or \
+                self.org_logo is not None and \
+                self.org_logo_thumbnail.name is not None and \
+                self.org_logo_thumbnail.name.find(self.org_logo.name) < 0:
+            try:
+                image_generator = Thumbnail(source=open(self.org_logo.file_field.path, 'rb'))
+                img = image_generator.generate()
+                new_filename = "thumbnail_{}".format(self.org_logo.file_field.name)
+                self.org_logo_thumbnail.save(new_filename, img)
+            except Exception:
+                # TODO: logger
+                pass
+        elif self.org_logo in ['', None] and self.org_logo_thumbnail.name is not None:
+            self.org_logo_thumbnail.delete()
 
 
 class PartnerMember(TimeStampedModel):

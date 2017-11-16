@@ -4,6 +4,7 @@ from django.db import transaction
 
 from rest_framework import serializers
 from rest_auth.serializers import LoginSerializer
+from rest_framework.validators import UniqueValidator
 
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
@@ -38,6 +39,7 @@ class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
 
     date_joined = serializers.DateTimeField(required=False, read_only=True)
     username = serializers.CharField(required=False, read_only=True)
+    email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
 
     class Meta:
         model = User
@@ -116,7 +118,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source='get_fullname')
+    name = serializers.CharField(source='get_user_name')
 
     class Meta:
         model = User
@@ -177,6 +179,22 @@ class PartnerUserSerializer(UserSerializer):
         partner_ids = obj.get_partner_ids_i_can_access()
         return PartnerSerializer(Partner.objects.filter(id__in=partner_ids),
                                  many=True).data
+
+
+class UserFullnameSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', )
+
+
+class PartnerMemberSerializer(serializers.ModelSerializer):
+
+    user = UserFullnameSerializer()
+
+    class Meta:
+        model = PartnerMember
+        fields = "__all__"
 
 
 class CustomLoginSerializer(LoginSerializer):
