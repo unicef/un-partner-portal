@@ -42,8 +42,9 @@ const PartnerProfileProjectImplementationBankingInfo = (props) => {
             label={messages.explain}
             fieldName="explain"
             textFieldProps={{
+              multiline: true,
               inputProps: {
-                maxLength: '200',
+                maxLength: '5000',
               },
             }}
             optional

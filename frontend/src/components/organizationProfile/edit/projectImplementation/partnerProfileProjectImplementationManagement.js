@@ -36,8 +36,9 @@ const PartnerProfileProjectImplementationManagement = (props) => {
             label={messages.resultsDescription}
             fieldName="management_approach_desc"
             textFieldProps={{
+              multiline: true,
               inputProps: {
-                maxLength: '200',
+                maxLength: '5000',
               },
             }}
             optional
@@ -58,8 +59,9 @@ const PartnerProfileProjectImplementationManagement = (props) => {
             label={messages.meDescription}
             fieldName="system_monitoring_desc"
             textFieldProps={{
+              multiline: true,
               inputProps: {
-                maxLength: '200',
+                maxLength: '5000',
               },
             }}
             optional
@@ -80,8 +82,9 @@ const PartnerProfileProjectImplementationManagement = (props) => {
             label={messages.feedbackDescription}
             fieldName="feedback_mechanism_desc"
             textFieldProps={{
+              multiline: true,
               inputProps: {
-                maxLength: '200',
+                maxLength: '5000',
               },
             }}
             optional

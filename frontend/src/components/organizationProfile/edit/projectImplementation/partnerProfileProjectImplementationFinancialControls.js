@@ -60,8 +60,9 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
               label={messages.systemDescription}
               fieldName="financial_control_system_desc"
               textFieldProps={{
+                multiline: true,
                 inputProps: {
-                  maxLength: '200',
+                  maxLength: '5000',
                 },
               }}
               optional

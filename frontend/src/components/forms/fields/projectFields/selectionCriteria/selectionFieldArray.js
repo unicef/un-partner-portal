@@ -38,7 +38,7 @@ const Description = (readOnly, hasWeighting, ...props) => (member, index, fields
         textFieldProps={{
           multiline: true,
           inputProps: {
-            maxLength: '200',
+            maxLength: '5000',
           },
           disabled,
         }}

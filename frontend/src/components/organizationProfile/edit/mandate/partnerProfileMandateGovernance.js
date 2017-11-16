@@ -21,8 +21,9 @@ const PartnerProfileMandateGovernance = (props) => {
           label={messages.structure}
           fieldName="governance_structure"
           textFieldProps={{
+            multiline: true,
             inputProps: {
-              maxLength: '200',
+              maxLength: '5000',
             },
           }}
           optional
@@ -33,8 +34,9 @@ const PartnerProfileMandateGovernance = (props) => {
           label={messages.headquaters}
           fieldName="governance_hq"
           textFieldProps={{
+            multiline: true,
             inputProps: {
-              maxLength: '200',
+              maxLength: '5000',
             },
           }}
           optional

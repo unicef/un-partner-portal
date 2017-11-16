@@ -25,8 +25,9 @@ const PartnerProfileOtherInfoContent = (props) => {
           label={messages.otherInfo}
           fieldName="info_to_share"
           textFieldProps={{
+            multiline: true,
             inputProps: {
-              maxLength: '200',
+              maxLength: '5000',
             },
           }}
           optional

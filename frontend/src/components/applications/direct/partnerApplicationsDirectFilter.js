@@ -68,7 +68,7 @@ class PartnerApplicationsNotesFilter extends Component {
     const { pathName, query } = this.props;
     resetChanges(pathName, query);
 
-    const active = this.props.query.cfei_active ? this.props.query.cfei_active : true;
+    const active = !!(this.props.query.cfei_active === 'true' || (typeof (this.props.query.cfei_active) === 'boolean' && this.props.query.cfei_active) || !this.props.query.cfei_active);
 
     history.push({
       pathname: pathName,
