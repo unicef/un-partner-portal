@@ -50,14 +50,17 @@ class CountryOfficesHeaderContainer extends React.Component {
     const filteredOutCreatedProfiles = R.filter(presenceCode =>
       R.isEmpty(R.filter(profile =>
         profile.country_code === presenceCode, countryProfiles)), countryPresence);
-    
+
     return R.concat(filteredOutCreatedProfiles, countryProfiles);
   }
 
   render() {
     return (
       <div>
-        <CountryOfficesHeader handleNewCountryClick={this.handleNewCountry} />
+        <CountryOfficesHeader
+          disableNewCountries={this.props.disableNewCountries}
+          handleNewCountryClick={this.handleNewCountry}
+        />
         <ControlledModal
           trigger={this.state.showCountryModal}
           title={messages.countryDialogTitle}
@@ -86,6 +89,7 @@ CountryOfficesHeaderContainer.propTypes = {
   newCountryProfile: PropTypes.func.isRequired,
   selectedCountryId: PropTypes.number.isRequired,
   partnerId: PropTypes.number.isRequired,
+  disableNewCountries: PropTypes.bool,
 };
 
 const mapDispatch = dispatch => ({
@@ -98,6 +102,7 @@ const mapStateToProps = state => ({
   countryPresence: R.path(['hq', 'country_presence'], state.countryProfiles) || [],
   selectedCountryId: state.countryProfiles.selectedCountryId,
   partnerId: state.session.partnerId,
+  disableNewCountries: !state.session.isProfileComplete,
 });
 
 export default connect(mapStateToProps, mapDispatch)(CountryOfficesHeaderContainer);

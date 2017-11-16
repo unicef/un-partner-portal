@@ -1,17 +1,25 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { browserHistory as history, withRouter } from 'react-router';
+import { browserHistory as history, withRouter, Link } from 'react-router';
 import PropTypes from 'prop-types';
+import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 import Delete from 'material-ui-icons/Delete';
 import IconButton from 'material-ui/IconButton';
+import Button from 'material-ui/Button';
+import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
 import SpreadContent from '../../../common/spreadContent';
 import HeaderList from '../../../common/list/headerList';
 import ConceptNoteSubmission from './conceptNoteSubmission';
 import { deleteCn } from '../../../../reducers/conceptNote';
+import PaddedContent from '../../../common/paddedContent';
 
 const messages = {
+  completeProfile: 'Complete Profile',
+  incomplete: 'Your organization cannot submit an application for funding consideration until ' +
+  'it has completed its profile in the UN Partner Portal.',
+  hq: 'You cannot submit an application as HQ profile, please switch to country profile',
   title: 'Concept Note',
   confirm: 'Yes, DELETE',
   cancel: 'Cancel',
@@ -53,8 +61,31 @@ class CfeiSubmission extends Component {
 
   render() {
     const { open } = this.state;
-    const { partnerId, cnUploaded } = this.props;
-
+    const { partnerId, cnUploaded, isHq, isProfileComplete } = this.props;
+    if (isHq) {
+      return (<Paper>
+        <PaddedContent big >
+          <Typography>{messages.hq}</Typography>
+        </PaddedContent>
+      </Paper>);
+    } else if (!isProfileComplete) {
+      return (<Paper>
+        <PaddedContent big >
+          <Typography>{messages.incomplete}</Typography>
+          <Grid container justify="flex-end">
+            <Grid item>
+              <Button
+                component={Link}
+                to={`/profile/${partnerId}/edit/`}
+                color="accent"
+              >
+                {messages.completeProfile}
+              </Button>
+            </Grid>
+          </Grid>
+        </PaddedContent>
+      </Paper>);
+    }
     return (
       <div>
         <HeaderList
@@ -94,6 +125,8 @@ const mapStateToProps = (state, ownProps) => ({
   partnerId: ownProps.params.id,
   loader: state.conceptNote.loading,
   cnUploaded: state.conceptNote.cnFile,
+  isHq: state.session.isHq,
+  isProfileComplete: state.session.isProfileComplete,
 });
 
 const mapDispatch = dispatch => ({
