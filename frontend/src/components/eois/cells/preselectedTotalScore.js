@@ -8,19 +8,20 @@ import GridRow from '../../common/grid/gridRow';
 import WithGreyColor from '../../common/hoc/withGreyButtonStyle';
 
 const PreselectedTotalScore = (props) => {
-  const { id, conceptNote, score, hovered } = props;
+  const { id, conceptNote, score, hovered, allowedToEdit } = props;
   const Delete = WithGreyColor()(DeleteButton);
   const Download = WithGreyColor(!conceptNote)(GetConceptNoteButton);
-  const localScore = score || '-';
+  const localScore = score ? score.toFixed(2) : '-';
+
   return (
     <TableCell>
       <GridRow align="center" >
         <Typography type="body1" color="inherit">
           {localScore}
         </Typography>
-        {hovered && <GridRow spacing={0} columns={2}>
+        {hovered && <GridRow spacing={8} columns={2}>
           <Download id={id} conceptNote={conceptNote} />
-          <Delete id={[id]} />
+          {allowedToEdit && <Delete id={[id]} />}
         </GridRow>}
       </GridRow>
     </TableCell>
@@ -32,6 +33,7 @@ PreselectedTotalScore.propTypes = {
   conceptNote: PropTypes.string,
   score: PropTypes.string,
   hovered: PropTypes.bool,
+  allowedToEdit: PropTypes.bool,
 };
 
 export default PreselectedTotalScore;

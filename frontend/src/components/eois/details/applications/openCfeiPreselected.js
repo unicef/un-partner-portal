@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import {reject} from 'ramda';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
 import ApplicationCnIdCell from '../../cells/applicationCnIdCell';
 import SelectableList from '../../../common/list/selectableList';
+import PaginatedList from '../../../common/list/paginatedList';
+import TableWithStateInUrl from '../../../common/hoc/tableWithStateInUrl';
 import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
 import Compare from '../../buttons/compareButton';
 import PreselectedTotalScore from '../../cells/preselectedTotalScore';
@@ -11,6 +14,12 @@ import PreselectedYourScore from '../../cells/preselectedYourScore';
 import { loadApplications } from '../../../../reducers/partnersApplicationsList';
 import { APPLICATION_STATUSES } from '../../../../helpers/constants';
 import { isQueryChanged } from '../../../../helpers/apiHelper';
+import {
+  isCfeiCompleted,
+  isUserAFocalPoint,
+  isUserACreator,
+  isUserAReviewer,
+} from '../../../../store';
 
 /* eslint-disable react/prop-types */
 const HeaderActions = (props) => {
@@ -21,36 +30,14 @@ const HeaderActions = (props) => {
   );
 };
 
-const applicationsCells = ({ row, column }) => {
-  if (column.name === 'name') {
-    return (<PartnerProfileNameCell
-      verified={row.verified}
-      yellowFlag={row.flagYellow}
-      redFlag={row.flagRed}
-      name={row.name}
-    />);
-  } else if (column.name === 'id') {
-    return (<ApplicationCnIdCell
-      id={row.id}
-    />
-    );
-  } else if (column.name === 'your_score') {
-    return (<PreselectedYourScore
-      id={row.id}
-      score={row.your_score}
-    />);
-  } else if (column.name === 'total_score') {
-    return (<PreselectedTotalScore
-      id={row.id}
-      conceptNote={row.cn}
-      score={row.total_score}
-      hovered={row.hovered}
-    />);
-  }
-  return undefined;
-};
+
 /* eslint-enable react/prop-types */
 class OpenCfeiPreselections extends Component {
+  constructor() {
+    super();
+    this.applicationsCells = this.applicationsCells.bind(this);
+  }
+
   componentWillMount() {
     const { id, query } = this.props;
     this.props.loadApplications(id, query);
@@ -66,18 +53,65 @@ class OpenCfeiPreselections extends Component {
     return true;
   }
 
+  applicationsCells({ row, column }) {
+    if (column.name === 'name') {
+      return (<PartnerProfileNameCell
+        verified={row.partner_additional.is_verified}
+        flags={row.partner_additional.flagging_status}
+        name={row.name}
+      />);
+    } else if (column.name === 'id') {
+      return (<ApplicationCnIdCell
+        id={row.id}
+      />
+      );
+    } else if (column.name === 'your_score') {
+      return (<PreselectedYourScore
+        id={row.id}
+        score={row.your_score}
+        breakdown={row.your_score_breakdown}
+      />);
+    } else if (column.name === 'average_total_score') {
+      return (<PreselectedTotalScore
+        id={row.id}
+        conceptNote={row.cn}
+        score={row.average_total_score}
+        hovered={row.hovered}
+        allowedToEdit={this.props.allowedToEdit}
+      />);
+    }
+    return undefined;
+  }
+
   render() {
-    const { applications, columns, loading, itemsCount } = this.props;
+    const { applications, columns, loading, itemsCount, allowedToEdit, isReviewer } = this.props;
+    console.log(columns);
+    let finalColumns = columns;
+    if (!allowedToEdit) {
+      finalColumns = reject(column => column.name === 'average_total_score', finalColumns);
+    }
+    if (!isReviewer) {
+      finalColumns = reject(column => column.name === 'your_score', finalColumns);
+    }
     return (
       <div>
-        <SelectableList
-          items={applications}
-          itemsCount={itemsCount}
-          columns={columns}
-          loading={loading}
-          headerAction={HeaderActions}
-          templateCell={applicationsCells}
-        />
+        {allowedToEdit ?
+          <SelectableList
+            items={applications}
+            columns={finalColumns}
+            loading={loading}
+            itemsCount={itemsCount}
+            headerAction={HeaderActions}
+            templateCell={this.applicationsCells}
+          />
+          : <TableWithStateInUrl
+            component={PaginatedList}
+            items={applications}
+            columns={finalColumns}
+            loading={loading}
+            itemsCount={itemsCount}
+            templateCell={this.applicationsCells}
+          />}
       </div>
     );
   }
@@ -91,6 +125,8 @@ OpenCfeiPreselections.propTypes = {
   query: PropTypes.object,
   itemsCount: PropTypes.number,
   id: PropTypes.number,
+  allowedToEdit: PropTypes.bool,
+  isReviewer: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -100,6 +136,9 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.partnersApplicationsList.status.loading,
   query: ownProps.location.query,
   id: ownProps.params.id,
+  allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
+    && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
+  isReviewer: isUserAReviewer(state, ownProps.params.id),
 });
 
 const mapDispatchToProps = dispatch => ({

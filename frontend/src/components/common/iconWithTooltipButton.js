@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import IconButton from 'material-ui/IconButton';
-import Tooltip from './tooltip';
+import Tooltip from 'material-ui/Tooltip';
 
 const PreselectButton = (props) => {
   const { icon, onClick, disabled, text, name, ...other } = props;
   return (
-    <div data-tip data-for={`${name}-button`} {...other}>
+    <Tooltip
+      id={`${name}-button`}
+      title={text}
+      placement="bottom"
+    >
       <IconButton
         color="inherit"
         onClick={() => onClick()}
@@ -14,11 +18,7 @@ const PreselectButton = (props) => {
       >
         {icon}
       </IconButton>
-      {!disabled && <Tooltip
-        id={`${name}-button`}
-        text={text}
-      />}
-    </div>
+    </Tooltip>
   );
 };
 

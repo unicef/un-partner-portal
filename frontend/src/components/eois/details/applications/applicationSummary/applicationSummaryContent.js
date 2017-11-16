@@ -10,13 +10,14 @@ import ConceptNote from '../../overview/conceptNote';
 import {
   selectApplication,
   selectCfeiCriteria,
+  selectCfeiStatus,
   isUserAFocalPoint,
   isUserAReviewer,
   isUserACreator,
 } from '../../../../../store';
 import ReviewContent from './reviewContent/reviewContent';
 import Feedback from '../../../../applications/feedback/feedbackContainer';
-import { APPLICATION_STATUSES } from '../../../../../helpers/constants';
+import { APPLICATION_STATUSES, PROJECT_STATUSES } from '../../../../../helpers/constants';
 
 
 const messages = {
@@ -79,6 +80,7 @@ const mapStateToProps = (state, ownProps) => {
   const { partner = {}, eoi, status, application_status } = application;
   const partnerDetails = R.prop(R.prop('id', partner), state.agencyPartnerProfile);
   const cfeiCriteria = selectCfeiCriteria(state, eoi);
+  const cfeiStatus = selectCfeiStatus(state, eoi);
   const isUserFocalPoint = isUserAFocalPoint(state, eoi);
   const isUserReviewer = isUserAReviewer(state, eoi);
   const isUserCreator = isUserACreator(state, eoi);
@@ -92,7 +94,7 @@ const mapStateToProps = (state, ownProps) => {
     shouldAddFeedback: isUserFocalPoint || isUserCreator,
     shouldSeeReviews: (isUserFocalPoint || isUserReviewer)
     && status === APPLICATION_STATUSES.PRE
-    && application_status === 'Application Under Review',
+    && cfeiStatus === PROJECT_STATUSES.CLO,
     isUserFocalPoint,
     isUserReviewer,
   };
