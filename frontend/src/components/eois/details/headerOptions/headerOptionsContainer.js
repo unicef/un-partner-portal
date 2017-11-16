@@ -29,6 +29,7 @@ const HeaderOptionsContainer = (props) => {
     partnerId,
     completedJustification,
     allowedToEdit,
+    completedReasons,
   } = props;
   let options;
   if (type === PROJECT_TYPES.OPEN) {
@@ -53,7 +54,7 @@ const HeaderOptionsContainer = (props) => {
     return (
       <GridColumn spacing={0} justify="flex-end" align="flex-end">
         <EoiStatusCell status={cfeiStatus} />
-        <Typography type="caption">{completedJustification}</Typography>
+        <Typography type="caption">{completedReasons[completedJustification]}</Typography>
       </GridColumn>);
   }
 
@@ -73,12 +74,14 @@ HeaderOptionsContainer.propTypes = {
   partnerId: PropTypes.string,
   allowedToEdit: PropTypes.bool,
   completedJustification: PropTypes.string,
+  completedReasons: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   cfeiCompleted: isCfeiCompleted(state, ownProps.id),
   cfeiStatus: selectCfeiStatus(state, ownProps.id),
   completedJustification: selectCfeiJustification(state, ownProps.id),
+  completedReasons: state.partnerProfileConfig['completed-reason'] || {},
   cfeiConverted: selectCfeiConverted(state, ownProps.id),
   allowedToEdit: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
 });

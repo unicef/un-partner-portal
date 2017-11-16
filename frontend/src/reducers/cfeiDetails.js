@@ -109,8 +109,8 @@ export function selectCfeiConverted(state, id) {
 }
 
 export function selectCfeiJustification(state, id) {
-  const { [id]: { justification = null } = {} } = state;
-  return justification;
+  const { [id]: { completed_reason = null } = {} } = state;
+  return completed_reason;
 }
 
 export function isCfeiCompleted(state, id) {
