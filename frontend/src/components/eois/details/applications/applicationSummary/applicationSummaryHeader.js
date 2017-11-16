@@ -32,6 +32,7 @@ const messages = {
     notVerified: 'Partner is not verified',
     notPreselected: 'Application is not preselected',
     redFlag: 'Partner has red flag',
+    noReviews: 'All assessments are not done yet',
   },
 };
 
@@ -49,17 +50,11 @@ class ApplicationSummaryHeader extends Component {
   }
 
   renderTooltipText() {
-    const { loading,
-      isUserFocalPoint,
-      isUserReviewer,
-      reviews,
-      user,
+    const {
       status,
-      getAssessment,
-      params: { applicationId },
-      didWin,
       isVerified,
       redFlags,
+      completedReview,
     } = this.props;
     let text = '';
     if (status !== APPLICATION_STATUSES.PRE) {
@@ -67,6 +62,7 @@ class ApplicationSummaryHeader extends Component {
     }
     if (!isVerified) text = concatText(text, messages.tooltip.notVerified);
     if (redFlags) text = concatText(text, messages.tooltip.redFlag);
+    if (!completedReview) text = concatText(text, messages.tooltip.noReviews);
     return text;
   }
 
@@ -82,16 +78,18 @@ class ApplicationSummaryHeader extends Component {
       didWin,
       isVerified,
       redFlags,
+      completedReview,
     } = this.props;
     const disableAward = loading
       || status !== APPLICATION_STATUSES.PRE
       || !isVerified
-      || redFlags;
-    const disableWithdraw = loading || status !== APPLICATION_STATUSES.PRE;
+      || redFlags
+      || !completedReview;
+    const disabled = loading || status !== APPLICATION_STATUSES.PRE;
     if (isUserFocalPoint) {
       if (didWin) {
         return (<WithdrawApplicationButton
-          disabled={disableWithdraw}
+          disabled={disabled}
           raised
           applicationId={applicationId}
         />);
@@ -103,7 +101,6 @@ class ApplicationSummaryHeader extends Component {
           disableTriggerHover={!disableAward}
           disableTriggerTouch={!disableAward}
           id="tooltip-award-button"
-          open
           title={this.renderTooltipText()}
           placement="bottom"
         >
@@ -183,6 +180,7 @@ ApplicationSummaryHeader.propTypes = {
   didWin: PropTypes.bool,
   isVerified: PropTypes.bool,
   redFlags: PropTypes.number,
+  completedReview: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -191,6 +189,7 @@ const mapStateToProps = (state, ownProps) => {
   const { eoi,
     did_win,
     did_withdraw,
+    assessments_is_completed = false,
     partner: {
       legal_name,
       partner_additional: {
@@ -215,6 +214,7 @@ const mapStateToProps = (state, ownProps) => {
     didWithdraw: did_withdraw,
     isVerified,
     redFlags,
+    completedReview: assessments_is_completed,
   };
 };
 
