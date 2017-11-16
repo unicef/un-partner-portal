@@ -71,8 +71,8 @@ class EoiFilter extends Component {
     const { pathName, query, agencyId } = this.props;
 
     const agency = this.props.query.agency ? this.props.query.agency : agencyId;
-    const active = this.props.query.active ? this.props.query.active : true;
-    const ordering = this.props.query.active === 'true' ? 'deadline_date' : '-completed_date';
+    const active = !!(this.props.query.active === 'true' || (typeof (this.props.query.active) === 'boolean' && this.props.query.active) || !this.props.query.active);
+    const ordering = active ? 'deadline_date' : '-completed_date';
 
     history.push({
       pathname: pathName,
@@ -89,7 +89,7 @@ class EoiFilter extends Component {
       const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
       const ordering = this.props.query.active === 'true' ? 'deadline_date' : '-completed_date';
       const active = this.props.query.active ? this.props.query.active : true;
-
+      
       history.push({
         pathname,
         query: R.merge(this.props.query,

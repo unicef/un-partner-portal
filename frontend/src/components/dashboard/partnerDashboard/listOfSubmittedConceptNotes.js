@@ -22,7 +22,7 @@ const columns = [
   { name: 'agency_name', title: 'UN Agency' },
   { name: 'countries', title: 'Country' },
   { name: 'specializations', title: 'Sector & Area of Specialization' },
-  { name: 'offer_status', title: 'Status' },
+  { name: 'application_status', title: 'Status' },
 ];
 
 const renderCells = ({ row, column }) => {

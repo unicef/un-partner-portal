@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 import os
 from datetime import date
+import mock
 
 from django.urls import reverse
 from django.conf import settings
@@ -57,6 +58,15 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
             'chosen_country_to_create': chosen_country_to_create,
         }
         response = self.client.post(url, data=payload, format='json')
+        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertEquals(
+            response.data['non_field_errors'],
+            ["You don't have the ability to create country profile if Your profile is not completed."]
+        )
+
+        with mock.patch('partner.models.Partner.has_finished', lambda: True):
+            response = self.client.post(url, data=payload, format='json')
+
         expected_count = len(chosen_country_to_create)
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(Partner.objects.filter(hq_id=partner.id, display_type=PARTNER_TYPES.international).count(),
@@ -362,6 +372,11 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         payload['financial_control_system_desc'] = text
         payload['management_approach_desc'] = text
         payload['comment'] = text
+        payload['regular_audited'] = False
+        payload['experienced_staff']  = True
+        payload['have_separate_bank_account'] = True
+        payload['have_bank_account'] = True
+        payload['capacity_assessment'] = True
 
         for internal_control in payload['internal_controls']:
             internal_control['comment'] = text

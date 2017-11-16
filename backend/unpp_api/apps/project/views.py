@@ -15,7 +15,7 @@ from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.models import User
-from common.consts import EOI_TYPES
+from common.consts import EOI_TYPES, DIRECT_SELECTION_SOURCE
 from common.paginations import SmallPagination
 from common.permissions import (
     IsAgencyMemberUser,
@@ -45,7 +45,8 @@ from .serializers import (
     CreateProjectSerializer,
     PartnerProjectSerializer,
     CreateDirectProjectSerializer,
-    ProjectUpdateSerializer,
+    AgencyProjectReadSerializer,
+    AgencyProjectUpdateSerializer,
     ApplicationFullSerializer,
     ApplicationFullEOISerializer,
     AgencyUnsolicitedApplicationSerializer,
@@ -115,12 +116,13 @@ class OpenProjectAPIView(BaseProjectAPIView):
 class EOIAPIView(RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
-    serializer_class = ProjectUpdateSerializer
     queryset = EOI.objects.all()
 
     def get_serializer_class(self, *args, **kwargs):
         if self.request.user.is_agency_user:
-            return ProjectUpdateSerializer
+            if self.request.method == 'GET':
+                return AgencyProjectReadSerializer
+            return AgencyProjectUpdateSerializer
         return PartnerProjectSerializer
 
     def perform_update(self, serializer):
@@ -179,6 +181,7 @@ class DirectProjectAPIView(BaseProjectAPIView):
         data = request.data or {}
         try:
             data['eoi']['created_by'] = request.user.id
+            data['eoi']['selected_source'] = DIRECT_SELECTION_SOURCE.un
         except Exception:
             pass  # serializer.is_valid() will take care of right response
 
@@ -258,6 +261,19 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
                 {'non_field_errors': ['The fields eoi, partner must make a unique set.']},
                 status=statuses.HTTP_400_BAD_REQUEST
             )
+        if self.request.active_partner.is_hq and request.user.member.partner.id != self.request.active_partner.id:
+            return Response(
+                {'non_field_errors': ["You don't have the ability to submit an application if You are currently "
+                                      "toggled under the HQ profile."]},
+                status=statuses.HTTP_400_BAD_REQUEST
+            )
+        if not self.request.active_partner.has_finished:
+            return Response(
+                {'non_field_errors':
+                     ["You don't have the ability to submit an application if Your profile is not completed."]},
+                status=statuses.HTTP_400_BAD_REQUEST
+            )
+
         return super(PartnerEOIApplicationCreateAPIView, self).post(request, pk, *args, **kwargs)
 
     def perform_create(self, serializer):

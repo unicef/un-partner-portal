@@ -20,10 +20,6 @@ const messages = {
   postOpenFailure: 'Unfortunately, couldn\'t create new Cfei',
 };
 
-const mockData = {
-  agency: 1,
-  agency_office: 1,
-};
 
 const initialState = {
   openCfeiSubmitting: false,
@@ -70,13 +66,21 @@ export const addOpenCfei = body => (dispatch, getState) => {
     });
 };
 
-export const addDirectCfei = body => (dispatch) => {
+export const addDirectCfei = body => (dispatch, getState) => {
   dispatch(newCfeiSubmitting());
+  const { agencyId, officeId } = getState().session;
   const preparedBody = prepareBody(body);
   const { applications, ...other } = preparedBody;
-  const finalBody = { applications, eoi: { ...other } };
+  const finalBody = {
+    applications,
+    eoi: R.mergeWith(
+      R.merge,
+      { ...other },
+      { agency: agencyId, agency_office: officeId },
+    ),
+  };
   const params = history.getCurrentLocation().query;
-  return postDirectCfei(R.mergeWith(R.merge, finalBody, { eoi: mockData }))
+  return postDirectCfei(finalBody)
     .then(() => {
       dispatch(newCfeiSubmitted());
       dispatch(loadCfei(PROJECT_TYPES.DIRECT, params));
@@ -115,7 +119,8 @@ export const updateCfei = (body, id) => (dispatch) => {
     });
 };
 
-export const changePinStatusCfei = (id, isPinned) => (dispatch) => patchPinnedCfei({
+export const changePinStatusCfei = (id, isPinned) => dispatch =>
+  patchPinnedCfei({
     eoi_ids: [id],
     pin: !isPinned,
   })

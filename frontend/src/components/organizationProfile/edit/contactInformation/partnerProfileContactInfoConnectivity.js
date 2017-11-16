@@ -34,8 +34,9 @@ const PartnerProfileContactInfoConnectivity = (props) => {
             label={messages.explenation}
             fieldName="connectivity_excuse"
             textFieldProps={{
+              multiline: true,
               inputProps: {
-                maxLength: '200',
+                maxLength: '5000',
               },
             }}
             optional

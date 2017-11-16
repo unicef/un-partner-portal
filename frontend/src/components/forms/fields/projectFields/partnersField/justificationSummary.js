@@ -16,7 +16,7 @@ const JustificationSummary = (props) => {
       textFieldProps={{
         multiline: true,
         inputProps: {
-          maxLength: '200',
+          maxLength: '5000',
         },
         disabled,
       }}
