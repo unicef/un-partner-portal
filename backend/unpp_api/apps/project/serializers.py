@@ -437,6 +437,18 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
                 if partner.id not in self.initial_data.get('invited_partners', []):
                     instance.invited_partners.remove(partner)
 
+        if 'reviewers' in validated_data:
+            del validated_data['reviewers']
+            for user in instance.reviewers.all():
+                if user.id not in self.initial_data.get('reviewers', []):
+                    instance.reviewers.remove(user)
+
+        if 'focal_points' in validated_data:
+            del validated_data['focal_points']
+            for user in instance.focal_points.all():
+                if user.id not in self.initial_data.get('focal_points', []):
+                    instance.focal_points.remove(user)
+
         if instance.completed_reason is None and validated_data.get('completed_reason') is not None and \
                 instance.completed_date is None and instance.is_completed is False:
             instance.completed_date = datetime.now()
@@ -445,6 +457,12 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
         instance = super(ProjectUpdateSerializer, self).update(instance, validated_data)
         for invited_partner in self.initial_data.get('invited_partners', []):
             instance.invited_partners.add(Partner.objects.get(id=invited_partner))
+
+        for reviewer in self.initial_data.get('reviewers', []):
+            instance.reviewers.add(User.objects.get(id=reviewer))
+
+        for focal_point in self.initial_data.get('focal_points', []):
+            instance.focal_points.add(User.objects.get(id=focal_point))
 
         instance.save()
 
@@ -459,7 +477,11 @@ class ProjectUpdateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if self.context['request'].method in ['PATCH', 'PUT']:
-            if self.instance.is_completed:
+            if self.instance.status == EOI_STATUSES.closed and \
+                    not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
+                raise serializers.ValidationError(
+                    "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s).")
+            elif self.instance.is_completed:
                 raise serializers.ValidationError(
                     "CFEI is completed. Modify is forbidden.")
             allowed_to_modify = \
