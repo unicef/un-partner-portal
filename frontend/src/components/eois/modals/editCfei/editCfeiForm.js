@@ -13,7 +13,7 @@ import {
 import GridColumn from '../../../common/grid/gridColumn';
 import GridRow from '../../../common/grid/gridRow';
 import { selectCfeiDetails } from '../../../../store';
-import { PROJECT_TYPES } from '../../../../helpers/constants';
+import { PROJECT_TYPES, PROJECT_STATUSES } from '../../../../helpers/constants';
 
 
 const EditCfeiForm = (props) => {
@@ -27,12 +27,13 @@ const EditCfeiForm = (props) => {
     },
     focalPoints,
     type
+    changeDates,
   } = props;
   const isOpen = type === PROJECT_TYPES.OPEN;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
-        <GridRow columns={4} >
+        {changeDates && <GridRow columns={4} >
           <StartDate minDate={formNotifDate} />
           <EndDate minDate={formStartDate} />
           {isOpen && <DeadlineDate />}
@@ -57,6 +58,7 @@ EditCfeiForm.propTypes = {
   focalPoints: PropTypes.array,
   isOpen: PropTypes.bool,
   formDates: PropTypes.object,
+  changeDates: PropTypes.bool,
 };
 
 const formEditCfei = reduxForm({
@@ -68,14 +70,19 @@ const selector = formValueSelector('editCfei');
 
 const mapStateToProps = (state, ownProps) => {
   const isOpen = ownProps.type === PROJECT_TYPES.OPEN;
+
   const { focal_points,
     focal_points_detail,
+    status,
+
     start_date,
     end_date,
     deadline_date,
     notif_results_date } = selectCfeiDetails(state, ownProps.id);
-  let initialValues = { focal_points, start_date, end_date };
-  if (isOpen) initialValues = { ...initialValues, deadline_date, notif_results_date };
+  const changeDates = status === PROJECT_STATUSES.OPE;
+  let initialValues = { focal_points };
+  if (changeDates) initialValues = { ...initialValues, start_date, end_date };
+  if (isOpen && changeDates) initialValues = { ...initialValues, deadline_date, notif_results_date };
   const formDates = selector(state, 'start_date', 'deadline_date', 'notif_results_date');
   return {
     initialValues: {
@@ -89,6 +96,7 @@ const mapStateToProps = (state, ownProps) => {
     isOpen,
     formDates,
     initialValues,
+    changeDates,
   };
 };
 

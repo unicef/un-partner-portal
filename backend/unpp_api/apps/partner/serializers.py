@@ -788,6 +788,10 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("You can create profile only for HQ.")
         partner = partner.get()
 
+        if not partner.has_finished:
+            raise serializers.ValidationError(
+                "You don't have the ability to create country profile if Your profile is not completed.")
+
         country_list = self.initial_data.get('chosen_country_to_create')
         if not type(country_list):
             raise serializers.ValidationError("Field 'chosen_country_to_create' should be a list of country codes")

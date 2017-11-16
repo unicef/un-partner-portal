@@ -156,7 +156,7 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
     is_direct = serializers.SerializerMethodField()
     cfei_type = serializers.CharField(read_only=True)
     application_status = serializers.CharField(read_only=True)
-
+    assessments_is_completed = serializers.NullBooleanField(read_only=True)
 
     class Meta:
         model = Application
@@ -165,6 +165,39 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
 
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
+
+    def validate(self, data):
+        if self.context['request'].method in ['PATCH', 'PUT']:
+            kwargs = self.context['request'].parser_context.get('kwargs', {})
+            application_id = kwargs.get(self.context['view'].lookup_field)
+            app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
+
+            allowed_to_modify_status = \
+                list(app.eoi.focal_points.values_list('id', flat=True)) + [app.eoi.created_by_id]
+            if data.get("status") and self.context['request'].user.id not in allowed_to_modify_status:
+                raise serializers.ValidationError(
+                    "Only Focal Point/Creator is allowed to pre-select/reject an application.")
+
+            if data.get("status") == APPLICATION_STATUSES.rejected and \
+                    Assessment.objects.filter(application=app).exists():
+                raise serializers.ValidationError("Since assessment has begun, application can't be reject.")
+
+            if app.eoi.is_completed:
+                raise serializers.ValidationError(
+                    "Since CEOI is completed, modification is forbidden.")
+
+            if data.get("did_win") and not app.partner.is_verified:
+                raise serializers.ValidationError(
+                    "You can not award an application if the profile has not been verified yet.")
+            if data.get("did_win") and app.partner.has_red_flag:
+                raise serializers.ValidationError(
+                    "You can not award an application if the profile has red flag.")
+            if data.get("did_win") and \
+                    app.eoi.reviewers.count() != Assessment.objects.filter(application=app).count():
+                raise serializers.ValidationError(
+                    "You can not award an application if all assessments have not been added for the application.")
+
+        return super(ApplicationFullSerializer, self).validate(data)
 
 
 class ApplicationFullEOISerializer(ApplicationFullSerializer):
@@ -462,6 +495,18 @@ class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
                 if partner.id not in self.initial_data.get('invited_partners', []):
                     instance.invited_partners.remove(partner)
 
+        if 'reviewers' in validated_data:
+            del validated_data['reviewers']
+            for user in instance.reviewers.all():
+                if user.id not in self.initial_data.get('reviewers', []):
+                    instance.reviewers.remove(user)
+
+        if 'focal_points' in validated_data:
+            del validated_data['focal_points']
+            for user in instance.focal_points.all():
+                if user.id not in self.initial_data.get('focal_points', []):
+                    instance.focal_points.remove(user)
+
         if instance.completed_reason is None and validated_data.get('completed_reason') is not None and \
                 instance.completed_date is None and instance.is_completed is False:
             instance.completed_date = datetime.now()
@@ -471,9 +516,33 @@ class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
         for invited_partner in self.initial_data.get('invited_partners', []):
             instance.invited_partners.add(Partner.objects.get(id=invited_partner))
 
+        for reviewer in self.initial_data.get('reviewers', []):
+            instance.reviewers.add(User.objects.get(id=reviewer))
+
+        for focal_point in self.initial_data.get('focal_points', []):
+            instance.focal_points.add(User.objects.get(id=focal_point))
+
         instance.save()
 
         return instance
+
+    def validate(self, data):
+        if self.context['request'].method in ['PATCH', 'PUT']:
+            if self.instance.status == EOI_STATUSES.closed and \
+                    not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
+                raise serializers.ValidationError(
+                    "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s).")
+            elif self.instance.is_completed:
+                raise serializers.ValidationError(
+                    "CFEI is completed. Modify is forbidden.")
+            allowed_to_modify = \
+                list(self.instance.focal_points.values_list('id', flat=True)) + [self.instance.created_by_id]
+            if self.context['request'].user.id not in allowed_to_modify:
+                raise serializers.ValidationError(
+                    "Only Focal Point/Creator is allowed to modify a CFEI.")
+
+        return super(AgencyProjectUpdateSerializer, self).validate(data)
+
 
 
 class ApplicationsListSerializer(serializers.ModelSerializer):
