@@ -20,10 +20,6 @@ const messages = {
   postOpenFailure: 'Unfortunately, couldn\'t create new Cfei',
 };
 
-const mockData = {
-  agency: 1,
-  agency_office: 1,
-};
 
 const initialState = {
   openCfeiSubmitting: false,
@@ -55,12 +51,13 @@ export const addOpenCfei = body => (dispatch, getState) => {
   dispatch(newCfeiSubmitting());
   const { agencyId, officeId } = getState().session;
   const preparedBody = prepareBody(body);
+  const params = history.getCurrentLocation().query;
   return postOpenCfei(R.mergeWith(R.merge, preparedBody,
     { agency: agencyId, agency_office: officeId }))
     .then((cfei) => {
       dispatch(newCfeiSubmitted());
       dispatch(newCfeiProcessing());
-      dispatch(loadCfei(PROJECT_TYPES.OPEN));
+      dispatch(loadCfei(PROJECT_TYPES.OPEN, params));
       return cfei;
     })
     .catch((error) => {
@@ -69,15 +66,24 @@ export const addOpenCfei = body => (dispatch, getState) => {
     });
 };
 
-export const addDirectCfei = body => (dispatch) => {
+export const addDirectCfei = body => (dispatch, getState) => {
   dispatch(newCfeiSubmitting());
+  const { agencyId, officeId } = getState().session;
   const preparedBody = prepareBody(body);
   const { applications, ...other } = preparedBody;
-  const finalBody = { applications, eoi: { ...other } };
-  return postDirectCfei(R.mergeWith(R.merge, finalBody, { eoi: mockData }))
+  const finalBody = {
+    applications,
+    eoi: R.mergeWith(
+      R.merge,
+      { ...other },
+      { agency: agencyId, agency_office: officeId },
+    ),
+  };
+  const params = history.getCurrentLocation().query;
+  return postDirectCfei(finalBody)
     .then(() => {
       dispatch(newCfeiSubmitted());
-      dispatch(loadCfei(PROJECT_TYPES.DIRECT));
+      dispatch(loadCfei(PROJECT_TYPES.DIRECT, params));
     })
     .catch((error) => {
       dispatch(newCfeiSubmitted());
@@ -113,8 +119,8 @@ export const updateCfei = (body, id) => (dispatch) => {
     });
 };
 
-export const changePinStatusCfei = (id, isPinned) => (dispatch) => {
-  return patchPinnedCfei({
+export const changePinStatusCfei = (id, isPinned) => dispatch =>
+  patchPinnedCfei({
     eoi_ids: [id],
     pin: !isPinned,
   })
@@ -124,7 +130,6 @@ export const changePinStatusCfei = (id, isPinned) => (dispatch) => {
     .catch((error) => {
       dispatch(newCfeiFailure(error));
     });
-};
 
 
 const startSubmitting = state => R.assoc('error', {}, R.assoc('openCfeiSubmitting', true, state));

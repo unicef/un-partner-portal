@@ -18,7 +18,7 @@ import Pagination from '../../common/pagination';
 import EmptyContent from '../../common/emptyContent';
 
 const messages = {
-  title: 'Feedback',
+  title: 'Comments',
   placeholder: 'Provide optional feedback',
   button: 'send',
   from: 'from',
@@ -63,7 +63,6 @@ class FeedbackContainer extends Component {
       this.props.loadFeedback(nextState.params);
       return false;
     }
-    if (R.isEmpty(nextProps.feedback)) return false;
     return true;
   }
 
@@ -124,18 +123,21 @@ FeedbackContainer.propTypes = {
   extraTitle: PropTypes.string,
 };
 
+FeedbackContainer.defaultProps = {
+  key: 'default',
+};
+
 const mapStateToProps = (state, ownProps) => {
   const { applicationId } = ownProps;
   return {
-    loading: state.applicationFeedback.status.loading,
+    loading: state.applicationFeedback.status.loading[ownProps.key],
     feedback: selectApplicationFeedback(state, applicationId),
-    allowedToAdd: state.session.role === ROLES.AGENCY,
     count: selectApplicationFeedbackCount(state, applicationId),
   };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  loadFeedback: params => dispatch(loadApplicationFeedback(ownProps.applicationId, params)),
+  loadFeedback: params => dispatch(loadApplicationFeedback(ownProps.applicationId, params, ownProps.key)),
 });
 
 

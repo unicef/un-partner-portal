@@ -10,7 +10,7 @@ import GridColumn from '../../common/grid/gridColumn';
 import PaddedContent from '../../common/paddedContent';
 
 const messages = {
-  title: 'Number Of New CFEIs',
+  title: 'Number of New Calls for Expressions of Interest',
   button: 'view all',
 };
 

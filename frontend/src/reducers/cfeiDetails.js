@@ -79,7 +79,7 @@ const saveUCN = (state, action) => {
     partner_name: ucn.partner.id,
     display_type: ucn.partner.display_type,
     title: R.path(['proposal_of_eoi_details', 'title'], ucn),
-    locations: ucn.locations_proposal_of_eoi,
+    locations: normalizeLocations(ucn.locations_proposal_of_eoi),
     specializations: R.path(['proposal_of_eoi_details', 'specializations'], ucn),
     agency: ucn.agency,
     cn: ucn.cn,
@@ -126,6 +126,12 @@ export function selectCfeiCriteria(state, id) {
 export function isUserAReviewer(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
   if (cfei) return cfei.reviewers.includes(userId);
+  return false;
+}
+
+export function isUserACreator(state, cfeiId, userId) {
+  const cfei = R.prop(cfeiId, state);
+  if (cfei) return cfei.created_by === userId;
   return false;
 }
 

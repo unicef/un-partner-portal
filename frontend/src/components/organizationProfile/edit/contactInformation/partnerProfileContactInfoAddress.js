@@ -53,7 +53,7 @@ const PartnerProfileContactInfoAddress = (props) => {
             readOnly={readOnly}
           />
         </Grid>
-        {mailingType && <Grid item>
+        <Grid item>
           <Grid container direction="row">
             <Grid item sm={3} xs={12}>
               <TextFieldForm
@@ -91,7 +91,6 @@ const PartnerProfileContactInfoAddress = (props) => {
                 readOnly={readOnly}
               />
             </Grid>
-            {!isStreetAddress(mailingType) &&
             <Grid item sm={12} xs={12}>
               <Grid container direction="row">
                 <Grid item sm={3} xs={12}>
@@ -128,9 +127,9 @@ const PartnerProfileContactInfoAddress = (props) => {
                   />
                 </Grid>
               </Grid>
-            </Grid>}
+            </Grid>
           </Grid>
-        </Grid>}
+        </Grid>
       </Grid>
     </Grid>
   </FormSection>);

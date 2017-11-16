@@ -7,8 +7,8 @@ import { updateCfei } from '../../../../reducers/newCfei';
 import CompleteCfeiForm from './completeCfeiForm';
 
 const messages = {
-  title: 'Are you sure you want to complete this CFEI?',
-  header: { title: 'Email will be sent to all participating Partners.' },
+  title: 'Are you sure you want to finalize this CFEI?',
+  header: { title: 'An e-mail notification that this CFEI is now finalized will be sent to all partners who applied for this CFEI.' },
   save: 'complete',
 };
 
@@ -21,7 +21,7 @@ class CompleteCfeiModal extends Component {
 
   onFormSubmit(values) {
     this.props.handleDialogClose();
-    this.props.updateCfei({ ...values, status: 'Com' });
+    this.props.updateCfei({ ...values });
   }
 
   render() {

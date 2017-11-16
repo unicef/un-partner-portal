@@ -7,7 +7,7 @@ import OrganizationProfileOverviewHeader from './organizationProfileOverviewHead
 import HeaderNavigation from '../../../components/common/headerNavigation';
 
 const messages = {
-  hqProfile: 'HQ Profile',
+  hqProfile: 'Headquarters Profile',
 };
 
 class OrganizationProfileHeader extends Component {

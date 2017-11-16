@@ -11,7 +11,7 @@ import Grid from 'material-ui/Grid';
 import EoiCountryCell from '../../components/eois/cells/eoiCountryCell';
 
 const messages = {
-  profile: 'HQ Profile',
+  profile: 'Headquarters Profile',
   user: 'user',
   lastUpdate: 'Last update: ',
   pluralSuffix: 's',

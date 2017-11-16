@@ -77,7 +77,7 @@ class PartnersContainer extends Component {
                 expandable
                 loading={loading}
                 templateCell={this.partnerCell}
-                expandedCell={row => <PartnerProfileDetailItem partner={row.details} />}
+                expandedCell={row => <PartnerProfileDetailItem partner={row} />}
               />
             </Grid>
           </Grid>

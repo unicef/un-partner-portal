@@ -8,10 +8,10 @@ import Typography from 'material-ui/Typography';
 import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
 import AccountIcon from 'material-ui-icons/AccountCircle';
-import LensIcon from 'material-ui-icons/Lens';
-import Badge from 'material-ui/Badge';
+import BadgeIcon from './badgeIcon';
 import NotificationsList from '../notifications/notificationsList';
 import SidebarMenu from './sidebarMenu';
+import Logout from './logout';
 
 // TODO check what can be done in muiTheme
 const styleSheet = theme => ({
@@ -34,20 +34,18 @@ const styleSheet = theme => ({
   paper2: {
     height: '100%',
   },
-  badge: {
-    backgroundColor: 'red',
-    top: 5,
-    right: 5,
-    width: 18,
-    height: 18,
-  },
   iconBox: {
     width: 48,
     height: 48,
-    marginRight: 5,
   },
   headerIcon: {
     fill: theme.palette.primary[400],
+  },
+
+  noPrint: {
+    '@media print': {
+      display: 'none',
+    },
   },
 });
 
@@ -55,19 +53,31 @@ class MainLayout extends Component {
   constructor() {
     super();
     this.state = {
-      anchorEl: null,
-      open: false,
+      notifAnchor: null,
+      profileAnchor: null,
+      verificationOpen: false,
+      profileOpen: false,
     };
-    this.handleClick = this.handleClick.bind(this);
-    this.handleRequestClose = this.handleRequestClose.bind(this);
+    this.handleVerificationClick = this.handleVerificationClick.bind(this);
+    this.handleVerificationRequestClose = this.handleVerificationRequestClose.bind(this);
+    this.handleProfileClick = this.handleProfileClick.bind(this);
+    this.handleProfileRequestClose = this.handleProfileRequestClose.bind(this);
   }
 
-  handleClick(event) {
-    this.setState({ open: true, anchorEl: event.currentTarget });
+  handleVerificationClick(event) {
+    this.setState({ verificationOpen: true, notifAnchor: event.currentTarget });
   }
 
-  handleRequestClose() {
-    this.setState({ open: false });
+  handleVerificationRequestClose() {
+    this.setState({ verificationOpen: false });
+  }
+
+  handleProfileClick(event) {
+    this.setState({ profileOpen: true, profileAnchor: event.currentTarget });
+  }
+
+  handleProfileRequestClose() {
+    this.setState({ profileOpen: false });
   }
 
   render() {
@@ -75,7 +85,7 @@ class MainLayout extends Component {
     return (
       <Grid item >
         <Grid container spacing={0} className={classes.root}>
-          <Grid item sm={2} hidden={{ xsDown: true }}>
+          <Grid item sm={2} hidden={{ xsDown: true }} className={classes.noPrint}>
             <AppBar
               className={`${classes.header} ${classes.leftHeader}`}
               position="static"
@@ -86,7 +96,7 @@ class MainLayout extends Component {
               </Typography>
             </AppBar>
           </Grid>
-          <Grid item xs={12} sm={10}>
+          <Grid item xs={12} sm={10} className={classes.noPrint}>
             <AppBar
               className={`${classes.header} ${classes.rightHeader}`}
               position="static"
@@ -98,22 +108,14 @@ class MainLayout extends Component {
                 justify="flex-end"
                 spacing={0}
               >
-                <Badge
-                  badgeContent=" "
-                  className={classes.iconBox}
-                  classes={{ badge: classes.badge }}
-                >
-                  <IconButton color="contrast" onClick={this.handleClick}>
-                    <LensIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
-                  </IconButton>
-                </Badge>
-                <IconButton color="contrast">
+                <BadgeIcon handleClick={this.handleVerificationClick} />
+                <IconButton color="contrast" onClick={this.handleProfileClick}>
                   <AccountIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
                 </IconButton>
               </Grid>
             </AppBar>
           </Grid>
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={2} className={classes.noPrint}>
             <Paper className={classes.paper}>
               <SidebarMenu />
             </Paper>
@@ -126,8 +128,8 @@ class MainLayout extends Component {
         </Grid>
         <Popover
           id="notifications"
-          anchorEl={this.state.anchorEl}
-          open={this.state.open}
+          anchorEl={this.state.notifAnchor}
+          open={this.state.verificationOpen}
           anchorOrigin={{
             vertical: 'bottom',
             horizontal: 'right',
@@ -136,9 +138,25 @@ class MainLayout extends Component {
             vertical: 'top',
             horizontal: 'right',
           }}
-          onRequestClose={this.handleRequestClose}
+          onRequestClose={this.handleVerificationRequestClose}
         >
           <NotificationsList />
+        </Popover>
+        <Popover
+          id="partnerProfile"
+          anchorEl={this.state.profileAnchor}
+          open={this.state.profileOpen}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          onRequestClose={this.handleProfileRequestClose}
+        >
+          <Logout />
         </Popover>
       </Grid>
     );

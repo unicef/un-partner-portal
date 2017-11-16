@@ -7,7 +7,7 @@ import { updateCfei } from '../../../../reducers/newCfei';
 import EditCfeiForm from './editCfeiForm';
 
 const messages = {
-  title: 'Edit Expression of Interests',
+  title: 'Edit Call for Expressions of Interest',
   header: {
     open: { title: 'This is an open selection' },
     direct: { title: 'This is an direct CFEI' },

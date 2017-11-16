@@ -4,11 +4,13 @@ from django.db import transaction
 
 from rest_framework import serializers
 from rest_auth.serializers import LoginSerializer
+from rest_framework.validators import UniqueValidator
 
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     MEMBER_ROLES,
     MEMBER_STATUSES,
+    POLICY_AREA_CHOICES,
 )
 from partner.models import (
     Partner,
@@ -23,6 +25,7 @@ from partner.models import (
     PartnerInternalControl,
     PartnerMember,
     PartnerBudget,
+    PartnerPolicyArea,
 )
 
 from partner.serializers import (
@@ -38,6 +41,7 @@ class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
 
     date_joined = serializers.DateTimeField(required=False, read_only=True)
     username = serializers.CharField(required=False, read_only=True)
+    email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
 
     class Meta:
         model = User
@@ -83,12 +87,19 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         PartnerMandateMission.objects.create(partner=self.partner)
         PartnerFunding.objects.create(partner=self.partner)
         PartnerOtherInfo.objects.create(partner=self.partner)
+
         responsibilities = []
         for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
             responsibilities.append(
                 PartnerInternalControl(partner=self.partner, functional_responsibility=responsibility)
             )
         PartnerInternalControl.objects.bulk_create(responsibilities)
+
+        policy_areas = []
+        for policy_area in list(POLICY_AREA_CHOICES._db_values):
+            policy_areas.append(PartnerPolicyArea(partner=self.partner, area=policy_area))
+
+        PartnerPolicyArea.objects.bulk_create(policy_areas)
 
         budgets = []
         for year in [date.today().year, date.today().year-1, date.today().year-2]:
@@ -116,7 +127,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source='get_fullname')
+    name = serializers.CharField(source='get_user_name')
 
     class Meta:
         model = User

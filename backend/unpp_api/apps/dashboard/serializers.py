@@ -109,7 +109,7 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
             count=Count('applications')).values('name', 'count')
         count = 0
         if len(details) > 0:
-            count = reduce(lambda x,y: x['count']+y['count'], details)
+            count = reduce(lambda x, y: x + y, map(lambda x: x['count'], details))
         return {
             'details': details,
             'count': count

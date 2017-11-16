@@ -13,7 +13,7 @@ import SpreadContent from '../../../common/spreadContent';
 import { formatDateForPrint } from '../../../../helpers/dates';
 
 const labels = {
-  profileSummary: 'Organization Profile Summary',
+  profileSummary: 'Profile summary',
   updated: 'Last updated: ',
   partnerName: 'Partner name',
   partnerId: 'Partner ID',

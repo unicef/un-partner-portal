@@ -9,8 +9,8 @@ import { selectCountryId, createCountryAndRefresh, INIT_COUNTRY_ID } from '../..
 
 
 const messages = {
-  countryDialogTitle: 'Create new country profile',
-  countryDialogInfo: 'You have ability to choose from countries selected in HQ Profile as a countries of presence. Disabled options suggest, that those profiles are already created.',
+  countryDialogTitle: 'Create new a country profile',
+  countryDialogInfo: 'You can grant access to your organization\'s country offices. If your organization has a country office in a country that is not shown below, you must first add that country in your headquarters profile.',
   create: 'Create',
 };
 
@@ -50,14 +50,17 @@ class CountryOfficesHeaderContainer extends React.Component {
     const filteredOutCreatedProfiles = R.filter(presenceCode =>
       R.isEmpty(R.filter(profile =>
         profile.country_code === presenceCode, countryProfiles)), countryPresence);
-    
+
     return R.concat(filteredOutCreatedProfiles, countryProfiles);
   }
 
   render() {
     return (
       <div>
-        <CountryOfficesHeader handleNewCountryClick={this.handleNewCountry} />
+        <CountryOfficesHeader
+          disableNewCountries={this.props.disableNewCountries}
+          handleNewCountryClick={this.handleNewCountry}
+        />
         <ControlledModal
           trigger={this.state.showCountryModal}
           title={messages.countryDialogTitle}
@@ -86,6 +89,7 @@ CountryOfficesHeaderContainer.propTypes = {
   newCountryProfile: PropTypes.func.isRequired,
   selectedCountryId: PropTypes.number.isRequired,
   partnerId: PropTypes.number.isRequired,
+  disableNewCountries: PropTypes.bool,
 };
 
 const mapDispatch = dispatch => ({
@@ -98,6 +102,7 @@ const mapStateToProps = state => ({
   countryPresence: R.path(['hq', 'country_presence'], state.countryProfiles) || [],
   selectedCountryId: state.countryProfiles.selectedCountryId,
   partnerId: state.session.partnerId,
+  disableNewCountries: !state.session.isProfileComplete,
 });
 
 export default connect(mapStateToProps, mapDispatch)(CountryOfficesHeaderContainer);

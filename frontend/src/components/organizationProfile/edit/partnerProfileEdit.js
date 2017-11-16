@@ -10,7 +10,7 @@ import Loader from '../../../components/common/loader';
 
 const messages = {
   edit: 'Edit Profile',
-  hqProfile: 'HQ Profile',
+  hqProfile: 'Headquarters Profile',
 };
 
 class PartnerProfileEdit extends Component {

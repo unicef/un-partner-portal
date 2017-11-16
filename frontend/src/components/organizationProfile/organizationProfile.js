@@ -15,7 +15,7 @@ import { formatDateForPrint } from '../../helpers/dates';
 import GridColumn from '../common/grid/gridColumn';
 
 const messages = {
-  header: 'Organization Profile',
+  header: 'Profile',
 };
 
 class OrganizationProfile extends Component {

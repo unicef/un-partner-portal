@@ -1,4 +1,4 @@
-from django.db import transaction, IntegrityError
+from django.db import transaction
 from rest_framework import serializers
 
 from common.consts import (
@@ -6,6 +6,7 @@ from common.consts import (
     METHOD_ACC_ADOPTED_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     PARTNER_TYPES,
+    POLICY_AREA_CHOICES,
 )
 from common.models import Point, AdminLevel1
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
@@ -44,6 +45,7 @@ class PartnerAdditionalSerializer(serializers.ModelSerializer):
             'legal_name',
             'flagging_status',
             'is_verified',
+            'has_finished',
         )
 
 
@@ -52,6 +54,7 @@ class PartnerSerializer(serializers.ModelSerializer):
     is_hq = serializers.BooleanField(read_only=True)
     logo = CommonFileSerializer(source='other_info.org_logo',
                                 read_only=True)
+    org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
 
     class Meta:
@@ -64,6 +67,7 @@ class PartnerSerializer(serializers.ModelSerializer):
             'country_code',
             'display_type',
             'partner_additional',
+            'org_logo_thumbnail',
         )
 
 
@@ -298,6 +302,14 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     audit = PartnerAuditAssessmentSerializer()
     report = PartnerReportingSerializer()
     location_field_offices = PointSerializer(many=True)
+    is_finished = serializers.BooleanField(read_only=True, source="has_finished")
+    identification_is_complete = serializers.BooleanField(read_only=True, source="profile.identification_is_complete")
+    contact_is_complete = serializers.BooleanField(read_only=True, source="profile.contact_is_complete")
+    mandatemission_complete = serializers.BooleanField(read_only=True, source="profile.mandatemission_complete")
+    funding_complete = serializers.BooleanField(read_only=True, source="profile.funding_complete")
+    collaboration_complete = serializers.BooleanField(read_only=True, source="profile.collaboration_complete")
+    proj_impl_is_complete = serializers.BooleanField(read_only=True, source="profile.proj_impl_is_complete")
+    other_info_is_complete = serializers.BooleanField(read_only=True, source="profile.other_info_is_complete")
 
     class Meta:
         model = Partner
@@ -331,6 +343,14 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "area_policies",
             "audit",
             "report",
+            "is_finished",
+            "identification_is_complete",
+            "contact_is_complete",
+            "mandatemission_complete",
+            "funding_complete",
+            "collaboration_complete",
+            "proj_impl_is_complete",
+            "other_info_is_complete",
         )
 
 
@@ -398,6 +418,7 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
     type_org = serializers.CharField(source="partner.display_type", read_only=True)
     gov_doc = CommonFileSerializer()
     registration_doc = CommonFileSerializer()
+    has_finished = serializers.BooleanField(read_only=True, source="profile.identification_is_complete")
 
     class Meta:
         model = PartnerProfile
@@ -418,6 +439,7 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
             'registration_date',
             'registration_comment',
             'registration_number',
+            'has_finished',
         )
 
 
@@ -434,6 +456,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     working_languages = serializers.ListField(source="profile.working_languages")
     working_languages_other = serializers.CharField(
         source="profile.working_languages_other")
+    has_finished = serializers.BooleanField(read_only=True, source="profile.contact_is_complete")
 
     class Meta:
         model = Partner
@@ -448,6 +471,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
             'connectivity_excuse',
             'working_languages',
             'working_languages_other',
+            'has_finished',
         )
 
     related_names = [
@@ -484,6 +508,8 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     location_of_office = PointSerializer()
     location_field_offices = PointSerializer(many=True)
 
+    has_finished = serializers.BooleanField(read_only=True, source="profile.mandatemission_complete")
+
     class Meta:
         model = Partner
         fields = (
@@ -511,6 +537,7 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
             'staff_in_country',
             'engagement_operate_desc',
             'experiences',
+            'has_finished',
         )
 
     related_names = [
@@ -553,6 +580,8 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
     source_core_funding = serializers.CharField(source="fund.source_core_funding")
     main_donors_list = serializers.CharField(source="fund.main_donors_list")
 
+    has_finished = serializers.BooleanField(read_only=True, source="profile.funding_complete")
+
     class Meta:
         model = Partner
         fields = (
@@ -560,6 +589,7 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
             'major_donors',
             'main_donors_list',
             'source_core_funding',
+            'has_finished',
         )
 
     related_names = [
@@ -584,6 +614,8 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
 
     collaboration_evidences = PartnerCollaborationEvidenceSerializer(many=True)
 
+    has_finished = serializers.BooleanField(read_only=True, source="profile.collaboration_complete")
+
     class Meta:
         model = Partner
         fields = (
@@ -591,6 +623,7 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
             'partnership_collaborate_institution',
             'partnership_collaborate_institution_desc',
             'collaboration_evidences',
+            'has_finished',
         )
 
     related_names = [
@@ -643,6 +676,8 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
     report = CommonFileSerializer(source="report.report")
     link_report = serializers.URLField(source="report.link_report")
 
+    has_finished = serializers.BooleanField(read_only=True, source="profile.proj_impl_is_complete")
+
     class Meta:
         model = Partner
         fields = (
@@ -680,6 +715,7 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
             'last_report',
             'report',
             'link_report',
+            'has_finished',
         )
 
     related_names = [
@@ -697,13 +733,16 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
 
 class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
-    info_to_share = serializers.CharField(source="other_info.info_to_share")
+    info_to_share = serializers.CharField(source="other_info.info_to_share", required=False,
+                                          allow_blank=True)
     org_logo = CommonFileSerializer(source="other_info.org_logo")
     confirm_data_updated = serializers.BooleanField(source="other_info.confirm_data_updated")
 
     other_doc_1 = CommonFileSerializer(source='other_info.other_doc_1')
     other_doc_2 = CommonFileSerializer(source='other_info.other_doc_2')
     other_doc_3 = CommonFileSerializer(source='other_info.other_doc_3')
+
+    has_finished = serializers.BooleanField(read_only=True, source="profile.other_info_is_complete")
 
     class Meta:
         model = Partner
@@ -714,6 +753,7 @@ class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serialize
             'other_doc_1',
             'other_doc_2',
             'other_doc_3',
+            'has_finished',
         )
 
     related_names = [
@@ -747,6 +787,10 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
         if not partner.exists():
             raise serializers.ValidationError("You can create profile only for HQ.")
         partner = partner.get()
+
+        if not partner.has_finished:
+            raise serializers.ValidationError(
+                "You don't have the ability to create country profile if Your profile is not completed.")
 
         country_list = self.initial_data.get('chosen_country_to_create')
         if not type(country_list):
@@ -790,6 +834,7 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
                 country_code=country_code,
                 display_type=PARTNER_TYPES.international,
             )
+            # TODO - move this and partner create in account registration into one location
             PartnerProfile.objects.create(partner=partner)
             PartnerMailingAddress.objects.create(partner=partner)
             PartnerAuditAssessment.objects.create(partner=partner)
@@ -797,11 +842,18 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
             PartnerMandateMission.objects.create(partner=partner)
             PartnerFunding.objects.create(partner=partner)
             PartnerOtherInfo.objects.create(partner=partner)
+
             responsibilities = []
             for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
                 responsibilities.append(
                     PartnerInternalControl(partner=partner, functional_responsibility=responsibility)
                 )
             PartnerInternalControl.objects.bulk_create(responsibilities)
+
+            policy_areas = []
+            for policy_area in list(POLICY_AREA_CHOICES._db_values):
+                policy_areas.append(PartnerPolicyArea(partner=partner, area=policy_area))
+
+            PartnerPolicyArea.objects.bulk_create(policy_areas)
 
         return Partner.objects.get(pk=hq_id)  # we want to refresh changes after creating related models

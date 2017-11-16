@@ -5,12 +5,15 @@ from rest_framework.test import APITestCase
 
 from common.consts import PARTNER_TYPES, FUNCTIONAL_RESPONSIBILITY_CHOICES
 from partner.models import Partner
+from account.models import User
 
 
 class TestRegisterPartnerAccountAPITestCase(APITestCase):
 
     def setUp(self):
         super(TestRegisterPartnerAccountAPITestCase, self).setUp()
+        email = "test@myorg.org"
+        User.objects.create(username=email, email=email)
         self.data = {
             "partner": {
                 "legal_name": "My org legal name",
@@ -18,7 +21,7 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
                 "display_type": PARTNER_TYPES.international,
             },
             "user": {
-                "email": "test@myorg.org",
+                "email": email,
                 "password": "Test123!",
                 "first_name": "Leszek",
                 "last_name": "Orzeszek",
@@ -45,6 +48,13 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
         url = reverse('accounts:registration')
         response = self.client.post(url, data=self.data, format='json')
 
+        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertEquals(
+            response.data, {'user': {'email': [u'This field must be unique.']}}
+        )
+
+        self.data['user']['email'] = "new-user@myorg.org"
+        response = self.client.post(url, data=self.data, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['partner']['legal_name'],
                           self.data['partner']['legal_name'])

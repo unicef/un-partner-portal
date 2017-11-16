@@ -10,7 +10,7 @@ const AreaField = (props) => {
   return (
     <SelectForm
       fieldName={`${name}.areas`}
-      label="Area of Specialization"
+      label="Area(s) of specialization"
       values={areas}
       selectFieldProps={{
         multiple: true,

@@ -1,6 +1,6 @@
 import { browserHistory as history } from 'react-router';
 import R from 'ramda';
-import { postRegistration, login, getUserData } from '../helpers/api/api';
+import { postRegistration, login, logout, getUserData } from '../helpers/api/api';
 import { ROLES, SESSION_STATUS } from '../helpers/constants';
 
 export const SESSION_CHANGE = 'SESSION_CHANGE';
@@ -8,6 +8,7 @@ export const SESSION_READY = 'SESSION_READY';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const LOGIN_SUBMITTING = 'LOGIN_SUBMITTIN';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 
 const initialState = {
   role: undefined,
@@ -51,6 +52,8 @@ export const sessionReady = getState => ({
 
 export const loginSuccess = session => ({ type: LOGIN_SUCCESS, session });
 
+export const logoutSuccess = () => ({ type: LOGIN_SUCCESS });
+
 export const loadUserData = () => (dispatch, getState) => {
   const token = getState().session.token;
   if (!token) {
@@ -83,6 +86,8 @@ export const loadUserData = () => (dispatch, getState) => {
         isHq: role === ROLES.PARTNER ? R.prop('is_hq', R.head(response.partners)) : null,
         displayType: role === ROLES.PARTNER ? R.prop('display_type', R.head(response.partners)) : null,
         logo: role === ROLES.PARTNER ? R.prop('logo', R.head(response.partners)) : null,
+        isProfileComplete: role === ROLES.PARTNER ? R.path(['partner_additional', 'has_finished'],
+          R.head(response.partners)) : null,
       };
       dispatch(initSession(sessionObject));
       dispatch(sessionReady(getState));
@@ -114,14 +119,23 @@ export const loginUser = creds => dispatch => login(creds)
     history.push('/');
   });
 
-export const registerUser = json => (dispatch) => {
-  postRegistration(json)
-    .then(({ user: { email, username } }) => {
-      dispatch(loginSuccess({ role: ROLES.PARTNER, user: username }));
-      dispatch(sessionChange({ newlyRegistered: true }));
-      dispatch(loginUser({ email, password: R.path(['user', 'password'], json) }));
-    });
-};
+export const logoutUser = () => dispatch => logout()
+  .then(() => {
+    window.localStorage.removeItem('token');
+    dispatch(logoutSuccess());
+    history.push('/login');
+  }).catch(() => {
+    window.localStorage.removeItem('token');
+    dispatch(logoutSuccess());
+    history.push('/login');
+  });
+
+export const registerUser = json => dispatch => postRegistration(json)
+  .then(({ user: { email, username } }) => {
+    dispatch(loginSuccess({ role: ROLES.PARTNER, user: username }));
+    dispatch(sessionChange({ newlyRegistered: true }));
+    dispatch(loginUser({ email, password: R.path(['user', 'password'], json) }));
+  });
 
 const setSession = (state, session) => R.mergeDeepRight(state, session);
 
@@ -135,6 +149,9 @@ export default function sessionReducer(state = initialState, action) {
     }
     case LOGIN_SUCCESS: {
       return setSession(state, { userLogged: true, ...action.session });
+    }
+    case LOGOUT_SUCCESS: {
+      return initialState;
     }
     default:
       return state;

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import os
 import random
 from datetime import date, timedelta
+import mock
 
 from django.urls import reverse
 from django.conf import settings
@@ -15,7 +16,13 @@ from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
 from common.tests.base import BaseAPITestCase
 from common.factories import (
-    EOIFactory, AgencyMemberFactory, PartnerSimpleFactory, PartnerMemberFactory, AgencyOfficeFactory, AgencyFactory
+    EOIFactory,
+    AgencyMemberFactory,
+    PartnerSimpleFactory,
+    PartnerMemberFactory,
+    AgencyOfficeFactory,
+    AgencyFactory,
+    PartnerVerificationFactory,
 )
 from common.models import Specialization, CommonFile
 from common.consts import (
@@ -31,6 +38,10 @@ from project.views import PinProjectAPIView
 from project.serializers import ConvertUnsolicitedSerializer
 
 filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+
+
+def partner_has_finished(*args, **kwargs):
+    return True
 
 
 class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
@@ -197,13 +208,12 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         payload = {
             "justification": justification,
             "completed_reason": COMPLETED_REASON.canceled,
-            "status": EOI_STATUSES.completed
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.canceled)
         self.assertTrue(response.data['completed_date'])
-        self.assertEquals(response.data['status'], EOI_STATUSES.completed)
+        self.assertTrue(response.data['is_completed'])
         self.assertEquals(response.data['justification'], justification)
 
 
@@ -294,6 +304,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         EOIFactory.create_batch(self.quantity, display_type='NoN')
         PartnerSimpleFactory.create_batch(self.quantity)
 
+    @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
     def test_create(self):
         eoi_id = EOI.objects.first().id
         cfile = CommonFile.objects.create()
@@ -343,6 +354,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         # status='NoN' - will not create applications
         EOIFactory.create_batch(self.quantity, display_type='NoN')
 
+    @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
     def test_create(self):
         eoi_id = EOI.objects.first().id
         url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
@@ -366,7 +378,8 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         EOIFactory.create_batch(self.quantity)
 
     def test_read_update(self):
-        url = reverse('projects:application', kwargs={"pk": Application.objects.first().id})
+        app = Application.objects.first()
+        url = reverse('projects:application', kwargs={"pk": app.id})
         response = self.client.get(url, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], Application.objects.first().id)
@@ -378,6 +391,14 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.local],
         }
         response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertEquals(response.data['non_field_errors'],
+                          ['Only Focal Point/Creator is allowed to pre-select/reject an application.'])
+
+        self.client.logout()
+        self.client.login(username=app.eoi.created_by.username, password='test')
+
+        response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
         self.assertEquals(response.data['ds_justification_select'], [JUSTIFICATION_FOR_DIRECT_SELECTION.local])
@@ -387,6 +408,12 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "status": APPLICATION_STATUSES.preselected,
             "justification_reason": "good reason",
         }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertEquals(response.data['non_field_errors'],
+                          ['You can not award an application if the profile has not been verified yet.'])
+
+        PartnerVerificationFactory(partner=app.partner, submitter=app.eoi.created_by)
+
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_win'])
@@ -401,7 +428,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_accept'])
-        self.assertEquals(response.data['did_accept_date'], str(date.today()))
+        self.assertEquals(response.data['decision_date'], str(date.today()))
 
         # decline offer
         payload = {
@@ -416,14 +443,19 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         # withdraw
         reason = "They are better then You."
         payload = {
-            "did_win": False,
             "did_withdraw": True,
             "withdraw_reason": reason,
             "status": APPLICATION_STATUSES.rejected,
         }
         response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertEquals(response.data["non_field_errors"],
+                          ["Since assessment has begun, application can't be reject."])
+
+        app.assessments.all().delete()
+        response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
-        self.assertFalse(response.data['did_win'])
+        self.assertTrue(response.data['did_win'])
         self.assertTrue(response.data['did_withdraw'])
         self.assertEquals(response.data["withdraw_reason"], reason)
 
@@ -467,6 +499,12 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
         # add logged agency member to eoi/application reviewers
         app.eoi.reviewers.add(self.user)
+
+        response = self.client.post(url, data=payload, format='json')
+        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertEquals(response.data['non_field_errors'], ['Assessment allowed once deadline is passed.'])
+        app.eoi.deadline_date = date.today() - timedelta(days=1)
+        app.eoi.save()
 
         response = self.client.post(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))

@@ -5,7 +5,7 @@ import SelectForm from '../../selectForm';
 import { selectNormalizedPopulationsOfConcernGroups } from '../../../../store';
 
 const messages = {
-  label: 'Intended populations of concern (only for UNHCR)',
+  label: 'Intended population(s) of concern (for UNHCR-issued CFEIs only)',
 };
 // TODO make this only for agency=UNHCR
 const SelectPopulationOfConcern = (props) => {

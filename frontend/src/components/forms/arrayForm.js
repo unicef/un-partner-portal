@@ -164,7 +164,7 @@ const ArrayForm = (props) => {
     readOnly } = props;
   return (
     <FormControl fullWidth>
-      <FormLabel>{label}</FormLabel>
+      {label && <FormLabel>{label}</FormLabel>}
       <FieldArray
         limit={limit}
         name={fieldName}

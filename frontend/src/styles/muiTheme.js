@@ -123,6 +123,7 @@ const getTheme = () => (
         blue: '#87B0EE',
         green: '#72C300',
         gray: '#F6F6F6',
+        formLabel: 'rgba(0, 0, 0, 0.34)',
         grayText: '#757575',
       },
       eoiStatus: {

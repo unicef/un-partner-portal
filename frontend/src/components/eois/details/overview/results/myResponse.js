@@ -7,7 +7,7 @@ import { selectCfeiDetails } from '../../../../../store';
 import ResponseForm from './responseForm';
 
 const messages = {
-  title: 'My Response',
+  title: 'Result',
 };
 
 

@@ -11,12 +11,10 @@ import TextFieldForm from '../../../forms/textFieldForm';
 import AgencySelectField from '../../../forms/fields/projectFields/agencies';
 
 const messages = {
-  myPartnership: 'My Partnership',
   explainCollaboration: 'Briefly explain the collaboration with the agency selected (optional)',
   provideNumber: 'Please provide your Vendor/Partner Number (If applicable)',
-  selectAgency: 'Select UN agency your organization has ever collaborated with (optional)',
-  hasCollaborated: 'Has the organization collaborated with a member of a cluster, professional ' +
-            'network, consortium or any similar institution?',
+  selectAgency: 'Please indicate whether your organization has collaborated with any UN agencies',
+  hasCollaborated: 'Has the organization collaborated with or participated as a member of a cluster, professional network, consortium or any similar institution?',
   collaborationDesc: 'Please state which cluster, network or consortium and briefly explain the ' +
             'collaboration',
 };
@@ -74,7 +72,6 @@ const PartnerProfileCollaborationHistory = (props) => {
   return (<FormSection name="history">
     <GridColumn>
       <ArrayForm
-        label={messages.myPartnership}
         limit={15}
         fieldName="collaborations_partnership"
         initial
