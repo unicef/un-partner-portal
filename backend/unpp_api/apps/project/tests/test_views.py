@@ -435,14 +435,19 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         # withdraw
         reason = "They are better then You."
         payload = {
-            "did_win": False,
             "did_withdraw": True,
             "withdraw_reason": reason,
             "status": APPLICATION_STATUSES.rejected,
         }
         response = self.client.patch(url, data=payload, format='json')
+        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertEquals(response.data["non_field_errors"],
+                          ["Since assessment has begun, application can't be reject."])
+
+        app.assessments.all().delete()
+        response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
-        self.assertFalse(response.data['did_win'])
+        self.assertTrue(response.data['did_win'])
         self.assertTrue(response.data['did_withdraw'])
         self.assertEquals(response.data["withdraw_reason"], reason)
 

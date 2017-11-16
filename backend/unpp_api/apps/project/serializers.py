@@ -157,7 +157,6 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
     cfei_type = serializers.CharField(read_only=True)
     application_status = serializers.CharField(read_only=True)
 
-
     class Meta:
         model = Application
         fields = '__all__'
@@ -178,6 +177,10 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Only Focal Point/Creator is allowed to pre-select/reject an application.")
 
+            if data.get("status") == APPLICATION_STATUSES.rejected and \
+                    Assessment.objects.filter(application=app).exists():
+                raise serializers.ValidationError("Since assessment has begun, application can't be reject.")
+
             if app.eoi.is_completed:
                 raise serializers.ValidationError(
                     "Since CEOI is completed, modification is forbidden.")
@@ -188,7 +191,8 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
             if app.partner.has_red_flag:
                 raise serializers.ValidationError(
                     "You can not award an application if the profile has red flag.")
-            if app.eoi.reviewers.count() != Assessment.objects.filter(application=app).count():
+            if data.get("did_win") is not None and \
+                    app.eoi.reviewers.count() != Assessment.objects.filter(application=app).count():
                 raise serializers.ValidationError(
                     "You can not award an application if all assessments have not been added for the application.")
 
