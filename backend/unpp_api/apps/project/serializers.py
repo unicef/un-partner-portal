@@ -156,6 +156,7 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
     is_direct = serializers.SerializerMethodField()
     cfei_type = serializers.CharField(read_only=True)
     application_status = serializers.CharField(read_only=True)
+    assessments_is_completed = serializers.NullBooleanField(read_only=True)
 
     class Meta:
         model = Application

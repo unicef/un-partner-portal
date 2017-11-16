@@ -248,6 +248,10 @@ class Application(TimeStampedModel):
             return sum([x.total_score for x in assessments_qs]) / count  # we expect to have integer
         return 0
 
+    @property
+    def assessments_is_completed(self):
+        return self.eoi and self.eoi.reviewers.count() == self.assessments.count()
+
 
 class ApplicationFeedback(TimeStampedModel):
     application = models.ForeignKey(Application, related_name="application_feedbacks")
