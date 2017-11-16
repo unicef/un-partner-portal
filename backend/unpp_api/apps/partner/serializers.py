@@ -45,6 +45,7 @@ class PartnerAdditionalSerializer(serializers.ModelSerializer):
             'legal_name',
             'flagging_status',
             'is_verified',
+            'has_finished',
         )
 
 
@@ -301,6 +302,14 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     audit = PartnerAuditAssessmentSerializer()
     report = PartnerReportingSerializer()
     location_field_offices = PointSerializer(many=True)
+    is_finished = serializers.BooleanField(read_only=True, source="has_finished")
+    identification_is_complete = serializers.BooleanField(read_only=True, source="profile.identification_is_complete")
+    contact_is_complete = serializers.BooleanField(read_only=True, source="profile.contact_is_complete")
+    mandatemission_complete = serializers.BooleanField(read_only=True, source="profile.mandatemission_complete")
+    funding_complete = serializers.BooleanField(read_only=True, source="profile.funding_complete")
+    collaboration_complete = serializers.BooleanField(read_only=True, source="profile.collaboration_complete")
+    proj_impl_is_complete = serializers.BooleanField(read_only=True, source="profile.proj_impl_is_complete")
+    other_info_is_complete = serializers.BooleanField(read_only=True, source="profile.other_info_is_complete")
 
     class Meta:
         model = Partner
@@ -334,6 +343,14 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "area_policies",
             "audit",
             "report",
+            "is_finished",
+            "identification_is_complete",
+            "contact_is_complete",
+            "mandatemission_complete",
+            "funding_complete",
+            "collaboration_complete",
+            "proj_impl_is_complete",
+            "other_info_is_complete",
         )
 
 
@@ -401,6 +418,7 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
     type_org = serializers.CharField(source="partner.display_type", read_only=True)
     gov_doc = CommonFileSerializer()
     registration_doc = CommonFileSerializer()
+    has_finished = serializers.BooleanField(read_only=True, source="profile.identification_is_complete")
 
     class Meta:
         model = PartnerProfile
@@ -421,6 +439,7 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
             'registration_date',
             'registration_comment',
             'registration_number',
+            'has_finished',
         )
 
 
@@ -437,6 +456,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     working_languages = serializers.ListField(source="profile.working_languages")
     working_languages_other = serializers.CharField(
         source="profile.working_languages_other")
+    has_finished = serializers.BooleanField(read_only=True, source="profile.contact_is_complete")
 
     class Meta:
         model = Partner
@@ -451,6 +471,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
             'connectivity_excuse',
             'working_languages',
             'working_languages_other',
+            'has_finished',
         )
 
     related_names = [
@@ -487,6 +508,8 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     location_of_office = PointSerializer()
     location_field_offices = PointSerializer(many=True)
 
+    has_finished = serializers.BooleanField(read_only=True, source="profile.mandatemission_complete")
+
     class Meta:
         model = Partner
         fields = (
@@ -514,6 +537,7 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
             'staff_in_country',
             'engagement_operate_desc',
             'experiences',
+            'has_finished',
         )
 
     related_names = [
@@ -556,6 +580,8 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
     source_core_funding = serializers.CharField(source="fund.source_core_funding")
     main_donors_list = serializers.CharField(source="fund.main_donors_list")
 
+    has_finished = serializers.BooleanField(read_only=True, source="profile.funding_complete")
+
     class Meta:
         model = Partner
         fields = (
@@ -563,6 +589,7 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
             'major_donors',
             'main_donors_list',
             'source_core_funding',
+            'has_finished',
         )
 
     related_names = [
@@ -587,6 +614,8 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
 
     collaboration_evidences = PartnerCollaborationEvidenceSerializer(many=True)
 
+    has_finished = serializers.BooleanField(read_only=True, source="profile.collaboration_complete")
+
     class Meta:
         model = Partner
         fields = (
@@ -594,6 +623,7 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
             'partnership_collaborate_institution',
             'partnership_collaborate_institution_desc',
             'collaboration_evidences',
+            'has_finished',
         )
 
     related_names = [
@@ -646,6 +676,8 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
     report = CommonFileSerializer(source="report.report")
     link_report = serializers.URLField(source="report.link_report")
 
+    has_finished = serializers.BooleanField(read_only=True, source="profile.proj_impl_is_complete")
+
     class Meta:
         model = Partner
         fields = (
@@ -683,6 +715,7 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
             'last_report',
             'report',
             'link_report',
+            'has_finished',
         )
 
     related_names = [
@@ -709,6 +742,8 @@ class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serialize
     other_doc_2 = CommonFileSerializer(source='other_info.other_doc_2')
     other_doc_3 = CommonFileSerializer(source='other_info.other_doc_3')
 
+    has_finished = serializers.BooleanField(read_only=True, source="profile.other_info_is_complete")
+
     class Meta:
         model = Partner
         fields = (
@@ -718,6 +753,7 @@ class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serialize
             'other_doc_1',
             'other_doc_2',
             'other_doc_3',
+            'has_finished',
         )
 
     related_names = [
