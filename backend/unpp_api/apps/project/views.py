@@ -15,7 +15,7 @@ from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.models import User
-from common.consts import EOI_TYPES
+from common.consts import EOI_TYPES, DIRECT_SELECTION_SOURCE
 from common.paginations import SmallPagination
 from common.permissions import (
     IsAgencyMemberUser,
@@ -179,6 +179,7 @@ class DirectProjectAPIView(BaseProjectAPIView):
         data = request.data or {}
         try:
             data['eoi']['created_by'] = request.user.id
+            data['eoi']['selected_source'] = DIRECT_SELECTION_SOURCE.un
         except Exception:
             pass  # serializer.is_valid() will take care of right response
 

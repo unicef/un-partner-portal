@@ -7,9 +7,11 @@ import { withStyles } from 'material-ui/styles';
 
 const styleSheet = theme => ({
   root: {
-    position: 'relative',
     width: '100%',
     height: '100%',
+  },
+  relative: {
+    position: 'relative',
   },
   Fullscreen: {
     position: 'fixed',
@@ -27,10 +29,12 @@ const styleSheet = theme => ({
 
 const Loader = (props) => {
   const { classes, children, loading, fullscreen, replaceContent } = props;
-  const className = classNames({
-    [classes.root]: loading,
-    [classes.Fullscreen]: fullscreen,
-  });
+  const className = classNames(
+    classes.root,
+    {
+      [classes.position]: !fullscreen && loading,
+      [classes.Fullscreen]: fullscreen && loading,
+    });
   if (replaceContent) {
     return loading ? <div className={className}>
       <CircularProgress
