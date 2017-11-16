@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import R from 'ramda';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
-
+import Tooltip from 'material-ui/Tooltip';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 
@@ -28,7 +28,14 @@ const messages = {
   header: 'Application from :',
   noCfei: 'Sorry but this application doesn\'t exist',
   button: 'Award',
+  tooltip: {
+    notVerified: 'Partner is not verified',
+    notPreselected: 'Application is not preselected',
+    redFlag: 'Partner has red flag',
+  },
 };
+
+const concatText = (text, message) => `${text}${message} \n`;
 
 class ApplicationSummaryHeader extends Component {
   constructor() {
@@ -41,6 +48,28 @@ class ApplicationSummaryHeader extends Component {
     history.push(`/cfei/${type}/${id}/applications`);
   }
 
+  renderTooltipText() {
+    const { loading,
+      isUserFocalPoint,
+      isUserReviewer,
+      reviews,
+      user,
+      status,
+      getAssessment,
+      params: { applicationId },
+      didWin,
+      isVerified,
+      redFlags,
+    } = this.props;
+    let text = '';
+    if (status !== APPLICATION_STATUSES.PRE) {
+      text = concatText(text, messages.tooltip.notPreselected);
+    }
+    if (!isVerified) text = concatText(text, messages.tooltip.notVerified);
+    if (redFlags) text = concatText(text, messages.tooltip.redFlag);
+    return text;
+  }
+
   renderActionButton() {
     const { loading,
       isUserFocalPoint,
@@ -51,20 +80,40 @@ class ApplicationSummaryHeader extends Component {
       getAssessment,
       params: { applicationId },
       didWin,
+      isVerified,
+      redFlags,
     } = this.props;
-    const disabled = loading || status !== APPLICATION_STATUSES.PRE;
+    const disableAward = loading
+      || status !== APPLICATION_STATUSES.PRE
+      || !isVerified
+      || redFlags;
+    const disableWithdraw = loading || status !== APPLICATION_STATUSES.PRE;
     if (isUserFocalPoint) {
       if (didWin) {
         return (<WithdrawApplicationButton
-          disabled={disabled}
+          disabled={disableWithdraw}
           raised
           applicationId={applicationId}
         />);
       }
-      return (<AwardApplicationButton
-        disabled={disabled}
-        applicationId={applicationId}
-      />);
+      return (
+        <Tooltip
+          style={{ whiteSpace: 'pre-line' }}
+          disableTriggerFocus={!disableAward}
+          disableTriggerHover={!disableAward}
+          disableTriggerTouch={!disableAward}
+          id="tooltip-award-button"
+          open
+          title={this.renderTooltipText()}
+          placement="bottom"
+        >
+          <div>
+            <AwardApplicationButton
+              disabled={disableAward}
+              applicationId={applicationId}
+            />
+          </div>
+        </Tooltip>);
     } else if (isUserReviewer) {
       if (R.prop(user, reviews)) {
         return (<EditReviewModalButton
@@ -132,12 +181,26 @@ ApplicationSummaryHeader.propTypes = {
   reviews: PropTypes.object,
   getAssessment: PropTypes.func,
   didWin: PropTypes.bool,
+  isVerified: PropTypes.bool,
+  redFlags: PropTypes.number,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const application = selectApplication(state, ownProps.params.applicationId) || {};
   const reviews = selectReview(state, ownProps.params.applicationId) || {};
-  const { eoi, did_win, did_withdraw, partner: { legal_name } = {} } = application;
+  const { eoi,
+    did_win,
+    did_withdraw,
+    partner: {
+      legal_name,
+      partner_additional: {
+        flagging_status: {
+          red: redFlags = 0,
+        } = {},
+        is_verified: isVerified,
+      } = {},
+    } = {},
+  } = application;
   return {
     status: selectApplicationStatus(state, ownProps.params.applicationId),
     partner: legal_name,
@@ -150,6 +213,8 @@ const mapStateToProps = (state, ownProps) => {
     user: state.session.userId,
     didWin: did_win,
     didWithdraw: did_withdraw,
+    isVerified,
+    redFlags,
   };
 };
 
