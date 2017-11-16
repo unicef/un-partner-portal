@@ -15,7 +15,7 @@ class BaseProjectFilter(django_filters.FilterSet):
     country_code = CharFilter(method='get_country_code')
     locations = CharFilter(method='get_locations')
     specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
-                                        queryset=Specialization.objects.all())
+                                                queryset=Specialization.objects.all())
     active = BooleanFilter(method='get_active', widget=BooleanWidget())
     posted_from_date = DateFilter(name='created',
                                   lookup_expr=('gt'))
@@ -49,6 +49,9 @@ class ApplicationsFilter(django_filters.FilterSet):
     country_code = CharFilter(method='get_country_code')
     location = CharFilter(method='get_location')
     specialization = CharFilter(method='get_specialization')
+    specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
+                                                name='eoi__specializations',
+                                                queryset=Specialization.objects.all())
     year = CharFilter(method='get_year')
     concern = CharFilter(method='get_concern')
     status = CharFilter(method='get_status')
@@ -72,6 +75,7 @@ class ApplicationsFilter(django_filters.FilterSet):
     def get_locations(self, queryset, name, value):
         return queryset.filter(eoi__locations__admin_level_1=value)
 
+    # TODO - remove once frontend has integrated with specializations
     def get_specialization(self, queryset, name, value):
         return queryset.filter(eoi__specializations=value)
 
@@ -98,6 +102,9 @@ class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
     project_title = CharFilter(method='get_project_title')
     country_code = CharFilter(method='get_country_code')
     location = CharFilter(method='get_location')
+    specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
+                                           method='get_specializations',
+                                           queryset=Specialization.objects.all())
     specialization = CharFilter(method='get_specialization')
     agency = CharFilter(method='get_agency')
     ds_converted = BooleanFilter(method='get_ds_converted', widget=BooleanWidget())
@@ -112,11 +119,22 @@ class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
             Q(eoi__title__icontains=value)  # direct selection - developed from unsolicited
         )
 
+    # TODO - remove once frontend has integrated with specializations
     def get_specialization(self, queryset, name, value):
         return queryset.filter(
             Q(proposal_of_eoi_details__contains={"specialization": [value]}) |  # unsolicited
             Q(eoi__specializations=[value])  # direct selection - developed from unsolicited
         )
+
+    def get_specializations(self, queryset, name, value):
+        if value:
+            value = list(value.values_list('id', flat=True))
+            query = Q()
+            for pk in value:
+                query |= Q(proposal_of_eoi_details__specializations__contains=pk)
+            return queryset.filter(query)
+        return queryset
+
 
     def get_country_code(self, queryset, name, value):
         return queryset.filter(
