@@ -258,6 +258,13 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
                 {'non_field_errors': ['The fields eoi, partner must make a unique set.']},
                 status=statuses.HTTP_400_BAD_REQUEST
             )
+        if self.request.active_partner.is_hq and request.user.member.partner.id != self.request.active_partner.id:
+            return Response(
+                {'non_field_errors': ["You don't have the ability to submit an application if You are currently "
+                                      "toggled under the HQ profile."]},
+                status=statuses.HTTP_400_BAD_REQUEST
+            )
+
         return super(PartnerEOIApplicationCreateAPIView, self).post(request, pk, *args, **kwargs)
 
     def perform_create(self, serializer):
