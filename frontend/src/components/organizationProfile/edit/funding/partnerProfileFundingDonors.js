@@ -34,8 +34,9 @@ const PartnerProfileFundingDonors = (props) => {
           label={messages.donorsList}
           fieldName="main_donors_list"
           textFieldProps={{
+            multiline: true,
             inputProps: {
-              maxLength: '200',
+              maxLength: '5000',
             },
           }}
           optional
@@ -46,8 +47,9 @@ const PartnerProfileFundingDonors = (props) => {
           label={messages.coreFunding}
           fieldName="source_core_funding"
           textFieldProps={{
+            multiline: true,
             inputProps: {
-              maxLength: '200',
+              maxLength: '5000',
             },
           }}
           optional

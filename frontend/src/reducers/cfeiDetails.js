@@ -76,6 +76,8 @@ const saveUCN = (state, action) => {
 
   const newUCN = {
     id: ucn.id,
+    reviewers: [],
+    focal_points: [],
     partner_name: ucn.partner.id,
     display_type: ucn.partner.display_type,
     title: R.path(['proposal_of_eoi_details', 'title'], ucn),
@@ -106,6 +108,11 @@ export function selectCfeiStatus(state, id) {
 export function selectCfeiConverted(state, id) {
   const { [id]: { eoiConverted = null } = {} } = state;
   return eoiConverted;
+}
+
+export function selectCfeiJustification(state, id) {
+  const { [id]: { completed_reason = null } = {} } = state;
+  return completed_reason;
 }
 
 export function isCfeiCompleted(state, id) {

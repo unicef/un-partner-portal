@@ -26,10 +26,8 @@ const EditCfeiForm = (props) => {
       notif_results_date: formNotifDate,
     },
     focalPoints,
-    type
     changeDates,
   } = props;
-  const isOpen = type === PROJECT_TYPES.OPEN;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
@@ -38,10 +36,9 @@ const EditCfeiForm = (props) => {
           <EndDate minDate={formStartDate} />
           {isOpen && <DeadlineDate />}
           {isOpen && <NotifyDate minDate={formDeadline} />}
-        </GridRow>
+        </GridRow>}
         <FocalPoint initialMultiValues={focalPoints} />
       </GridColumn>
-
     </form >
   );
 };
@@ -54,7 +51,6 @@ EditCfeiForm.propTypes = {
   /**
    * type of the project, direct, open, unsolicited
    */
-  type: PropTypes.string,
   focalPoints: PropTypes.array,
   isOpen: PropTypes.bool,
   formDates: PropTypes.object,
@@ -85,13 +81,6 @@ const mapStateToProps = (state, ownProps) => {
   if (isOpen && changeDates) initialValues = { ...initialValues, deadline_date, notif_results_date };
   const formDates = selector(state, 'start_date', 'deadline_date', 'notif_results_date');
   return {
-    initialValues: {
-      focal_points,
-      start_date,
-      end_date,
-      deadline_date,
-      notif_results_date,
-    },
     focalPoints: pluck('name', focal_points_detail),
     isOpen,
     formDates,

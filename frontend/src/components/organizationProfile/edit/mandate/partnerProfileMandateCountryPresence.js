@@ -70,8 +70,9 @@ const PartnerProfileMandateCountryPresence = (props) => {
             label={messages.countryDescription}
             fieldName="engagement_operate_desc"
             textFieldProps={{
+              multiline: true,
               inputProps: {
-                maxLength: '200',
+                maxLength: '5000',
               },
             }}
             readOnly={readOnly}

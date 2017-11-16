@@ -47,8 +47,8 @@ const mapStateToProps = (state, ownProps) => {
   const { invited_partners = [], locations = [] } = cfei;
   const countries = R.pluck('country', locations);
   return {
-    initialValues: { invited_partners },
-    invitedPartners: invited_partners,
+    initialValues: { invited_partners: R.pluck('id', invited_partners) },
+    invitedPartners: R.pluck('legal_name', invited_partners),
     countries,
   };
 };

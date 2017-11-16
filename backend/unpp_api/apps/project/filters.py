@@ -2,9 +2,10 @@
 from __future__ import unicode_literals
 from django.db.models import Q
 import django_filters
-from django_filters.filters import CharFilter, DateFilter, BooleanFilter
-from django_filters.widgets import BooleanWidget
+from django_filters.filters import CharFilter, DateFilter, BooleanFilter, ModelMultipleChoiceFilter
+from django_filters.widgets import BooleanWidget, CSVWidget
 
+from common.models import Specialization
 from .models import EOI, Application
 
 
@@ -13,7 +14,8 @@ class BaseProjectFilter(django_filters.FilterSet):
     title = CharFilter(method='get_title')
     country_code = CharFilter(method='get_country_code')
     locations = CharFilter(method='get_locations')
-    specializations = CharFilter(method='get_specializations')
+    specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
+                                        queryset=Specialization.objects.all())
     active = BooleanFilter(method='get_active', widget=BooleanWidget())
     posted_from_date = DateFilter(name='created',
                                   lookup_expr=('gt'))
@@ -33,9 +35,6 @@ class BaseProjectFilter(django_filters.FilterSet):
 
     def get_locations(self, queryset, name, value):
         return queryset.filter(locations__admin_level_1=value)
-
-    def get_specializations(self, queryset, name, value):
-        return queryset.filter(specializations=value)
 
     def get_active(self, queryset, name, value):
         if value:

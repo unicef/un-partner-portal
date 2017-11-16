@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
 
 import PropTypes from 'prop-types';
@@ -28,7 +28,7 @@ const DirectForm = (props) => {
           formName="newDirectCfei"
           dateFields={[
             <fields.StartDate />,
-             <fields.EndDate minDate={start_date} />,
+            <fields.EndDate minDate={start_date} />,
           ]}
         />
         <Typography type="headline">
@@ -45,7 +45,6 @@ DirectForm.propTypes = {
    * callback for form submit
    */
   handleSubmit: PropTypes.func.isRequired,
-  getPartnerNames: PropTypes.func,
   start_date: PropTypes.string,
 
 };
@@ -56,16 +55,11 @@ const mapStateToProps = state => ({
 });
 
 
-const mapDispatchToProps = dispatch => ({
-  getPartnerNames: () => dispatch(loadPartnerNames()),
-});
-
 const connectedDirectForm = connect(
   mapStateToProps,
-  mapDispatchToProps,
 )(DirectForm);
 
 export default reduxForm({
   form: 'newDirectCfei',
-})(DirectForm);
+})(connectedDirectForm);
 

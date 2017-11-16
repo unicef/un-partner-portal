@@ -7,6 +7,7 @@ import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import CountryField from '../../../forms/fields/projectFields/locationField/countryField';
 import { selectNormalizedCountries } from '../../../../store';
+import { url, email } from '../../../../helpers/validation';
 
 const messages = {
   mailingType: 'Type of mailing address',
@@ -114,7 +115,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                   <TextFieldForm
                     label={messages.website}
                     fieldName="website"
-                    optional
+                    validation={[url]}
                     readOnly={readOnly}
                   />
                 </Grid>
@@ -122,7 +123,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                   <TextFieldForm
                     label={messages.organizationEmail}
                     fieldName="org_email"
-                    optional
+                    validation={[email]}
                     readOnly={readOnly}
                   />
                 </Grid>

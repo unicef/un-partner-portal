@@ -196,7 +196,11 @@ export const renderTextField = ({
     />
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
       {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
-      {other.inputProps && other.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
+      {/* show limit of characters
+       {other.inputProps && other.inputProps.maxLength && 
+        <FormHelperText style={{ marginLeft: 'auto' }}>
+        {input.value.length}/{other.inputProps.maxLength}
+        </FormHelperText>} */}
     </div>
   </div>);
 }

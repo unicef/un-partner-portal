@@ -31,6 +31,7 @@ const ChangeSummaryForm = (props) => {
         <FileForm
           fieldName="review_summary_attachment"
           label={messages.labels.attachment}
+          optional
           readOnly={readOnly}
         />
         <Snackbar
