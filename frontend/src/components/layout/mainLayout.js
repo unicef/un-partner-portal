@@ -108,7 +108,7 @@ class MainLayout extends Component {
                 justify="flex-end"
                 spacing={0}
               >
-                <BadgeIcon handleVerificationClick={this.handleVerificationClick} />
+                <BadgeIcon handleClick={this.handleVerificationClick} />
                 <IconButton color="contrast" onClick={this.handleProfileClick}>
                   <AccountIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
                 </IconButton>

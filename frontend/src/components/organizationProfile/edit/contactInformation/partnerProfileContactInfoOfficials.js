@@ -79,16 +79,15 @@ const authorisedOfficerForm = (officer, readOnly) => (
     <GridRow columns={3}>
       <TextFieldForm
         fieldName={`${officer}.telephone`}
-        label="First Name"
+        label="Telephone"
         optional
         warn
         readOnly={readOnly}
       />
       <TextFieldForm
         fieldName={`${officer}.fax`}
-        label="Last Name"
+        label="Fax (optional)"
         optional
-        warn
         readOnly={readOnly}
       />
       <TextFieldForm
