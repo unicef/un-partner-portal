@@ -8,6 +8,7 @@ import Timeline from './timeline';
 import ProjectDetails from './projectDetails';
 import SelectionCriteria from './selectionCriteria';
 import InformedPartners from './informedPartners';
+import SelectedPartners from './selectedPartners/selectedPartnersContainer';
 import { selectCfeiDetails } from '../../../../store';
 import { ROLES, PROJECT_TYPES } from '../../../../helpers/constants';
 import ConceptNote from './conceptNote';
@@ -33,8 +34,10 @@ const CfeiOverview = (props) => {
                 && <ConceptNote title={messages.cn} conceptNote={cn} />}
               {type === PROJECT_TYPES.OPEN
                 && <SelectionCriteria id={id} />}
-              {role === ROLES.AGENCY && type !== PROJECT_TYPES.UNSOLICITED
+              {role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN
                 && <InformedPartners id={id} />}
+              {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT
+                && <SelectedPartners id={id} />}
             </GridColumn>
           </Grid>
         </Grid>

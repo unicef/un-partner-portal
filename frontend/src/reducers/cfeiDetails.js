@@ -79,7 +79,7 @@ const saveUCN = (state, action) => {
     partner_name: ucn.partner.id,
     display_type: ucn.partner.display_type,
     title: R.path(['proposal_of_eoi_details', 'title'], ucn),
-    locations: ucn.locations_proposal_of_eoi,
+    locations: normalizeLocations(ucn.locations_proposal_of_eoi),
     specializations: R.path(['proposal_of_eoi_details', 'specializations'], ucn),
     agency: ucn.agency,
     cn: ucn.cn,
