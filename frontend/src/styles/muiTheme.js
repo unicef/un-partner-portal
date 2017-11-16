@@ -101,6 +101,10 @@ const theme = {
 const getTheme = () => (
   {
     ...theme,
+    zIndex: {
+      ...theme.zIndex,
+      dialog: 999,
+    },
     palette: {
       ...theme.palette,
       secondary: getColorTheme(),
