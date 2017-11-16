@@ -43,8 +43,9 @@ const PartnerProfileProjectImplementationAudit = (props) => {
             label={messages.comment}
             fieldName="regular_audited_comment"
             textFieldProps={{
+              multiline: true,
               inputProps: {
-                maxLength: '200',
+                maxLength: '5000',
               },
             }}
             optional
@@ -82,8 +83,9 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               label={messages.insertLink}
               fieldName="link_report"
               textFieldProps={{
+                multiline: true,
                 inputProps: {
-                  maxLength: '200',
+                  maxLength: '5000',
                 },
               }}
               optional
@@ -104,8 +106,9 @@ const PartnerProfileProjectImplementationAudit = (props) => {
             label={messages.comment}
             fieldName="comment"
             textFieldProps={{
+              multiline: true,
               inputProps: {
-                maxLength: '200',
+                maxLength: '5000',
               },
             }}
             optional

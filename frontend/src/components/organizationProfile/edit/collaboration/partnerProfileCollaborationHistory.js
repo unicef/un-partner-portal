@@ -37,8 +37,9 @@ const PartnershipInner = (readOnly, ...props) => member => (
       label={messages.explainCollaboration}
       fieldName={`${member}.description`}
       textFieldProps={{
+        multiline: true,
         inputProps: {
-          maxLength: '200',
+          maxLength: '5000',
         },
       }}
       optional
@@ -52,8 +53,9 @@ const PartnershipInner = (readOnly, ...props) => member => (
           label={messages.provideNumber}
           fieldName={`${member}.partner_number`}
           textFieldProps={{
+            multiline: true,
             inputProps: {
-              maxLength: '200',
+              maxLength: '5000',
             },
           }}
           optional
@@ -92,8 +94,9 @@ const PartnerProfileCollaborationHistory = (props) => {
           label={messages.collaborationDesc}
           fieldName="partnership_collaborate_institution_desc"
           textFieldProps={{
+            multiline: true,
             inputProps: {
-              maxLength: '200',
+              maxLength: '5000',
             },
           }}
           optional

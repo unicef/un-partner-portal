@@ -32,7 +32,7 @@ export const Background = props => (<TextFieldForm
   textFieldProps={{
     multiline: true,
     inputProps: {
-      maxLength: '200',
+      maxLength: '5000',
     },
   }}
   {...props}
@@ -45,7 +45,7 @@ export const Goal = props => (<TextFieldForm
   textFieldProps={{
     multiline: true,
     inputProps: {
-      maxLength: '200',
+      maxLength: '5000',
     },
   }}
   {...props}
@@ -58,7 +58,7 @@ export const OtherInfo = props => (<TextFieldForm
   textFieldProps={{
     multiline: true,
     inputProps: {
-      maxLength: '200',
+      maxLength: '5000',
     },
   }}
   optional

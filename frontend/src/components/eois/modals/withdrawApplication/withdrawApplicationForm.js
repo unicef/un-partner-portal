@@ -6,7 +6,7 @@ import TextFieldForm from '../../../forms/textFieldForm';
 
 const messages = {
   label: 'Justification',
-  placeholder: 'I decided to withdraw this award because of the: ...'
+  placeholder: 'I decided to withdraw this award because of the: ...',
 };
 
 const styleSheet = () => ({
@@ -27,6 +27,9 @@ const WithdrawAward = (props) => {
         fieldName="withdraw_reason"
         textFieldProps={{
           multiline: true,
+          inputProps: {
+            maxLength: '5000',
+          },
         }}
       />
     </form >

@@ -45,8 +45,9 @@ const PartnerProfileMandateSecurity = (props) => {
           label={messages.description}
           fieldName="security_desc"
           textFieldProps={{
+            multiline: true,
             inputProps: {
-              maxLength: '200',
+              maxLength: '5000',
             },
           }}
           optional

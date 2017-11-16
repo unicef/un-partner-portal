@@ -60,8 +60,9 @@ const CommentInner = (readOnly, ...props) => member => (
     label={messages.pleaseComment}
     fieldName={`${member}.comment`}
     textFieldProps={{
+      multiline: true,
       inputProps: {
-        maxLength: '200',
+        maxLength: '5000',
       },
     }}
     optional
@@ -134,8 +135,9 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
               label={messages.pleaseComment}
               fieldName="experienced_staff_desc"
               textFieldProps={{
+                multiline: true,
                 inputProps: {
-                  maxLength: '200',
+                  maxLength: '5000',
                 },
               }}
               optional

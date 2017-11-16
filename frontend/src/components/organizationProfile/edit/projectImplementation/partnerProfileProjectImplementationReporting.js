@@ -28,8 +28,9 @@ const PartnerProfileProjectImplementationReporting = (props) => {
           label={messages.keyResults}
           fieldName="key_result"
           textFieldProps={{
+            multiline: true,
             inputProps: {
-              maxLength: '200',
+              maxLength: '5000',
             },
           }}
           optional
@@ -76,8 +77,9 @@ const PartnerProfileProjectImplementationReporting = (props) => {
               label={messages.link}
               fieldName="link_report"
               textFieldProps={{
+                multiline: true,
                 inputProps: {
-                  maxLength: '200',
+                  maxLength: '5000',
                 },
               }}
               optional
