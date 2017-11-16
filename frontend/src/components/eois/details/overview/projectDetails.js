@@ -41,7 +41,7 @@ const messages = {
   },
 };
 
-const Fields = ({ type, role, partner }) => {
+const Fields = ({ type, role, partner, displayGoal }) => {
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return (<PaddedContent>
       <GridColumn >
@@ -90,7 +90,7 @@ const Fields = ({ type, role, partner }) => {
         readOnly
       />
       <Background readOnly />
-      <Goal readOnly />
+      {displayGoal && <Goal readOnly />}
       <OtherInfo readOnly />
       {type === PROJECT_TYPES.OPEN && <GridRow columns={2} >
         <DeadlineDate readOnly />
@@ -108,6 +108,7 @@ Fields.propTypes = {
   type: PropTypes.string,
   role: PropTypes.string,
   partner: PropTypes.number,
+  displayGoal: PropTypes.bool,
 };
 
 
@@ -122,10 +123,10 @@ const title = type => () => (
   </SpreadContent>
 );
 
-const ProjectDetails = ({ type, role, partner }) => (
+const ProjectDetails = ({ type, role, partner, displayGoal }) => (
   <HeaderList
     header={title(type)}
-    rows={[<Fields type={type} role={role} partner={partner} />]}
+    rows={[<Fields type={type} role={role} partner={partner} displayGoal={displayGoal} />]}
   />
 );
 
@@ -133,6 +134,7 @@ ProjectDetails.propTypes = {
   type: PropTypes.string,
   role: PropTypes.string,
   partner: PropTypes.number,
+  displayGoal: PropTypes.bool,
 };
 
 export default ProjectDetails;

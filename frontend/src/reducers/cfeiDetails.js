@@ -76,6 +76,8 @@ const saveUCN = (state, action) => {
 
   const newUCN = {
     id: ucn.id,
+    reviewers: [],
+    focal_points: [],
     partner_name: ucn.partner.id,
     display_type: ucn.partner.display_type,
     title: R.path(['proposal_of_eoi_details', 'title'], ucn),

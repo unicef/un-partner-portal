@@ -1,4 +1,5 @@
 import React from 'react';
+import { pluck } from 'ramda';
 import { TableCell } from 'material-ui/Table';
 import EoiSectorCell from './eoiSectorCell';
 import EoiPartnersStatusCell from './eoiPartnersStatusCell';
@@ -7,6 +8,7 @@ import EoiPartnersCell from './eoiPartnersCell';
 import EoiNameCell from './eoiNameCell';
 import IsDirectCell from './isDirectCell';
 import CountriesCell from '../../partners/countriesCell';
+import EoiDSPartnersCell from './eoiDSPartnersCell';
 import { formatDateForPrint } from '../../../helpers/dates';
 
 export default type => ({ row, column }) => {
@@ -43,7 +45,10 @@ export default type => ({ row, column }) => {
   } else if (column.name === 'selected_partners') {
     return (
       <TableCell >
-        <EoiPartnersCell partners={row.invited_partners || []} />
+        <EoiDSPartnersCell
+          partners={pluck('legal_name', row.partner_offer_status || [])}
+          id={row.id}
+        />
       </TableCell>);
   } else if (column.name === 'submission_date') {
     return (
