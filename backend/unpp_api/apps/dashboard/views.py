@@ -8,7 +8,7 @@ from django.http import Http404
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from common.permissions import IsAtLeastMemberReader
+from common.permissions import IsAtLeastMemberReader, IsAgencyMemberUser, IsPartner
 from common.mixins import PartnerIdsMixin
 from common.paginations import MediumPagination, SmallPagination
 from project.serializers import ApplicationFullEOISerializer, SubmittedCNSerializer, PendingOffersSerializer
@@ -20,7 +20,7 @@ class DashboardAPIView(RetrieveAPIView):
     """
     Generic Dashboard view for partner or agency user
     """
-    permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
+    permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
 
     def get_serializer_class(self):
         if self.request.user.is_agency_user:
@@ -43,7 +43,7 @@ class ApplicationsToScoreListAPIView(ListAPIView):
     """
 
     serializer_class = ApplicationFullEOISerializer
-    permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
+    permission_classes = (IsAgencyMemberUser, )
     pagination_class = MediumPagination
 
     def get_queryset(self):
@@ -59,7 +59,7 @@ class ApplicationsPartnerDecisionsListAPIView(ListAPIView):
 
     DAYS_AGO = 5
     serializer_class = ApplicationFullEOISerializer
-    permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
+    permission_classes = (IsAgencyMemberUser, )
     pagination_class = MediumPagination
 
     def get_queryset(self):
@@ -78,7 +78,7 @@ class SubmittedCNListAPIView(PartnerIdsMixin, ListAPIView):
     Returns list of partner submitted concept notes
     """
     serializer_class = SubmittedCNSerializer
-    permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
+    permission_classes = (IsAuthenticated, IsPartner)
     pagination_class = SmallPagination
 
     def get_queryset(self):
@@ -90,7 +90,7 @@ class PendingOffersListAPIView(PartnerIdsMixin, ListAPIView):
     Returns list of pending offers for partner
     """
     serializer_class = PendingOffersSerializer
-    permission_classes = (IsAuthenticated, IsAtLeastMemberReader, )
+    permission_classes = (IsAuthenticated, IsPartner)
     pagination_class = SmallPagination
 
     def get_queryset(self):

@@ -362,6 +362,11 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         payload['financial_control_system_desc'] = text
         payload['management_approach_desc'] = text
         payload['comment'] = text
+        payload['regular_audited'] = False
+        payload['experienced_staff']  = True
+        payload['have_separate_bank_account'] = True
+        payload['have_bank_account'] = True
+        payload['capacity_assessment'] = True
 
         for internal_control in payload['internal_controls']:
             internal_control['comment'] = text
@@ -377,7 +382,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
     def test_other_info(self):
         url = reverse('common:file')
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
         with open(filename) as doc:
             payload = {
                 "file_field": doc

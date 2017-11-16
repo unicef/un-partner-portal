@@ -2,6 +2,9 @@ import os
 
 from logging.handlers import RotatingFileHandler
 
+from imagekit import ImageSpec
+from imagekit.processors import ResizeToFill
+
 
 class DeferredRotatingFileHandler(RotatingFileHandler):
     """
@@ -34,3 +37,9 @@ def get_countries_code_from_queryset(queryset):
 def get_partners_name_from_queryset(queryset):
     from partner.serializers import PartnerShortSerializer
     return map(lambda x: x.get("legal_name"), PartnerShortSerializer(queryset, many=True).data)
+
+
+class Thumbnail(ImageSpec):
+    processors = [ResizeToFill(100, 50)]
+    format = 'JPEG'
+    options = {'quality': 80}

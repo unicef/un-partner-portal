@@ -92,14 +92,14 @@ const Fields = ({ type, role, partner }) => {
       <Background readOnly />
       <Goal readOnly />
       <OtherInfo readOnly />
-      <GridRow columns={2} >
+      {type === PROJECT_TYPES.OPEN && <GridRow columns={2} >
         <DeadlineDate readOnly />
         <NotifyDate readOnly />
-      </GridRow>
-      {type === PROJECT_TYPES.OPEN && <GridRow columns={2} >
+      </GridRow>}
+      <GridRow columns={2} >
         <StartDate readOnly />
         <EndDate readOnly />
-      </GridRow>}
+      </GridRow>
     </GridColumn>
   </PaddedContent>);
 };

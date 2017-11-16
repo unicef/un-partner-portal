@@ -10,7 +10,7 @@ import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
 import RadioForm from '../../forms/radioForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
-import { selectNormalizedSpecializations, selectNormalizedCountries, selectNormalizedApplicationStatuses } from '../../../store';
+import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedApplicationStatuses } from '../../../store';
 import resetChanges from '../../eois/filters/eoiHelper';
 
 const messages = {
@@ -22,7 +22,7 @@ const messages = {
     status: 'CFEI Status',
     cnStatus: 'CN Status',
     agency: 'Agency',
-    sector_area: 'Sector & Area of Specialization',
+    sector: 'Sector & Area of Specialization',
     fromDate: 'From date',
     toDate: 'To date',
     date: 'Date posted - choose date range',
@@ -68,19 +68,36 @@ class PartnerApplicationsNotesFilter extends Component {
     const { pathName, query } = this.props;
     resetChanges(pathName, query);
 
+    const active = this.props.query.cfei_active ? this.props.query.cfei_active : true;
+
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { cfei_active: true },
+        { cfei_active: active },
       ),
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (R.isEmpty(nextProps.query)) {
+      const { pathname } = nextProps.location;
+
+      const active = this.props.query.cfei_active ? this.props.query.cfei_active : true;
+
+      history.push({
+        pathname,
+        query: R.merge(this.props.query,
+          { cfei_active: active },
+        ),
+      });
+    }
+  }
+
+
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { agency, country_code, specialization,
-      cfei_active } = values;
+    const { agency, country_code, specialization, cfei_active } = values;
 
     history.push({
       pathname: pathName,
@@ -88,7 +105,21 @@ class PartnerApplicationsNotesFilter extends Component {
         agency,
         cfei_active,
         country_code,
-        specialization }),
+        specialization
+      }),
+    });
+  }
+
+  resetForm() {
+    const query = resetChanges(this.props.pathName, this.props.query);
+
+    const { pathName } = this.props;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { cfei_active: true },
+      ),
     });
   }
 
@@ -103,6 +134,7 @@ class PartnerApplicationsNotesFilter extends Component {
               <SelectForm
                 fieldName="country_code"
                 label={messages.labels.country}
+                placeholder={messages.choose}
                 values={countries}
                 optional
               />
@@ -110,9 +142,10 @@ class PartnerApplicationsNotesFilter extends Component {
             <Grid item sm={4} xs={12} >
               <SelectForm
                 label={messages.labels.sector}
-                placeholder={messages.labels.choose}
+                placeholder={messages.choose}
                 fieldName="specialization"
                 values={specs}
+                sections
                 optional
               />
             </Grid>
@@ -138,7 +171,7 @@ class PartnerApplicationsNotesFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>
@@ -170,23 +203,28 @@ PartnerApplicationsNotesFilter.propTypes = {
 
 const formPartnerApplicationsNotesFilter = reduxForm({
   form: 'tableFilter',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(PartnerApplicationsNotesFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { country_code } = { } } = ownProps.location;
-  const { query: { agency } = { } } = ownProps.location;
-  const { query: { cfei_active } = { } } = ownProps.location;
-  const { query: { specialization } = { } } = ownProps.location;
+  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { agency } = {} } = ownProps.location;
+  const { query: { cfei_active } = {} } = ownProps.location;
+  const { query: { specialization } = {} } = ownProps.location;
+
+  const agencyQ = agency ? Number(agency) : agency;
 
   return {
     countries: selectNormalizedCountries(state),
-    specs: selectNormalizedSpecializations(state),
+    specs: selectMappedSpecializations(state),
     cnStatus: selectNormalizedApplicationStatuses(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {
       country_code,
-      agency,
+      agency: agencyQ,
       cfei_active,
       specialization,
     },

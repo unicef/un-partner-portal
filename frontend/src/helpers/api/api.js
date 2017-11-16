@@ -101,6 +101,10 @@ export function login(body) {
   return post('/rest-auth/login/', body);
 }
 
+export function logout() {
+  return post('/rest-auth/logout/');
+}
+
 export function getUserData() {
   return authorizedGet({ uri: '/accounts/me/' });
 }

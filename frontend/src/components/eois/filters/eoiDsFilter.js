@@ -12,7 +12,8 @@ import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import CountryField from '../../forms/fields/projectFields/locationField/countryField';
-import { selectNormalizedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
+import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
 import resetChanges from './eoiHelper';
 
 const messages = {
@@ -65,27 +66,68 @@ class EoiFilter extends Component {
   }
 
   componentWillMount() {
-    const { pathName, query } = this.props;
+    const { pathName, query, agencyId } = this.props;
+
+    const agency = this.props.query.agency ? this.props.query.agency : agencyId;
+    const active = !!(this.props.query.active === 'true' || (typeof (this.props.query.active) === 'boolean' && this.props.query.active) || !this.props.query.active);
+    const ordering = active ? 'created' : '-completed_date';
 
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { active: true, ordering: 'created' },
+        { active, ordering, agency },
       ),
     });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (R.isEmpty(nextProps.query)) {
+      const { pathname } = nextProps.location;
+
+      const ordering = this.props.query.active ? 'created' : '-completed_date';
+      const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
+
+      history.push({
+        pathname,
+        query: R.merge(this.props.query,
+          { active: this.props.query.active, ordering, agency: agencyQ },
+        ),
+      });
+    }
   }
 
   onSearch(values) {
     const { pathName, query } = this.props;
     // TODO - move order to paginated list wrapper
     const { title, agency, active, country_code, specializations, selected_source } = values;
-    const ordering = active ? 'created' : '-completed_date';
+
+    const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
+    const ordering = active === 'true' ? 'created' : '-completed_date';
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
-        title, agency, active, ordering, country_code, specializations, selected_source,
+        title,
+        agency: agencyQ,
+        active,
+        ordering,
+        country_code,
+        specializations,
+        selected_source,
       }),
+    });
+  }
+
+  resetForm() {
+    const query = resetChanges(this.props.pathName, this.props.query);
+
+    const { pathName, agencyId } = this.props;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { active: true, ordering: 'created', agency: agencyId },
+      ),
     });
   }
 
@@ -112,11 +154,11 @@ class EoiFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
-                fieldName="sector"
+              <AdminOneLocation
+                fieldName="locations"
+                formName="tableFilter"
+                observeFieldName="country_code"
                 label={messages.labels.location}
-                placeholder={messages.choose}
-                values={[]}
                 optional
               />
             </Grid>
@@ -128,6 +170,7 @@ class EoiFilter extends Component {
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
                 values={specs}
+                sections
                 optional
               />
             </Grid>
@@ -161,7 +204,7 @@ class EoiFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>
@@ -187,6 +230,7 @@ EoiFilter.propTypes = {
   specs: PropTypes.array.isRequired,
   directSources: PropTypes.array.isRequired,
   pathName: PropTypes.string,
+  agencyId: PropTypes.string,
   query: PropTypes.object,
 };
 
@@ -194,26 +238,30 @@ const formEoiFilter = reduxForm({
   form: 'directFilter',
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(EoiFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { title } = { } } = ownProps.location;
-  const { query: { country_code } = { } } = ownProps.location;
-  const { query: { agency } = { } } = ownProps.location;
-  const { query: { active } = { } } = ownProps.location;
-  const { query: { specializations } = { } } = ownProps.location;
-  const { query: { selected_source } = { } } = ownProps.location;
+  const { query: { title } = {} } = ownProps.location;
+  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { agency } = {} } = ownProps.location;
+  const { query: { active } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
+  const { query: { selected_source } = {} } = ownProps.location;
 
+  const agencyQ = Number(agency);
 
   return {
-    specs: selectNormalizedSpecializations(state),
+    countries: selectNormalizedCountries(state),
+    specs: selectMappedSpecializations(state),
     directSources: selectNormalizedDirectSelectionSource(state),
+    agencyId: state.session.agencyId,
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {
       title,
       country_code,
-      agency,
+      agency: agencyQ,
       active,
       specializations,
       selected_source,
