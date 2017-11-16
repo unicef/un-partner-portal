@@ -10,6 +10,7 @@ import TextFieldForm from '../../../forms/textFieldForm';
 import { selectNormalizedAuditTypes, selectNormalizedCapacityAssessments } from '../../../../store';
 import { visibleIfYes, visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
 import GridColumn from '../../../common/grid/gridColumn';
+import { url } from '../../../../helpers/validation';
 
 const messages = {
   isRegularyAudited: 'Is the organization regularly audited?',
@@ -82,13 +83,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
             <TextFieldForm
               label={messages.insertLink}
               fieldName="link_report"
-              textFieldProps={{
-                multiline: true,
-                inputProps: {
-                  maxLength: '5000',
-                },
-              }}
-              optional
+              validation={[url]}
               readOnly={readOnly}
             />
           </Grid>
