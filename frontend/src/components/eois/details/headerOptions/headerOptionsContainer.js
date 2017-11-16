@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { PROJECT_TYPES, ROLES } from '../../../../helpers/constants';
+import { PROJECT_TYPES, ROLES, PROJECT_STATUSES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
 import AgencyOpenHeaderOptions from './agencyOpenHeaderOptions';
 import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
+import AgencyOpenAfterDeadlineHeaderOptions from './agencyOpenAfterDeadlineHeaderOptions';
 import EoiStatusCell from '../../cells/eoiStatusCell';
 import { selectCfeiStatus,
   isCfeiCompleted,
@@ -28,7 +29,11 @@ const HeaderOptionsContainer = (props) => {
   let options;
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
-      options = (allowedToEdit && !cfeiCompleted) ? <AgencyOpenHeaderOptions /> : null;
+      options = (allowedToEdit && !cfeiCompleted)
+        ? cfeiStatus === PROJECT_STATUSES.OPE
+          ? <AgencyOpenHeaderOptions />
+          : <AgencyOpenAfterDeadlineHeaderOptions />
+        : null;
     } else if (role === ROLES.PARTNER) {
       options = <PartnerOpenHeaderOptions />;
     }
