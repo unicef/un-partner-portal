@@ -302,6 +302,14 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     audit = PartnerAuditAssessmentSerializer()
     report = PartnerReportingSerializer()
     location_field_offices = PointSerializer(many=True)
+    is_finished = serializers.BooleanField(read_only=True, source="has_finished")
+    identification_is_complete = serializers.BooleanField(read_only=True, source="profile.identification_is_complete")
+    contact_is_complete = serializers.BooleanField(read_only=True, source="profile.contact_is_complete")
+    mandatemission_complete = serializers.BooleanField(read_only=True, source="profile.mandatemission_complete")
+    funding_complete = serializers.BooleanField(read_only=True, source="profile.funding_complete")
+    collaboration_complete = serializers.BooleanField(read_only=True, source="profile.collaboration_complete")
+    proj_impl_is_complete = serializers.BooleanField(read_only=True, source="profile.proj_impl_is_complete")
+    other_info_is_complete = serializers.BooleanField(read_only=True, source="profile.other_info_is_complete")
 
     class Meta:
         model = Partner
@@ -335,6 +343,14 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "area_policies",
             "audit",
             "report",
+            "is_finished",
+            "identification_is_complete",
+            "contact_is_complete",
+            "mandatemission_complete",
+            "funding_complete",
+            "collaboration_complete",
+            "proj_impl_is_complete",
+            "other_info_is_complete",
         )
 
 
