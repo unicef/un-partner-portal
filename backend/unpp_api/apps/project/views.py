@@ -265,6 +265,12 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
                                       "toggled under the HQ profile."]},
                 status=statuses.HTTP_400_BAD_REQUEST
             )
+        if not self.request.active_partner.has_finished:
+            return Response(
+                {'non_field_errors':
+                     ["You don't have the ability to submit an application if Your profile is not completed."]},
+                status=statuses.HTTP_400_BAD_REQUEST
+            )
 
         return super(PartnerEOIApplicationCreateAPIView, self).post(request, pk, *args, **kwargs)
 

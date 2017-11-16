@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import os
 import random
 from datetime import date, timedelta
+import mock
 
 from django.urls import reverse
 from django.conf import settings
@@ -37,6 +38,10 @@ from project.views import PinProjectAPIView
 from project.serializers import ConvertUnsolicitedSerializer
 
 filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+
+
+def partner_has_finished(*args, **kwargs):
+    return True
 
 
 class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
@@ -299,6 +304,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         EOIFactory.create_batch(self.quantity, display_type='NoN')
         PartnerSimpleFactory.create_batch(self.quantity)
 
+    @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
     def test_create(self):
         eoi_id = EOI.objects.first().id
         cfile = CommonFile.objects.create()
@@ -348,6 +354,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         # status='NoN' - will not create applications
         EOIFactory.create_batch(self.quantity, display_type='NoN')
 
+    @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
     def test_create(self):
         eoi_id = EOI.objects.first().id
         url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
