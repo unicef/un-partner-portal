@@ -40,16 +40,14 @@ from .models import User
 class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
 
     date_joined = serializers.DateTimeField(required=False, read_only=True)
-    username = serializers.CharField(required=False, read_only=True)
+    fullname = serializers.CharField(required=False, read_only=True)
     email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
 
     class Meta:
         model = User
         fields = (
             'id',
-            'first_name',
-            'last_name',
-            'username',
+            'fullname',
             'email',
             'password',
             'date_joined',
@@ -66,7 +64,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        validated_data['user']['username'] = validated_data['user']['email']
+        validated_data['user']['fullname'] = validated_data['user']['email']
         self.user = User.objects.create(**validated_data['user'])
         self.user.set_password(validated_data['user']['password'])
         self.user.save()
@@ -127,7 +125,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source='get_fullname')
+    name = serializers.CharField(source='fullname')
 
     class Meta:
         model = User
@@ -194,7 +192,7 @@ class UserFullnameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email', )
+        fields = ('id', 'fullname', 'email', )
 
 
 class PartnerMemberSerializer(serializers.ModelSerializer):

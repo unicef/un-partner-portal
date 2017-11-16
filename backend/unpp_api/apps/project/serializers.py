@@ -527,7 +527,7 @@ class ReviewersApplicationSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'id',
-            'first_name',
+            'fullname',
             'last_name',
             'assessment',
         )
