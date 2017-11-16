@@ -15,6 +15,7 @@ import {
   isUserAReviewer,
   selectReview,
   selectAssessment,
+  isCfeiCompleted,
 } from '../../../../../store';
 import ApplicationStatusText from '../applicationStatusText';
 import GridRow from '../../../../common/grid/gridRow';
@@ -79,6 +80,7 @@ class ApplicationSummaryHeader extends Component {
       isVerified,
       redFlags,
       completedReview,
+      isCfeiCompleted,
     } = this.props;
     const disableAward = loading
       || status !== APPLICATION_STATUSES.PRE
@@ -86,6 +88,7 @@ class ApplicationSummaryHeader extends Component {
       || redFlags
       || !completedReview;
     const disabled = loading || status !== APPLICATION_STATUSES.PRE;
+    if (isCfeiCompleted) return <div />;
     if (isUserFocalPoint) {
       if (didWin) {
         return (<WithdrawApplicationButton
@@ -181,6 +184,7 @@ ApplicationSummaryHeader.propTypes = {
   isVerified: PropTypes.bool,
   redFlags: PropTypes.number,
   completedReview: PropTypes.bool,
+  isCfeiCompleted: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -215,6 +219,7 @@ const mapStateToProps = (state, ownProps) => {
     isVerified,
     redFlags,
     completedReview: assessments_is_completed,
+    isCfeiCompleted: isCfeiCompleted(state, eoi),
   };
 };
 

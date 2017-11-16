@@ -16,11 +16,10 @@ const PartnerOpenHeaderOptions = (props) => {
   const { params: { id },
     dialogOpen,
     handleDialogClose,
-    handleDialogOpen,
-    cfeiCompleted } = props;
+    handleDialogOpen } = props;
   return (
     <SpreadContent>
-      {!cfeiCompleted && <Complete handleClick={() => handleDialogOpen(complete)} />}
+      <Complete handleClick={() => handleDialogOpen(complete)} />
       <DropdownMenu
         options={
           [
@@ -51,7 +50,6 @@ PartnerOpenHeaderOptions.propTypes = {
   dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
-  cfeiCompleted: PropTypes.bool,
 };
 
 export default withMultipleDialogHandling(withRouter(PartnerOpenHeaderOptions));
