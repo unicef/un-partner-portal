@@ -186,13 +186,13 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Since CEOI is completed, modification is forbidden.")
 
-            if not app.partner.is_verified:
+            if data.get("did_win") and not app.partner.is_verified:
                 raise serializers.ValidationError(
                     "You can not award an application if the profile has not been verified yet.")
-            if app.partner.has_red_flag:
+            if data.get("did_win") and app.partner.has_red_flag:
                 raise serializers.ValidationError(
                     "You can not award an application if the profile has red flag.")
-            if data.get("did_win") is not None and \
+            if data.get("did_win") and \
                     app.eoi.reviewers.count() != Assessment.objects.filter(application=app).count():
                 raise serializers.ValidationError(
                     "You can not award an application if all assessments have not been added for the application.")

@@ -390,11 +390,6 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
         self.client.logout()
         self.client.login(username=app.eoi.created_by.username, password='test')
-        response = self.client.patch(url, data=payload, format='json')
-        self.assertEquals(response.data['non_field_errors'],
-                          ['You can not award an application if the profile has not been verified yet.'])
-
-        PartnerVerificationFactory(partner=app.partner, submitter=app.eoi.created_by)
 
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
@@ -406,6 +401,12 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "status": APPLICATION_STATUSES.preselected,
             "justification_reason": "good reason",
         }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertEquals(response.data['non_field_errors'],
+                          ['You can not award an application if the profile has not been verified yet.'])
+
+        PartnerVerificationFactory(partner=app.partner, submitter=app.eoi.created_by)
+
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(response.data['did_win'])
