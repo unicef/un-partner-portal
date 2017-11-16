@@ -6,6 +6,7 @@ import {
   flattenToNames,
   normId,
 } from './normalizationHelpers';
+import { mapValuesForSelectionField } from '../store';
 
 export const LOAD_SECTORS_SUCCESS = 'LOAD_SECTORS_SUCCESS';
 
@@ -26,6 +27,7 @@ const normalizeSectors = sectors => ({
   allSpecializations: R.mergeAll(R.map(flattenSpecializations, sectors)),
 });
 
+
 export const selectAllSectors = state => state.allSectors;
 export const selectSector = (state, id) => state.allSectors[id];
 export const selectSpecializations = (state, ids) =>
@@ -34,6 +36,15 @@ export const selectSpecializationsForSector = (state, sectorId) => {
   if (!state.bySector) return {};
   return selectSpecializations(state, state.bySector[sectorId]);
 };
+
+const organizeSector = (state, [sector, specializations]) => [
+  selectSector(state, sector),
+  mapValuesForSelectionField(selectSpecializations(state, specializations)),
+];
+
+export const selectMappedSpecializations = state =>
+  R.map(R.curry(organizeSector)(state), R.toPairs(state.bySector));
+
 
 export default function sectorsReducer(state = initialState, action) {
   switch (action.type) {

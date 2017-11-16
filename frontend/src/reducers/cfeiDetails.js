@@ -129,6 +129,12 @@ export function isUserAReviewer(state, cfeiId, userId) {
   return false;
 }
 
+export function isUserACreator(state, cfeiId, userId) {
+  const cfei = R.prop(cfeiId, state);
+  if (cfei) return cfei.created_by === userId;
+  return false;
+}
+
 export function isUserAFocalPoint(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
   if (cfei) return cfei.focal_points.includes(userId);
