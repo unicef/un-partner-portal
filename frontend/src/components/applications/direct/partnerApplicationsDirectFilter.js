@@ -134,6 +134,7 @@ class PartnerApplicationsNotesFilter extends Component {
               <SelectForm
                 fieldName="country_code"
                 label={messages.labels.country}
+                placeholder={messages.choose}
                 values={countries}
                 optional
               />
@@ -141,8 +142,8 @@ class PartnerApplicationsNotesFilter extends Component {
             <Grid item sm={4} xs={12} >
               <SelectForm
                 label={messages.labels.sector}
-                placeholder={messages.labels.choose}
-                fieldName="specializations"
+                placeholder={messages.choose}
+                fieldName="specialization"
                 values={specs}
                 sections
                 optional
