@@ -57,9 +57,6 @@ class User(AbstractUser):
         return self.__partner_ids
 
     def get_fullname(self):
-        return self.username
-
-    def get_user_name(self):
         return "{} {}".format(self.first_name, self.last_name)
 
 

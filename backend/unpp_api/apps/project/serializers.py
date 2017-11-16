@@ -761,7 +761,7 @@ class ReviewSummarySerializer(serializers.ModelSerializer):
 class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
     __apps_count = None
     user_id = serializers.CharField(source='id')
-    user_name = serializers.CharField(source='get_user_name')
+    user_name = serializers.CharField(source='get_fullname')
     assessments = serializers.SerializerMethodField()
 
     class Meta:
@@ -820,7 +820,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
         for assessment in assessments:
             notes.append({
                 'note': assessment.note,
-                'reviewer': assessment.reviewer.get_user_name(),
+                'reviewer': assessment.reviewer.get_fullname(),
             })
 
         return {

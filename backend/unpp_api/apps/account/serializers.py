@@ -127,7 +127,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source='get_user_name')
+    name = serializers.CharField(source='get_fullname')
 
     class Meta:
         model = User
