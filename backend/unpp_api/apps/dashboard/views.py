@@ -96,6 +96,8 @@ class PendingOffersListAPIView(PartnerIdsMixin, ListAPIView):
     def get_queryset(self):
         return Application.objects.filter(
             did_win=True,
+            did_accept=False,
+            did_withdraw=False,
             decision_date__isnull=True,
             did_decline=False,
             partner_id__in=self.get_partner_ids()
