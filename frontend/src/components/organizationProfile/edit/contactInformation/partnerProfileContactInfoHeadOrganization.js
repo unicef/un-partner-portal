@@ -5,8 +5,7 @@ import Grid from 'material-ui/Grid';
 import TextFieldForm from '../../../forms/textFieldForm';
 
 const messages = {
-  firstName: 'First Name',
-  lastName: 'Last Name',
+  fullname: 'Personal name',
   jobTitle: 'Job Title/Position',
   telephone: 'Telephone',
   mobile: 'Mobile (optional)',
@@ -19,21 +18,14 @@ const PartnerProfileContactInfoHeadOrganization = (props) => {
 
   return (<FormSection name="org_head">
     <Grid container direction="row">
-      <Grid item sm={3} xs={12}>
+      <Grid item sm={4} xs={12}>
         <TextFieldForm
-          label={messages.firstName}
-          fieldName="first_name"
+          label={messages.fullname}
+          fieldName="fullname"
           readOnly
         />
       </Grid>
-      <Grid item sm={3} xs={12}>
-        <TextFieldForm
-          label={messages.lastName}
-          fieldName="last_name"
-          readOnly
-        />
-      </Grid>
-      <Grid item sm={3} xs={12}>
+      <Grid item sm={4} xs={12}>
         <TextFieldForm
           label={messages.jobTitle}
           fieldName="job_title"
@@ -41,7 +33,7 @@ const PartnerProfileContactInfoHeadOrganization = (props) => {
           readOnly={readOnly}
         />
       </Grid>
-      <Grid item sm={3} xs={12}>
+      <Grid item sm={4} xs={12}>
         <TextFieldForm
           label={messages.telephone}
           fieldName="telephone"

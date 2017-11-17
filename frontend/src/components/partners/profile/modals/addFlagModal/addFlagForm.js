@@ -11,7 +11,7 @@ const messages = {
   comments: 'Comments',
   commentsHolder: 'Enter additional details...',
   contact: 'Contact person (optional)',
-  contactHolder: 'Name and last name...',
+  contactHolder: 'Personal name...',
   telephone: 'Telephone (optional)',
   telephoneHolder: 'Enter telephone...',
   email: 'E-mail (optional)',
