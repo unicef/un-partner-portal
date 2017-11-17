@@ -396,7 +396,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
                           ['Only Focal Point/Creator is allowed to pre-select/reject an application.'])
 
         self.client.logout()
-        self.client.login(username=app.eoi.created_by.username, password='test')
+        self.client.login(email=app.eoi.created_by.email, password='test')
 
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
