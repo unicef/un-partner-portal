@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import TextFieldForm from '../../../textFieldForm';
-import { numerical } from '../../../../../helpers/validation';
+import { weight } from '../../../../../helpers/validation';
 
 
 const messages = {
@@ -27,7 +27,7 @@ const WeightField = (props) => {
         },
         disabled,
       }}
-      validation={[numerical]}
+      validation={[weight]}
       {...other}
     />
   </Grid>) : null;
