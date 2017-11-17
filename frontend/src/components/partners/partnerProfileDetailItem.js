@@ -68,7 +68,7 @@ const PartnerProfileDetailItem = (props) => {
           <ItemColumnCell label={messages.website} content={R.path(['mailing_address', 'website'], partner)} />
         </GridRow>
         <GridRow columns={3} spacing={24}>
-          <ItemColumnCell label={messages.headName} content={R.path(['org_head', 'first_name'], partner)} />
+          <ItemColumnCell label={messages.headName} content={R.path(['org_head', 'fullname'], partner)} />
           <ItemColumnCell label={messages.headTitle} content={R.path(['org_head', 'job_title'], partner)} />
           <ItemColumnCell label={messages.headEmail} content={R.path(['org_head', 'email'], partner)} />
         </GridRow>

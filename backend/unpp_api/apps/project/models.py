@@ -281,8 +281,9 @@ class Assessment(TimeStampedModel):
                 for k, v in self.get_scores_as_dict().iteritems():
                     comb_dict[k]['score'] = v['score']
 
-                key_count = len(comb_dict.keys()) # Default if weight wasn't entered
-                self.__total_score = sum([(v['score']*(v.get('weight', key_count)/100.0)) for k, v in comb_dict.iteritems()])
+                key_count = len(comb_dict.keys())  # Default if weight wasn't entered
+                self.__total_score = \
+                    sum([(v['score']*(v.get('weight', key_count)/100.0)) for k, v in comb_dict.iteritems()])
 
         return self.__total_score
 

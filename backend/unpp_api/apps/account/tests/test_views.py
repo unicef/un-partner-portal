@@ -13,7 +13,7 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
     def setUp(self):
         super(TestRegisterPartnerAccountAPITestCase, self).setUp()
         email = "test@myorg.org"
-        User.objects.create(username=email, email=email)
+        User.objects.create(fullname=email, email=email)
         self.data = {
             "partner": {
                 "legal_name": "My org legal name",
@@ -23,8 +23,7 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
             "user": {
                 "email": email,
                 "password": "Test123!",
-                "first_name": "Leszek",
-                "last_name": "Orzeszek",
+                "fullname": "Leszek Orzeszek",
             },
             "partner_profile": {
                 "alias_name": "Name Inc.",
@@ -32,8 +31,7 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
                 "former_legal_name": "Former Legal Name Inc.",
             },
             "partner_head_organization": {
-                "first_name": "Jack",
-                "last_name": "Sparrow",
+                "fullname": "Jack Orzeszek",
                 "email": "captain@blackpearl.org",
             },
             "partner_member": {

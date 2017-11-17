@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import datetime, date
+from datetime import datetime
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -544,7 +544,6 @@ class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
         return super(AgencyProjectUpdateSerializer, self).validate(data)
 
 
-
 class ApplicationsListSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
@@ -596,8 +595,7 @@ class ReviewersApplicationSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'id',
-            'first_name',
-            'last_name',
+            'fullname',
             'assessment',
         )
 
@@ -643,7 +641,6 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
     application_date = serializers.CharField(source="created")
-
 
     class Meta:
         model = Application
@@ -830,7 +827,7 @@ class ReviewSummarySerializer(serializers.ModelSerializer):
 class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
     __apps_count = None
     user_id = serializers.CharField(source='id')
-    user_name = serializers.CharField(source='get_user_name')
+    user_name = serializers.CharField(source='get_fullname')
     assessments = serializers.SerializerMethodField()
 
     class Meta:
@@ -889,7 +886,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
         for assessment in assessments:
             notes.append({
                 'note': assessment.note,
-                'reviewer': assessment.reviewer.get_user_name(),
+                'reviewer': assessment.reviewer.get_fullname(),
             })
 
         return {

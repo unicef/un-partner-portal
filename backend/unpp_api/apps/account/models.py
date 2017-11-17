@@ -1,17 +1,77 @@
 from __future__ import unicode_literals
 
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
+from django.utils import timezone
 
 from model_utils.models import TimeStampedModel
 
 
-class User(AbstractUser):
-    """
-    User model inherited after AbstractUser class.
-    """
+class UserManager(BaseUserManager):
+
+    def _create_user(self, fullname, email, password,
+                     is_staff, is_superuser, **extra_fields):
+        now = timezone.now()
+        email = self.normalize_email(email)
+        user = self.model(fullname=fullname, email=email,
+                          is_staff=is_staff, is_active=True,
+                          is_superuser=is_superuser, last_login=now,
+                          date_joined=now, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, fullname, email, password=None, **extra_fields):
+        return self._create_user(fullname, email, password, False, False, **extra_fields)
+
+    def create_superuser(self, fullname, email, password, **extra_fields):
+        return self._create_user(fullname, email, password, True, True, **extra_fields)
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+
+    fullname = models.CharField(
+        'fullname',
+        null=True,
+        blank=True,
+        max_length=512,
+        help_text='Your fullname like first and last name, 512 characters.')
+
+    email = models.EmailField('email address', max_length=254, unique=True)
+
+    is_staff = models.BooleanField(
+        'staff status',
+        default=False,
+        help_text=('Designates whether the user can log into this admin site.'),
+    )
+    is_active = models.BooleanField(
+        'active',
+        default=True,
+        help_text=(
+            'Designates whether this user should be treated as active. '
+            'Unselect this instead of deleting accounts.'
+        ),
+    )
+
+    date_joined = models.DateTimeField(auto_now_add=True)
+
     __partner_ids = None
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+    objects = UserManager()
+
+    class Meta:
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
+        ordering = ['id']
+
+    def get_short_name(self):
+        return self.fullname
+
+    def get_fullname(self):
+        return self.fullname
 
     def __str__(self):
         return "{} - User".format(self.get_fullname())
@@ -55,12 +115,6 @@ class User(AbstractUser):
                     [p.id for p in partner_member.partner.country_profiles])
 
         return self.__partner_ids
-
-    def get_fullname(self):
-        return self.username
-
-    def get_user_name(self):
-        return "{} {}".format(self.first_name, self.last_name)
 
 
 class UserProfile(TimeStampedModel):

@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import django_filters
-from django_filters.filters import CharFilter
+from django_filters.filters import CharFilter, ModelMultipleChoiceFilter
+from django_filters.widgets import CSVWidget
+
+from common.models import Specialization
 from .models import Partner
 
 
@@ -11,7 +15,9 @@ class PartnersListFilter(django_filters.FilterSet):
     verification_status = CharFilter(method='get_verification_status')
     display_type = CharFilter(method='get_display_type')
     country_code = CharFilter(method='get_country_code')
-    specializations = CharFilter(method='get_specializations')
+    specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
+                                                name='experiences__specialization',
+                                                queryset=Specialization.objects.all())
     concern = CharFilter(method='get_concern')
 
     class Meta:
@@ -26,9 +32,6 @@ class PartnersListFilter(django_filters.FilterSet):
 
     def get_display_type(self, queryset, name, value):
         return queryset.filter(display_type=value)
-
-    def get_specializations(self, queryset, name, value):
-        return queryset.filter(experiences__specialization=value)
 
     def get_concern(self, queryset, name, value):
         return queryset.filter(mandate_mission__concern_groups__contains=[value])
