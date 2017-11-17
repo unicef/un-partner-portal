@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 import PaddedContent from '../../../../../common/paddedContent';
 import SpreadContent from '../../../../../common/spreadContent';
@@ -8,6 +9,9 @@ import WithdrawApplicationButton from '../../../../buttons/withdrawApplicationBu
 import SimpleCollapsableItem from '../../../../../common/simpleCollapsableItem';
 import ExpandedAssessmentAward from './expandedAssessmentsAward';
 
+const messages = {
+  retracted: 'Retracted',
+};
 const styleSheet = () => ({
   fullWidth: {
     width: '100%',
@@ -25,9 +29,10 @@ const SingleAward = (props) => {
           <Typography type="body2">
             {award.partner_name}
           </Typography>
-          {isFocalPoint && <WithdrawApplicationButton
-            applicationId={award.application_id}
-          />}
+          {isFocalPoint && award.did_withdraw ? <Button disabled>{messages.retracted}</Button>
+            : <WithdrawApplicationButton
+              applicationId={award.application_id}
+            />}
         </SpreadContent>
       </PaddedContent >}
     component={<ExpandedAssessmentAward awardInfo={award} />}
