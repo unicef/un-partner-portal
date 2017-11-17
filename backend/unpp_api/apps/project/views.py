@@ -37,7 +37,6 @@ from notification.helpers import (
     send_notificiation_application_created,
     send_notification
 )
-from partner.models import PartnerMember
 from .models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from .serializers import (
     BaseProjectSerializer,
@@ -207,7 +206,6 @@ class PinProjectAPIView(BaseProjectAPIView):
         return self.queryset.filter(pins__partner_id=self.request.active_partner.id,
                                     deadline_date__gte=today)\
                             .distinct()
-
 
     def patch(self, request, *args, **kwargs):
         eoi_ids = request.data.get("eoi_ids")

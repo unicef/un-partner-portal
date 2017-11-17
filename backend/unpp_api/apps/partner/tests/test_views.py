@@ -371,7 +371,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         payload['management_approach_desc'] = text
         payload['comment'] = text
         payload['regular_audited'] = False
-        payload['experienced_staff']  = True
+        payload['experienced_staff'] = True
         payload['have_separate_bank_account'] = True
         payload['have_bank_account'] = True
         payload['capacity_assessment'] = True

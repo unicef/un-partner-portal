@@ -103,8 +103,8 @@ class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
     country_code = CharFilter(method='get_country_code')
     location = CharFilter(method='get_location')
     specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
-                                           method='get_specializations',
-                                           queryset=Specialization.objects.all())
+                                                method='get_specializations',
+                                                queryset=Specialization.objects.all())
     specialization = CharFilter(method='get_specialization')
     agency = CharFilter(method='get_agency')
     ds_converted = BooleanFilter(method='get_ds_converted', widget=BooleanWidget())
@@ -134,7 +134,6 @@ class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
                 query |= Q(proposal_of_eoi_details__specializations__contains=pk)
             return queryset.filter(query)
         return queryset
-
 
     def get_country_code(self, queryset, name, value):
         return queryset.filter(

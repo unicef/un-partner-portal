@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db.models import Q
-
 import django_filters
 from django_filters.filters import MultipleChoiceFilter, CharFilter
 from django_filters.widgets import CSVWidget

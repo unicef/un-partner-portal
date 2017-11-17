@@ -539,7 +539,6 @@ class EOIFactory(factory.django.DjangoModelFactory):
     def reviewers(self, create, extracted, **kwargs):
         agency_members = User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?")
         count = random.randint(2, 4)
-        values = []
         idx = agency_members.count()
         while count and idx:
             count -= 1
@@ -611,7 +610,6 @@ class EOIFactory(factory.django.DjangoModelFactory):
     @factory.post_generation
     def locations(self, create, extracted, **kwargs):
         count = random.randint(0, 3)
-        values = []
         while count:
             count -= 1
             self.locations.add(PointFactory())

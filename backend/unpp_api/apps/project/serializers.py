@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import datetime, date
+from datetime import datetime
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -544,7 +544,6 @@ class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
         return super(AgencyProjectUpdateSerializer, self).validate(data)
 
 
-
 class ApplicationsListSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
@@ -642,7 +641,6 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
     application_date = serializers.CharField(source="created")
-
 
     class Meta:
         model = Application

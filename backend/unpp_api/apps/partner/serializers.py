@@ -8,7 +8,7 @@ from common.consts import (
     PARTNER_TYPES,
     POLICY_AREA_CHOICES,
 )
-from common.models import Point, AdminLevel1
+from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (CommonFileSerializer,
                                 SpecializationSerializer,
