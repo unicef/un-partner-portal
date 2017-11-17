@@ -167,8 +167,7 @@ class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
         model = PartnerHeadOrganization
         fields = "__all__"
         read_only_fields = (
-            'first_name',
-            'last_name',
+            'fullname',
             'email',
         )
 

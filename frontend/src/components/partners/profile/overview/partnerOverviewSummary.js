@@ -21,8 +21,7 @@ const labels = {
   country: 'Country',
   location: 'Location',
   headOfOrganization: 'Head of organization',
-  firstName: 'First Name',
-  lastName: 'Last Name',
+  fullname: 'Personal Name',
   jobTitle: 'Job Title/Position',
   telephone: 'Telephone',
   mobile: 'Mobile',
@@ -48,8 +47,7 @@ const fields = (partner, button) => (
     <ItemRowCellDivider label={labels.country} content={R.prop('operationCountry', partner)} />
     <ItemRowCellDivider label={labels.location} content={R.prop('location', partner)} />
     <ItemRowCellDivider divider label={labels.headOfOrganization} />
-    <ItemRowCellDivider divider labelSecondary label={labels.firstName} content={R.path(['head', 'firstName'], partner)} />
-    <ItemRowCellDivider divider labelSecondary label={labels.lastName} content={R.path(['head', 'lastName'], partner)} />
+    <ItemRowCellDivider divider labelSecondary label={labels.fullname} content={R.path(['head', 'fullname'], partner)} />
     <ItemRowCellDivider divider labelSecondary label={labels.jobTitle} content={R.path(['head', 'title'], partner)} />
     <ItemRowCellDivider divider labelSecondary label={labels.telephone} content={R.path(['head', 'telephone'], partner)} />
     <ItemRowCellDivider divider labelSecondary label={labels.mobile} content={R.path(['head', 'mobile'], partner)} />

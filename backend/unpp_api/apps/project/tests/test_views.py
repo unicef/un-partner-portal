@@ -588,7 +588,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         AgencyMemberFactory.create_batch(4)
 
         user = User.objects.filter(agency_members__isnull=False).first()
-        self.client.login(username=user.username, password='test')
+        self.client.login(email=user.email, password='test')
 
         url = reverse('projects:convert-unsolicited', kwargs={'pk': response.data['id']})
         start_date = date.today()
