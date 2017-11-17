@@ -5,7 +5,7 @@ import Grid from 'material-ui/Grid';
 import { browserHistory as history, withRouter } from 'react-router';
 import MainContentWrapper from '../../components/common/mainContentWrapper';
 import HeaderNavigation from '../../components/common/headerNavigation';
-import PartnerFilter from './partnerFilter';
+import PartnersFilter from './partnersFilter';
 import PartnerProfileNameCell from './partnerProfileNameCell';
 import PaginatedList from '../common/list/paginatedList';
 import TableWithStateInUrl from '../common/hoc/tableWithStateInUrl';
@@ -66,7 +66,7 @@ class PartnersContainer extends Component {
         <MainContentWrapper>
           <Grid container direction="column" spacing={24}>
             <Grid item>
-              <PartnerFilter />
+              <PartnersFilter />
             </Grid>
             <Grid item>
               <TableWithStateInUrl

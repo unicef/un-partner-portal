@@ -29,13 +29,6 @@ def create_sanctions_match(name_matches_qs, partner, match_type, match_text):
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
                   [settings.UN_SANCTIONS_LIST_EMAIL_ALERT])
 
-xstr = (lambda s: s or "")
-
-
-def format_to_full_name(first_name, last_name):
-    full_name = '{} {}'.format(xstr(first_name), xstr(last_name))
-    return " ".join(full_name.split())
-
 
 def sanctions_scan_partner(partner):
 
@@ -50,9 +43,7 @@ def sanctions_scan_partner(partner):
 
     # Partner Heads
     if partner.org_head:
-        full_name = format_to_full_name(partner.org_head.first_name,
-                                        partner.org_head.last_name)
-        matched_names = filter_sanctions_names(full_name,
+        matched_names = filter_sanctions_names(partner.org_head.fullname,
                                                SANCTION_LIST_TYPES.individual,
                                                partner)
         create_sanctions_match(matched_names,
@@ -62,8 +53,7 @@ def sanctions_scan_partner(partner):
 
     # Partner Directors
     for director in partner.directors.all():
-        full_name = format_to_full_name(director.first_name, director.last_name)
-        matched_names = filter_sanctions_names(full_name,
+        matched_names = filter_sanctions_names(director.fullname,
                                                SANCTION_LIST_TYPES.individual,
                                                partner)
         create_sanctions_match(matched_names, partner,
@@ -72,8 +62,7 @@ def sanctions_scan_partner(partner):
 
     # Partner Authorized Officers
     for officer in partner.authorised_officers.all():
-        full_name = format_to_full_name(officer.first_name, officer.last_name)
-        matched_names = filter_sanctions_names(full_name,
+        matched_names = filter_sanctions_names(officer.fullname,
                                                SANCTION_LIST_TYPES.individual,
                                                partner)
         create_sanctions_match(matched_names, partner,
@@ -82,8 +71,7 @@ def sanctions_scan_partner(partner):
 
     # Partner Users
     for partner_member in partner.partner_members.all():
-        full_name = format_to_full_name(partner_member.user.first_name, partner_member.user.last_name)
-        matched_names = filter_sanctions_names(full_name,
+        matched_names = filter_sanctions_names(partner_member.user.fullname,
                                                SANCTION_LIST_TYPES.individual,
                                                partner)
 

@@ -83,19 +83,11 @@ def get_country_list(quantity=3):
     return [random.choice(COUNTRIES) for idx in xrange(0, quantity)]
 
 
-def get_first_name():
+def get_fullname():
     return random.choice([
-        "William",
-        "Lizzy",
-        "Jack"
-    ])
-
-
-def get_last_name():
-    return random.choice([
-        "Collins",
-        "Bennet",
-        "Sparow",
+        "William Collins",
+        "Elizabeth Bennet",
+        "Jack Sparow"
     ])
 
 
@@ -136,11 +128,10 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    username = fuzzy.FuzzyText()
+    fullname = fuzzy.FuzzyText()
     email = factory.Sequence(lambda n: "fake-user-{}@unicef.org".format(n))
     password = factory.PostGenerationMethodCall('set_password', 'test')
-    first_name = factory.LazyFunction(get_first_name)
-    last_name = factory.LazyFunction(get_last_name)
+    fullname = factory.LazyFunction(get_fullname)
 
     profile = factory.RelatedFactory(UserProfileFactory, 'user')
 
@@ -217,8 +208,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         for x in xrange(0, 2):
             PartnerDirector.objects.create(
                 partner=self,
-                first_name=get_first_name(),
-                last_name=get_last_name(),
+                fullname=get_fullname(),
                 job_title=get_job_title(),
             )
 
@@ -227,8 +217,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         for x in xrange(0, 2):
             PartnerAuthorisedOfficer.objects.create(
                 partner=self,
-                first_name=get_first_name(),
-                last_name=get_last_name(),
+                fullname=get_fullname(),
                 job_title=get_job_title(),
                 telephone='(123) 234 569',
                 fax='(123) 234 566',
@@ -346,8 +335,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             return
         PartnerHeadOrganization.objects.create(
             partner=self,
-            first_name=get_first_name(),
-            last_name=get_last_name(),
+            fullname=get_fullname(),
             email="fake-partner-head-{}@unicef.org".format(self.id),
             job_title=get_job_title(),
             telephone="+48 22 568 03 0{}".format(self.id)
@@ -551,7 +539,6 @@ class EOIFactory(factory.django.DjangoModelFactory):
     def reviewers(self, create, extracted, **kwargs):
         agency_members = User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?")
         count = random.randint(2, 4)
-        values = []
         idx = agency_members.count()
         while count and idx:
             count -= 1
@@ -593,7 +580,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
                     ds_justification_select=[random.choice(list(JUSTIFICATION_FOR_DIRECT_SELECTION._db_values))],
                     justification_reason="good reason",
                 )
-            self.selected_source = DIRECT_SELECTION_SOURCE.cso
+            self.selected_source = DIRECT_SELECTION_SOURCE.un
             self.save()
 
         elif self.display_type == EOI_TYPES.open:
@@ -623,7 +610,6 @@ class EOIFactory(factory.django.DjangoModelFactory):
     @factory.post_generation
     def locations(self, create, extracted, **kwargs):
         count = random.randint(0, 3)
-        values = []
         while count:
             count -= 1
             self.locations.add(PointFactory())

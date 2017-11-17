@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
 from agency.models import AgencyMember
-from partner.models import Partner, PartnerMember
+from partner.models import PartnerMember
 from project.models import Application
 from .consts import POWER_MEMBER_ROLES, MEMBER_ROLES
 

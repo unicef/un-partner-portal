@@ -8,7 +8,7 @@ from common.consts import (
     PARTNER_TYPES,
     POLICY_AREA_CHOICES,
 )
-from common.models import Point, AdminLevel1
+from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (CommonFileSerializer,
                                 SpecializationSerializer,
@@ -167,8 +167,7 @@ class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
         model = PartnerHeadOrganization
         fields = "__all__"
         read_only_fields = (
-            'first_name',
-            'last_name',
+            'fullname',
             'email',
         )
 
