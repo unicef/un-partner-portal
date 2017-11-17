@@ -64,7 +64,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const { params: { applicationId } } = ownProps;
   return {
     updateApplication: body => dispatch(updateApplication(
-      applicationId, body)),
+      applicationId || ownProps.applicationId, body)),
     submit: () => dispatch(submit('withdrawApplication')),
   };
 };
