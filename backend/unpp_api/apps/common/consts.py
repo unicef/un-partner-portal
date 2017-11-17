@@ -204,7 +204,7 @@ ACCEPTED_DECLINED = Choices(
 )
 
 DIRECT_SELECTION_SOURCE = Choices(
-    ('CSO', 'cso', 'CSO-Initiated'),
+    ('UCN', 'ucn', 'Unsolicited Concept Note'),
     ('UNI', 'un', 'UN-Initiated'),
 )
 

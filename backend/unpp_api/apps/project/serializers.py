@@ -784,7 +784,7 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         eoi.agency = app.agency
         # we can use get direct because agent have one agency office
         eoi.agency_office = submitter.agency_members.get().office
-        eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
+        eoi.selected_source = DIRECT_SELECTION_SOURCE.ucn
 
         eoi.save()
         for focal_point in focal_points:
