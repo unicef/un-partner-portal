@@ -92,7 +92,7 @@ class PartnerApplicationListFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { project_title, agency, did_win, country_code, specialization, eoi } = values;
+    const { project_title, agency, did_win, country_code, specializations, eoi } = values;
     const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
 
     history.push({
@@ -102,7 +102,7 @@ class PartnerApplicationListFilter extends Component {
         agency: agencyQ,
         did_win,
         country_code,
-        specialization,
+        specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         eoi,
       }),
     });
@@ -149,6 +149,9 @@ class PartnerApplicationListFilter extends Component {
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
+                selectFieldProps={{
+                  multiple: true,
+                }}
                 values={specs}
                 sections
                 optional
@@ -228,11 +231,11 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { agency } = {} } = ownProps.location;
   const { query: { did_win } = {} } = ownProps.location;
-  const { query: { specialization } = {} } = ownProps.location;
+  const { query: { specializations = '' } = {} } = ownProps.location;
   const { query: { eoi } = {} } = ownProps.location;
 
   const agencyQ = Number(agency);
-
+  const specializationsQ = specializations && R.map(Number, specializations.split(','));
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
@@ -245,7 +248,7 @@ const mapStateToProps = (state, ownProps) => {
       country_code,
       agency: agencyQ,
       did_win,
-      specialization,
+      specializations: specializationsQ,
       eoi,
     },
   };
