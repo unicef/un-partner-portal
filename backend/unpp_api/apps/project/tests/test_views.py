@@ -149,18 +149,28 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             'deadline_date': date.today(),
             'notif_results_date': date.today(),
             'has_weighting': True,
-            'assessment_criterias': [
+            'assessments_criteria': [
                 {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'weight': 10},
                 {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'weight': 40},
             ],
         }
 
         response = self.client.post(self.url, data=payload, format='json')
+        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertEquals(response.data['assessments_criteria'],
+                          ['The sum of all weight criteria must be equal to 100.'])
+
+        payload['assessments_criteria'].extend([
+            {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'weight': 20},
+            {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 30},
+        ])
+        response = self.client.post(self.url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         eoi = EOI.objects.last()
         self.assertEquals(response.data['title'], payload['title'])
         self.assertEquals(eoi.created_by.id, self.user.id)
         self.assertEquals(response.data['id'], eoi.id)
+        self.assertTrue(eoi.is_weight_adjustments_ok, 'The sum of all weight criteria must be equal to 100.')
 
         # invite partners
         url = reverse('projects:eoi-detail', kwargs={"pk": eoi.id})
