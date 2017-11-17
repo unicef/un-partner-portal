@@ -19,7 +19,6 @@ class LocationsMapField extends Component {
 
     this.saveLocation = this.saveLocation.bind(this);
     this.removeLocation = this.removeLocation.bind(this);
-    this.selectedLocations = this.selectedLocations.bind(this);
   }
 
   saveLocation(newLocation) {

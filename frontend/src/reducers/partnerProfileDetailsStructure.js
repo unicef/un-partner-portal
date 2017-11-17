@@ -1,4 +1,13 @@
 const partnerDetailsStructure = {
+  completion: {
+    identification_is_complete: null,
+    contact_is_complete: null,
+    mandatemission_complete: null,
+    funding_complete: null,
+    collaboration_complete: null,
+    proj_impl_is_complete: null,
+    other_info_is_complete: null,
+  },
   identification: {
     basic: {
       alias_name: null,
