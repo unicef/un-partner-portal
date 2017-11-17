@@ -580,7 +580,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
                     ds_justification_select=[random.choice(list(JUSTIFICATION_FOR_DIRECT_SELECTION._db_values))],
                     justification_reason="good reason",
                 )
-            self.selected_source = DIRECT_SELECTION_SOURCE.cso
+            self.selected_source = DIRECT_SELECTION_SOURCE.un
             self.save()
 
         elif self.display_type == EOI_TYPES.open:
