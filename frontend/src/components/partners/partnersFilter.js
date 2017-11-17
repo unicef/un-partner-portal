@@ -97,7 +97,7 @@ class PartnersFilter extends Component {
         verification_status,
         display_type,
         country_code,
-        specializations,
+        specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         concern,
       }),
     });
@@ -153,6 +153,9 @@ class PartnersFilter extends Component {
                 label={messages.labels.sectorArea}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
+                selectFieldProps={{
+                  multiple: true,
+                }}
                 values={specs}
                 sections
                 optional
@@ -213,8 +216,10 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { verification_status } = {} } = ownProps.location;
   const { query: { display_type } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
-  const { query: { specializations } = {} } = ownProps.location;
+  const { query: { specializations = '' } = {} } = ownProps.location;
   const { query: { concern } = {} } = ownProps.location;
+
+  const specializationsQ = specializations && R.map(Number, specializations.split(','));
 
   return {
     countries: selectNormalizedCountries(state),
@@ -228,7 +233,7 @@ const mapStateToProps = (state, ownProps) => {
       verification_status,
       display_type,
       country_code,
-      specializations,
+      specializations: specializationsQ,
       concern,
     },
   };
