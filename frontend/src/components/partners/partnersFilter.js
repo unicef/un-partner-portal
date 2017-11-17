@@ -8,21 +8,19 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SelectForm from '../forms/selectForm';
-import CheckboxForm from '../forms/checkboxForm';
 import TextFieldForm from '../forms/textFieldForm';
-import Agencies from '../forms/fields/projectFields/agencies';
-import { selectMappedSpecializations, selectNormalizedCountries } from '../../store';
+import { selectNormalizedPopulationsOfConcernGroups, selectMappedSpecializations, selectNormalizedCountries, selectNormalizedOrganizationTypes } from '../../store';
 import resetChanges from '../eois/filters/eoiHelper';
 
 const messages = {
   choose: 'Choose',
   labels: {
-    search: 'Search',
+    name: 'Legal Name',
     country: 'Country',
-    sector: 'Sector & Area of Specialization',
-    type: 'Type of Application',
-    agency: 'Agency',
-    show: 'Show Only Selected Applications',
+    verificationStatus: 'Verification Status',
+    typeOfOrganization: 'Type of Organization',
+    sectorArea: 'Sector & Area of Specialization',
+    populations: 'Populations of concern',
   },
   clear: 'clear',
   submit: 'submit',
@@ -39,19 +37,23 @@ const styleSheet = theme => ({
   },
 });
 
-
-export const STATUS_VAL = [
+const VERIFICATION_MENU = [
   {
-    value: true,
-    label: 'Active',
+    value: 'none',
+    label: 'All',
   },
   {
-    value: false,
-    label: 'Finalized',
+    value: 'true',
+    label: 'Verified',
+  },
+  {
+    value: 'false',
+    label: 'Not Verified',
   },
 ];
 
-class PartnerApplicationListFilter extends Component {
+
+class PartnersFilter extends Component {
   constructor(props) {
     super(props);
 
@@ -63,28 +65,21 @@ class PartnerApplicationListFilter extends Component {
   }
 
   componentWillMount() {
-    const { pathName, query, agencyId } = this.props;
-
-    const agency = this.props.query.agency ? this.props.query.agency : agencyId;
+    const { pathName, query } = this.props;
 
     history.push({
       pathname: pathName,
-      query: R.merge(query,
-        { agency },
-      ),
+      query,
     });
   }
 
   componentWillReceiveProps(nextProps) {
     if (R.isEmpty(nextProps.query)) {
       const { pathname } = nextProps.location;
-      const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
 
       history.push({
         pathname,
-        query: R.merge(this.props.query,
-          { agency: agencyQ },
-        ),
+        query: this.props.query,
       });
     }
   }
@@ -92,37 +87,29 @@ class PartnerApplicationListFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { project_title, agency, did_win, country_code, specializations, eoi } = values;
-    const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
+    const { legal_name, verification_status, display_type,
+      country_code, specializations, concern } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
-        project_title,
-        agency: agencyQ,
-        did_win,
+        legal_name,
+        verification_status,
+        display_type,
         country_code,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
-        eoi,
+        concern,
       }),
     });
   }
 
   resetForm() {
-    const query = resetChanges(this.props.pathName, this.props.query);
-
-    const { pathName, agencyId } = this.props;
-
-    history.push({
-      pathname: pathName,
-      query: R.merge(query,
-        { agency: agencyId },
-      ),
-    });
+    resetChanges(this.props.pathName, this.props.query);
   }
 
   render() {
-    const { classes, countries, eoiTypes, specs, handleSubmit, reset } = this.props;
+    const { classes, countries, partnersType, concernGroups,
+      specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -130,13 +117,30 @@ class PartnerApplicationListFilter extends Component {
           <Grid container direction="row" >
             <Grid item sm={4} xs={12} >
               <TextFieldForm
-                label={messages.labels.search}
-                placeholder={messages.labels.search}
-                fieldName="project_title"
+                label={messages.labels.name}
+                fieldName="legal_name"
                 optional
               />
             </Grid>
             <Grid item sm={4} xs={12}>
+              <SelectForm
+                fieldName="verification_status"
+                label={messages.labels.verificationStatus}
+                values={VERIFICATION_MENU}
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <SelectForm
+                fieldName="display_type"
+                label={messages.labels.typeOfOrganization}
+                values={partnersType}
+                optional
+              />
+            </Grid>
+          </Grid>
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12} >
               <SelectForm
                 fieldName="country_code"
                 label={messages.labels.country}
@@ -146,7 +150,7 @@ class PartnerApplicationListFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <SelectForm
-                label={messages.labels.sector}
+                label={messages.labels.sectorArea}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
                 selectFieldProps={{
@@ -157,31 +161,12 @@ class PartnerApplicationListFilter extends Component {
                 optional
               />
             </Grid>
-          </Grid>
-          <Grid container direction="row" >
-            <Grid item sm={3} xs={12} >
+            <Grid item sm={4} xs={12}>
               <SelectForm
-                label={messages.labels.type}
-                placeholder={messages.labels.choose}
-                fieldName="eoi"
-                values={eoiTypes}
+                fieldName="concern"
+                label={messages.labels.populations}
+                values={concernGroups}
                 optional
-              />
-            </Grid>
-            <Grid item sm={3} xs={12}>
-              <Agencies
-                fieldName="agency"
-                label={messages.labels.agency}
-                placeholder={messages.choose}
-                optional
-              />
-            </Grid>
-            <Grid item sm={6} xs={12}>
-              <CheckboxForm
-                label={messages.labels.show}
-                fieldName="did_win"
-                optional
-                warn
               />
             </Grid>
           </Grid>
@@ -196,7 +181,7 @@ class PartnerApplicationListFilter extends Component {
               color="accent"
               onTouchTap={handleSubmit(this.onSearch)}
             >
-              {messages.labels.search}
+              {messages.submit}
             </Button>
           </Grid>
         </Grid>
@@ -205,7 +190,7 @@ class PartnerApplicationListFilter extends Component {
   }
 }
 
-PartnerApplicationListFilter.propTypes = {
+PartnersFilter.propTypes = {
   /**
    *  reset function
    */
@@ -213,49 +198,48 @@ PartnerApplicationListFilter.propTypes = {
   classes: PropTypes.object.isRequired,
   countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
-  eoiTypes: PropTypes.array.isRequired,
+  partnersType: PropTypes.array.isRequired,
+  concernGroups: PropTypes.array.isRequired,
   pathName: PropTypes.string,
   query: PropTypes.object,
-  agencyId: PropTypes.string,
 };
 
-const formEoiFilter = reduxForm({
-  form: 'partnerApplicationsForm',
+const formPartnersFilter = reduxForm({
+  form: 'partnersFilter',
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
   enableReinitialize: true,
-})(PartnerApplicationListFilter);
+})(PartnersFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { project_title } = {} } = ownProps.location;
+  const { query: { legal_name } = {} } = ownProps.location;
+  const { query: { verification_status } = {} } = ownProps.location;
+  const { query: { display_type } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
-  const { query: { agency } = {} } = ownProps.location;
-  const { query: { did_win } = {} } = ownProps.location;
   const { query: { specializations = '' } = {} } = ownProps.location;
-  const { query: { eoi } = {} } = ownProps.location;
+  const { query: { concern } = {} } = ownProps.location;
 
-  const agencyQ = Number(agency);
   const specializationsQ = specializations && R.map(Number, specializations.split(','));
-  
+
   return {
     countries: selectNormalizedCountries(state),
+    partnersType: selectNormalizedOrganizationTypes(state),
     specs: selectMappedSpecializations(state),
-    eoiTypes: [],
+    concernGroups: selectNormalizedPopulationsOfConcernGroups(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
-    agencyId: state.session.agencyId,
     initialValues: {
-      project_title,
+      legal_name,
+      verification_status,
+      display_type,
       country_code,
-      agency: agencyQ,
-      did_win,
       specializations: specializationsQ,
-      eoi,
+      concern,
     },
   };
 };
 
-const connected = connect(mapStateToProps, null)(formEoiFilter);
-const withRouterEoiFilter = withRouter(connected);
+const connected = connect(mapStateToProps, null)(formPartnersFilter);
+const withRouterPartnersFilter = withRouter(connected);
 
-export default (withStyles(styleSheet, { name: 'partnerApplicationsFilter' })(withRouterEoiFilter));
+export default (withStyles(styleSheet, { name: 'partnersFilter' })(withRouterPartnersFilter));
