@@ -209,9 +209,9 @@ DIRECT_SELECTION_SOURCE = Choices(
 )
 
 COMPLETED_REASON = Choices(
-    ('Par', 'partners', 'Completed - Partners selected'),
-    ('Can', 'canceled', 'Completed - Canceled'),
-    ('NoC', 'no_candidate', 'Completed - No successful candidate'),
+    ('Par', 'partners', 'Finalized - Partner accepted'),
+    ('Can', 'canceled', 'Finalized - CFEI canceled'),
+    ('NoC', 'no_candidate', 'Finalized - No successful applicant'),
 )
 
 BUDGET_CHOICES = Choices(
