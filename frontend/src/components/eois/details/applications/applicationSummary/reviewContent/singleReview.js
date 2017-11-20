@@ -38,7 +38,7 @@ export const calcTotalScore = assessmentInfo => assessmentInfo.scores.reduce((to
 }, 0);
 
 const markAsYou = (text, name, isYou) =>
-  `${name.first_name} ${name.last_name}${isYou ? ` (${messages.you})` : ''}`;
+  `${name.fullname} ${isYou ? ` (${messages.you})` : ''}`;
 
 const SingleReview = (props) => {
   const { classes,

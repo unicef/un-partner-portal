@@ -17,15 +17,25 @@ import { changeTab } from '../../../reducers/partnerProfileEdit';
 
 const FIRST_INDEX = 0;
 
+const completionTabs = [
+  'identification_is_complete',
+  'contact_is_complete',
+  'mandatemission_complete',
+  'funding_complete',
+  'collaboration_complete',
+  'proj_impl_is_complete',
+  'other_info_is_complete',
+];
+
 const messages = {
   sections: [
-    { label: 'Identification', notComplete: true },
-    { label: 'Contact information', notComplete: false },
-    { label: 'Mandate & Mission', notComplete: false },
-    { label: 'Funding', notComplete: true },
-    { label: 'Collaboration', notComplete: true },
-    { label: 'Project Implementation', notComplete: false },
-    { label: 'Other Information', notComplete: false },
+    { label: 'Identification' },
+    { label: 'Contact information' },
+    { label: 'Mandate & Mission' },
+    { label: 'Funding' },
+    { label: 'Collaboration' },
+    { label: 'Project Implementation' },
+    { label: 'Other Information' },
   ],
   sectionComponents: [
     <PartnerProfileIdentification readOnly />,
@@ -54,6 +64,8 @@ class OrganizationProfileOverview extends Component {
 
 
   render() {
+    const { completion } = this.props;
+    
     return (
       <div>
         {messages.sections.map(item =>
@@ -61,7 +73,7 @@ class OrganizationProfileOverview extends Component {
             <CollapsableItem
               expanded={R.indexOf(item, messages.sections) === FIRST_INDEX}
               title={item.label}
-              warning={item.notComplete}
+              warning={completion ? completion[completionTabs[R.indexOf(item, messages.sections)]] : false}
               handleEditMode={() => this.handleEditMode(R.indexOf(item, messages.sections))}
               component={messages.sectionComponents[R.indexOf(item, messages.sections)]}
             />
@@ -78,6 +90,7 @@ OrganizationProfileOverview.propTypes = {
   changeTab: PropTypes.func.isRequired,
   partnerId: PropTypes.string.isRequired,
   loadPartnerProfileDetails: PropTypes.func,
+  completion: PropTypes.array,
 };
 
 const mapDispatch = dispatch => ({
@@ -85,7 +98,10 @@ const mapDispatch = dispatch => ({
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
 });
 
-const mapStateToProps = (state, ownProps) => ({ partnerId: ownProps.params.id });
+const mapStateToProps = (state, ownProps) => ({
+  partnerId: ownProps.params.id,
+  completion: state.partnerProfileDetails.partnerProfileDetails.completion,
+});
 
 const connectedOrganizationProfileOverview = connect(
   mapStateToProps, mapDispatch)(OrganizationProfileOverview);

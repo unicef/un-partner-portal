@@ -14,7 +14,6 @@ import Collaboration from './collaboration/partnerProfileCollaboration';
 import OtherInfo from './otherInfo/partnerProfileOtherInfo';
 import { changeTab } from '../../../reducers/partnerProfileEdit';
 
-
 const styleSheet = theme => ({
   root: {
     flexGrow: 1,
@@ -84,8 +83,7 @@ TabsContainer.propTypes = {
 const mapState = (state, ownProps) => ({
   location: ownProps.params,
   currentTab: state.partnerProfileEdit.currentTab,
-  tabs: state.partnerProfileDetailsNav.tabs,
-  incompleteTabs: state.partnerProfileEdit.incompleteTabs,
+  tabs: state.partnerProfileDetailsNav.tabs, 
 });
 
 const mapDispatch = dispatch => ({
