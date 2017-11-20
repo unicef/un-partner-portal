@@ -50,7 +50,7 @@ export const selectionCriteria = (value) => {
     const allWeights = pluck('weight', value);
     const max = 100;
     const totalWeights = sum(allWeights);
-    if (totalWeights > max) return 'Sum of all weights cannot exceed 100';
+    if (totalWeights !== max) return 'Sum of all weights must be equal to 100';
   }
   return undefined;
 };
