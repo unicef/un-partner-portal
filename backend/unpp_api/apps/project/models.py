@@ -15,7 +15,9 @@ from common.consts import (
     COMPLETED_REASON,
 )
 from common.utils import get_countries_code_from_queryset
-from validators import validate_weight_adjustments
+from validators import (
+    validate_weight_adjustments,
+)
 
 
 class EOI(TimeStampedModel):

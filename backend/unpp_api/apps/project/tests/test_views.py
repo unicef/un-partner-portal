@@ -517,6 +517,29 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         app.eoi.save()
 
         response = self.client.post(url, data=payload, format='json')
+        self.assertTrue(statuses.is_client_error(response.status_code),
+                        'You can score only selection criteria defined in CFEI.')
+        self.assertEquals(response.data['non_field_errors'],
+                          ["You can score only selection criteria defined in CFEI."])
+
+        scores = []
+        for criterion in app.eoi.assessments_criteria:
+            scores.append({
+                'selection_criteria': criterion.get('selection_criteria'), 'score': 100
+            })
+        payload['scores'] = scores
+        response = self.client.post(url, data=payload, format='json')
+        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertEquals(response.data['non_field_errors'],
+                          ["The maximum score is equal to the value entered for the weight."])
+
+        scores = []
+        for criterion in app.eoi.assessments_criteria:
+            scores.append({
+                'selection_criteria': criterion.get('selection_criteria'), 'score': criterion.get('weight') - 1
+            })
+        payload['scores'] = scores
+        response = self.client.post(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['date_reviewed'], str(date.today()))
         self.assertEquals(response.data['reviewer'], self.user.id)
@@ -539,12 +562,13 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         self.assertEquals(response.data['id'], assessment_id)
         self.assertEquals(Assessment.objects.last().note, payload['note'])
 
+        scores = []
+        for criterion in app.eoi.assessments_criteria:
+            scores.append({
+                'selection_criteria': criterion.get('selection_criteria'), 'score': criterion.get('weight') - 3
+            })
         payload = {
-            'scores': [
-                {'selection_criteria': SELECTION_CRITERIA_CHOICES.sector, 'score': 5},
-                {'selection_criteria': SELECTION_CRITERIA_CHOICES.local, 'score': 7},
-                {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'score': 6},
-            ],
+            'scores': scores,
             'note': note,
         }
         response = self.client.put(url, data=payload, format='json')
