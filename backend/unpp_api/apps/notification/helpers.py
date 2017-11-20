@@ -8,7 +8,7 @@ from django.template import Context, Template
 from django.contrib.contenttypes.models import ContentType
 
 from account.models import User
-from common.consts import COMPLETED_REASON, MEMBER_ROLES
+from common.consts import COMPLETED_REASON
 from .models import Notification, NotifiedUser
 from .consts import NOTIFICATION_KINDS
 
@@ -51,7 +51,6 @@ def send_notification(source, obj, users, context=None, send_in_feed=True,
 
     if send_in_feed:
         feed_alert(source, notif_dict.get('subject'), body, users, obj)
-
 
 
 def get_template_as_str(filename, context):

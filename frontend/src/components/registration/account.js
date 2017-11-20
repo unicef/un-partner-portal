@@ -40,22 +40,11 @@ class Account extends Component {
       <Grid item>
         <Grid container direction="column" spacing={16}>
           <Grid item>
-            <Grid container direction="row">
-              <Grid item sm={6} xs={12}>
-                <TextFieldForm
-                  label="Your First Name"
-                  placeholder="Provide First Name"
-                  fieldName="json.user.first_name"
-                />
-              </Grid>
-              <Grid item sm={6} xs={12}>
-                <TextFieldForm
-                  label="Your Last Name"
-                  placeholder="Provide Last Name"
-                  fieldName="json.user.last_name"
-                />
-              </Grid>
-            </Grid>
+            <TextFieldForm
+              label="Your Personal Name"
+              placeholder="Provide Personal Name"
+              fieldName="json.user.fullname"
+            />
           </Grid>
           <Grid item sm={6} xs={12}>
             <TextFieldForm

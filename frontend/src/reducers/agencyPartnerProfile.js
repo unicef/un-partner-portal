@@ -26,8 +26,7 @@ const savePartnerProfileOverview = (state, action) => {
     operationCountry: wholeState.countries[R.path(['mailing_address', 'country'], partnerDetails)],
     location: R.path(['mailing_address', 'city'], partnerDetails),
     head: {
-      firstName: R.path(['org_head', 'first_name'], partnerDetails),
-      lastName: R.path(['org_head', 'last_name'], partnerDetails),
+      fullname: R.path(['org_head', 'fullname'], partnerDetails),
       title: R.path(['org_head', 'job_title'], partnerDetails),
       telephone: R.path(['org_head', 'telephone'], partnerDetails),
       mobile: R.path(['org_head', 'mobile'], partnerDetails),

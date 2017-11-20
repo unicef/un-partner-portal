@@ -38,7 +38,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
         response = self.client.post(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
-        self.assertEquals(response.data['submitter']['name'], self.user.get_user_name())
+        self.assertEquals(response.data['submitter']['name'], self.user.get_fullname())
         self.assertEquals(response.data['flag_type'], FLAG_TYPES.yellow)
         self.assertEquals(response.data['is_valid'], True)
 
