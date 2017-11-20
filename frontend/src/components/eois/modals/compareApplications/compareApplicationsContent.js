@@ -10,7 +10,7 @@ import VerificationText from '../../../partners/profile/common/verificationText'
 import FlaggingStatus from '../../../partners/profile/common/flaggingStatus';
 
 const messages = {
-  labelAward: 'Select comparison(s) you want to award',
+  labelAward: 'Choose successful applicant(s)',
   award: 'Award',
 };
 
