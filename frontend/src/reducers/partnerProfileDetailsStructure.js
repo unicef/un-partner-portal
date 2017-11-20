@@ -40,10 +40,10 @@ const partnerDetailsStructure = {
       city: null,
       country: null,
       zip_code: null,
-      fax: null,
+      mailing_fax: null,
       website: null,
       org_email: null,
-      telephone: null,
+      mailing_telephone: null,
     },
     authorised_officials: {
       have_board_directors: null,
