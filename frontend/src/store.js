@@ -265,6 +265,14 @@ export const selectApplication = (state, id) =>
   applicationDetailsSelector.selectApplication(
     state.applicationDetails.applicationDetails, id);
 
+export const selectApplicationWithdrawalStatus = (state, id) =>
+  applicationDetailsSelector.selectApplicationWithdrawStatus(
+    state.applicationDetails.applicationDetails, id);
+
+export const selectApplicationCurrentStatus = (state, id) =>
+  applicationDetailsSelector.selectApplicationCurrentStatus(
+    state.applicationDetails.applicationDetails, id);
+
 export const selectReview = (state, reviewId) =>
   applicationReviewsSelector.selectReview(state.applicationReviews, reviewId);
 
