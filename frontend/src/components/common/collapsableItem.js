@@ -101,7 +101,7 @@ class CollapsableItem extends Component {
           </IconButton>
           {title}
           <div className={`${classes.alignRight} ${classes.noPrint}`}>
-            {warning ?
+            {!warning ?
               <div className={classes.padding}>
                 <Warning className={classes.icon} />
               </div>
