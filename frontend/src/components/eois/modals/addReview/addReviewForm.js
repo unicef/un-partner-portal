@@ -13,20 +13,25 @@ import { selectCfeiCriteria, selectApplicationProject } from '../../../../store'
 import TextFieldForm from '../../../forms/textFieldForm';
 import SpreadContent from '../../../common/spreadContent';
 
-import { numerical } from '../../../../helpers/validation';
+import { validateReviewScores } from '../../../../helpers/validation';
 
 const messages = {
   criteria: 'Criteria',
   score: 'Your score',
 };
 
-const styleSheet = () => ({
+const styleSheet = theme => ({
   spread: {
     minWidth: 500,
   },
+  weight: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    minHeight: theme.spacing.unit * 4,
+  },
 });
 
-const renderCriteria = ({ criteria, allCriteria, fields }) => (<div>
+const renderCriteriaBase = ({ classes, criteria, allCriteria, fields }) => (<div>
   {fields.map((name, index) => (<div>
     <Grid container direction="row" align="center" justify="center">
       <Grid item xs={9}>
@@ -37,7 +42,7 @@ const renderCriteria = ({ criteria, allCriteria, fields }) => (<div>
           {criteria[index].description}
         </Typography>
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={2}>
         <TextFieldForm
           label=""
           fieldName={`${name}.score`}
@@ -45,19 +50,30 @@ const renderCriteria = ({ criteria, allCriteria, fields }) => (<div>
           textFieldProps={{
             inputProps: {
               min: '1',
-              max: '100',
+              max: criteria[index].weight || '100',
               type: 'number',
             },
           }}
           normalize={value => parseInt(value)}
-          validation={[numerical]}
         />
       </Grid>
+      {criteria[index].weight && <Grid item xs={1}>
+        <Typography className={classes.weight}>{`/${criteria[index].weight}`}</Typography>
+      </Grid>}
     </Grid>
     <Divider />
   </div>))}
 </div>
 );
+
+renderCriteriaBase.propTypes = {
+  classes: PropTypes.object,
+  criteria: PropTypes.array,
+  allCriteria: PropTypes.array,
+  fields: PropTypes.array,
+};
+
+const renderCriteria = withStyles(styleSheet)(renderCriteriaBase);
 
 
 const AddReview = (props) => {
@@ -100,6 +116,7 @@ AddReview.propTypes = {
 
 const formAddReview = reduxForm({
   form: 'addReview',
+  validate: validateReviewScores,
 })(AddReview);
 
 const mapStateToProps = (state, ownProps) => {
