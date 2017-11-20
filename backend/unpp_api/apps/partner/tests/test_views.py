@@ -154,33 +154,31 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         authorised_officers = response.data['authorised_officers']
         working_languages_other = 'PL'
         connectivity_excuse = "test excuse"
-        first_name = "Leszek"
+        fullname = "Leszek Test"
         email = "leszek@unicef.org"
         website = 'http://test.pl'
         for director in directors:
-            director['first_name'] = first_name
+            director['fullname'] = fullname
             director['authorized'] = True
 
         for authorised_officer in authorised_officers:
-            authorised_officer['first_name'] = first_name
+            authorised_officer['fullname'] = fullname
             authorised_officer['email'] = email
 
         directors.append({
-            'first_name': first_name,
-            'last_name': 'Sparow',
+            'fullname': fullname,
             'job_title': 'PM Assistant',
             'authorized': True
         })
         authorised_officers.append({
-            'first_name': first_name,
-            'last_name': 'Sparow',
+            'fullname': fullname,
             'job_title': 'PM Assistant',
             'telephone': '(123) 234 569',
             'fax': u'(123) 234 566',
             'email': email
         })
         payload = {
-            'org_head': {"first_name": first_name, "email": email},
+            'org_head': {"fullname": fullname, "email": email},
             'mailing_address': {'website': website},
             'connectivity_excuse': connectivity_excuse,
             'working_languages_other': working_languages_other,
@@ -192,18 +190,18 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['working_languages_other'], working_languages_other)
         self.assertEquals(response.data['connectivity_excuse'], connectivity_excuse)
         # org head can't be changed
-        self.assertTrue(response.data['org_head']['first_name'] != first_name)
+        self.assertTrue(response.data['org_head']['fullname'] != fullname)
         self.assertTrue(response.data['org_head']['email'] != email)
         self.assertEquals(response.data['mailing_address']['website'], website)
         self.assertEquals(len(response.data['directors']), len(directors))
 
         for director in response.data['directors']:
-            self.assertEquals(director['first_name'], first_name)
+            self.assertEquals(director['fullname'], fullname)
             self.assertEquals(director['authorized'], True)
 
         authorised_officers = response.data['authorised_officers']
         for authorised_officer in authorised_officers:
-            self.assertEquals(authorised_officer['first_name'], first_name)
+            self.assertEquals(authorised_officer['fullname'], fullname)
             self.assertEquals(authorised_officer['email'], email)
 
         payload = {
@@ -214,7 +212,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['connectivity_excuse'], payload['connectivity_excuse'])
         self.assertEquals(partner.authorised_officers.count(), len(authorised_officers))
         for authorised_officer in partner.authorised_officers.all():
-            self.assertEquals(authorised_officer.first_name, first_name)
+            self.assertEquals(authorised_officer.fullname, fullname)
             self.assertEquals(authorised_officer.email, email)
 
     def test_mandate_mission(self):
@@ -373,7 +371,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         payload['management_approach_desc'] = text
         payload['comment'] = text
         payload['regular_audited'] = False
-        payload['experienced_staff']  = True
+        payload['experienced_staff'] = True
         payload['have_separate_bank_account'] = True
         payload['have_bank_account'] = True
         payload['capacity_assessment'] = True

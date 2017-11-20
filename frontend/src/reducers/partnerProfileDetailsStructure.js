@@ -52,8 +52,7 @@ const partnerDetailsStructure = {
       authorised_officers: null,
     },
     org_head: {
-      first_name: null,
-      last_name: null,
+      fullname: null,
       job_title: null,
       telephone: null,
       fax: null,

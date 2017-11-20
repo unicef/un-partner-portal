@@ -396,7 +396,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
                           ['Only Focal Point/Creator is allowed to pre-select/reject an application.'])
 
         self.client.logout()
-        self.client.login(username=app.eoi.created_by.username, password='test')
+        self.client.login(email=app.eoi.created_by.email, password='test')
 
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
@@ -588,7 +588,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         AgencyMemberFactory.create_batch(4)
 
         user = User.objects.filter(agency_members__isnull=False).first()
-        self.client.login(username=user.username, password='test')
+        self.client.login(email=user.email, password='test')
 
         url = reverse('projects:convert-unsolicited', kwargs={'pk': response.data['id']})
         start_date = date.today()
