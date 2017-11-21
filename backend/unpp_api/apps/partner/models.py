@@ -255,7 +255,6 @@ class PartnerProfile(TimeStampedModel):
         ethic_fraud_comment = self.partner.mandate_mission.ethic_fraud_comment
         population_of_concern = self.partner.mandate_mission.population_of_concern
         required_fields = {
-            'proj_background_rationale': self.partner.mandate_mission.background_and_rationale,
             'managate_and_mission': self.partner.mandate_mission.mandate_and_mission,
             'governance_structure': self.partner.mandate_mission.governance_structure,
             'governance_hq': self.partner.mandate_mission.governance_hq,
