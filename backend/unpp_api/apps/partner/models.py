@@ -349,8 +349,9 @@ class PartnerProfile(TimeStampedModel):
             'assessment_report':
                 self.partner.audit.assessment_report if self.partner.audit.capacity_assessment else True,
             'key_result': self.partner.report.key_result,
-            'publish_annual_reports': self.partner.report.publish_annual_reports,
-            'publish_annual_reports_last_report': self.partner.report.last_report,
+            'publish_annual_reports': self.partner.report.publish_annual_reports is not None,
+            'publish_annual_reports_last_report':
+                self.partner.report.last_report if self.partner.report.publish_annual_reports else True,
             'publish_annual_reports_artifact': rep_artifact if self.partner.report.publish_annual_reports else True,
         }
 
