@@ -219,7 +219,6 @@ class PartnerProfile(TimeStampedModel):
         if self.registration_to_operate_in_country:
             required_fields.update({
                 'registration_date': self.registration_date,
-                'registration_number': self.registration_number,
                 'registration_doc': self.registration_doc,
             })
         elif self.registration_to_operate_in_country is False:
