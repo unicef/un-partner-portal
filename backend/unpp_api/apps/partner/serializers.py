@@ -646,41 +646,57 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
 
 class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
-    have_management_approach = serializers.BooleanField(source="profile.have_management_approach")
-    management_approach_desc = serializers.CharField(source="profile.management_approach_desc")
-    have_system_monitoring = serializers.BooleanField(source="profile.have_system_monitoring")
-    system_monitoring_desc = serializers.CharField(source="profile.system_monitoring_desc")
-    have_feedback_mechanism = serializers.BooleanField(source="profile.have_feedback_mechanism")
-    feedback_mechanism_desc = serializers.CharField(source="profile.feedback_mechanism_desc")
-    org_acc_system = serializers.ChoiceField(source="profile.org_acc_system", choices=FINANCIAL_CONTROL_SYSTEM_CHOICES)
-    method_acc = serializers.ChoiceField(source="profile.method_acc", choices=METHOD_ACC_ADOPTED_CHOICES)
-    have_system_track = serializers.BooleanField(source="profile.have_system_track")
-    financial_control_system_desc = serializers.CharField(source="profile.financial_control_system_desc")
+    have_management_approach = serializers.BooleanField(
+        source="profile.have_management_approach")
+    management_approach_desc = serializers.CharField(
+        source="profile.management_approach_desc", allow_blank=True, allow_null=True)
+    have_system_monitoring = serializers.BooleanField(
+        source="profile.have_system_monitoring")
+    system_monitoring_desc = serializers.CharField(
+        source="profile.system_monitoring_desc", allow_blank=True, allow_null=True)
+    have_feedback_mechanism = serializers.BooleanField(
+        source="profile.have_feedback_mechanism")
+    feedback_mechanism_desc = serializers.CharField(
+        source="profile.feedback_mechanism_desc", allow_blank=True, allow_null=True)
+    org_acc_system = serializers.ChoiceField\
+        (source="profile.org_acc_system", choices=FINANCIAL_CONTROL_SYSTEM_CHOICES)
+    method_acc = serializers.ChoiceField(
+        source="profile.method_acc", choices=METHOD_ACC_ADOPTED_CHOICES)
+    have_system_track = serializers.BooleanField(
+        source="profile.have_system_track")
+    financial_control_system_desc = serializers.CharField(
+        source="profile.financial_control_system_desc", allow_blank=True, allow_null=True)
     internal_controls = PartnerInternalControlSerializer(many=True)
-    experienced_staff = serializers.BooleanField(source="profile.experienced_staff")
-    experienced_staff_desc = serializers.CharField(source="profile.experienced_staff_desc")
+    experienced_staff = serializers.BooleanField(
+        source="profile.experienced_staff")
+    experienced_staff_desc = serializers.CharField(
+        source="profile.experienced_staff_desc", allow_blank=True, allow_null=True)
     area_policies = PartnerPolicyAreaSerializer(many=True)
-    have_bank_account = serializers.BooleanField(source="profile.have_bank_account")
-    have_separate_bank_account = serializers.BooleanField(source="profile.have_separate_bank_account")
-    explain = serializers.CharField(source="profile.explain")
+    have_bank_account = serializers.BooleanField(
+        source="profile.have_bank_account")
+    have_separate_bank_account = serializers.BooleanField(
+        source="profile.have_separate_bank_account")
+    explain = serializers.CharField(
+        source="profile.explain")
 
     regular_audited = serializers.BooleanField(source="audit.regular_audited")
-    regular_audited_comment = serializers.CharField(source="audit.regular_audited_comment")
+    regular_audited_comment = serializers.CharField(
+        source="audit.regular_audited_comment", allow_blank=True, allow_null=True)
     org_audits = serializers.ListField(source="audit.org_audits")
     most_recent_audit_report = CommonFileSerializer(source="audit.most_recent_audit_report", required=False)
-    audit_link_report = serializers.URLField(source="audit.link_report", required=False)
+    audit_link_report = serializers.URLField(source="audit.link_report", allow_blank=True, allow_null=True)
     major_accountability_issues_highlighted = serializers.BooleanField(
         source="audit.major_accountability_issues_highlighted")
     comment = serializers.CharField(source="audit.comment")
     capacity_assessment = serializers.BooleanField(source="audit.capacity_assessment")
     assessments = serializers.ListField(source="audit.assessments")
-    assessment_report = CommonFileSerializer(source="audit.assessment_report")
+    assessment_report = CommonFileSerializer(source="audit.assessment_report", allow_null=True)
 
     key_result = serializers.CharField(source="report.key_result")
     publish_annual_reports = serializers.BooleanField(source="report.publish_annual_reports")
-    last_report = serializers.DateField(source="report.last_report")
-    report = CommonFileSerializer(source="report.report", required=False)
-    link_report = serializers.URLField(source="report.link_report", required=False)
+    last_report = serializers.DateField(source="report.last_report", allow_null=True)
+    report = CommonFileSerializer(source="report.report", allow_null=True)
+    link_report = serializers.URLField(source="report.link_report", allow_blank=True, allow_null=True)
 
     has_finished = serializers.BooleanField(read_only=True, source="profile.proj_impl_is_complete")
 
