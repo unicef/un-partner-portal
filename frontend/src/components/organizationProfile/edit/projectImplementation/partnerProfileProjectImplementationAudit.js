@@ -74,7 +74,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               formName="partnerProfile"
               fieldName="most_recent_audit_report"
               label={messages.copyOfRecentAudit}
-              optional
+              optional={(mostRecentAuditReport || auditLinkReport)}
               warn={!(mostRecentAuditReport || auditLinkReport)}
               readOnly={readOnly}
             />
@@ -84,7 +84,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               label={messages.insertLink}
               fieldName="audit_link_report"
               validation={[url]}
-              optional
+              optional={(mostRecentAuditReport || auditLinkReport)}
               warn={!(mostRecentAuditReport || auditLinkReport)}
               readOnly={readOnly}
             />
