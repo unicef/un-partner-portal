@@ -308,7 +308,7 @@ class PartnerProfile(TimeStampedModel):
                 self.partner.collaboration_evidences.filter(mode=COLLABORATION_EVIDENCE_MODES.reference).exists(),
             'partnership_collaborate_institution': self.partnership_collaborate_institution is not None,
             'partnership_collaborate_institution_desc':
-                self.partnership_collaborate_institution_desc not in ['', None],
+                self.partnership_collaborate_institution_desc if self.partnership_collaborate_institution else True,
         }
 
         return all(required_fields.values())
