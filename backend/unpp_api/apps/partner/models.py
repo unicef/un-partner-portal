@@ -259,7 +259,6 @@ class PartnerProfile(TimeStampedModel):
             'managate_and_mission': self.partner.mandate_mission.mandate_and_mission,
             'governance_structure': self.partner.mandate_mission.governance_structure,
             'governance_hq': self.partner.mandate_mission.governance_hq,
-            'governance_organigram': self.partner.mandate_mission.governance_organigram,
             'ethic_safeguard': ethic_safeguard is not None,
             'ethic_safeguard_policy': ethic_safeguard_policy if ethic_safeguard is True else True,
             'ethic_safeguard_comment': ethic_safeguard_comment if ethic_safeguard is False else True,
