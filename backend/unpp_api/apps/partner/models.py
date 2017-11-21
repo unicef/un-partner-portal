@@ -237,11 +237,11 @@ class PartnerProfile(TimeStampedModel):
             'sreet_or_pobox': self.partner.mailing_address.street or self.partner.mailing_address.po_box,
             'city': self.partner.mailing_address.city,
             'country': self.partner.mailing_address.country,
-            'zip_code': self.partner.mailing_address.zip_code,
             'telephone': self.partner.mailing_address.telephone,
             'have_board_directors': self.have_board_directors is not None,
             'have_authorised_officers': self.have_authorised_officers is not None,
-            'connectivity': self.connectivity,
+            'connectivity': self.connectivity is not None,
+            'connectivity_exuse': self.connectivity_excuse if self.connectivity is False else True,
         }
         return all(required_fields.values())
 
