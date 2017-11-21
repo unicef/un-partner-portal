@@ -7,7 +7,7 @@ const initialState = {
     { name: 'id', title: 'Application ID' },
     { name: 'review_progress', title: 'Review progress' },
     { name: 'your_score', title: 'Your score' },
-    { name: 'average_total_score', title: 'Total Score' },
+    { name: 'average_total_score', title: 'Average score' },
   ],
 };
 
