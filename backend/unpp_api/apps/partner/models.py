@@ -210,7 +210,7 @@ class PartnerProfile(TimeStampedModel):
     @property
     def identification_is_complete(self):
         required_fields = {
-            'legal_name': self.partner.legal_name,
+            'country_presence': self.partner.country_presence,
             'have_gov_doc': self.have_gov_doc,
             'gov_doc': self.gov_doc if self.have_gov_doc else True,
             'registration_to_operate_in_country': self.registration_to_operate_in_country,
