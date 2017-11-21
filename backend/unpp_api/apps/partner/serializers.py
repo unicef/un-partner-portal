@@ -683,11 +683,12 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
     regular_audited_comment = serializers.CharField(
         source="audit.regular_audited_comment", allow_blank=True, allow_null=True)
     org_audits = serializers.ListField(source="audit.org_audits")
-    most_recent_audit_report = CommonFileSerializer(source="audit.most_recent_audit_report", required=False)
+    most_recent_audit_report = CommonFileSerializer(
+        source="audit.most_recent_audit_report", allow_null=True)
     audit_link_report = serializers.URLField(source="audit.link_report", allow_blank=True, allow_null=True)
     major_accountability_issues_highlighted = serializers.BooleanField(
         source="audit.major_accountability_issues_highlighted")
-    comment = serializers.CharField(source="audit.comment")
+    comment = serializers.CharField(source="audit.comment", allow_blank=True, allow_null=True)
     capacity_assessment = serializers.BooleanField(source="audit.capacity_assessment")
     assessments = serializers.ListField(source="audit.assessments")
     assessment_report = CommonFileSerializer(source="audit.assessment_report", allow_null=True)
