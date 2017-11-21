@@ -135,8 +135,8 @@ class FileFormUploadButton extends Component {
               </Typography>
             </div>}
         </div>
-        {touched && (error || warning)
-          && <FormHelperText error>{touched && (error || warning)}</FormHelperText>}
+        {/*{touched && (error || warning)
+          && <FormHelperText error>{touched && (error || warning)}</FormHelperText>}*/}
       </FormControl>
     );
   }

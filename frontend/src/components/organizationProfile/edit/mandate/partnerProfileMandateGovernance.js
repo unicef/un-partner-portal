@@ -8,7 +8,7 @@ import FileForm from '../../../forms/fileForm';
 const messages = {
   structure: 'Briefly describe the organization\'s governance structure',
   headquaters: "Briefly describe the headquarters' oversight of country/ branch office operations including any reporting requirements of the country/branch offices to HQ.",
-  organigram: 'Your most up-to-date organigram',
+  organigram: 'Your most up-to-date organigram (optional)',
 };
 
 const PartnerProfileMandateGovernance = (props) => {
@@ -49,7 +49,6 @@ const PartnerProfileMandateGovernance = (props) => {
           label={messages.organigram}
           fieldName="governance_organigram"
           optional
-          warn
           readOnly={readOnly}
         />
       </GridColumn>

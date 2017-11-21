@@ -175,7 +175,7 @@ export const renderTextField = ({
   <div>
     <TextField
       className={className}
-      id={name}
+      id={input.name}
       error={(touched && !!error) || !!warning}
       fullWidth
       {...input}

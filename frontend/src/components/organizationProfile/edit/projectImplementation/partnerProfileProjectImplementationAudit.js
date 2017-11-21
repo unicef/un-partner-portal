@@ -26,7 +26,8 @@ const messages = {
 };
 
 const PartnerProfileProjectImplementationAudit = (props) => {
-  const { auditTypes, capacityAssessments, hasCapacityAssessment, isRegularyAudited, accountabilityIssues, readOnly } = props;
+  const { auditTypes, capacityAssessments, hasCapacityAssessment, isRegularyAudited,
+    accountabilityIssues, mostRecentAuditReport, auditLinkReport, readOnly } = props;
 
   return (
     <FormSection name="audit">
@@ -75,15 +76,16 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               fieldName="most_recent_audit_report"
               label={messages.copyOfRecentAudit}
               optional
-              warn
+              warn={!(mostRecentAuditReport || auditLinkReport)}
               readOnly={readOnly}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
             <TextFieldForm
               label={messages.insertLink}
-              fieldName="link_report"
+              fieldName="audit_link_report"
               validation={[url]}
+              warn={!(mostRecentAuditReport || auditLinkReport)}
               readOnly={readOnly}
             />
           </Grid>
@@ -154,7 +156,8 @@ PartnerProfileProjectImplementationAudit.propTypes = {
   capacityAssessments: PropTypes.array,
   isRegularyAudited: PropTypes.bool,
   accountabilityIssues: PropTypes.bool,
-  hasCapacityAssessment: PropTypes.bool,
+  mostRecentAuditReport: PropTypes.string,
+  auditLinkReport: PropTypes.string,
 };
 
 const selector = formValueSelector('partnerProfile');
@@ -163,6 +166,8 @@ export default connect(
     isRegularyAudited: selector(state, 'project_impl.audit.regular_audited'),
     accountabilityIssues: selector(state, 'project_impl.audit.major_accountability_issues_highlighted'),
     hasCapacityAssessment: selector(state, 'project_impl.audit.capacity_assessment'),
+    mostRecentAuditReport: selector(state, 'project_impl.audit.most_recent_audit_report'),
+    auditLinkReport: selector(state, 'project_impl.audit.audit_link_report'),
     capacityAssessments: selectNormalizedCapacityAssessments(state),
     auditTypes: selectNormalizedAuditTypes(state),
   }),
