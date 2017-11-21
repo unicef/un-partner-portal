@@ -315,20 +315,21 @@ class PartnerProfile(TimeStampedModel):
 
     @property
     def proj_impl_is_complete(self):
-        rep_artifact = self.partner.report.last_report or self.partner.report.report or self.partner.report.link_report
+        rep_artifact = self.partner.report.report or self.partner.report.link_report
         required_fields = {
             'have_management_approach': self.have_management_approach is not None,
             'management_approach_desc':
-                self.management_approach_desc if self.have_management_approach is False else True,
+                self.management_approach_desc if self.have_management_approach else True,
             'have_system_monitoring': self.have_system_monitoring is not None,
-            'system_monitoring_desc': self.system_monitoring_desc if self.have_system_monitoring is False else True,
+            'system_monitoring_desc': self.system_monitoring_desc if self.have_system_monitoring else True,
             'have_feedback_mechanism': self.have_feedback_mechanism is not None,
-            'feedback_mechanism_desc': self.feedback_mechanism_desc if self.have_feedback_mechanism is False else True,
+            'feedback_mechanism_desc': self.feedback_mechanism_desc if self.have_feedback_mechanism else True,
             'have_system_track': self.have_system_track is not None,
             'financial_control_system_desc': self.financial_control_system_desc if self.have_system_track else True,
-            'internal_controls': self.partner.internal_controls.filter(segregation_duties__isnull=True).exists() is False,
+            'internal_controls':
+                self.partner.internal_controls.filter(segregation_duties__isnull=True).exists() is False,
             'experienced_staff': self.experienced_staff is not None,
-            'experienced_staff_desc': self.experienced_staff_desc if self.experienced_staff is False else True,
+            'experienced_staff_desc': self.experienced_staff_desc if self.experienced_staff else True,
             'area_policies': self.partner.area_policies.filter(document_policies__isnull=True).exists() is False,
 
             # partner academy does not contain those fields as is completed
@@ -336,6 +337,7 @@ class PartnerProfile(TimeStampedModel):
             # 'have_separate_bank_account': self.have_separate_bank_account is not None,
             # 'explain': self.explain if self.have_separate_bank_account is False else True,
 
+            'most_recent_audit_report': self.partner.audit.most_recent_audit_report or self.partner.audit.link_report,
             'regular_audited': self.partner.audit.regular_audited is not None,
             'regular_audited_comment':
                 self.partner.audit.regular_audited_comment if self.partner.audit.regular_audited is False else True,
@@ -348,6 +350,7 @@ class PartnerProfile(TimeStampedModel):
                 self.partner.audit.assessment_report if self.partner.audit.capacity_assessment else True,
             'key_result': self.partner.report.key_result,
             'publish_annual_reports': self.partner.report.publish_annual_reports,
+            'publish_annual_reports_last_report': self.partner.report.last_report,
             'publish_annual_reports_artifact': rep_artifact if self.partner.report.publish_annual_reports else True,
         }
 
