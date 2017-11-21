@@ -188,7 +188,7 @@ class PartnerAuthorisedOfficerSerializer(serializers.ModelSerializer):
 
 class PartnerMandateMissionSerializer(serializers.ModelSerializer):
 
-    governance_organigram = CommonFileSerializer()
+    governance_organigram = CommonFileSerializer(required=False)
     ethic_safeguard_policy = CommonFileSerializer()
     ethic_fraud_policy = CommonFileSerializer()
 
@@ -275,7 +275,7 @@ class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
 
 class PartnerReportingSerializer(serializers.ModelSerializer):
 
-    report = CommonFileSerializer()
+    report = CommonFileSerializer(required=False)
 
     class Meta:
         model = PartnerReporting
@@ -299,7 +299,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     internal_controls = PartnerInternalControlSerializer(many=True)
     area_policies = PartnerPolicyAreaSerializer(many=True)
     audit = PartnerAuditAssessmentSerializer()
-    report = PartnerReportingSerializer()
+    report = PartnerReportingSerializer(required=False)
     location_field_offices = PointSerializer(many=True)
     is_finished = serializers.BooleanField(read_only=True, source="has_finished")
     identification_is_complete = serializers.BooleanField(read_only=True, source="profile.identification_is_complete")
@@ -490,7 +490,7 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
     governance_structure = serializers.CharField(source="mandate_mission.governance_structure")
     governance_hq = serializers.CharField(source="mandate_mission.governance_hq")
-    governance_organigram = CommonFileSerializer(source="mandate_mission.governance_organigram")
+    governance_organigram = CommonFileSerializer(source="mandate_mission.governance_organigram", required=False)
     ethic_safeguard = serializers.BooleanField(source="mandate_mission.ethic_safeguard")
     ethic_safeguard_policy = CommonFileSerializer(source="mandate_mission.ethic_safeguard_policy")
     ethic_safeguard_comment = serializers.CharField(source="mandate_mission.ethic_safeguard_comment")
@@ -660,8 +660,8 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
     regular_audited = serializers.BooleanField(source="audit.regular_audited")
     regular_audited_comment = serializers.CharField(source="audit.regular_audited_comment")
     org_audits = serializers.ListField(source="audit.org_audits")
-    most_recent_audit_report = CommonFileSerializer(source="audit.most_recent_audit_report")
-    audit_link_report = serializers.URLField(source="audit.link_report")
+    most_recent_audit_report = CommonFileSerializer(source="audit.most_recent_audit_report", required=False)
+    audit_link_report = serializers.URLField(source="audit.link_report", required=False)
     major_accountability_issues_highlighted = serializers.BooleanField(
         source="audit.major_accountability_issues_highlighted")
     comment = serializers.CharField(source="audit.comment")
@@ -672,8 +672,8 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
     key_result = serializers.CharField(source="report.key_result")
     publish_annual_reports = serializers.BooleanField(source="report.publish_annual_reports")
     last_report = serializers.DateField(source="report.last_report")
-    report = CommonFileSerializer(source="report.report")
-    link_report = serializers.URLField(source="report.link_report")
+    report = CommonFileSerializer(source="report.report", required=False)
+    link_report = serializers.URLField(source="report.link_report", required=False)
 
     has_finished = serializers.BooleanField(read_only=True, source="profile.proj_impl_is_complete")
 

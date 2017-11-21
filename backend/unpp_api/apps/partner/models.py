@@ -212,8 +212,16 @@ class PartnerProfile(TimeStampedModel):
         required_fields = {
             'legal_name': self.partner.legal_name,
             'country_code': self.partner.country_code,
+            'country_presence': self.partner.country_presence,
+            'have_gov_doc': self.have_gov_doc,
+            'gov_doc': self.gov_doc if self.have_gov_doc else True,
+            'registration_date': self.registration_date,
+            'registration_number': self.registration_number,
+            'registration_doc': self.registration_doc,
             'establishment_year': self.year_establishment
         }
+        if not self.partner.is_hq:
+            required_fields.pop('country_presence')
 
         return all(required_fields.values())
 
@@ -224,18 +232,34 @@ class PartnerProfile(TimeStampedModel):
             'city': self.partner.mailing_address.city,
             'country': self.partner.mailing_address.country,
             'zip_code': self.partner.mailing_address.zip_code,
-            'telephone': self.partner.mailing_address.telephone
+            'telephone': self.partner.mailing_address.telephone,
+            'have_board_directors': self.have_board_directors is not None,
+            'have_authorised_officers': self.have_authorised_officers is not None,
+            'connectivity': self.connectivity,
         }
         return all(required_fields.values())
 
     @property
     def mandatemission_complete(self):
+        ethic_safeguard = self.partner.mandate_mission.ethic_safeguard
+        ethic_safeguard_policy = self.partner.mandate_mission.ethic_safeguard_policy
+        ethic_safeguard_comment = self.partner.mandate_mission.ethic_safeguard_comment
+        population_of_concern = self.partner.mandate_mission.population_of_concern
         required_fields = {
             'proj_background_rationale': self.partner.mandate_mission.background_and_rationale,
             'managate_and_mission': self.partner.mandate_mission.mandate_and_mission,
             'governance_structure': self.partner.mandate_mission.governance_structure,
             'governance_hq': self.partner.mandate_mission.governance_hq,
             'governance_organigram': self.partner.mandate_mission.governance_organigram,
+            'ethic_safeguard': ethic_safeguard is not None,
+            'ethic_safeguard_policy': ethic_safeguard_policy if ethic_safeguard is True else True,
+            'ethic_safeguard_comment': ethic_safeguard_comment if ethic_safeguard is False else True,
+            'experiences': self.partner.experiences.exists(),
+            'population_of_concern': population_of_concern,
+            'concern_groups': self.partner.mandate_mission.concern_groups > 0 if population_of_concern else True,
+            'security_high_risk_locations': self.partner.mandate_mission.security_high_risk_locations is not None,
+            'security_high_risk_policy': self.partner.mandate_mission.security_high_risk_policy is not None,
+            'security_desc': self.partner.mandate_mission.security_desc,
             'staff_in_country': self.partner.staff_in_country,
             'staff_globally': self.partner.staff_globally,
             'more_office_in_country': self.partner.more_office_in_country is not None,
@@ -282,6 +306,7 @@ class PartnerProfile(TimeStampedModel):
 
     @property
     def proj_impl_is_complete(self):
+        rep_artifact = self.partner.report.last_report or self.partner.report.report or self.partner.report.link_report
         required_fields = {
             'have_management_approach': self.have_management_approach is not None,
             'management_approach_desc':
@@ -290,35 +315,31 @@ class PartnerProfile(TimeStampedModel):
             'system_monitoring_desc': self.system_monitoring_desc if self.have_system_monitoring is False else True,
             'have_feedback_mechanism': self.have_feedback_mechanism is not None,
             'feedback_mechanism_desc': self.feedback_mechanism_desc if self.have_feedback_mechanism is False else True,
-            'org_acc_system': self.org_acc_system,
-            'method_acc': self.method_acc,
             'have_system_track': self.have_system_track is not None,
-            'financial_control_system_desc': self.financial_control_system_desc,
-            'internal_controls': self.partner.internal_controls.exists(),
+            'financial_control_system_desc': self.financial_control_system_desc if self.have_system_track else True,
+            'internal_controls': self.partner.internal_controls.filter(segregation_duties__isnull=True).exists() is False,
             'experienced_staff': self.experienced_staff is not None,
             'experienced_staff_desc': self.experienced_staff_desc if self.experienced_staff is False else True,
-            'area_policies': self.partner.area_policies.exists(),
-            'have_bank_account': self.have_bank_account is not None,
-            'have_separate_bank_account': self.have_separate_bank_account is not None,
-            'explain': self.explain if self.have_separate_bank_account is False else True,
+            'area_policies': self.partner.area_policies.filter(document_policies__isnull=True).exists() is False,
+
+            # partner academy does not contain those fields as is completed
+            # 'have_bank_account': self.have_bank_account is not None,
+            # 'have_separate_bank_account': self.have_separate_bank_account is not None,
+            # 'explain': self.explain if self.have_separate_bank_account is False else True,
 
             'regular_audited': self.partner.audit.regular_audited is not None,
             'regular_audited_comment':
                 self.partner.audit.regular_audited_comment if self.partner.audit.regular_audited is False else True,
-            'org_audits': len(self.partner.audit.org_audits) > 0,
-            'most_recent_audit_report': self.partner.audit.most_recent_audit_report,
-            'audit_link_report': self.partner.audit.link_report,
             'major_accountability_issues_highlighted':
                 self.partner.audit.major_accountability_issues_highlighted is not None,
-            'comment': self.partner.audit.comment if self.partner.audit.major_accountability_issues_highlighted is False else True,
+            'comment':
+                self.partner.audit.comment if self.partner.audit.major_accountability_issues_highlighted else True,
             'capacity_assessment': self.partner.audit.capacity_assessment is not None,
-            'assessments': len(self.partner.audit.assessments) > 0,
-            'assessment_report': self.partner.audit.assessment_report,
-
+            'assessment_report':
+                self.partner.audit.assessment_report if self.partner.audit.capacity_assessment else True,
             'key_result': self.partner.report.key_result,
             'publish_annual_reports': self.partner.report.publish_annual_reports,
-            'publish_annual_reports_artifact':
-                self.partner.report.last_report or self.partner.report.report or self.partner.report.link_report,
+            'publish_annual_reports_artifact': rep_artifact if self.partner.report.publish_annual_reports else True,
         }
 
         return all(required_fields.values())
@@ -326,7 +347,6 @@ class PartnerProfile(TimeStampedModel):
     @property
     def other_info_is_complete(self):
         required_fields = {
-            'info_to_share': self.partner.other_info.info_to_share,
             'org_logo': self.partner.other_info.org_logo,
             'confirm_data_updated': self.partner.other_info.confirm_data_updated is not None,
         }
@@ -429,7 +449,7 @@ class PartnerAuditAssessment(TimeStampedModel):
     )
     most_recent_audit_report = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="most_recent_audit_reports")
-    link_report = models.URLField()
+    link_report = models.URLField(null=True, blank=True)
     major_accountability_issues_highlighted = models.NullBooleanField(
         verbose_name="Were there any major accountability issues highlighted by audits in the past three years?")
     comment = models.CharField(max_length=200, null=True, blank=True)
@@ -456,7 +476,7 @@ class PartnerReporting(TimeStampedModel):
     publish_annual_reports = models.NullBooleanField()
     last_report = models.DateField(verbose_name='Date of most recent annual report', null=True, blank=True)
     report = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="reports")
-    link_report = models.URLField()
+    link_report = models.URLField(null=True, blank=True)
 
     class Meta:
         ordering = ['id']
