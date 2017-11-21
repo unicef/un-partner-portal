@@ -189,7 +189,7 @@ class PartnerAuthorisedOfficerSerializer(serializers.ModelSerializer):
 
 class PartnerMandateMissionSerializer(serializers.ModelSerializer):
 
-    governance_organigram = CommonFileSerializer(required=False)
+    governance_organigram = CommonFileSerializer(allow_null=True)
     ethic_safeguard_policy = CommonFileSerializer()
     ethic_fraud_policy = CommonFileSerializer()
 
@@ -494,12 +494,12 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
     governance_structure = serializers.CharField(source="mandate_mission.governance_structure")
     governance_hq = serializers.CharField(source="mandate_mission.governance_hq")
-    governance_organigram = CommonFileSerializer(source="mandate_mission.governance_organigram", required=False)
+    governance_organigram = CommonFileSerializer(source="mandate_mission.governance_organigram", allow_null=True)
     ethic_safeguard = serializers.BooleanField(source="mandate_mission.ethic_safeguard")
-    ethic_safeguard_policy = CommonFileSerializer(source="mandate_mission.ethic_safeguard_policy")
+    ethic_safeguard_policy = CommonFileSerializer(source="mandate_mission.ethic_safeguard_policy", allow_null=True)
     ethic_safeguard_comment = serializers.CharField(source="mandate_mission.ethic_safeguard_comment")
     ethic_fraud = serializers.BooleanField(source="mandate_mission.ethic_fraud")
-    ethic_fraud_policy = CommonFileSerializer(source="mandate_mission.ethic_fraud_policy")
+    ethic_fraud_policy = CommonFileSerializer(source="mandate_mission.ethic_fraud_policy", allow_null=True)
     ethic_fraud_comment = serializers.CharField(source="mandate_mission.ethic_fraud_comment")
     population_of_concern = serializers.BooleanField(source="mandate_mission.population_of_concern")
     concern_groups = serializers.ListField(source="mandate_mission.concern_groups")
