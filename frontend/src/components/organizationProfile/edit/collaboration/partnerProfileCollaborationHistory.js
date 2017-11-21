@@ -25,7 +25,6 @@ const AgencySelection = (values, readOnly, ...props) => (member, index, fields) 
       fieldName={`${member}.agency`}
       label={messages.selectAgency}
       readOnly={readOnly}
-      optional
       warn
     />
   </GridColumn>
@@ -85,7 +84,6 @@ const PartnerProfileCollaborationHistory = (props) => {
         fieldName="partnership_collaborate_institution"
         label={messages.hasCollaborated}
         values={BOOL_VAL}
-        optional
         warn
         readOnly={readOnly}
       />
@@ -99,7 +97,6 @@ const PartnerProfileCollaborationHistory = (props) => {
               maxLength: '5000',
             },
           }}
-          optional
           warn
           readOnly={readOnly}
         />

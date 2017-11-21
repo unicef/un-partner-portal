@@ -49,7 +49,6 @@ const PartnerProfileContactInfoAddress = (props) => {
             label={messages.mailingType}
             values={MAILING_TYPE_VALUES}
             renderTextSelection
-            optional
             warn
             readOnly={readOnly}
           />
@@ -60,7 +59,6 @@ const PartnerProfileContactInfoAddress = (props) => {
               <TextFieldForm
                 label={isStreetAddress(mailingType) ? messages.streetAddress : messages.poBoxNumber}
                 fieldName="street"
-                optional
                 warn
                 readOnly={readOnly}
               />
@@ -69,7 +67,6 @@ const PartnerProfileContactInfoAddress = (props) => {
               <TextFieldForm
                 label={messages.city}
                 fieldName="city"
-                optional
                 warn
                 readOnly={readOnly}
               />
@@ -79,7 +76,6 @@ const PartnerProfileContactInfoAddress = (props) => {
                 label={messages.country}
                 fieldName="country"
                 values={countries}
-                optional
                 warn
                 readOnly={readOnly}
               />
@@ -98,7 +94,6 @@ const PartnerProfileContactInfoAddress = (props) => {
                   <TextFieldForm
                     label={messages.telephone}
                     fieldName="mailing_telephone"
-                    optional
                     warn
                     readOnly={readOnly}
                   />
@@ -116,6 +111,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                     label={messages.website}
                     fieldName="website"
                     validation={[url]}
+                    optional
                     readOnly={readOnly}
                   />
                 </Grid>
@@ -124,6 +120,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                     label={messages.organizationEmail}
                     fieldName="org_email"
                     validation={[email]}
+                    optional
                     readOnly={readOnly}
                   />
                 </Grid>
