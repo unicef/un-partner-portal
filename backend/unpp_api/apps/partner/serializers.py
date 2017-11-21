@@ -453,7 +453,8 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
     org_head = PartnerHeadOrganizationSerializer(read_only=True)
     connectivity = serializers.BooleanField(source="profile.connectivity")
-    connectivity_excuse = serializers.CharField(source="profile.connectivity_excuse", allow_null=True)
+    connectivity_excuse = serializers.CharField(
+        source="profile.connectivity_excuse", allow_null=True, allow_blank=True)
     working_languages = serializers.ListField(source="profile.working_languages")
     working_languages_other = serializers.CharField(
         source="profile.working_languages_other",
@@ -497,10 +498,10 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     governance_organigram = CommonFileSerializer(source="mandate_mission.governance_organigram", allow_null=True)
     ethic_safeguard = serializers.BooleanField(source="mandate_mission.ethic_safeguard")
     ethic_safeguard_policy = CommonFileSerializer(source="mandate_mission.ethic_safeguard_policy", allow_null=True)
-    ethic_safeguard_comment = serializers.CharField(source="mandate_mission.ethic_safeguard_comment")
+    ethic_safeguard_comment = serializers.CharField(source="mandate_mission.ethic_safeguard_comment", allow_blank=True)
     ethic_fraud = serializers.BooleanField(source="mandate_mission.ethic_fraud")
     ethic_fraud_policy = CommonFileSerializer(source="mandate_mission.ethic_fraud_policy", allow_null=True)
-    ethic_fraud_comment = serializers.CharField(source="mandate_mission.ethic_fraud_comment")
+    ethic_fraud_comment = serializers.CharField(source="mandate_mission.ethic_fraud_comment", allow_blank=True)
     population_of_concern = serializers.BooleanField(source="mandate_mission.population_of_concern")
     concern_groups = serializers.ListField(source="mandate_mission.concern_groups")
     security_high_risk_locations = serializers.BooleanField(source="mandate_mission.security_high_risk_locations")
