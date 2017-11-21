@@ -44,7 +44,6 @@ const PartnerProfileProjectImplementationReporting = (props) => {
               fieldName="publish_annual_reports"
               label={messages.publishAnnualReports}
               values={BOOL_VAL}
-              optional
               warn
               readOnly={readOnly}
             />
@@ -79,6 +78,7 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                 label={messages.link}
                 fieldName="link_report"
                 validation={[url]}
+                optional
                 warn={!(annualReport || annualReportLink)}
                 readOnly={readOnly}
               />
