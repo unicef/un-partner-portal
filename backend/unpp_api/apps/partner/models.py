@@ -255,6 +255,7 @@ class PartnerProfile(TimeStampedModel):
         ethic_fraud_comment = self.partner.mandate_mission.ethic_fraud_comment
         population_of_concern = self.partner.mandate_mission.population_of_concern
         required_fields = {
+            'proj_background_rationale': self.partner.mandate_mission.background_and_rationale,
             'managate_and_mission': self.partner.mandate_mission.mandate_and_mission,
             'governance_structure': self.partner.mandate_mission.governance_structure,
             'governance_hq': self.partner.mandate_mission.governance_hq,
@@ -265,7 +266,7 @@ class PartnerProfile(TimeStampedModel):
             'ethic_fraud_policy': ethic_fraud_policy if ethic_fraud is True else True,
             'ethic_fraud_comment': ethic_fraud_comment if ethic_fraud is False else True,
             'experiences': self.partner.experiences.exists(),
-            'population_of_concern': population_of_concern,
+            'population_of_concern': population_of_concern is not None,
             'concern_groups': self.partner.mandate_mission.concern_groups > 0 if population_of_concern else True,
             'security_high_risk_locations': self.partner.mandate_mission.security_high_risk_locations is not None,
             'security_high_risk_policy': self.partner.mandate_mission.security_high_risk_policy is not None,
