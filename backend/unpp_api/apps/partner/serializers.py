@@ -148,7 +148,7 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
 class PartnerMailingAddressSerializer(serializers.ModelSerializer):
 
     mailing_telephone = serializers.CharField(source="telephone")
-    mailing_fax = serializers.CharField(source="fax")
+    mailing_fax = serializers.CharField(source="fax", required=False)
 
     class Meta:
         model = PartnerMailingAddress
