@@ -215,11 +215,20 @@ class PartnerProfile(TimeStampedModel):
             'country_presence': self.partner.country_presence,
             'have_gov_doc': self.have_gov_doc,
             'gov_doc': self.gov_doc if self.have_gov_doc else True,
-            'registration_date': self.registration_date,
-            'registration_number': self.registration_number,
-            'registration_doc': self.registration_doc,
+            'registration_to_operate_in_country': self.registration_to_operate_in_country,
             'establishment_year': self.year_establishment
         }
+        if self.registration_to_operate_in_country:
+            required_fields.update({
+                'registration_date': self.registration_date,
+                'registration_number': self.registration_number,
+                'registration_doc': self.registration_doc,
+            })
+        elif self.registration_to_operate_in_country is False:
+            required_fields.update({
+                'registration_comment': self.registration_comment,
+            })
+
         if not self.partner.is_hq:
             required_fields.pop('country_presence')
 
