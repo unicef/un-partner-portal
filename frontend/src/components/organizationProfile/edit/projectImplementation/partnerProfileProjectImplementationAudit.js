@@ -18,7 +18,7 @@ const messages = {
   comment: 'Please comment',
   copyOfRecentAudit: 'Copy of your most recent audit report',
   insertLink: 'Or insert the link to the report from the organization\'s website',
-  accountabilityIssues: 'Were there any major accountability isses highlighted by audits in ' +
+  accountabilityIssues: 'Were there any major accountability issues highlighted by audits in ' +
                   'the past three years?',
   formalCapacity: 'Has the organization undergone a formal capacity assessment?',
   indicateAssessments: 'Please indicate which assessment(s)',
@@ -63,7 +63,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
             selectFieldProps={{
               multiple: true,
             }}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -85,6 +84,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               label={messages.insertLink}
               fieldName="audit_link_report"
               validation={[url]}
+              optional
               warn={!(mostRecentAuditReport || auditLinkReport)}
               readOnly={readOnly}
             />
@@ -94,7 +94,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
           fieldName="major_accountability_issues_highlighted"
           label={messages.accountabilityIssues}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -108,7 +107,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
                 maxLength: '5000',
               },
             }}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -117,7 +115,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
           fieldName="capacity_assessment"
           label={messages.formalCapacity}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -130,7 +127,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               selectFieldProps={{
                 multiple: true,
               }}
-              optional
               warn
               readOnly={readOnly}
             />
@@ -139,7 +135,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               sectionName="project_impl.audit"
               fieldName="assessment_report"
               label={messages.copyOfAssessment}
-              optional
               warn
               readOnly={readOnly}
             />
