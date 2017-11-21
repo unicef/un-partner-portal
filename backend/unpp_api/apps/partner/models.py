@@ -211,9 +211,9 @@ class PartnerProfile(TimeStampedModel):
     def identification_is_complete(self):
         required_fields = {
             'country_presence': self.partner.country_presence,
-            'have_gov_doc': self.have_gov_doc,
+            'have_gov_doc': self.have_gov_doc is not None,
             'gov_doc': self.gov_doc if self.have_gov_doc else True,
-            'registration_to_operate_in_country': self.registration_to_operate_in_country,
+            'registration_to_operate_in_country': self.registration_to_operate_in_country is not None,
             'establishment_year': self.year_establishment
         }
         if self.registration_to_operate_in_country:
