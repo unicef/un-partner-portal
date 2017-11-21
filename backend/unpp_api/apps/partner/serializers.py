@@ -615,6 +615,7 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
     partnership_collaborate_institution_desc = serializers.CharField(
         source="profile.partnership_collaborate_institution_desc",
         allow_null=True,
+        allow_blank=True,
     )
 
     collaboration_evidences = PartnerCollaborationEvidenceSerializer(many=True)
