@@ -4,7 +4,7 @@ steps:
 
     build_frontend:
         type: build
-        image_name: unpp-frontend
+        image_name: unicef/unpp-frontend
         dockerfile: Dockerfile
         working_directory: ${{main_clone}}/frontend
         tag: ${{CF_BRANCH}}
@@ -12,7 +12,7 @@ steps:
     push_to_hub:
         type: push
         title: Pushing frontend image to docker hub
-        registry: tivix-dockerhub
+        registry: unicef-dockerhub
         candidate: ${{build_frontend}}
         tags: 
             - ${{CF_BRANCH}}
