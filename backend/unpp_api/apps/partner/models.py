@@ -250,6 +250,9 @@ class PartnerProfile(TimeStampedModel):
         ethic_safeguard = self.partner.mandate_mission.ethic_safeguard
         ethic_safeguard_policy = self.partner.mandate_mission.ethic_safeguard_policy
         ethic_safeguard_comment = self.partner.mandate_mission.ethic_safeguard_comment
+        ethic_fraud = self.partner.mandate_mission.ethic_fraud
+        ethic_fraud_policy = self.partner.mandate_mission.ethic_fraud_policy
+        ethic_fraud_comment = self.partner.mandate_mission.ethic_fraud_comment
         population_of_concern = self.partner.mandate_mission.population_of_concern
         required_fields = {
             'proj_background_rationale': self.partner.mandate_mission.background_and_rationale,
@@ -260,6 +263,9 @@ class PartnerProfile(TimeStampedModel):
             'ethic_safeguard': ethic_safeguard is not None,
             'ethic_safeguard_policy': ethic_safeguard_policy if ethic_safeguard is True else True,
             'ethic_safeguard_comment': ethic_safeguard_comment if ethic_safeguard is False else True,
+            'ethic_fraud': ethic_fraud is not None,
+            'ethic_fraud_policy': ethic_fraud_policy if ethic_fraud is True else True,
+            'ethic_fraud_comment': ethic_fraud_comment if ethic_fraud is False else True,
             'experiences': self.partner.experiences.exists(),
             'population_of_concern': population_of_concern,
             'concern_groups': self.partner.mandate_mission.concern_groups > 0 if population_of_concern else True,
@@ -268,9 +274,7 @@ class PartnerProfile(TimeStampedModel):
             'security_desc': self.partner.mandate_mission.security_desc,
             'staff_in_country': self.partner.staff_in_country,
             'staff_globally': self.partner.staff_globally,
-            'more_office_in_country': self.partner.more_office_in_country is not None,
             # TODO - country presence for hq + country
-
         }
         if not self.partner.is_hq:
             required_fields.pop('governance_hq')
