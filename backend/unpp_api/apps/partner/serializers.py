@@ -148,7 +148,7 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
 class PartnerMailingAddressSerializer(serializers.ModelSerializer):
 
     mailing_telephone = serializers.CharField(source="telephone")
-    mailing_fax = serializers.CharField(source="fax", required=False)
+    mailing_fax = serializers.CharField(source="fax", allow_null=True)
 
     class Meta:
         model = PartnerMailingAddress
@@ -453,10 +453,12 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
     org_head = PartnerHeadOrganizationSerializer(read_only=True)
     connectivity = serializers.BooleanField(source="profile.connectivity")
-    connectivity_excuse = serializers.CharField(source="profile.connectivity_excuse")
+    connectivity_excuse = serializers.CharField(source="profile.connectivity_excuse", allow_null=True)
     working_languages = serializers.ListField(source="profile.working_languages")
     working_languages_other = serializers.CharField(
-        source="profile.working_languages_other")
+        source="profile.working_languages_other",
+        allow_null=True
+    )
     has_finished = serializers.BooleanField(read_only=True, source="profile.contact_is_complete")
 
     class Meta:
