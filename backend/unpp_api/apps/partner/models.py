@@ -65,12 +65,20 @@ class Partner(TimeStampedModel):
         return "Partner: {} <pk:{}>".format(self.legal_name, self.id)
 
     @property
+    def is_international(self):
+        return self.display_type == PARTNER_TYPES.international
+
+    @property
     def is_hq(self):
-        return self.hq in [None, ''] and self.display_type == PARTNER_TYPES.international
+        if self.is_international:
+            return self.hq in [None, '']
+        return None
 
     @property
     def is_country_profile(self):
-        return self.hq not in [None, ''] and self.display_type == PARTNER_TYPES.international
+        if self.is_international:
+            return self.hq not in [None, '']
+        return None
 
     @property
     def country_profiles(self):
@@ -223,6 +231,11 @@ class PartnerProfile(TimeStampedModel):
         elif self.registration_to_operate_in_country is False:
             required_fields.update({
                 'registration_comment': self.registration_comment,
+            })
+        if self.partner.is_hq is False:
+            required_fields.update({
+                'legal_name': self.partner.legal_name,
+                'former_legal_name': self.partner.former_legal_name,
             })
 
         return all(required_fields.values())
