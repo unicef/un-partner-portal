@@ -443,6 +443,30 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
             'has_finished',
         )
 
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        # std method does not support writable nested fields by default
+
+        instance.partner.legal_name = validated_data.get('parnter', {}).get('legal_name', instance.partner.legal_name)
+        instance.partner.save()
+
+        instance.alias_name = validated_data.get('alias_name', instance.alias_name)
+        instance.acronym = validated_data.get('acronym', instance.acronym)
+        instance.former_legal_name = validated_data.get('former_legal_name', instance.former_legal_name)
+        instance.year_establishment = validated_data.get('year_establishment', instance.year_establishment)
+        instance.have_gov_doc = validated_data.get('have_gov_doc', instance.have_gov_doc)
+        instance.gov_doc_id = validated_data.get('gov_doc', instance.gov_doc_id)
+        instance.registration_to_operate_in_country = \
+            validated_data.get('registration_to_operate_in_country', instance.registration_to_operate_in_country)
+        instance.registration_doc_id = validated_data.get('registration_doc', instance.registration_doc_id)
+        instance.registration_date = validated_data.get('registration_date', instance.registration_date)
+        instance.registration_comment = validated_data.get('registration_comment', instance.registration_comment)
+        instance.registration_number = validated_data.get('registration_number', instance.registration_number)
+
+        instance.save()
+
+        return PartnerProfile.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+
 
 class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 

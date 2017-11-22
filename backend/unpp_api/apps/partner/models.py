@@ -235,7 +235,7 @@ class PartnerProfile(TimeStampedModel):
         if self.partner.is_hq is False:
             required_fields.update({
                 'legal_name': self.partner.legal_name,
-                'former_legal_name': self.partner.former_legal_name,
+                'former_legal_name': self.former_legal_name,
             })
 
         return all(required_fields.values())
