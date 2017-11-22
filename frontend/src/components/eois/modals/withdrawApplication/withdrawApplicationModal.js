@@ -23,7 +23,6 @@ class awardApplicationModal extends Component {
   onFormSubmit(values) {
     this.props.handleDialogClose();
     this.props.updateApplication({ ...values,
-      did_win: false,
       did_withdraw: true,
       justification_reason: null });
   }
@@ -65,7 +64,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const { params: { applicationId } } = ownProps;
   return {
     updateApplication: body => dispatch(updateApplication(
-      applicationId, body)),
+      applicationId || ownProps.applicationId, body)),
     submit: () => dispatch(submit('withdrawApplication')),
   };
 };

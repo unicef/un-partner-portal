@@ -41,6 +41,7 @@ class AwardedPartners extends Component {
 
   render() {
     const { loading } = this.props;
+
     return (<HeaderList
       loading={loading}
       header={<Typography type="headline" >{messages.title}</Typography>}

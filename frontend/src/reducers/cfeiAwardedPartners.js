@@ -7,17 +7,31 @@ import cfeiAwardedPartnersStatus, {
   loadCfeiAwardedPartnersFailure,
   LOAD_CFEI_AWARDED_PARTNERS_SUCCESS,
 } from './cfeiAwardedPartnersStatus';
-import { selectIndexWithDefaultEmptyArray } from './normalizationHelpers';
+import { selectIndexWithDefaultEmptyArray, pickByMap } from './normalizationHelpers';
+import {
+  loadApplicationDetailSuccess,
+} from './applicationDetailsStatus';
 import { getCfeiAwardedPartners } from '../helpers/api/api';
+
 
 const initialState = {};
 
-export const loadAwardedPartners = cfeiId => (dispatch) => {
+export const loadAwardedPartners = cfeiId => (dispatch, getState) => {
   dispatch(loadCfeiAwardedPartnersStarted());
   return getCfeiAwardedPartners(cfeiId)
     .then((awardedPartners) => {
       dispatch(loadCfeiAwardedPartnersEnded());
       dispatch(loadCfeiAwardedPartnersSuccess(awardedPartners, cfeiId));
+      awardedPartners.forEach((awardedPartner) => {
+        dispatch(loadApplicationDetailSuccess(pickByMap({
+          id: 'application_id',
+          did_accept: 'did_accept',
+          did_decline: 'did_decline',
+          did_win: 'did_win',
+          did_withdraw: 'did_withdraw',
+          withdraw_reason: 'withdraw_reason',
+        }, awardedPartner), getState));
+      });
       return awardedPartners;
     })
     .catch((error) => {

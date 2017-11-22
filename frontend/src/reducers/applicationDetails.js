@@ -57,6 +57,16 @@ export function selectApplicationProject(state, id) {
   return state[id] ? state[id].eoi : null;
 }
 
+export function selectApplicationWithdrawStatus(state, id) {
+  const { [id]: { withdraw_reason = null, did_withdraw = false } = {} } = state;
+  return { withdraw_reason, did_withdraw };
+}
+
+export function selectApplicationCurrentStatus(state, id) {
+  const { [id]: { application_status = null } = {} } = state;
+  return application_status
+}
+
 const saveApplicationSync = (state, action) => {
   if (selectApplication(state, action.id)) return state;
   const { id, name, status } = action;

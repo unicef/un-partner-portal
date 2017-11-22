@@ -13,15 +13,27 @@ import cfeiDetailsStatus, {
 import { } from './apiStatus';
 import { normalizeSingleCfei } from './cfei';
 import { getOpenCfeiDetails, getApplicationDetails } from '../helpers/api/api';
+import { pickByMap } from './normalizationHelpers';
+import {
+  loadApplicationDetailSuccess,
+} from './applicationDetailsStatus';
 
 const initialState = {};
 
-export const loadCfei = id => (dispatch) => {
+export const loadCfei = id => (dispatch, getState) => {
   dispatch(loadCfeiDetailStarted());
   return getOpenCfeiDetails(id)
     .then((cfei) => {
       dispatch(loadCfeiDetailEnded());
       dispatch(loadCfeiDetailSuccess(cfei));
+      if (cfei.direct_selected_partners) {
+        cfei.direct_selected_partners.forEach((selectedPartner) => {
+          dispatch(loadApplicationDetailSuccess({
+            id: selectedPartner.id,
+            application_status: selectedPartner.application_status,
+          }, selectedPartner), getState);
+        });
+      }
       return cfei;
     })
     .catch((error) => {
