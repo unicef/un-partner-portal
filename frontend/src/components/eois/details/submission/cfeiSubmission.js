@@ -121,8 +121,8 @@ CfeiSubmission.propTypes = {
   deleteCn: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  partnerId: ownProps.params.id,
+const mapStateToProps = state => ({
+  partnerId: state.session.partnerId,
   loader: state.conceptNote.loading,
   cnUploaded: state.conceptNote.cnFile,
   isHq: state.session.isHq,
