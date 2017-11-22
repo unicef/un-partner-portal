@@ -10,6 +10,7 @@ import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
+import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
 import { selectMappedSpecializations, selectNormalizedCountries } from '../../../store';
 import resetChanges from './eoiHelper';
@@ -103,10 +104,9 @@ class EoiPinnedFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
+              <CountryField
                 fieldName="country_code"
                 label={messages.labels.country}
-                values={countries}
                 optional
               />
             </Grid>

@@ -10,6 +10,7 @@ import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
 import RadioForm from '../../forms/radioForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
+import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedApplicationStatuses } from '../../../store';
 import resetChanges from '../../eois/filters/eoiHelper';
 
@@ -131,11 +132,9 @@ class PartnerApplicationsNotesFilter extends Component {
         <Grid item xs={12} className={classes.filterContainer} >
           <Grid container direction="row" >
             <Grid item sm={4} xs={12}>
-              <SelectForm
+              <CountryField
                 fieldName="country_code"
                 label={messages.labels.country}
-                placeholder={messages.choose}
-                values={countries}
                 optional
               />
             </Grid>
