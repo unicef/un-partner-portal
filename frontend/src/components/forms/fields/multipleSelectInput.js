@@ -25,11 +25,11 @@ const MultipleSelectInput = (props) => {
     inputRef,
     ...other } = props;
   return (
-    <Grid container align="center" spacing={8}>
+    <Grid container alignItems="center" spacing={8}>
       {!R.isEmpty(multiValues)
         && multiValues.map((value, index) =>
           (<Grid item key={`${value}-${index}`}>
-            <Grid container align="center" spacing={0}>
+            <Grid container alignItems="center" spacing={0}>
               {value}
               <IconButton
                 className={classes.icon}

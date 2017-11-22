@@ -20,7 +20,7 @@ const VerificationItem = (props) => {
   return (
     <Grid item>
       <GridColumn>
-        <Grid container direction="row" justify="space-between" align="center">
+        <Grid container direction="row" justify="space-between" alignItems="center">
           <Grid item>
             <VerificationText verified={R.prop('is_verified', verification)} />
           </Grid>

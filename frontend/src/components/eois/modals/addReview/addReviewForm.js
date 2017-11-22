@@ -33,7 +33,7 @@ const styleSheet = theme => ({
 
 const renderCriteriaBase = ({ classes, criteria, allCriteria, fields }) => (<div>
   {fields.map((name, index) => (<div>
-    <Grid container direction="row" align="center" justify="center">
+    <Grid container direction="row" alignItems="center" justify="center">
       <Grid item xs={9}>
         <Typography type="subheading">
           {allCriteria[criteria[index].selection_criteria]}

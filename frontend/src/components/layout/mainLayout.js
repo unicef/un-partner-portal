@@ -91,7 +91,7 @@ class MainLayout extends Component {
               position="static"
               color="accent"
             >
-              <Typography type="display1" color="inherit" align="center">
+              <Typography type="display1" color="inherit" alignItems="center">
               UNPP
               </Typography>
             </AppBar>

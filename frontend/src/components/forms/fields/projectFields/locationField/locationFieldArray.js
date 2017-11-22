@@ -40,7 +40,6 @@ LocationFieldArray.propTypes = {
   loaded: PropTypes.bool,
 };
 
-
 const WrappedLocationFieldArray = GoogleApiWrapper({
   version: '3.exp',
   apiKey: process.env.GOOGLE_KEY,

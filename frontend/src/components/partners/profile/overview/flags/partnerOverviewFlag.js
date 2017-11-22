@@ -32,7 +32,7 @@ const flags = (displayMenu, flagItems = {}) => (
 );
 
 const flagHeader = displayMenu => (
-  <Grid container align="center" justify="space-between" direction="row">
+  <Grid container alignItems="center" justify="space-between" direction="row">
     <Grid item xs={10}>
       <Typography type="title" >{messages.flagStatus}</Typography>
     </Grid>

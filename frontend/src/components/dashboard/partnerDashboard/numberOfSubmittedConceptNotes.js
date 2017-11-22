@@ -28,7 +28,7 @@ const NumberOfSubmittedConceptNotes = (props) => {
             <div key={`name_${index}`}>
               <GridColumn spacing={8}>
                 <SpreadContent>
-                  <Grid container align="center">
+                  <Grid container alignItems="center">
                     <Grid item>
                       <div style={{ height: 24, width: 8, background: chartColors[index] }} />
                     </Grid>
