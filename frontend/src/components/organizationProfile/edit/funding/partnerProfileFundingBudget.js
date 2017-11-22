@@ -48,7 +48,7 @@ const PartnerProfileFundingBudget = (props) => {
       <Grid container direction="column" spacing={16}>
         <Grid item>
           <ArrayForm
-            fieldName="budgets"
+            fieldName={isReadOnlyField ? 'hq_budgets' : 'budgets'}
             limit={3}
             label={messages.annualBudget}
             initial
