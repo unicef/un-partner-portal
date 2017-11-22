@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 import django_filters
-from django_filters.filters import CharFilter, ModelMultipleChoiceFilter
-from django_filters.widgets import CSVWidget
+from django_filters.filters import CharFilter, ModelMultipleChoiceFilter, BooleanFilter
+from django_filters.widgets import CSVWidget, BooleanWidget
 
 from common.models import Specialization
 from .models import Partner
@@ -12,7 +12,7 @@ from .models import Partner
 class PartnersListFilter(django_filters.FilterSet):
 
     legal_name = CharFilter(method='get_legal_name')
-    verification_status = CharFilter(method='get_verification_status')
+    is_verified = BooleanFilter(method='get_is_verified', widget=BooleanWidget())
     display_type = CharFilter(method='get_display_type')
     country_code = CharFilter(method='get_country_code')
     specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
@@ -26,6 +26,11 @@ class PartnersListFilter(django_filters.FilterSet):
 
     def get_legal_name(self, queryset, name, value):
         return queryset.filter(legal_name__icontains=value)
+
+    def get_is_verified(self, queryset, name, value):
+        if value:
+            return queryset.filter(verifications__is_verified=True)
+        return queryset.exclude(verifications__is_verified=True)
 
     def get_country_code(self, queryset, name, value):
         return queryset.filter(country_code=(value and value.upper()))
