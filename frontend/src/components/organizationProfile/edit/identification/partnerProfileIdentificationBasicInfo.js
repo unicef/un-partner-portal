@@ -86,6 +86,8 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
 PartnerProfileIdentificationBasicInfo.propTypes = {
   countries: PropTypes.array.isRequired,
   readOnly: PropTypes.bool,
+  isCountryProfile: PropTypes.bool,
+  displayType: PropTypes.string,
   organizationTypes: PropTypes.array.isRequired,
 };
 
