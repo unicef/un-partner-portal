@@ -447,7 +447,7 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
 
-        instance.partner.legal_name = validated_data.get('parnter', {}).get('legal_name', instance.partner.legal_name)
+        instance.partner.legal_name = validated_data.get('partner', {}).get('legal_name', instance.partner.legal_name)
         instance.partner.save()
 
         instance.alias_name = validated_data.get('alias_name', instance.alias_name)
