@@ -295,7 +295,11 @@ class PartnerProfile(TimeStampedModel):
 
     @property
     def funding_complete(self):
-        budgets = self.partner.budgets.all()
+        if self.partner.is_hq is False:
+            budgets = self.partner.hq.budgets.all()
+        else:
+            budgets = self.partner.budgets.all()
+
         current_year_exists = budgets.filter(year=date.today().year).exists()
 
         required_fields = {
