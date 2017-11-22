@@ -116,8 +116,8 @@ class PartnerFullSerializer(serializers.ModelSerializer):
 
 class PartnerFullProfilesSerializer(serializers.ModelSerializer):
 
-    gov_doc = CommonFileSerializer()
-    registration_doc = CommonFileSerializer()
+    gov_doc = CommonFileSerializer(allow_null=True)
+    registration_doc = CommonFileSerializer(allow_null=True)
 
     class Meta:
         model = PartnerProfile
@@ -417,8 +417,8 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
     former_legal_name = serializers.CharField(read_only=True)
     country_origin = serializers.CharField(read_only=True)
     type_org = serializers.CharField(source="partner.display_type", read_only=True)
-    gov_doc = CommonFileSerializer()
-    registration_doc = CommonFileSerializer()
+    gov_doc = CommonFileSerializer(allow_null=True)
+    registration_doc = CommonFileSerializer(allow_null=True)
     has_finished = serializers.BooleanField(read_only=True, source="profile.identification_is_complete")
 
     class Meta:
