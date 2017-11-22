@@ -412,9 +412,9 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
-    alias_name = serializers.CharField()
-    acronym = serializers.CharField()
-    former_legal_name = serializers.CharField()
+    alias_name = serializers.CharField(allow_blank=True)
+    acronym = serializers.CharField(allow_blank=True)
+    former_legal_name = serializers.CharField(allow_blank=True)
     country_origin = serializers.CharField(read_only=True)
     type_org = serializers.CharField(source="partner.display_type", read_only=True)
     gov_doc = CommonFileSerializer(allow_null=True)
