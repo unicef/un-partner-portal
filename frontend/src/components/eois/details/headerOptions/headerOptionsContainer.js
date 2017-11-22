@@ -52,13 +52,13 @@ const HeaderOptionsContainer = (props) => {
   }
   if (cfeiCompleted) {
     return (
-      <GridColumn spacing={0} justify="flex-end" align="flex-end">
+      <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
         <EoiStatusCell status={cfeiStatus} />
         <Typography type="caption">{completedReasons[completedJustification]}</Typography>
       </GridColumn>);
   }
 
-  return (<GridRow justify="center" align="center">
+  return (<GridRow justify="center" alignItems="center">
     <EoiStatusCell status={cfeiStatus} />
     {options}
   </GridRow>);

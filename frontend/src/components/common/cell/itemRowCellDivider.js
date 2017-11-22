@@ -31,7 +31,7 @@ const ItemRowCellDivider = (props) => {
   const { label, content, divider, labelSecondary, classes } = props;
   return (
     <div>
-      <Grid container align="center" justify="space-between" direction="row">
+      <Grid container alignItems="center" justify="space-between" direction="row">
         <Grid className={classes.row} item xs={8}>
           <Typography color={labelSecondary ? 'secondary' : 'inherit'} type="body1" >{label}</Typography>
         </Grid>

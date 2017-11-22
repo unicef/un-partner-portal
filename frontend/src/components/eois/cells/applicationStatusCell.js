@@ -18,7 +18,7 @@ const ApplicationStatusCell = (props) => {
   const Download = WithGreyColor(!conceptNote)(GetConceptNoteButton);
   return (
     <TableCell>
-      <GridRow align="center" >
+      <GridRow alignItems="center" >
         <ApplicationStatusText status={status} />
         {hovered && <GridRow spacing={8} columns={3}>
           <Download id={id} conceptNote={conceptNote} />

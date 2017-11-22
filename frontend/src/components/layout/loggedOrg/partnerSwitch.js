@@ -83,7 +83,7 @@ class PartnerSwitch extends Component {
     const { classes, partners, name, partnerCountry, countries } = this.props;
     return (
       <div>
-        <GridRow align="center">
+        <GridRow alignItems="center">
           <Typography type="body2">
             {name}
           </Typography>
