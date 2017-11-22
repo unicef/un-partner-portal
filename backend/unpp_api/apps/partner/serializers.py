@@ -294,6 +294,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     mandate_mission = PartnerMandateMissionSerializer()
     experiences = PartnerExperienceSerializer(many=True)
     budgets = PartnerBudgetSerializer(many=True)
+    hq_budgets = serializers.SerializerMethodField()
     fund = PartnerFundingSerializer()
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
     collaboration_evidences = PartnerCollaborationEvidenceSerializer(many=True)
@@ -336,6 +337,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "mandate_mission",
             "experiences",
             "budgets",
+            "hq_budgets",
             "fund",
             "collaborations_partnership",
             "collaboration_evidences",
@@ -353,6 +355,11 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "proj_impl_is_complete",
             "other_info_is_complete",
         )
+
+    def get_hq_budgets(self, obj):
+        if obj.is_hq is False:
+            return PartnerBudgetSerializer(obj.hq.budgets.all(), many=True).data
+        return
 
 
 class PartnersListSerializer(serializers.ModelSerializer):
@@ -604,6 +611,7 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
 class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
     budgets = PartnerBudgetSerializer(many=True)
+    hq_budgets = serializers.SerializerMethodField()
     major_donors = serializers.ListField(source="fund.major_donors")
     source_core_funding = serializers.CharField(source="fund.source_core_funding")
     main_donors_list = serializers.CharField(source="fund.main_donors_list")
@@ -614,6 +622,7 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
         model = Partner
         fields = (
             'budgets',
+            'hq_budgets',
             'major_donors',
             'main_donors_list',
             'source_core_funding',
@@ -629,6 +638,11 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
         # std method does not support writable nested fields by default
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+
+    def get_hq_budgets(self, obj):
+        if obj.is_hq is False:
+            return PartnerBudgetSerializer(obj.hq.budgets.all(), many=True).data
+        return
 
 
 class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
