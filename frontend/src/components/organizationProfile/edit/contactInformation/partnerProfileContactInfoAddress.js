@@ -97,7 +97,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                 <Grid item sm={3} xs={12}>
                   <TextFieldForm
                     label={messages.telephone}
-                    fieldName="telephone"
+                    fieldName="mailing_telephone"
                     optional
                     warn
                     readOnly={readOnly}
@@ -106,7 +106,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                 <Grid item sm={3} xs={12}>
                   <TextFieldForm
                     label={messages.fax}
-                    fieldName="fax"
+                    fieldName="mailing_fax"
                     optional
                     readOnly={readOnly}
                   />
