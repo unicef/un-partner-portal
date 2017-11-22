@@ -49,7 +49,7 @@ const PartnerProfileMandateGovernance = (props) => {
           sectionName="mandate_mission.governance"
           label={messages.organigram}
           fieldName="governance_organigram"
-          optinal
+          optional
           readOnly={readOnly}
         />
       </GridColumn>

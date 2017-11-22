@@ -40,6 +40,10 @@ class PartnerProfileEdit extends Component {
   }
 
   updatePath() {
+    if (this.rootContainer) {
+      this.rootContainer.scrollIntoView();
+    }
+
     const { tabs, params: { type } } = this.props;
     const index = tabs.findIndex(itab => itab.path === type);
     if (index === -1) {
@@ -57,6 +61,7 @@ class PartnerProfileEdit extends Component {
 
   handleChange(event, index) {
     const { tabs, partnerId } = this.props;
+
     history.push({
       pathname: `/profile/${partnerId}/edit/${tabs[index].path}`,
     });
@@ -69,7 +74,7 @@ class PartnerProfileEdit extends Component {
     const index = this.updatePath();
 
     return (
-      <div>
+      <div ref={(ref) => { this.rootContainer = ref; }}>
         <HeaderNavigation
           index={index}
           subTitle={messages.edit}

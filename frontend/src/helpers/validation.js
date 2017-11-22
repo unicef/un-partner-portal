@@ -2,6 +2,7 @@ import { isEmpty, pluck, sum } from 'ramda';
 import { isDateBefore } from './dates';
 
 export const required = value => ((value === undefined || value === null || isEmpty(value)) ? 'Required' : undefined);
+export const requiredBool = value => ((value === undefined || value === null || isEmpty(value) || !value) ? 'Required' : undefined);
 export const warning = value => (value || (typeof (value) === 'boolean') ? undefined : 'Missing field');
 export const email = (value) => {
   if (value && value.length > 0) {
