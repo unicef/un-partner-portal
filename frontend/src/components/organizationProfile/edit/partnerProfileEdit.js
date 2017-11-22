@@ -40,7 +40,9 @@ class PartnerProfileEdit extends Component {
   }
 
   updatePath() {
-    window.scrollTo(0, 0);
+    if (this.rootContainer) {
+      this.rootContainer.scrollIntoView();
+    }
 
     const { tabs, params: { type } } = this.props;
     const index = tabs.findIndex(itab => itab.path === type);
@@ -72,7 +74,7 @@ class PartnerProfileEdit extends Component {
     const index = this.updatePath();
 
     return (
-      <div>
+      <div ref={(ref) => { this.rootContainer = ref; }}>
         <HeaderNavigation
           index={index}
           subTitle={messages.edit}
