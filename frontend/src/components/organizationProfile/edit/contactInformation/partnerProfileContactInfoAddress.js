@@ -4,8 +4,8 @@ import { FormSection, formValueSelector } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import { connect } from 'react-redux';
 import RadioForm from '../../../forms/radioForm';
-import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import CountryField from '../../../forms/fields/projectFields/locationField/countryField';
 import { selectNormalizedCountries } from '../../../../store';
 import { url, email } from '../../../../helpers/validation';
 
@@ -38,7 +38,7 @@ const MAILING_TYPE_VALUES = [
 const isStreetAddress = type => type && type === MAILING_TYPE_VALUES[0].value;
 
 const PartnerProfileContactInfoAddress = (props) => {
-  const { readOnly, countries, mailingType } = props;
+  const { readOnly, country, mailingType } = props;
 
   return (<FormSection name="address">
     <Grid item>
@@ -75,10 +75,10 @@ const PartnerProfileContactInfoAddress = (props) => {
               />
             </Grid>
             <Grid item sm={3} xs={12}>
-              <SelectForm
+              <CountryField
                 label={messages.country}
                 fieldName="country"
-                values={countries}
+                initialValue={country}
                 optional
                 warn
                 readOnly={readOnly}
@@ -138,7 +138,7 @@ const PartnerProfileContactInfoAddress = (props) => {
 
 PartnerProfileContactInfoAddress.propTypes = {
   readOnly: PropTypes.bool,
-  countries: PropTypes.array.isRequired,
+  country: PropTypes.string,
   mailingType: PropTypes.string,
 };
 
@@ -146,5 +146,6 @@ const selector = formValueSelector('partnerProfile');
 
 export default connect(state => ({
   countries: selectNormalizedCountries(state),
+  country: selector(state, 'mailing.address.country'),
   mailingType: selector(state, 'mailing.address.mailing_type'),
 }), null)(PartnerProfileContactInfoAddress);

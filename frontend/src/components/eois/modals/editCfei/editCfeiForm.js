@@ -1,4 +1,5 @@
 import React from 'react';
+import { pluck } from 'ramda';
 import { connect } from 'react-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
 import PropTypes from 'prop-types';
@@ -24,6 +25,7 @@ const EditCfeiForm = (props) => {
       deadline_date: formDeadline,
       notif_results_date: formNotifDate,
     },
+    focalPoints,
     changeDates,
   } = props;
   return (
@@ -35,9 +37,8 @@ const EditCfeiForm = (props) => {
           {isOpen && <DeadlineDate />}
           {isOpen && <NotifyDate minDate={formDeadline} />}
         </GridRow>}
-        <FocalPoint />
+        <FocalPoint initialMultiValues={focalPoints} />
       </GridColumn>
-
     </form >
   );
 };
@@ -50,6 +51,7 @@ EditCfeiForm.propTypes = {
   /**
    * type of the project, direct, open, unsolicited
    */
+  focalPoints: PropTypes.array,
   isOpen: PropTypes.bool,
   formDates: PropTypes.object,
   changeDates: PropTypes.bool,
@@ -66,7 +68,9 @@ const mapStateToProps = (state, ownProps) => {
   const isOpen = ownProps.type === PROJECT_TYPES.OPEN;
 
   const { focal_points,
+    focal_points_detail,
     status,
+
     start_date,
     end_date,
     deadline_date,
@@ -77,6 +81,7 @@ const mapStateToProps = (state, ownProps) => {
   if (isOpen && changeDates) initialValues = { ...initialValues, deadline_date, notif_results_date };
   const formDates = selector(state, 'start_date', 'deadline_date', 'notif_results_date');
   return {
+    focalPoints: pluck('name', focal_points_detail),
     isOpen,
     formDates,
     initialValues,

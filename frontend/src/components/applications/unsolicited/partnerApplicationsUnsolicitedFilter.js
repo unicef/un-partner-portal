@@ -11,6 +11,7 @@ import SelectForm from '../../forms/selectForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
 import resetChanges from '../../eois/filters/eoiHelper';
 
@@ -118,10 +119,9 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
+              <CountryField
                 fieldName="country_code"
                 label={messages.labels.country}
-                values={countries}
                 optional
               />
             </Grid>
