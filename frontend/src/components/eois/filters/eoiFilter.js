@@ -14,6 +14,7 @@ import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 import { selectMappedSpecializations, selectNormalizedCountries } from '../../../store';
 import resetChanges from './eoiHelper';
 
@@ -151,10 +152,9 @@ class EoiFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
+              <CountryField
                 fieldName="country_code"
                 label={messages.labels.country}
-                values={countries}
                 optional
               />
             </Grid>
@@ -246,7 +246,6 @@ EoiFilter.propTypes = {
    */
   reset: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
-  countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
   pathName: PropTypes.string,
   agencyId: PropTypes.string,

@@ -9,6 +9,7 @@ import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SelectForm from '../forms/selectForm';
 import TextFieldForm from '../forms/textFieldForm';
+import CountryField from '../forms/fields/projectFields/locationField/countryField';
 import { selectNormalizedPopulationsOfConcernGroups, selectMappedSpecializations, selectNormalizedCountries, selectNormalizedOrganizationTypes } from '../../store';
 import resetChanges from '../eois/filters/eoiHelper';
 
@@ -141,10 +142,9 @@ class PartnersFilter extends Component {
           </Grid>
           <Grid container direction="row" >
             <Grid item sm={4} xs={12} >
-              <SelectForm
+              <CountryField
                 fieldName="country_code"
                 label={messages.labels.country}
-                values={countries}
                 optional
               />
             </Grid>

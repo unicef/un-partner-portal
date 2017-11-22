@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 
 import Grid from 'material-ui/Grid';
 import { selectNormalizedCountries } from '../../store';
-import SelectForm from '../forms/selectForm';
 import TextFieldForm from '../forms/textFieldForm';
 import PolarRadio from '../forms/fields/PolarRadio';
+import CountryField from '../forms/fields/projectFields/locationField/countryField';
 import { email } from '../../helpers/validation';
 
 const messages = {
@@ -20,7 +20,7 @@ const messages = {
 };
 
 const BasicInformation = (props) => {
-  const { legalNameChange, countries } = props;
+  const { legalNameChange } = props;
   return (
     <Grid item>
       <Grid container direction="column" spacing={16}>
@@ -55,13 +55,14 @@ const BasicInformation = (props) => {
             label="Organization's former Legal Name"
             fieldName="json.partner_profile.former_legal_name"
           />)}
-        <SelectForm
-          fieldName="json.partner.country_code"
-          label="Country of Origin"
-          values={countries}
-          infoIcon
-          infoText={messages.tooltip}
-        />
+        <Grid item>
+          <CountryField
+            fieldName="json.partner.country_code"
+            label="Country of Origin"
+            infoIcon
+            infoText={messages.tooltip}
+          />
+        </Grid>
         <Grid item>
           <TextFieldForm
             label="Head of Organization's Personal Name"
@@ -87,14 +88,12 @@ BasicInformation.propTypes = {
    * value of legal name change field to determine if former legal name field have to be displayed
    */
   legalNameChange: PropTypes.bool,
-  countries: PropTypes.arrayOf(PropTypes.string),
 };
 
 const selector = formValueSelector('registration');
 const connectedBasicInformation = connect(
   state => ({
     legalNameChange: selector(state, 'json.partner_profile.legal_name_change'),
-    countries: selectNormalizedCountries(state),
   }),
 )(BasicInformation);
 

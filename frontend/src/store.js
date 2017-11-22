@@ -246,9 +246,6 @@ export const mapSelectCriteriaToSelection = state =>
 export const mapPartnersNamesToSelection = state =>
   mapValuesForSelectionField(state.partnerNames);
 
-export const selectPartnerName = (state, id) =>
-  partnerNamesSelector.selectPartnerName(state.partnerNames, id);
-
 export const selectApplicationStatus = (state, id) =>
   applicationDetailsSelector.selectApplicationStatus(
     state.applicationDetails.applicationDetails, id);
@@ -287,7 +284,7 @@ export const isAssesmentAdded = (state, assessmentId) =>
 
 export const mapFocalPointsReviewersToSelection = state =>
   mapValuesForSelectionField(
-    agencyMembersSelectors.selectPossibleFocalPointsReviewers(state.agencyMembers));
+    agencyMembersSelectors.selectPossibleFocalPointsReviewers(state.agencyMembers.data));
 
 export const isUserACreator = (state, cfeiId) => cfeiDetailsSelector.isUserACreator(
   state.cfeiDetails.cfeiDetails, cfeiId, state.session.userId);
