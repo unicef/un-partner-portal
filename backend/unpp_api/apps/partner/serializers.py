@@ -240,10 +240,10 @@ class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
 
 class PartnerOtherInfoSerializer(serializers.ModelSerializer):
 
-    org_logo = CommonFileSerializer()
-    other_doc_1 = CommonFileSerializer()
-    other_doc_2 = CommonFileSerializer()
-    other_doc_3 = CommonFileSerializer()
+    org_logo = CommonFileSerializer(allow_null=True)
+    other_doc_1 = CommonFileSerializer(allow_null=True)
+    other_doc_2 = CommonFileSerializer(allow_null=True)
+    other_doc_3 = CommonFileSerializer(allow_null=True)
 
     class Meta:
         model = PartnerOtherInfo
@@ -759,12 +759,12 @@ class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serialize
 
     info_to_share = serializers.CharField(source="other_info.info_to_share", required=False,
                                           allow_blank=True)
-    org_logo = CommonFileSerializer(source="other_info.org_logo")
+    org_logo = CommonFileSerializer(source="other_info.org_logo", allow_null=True)
     confirm_data_updated = serializers.BooleanField(source="other_info.confirm_data_updated")
 
-    other_doc_1 = CommonFileSerializer(source='other_info.other_doc_1')
-    other_doc_2 = CommonFileSerializer(source='other_info.other_doc_2')
-    other_doc_3 = CommonFileSerializer(source='other_info.other_doc_3')
+    other_doc_1 = CommonFileSerializer(source='other_info.other_doc_1', allow_null=True)
+    other_doc_2 = CommonFileSerializer(source='other_info.other_doc_2', allow_null=True)
+    other_doc_3 = CommonFileSerializer(source='other_info.other_doc_3', allow_null=True)
 
     has_finished = serializers.BooleanField(read_only=True, source="profile.other_info_is_complete")
 
