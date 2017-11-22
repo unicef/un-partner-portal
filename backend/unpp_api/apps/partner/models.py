@@ -210,7 +210,6 @@ class PartnerProfile(TimeStampedModel):
     @property
     def identification_is_complete(self):
         required_fields = {
-            'country_presence': self.partner.country_presence,
             'have_gov_doc': self.have_gov_doc is not None,
             'gov_doc': self.gov_doc if self.have_gov_doc else True,
             'registration_to_operate_in_country': self.registration_to_operate_in_country is not None,
@@ -225,9 +224,6 @@ class PartnerProfile(TimeStampedModel):
             required_fields.update({
                 'registration_comment': self.registration_comment,
             })
-
-        if not self.partner.is_hq:
-            required_fields.pop('country_presence')
 
         return all(required_fields.values())
 
