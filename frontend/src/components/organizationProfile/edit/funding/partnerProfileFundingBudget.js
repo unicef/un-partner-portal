@@ -28,7 +28,6 @@ const annualBudgetForm = (budget, budgetTypes, readOnly) => (
         fieldName={`${budget}.budget`}
         label={messages.budget}
         values={budgetTypes}
-        optional
         warn
         readOnly={readOnly}
       />
