@@ -40,7 +40,7 @@ def clean_up_data_in_db():
 def generate_fake_data(quantity=50):
     assert quantity in [50, 100, 150, 200], "Quantity have to be: 50 or 100, 150, 200."
 
-    admin, created = User.objects.get_or_create(username='admin', defaults={
+    admin, created = User.objects.get_or_create(fullname='admin', defaults={
         'email': 'admin@unicef.org',
         'is_superuser': True,
         'is_staff': True,
@@ -48,7 +48,7 @@ def generate_fake_data(quantity=50):
     password = 'Passw0rd!'
     admin.set_password(password)
     admin.save()
-    print "Superuser created:{}/{}".format(admin.username, password)
+    print "Superuser created:{}/{}".format(admin.fullname, password)
 
     # Agencies
     unicef = AgencyFactory(name="UNICEF")

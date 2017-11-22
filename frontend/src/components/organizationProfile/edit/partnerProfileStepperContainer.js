@@ -6,11 +6,7 @@ import { reduxForm, submit, FormSection, getFormSyncWarnings, getFormSubmitError
 import { connect } from 'react-redux';
 import PartnerProfileStepper from './partnerProfileStepper';
 import Loader from '../../common/loader';
-import {
-  addIncompleteTab,
-  removeIncompleteTab,
-  addIncompleteStep,
-  removeIncompleteStep } from '../../../reducers/partnerProfileEdit';
+import { addIncompleteStep, removeIncompleteStep } from '../../../reducers/partnerProfileEdit';
 
 class PartnerProfileStepperContainer extends Component {
   constructor(props) {
@@ -24,10 +20,9 @@ class PartnerProfileStepperContainer extends Component {
   }
 
   componentWillUpdate(nextProps) {
-    const { name, isTabWarning, noTabWarning, isStepWarning, noStepWarning } = this.props;
+    const { name, isStepWarning, noStepWarning } = this.props;
 
     if (!nextProps.warnings || !nextProps.warnings[name]) {
-      noTabWarning(name);
       this.state.observedSteps.forEach(observedStep => noStepWarning(observedStep));
     } else {
       this.state.observedSteps.forEach((observedStep) => {
@@ -37,7 +32,6 @@ class PartnerProfileStepperContainer extends Component {
           isStepWarning(observedStep);
         }
       });
-      isTabWarning(name);
     }
   }
 
@@ -47,7 +41,7 @@ class PartnerProfileStepperContainer extends Component {
   }
 
   render() {
-    const { name, handleSubmit, readOnly, submitting, 
+    const { name, handleSubmit, readOnly, submitting,
       steps, singleSection, last, error, handleExit, handleNext } = this.props;
 
     return (
@@ -90,8 +84,6 @@ PartnerProfileStepperContainer.propTypes = {
     label: PropTypes.string,
     name: PropTypes.string,
   })),
-  isTabWarning: PropTypes.func,
-  noTabWarning: PropTypes.func,
   isStepWarning: PropTypes.func,
   noStepWarning: PropTypes.func,
   clearError: PropTypes.func,
@@ -111,8 +103,6 @@ const mapState = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  isTabWarning: tabName => dispatch(addIncompleteTab(tabName)),
-  noTabWarning: tabName => dispatch(removeIncompleteTab(tabName)),
   isStepWarning: stepName => dispatch(addIncompleteStep(stepName)),
   noStepWarning: stepName => dispatch(removeIncompleteStep(stepName)),
   clearError: () => dispatch(clearSubmitErrors('partnerProfile')),

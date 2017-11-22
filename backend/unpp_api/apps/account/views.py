@@ -45,7 +45,6 @@ class AccountRegisterAPIView(APIView):
             partner.is_locked = True
             partner.save()
 
-
         return Response(serializer.instance_json, status=statuses.HTTP_201_CREATED)
 
 

@@ -33,6 +33,7 @@ from .consts import (
     JUSTIFICATION_FOR_DIRECT_SELECTION,
 )
 
+
 class ConfigCountriesAPIView(APIView):
 
     def get(self, request, *args, **kwargs):

@@ -20,15 +20,8 @@ const messages = {
 const directorForm = (director, readOnly) => (
   <GridRow columns={4}>
     <TextFieldForm
-      fieldName={`${director}.first_name`}
-      label="First Name"
-      optional
-      warn
-      readOnly={readOnly}
-    />
-    <TextFieldForm
-      fieldName={`${director}.last_name`}
-      label="Last Name"
+      fieldName={`${director}.fullname`}
+      label="Personal Name"
       optional
       warn
       readOnly={readOnly}
@@ -55,15 +48,8 @@ const authorisedOfficerForm = (officer, readOnly) => (
   <GridColumn>
     <GridRow columns={3}>
       <TextFieldForm
-        fieldName={`${officer}.first_name`}
-        label="First Name"
-        optional
-        warn
-        readOnly={readOnly}
-      />
-      <TextFieldForm
-        fieldName={`${officer}.last_name`}
-        label="Last Name"
+        fieldName={`${officer}.fullname`}
+        label="Personal Name"
         optional
         warn
         readOnly={readOnly}

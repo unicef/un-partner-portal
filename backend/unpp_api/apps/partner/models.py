@@ -274,7 +274,7 @@ class PartnerProfile(TimeStampedModel):
             'collaboration_reference':
                 self.partner.collaboration_evidences.filter(mode=COLLABORATION_EVIDENCE_MODES.reference).exists(),
             'partnership_collaborate_institution': self.partnership_collaborate_institution is not None,
-            'partnership_collaborate_institution_desc': \
+            'partnership_collaborate_institution_desc':
                 self.partnership_collaborate_institution_desc not in ['', None],
         }
 
@@ -360,8 +360,7 @@ class PartnerMailingAddress(TimeStampedModel):
 
 class PartnerHeadOrganization(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="org_head")
-    first_name = models.CharField(max_length=255, null=True, blank=True)
-    last_name = models.CharField(max_length=255, null=True, blank=True)
+    fullname = models.CharField(max_length=512, null=True, blank=True)
     email = models.EmailField(max_length=255, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
     # TODO: shall we provide PhoneNumberField ???
@@ -379,8 +378,7 @@ class PartnerHeadOrganization(TimeStampedModel):
 class PartnerDirector(TimeStampedModel):
     created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="directors")
     partner = models.ForeignKey(Partner, related_name="directors")
-    first_name = models.CharField(max_length=255, null=True, blank=True)
-    last_name = models.CharField(max_length=255, null=True, blank=True)
+    fullname = models.CharField(max_length=512, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
     authorized = models.NullBooleanField()
 
@@ -394,8 +392,7 @@ class PartnerDirector(TimeStampedModel):
 class PartnerAuthorisedOfficer(TimeStampedModel):
     created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="authorised_officers")
     partner = models.ForeignKey(Partner, related_name="authorised_officers")
-    first_name = models.CharField(max_length=255, null=True, blank=True)
-    last_name = models.CharField(max_length=255, null=True, blank=True)
+    fullname = models.CharField(max_length=512, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
     telephone = models.CharField(max_length=255, null=True, blank=True)
     fax = models.CharField(max_length=255, null=True, blank=True)

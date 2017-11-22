@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db.models import Q
-
 import django_filters
 from django_filters.filters import MultipleChoiceFilter, CharFilter
 from django_filters.widgets import CSVWidget
@@ -24,7 +22,4 @@ class AgencyUserFilter(django_filters.FilterSet):
         fields = ['role', 'name']
 
     def get_name(self, queryset, name, value):
-        return queryset.filter(
-            Q(first_name__icontains=value) |
-            Q(last_name__icontains=value)
-        )
+        return queryset.filter(fullname__icontains=value)
