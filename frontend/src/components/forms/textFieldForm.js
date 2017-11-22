@@ -39,7 +39,7 @@ function TextFieldForm(props) {
               name={fieldName}
               placeholder={placeholder || `Provide ${label.toLowerCase()}`}
               component={renderTextField}
-              validate={(optional ? [] : [required].concat(validation || []))}
+              validate={(optional ? (validation || []) : [required].concat(validation || []))}
               normalize={normalize}
               warn={warn && warning}
               {...textFieldProps}

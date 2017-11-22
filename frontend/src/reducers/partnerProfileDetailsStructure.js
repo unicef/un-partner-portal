@@ -109,6 +109,7 @@ const partnerDetailsStructure = {
   fund: {
     budgets: {
       budgets: null,
+      hq_budgets: null,
     },
     major_donors: {
       source_core_funding: null,
