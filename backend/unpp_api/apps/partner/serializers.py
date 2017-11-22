@@ -291,6 +291,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
     org_head = PartnerHeadOrganizationSerializer()
+    hq_org_head = serializers.SerializerMethodField()
     mandate_mission = PartnerMandateMissionSerializer()
     experiences = PartnerExperienceSerializer(many=True)
     budgets = PartnerBudgetSerializer(many=True)
@@ -334,6 +335,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "directors",
             "authorised_officers",
             "org_head",
+            "hq_org_head",
             "mandate_mission",
             "experiences",
             "budgets",
@@ -359,6 +361,11 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     def get_hq_budgets(self, obj):
         if obj.is_hq is False:
             return PartnerBudgetSerializer(obj.hq.budgets.all(), many=True).data
+        return
+
+    def get_hq_org_head(self, obj):
+        if obj.is_hq is False:
+            return PartnerHeadOrganizationSerializer(obj.hq.org_head).data
         return
 
 
