@@ -40,6 +40,8 @@ class PartnerProfileEdit extends Component {
   }
 
   updatePath() {
+    window.scrollTo(0, 0);
+
     const { tabs, params: { type } } = this.props;
     const index = tabs.findIndex(itab => itab.path === type);
     if (index === -1) {
@@ -57,6 +59,7 @@ class PartnerProfileEdit extends Component {
 
   handleChange(event, index) {
     const { tabs, partnerId } = this.props;
+
     history.push({
       pathname: `/profile/${partnerId}/edit/${tabs[index].path}`,
     });

@@ -1,23 +1,13 @@
 import React from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
-import { withStyles } from 'material-ui/styles';
 import { FormControl } from 'material-ui/Form';
 import { renderCheckbox } from '../../helpers/formHelper';
-import { required, warning } from '../../helpers/validation';
-
-const styleSheet = () => ({
-  root: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-});
+import { requiredBool, warning } from '../../helpers/validation';
 
 function CheckboxForm(props) {
   const {
-    classes,
     fieldName,
     label,
     textFieldProps,
@@ -29,19 +19,15 @@ function CheckboxForm(props) {
   return (
     <Grid item>
       <FormControl fullWidth>
-        <div className={classes.root}>
-          <Field
-            name={fieldName}
-            component={renderCheckbox}
-            validate={optional ? [] : [required].concat(validation || [])}
-            warn={warn && warning}
-            disabled={readOnly}
-            {...textFieldProps}
-          />
-          <Typography color="inherit" type="caption">
-            {label}
-          </Typography>
-        </div>
+        <Field
+          name={fieldName}
+          component={renderCheckbox}
+          validate={optional ? [] : [requiredBool].concat(validation || [])}
+          warn={warn && warning}
+          disabled={readOnly}
+          label={label}
+          {...textFieldProps}
+        />
       </FormControl>
     </Grid>
   );
@@ -49,7 +35,6 @@ function CheckboxForm(props) {
 
 
 CheckboxForm.propTypes = {
-  classes: PropTypes.object.isRequired,
   /**
    * Name of the field used by react-form and as unique id.
    */
@@ -89,4 +74,4 @@ CheckboxForm.defaultProps = {
 };
 
 
-export default withStyles(styleSheet, { name: 'CheckboxForm' })(CheckboxForm);
+export default CheckboxForm;
