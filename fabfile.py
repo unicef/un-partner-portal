@@ -56,11 +56,14 @@ def stop():
     local('docker-compose stop')
 
 
-def fixtures(quantity=50):
+def fixtures(quantity=50, clean_before=True):
     """
     Load example data from fakedata management command.
     """
-    local('docker-compose exec backend python manage.py fakedata %d --clean_before' % (int(quantity)))
+    cmd = 'docker-compose exec backend python manage.py fakedata %d' % (int(quantity))
+    if clean_before:
+        cmd += ' --clean_before'
+    local(cmd)
     print "fab fixtures is done."
 
 
@@ -72,7 +75,8 @@ def make_db():
     local('docker-compose exec backend python manage.py reset_db')
     local('docker-compose exec backend python manage.py migrate')
     local('docker-compose exec backend python manage.py loaddata --app common initial.json')
-    fixtures()
+    # we have reset_db instead of clean before
+    fixtures(clean_before=False)
 
 
 def tests():

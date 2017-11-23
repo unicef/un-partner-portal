@@ -651,12 +651,16 @@ class UnsolicitedFactory(factory.django.DjangoModelFactory):
     partner = factory.LazyFunction(get_partner)
     submitter = factory.LazyFunction(get_partner_member)
     agency = factory.LazyFunction(get_random_agency)
-    proposal_of_eoi_details = {
-        'specializations': [
-            Specialization.objects.all().order_by("?").first().id,
-        ],
-        'title': 'fake title'
-    }
 
     class Meta:
         model = Application
+
+    @factory.post_generation
+    def proposal_of_eoi_details(self, create, extracted, **kwargs):
+        self.proposal_of_eoi_details = {
+            'specializations': [
+                Specialization.objects.all().order_by("?").first().id,
+            ],
+            'title': 'fake title'
+        }
+        self.save()
