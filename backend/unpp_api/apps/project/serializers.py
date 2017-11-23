@@ -527,7 +527,11 @@ class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
         return instance
 
     def validate(self, data):
-        if self.context['request'].method in ['PATCH', 'PUT']:
+        allowed_to_modify = \
+            list(self.instance.focal_points.values_list('id', flat=True)) + [self.instance.created_by_id]
+        if self.context['request'].user.id in allowed_to_modify:
+            pass
+        elif self.context['request'].method in ['PATCH', 'PUT']:
             if self.instance.status == EOI_STATUSES.closed and \
                     not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
                 raise serializers.ValidationError(
@@ -535,8 +539,7 @@ class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
             elif self.instance.is_completed:
                 raise serializers.ValidationError(
                     "CFEI is completed. Modify is forbidden.")
-            allowed_to_modify = \
-                list(self.instance.focal_points.values_list('id', flat=True)) + [self.instance.created_by_id]
+
             if self.context['request'].user.id not in allowed_to_modify:
                 raise serializers.ValidationError(
                     "Only Focal Point/Creator is allowed to modify a CFEI.")
