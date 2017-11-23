@@ -523,15 +523,18 @@ class EOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def assessments_criteria(self, create, extracted, **kwargs):
-        count = random.randint(4, 7)
+        count = random.randint(3, 5)
         values = []
         while count:
             count -= 1
             criterion = random.choice(list(SELECTION_CRITERIA_CHOICES._db_values))
             if criterion not in map(lambda x: x['selection_criteria'], values):
                 values.append(
-                    {'selection_criteria': criterion, 'weight': random.randint(1, 5)*10}
+                    {'selection_criteria': criterion, 'weight': random.randrange(10, 20, 5)}
                 )
+
+        result = sum(map(lambda x: x.get('weight'), values))
+        values[-1]['weight'] += 100 - result
         self.assessments_criteria = values
         self.save()
 
