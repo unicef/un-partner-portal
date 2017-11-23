@@ -80,8 +80,10 @@ class PartnerShortSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'legal_name',
+            'country_code',
             'partner_additional',
         )
+        read_only_fields = ('country_code', )
 
 
 class PartnerMemberSerializer(serializers.ModelSerializer):
@@ -102,6 +104,7 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'alias_name',
+            'acronym',
             'former_legal_name',
             'legal_name_change',
         )
@@ -148,7 +151,7 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
 class PartnerMailingAddressSerializer(serializers.ModelSerializer):
 
     mailing_telephone = serializers.CharField(source="telephone")
-    mailing_fax = serializers.CharField(source="fax")
+    mailing_fax = serializers.CharField(source="fax", allow_blank=True)
 
     class Meta:
         model = PartnerMailingAddress
