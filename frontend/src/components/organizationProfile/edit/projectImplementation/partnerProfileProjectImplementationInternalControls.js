@@ -86,8 +86,6 @@ const PolicyArea = (values, readOnly, ...props) => (member, index, fields) => {
           label={messages.areaOfResponsibility}
           values={newValues}
           readOnly
-          optional
-          warn
           {...props}
         />
       </Grid>
@@ -96,7 +94,6 @@ const PolicyArea = (values, readOnly, ...props) => (member, index, fields) => {
           fieldName={`${member}.document_policies`}
           label={messages.documentedPolicies}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -125,7 +122,6 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
           fieldName="experienced_staff"
           label={messages.experiencedStaff}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -140,7 +136,6 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
                   maxLength: '5000',
                 },
               }}
-              optional
               warn
               readOnly={readOnly}
             />

@@ -27,7 +27,6 @@ const PartnerProfileMandateEthics = (props) => {
           fieldName="ethic_safeguard"
           label={messages.violation}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -42,7 +41,6 @@ const PartnerProfileMandateEthics = (props) => {
                 maxLength: '5000',
               },
             }}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -53,7 +51,6 @@ const PartnerProfileMandateEthics = (props) => {
             sectionName="mandate_mission.ethics"
             fieldName="ethic_safeguard_policy"
             label={messages.policy}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -62,7 +59,6 @@ const PartnerProfileMandateEthics = (props) => {
           fieldName="ethic_fraud"
           label={messages.fraud}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -77,7 +73,6 @@ const PartnerProfileMandateEthics = (props) => {
                 maxLength: '5000',
               },
             }}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -88,7 +83,6 @@ const PartnerProfileMandateEthics = (props) => {
             sectionName="mandate_mission.ethics"
             fieldName="ethic_fraud_policy"
             label={messages.policy}
-            optional
             warn
             readOnly={readOnly}
           />

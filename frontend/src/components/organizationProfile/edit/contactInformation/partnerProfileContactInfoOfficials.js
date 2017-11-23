@@ -22,21 +22,18 @@ const directorForm = (director, readOnly) => (
     <TextFieldForm
       fieldName={`${director}.fullname`}
       label="Personal Name"
-      optional
       warn
       readOnly={readOnly}
     />
     <TextFieldForm
       fieldName={`${director}.job_title`}
       label="Job Title/Position"
-      optional
       warn
       readOnly={readOnly}
     />
     <RadioForm
       fieldName={`${director}.authorized`}
       values={BOOL_VAL}
-      optional
       warn
       label="Authorised Officer?"
       readOnly={readOnly}
@@ -50,14 +47,12 @@ const authorisedOfficerForm = (officer, readOnly) => (
       <TextFieldForm
         fieldName={`${officer}.fullname`}
         label="Personal Name"
-        optional
         warn
         readOnly={readOnly}
       />
       <TextFieldForm
         fieldName={`${officer}.job_title`}
         label="Job Title/Position"
-        optional
         warn
         readOnly={readOnly}
       />
@@ -66,7 +61,6 @@ const authorisedOfficerForm = (officer, readOnly) => (
       <TextFieldForm
         fieldName={`${officer}.telephone`}
         label="Telephone"
-        optional
         warn
         readOnly={readOnly}
       />
@@ -79,7 +73,6 @@ const authorisedOfficerForm = (officer, readOnly) => (
       <TextFieldForm
         fieldName={`${officer}.email`}
         label="Email"
-        optional
         warn
         readOnly={readOnly}
       />
@@ -97,7 +90,6 @@ const PartnerProfileContactInfoOfficials = (props) => {
           label={messages.boardOfDirectors}
           fieldName="have_board_directors"
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -117,7 +109,6 @@ const PartnerProfileContactInfoOfficials = (props) => {
           label={messages.authorisedOfficers}
           fieldName="have_authorised_officers"
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
