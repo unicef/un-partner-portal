@@ -315,10 +315,6 @@ class PartnerProfile(TimeStampedModel):
     def collaboration_complete(self):
         required_fields = {
             'collaborations_partnership': self.partner.collaborations_partnership.exists(),
-            'collaboration_accreditation':
-                self.partner.collaboration_evidences.filter(mode=COLLABORATION_EVIDENCE_MODES.accreditation).exists(),
-            'collaboration_reference':
-                self.partner.collaboration_evidences.filter(mode=COLLABORATION_EVIDENCE_MODES.reference).exists(),
             'partnership_collaborate_institution': self.partnership_collaborate_institution is not None,
             'partnership_collaborate_institution_desc':
                 self.partnership_collaborate_institution_desc if self.partnership_collaborate_institution else True,
