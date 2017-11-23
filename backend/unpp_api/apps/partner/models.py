@@ -253,7 +253,7 @@ class PartnerProfile(TimeStampedModel):
 
     @property
     def funding_complete(self):
-        budgets = self.partner.budgets.all()
+        budgets = self.partner.budgets.filter(budget__isnull=False)
         current_year_exists = budgets.filter(year=date.today().year).exists()
 
         required_fields = {
@@ -576,7 +576,7 @@ class PartnerBudget(TimeStampedModel):
         help_text="Enter valid year.",
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
-    budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, default=BUDGET_CHOICES.less)
+    budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, null=True, blank=True)
 
     class Meta:
         ordering = ['id']
