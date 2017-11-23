@@ -19,7 +19,10 @@ const GetConceptNoteButton = (props) => {
       icon={<Download />}
       name="download"
       text={messages.text}
-      onClick={() => downloadConceptNoteApplication(conceptNote)}
+      onClick={(e) => {
+        e.stopPropagation();
+        downloadConceptNoteApplication(conceptNote);
+      }}
       {...other}
     />
   );
