@@ -23,12 +23,17 @@ const styles = theme => ({
     position: 'relative',
   },
   suggestionsContainerOpen: {
-    position: 'inherit',
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit * 3,
     left: 0,
     right: 0,
     zIndex: 2000,
+  },
+  suggestionsContainerOpenOverlap: {
+    position: 'absolute',
+  },
+  suggestionsContainerOpenExpand: {
+    position: 'inherit',
   },
   suggestion: {
     display: 'block',
@@ -137,6 +142,7 @@ class AutocompleteField extends React.Component {
       multiple,
       async,
       textFieldProps,
+      overlap,
     } = this.props;
     return (
       <div className={classes.root}>
@@ -159,6 +165,7 @@ class AutocompleteField extends React.Component {
             classes={classes}
             parse={this.parseFormValue}
             suggestions={this.state.suggestions}
+            overlap={overlap}
             handleSuggestionsFetchRequested={async
               ? this.debounceSuggestionsFetch
               : this.handleSuggestionsFetchRequested}
@@ -236,11 +243,16 @@ AutocompleteField.propTypes = { /**
    * query param name for getting async suggestions
    */
   search: PropTypes.string,
+  /** 
+   * whether suggestions should overlap content below 
+   */
+  overlap: PropTypes.bool,
   classes: PropTypes.object,
 };
 
 AutocompleteField.defaultProps = {
   initialMultiValues: [],
+  overlap: true,
 };
 
 export default withStyles(styles)(AutocompleteField);

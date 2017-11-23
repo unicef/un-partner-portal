@@ -327,13 +327,16 @@ export const renderAutocomplete = ({
   multiValues,
   fieldValue,
   multiple,
+  overlap,
 }) => {
   return (<div>
     <Autosuggest
       id={`autosuggest-${name}`}
       theme={{
         container: classes.container,
-        suggestionsContainerOpen: classes.suggestionsContainerOpen,
+        suggestionsContainerOpen: overlap
+          ? `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenOverlap}`
+          : `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenExpand}`,
         suggestionsList: classes.suggestionsList,
         suggestion: classes.suggestion,
       }}

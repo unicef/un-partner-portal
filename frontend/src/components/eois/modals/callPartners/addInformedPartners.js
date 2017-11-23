@@ -50,7 +50,7 @@ class CallPartnersModal extends Component {
               label: messages.save,
             },
           }}
-          content={<CallPartnersForm id={id} onSubmit={this.onFormSubmit} />}
+          content={<CallPartnersForm overlap={false} id={id} onSubmit={this.onFormSubmit} />}
         />
       </div >
     );
