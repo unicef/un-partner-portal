@@ -15,10 +15,12 @@ class PartnersListFilter(django_filters.FilterSet):
     is_verified = BooleanFilter(method='get_is_verified', widget=BooleanWidget())
     display_type = CharFilter(method='get_display_type')
     country_code = CharFilter(method='get_country_code')
+    country_codes = CharFilter(method='get_country_codes')
     specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
                                                 name='experiences__specialization',
                                                 queryset=Specialization.objects.all())
     concern = CharFilter(method='get_concern')
+    limit = CharFilter(method='get_limit')
 
     class Meta:
         model = Partner
@@ -35,8 +37,17 @@ class PartnersListFilter(django_filters.FilterSet):
     def get_country_code(self, queryset, name, value):
         return queryset.filter(country_code=(value and value.upper()))
 
+    def get_country_codes(self, queryset, name, value):
+        country_codes = filter(lambda x: x.isalpha() and len(x) == 2, value and value.upper().split(","))
+        return queryset.filter(country_code__in=country_codes)
+
     def get_display_type(self, queryset, name, value):
         return queryset.filter(display_type=value)
 
     def get_concern(self, queryset, name, value):
         return queryset.filter(mandate_mission__concern_groups__contains=[value])
+
+    def get_limit(self, queryset, name, value):
+        if value.isdigit():
+            return queryset[:value]
+        return queryset
