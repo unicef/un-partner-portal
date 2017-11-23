@@ -42,7 +42,7 @@ const VerificationConfirmation = (props) => {
   if (verification) verified = verification.is_verified;
   return (
     <PaddedContent big className={classes.extraWidth}>
-      <GridColumn align="center">
+      <GridColumn alignItems="center">
         <Typography type="body2">
           {messages.status}
         </Typography>

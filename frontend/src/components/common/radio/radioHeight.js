@@ -14,7 +14,7 @@ const RadioHeight = (props) => {
 
   return (<Radio
     {...other}
-    classes={{ root: classes.rootRadio }}
+    classes={{ default: classes.rootRadio }}
   />);
 };
 

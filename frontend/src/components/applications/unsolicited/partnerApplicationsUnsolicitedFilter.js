@@ -11,6 +11,7 @@ import SelectForm from '../../forms/selectForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
 import resetChanges from '../../eois/filters/eoiHelper';
 
@@ -86,7 +87,7 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { project_title, agency, active, country_code, specialization, selected_source, ds_converted } = values;
+    const { project_title, agency, active, country_code, specializations, selected_source, ds_converted } = values;
 
     history.push({
       pathname: pathName,
@@ -95,7 +96,7 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
         agency,
         active,
         country_code,
-        specialization,
+        specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         selected_source,
         ds_converted,
       }),
@@ -118,10 +119,9 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
+              <CountryField
                 fieldName="country_code"
                 label={messages.labels.country}
-                values={countries}
                 optional
               />
             </Grid>
@@ -141,6 +141,9 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
+                selectFieldProps={{
+                  multiple: true,
+                }}
                 values={specs}
                 sections
                 optional
@@ -198,12 +201,12 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { project_title } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { agency } = {} } = ownProps.location;
-  const { query: { specialization } = {} } = ownProps.location;
+  const { query: { specializations = '' } = {} } = ownProps.location;
   const { query: { selected_source } = {} } = ownProps.location;
   const { query: { ds_converted } = {} } = ownProps.location;
 
   const agencyQ = agency ? Number(agency) : agency;
-
+  const specializationsQ = specializations && R.map(Number, specializations.split(','));
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
@@ -214,7 +217,7 @@ const mapStateToProps = (state, ownProps) => {
       project_title,
       country_code,
       agency: agencyQ,
-      specialization,
+      specialization: specializationsQ,
       selected_source,
       ds_converted,
     },

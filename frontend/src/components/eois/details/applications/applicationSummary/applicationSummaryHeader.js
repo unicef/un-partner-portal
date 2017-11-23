@@ -147,7 +147,7 @@ class ApplicationSummaryHeader extends Component {
     }
     return (<HeaderNavigation
       title={`${messages.header} ${partner}`}
-      header={<GridRow align="center">
+      header={<GridRow alignItems="center">
         <ApplicationStatusText status={status} />
         {this.renderActionButton()}
       </GridRow>

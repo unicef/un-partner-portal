@@ -15,7 +15,7 @@ const messages = {
   comments: 'Comments',
   commentsHolder: 'Enter additional details...',
   contact: 'Contact person (optional)',
-  contactHolder: 'Name and last name...',
+  contactHolder: 'Personal name...',
   telephone: 'Telephone (optional)',
   telephoneHolder: 'Enter telephone...',
   email: 'E-mail (optional)',
@@ -43,7 +43,7 @@ const SingleFlagSummary = (props) => {
             fieldName="comment"
             readOnly
           />
-          <GridRow columns={3} align="flex-end">
+          <GridRow columns={3} alignItems="flex-end">
             <TextFieldForm
               label={messages.contact}
               placeholder={messages.contactHolder}

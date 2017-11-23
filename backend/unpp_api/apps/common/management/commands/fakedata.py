@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from django.core.management.base import BaseCommand
+from django.core.management import call_command
 from .helpers import clean_up_data_in_db, generate_fake_data
 
 
@@ -20,6 +21,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if options['clean_before']:
             clean_up_data_in_db()
+            print "Data cleaned!"
+            call_command("loaddata", "initial.json")
+            print "Sectors and Specialization initialized!"
 
         generate_fake_data(options['quantity'])
 

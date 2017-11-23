@@ -1,3 +1,4 @@
+import { pluck, sum } from 'ramda';
 import { isDateBefore } from './dates';
 
 export const required = value => ((value === undefined || value === null) ? 'Required' : undefined);
@@ -36,6 +37,24 @@ export const numerical = (value) => {
   return undefined;
 };
 
+export const weight = (value) => {
+  const numValue = Number(value);
+  if (Number.isNaN(numValue)) return 'Invalid number';
+  if (value < 1) return 'Value is to small, min: 1';
+  return undefined;
+};
+
+
+export const selectionCriteria = (value) => {
+  if (value) {
+    const allWeights = pluck('weight', value);
+    const max = 100;
+    const totalWeights = sum(allWeights);
+    if (totalWeights !== max) return 'Sum of all weights must be equal to 100';
+  }
+  return undefined;
+};
+
 export const areFieldsMissing = (fields, values) => {
   const isFieldMissing = key => values[key] === undefined;
   return Object.keys(fields).find(isFieldMissing);
@@ -60,4 +79,21 @@ export const notifResultsDate = (value, allValues) => {
     if (isDateBefore(value, allValues.deadline_date)) return 'Notification date must be after deadline date';
   }
   return undefined;
+};
+
+export const validateReviewScores = (values, props) => {
+  if (values.scores) {
+    const scoresError = [];
+    const weights = pluck('weight', props.criteria);
+    values.scores.forEach((scoreObj, scoreIndex) => {
+      const scoreError = {};
+      if (+scoreObj.score < 1) scoreError.score = 'Value is to small, min: 1';
+      else if (+scoreObj.score > weights[scoreIndex]) {
+        scoreError.score = `Value is to large, max: ${weights[scoreIndex]}`;
+      }
+      scoresError[scoreIndex] = scoreError;
+    });
+    return { scores: scoresError };
+  }
+  return {};
 };

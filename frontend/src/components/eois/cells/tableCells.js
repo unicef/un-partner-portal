@@ -20,12 +20,12 @@ export default type => ({ row, column }) => {
     );
   } else if (column.name === 'specializations') {
     return (
-      <TableCell >
+      <TableCell padding="dense" >
         <EoiSectorCell data={row.specializations} id={row.id} />
       </TableCell>);
   } else if (column.name === 'agency') {
     return (
-      <TableCell >
+      <TableCell padding="dense">
         {row.agency.name}
       </TableCell>);
   } else if (column.name === 'status' && type === 'open') {
@@ -54,6 +54,21 @@ export default type => ({ row, column }) => {
     return (
       <TableCell >
         {formatDateForPrint(row.submission_date)}
+      </TableCell>);
+  } else if (column.name === 'created') {
+    return (
+      <TableCell >
+        {formatDateForPrint(row.created)}
+      </TableCell>);
+  } else if (column.name === 'deadline_date') {
+    return (
+      <TableCell >
+        {formatDateForPrint(row.deadline_date)}
+      </TableCell>);
+  } else if (column.name === 'start_date') {
+    return (
+      <TableCell >
+        {formatDateForPrint(row.start_date)}
       </TableCell>);
   } else if (column.name === 'is_direct') {
     return (

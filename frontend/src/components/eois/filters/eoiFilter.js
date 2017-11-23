@@ -14,6 +14,7 @@ import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 import { selectMappedSpecializations, selectNormalizedCountries } from '../../../store';
 import resetChanges from './eoiHelper';
 
@@ -89,7 +90,7 @@ class EoiFilter extends Component {
       const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
       const ordering = this.props.query.active === 'true' ? 'deadline_date' : '-completed_date';
       const active = this.props.query.active ? this.props.query.active : true;
-      
+
       history.push({
         pathname,
         query: R.merge(this.props.query,
@@ -107,7 +108,6 @@ class EoiFilter extends Component {
 
     const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
     const ordering = active === 'true' ? 'deadline_date' : '-completed_date';
-
     history.push({
       pathname: pathName,
       query: R.merge(query, {
@@ -116,10 +116,11 @@ class EoiFilter extends Component {
         ordering,
         active,
         country_code,
-        specializations,
+        specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         posted_from_date,
         posted_to_date,
-        locations }),
+        locations,
+      }),
     });
   }
 
@@ -151,10 +152,9 @@ class EoiFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
+              <CountryField
                 fieldName="country_code"
                 label={messages.labels.country}
-                values={countries}
                 optional
               />
             </Grid>
@@ -174,6 +174,9 @@ class EoiFilter extends Component {
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
+                selectFieldProps={{
+                  multiple: true,
+                }}
                 values={specs}
                 sections
                 optional
@@ -243,7 +246,6 @@ EoiFilter.propTypes = {
    */
   reset: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
-  countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
   pathName: PropTypes.string,
   agencyId: PropTypes.string,
@@ -258,17 +260,16 @@ const formEoiFilter = reduxForm({
 })(EoiFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { title } = { } } = ownProps.location;
-  const { query: { country_code } = { } } = ownProps.location;
-  const { query: { agency } = { } } = ownProps.location;
-  const { query: { active } = { } } = ownProps.location;
-  const { query: { locations } = { } } = ownProps.location;
-  const { query: { specializations } = { } } = ownProps.location;
-  const { query: { posted_from_date } = { } } = ownProps.location;
-  const { query: { posted_to_date } = { } } = ownProps.location;
-
+  const { query: { title } = {} } = ownProps.location;
+  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { agency } = {} } = ownProps.location;
+  const { query: { active } = {} } = ownProps.location;
+  const { query: { locations } = {} } = ownProps.location;
+  const { query: { specializations = '' } = {} } = ownProps.location;
+  const { query: { posted_from_date } = {} } = ownProps.location;
+  const { query: { posted_to_date } = {} } = ownProps.location;
   const agencyQ = Number(agency);
-
+  const specializationsQ = specializations && R.map(Number, specializations.split(','));
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
@@ -281,7 +282,7 @@ const mapStateToProps = (state, ownProps) => {
       agency: agencyQ,
       active,
       locations,
-      specializations,
+      specializations: specializationsQ,
       posted_from_date,
       posted_to_date,
     },

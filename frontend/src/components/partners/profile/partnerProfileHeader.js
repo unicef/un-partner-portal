@@ -26,7 +26,7 @@ const PartnerTitle = (props) => {
     } = {},
   } = props;
   return (
-    <Grid container align="center">
+    <Grid container alignItems="center">
       <Grid item>
         <Typography type="headline">
           {name}

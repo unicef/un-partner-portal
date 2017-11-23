@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 
-import SelectForm from '../../../selectForm';
+import CountryField from './countryField';
 import { selectNormalizedCountries } from '../../../../../store';
 
 const COUNTRY = 'country';
@@ -14,10 +14,10 @@ const LocationsCountry = (props) => {
   const { name, countries } = props;
 
   return (
-    <SelectForm
+    <CountryField
       fieldName={`${name}.${COUNTRY}`}
       label="Country"
-      values={countries}
+      suggestionsPool={countries}
     />
   );
 };

@@ -8,7 +8,7 @@ from common.consts import (
     PARTNER_TYPES,
     POLICY_AREA_CHOICES,
 )
-from common.models import Point, AdminLevel1
+from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (CommonFileSerializer,
                                 SpecializationSerializer,
@@ -147,9 +147,12 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
 
 class PartnerMailingAddressSerializer(serializers.ModelSerializer):
 
+    mailing_telephone = serializers.CharField(source="telephone")
+    mailing_fax = serializers.CharField(source="fax", allow_blank=True)
+
     class Meta:
         model = PartnerMailingAddress
-        fields = "__all__"
+        exclude = ("telephone", "fax")
 
 
 class PartnerHeadOrganizationRegisterSerializer(serializers.ModelSerializer):
@@ -161,14 +164,11 @@ class PartnerHeadOrganizationRegisterSerializer(serializers.ModelSerializer):
 
 class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
 
-    org_fax = serializers.CharField(source="fax")
-
     class Meta:
         model = PartnerHeadOrganization
         fields = "__all__"
         read_only_fields = (
-            'first_name',
-            'last_name',
+            'fullname',
             'email',
         )
 
@@ -268,10 +268,11 @@ class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
 
     most_recent_audit_report = CommonFileSerializer()
     assessment_report = CommonFileSerializer()
+    audit_link_report = serializers.URLField(source="link_report")
 
     class Meta:
         model = PartnerAuditAssessment
-        fields = "__all__"
+        exclude = ("link_report", )
 
 
 class PartnerReportingSerializer(serializers.ModelSerializer):

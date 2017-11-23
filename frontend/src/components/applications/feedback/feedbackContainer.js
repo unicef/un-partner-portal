@@ -55,11 +55,16 @@ class FeedbackContainer extends Component {
   }
 
   componentWillMount() {
-    this.props.loadFeedback(this.state.params);
+    if (this.props.applicationId) {
+      this.props.loadFeedback(this.state.params);
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (!R.equals(nextState.params, this.state.params)) {
+      this.props.loadFeedback(nextState.params);
+      return false;
+    } else if (!this.props.applicationId && nextProps.applicationId) {
       this.props.loadFeedback(nextState.params);
       return false;
     }

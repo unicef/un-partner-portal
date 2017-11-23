@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
-import { FormControl, FormLabel } from 'material-ui/Form';
+import { FormControl, FormLabel, FormHelperText } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
@@ -9,6 +9,7 @@ import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
+import classname from 'classnames';
 
 
 const messages = {
@@ -47,6 +48,12 @@ const styleSheet = theme => ({
     paddingTop: '1em',
     paddingBottom: '1em',
   },
+  error: {
+    border: '2px solid red',
+  },
+  errorText: {
+    paddingLeft: theme.spacing.unit * 2,
+  },
 });
 
 class RenderArrayMembers extends Component {
@@ -67,10 +74,15 @@ class RenderArrayMembers extends Component {
       classes,
       disableAdding,
       disableDeleting,
+      meta: { error },
       readOnly } = this.props;
-
+    const paperClass = classname(
+      classes.outerPaper,
+      { [classes.error]: error },
+    );
     return (
-      <Paper elevation={0} className={classes.outerPaper} >
+      <Paper elevation={0} className={paperClass} >
+        {error && <FormHelperText className={classes.errorText} error>{error}</FormHelperText>}
         <List className={classes.list}>
           {fields.map((member, index) => (
             <div>
@@ -114,6 +126,7 @@ class RenderArrayMembers extends Component {
 
 RenderArrayMembers.propTypes = {
   fields: PropTypes.object,
+  meta: PropTypes.bool,
   classes: PropTypes.object,
   /**
    * form or whole component displayed on the outer grey section
@@ -161,6 +174,7 @@ const ArrayForm = (props) => {
     initial,
     disableAdding,
     disableDeleting,
+    validate,
     readOnly } = props;
   return (
     <FormControl fullWidth>
@@ -175,6 +189,7 @@ const ArrayForm = (props) => {
         disableAdding={disableAdding}
         disableDeleting={disableDeleting}
         readOnly={readOnly}
+        validate={validate}
       />
     </FormControl>
   );

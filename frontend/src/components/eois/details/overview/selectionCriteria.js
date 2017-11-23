@@ -9,16 +9,24 @@ import { selectCfeiDetails } from '../../../../store';
 
 const messages = {
   title: 'Selection Criteria',
+  weight: 'Weight of criteria',
 };
 
 const title = () => (
   <Typography type="headline" >{messages.title}</Typography>
 );
 
-const renderRow = (criterias, allCriteria) => criterias.map(selection => (<PaddedContent>
-  <Typography type="subheading">{allCriteria[selection.selection_criteria]}</Typography>
-  <Typography type="caption">{selection.description} </Typography>
-</PaddedContent>));
+const renderRow = (criterias, allCriteria) => {
+  return criterias.map(selection => (<PaddedContent>
+    <Typography type="subheading">{allCriteria[selection.selection_criteria]}</Typography>
+    <Typography type="caption">{selection.description} </Typography>
+    {selection.weight && <Typography
+      type="caption"
+    >
+      {`${messages.weight}: ${selection.weight}`}
+    </Typography>}
+  </PaddedContent>));
+};
 
 const SelectionCriteria = (props) => {
   const { selectionCriteria, allCriteria } = props;

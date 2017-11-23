@@ -4,7 +4,7 @@ steps:
 
     build_proxy:
         type: build
-        image_name: unpp-proxy
+        image_name: unicef/unpp-proxy
         dockerfile: Dockerfile
         working_directory: ${{main_clone}}/proxy
         tag: ${{CF_BRANCH}}
@@ -13,7 +13,7 @@ steps:
         type: push
         title: Pushing proxy image to docker hub
         candidate: ${{build_proxy}}
-        registry: tivix-dockerhub
+        registry: unicef-dockerhub
         tags: 
             - ${{CF_BRANCH}}
             - latest

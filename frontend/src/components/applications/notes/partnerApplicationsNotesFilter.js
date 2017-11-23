@@ -12,6 +12,7 @@ import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedApplicationStatuses } from '../../../store';
 import resetChanges from '../../eois/filters/eoiHelper';
 
@@ -95,7 +96,7 @@ class PartnerApplicationsNotesFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { project_title, agency, country_code, specialization,
+    const { project_title, agency, country_code, specializations,
       posted_from_date, posted_to_date, cfei_active, status, locations } = values;
 
     history.push({
@@ -106,7 +107,7 @@ class PartnerApplicationsNotesFilter extends Component {
         status,
         cfei_active,
         country_code,
-        specialization,
+        specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         posted_from_date,
         posted_to_date,
         locations
@@ -144,10 +145,9 @@ class PartnerApplicationsNotesFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
+              <CountryField
                 fieldName="country_code"
                 label={messages.labels.country}
-                values={countries}
                 optional
               />
             </Grid>
@@ -167,6 +167,9 @@ class PartnerApplicationsNotesFilter extends Component {
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
+                selectFieldProps={{
+                  multiple: true,
+                }}
                 values={specs}
                 sections
                 optional
@@ -245,12 +248,12 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { cfei_active } = {} } = ownProps.location;
   const { query: { status } = {} } = ownProps.location;
   const { query: { locations } = {} } = ownProps.location;
-  const { query: { specialization } = {} } = ownProps.location;
+  const { query: { specializations = '' } = {} } = ownProps.location;
   const { query: { posted_from_date } = {} } = ownProps.location;
   const { query: { posted_to_date } = {} } = ownProps.location;
 
   const agencyQ = agency ? Number(agency) : agency;
-
+  const specializationsQ = specializations && R.map(Number, specializations.split(','));
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
@@ -264,7 +267,7 @@ const mapStateToProps = (state, ownProps) => {
       cfei_active,
       status,
       locations,
-      specialization,
+      specializations: specializationsQ,
       posted_from_date,
       posted_to_date,
     },

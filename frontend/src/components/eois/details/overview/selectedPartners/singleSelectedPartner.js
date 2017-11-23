@@ -5,8 +5,9 @@ import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import GridColumn from '../../../../common/grid/gridColumn';
-import { updateApplication } from '../../../../../reducers/partnerApplicationDetails';
-import { loadCfei } from '../../../../../reducers/cfeiDetails';
+import { updateApplication } from '../../../../../reducers//applicationDetails';
+import { selectApplicationCurrentStatus } from '../../../../../store';
+import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 
 const messages = {
   accept: 'Accept',
@@ -15,18 +16,20 @@ const messages = {
 };
 
 
-const SingleAward = (props) => {
-  const { partner, isFocalPoint, acceptSelection, withdrawPartner } = props;
-  const displayAccept = isFocalPoint && partner.application_status === 'Application Successful';
-  const displayWithdraw = partner.application_status !== 'Selection Retracted';
+const SingleSelectedPartner = (props) => {
+  const { partner, isFocalPoint, acceptSelection, applicationStatus } = props;
+  const displayAccept = isFocalPoint && applicationStatus === 'Application Successful';
+  const displayWithdraw = isFocalPoint && applicationStatus !== 'Selection Retracted';
   return (<GridColumn>
     <Typography>{partner.partner_name}</Typography>
-    <Typography type="caption">{partner.application_status}</Typography>
+    <Typography type="caption">{applicationStatus}</Typography>
     {displayAccept && <Typography type="caption">{messages.acceptText}</Typography>}
     {(displayAccept || displayWithdraw) &&
       <Grid container justify="flex-end">
         {displayWithdraw && <Grid item>
-          <Button color="accent" onClick={withdrawPartner} >{messages.withdraw}</Button>
+          <WithdrawApplicationButton
+            applicationId={partner.id}
+          />
         </Grid>}
         {displayAccept && <Grid item>
           <Button color="accent" onClick={acceptSelection}>{messages.accept}</Button>
@@ -36,21 +39,22 @@ const SingleAward = (props) => {
   </GridColumn>);
 };
 
-SingleAward.propTypes = {
+SingleSelectedPartner.propTypes = {
   partner: PropTypes.object,
   isFocalPoint: PropTypes.bool,
   acceptSelection: PropTypes.func,
   withdrawPartner: PropTypes.func,
+  applicationStatus: PropTypes.string,
 };
+
+const mapStateToProps = (state, { partner: { id } }) => ({
+  applicationStatus: selectApplicationCurrentStatus(state, id),
+});
 
 
 const mapDispatchToProps = (dispatch, { id, partner = {} }) => ({
   acceptSelection: () => dispatch(updateApplication(partner.id,
-    { did_accept: true, did_decline: false }))
-    .then(() => { dispatch(loadCfei(id)); }),
-  withdrawPartner: () => dispatch(updateApplication(partner.id,
-    { did_withdraw: true }))
-    .then(() => { dispatch(loadCfei(id)); }),
+    { did_accept: true, did_decline: false })),
 });
 
-export default connect(null, mapDispatchToProps)(SingleAward);
+export default connect(mapStateToProps, mapDispatchToProps)(SingleSelectedPartner);

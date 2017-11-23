@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import datetime, date
+from datetime import datetime
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -527,7 +527,11 @@ class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
         return instance
 
     def validate(self, data):
-        if self.context['request'].method in ['PATCH', 'PUT']:
+        allowed_to_modify = \
+            list(self.instance.focal_points.values_list('id', flat=True)) + [self.instance.created_by_id]
+        if self.context['request'].user.id in allowed_to_modify:
+            pass
+        elif self.context['request'].method in ['PATCH', 'PUT']:
             if self.instance.status == EOI_STATUSES.closed and \
                     not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
                 raise serializers.ValidationError(
@@ -535,14 +539,12 @@ class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
             elif self.instance.is_completed:
                 raise serializers.ValidationError(
                     "CFEI is completed. Modify is forbidden.")
-            allowed_to_modify = \
-                list(self.instance.focal_points.values_list('id', flat=True)) + [self.instance.created_by_id]
+
             if self.context['request'].user.id not in allowed_to_modify:
                 raise serializers.ValidationError(
                     "Only Focal Point/Creator is allowed to modify a CFEI.")
 
         return super(AgencyProjectUpdateSerializer, self).validate(data)
-
 
 
 class ApplicationsListSerializer(serializers.ModelSerializer):
@@ -596,8 +598,7 @@ class ReviewersApplicationSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'id',
-            'first_name',
-            'last_name',
+            'fullname',
             'assessment',
         )
 
@@ -807,7 +808,7 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         eoi.agency = app.agency
         # we can use get direct because agent have one agency office
         eoi.agency_office = submitter.agency_members.get().office
-        eoi.selected_source = DIRECT_SELECTION_SOURCE.cso
+        eoi.selected_source = DIRECT_SELECTION_SOURCE.ucn
 
         eoi.save()
         for focal_point in focal_points:
@@ -850,7 +851,7 @@ class ReviewSummarySerializer(serializers.ModelSerializer):
 class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
     __apps_count = None
     user_id = serializers.CharField(source='id')
-    user_name = serializers.CharField(source='get_user_name')
+    user_name = serializers.CharField(source='get_fullname')
     assessments = serializers.SerializerMethodField()
 
     class Meta:
@@ -883,6 +884,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
     partner_id = serializers.CharField(source='partner.id')
     partner_name = serializers.CharField(source='partner.legal_name')
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
+    application_id = serializers.CharField(source='id')
 
     cn = CommonFileSerializer()
     partner_notified = serializers.SerializerMethodField()
@@ -896,6 +898,12 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
             'partner_id',
             'partner_name',
             'partner_additional',
+            'application_id',
+            'did_win',
+            'did_withdraw',
+            'withdraw_reason',
+            'did_decline',
+            'did_accept',
             'cn',
             'partner_notified',
             'partner_decision_date',
@@ -909,7 +917,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
         for assessment in assessments:
             notes.append({
                 'note': assessment.note,
-                'reviewer': assessment.reviewer.get_user_name(),
+                'reviewer': assessment.reviewer.get_fullname(),
             })
 
         return {

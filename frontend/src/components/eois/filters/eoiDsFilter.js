@@ -11,6 +11,7 @@ import SelectForm from '../../forms/selectForm';
 import RadioForm from '../../forms/radioForm';
 import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
+import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
 import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
 import resetChanges from './eoiHelper';
@@ -111,7 +112,7 @@ class EoiFilter extends Component {
         active,
         ordering,
         country_code,
-        specializations,
+        specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         selected_source,
       }),
     });
@@ -131,7 +132,7 @@ class EoiFilter extends Component {
   }
 
   render() {
-    const { classes, countries, directSources, specs, handleSubmit, reset } = this.props;
+    const { classes, directSources, specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -146,10 +147,9 @@ class EoiFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
+              <CountryField
                 fieldName="country_code"
                 label={messages.labels.country}
-                values={countries}
                 optional
               />
             </Grid>
@@ -169,6 +169,9 @@ class EoiFilter extends Component {
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
+                selectFieldProps={{
+                  multiple: true,
+                }}
                 values={specs}
                 sections
                 optional
@@ -227,7 +230,6 @@ EoiFilter.propTypes = {
    */
   reset: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
-  countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
   directSources: PropTypes.array.isRequired,
   pathName: PropTypes.string,
@@ -247,11 +249,11 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { agency } = {} } = ownProps.location;
   const { query: { active } = {} } = ownProps.location;
-  const { query: { specializations } = {} } = ownProps.location;
+  const { query: { specializations = '' } = {} } = ownProps.location;
   const { query: { selected_source } = {} } = ownProps.location;
 
   const agencyQ = Number(agency);
-
+  const specializationsQ = specializations && R.map(Number, specializations.split(','));
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
@@ -264,7 +266,7 @@ const mapStateToProps = (state, ownProps) => {
       country_code,
       agency: agencyQ,
       active,
-      specializations,
+      specializations: specializationsQ,
       selected_source,
     },
   };

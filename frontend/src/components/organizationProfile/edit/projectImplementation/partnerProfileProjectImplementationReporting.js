@@ -20,7 +20,7 @@ const messages = {
 };
 
 const PartnerProfileProjectImplementationReporting = (props) => {
-  const { readOnly, publishReports } = props;
+  const { readOnly, publishReports, annualReport, annualReportLink } = props;
 
   return (
     <FormSection name="report">
@@ -61,28 +61,30 @@ const PartnerProfileProjectImplementationReporting = (props) => {
             </Grid>
             : <Grid item sm={6} xs={12} />}
         </Grid>
-        <Grid container direction="row">
-          <Grid item sm={6} xs={12}>
-            <FileForm
-              formName="partnerProfile"
-              sectionName="project_impl.report"
-              label={messages.mostRecentReport}
-              fieldName="report"
-              optional
-              warn
-              readOnly={readOnly}
-            />
+        {visibleIfYes(publishReports) ?
+          <Grid container direction="row">
+            <Grid item sm={6} xs={12}>
+              <FileForm
+                formName="partnerProfile"
+                sectionName="project_impl.report"
+                label={messages.mostRecentReport}
+                fieldName="report"
+                optional
+                warn={!(annualReport || annualReportLink)}
+                readOnly={readOnly}
+              />
+            </Grid>
+            <Grid item sm={6} xs={12}>
+              <TextFieldForm
+                label={messages.link}
+                fieldName="link_report"
+                validation={[url]}
+                warn={!(annualReport || annualReportLink)}
+                readOnly={readOnly}
+              />
+            </Grid>
           </Grid>
-          <Grid item sm={6} xs={12}>
-            <TextFieldForm
-              label={messages.link}
-              fieldName="link_report"
-              validation={[url]}
-              warn
-              readOnly={readOnly}
-            />
-          </Grid>
-        </Grid>
+          : null}
       </GridColumn>
     </FormSection>
   );
@@ -91,11 +93,15 @@ const PartnerProfileProjectImplementationReporting = (props) => {
 PartnerProfileProjectImplementationReporting.propTypes = {
   readOnly: PropTypes.bool,
   publishReports: PropTypes.bool,
+  annualReport: PropTypes.string,
+  annualReportLink: PropTypes.string,
 };
 
 const selector = formValueSelector('partnerProfile');
 export default connect(
   state => ({
     publishReports: selector(state, 'project_impl.report.publish_annual_reports'),
+    annualReport: selector(state, 'project_impl.report.report'),
+    annualReportLink: selector(state, 'project_impl.report.link_report'),
   }),
 )(PartnerProfileProjectImplementationReporting);

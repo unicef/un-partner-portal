@@ -85,7 +85,6 @@ class OpenCfeiPreselections extends Component {
 
   render() {
     const { applications, columns, loading, itemsCount, allowedToEdit, isReviewer } = this.props;
-    console.log(columns);
     let finalColumns = columns;
     if (!allowedToEdit) {
       finalColumns = reject(column => column.name === 'average_total_score', finalColumns);

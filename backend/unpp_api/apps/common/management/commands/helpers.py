@@ -2,6 +2,13 @@ from datetime import date
 from django.conf import settings
 
 from account.models import User, UserProfile
+from agency.models import (
+    OtherAgency,
+    Agency,
+    AgencyProfile,
+    AgencyOffice,
+    AgencyMember,
+)
 from common.consts import (
     EOI_TYPES,
     MEMBER_ROLES,
@@ -20,12 +27,54 @@ from common.factories import (
     PartnerVerificationFactory,
     PartnerFlagFactory,
 )
+from common.models import (
+    AdminLevel1,
+    Point,
+    Sector,
+    Specialization,
+    CommonFile,
+)
+from notification.models import (
+    Notification,
+    NotifiedUser,
+)
 from partner.models import (
     Partner,
+    PartnerProfile,
+    PartnerMailingAddress,
     PartnerHeadOrganization,
+    PartnerDirector,
+    PartnerAuthorisedOfficer,
+    PartnerPolicyArea,
+    PartnerAuditAssessment,
+    PartnerReporting,
+    PartnerMandateMission,
+    PartnerExperience,
+    PartnerInternalControl,
     PartnerBudget,
+    PartnerFunding,
+    PartnerCollaborationPartnership,
+    PartnerCollaborationEvidence,
+    PartnerOtherInfo,
+    PartnerMember,
+    PartnerReview,
 )
-from project.models import EOI
+from project.models import (
+    EOI,
+    Pin,
+    Application,
+    ApplicationFeedback,
+    Assessment,
+)
+from review.models import (
+    PartnerFlag,
+    PartnerVerification,
+)
+from sanctionslist.models import (
+    SanctionedItem,
+    SanctionedName,
+    SanctionedNameMatch,
+)
 
 
 def clean_up_data_in_db():
@@ -34,13 +83,62 @@ def clean_up_data_in_db():
 
         User.objects.all().delete()
         UserProfile.objects.all().delete()
+
+        OtherAgency.objects.all().delete()
+        Agency.objects.all().delete()
+        AgencyProfile.objects.all().delete()
+        AgencyOffice.objects.all().delete()
+        AgencyMember.objects.all().delete()
+
+        AdminLevel1.objects.all().delete()
+        Point.objects.all().delete()
+        Sector.objects.all().delete()
+        Specialization.objects.all().delete()
+        CommonFile.objects.all().delete()
+
+        Notification.objects.all().delete()
+        NotifiedUser.objects.all().delete()
+
+        Partner.objects.all().delete()
+        PartnerProfile.objects.all().delete()
+        PartnerMailingAddress.objects.all().delete()
+        PartnerHeadOrganization.objects.all().delete()
+        PartnerDirector.objects.all().delete()
+        PartnerAuthorisedOfficer.objects.all().delete()
+        PartnerPolicyArea.objects.all().delete()
+        PartnerAuditAssessment.objects.all().delete()
+        PartnerReporting.objects.all().delete()
+        PartnerMandateMission.objects.all().delete()
+        PartnerExperience.objects.all().delete()
+        PartnerInternalControl.objects.all().delete()
+        PartnerBudget.objects.all().delete()
+        PartnerFunding.objects.all().delete()
+        PartnerCollaborationPartnership.objects.all().delete()
+        PartnerCollaborationEvidence.objects.all().delete()
+        PartnerOtherInfo.objects.all().delete()
+        PartnerMember.objects.all().delete()
+        PartnerReview.objects.all().delete()
+
+        EOI.objects.all().delete()
+        Pin.objects.all().delete()
+        Application.objects.all().delete()
+        ApplicationFeedback.objects.all().delete()
+        Assessment.objects.all().delete()
+
+        PartnerFlag.objects.all().delete()
+        PartnerVerification.objects.all().delete()
+
+        SanctionedItem.objects.all().delete()
+        SanctionedName.objects.all().delete()
+        SanctionedNameMatch.objects.all().delete()
+
         print "All ORM objects deleted"
 
 
 def generate_fake_data(quantity=50):
     assert quantity in [50, 100, 150, 200], "Quantity have to be: 50 or 100, 150, 200."
 
-    admin, created = User.objects.get_or_create(username='admin', defaults={
+    admin, created = User.objects.get_or_create(fullname='admin', defaults={
         'email': 'admin@unicef.org',
         'is_superuser': True,
         'is_staff': True,
@@ -48,7 +146,7 @@ def generate_fake_data(quantity=50):
     password = 'Passw0rd!'
     admin.set_password(password)
     admin.save()
-    print "Superuser created:{}/{}".format(admin.username, password)
+    print "Superuser {}:{}/{}".format("created" if created else "updated",admin.fullname, password)
 
     # Agencies
     unicef = AgencyFactory(name="UNICEF")

@@ -32,7 +32,7 @@ const styleSheet = theme => ({
 const CountryOfficesHeader = (props) => {
   const { classes, handleNewCountryClick, disableNewCountries } = props;
   return (
-    <Grid align="center" container>
+    <Grid alignItems="center" container>
       <Grid xs={9} item>
         <Typography type="title" color="inherit">
           {messages.countryProfile}

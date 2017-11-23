@@ -3,20 +3,22 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ArrayForm from '../../../arrayForm';
 import SelectForm from '../../../selectForm';
-import { mapPartnersNamesToSelection } from '../../../../../store';
 import JustificationField from './justificationField';
 import JustificationSummary from './justificationSummary';
+import AutocompleteForm from '../../../autoCompleteForm';
+import { mapValuesForSelectionField } from '../../../../../store';
+import { loadPartnerNamesForAutoComplete } from '../../../../../reducers/partnerNames';
 
-const Partners = (values, readOnly, ...props) => (member, index, fields) => {
+const Partners = (getPartners, readOnly, ...props) => (member, index, fields) => {
   const chosenPartners = fields.getAll().map(field => field.partner);
   const ownPartner = fields.get(index).partner;
-  const newValues = values.filter(value =>
-    (ownPartner === value.value) || !(chosenPartners.includes(value.value)));
-  return (<SelectForm
+  return (<AutocompleteForm
     fieldName={`${member}.partner`}
     label="Partner"
-    values={newValues}
+    async
+    asyncFunction={getPartners}
     readOnly={readOnly}
+    search={'legal_name'}
     {...props}
   />
   );
@@ -42,35 +44,32 @@ const Justification = (readOnly, ...props) => (member, index, fields) => (
 
 
 const PartnersFieldArray = (props) => {
-  const { partners, readOnly, ...other } = props;
+  const { getPartners, readOnly, ...other } = props;
   return (
     <ArrayForm
       label=""
-      limit={partners.length}
+      limit={16}
       fieldName="applications"
       initial
       readOnly={readOnly}
       {...other}
-      outerField={Partners(partners, readOnly, ...other)}
+      outerField={Partners(getPartners, readOnly, ...other)}
       innerField={Justification(readOnly, ...other)}
     />
   );
 };
 
 PartnersFieldArray.propTypes = {
-  partners: PropTypes.arrayOf(
-    PropTypes.objectOf(
-      {
-        value: PropTypes.string,
-        label: PropTypes.string,
-      },
-    ),
-  ),
+  getPartners: PropTypes.func,
   readOnly: PropTypes.bool,
 };
 
 
 export default connect(
-  state => (
-    { partners: mapPartnersNamesToSelection(state) }),
+  null,
+  (dispatch, ownProps) => ({
+    getPartners: params => dispatch(
+      loadPartnerNamesForAutoComplete({ ...params }))
+      .then(results => mapValuesForSelectionField(results)),
+  }),
 )(PartnersFieldArray);
