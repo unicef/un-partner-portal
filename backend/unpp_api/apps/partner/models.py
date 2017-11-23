@@ -622,7 +622,7 @@ class PartnerBudget(TimeStampedModel):
         help_text="Enter valid year.",
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
-    budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, default=BUDGET_CHOICES.less)
+    budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, null=True, blank=True)
 
     class Meta:
         ordering = ['id']

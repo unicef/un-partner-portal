@@ -527,7 +527,11 @@ class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
         return instance
 
     def validate(self, data):
-        if self.context['request'].method in ['PATCH', 'PUT']:
+        allowed_to_modify = \
+            list(self.instance.focal_points.values_list('id', flat=True)) + [self.instance.created_by_id]
+        if self.context['request'].user.id in allowed_to_modify:
+            pass
+        elif self.context['request'].method in ['PATCH', 'PUT']:
             if self.instance.status == EOI_STATUSES.closed and \
                     not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
                 raise serializers.ValidationError(
@@ -535,8 +539,7 @@ class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
             elif self.instance.is_completed:
                 raise serializers.ValidationError(
                     "CFEI is completed. Modify is forbidden.")
-            allowed_to_modify = \
-                list(self.instance.focal_points.values_list('id', flat=True)) + [self.instance.created_by_id]
+
             if self.context['request'].user.id not in allowed_to_modify:
                 raise serializers.ValidationError(
                     "Only Focal Point/Creator is allowed to modify a CFEI.")
@@ -630,6 +633,27 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
         app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
         if app.eoi.status != EOI_STATUSES.closed:
             raise serializers.ValidationError("Assessment allowed once deadline is passed.")
+        scores = data.get('scores')
+        application = self.instance and self.instance.application or data.get('application')
+        assessments_criteria = application.eoi.assessments_criteria
+
+        if scores and not set(map(lambda x: x['selection_criteria'], scores)).__eq__(
+                set(map(lambda x: x['selection_criteria'], assessments_criteria))):
+            raise serializers.ValidationError(
+                "You can score only selection criteria defined in CFEI.")
+
+        if scores and application.eoi.has_weighting:
+            for score in scores:
+                key = score.get('selection_criteria')
+                val = score.get('score')
+                criterion = filter(lambda x: x.get('selection_criteria') == key, assessments_criteria)
+                if len(criterion) == 1 and val > criterion[0].get('weight'):
+                    raise serializers.ValidationError(
+                        "The maximum score is equal to the value entered for the weight.")
+                elif len(criterion) != 1:
+                    raise serializers.ValidationError(
+                        "Selection criterion '{}' defined improper.".format(key))
+
         return super(ReviewerAssessmentsSerializer, self).validate(data)
 
 
