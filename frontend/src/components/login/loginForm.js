@@ -17,7 +17,7 @@ const styleSheet = (theme) => {
   return {
     root: {
       width: '30vw',
-      height: '50vh',
+      minHeight: '50vh',
       background: theme.palette.background.paper,
     },
     fields: {
