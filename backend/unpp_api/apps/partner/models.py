@@ -296,9 +296,9 @@ class PartnerProfile(TimeStampedModel):
     @property
     def funding_complete(self):
         if self.partner.is_hq is False:
-            budgets = self.partner.hq.budgets.all()
+            budgets = self.partner.hq.budgets.filter(budget__isnull=False)
         else:
-            budgets = self.partner.budgets.all()
+            budgets = self.partner.budgets.filter(budget__isnull=False)
 
         current_year_exists = budgets.filter(year=date.today().year).exists()
 
@@ -315,10 +315,6 @@ class PartnerProfile(TimeStampedModel):
     def collaboration_complete(self):
         required_fields = {
             'collaborations_partnership': self.partner.collaborations_partnership.exists(),
-            'collaboration_accreditation':
-                self.partner.collaboration_evidences.filter(mode=COLLABORATION_EVIDENCE_MODES.accreditation).exists(),
-            'collaboration_reference':
-                self.partner.collaboration_evidences.filter(mode=COLLABORATION_EVIDENCE_MODES.reference).exists(),
             'partnership_collaborate_institution': self.partnership_collaborate_institution is not None,
             'partnership_collaborate_institution_desc':
                 self.partnership_collaborate_institution_desc if self.partnership_collaborate_institution else True,
