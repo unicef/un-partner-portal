@@ -49,7 +49,7 @@ class AutocompleteField extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      value: '',
+      value: props.initial || '',
       multiValues: props.initialMultiValues || [],
       suggestions: [],
     };
