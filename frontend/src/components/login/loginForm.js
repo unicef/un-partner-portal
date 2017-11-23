@@ -1,60 +1,91 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { reduxForm, SubmissionError } from 'redux-form';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Snackbar from 'material-ui/Snackbar';
+import Typography from 'material-ui/Typography';
 import GridColumn from '../common/grid/gridColumn';
 import { loginUser } from '../../reducers/session';
 import TextFieldForm from '../forms/textFieldForm';
 import PasswordFieldForm from '../forms/passwordFieldForm';
 
-
-const handleLogin = (values, dispatch) => {
-  return dispatch(loginUser(values)).catch((error) => {
-    const errorMsg = error.response.data.non_field_errors || 'Login failed!';
-    throw new SubmissionError({
-      ...error.response.data,
-      _error: errorMsg,
-    });
-  });
+const styleSheet = (theme) => {
+  const paddingFields = theme.spacing.unit * 5;
+  const paddingField = theme.spacing.unit * 3;
+  return {
+    root: {
+      width: '30vw',
+      height: '50vh',
+      background: theme.palette.background.paper,
+    },
+    fields: {
+      padding: `${paddingFields}px`,
+    },
+    logIn: {
+      color: theme.palette.secondary[500],
+    },
+    field: {
+      paddingTop: `${paddingField}px`,
+    },
+    lineHeight: {
+      lineHeight: '24px',
+    },
+  };
 };
+
+const handleLogin = (values, dispatch) => dispatch(loginUser(values)).catch((error) => {
+  const errorMsg = error.response.data.non_field_errors || 'Login failed!';
+  throw new SubmissionError({
+    ...error.response.data,
+    _error: errorMsg,
+  });
+});
+
 const Login = (props) => {
-  const { handleSubmit, pristine, submitting, submitFailed, error } = props;
+  const { handleSubmit, pristine, submitting, submitFailed, error, classes } = props;
   return (
-    <form onSubmit={handleSubmit}>
-      <GridColumn>
-        <TextFieldForm
-          label="Login (e-mail)"
-          placeholder="Please use your email to login"
-          fieldName="email"
-        />
-        <PasswordFieldForm
-          label="Password"
-          fieldName="password"
-        />
-        <Grid container justify="flex-end" >
-          <Button onTouchTap={handleSubmit} color="accent" disabled={pristine || submitting}>
-            Submit
-          </Button>
-        </Grid>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={error}
-          message={error}
-        />
-      </GridColumn>
-
-
-    </form >
+    <div >
+      <form onSubmit={handleSubmit}>
+        <GridColumn className={classes.root}>
+          <Grid className={classes.field} container justify="center" >
+            <Typography type="display1" className={classes.logIn}>Log in</Typography>
+          </Grid>
+          <div className={classes.fields}>
+            <TextFieldForm
+              label="E-mail"
+              placeholder="Please use your email to login"
+              fieldName="email"
+            />
+            <div className={classes.field}>
+              <PasswordFieldForm
+                label="Password"
+                fieldName="password"
+              />
+            </div>
+          </div>
+          <Grid container justify="center" >
+            <Button onTouchTap={handleSubmit} raised color="accent" disabled={pristine || submitting}>
+            Log in
+            </Button>
+          </Grid>
+          <Snackbar
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            open={error}
+            message={error}
+          />
+        </GridColumn>
+      </form >
+    </div>
   );
 };
 
 Login.propTypes = {
+  classes: PropTypes.object,
   /**
    * callback for form submit
    */
@@ -68,4 +99,4 @@ const LoginForm = reduxForm({
   onSubmit: handleLogin,
 })(Login);
 
-export default LoginForm;
+export default withStyles(styleSheet, { name: 'LoginForm' })(LoginForm);
