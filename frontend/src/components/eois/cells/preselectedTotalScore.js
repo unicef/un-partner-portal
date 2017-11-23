@@ -15,7 +15,7 @@ const PreselectedTotalScore = (props) => {
 
   return (
     <TableCell>
-      <GridRow align="center" >
+      <GridRow alignItems="center" >
         <Typography type="body1" color="inherit">
           {localScore}
         </Typography>

@@ -12,11 +12,10 @@ const table = {
 
 const styleSheet = (theme) => {
   const paddingSmall = theme.spacing.unit * 3;
-  const paddingMedium = theme.spacing.unit * 4;
 
   return {
     container: {
-      padding: `${paddingSmall}px 0 ${paddingSmall}px ${paddingMedium}px`,
+      padding: `${paddingSmall}px 0 ${paddingSmall}px ${paddingSmall}px`,
     },
   };
 };

@@ -41,7 +41,7 @@ const AddVerificationModal = (props) => {
           </SpreadContent>,
         }}
         buttons={{}}
-        content={<GridColumn align="center">
+        content={<GridColumn alignItems="center">
           <VerificationConfirmation verification={verification} />
           <AddVerificationForm readOnly initialValues={verification} />
         </GridColumn>}

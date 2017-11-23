@@ -2,12 +2,13 @@ import R from 'ramda';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
-import { FormSection } from 'redux-form';
+import { FormSection, formValueSelector } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import { connect } from 'react-redux';
 import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
-import { selectNormalizedCountries, selectNormalizedOrganizationTypes } from '../../../../store';
+import CountryField from '../../../forms/fields/projectFields/locationField/countryField';
+import { selectNormalizedOrganizationTypes } from '../../../../store';
 
 const messages = {
   legalName: 'Organization\'s Legal Name',
@@ -21,7 +22,7 @@ const messages = {
 const isReadOnly = (isHq, displayType, readOnly) => readOnly || !(!isHq && displayType === 'Int');
 
 const PartnerProfileIdentificationBasicInfo = (props) => {
-  const { isCountryProfile, displayType, readOnly, countries, organizationTypes } = props;
+  const { isCountryProfile, displayType, readOnly, country, organizationTypes } = props;
 
   return (
     <FormSection name="basic">
@@ -58,10 +59,10 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
             />
           </Grid>
           <Grid item sm={6} xs={12}>
-            <SelectForm
+            <CountryField
               fieldName="country_code"
               label={messages.countryOrigin}
-              values={countries}
+              initialValue={country}
               optional
               warn
               readOnly
@@ -84,21 +85,21 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
 };
 
 PartnerProfileIdentificationBasicInfo.propTypes = {
-  countries: PropTypes.array.isRequired,
+  country: PropTypes.string,
   readOnly: PropTypes.bool,
   isCountryProfile: PropTypes.bool,
   displayType: PropTypes.string,
   organizationTypes: PropTypes.array.isRequired,
 };
 
+const selector = formValueSelector('partnerProfile');
 
 const connected = connect((state, ownProps) => {
   const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
-
   return {
     isCountryProfile: partner ? partner.is_hq : false,
     displayType: partner ? partner.display_type : null,
-    countries: selectNormalizedCountries(state),
+    country: selector(state, 'identification.basic.country_code'),
     organizationTypes: selectNormalizedOrganizationTypes(state),
   };
 }, null)(PartnerProfileIdentificationBasicInfo);

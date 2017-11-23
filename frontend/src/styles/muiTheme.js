@@ -89,8 +89,10 @@ const theme = {
       },
     },
     MuiTableCell: {
-      padding: {
-        padding: '0 8px 0 8px',
+      paddingDefault: {
+        '&:not(:first-child)': {
+          paddingLeft: '8px',
+        },
       },
     },
     MuiDefaultTab: {

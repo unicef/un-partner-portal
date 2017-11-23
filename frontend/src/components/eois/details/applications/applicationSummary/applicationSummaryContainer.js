@@ -2,7 +2,6 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  selectPartnerName,
   selectCfeiDetails,
   isUserAFocalPoint,
   isUserAReviewer,
@@ -60,9 +59,7 @@ ApplicationSummaryHeader.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  partnerNameExists: name => !!selectPartnerName(state, name),
   cfeiDetailsExists: cfeiId => !!selectCfeiDetails(state, cfeiId),
-  getPartnerNameFromState: id => selectPartnerName(state, id),
   shouldGetReviews: eoi => isUserAFocalPoint(state, eoi) || isUserAReviewer(state, eoi),
   user: state.session.userId,
 });

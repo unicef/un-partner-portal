@@ -8,11 +8,11 @@ import TooltipText from '../../common/text/tooltipText';
 
 const renderExpandedCell = data => data.map((score, index) => (
   <SpreadContent key={index}>
-    <TooltipText color="inherit" align="left">
+    <TooltipText color="inherit" alignItems="left">
       {score.label}
     </TooltipText>
     <div style={{ minWidth: 50 }} />
-    <TooltipText color="inherit" align="right">
+    <TooltipText color="inherit" alignItems="right">
       {score.score}
     </TooltipText>
   </SpreadContent>

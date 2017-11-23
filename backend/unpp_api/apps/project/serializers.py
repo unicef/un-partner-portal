@@ -860,6 +860,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
     partner_id = serializers.CharField(source='partner.id')
     partner_name = serializers.CharField(source='partner.legal_name')
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
+    application_id = serializers.CharField(source='id')
 
     cn = CommonFileSerializer()
     partner_notified = serializers.SerializerMethodField()
@@ -873,6 +874,12 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
             'partner_id',
             'partner_name',
             'partner_additional',
+            'application_id',
+            'did_win',
+            'did_withdraw',
+            'withdraw_reason',
+            'did_decline',
+            'did_accept',
             'cn',
             'partner_notified',
             'partner_decision_date',

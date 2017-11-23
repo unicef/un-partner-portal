@@ -29,9 +29,9 @@ function buildHeaders(authorize = false, extraHeaders = {}) {
   return { ...headers, ...extraHeaders };
 }
 
-function get(uri, params = {}) {
-  const options = { method: 'GET', params, headers: buildHeaders() };
-  return axios.get(`${host}${uri}`, options)
+function get(uri, params = {}, options) {
+  const opt = { method: 'GET', params, headers: buildHeaders() };
+  return axios.get(`${host}${uri}`, { ...opt, ...options })
     .then(response => response.data);
 }
 
@@ -43,12 +43,12 @@ function post(uri, body = {}) {
     .then(response => response.data);
 }
 
-function authorizedGet({ uri, params = {} }) {
-  const options = {
+function authorizedGet({ uri, params = {}, options }) {
+  const opt = {
     params,
     headers: buildHeaders(true),
   };
-  return axios.get(`${host}${uri}`, options)
+  return axios.get(`${host}${uri}`, { ...options, ...opt })
     .then(response => response.data);
 }
 
@@ -261,8 +261,8 @@ export function getPartnerProfileDetails(partnerId) {
   return authorizedGet({ uri: `/partners/${partnerId}` });
 }
 
-export function getPartnerNames() {
-  return get('/partners/short');
+export function getPartnerNames(params, options) {
+  return get('/partners/short', params, options);
 }
 
 export function getPartnersList(params) {
@@ -323,8 +323,8 @@ export function patchPartnerFlags(id, body, flagId) {
 
 
 // Agencies
-export function getAgencyMembers(id, params = { page_size: 100 }) {
-  return authorizedGet({ uri: `/agencies/${id}/members`, params },
+export function getAgencyMembers(id, params = { page_size: 100 }, options) {
+  return authorizedGet({ uri: `/agencies/${id}/members`, params, options },
   );
 }
 

@@ -21,7 +21,7 @@ const styleSheet = theme => ({
     zIndex: 1,
   },
   spinner: {
-    position: 'fixed',
+    position: 'relative',
     left: 'calc(50% - 25px)',
     top: 'calc(50% - 25px)',
   },

@@ -28,7 +28,7 @@ const NumberOfAwards = (props) => {
       <PaddedContent>
         <GridRow>
           <Typography type="headline">{messages.title}</Typography>
-          <GridColumn align="flex-end">
+          <GridColumn alignItems="flex-end">
             <Typography className={classes.number} type="display2">{number}</Typography>
             <Button
               component={Link}

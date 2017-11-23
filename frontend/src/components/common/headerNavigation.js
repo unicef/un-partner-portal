@@ -93,7 +93,7 @@ class HeaderNavigation extends Component {
 
     return (
       <div>
-        <Grid align="center" className={classes.container} container>
+        <Grid alignItems="center" className={classes.container} container>
           <SpreadContent className={classes.flex} >
             <div className={paddingClass}>
               { backButton

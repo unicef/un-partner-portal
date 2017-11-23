@@ -25,3 +25,16 @@ export const selectIndexWithDefaultEmptyObject = R.propOr({});
 export const selectIndexWithDefaultEmptyArray = R.propOr([]);
 
 export const pluckAll = R.compose(R.juxt, R.map(R.pluck));
+
+export const pickByMap = (keysMap, obj) =>
+  R.map(
+    (key) => {
+      if (typeof key === 'string') {
+        return R.path([key], obj);
+      }
+      return R.path(key, obj);
+    },
+    keysMap,
+  );
+
+export const mapArray = (keysMap, list) => R.map(R.curry(pickByMap)(keysMap), list);

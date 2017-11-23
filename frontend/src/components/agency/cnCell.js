@@ -29,7 +29,7 @@ const CnCell = (props) => {
   const { cnId, eoiId, type } = props;
 
   return (
-    <TableCell first limited>
+    <TableCell>
       <Typography
         component={Link}
         color="accent"

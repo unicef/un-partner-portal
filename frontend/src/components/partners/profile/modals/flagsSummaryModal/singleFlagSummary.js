@@ -43,7 +43,7 @@ const SingleFlagSummary = (props) => {
             fieldName="comment"
             readOnly
           />
-          <GridRow columns={3} align="flex-end">
+          <GridRow columns={3} alignItems="flex-end">
             <TextFieldForm
               label={messages.contact}
               placeholder={messages.contactHolder}

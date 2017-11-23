@@ -14,12 +14,13 @@ const title = () => (
   <Typography type="headline" >{messages.title}</Typography>
 );
 
-const renderRow = (partners, partnerNames) => partners.map(partner => (
-  <PaddedContent>
-    <Typography type="subheading">{partnerNames[partner]}</Typography>
-  </PaddedContent>
-));
-
+const renderRow = (partners) => {
+  return partners.map(partner => (
+    <PaddedContent>
+      <Typography type="subheading">{partner.legal_name}</Typography>
+    </PaddedContent>
+  ));
+};
 
 const InformedPartners = (props) => {
   const { partners, partnerNames } = props;
@@ -41,7 +42,6 @@ const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
   return {
     partners: cfei ? cfei.invited_partners : [],
-    partnerNames: state.partnerNames || {},
   };
 };
 

@@ -32,7 +32,7 @@ const NumberOfPinnedCfeis = (props) => {
             <Typography type="headline">{messages.title}</Typography>
             <Typography type="caption">{messages.caption}</Typography>
           </div>
-          <GridColumn align="flex-end">
+          <GridColumn alignItems="flex-end">
             <Typography className={classes.number} type="display2">{number}</Typography>
             <Button component={Link} to="/cfei/pinned/" color="accent">{messages.button}</Button>
           </GridColumn>
