@@ -30,6 +30,7 @@ from common.permissions import (
     IsPartnerEOIApplicationCreate,
     IsPartner,
 )
+from common.mixins import PartnerIdsMixin
 from notification.helpers import (
     get_partner_users_for_app_qs,
     send_notification_cfei_completed,
@@ -430,7 +431,7 @@ class UnsolicitedProjectAPIView(ListAPIView):
     serializer_class = AgencyUnsolicitedApplicationSerializer
 
 
-class PartnerApplicationOpenListAPIView(ListAPIView):
+class PartnerApplicationOpenListAPIView(PartnerIdsMixin, ListAPIView):
     permission_classes = (IsAuthenticated, IsPartner)
     queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.open).distinct()
     serializer_class = ApplicationPartnerOpenSerializer
@@ -439,10 +440,10 @@ class PartnerApplicationOpenListAPIView(ListAPIView):
     filter_class = ApplicationsFilter
 
     def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(partner_id=self.request.active_partner.id)
+        return self.queryset.filter(partner_id__in=self.get_partner_ids())
 
 
-class PartnerApplicationUnsolicitedListCreateAPIView(ListCreateAPIView):
+class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreateAPIView):
     permission_classes = (IsAuthenticated, IsPartner)
     queryset = Application.objects.filter(is_unsolicited=True).distinct()
     filter_class = ApplicationsUnsolicitedFilter
@@ -455,7 +456,7 @@ class PartnerApplicationUnsolicitedListCreateAPIView(ListCreateAPIView):
         return ApplicationPartnerUnsolicitedDirectSerializer
 
     def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(partner_id=self.request.active_partner.id)
+        return self.queryset.filter(partner_id__in=self.get_partner_ids())
 
     def perform_create(self, serializer):
         instance = serializer.save()
@@ -466,7 +467,7 @@ class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedLis
     queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct).distinct()
 
     def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(partner_id=self.request.active_partner.id)
+        return self.queryset.filter(partner_id__in=self.get_partner_ids())
 
 
 class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
