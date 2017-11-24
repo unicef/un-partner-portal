@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { browserHistory as history } from 'react-router';
 import PartnerFilter from '../../../partners/partnerFilter';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
 import SelectableList from '../../../common/list/selectableList';
@@ -35,7 +36,12 @@ const HeaderActions = (props) => {
   );
 };
 
-const applicationsCells = ({ row, column }) => {
+const onTableRowClick = (row) => {
+  const loc = history.getCurrentLocation().pathname;
+  history.push(`${loc}/${row.id}`);
+};
+
+const applicationsCells = ({ row, column, hovered }) => {
   if (column.name === 'name') {
     return (<PartnerProfileNameCell
       verified={row.partner_additional.is_verified}
@@ -54,7 +60,7 @@ const applicationsCells = ({ row, column }) => {
       id={row.id}
       status={row.status}
       conceptNote={row.cn}
-      hovered={row.hovered}
+      hovered={hovered}
       progress={row.review_progress}
     />
     );
@@ -92,6 +98,8 @@ class ApplicationsListContainer extends Component {
               itemsCount={itemsCount}
               headerAction={HeaderActions}
               templateCell={applicationsCells}
+              onTableRowClick={onTableRowClick}
+              clickableRow
             />
             : <TableWithStateInUrl
               component={PaginatedList}
@@ -100,6 +108,8 @@ class ApplicationsListContainer extends Component {
               loading={loading}
               itemsCount={itemsCount}
               templateCell={applicationsCells}
+              onTableRowClick={onTableRowClick}
+              clickableRow
             />}
         </GridColumn>
       </div>

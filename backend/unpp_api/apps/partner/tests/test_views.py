@@ -131,7 +131,6 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             'registration_number': '123/2016',
         }
         response = self.client.patch(url, data=payload, format='json')
-
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['year_establishment'], year_establishment)
         self.assertEquals(response.data['registration_date'], registration_date)

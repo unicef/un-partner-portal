@@ -37,7 +37,7 @@ const EditCfeiForm = (props) => {
           {isOpen && <DeadlineDate />}
           {isOpen && <NotifyDate minDate={formDeadline} />}
         </GridRow>}
-        <FocalPoint initialMultiValues={focalPoints} />
+        <FocalPoint overlap={false} initialMultiValues={focalPoints} />
       </GridColumn>
     </form >
   );

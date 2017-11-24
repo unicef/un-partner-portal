@@ -26,7 +26,6 @@ const PartnerProfileFundingDonors = (props) => {
           selectFieldProps={{
             multiple: true,
           }}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -39,7 +38,6 @@ const PartnerProfileFundingDonors = (props) => {
               maxLength: '5000',
             },
           }}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -52,7 +50,6 @@ const PartnerProfileFundingDonors = (props) => {
               maxLength: '5000',
             },
           }}
-          optional
           warn
           readOnly={readOnly}
         />

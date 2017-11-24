@@ -48,7 +48,6 @@ class LocationsMapBase extends Component {
 
   componentWillMount() {
     const { currentCountry } = this.props;
-
     if (currentCountry) {
       this.initMap(currentCountry);
     }

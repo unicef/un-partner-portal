@@ -19,7 +19,6 @@ const Accreditation = readOnly => member => (
       <TextFieldForm
         label={messages.certifying}
         fieldName={`${member}.organization_name`}
-        optional
         warn
         readOnly={readOnly}
       />
@@ -33,7 +32,6 @@ const AccreditationInner = readOnly => member => (
       <DatePickerForm
         label={messages.date}
         fieldName={`${member}.date_received`}
-        optional
         warn
         readOnly={readOnly}
       />
@@ -44,7 +42,6 @@ const AccreditationInner = readOnly => member => (
         formName="partnerProfile"
         fieldName={`${member}.evidence_file`}
         label={messages.accreditation}
-        optional
         warn
         readOnly={readOnly}
       />

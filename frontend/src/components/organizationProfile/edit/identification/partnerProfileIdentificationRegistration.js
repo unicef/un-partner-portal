@@ -38,7 +38,6 @@ const PartnerProfileIdentificationRegistration = (props) => {
                 label={isCountryProfile
                   ? messages.yearEstablishment
                   : messages.yearEstablishmentHq}
-                optional
                 warn
                 readOnly={readOnly}
               />
@@ -48,7 +47,6 @@ const PartnerProfileIdentificationRegistration = (props) => {
                 fieldName="have_gov_doc"
                 label={messages.haveGovDoc}
                 values={BOOL_VAL}
-                optional
                 warn
                 readOnly={readOnly}
               />
@@ -60,7 +58,6 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   formName="partnerProfile"
                   sectionName="identification.registration"
                   label={messages.governingDoc}
-                  optional
                   warn
                   readOnly={readOnly}
                 />
@@ -74,7 +71,6 @@ const PartnerProfileIdentificationRegistration = (props) => {
               ? messages.registrationCountry
               : messages.registrationCountryHq}
             values={BOOL_VAL}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -86,7 +82,6 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   <DatePickerForm
                     fieldName="registration_date"
                     label={messages.date}
-                    optional
                     warn
                     readOnly={readOnly}
                   />
@@ -96,7 +91,6 @@ const PartnerProfileIdentificationRegistration = (props) => {
                     label={messages.number}
                     fieldName="registration_number"
                     optional
-                    warn
                     readOnly={readOnly}
                   />
                 </Grid>
@@ -106,7 +100,6 @@ const PartnerProfileIdentificationRegistration = (props) => {
                     formName="partnerProfile"
                     sectionName="identification.registration"
                     label={messages.document}
-                    optional
                     warn
                     readOnly={readOnly}
                   />
@@ -117,7 +110,6 @@ const PartnerProfileIdentificationRegistration = (props) => {
           <TextFieldForm
             label={messages.comment}
             fieldName="registration_comment"
-            optional
             warn
             readOnly={readOnly}
           />

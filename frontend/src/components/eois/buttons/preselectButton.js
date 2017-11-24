@@ -17,7 +17,10 @@ const PreselectButton = (props) => {
       icon={<Preselect />}
       name="preselect"
       text={messages.text}
-      onClick={() => changeStatus(id)}
+      onClick={(event) => {
+        event.stopPropagation();
+        changeStatus(id);
+      }}
       {...other}
     />
   );

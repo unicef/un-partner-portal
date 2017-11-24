@@ -31,7 +31,6 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
           <TextFieldForm
             label={messages.legalName}
             fieldName="legal_name"
-            optional
             warn
             readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
           />
@@ -40,7 +39,6 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               label={messages.alias}
               fieldName="alias_name"
               optional
-              warn
               readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
             />
           </Grid>
@@ -49,7 +47,6 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               label={messages.acronym}
               fieldName="acronym"
               optional
-              warn
               readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
             />
           </Grid>
@@ -57,7 +54,6 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
             <TextFieldForm
               label={messages.formerLegalName}
               fieldName="former_legal_name"
-              optional
               warn
               readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
             />
@@ -69,7 +65,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               initialValue={country}
               optional
               warn
-              readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
+              readOnly
             />
           </Grid>
           <Grid item sm={6} xs={12}>
@@ -79,7 +75,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               values={organizationTypes}
               optional
               warn
-              readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
+              readOnly
             />
           </Grid>
         </Grid>
@@ -91,6 +87,8 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
 PartnerProfileIdentificationBasicInfo.propTypes = {
   country: PropTypes.string,
   readOnly: PropTypes.bool,
+  isCountryProfile: PropTypes.bool,
+  displayType: PropTypes.string,
   organizationTypes: PropTypes.array.isRequired,
 };
 
