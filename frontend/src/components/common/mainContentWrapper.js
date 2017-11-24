@@ -8,6 +8,7 @@ const styleSheet = theme => ({
   root: {
     background: theme.palette.primary[200],
     padding: theme.spacing.unit * 3,
+    height: '100%',
   },
 });
 
