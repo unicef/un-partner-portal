@@ -11,6 +11,7 @@ from common.permissions import (
     IsRoleAdministratorOnNotGET,
 )
 from common.paginations import SmallPagination
+from common.mixins import PatchOneFieldErrorMixin
 from .serializers import (
     OrganizationProfileSerializer,
     OrganizationProfileDetailsSerializer,
@@ -75,7 +76,7 @@ class PartnersListItemAPIView(RetrieveAPIView):
     queryset = Partner.objects.all()
 
 
-class PartnerIdentificationAPIView(RetrieveUpdateAPIView):
+class PartnerIdentificationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
     """
     PartnerIdentificationAPIView endpoint return specific partner profile data via serializer,
     by given pk (PartnerProfile)
@@ -85,42 +86,42 @@ class PartnerIdentificationAPIView(RetrieveUpdateAPIView):
     queryset = PartnerProfile.objects.all()
 
 
-class PartnerContactInformationAPIView(RetrieveUpdateAPIView):
+class PartnerContactInformationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerContactInformationSerializer
     queryset = Partner.objects.all()
 
 
-class PartnerMandateMissionAPIView(RetrieveUpdateAPIView):
+class PartnerMandateMissionAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerProfileMandateMissionSerializer
     queryset = Partner.objects.all()
 
 
-class PartnerFundingAPIView(RetrieveUpdateAPIView):
+class PartnerFundingAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerProfileFundingSerializer
     queryset = Partner.objects.all()
 
 
-class PartnerCollaborationAPIView(RetrieveUpdateAPIView):
+class PartnerCollaborationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerProfileCollaborationSerializer
     queryset = Partner.objects.all()
 
 
-class PartnerProjectImplementationAPIView(RetrieveUpdateAPIView):
+class PartnerProjectImplementationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerProfileProjectImplementationSerializer
     queryset = Partner.objects.all()
 
 
-class PartnerOtherInfoAPIView(RetrieveUpdateAPIView):
+class PartnerOtherInfoAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerProfileOtherInfoSerializer
