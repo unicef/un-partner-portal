@@ -18,13 +18,13 @@ import {
   renderInput,
   renderMultipleInput,
   renderSuggestion,
-  renderSuggestionsContainer
+  renderSuggestionsContainer,
 } from '../components/forms/autocompleteHelpers/autocompleteRenders';
 import {
   getSuggestionValue,
   setSuggestionValue,
   setMultipleSuggestionValue,
-  handleClear
+  handleClear,
 } from '../components/forms//autocompleteHelpers/autocompleteFunctions';
 
 export const fileNameFromUrl = (url) => {
@@ -76,16 +76,16 @@ export const renderFormControlWithLabel = ({
   input,
   ...other
 }) => (
-    <div>
-      <FormLabel>{label}</FormLabel>
-      <FormControl
-        className={className}
-        {...input}
-        {...other}
-      />
-      {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
-    </div>
-  );
+  <div>
+    <FormLabel>{label}</FormLabel>
+    <FormControl
+      className={className}
+      {...input}
+      {...other}
+    />
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>
+);
 
 export const renderFormControl = ({
   className,
@@ -94,15 +94,15 @@ export const renderFormControl = ({
   input,
   ...other
 }) => (
-    <div>
-      <FormControl
-        className={className}
-        {...input}
-        {...other}
-      />
-      {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
-    </div>
-  );
+  <div>
+    <FormControl
+      className={className}
+      {...input}
+      {...other}
+    />
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>
+);
 
 export const renderSelectField = ({
   input,
@@ -111,16 +111,16 @@ export const renderSelectField = ({
   children,
   ...other
 }) => (
-    <SelectField
-      errorText={(touched && error) || warning}
-      {...input}
-      value={input.value || defaultValue}
-      onChange={(event, index, value) => input.onChange(value)}
-      {...other}
-    >
-      {children}
-    </SelectField>
-  );
+  <SelectField
+    errorText={(touched && error) || warning}
+    {...input}
+    value={input.value || defaultValue}
+    onChange={(event, index, value) => input.onChange(value)}
+    {...other}
+  >
+    {children}
+  </SelectField>
+);
 
 export const renderRadioField = ({ input,
   label,
@@ -128,38 +128,49 @@ export const renderRadioField = ({ input,
   meta: { touched, error, warning },
   options, ...other
 }) => (
-    <div>
-      <FormControl fullWidth>
-        <FormLabel>{label}</FormLabel>
-        <RadioGroupRow
-          selectedValue={!R.isEmpty(input.value) ? transformBool(input.value) : defaultValue}
-          onChange={(event, value) => { input.onChange(transformBool(value)); }}
-          {...other}
-        >
-          {options.map((value, index) => (
-            <FormControlLabel
-              key={index}
-              value={value.value}
-              control={<RadioHeight />}
-              label={value.label}
-            />))}</RadioGroupRow>
-      </FormControl>
-      {((touched && error) || warning) &&
-        <FormHelperText error>{error || warning}</FormHelperText>}
-    </div>);
+  <div>
+    <FormControl fullWidth>
+      <FormLabel>{label}</FormLabel>
+      <RadioGroupRow
+        selectedValue={!R.isEmpty(input.value) ? transformBool(input.value) : defaultValue}
+        onChange={(event, value) => { input.onChange(transformBool(value)); }}
+        {...other}
+      >
+        {options.map((value, index) => (
+          <FormControlLabel
+            key={index}
+            value={value.value}
+            control={<RadioHeight />}
+            label={value.label}
+          />))}</RadioGroupRow>
+    </FormControl>
+    {((touched && error) || warning) &&
+    <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>);
 
 export const renderCheckbox = ({
   name,
   className,
   disabled,
+  label,
+  meta: { error, warning },
   input,
-}) => (<Checkbox
-    className={className}
-    id={name}
-    disabled={disabled}
-    checked={input.value}
-    onChange={(event, value) => { input.onChange(transformBool(value)); }}
-  />);
+}) => (
+  <div>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <Checkbox
+        className={className}
+        id={name}
+        disabled={disabled}
+        checked={input.value}
+        onChange={(event, value) => { input.onChange(transformBool(value)); }}
+      />
+      <Typography color="inherit" type="caption">
+        {label}
+      </Typography>
+    </div>
+    <FormHelperText error>{error || warning}</FormHelperText>
+  </div>);
 
 export const renderFileDownload = () => ({ input, label }) => (<FormControl fullWidth>
   <FormLabel>{label}</FormLabel>
@@ -184,26 +195,24 @@ export const renderTextField = ({
   meta: { touched, error, warning },
   input,
   ...other
-}) => {
-  return (<div>
-    <TextField
-      className={className}
-      id={input.name}
-      error={(touched && !!error) || !!warning}
-      fullWidth
-      {...input}
-      {...other}
-    />
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
-      {/* show limit of characters
+}) => (<div>
+  <TextField
+    className={className}
+    id={input.name}
+    error={(touched && !!error) || !!warning}
+    fullWidth
+    {...input}
+    {...other}
+  />
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+    {/* show limit of characters
        {other.inputProps && other.inputProps.maxLength && 
         <FormHelperText style={{ marginLeft: 'auto' }}>
         {input.value.length}/{other.inputProps.maxLength}
         </FormHelperText>} */}
-    </div>
-  </div>);
-}
+  </div>
+</div>);
 
 export const renderNumberField = ({
   name,
@@ -238,15 +247,15 @@ export const renderDatePicker = ({
   meta: { touched, error, warning },
   ...other
 }) => (
-    <div>
-      <DatePicker
-        errorText={(touched && error) || warning}
-        {...input}
-        onChange={(event, value) => input.onChange(value)}
-        {...other}
-      />
-    </div>
-  );
+  <div>
+    <DatePicker
+      errorText={(touched && error) || warning}
+      {...input}
+      onChange={(event, value) => input.onChange(value)}
+      {...other}
+    />
+  </div>
+);
 
 export const renderText = ({
   className,
@@ -275,7 +284,7 @@ export const renderText = ({
         {date && <DateRange style={{
           marginRight: 5,
           width: 22,
-          height: 22
+          height: 22,
         }}
         />}
         <Typography
@@ -328,46 +337,43 @@ export const renderAutocomplete = ({
   fieldValue,
   multiple,
   overlap,
-}) => {
-  return (<div>
-    <Autosuggest
-      id={`autosuggest-${name}`}
-      theme={{
-        container: classes.container,
-        suggestionsContainerOpen: overlap
+}) => (<div>
+  <Autosuggest
+    id={`autosuggest-${name}`}
+    theme={{
+      container: classes.container,
+      suggestionsContainerOpen: overlap
           ? `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenOverlap}`
           : `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenExpand}`,
-        suggestionsList: classes.suggestionsList,
-        suggestion: classes.suggestion,
-      }}
-      renderInputComponent={multiple ? renderMultipleInput : renderInput}
-      suggestions={suggestions}
-      onSuggestionsFetchRequested={handleSuggestionsFetchRequested}
-      onSuggestionsClearRequested={handleSuggestionsClearRequested}
-      renderSuggestionsContainer={renderSuggestionsContainer}
-      getSuggestionValue={getSuggestionValue}
-      onSuggestionSelected={multiple
-        ? R.curry(setMultipleSuggestionValue)(formValue, handleChange, onFormChange, handleMultiChange)
-        : R.curry(setSuggestionValue)(onFormChange)
-      }
-      highlightFirstSuggestion
-
-      renderSuggestion={renderSuggestion}
-      inputProps={{
-        name,
-        error: (touched && (!!error || !!warning)),
-        label,
-        type: 'text',
-        placeholder,
-        value: fieldValue,
-        multiValues,
-        onChange: handleChange,
-        handleClear: R.curry(handleClear)(onFormChange, handleMultiClear),
-        ...inputProps,
-      }}
-    />
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
-    </div>
-  </div>);
-}
+      suggestionsList: classes.suggestionsList,
+      suggestion: classes.suggestion,
+    }}
+    renderInputComponent={multiple ? renderMultipleInput : renderInput}
+    suggestions={suggestions}
+    onSuggestionsFetchRequested={handleSuggestionsFetchRequested}
+    onSuggestionsClearRequested={handleSuggestionsClearRequested}
+    renderSuggestionsContainer={renderSuggestionsContainer}
+    getSuggestionValue={getSuggestionValue}
+    onSuggestionSelected={multiple
+      ? R.curry(setMultipleSuggestionValue)(formValue, handleChange, onFormChange, handleMultiChange)
+      : R.curry(setSuggestionValue)(onFormChange)
+    }
+    highlightFirstSuggestion
+    renderSuggestion={renderSuggestion}
+    inputProps={{
+      name,
+      error: (touched && (!!error || !!warning)),
+      label,
+      type: 'text',
+      placeholder,
+      value: fieldValue,
+      multiValues,
+      onChange: handleChange,
+      handleClear: R.curry(handleClear)(onFormChange, handleMultiClear),
+      ...inputProps,
+    }}
+  />
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>
+</div>);

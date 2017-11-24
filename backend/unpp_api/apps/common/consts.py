@@ -90,8 +90,7 @@ PARTNER_DONORS_CHOICES = Choices(
     ('Pri', 'private', 'Private companies and corporations'),
     ('Gov', 'gov', 'Government'),
     ('UNA', 'united_agency', 'United Nations Agency'),
-    ('Bil', 'bilateral', 'Bilateral Agency/Multilateral'),
-    ('Age', 'agency', 'Agency/Development Banks'),
+    ('Bil', 'bilateral', 'Bilateral Agency/Multilateral/Development Banks'),
     ('NGO', 'non_gov', 'International Non Governmental Organizations'),
     ('Oth', 'other', 'Other'),
 )

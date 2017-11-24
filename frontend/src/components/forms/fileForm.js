@@ -50,8 +50,8 @@ class FileForm extends Component {
                 sectionName={sectionName}
                 formName={formName}
                 deleteDisabled={deleteDisabled}
-                validate={optional ? [] : [required].concat(validation || [])}
-                warn={warn ? [warning] : []}
+                validate={(optional ? [] : [required].concat(validation || []))}
+                warn={warn && warning}
                 {...other}
               />
             </div>

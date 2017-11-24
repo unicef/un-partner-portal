@@ -25,7 +25,6 @@ const PartnerProfileMandateSecurity = (props) => {
               fieldName="security_high_risk_locations"
               label={messages.highRiskLoaction}
               values={BOOL_VAL}
-              optional
               warn
               readOnly={readOnly}
             />
@@ -35,7 +34,6 @@ const PartnerProfileMandateSecurity = (props) => {
               fieldName="security_high_risk_policy"
               label={messages.highRiskPolicy}
               values={BOOL_VAL}
-              optional
               warn
               readOnly={readOnly}
             />
@@ -50,7 +48,6 @@ const PartnerProfileMandateSecurity = (props) => {
               maxLength: '5000',
             },
           }}
-          optional
           warn
           readOnly={readOnly}
         />

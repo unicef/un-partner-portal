@@ -1,11 +1,9 @@
 import React from 'react';
-
-import Card from '../common/card';
-
+import Card from '../common/cardLogin';
 import LoginForm from './loginForm';
 
 const messages = {
-  title: 'Login',
+  title: 'UN Partner Portal',
 };
 
 const Login = () => (

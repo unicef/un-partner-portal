@@ -10,6 +10,7 @@ import detailsStatus, {
   LOAD_DETAILS_SUCCESS } from './partnerProfileDetailsStatus';
 import detailsStructure from './partnerProfileDetailsStructure';
 import { equalAtPaths } from '../reducers/normalizationHelpers';
+import { sessionChange } from './session';
 
 const initialState = {
   identification: null,
@@ -22,11 +23,17 @@ const initialState = {
 };
 
 export const loadPartnerDetails = partnerId => (dispatch, getState) => {
+  const session = getState().session;
+
   dispatch(loadDetailsStarted());
   return getPartnerProfileDetails(partnerId)
     .then((details) => {
       dispatch(loadDetailsEnded());
       dispatch(loadDetailsSuccess(details, getState));
+
+      if (session.partnerId === details.profile.id) {
+        dispatch(sessionChange(R.assoc('isProfileComplete', details.is_finished, session)));
+      }
     })
     .catch((error) => {
       dispatch(loadDetailsEnded());

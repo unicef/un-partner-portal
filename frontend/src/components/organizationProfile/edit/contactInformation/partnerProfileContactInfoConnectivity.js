@@ -24,7 +24,6 @@ const PartnerProfileContactInfoConnectivity = (props) => {
             fieldName="connectivity"
             label={messages.internetAccess}
             values={BOOL_VAL}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -39,7 +38,6 @@ const PartnerProfileContactInfoConnectivity = (props) => {
                 maxLength: '5000',
               },
             }}
-            optional
             warn
             readOnly={readOnly}
           />

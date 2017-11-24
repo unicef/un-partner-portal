@@ -24,7 +24,6 @@ const PartnerProfileMandateBackground = (props) => {
               maxLength: '400',
             },
           }}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -36,7 +35,6 @@ const PartnerProfileMandateBackground = (props) => {
               maxLength: '400',
             },
           }}
-          optional
           warn
           readOnly={readOnly}
         />

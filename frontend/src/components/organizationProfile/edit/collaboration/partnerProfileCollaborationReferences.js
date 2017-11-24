@@ -19,7 +19,6 @@ const Reference = readOnly => member => (
       <TextFieldForm
         label={messages.referring}
         fieldName={`${member}.organization_name`}
-        optional
         warn
         readOnly={readOnly}
       />
@@ -33,7 +32,6 @@ const ReferenceInner = readOnly => member => (
       <DatePickerForm
         label={messages.date}
         fieldName={`${member}.date_received`}
-        optional
         warn
         readOnly={readOnly}
       />
@@ -44,7 +42,6 @@ const ReferenceInner = readOnly => member => (
         formName="partnerProfile"
         fieldName={`${member}.evidence_file`}
         label={messages.reference}
-        optional
         warn
         readOnly={readOnly}
       />
