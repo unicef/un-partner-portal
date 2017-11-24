@@ -10,6 +10,7 @@ const styleSheet = theme => ({
   item: {
     margin: 0,
     padding: 0,
+    height: 40,
     color: 'black',
     '&:hover': {
       color: theme.palette.secondary[500],
@@ -17,6 +18,7 @@ const styleSheet = theme => ({
   },
   buttonHeight: {
     height: 24,
+    margin: theme.spacing.unit * 2,
   },
 });
 

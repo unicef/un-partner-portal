@@ -13,7 +13,7 @@ const PreselectButton = (props) => {
     >
       <IconButton
         color="inherit"
-        onClick={() => onClick()}
+        onClick={e => onClick(e)}
         disabled={disabled}
       >
         {icon}
