@@ -34,12 +34,9 @@ class LocationsMapField extends Component {
 
   render() {
     const { countryCode, currentCountry, readOnly, currentLocations } = this.props;
-
     return (
       <GridColumn>
-        <GridColumn>
-          <Typography type="caption">{messages.label}</Typography>
-        </GridColumn>
+        <Typography type="caption">{messages.label}</Typography>
         <LocationsMap
           currentCountryCode={countryCode}
           currentCountry={currentCountry}

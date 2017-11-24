@@ -12,7 +12,7 @@ const ManageReviewersForm = (props) => {
   const { handleSubmit, reviewers } = props;
   return (
     <form onSubmit={handleSubmit}>
-      <Reviewers initialMultiValues={reviewers} />
+      <Reviewers overlap={false} initialMultiValues={reviewers} />
     </form >
   );
 };

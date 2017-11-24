@@ -13,7 +13,7 @@ const messages = {
 };
 
 const CallPartnersForm = (props) => {
-  const { handleSubmit, invitedPartners, countries } = props;
+  const { handleSubmit, invitedPartners, countries, ...other } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
@@ -22,6 +22,7 @@ const CallPartnersForm = (props) => {
           label={messages.label}
           initialMultiValues={invitedPartners}
           countries={countries}
+          {...other}
         />
       </GridColumn>
     </form >
