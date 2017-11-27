@@ -633,7 +633,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
             'justification': 'Explain justification for creating direct selection',
             'focal_points': focal_points,
             'description': 'Provide brief background of the project',
-            'other_information': 'Provide other information',
+            'other_information': '',
             'start_date': str(start_date),
             'end_date': str(end_date),
         }
