@@ -10,6 +10,7 @@ import DatePickerForm from '../../../forms/datePickerForm';
 import GridColumn from '../../../common/grid/gridColumn';
 import { selectNormalizedDirectJustification } from '../../../../store';
 import { endDate } from '../../../../helpers/validation';
+import { StartDate, EndDate } from '../../../forms/fields/projectFields/commonFields';
 
 const messages = {
   justification: 'Add justification for completing this CFEI',
@@ -81,22 +82,11 @@ const ConvertToDirectSelectionForm = (props) => {
 
         <Grid container direction="row">
           <Grid item xs={4}>
-            <DatePickerForm
-              label={messages.startDate}
-              fieldName="start_date"
-              datePickerProps={{
-                minDate: new Date(),
-              }}
-            />
+            <StartDate />
           </Grid>
           <Grid item xs={4}>
-            <DatePickerForm
-              label={messages.endDate}
-              fieldName="end_date"
-              datePickerProps={{
-                minDate: (startDate && startDate !== 'Invalid date') ? new Date(startDate) : new Date(),
-              }}
-              validation={[endDate]}
+            <EndDate
+              minDate={startDate}
             />
           </Grid>
           <Grid item xs={4} />

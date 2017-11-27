@@ -501,6 +501,7 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     office = factory.LazyFunction(get_random_agency_office)
     role = MEMBER_ROLES.editor
+    status = MEMBER_STATUSES.active
 
     class Meta:
         model = AgencyMember

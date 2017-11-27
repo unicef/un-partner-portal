@@ -125,6 +125,7 @@ export const renderSelectField = ({
 export const renderRadioField = ({ input,
   label,
   defaultValue,
+  classes,
   meta: { touched, error, warning },
   options, ...other
 }) => (
@@ -138,6 +139,7 @@ export const renderRadioField = ({ input,
       >
         {options.map((value, index) => (
           <FormControlLabel
+            className={classes.padding}
             key={index}
             value={value.value}
             control={<RadioHeight />}
@@ -150,16 +152,14 @@ export const renderRadioField = ({ input,
 
 export const renderCheckbox = ({
   name,
-  className,
   disabled,
   label,
-  meta: { error, warning },
+  meta: { touched, error, warning },
   input,
 }) => (
   <div>
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <Checkbox
-        className={className}
         id={name}
         disabled={disabled}
         checked={input.value}
@@ -169,7 +169,7 @@ export const renderCheckbox = ({
         {label}
       </Typography>
     </div>
-    <FormHelperText error>{error || warning}</FormHelperText>
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
   </div>);
 
 export const renderFileDownload = () => ({ input, label }) => (<FormControl fullWidth>
@@ -343,8 +343,8 @@ export const renderAutocomplete = ({
     theme={{
       container: classes.container,
       suggestionsContainerOpen: overlap
-          ? `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenOverlap}`
-          : `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenExpand}`,
+        ? `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenOverlap}`
+        : `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenExpand}`,
       suggestionsList: classes.suggestionsList,
       suggestion: classes.suggestion,
     }}

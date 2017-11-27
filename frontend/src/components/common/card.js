@@ -18,11 +18,12 @@ const styleSheet = (theme) => {
     },
     cardContainer: {
       minWidth: 300,
+      maxHeight: '100%',
       [theme.breakpoints.up('md')]: {
-        maxWidth: '50vw',
+        width: '50vw',
       },
       [theme.breakpoints.down('md')]: {
-        maxWidth: '100vw',
+        width: '100vw',
       },
     },
     header: {

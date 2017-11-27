@@ -9,6 +9,7 @@ from model_utils.models import TimeStampedModel
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.consts import (
     MEMBER_ROLES,
+    MEMBER_STATUSES,
 )
 
 
@@ -86,6 +87,8 @@ class AgencyMember(TimeStampedModel):
     user = models.ForeignKey('account.User', related_name="agency_members")
     role = models.CharField(max_length=3, choices=MEMBER_ROLES, default=MEMBER_ROLES.reader)
     office = models.ForeignKey(AgencyOffice, related_name="agency_members")
+    telephone = models.CharField(max_length=255, null=True, blank=True)
+    status = models.CharField(max_length=3, choices=MEMBER_STATUSES, default=MEMBER_STATUSES.invited)
 
     class Meta:
         ordering = ['id']
