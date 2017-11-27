@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { has } from 'ramda';
 import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
-
+import { formValueSelector } from 'redux-form';
 import ArrayForm from '../../../arrayForm';
 import CriteriaField from './criteriaField';
 import TextFieldForm from '../../../textFieldForm';
 
 import { mapSelectCriteriaToSelection } from '../../../../../store';
 import WeightField from './weightField';
+import { selectionCriteria } from '../../../../../helpers/validation';
 
 
 const messages = {
@@ -18,6 +20,18 @@ const messages = {
   },
 };
 
+const insertWeight = (index, fields) => {
+  const tempSelection = fields.get(index);
+  if (!has('weight', tempSelection)) {
+    const fieldsLength = fields.length;
+    const isLast = index === fieldsLength - 1;
+    console.log(fieldsLength)
+    console.log((100 / fieldsLength))
+    const newWeight = Math.floor(100 / fieldsLength) + (isLast ? (100 % fieldsLength) : 0);
+    fields.remove(index);
+    fields.insert(index, { ...tempSelection, weight: newWeight });
+  }
+};
 
 const Criteria = (criteria, readOnly, ...props) => (member, index, fields) => (<CriteriaField
   name={member}
@@ -29,6 +43,7 @@ const Criteria = (criteria, readOnly, ...props) => (member, index, fields) => (<
 
 const Description = (readOnly, hasWeighting, ...props) => (member, index, fields) => {
   const disabled = !fields.get(index).selection_criteria;
+  if (hasWeighting) insertWeight(index, fields);
   return (<Grid container>
     <Grid item xs={12}>
       <TextFieldForm
@@ -61,6 +76,7 @@ const SelectionFieldArray = (props) => {
       {...other}
       outerField={Criteria(criteria, readOnly, ...other)}
       innerField={Description(readOnly, hasWeighting, ...other)}
+      validate={hasWeighting ? [selectionCriteria] : []}
     />
   );
 };
@@ -71,8 +87,11 @@ SelectionFieldArray.propTypes = {
   criteria: PropTypes.object,
 };
 
+const selector = formValueSelector('newOpenCfei');
+
 export default connect(
   state => ({
     criteria: mapSelectCriteriaToSelection(state),
+    hasWeighting: selector(state, 'has_weighting'),
   }),
 )(SelectionFieldArray);

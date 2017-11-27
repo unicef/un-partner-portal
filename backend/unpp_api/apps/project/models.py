@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 from datetime import date
 
 from django.conf import settings
-from django.db import models
 from django.contrib.postgres.fields import ArrayField, JSONField
+from django.db import models
 from model_utils.models import TimeStampedModel
 from common.consts import (
     EOI_TYPES,
@@ -15,6 +15,9 @@ from common.consts import (
     COMPLETED_REASON,
 )
 from common.utils import get_countries_code_from_queryset
+from validators import (
+    validate_weight_adjustments,
+)
 
 
 class EOI(TimeStampedModel):
@@ -53,7 +56,10 @@ class EOI(TimeStampedModel):
     completed_date = models.DateTimeField(null=True, blank=True)
     is_completed = models.BooleanField(default=False)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
-    assessments_criteria = JSONField(default=dict([('selection_criteria', ''), ('weight', 0)]))
+    assessments_criteria = JSONField(
+        default=dict([('selection_criteria', ''), ('weight', 0)]),
+        validators=[validate_weight_adjustments]
+    )
     review_summary_comment = models.TextField(null=True, blank=True)
     review_summary_attachment = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name='review_summary_attachments')
@@ -97,6 +103,10 @@ class EOI(TimeStampedModel):
             criteria_name = copied_criteria.pop('selection_criteria')
             output[criteria_name] = copied_criteria
         return output
+
+    @property
+    def is_weight_adjustments_ok(self):
+        return sum(map(lambda x: x.get('weight'), self.assessments_criteria)) == 100 if self.has_weighting else True
 
     def get_absolute_url(self):
         return "{}cfei/open/1/overview".format(settings.FRONTEND_URL)
@@ -281,9 +291,7 @@ class Assessment(TimeStampedModel):
                 for k, v in self.get_scores_as_dict().iteritems():
                     comb_dict[k]['score'] = v['score']
 
-                key_count = len(comb_dict.keys())  # Default if weight wasn't entered
-                self.__total_score = \
-                    sum([(v['score']*(v.get('weight', key_count)/100.0)) for k, v in comb_dict.iteritems()])
+                self.__total_score = sum([v['score'] for v in comb_dict.values()])
 
         return self.__total_score
 
@@ -294,3 +302,4 @@ class Assessment(TimeStampedModel):
             criteria_name = copied_score.pop('selection_criteria')
             output[criteria_name] = copied_score
         return output
+

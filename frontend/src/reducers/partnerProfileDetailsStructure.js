@@ -1,4 +1,13 @@
 const partnerDetailsStructure = {
+  completion: {
+    identification_is_complete: null,
+    contact_is_complete: null,
+    mandatemission_complete: null,
+    funding_complete: null,
+    collaboration_complete: null,
+    proj_impl_is_complete: null,
+    other_info_is_complete: null,
+  },
   identification: {
     basic: {
       alias_name: null,
@@ -31,10 +40,10 @@ const partnerDetailsStructure = {
       city: null,
       country: null,
       zip_code: null,
-      fax: null,
+      mailing_fax: null,
       website: null,
       org_email: null,
-      telephone: null,
+      mailing_telephone: null,
     },
     authorised_officials: {
       have_board_directors: null,
@@ -100,6 +109,7 @@ const partnerDetailsStructure = {
   fund: {
     budgets: {
       budgets: null,
+      hq_budgets: null,
     },
     major_donors: {
       source_core_funding: null,

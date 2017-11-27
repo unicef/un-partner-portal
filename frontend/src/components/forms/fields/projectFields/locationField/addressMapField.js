@@ -19,7 +19,6 @@ class LocationsMapField extends Component {
 
     this.saveLocation = this.saveLocation.bind(this);
     this.removeLocation = this.removeLocation.bind(this);
-    this.selectedLocations = this.selectedLocations.bind(this);
   }
 
   saveLocation(newLocation) {
@@ -35,12 +34,9 @@ class LocationsMapField extends Component {
 
   render() {
     const { countryCode, currentCountry, readOnly, currentLocations } = this.props;
-
     return (
       <GridColumn>
-        <GridColumn>
-          <Typography type="caption">{messages.label}</Typography>
-        </GridColumn>
+        <Typography type="caption">{messages.label}</Typography>
         <LocationsMap
           currentCountryCode={countryCode}
           currentCountry={currentCountry}

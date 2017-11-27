@@ -34,11 +34,11 @@ const renderShortCell = data => data.map(sector => sector.name).join(', ');
 const renderExpandedCell = (sectors, classes) => sectors.map((sector, index) =>
   (
     <div>
-      <Typography type="body2" color="inherit" className={classes.mainText} align="left">
+      <Typography type="body2" color="inherit" className={classes.mainText} alignItems="left">
         {sector.name}
       </Typography>
       {sector.areas.map(area => (
-        <Typography type="body1" color="inherit" className={classes.text} align="left">
+        <Typography type="body1" color="inherit" className={classes.text} alignItems="left">
           {area}
         </Typography>
       ))}

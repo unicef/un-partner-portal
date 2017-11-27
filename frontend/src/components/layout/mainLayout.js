@@ -91,7 +91,7 @@ class MainLayout extends Component {
               position="static"
               color="accent"
             >
-              <Typography type="display1" color="inherit" align="center">
+              <Typography type="display1" color="inherit" alignItems="center">
               UNPP
               </Typography>
             </AppBar>
@@ -108,10 +108,14 @@ class MainLayout extends Component {
                 justify="flex-end"
                 spacing={0}
               >
-                <BadgeIcon handleClick={this.handleVerificationClick} />
-                <IconButton color="contrast" onClick={this.handleProfileClick}>
-                  <AccountIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
-                </IconButton>
+                <Grid item>
+                  <BadgeIcon handleClick={this.handleVerificationClick} />
+                </Grid>
+                <Grid item>
+                  <IconButton color="contrast" onClick={this.handleProfileClick}>
+                    <AccountIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
+                  </IconButton>
+                </Grid>
               </Grid>
             </AppBar>
           </Grid>

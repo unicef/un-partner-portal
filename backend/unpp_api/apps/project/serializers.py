@@ -527,19 +527,33 @@ class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
         return instance
 
     def validate(self, data):
+        assessments_criteria = data.get('assessments_criteria', [])
+        has_weighting = data.get('has_weighting', False)
+
+        if has_weighting is True and all(map(lambda x: 'weight' in x, assessments_criteria)) is False:
+            raise serializers.ValidationError(
+                "Weight criteria must be provided since `has_weighting` is selected.")
+        elif has_weighting is False and any(map(lambda x: 'weight' in x, assessments_criteria)) is True:
+            raise serializers.ValidationError(
+                "Weight criteria should not be provided since `has_weighting` is unselected.")
+
         if self.context['request'].method in ['PATCH', 'PUT']:
-            if self.instance.status == EOI_STATUSES.closed and \
-                    not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
-                raise serializers.ValidationError(
-                    "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s).")
-            elif self.instance.is_completed:
-                raise serializers.ValidationError(
-                    "CFEI is completed. Modify is forbidden.")
             allowed_to_modify = \
                 list(self.instance.focal_points.values_list('id', flat=True)) + [self.instance.created_by_id]
-            if self.context['request'].user.id not in allowed_to_modify:
-                raise serializers.ValidationError(
-                    "Only Focal Point/Creator is allowed to modify a CFEI.")
+            if self.context['request'].user.id in allowed_to_modify:
+                pass
+            else:
+                if self.instance.status == EOI_STATUSES.closed and \
+                        not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
+                    raise serializers.ValidationError(
+                        "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s).")
+                elif self.instance.is_completed:
+                    raise serializers.ValidationError(
+                        "CFEI is completed. Modify is forbidden.")
+
+                if self.context['request'].user.id not in allowed_to_modify:
+                    raise serializers.ValidationError(
+                        "Only Focal Point/Creator is allowed to modify a CFEI.")
 
         return super(AgencyProjectUpdateSerializer, self).validate(data)
 
@@ -630,6 +644,27 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
         app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
         if app.eoi.status != EOI_STATUSES.closed:
             raise serializers.ValidationError("Assessment allowed once deadline is passed.")
+        scores = data.get('scores')
+        application = self.instance and self.instance.application or data.get('application')
+        assessments_criteria = application.eoi.assessments_criteria
+
+        if scores and not set(map(lambda x: x['selection_criteria'], scores)).__eq__(
+                set(map(lambda x: x['selection_criteria'], assessments_criteria))):
+            raise serializers.ValidationError(
+                "You can score only selection criteria defined in CFEI.")
+
+        if scores and application.eoi.has_weighting:
+            for score in scores:
+                key = score.get('selection_criteria')
+                val = score.get('score')
+                criterion = filter(lambda x: x.get('selection_criteria') == key, assessments_criteria)
+                if len(criterion) == 1 and val > criterion[0].get('weight'):
+                    raise serializers.ValidationError(
+                        "The maximum score is equal to the value entered for the weight.")
+                elif len(criterion) != 1:
+                    raise serializers.ValidationError(
+                        "Selection criterion '{}' defined improper.".format(key))
+
         return super(ReviewerAssessmentsSerializer, self).validate(data)
 
 
@@ -750,7 +785,8 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
     justification = serializers.CharField(source="eoi.justification")
     focal_points = IDUserSerializer(many=True, source="eoi.focal_points")
     description = serializers.CharField(source="eoi.description")
-    other_information = serializers.CharField(source="eoi.other_information")
+    other_information = serializers.CharField(
+        source="eoi.other_information", required=False, allow_blank=True, allow_null=True)
     start_date = serializers.DateField(source="eoi.start_date")
     end_date = serializers.DateField(source="eoi.end_date")
 
@@ -860,6 +896,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
     partner_id = serializers.CharField(source='partner.id')
     partner_name = serializers.CharField(source='partner.legal_name')
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
+    application_id = serializers.CharField(source='id')
 
     cn = CommonFileSerializer()
     partner_notified = serializers.SerializerMethodField()
@@ -873,6 +910,12 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
             'partner_id',
             'partner_name',
             'partner_additional',
+            'application_id',
+            'did_win',
+            'did_withdraw',
+            'withdraw_reason',
+            'did_decline',
+            'did_accept',
             'cn',
             'partner_notified',
             'partner_decision_date',

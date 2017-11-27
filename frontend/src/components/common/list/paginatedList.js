@@ -4,7 +4,11 @@ import { withStyles } from 'material-ui/styles';
 import { PagingState, SortingState, RowDetailState } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
+import {
+  TableRow as TableRowMUI,
+} from 'material-ui/Table';
 import ListLoader from './listLoader';
+
 
 const table = {
   allowedPageSizes: [5, 10, 15],
@@ -12,11 +16,10 @@ const table = {
 
 const styleSheet = (theme) => {
   const paddingSmall = theme.spacing.unit * 3;
-  const paddingMedium = theme.spacing.unit * 4;
 
   return {
     container: {
-      padding: `${paddingSmall}px 0 ${paddingSmall}px ${paddingMedium}px`,
+      padding: `${paddingSmall}px 0 ${paddingSmall}px ${paddingSmall}px`,
     },
   };
 };
@@ -41,6 +44,14 @@ class PaginatedList extends Component {
     this.setState({
       sorting,
     });
+  }
+
+  tableRowTemplate({ row, children }) {
+    return (<TableRowMUI
+      hover
+      onClick={() => this.props.clickableRow && this.props.onTableRowClick(row)}
+    > {children}
+    </TableRowMUI>);
   }
 
   render() {
@@ -115,6 +126,8 @@ PaginatedList.propTypes = {
   allowSorting: PropTypes.bool,
   changePageSize: PropTypes.func,
   changePageNumber: PropTypes.func,
+  onTableRowClick: PropTypes.func,
+  clickableRow: PropTypes.bool,
 };
 
 

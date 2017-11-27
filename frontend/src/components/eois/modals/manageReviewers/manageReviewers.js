@@ -1,4 +1,5 @@
 import React from 'react';
+import { pluck } from 'ramda';
 import { reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -8,10 +9,10 @@ import {
 import { selectCfeiDetails } from '../../../../store';
 
 const ManageReviewersForm = (props) => {
-  const { handleSubmit } = props;
+  const { handleSubmit, reviewers } = props;
   return (
     <form onSubmit={handleSubmit}>
-      <Reviewers />
+      <Reviewers overlap={false} initialMultiValues={reviewers} />
     </form >
   );
 };
@@ -21,14 +22,16 @@ ManageReviewersForm.propTypes = {
    * callback for form submit
    */
   handleSubmit: PropTypes.func.isRequired,
+  reviewers: PropTypes.array,
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { reviewers } = selectCfeiDetails(state, ownProps.id);
+  const { reviewers, reviewers_detail } = selectCfeiDetails(state, ownProps.id);
   return {
     initialValues: {
       reviewers,
     },
+    reviewers: pluck('name', reviewers_detail),
   };
 };
 

@@ -25,7 +25,7 @@ function DeclarationRow(props) {
   const { classes, message, index } = props;
   return (
     <Grid item className={classes.container}>
-      <Grid container direction="row" align="center">
+      <Grid container direction="row" alignItems="center">
         <Grid item xs={8} className={classes.column}>
           <Typography className={classes.message}>{message}</Typography>
         </Grid>

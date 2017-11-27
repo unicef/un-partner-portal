@@ -4,6 +4,7 @@ import React from 'react';
 import SelectField from 'material-ui-old/SelectField';
 import TextField from 'material-ui/TextField';
 import Checkbox from 'material-ui/Checkbox';
+import Autosuggest from 'react-autosuggest';
 import { FormControl, FormControlLabel, FormHelperText, FormLabel } from 'material-ui/Form';
 import Attachment from 'material-ui-icons/Attachment';
 import DateRange from 'material-ui-icons/DateRange';
@@ -13,6 +14,18 @@ import RadioGroupRow from '../components/common/radio/radioGroupRow';
 import RadioHeight from '../components/common/radio/radioHeight';
 import { formatDateForPrint } from './dates';
 import { numerical } from '../helpers/validation';
+import {
+  renderInput,
+  renderMultipleInput,
+  renderSuggestion,
+  renderSuggestionsContainer,
+} from '../components/forms/autocompleteHelpers/autocompleteRenders';
+import {
+  getSuggestionValue,
+  setSuggestionValue,
+  setMultipleSuggestionValue,
+  handleClear,
+} from '../components/forms//autocompleteHelpers/autocompleteFunctions';
 
 export const fileNameFromUrl = (url) => {
   if (url) {
@@ -112,6 +125,7 @@ export const renderSelectField = ({
 export const renderRadioField = ({ input,
   label,
   defaultValue,
+  classes,
   meta: { touched, error, warning },
   options, ...other
 }) => (
@@ -125,6 +139,7 @@ export const renderRadioField = ({ input,
       >
         {options.map((value, index) => (
           <FormControlLabel
+            className={classes.padding}
             key={index}
             value={value.value}
             control={<RadioHeight />}
@@ -137,16 +152,25 @@ export const renderRadioField = ({ input,
 
 export const renderCheckbox = ({
   name,
-  className,
   disabled,
+  label,
+  meta: { touched, error, warning },
   input,
-}) => (<Checkbox
-  className={className}
-  id={name}
-  disabled={disabled}
-  checked={input.value}
-  onChange={(event, value) => { input.onChange(transformBool(value)); }}
-/>);
+}) => (
+  <div>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <Checkbox
+        id={name}
+        disabled={disabled}
+        checked={input.value}
+        onChange={(event, value) => { input.onChange(transformBool(value)); }}
+      />
+      <Typography color="inherit" type="caption">
+        {label}
+      </Typography>
+    </div>
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>);
 
 export const renderFileDownload = () => ({ input, label }) => (<FormControl fullWidth>
   <FormLabel>{label}</FormLabel>
@@ -171,25 +195,24 @@ export const renderTextField = ({
   meta: { touched, error, warning },
   input,
   ...other
-}) => (
-  <div>
-    <TextField
-      className={className}
-      id={name}
-      error={(touched && !!error) || !!warning}
-      fullWidth
-      {...input}
-      {...other}
-    />
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
-      {/* show limit of characters
+}) => (<div>
+  <TextField
+    className={className}
+    id={input.name}
+    error={(touched && !!error) || !!warning}
+    fullWidth
+    {...input}
+    {...other}
+  />
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+    {/* show limit of characters
        {other.inputProps && other.inputProps.maxLength && 
         <FormHelperText style={{ marginLeft: 'auto' }}>
         {input.value.length}/{other.inputProps.maxLength}
         </FormHelperText>} */}
-    </div>
-  </div>);
+  </div>
+</div>);
 
 export const renderNumberField = ({
   name,
@@ -213,7 +236,7 @@ export const renderNumberField = ({
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         {((touched && error) || warning || rangeError) &&
-        <FormHelperText error>{error || warning || rangeError}</FormHelperText>}
+          <FormHelperText error>{error || warning || rangeError}</FormHelperText>}
         {other.inputProps && other.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
       </div>
     </div>);
@@ -261,7 +284,8 @@ export const renderText = ({
         {date && <DateRange style={{
           marginRight: 5,
           width: 22,
-          height: 22 }}
+          height: 22,
+        }}
         />}
         <Typography
           className={className}
@@ -296,3 +320,60 @@ export const renderBool = ({
     </FormControl>
   );
 };
+
+export const renderAutocomplete = ({
+  meta: { touched, error, warning },
+  input: { name, onChange: onFormChange, value: formValue, ...inputProps },
+  suggestions,
+  handleSuggestionsFetchRequested,
+  handleSuggestionsClearRequested,
+  classes,
+  label,
+  placeholder,
+  handleChange,
+  handleMultiChange,
+  handleMultiClear,
+  multiValues,
+  fieldValue,
+  multiple,
+  overlap,
+}) => (<div>
+  <Autosuggest
+    id={`autosuggest-${name}`}
+    theme={{
+      container: classes.container,
+      suggestionsContainerOpen: overlap
+        ? `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenOverlap}`
+        : `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenExpand}`,
+      suggestionsList: classes.suggestionsList,
+      suggestion: classes.suggestion,
+    }}
+    renderInputComponent={multiple ? renderMultipleInput : renderInput}
+    suggestions={suggestions}
+    onSuggestionsFetchRequested={handleSuggestionsFetchRequested}
+    onSuggestionsClearRequested={handleSuggestionsClearRequested}
+    renderSuggestionsContainer={renderSuggestionsContainer}
+    getSuggestionValue={getSuggestionValue}
+    onSuggestionSelected={multiple
+      ? R.curry(setMultipleSuggestionValue)(formValue, handleChange, onFormChange, handleMultiChange)
+      : R.curry(setSuggestionValue)(onFormChange)
+    }
+    highlightFirstSuggestion
+    renderSuggestion={renderSuggestion}
+    inputProps={{
+      name,
+      error: (touched && (!!error || !!warning)),
+      label,
+      type: 'text',
+      placeholder,
+      value: fieldValue,
+      multiValues,
+      onChange: handleChange,
+      handleClear: R.curry(handleClear)(onFormChange, handleMultiClear),
+      ...inputProps,
+    }}
+  />
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>
+</div>);

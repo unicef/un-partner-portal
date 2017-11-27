@@ -18,7 +18,7 @@ const messages = {
   comment: 'Please comment',
   copyOfRecentAudit: 'Copy of your most recent audit report',
   insertLink: 'Or insert the link to the report from the organization\'s website',
-  accountabilityIssues: 'Were there any major accountability isses highlighted by audits in ' +
+  accountabilityIssues: 'Were there any major accountability issues highlighted by audits in ' +
                   'the past three years?',
   formalCapacity: 'Has the organization undergone a formal capacity assessment?',
   indicateAssessments: 'Please indicate which assessment(s)',
@@ -26,7 +26,8 @@ const messages = {
 };
 
 const PartnerProfileProjectImplementationAudit = (props) => {
-  const { auditTypes, capacityAssessments, hasCapacityAssessment, isRegularyAudited, accountabilityIssues, readOnly } = props;
+  const { auditTypes, capacityAssessments, hasCapacityAssessment, isRegularyAudited,
+    accountabilityIssues, mostRecentAuditReport, auditLinkReport, readOnly } = props;
 
   return (
     <FormSection name="audit">
@@ -62,7 +63,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
             selectFieldProps={{
               multiple: true,
             }}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -74,16 +74,18 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               formName="partnerProfile"
               fieldName="most_recent_audit_report"
               label={messages.copyOfRecentAudit}
-              optional
-              warn
+              optional={(mostRecentAuditReport || auditLinkReport)}
+              warn={!(mostRecentAuditReport || auditLinkReport)}
               readOnly={readOnly}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
             <TextFieldForm
               label={messages.insertLink}
-              fieldName="link_report"
+              fieldName="audit_link_report"
               validation={[url]}
+              optional={(mostRecentAuditReport || auditLinkReport)}
+              warn={!(mostRecentAuditReport || auditLinkReport)}
               readOnly={readOnly}
             />
           </Grid>
@@ -92,7 +94,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
           fieldName="major_accountability_issues_highlighted"
           label={messages.accountabilityIssues}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -106,7 +107,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
                 maxLength: '5000',
               },
             }}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -115,7 +115,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
           fieldName="capacity_assessment"
           label={messages.formalCapacity}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -128,7 +127,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               selectFieldProps={{
                 multiple: true,
               }}
-              optional
               warn
               readOnly={readOnly}
             />
@@ -137,7 +135,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               sectionName="project_impl.audit"
               fieldName="assessment_report"
               label={messages.copyOfAssessment}
-              optional
               warn
               readOnly={readOnly}
             />
@@ -154,7 +151,8 @@ PartnerProfileProjectImplementationAudit.propTypes = {
   capacityAssessments: PropTypes.array,
   isRegularyAudited: PropTypes.bool,
   accountabilityIssues: PropTypes.bool,
-  hasCapacityAssessment: PropTypes.bool,
+  mostRecentAuditReport: PropTypes.string,
+  auditLinkReport: PropTypes.string,
 };
 
 const selector = formValueSelector('partnerProfile');
@@ -163,6 +161,8 @@ export default connect(
     isRegularyAudited: selector(state, 'project_impl.audit.regular_audited'),
     accountabilityIssues: selector(state, 'project_impl.audit.major_accountability_issues_highlighted'),
     hasCapacityAssessment: selector(state, 'project_impl.audit.capacity_assessment'),
+    mostRecentAuditReport: selector(state, 'project_impl.audit.most_recent_audit_report'),
+    auditLinkReport: selector(state, 'project_impl.audit.audit_link_report'),
     capacityAssessments: selectNormalizedCapacityAssessments(state),
     auditTypes: selectNormalizedAuditTypes(state),
   }),

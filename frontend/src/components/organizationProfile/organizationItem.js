@@ -67,7 +67,7 @@ class OrganizationItem extends Component {
     const { classes, isCountryItem, title, users, update, completed } = this.props;
     return (
       <Grid
-        align="center"
+        alignItems="center"
         container
         className={isCountryItem ?
           classes.countryItem : classes.hqProfile}

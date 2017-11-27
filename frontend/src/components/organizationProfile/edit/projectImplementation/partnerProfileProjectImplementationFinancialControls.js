@@ -28,7 +28,6 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
             fieldName="org_acc_system"
             label={messages.accountingSystem}
             values={financialControlSystem}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -38,7 +37,6 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
             fieldName="method_acc"
             label={messages.methodAdopted}
             values={methodAccAdopted}
-            optional
             warn
             readOnly={readOnly}
             renderTextSelection
@@ -49,7 +47,6 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
             fieldName="have_system_track"
             label={messages.trackSystem}
             values={BOOL_VAL}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -65,7 +62,6 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
                   maxLength: '5000',
                 },
               }}
-              optional
               warn
               readOnly={readOnly}
             />

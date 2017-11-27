@@ -39,7 +39,7 @@ class CallPartnersModal extends Component {
           maxWidth="md"
           title={messages.title}
           trigger={dialogOpen}
-          handleDialogClose={this.onDialogClose}
+          handleDialogClose={handleDialogClose}
           info={messages.header}
           buttons={{
             flat: {
@@ -50,7 +50,7 @@ class CallPartnersModal extends Component {
               label: messages.save,
             },
           }}
-          content={<CallPartnersForm id={id} onSubmit={this.onFormSubmit} />}
+          content={<CallPartnersForm overlap={false} id={id} onSubmit={this.onFormSubmit} />}
         />
       </div >
     );
@@ -58,11 +58,11 @@ class CallPartnersModal extends Component {
 }
 
 CallPartnersModal.propTypes = {
-  openDialog: PropTypes.bool,
-  showLoading: PropTypes.bool,
+  id: PropTypes.number,
   submit: PropTypes.func,
-  newCfeiProcessed: PropTypes.func,
-  newCfeiFailure: PropTypes.func,
+  dialogOpen: PropTypes.object,
+  handleDialogClose: PropTypes.func,
+  updateCfei: PropTypes.func,
 };
 
 const mapStateToProps = state => ({

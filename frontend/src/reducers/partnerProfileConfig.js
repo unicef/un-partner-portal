@@ -7,14 +7,11 @@ const initialState = {};
 const loadPartnerConfigSuccess = config => ({ type: LOAD_PARTNER_CONFIG_SUCCESS, config });
 
 export const loadPartnerConfig = () => (dispatch) => {
-  if (!window.localStorage.partnerConfig) {
-    return getPartnerProfileConfig()
-      .then((config) => {
-        window.localStorage.setItem('partnerConfig', JSON.stringify(config));
-        return dispatch(loadPartnerConfigSuccess(config));
-      });
-  }
-  return dispatch(loadPartnerConfigSuccess(JSON.parse(window.localStorage.partnerConfig)));
+  return getPartnerProfileConfig()
+    .then((config) => {
+      window.localStorage.setItem('partnerConfig', JSON.stringify(config));
+      return dispatch(loadPartnerConfigSuccess(config));
+    });
 };
 
 export default function partnerProfileConfigReducer(state = initialState, action) {

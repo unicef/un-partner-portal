@@ -23,7 +23,6 @@ const PartnerProfileMandatePopulation = (props) => {
           fieldName="population_of_concern"
           label={messages.populationOfConcern}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -35,7 +34,6 @@ const PartnerProfileMandatePopulation = (props) => {
           selectFieldProps={{
             multiple: true,
           }}
-          optional
           warn
           readOnly={readOnly}
         />}

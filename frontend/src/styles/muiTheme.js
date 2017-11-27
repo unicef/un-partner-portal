@@ -69,6 +69,12 @@ const theme = {
         color: 'inherit',
       },
     },
+    MuiIconButton: {
+      root: {
+        height: 24,
+        width: 24,
+      },
+    },
     MuiFormLabel: {
       root: {
         color: 'rgba(0, 0, 0, 0.34)',
@@ -89,8 +95,10 @@ const theme = {
       },
     },
     MuiTableCell: {
-      padding: {
-        padding: '0 8px 0 8px',
+      paddingDefault: {
+        '&:not(:first-child)': {
+          paddingLeft: '8px',
+        },
       },
     },
     MuiDefaultTab: {

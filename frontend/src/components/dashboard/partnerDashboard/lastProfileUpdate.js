@@ -29,7 +29,7 @@ const LastProfileUpdate = (props) => {
       <PaddedContent>
         <GridRow>
           <Typography type="headline">{messages.title}</Typography>
-          <GridColumn align="flex-end">
+          <GridColumn alignItems="flex-end">
             <Typography
               className={classes.date}
               type="headline"

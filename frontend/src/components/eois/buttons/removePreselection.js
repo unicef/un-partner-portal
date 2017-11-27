@@ -17,7 +17,10 @@ const RemovePreselectionButton = (props) => {
       id={id}
       icon={<RemovePreselection />}
       text={messages.text}
-      onClick={() => changeStatus(id)}
+      onClick={(event) => {
+        event.stopPropagation();
+        changeStatus(id);
+      }}
       {...other}
     />
   );

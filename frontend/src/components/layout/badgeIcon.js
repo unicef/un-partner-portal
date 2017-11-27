@@ -28,6 +28,7 @@ const styleSheet = (theme) => {
       fill: theme.palette.primary[400],
     },
     headerIcon: {
+      marginRight: theme.spacing.unit *3,
     },
     bell: {
       position: 'absolute',
@@ -44,8 +45,8 @@ class BadgeIcon extends Component {
   render() {
     const { classes, notifications, handleClick } = this.props;
     return (
-      <IconButton color="contrast" onClick={(event) => { if (notifications > 0) handleClick(event); }}>
-        <LensIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
+      <IconButton className={classes.headerIcon} color="contrast" onClick={(event) => { if (notifications > 0) handleClick(event); }}>
+        <LensIcon className={classes.iconBox} />
         <NotificationsIcon className={classes.bell} />
         {notifications > 0 && <Badge
           badgeContent={notifications}

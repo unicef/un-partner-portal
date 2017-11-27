@@ -4,8 +4,8 @@ import { FormSection, formValueSelector } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import { connect } from 'react-redux';
 import RadioForm from '../../../forms/radioForm';
-import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import CountryField from '../../../forms/fields/projectFields/locationField/countryField';
 import { selectNormalizedCountries } from '../../../../store';
 import { url, email } from '../../../../helpers/validation';
 
@@ -38,7 +38,7 @@ const MAILING_TYPE_VALUES = [
 const isStreetAddress = type => type && type === MAILING_TYPE_VALUES[0].value;
 
 const PartnerProfileContactInfoAddress = (props) => {
-  const { readOnly, countries, mailingType } = props;
+  const { readOnly, country, countries, mailingType } = props;
 
   return (<FormSection name="address">
     <Grid item>
@@ -49,7 +49,6 @@ const PartnerProfileContactInfoAddress = (props) => {
             label={messages.mailingType}
             values={MAILING_TYPE_VALUES}
             renderTextSelection
-            optional
             warn
             readOnly={readOnly}
           />
@@ -60,7 +59,6 @@ const PartnerProfileContactInfoAddress = (props) => {
               <TextFieldForm
                 label={isStreetAddress(mailingType) ? messages.streetAddress : messages.poBoxNumber}
                 fieldName="street"
-                optional
                 warn
                 readOnly={readOnly}
               />
@@ -69,17 +67,16 @@ const PartnerProfileContactInfoAddress = (props) => {
               <TextFieldForm
                 label={messages.city}
                 fieldName="city"
-                optional
                 warn
                 readOnly={readOnly}
               />
             </Grid>
             <Grid item sm={3} xs={12}>
-              <SelectForm
+              <CountryField
                 label={messages.country}
                 fieldName="country"
                 values={countries}
-                optional
+                initialValue={country}
                 warn
                 readOnly={readOnly}
               />
@@ -97,8 +94,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                 <Grid item sm={3} xs={12}>
                   <TextFieldForm
                     label={messages.telephone}
-                    fieldName="telephone"
-                    optional
+                    fieldName="mailing_telephone"
                     warn
                     readOnly={readOnly}
                   />
@@ -106,7 +102,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                 <Grid item sm={3} xs={12}>
                   <TextFieldForm
                     label={messages.fax}
-                    fieldName="fax"
+                    fieldName="mailing_fax"
                     optional
                     readOnly={readOnly}
                   />
@@ -116,6 +112,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                     label={messages.website}
                     fieldName="website"
                     validation={[url]}
+                    optional
                     readOnly={readOnly}
                   />
                 </Grid>
@@ -124,6 +121,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                     label={messages.organizationEmail}
                     fieldName="org_email"
                     validation={[email]}
+                    optional
                     readOnly={readOnly}
                   />
                 </Grid>
@@ -138,7 +136,8 @@ const PartnerProfileContactInfoAddress = (props) => {
 
 PartnerProfileContactInfoAddress.propTypes = {
   readOnly: PropTypes.bool,
-  countries: PropTypes.array.isRequired,
+  country: PropTypes.string,
+  countries: PropTypes.array,
   mailingType: PropTypes.string,
 };
 
@@ -146,5 +145,6 @@ const selector = formValueSelector('partnerProfile');
 
 export default connect(state => ({
   countries: selectNormalizedCountries(state),
+  country: selector(state, 'mailing.address.country'),
   mailingType: selector(state, 'mailing.address.mailing_type'),
 }), null)(PartnerProfileContactInfoAddress);

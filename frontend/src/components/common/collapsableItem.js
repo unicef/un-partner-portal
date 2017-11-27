@@ -4,7 +4,6 @@ import Collapse from 'material-ui/transitions/Collapse';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import ModeEdit from 'material-ui-icons/ModeEdit';
 import { withStyles } from 'material-ui/styles';
@@ -101,7 +100,7 @@ class CollapsableItem extends Component {
           </IconButton>
           {title}
           <div className={`${classes.alignRight} ${classes.noPrint}`}>
-            {warning ?
+            {!warning ?
               <div className={classes.padding}>
                 <Warning className={classes.icon} />
               </div>

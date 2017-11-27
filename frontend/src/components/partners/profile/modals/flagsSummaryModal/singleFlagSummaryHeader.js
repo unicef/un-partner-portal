@@ -99,7 +99,7 @@ class SingleFlagSummaryHeader extends Component {
               <Grid item>
                 {expanded ?
                   <div>
-                    <Grid container spacing={0} align="center">
+                    <Grid container spacing={0} alignItems="center">
                       <Grid item>
                         <Checkbox
                           checked={checked}

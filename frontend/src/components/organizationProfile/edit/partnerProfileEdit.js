@@ -13,6 +13,16 @@ const messages = {
   hqProfile: 'Headquarters Profile',
 };
 
+const completionTabs = {
+  identification: 'identification_is_complete',
+  mailing: 'contact_is_complete',
+  mandate_mission: 'mandatemission_complete',
+  fund: 'funding_complete',
+  collaboration: 'collaboration_complete',
+  project_impl: 'proj_impl_is_complete',
+  otherInformation: 'other_info_is_complete',
+};
+
 class PartnerProfileEdit extends Component {
   constructor(props) {
     super(props);
@@ -30,6 +40,10 @@ class PartnerProfileEdit extends Component {
   }
 
   updatePath() {
+    if (this.rootContainer) {
+      this.rootContainer.scrollIntoView();
+    }
+
     const { tabs, params: { type } } = this.props;
     const index = tabs.findIndex(itab => itab.path === type);
     if (index === -1) {
@@ -40,15 +54,14 @@ class PartnerProfileEdit extends Component {
   }
 
   partnerProfileTabs() {
-    const { tabs, incompleteTabs } = this.props;
+    const { tabs, completion } = this.props;
 
-    return tabs.map((tab, index) =>
-      <CustomTab label={tab.label} key={index} warn={incompleteTabs.includes(tab.name)} />,
-    );
+    return tabs.map((tab, index) => <CustomTab label={tab.label} key={index} warn={completion ? !completion[completionTabs[tab.name]] : false} />);
   }
 
   handleChange(event, index) {
     const { tabs, partnerId } = this.props;
+
     history.push({
       pathname: `/profile/${partnerId}/edit/${tabs[index].path}`,
     });
@@ -59,8 +72,9 @@ class PartnerProfileEdit extends Component {
     } = this.props;
 
     const index = this.updatePath();
+
     return (
-      <div>
+      <div ref={(ref) => { this.rootContainer = ref; }}>
         <HeaderNavigation
           index={index}
           subTitle={messages.edit}
@@ -80,7 +94,6 @@ class PartnerProfileEdit extends Component {
 
 PartnerProfileEdit.propTypes = {
   tabs: PropTypes.array.isRequired,
-  incompleteTabs: PropTypes.array,
   children: PropTypes.node,
   params: PropTypes.object,
   countryName: PropTypes.string,
@@ -88,18 +101,19 @@ PartnerProfileEdit.propTypes = {
   loadPartnerDetails: PropTypes.func.isRequired,
   partnerProfile: PropTypes.object,
   partnerLoading: PropTypes.bool.isRequired,
+  completion: PropTypes.array,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
-  
+
   return {
     partnerProfile: state.partnerProfileDetails.partnerProfileDetails,
     partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
     countryName: partner.is_hq ? messages.hqProfile : state.countries[partner.country_code],
     tabs: state.partnerProfileDetailsNav.tabs,
     partnerId: ownProps.params.id,
-    incompleteTabs: state.partnerProfileEdit.incompleteTabs,
+    completion: state.partnerProfileDetails.partnerProfileDetails.completion,
   };
 };
 

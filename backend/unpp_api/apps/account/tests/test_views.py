@@ -27,6 +27,7 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
             },
             "partner_profile": {
                 "alias_name": "Name Inc.",
+                "acronym": "N1",
                 "legal_name_change": True,
                 "former_legal_name": "Former Legal Name Inc.",
             },
@@ -60,6 +61,8 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
                           self.data['user']['email'])
         self.assertEquals(response.data['partner_profile']['former_legal_name'],
                           self.data['partner_profile']['former_legal_name'])
+        self.assertEquals(response.data['partner_profile']['acronym'],
+                          self.data['partner_profile']['acronym'])
         self.assertEquals(response.data['partner_head_organization']['email'],
                           self.data['partner_head_organization']['email'])
         self.assertEquals(response.data['partner_member']['title'],

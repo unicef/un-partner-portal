@@ -1,22 +1,11 @@
 import React from 'react';
 
 import TextFieldForm from '../../textFieldForm';
-import SelectForm from '../../selectForm';
 import DatePickerForm from '../../datePickerForm';
 import PolarRadio from '../../fields/PolarRadio';
 import AgencyMembersField from './agencyMembersFields/agencyMembersField';
 import { endDate, startDate, notifResultsDate } from '../../../../helpers/validation';
-
-const COUNTRIES = [
-  {
-    value: 'GB',
-    label: 'England',
-  },
-  {
-    value: 'KE',
-    label: 'Kenya',
-  },
-];
+import { formatDateForDatePicker } from '../../../../helpers/dates';
 
 export const TitleField = props => (<TextFieldForm
   label="Project Title"
@@ -70,7 +59,7 @@ export const StartDate = ({ minDate, ...props }) => (<DatePickerForm
   fieldName="start_date"
   placeholder="Pick a date"
   datePickerProps={{
-    minDate: (minDate && minDate !== 'Invalid date') ? new Date(minDate) : new Date(),
+    minDate: (minDate && minDate !== 'Invalid date') ? formatDateForDatePicker(minDate) : new Date(),
   }}
   validation={[startDate]}
   {...props}
@@ -81,7 +70,7 @@ export const EndDate = ({ minDate, ...props }) => (<DatePickerForm
   fieldName="end_date"
   placeholder="Pick a date"
   datePickerProps={{
-    minDate: (minDate && minDate !== 'Invalid date') ? new Date(minDate) : new Date(),
+    minDate: (minDate && minDate !== 'Invalid date') ? formatDateForDatePicker(minDate) : new Date(),
   }}
   validation={[endDate]}
   {...props}
@@ -92,7 +81,7 @@ export const DeadlineDate = ({ minDate, ...props }) => (<DatePickerForm
   fieldName="deadline_date"
   placeholder="Pick a date"
   datePickerProps={{
-    minDate: (minDate && minDate !== 'Invalid date') ? new Date(minDate) : new Date(),
+    minDate: (minDate && minDate !== 'Invalid date') ? formatDateForDatePicker(minDate) : new Date(),
   }}
   {...props}
 />);
@@ -102,7 +91,7 @@ export const NotifyDate = ({ minDate, ...props }) => (<DatePickerForm
   fieldName="notif_results_date"
   placeholder="Pick a date"
   datePickerProps={{
-    minDate: (minDate && minDate !== 'Invalid date') ? new Date(minDate) : new Date(),
+    minDate: (minDate && minDate !== 'Invalid date') ? formatDateForDatePicker(minDate) : new Date(),
   }}
   validation={[notifResultsDate]}
   {...props}
@@ -113,12 +102,6 @@ export const Weighting = () => (<PolarRadio
   fieldName="has_weighting"
 />);
 
-export const ProjectCountries = () => (<SelectForm
-  fieldName="countries"
-  label="Country"
-  values={COUNTRIES}
-/>);
-
 export const FocalPoint = props => (<AgencyMembersField
   label="Project/Programme Focal Point(s)"
   fieldName="focal_points"
@@ -126,7 +109,9 @@ export const FocalPoint = props => (<AgencyMembersField
   {...props}
 />);
 
-export const Reviewers = () => (<AgencyMembersField
+export const Reviewers = props => (<AgencyMembersField
   label="Select users"
   fieldName="reviewers"
+  placeholder="Search for users"
+  {...props}
 />);

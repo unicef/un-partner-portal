@@ -65,7 +65,7 @@ class SelectForm extends Component {
     } = this.props;
     return (
       <Grid item>
-        <Grid container direction="row" align="flex-end" wrap="nowrap">
+        <Grid container direction="row" alignItems="flex-end" wrap="nowrap">
           <Grid item xs={infoIcon ? 11 : 12}>
             {readOnly ?
               <FormControl fullWidth>

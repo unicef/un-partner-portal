@@ -6,11 +6,17 @@ import { PagingState, SelectionState } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import R from 'ramda';
+import {
+  Template, TemplateConnector, TemplateRenderer,
+} from '@devexpress/dx-react-core';
+import {
+  TableRow as TableRowMUI,
+} from 'material-ui/Table';
 import { Grid, TableView, TableHeaderRow, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import SelectedHeader from './selectedHeader';
-import TableTemplate from './tableTemplate';
 import ListLoader from './listLoader';
 import { calculatePaginatedPage, updatePageNumberSize, updatePageNumber } from '../../../helpers/apiHelper';
+
 
 const table = {
   allowedPageSizes: [5, 10, 15],
@@ -28,6 +34,22 @@ const styleSheet = (theme) => {
   };
 };
 
+const getSelectTableRowTemplateArgs = (
+  { selectByRowClick, highlightSelected, hovered, ...restParams },
+  { selection }, // current selection
+// action that changes row selection
+) => {
+  const { rowId, row } = restParams.tableRow;
+  return ({
+    ...restParams,
+    row,
+    selectByRowClick,
+    selected: highlightSelected && selection.indexOf(rowId) > -1,
+    rowId,
+    hovered: hovered === rowId,
+  });
+};
+
 class SelectableList extends Component {
   constructor(props) {
     super(props);
@@ -39,6 +61,7 @@ class SelectableList extends Component {
     this.handleRowMouseEnter = this.handleRowMouseEnter.bind(this);
     this.handleRowMouseLeave = this.handleRowMouseLeave.bind(this);
     this.onPageSize = this.onPageSize.bind(this);
+    this.tableRowTemplate = this.tableRowTemplate.bind(this);
   }
 
   componentWillMount() {
@@ -87,6 +110,17 @@ class SelectableList extends Component {
     </div>);
   }
 
+  tableRowTemplate({ row, children, selected, rowId }) {
+    return (<TableRowMUI
+      selected={selected}
+      hover
+      onClick={() => this.props.clickableRow && this.props.onTableRowClick(row)}
+      onMouseEnter={() => this.handleRowMouseEnter(rowId)}
+      onMouseLeave={() => this.handleRowMouseLeave()}
+    > {children}
+    </TableRowMUI>);
+  }
+
   render() {
     const {
       items,
@@ -123,14 +157,38 @@ class SelectableList extends Component {
             onSelectionChange={this.handleSelect}
           />
           <TableView
-            tableTemplate={TableTemplate(this.handleRowMouseEnter,
-              this.handleRowMouseLeave,
-              hoveredRow)}
-            tableCellTemplate={templateCell}
+            tableRowTemplate={this.tableRowTemplate}
+            table
+            tableCellTemplate={({ row, column, tableRow: { rowId } }) =>
+              templateCell({ row, column, hovered: hoveredRow === rowId })}
           />
+          <Template
+            name="tableViewRow"
+            // use custom template only for table data rows
+            predicate={({ tableRow }) => tableRow.type === 'data'}
+          >
+            {params => (
+              <TemplateConnector>
+                {(getters, actions) => (
+                  <TemplateRenderer
+                  // custom template
+                    template={this.tableRowTemplate}
+                    // custom template params
+                    params={
+                      getSelectTableRowTemplateArgs({
+                        selectByRowClick: true,
+                        highlightSelected: true,
+                        hovered: hoveredRow,
+                        ...params,
+                      }, getters, actions)
+                    }
+                  />
+                )}
+              </TemplateConnector>
+            )}
+          </Template>
           <TableSelection
             selectionColumnWidth={50}
-            highlightSelected
           />
           <TableHeaderRow />
           <PagingPanel allowedPageSizes={table.allowedPageSizes} />
@@ -145,7 +203,6 @@ SelectableList.propTypes = {
   items: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   templateCell: PropTypes.func,
-  templateHeader: PropTypes.func,
   itemsCount: PropTypes.object.isRequired,
   pageSize: PropTypes.number.isRequired,
   pageNumber: PropTypes.number.isRequired,
@@ -153,6 +210,8 @@ SelectableList.propTypes = {
   loading: PropTypes.bool,
   pathName: PropTypes.string.isRequired,
   query: PropTypes.object,
+  onTableRowClick: PropTypes.func,
+  clickableRow: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({

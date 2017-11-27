@@ -1,7 +1,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withTheme } from 'material-ui/styles';
 import { Marker, InfoWindow } from 'google-maps-react';
 import Typography from 'material-ui/Typography';
 import SearchBox from '../../../../common/map/SearchBox';
@@ -49,7 +48,6 @@ class LocationsMapBase extends Component {
 
   componentWillMount() {
     const { currentCountry } = this.props;
-
     if (currentCountry) {
       this.initMap(currentCountry);
     }
@@ -215,4 +213,4 @@ LocationsMapBase.propTypes = {
   readOnly: PropTypes.bool,
 };
 
-export default withTheme(LocationsMapBase);
+export default LocationsMapBase;

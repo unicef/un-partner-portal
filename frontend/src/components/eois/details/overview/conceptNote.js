@@ -20,7 +20,7 @@ const ConceptNote = (props) => {
       rows={[
         <PaddedContent>
           <Loader loading={loading}>
-            {!loading && <GridColumn align="center">
+            {!loading && <GridColumn alignItems="center">
               <FileDownloadButton fileUrl={conceptNote} />
               {date && <Typography type="caption">
                 {`${messages.caption}: ${formatDateForPrint(date)}`}
