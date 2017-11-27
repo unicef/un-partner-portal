@@ -1,5 +1,5 @@
 import React from 'react';
-import { reduxForm, SubmissionError } from 'redux-form';
+import { reduxForm, SubmissionError, clearSubmitErrors } from 'redux-form';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
@@ -16,6 +16,7 @@ const styleSheet = (theme) => {
   const paddingField = theme.spacing.unit * 3;
   return {
     root: {
+      width: '30vw',
       minHeight: '50vh',
       background: theme.palette.background.paper,
     },
@@ -43,7 +44,7 @@ const handleLogin = (values, dispatch) => dispatch(loginUser(values)).catch((err
 });
 
 const Login = (props) => {
-  const { handleSubmit, pristine, submitting, submitFailed, error, classes } = props;
+  const { handleSubmit, pristine, submitting, error, classes, dispatch, form } = props;
   return (
     <div >
       <form onSubmit={handleSubmit}>
@@ -76,6 +77,8 @@ const Login = (props) => {
             }}
             open={error}
             message={error}
+            autoHideDuration={4e3}
+            onRequestClose={() => dispatch(clearSubmitErrors(form))}
           />
         </GridColumn>
       </form >
@@ -91,6 +94,9 @@ Login.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   pristine: PropTypes.bool,
   submitting: PropTypes.bool,
+  error: PropTypes.string,
+  form: PropTypes.string,
+  dispatch: PropTypes.func,
 };
 
 const LoginForm = reduxForm({
