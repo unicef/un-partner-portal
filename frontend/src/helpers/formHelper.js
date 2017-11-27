@@ -125,6 +125,7 @@ export const renderSelectField = ({
 export const renderRadioField = ({ input,
   label,
   defaultValue,
+  classes,
   meta: { touched, error, warning },
   options, ...other
 }) => (
@@ -138,7 +139,7 @@ export const renderRadioField = ({ input,
       >
         {options.map((value, index) => (
           <FormControlLabel
-            style={{ paddingRight: 10 }}
+            className={classes.padding}
             key={index}
             value={value.value}
             control={<RadioHeight />}
