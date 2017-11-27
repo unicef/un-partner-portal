@@ -4,7 +4,6 @@ import Collapse from 'material-ui/transitions/Collapse';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import ModeEdit from 'material-ui-icons/ModeEdit';
 import { withStyles } from 'material-ui/styles';
