@@ -774,7 +774,8 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
     justification = serializers.CharField(source="eoi.justification")
     focal_points = IDUserSerializer(many=True, source="eoi.focal_points")
     description = serializers.CharField(source="eoi.description")
-    other_information = serializers.CharField(source="eoi.other_information")
+    other_information = serializers.CharField(
+        source="eoi.other_information", required=False, allow_blank=True, allow_null=True)
     start_date = serializers.DateField(source="eoi.start_date")
     end_date = serializers.DateField(source="eoi.end_date")
 
