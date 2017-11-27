@@ -16,7 +16,6 @@ const styleSheet = (theme) => {
   const paddingField = theme.spacing.unit * 3;
   return {
     root: {
-      width: '30vw',
       minHeight: '50vh',
       background: theme.palette.background.paper,
     },

@@ -18,6 +18,7 @@ const styleSheet = (theme) => {
     },
     cardContainer: {
       minWidth: 300,
+      maxHeight: '100%',
       [theme.breakpoints.up('md')]: {
         width: '50vw',
       },
