@@ -18,7 +18,6 @@ const styleSheet = (theme) => {
     root: {
       width: '30vw',
       minHeight: '50vh',
-      background: theme.palette.background.paper,
     },
     fields: {
       padding: `${paddingFields}px`,
