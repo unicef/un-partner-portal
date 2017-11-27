@@ -116,7 +116,7 @@ class FileFormUploadButton extends Component {
                   {messages.upload}
                 </label>
               </Button>
-              <FormHelperText error>{error || warning}</FormHelperText>
+              {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
             </div>
             : <div className={classes.wrapContent}>
               <Typography type="subheading" className={classes.iconLabel} spacingBottom >
