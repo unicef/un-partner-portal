@@ -138,6 +138,7 @@ export const renderRadioField = ({ input,
       >
         {options.map((value, index) => (
           <FormControlLabel
+            style={{ paddingRight: 10 }}
             key={index}
             value={value.value}
             control={<RadioHeight />}

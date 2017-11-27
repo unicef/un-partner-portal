@@ -6,6 +6,7 @@ import Radio from 'material-ui/Radio';
 export const styleSheet = () => ({
   rootRadio: {
     height: '100%',
+    margin: 5,
   },
 });
 
