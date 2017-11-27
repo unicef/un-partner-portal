@@ -183,7 +183,6 @@ class EoiFilter extends Component {
                 label={messages.labels.show}
                 fieldName="ds_converted"
                 optional
-                warn
               />
             </Grid>
           </Grid>
