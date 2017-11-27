@@ -91,8 +91,8 @@ const mapStateToProps = (state, ownProps) => ({
   role: state.session.role,
   cfei: state.cfei.cfei[ownProps.type],
   count: state.cfei.cfei[`${ownProps.type}Count`],
-  loading: state.cfei.cfeiStatus.loading,
-  errorMsg: state.cfei.cfeiStatus.error.message,
+  loading: state.cfei.status.loading,
+  errorMsg: state.cfei.status.error.message,
 });
 
 const mapDispatchToProps = dispatch => ({

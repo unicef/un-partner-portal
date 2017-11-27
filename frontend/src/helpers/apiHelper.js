@@ -2,6 +2,15 @@
 /* eslint-disable import/prefer-default-export */
 import R from 'ramda';
 import { browserHistory as history } from 'react-router';
+import { isCancel, CancelToken } from 'axios';
+import {
+  loadStarted,
+  loadEnded,
+  loadSuccess,
+  loadFailure } from '../reducers/apiMeta';
+import { errorToBeAdded } from '../reducers/errorReducer';
+
+const errorHandler = R.curry(errorToBeAdded);
 
 export const isQueryChanged = (nextProps, query) =>
   (!R.isEmpty(nextProps.location.query) && !R.equals(query, nextProps.location.query));
@@ -38,4 +47,50 @@ export const changedValues = (initialValues, values) => {
   const merged = R.mergeAll(R.map(item => R.objOf(item, values[item]), filtered));
 
   return merged;
+};
+
+export const getNewRequestToken = (getState, name) => {
+  const currentCancelToken = R.path([name, 'status', 'cancelToken'], getState());
+  if (currentCancelToken) {
+    currentCancelToken.cancel();
+  }
+  return CancelToken.source();
+};
+
+export const sendRequest = ({
+  loadFunction,
+  meta: {
+    reducerTag,
+    actionTag,
+    isPaginated = false,
+  },
+  successParams,
+  errorHandling: {
+    userMessage,
+    id,
+    additionalErrors,
+  },
+  apiParams,
+},
+) => (dispatch, getState) => {
+  // export const loadCfei = (project, filters) => (dispatch, getState) => {
+  const newCancelToken = getNewRequestToken(getState, reducerTag);
+  dispatch(loadStarted(actionTag, newCancelToken));
+  return loadFunction(...apiParams, { cancelToken: newCancelToken.token })
+    .then((response) => {
+      dispatch(loadEnded(actionTag));
+      if (isPaginated) {
+        const results = response.results;
+        const count = response.count;
+        return dispatch(loadSuccess(actionTag, { results, count, ...successParams, getState }));
+      }
+      return dispatch(loadSuccess(actionTag, { results: response, ...successParams, getState }));
+    })
+    .catch((error) => {
+      if (!isCancel(error)) {
+        dispatch(loadEnded(actionTag));
+        dispatch(errorHandler(error, id || reducerTag, userMessage));
+        if (additionalErrors) dispatch(loadFailure(additionalErrors(error)));
+      }
+    });
 };

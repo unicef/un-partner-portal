@@ -21,7 +21,7 @@ import PaddedContent from '../../common/paddedContent';
 import MainContentWrapper from '../../common/mainContentWrapper';
 
 const messages = {
-  noCfei: 'Sorry but this cfei doesn\'t exist',
+  noCfei: 'Sorry but this project doesn\'t exist',
 };
 
 class CfeiHeader extends Component {

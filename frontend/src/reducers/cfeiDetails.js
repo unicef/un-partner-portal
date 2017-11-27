@@ -13,7 +13,6 @@ import cfeiDetailsStatus, {
 import { } from './apiStatus';
 import { normalizeSingleCfei } from './cfei';
 import { getOpenCfeiDetails, getApplicationDetails } from '../helpers/api/api';
-import { pickByMap } from './normalizationHelpers';
 import {
   loadApplicationDetailSuccess,
 } from './applicationDetailsStatus';

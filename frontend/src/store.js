@@ -57,6 +57,7 @@ import submittedCN from './reducers/submittedCN';
 import applicationDecisions from './reducers/applicationsDecisions';
 import applicationComparison from './reducers/applicationsComparison';
 import notificationsList from './reducers/notificationsList';
+import error from './reducers/errorReducer';
 
 const mainReducer = combineReducers({
   cfei,
@@ -72,6 +73,7 @@ const mainReducer = combineReducers({
   adminOneLocation,
   nav,
   session,
+  error,
   countries,
   conceptNote,
   countryProfiles,
@@ -317,7 +319,7 @@ export const selectPreviousVerificationCount = (state, partnerId) =>
   partnerVerificationsSelector.selectPreviousVerificationsCount(state.partnerVerifications,
     partnerId);
 
-export const mapAgenciesNamesToSelection = state => mapValuesForSelectionField(state.agencies);
+export const mapAgenciesNamesToSelection = state => mapValuesForSelectionField(state.agencies.data);
 
 export const selectCfeiReviewSummary = (state, cfeiId) =>
   selectReviewSummary(state.cfeiReviewSummary.data, cfeiId);

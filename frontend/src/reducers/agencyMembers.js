@@ -1,6 +1,6 @@
 import R from 'ramda';
 import { combineReducers } from 'redux';
-import { getNewRequestToken } from './apiStatus';
+import { getNewRequestToken } from '../helpers/apiHelper';
 import apiMeta, {
   success,
   loadStarted,

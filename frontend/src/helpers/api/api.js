@@ -119,16 +119,16 @@ export function getSectors() {
 }
 
 // Project
-export function getOpenCfei(filters) {
-  return authorizedGet({ uri: '/projects/open', params: filters });
+export function getOpenCfei(filters, options) {
+  return authorizedGet({ uri: '/projects/open', params: filters, options });
 }
 
-export function getPinnedCfei(filters) {
-  return authorizedGet({ uri: '/projects/pins', params: filters });
+export function getPinnedCfei(filters, options) {
+  return authorizedGet({ uri: '/projects/pins', params: filters, options });
 }
 
-export function getDirectCfei(filters) {
-  return authorizedGet({ uri: '/projects/direct', params: filters });
+export function getDirectCfei(filters, options) {
+  return authorizedGet({ uri: '/projects/direct', params: filters, options });
 }
 
 export function postOpenCfei(body) {
@@ -159,8 +159,8 @@ export function getOpenCfeiDetails(id) {
   return authorizedGet({ uri: `/projects/${id}` });
 }
 
-export function getUnsolicitedCN(params) {
-  return authorizedGet({ uri: '/projects/unsolicited', params });
+export function getUnsolicitedCN(params, options) {
+  return authorizedGet({ uri: '/projects/unsolicited', params, options });
 }
 
 export function patchPinnedCfei(body) {
@@ -328,8 +328,8 @@ export function getAgencyMembers(id, params = { page_size: 100 }, options) {
   );
 }
 
-export function getAgencies(params = { page_size: 100 }) {
-  return authorizedGet({ uri: '/agencies/', params },
+export function getAgencies(params = { page_size: 100 }, options) {
+  return authorizedGet({ uri: '/agencies/', params, options },
   );
 }
 
