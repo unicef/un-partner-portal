@@ -15,12 +15,11 @@ const styleSheet = (theme) => {
       height: '100vh',
     },
     cardContainer: {
-      minWidth: 300,
       [theme.breakpoints.up('md')]: {
-        maxWidth: '50vw',
+        width: '30vw',
       },
       [theme.breakpoints.down('md')]: {
-        maxWidth: '100vw',
+        width: '100vw',
       },
     },
     header: {
@@ -59,7 +58,7 @@ const CardLogin = (props) => {
 CardLogin.propTypes = {
   classes: PropTypes.object,
   children: PropTypes.node,
-  title: PropTypes.string, 
+  title: PropTypes.string,
 };
 
 export default withStyles(styleSheet, { name: 'CardLogin' })(CardLogin);
