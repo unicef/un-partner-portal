@@ -57,7 +57,7 @@ import submittedCN from './reducers/submittedCN';
 import applicationDecisions from './reducers/applicationsDecisions';
 import applicationComparison from './reducers/applicationsComparison';
 import notificationsList from './reducers/notificationsList';
-import error from './reducers/errorReducer';
+import error, * as errorSelector from './reducers/errorReducer';
 
 const mainReducer = combineReducers({
   cfei,
@@ -335,3 +335,5 @@ export const selectPartnerFlags = (state, partnerId) =>
 
 export const selectPartnerFlagsCount = (state, partnerId) =>
   partnerFlagsSelector.selectPartnerFlagsCount(state.partnerFlags, partnerId);
+
+export const selectAllErrorsMapped = state => errorSelector.selectAllErrorsMapped(state.error);

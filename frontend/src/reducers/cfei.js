@@ -8,9 +8,12 @@ import apiMeta, {
   success,
 } from './apiMeta';
 
+const errorMessage = type => `Couldn't load ${type}, please refresh page and try again`;
+
 const messages = {
-  loadingCN: 'Couldn\'t load Calls for Expression of ' +
-  'Interests, please refresh page and try again',
+  loadingCN: errorMessage('Calls for Expression of Interests'),
+  loadingDS: errorMessage('Direct Selections'),
+  loadingUCN: errorMessage('Unsolicited Concept Notes'),
 };
 
 const initialState = {
@@ -36,6 +39,20 @@ const getCfeiLoadFunc = (project) => {
   }
 };
 
+const getErrorMessage = (project) => {
+  switch (project) {
+    case PROJECT_TYPES.OPEN:
+    default:
+      return messages.loadingCN;
+    case PROJECT_TYPES.PINNED:
+      return messages.loadingCN;
+    case PROJECT_TYPES.DIRECT:
+      return messages.loadingDS;
+    case PROJECT_TYPES.UNSOLICITED:
+      return messages.loadingUCN;
+  }
+};
+
 export const loadCfei = (project, filters) => sendRequest({
   loadFunction: getCfeiLoadFunc(project),
   meta: {
@@ -44,7 +61,7 @@ export const loadCfei = (project, filters) => sendRequest({
     isPaginated: true,
   },
   successParams: { project },
-  errorHandling: { userMessage: messages.loadingCN },
+  errorHandling: { userMessage: getErrorMessage(project) },
   apiParams: [filters],
 });
 

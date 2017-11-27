@@ -31,9 +31,11 @@ const initialState = {
 
 export const errorToBeAdded = (error, id, userMessage) =>
   ({ type: NEW_ERROR, error, id, userMessage });
-export const errorToBeCleared = (error, id, userMessage) =>
-  ({ type: CLEAR_ERROR, error, id, userMessage });
+export const errorToBeCleared = id =>
+  ({ type: CLEAR_ERROR, id });
 
+
+export const selectAllErrorsMapped = state => state.allErrors.map(error => state.errorsById[error]);
 
 export default function errrorReducer(state = initialState, action) {
   switch (action.type) {
@@ -41,7 +43,7 @@ export default function errrorReducer(state = initialState, action) {
       return saveError(state, action);
     }
     case CLEAR_ERROR: {
-      return clearError(state);
+      return clearError(state, action);
     }
     default:
       return state;
