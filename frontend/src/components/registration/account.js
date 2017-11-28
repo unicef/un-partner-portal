@@ -41,8 +41,8 @@ class Account extends Component {
         <Grid container direction="column" spacing={16}>
           <Grid item>
             <TextFieldForm
-              label="Your Personal Name"
-              placeholder="Provide Personal Name"
+              label="Your Full Name"
+              placeholder="Provide Full Name"
               fieldName="json.user.fullname"
             />
           </Grid>

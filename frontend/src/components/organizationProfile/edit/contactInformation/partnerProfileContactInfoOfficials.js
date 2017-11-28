@@ -21,7 +21,7 @@ const directorForm = (director, readOnly) => (
   <GridRow columns={4}>
     <TextFieldForm
       fieldName={`${director}.fullname`}
-      label="Personal Name"
+      label="Full Name"
       warn
       readOnly={readOnly}
     />
@@ -46,7 +46,7 @@ const authorisedOfficerForm = (officer, readOnly) => (
     <GridRow columns={3}>
       <TextFieldForm
         fieldName={`${officer}.fullname`}
-        label="Personal Name"
+        label="Full Name"
         warn
         readOnly={readOnly}
       />
