@@ -13,7 +13,7 @@ const messages = {
 };
 
 const OpenForm = (props) => {
-  const { handleSubmit, start_date, end_date, deadline_date, notif_results_date } = props;
+  const { handleSubmit, start_date, end_date, deadline_date, notif_results_date, form } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
@@ -30,7 +30,7 @@ const OpenForm = (props) => {
           {messages.selectionCriteria}
         </Typography>
         <fields.Weighting />
-        <SelectionField />
+        <SelectionField form={form} />
       </GridColumn>
     </form >
   );
@@ -44,7 +44,7 @@ OpenForm.propTypes = {
   deadline_date: PropTypes.string,
   notif_results_date: PropTypes.string,
   start_date: PropTypes.string,
-
+  form: PropTypes.string,
 };
 
 const selector = formValueSelector('newOpenCfei');
