@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import R from 'ramda';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
-import Tooltip from 'material-ui/Tooltip';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 
@@ -21,7 +20,7 @@ import ApplicationStatusText from '../applicationStatusText';
 import GridRow from '../../../../common/grid/gridRow';
 import EditReviewModalButton from './reviewContent/editReviewModalButton';
 import AddReviewModalButton from './reviewContent/addReviewModalButton';
-import AwardApplicationButton from '../../../buttons/awardApplicationButton';
+import AwardApplicationButtonContainer from '../../../buttons/awardApplicationButtonContainer';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 import { APPLICATION_STATUSES } from '../../../../../helpers/constants';
 
@@ -29,15 +28,7 @@ const messages = {
   header: 'Application from :',
   noCfei: 'Sorry but this application doesn\'t exist',
   button: 'Award',
-  tooltip: {
-    notVerified: 'Partner is not verified',
-    notPreselected: 'Application is not preselected',
-    redFlag: 'Partner has red flag',
-    noReviews: 'All assessments are not done yet',
-  },
 };
-
-const concatText = (text, message) => `${text}${message} \n`;
 
 class ApplicationSummaryHeader extends Component {
   constructor() {
@@ -48,23 +39,6 @@ class ApplicationSummaryHeader extends Component {
   handleBackButton() {
     const { params: { type, id } } = this.props;
     history.push(`/cfei/${type}/${id}/applications`);
-  }
-
-  renderTooltipText() {
-    const {
-      status,
-      isVerified,
-      redFlags,
-      completedReview,
-    } = this.props;
-    let text = '';
-    if (status !== APPLICATION_STATUSES.PRE) {
-      text = concatText(text, messages.tooltip.notPreselected);
-    }
-    if (!isVerified) text = concatText(text, messages.tooltip.notVerified);
-    if (redFlags) text = concatText(text, messages.tooltip.redFlag);
-    if (!completedReview) text = concatText(text, messages.tooltip.noReviews);
-    return text;
   }
 
   renderActionButton() {
@@ -82,11 +56,6 @@ class ApplicationSummaryHeader extends Component {
       completedReview,
       isCfeiCompleted,
     } = this.props;
-    const disableAward = loading
-      || status !== APPLICATION_STATUSES.PRE
-      || !isVerified
-      || redFlags
-      || !completedReview;
     const disabled = loading || status !== APPLICATION_STATUSES.PRE;
     if (isCfeiCompleted) return <div />;
     if (isUserFocalPoint) {
@@ -98,22 +67,14 @@ class ApplicationSummaryHeader extends Component {
         />);
       }
       return (
-        <Tooltip
-          style={{ whiteSpace: 'pre-line' }}
-          disableTriggerFocus={!disableAward}
-          disableTriggerHover={!disableAward}
-          disableTriggerTouch={!disableAward}
-          id="tooltip-award-button"
-          title={this.renderTooltipText()}
-          placement="bottom"
-        >
-          <div>
-            <AwardApplicationButton
-              disabled={disableAward}
-              applicationId={applicationId}
-            />
-          </div>
-        </Tooltip>);
+        <AwardApplicationButtonContainer
+          loading={loading}
+          status={status}
+          isVerified={isVerified}
+          redFlags={redFlags}
+          completedReview={completedReview}
+          applicationId={applicationId}
+        />);
     } else if (isUserReviewer) {
       if (R.prop(user, reviews)) {
         return (<EditReviewModalButton
@@ -137,7 +98,6 @@ class ApplicationSummaryHeader extends Component {
       partner,
       status,
       children,
-      params: { type },
       error,
     } = this.props;
     if (error.notFound) {

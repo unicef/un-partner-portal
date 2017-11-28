@@ -8,6 +8,7 @@ import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
 import VerificationText from '../../../partners/profile/common/verificationText';
 import FlaggingStatus from '../../../partners/profile/common/flaggingStatus';
+import AwardApplicationButtonContainer from '../../buttons/awardApplicationButtonContainer';
 
 const messages = {
   labelAward: 'Choose successful applicant(s)',
@@ -53,6 +54,7 @@ const CompareApplicationContent = (props) => {
     id,
     type } = props;
   const [names, ids, avgTotalScores, verification, flagging, unExp, budgets] = comparison;
+  console.log(applications)
   return (
     <div>
       <div className={`${classes.gridContainer}`}>
