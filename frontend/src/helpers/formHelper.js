@@ -1,9 +1,11 @@
 /* eslint-disable react/prop-types */
 import R from 'ramda';
 import React from 'react';
-import SelectField from 'material-ui-old/SelectField';
+import Select from 'material-ui/Select';
 import TextField from 'material-ui/TextField';
 import Checkbox from 'material-ui/Checkbox';
+import Close from 'material-ui-icons/Close';
+import IconButton from 'material-ui/IconButton';
 import Autosuggest from 'react-autosuggest';
 import { FormControl, FormControlLabel, FormHelperText, FormLabel } from 'material-ui/Form';
 import Attachment from 'material-ui-icons/Attachment';
@@ -110,17 +112,31 @@ export const renderSelectField = ({
   meta: { touched, error, warning },
   children,
   ...other
-}) => (
-  <SelectField
+}) => {
+  
+debugger;
+  return (<Select
     errorText={(touched && error) || warning}
     {...input}
+    multiple
     value={input.value || defaultValue}
-    onChange={(event, index, value) => input.onChange(value)}
+    renderValue={(value) => {
+      if (Array.isArray(value)) {
+        return (<div style={{ display: 'flex', alignItems: 'center' }}>
+          {value.map(item =>
+            (<div style={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton onClick={(e) => { e.stopPropagation(); }}><Close /></IconButton>{item}
+            </div>))}
+        </div>);
+      }
+      return value;
+    }}
+    onChange={event => input.onChange(event.target.value)}
     {...other}
   >
     {children}
-  </SelectField>
-);
+  </Select>);
+};
 
 export const renderRadioField = ({ input,
   label,
