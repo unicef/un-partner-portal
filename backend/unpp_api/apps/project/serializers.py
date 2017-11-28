@@ -957,7 +957,6 @@ class CompareSelectedSerializer(serializers.ModelSerializer):
     flagging_status = serializers.JSONField(source="partner.flagging_status")
     annual_budget = serializers.SerializerMethodField()
     un_exp = serializers.SerializerMethodField()
-    # key_results = TODO or rm
 
     class Meta:
         model = Application
@@ -974,7 +973,9 @@ class CompareSelectedSerializer(serializers.ModelSerializer):
             'annual_budget',
             'verification_status',
             'flagging_status',
-            # 'key_results',
+            'did_win',
+            'did_withdraw',
+            'assessments_is_completed',
         )
 
     def get_annual_budget(self, obj):
