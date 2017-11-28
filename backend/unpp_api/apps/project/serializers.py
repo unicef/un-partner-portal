@@ -951,12 +951,12 @@ class CompareSelectedSerializer(serializers.ModelSerializer):
     partner_id = serializers.IntegerField(source='partner.id')
     partner_name = serializers.CharField(source='partner.legal_name')
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
+    year_establishment = serializers.IntegerField(source='partner.profile.year_establishment')
     total_assessment_score = serializers.IntegerField(source='average_total_score')
     verification_status = serializers.BooleanField(source="partner.is_verified")
     flagging_status = serializers.JSONField(source="partner.flagging_status")
     annual_budget = serializers.SerializerMethodField()
     un_exp = serializers.SerializerMethodField()
-    # key_results = TODO or rm
 
     class Meta:
         model = Application
@@ -964,6 +964,7 @@ class CompareSelectedSerializer(serializers.ModelSerializer):
             'partner_id',
             'partner_name',
             'partner_additional',
+            'year_establishment',
             'eoi_id',
             'total_assessment_score',
             'verification_status',
@@ -972,7 +973,9 @@ class CompareSelectedSerializer(serializers.ModelSerializer):
             'annual_budget',
             'verification_status',
             'flagging_status',
-            # 'key_results',
+            'did_win',
+            'did_withdraw',
+            'assessments_is_completed',
         )
 
     def get_annual_budget(self, obj):
