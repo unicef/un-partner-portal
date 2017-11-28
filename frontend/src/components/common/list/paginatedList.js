@@ -49,6 +49,7 @@ class PaginatedList extends Component {
   tableRowTemplate({ row, children }) {
     return (<TableRowMUI
       hover
+      style={{ cursor: this.props.clickableRow ? 'pointer' : 'auto' }}
       onClick={() => this.props.clickableRow && this.props.onTableRowClick(row)}
     > {children}
     </TableRowMUI>);
