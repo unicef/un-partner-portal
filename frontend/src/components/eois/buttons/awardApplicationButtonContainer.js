@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import Tooltip from 'material-ui/Tooltip';
+import { Link } from 'react-router';
 import AwardApplicationButton from './awardApplicationButton';
 import { APPLICATION_STATUSES } from '../../../helpers/constants';
 
@@ -14,6 +15,8 @@ const messages = {
   redFlag: 'Partner has red flag',
   noReviews: 'All assessments are not done yet',
   awarded: 'Selected',
+  award: 'select',
+  withdraw: 'selection retracted',
 };
 
 const renderTooltipText = ({
@@ -24,17 +27,26 @@ const renderTooltipText = ({
 }) => {
   let text = '';
   if (status !== APPLICATION_STATUSES.PRE) {
-    text = concatText(text, messages.tooltip.notPreselected);
+    text = concatText(text, messages.notPreselected);
   }
-  if (!isVerified) text = concatText(text, messages.tooltip.notVerified);
-  if (redFlags) text = concatText(text, messages.tooltip.redFlag);
-  if (!completedReview) text = concatText(text, messages.tooltip.noReviews);
+  if (!isVerified) text = concatText(text, messages.notVerified);
+  if (redFlags) text = concatText(text, messages.redFlag);
+  if (!completedReview) text = concatText(text, messages.noReviews);
   return text;
 };
 
 
 const AwardApplicationButtonContainer = (props) => {
-  const { loading, status, isVerified, redFlags, completedReview, applicationId, CustomButton, didWin } = props;
+  const { loading,
+    status,
+    isVerified,
+    redFlags,
+    completedReview,
+    applicationId,
+    linkedButton,
+    didWin,
+    didWithdraw,
+    eoiId } = props;
   const disableAward = loading
   || status !== APPLICATION_STATUSES.PRE
   || !isVerified
@@ -51,10 +63,26 @@ const AwardApplicationButtonContainer = (props) => {
       placement="bottom"
     >
       <div>
-        {didWin ? <Button color="accent" disabled>{messages.awarded}</Button> : CustomButton ? <CustomButton disabled={disableAward} /> : <AwardApplicationButton
-          disabled={disableAward}
-          applicationId={applicationId}
-        />}
+        {didWin
+          ? <Button color="accent" disabled>{didWithdraw ? messages.withdraw : messages.awarded}</Button>
+          : linkedButton
+            ? (<Button
+              // className={classes.button}
+              raised
+              component={Link}
+              to={{
+                pathname: `/cfei/open/${eoiId}/applications/${applicationId}`,
+                hash: '#award-open',
+              }}
+              color="accent"
+              disabled={disableAward}
+            >
+              {messages.award}
+            </Button>)
+            : <AwardApplicationButton
+              disabled={disableAward}
+              applicationId={applicationId}
+            />}
       </div>
     </Tooltip>
   );
@@ -68,8 +96,10 @@ AwardApplicationButtonContainer.propTypes = {
   isVerified: PropTypes.bool,
   redFlags: PropTypes.number,
   completedReview: PropTypes.bool,
-  CustomButton: PropTypes.element,
+  linkedButton: PropTypes.element,
   didWin: PropTypes.bool,
+  didWithdraw: PropTypes.bool,
+  eoiId: PropTypes.string,
 };
 
 

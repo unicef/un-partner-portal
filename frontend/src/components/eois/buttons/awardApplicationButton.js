@@ -6,7 +6,7 @@ import AwardApplicationModal from '../modals/awardApplication/awardApplicationMo
 import withDialogHandling from '../../common/hoc/withDialogHandling';
 
 const messages = {
-  award: 'award',
+  award: 'Select',
 };
 
 

@@ -4,6 +4,7 @@ import R from 'ramda';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 import Grid from 'material-ui/Grid';
+import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 
 import HeaderNavigation from '../../../../common/headerNavigation';
@@ -15,6 +16,7 @@ import {
   selectReview,
   selectAssessment,
   isCfeiCompleted,
+  selectCfeiStatus,
 } from '../../../../../store';
 import ApplicationStatusText from '../applicationStatusText';
 import GridRow from '../../../../common/grid/gridRow';
@@ -22,12 +24,12 @@ import EditReviewModalButton from './reviewContent/editReviewModalButton';
 import AddReviewModalButton from './reviewContent/addReviewModalButton';
 import AwardApplicationButtonContainer from '../../../buttons/awardApplicationButtonContainer';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
-import { APPLICATION_STATUSES } from '../../../../../helpers/constants';
+import { APPLICATION_STATUSES, PROJECT_STATUSES } from '../../../../../helpers/constants';
 
 const messages = {
   header: 'Application from :',
   noCfei: 'Sorry but this application doesn\'t exist',
-  button: 'Award',
+  retracted: 'Retracted',
 };
 
 class ApplicationSummaryHeader extends Component {
@@ -51,15 +53,22 @@ class ApplicationSummaryHeader extends Component {
       getAssessment,
       params: { applicationId },
       didWin,
+      didWithdraw,
       isVerified,
       redFlags,
       completedReview,
       isCfeiCompleted,
+      cfeiStatus,
     } = this.props;
-    const disabled = loading || status !== APPLICATION_STATUSES.PRE;
+    const disabled = loading
+    || status !== APPLICATION_STATUSES.PRE
+    || cfeiStatus !== PROJECT_STATUSES.CLO;
     if (isCfeiCompleted) return <div />;
     if (isUserFocalPoint) {
       if (didWin) {
+        if (didWithdraw) {
+          return <Button disabled>{messages.retracted}</Button>;
+        }
         return (<WithdrawApplicationButton
           disabled={disabled}
           raised
@@ -141,10 +150,12 @@ ApplicationSummaryHeader.propTypes = {
   reviews: PropTypes.object,
   getAssessment: PropTypes.func,
   didWin: PropTypes.bool,
+  didWithdraw: PropTypes.bool,
   isVerified: PropTypes.bool,
   redFlags: PropTypes.number,
   completedReview: PropTypes.bool,
   isCfeiCompleted: PropTypes.bool,
+  cfeiStatus: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -171,6 +182,7 @@ const mapStateToProps = (state, ownProps) => {
     loading: state.applicationDetails.status.loading,
     error: state.applicationDetails.status.error,
     isUserFocalPoint: isUserAFocalPoint(state, eoi),
+    cfeiStatus: selectCfeiStatus(state, eoi),
     isUserReviewer: isUserAReviewer(state, eoi),
     reviews,
     user: state.session.userId,
