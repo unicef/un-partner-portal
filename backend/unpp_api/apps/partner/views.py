@@ -16,7 +16,6 @@ from .serializers import (
     OrganizationProfileSerializer,
     OrganizationProfileDetailsSerializer,
     PartnersListSerializer,
-    PartnersListItemSerializer,
     PartnerShortSerializer,
     PartnerIdentificationSerializer,
     PartnerContactInformationSerializer,
@@ -66,14 +65,6 @@ class PartnerShortListAPIView(ListAPIView):
     serializer_class = PartnerShortSerializer
     filter_backends = (DjangoFilterBackend, )
     filter_class = PartnersListFilter
-
-
-# TODO: it looks like we don't use this endpoint at all...
-class PartnersListItemAPIView(RetrieveAPIView):
-
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
-    serializer_class = PartnersListItemSerializer
-    queryset = Partner.objects.all()
 
 
 class PartnerIdentificationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
