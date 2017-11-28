@@ -38,7 +38,7 @@ class OrganizationProfileAPIView(RetrieveAPIView):
     """
     Endpoint for getting Organization Profile.
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsPartner)
     serializer_class = OrganizationProfileSerializer
     queryset = Partner.objects.all()
 
@@ -61,6 +61,8 @@ class PartnersListAPIView(ListAPIView):
 
 
 class PartnerShortListAPIView(ListAPIView):
+
+    permission_classes = (IsAuthenticated, )
     queryset = Partner.objects.all()
     serializer_class = PartnerShortSerializer
     filter_backends = (DjangoFilterBackend, )
