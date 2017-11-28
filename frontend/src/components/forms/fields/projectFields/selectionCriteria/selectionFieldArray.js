@@ -25,8 +25,6 @@ const insertWeight = (index, fields) => {
   if (!has('weight', tempSelection)) {
     const fieldsLength = fields.length;
     const isLast = index === fieldsLength - 1;
-    console.log(fieldsLength)
-    console.log((100 / fieldsLength))
     const newWeight = Math.floor(100 / fieldsLength) + (isLast ? (100 % fieldsLength) : 0);
     fields.remove(index);
     fields.insert(index, { ...tempSelection, weight: newWeight });
@@ -41,7 +39,7 @@ const Criteria = (criteria, readOnly, ...props) => (member, index, fields) => (<
   {...props}
 />);
 
-const Description = (readOnly, hasWeighting, ...props) => (member, index, fields) => {
+const Description = (readOnly, form, hasWeighting, ...props) => (member, index, fields) => {
   const disabled = !fields.get(index).selection_criteria;
   if (hasWeighting) insertWeight(index, fields);
   return (<Grid container>
@@ -60,12 +58,12 @@ const Description = (readOnly, hasWeighting, ...props) => (member, index, fields
         {...props}
       />
     </Grid>
-    <WeightField disabled={disabled} name={member} />
+    {hasWeighting && <WeightField form={form} disabled={disabled} name={member} />}
   </Grid>);
 };
 
 const SelectionFieldArray = (props) => {
-  const { criteria, readOnly, hasWeighting, ...other } = props;
+  const { criteria, readOnly, hasWeighting, form, ...other } = props;
   return (
     <ArrayForm
       label=""
@@ -75,7 +73,7 @@ const SelectionFieldArray = (props) => {
       readOnly={readOnly}
       {...other}
       outerField={Criteria(criteria, readOnly, ...other)}
-      innerField={Description(readOnly, hasWeighting, ...other)}
+      innerField={Description(readOnly, form, hasWeighting, ...other)}
       validate={hasWeighting ? [selectionCriteria] : []}
     />
   );
@@ -85,6 +83,7 @@ SelectionFieldArray.propTypes = {
   readOnly: PropTypes.bool,
   hasWeighting: PropTypes.bool,
   criteria: PropTypes.object,
+  form: PropTypes.string,
 };
 
 const selector = formValueSelector('newOpenCfei');
