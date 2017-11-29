@@ -110,7 +110,7 @@ class PartnerApplicationsNotesFilter extends Component {
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         posted_from_date,
         posted_to_date,
-        locations
+        locations,
       }),
     });
   }
@@ -130,7 +130,7 @@ class PartnerApplicationsNotesFilter extends Component {
   }
 
   render() {
-    const { classes, countries, specs, handleSubmit, cnStatus, reset } = this.props;
+    const { classes, countryCode, countries, specs, handleSubmit, cnStatus, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -146,6 +146,7 @@ class PartnerApplicationsNotesFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
@@ -260,6 +261,7 @@ const mapStateToProps = (state, ownProps) => {
     cnStatus: selectNormalizedApplicationStatuses(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
+    countryCode: country_code,
     initialValues: {
       project_title,
       country_code,

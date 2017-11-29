@@ -23,7 +23,6 @@ const CountryField = (props) => {
     initial,
     initialMultiValues,
     ...other } = props;
-
   return readOnly ? (
     <SelectForm
       fieldName={fieldName}
