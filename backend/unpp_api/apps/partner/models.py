@@ -369,7 +369,6 @@ class PartnerProfile(TimeStampedModel):
     @property
     def other_info_is_complete(self):
         required_fields = {
-            'org_logo': self.partner.other_info.org_logo,
             'confirm_data_updated': self.partner.other_info.confirm_data_updated is True,
         }
 
