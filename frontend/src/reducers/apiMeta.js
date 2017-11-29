@@ -25,13 +25,13 @@ export const errorToBeCleared = tag => ({ type: `CLEAR_${tag}_ERROR` });
 export const loadStarted = (tag, cancelToken) =>
   ({ type: `LOAD_${tag}_STARTED`, cancelToken });
 export const loadEnded = tag => ({ type: `LOAD_${tag}_ENDED` });
-export const loadSuccess = (tag, ...params) => (
-  { type: `LOAD_${tag}_SUCCESS`, ...params });
+export const loadSuccess = (tag, params) =>
+  ({ type: `LOAD_${tag}_SUCCESS`, ...params });
 export const loadFailure = (tag, error) => (
   { type: `LOAD_${tag}_FAILURE`, error });
 
-export default function createMetaReducer(tag, errorMessage) {
-  return function apiMetaReducer(state = { errorMessage, ...initialState }, action) {
+export default function createMetaReducer(tag) {
+  return function apiMetaReducer(state = { ...initialState }, action) {
     switch (action.type) {
       case `LOAD_${tag}_FAILURE`: {
         return saveError(state, action);

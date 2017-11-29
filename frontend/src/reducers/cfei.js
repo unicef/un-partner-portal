@@ -1,14 +1,20 @@
 import R from 'ramda';
 import { combineReducers } from 'redux';
 import { getOpenCfei, getPinnedCfei, getDirectCfei, getUnsolicitedCN } from '../helpers/api/api';
-import cfeiStatus, {
-  loadCfeiStarted,
-  loadCfeiEnded,
-  loadCfeiSuccess,
-  loadCfeiFailure,
-  LOAD_CFEI_SUCCESS,
-} from './cfeiStatus';
 import { PROJECT_TYPES } from '../helpers/constants';
+import { sendRequest } from '../helpers/apiHelper';
+
+import apiMeta, {
+  success,
+} from './apiMeta';
+
+const errorMessage = type => `Couldn't load ${type}, please refresh page and try again`;
+
+const messages = {
+  loadingCN: errorMessage('Calls for Expression of Interests'),
+  loadingDS: errorMessage('Direct Selections'),
+  loadingUCN: errorMessage('Unsolicited Concept Notes'),
+};
 
 const initialState = {
   open: [],
@@ -16,33 +22,48 @@ const initialState = {
   direct: [],
   unsolicited: [],
 };
+const CFEI_LIST = 'CFEI_LIST';
+const tag = 'cfei';
 
-const getCfei = (project, filters) => {
+const getCfeiLoadFunc = (project) => {
   switch (project) {
     case PROJECT_TYPES.OPEN:
     default:
-      return getOpenCfei(filters);
+      return getOpenCfei;
     case PROJECT_TYPES.PINNED:
-      return getPinnedCfei(filters);
+      return getPinnedCfei;
     case PROJECT_TYPES.DIRECT:
-      return getDirectCfei(filters);
+      return getDirectCfei;
     case PROJECT_TYPES.UNSOLICITED:
-      return getUnsolicitedCN(filters);
+      return getUnsolicitedCN;
   }
 };
 
-export const loadCfei = (project, filters) => (dispatch) => {
-  dispatch(loadCfeiStarted());
-  return getCfei(project, filters)
-    .then((cfei) => {
-      dispatch(loadCfeiEnded());
-      dispatch(loadCfeiSuccess(cfei.results, project, cfei.count));
-    })
-    .catch((error) => {
-      dispatch(loadCfeiEnded());
-      dispatch(loadCfeiFailure(error));
-    });
+const getErrorMessage = (project) => {
+  switch (project) {
+    case PROJECT_TYPES.OPEN:
+    default:
+      return messages.loadingCN;
+    case PROJECT_TYPES.PINNED:
+      return messages.loadingCN;
+    case PROJECT_TYPES.DIRECT:
+      return messages.loadingDS;
+    case PROJECT_TYPES.UNSOLICITED:
+      return messages.loadingUCN;
+  }
 };
+
+export const loadCfei = (project, filters) => sendRequest({
+  loadFunction: getCfeiLoadFunc(project),
+  meta: {
+    reducerTag: tag,
+    actionTag: CFEI_LIST,
+    isPaginated: true,
+  },
+  successParams: { project },
+  errorHandling: { userMessage: getErrorMessage(project) },
+  apiParams: [filters],
+});
 
 const extractSector = list => ({
   sector: list[0].category, areas: list.map(area => area.id) });
@@ -64,14 +85,14 @@ const normalizeCfei = cfeis =>
   );
 
 const saveCfei = (state, action) => {
-  const cfei = normalizeCfei(action.cfei, action.getState);
+  const cfei = normalizeCfei(action.results);
   const newState = R.assoc(`${action.project}Count`, action.count, state);
   return R.assoc(action.project, cfei, newState);
 };
 
 const cfei = (state = initialState, action) => {
   switch (action.type) {
-    case LOAD_CFEI_SUCCESS: {
+    case success`${CFEI_LIST}`: {
       return saveCfei(state, action);
     }
     default:
@@ -79,5 +100,5 @@ const cfei = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ cfei, cfeiStatus });
+export default combineReducers({ cfei, status: apiMeta(CFEI_LIST) });
 
