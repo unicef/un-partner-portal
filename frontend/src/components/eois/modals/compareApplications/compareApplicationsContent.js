@@ -8,6 +8,8 @@ import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
 import VerificationText from '../../../partners/profile/common/verificationText';
 import FlaggingStatus from '../../../partners/profile/common/flaggingStatus';
+import AwardApplicationButtonContainer from '../../buttons/awardApplicationButtonContainer';
+import { APPLICATION_STATUSES } from '../../../../helpers/constants';
 
 const messages = {
   labelAward: 'Choose successful applicant(s)',
@@ -50,9 +52,19 @@ const CompareApplicationContent = (props) => {
     budgetOptions,
     comparison,
     applications,
+    applicationsMeta,
     id,
-    type } = props;
-  const [names, ids, avgTotalScores, verification, flagging, unExp, budgets] = comparison;
+    type,
+    loading } = props;
+  const [names,
+    ids,
+    avgTotalScores,
+    verification,
+    flagging,
+    establishment,
+    unExp,
+    budgets] = comparison;
+  console.log(comparison);
   return (
     <div>
       <div className={`${classes.gridContainer}`}>
@@ -96,9 +108,7 @@ const CompareApplicationContent = (props) => {
         >
           {verification.map((singleVerification, index) => {
             if (index === 0) return (<Typography>{singleVerification}</Typography>);
-            return (<Typography>
-              <VerificationText verified={singleVerification} />
-            </Typography>);
+            return (<VerificationText verified={singleVerification} />);
           })}
         </div>
         <Divider />
@@ -109,13 +119,22 @@ const CompareApplicationContent = (props) => {
         >
           {flagging.map((flag, index) => {
             if (index === 0) return (<Typography>{flag}</Typography>);
-            return (<Typography>
-              <FlaggingStatus flags={flag} noFlagText />
-            </Typography>);
+            return (<FlaggingStatus flags={flag} noFlagText />);
           })}
         </div>
-
         <Divider />
+
+        <div
+          style={{ grid: `none / repeat(${columns}, 1fr)` }}
+          className={classes.subGrid}
+        >
+          {establishment.map(year => (<Typography>
+            {year}
+          </Typography>))}
+        </div>
+        <Divider />
+
+
         <div
           style={{ grid: `none / repeat(${columns}, 1fr)` }}
           className={classes.subGrid}
@@ -145,26 +164,37 @@ const CompareApplicationContent = (props) => {
           className={classes.subGrid}
         >
           <Typography type="body2">{messages.labelAward}</Typography>
-          {applications.map(application =>
-            (<Button
-              className={classes.button}
-              raised
-              component={Link}
-              to={{
-                pathname: `/cfei/${type}/${id}/applications/${application}`,
-                hash: '#award-open',
-              }}
-              color="accent"
-            >
-              {messages.award}
-            </Button>))}
+          {applications.map((application, index) => (
+            <AwardApplicationButtonContainer
+              loading={loading}
+              status={APPLICATION_STATUSES.PRE}
+              isVerified={verification[index + 1]}
+              redFlags={flagging[index + 1].red}
+              completedReview={applicationsMeta[index].assessments_is_completed}
+              applicationId={application}
+              eoiId={id}
+              didWin={applicationsMeta[index].did_win}
+              didWithdraw={applicationsMeta[index].did_withdraw}
+              linkedButton
+            />))}
         </div>
         <Divider />
       </div>
     </div>
   );
 };
-
+// (<Button
+//   className={classes.button}
+//   raised
+//   component={Link}
+//   to={{
+//     pathname: `/cfei/${type}/${id}/applications/${application}`,
+//     hash: '#award-open',
+//   }}
+//   color="accent"
+// >
+//   {messages.award}
+// </Button>)
 
 CompareApplicationContent.propTypes = {
   comparison: PropTypes.array,
@@ -174,6 +204,8 @@ CompareApplicationContent.propTypes = {
   classes: PropTypes.object,
   applications: PropTypes.array,
   budgetOptions: PropTypes.object,
+  loading: PropTypes.bool,
+  applicationsMeta: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
