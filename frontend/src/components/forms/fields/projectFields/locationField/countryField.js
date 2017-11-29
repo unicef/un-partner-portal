@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import R from 'ramda';
@@ -30,6 +29,11 @@ const CountryField = (props) => {
       label={label}
       values={countries}
       readOnly={readOnly}
+      textFieldProps={{
+        inputProps: {
+          initial,
+        },
+      }}
       {...other}
     />
   ) : (
