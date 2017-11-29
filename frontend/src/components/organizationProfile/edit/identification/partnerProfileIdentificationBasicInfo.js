@@ -14,7 +14,7 @@ const messages = {
   legalName: 'Organization\'s Legal Name',
   alias: 'Alias (if applicable)',
   acronym: 'Acronym (If applicable)',
-  formerLegalName: 'Organization\'s former Legal Name',
+  formerLegalName: 'Organization\'s former Legal Name (optional)',
   countryOrigin: 'Country of Origin',
   organizationType: 'Type of organization',
 };
@@ -54,7 +54,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
             <TextFieldForm
               label={messages.formerLegalName}
               fieldName="former_legal_name"
-              warn
+              optional
               readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
             />
           </Grid>

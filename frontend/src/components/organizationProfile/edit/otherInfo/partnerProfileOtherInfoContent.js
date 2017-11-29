@@ -60,7 +60,7 @@ const PartnerProfileOtherInfoContent = (props) => {
           sectionName="other_info.info"
           label={messages.orgLogo}
           fieldName="org_logo"
-          warn
+          optional
           readOnly={readOnly}
         />
         <CheckboxForm
