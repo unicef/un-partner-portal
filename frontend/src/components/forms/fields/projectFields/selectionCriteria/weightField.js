@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { formValueSelector } from 'redux-form';
+import { formValueSelector, clearFields } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import TextFieldForm from '../../../textFieldForm';
 import { weight } from '../../../../../helpers/validation';
@@ -13,36 +13,43 @@ const messages = {
   },
 };
 
-const WeightField = (props) => {
-  const { name, hasWeighting, disabled, ...other } = props;
-  return (hasWeighting) ? (<Grid item xs={12} sm={4}>
-    <TextFieldForm
-      label={messages.labels.weight}
-      fieldName={`${name}.weight`}
-      textFieldProps={{
-        inputProps: {
-          min: '1',
-          max: '100',
-          type: 'number',
-        },
-        disabled,
-      }}
-      validation={[weight]}
-      {...other}
-    />
-  </Grid>) : null;
-};
+class WeightField extends Component {
+  componentWillUnmount() {
+    this.props.clearWeight();
+  }
+
+  render() {
+    const { name, disabled, ...other } = this.props;
+    return (<Grid item xs={12} sm={4}>
+      <TextFieldForm
+        label={messages.labels.weight}
+        fieldName={`${name}.weight`}
+        textFieldProps={{
+          inputProps: {
+            min: '1',
+            max: '100',
+            type: 'number',
+          },
+          disabled,
+        }}
+        validation={[weight]}
+        {...other}
+      />
+    </Grid>);
+  }
+}
 
 WeightField.propTypes = {
   hasWeighting: PropTypes.bool,
   name: PropTypes.string,
   disabled: PropTypes.bool,
+  clearWeight: PropTypes.func,
 };
 
-const selector = formValueSelector('newOpenCfei');
 
 export default connect(
-  state => ({
-    hasWeighting: selector(state, 'has_weighting'),
+  null,
+  (dispatch, ownProps) => ({
+    clearWeight: () => dispatch(clearFields(ownProps.form, false, false, `${ownProps.name}.weight`)),
   }),
 )(WeightField);
