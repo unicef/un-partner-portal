@@ -356,7 +356,7 @@ class EOIApplicationsListAPIView(ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         eoi_id = self.kwargs.get(self.lookup_field)
-        return self.queryset.objects.filter(eoi_id=eoi_id)
+        return self.queryset.filter(eoi_id=eoi_id)
 
 
 class ReviewersStatusAPIView(ListAPIView):
