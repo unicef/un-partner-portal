@@ -21,7 +21,7 @@ const labels = {
   country: 'Country',
   location: 'Location',
   headOfOrganization: 'Head of organization',
-  fullname: 'Personal Name',
+  fullname: 'Full Name',
   jobTitle: 'Job Title/Position',
   telephone: 'Telephone',
   mobile: 'Mobile',
