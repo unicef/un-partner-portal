@@ -235,7 +235,6 @@ class PartnerProfile(TimeStampedModel):
         if self.partner.is_hq is False:
             required_fields.update({
                 'legal_name': self.partner.legal_name,
-                'former_legal_name': self.former_legal_name,
             })
 
         return all(required_fields.values())
@@ -369,7 +368,6 @@ class PartnerProfile(TimeStampedModel):
     @property
     def other_info_is_complete(self):
         required_fields = {
-            'org_logo': self.partner.other_info.org_logo,
             'confirm_data_updated': self.partner.other_info.confirm_data_updated is True,
         }
 
