@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { browserHistory as history } from 'react-router';
-import PartnerFilter from '../../../partners/partnerFilter';
+import OpenCfeiApplicationsFilter from '../../filters/openCfeiApplicationsFilter';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
 import SelectableList from '../../../common/list/selectableList';
 import PaginatedList from '../../../common/list/paginatedList';
@@ -89,7 +89,7 @@ class ApplicationsListContainer extends Component {
     return (
       <div>
         <GridColumn spacing={24}>
-          <PartnerFilter />
+          <OpenCfeiApplicationsFilter />
           {allowedToEdit ?
             <SelectableList
               items={applications}
