@@ -114,6 +114,7 @@ class SelectableList extends Component {
     return (<TableRowMUI
       selected={selected}
       hover
+      style={{ cursor: this.props.clickableRow ? 'pointer' : 'auto' }}
       onClick={() => this.props.clickableRow && this.props.onTableRowClick(row)}
       onMouseEnter={() => this.handleRowMouseEnter(rowId)}
       onMouseLeave={() => this.handleRowMouseLeave()}
