@@ -172,4 +172,4 @@ const cfeiDetails = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ cfeiDetails, cfeiDetailsStatus });
+export default combineReducers({ data: cfeiDetails, status: cfeiDetailsStatus });

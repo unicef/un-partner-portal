@@ -69,12 +69,12 @@ const theme = {
         color: 'inherit',
       },
     },
-    MuiIconButton: {
-      root: {
-        height: 24,
-        width: 24,
-      },
-    },
+    // MuiIconButton: {
+    //   root: {
+    //     height: 24,
+    //     width: 24,
+    //   },
+    // },
     MuiFormLabel: {
       root: {
         color: 'rgba(0, 0, 0, 0.34)',

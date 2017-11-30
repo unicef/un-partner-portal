@@ -70,7 +70,8 @@ OrganizationProfileHeader.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
+    || state.agencyPartnersList.data.partners);
 
   return {
     countryName: partner.is_hq ? messages.hqProfile : state.countries[partner.country_code],

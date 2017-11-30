@@ -129,9 +129,9 @@ ApplicationsListContainer.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  applications: state.partnersApplicationsList.applicationsList.applications,
-  itemsCount: state.partnersApplicationsList.applicationsList.itemsCount,
-  columns: state.partnersApplicationsList.applicationsList.columns,
+  applications: state.partnersApplicationsList.data.applications,
+  itemsCount: state.partnersApplicationsList.data.itemsCount,
+  columns: state.partnersApplicationsList.data.columns,
   loading: state.partnersApplicationsList.status.loading,
   query: ownProps.location.query,
   id: ownProps.params.id,
