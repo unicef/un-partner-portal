@@ -233,7 +233,7 @@ class IsPartnerEOIApplicationCreate(IsAtLeastPartnerMemberEditor):
             return True
 
 
-class IsOpenProject(IsAtLeastMemberReader):
+class IsAgencyProject(IsAtLeastMemberReader):
 
     MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
 

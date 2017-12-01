@@ -15,6 +15,7 @@ const labels = {
   total_assessment_score: 'Average score',
   verification_status: 'Verification status',
   flagging_status: 'Flagging status',
+  year_establishment: 'Year of Establishment',
   un_exp: 'UN Experience',
   annual_budget: 'Annual Budget(USD)',
 };
@@ -29,6 +30,8 @@ class CompareApplicationContentContainer extends Component {
   render() {
     const { loading, applications, comparison, params: { id, type } } = this.props;
     if (loading || R.isEmpty(comparison)) return <Loader loading={loading}><EmptyContent /></Loader>;
+    const applicationMeta = R.map(R.pick(['did_win', 'did_withdraw', 'assessments_is_completed']),
+      comparison);
     let fullComparison = R.prepend(labels, comparison);
     const columns = fullComparison.length;
     fullComparison = mapProperties(fullComparison);
@@ -46,6 +49,8 @@ class CompareApplicationContentContainer extends Component {
       comparison={fullComparison}
       id={id}
       type={type}
+      applicationsMeta={applicationMeta}
+      loading={loading}
     />);
   }
 }

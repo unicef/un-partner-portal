@@ -22,7 +22,10 @@ class ConvertToDirectSelectionModal extends Component {
 
   onFormSubmit(values) {
     this.props.handleDialogClose();
-    const focal = R.assoc('focal_points', [{ id: values.focal_points }], values);
+    const focal = R.assoc(
+      'focal_points',
+      values.focal_points.map(id => ({ id })),
+      values);
 
     this.props.convertToDS(focal);
   }

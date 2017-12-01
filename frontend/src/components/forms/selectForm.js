@@ -62,6 +62,7 @@ class SelectForm extends Component {
       defaultValue,
       readOnly,
       sections,
+      textFieldProps,
     } = this.props;
     return (
       <Grid item>
@@ -75,6 +76,7 @@ class SelectForm extends Component {
                   values={values}
                   optional={optional}
                   label={label}
+                  {...textFieldProps}
                 />
                 : [<FormLabel>{label}</FormLabel>,
                   <Field

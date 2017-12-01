@@ -22,7 +22,7 @@ from common.permissions import (
     IsAtLeastMemberReader,
     IsAtLeastMemberEditor,
     IsAtLeastAgencyMemberEditor,
-    IsOpenProject,
+    IsAgencyProject,
     IsEOIReviewerAssessments,
     IsApplicationAPIEditor,
     IsConvertUnsolicitedEditor,
@@ -72,8 +72,8 @@ class BaseProjectAPIView(ListCreateAPIView):
     """
     Base endpoint for Call of Expression of Interest.
     """
-    permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
-    queryset = EOI.objects.prefetch_related("specializations", "agency").distinct()
+    permission_classes = (IsAuthenticated, )
+    queryset = EOI.objects.select_related("agency").prefetch_related("specializations").distinct()
     serializer_class = BaseProjectSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
@@ -86,7 +86,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
     """
     Endpoint for getting OPEN Call of Expression of Interest.
     """
-    permission_classes = (IsAuthenticated, IsOpenProject)
+    permission_classes = (IsAuthenticated, IsAgencyProject)
 
     def get_queryset(self):
         queryset = self.queryset.filter(display_type=EOI_TYPES.open)
@@ -172,6 +172,7 @@ class DirectProjectAPIView(BaseProjectAPIView):
     Endpoint for getting DIRECT Call of Expression of Interest.
     """
 
+    permission_classes = (IsAuthenticated, IsAgencyProject)
     serializer_class = DirectProjectSerializer
 
     def get_queryset(self):
@@ -198,6 +199,8 @@ class PinProjectAPIView(BaseProjectAPIView):
     """
     Endpoint for getting PINNED Call of Expression of Interest for User Partner.
     """
+
+    permission_classes = (IsAuthenticated, IsPartner)
 
     ERROR_MSG_WRONG_EOI_PKS = "At least one of given EOI primary key doesn't exists."
     ERROR_MSG_WRONG_PARAMS = "Couldn't properly identify input parameters like 'eoi_ids' and 'pin'."
@@ -325,7 +328,8 @@ class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
 
 class ApplicationAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated, IsApplicationAPIEditor)
-    queryset = Application.objects.all()
+    queryset = Application.objects.select_related("partner", "eoi", "cn")\
+        .prefetch_related("eoi__reviewers").all()
     serializer_class = ApplicationFullSerializer
 
     def perform_update(self, serializer):
@@ -340,8 +344,9 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
 
 
 class EOIApplicationsListAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
-    queryset = Application.objects.all().distinct()
+    permission_classes = (IsAgencyMemberUser, )
+    queryset = Application.objects.select_related("partner", "eoi", "cn")\
+        .prefetch_related("assessments", "eoi__reviewers").all()
     serializer_class = ApplicationsListSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
@@ -351,7 +356,7 @@ class EOIApplicationsListAPIView(ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         eoi_id = self.kwargs.get(self.lookup_field)
-        return Application.objects.filter(eoi_id=eoi_id)
+        return self.queryset.filter(eoi_id=eoi_id)
 
 
 class ReviewersStatusAPIView(ListAPIView):
@@ -363,7 +368,7 @@ class ReviewersStatusAPIView(ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         application_id = self.kwargs.get(self.lookup_url_kwarg)
-        app = get_object_or_404(Application.objects.select_related('eoi'),
+        app = get_object_or_404(Application.objects.select_related('eoi').prefetch_related('eoi__reviewers'),
                                 pk=application_id)
         return User.objects.filter(pk__in=app.eoi.reviewers.all().values_list("pk"))
 
@@ -497,7 +502,7 @@ class ReviewSummaryAPIView(RetrieveUpdateAPIView):
     """
     Endpoint for review summary - comment & attachement
     """
-    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor,)
+    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
     serializer_class = ReviewSummarySerializer
     queryset = EOI.objects.all()
 

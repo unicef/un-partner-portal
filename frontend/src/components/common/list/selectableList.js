@@ -92,7 +92,7 @@ class SelectableList extends Component {
     this.setState({ hoveredRow: null });
   }
   navigationHeader(selected, rows, HeaderAction) {
-    const { classes, itemsCount, pageSize, pageNumber } = this.props;
+    const { classes, itemsCount = 0, pageSize, pageNumber } = this.props;
 
     const firstRange = (pageSize * (pageNumber - 1)) + 1;
     const secondTmp = (pageSize * (pageNumber));
@@ -104,7 +104,7 @@ class SelectableList extends Component {
           <HeaderAction rows={R.values(R.pick(selected, rows))} />
         </SelectedHeader>
         : <div className={classes.container}><Typography type="title">
-          {`${firstRange}-${secondRange} of ${itemsCount} results`}
+          {`${isNaN(firstRange) ? 0 : firstRange}-${isNaN(secondRange) ? 0 : secondRange} of ${itemsCount} results`}
         </Typography></div>
       }
     </div>);
@@ -114,6 +114,7 @@ class SelectableList extends Component {
     return (<TableRowMUI
       selected={selected}
       hover
+      style={{ cursor: this.props.clickableRow ? 'pointer' : 'auto' }}
       onClick={() => this.props.clickableRow && this.props.onTableRowClick(row)}
       onMouseEnter={() => this.handleRowMouseEnter(rowId)}
       onMouseLeave={() => this.handleRowMouseLeave()}

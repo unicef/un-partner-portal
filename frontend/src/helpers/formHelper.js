@@ -282,16 +282,20 @@ export const renderText = ({
   date,
   ...other
 }) => {
-  let value = input.value || (other.inputProps ? other.inputProps.initial : null);
+  let value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (other.inputProps ? other.inputProps.initial : null);
+  
   if (!value) value = '-';
+  
   if (values) {
     value = R.filter((val) => {
       if (Array.isArray(value)) return value.includes(val.value);
       return value === val.value;
     }, values).map(matchedValue => matchedValue.label).join(', ');
   }
+
+  if (R.isEmpty(value) || R.isNil(value)) value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (other.inputProps ? other.inputProps.initial : null);
   if (date) value = formatDateForPrint(value);
-  if (R.isEmpty(value)) value = '-';
+  if (R.isEmpty(value) || R.isNil(value)) value = '-';
 
   return (
     <FormControl fullWidth>

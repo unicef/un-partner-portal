@@ -14,7 +14,7 @@ class CompareApplicationsModal extends Component {
     return (
       <div>
         <ControlledModal
-          maxWidth="md"
+          maxWidth="xl"
           title={messages.title}
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}

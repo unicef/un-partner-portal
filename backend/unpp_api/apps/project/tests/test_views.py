@@ -231,6 +231,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
     quantity = 2
     url = reverse('projects:direct')
+    user_type = 'agency'
 
     def setUp(self):
         super(TestDirectProjectsAPITestCase, self).setUp()

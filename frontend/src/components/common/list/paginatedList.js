@@ -31,12 +31,12 @@ class PaginatedList extends Component {
   }
 
   navigationHeader() {
-    const { classes, itemsCount, pageSize, pageNumber } = this.props;
+    const { classes, itemsCount = 0, pageSize, pageNumber } = this.props;
     const firstRange = (pageSize * (pageNumber - 1)) + 1;
     const secondTmp = (pageSize * (pageNumber));
     const secondRange = secondTmp > itemsCount ? itemsCount : secondTmp;
     return (<div className={classes.container}><Typography type="title">
-      {`${firstRange}-${secondRange} of ${itemsCount} results`}
+      {`${isNaN(firstRange) ? 0 : firstRange}-${isNaN(secondRange) ? 0 : secondRange} of ${itemsCount} results`}
     </Typography></div>);
   }
 
@@ -49,6 +49,7 @@ class PaginatedList extends Component {
   tableRowTemplate({ row, children }) {
     return (<TableRowMUI
       hover
+      style={{ cursor: this.props.clickableRow ? 'pointer' : 'auto' }}
       onClick={() => this.props.clickableRow && this.props.onTableRowClick(row)}
     > {children}
     </TableRowMUI>);
@@ -83,11 +84,11 @@ class PaginatedList extends Component {
             onSortingChange={changeSorting}
           /> }
           <PagingState
-            currentPage={pageNumber - 1}
-            pageSize={pageSize}
+            currentPage={Number.isNaN(pageNumber) ? 0 : pageNumber - 1}
+            pageSize={Number.isNaN(pageNumber) ? 0 : pageSize}
             onPageSizeChange={changePageSize}
             onCurrentPageChange={changePageNumber}
-            totalCount={itemsCount}
+            totalCount={itemsCount || 0}
           />
 
           {expandable &&
