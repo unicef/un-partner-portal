@@ -60,7 +60,7 @@ class CfeiContainer extends Component {
     const { role, params: { type } } = this.props;
 
     return (
-      <Grid container direction="column" spacing={40}>
+      <Grid container direction="column" spacing={24}>
         <Grid item>
           {this.filter()}
         </Grid>

@@ -24,7 +24,7 @@ const CfeiOverview = (props) => {
     <form >
       <GridColumn >
         {type === PROJECT_TYPES.OPEN && <Timeline id={id} />}
-        <Grid container direction="row">
+        <Grid container direction="row" spacing={24}>
           <Grid item xs={12} sm={8}>
             <ProjectDetails
               type={type}

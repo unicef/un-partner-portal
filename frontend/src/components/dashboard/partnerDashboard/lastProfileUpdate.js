@@ -19,13 +19,16 @@ const styleSheet = theme => ({
   date: {
     paddingRight: theme.spacing.unit * 2,
   },
+  paper: {
+    height: '100%',
+  },
 });
 
 
 const LastProfileUpdate = (props) => {
   const { date, classes } = props;
   return (
-    <Paper>
+    <Paper className={classes.paper}>
       <PaddedContent>
         <GridRow>
           <Typography type="headline">{messages.title}</Typography>
