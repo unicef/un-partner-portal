@@ -150,6 +150,11 @@ const getTheme = () => (
         yellow: '#FFC400',
       },
     },
+    typography: {
+      headline: {
+        fontSize: '1.25rem',
+      },
+    },
     overrides: {
       ...theme.overrides,
       MuiRadio: {
