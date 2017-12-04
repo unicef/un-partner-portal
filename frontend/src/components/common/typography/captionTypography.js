@@ -5,7 +5,7 @@ import Typography from 'material-ui/Typography';
 
 const styleSheet = () => ({
   caption: {
-    fontSize: '16px',
+    fontSize: '1rem',
     fontWeight: 400,
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
     lineHeight: '1.375em',
