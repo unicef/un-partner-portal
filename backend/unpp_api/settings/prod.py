@@ -11,6 +11,7 @@ extend_list_avoid_repeats(INSTALLED_APPS, [
     'rest_framework_swagger',
 ])
 
+DATABASES['default'].update({"sslmode": 'require'})
 
 # Sendgrid stuff
 EMAIL_HOST = 'smtp.sendgrid.net'
