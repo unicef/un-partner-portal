@@ -6,7 +6,7 @@ import {
   flattenToObjectKey,
 } from './normalizationHelpers';
 
-import { getNewRequestToken } from './apiStatus';
+import { getNewRequestToken } from '../helpers/apiHelper';
 import apiMeta, {
   success,
   loadStarted,

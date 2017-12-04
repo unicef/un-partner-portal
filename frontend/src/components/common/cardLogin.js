@@ -41,11 +41,11 @@ const CardLogin = (props) => {
   return (
     <div className={classes.center}>
       <div className={classes.cardContainer}>
-        <CardHeader
-          className={classes.header}
-          title={title}
-        />
         <Paper elevation={2} >
+          <CardHeader
+            className={classes.header}
+            title={title}
+          />
           <PaddedContent >
             {children}
           </PaddedContent>

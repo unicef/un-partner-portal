@@ -5,7 +5,7 @@ import Grid from 'material-ui/Grid';
 import TextFieldForm from '../../../forms/textFieldForm';
 
 const messages = {
-  fullname: 'Personal name',
+  fullname: 'Full name',
   jobTitle: 'Job Title/Position',
   telephone: 'Telephone',
   mobile: 'Mobile (optional)',

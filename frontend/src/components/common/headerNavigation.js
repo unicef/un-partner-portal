@@ -120,6 +120,8 @@ class HeaderNavigation extends Component {
                 scrollable
                 value={index}
                 scrollButtons="off"
+                textColor="accent"
+                indicatorColor="accent"
                 onChange={handleChange}
               >
                 {customTabs ? customTabs() : this.renderTabs()}

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { isEmpty } from 'ramda';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SelectForm from '../../selectForm';
@@ -11,12 +12,14 @@ const messages = {
 
 class Agencies extends Component {
   componentWillMount() {
-    this.props.loadAgencies();
+    if (isEmpty(this.props.agencies)) {
+      this.props.loadAgencies();
+    }
   }
 
   render() {
     const { fieldName, label, agencies, agencyId, ...other } = this.props;
-    
+
     return (
       <SelectForm
         fieldName={fieldName}

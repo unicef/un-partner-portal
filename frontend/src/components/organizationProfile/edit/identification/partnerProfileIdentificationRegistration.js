@@ -12,11 +12,11 @@ import TextFieldForm from '../../../forms/textFieldForm';
 import DatePickerForm from '../../../forms/datePickerForm';
 
 const messages = {
-  yearEstablishmentHq: 'Year of establishment in country of origin',
+  yearEstablishmentHq: 'Year of establishment in country of operation',
   yearEstablishment: 'Year of establishment in country',
   haveGovDoc: 'Does the Organization have a Governing Document?',
   governingDoc: 'Governing Document',
-  registrationCountryHq: 'Is the organization registered in the country of origin?',
+  registrationCountryHq: 'Is the organization registered in the country of operation?',
   registrationCountry: 'Is the organization registered to operate in the country?',
   date: 'Registration Date',
   number: 'Registration number (If applicable)',

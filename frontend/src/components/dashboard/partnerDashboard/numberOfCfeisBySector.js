@@ -10,6 +10,7 @@ import { toPairs, isEmpty, map } from 'ramda';
 import { Link } from 'react-router';
 import GridColumn from '../../common/grid/gridColumn';
 import PaddedContent from '../../common/paddedContent';
+import CaptionTypography from '../../common/typography/captionTypography';
 import VerticalBarChart from '../../common/charts/verticalBarChart';
 
 const messages = {
@@ -38,7 +39,7 @@ const NumberOfCfeisBySector = (props) => {
       <PaddedContent>
         <GridColumn>
           <Typography type="headline">{messages.title}</Typography>
-          <Typography type="caption">{messages.caption}</Typography>
+          <CaptionTypography>{messages.caption}</CaptionTypography>
           <Divider />
           <VerticalBarChart
             data={data}

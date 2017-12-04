@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from account.serializers import PartnerMemberSerializer
 from common.permissions import (
-    IsAtLeastMemberEditor,
     IsPartner,
     IsAtLeastEditorPartnerOnNotGET,
     IsRoleAdministratorOnNotGET,
@@ -16,7 +15,6 @@ from .serializers import (
     OrganizationProfileSerializer,
     OrganizationProfileDetailsSerializer,
     PartnersListSerializer,
-    PartnersListItemSerializer,
     PartnerShortSerializer,
     PartnerIdentificationSerializer,
     PartnerContactInformationSerializer,
@@ -39,7 +37,7 @@ class OrganizationProfileAPIView(RetrieveAPIView):
     """
     Endpoint for getting Organization Profile.
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsPartner)
     serializer_class = OrganizationProfileSerializer
     queryset = Partner.objects.all()
 
@@ -62,18 +60,12 @@ class PartnersListAPIView(ListAPIView):
 
 
 class PartnerShortListAPIView(ListAPIView):
+
+    permission_classes = (IsAuthenticated, )
     queryset = Partner.objects.all()
     serializer_class = PartnerShortSerializer
     filter_backends = (DjangoFilterBackend, )
     filter_class = PartnersListFilter
-
-
-# TODO: it looks like we don't use this endpoint at all...
-class PartnersListItemAPIView(RetrieveAPIView):
-
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
-    serializer_class = PartnersListItemSerializer
-    queryset = Partner.objects.all()
 
 
 class PartnerIdentificationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):

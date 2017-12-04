@@ -8,6 +8,7 @@ import { loadCountries } from '../reducers/countries';
 import { loadPartnerConfig } from '../reducers/partnerProfileConfig';
 import { loadSectors } from '../reducers/sectors';
 import getTheme, { muiOldTheme } from '../styles/muiTheme';
+import SnackbarContainer from './common/snackbarContainer';
 
 class Main extends Component {
   constructor() {
@@ -41,7 +42,9 @@ class Main extends Component {
     return (
       <MuiThemeProvider theme={createMuiTheme(getTheme())}>
         <MuiThemeProviderLegacy muiTheme={muiOldTheme()}>
-          {this.state.configLoaded && children}
+          <SnackbarContainer>
+            {this.state.configLoaded && children}
+          </SnackbarContainer>
         </MuiThemeProviderLegacy>
       </MuiThemeProvider>);
   }

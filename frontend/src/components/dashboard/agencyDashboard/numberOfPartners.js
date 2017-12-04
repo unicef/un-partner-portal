@@ -10,6 +10,7 @@ import GridColumn from '../../common/grid/gridColumn';
 import PaddedContent from '../../common/paddedContent';
 import SpreadContent from '../../common/spreadContent';
 import DonutChart from '../../common/charts/pieChart';
+import CaptionTypography from '../../common/typography/captionTypography';
 import { chartColors } from '../../../styles/muiTheme';
 
 const messages = {
@@ -32,7 +33,7 @@ const NumberOfPartners = (props) => {
       <PaddedContent>
         <GridColumn>
           <Typography type="headline">{messages.title}</Typography>
-          <Typography type="caption">{messages.caption}</Typography>
+          <CaptionTypography>{messages.caption}</CaptionTypography>
           <DonutChart colors={chartColors} label={total} data={data} />
           {data.map(({ name, value }, index) => (
             <div key={`name_${index}`}>

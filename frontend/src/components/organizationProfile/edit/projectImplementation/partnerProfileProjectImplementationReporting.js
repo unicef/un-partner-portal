@@ -15,7 +15,7 @@ const messages = {
   keyResults: 'Briefly explain the key results achieved by your organization over the last year',
   publishAnnualReports: 'Does the organization publish annual reports?',
   dateOfReport: 'Date of most recent annual report',
-  mostRecentReport: 'Copy of your most rescent annual report',
+  mostRecentReport: 'Copy of your most recent annual report',
   link: 'Or link to the report form the organization\'s website',
 };
 

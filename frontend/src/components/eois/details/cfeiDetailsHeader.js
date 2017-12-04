@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import R from 'ramda';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 import Grid from 'material-ui/Grid';
+import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 import HeaderOptionsContainer from './headerOptions/headerOptionsContainer';
 import CustomTab from '../../common/customTab';
@@ -12,16 +12,16 @@ import Loader from '../../common/loader';
 import {
   selectCfeiDetailsItemsByType,
   selectCfeiTitle,
-  selectCfeiStatus,
 } from '../../../store';
 import { loadCfei, loadUnsolicitedCfei } from '../../../reducers/cfeiDetails';
 import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
 import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
 import { ROLES, PROJECT_TYPES } from '../../../helpers/constants';
-
+import PaddedContent from '../../common/paddedContent';
+import MainContentWrapper from '../../common/mainContentWrapper';
 
 const messages = {
-  noCfei: 'Sorry but this cfei doesn\'t exist',
+  noCfei: 'Sorry but this project doesn\'t exist',
 };
 
 class CfeiHeader extends Component {
@@ -84,9 +84,21 @@ class CfeiHeader extends Component {
       error,
     } = this.props;
     if (error.notFound) {
-      return <Typography >{messages.noCfei}</Typography>;
+      return (<MainContentWrapper>
+        <Paper>
+          <PaddedContent big >
+            <Typography>{messages.noCfei}</Typography>
+          </PaddedContent>
+        </Paper>
+      </MainContentWrapper>);
     } else if (error.message) {
-      return <Typography >{error.message}</Typography>;
+      return (<MainContentWrapper>
+        <Paper>
+          <PaddedContent big >
+            <Typography>{error.message}</Typography>
+          </PaddedContent>
+        </Paper>
+      </MainContentWrapper>);
     }
     return (<HeaderNavigation
       index={index}
@@ -107,11 +119,9 @@ class CfeiHeader extends Component {
     } = this.props;
     const index = this.updatePath();
     return (
-      <Grid item>
-        <Loader loading={loading}>
-          {!loading && this.renderContent(index)}
-        </Loader>
-      </Grid>
+      <Loader loading={loading}>
+        {!loading && this.renderContent(index)}
+      </Loader>
     );
   }
 }

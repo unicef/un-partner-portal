@@ -40,7 +40,7 @@ const BasicInformation = (props) => {
           <TextFieldForm
             label={'Acronym (If applicable)'}
             placeholder="Provide acronym"
-            fieldName="acronym"
+            fieldName="json.partner_profile.acronym"
             optional
           />
         </Grid>
@@ -65,8 +65,8 @@ const BasicInformation = (props) => {
         </Grid>
         <Grid item>
           <TextFieldForm
-            label="Head of Organization's Personal Name"
-            placeholder="Provide Personal Name"
+            label="Head of Organization's Full Name"
+            placeholder="Provide Full Name"
             fieldName="json.partner_head_organization.fullname"
           />
         </Grid>

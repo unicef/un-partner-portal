@@ -11,12 +11,6 @@ const styleSheet = (theme) => {
   const paddingIcon = theme.spacing.unit / 2;
 
   return {
-    rootPrimarySelected: {
-      color: theme.palette.secondary[500],
-    },
-    rootInheritSelected: {
-      color: theme.palette.secondary[500],
-    },
     checked: {
       fill: '#189a58',
       margin: `0 0 0 ${paddingIcon}px`,
@@ -43,8 +37,6 @@ const CustomTab = (props) => {
         checked && <CheckCircle className={classes.checked} />,
       ]}
       classes={{
-        rootPrimarySelected: classes.rootPrimarySelected,
-        rootInheritSelected: classes.rootInheritSelected,
         label: (warn || checked) && classes.label,
       }}
       {...tabProps}
