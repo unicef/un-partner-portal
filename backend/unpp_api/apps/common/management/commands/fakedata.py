@@ -23,7 +23,7 @@ class Command(BaseCommand):
             clean_up_data_in_db()
             print "Data cleaned!"
             call_command("loaddata", "initial.json")
-            print "Sectors and Specialization initialized!"
+            print "Agency, Sectors and Specialization initialized!"
 
         generate_fake_data(options['quantity'])
 
