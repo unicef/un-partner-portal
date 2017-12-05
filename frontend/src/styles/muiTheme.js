@@ -43,6 +43,7 @@ const theme = {
         height: '100%',
         padding: 15,
         alignItems: 'center',
+        zIndex: 0,
       },
     },
     MuiList: {
