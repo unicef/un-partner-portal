@@ -70,12 +70,6 @@ const theme = {
         color: 'inherit',
       },
     },
-    MuiIconButton: {
-      root: {
-        height: 24,
-        width: 24,
-      },
-    },
     MuiFormLabel: {
       root: {
         color: 'rgba(0, 0, 0, 0.34)',
@@ -149,6 +143,11 @@ const getTheme = () => (
       flags: {
         red: '#D50000',
         yellow: '#FFC400',
+      },
+    },
+    typography: {
+      headline: {
+        fontSize: '1.25rem',
       },
     },
     overrides: {

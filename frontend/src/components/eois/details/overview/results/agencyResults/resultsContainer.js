@@ -9,7 +9,7 @@ import ReviewersSummary from './reviewersSummary';
 const ResultsContainer = (props) => {
   const { id } = props;
   return (
-    <Grid container direction="row">
+    <Grid container direction="row" spacing={24}>
       <Grid item xs={12} sm={8}>
         <GridColumn >
           <ReviewSummary id={id} />

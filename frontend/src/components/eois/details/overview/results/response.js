@@ -11,7 +11,7 @@ const Results = (props) => {
   const { role, params: { id }, application } = props;
   if (role === ROLES.PARTNER) {
     return (
-      <Grid container direction="row">
+      <Grid container direction="row" spacing={24}>
         <Grid item xs={12} sm={8}>
           <Feedback applicationId={application.id} />
         </Grid>
