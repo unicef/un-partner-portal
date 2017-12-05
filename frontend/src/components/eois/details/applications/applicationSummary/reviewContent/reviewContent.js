@@ -10,8 +10,8 @@ import TotalScore from './reviewTotalScore';
 const ReviewContent = (props) => {
   const { applicationId, isUserFocalPoint, isUserReviewer, justReason } = props;
   return (
-    <GridColumn>
-      <Grid container direction="row">
+    <GridColumn spacing={24}>
+      <Grid container direction="row" spacing={24}>
         <Grid item xs={12} sm={8}>
           <Reviews
             applicationId={applicationId}
