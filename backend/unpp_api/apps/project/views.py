@@ -19,7 +19,6 @@ from common.consts import EOI_TYPES, DIRECT_SELECTION_SOURCE
 from common.paginations import SmallPagination
 from common.permissions import (
     IsAgencyMemberUser,
-    IsAtLeastMemberReader,
     IsAtLeastMemberEditor,
     IsAtLeastAgencyMemberEditor,
     IsAgencyProject,
@@ -272,7 +271,7 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
         if not self.request.active_partner.has_finished:
             return Response(
                 {'non_field_errors':
-                     ["You don't have the ability to submit an application if Your profile is not completed."]},
+                    ["You don't have the ability to submit an application if Your profile is not completed."]},
                 status=statuses.HTTP_400_BAD_REQUEST
             )
 

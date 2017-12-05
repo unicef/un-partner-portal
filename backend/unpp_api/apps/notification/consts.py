@@ -59,7 +59,8 @@ NOTIFICATION_KINDS = {
 
     'direct_select_ucn': {
             'template_name': 'direct_selection_via_UCN',
-            'subject': 'UN has identified your organization for a partnership opportunity via direct selection on the basis of an unsolicited concept note'
+            'subject': 'UN has identified your organization for a partnership opportunity via direct selection on'
+                       ' the basis of an unsolicited concept note'
     },
 
     'cfei_invitation': {

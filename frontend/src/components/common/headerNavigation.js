@@ -16,6 +16,11 @@ const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 2;
   const biggerPadding = theme.spacing.unit * 3;
   return {
+    root: {
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+    },
     container: {
       width: '100%',
       margin: '0',
@@ -92,41 +97,45 @@ class HeaderNavigation extends Component {
     );
 
     return (
-      <div>
-        <Grid alignItems="center" className={classes.container} container>
-          <SpreadContent className={classes.flex} >
-            <div className={paddingClass}>
-              { backButton
-                ? <IconButton
-                  className={`${classes.backButtonHeight} ${classes.noPrint}`}
-                  onClick={handleBackButton}
+      <div className={classes.root}>
+        <Grid item>
+          <Grid alignItems="center" className={classes.container} container>
+            <SpreadContent className={classes.flex} >
+              <div className={paddingClass}>
+                { backButton
+                  ? <IconButton
+                    className={`${classes.backButtonHeight} ${classes.noPrint}`}
+                    onClick={handleBackButton}
+                  >
+                    <KeyboardArrowLeft />
+                  </IconButton>
+                  : null }
+                { typeof title === 'string'
+                  ? <Typography type="headline">
+                    {title}
+                  </Typography>
+                  : titleObject }
+              </div>
+              <div className={actionsClass} >
+                {header}
+              </div>
+            </SpreadContent>
+            {customTabs || tabs
+              ? <div className={classes.noPrint}>
+                <Tabs
+                  scrollable
+                  value={index}
+                  scrollButtons="off"
+                  textColor="accent"
+                  indicatorColor="accent"
+                  onChange={handleChange}
                 >
-                  <KeyboardArrowLeft />
-                </IconButton>
-                : null }
-              { typeof title === 'string'
-                ? <Typography type="headline">
-                  {title}
-                </Typography>
-                : titleObject }
-            </div>
-            <div className={actionsClass} >
-              {header}
-            </div>
-          </SpreadContent>
-          {customTabs || tabs
-            ? <div className={classes.noPrint}>
-              <Tabs
-                scrollable
-                value={index}
-                scrollButtons="off"
-                onChange={handleChange}
-              >
-                {customTabs ? customTabs() : this.renderTabs()}
-              </Tabs>
-            </div>
-            : null
-          }
+                  {customTabs ? customTabs() : this.renderTabs()}
+                </Tabs>
+              </div>
+              : null
+            }
+          </Grid>
         </Grid>
         {children}
       </div>

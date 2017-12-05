@@ -17,7 +17,13 @@ const styleSheet = theme => ({
     alignContent: 'space-between',
   },
   logo: {
-    width: '100%',
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+      position: 'inherit',
+    },
+    width: theme.spacing.unit * 28,
+    position: 'fixed',
+    bottom: 0,
   },
   innerLogo: {
     padding: theme.spacing.unit * 2,

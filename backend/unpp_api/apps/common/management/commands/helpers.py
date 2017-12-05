@@ -146,7 +146,7 @@ def generate_fake_data(quantity=50):
     password = 'Passw0rd!'
     admin.set_password(password)
     admin.save()
-    print "Superuser {}:{}/{}".format("created" if created else "updated",admin.fullname, password)
+    print "Superuser {}:{}/{}".format("created" if created else "updated", admin.fullname, password)
 
     # Agencies
     unicef = AgencyFactory(name="UNICEF")

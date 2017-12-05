@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from account.serializers import PartnerMemberSerializer
 from common.permissions import (
-    IsAtLeastMemberEditor,
     IsPartner,
     IsAtLeastEditorPartnerOnNotGET,
     IsRoleAdministratorOnNotGET,
