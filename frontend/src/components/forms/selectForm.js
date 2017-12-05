@@ -5,7 +5,7 @@ import InfoIcon from 'material-ui-icons/Info';
 import Grid from 'material-ui/Grid';
 import Divider from 'material-ui/Divider';
 import Typography from 'material-ui/Typography';
-import { MenuItem } from 'material-ui-old/Menu';
+import { MenuItem } from 'material-ui/Menu';
 import { FormControl, FormLabel } from 'material-ui/Form';
 import { renderSelectField, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
@@ -62,67 +62,67 @@ class SelectForm extends Component {
       defaultValue,
       readOnly,
       sections,
+      multiple,
       textFieldProps,
     } = this.props;
+
     return (
       <Grid item>
         <Grid container direction="row" alignItems="flex-end" wrap="nowrap">
           <Grid item xs={infoIcon ? 11 : 12}>
-            <FormControl fullWidth>
-              {readOnly
-                ? <Field
-                  name={fieldName}
-                  component={renderText}
-                  values={values}
-                  optional={optional}
-                  label={label}
-                  {...textFieldProps}
-                />
-                : [<FormLabel>{label}</FormLabel>,
-                  <Field
-                    name={fieldName}
-                    component={renderSelectField}
-                    {...selectFieldProps}
-                    label={label}
-                    hintText={placeholder || `Select ${label.toLowerCase()}`}
-                    validate={optional ? [] : [required].concat(validation || [])}
-                    warn={warn && warning}
-                    defaultValue={defaultValue}
-                    onChange={this.handleChange}
-                    fullWidth
-                    autoWidth
-                  >
-                    {sections
-                      ? values.map(([sectionName, sectionValues], index) =>
-                        [
-                          <PaddedContent>
-                            <Typography
-                              type="body2"
-                              key={`${fieldName}_sectionName_${index}`}
-                            >{sectionName}
-                            </Typography>
-                            <Divider key={`${fieldName}_divider_${index}`} />
-                          </PaddedContent>,
-                          sectionValues.map((value, innerIndex) => (
-                            <MenuItem
-                              key={`${value.value}_menuItem_${innerIndex}`}
-                              value={value.value}
-                              primaryText={value.label}
-                            />)),
-                        ],
-                      )
-                      : values.map((value, index) => (
+            {readOnly
+              ? <Field
+                name={fieldName}
+                component={renderText}
+                values={values}
+                optional={optional}
+                label={label}
+                {...textFieldProps}
+              />
+              : <Field
+                name={fieldName}
+                component={renderSelectField}
+                {...selectFieldProps}
+                label={label}
+                placeholder={placeholder || `Select ${label.toLowerCase()}`}
+                validate={optional ? [] : [required].concat(validation || [])}
+                warn={warn && warning}
+                defaultValue={defaultValue || multiple ? [] : ''}
+                multiple={multiple}
+                onChange={this.handleChange}
+                fullWidth
+                values={values}
+                autoWidth
+              >
+                {sections
+                  ? values.map(([sectionName, sectionValues], index) =>
+                    [
+                      <PaddedContent>
+                        <Typography
+                          type="body2"
+                          key={`${fieldName}_sectionName_${index}`}
+                        >{sectionName}
+                        </Typography>
+                        <Divider key={`${fieldName}_divider_${index}`} />
+                      </PaddedContent>,
+                      sectionValues.map((value, innerIndex) => (
                         <MenuItem
-                          key={`${fieldName}_menuItem_${index}`}
+                          key={`${value.value}_menuItem_${innerIndex}`}
                           value={value.value}
                           primaryText={value.label}
-                        />
+                        />)),
+                    ],
+                  )
+                  : values.map(value => (
+                    <MenuItem
+                      key={`${fieldName}_menuItem_${value.value}`}
+                      value={value.value}
+                    >{value.label}
+                    </MenuItem>
 
-                      ))}
-                  </Field>]
-
-              }
-            </FormControl>
+                  ))}
+              </Field>
+            }
           </Grid>
           {infoIcon && (
             <Grid item xs={1} >
@@ -191,12 +191,16 @@ SelectForm.propTypes = {
   /**
    * default value String
    */
-  defaultValue: PropTypes.string,
+  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   /**
    * whether values should be divided into sections, expects this data format: 
    * [sectionName: string, valuesForSection: [{value, label}] ]
    */
   sections: PropTypes.array,
+  /**
+   * if select field should be multiple
+   */
+  multiple: PropTypes.bool,
 };
 
 export default SelectForm;

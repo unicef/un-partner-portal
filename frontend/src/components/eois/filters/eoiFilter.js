@@ -159,18 +159,18 @@ class EoiFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <AdminOneLocation
+              {/* <AdminOneLocation
                 fieldName="locations"
                 formName="tableFilter"
                 observeFieldName="country_code"
                 label={messages.labels.location}
                 optional
-              />
+              /> */}
             </Grid>
           </Grid>
           <Grid container direction="row" >
             <Grid item sm={4} xs={12} >
-              <SelectForm
+              {/* <SelectForm
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
@@ -180,7 +180,7 @@ class EoiFilter extends Component {
                 values={specs}
                 sections
                 optional
-              />
+              /> */}
             </Grid>
             <Grid item sm={4} xs={12}>
               <RadioForm

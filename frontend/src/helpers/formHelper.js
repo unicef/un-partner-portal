@@ -7,6 +7,7 @@ import Checkbox from 'material-ui/Checkbox';
 import Close from 'material-ui-icons/Close';
 import IconButton from 'material-ui/IconButton';
 import Autosuggest from 'react-autosuggest';
+import Input from 'material-ui/Input';
 import { FormControl, FormControlLabel, FormHelperText, FormLabel } from 'material-ui/Form';
 import Attachment from 'material-ui-icons/Attachment';
 import DateRange from 'material-ui-icons/DateRange';
@@ -111,32 +112,46 @@ export const renderSelectField = ({
   defaultValue,
   meta: { touched, error, warning },
   children,
+  multiple,
+  label,
+  values,
+  placeholder,
   ...other
-}) => {
-  
-debugger;
-  return (<Select
-    errorText={(touched && error) || warning}
+}) => (<FormControl margin="dense" fullWidth error={(touched && error) || warning}>
+  <FormLabel>{label}</FormLabel>
+  <TextField
     {...input}
-    multiple
-    value={input.value || defaultValue}
+    select
+    value={input.value || defaultValue || placeholder || null}
+    input={<Input margin="dense" />}
+    multiple={multiple}
     renderValue={(value) => {
       if (Array.isArray(value)) {
         return (<div style={{ display: 'flex', alignItems: 'center' }}>
-          {value.map(item =>
-            (<div style={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton onClick={(e) => { e.stopPropagation(); }}><Close /></IconButton>{item}
-            </div>))}
+          {value.map((item, index) => {
+            const { label } = R.find(R.propEq('value', item))(values);
+            return (<div style={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton onClick={(e) => {
+                e.stopPropagation();
+                input.onChange(R.without([value[index]], value));
+              }}
+              ><Close /></IconButton>{label}
+            </div>);
+          })}
         </div>);
       }
-      return value;
+      const { label } = R.find(R.propEq('value', value))(values) || '';
+      return label || placeholder;
     }}
-    onChange={event => input.onChange(event.target.value)}
+    onBlur={(event) => {
+      event.preventDefault();
+    }}
     {...other}
   >
     {children}
-  </Select>);
-};
+  </TextField>
+  {((touched && error) || warning) && <FormHelperText>{error}</FormHelperText>}
+</FormControl>);
 
 export const renderRadioField = ({ input,
   label,
@@ -283,9 +298,9 @@ export const renderText = ({
   ...other
 }) => {
   let value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (other.inputProps ? other.inputProps.initial : null);
-  
+
   if (!value) value = '-';
-  
+
   if (values) {
     value = R.filter((val) => {
       if (Array.isArray(value)) return value.includes(val.value);
