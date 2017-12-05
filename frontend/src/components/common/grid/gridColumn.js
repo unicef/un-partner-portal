@@ -22,7 +22,7 @@ GridColumn.propTypes = {
 };
 
 GridColumn.defaultProps = {
-  spacing: 16,
+  spacing: 24,
 };
 
 export default GridColumn;

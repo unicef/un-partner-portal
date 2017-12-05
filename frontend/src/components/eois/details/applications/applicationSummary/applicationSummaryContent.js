@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import R from 'ramda';
 import { connect } from 'react-redux';
 import Divider from 'material-ui/Divider';
+import { withStyles } from 'material-ui/styles';
 import GridColumn from '../../../../common/grid/gridColumn';
 import PartnerOverview from '../../../../partners/profile/overview/partnerOverviewSummary';
 import ConceptNote from '../../overview/conceptNote';
@@ -24,6 +25,18 @@ const messages = {
   cn: 'Concept Note',
 };
 
+const styleSheet = () => ({
+  grid: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: -12,
+  },
+  gridItem: {
+    padding: 12,
+  },
+});
+
+
 const ApplicationSummaryContent = (props) => {
   const { application,
     partnerDetails,
@@ -33,32 +46,42 @@ const ApplicationSummaryContent = (props) => {
     isUserReviewer,
     shouldSeeReviews,
     shouldAddFeedback,
+    classes,
   } = props;
   return (
-    <GridColumn spacing="16">
-      <Grid container direction="row">
-        <Grid item xs={12} sm={8}>
-          <PartnerOverview partner={partnerDetails} loading={partnerLoading} button />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <ConceptNote
-            conceptNote={application.cn}
-            loading={partnerLoading}
-            date={application.created}
-            title={messages.cn}
-          />
+    <div className={classes.grid}>
+      <Grid item className={classes.gridItem}>
+        <Grid container spacing={24}>
+          <Grid item xs={12} sm={8}>
+            <PartnerOverview partner={partnerDetails} loading={partnerLoading} button />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <ConceptNote
+              conceptNote={application.cn}
+              loading={partnerLoading}
+              date={application.created}
+              title={messages.cn}
+            />
+          </Grid>
         </Grid>
       </Grid>
-      <Divider />
-      {shouldSeeReviews && <ReviewContent
-        applicationId={applicationId}
-        isUserFocalPoint={isUserFocalPoint}
-        isUserReviewer={isUserReviewer}
-        justReason={application.justification_reason}
-      />
+      <Grid item className={classes.gridItem}>
+        <Divider />
+      </Grid>
+      {shouldSeeReviews ? <Grid item className={classes.gridItem}>
+        <ReviewContent
+          applicationId={applicationId}
+          isUserFocalPoint={isUserFocalPoint}
+          isUserReviewer={isUserReviewer}
+          justReason={application.justification_reason}
+        />
+      </Grid>
+        : null
       }
-      <Feedback allowedToAdd={shouldAddFeedback} applicationId={applicationId} />
-    </GridColumn>
+      <Grid item className={classes.gridItem}>
+        <Feedback allowedToAdd={shouldAddFeedback} applicationId={applicationId} />
+      </Grid>
+    </div>
 
   );
 };
@@ -102,4 +125,4 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-)(ApplicationSummaryContent);
+)(withStyles(styleSheet)(ApplicationSummaryContent));

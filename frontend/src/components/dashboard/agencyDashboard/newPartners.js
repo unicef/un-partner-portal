@@ -31,6 +31,9 @@ const styleSheet = theme => ({
   number: {
     paddingRight: theme.spacing.unit * 2,
   },
+  paper: {
+    height: '100%',
+  },
 });
 
 
@@ -43,7 +46,7 @@ const NewPartners = (props) => {
       toPairs(dayBreakdown));
   }
   return (
-    <Paper>
+    <Paper className={classes.paper}>
       <PaddedContent>
         <GridRow>
           <div>
