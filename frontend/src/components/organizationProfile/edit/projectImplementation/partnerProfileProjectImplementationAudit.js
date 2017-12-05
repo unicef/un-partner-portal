@@ -36,7 +36,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
           fieldName="regular_audited"
           label={messages.isRegularyAudited}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -50,7 +49,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
                 maxLength: '5000',
               },
             }}
-            optional
             warn
             readOnly={readOnly}
           />
