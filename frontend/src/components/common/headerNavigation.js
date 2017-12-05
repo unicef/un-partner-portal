@@ -48,6 +48,9 @@ const styleSheet = (theme) => {
     backButtonHeight: {
       height: 24,
     },
+    tabsContainer: {
+      maxWidth: '100%',
+    },
     noPrint: {
       '@media print': {
         visibility: 'hidden',
@@ -121,7 +124,7 @@ class HeaderNavigation extends Component {
               </div>
             </SpreadContent>
             {customTabs || tabs
-              ? <div className={classes.noPrint}>
+              ? <div className={`${classes.noPrint} ${classes.tabsContainer}`}>
                 <Tabs
                   scrollable
                   value={index}

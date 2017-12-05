@@ -21,6 +21,7 @@ const styleSheet = theme => ({
     margin: 'auto',
   },
   rightItem: {
+    overflowX: 'scroll',
     height: '100%',
     width: '100%',
     flexShrink: 1,
