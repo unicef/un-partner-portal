@@ -10,7 +10,7 @@ import GridColumn from '../../../common/grid/gridColumn';
 const messages = {
   hasBankAccount: 'Does the organization have a bank account?',
   hasSeparateAccount: 'Does the organization currently maintain, or has it previously maintained, ' +
-            'a seperate interest-bearing account for UN funded projects that require a seperate ' +
+            'a separate interest-bearing account for UN funded projects that require a separate ' +
             'account?',
   explain: 'Briefly explain the system used',
 };

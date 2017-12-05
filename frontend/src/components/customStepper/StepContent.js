@@ -10,13 +10,16 @@ export const styleSheet = theme => ({
     marginLeft: 14 + 11,
     paddingLeft: (24 - 11) + 8,
     paddingRight: 16,
-    overflow: 'hidden',
+    overflow: 'visible',
   },
   notLast: {
     borderLeft: `1px solid ${theme.palette.primary[200]}`,
   },
   active: {
     margin: '8px 0px 8px 25px',
+  },
+  overflow: {
+    overflow: 'visible',
   },
 });
 
@@ -38,7 +41,12 @@ const StepContent = (props) => {
   );
   return (
     <div className={className}>
-      <Collapse in={active} transitionDuration="auto" unmountOnExit>
+      <Collapse
+        in={active}
+        transitionDuration="auto"
+        unmountOnExit
+        classes={{ container: classes.overflow }}
+      >
         {children}
       </Collapse>
     </div>
