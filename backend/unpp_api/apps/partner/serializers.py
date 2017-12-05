@@ -690,8 +690,8 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
         source="profile.have_feedback_mechanism")
     feedback_mechanism_desc = serializers.CharField(
         source="profile.feedback_mechanism_desc", allow_blank=True, allow_null=True)
-    org_acc_system = serializers.ChoiceField\
-        (source="profile.org_acc_system", choices=FINANCIAL_CONTROL_SYSTEM_CHOICES)
+    org_acc_system = serializers.ChoiceField(
+        source="profile.org_acc_system", choices=FINANCIAL_CONTROL_SYSTEM_CHOICES)
     method_acc = serializers.ChoiceField(
         source="profile.method_acc", choices=METHOD_ACC_ADOPTED_CHOICES)
     have_system_track = serializers.BooleanField(

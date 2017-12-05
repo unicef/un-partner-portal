@@ -18,6 +18,7 @@ import {
 import { Link } from 'react-router';
 import GridRow from '../../common/grid/gridRow';
 import PaddedContent from '../../common/paddedContent';
+import CaptionTypography from '../../common/typography/captionTypography';
 import { formatDateForChart } from '../../../helpers/dates';
 
 const messages = {
@@ -50,7 +51,7 @@ const NewPartners = (props) => {
         <GridRow>
           <div>
             <Typography type="headline">{messages.title}</Typography>
-            <Typography type="caption">{messages.caption}</Typography>
+            <CaptionTypography>{messages.caption}</CaptionTypography>
           </div>
           <Grid container justify="flex-end">
             <Grid item>

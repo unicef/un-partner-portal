@@ -106,11 +106,12 @@ PartnerProfileEdit.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
+  const basicInfo = R.path(['partnerProfileDetails', 'partnerProfileDetails', 'identification', 'basic'], state);
 
   return {
     partnerProfile: state.partnerProfileDetails.partnerProfileDetails,
     partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
-    countryName: partner.is_hq ? messages.hqProfile : state.countries[partner.country_code],
+    countryName: partner.is_hq ? messages.hqProfile : basicInfo ? basicInfo.legal_name : '',
     tabs: state.partnerProfileDetailsNav.tabs,
     partnerId: ownProps.params.id,
     completion: state.partnerProfileDetails.partnerProfileDetails.completion,
