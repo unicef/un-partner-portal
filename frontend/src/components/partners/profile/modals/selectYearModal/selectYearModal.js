@@ -54,10 +54,7 @@ class SelectYearModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { input } = this.props;
-
     if (nextProps.input) {
-      console.log(nextProps.input.value);
       this.setState({ selected: nextProps.input.value });
     }
   }
