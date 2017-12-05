@@ -75,6 +75,7 @@ def make_db():
     local('docker-compose exec backend python manage.py reset_db')
     local('docker-compose exec backend python manage.py migrate')
     local('docker-compose exec backend python manage.py loaddata --app common initial.json')
+    local('docker-compose exec backend python manage.py loaddata --app agency initial.json')
     # we have reset_db instead of clean before
     fixtures(clean_before=False)
 

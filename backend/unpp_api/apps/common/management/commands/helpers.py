@@ -149,9 +149,9 @@ def generate_fake_data(quantity=50):
     print "Superuser {}:{}/{}".format("created" if created else "updated", admin.fullname, password)
 
     # Agencies
-    unicef = AgencyFactory(name="UNICEF")
-    wfp = AgencyFactory(name="WFP")
-    unhcr = AgencyFactory(name="UNHCR")
+    unicef = Agency.objects.get(name="UNICEF")
+    wfp = Agency.objects.get(name="WFP")
+    unhcr = Agency.objects.get(name="UNHCR")
 
     AgencyOfficeFactory.create_batch(3, agency=unicef)
     AgencyOfficeFactory.create_batch(3, agency=wfp)
