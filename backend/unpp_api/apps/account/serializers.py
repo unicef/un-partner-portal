@@ -182,10 +182,17 @@ class AgencyUserSerializer(UserSerializer):
 class PartnerUserSerializer(UserSerializer):
 
     partners = serializers.SerializerMethodField()
+    role = serializers.SerializerMethodField()
+
+    def _partner_member(self, obj):
+        return obj.partner_members.get()
+
+    def get_role(self, obj):
+        return self._partner_member(obj).get_role_display()
 
     class Meta:
         model = User
-        fields = UserSerializer.Meta.fields + ('partners', 'is_account_locked',)
+        fields = UserSerializer.Meta.fields + ('partners', 'role', 'is_account_locked')
 
     def get_partners(self, obj):
         partner_ids = obj.get_partner_ids_i_can_access()
