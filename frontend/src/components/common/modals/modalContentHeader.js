@@ -23,7 +23,7 @@ function ModalContentHeader(props) {
         <Typography type="body2">
           {titleText}
         </Typography>
-        <Typography type="body1">
+        <Typography type="subheading">
           {bodyText}
         </Typography>
       </Paper>
