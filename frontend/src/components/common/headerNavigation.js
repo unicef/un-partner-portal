@@ -87,6 +87,7 @@ class HeaderNavigation extends Component {
       tabs,
       children,
       header,
+      tabsProps,
       handleChange } = this.props;
     const paddingClass = className(
       {
@@ -126,12 +127,13 @@ class HeaderNavigation extends Component {
             {customTabs || tabs
               ? <div className={`${classes.noPrint} ${classes.tabsContainer}`}>
                 <Tabs
-                  scrollable
                   value={index}
+                  scrollable
                   scrollButtons="off"
                   textColor="accent"
                   indicatorColor="accent"
                   onChange={handleChange}
+                  {...tabsProps}
                 >
                   {customTabs ? customTabs() : this.renderTabs()}
                 </Tabs>
