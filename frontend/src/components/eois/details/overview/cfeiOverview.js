@@ -35,8 +35,8 @@ const CfeiOverview = (props) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <GridColumn >
-              {role === ROLES.PARTNER
-                && type === PROJECT_TYPES.OPEN
+              {((role === ROLES.PARTNER && type === PROJECT_TYPES.OPEN)
+              || type === PROJECT_TYPES.UNSOLICITED)
                 && <ConceptNote title={messages.cn} conceptNote={cn} />}
               {type === PROJECT_TYPES.OPEN
                 && <SelectionCriteria id={id} />}
