@@ -48,7 +48,6 @@ class PaginatedList extends Component {
   }
 
   tableRowTemplate({ row, children }) {
-    console.log(this.props.clickableRow)
     return (<TableRowMUI
       hover
       style={{ cursor: this.props.clickableRow ? 'pointer' : 'auto' }}
