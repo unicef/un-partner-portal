@@ -169,7 +169,7 @@ export const renderCheckbox = ({
         {label}
       </Typography>
     </div>
-    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+    {((touched && error) || error || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
   </div>);
 
 export const renderFileDownload = () => ({ input, label }) => (<FormControl fullWidth>
