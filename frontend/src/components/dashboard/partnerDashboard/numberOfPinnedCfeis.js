@@ -8,6 +8,7 @@ import { Link } from 'react-router';
 import GridRow from '../../common/grid/gridRow';
 import GridColumn from '../../common/grid/gridColumn';
 import PaddedContent from '../../common/paddedContent';
+import CaptionTypography from '../../common/typography/captionTypography';
 
 const messages = {
   title: 'Number Of Pinned Calls for Expressions of Interest',
@@ -19,18 +20,21 @@ const styleSheet = theme => ({
   number: {
     paddingRight: theme.spacing.unit * 2,
   },
+  paper: {
+    height: '100%',
+  },
 });
 
 
 const NumberOfPinnedCfeis = (props) => {
   const { number, classes } = props;
   return (
-    <Paper>
+    <Paper className={classes.paper}>
       <PaddedContent>
         <GridRow>
           <div>
             <Typography type="headline">{messages.title}</Typography>
-            <Typography type="caption">{messages.caption}</Typography>
+            <CaptionTypography>{messages.caption}</CaptionTypography>
           </div>
           <GridColumn alignItems="flex-end">
             <Typography className={classes.number} type="display2">{number}</Typography>

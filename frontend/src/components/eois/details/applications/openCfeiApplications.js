@@ -29,10 +29,10 @@ const HeaderActions = (props) => {
   const Preselect = WithGreyColor()(PreselectButton);
   const Reject = WithGreyColor()(RejectButton);
   return (
-    <GridRow spacing={0}>
+    <div>
       <Preselect id={ids} />
       <Reject id={ids} />
-    </GridRow>
+    </div>
   );
 };
 

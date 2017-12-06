@@ -326,7 +326,8 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         }
         response = self.client.post(url, data=payload, headers={'Partner-ID': Partner.objects.last()}, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
-        self.assertEquals(response.data['id'], Application.objects.last().id)
+        app_id = Application.objects.last().id
+        self.assertEquals(response.data['id'], app_id)
         self.assertEquals(response.data['eoi'], eoi_id)
         self.assertEquals(response.data['submitter']['id'], self.user.id)
         cfile = CommonFile.objects.create()
@@ -351,6 +352,11 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         expected_msgs = 'You do not have permission to perform this action.'
         self.assertEquals(response.data['detail'], expected_msgs)
 
+        url = reverse('projects:partner-application-delete', kwargs={"pk": app_id})
+        response = self.client.delete(url, format='json')
+        self.assertTrue(statuses.is_success(response.status_code))
+        Application.objects.filter(pk=app_id)
+
 
 class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
@@ -367,8 +373,9 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
     @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
     def test_create(self):
-        eoi_id = EOI.objects.first().id
-        url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
+        eoi = EOI.objects.first()
+        eoi.focal_points.add(self.user)
+        url = reverse('projects:agency-applications', kwargs={"pk": eoi.id})
 
         payload = {
             "partner": Partner.objects.last().id,
@@ -377,7 +384,15 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         }
         response = self.client.post(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
-        self.assertEquals(response.data['id'], Application.objects.last().id)
+        app_id = Application.objects.last().id
+        self.assertEquals(response.data['id'], app_id)
+
+        # agent member should delete only direct application
+        eoi.display_type = EOI_TYPES.direct
+        eoi.save()
+        url = reverse('projects:agency-applications-delete', kwargs={"pk": app_id, "eoi_id": eoi.id})
+        response = self.client.delete(url,format='json')
+        self.assertTrue(statuses.is_success(response.status_code), "Application should be destroyed.")
 
 
 class TestApplicationsAPITestCase(BaseAPITestCase):
