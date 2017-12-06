@@ -59,10 +59,7 @@ class PartnersContainer extends Component {
     const { partners, columns, totalCount, loading } = this.props;
 
     return (
-      <div>
-        <Grid item>
-          <HeaderNavigation title={messages.header} />
-        </Grid>
+      <HeaderNavigation title={messages.header}>
         <MainContentWrapper>
           <Grid container direction="column" spacing={24}>
             <Grid item>
@@ -82,7 +79,7 @@ class PartnersContainer extends Component {
             </Grid>
           </Grid>
         </MainContentWrapper>
-      </div>
+      </HeaderNavigation>
     );
   }
 }
