@@ -97,10 +97,10 @@ PartnersContainer.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  partners: state.agencyPartnersList.partners,
-  totalCount: state.agencyPartnersList.totalCount,
-  columns: state.agencyPartnersList.columns,
-  loading: state.agencyPartnersList.loading,
+  partners: state.agencyPartnersList.data.partners,
+  totalCount: state.agencyPartnersList.data.totalCount,
+  columns: state.agencyPartnersList.data.columns,
+  loading: state.agencyPartnersList.status.loading,
   query: ownProps.location.query,
 });
 

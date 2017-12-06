@@ -131,7 +131,8 @@ PartnerProfileIdentificationRegistration.propTypes = {
 
 const selector = formValueSelector('partnerProfile');
 const connected = connect((state, ownProps) => {
-  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
+    || state.agencyPartnersList.data.partners);
 
   return {
     isCountryProfile: partner ? partner.is_hq : false,
