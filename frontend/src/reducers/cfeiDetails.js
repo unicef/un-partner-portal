@@ -95,7 +95,7 @@ const saveUCN = (state, action) => {
     title: R.path(['proposal_of_eoi_details', 'title'], ucn),
     locations: normalizeLocations(ucn.locations_proposal_of_eoi),
     specializations: R.path(['proposal_of_eoi_details', 'specializations'], ucn),
-    agency: ucn.agency,
+    agency: R.path(['agency', 'name'], ucn),
     cn: ucn.cn,
     eoiConverted: ucn.eoi_converted,
   };
