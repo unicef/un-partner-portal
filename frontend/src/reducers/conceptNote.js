@@ -44,21 +44,6 @@ const saveConceptNote = (state, action) => {
   return R.assoc('created', action.response.created, file);
 };
 
-export const deleteUploadedCn = projectId => (dispatch) => {
-  debugger
-  dispatch(uploadCnStarted());
-  return deleteConceptNote(projectId)
-    .then((response) => {
-      debugger;
-      dispatch(uploadCnEnded());
-      dispatch(deletedCn());
-    })
-    .catch((error) => {
-      dispatch(uploadCnFailure(error));
-      dispatch(uploadCnEnded());
-    });
-};
-
 export const projectApplicationExists = partnerId => (dispatch) => {
   dispatch(uploadCnStarted());
   return getProjectApplication(partnerId)
@@ -68,6 +53,19 @@ export const projectApplicationExists = partnerId => (dispatch) => {
       dispatch(loadPartnerApplication(partnerId, profiles));
     })
     .catch((error) => {
+      dispatch(uploadCnEnded());
+    });
+};
+
+export const deleteUploadedCn = projectId => (dispatch) => {
+  dispatch(uploadCnStarted());
+  return deleteConceptNote(projectId)
+    .then((response) => {
+      dispatch(uploadCnEnded());
+      projectApplicationExists(projectId);
+    })
+    .catch((error) => {
+      dispatch(uploadCnFailure(error));
       dispatch(uploadCnEnded());
     });
 };

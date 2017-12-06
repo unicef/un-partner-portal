@@ -120,6 +120,7 @@ CfeiSubmission.propTypes = {
   applicationId: PropTypes.string,
   cnUploaded: PropTypes.object,
   deleteCn: PropTypes.func.isRequired,
+  clearFile: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({

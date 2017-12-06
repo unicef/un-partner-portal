@@ -61,6 +61,15 @@ function authorizedPost({ uri, params, body = {} }) {
     .then(response => response.data);
 }
 
+function authorizedDelete({ uri, params }) {
+  const options = {
+    params,
+    headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
+  };
+  return axios.delete(`${host}${uri}`, options)
+    .then(response => response.data);
+}
+
 function authorizedPatch({ uri, params, body = {} }) {
   const options = {
     params,
@@ -148,7 +157,7 @@ export function convertCnToDirectSelection(body, id) {
 }
 
 export function deleteConceptNote(projectId) {
-  return authorizedPost({ uri: `/projects/${projectId}/partner-applications-delete/` });
+  return authorizedDelete({ uri: `/projects/${projectId}/partner-applications-delete/` });
 }
 
 export function uploadConceptNote(projectId, body) {

@@ -94,7 +94,7 @@ class ConceptNoteSubmission extends Component {
           <Typography className={classes.alignRight} type="caption">
             {`${messages.deadline} ${formatDateForPrint(deadlineDate)}`}
           </Typography>
-          <ProfileConfirmation disabled={cnUploaded} onChange={(event, check) => this.handleCheck(event, check)} />
+          <ProfileConfirmation checked={cnUploaded || this.state.check} disabled={cnUploaded} onChange={(event, check) => this.handleCheck(event, check)} />
           <div className={classes.alignRight}>
             {cnUploaded
               ? <Typography type="body1">
