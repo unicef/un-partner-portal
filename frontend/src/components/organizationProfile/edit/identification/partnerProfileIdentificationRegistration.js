@@ -8,6 +8,7 @@ import { withRouter } from 'react-router';
 import { visibleIfYes, visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
 import RadioForm from '../../../forms/radioForm';
 import FileForm from '../../../forms/fileForm';
+import YearFieldForm from '../../../forms/yearFieldForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import DatePickerForm from '../../../forms/datePickerForm';
 
@@ -33,7 +34,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
         <Grid item>
           <Grid container direction="row">
             <Grid item sm={4} xs={12}>
-              <TextFieldForm
+              <YearFieldForm
                 fieldName="year_establishment"
                 label={isCountryProfile
                   ? messages.yearEstablishment

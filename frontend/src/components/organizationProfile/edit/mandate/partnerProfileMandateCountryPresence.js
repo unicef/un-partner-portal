@@ -32,7 +32,6 @@ const PartnerProfileMandateCountryPresence = (props) => {
             selectFieldProps={{
               multiple: true,
             }}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -50,7 +49,6 @@ const PartnerProfileMandateCountryPresence = (props) => {
             fieldName="staff_globally"
             label={messages.staffGlobaly}
             values={staffGlobally}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -60,7 +58,6 @@ const PartnerProfileMandateCountryPresence = (props) => {
             fieldName="staff_in_country"
             label={messages.staffCountry}
             values={staffGlobally}
-            optional
             warn
             readOnly={readOnly}
           />

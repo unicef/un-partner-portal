@@ -368,7 +368,7 @@ class PartnerProfile(TimeStampedModel):
     @property
     def other_info_is_complete(self):
         required_fields = {
-            'confirm_data_updated': self.partner.other_info.confirm_data_updated is True,
+            'confirm_data_updated': self.partner.other_info.confirm_data_updated,
         }
 
         return all(required_fields.values())

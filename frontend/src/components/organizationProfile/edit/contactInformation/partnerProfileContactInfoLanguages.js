@@ -26,7 +26,6 @@ const PartnerProfileContactInfoLanguages = (props) => {
             selectFieldProps={{
               multiple: true,
             }}
-            optional
             warn
             readOnly={readOnly}
           />
