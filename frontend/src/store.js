@@ -219,28 +219,28 @@ export const selectCfeiDetailsItemsByType = (state, type) =>
   selectItemsByType(state.cfeiDetailsNav, type);
 
 export const selectCfeiDetails = (state, id) =>
-  cfeiDetailsSelector.selectCfeiDetail(state.cfeiDetails.cfeiDetails, id);
+  cfeiDetailsSelector.selectCfeiDetail(state.cfeiDetails.data, id);
 
 export const selectCfeiTitle = (state, id) =>
-  cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails.cfeiDetails, id);
+  cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails.data, id);
 
 export const selectCfeiCriteria = (state, id) =>
-  cfeiDetailsSelector.selectCfeiCriteria(state.cfeiDetails.cfeiDetails, id);
+  cfeiDetailsSelector.selectCfeiCriteria(state.cfeiDetails.data, id);
 
 export const selectCfeiStatus = (state, id) =>
-  cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.cfeiDetails, id);
+  cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.data, id);
 
 export const selectCfeiConverted = (state, id) =>
-  cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.cfeiDetails, id);
+  cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.data, id);
 
 export const selectCfeiJustification = (state, id) =>
-  cfeiDetailsSelector.selectCfeiJustification(state.cfeiDetails.cfeiDetails, id);
+  cfeiDetailsSelector.selectCfeiJustification(state.cfeiDetails.data, id);
 
 export const isCfeiCompleted = (state, id) =>
-  cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.cfeiDetails, id);
+  cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.data, id);
 
 export const isCfeiPinned = (state, id) =>
-  cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.cfeiDetails, id);
+  cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.data, id);
 
 export const mapSelectCriteriaToSelection = state =>
   mapValuesForSelectionField(state.selectionCriteria);
@@ -250,27 +250,27 @@ export const mapPartnersNamesToSelection = state =>
 
 export const selectApplicationStatus = (state, id) =>
   applicationDetailsSelector.selectApplicationStatus(
-    state.applicationDetails.applicationDetails, id);
+    state.applicationDetails.data, id);
 
 export const selectApplicationPartnerName = (state, id) =>
   applicationDetailsSelector.selectApplicationPartnerName(
-    state.applicationDetails.applicationDetails, id);
+    state.applicationDetails.data, id);
 
 export const selectApplicationProject = (state, id) =>
   applicationDetailsSelector.selectApplicationProject(
-    state.applicationDetails.applicationDetails, id);
+    state.applicationDetails.data, id);
 
 export const selectApplication = (state, id) =>
   applicationDetailsSelector.selectApplication(
-    state.applicationDetails.applicationDetails, id);
+    state.applicationDetails.data, id);
 
 export const selectApplicationWithdrawalStatus = (state, id) =>
   applicationDetailsSelector.selectApplicationWithdrawStatus(
-    state.applicationDetails.applicationDetails, id);
+    state.applicationDetails.data, id);
 
 export const selectApplicationCurrentStatus = (state, id) =>
   applicationDetailsSelector.selectApplicationCurrentStatus(
-    state.applicationDetails.applicationDetails, id);
+    state.applicationDetails.data, id);
 
 export const selectReview = (state, reviewId) =>
   applicationReviewsSelector.selectReview(state.applicationReviews, reviewId);
@@ -289,13 +289,13 @@ export const mapFocalPointsReviewersToSelection = state =>
     agencyMembersSelectors.selectPossibleFocalPointsReviewers(state.agencyMembers.data));
 
 export const isUserACreator = (state, cfeiId) => cfeiDetailsSelector.isUserACreator(
-  state.cfeiDetails.cfeiDetails, cfeiId, state.session.userId);
+  state.cfeiDetails.data, cfeiId, state.session.userId);
 
 export const isUserAReviewer = (state, cfeiId) => cfeiDetailsSelector.isUserAReviewer(
-  state.cfeiDetails.cfeiDetails, cfeiId, state.session.userId);
+  state.cfeiDetails.data, cfeiId, state.session.userId);
 
 export const isUserAFocalPoint = (state, cfeiId) => cfeiDetailsSelector.isUserAFocalPoint(
-  state.cfeiDetails.cfeiDetails, cfeiId, state.session.userId);
+  state.cfeiDetails.data, cfeiId, state.session.userId);
 
 export const selectNormalizedCompletionReasons = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['completed-reason']);

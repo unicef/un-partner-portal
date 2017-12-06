@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
 from rest_framework.views import APIView
 from rest_framework.generics import (
-    ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
+    ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView, DestroyAPIView
 )
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -27,6 +27,7 @@ from common.permissions import (
     IsConvertUnsolicitedEditor,
     IsApplicationFeedbackPerm,
     IsPartnerEOIApplicationCreate,
+    IsPartnerEOIApplicationDestroy,
     IsPartner,
 )
 from common.mixins import PartnerIdsMixin
@@ -247,6 +248,20 @@ class AgencyApplicationListAPIView(ListAPIView):
     pagination_class = SmallPagination
 
 
+class PartnerEOIApplicationDestroyAPIView(DestroyAPIView):
+    """
+    Destroy Application (concept note) created by partner.
+    """
+    permission_classes = (IsAuthenticated, IsPartnerEOIApplicationDestroy)
+    queryset = Application.objects.all()
+    serializer_class = ApplicationFullSerializer
+
+    def delete(self, request, pk, *args, **kwargs):
+        app = get_object_or_404(Application, id=pk)
+        app.delete()
+        return Response({}, status=statuses.HTTP_204_NO_CONTENT)
+
+
 class PartnerEOIApplicationCreateAPIView(CreateAPIView):
     """
     Create Application for open EOI by partner.
@@ -323,6 +338,25 @@ class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
                                    agency=eoi.agency)
 
         send_notificiation_application_created(instance)
+
+
+class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+    queryset = Application.objects.all()
+    serializer_class = CreateDirectApplicationNoCNSerializer
+
+    def delete(self, request, eoi_id, pk, *args, **kwargs):
+        self.eoi = get_object_or_404(EOI, id=eoi_id)
+
+        allowed_to_modify = \
+            list(self.eoi.focal_points.values_list('id', flat=True)) + [self.eoi.created_by_id]
+        if request.user.id not in allowed_to_modify or not self.eoi.is_direct:
+            raise PermissionDenied
+
+        app = get_object_or_404(Application, id=pk)
+        app.delete()
+        return Response({}, status=statuses.HTTP_204_NO_CONTENT)
 
 
 class ApplicationAPIView(RetrieveUpdateAPIView):

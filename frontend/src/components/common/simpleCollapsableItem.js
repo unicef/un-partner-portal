@@ -44,12 +44,10 @@ const styleSheet = (theme) => {
 class CollapsableItem extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      expanded: props.expanded,
+    };
     this.handleExpandClick = this.handleExpandClick.bind(this);
-  }
-
-  componentWillMount() {
-    this.state = { expanded: this.props.expanded };
   }
 
   handleExpandClick() {
@@ -57,7 +55,7 @@ class CollapsableItem extends Component {
   }
 
   render() {
-    const { classes, title, component } = this.props;
+    const { classes, title, component, handleChange, expanded } = this.props;
     return (
       <div>
         <div className={classes.alignItems}>
@@ -65,7 +63,7 @@ class CollapsableItem extends Component {
             className={classNames(classes.icon, classes.expand, {
               [classes.expandOpen]: this.state.expanded,
             })}
-            onClick={this.handleExpandClick}
+            onClick={handleChange || this.handleExpandClick}
             aria-expanded={this.state.expanded}
             aria-label="Show more"
           >
@@ -73,7 +71,7 @@ class CollapsableItem extends Component {
           </IconButton>
           {title}
         </div>
-        <Collapse in={this.state.expanded} transitionDuration="auto" unmountOnExit>
+        <Collapse in={handleChange ? expanded : this.state.expanded} transitionDuration="auto" unmountOnExit>
           <div className={classes.paddingContent}>{component}</div>
         </Collapse>
       </div>
@@ -86,6 +84,7 @@ CollapsableItem.propTypes = {
   title: PropTypes.string.isRequired,
   expanded: PropTypes.bool,
   component: PropTypes.component,
+  handleChange: PropTypes.array,
 };
 
 export default withStyles(styleSheet, { name: 'CollapsableItem' })(CollapsableItem);

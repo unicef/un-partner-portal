@@ -92,7 +92,8 @@ PartnerProfileIdentificationBasicInfo.propTypes = {
 const selector = formValueSelector('partnerProfile');
 
 const connected = connect((state, ownProps) => {
-  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
+  || state.agencyPartnersList.data.partners);
   const displayType = partner ? partner.display_type : null;
   const isCountryProfile = partner ? partner.is_hq : false;
   let country = selector(state, 'identification.basic.country_code');
@@ -101,7 +102,6 @@ const connected = connect((state, ownProps) => {
     const partners = R.filter(item => item.is_hq, state.session.partners);
     country = !R.isEmpty(partners) ? partners[0].country_code : '';
   }
-
   return {
     country,
     displayType,

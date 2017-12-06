@@ -68,7 +68,8 @@ const connected = connect(
     const selector = formValueSelector(ownProps.formName);
     const locations = selector(state, ownProps.name);
     const currentLocations = locations ? R.filter(item => !R.isEmpty(item), locations) : [];
-    const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
+    const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
+    || state.agencyPartnersList.data.partners);
     const currentCountry = partner ? state.countries[partner.country_code] : null;
     const countryCode = partner ? partner.country_code : {};
 

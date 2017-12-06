@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { submit } from 'redux-form';
+import { submit, SubmissionError } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
 import OpenForm from './openForm';
@@ -11,6 +11,7 @@ import UnsolicitedForm from './unsolicitedForm';
 import { addDirectCfei, addOpenCfei, addUnsolicitedCN } from '../../../../reducers/newCfei';
 import CallPartnersModal from '../callPartners/callPartnersModal';
 import { PROJECT_TYPES } from '../../../../helpers/constants';
+import { errorToBeAdded } from '../../../../reducers/errorReducer';
 
 const messages = {
   title: {
@@ -26,6 +27,11 @@ const messages = {
       title: 'This is a direct selection.',
       body: 'In order to save this form, you will need to identify the partner(s).',
     },
+  },
+  error: {
+    open: 'Unable to create new Call for Expressions of Interests',
+    direct: 'Unable to create new direct selection',
+    unsolicited: 'Unable to create new Unsolicited Concept Note',
   },
 
 };
@@ -89,6 +95,18 @@ const getModal = (type) => {
   }
 };
 
+const getErrorMessage = (type) => {
+  switch (type) {
+    case PROJECT_TYPES.OPEN:
+    default:
+      return messages.error.open;
+    case PROJECT_TYPES.DIRECT:
+      return messages.error.direct;
+    case PROJECT_TYPES.UNSOLICITED:
+      return messages.error.unsolicited;
+  }
+};
+
 class NewCfeiModal extends Component {
   constructor(props) {
     super(props);
@@ -105,11 +123,17 @@ class NewCfeiModal extends Component {
   }
 
   handleSubmit(values) {
-    this.props.onDialogClose();
-    this.props.postCfei(values).then(
+    return this.props.postCfei(values).then(
       (cfei) => {
         this.setState({ id: cfei && cfei.id });
+        this.props.onDialogClose();
+      }).catch((error) => {
+      this.props.postError(error, getErrorMessage(this.props.type));
+      throw new SubmissionError({
+        ...error.response.data,
+        _error: getErrorMessage(this.props.type),
       });
+    });
   }
 
   handleDialogSubmit() {
@@ -155,11 +179,13 @@ NewCfeiModal.propTypes = {
   onDialogClose: PropTypes.func,
   postCfei: PropTypes.func,
   submit: PropTypes.func,
+  postError: PropTypes.func,
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   postCfei: values => dispatch(getPostMethod(ownProps.type)(values)),
   submit: () => dispatch(submit(getFormName(ownProps.type))),
+  postError: (error, message) => dispatch(errorToBeAdded(error, `newProject${ownProps.type}`, message)),
 });
 
 const connected = connect(

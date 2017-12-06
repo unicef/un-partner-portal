@@ -26,8 +26,9 @@ class CallPartnersModal extends Component {
   }
 
   onFormSubmit(values) {
-    this.props.handleDialogClose();
-    this.props.updateCfei(values);
+    return this.props.updateCfei(values).then(() => {
+      this.props.handleDialogClose();
+    });
   }
 
 
