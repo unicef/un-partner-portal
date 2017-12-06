@@ -147,6 +147,10 @@ export function convertCnToDirectSelection(body, id) {
   return authorizedPost({ uri: `/projects/application/${id}/convert-unsolicited/`, body });
 }
 
+export function deleteConceptNote(projectId) {
+  return authorizedPost({ uri: `/projects/${projectId}/partner-applications-delete/` });
+}
+
 export function uploadConceptNote(projectId, body) {
   return authorizedPost({ uri: `/projects/${projectId}/partner-applications/`, body });
 }

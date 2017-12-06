@@ -12,7 +12,7 @@ import ControlledModal from '../../../common/modals/controlledModal';
 import SpreadContent from '../../../common/spreadContent';
 import HeaderList from '../../../common/list/headerList';
 import ConceptNoteSubmission from './conceptNoteSubmission';
-import { deleteCn } from '../../../../reducers/conceptNote';
+import { deleteUploadedCn } from '../../../../reducers/conceptNote';
 import PaddedContent from '../../../common/paddedContent';
 
 const messages = {
@@ -47,7 +47,7 @@ class CfeiSubmission extends Component {
 
   handleDeleteAccept() {
     this.setState({ open: false });
-    this.props.deleteCn();
+    this.props.deleteCn(this.props.applicationId);
   }
 
   titleHeader(cnUploaded) {
@@ -117,12 +117,14 @@ class CfeiSubmission extends Component {
 
 CfeiSubmission.propTypes = {
   partnerId: PropTypes.string,
+  applicationId: PropTypes.string,
   cnUploaded: PropTypes.object,
   deleteCn: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   partnerId: state.session.partnerId,
+  applicationId: ownProps.params.id,
   loader: state.conceptNote.loading,
   cnUploaded: state.conceptNote.cnFile,
   isHq: state.session.isHq,
@@ -130,7 +132,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  deleteCn: () => dispatch(deleteCn()),
+  deleteCn: projectId => dispatch(deleteUploadedCn(projectId)),
 });
 
 const connectedCfeiSubmission = connect(mapStateToProps, mapDispatch)(CfeiSubmission);

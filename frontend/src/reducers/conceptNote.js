@@ -5,14 +5,14 @@ import {
   stopLoading,
   saveErrorMsg,
 } from './apiStatus';
-import { uploadConceptNote, getProjectApplication } from '../helpers/api/api';
+import { uploadConceptNote, deleteConceptNote, getProjectApplication } from '../helpers/api/api';
 import { loadPartnerApplication } from './partnerApplicationDetails';
 
 export const UPLOAD_CN_STARTED = 'UPLOAD_CN_STARTED';
 export const UPLOAD_CN_SUCCESS = 'UPLOAD_CN_SUCCESS';
 export const UPLOAD_CN_FAILURE = 'UPLOAD_CN_FAILURE';
 export const UPLOAD_CN_ENDED = 'UPLOAD_CN_ENDED';
-export const UPLOAD_CN_DELETE = 'UPLOAD_CN_DELETE';
+export const UPLOAD_CN_DELETED = 'UPLOAD_CN_DELETED';
 export const UPLOAD_CN_CONFIRM = 'UPLOAD_CN_CONFIRM';
 export const UPLOAD_CN_CLEAR_ERROR = 'UPLOAD_CN_CLEAR_ERROR';
 export const UPLOAD_CN_CLEAR = 'UPLOAD_CN_CLEAR';
@@ -23,7 +23,7 @@ export const uploadCnSuccess = response => ({ type: UPLOAD_CN_SUCCESS, response 
 export const uploadCnFailure = error => ({ type: UPLOAD_CN_FAILURE, error });
 export const uploadCnEnded = () => ({ type: UPLOAD_CN_ENDED });
 export const uploadCnclearError = () => ({ type: UPLOAD_CN_CLEAR_ERROR });
-export const deleteCn = () => ({ type: UPLOAD_CN_DELETE });
+export const deletedCn = () => ({ type: UPLOAD_CN_DELETED });
 export const clearLocalState = () => ({ type: UPLOAD_CN_CLEAR });
 export const selectLocalCnFile = file => ({ type: UPLOAD_CN_LOCAL_FILE, file });
 export const confirmProfileUpdated = confirmation => ({ type: UPLOAD_CN_CONFIRM, confirmation });
@@ -42,6 +42,21 @@ const clearConceptNoteState = (state) => {
 const saveConceptNote = (state, action) => {
   const file = R.assoc('cnFile', action.response.cn, state);
   return R.assoc('created', action.response.created, file);
+};
+
+export const deleteUploadedCn = projectId => (dispatch) => {
+  debugger
+  dispatch(uploadCnStarted());
+  return deleteConceptNote(projectId)
+    .then((response) => {
+      debugger;
+      dispatch(uploadCnEnded());
+      dispatch(deletedCn());
+    })
+    .catch((error) => {
+      dispatch(uploadCnFailure(error));
+      dispatch(uploadCnEnded());
+    });
 };
 
 export const projectApplicationExists = partnerId => (dispatch) => {
@@ -102,7 +117,7 @@ export default function conceptNoteReducer(state = initialState, action) {
     case UPLOAD_CN_CLEAR_ERROR: {
       return clearError(state);
     }
-    case UPLOAD_CN_DELETE: {
+    case UPLOAD_CN_DELETED: {
       return clearConceptNoteState(state);
     }
     case UPLOAD_CN_CONFIRM: {

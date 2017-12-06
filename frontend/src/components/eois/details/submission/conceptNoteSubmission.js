@@ -83,16 +83,18 @@ class ConceptNoteSubmission extends Component {
       <form onSubmit={handleSubmit(this.handleSubmit)}>
         <PaddedContent>
           <CnFileSection
-            component={<FileForm
-              fieldName="cn"
-              deleteDisabled={cnUploaded}
-            />}
+            component={
+              <FileForm
+                fieldName="cn"
+                optional
+                deleteDisabled={cnUploaded}
+              />}
             displayHint={cn}
           />
           <Typography className={classes.alignRight} type="caption">
             {`${messages.deadline} ${formatDateForPrint(deadlineDate)}`}
           </Typography>
-          <ProfileConfirmation onChange={(event, check) => this.handleCheck(event, check)} />
+          <ProfileConfirmation disabled={cnUploaded} onChange={(event, check) => this.handleCheck(event, check)} />
           <div className={classes.alignRight}>
             {cnUploaded
               ? <Typography type="body1">
