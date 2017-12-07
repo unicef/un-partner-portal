@@ -86,9 +86,11 @@ const PartnerOverviewSummary = (props) => {
   return (
     <HeaderList
       header={summaryHeader(R.prop('lastUpdate', partner))}
-      rows={[fields(partner, button)]}
       loading={loading}
-    />);
+    >
+      {fields(partner, button)}
+    </HeaderList>
+  );
 };
 
 PartnerOverviewSummary.propTypes = {

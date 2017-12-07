@@ -58,7 +58,8 @@ const ListOfSubmittedCN = (props) => {
     <HeaderList
       header={<Typography type="headline" >{messages.title}</Typography>}
       loading={loading}
-      rows={[<TableWithLocalState
+    >
+      <TableWithLocalState
         component={PaginatedList}
         items={data}
         itemsCount={itemsCount}
@@ -66,8 +67,8 @@ const ListOfSubmittedCN = (props) => {
         loading={loading}
         templateCell={renderCells}
         loadingFunction={loadCN}
-      />]}
-    />
+      />
+    </HeaderList>
   );
 };
 

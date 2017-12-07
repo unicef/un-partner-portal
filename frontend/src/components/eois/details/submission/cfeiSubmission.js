@@ -90,8 +90,9 @@ class CfeiSubmission extends Component {
       <div>
         <HeaderList
           header={this.titleHeader(cnUploaded)}
-          rows={[<ConceptNoteSubmission />]}
-        />
+        >
+          <ConceptNoteSubmission />
+        </HeaderList>
         <ControlledModal
           maxWidth="md"
           title={messages.confirmQuestion}

@@ -64,8 +64,8 @@ const PartnerProfileNameCell = (props) => {
 
 PartnerProfileNameCell.propTypes = {
   classes: PropTypes.object.isRequired,
-  name: PropTypes.object.isRequired,
-  verified: PropTypes.bool.isRequired,
+  name: PropTypes.string.isRequired,
+  verified: PropTypes.bool,
   yellowFlag: PropTypes.bool,
   redFlag: PropTypes.bool,
   onClick: PropTypes.func,

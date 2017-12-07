@@ -65,7 +65,7 @@ class PartnerSwitch extends Component {
     this.setState({ open: false });
   }
 
-  renderMenuItems(partners, countries) {
+  renderMenuItems(partners = [], countries = {}) {
     return partners.map(partner => (
       <MenuItem
         key={partner.id}

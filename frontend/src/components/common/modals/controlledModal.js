@@ -119,7 +119,7 @@ ControlledModal.propTypes = {
   /**
    * Extra info in grey section
    */
-  info: PropTypes.string,
+  info: PropTypes.object,
 
   /**
    * Wrap content in DialogContent

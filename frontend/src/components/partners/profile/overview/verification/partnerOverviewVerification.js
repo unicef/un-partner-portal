@@ -32,8 +32,9 @@ const PartnerOverviewVerification = (props) => {
     <div>
       <HeaderList
         header={summaryHeader(menuVisible)}
-        rows={[fields(partnerId)]}
-      />
+      >
+        {fields(partnerId)}
+      </HeaderList>
     </div>);
 };
 

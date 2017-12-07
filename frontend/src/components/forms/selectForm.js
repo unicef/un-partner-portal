@@ -94,7 +94,7 @@ class SelectForm extends Component {
                   height: '56px',
                 }}
                 inputStyle={{
-                  'margin-top': 0,
+                  marginTop: 0,
                 }}
                 floatingLabelStyle={{
                   top: '22px',
@@ -104,7 +104,7 @@ class SelectForm extends Component {
                   top: '10px',
                 }}
                 underlineStyle={{
-                  'border-top': '1px solid rgba(0, 0, 0, 0.42)',
+                  borderTop: '1px solid rgba(0, 0, 0, 0.42)',
                   bottom: '6px',
                 }}
                 errorStyle={{
@@ -215,7 +215,7 @@ SelectForm.propTypes = {
    * whether values should be divided into sections, expects this data format: 
    * [sectionName: string, valuesForSection: [{value, label}] ]
    */
-  sections: PropTypes.array,
+  sections: PropTypes.bool,
 };
 
 export default SelectForm;

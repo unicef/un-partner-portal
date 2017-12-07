@@ -33,8 +33,9 @@ const SelectionCriteria = (props) => {
   return (
     <HeaderList
       header={title}
-      rows={renderRow(selectionCriteria, allCriteria)}
-    />
+    >
+      {renderRow(selectionCriteria, allCriteria)}
+    </HeaderList>
   );
 };
 

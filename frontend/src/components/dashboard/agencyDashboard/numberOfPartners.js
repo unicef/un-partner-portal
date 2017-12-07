@@ -52,7 +52,12 @@ const NumberOfPartners = (props) => {
               <Typography type="headline">{messages.title}</Typography>
               <CaptionTypography>{messages.caption}</CaptionTypography>
             </div>
-            <DonutChart colors={chartColors} label={total} data={data} />
+            <DonutChart
+              colors={chartColors}
+              label={`${total}`}
+              data={data}
+              pieProps={{ dataKey: 'value' }}
+            />
             {data.map(({ name, value }, index) => (
               <div key={`name_${index}`}>
                 <GridColumn spacing={8}>

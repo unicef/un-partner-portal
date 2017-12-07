@@ -57,7 +57,7 @@ class DatePickerForm extends Component {
               normalize={normalizeDate}
               textFieldStyle={{
                 width: '100%',
-                'line-height': null,
+                lineHeight: null,
                 height: 40,
               }}
               {...datePickerProps}
@@ -82,7 +82,7 @@ DatePickerForm.propTypes = {
   /**
    * props passed to wrapped TextField
    */
-  datePickerProps: PropTypes.node,
+  datePickerProps: PropTypes.object,
   /**
    * unique text used as placeholder
    */

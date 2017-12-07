@@ -214,7 +214,7 @@ EoiFilter.propTypes = {
   classes: PropTypes.object.isRequired,
   specs: PropTypes.array.isRequired,
   pathName: PropTypes.string,
-  agencyId: PropTypes.string,
+  agencyId: PropTypes.number,
   query: PropTypes.object,
 };
 

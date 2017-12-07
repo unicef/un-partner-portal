@@ -141,7 +141,7 @@ export const renderRadioField = ({ input,
           <FormControlLabel
             className={classes.padding}
             key={index}
-            value={value.value}
+            value={`${value.value}`}
             control={<RadioHeight />}
             label={value.label}
           />))}</RadioGroupRow>
@@ -264,9 +264,12 @@ export const renderText = ({
   optional,
   label,
   date,
+  meta,
+  multiline,
+  inputProps,
   ...other
 }) => {
-  let value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (other.inputProps ? other.inputProps.initial : null);
+  let value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (inputProps ? inputProps.initial : null);
   
   if (!value) value = '-';
   
@@ -277,7 +280,7 @@ export const renderText = ({
     }, values).map(matchedValue => matchedValue.label).join(', ');
   }
 
-  if (R.isEmpty(value) || R.isNil(value)) value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (other.inputProps ? other.inputProps.initial : null);
+  if (R.isEmpty(value) || R.isNil(value)) value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (inputProps ? inputProps.initial : null);
   if (date) value = formatDateForPrint(value);
   if (R.isEmpty(value) || R.isNil(value)) value = '-';
 

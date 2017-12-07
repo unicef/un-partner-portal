@@ -27,8 +27,9 @@ const InformedPartners = (props) => {
   return (
     <HeaderList
       header={title}
-      rows={renderRow(partners, partnerNames)}
-    />
+    >
+      {renderRow(partners, partnerNames)}
+    </HeaderList>
   );
 };
 

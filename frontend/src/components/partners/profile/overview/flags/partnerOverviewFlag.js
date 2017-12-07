@@ -48,8 +48,9 @@ const PartnerOverviewFlag = (props) => {
     <div>
       <HeaderList
         header={flagHeader(displayMenu, flagItems)}
-        rows={flags(displayMenu, flagItems)}
-      />
+      >
+        {flags(displayMenu, flagItems)}
+      </HeaderList>
     </div>);
 };
 

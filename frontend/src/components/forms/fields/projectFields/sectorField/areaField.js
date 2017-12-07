@@ -23,14 +23,10 @@ const AreaField = (props) => {
 
 AreaField.propTypes = {
   name: PropTypes.string,
-  areas: PropTypes.arrayOf(
-    PropTypes.objectOf(
-      {
-        value: PropTypes.string,
-        label: PropTypes.string,
-      },
-    ),
-  ),
+  areas: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.number,
+    label: PropTypes.string,
+  })),
   disabled: PropTypes.bool,
 };
 

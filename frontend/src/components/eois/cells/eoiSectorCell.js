@@ -31,28 +31,35 @@ const styleSheet = theme => ({
 });
 
 const renderShortCell = data => data.map(sector => sector.name).join(', ');
-const renderExpandedCell = (sectors, classes) => sectors.map((sector, index) =>
-  (
-    <div>
-      <Typography type="body2" color="inherit" className={classes.mainText} alignItems="left">
+const renderExpandedCell = (sectors, classes) => sectors.map((sector, index) => {
+  return (
+    <div key={sector.name}>
+      <Typography type="body2" color="inherit" className={classes.mainText}>
         {sector.name}
       </Typography>
       {sector.areas.map(area => (
-        <Typography type="body1" color="inherit" className={classes.text} alignItems="left">
+        <Typography
+          key={area}
+          type="body1"
+          color="inherit"
+          className={classes.text}
+        >
           {area}
         </Typography>
       ))}
       {index !== (Object.keys(sectors).length - 1) && <Divider className={classes.divider} />}
     </div>
-  ),
-);
+  );
+});
 
 
 const EoiSectorCell = (props) => {
   const { classes, id, sectors } = props;
   return (
-    <div data-tip data-for={`${id}-sector-tooltip`}>
-      {renderShortCell(sectors)}
+    <div>
+      <div data-tip data-for={`${id}-sector-tooltip`}>
+        {renderShortCell(sectors)}
+      </div>
       <Tooltip
         id={`${id}-sector-tooltip`}
         text={renderExpandedCell(sectors, classes)}

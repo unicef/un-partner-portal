@@ -26,7 +26,7 @@ const messages = {
 };
 
 const SingleDecision = ({ id, partner: { legal_name }, eoi: { title }, modified, did_accept }) => (
-  <Paper>
+  <Paper key={id}>
     <PaddedContent>
       <SpreadContent>
         <div>
