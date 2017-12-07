@@ -55,7 +55,8 @@ class PaginatedList extends Component {
         onClick={() => { if (this.props.clickableRow) this.props.onTableRowClick(row); }}
       >
         {children}
-      </TableRowMUI>);
+      </TableRowMUI>
+    );
   }
 
   render() {

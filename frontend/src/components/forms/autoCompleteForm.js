@@ -159,7 +159,7 @@ class AutocompleteField extends React.Component {
             label={label}
             placeholder={placeholder || `Provide ${label.toLowerCase()}`}
             component={renderAutocomplete}
-            validate={(optional ? [] : [required].concat(validation || []))}
+            validate={(optional ? (validation || []) : [required].concat(validation || []))}
             normalize={normalizeSuggestion}
             warn={warn && warning}
             classes={classes}

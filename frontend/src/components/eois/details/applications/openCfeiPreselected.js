@@ -138,8 +138,8 @@ OpenCfeiPreselections.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  applications: state.partnersApplicationsList.applicationsList.applications,
-  itemsCount: state.partnersApplicationsList.applicationsList.itemsCount,
+  applications: state.partnersApplicationsList.data.applications,
+  itemsCount: state.partnersApplicationsList.data.itemsCount,
   columns: state.partnersPreselectionList.columns,
   loading: state.partnersApplicationsList.status.loading,
   query: ownProps.location.query,

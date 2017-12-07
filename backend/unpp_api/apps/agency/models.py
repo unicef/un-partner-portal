@@ -27,7 +27,7 @@ class OtherAgency(TimeStampedModel):
         return "Other Agency: {} <pk:{}>".format(self.name, self.id)
 
 
-class Agency(TimeStampedModel):
+class Agency(models.Model):
     """
 
     """

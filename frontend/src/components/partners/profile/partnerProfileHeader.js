@@ -119,7 +119,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     history.push(path);
   },
   loadPartnerDetails: () => dispatch(loadPartnerDetails(ownProps.params.id)),
-  loadPartnerVerifications: () => dispatch(loadPartnerVerifications(ownProps.params.id)),
+  loadPartnerVerifications: () => dispatch(
+    loadPartnerVerifications(ownProps.params.id, { page_size: 5, page: 1 })),
 });
 
 const connectedPartnerProfile = connect(mapStateToProps, mapDispatchToProps)(PartnerProfileHeader);

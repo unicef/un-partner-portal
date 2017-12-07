@@ -49,6 +49,7 @@ class PartnerSwitch extends Component {
         partnerName: partner.legal_name,
         isHq: partner.is_hq,
         logo: partner.logo,
+        logoThumbnail: partner.logoThumbnail,
         isProfileComplete: partner.partner_additional.has_finished,
       });
 

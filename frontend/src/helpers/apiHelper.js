@@ -64,13 +64,13 @@ export const sendRequest = ({
     actionTag,
     isPaginated = false,
   },
-  successParams,
+  successParams = {},
   errorHandling: {
-    userMessage,
-    id,
+    userMessage = '',
+    id = 'generic',
     additionalErrors,
-  },
-  apiParams,
+  } = {},
+  apiParams = [],
 },
 ) => (dispatch, getState) => {
   // export const loadCfei = (project, filters) => (dispatch, getState) => {

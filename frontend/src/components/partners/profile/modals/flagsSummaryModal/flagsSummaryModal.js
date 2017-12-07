@@ -13,7 +13,7 @@ const messages = {
   multipleFlags: 'flags',
 };
 
-function flagText(_, flag, color) {
+function flagText(flag, color) {
   if (flag) {
     return `${flag} ${color} ${flag > 1 ? messages.multipleFlags : messages.singleFlag}`
   }
@@ -39,7 +39,7 @@ const FlagSummaryModal = (props) => {
         trigger={dialogOpen}
         handleDialogClose={handleDialogClose}
         info={{
-          title: buildHeader(yelFlag, redFlag),
+          title: buildHeader`${yelFlag} ${redFlag}`,
         }}
         buttons={{}}
         content={<FlagSummaryContainer />}

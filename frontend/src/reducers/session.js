@@ -86,6 +86,7 @@ export const loadUserData = () => (dispatch, getState) => {
         isHq: role === ROLES.PARTNER ? R.prop('is_hq', R.head(response.partners)) : null,
         displayType: role === ROLES.PARTNER ? R.prop('display_type', R.head(response.partners)) : null,
         logo: role === ROLES.PARTNER ? R.prop('logo', R.head(response.partners)) : null,
+        logoThumbnail: role === ROLES.PARTNER ? R.prop('org_logo_thumbnail', R.head(response.partners)) : null,
         isProfileComplete: role === ROLES.PARTNER ? R.path(['partner_additional', 'has_finished'],
           R.head(response.partners)) : null,
       };

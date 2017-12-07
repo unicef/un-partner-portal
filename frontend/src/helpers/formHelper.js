@@ -112,7 +112,7 @@ export const renderSelectField = ({
   ...other
 }) => (
   <SelectField
-    errorText={(touched && error) || warning}
+    errorText={(touched && error) || error || warning}
     {...input}
     value={input.value || defaultValue}
     onChange={(event, index, value) => input.onChange(value)}
@@ -249,13 +249,12 @@ export const renderDatePicker = ({
 }) => (
   <div>
     <DatePicker
-      errorText={(touched && error) || warning}
+      errorText={(touched && error) || error || warning}
       {...input}
       onChange={(event, value) => input.onChange(value)}
       {...other}
     />
-  </div>
-);
+  </div>);
 
 export const renderText = ({
   className,
@@ -270,9 +269,9 @@ export const renderText = ({
   ...other
 }) => {
   let value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (inputProps ? inputProps.initial : null);
-  
+
   if (!value) value = '-';
-  
+
   if (values) {
     value = R.filter((val) => {
       if (Array.isArray(value)) return value.includes(val.value);
@@ -381,6 +380,6 @@ export const renderAutocomplete = ({
     }}
   />
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+    {((touched && error) || error || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
   </div>
 </div>);

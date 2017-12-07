@@ -17,6 +17,7 @@ const styleSheet = (theme) => {
     },
     label: {
       display: 'flex',
+      flexDirection: 'row-reverse',
       alignItems: 'center',
       fontSize: theme.typography.fontSize,
       whiteSpace: 'normal',
@@ -31,13 +32,13 @@ const CustomTab = (props) => {
   const { classes, warn, checked, label, ...tabProps } = props;
   return (
     <Tab
-      label={[
-        label,
-        warn && <Icon color="error"><ReportProblemIcon /></Icon>,
-        checked && <CheckCircle className={classes.checked} />,
-      ]}
-      classes={{
-        label: (warn || checked) && classes.label,
+      label={label}
+      icon={(warn && <Icon color="error"><ReportProblemIcon /></Icon>)
+        || (checked && <CheckCircle className={classes.checked} />)
+        || null
+      }
+      classes={(warn || checked) && {
+        wrapper: classes.label,
       }}
       {...tabProps}
     />

@@ -2,17 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import Hidden from 'material-ui/Hidden';
-import Popover from 'material-ui/Popover';
-import AppBar from 'material-ui/AppBar';
-import Typography from 'material-ui/Typography';
 import Paper from 'material-ui/Paper';
-import IconButton from 'material-ui/IconButton';
-import AccountIcon from 'material-ui-icons/AccountCircle';
-import BadgeIcon from './badgeIcon';
-import NotificationsList from '../notifications/notificationsList';
 import SidebarMenu from './sidebarMenu';
-import Logout from './logout';
 import MainAppBar from './appBar';
 
 // TODO check what can be done in muiTheme
@@ -21,6 +12,7 @@ const styleSheet = theme => ({
     margin: 'auto',
   },
   rightItem: {
+    overflowX: 'scroll',
     height: '100%',
     width: '100%',
     flexShrink: 1,
