@@ -23,8 +23,9 @@ class EditCfeiModal extends Component {
   }
 
   onFormSubmit(values) {
-    this.props.handleDialogClose();
-    this.props.updateCfei(values);
+    return this.props.updateCfei(values).then(() => {
+      this.props.handleDialogClose();
+    });
   }
 
   render() {

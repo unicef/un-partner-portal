@@ -19,24 +19,26 @@ const messages = {
 };
 
 const CfeiOverview = (props) => {
-  const { params: { id, type }, role, cn, partner, displayGoal } = props;
+  const { params: { id, type }, role, cn, partner, partnerId, displayGoal } = props;
+
   return (
     <form >
       <GridColumn >
         {type === PROJECT_TYPES.OPEN && <Timeline id={id} />}
-        <Grid container direction="row">
+        <Grid container direction="row" spacing={24}>
           <Grid item xs={12} sm={8}>
             <ProjectDetails
               type={type}
               role={role}
+              partnerId={partnerId}
               partner={partner}
               displayGoal={displayGoal}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
             <GridColumn >
-              {role === ROLES.PARTNER
-                && type === PROJECT_TYPES.OPEN
+              {((role === ROLES.PARTNER && type === PROJECT_TYPES.OPEN)
+              || type === PROJECT_TYPES.UNSOLICITED)
                 && <ConceptNote title={messages.cn} conceptNote={cn} />}
               {type === PROJECT_TYPES.OPEN
                 && <SelectionCriteria id={id} />}
@@ -56,7 +58,8 @@ CfeiOverview.propTypes = {
   params: PropTypes.object,
   role: PropTypes.string,
   cn: PropTypes.string,
-  partner: PropTypes.number,
+  partner: PropTypes.string,
+  partnerId: PropTypes.number,
   displayGoal: PropTypes.bool,
 };
 
@@ -68,6 +71,7 @@ const formCfeiDetails = reduxForm({
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.params.id);
   const { cn = null,
+    partner_id = null,
     partner_name = null,
     selected_source = null,
     focal_points_detail = [],
@@ -76,6 +80,7 @@ const mapStateToProps = (state, ownProps) => {
     initialValues: assoc('focal_points', pluck('name', focal_points_detail), cfei),
     cn,
     partner: partner_name,
+    partnerId: partner_id,
     role: state.session.role,
     displayGoal: selected_source === 'UNI',
   };

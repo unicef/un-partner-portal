@@ -46,7 +46,7 @@ class DatePickerForm extends Component {
             <Field
               name={fieldName}
               component={readOnly ? renderText : renderDatePicker}
-              validate={optional ? [] : [required].concat(validation || [])}
+              validate={(optional ? (validation || []) : [required].concat(validation || []))}
               hintText={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
               warn={warn && warning}
               format={(value) => {

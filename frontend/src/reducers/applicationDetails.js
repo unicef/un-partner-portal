@@ -89,4 +89,4 @@ const applicationDetails = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ applicationDetails, status: applicationDetailsStatus });
+export default combineReducers({ data: applicationDetails, status: applicationDetailsStatus });

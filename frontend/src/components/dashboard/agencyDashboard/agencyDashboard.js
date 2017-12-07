@@ -23,13 +23,13 @@ const AgencyDashboard = (props) => {
     } } = props;
   return (
     <GridColumn>
-      <Grid container direction="row">
+      <Grid container direction="row" spacing={0}>
         <Grid item xs={12} sm={8}>
-          <GridColumn>
+          <GridColumn spacing={24}>
             <Loader loading={loading} >
               <NewPartners number={newPartnersCount} dayBreakdown={newPartnersByDayCount} />
             </Loader>
-            <GridRow>
+            <GridRow spacing={24}>
               <Loader loading={loading} >
                 <NumberOfNewCfeis number={newCfeiCount} />
               </Loader>

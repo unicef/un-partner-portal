@@ -43,6 +43,7 @@ const theme = {
         height: '100%',
         padding: 15,
         alignItems: 'center',
+        zIndex: 0,
       },
     },
     MuiList: {
@@ -67,12 +68,6 @@ const theme = {
     MuiTypography: {
       headline: {
         color: 'inherit',
-      },
-    },
-    MuiIconButton: {
-      root: {
-        height: 24,
-        width: 24,
       },
     },
     MuiFormLabel: {
@@ -148,6 +143,11 @@ const getTheme = () => (
       flags: {
         red: '#D50000',
         yellow: '#FFC400',
+      },
+    },
+    typography: {
+      headline: {
+        fontSize: '1.25rem',
       },
     },
     overrides: {

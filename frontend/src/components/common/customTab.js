@@ -11,18 +11,13 @@ const styleSheet = (theme) => {
   const paddingIcon = theme.spacing.unit / 2;
 
   return {
-    rootPrimarySelected: {
-      color: theme.palette.secondary[500],
-    },
-    rootInheritSelected: {
-      color: theme.palette.secondary[500],
-    },
     checked: {
       fill: '#189a58',
       margin: `0 0 0 ${paddingIcon}px`,
     },
     label: {
       display: 'flex',
+      flexDirection: 'row-reverse',
       alignItems: 'center',
       fontSize: theme.typography.fontSize,
       whiteSpace: 'normal',
@@ -37,15 +32,13 @@ const CustomTab = (props) => {
   const { classes, warn, checked, label, ...tabProps } = props;
   return (
     <Tab
-      label={[
-        label,
-        warn && <Icon color="error"><ReportProblemIcon /></Icon>,
-        checked && <CheckCircle className={classes.checked} />,
-      ]}
-      classes={{
-        rootPrimarySelected: classes.rootPrimarySelected,
-        rootInheritSelected: classes.rootInheritSelected,
-        label: (warn || checked) && classes.label,
+      label={label}
+      icon={(warn && <Icon color="error"><ReportProblemIcon /></Icon>)
+        || (checked && <CheckCircle className={classes.checked} />)
+        || null
+      }
+      classes={(warn || checked) && {
+        wrapper: classes.label,
       }}
       {...tabProps}
     />

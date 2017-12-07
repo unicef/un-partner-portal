@@ -134,7 +134,7 @@ class PartnerApplicationsNotesFilter extends Component {
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
-        <Grid item xs={12} className={classes.filterContainer} >
+        <div className={classes.filterContainer} >
           <Grid container direction="row" >
             <Grid item sm={4} xs={12} >
               <TextFieldForm
@@ -213,7 +213,7 @@ class PartnerApplicationsNotesFilter extends Component {
               {messages.labels.search}
             </Button>
           </Grid>
-        </Grid>
+        </div>
       </form >
     );
   }

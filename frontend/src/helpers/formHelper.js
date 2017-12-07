@@ -282,13 +282,12 @@ export const renderDatePicker = ({
 }) => (
   <div>
     <DatePicker
-      errorText={(touched && error) || warning}
+      errorText={(touched && error) || error || warning}
       {...input}
       onChange={(event, value) => input.onChange(value)}
       {...other}
     />
-  </div>
-);
+  </div>);
 
 export const renderText = ({
   className,
@@ -411,6 +410,6 @@ export const renderAutocomplete = ({
     }}
   />
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+    {((touched && error) || error || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
   </div>
 </div>);

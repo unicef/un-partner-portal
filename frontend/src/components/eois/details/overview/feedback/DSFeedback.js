@@ -46,7 +46,7 @@ DSFeedback.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  applications: state.partnersApplicationsList.applicationsList.applications || [],
+  applications: state.partnersApplicationsList.data.applications || [],
   loading: state.partnersApplicationsList.status.loading,
   shouldAddFeedback: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
 });

@@ -9,6 +9,7 @@ const styleSheet = theme => ({
   root: {
     width: '100%',
     height: '100%',
+
   },
   relative: {
     position: 'relative',
@@ -18,10 +19,10 @@ const styleSheet = theme => ({
     backgroundColor: theme.palette.common.lightBlack,
     top: 0,
     left: 0,
-    zIndex: 1,
+    zIndex: 5000,
   },
   spinner: {
-    position: 'relative',
+    position: 'absolute',
     left: 'calc(50% - 25px)',
     top: 'calc(50% - 25px)',
   },
@@ -32,7 +33,7 @@ const Loader = (props) => {
   const className = classNames(
     classes.root,
     {
-      [classes.position]: !fullscreen && loading,
+      [classes.relative]: !fullscreen && loading,
       [classes.Fullscreen]: fullscreen && loading,
     });
   if (replaceContent) {

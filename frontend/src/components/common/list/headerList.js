@@ -36,17 +36,15 @@ class HeaderList extends Component {
     return (
       <Paper>
         <div>
-          <Grid className={classes.header} item>
+          <div className={classes.header}>
             {(typeof header === 'function')
               ? React.createElement(header)
               : header
             }
-          </Grid>
-          <Grid item>
-            <Loader loading={loading} >
-              {this.renderChildren()}
-            </Loader>
-          </Grid>
+          </div>
+          <Loader loading={loading} >
+            {this.renderChildren()}
+          </Loader>
         </div>
       </Paper>
     );

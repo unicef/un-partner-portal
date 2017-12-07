@@ -13,14 +13,14 @@ const messages = {
 
 const styleSheet = theme => ({
   checkboxContainer: {
-    marginLeft: -14,
+    //marginLeft: -14,
   },
   paddingTop: {
     padding: '12px 0px 0px 0px',
   },
   alignVertical: {
     display: 'flex',
-    alignItems: 'top',
+    alignItems: 'center',
   },
   captionStyle: {
     color: theme.palette.primary[500],
