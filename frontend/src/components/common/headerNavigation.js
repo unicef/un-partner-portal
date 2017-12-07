@@ -104,7 +104,7 @@ class HeaderNavigation extends Component {
       <div className={classes.root}>
         <Grid item>
           <Grid alignItems="center" className={classes.container} container>
-            <SpreadContent className={{ [classes.flex]: false, lalala: false }}>
+            <SpreadContent className={{ [classes.flex]: true }}>
               <div className={paddingClass}>
                 { backButton
                   ? <IconButton
