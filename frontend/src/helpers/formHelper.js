@@ -118,7 +118,7 @@ export const renderSelectField = ({
   values,
   placeholder,
   ...other
-}) => (<FormControl margin="dense" fullWidth error={(touched && error) || warning}>
+}) => (<FormControl fullWidth error={(touched && error) || warning}>
   <FormLabel>{label}</FormLabel>
   <Select
     {...input}

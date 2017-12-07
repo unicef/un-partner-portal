@@ -3,7 +3,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Hidden from 'material-ui/Hidden';
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
