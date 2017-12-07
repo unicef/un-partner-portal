@@ -1,5 +1,6 @@
 import Typography from 'material-ui/Typography';
 import React from 'react';
+import classname from 'classnames';
 import { TableCell } from 'material-ui/Table';
 import PropTypes from 'prop-types';
 import VerifiedUser from 'material-ui-icons/VerifiedUser';
@@ -14,6 +15,12 @@ const styleSheet = (theme) => {
       display: 'flex',
       alignItems: 'center',
       cursor: 'pointer',
+    },
+    iconUnverified: {
+      fill: theme.palette.error[500],
+      width: 15,
+      height: 15,
+      margin: `0 0 0 ${paddingIcon}px`,
     },
     iconNotVerified: {
       fill: theme.palette.primary[500],
@@ -44,19 +51,23 @@ const styleSheet = (theme) => {
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 const PartnerProfileNameCell = (props) => {
-  const { classes, name, verified, yellowFlag, redFlag, onClick } = props;
+  const { classes, info, onClick } = props;
+  const className = classname({
+    [classes.iconVerified]: info.is_verified === true,
+    [classes.iconUnverified]: info.is_verified === false,
+    [classes.iconNotVerified]: info.is_verified === null || info.is_verified === undefined,
+  });
+
   return (
     <TableCell>
       <div role="button" onClick={() => onClick()} className={classes.alignCenter}>
         <Typography type="body1" color="accent">
-          {name}
+          {info.legal_name}
         </Typography>
 
-        {verified ?
-          <VerifiedUser className={classes.iconVerified} />
-          : <VerifiedUser className={classes.iconNotVerified} />}
-        {yellowFlag ? <Flag className={classes.iconYellow} /> : null}
-        {redFlag ? <Flag className={classes.iconRed} /> : null}
+        <VerifiedUser className={className} />
+        {info.flagging_status.yellow > 0 && <Flag className={classes.iconYellow} />}
+        {info.flagging_status.red > 0 && <Flag className={classes.iconRed} />}
       </div>
     </TableCell>
   );
@@ -64,10 +75,7 @@ const PartnerProfileNameCell = (props) => {
 
 PartnerProfileNameCell.propTypes = {
   classes: PropTypes.object.isRequired,
-  name: PropTypes.object.isRequired,
-  verified: PropTypes.bool.isRequired,
-  yellowFlag: PropTypes.bool,
-  redFlag: PropTypes.bool,
+  info: PropTypes.object.isRequired,
   onClick: PropTypes.func,
 };
 

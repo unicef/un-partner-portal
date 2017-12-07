@@ -40,10 +40,7 @@ class PartnersContainer extends Component {
   partnerCell({ row, column }) {
     if (column.name === 'name') {
       return (<PartnerProfileNameCell
-        verified={row.verified}
-        yellowFlag={row.flagYellow}
-        redFlag={row.flagRed}
-        name={row.legal_name}
+        info={row.partner_additional}
         onClick={() => history.push(`/partner/${row.id}/overview`)}
       />);
     } else if (column.name === 'country_code') {
