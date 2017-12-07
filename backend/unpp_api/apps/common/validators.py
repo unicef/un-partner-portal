@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from datetime import date
 from django.core.validators import BaseValidator
 from django.utils.deconstruct import deconstructible
