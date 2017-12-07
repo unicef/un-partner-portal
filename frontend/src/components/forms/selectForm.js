@@ -1,52 +1,27 @@
 import React, { Component } from 'react';
+import R from 'ramda';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import InfoIcon from 'material-ui-icons/Info';
 import Grid from 'material-ui/Grid';
-import Divider from 'material-ui/Divider';
-import Typography from 'material-ui/Typography';
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl, FormLabel } from 'material-ui/Form';
 import { renderSelectField, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 import TooltipIcon from '../common/tooltipIcon';
-import PaddedContent from '../common/paddedContent';
+import { renderSelectOptions } from './selectHelpers/selectRenderers';
+
 
 class SelectForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selectedItem: undefined,
-      tooltipShown: false,
-      iconHovered: false,
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.hideTooltip = this.hideTooltip.bind(this);
-    this.showTooltip = this.showTooltip.bind(this);
-    this.handleMouseEnter = this.handleMouseEnter.bind(this);
-    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.parseFormValue = this.parseFormValue.bind(this);
   }
 
-  handleChange(event, value) {
-    this.setState({ selectedItem: value });
+  parseFormValue(value) {
+    if (this.props.multiple) {
+      return R.without('placeholder_none', value);
+    }
+    return value;
   }
-
-  hideTooltip() {
-    this.setState({ tooltipShown: false });
-  }
-
-  showTooltip() {
-    this.setState({ tooltipShown: true });
-  }
-
-  handleMouseEnter() {
-    this.showTooltip();
-  }
-
-  handleMouseLeave() {
-    this.hideTooltip();
-  }
-
   render() {
     const {
       fieldName,
@@ -82,45 +57,18 @@ class SelectForm extends Component {
               : <Field
                 name={fieldName}
                 component={renderSelectField}
+                parse={this.parseFormValue}
                 {...selectFieldProps}
                 label={label}
                 placeholder={placeholder || `Select ${label.toLowerCase()}`}
                 validate={optional ? [] : [required].concat(validation || [])}
                 warn={warn && warning}
-                defaultValue={defaultValue || multiple ? [] : ''}
+                defaultValue={defaultValue || multiple ? ['placeholder_none'] : 'placeholder_none'}
                 multiple={multiple}
-                onChange={this.handleChange}
                 fullWidth
-                values={values}
-                autoWidth
+                values={sections ? R.reduce((current, [_, nextValues]) => R.concat(current, nextValues), [], values) : values}
               >
-                {sections
-                  ? values.map(([sectionName, sectionValues], index) =>
-                    [
-                      <PaddedContent>
-                        <Typography
-                          type="body2"
-                          key={`${fieldName}_sectionName_${index}`}
-                        >{sectionName}
-                        </Typography>
-                        <Divider key={`${fieldName}_divider_${index}`} />
-                      </PaddedContent>,
-                      sectionValues.map((value, innerIndex) => (
-                        <MenuItem
-                          key={`${value.value}_menuItem_${innerIndex}`}
-                          value={value.value}
-                          primaryText={value.label}
-                        />)),
-                    ],
-                  )
-                  : values.map(value => (
-                    <MenuItem
-                      key={`${fieldName}_menuItem_${value.value}`}
-                      value={value.value}
-                    >{value.label}
-                    </MenuItem>
-
-                  ))}
+                {renderSelectOptions(fieldName, values, sections)}
               </Field>
             }
           </Grid>
@@ -201,6 +149,10 @@ SelectForm.propTypes = {
    * if select field should be multiple
    */
   multiple: PropTypes.bool,
+  /**
+   * props for read-only text field
+   */
+  textFieldProps: PropTypes.object,
 };
 
 export default SelectForm;

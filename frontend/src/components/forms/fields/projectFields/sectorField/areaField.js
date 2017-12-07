@@ -12,8 +12,8 @@ const AreaField = (props) => {
       fieldName={`${name}.areas`}
       label="Area(s) of specialization"
       values={areas}
+      multiple
       selectFieldProps={{
-        multiple: true,
         disabled,
       }}
       {...other}

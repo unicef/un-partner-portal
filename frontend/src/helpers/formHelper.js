@@ -29,6 +29,7 @@ import {
   setMultipleSuggestionValue,
   handleClear,
 } from '../components/forms//autocompleteHelpers/autocompleteFunctions';
+import { RenderMultipleSelections, RenderPlaceholder } from '../components/forms/selectHelpers/selectRenderers';
 
 export const fileNameFromUrl = (url) => {
   if (url) {
@@ -119,29 +120,30 @@ export const renderSelectField = ({
   ...other
 }) => (<FormControl margin="dense" fullWidth error={(touched && error) || warning}>
   <FormLabel>{label}</FormLabel>
-  <TextField
+  <Select
     {...input}
-    select
-    value={input.value || defaultValue || placeholder || null}
-    input={<Input margin="dense" />}
+    value={input.value || defaultValue || 'placeholder_none' || null}
     multiple={multiple}
+    style={{ marginTop: 0 }}
     renderValue={(value) => {
-      if (Array.isArray(value)) {
-        return (<div style={{ display: 'flex', alignItems: 'center' }}>
-          {value.map((item, index) => {
-            const { label } = R.find(R.propEq('value', item))(values);
-            return (<div style={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton onClick={(e) => {
-                e.stopPropagation();
-                input.onChange(R.without([value[index]], value));
-              }}
-              ><Close /></IconButton>{label}
-            </div>);
-          })}
-        </div>);
+      if (value === 'placeholder_none' || R.indexOf('placeholder_none', value) !== -1) {
+        return (<RenderPlaceholder placeholder={placeholder} />);
       }
-      const { label } = R.find(R.propEq('value', value))(values) || '';
-      return label || placeholder;
+      if (Array.isArray(value)) {
+        const selectedValues = R.filter(
+          R.propSatisfies(prop => value.includes(prop), 'value'),
+          values,
+        );
+        return (<RenderMultipleSelections
+          fieldName={input.name}
+          onSelectionRemove={(removedValue) => {
+            input.onChange(R.without([removedValue], value));
+          }}
+          selectedValues={selectedValues}
+        />);
+      }
+      const { label: selectLabel } = R.find(R.propEq('value', value))(values);
+      return selectLabel;
     }}
     onBlur={(event) => {
       event.preventDefault();
@@ -149,7 +151,7 @@ export const renderSelectField = ({
     {...other}
   >
     {children}
-  </TextField>
+  </Select>
   {((touched && error) || warning) && <FormHelperText>{error}</FormHelperText>}
 </FormControl>);
 

@@ -101,7 +101,6 @@ const OrganizationTypes = (props) => {
         values={organizationTypes}
         infoIcon
         infoText={messages.tooltip}
-        multiple
       />
       {(organization === 'Int' || organization === 'RCC') && (
         <RadioForm

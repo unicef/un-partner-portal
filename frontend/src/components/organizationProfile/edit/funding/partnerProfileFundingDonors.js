@@ -23,9 +23,7 @@ const PartnerProfileFundingDonors = (props) => {
           fieldName="major_donors"
           label={messages.typeOfDonor}
           values={partnerDonors}
-          selectFieldProps={{
-            multiple: true,
-          }}
+          multiple
           warn
           readOnly={readOnly}
         />
