@@ -56,6 +56,16 @@ const transformBool = (value) => {
   return value;
 };
 
+const convertBool = (value) => {
+  if (typeof (value) === 'boolean' && value || value === 'true') {
+    return BOOL_VAL[0].label;
+  } else if (typeof (value) === 'boolean' && !value || value === 'false') {
+    return BOOL_VAL[1].label;
+  }
+
+  return value;
+};
+
 export const visibleIfNo = (value) => {
   if (value === BOOL_VAL[1].value || (typeof (value) === 'boolean' && !value)) { return true; }
 
@@ -308,21 +318,17 @@ export const renderBool = ({
   optional,
   label,
   ...other
-}) => {
-  let value = 'No';
-  if (input.value) value = 'Yes';
-  return (
-    <FormControl fullWidth>
-      <FormLabel>{label}</FormLabel>
-      <Typography
-        className={className}
-        {...other}
-      >
-        {value}
-      </Typography>
-    </FormControl>
-  );
-};
+}) => (
+  <FormControl fullWidth>
+    <FormLabel>{label}</FormLabel>
+    <Typography
+      className={className}
+      {...other}
+    >
+      {convertBool(input.value) ? convertBool(input.value) : '-'}
+    </Typography>
+  </FormControl>
+);
 
 export const renderAutocomplete = ({
   meta: { touched, error, warning },
