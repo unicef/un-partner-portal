@@ -15,35 +15,25 @@ const styleSheet = (theme) => {
       alignItems: 'center',
       cursor: 'pointer',
     },
-    iconUnverified: {
-      fill: theme.palette.error[500],
+    iconSize: {
       width: 15,
       height: 15,
       margin: `0 0 0 ${paddingIcon}px`,
+    },
+    iconUnverified: {
+      fill: theme.palette.error[500],
     },
     iconNotVerified: {
       fill: theme.palette.primary[500],
-      width: 15,
-      height: 15,
-      margin: `0 0 0 ${paddingIcon}px`,
     },
     iconVerified: {
       fill: '#009A54',
-      width: 15,
-      height: 15,
-      margin: `0 0 0 ${paddingIcon}px`,
     },
     iconYellow: {
       fill: '#FFC400',
-      width: 15,
-      height: 15,
-      margin: `0 0 0 ${paddingIcon}px`,
     },
     iconRed: {
       fill: '#D50000',
-      width: 15,
-      height: 15,
-      margin: `0 0 0 ${paddingIcon}px`,
     },
   };
 };
@@ -52,9 +42,9 @@ const styleSheet = (theme) => {
 const ItemPartnerAdditionalInfoCell = (props) => {
   const { classes, info, onClick } = props;
   const className = classname({
-    [classes.iconVerified]: info.is_verified === true,
-    [classes.iconUnverified]: info.is_verified === false,
-    [classes.iconNotVerified]: info.is_verified === null || info.is_verified === undefined,
+    [`${classes.iconVerified} ${classes.iconSize}`]: info.is_verified === true,
+    [`${classes.iconUnverified} ${classes.iconSize}`]: info.is_verified === false,
+    [`${classes.iconNotVerified} ${classes.iconSize}`]: info.is_verified === null || info.is_verified === undefined,
   });
 
   return (
@@ -64,8 +54,8 @@ const ItemPartnerAdditionalInfoCell = (props) => {
       </Typography>
 
       <VerifiedUser className={className} />
-      {info.flagging_status.yellow > 0 && <Flag className={classes.iconYellow} />}
-      {info.flagging_status.red > 0 && <Flag className={classes.iconRed} />}
+      {info.flagging_status.yellow > 0 && <Flag className={`${classes.iconYellow} ${classes.iconSize}`} />}
+      {info.flagging_status.red > 0 && <Flag className={`${classes.iconRed} ${classes.iconSize}`} />}
     </div>
   );
 };
