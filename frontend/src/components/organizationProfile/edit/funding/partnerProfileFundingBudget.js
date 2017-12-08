@@ -16,7 +16,7 @@ const messages = {
   year: 'Year',
 };
 
-const isReadOnly = (isHq, displayType, readOnly) => readOnly || (!isHq && displayType === 'Int');
+const isHqProfile = (isHq, displayType) => !isHq && displayType === 'Int';
 
 const annualBudgetForm = (budget, budgetTypes, readOnly) => (
   <Grid container direction="row">
@@ -41,20 +41,20 @@ const annualBudgetForm = (budget, budgetTypes, readOnly) => (
 
 const PartnerProfileFundingBudget = (props) => {
   const { readOnly, budgetTypes, isCountryProfile, displayType } = props;
-  const isReadOnlyField = isReadOnly(isCountryProfile, displayType, readOnly);
+  const isHq = isHqProfile(isCountryProfile, displayType);
 
   return (
     <FormSection name="budgets">
       <Grid container direction="column" spacing={16}>
         <Grid item>
           <ArrayForm
-            fieldName={isReadOnlyField ? 'hq_budgets' : 'budgets'}
+            fieldName={isHq ? 'hq_budgets' : 'budgets'}
             limit={3}
             label={messages.annualBudget}
             initial
             disableAdding
             disableDeleting
-            outerField={budget => annualBudgetForm(budget, budgetTypes, isReadOnlyField)}
+            outerField={budget => annualBudgetForm(budget, budgetTypes, readOnly)}
             readOnly={readOnly}
           />
         </Grid>
