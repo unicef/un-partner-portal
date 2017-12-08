@@ -40,10 +40,7 @@ class PartnersContainer extends Component {
   partnerCell({ row, column }) {
     if (column.name === 'name') {
       return (<PartnerProfileNameCell
-        verified={row.verified}
-        yellowFlag={row.flagYellow}
-        redFlag={row.flagRed}
-        name={row.legal_name}
+        info={row.partner_additional}
         onClick={() => history.push(`/partner/${row.id}/overview`)}
       />);
     } else if (column.name === 'country_code') {
@@ -59,10 +56,7 @@ class PartnersContainer extends Component {
     const { partners, columns, totalCount, loading } = this.props;
 
     return (
-      <div>
-        <Grid item>
-          <HeaderNavigation title={messages.header} />
-        </Grid>
+      <HeaderNavigation title={messages.header}>
         <MainContentWrapper>
           <Grid container direction="column" spacing={24}>
             <Grid item>
@@ -82,7 +76,7 @@ class PartnersContainer extends Component {
             </Grid>
           </Grid>
         </MainContentWrapper>
-      </div>
+      </HeaderNavigation>
     );
   }
 }

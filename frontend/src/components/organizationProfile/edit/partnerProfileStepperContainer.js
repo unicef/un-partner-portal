@@ -112,7 +112,6 @@ const connectedPartnerProfileRedux = reduxForm({
   form: 'partnerProfile', // a unique identifier for this form
   enableReinitialize: true,
   forceUnregisterOnUnmount: true,
-  keepDirtyOnReinitialize: true,
 })(PartnerProfileStepperContainer);
 
 const connectedPartnerProfileStepper = connect(

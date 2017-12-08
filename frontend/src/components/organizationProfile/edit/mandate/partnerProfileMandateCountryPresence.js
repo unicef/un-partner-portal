@@ -72,6 +72,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
                 maxLength: '5000',
               },
             }}
+            warn
             readOnly={readOnly}
           />
           : null}
