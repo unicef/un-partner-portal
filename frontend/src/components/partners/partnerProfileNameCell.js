@@ -1,11 +1,8 @@
-import Typography from 'material-ui/Typography';
 import React from 'react';
-import classname from 'classnames';
 import { TableCell } from 'material-ui/Table';
 import PropTypes from 'prop-types';
-import VerifiedUser from 'material-ui-icons/VerifiedUser';
-import Flag from 'material-ui-icons/Flag';
 import { withStyles } from 'material-ui/styles';
+import ItemPartnerAdditionalInfo from '../common/cell/itemPartnerAdditionalInfoCell';
 
 const styleSheet = (theme) => {
   const paddingIcon = theme.spacing.unit / 2;
@@ -49,32 +46,17 @@ const styleSheet = (theme) => {
   };
 };
 
-/* eslint-disable jsx-a11y/interactive-supports-focus */
 const PartnerProfileNameCell = (props) => {
-  const { classes, info, onClick } = props;
-  const className = classname({
-    [classes.iconVerified]: info.is_verified === true,
-    [classes.iconUnverified]: info.is_verified === false,
-    [classes.iconNotVerified]: info.is_verified === null || info.is_verified === undefined,
-  });
+  const { info, onClick } = props;
 
   return (
     <TableCell>
-      <div role="button" onClick={() => onClick()} className={classes.alignCenter}>
-        <Typography type="body1" color="accent">
-          {info.legal_name}
-        </Typography>
-
-        <VerifiedUser className={className} />
-        {info.flagging_status.yellow > 0 && <Flag className={classes.iconYellow} />}
-        {info.flagging_status.red > 0 && <Flag className={classes.iconRed} />}
-      </div>
+      <ItemPartnerAdditionalInfo info={info} onClick={onClick} />
     </TableCell>
   );
 };
 
 PartnerProfileNameCell.propTypes = {
-  classes: PropTypes.object.isRequired,
   info: PropTypes.object.isRequired,
   onClick: PropTypes.func,
 };
