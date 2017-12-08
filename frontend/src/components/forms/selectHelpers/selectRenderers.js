@@ -41,15 +41,25 @@ renderPlaceholderBase.propTypes = {
 export const RenderPlaceholder = withStyles(placeholderStyleSheet, { name: 'selectPlaceholder' })(renderPlaceholderBase);
 
 
-const multipleSelectionsStyleSheet = () => ({
-  rowContainer: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  itemsContainer: {
-    overflowX: 'scroll',
-  },
-});
+const multipleSelectionsStyleSheet = (theme) => {
+  const padding = theme.spacing.unit;
+
+  return {
+    label: {
+      padding: `0 ${padding}px 0 0`,
+    },
+    close: {
+      fill: theme.palette.secondary[500],
+    },
+    rowContainer: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    itemsContainer: {
+      overflowX: 'scroll',
+    },
+  };
+};
 
 function renderMultipleSelectionsBase({ classes, fieldName, onSelectionRemove, selectedValues }) {
   return (<div className={`${classes.rowContainer} ${classes.itemsContainer}`}>
@@ -57,13 +67,16 @@ function renderMultipleSelectionsBase({ classes, fieldName, onSelectionRemove, s
       key={`${fieldName}_selection_item_${item.value}`}
       className={classes.rowContainer}
     >
-      <IconButton
-        color="accent"
+      <Close
+        className={classes.close}
         onClick={(e) => {
           e.stopPropagation();
           onSelectionRemove(item.value);
         }}
-      ><Close /></IconButton>{item.label}
+      />
+      <div className={classes.label}>
+        {item.label}
+      </div>
     </div>))}
   </div>);
 }
