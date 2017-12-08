@@ -128,7 +128,6 @@ const ProjectDetails = ({ type, role, partner, partnerId, displayGoal }) => (
   <HeaderList
     header={title(type)}
   >
-    <Fields type={type} role={role} partner={partner} displayGoal={displayGoal} />
     <Fields type={type} role={role} partner={partner} partnerId={partnerId} displayGoal={displayGoal} />
   </HeaderList>
 );

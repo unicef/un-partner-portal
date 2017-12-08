@@ -31,9 +31,12 @@ const NumberOfConceptNotes = (props) => {
           <GridColumn alignItems="flex-end">
             {[
               <Typography
-                  key={0}
-                  className={classes.number}
-                  type="display2">{number}</Typography>
+                key={0}
+                className={classes.number}
+                type="display2"
+              >
+                {number}
+              </Typography>
             ]}
           </GridColumn>
         </GridRow>

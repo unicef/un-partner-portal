@@ -31,7 +31,7 @@ const renderExpandedCell = (partners, classes) => (
     { partners.map(partnerStatus => (
       <Typography 
         key={partnerStatus.legal_name}
-        lassName={classes.text}
+        className={classes.text}
         align="left"
       >
         {`${partnerStatus.legal_name}
