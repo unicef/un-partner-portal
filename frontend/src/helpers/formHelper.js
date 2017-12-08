@@ -16,7 +16,7 @@ import Typography from 'material-ui/Typography';
 import RadioGroupRow from '../components/common/radio/radioGroupRow';
 import RadioHeight from '../components/common/radio/radioHeight';
 import { formatDateForPrint } from './dates';
-import { numerical } from '../helpers/validation';
+import { numerical, validateReviewScores } from '../helpers/validation';
 import {
   renderInput,
   renderMultipleInput,
@@ -118,42 +118,51 @@ export const renderSelectField = ({
   values,
   placeholder,
   ...other
-}) => (<FormControl fullWidth error={(touched && error) || warning}>
-  <FormLabel>{label}</FormLabel>
-  <Select
-    {...input}
-    value={input.value || defaultValue || 'placeholder_none' || null}
-    multiple={multiple}
-    style={{ marginTop: 0 }}
-    renderValue={(value) => {
-      if (value === 'placeholder_none' || R.indexOf('placeholder_none', value) !== -1) {
-        return (<RenderPlaceholder placeholder={placeholder} />);
-      }
-      if (Array.isArray(value)) {
-        const selectedValues = R.filter(
-          R.propSatisfies(prop => value.includes(prop), 'value'),
-          values,
-        );
-        return (<RenderMultipleSelections
-          fieldName={input.name}
-          onSelectionRemove={(removedValue) => {
-            input.onChange(R.without([removedValue], value));
-          }}
-          selectedValues={selectedValues}
-        />);
-      }
-      const { label: selectLabel } = R.find(R.propEq('value', value))(values);
-      return selectLabel;
-    }}
-    onBlur={(event) => {
-      event.preventDefault();
-    }}
-    {...other}
-  >
-    {children}
-  </Select>
-  {((touched && error) || warning) && <FormHelperText>{error}</FormHelperText>}
-</FormControl>);
+}) => {
+  let valueForSelect;
+  if (multiple) {
+    valueForSelect = (!R.isEmpty(input.value) && input.value) || defaultValue || ['placeholder_none'];
+  } else {
+    valueForSelect = input.value || defaultValue || 'placeholder_none';
+  }
+  return (<FormControl fullWidth error={(touched && error) || warning}>
+    <FormLabel>{label}</FormLabel>
+    <Select
+      {...input}
+      value={valueForSelect}
+      multiple={multiple}
+      style={{ marginTop: 0 }}
+      renderValue={(value) => {
+        if (value === 'placeholder_none' || R.indexOf('placeholder_none', value) !== -1) {
+          return (<RenderPlaceholder placeholder={placeholder} />);
+        }
+        if (Array.isArray(value)) {
+          const selectedValues = R.filter(
+            R.propSatisfies(prop => value.includes(prop), 'value'),
+            values,
+          );
+          return (<RenderMultipleSelections
+            fieldName={input.name}
+            onSelectionRemove={(removedValue) => {
+              input.onChange(R.without([removedValue], value));
+            }}
+            selectedValues={selectedValues}
+          />);
+        }
+        const selectedValue = R.find(R.propEq('value', value))(values) || {};
+        const selectedLabel = R.prop('label', selectedValue);
+        return selectedLabel;
+      }}
+      onBlur={(event) => {
+        event.preventDefault();
+      }}
+      {...other}
+    >
+      {children}
+    </Select>
+    {((touched && error) || warning) && <FormHelperText>{error}</FormHelperText>}
+  </FormControl>);
+};
 
 export const renderRadioField = ({ input,
   label,
@@ -282,7 +291,7 @@ export const renderDatePicker = ({
 }) => (
   <div>
     <DatePicker
-      errorText={(touched && error) || error || warning}
+      errorText={(touched && error) || warning}
       {...input}
       onChange={(event, value) => input.onChange(value)}
       {...other}
@@ -410,6 +419,6 @@ export const renderAutocomplete = ({
     }}
   />
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-    {((touched && error) || error || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
   </div>
 </div>);
