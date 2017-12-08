@@ -23,9 +23,7 @@ const PartnerProfileContactInfoLanguages = (props) => {
             fieldName="working_languages"
             label={messages.workingLanguages}
             values={workingLanguages}
-            selectFieldProps={{
-              multiple: true,
-            }}
+            multiple
             warn
             readOnly={readOnly}
           />

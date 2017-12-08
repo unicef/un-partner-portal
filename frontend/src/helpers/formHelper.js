@@ -1,10 +1,13 @@
 /* eslint-disable react/prop-types */
 import R from 'ramda';
 import React from 'react';
-import SelectField from 'material-ui-old/SelectField';
+import Select from 'material-ui/Select';
 import TextField from 'material-ui/TextField';
 import Checkbox from 'material-ui/Checkbox';
+import Close from 'material-ui-icons/Close';
+import IconButton from 'material-ui/IconButton';
 import Autosuggest from 'react-autosuggest';
+import Input from 'material-ui/Input';
 import { FormControl, FormControlLabel, FormHelperText, FormLabel } from 'material-ui/Form';
 import Attachment from 'material-ui-icons/Attachment';
 import DateRange from 'material-ui-icons/DateRange';
@@ -13,7 +16,7 @@ import Typography from 'material-ui/Typography';
 import RadioGroupRow from '../components/common/radio/radioGroupRow';
 import RadioHeight from '../components/common/radio/radioHeight';
 import { formatDateForPrint } from './dates';
-import { numerical } from '../helpers/validation';
+import { numerical, validateReviewScores } from '../helpers/validation';
 import {
   renderInput,
   renderMultipleInput,
@@ -26,6 +29,7 @@ import {
   setMultipleSuggestionValue,
   handleClear,
 } from '../components/forms//autocompleteHelpers/autocompleteFunctions';
+import { RenderMultipleSelections, RenderPlaceholder } from '../components/forms/selectHelpers/selectRenderers';
 
 export const fileNameFromUrl = (url) => {
   if (url) {
@@ -119,18 +123,56 @@ export const renderSelectField = ({
   defaultValue,
   meta: { touched, error, warning },
   children,
+  multiple,
+  label,
+  values,
+  placeholder,
   ...other
-}) => (
-  <SelectField
-    errorText={(touched && error) || error || warning}
-    {...input}
-    value={input.value || defaultValue}
-    onChange={(event, index, value) => input.onChange(value)}
-    {...other}
-  >
-    {children}
-  </SelectField>
-);
+}) => {
+  let valueForSelect;
+  if (multiple) {
+    valueForSelect = (!R.isEmpty(input.value) && input.value) || defaultValue || ['placeholder_none'];
+  } else {
+    valueForSelect = input.value || defaultValue || 'placeholder_none';
+  }
+  return (<FormControl fullWidth error={(touched && error) || warning}>
+    <FormLabel>{label}</FormLabel>
+    <Select
+      {...input}
+      value={valueForSelect}
+      multiple={multiple}
+      style={{ marginTop: 0 }}
+      renderValue={(value) => {
+        if (value === 'placeholder_none' || R.indexOf('placeholder_none', value) !== -1) {
+          return (<RenderPlaceholder placeholder={placeholder} />);
+        }
+        if (Array.isArray(value)) {
+          const selectedValues = R.filter(
+            R.propSatisfies(prop => value.includes(prop), 'value'),
+            values,
+          );
+          return (<RenderMultipleSelections
+            fieldName={input.name}
+            onSelectionRemove={(removedValue) => {
+              input.onChange(R.without([removedValue], value));
+            }}
+            selectedValues={selectedValues}
+          />);
+        }
+        const selectedValue = R.find(R.propEq('value', value))(values) || {};
+        const selectedLabel = R.prop('label', selectedValue);
+        return selectedLabel;
+      }}
+      onBlur={(event) => {
+        event.preventDefault();
+      }}
+      {...other}
+    >
+      {children}
+    </Select>
+    {((touched && error) || warning) && <FormHelperText>{error}</FormHelperText>}
+  </FormControl>);
+};
 
 export const renderRadioField = ({ input,
   label,
@@ -259,7 +301,7 @@ export const renderDatePicker = ({
 }) => (
   <div>
     <DatePicker
-      errorText={(touched && error) || error || warning}
+      errorText={(touched && error) || warning}
       {...input}
       onChange={(event, value) => input.onChange(value)}
       {...other}
@@ -383,6 +425,6 @@ export const renderAutocomplete = ({
     }}
   />
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-    {((touched && error) || error || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
   </div>
 </div>);

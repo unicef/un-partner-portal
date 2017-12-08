@@ -31,9 +31,7 @@ const PartnerProfileMandatePopulation = (props) => {
           fieldName="concern_groups"
           label={messages.concernGroups}
           values={populationsOfConcernGroups}
-          selectFieldProps={{
-            multiple: true,
-          }}
+          multiple
           warn
           readOnly={readOnly}
         />}
