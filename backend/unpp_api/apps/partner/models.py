@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from datetime import date
+import os
+import logging
 
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
@@ -33,6 +35,9 @@ from common.consts import (
     BUDGET_CHOICES,
     FLAG_TYPES,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 class Partner(TimeStampedModel):
@@ -701,21 +706,28 @@ class PartnerOtherInfo(TimeStampedModel):
         return "PartnerOtherInfo <pk:{}>".format(self.id)
 
     def save(self, *args, **kwargs):
-        super(PartnerOtherInfo, self).save(*args, **kwargs)
         if self.org_logo is not None and self.org_logo_thumbnail.name is None or \
                 self.org_logo is not None and \
                 self.org_logo_thumbnail.name is not None and \
-                self.org_logo_thumbnail.name.find(self.org_logo.name) < 0:
+                self.org_logo_thumbnail.name.find(self.org_logo.file_field.name) < 0:
             try:
                 image_generator = Thumbnail(source=open(self.org_logo.file_field.path, 'rb'))
                 img = image_generator.generate()
                 new_filename = "thumbnail_{}".format(self.org_logo.file_field.name)
-                self.org_logo_thumbnail.save(new_filename, img)
-            except Exception:
-                # TODO: logger
-                pass
+                new_filepath = "{}/{}".format(
+                    os.path.dirname(self.org_logo.file_field.path), new_filename
+                )
+                os.mknod(new_filepath)
+                self.org_logo_thumbnail.name = new_filename
+                with open(new_filepath, "wb") as thumb:
+                    thumb.write(img.read())
+
+            except Exception as exp:
+                logger.exception(exp)
         elif self.org_logo in ['', None] and self.org_logo_thumbnail.name is not None:
             self.org_logo_thumbnail.delete()
+
+        super(PartnerOtherInfo, self).save(*args, **kwargs)
 
 
 class PartnerMember(TimeStampedModel):
