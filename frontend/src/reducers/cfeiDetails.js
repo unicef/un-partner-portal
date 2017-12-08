@@ -89,12 +89,13 @@ const saveUCN = (state, action) => {
     id: ucn.id,
     reviewers: [],
     focal_points: [],
-    partner_name: ucn.partner.id,
+    partner_id: ucn.partner.id,
+    partner_name: ucn.partner.legal_name,
     display_type: ucn.partner.display_type,
     title: R.path(['proposal_of_eoi_details', 'title'], ucn),
     locations: normalizeLocations(ucn.locations_proposal_of_eoi),
     specializations: R.path(['proposal_of_eoi_details', 'specializations'], ucn),
-    agency: ucn.agency,
+    agency: R.path(['agency', 'name'], ucn),
     cn: ucn.cn,
     eoiConverted: ucn.eoi_converted,
   };
@@ -172,4 +173,4 @@ const cfeiDetails = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ cfeiDetails, cfeiDetailsStatus });
+export default combineReducers({ data: cfeiDetails, status: cfeiDetailsStatus });

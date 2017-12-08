@@ -15,8 +15,8 @@ import AlertDialog from '../common/alertDialog';
 import { selectNormalizedOrganizationTypes } from '../../store';
 
 const messages = {
-  header: 'The UN Partner Portal is solely intended for use by national NGOs, international NGOs, community based organizations,' +
-  'academic institutes, and Red Cross/Red Crescent societies. The UN Partner Portal' +
+  header: 'The UN Partner Portal is solely intended for use by national NGOs, international NGOs, community based organizations, ' +
+  'academic institutes, and Red Cross/Red Crescent societies. The UN Partner Portal ' +
   'is NOT intended for use by private sector companies, government ministries, or individuals.',
   learn: ' Learn more.',
   tooltip: 'Community Based Organization (CBO): A community-based ' +

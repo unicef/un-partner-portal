@@ -38,7 +38,11 @@ const StepContent = (props) => {
   );
   return (
     <div className={className}>
-      <Collapse in={active} transitionDuration="auto" unmountOnExit>
+      <Collapse
+        in={active}
+        transitionDuration="auto"
+        unmountOnExit
+      >
         {children}
       </Collapse>
     </div>

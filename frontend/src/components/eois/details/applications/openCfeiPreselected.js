@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import {reject} from 'ramda';
+import { reject } from 'ramda';
 import { browserHistory as history } from 'react-router';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
 import ApplicationCnIdCell from '../../cells/applicationCnIdCell';
@@ -61,9 +61,7 @@ class OpenCfeiPreselections extends Component {
   applicationsCells({ row, column, hovered }) {
     if (column.name === 'name') {
       return (<PartnerProfileNameCell
-        verified={row.partner_additional.is_verified}
-        flags={row.partner_additional.flagging_status}
-        name={row.name}
+        info={row.partner_additional}
       />);
     } else if (column.name === 'id') {
       return (<ApplicationCnIdCell
@@ -138,8 +136,8 @@ OpenCfeiPreselections.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  applications: state.partnersApplicationsList.applicationsList.applications,
-  itemsCount: state.partnersApplicationsList.applicationsList.itemsCount,
+  applications: state.partnersApplicationsList.data.applications,
+  itemsCount: state.partnersApplicationsList.data.itemsCount,
   columns: state.partnersPreselectionList.columns,
   loading: state.partnersApplicationsList.status.loading,
   query: ownProps.location.query,

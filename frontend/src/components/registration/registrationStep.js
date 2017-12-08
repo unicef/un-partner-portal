@@ -5,6 +5,7 @@ import Snackbar from 'material-ui/Snackbar';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import { connect } from 'react-redux';
+import { withStyles } from 'material-ui/styles';
 
 const messages = {
   continue: 'Continue',
@@ -12,33 +13,35 @@ const messages = {
   cancel: 'Cancel',
 };
 
+const styleSheet = () => ({
+  buttonContainer: {
+    marginTop: 8,
+  },
+});
+
 const RegistrationStep = (props) => {
-  const { handleSubmit, handlePrev, last, first, children, reset, error, clearError } = props;
+  const { classes, handleSubmit, handlePrev, last, first, children, reset, error, clearError } = props;
   return (
     <form onSubmit={handleSubmit}>
-      <Grid container direction="column" >
-        {React.Children.map(children, child =>
-          React.cloneElement(child, { reset }),
-        )}
-        <Grid item xs={12}>
-          <Grid container direction="row" spacing={8}>
-            <Grid item>
-              <Button
-                color="accent"
-                raised
-                onTouchTap={handleSubmit}
-              >
-                {(last) ? messages.register : messages.continue}
-              </Button>
-            </Grid>
-            <Grid item>
-              {(!first && <Button
-                onTouchTap={handlePrev}
-              >
-                {messages.cancel}
-              </Button>)}
-            </Grid>
-          </Grid>
+      {React.Children.map(children, child =>
+        React.cloneElement(child, { reset }),
+      )}
+      <Grid container direction="row" spacing={8} className={classes.buttonContainer}>
+        <Grid item>
+          <Button
+            color="accent"
+            raised
+            onTouchTap={handleSubmit}
+          >
+            {(last) ? messages.register : messages.continue}
+          </Button>
+        </Grid>
+        <Grid item>
+          {(!first && <Button
+            onTouchTap={handlePrev}
+          >
+            {messages.cancel}
+          </Button>)}
         </Grid>
       </Grid>
       <Snackbar
@@ -93,8 +96,8 @@ const connectedRegistrationStep = connect(
   mapDispatchToProps,
 )(RegistrationStep);
 
-export default reduxForm({
+export default withStyles(styleSheet)(reduxForm({
   form: 'registration',
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true,
-})(connectedRegistrationStep);
+})(connectedRegistrationStep));

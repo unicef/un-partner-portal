@@ -8,6 +8,7 @@ import { withRouter } from 'react-router';
 import { visibleIfYes, visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
 import RadioForm from '../../../forms/radioForm';
 import FileForm from '../../../forms/fileForm';
+import YearFieldForm from '../../../forms/yearFieldForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import DatePickerForm from '../../../forms/datePickerForm';
 
@@ -16,8 +17,8 @@ const messages = {
   yearEstablishment: 'Year of establishment in country',
   haveGovDoc: 'Does the Organization have a Governing Document?',
   governingDoc: 'Governing Document',
-  registrationCountryHq: 'Is the organization registered in the country of operation?',
-  registrationCountry: 'Is the organization registered to operate in the country?',
+  registrationCountry: 'Is organization registered to operate in the country of origin?',
+  registrationCountryHq: 'Is the organization registered to operate in the country?',
   date: 'Registration Date',
   number: 'Registration number (If applicable)',
   document: 'Registration Document',
@@ -33,7 +34,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
         <Grid item>
           <Grid container direction="row">
             <Grid item sm={4} xs={12}>
-              <TextFieldForm
+              <YearFieldForm
                 fieldName="year_establishment"
                 label={isCountryProfile
                   ? messages.yearEstablishment
@@ -131,7 +132,8 @@ PartnerProfileIdentificationRegistration.propTypes = {
 
 const selector = formValueSelector('partnerProfile');
 const connected = connect((state, ownProps) => {
-  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
+    || state.agencyPartnersList.data.partners);
 
   return {
     isCountryProfile: partner ? partner.is_hq : false,

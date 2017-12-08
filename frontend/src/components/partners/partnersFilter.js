@@ -153,9 +153,7 @@ class PartnersFilter extends Component {
                 label={messages.labels.sectorArea}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
-                selectFieldProps={{
-                  multiple: true,
-                }}
+                multiple
                 values={specs}
                 sections
                 optional

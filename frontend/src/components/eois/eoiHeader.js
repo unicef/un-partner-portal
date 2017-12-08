@@ -48,17 +48,15 @@ class CfeiHeader extends Component {
     } = this.props;
     const index = this.updatePath();
     return (
-      <Grid item>
-        <HeaderNavigation
-          index={index}
-          title={messages[role]}
-          tabs={tabs}
-          header={!id && type && type !== 'unsolicited' && role === 'agency' && <NewCfeiModalButton type={type} />}
-          handleChange={this.handleChange}
-        >
-          {(index !== -1) && children}
-        </HeaderNavigation>
-      </Grid>
+      <HeaderNavigation
+        index={index}
+        title={messages[role]}
+        tabs={tabs}
+        header={!id && type && type !== 'unsolicited' && role === 'agency' && <NewCfeiModalButton type={type} />}
+        handleChange={this.handleChange}
+      >
+        {(index !== -1) && children}
+      </HeaderNavigation>
     );
   }
 }

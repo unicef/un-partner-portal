@@ -36,7 +36,6 @@ const InternalControls = (values, readOnly, ...props) => (member, index, fields)
           label={messages.areaOfResponsibility}
           values={newValues}
           readOnly
-          optional
           warn
           {...props}
         />
@@ -46,7 +45,6 @@ const InternalControls = (values, readOnly, ...props) => (member, index, fields)
           fieldName={`${member}.segregation_duties`}
           label={messages.segregationOf}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -65,7 +63,6 @@ const CommentInner = (readOnly, ...props) => member => (
         maxLength: '5000',
       },
     }}
-    optional
     warn
     readOnly={readOnly}
     {...props}

@@ -64,7 +64,6 @@ const CompareApplicationContent = (props) => {
     establishment,
     unExp,
     budgets] = comparison;
-  console.log(comparison);
   return (
     <div>
       <div className={`${classes.gridContainer}`}>

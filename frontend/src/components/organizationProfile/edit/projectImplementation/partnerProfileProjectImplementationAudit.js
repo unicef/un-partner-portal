@@ -36,7 +36,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
           fieldName="regular_audited"
           label={messages.isRegularyAudited}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -50,7 +49,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
                 maxLength: '5000',
               },
             }}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -60,9 +58,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
             fieldName="org_audits"
             label={messages.organizationUndergoes}
             values={auditTypes}
-            selectFieldProps={{
-              multiple: true,
-            }}
+            multiple
             warn
             readOnly={readOnly}
           />
@@ -124,9 +120,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               fieldName="assessments"
               label={messages.indicateAssessments}
               values={capacityAssessments}
-              selectFieldProps={{
-                multiple: true,
-              }}
+              multiple
               warn
               readOnly={readOnly}
             />

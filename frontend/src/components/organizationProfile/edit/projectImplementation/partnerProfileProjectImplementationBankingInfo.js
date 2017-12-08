@@ -10,7 +10,7 @@ import GridColumn from '../../../common/grid/gridColumn';
 const messages = {
   hasBankAccount: 'Does the organization have a bank account?',
   hasSeparateAccount: 'Does the organization currently maintain, or has it previously maintained, ' +
-            'a seperate interest-bearing account for UN funded projects that require a seperate ' +
+            'a separate interest-bearing account for UN funded projects that require a separate ' +
             'account?',
   explain: 'Briefly explain the system used',
 };
@@ -25,7 +25,6 @@ const PartnerProfileProjectImplementationBankingInfo = (props) => {
           fieldName={'have_bank_account'}
           label={messages.hasBankAccount}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -33,7 +32,6 @@ const PartnerProfileProjectImplementationBankingInfo = (props) => {
           fieldName={'have_separate_bank_account'}
           label={messages.hasSeparateAccount}
           values={BOOL_VAL}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -47,7 +45,6 @@ const PartnerProfileProjectImplementationBankingInfo = (props) => {
                 maxLength: '5000',
               },
             }}
-            optional
             warn
             readOnly={readOnly}
           />

@@ -39,8 +39,8 @@ const OpenForm = (props) => {
           label={messages.cnLabel}
           displayHint={false}
         />
+        <ProfileConfirmation onChange={handleConfirmation} />
       </GridColumn>
-      <ProfileConfirmation onChange={handleConfirmation} />
     </form >
   );
 };

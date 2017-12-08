@@ -34,7 +34,6 @@ const PartnerProfileProjectImplementationReporting = (props) => {
               maxLength: '5000',
             },
           }}
-          optional
           warn
           readOnly={readOnly}
         />
@@ -53,7 +52,6 @@ const PartnerProfileProjectImplementationReporting = (props) => {
               <DatePickerForm
                 label={messages.dateOfReport}
                 fieldName="last_report"
-                optional
                 warn
                 readOnly={readOnly}
               />
