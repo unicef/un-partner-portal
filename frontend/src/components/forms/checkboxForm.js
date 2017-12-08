@@ -22,7 +22,7 @@ function CheckboxForm(props) {
         <Field
           name={fieldName}
           component={renderCheckbox}
-          validate={optional ? [] : [requiredBool].concat(validation || [])}
+          validate={(optional ? (validation || []) : [requiredBool].concat(validation || []))}
           warn={warn && warning}
           disabled={readOnly}
           label={label}
