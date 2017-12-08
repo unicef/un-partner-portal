@@ -31,6 +31,11 @@ export const flatten = (data) => {
     if (Object(cur) !== cur) {
       result[prop] = cur;
     } else if (Array.isArray(cur)) {
+      if ((prop === 'collaborations_partnership' && R.isEmpty(cur))
+          || (prop === 'experiences' && R.isEmpty(cur))) {
+        cur.push({});
+      }
+
       result[prop] = cur;
     } else {
       let isEmpty = true;
