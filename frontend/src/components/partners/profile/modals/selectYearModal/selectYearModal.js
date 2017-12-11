@@ -67,7 +67,11 @@ class SelectYearModal extends Component {
 
   handleSelect() {
     const { input } = this.props;
-    input.onChange(this.state.selected);
+    
+    if (this.state.selected) {
+      input.onChange(this.state.selected);
+    }
+
     this.setState({ showModal: false });
   }
 
@@ -92,21 +96,21 @@ class SelectYearModal extends Component {
 
     const currYear = this.state.selected ? this.state.selected : input.value;
 
-    const currentYear = new Date().getFullYear() + 1;
+    const currentYear = new Date().getFullYear();
     const years = [];
 
     for (let i = 0; i < currentYear - 1900; i += 1) {
       years.push(
         <div ref={(field) => {
-          if (1900 + i === currYear) {
+          if ((currentYear - i) === currYear) {
             this.refItem = field;
           }
         }}
         >
           <Button className={classes.year} onClick={this.selectYear}>
-            {currYear === (1900 + i)
-              ? <Typography type="headline" color="accent">{1900 + i}</Typography>
-              : <Typography type="subheading">{1900 + i}</Typography>}
+            {currYear === (currentYear - i)
+              ? <Typography type="headline" color="accent">{currentYear - i}</Typography>
+              : <Typography type="subheading">{currentYear - i}</Typography>}
           </Button>
         </div>);
     }

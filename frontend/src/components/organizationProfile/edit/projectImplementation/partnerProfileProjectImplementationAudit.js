@@ -58,9 +58,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
             fieldName="org_audits"
             label={messages.organizationUndergoes}
             values={auditTypes}
-            selectFieldProps={{
-              multiple: true,
-            }}
+            multiple
             warn
             readOnly={readOnly}
           />
@@ -122,9 +120,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               fieldName="assessments"
               label={messages.indicateAssessments}
               values={capacityAssessments}
-              selectFieldProps={{
-                multiple: true,
-              }}
+              multiple
               warn
               readOnly={readOnly}
             />

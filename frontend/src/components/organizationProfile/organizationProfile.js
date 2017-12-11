@@ -27,19 +27,23 @@ class OrganizationProfile extends Component {
     const { countryProfiles, hqProfile, loading, createLoading } = this.props;
 
     return (
-      <div>
-        <HeaderNavigation title={messages.header} />
+      <HeaderNavigation title={messages.header}>
         <MainContentWrapper>
-          <GridColumn spacing={40}>
-            <Paper>
-              <OrganizationItem profileId={hqProfile.id} users={hqProfile.users} update={formatDateForPrint(hqProfile.modified)} />
-            </Paper>
-            <CountryOfficesList profiles={countryProfiles} />
-
-          </GridColumn>
+          <Loader loading={loading || createLoading} fullscreen >
+            <GridColumn spacing={40}>
+              <Paper>
+                <OrganizationItem
+                  profileId={hqProfile.id}
+                  users={hqProfile.users}
+                  update={formatDateForPrint(hqProfile.modified)}
+                />
+              </Paper>
+              <CountryOfficesList profiles={countryProfiles} />
+            </GridColumn>
+          </Loader>
         </MainContentWrapper>
-        <Loader loading={loading || createLoading} fullscreen />
-      </div>
+
+      </HeaderNavigation>
     );
   }
 }

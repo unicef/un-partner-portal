@@ -21,7 +21,6 @@ const messages = {
 
 const flags = (displayMenu, flagItems = {}) => (
   <PaddedContent>
-    <GridColumn />
     <SpreadContent>
       <FlaggingStatus flags={flagItems} noFlagText />
       {(flagItems.yellow > 0 || flagItems.red > 0)
