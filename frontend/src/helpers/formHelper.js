@@ -15,7 +15,7 @@ import DatePicker from 'material-ui-old/DatePicker';
 import Typography from 'material-ui/Typography';
 import RadioGroupRow from '../components/common/radio/radioGroupRow';
 import RadioHeight from '../components/common/radio/radioHeight';
-import { formatDateForPrint } from './dates';
+import { formatDateForPrint, formatDateForDatePicker } from './dates';
 import { numerical, validateReviewScores } from '../helpers/validation';
 import {
   renderInput,
@@ -295,18 +295,32 @@ export const renderNumberField = ({
 };
 
 export const renderDatePicker = ({
-  input,
+  input: { value, onChange, ...inputOther },
   meta: { touched, error, warning },
   ...other
-}) => (
+}) => {
+  const datePickerProps = {};
+
+  if (!value) {
+    // noop
+  } else if (typeof value === 'object' && value.valueOf()) {
+    datePickerProps.value = value;
+  } else if (typeof value === 'string' && value !== 'Invalid date') {
+    datePickerProps.value = formatDateForDatePicker(value);
+  }
+
+  return (
   <div>
     <DatePicker
       errorText={(touched && error) || warning}
-      {...input}
-      onChange={(event, value) => input.onChange(value)}
+      {...datePickerProps}
+      {...inputOther}
+      onChange={(event, val) => onChange(val)}
       {...other}
     />
-  </div>);
+  </div>
+  );
+};
 
 export const renderText = ({
   className,

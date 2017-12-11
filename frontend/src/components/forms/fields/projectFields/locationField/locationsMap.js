@@ -46,14 +46,14 @@ class LocationsMapBase extends Component {
     this.removeMarker = this.removeMarker.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { currentCountry } = this.props;
     if (currentCountry) {
       this.initMap(currentCountry);
     }
   }
 
-  componentWillUpdate(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { currentCountry } = this.props;
     const nextCountry = nextProps.currentCountry;
 
@@ -133,16 +133,18 @@ class LocationsMapBase extends Component {
 
   renderMarkers() {
     const { locations } = this.props;
-    return locations.map((location, index) => (
+
+    return locations.map(({ lat, lon, admin_level_1 } , index) => (
       <Marker
-        label={index}
+        key={`${lat}_${lon}`}
+        label=""
         index={index}
-        location={location.admin_level_1.name}
+        location={admin_level_1.name}
         onClick={this.onMarkerClick}
         onDblclick={this.removeMarker}
-        position={{ lat: location.lat, lng: location.lon }}
-      />),
-    );
+        position={{ lat: lat, lng: lon }}
+      />
+    ));
   }
 
   render() {

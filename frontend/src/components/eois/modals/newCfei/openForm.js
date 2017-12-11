@@ -19,13 +19,12 @@ const OpenForm = (props) => {
       <GridColumn>
         <ProjectDetails
           formName="newOpenCfei"
-          dateFields={[
-            <fields.DeadlineDate />,
-            <fields.NotifyDate minDate={deadline_date} />,
-            <fields.StartDate minDate={notif_results_date} />,
-            <fields.EndDate minDate={start_date} />,
-          ]}
-        />
+        >
+          <fields.DeadlineDate />
+          <fields.NotifyDate minDate={deadline_date} />
+          <fields.StartDate minDate={notif_results_date} />
+          <fields.EndDate minDate={start_date} />
+        </ProjectDetails>
         <Typography type="headline">
           {messages.selectionCriteria}
         </Typography>

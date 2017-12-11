@@ -6,7 +6,7 @@ import { FormControl, FormLabel } from 'material-ui/Form';
 import moment from 'moment';
 import { renderDatePicker, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
-import { normalizeDate, formatDateForPrint, formatDateForDatePicker } from '../../helpers/dates';
+import { normalizeDate, formatDateForPrint } from '../../helpers/dates';
 
 class DatePickerForm extends Component {
   constructor(props) {
@@ -49,10 +49,6 @@ class DatePickerForm extends Component {
               validate={(optional ? (validation || []) : [required].concat(validation || []))}
               hintText={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
               warn={warn && warning}
-              format={(value) => {
-                if (value && value !== 'Invalid date') return formatDateForDatePicker(value);
-                return value;
-              }}
               formatDate={formatDateForPrint}
               normalize={normalizeDate}
               textFieldStyle={{

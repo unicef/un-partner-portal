@@ -23,6 +23,7 @@ const MapContainer = (props) => {
           stylers: [{ visibility: 'off' }],
         },
       ]}
+      clickableIcons={false}
     >
       {children}
     </Map>
