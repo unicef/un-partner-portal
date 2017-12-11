@@ -138,7 +138,7 @@ CfeiHeader.propTypes = {
   loadProjectApplication: PropTypes.func,
   uploadCnClearState: PropTypes.func.isRequired,
   error: PropTypes.object,
-  cnFile: PropTypes.string,
+  cnFile: PropTypes.bool,
   type: PropTypes.string,
   loadUCN: PropTypes.func,
 };

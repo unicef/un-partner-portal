@@ -15,9 +15,9 @@ const title = () => (
 );
 
 const renderRow = (partners) => {
-  return partners.map(partner => (
-    <PaddedContent>
-      <Typography type="subheading">{partner.legal_name}</Typography>
+  return partners.map(({ id, legal_name }) => (
+    <PaddedContent key={id}>
+      <Typography type="subheading">{legal_name}</Typography>
     </PaddedContent>
   ));
 };

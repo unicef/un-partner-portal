@@ -37,9 +37,9 @@ const CustomTab = (props) => {
         || (checked && <CheckCircle className={classes.checked} />)
         || null
       }
-      classes={(warn || checked) && {
+      classes={(warn || checked) ? {
         wrapper: classes.label,
-      }}
+      } : {}}
       {...tabProps}
     />
   );

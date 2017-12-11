@@ -17,7 +17,7 @@ const title = () => (
 );
 
 const renderRow = (criterias, allCriteria) => {
-  return criterias.map(selection => (<PaddedContent>
+  return criterias.map(selection => (<PaddedContent key={selection.selection_criteria}>
     <Typography type="subheading">{allCriteria[selection.selection_criteria]}</Typography>
     <Typography type="caption">{selection.description} </Typography>
     {selection.weight && <Typography
