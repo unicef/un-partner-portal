@@ -19,7 +19,7 @@ const fields = partnerId => (
 const summaryHeader = menuVisible => (
   <Grid container alignItems="center" direction="row">
     <Grid item xs={10}>
-      <Typography type="title" >{messages.verificationStatus}</Typography>
+      <Typography type="title">{messages.verificationStatus}</Typography>
     </Grid>
     <Grid item xs={2}>
       {menuVisible && <PartnerOverviewVerificationMenu />}

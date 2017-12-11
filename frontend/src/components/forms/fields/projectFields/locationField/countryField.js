@@ -12,7 +12,8 @@ import SpreadContent from '../../../../common/spreadContent';
 const COUNTRY = 'Country';
 
 const CountryField = (props) => {
-  const { fieldName,
+  const {
+    fieldName,
     label,
     suggestionsPool,
     countries,
@@ -21,7 +22,12 @@ const CountryField = (props) => {
     infoText,
     initial,
     initialMultiValues,
-    ...other } = props;
+    ...other
+  } = props;
+
+  if (!fieldName) {
+    return null;
+  }
 
   return readOnly ? (
     <SelectForm

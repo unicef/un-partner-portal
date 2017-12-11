@@ -42,7 +42,7 @@ const labels = {
 const fields = (partner, button) => (
   <PaddedContent>
     <ItemRowCellDivider label={labels.partnerName} content={R.prop('name', partner)} />
-    <ItemRowCellDivider label={labels.partnerId} content={R.prop('partnerId', partner)} />
+    <ItemRowCellDivider label={labels.partnerId} content={`${R.prop('partnerId', partner)}`} />
     <ItemRowCellDivider label={labels.type} content={R.prop('organisationType', partner)} />
     <ItemRowCellDivider label={labels.country} content={R.prop('operationCountry', partner)} />
     <ItemRowCellDivider label={labels.location} content={R.prop('location', partner)} />

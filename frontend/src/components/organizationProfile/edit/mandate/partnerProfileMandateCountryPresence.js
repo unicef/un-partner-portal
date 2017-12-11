@@ -20,9 +20,10 @@ const messages = {
 
 const PartnerProfileMandateCountryPresence = (props) => {
   const { readOnly, isCountryProfile, countries, profileId, staffGlobally } = props;
+
   return (
     <FormSection name="country_presence">
-      <GridColumn removeNullChildren>
+      <GridColumn>
         {!isCountryProfile
           ? <CountryField
             fieldName="country_presence"
@@ -82,9 +83,9 @@ const PartnerProfileMandateCountryPresence = (props) => {
 
 PartnerProfileMandateCountryPresence.propTypes = {
   readOnly: PropTypes.bool,
-  isCountryProfile: PropTypes.object.isRequired,
+  isCountryProfile: PropTypes.bool.isRequired,
   profileId: PropTypes.string,
-  countries: PropTypes.array.isRequired,
+  countries: PropTypes.array,
   staffGlobally: PropTypes.array.isRequired,
 };
 

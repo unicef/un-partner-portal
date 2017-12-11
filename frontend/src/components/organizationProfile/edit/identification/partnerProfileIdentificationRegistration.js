@@ -30,7 +30,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
 
   return (
     <FormSection name="registration">
-      <Grid container direction="column" gutter={16}>
+      <Grid container direction="column">
         <Grid item>
           <Grid container direction="row">
             <Grid item sm={4} xs={12}>
@@ -127,7 +127,7 @@ PartnerProfileIdentificationRegistration.propTypes = {
   isRegistered: PropTypes.bool,
   readOnly: PropTypes.bool,
   hasGovDoc: PropTypes.bool,
-  isCountryProfile: PropTypes.object.isRequired,
+  isCountryProfile: PropTypes.bool.isRequired,
 };
 
 const selector = formValueSelector('partnerProfile');

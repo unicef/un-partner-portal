@@ -130,7 +130,7 @@ CollapsableItem.propTypes = {
   title: PropTypes.string.isRequired,
   expanded: PropTypes.bool,
   warning: PropTypes.bool,
-  component: PropTypes.component,
+  component: PropTypes.element,
   handleEditMode: PropTypes.func.isRequired,
 };
 

@@ -126,7 +126,7 @@ class PartnerProfileProjectImplementation extends Component {
 
 PartnerProfileProjectImplementation.propTypes = {
   readOnly: PropTypes.bool,
-  isCountryProfile: PropTypes.object.isRequired,
+  isCountryProfile: PropTypes.object,
   partnerId: PropTypes.string,
   updateTab: PropTypes.func,
   initialValues: PropTypes.object,
@@ -140,7 +140,7 @@ const mapState = (state, ownProps) => {
     || state.agencyPartnersList.data.partners);
 
   return {
-    isCountryProfile: partner ? partner.is_hq : false,
+    isCountryProfile: partner ? partner.is_hq : undefined,
     partnerId: ownProps.params.id,
     tabs: state.partnerProfileDetailsNav.tabs,
     initialValues: getFormInitialValues('partnerProfile')(state),

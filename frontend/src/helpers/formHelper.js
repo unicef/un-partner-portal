@@ -310,6 +310,7 @@ export const renderBool = ({
   values,
   optional,
   label,
+  meta,
   ...other
 }) => {
   let value = 'No';
