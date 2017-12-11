@@ -105,7 +105,7 @@ class Partner(TimeStampedModel):
         if not self.verifications.exists():
             return None
         else:
-            return self.verifications.filter(is_verified=True).exists()
+            return self.verifications.order_by("-created").first().is_verified
 
     @property
     def has_sanction_match(self):
