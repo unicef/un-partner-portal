@@ -149,9 +149,9 @@ const mapStateToProps = (state, ownProps) => ({
   role: state.session.role,
   title: selectCfeiTitle(state, ownProps.params.id),
   type: ownProps.params.type,
-  loading: state.cfeiDetails.cfeiDetailsStatus.loading,
+  loading: state.cfeiDetails.status.loading,
   cnFile: state.conceptNote.cnFile,
-  error: state.cfeiDetails.cfeiDetailsStatus.error,
+  error: state.cfeiDetails.status.error,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

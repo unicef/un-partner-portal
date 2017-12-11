@@ -13,6 +13,7 @@ from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (CommonFileSerializer,
                                 SpecializationSerializer,
                                 MixinPartnerRelatedSerializer,
+                                MixinPreventManyCommonFile,
                                 PointSerializer)
 from .models import (
     Partner,
@@ -408,7 +409,7 @@ class PartnersListSerializer(serializers.ModelSerializer):
             values_list("agency__name", flat=True).distinct()
 
 
-class PartnerIdentificationSerializer(serializers.ModelSerializer):
+class PartnerIdentificationSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
@@ -443,9 +444,13 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
             'has_finished',
         )
 
+    prevent_keys = ['gov_doc', 'registration_doc']
+
     @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
+
+        self.prevent_many_common_file_validator(self.initial_data)
 
         instance.partner.legal_name = validated_data.get('partner', {}).get('legal_name', instance.partner.legal_name)
         instance.partner.save()
@@ -676,7 +681,8 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
 
-class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
+class PartnerProfileProjectImplementationSerializer(
+        MixinPreventManyCommonFile, MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
     have_management_approach = serializers.BooleanField(
         source="profile.have_management_approach")
@@ -778,15 +784,20 @@ class PartnerProfileProjectImplementationSerializer(MixinPartnerRelatedSerialize
         "internal_controls", "area_policies",
     ]
 
+    prevent_keys = ["report", "assessment_report", "most_recent_audit_report"]
+
     @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
 
+        self.prevent_many_common_file_validator(self.initial_data)
+
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
 
-class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
+class PartnerProfileOtherInfoSerializer(
+        MixinPreventManyCommonFile, MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
     info_to_share = serializers.CharField(source="other_info.info_to_share", required=False,
                                           allow_blank=True)
@@ -815,9 +826,14 @@ class PartnerProfileOtherInfoSerializer(MixinPartnerRelatedSerializer, serialize
         "other_info",
     ]
 
+    prevent_keys = ["other_doc_1", "other_doc_2", "other_doc_3", 'org_logo']
+
     @transaction.atomic
     def update(self, instance, validated_data):
         # std method does not support writable nested fields by default
+
+        self.prevent_many_common_file_validator(self.initial_data)
+
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models

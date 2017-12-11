@@ -1,5 +1,6 @@
 import R from 'ramda';
 import { browserHistory as history } from 'react-router';
+import { SubmissionError } from 'redux-form';
 import { postOpenCfei, postDirectCfei, patchCfei, postUnsolicitedCN, patchPinnedCfei } from '../helpers/api/api';
 import { mergeListsFromObjectArray } from './normalizationHelpers';
 import { loadCfei } from './cfei';
@@ -7,19 +8,14 @@ import { loadCfeiDetailSuccess } from './cfeiDetailsStatus';
 import * as cfeiDetails from './cfeiDetails';
 import { PROJECT_TYPES } from '../helpers/constants';
 import { loadApplicationsUcn } from './applicationsUnsolicitedList';
+import { errorToBeAdded } from './errorReducer';
 
+const errorMsg = 'Unable to update project';
 
 export const NEW_CFEI_SUBMITTING = 'NEW_CFEI_SUBMITTING';
 export const NEW_CFEI_SUBMITTED = 'NEW_CFEI_SUBMITTED';
 export const NEW_CFEI_PROCESSED = 'NEW_CFEI_PROCESSED';
 export const NEW_CFEI_PROCESSING = 'NEW_CFEI_PROCESSING';
-export const NEW_CFEI_FAILURE = 'NEW_CFEI_FAILURE';
-
-
-const messages = {
-  postOpenFailure: 'Unfortunately, couldn\'t create new Cfei',
-};
-
 
 const initialState = {
   openCfeiSubmitting: false,
@@ -31,7 +27,6 @@ export const newCfeiSubmitting = () => ({ type: NEW_CFEI_SUBMITTING });
 export const newCfeiSubmitted = () => ({ type: NEW_CFEI_SUBMITTED });
 export const newCfeiProcessing = () => ({ type: NEW_CFEI_PROCESSING });
 export const newCfeiProcessed = () => ({ type: NEW_CFEI_PROCESSED });
-export const newCfeiFailure = () => ({ type: NEW_CFEI_FAILURE });
 
 const prepareBody = (body) => {
   let newBody = R.clone(body);
@@ -62,7 +57,7 @@ export const addOpenCfei = body => (dispatch, getState) => {
     })
     .catch((error) => {
       dispatch(newCfeiSubmitted());
-      dispatch(newCfeiFailure(error));
+      throw error;
     });
 };
 
@@ -82,12 +77,7 @@ export const addDirectCfei = body => (dispatch, getState) => {
   const params = history.getCurrentLocation().query;
   return postDirectCfei(finalBody)
     .then(() => {
-      dispatch(newCfeiSubmitted());
       dispatch(loadCfei(PROJECT_TYPES.DIRECT, params));
-    })
-    .catch((error) => {
-      dispatch(newCfeiSubmitted());
-      dispatch(newCfeiFailure(error));
     });
 };
 
@@ -99,23 +89,19 @@ export const addUnsolicitedCN = body => (dispatch) => {
     .then(() => {
       dispatch(newCfeiSubmitted());
       dispatch(loadApplicationsUcn(params));
-    })
-    .catch((error) => {
-      dispatch(newCfeiSubmitted());
-      dispatch(newCfeiFailure(error));
     });
 };
 
 export const updateCfei = (body, id) => (dispatch) => {
-  dispatch(newCfeiSubmitting());
   return patchCfei(body, id)
     .then((cfei) => {
-      dispatch(newCfeiSubmitted());
       dispatch(loadCfeiDetailSuccess(cfei));
-    })
-    .catch((error) => {
-      dispatch(newCfeiSubmitted());
-      dispatch(newCfeiFailure(error));
+    }).catch((error) => {
+      dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
+      throw new SubmissionError({
+        ...error.response.data,
+        _error: errorMsg,
+      });
     });
 };
 
@@ -126,9 +112,8 @@ export const changePinStatusCfei = (id, isPinned) => dispatch =>
   })
     .then(() => {
       dispatch(cfeiDetails.loadCfei(id));
-    })
-    .catch((error) => {
-      dispatch(newCfeiFailure(error));
+    }).catch((error) => {
+      dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
     });
 
 
@@ -136,13 +121,6 @@ const startSubmitting = state => R.assoc('error', {}, R.assoc('openCfeiSubmittin
 const stopSubmitting = state => R.assoc('openCfeiSubmitting', false, state);
 const startProcessing = state => R.assoc('openCfeiProcessing', true, state);
 const stopProcessing = state => R.assoc('openCfeiProcessing', false, state);
-const saveErrorMsg = (state, action) => R.assoc(
-  'error',
-  {
-    message: messages.postOpenFailure,
-    error: action.error && action.error.message,
-  },
-  state);
 
 export default function CfeiReducer(state = initialState, action) {
   switch (action.type) {
@@ -157,9 +135,6 @@ export default function CfeiReducer(state = initialState, action) {
     }
     case NEW_CFEI_PROCESSED: {
       return stopProcessing(state);
-    }
-    case NEW_CFEI_FAILURE: {
-      return saveErrorMsg(state, action);
     }
     default:
       return state;

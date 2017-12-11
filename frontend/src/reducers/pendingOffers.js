@@ -1,11 +1,6 @@
 import { combineReducers } from 'redux';
-import PendingOffersStatus, {
-  loadPendingOffersStarted,
-  loadPendingOffersEnded,
-  loadPendingOffersSuccess,
-  loadPendingOffersFailure,
-  LOAD_PENDING_OFFERS_SUCCESS,
-} from './pendingOffersStatus';
+import { sendRequest } from '../helpers/apiHelper';
+import apiMeta, { success } from './apiMeta';
 import { normalizeSingleCfei } from './cfei';
 
 import { getPendingOffers } from '../helpers/api/api';
@@ -15,29 +10,32 @@ const initialState = {
   count: 0,
 };
 
-export const loadPendingOffers = params => (dispatch) => {
-  dispatch(loadPendingOffersStarted());
-  return getPendingOffers(params)
-    .then(({ results, count }) => {
-      dispatch(loadPendingOffersEnded());
-      dispatch(loadPendingOffersSuccess(results, count));
-      return results;
-    })
-    .catch((error) => {
-      dispatch(loadPendingOffersEnded());
-      dispatch(loadPendingOffersFailure(error));
-    });
-};
+const errorMsg = 'Couldn\'t load pending offers, ' +
+  'please refresh page and try again';
+
+const PENDING_OFFERS = 'PENDING_OFFERS';
+const tag = 'pendingOffers';
+
+export const loadPendingOffers = params => sendRequest({
+  loadFunction: getPendingOffers,
+  meta: {
+    reducerTag: tag,
+    actionTag: PENDING_OFFERS,
+    isPaginated: true,
+  },
+  errorHandling: { userMessage: errorMsg },
+  apiParams: [params],
+});
 
 export const savePendingOffers = (action) => {
-  const { offers, count } = action;
-  const newPendingOffers = offers.map(normalizeSingleCfei);
+  const { results, count } = action;
+  const newPendingOffers = results.map(normalizeSingleCfei);
   return { pendingOffers: newPendingOffers, count };
 };
 
 const PendingOffers = (state = initialState, action) => {
   switch (action.type) {
-    case LOAD_PENDING_OFFERS_SUCCESS: {
+    case success`${PENDING_OFFERS}`: {
       return savePendingOffers(action);
     }
     default:
@@ -45,4 +43,4 @@ const PendingOffers = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ data: PendingOffers, status: PendingOffersStatus });
+export default combineReducers({ data: PendingOffers, status: apiMeta(PENDING_OFFERS) });

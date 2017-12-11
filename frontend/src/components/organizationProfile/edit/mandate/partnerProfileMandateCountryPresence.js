@@ -72,6 +72,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
                 maxLength: '5000',
               },
             }}
+            warn
             readOnly={readOnly}
           />
           : null}
@@ -91,7 +92,8 @@ PartnerProfileMandateCountryPresence.propTypes = {
 const selector = formValueSelector('partnerProfile');
 
 const connected = connect((state, ownProps) => {
-  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
+    || state.agencyPartnersList.data.partners);
   return {
     countries: selector(state, 'mandate_mission.country_presence.country_presence'),
     isCountryProfile: partner ? !partner.is_hq : false,

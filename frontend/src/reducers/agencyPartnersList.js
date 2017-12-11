@@ -1,30 +1,17 @@
 import R from 'ramda';
+import { combineReducers } from 'redux';
 import { getPartnersList } from '../helpers/api/api';
-import {
-  clearError,
-  startLoading,
-  stopLoading,
-  saveErrorMsg,
-} from './apiStatus';
-
-export const PARTNERS_LOAD_STARTED = 'PARTNERS_LOAD_STARTED';
-export const PARTNERS_LOAD_SUCCESS = 'PARTNERS_LOAD_SUCCESS';
-export const PARTNERS_LOAD_FAILURE = 'PARTNERS_LOAD_FAILURE';
-export const PARTNERS_LOAD_ENDED = 'PARTNERS_LOAD_ENDED';
-
-export const partnersLoadStarted = () => ({ type: PARTNERS_LOAD_STARTED });
-export const partnersLoadSuccess = response => ({ type: PARTNERS_LOAD_SUCCESS, response });
-export const partnersLoadFailure = error => ({ type: PARTNERS_LOAD_FAILURE, error });
-export const partnersLoadEnded = () => ({ type: PARTNERS_LOAD_ENDED });
+import { sendRequest } from '../helpers/apiHelper';
+import apiMeta, { success } from './apiMeta';
 
 const savePartners = (state, action) => {
-  const partners = R.assoc('partners', action.response.results, state);
-  return R.assoc('totalCount', action.response.count, partners);
+  const partners = R.assoc('partners', action.results, state);
+  return R.assoc('totalCount', action.count, partners);
 };
 
-const messages = {
-  loadFailed: 'Load partners failed.',
-};
+const errorMsg = 'Load partners failed.';
+const AGENCY_PARTNERS_LIST = 'AGENCY_PARTNERS_LIST';
+const tag = 'agencyPartnersList';
 
 const initialState = {
   columns: [
@@ -34,39 +21,30 @@ const initialState = {
     { name: 'country_code', title: 'Country' },
     { name: 'experience_working', title: 'Experience working with UN' },
   ],
-  loading: false,
-  totalCount: 0,
   partners: [],
+  totalCount: 0,
 };
 
-export const loadPartnersList = params => (dispatch) => {
-  dispatch(partnersLoadStarted());
-  return getPartnersList(params)
-    .then((cfei) => {
-      dispatch(partnersLoadEnded());
-      dispatch(partnersLoadSuccess(cfei));
-    })
-    .catch((error) => {
-      dispatch(partnersLoadEnded());
-      dispatch(partnersLoadFailure(error));
-    });
-};
+export const loadPartnersList = params => sendRequest({
+  loadFunction: getPartnersList,
+  meta: {
+    reducerTag: tag,
+    actionTag: AGENCY_PARTNERS_LIST,
+    isPaginated: true,
+  },
+  errorHandling: { userMessage: errorMsg },
+  apiParams: [params],
+});
 
-export default function agencyPartnersListReducer(state = initialState, action) {
+function agencyPartnersListReducer(state = initialState, action) {
   switch (action.type) {
-    case PARTNERS_LOAD_FAILURE: {
-      return saveErrorMsg(state, action, messages.loadFailed);
-    }
-    case PARTNERS_LOAD_ENDED: {
-      return stopLoading(state);
-    }
-    case PARTNERS_LOAD_STARTED: {
-      return startLoading(clearError(state));
-    }
-    case PARTNERS_LOAD_SUCCESS: {
+    case success`${AGENCY_PARTNERS_LIST}`: {
       return savePartners(state, action);
     }
     default:
       return state;
   }
 }
+
+export default combineReducers({ data: agencyPartnersListReducer,
+  status: apiMeta(AGENCY_PARTNERS_LIST) });

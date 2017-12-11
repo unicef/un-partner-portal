@@ -1,10 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classname from 'classnames';
-
 import VerifiedUser from 'material-ui-icons/VerifiedUser';
-
-
 import { withStyles } from 'material-ui/styles';
 
 

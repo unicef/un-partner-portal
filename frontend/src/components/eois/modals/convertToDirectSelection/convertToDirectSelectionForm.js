@@ -34,9 +34,7 @@ const ConvertToDirectSelectionForm = (props) => {
           fieldName="ds_justification_select"
           label={messages.justificationFor}
           values={directJustifications}
-          selectFieldProps={{
-            multiple: true,
-          }}
+          multiple
           optional
         />
         <TextFieldForm
