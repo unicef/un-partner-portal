@@ -1,4 +1,5 @@
 import R from 'ramda';
+import { change } from 'redux-form';
 import {
   clearError,
   startLoading,
@@ -6,11 +7,13 @@ import {
   saveErrorMsg,
 } from './apiStatus';
 import { uploadConceptNote, deleteConceptNote, getProjectApplication } from '../helpers/api/api';
-import { loadPartnerApplication } from './partnerApplicationDetails';
+import { loadPartnerApplication, deleteApplication } from './partnerApplicationDetails';
+import { uploadClearFile } from './commonFileUpload';
 
 export const UPLOAD_CN_STARTED = 'UPLOAD_CN_STARTED';
 export const UPLOAD_CN_SUCCESS = 'UPLOAD_CN_SUCCESS';
 export const UPLOAD_CN_FAILURE = 'UPLOAD_CN_FAILURE';
+export const DELETE_CN_FAILURE = 'DELETE_CN_FAILURE';
 export const UPLOAD_CN_ENDED = 'UPLOAD_CN_ENDED';
 export const UPLOAD_CN_DELETED = 'UPLOAD_CN_DELETED';
 export const UPLOAD_CN_CONFIRM = 'UPLOAD_CN_CONFIRM';
@@ -21,6 +24,7 @@ export const UPLOAD_CN_LOCAL_FILE = 'UPLOAD_CN_LOCAL_FILE';
 export const uploadCnStarted = () => ({ type: UPLOAD_CN_STARTED });
 export const uploadCnSuccess = response => ({ type: UPLOAD_CN_SUCCESS, response });
 export const uploadCnFailure = error => ({ type: UPLOAD_CN_FAILURE, error });
+export const deleteCnFailure = error => ({ type: DELETE_CN_FAILURE, error });
 export const uploadCnEnded = () => ({ type: UPLOAD_CN_ENDED });
 export const uploadCnclearError = () => ({ type: UPLOAD_CN_CLEAR_ERROR });
 export const deletedCn = () => ({ type: UPLOAD_CN_DELETED });
@@ -57,21 +61,25 @@ export const projectApplicationExists = partnerId => (dispatch) => {
     });
 };
 
-export const deleteUploadedCn = projectId => (dispatch) => {
+export const deleteUploadedCn = (projectId, applicationId) => (dispatch) => {
   dispatch(uploadCnStarted());
-  return deleteConceptNote(projectId)
+  return deleteConceptNote(applicationId)
     .then((response) => {
       dispatch(uploadCnEnded());
-      projectApplicationExists(projectId);
+      dispatch(clearLocalState());
+      dispatch(uploadClearFile('cn'));
+      dispatch(deleteApplication(applicationId));
+      dispatch(change('CNSubmission', 'cn', null));
     })
     .catch((error) => {
-      dispatch(uploadCnFailure(error));
+      dispatch(deleteCnFailure(error));
       dispatch(uploadCnEnded());
     });
 };
 
 const messages = {
   uploadFailed: 'Uploaded concept note failed, please try again.',
+  deleteFailed: 'Delete concept note failed, please try again.',
 };
 
 const initialState = {
@@ -102,6 +110,9 @@ export default function conceptNoteReducer(state = initialState, action) {
   switch (action.type) {
     case UPLOAD_CN_FAILURE: {
       return saveErrorMsg(state, action, messages.uploadFailed);
+    }
+    case DELETE_CN_FAILURE: {
+      return saveErrorMsg(state, action, messages.deleteFailed);
     }
     case UPLOAD_CN_ENDED: {
       return stopLoading(state);

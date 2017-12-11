@@ -47,7 +47,8 @@ class CfeiSubmission extends Component {
 
   handleDeleteAccept() {
     this.setState({ open: false });
-    this.props.deleteCn(this.props.applicationId);
+    this.props.deleteCn(this.props.projectId, this.props.applicationId);
+    this.conceptForm.clearState();
   }
 
   titleHeader(cnUploaded) {
@@ -90,7 +91,7 @@ class CfeiSubmission extends Component {
       <div>
         <HeaderList
           header={this.titleHeader(cnUploaded)}
-          rows={[<ConceptNoteSubmission />]}
+          rows={[<ConceptNoteSubmission onRef={(ref) => { this.conceptForm = ref; }} />]}
         />
         <ControlledModal
           maxWidth="md"
@@ -117,15 +118,17 @@ class CfeiSubmission extends Component {
 
 CfeiSubmission.propTypes = {
   partnerId: PropTypes.string,
+  projectId: PropTypes.string,
   applicationId: PropTypes.string,
   cnUploaded: PropTypes.object,
   deleteCn: PropTypes.func.isRequired,
-  clearFile: PropTypes.func,
+  dispatch: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   partnerId: state.session.partnerId,
-  applicationId: ownProps.params.id,
+  projectId: ownProps.params.id,
+  applicationId: state.partnerAppDetails[ownProps.params.id] ? state.partnerAppDetails[ownProps.params.id].id : null,
   loader: state.conceptNote.loading,
   cnUploaded: state.conceptNote.cnFile,
   isHq: state.session.isHq,
@@ -133,7 +136,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatch = dispatch => ({
-  deleteCn: projectId => dispatch(deleteUploadedCn(projectId)),
+  deleteCn: (projectId, applicationId) => dispatch(deleteUploadedCn(projectId, applicationId)),
 });
 
 const connectedCfeiSubmission = connect(mapStateToProps, mapDispatch)(CfeiSubmission);
