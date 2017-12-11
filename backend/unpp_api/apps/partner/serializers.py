@@ -715,7 +715,7 @@ class PartnerProfileProjectImplementationSerializer(
     have_separate_bank_account = serializers.BooleanField(
         source="profile.have_separate_bank_account")
     explain = serializers.CharField(
-        source="profile.explain")
+        source="profile.explain", allow_blank=True, allow_null=True)
 
     regular_audited = serializers.BooleanField(source="audit.regular_audited")
     regular_audited_comment = serializers.CharField(

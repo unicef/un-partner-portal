@@ -1,4 +1,3 @@
-import R from 'ramda';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
@@ -16,8 +15,8 @@ import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
 import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
 
-const STEPS = (readOnly, isCountryProfile) => {
-  const hqSteps = [{
+const STEPS = readOnly => [
+  {
     component: <PartnerProfileProjectImplementationManagement readOnly={readOnly} />,
     label: 'Programme Management',
     name: 'program_management',
@@ -46,14 +45,8 @@ const STEPS = (readOnly, isCountryProfile) => {
     component: <PartnerProfileProjectImplementationReporting readOnly={readOnly} />,
     label: 'Reporting',
     name: 'report',
-  }];
-
-  if (!isCountryProfile) {
-    return R.remove(3, 1, hqSteps);
-  }
-
-  return hqSteps;
-};
+  },
+];
 
 
 class PartnerProfileProjectImplementation extends Component {
@@ -109,7 +102,7 @@ class PartnerProfileProjectImplementation extends Component {
   }
 
   render() {
-    const { readOnly, isCountryProfile } = this.props;
+    const { readOnly } = this.props;
 
     return (
       <PartnerProfileStepperContainer
@@ -118,7 +111,7 @@ class PartnerProfileProjectImplementation extends Component {
         handleNext={this.handleNext}
         handleExit={this.handleExit}
         onSubmit={this.handleSubmit}
-        steps={STEPS(readOnly, isCountryProfile)}
+        steps={STEPS(readOnly)}
       />
     );
   }
@@ -126,7 +119,6 @@ class PartnerProfileProjectImplementation extends Component {
 
 PartnerProfileProjectImplementation.propTypes = {
   readOnly: PropTypes.bool,
-  isCountryProfile: PropTypes.object.isRequired,
   partnerId: PropTypes.string,
   updateTab: PropTypes.func,
   initialValues: PropTypes.object,
@@ -135,17 +127,11 @@ PartnerProfileProjectImplementation.propTypes = {
   tabs: PropTypes.array,
 };
 
-const mapState = (state, ownProps) => {
-  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
-    || state.agencyPartnersList.data.partners);
-
-  return {
-    isCountryProfile: partner ? partner.is_hq : false,
-    partnerId: ownProps.params.id,
-    tabs: state.partnerProfileDetailsNav.tabs,
-    initialValues: getFormInitialValues('partnerProfile')(state),
-  };
-};
+const mapState = (state, ownProps) => ({
+  partnerId: ownProps.params.id,
+  tabs: state.partnerProfileDetailsNav.tabs,
+  initialValues: getFormInitialValues('partnerProfile')(state),
+});
 
 const mapDispatch = dispatch => ({
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),

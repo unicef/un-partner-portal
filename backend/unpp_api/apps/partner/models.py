@@ -345,10 +345,9 @@ class PartnerProfile(TimeStampedModel):
             'experienced_staff_desc': self.experienced_staff_desc if self.experienced_staff else True,
             'area_policies': self.partner.area_policies.filter(document_policies__isnull=True).exists() is False,
 
-            # partner academy does not contain those fields as is completed
-            # 'have_bank_account': self.have_bank_account is not None,
-            # 'have_separate_bank_account': self.have_separate_bank_account is not None,
-            # 'explain': self.explain if self.have_separate_bank_account is False else True,
+            'have_bank_account': self.have_bank_account is not None,
+            'have_separate_bank_account': self.have_separate_bank_account is not None,
+            'explain': self.explain if self.have_separate_bank_account is False else True,
 
             'most_recent_audit_report': self.partner.audit.most_recent_audit_report or self.partner.audit.link_report,
             'regular_audited': self.partner.audit.regular_audited is not None,
