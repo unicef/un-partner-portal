@@ -200,6 +200,10 @@ class PartnerProfile(TimeStampedModel):
     partnership_collaborate_institution = models.NullBooleanField()
     partnership_collaborate_institution_desc = models.CharField(max_length=200, null=True, blank=True)
 
+    any_partnered_with_un = models.NullBooleanField()
+    any_accreditation = models.NullBooleanField()
+    any_reference = models.NullBooleanField()
+
     # Banking Information
     have_bank_account = models.NullBooleanField(
         verbose_name="Does the organization have a bank account?")
@@ -318,11 +322,26 @@ class PartnerProfile(TimeStampedModel):
     @property
     def collaboration_complete(self):
         required_fields = {
+            'any_partnered_with_un': self.any_partnered_with_un is not None,
             'collaborations_partnership': self.partner.collaborations_partnership.exists(),
             'partnership_collaborate_institution': self.partnership_collaborate_institution is not None,
             'partnership_collaborate_institution_desc':
                 self.partnership_collaborate_institution_desc if self.partnership_collaborate_institution else True,
         }
+
+        if not self.any_partnered_with_un:
+            required_fields.pop('collaborations_partnership')
+            required_fields.pop('any_partnered_with_un')
+
+        if self.any_accreditation:
+            any_accreditation = self.partner.collaboration_evidences.filter(
+                mode=COLLABORATION_EVIDENCE_MODES.accreditation)
+            required_fields.update({"any_accreditation": any_accreditation})
+
+        if self.any_reference:
+            any_reference = self.partner.collaboration_evidences.filter(
+                mode=COLLABORATION_EVIDENCE_MODES.reference)
+            required_fields.update({"any_reference": any_reference})
 
         return all(required_fields.values())
 
