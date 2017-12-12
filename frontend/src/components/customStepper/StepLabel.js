@@ -6,6 +6,7 @@ import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 
 import StepIcon from './StepIcon';
+import TooltipIcon from '../common/tooltipIcon';
 
 export const styleSheet = theme => ({
   root: {
@@ -36,6 +37,9 @@ export const styleSheet = theme => ({
     width: 24,
     height: 24,
   },
+  tooltipIcon: {
+    marginLeft: theme.spacing.unit,
+  },
   iconContainer: {
     paddingRight: 8,
   },
@@ -55,6 +59,7 @@ function StepLabel(props) {
     children,
     error,
     classes,
+    infoText,
     ...other
   } = props;
 
@@ -81,6 +86,11 @@ function StepLabel(props) {
         </span>
       )}
       <Typography className={error ? classes.errorText : null} type="body1">{children}</Typography>
+      {infoText ? <TooltipIcon
+        iconClass={classes.tooltipIcon}
+        infoText={infoText}
+      />
+        : null}
     </span>
   ) : null;
 }
@@ -124,6 +134,10 @@ StepLabel.propTypes = {
    * whether label should be displayed in error state
    */
   error: PropTypes.bool,
+  /**
+   * text/component for tooltip
+   */
+  infoText: PropTypes.node,
 };
 
 export default withStyles(styleSheet, { name: 'StepLabel' })(StepLabel);

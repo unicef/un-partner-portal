@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 
 import Typography from 'material-ui/Typography';
-import Tooltip from '../../common/tooltip';
+import Tooltip from '../../common/portalTooltip';
 import EoiStatusCell from './eoiStatusCell';
 
 
@@ -29,7 +29,7 @@ const renderExpandedCell = (partners, classes) => (
       Partner status:
     </Typography>
     { partners.map(partnerStatus => (
-      <Typography 
+      <Typography
         key={partnerStatus.legal_name}
         className={classes.text}
         align="left"
@@ -43,15 +43,16 @@ ${partnerStatus.application_status}`}
 
 const EoiPartnerStatusCell = (props) => {
   const { status, classes, id, partners } = props;
-
   return (
-    <div data-tip data-for={`${id}-partner-status-tooltip`}>
-      <EoiStatusCell status={status} />
-      { partners && <Tooltip
-        id={`${id}-partner-status-tooltip`}
-        text={renderExpandedCell(partners, classes)}
-      />}
-    </div>
+    <Tooltip
+      id={`${id}-partner-status-tooltip`}
+      title={renderExpandedCell(partners, classes)}
+      disabled={!partners}
+    >
+      <div>
+        <EoiStatusCell status={status} />
+      </div>
+    </Tooltip>
   );
 };
 

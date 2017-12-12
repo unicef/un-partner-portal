@@ -80,6 +80,10 @@ RadioForm.propTypes = {
   renderTextSelection: PropTypes.bool,
 
   defaultValue: PropTypes.object,
+  /**
+   * text/component passed to tooltip
+   */
+  infoText: PropTypes.string,
 };
 
 export default RadioForm;

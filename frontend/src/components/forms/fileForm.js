@@ -37,18 +37,17 @@ class FileForm extends Component {
       deleteDisabled,
       infoText,
       ...other } = this.props;
-
     return (
       <Grid item>
         <FormControl fullWidth>
           {readOnly
             ? <Field
-                name={fieldName}
-                label={label}
-                component={renderFileDownload(this.props)}
-                infoText={infoText}
-                optional={optional}
-              />
+              name={fieldName}
+              label={label}
+              component={renderFileDownload(this.props)}
+              infoText={infoText}
+              optional={optional}
+            />
             :
             <div>
               <Field
@@ -61,7 +60,7 @@ class FileForm extends Component {
                 formName={formName}
                 deleteDisabled={deleteDisabled}
                 validate={(optional ? [] : [required].concat(validation || []))}
-                warn={warn && warning}
+                warn={warn ? warning : null}
                 {...other}
               />
             </div>

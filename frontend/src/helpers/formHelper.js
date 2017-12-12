@@ -50,9 +50,9 @@ export const BOOL_VAL = [
 ];
 
 const transformBool = (value) => {
-  if (typeof (value) === 'boolean' && (value || value === 'true')) {
+  if (typeof (value) === 'boolean' && value || value === 'true') {
     return BOOL_VAL[0].value;
-  } else if (typeof (value) === 'boolean' && (!value || value === 'false')) {
+  } else if (typeof (value) === 'boolean' && !value || value === 'false') {
     return BOOL_VAL[1].value;
   }
 
@@ -60,9 +60,9 @@ const transformBool = (value) => {
 };
 
 const convertBool = (value) => {
-  if (typeof (value) === 'boolean' && (value || value === 'true')) {
+  if (typeof (value) === 'boolean' && value || value === 'true') {
     return BOOL_VAL[0].label;
-  } else if (typeof (value) === 'boolean' && (!value || value === 'false')) {
+  } else if (typeof (value) === 'boolean' && !value || value === 'false') {
     return BOOL_VAL[1].label;
   }
 
@@ -70,14 +70,14 @@ const convertBool = (value) => {
 };
 
 export const visibleIfNo = (value) => {
-  if (value === BOOL_VAL[1].value || (typeof (value) === 'boolean' && !value)) { return true; }
+  if (value === BOOL_VAL[1].value || typeof (value) === 'boolean' && !value) { return true; }
 
   return false;
 };
 
 
 export const visibleIfYes = (value) => {
-  if (value === BOOL_VAL[0].value || (typeof (value) === 'boolean' && value)) { return true; }
+  if (value === BOOL_VAL[0].value || typeof (value) === 'boolean' && value) { return true; }
 
   return false;
 };

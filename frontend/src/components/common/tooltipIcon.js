@@ -35,7 +35,7 @@ const TooltipIcon = (props) => {
       {...tooltipProps}
     >
       <Icon
-        className={iconClass || classes.infoIcon}
+        className={`${iconClass} ${classes.infoIcon}`}
         {...other}
       />
     </Tooltip>
@@ -48,7 +48,7 @@ TooltipIcon.propTypes = {
   /**
    * Icon to be displayed
    */
-  icon: PropTypes.node,
+  icon: PropTypes.func,
   /**
    * text/component displayed inside tooltip
    */

@@ -42,6 +42,9 @@ const STEPS = readOnly => [
     component: <PartnerProfileMandatePopulation readOnly={readOnly} />,
     label: 'Population of Concern',
     name: 'populations_of_concern',
+    infoText: 'Populations of Concern: is composed of various groups of people including ' +
+    'refugees, asylum-seekers, internally displaced persons (IDPs) protected/assisted by ' +
+    'UNHCR, stateless persons and returnees (returned refugees and IDPs).',
   },
   {
     component: <PartnerProfileMandateCountryPresence readOnly={readOnly} />,

@@ -43,7 +43,7 @@ const savePartnerProfileOverview = (state, action) => {
     yearOfEstablishment: R.path(['profile', 'registration_date'], partnerDetails),
     population: R.path(['mandate_mission', 'concern_groups'], partnerDetails).map(
       item => wholeState.partnerProfileConfig['population-of-concern'][item]),
-    unExperience: (R.prop('collaborations_partnership', partnerDetails) || []).map(item => item.agency),
+    unExperience: (R.prop('collaborations_partnership', partnerDetails) || []).map(item => item.agency.name),
     budget: R.path(['budgets', '0', 'budget'], partnerDetails),
     keyResults: 'Yes',
     mandateMission: R.path(['mandate_mission', 'description'], partnerDetails),

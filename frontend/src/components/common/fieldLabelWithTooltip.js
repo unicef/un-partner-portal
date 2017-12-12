@@ -2,15 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormLabel } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles';
+import classname from 'classnames';
 import TooltipIcon from './tooltipIcon';
 
-
-const styleSheet = () => ({
+const styleSheet = theme => ({
   root: {
     display: 'flex',
     alignItems: 'center',
   },
-
+  label: {
+    fontSize: '0.75rem',
+    transform: 'scale(1)',
+  },
+  icon: {
+    transform: 'scale(0.75)',
+  },
+  iconPadding: {
+    marginRight: theme.spacing.unit,
+  },
 });
 
 const FieldLabelWithTooltip = (props) => {
@@ -20,13 +29,20 @@ const FieldLabelWithTooltip = (props) => {
     tooltipIconProps,
     labelProps,
   } = props;
+  const labelClass = classname(
+    classes.label,
+    {
+      [classes.iconPadding]: infoText,
+    },
+  );
   return (
     <div className={classes.root}>
-      <FormLabel {...labelProps} >
+      <FormLabel className={labelClass} {...labelProps} >
         {children}
       </FormLabel>
       {infoText ? <TooltipIcon
         infoText={infoText}
+        iconClass={classes.icon}
         {...tooltipIconProps}
       />
         : null}

@@ -11,6 +11,13 @@ import grey from 'material-ui/colors/grey'
 import withStyles from 'material-ui/styles/withStyles'
 import Portal from 'material-ui/internal/Portal'
 
+
+/**
+ * TODO: This a customized tooltip from material UI with added portal functionality to escape some UI
+ * issues. Taken from this github issue: https://github.com/mui-org/material-ui/issues/9351
+ * Replace with regular tooltip when library version is enhanced
+ */
+
 // Use a class component so we can get a reference.
 class TargetChildren extends React.Component {
   render() {

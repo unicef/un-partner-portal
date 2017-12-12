@@ -40,7 +40,7 @@ function TextFieldForm(props) {
           validate={(optional ? (validation || []) : [required].concat(validation || []))}
           normalize={normalize}
           infoText={infoText}
-          warn={warn && warning}
+          warn={warn ? warning : null}
           {...textFieldProps}
         />
       }

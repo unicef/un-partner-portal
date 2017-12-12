@@ -52,6 +52,7 @@ class SelectForm extends Component {
                 values={values}
                 optional={optional}
                 label={label}
+                infoText={infoText}
                 {...textFieldProps}
               />
               : <Field
@@ -66,6 +67,7 @@ class SelectForm extends Component {
                 defaultValue={defaultValue || multiple ? ['placeholder_none'] : 'placeholder_none'}
                 multiple={multiple}
                 fullWidth
+                infoText={infoText}
                 values={sections ? R.reduce((current, [_, nextValues]) => R.concat(current, nextValues), [], values) : values}
               >
                 {renderSelectOptions(fieldName, values, sections)}
