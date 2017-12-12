@@ -12,7 +12,7 @@ import ControlledModal from '../../../common/modals/controlledModal';
 import SpreadContent from '../../../common/spreadContent';
 import HeaderList from '../../../common/list/headerList';
 import ConceptNoteSubmission from './conceptNoteSubmission';
-import { deleteCn } from '../../../../reducers/conceptNote';
+import { deleteUploadedCn } from '../../../../reducers/conceptNote';
 import PaddedContent from '../../../common/paddedContent';
 
 const messages = {
@@ -47,7 +47,8 @@ class CfeiSubmission extends Component {
 
   handleDeleteAccept() {
     this.setState({ open: false });
-    this.props.deleteCn();
+    this.props.deleteCn(this.props.projectId, this.props.applicationId);
+    this.conceptForm.clearState();
   }
 
   titleHeader(cnUploaded) {
@@ -90,7 +91,7 @@ class CfeiSubmission extends Component {
       <div>
         <HeaderList
           header={this.titleHeader(cnUploaded)}
-          rows={[<ConceptNoteSubmission />]}
+          rows={[<ConceptNoteSubmission onRef={(ref) => { this.conceptForm = ref; }} />]}
         />
         <ControlledModal
           maxWidth="md"
@@ -117,12 +118,17 @@ class CfeiSubmission extends Component {
 
 CfeiSubmission.propTypes = {
   partnerId: PropTypes.string,
+  projectId: PropTypes.string,
+  applicationId: PropTypes.string,
   cnUploaded: PropTypes.object,
   deleteCn: PropTypes.func.isRequired,
+  dispatch: PropTypes.func,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   partnerId: state.session.partnerId,
+  projectId: ownProps.params.id,
+  applicationId: state.partnerAppDetails[ownProps.params.id] ? state.partnerAppDetails[ownProps.params.id].id : null,
   loader: state.conceptNote.loading,
   cnUploaded: state.conceptNote.cnFile,
   isHq: state.session.isHq,
@@ -130,7 +136,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  deleteCn: () => dispatch(deleteCn()),
+  deleteCn: (projectId, applicationId) => dispatch(deleteUploadedCn(projectId, applicationId)),
 });
 
 const connectedCfeiSubmission = connect(mapStateToProps, mapDispatch)(CfeiSubmission);
