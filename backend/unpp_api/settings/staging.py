@@ -13,3 +13,9 @@ extend_list_avoid_repeats(INSTALLED_APPS, [
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# extend MIDDLEWARE's
+MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
+
+# extend INSTALLED_APPS
+INSTALLED_APPS.append('silk')

@@ -9,3 +9,5 @@ flake8==2.5.4
 
 # Swagger
 django-rest-swagger==2.1.2
+
+django-silk==1.0.0
