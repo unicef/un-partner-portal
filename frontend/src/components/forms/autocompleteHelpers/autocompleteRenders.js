@@ -7,16 +7,32 @@ import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import { MenuItem } from 'material-ui/Menu';
-import { FormControl, FormLabel } from 'material-ui/Form';
+import { FormControl } from 'material-ui/Form';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import MultipleSelectInput from '../fields/multipleSelectInput';
+import FieldLabelWithTooltipIcon from '../../common/fieldLabelWithTooltip';
 
 export function renderInput(inputProps) {
-  const { name, value, label, ref, error, multiValues, handleClear, ...other } = inputProps;
+  const { name,
+    value,
+    label,
+    ref,
+    error,
+    multiValues,
+    handleClear,
+    infoText,
+    ...other } = inputProps;
   return (
     <FormControl fullWidth error={error}>
-      <FormLabel>{label}</FormLabel>
+      <FieldLabelWithTooltipIcon
+        infoText={infoText}
+        tooltipIconProps={{
+          name,
+        }}
+      >
+        {label}
+      </FieldLabelWithTooltipIcon>
       <TextField
         value={value}
         inputRef={ref}
@@ -29,10 +45,17 @@ export function renderInput(inputProps) {
 }
 
 export function renderMultipleInput(inputProps) {
-  const { name, label, ref, error, ...other } = inputProps;
+  const { name, label, ref, error, infoText, ...other } = inputProps;
   return (
     <FormControl fullWidth error={error}>
-      <FormLabel>{label}</FormLabel>
+      <FieldLabelWithTooltipIcon
+        infoText={infoText}
+        tooltipIconProps={{
+          name,
+        }}
+      >
+        {label}
+      </FieldLabelWithTooltipIcon>
       <TextField
         inputProps={{
           inputRef: ref,
@@ -57,7 +80,7 @@ export function renderSuggestion(suggestion, { query, isHighlighted }) {
             ? (<Typography key={index} color="accent">
               {part.text}
             </Typography>)
-            : (<Typography key={index} style={{whiteSpace: 'pre-wrap'}}>
+            : (<Typography key={index} style={{ whiteSpace: 'pre-wrap' }}>
               {part.text}
             </Typography>)
         ))}

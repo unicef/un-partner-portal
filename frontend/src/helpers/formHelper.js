@@ -455,6 +455,7 @@ export const renderAutocomplete = ({
   fieldValue,
   multiple,
   overlap,
+  infoText,
 }) => (<div>
   <Autosuggest
     id={`autosuggest-${name}`}
@@ -488,6 +489,7 @@ export const renderAutocomplete = ({
       multiValues,
       onChange: handleChange,
       handleClear: R.curry(handleClear)(onFormChange, handleMultiClear),
+      infoText,
       ...inputProps,
     }}
   />

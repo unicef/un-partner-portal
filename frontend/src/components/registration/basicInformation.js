@@ -58,7 +58,6 @@ const BasicInformation = (props) => {
           <CountryField
             fieldName="json.partner.country_code"
             label="Country of Origin"
-            infoIcon
             infoText={messages.tooltip}
           />
         </Grid>

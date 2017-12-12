@@ -143,6 +143,7 @@ class AutocompleteField extends React.Component {
       async,
       textFieldProps,
       overlap,
+      infoText,
     } = this.props;
     return (
       <div className={classes.root}>
@@ -165,6 +166,7 @@ class AutocompleteField extends React.Component {
             classes={classes}
             parse={this.parseFormValue}
             suggestions={this.state.suggestions}
+            infoText={infoText}
             overlap={overlap}
             handleSuggestionsFetchRequested={async
               ? this.debounceSuggestionsFetch
@@ -247,6 +249,10 @@ AutocompleteField.propTypes = { /**
    * whether suggestions should overlap content below 
    */
   overlap: PropTypes.bool,
+  /**
+   * text/component for tooltip
+   */
+  infoText: PropTypes.node,
   classes: PropTypes.object,
 };
 
