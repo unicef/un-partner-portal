@@ -13,7 +13,6 @@ const RejectButton = (props) => {
   const { id, status, changeStatus, ...other } = props;
   return (
     <IconWithTooltipButton
-      id={id}
       icon={<Reject />}
       name="reject"
       text={messages.text}
@@ -27,7 +26,10 @@ const RejectButton = (props) => {
 };
 
 RejectButton.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.string,
+  ]),
   status: PropTypes.string,
   changeStatus: PropTypes.func,
 };

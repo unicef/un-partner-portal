@@ -41,7 +41,7 @@ const styleSheet = (theme) => {
   };
 };
 
-class CollapsableItem extends Component {
+class SimpleCollapsableItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -79,12 +79,15 @@ class CollapsableItem extends Component {
   }
 }
 
-CollapsableItem.propTypes = {
+SimpleCollapsableItem.propTypes = {
   classes: PropTypes.object.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]).isRequired,
   expanded: PropTypes.bool,
-  component: PropTypes.component,
+  component: PropTypes.node,
   handleChange: PropTypes.array,
 };
 
-export default withStyles(styleSheet, { name: 'CollapsableItem' })(CollapsableItem);
+export default withStyles(styleSheet, { name: 'SimpleCollapsableItem' })(SimpleCollapsableItem);

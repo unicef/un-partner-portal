@@ -15,7 +15,7 @@ const messages = {
   empty: 'No Reviewers added yet',
 };
 
-class ReviewSummary extends Component {
+class ReviewersSummary extends Component {
   componentWillMount() {
     this.props.getReviewers();
   }
@@ -33,7 +33,11 @@ class ReviewSummary extends Component {
     }
     return (
       <div>
-        {reviewers.map(reviewer => <SingleReviewer reviewer={reviewer} isFocalPoint={focalPoint} />)}
+        {reviewers.map(reviewer => (<SingleReviewer
+          key={reviewer.user_id}
+          reviewer={reviewer}
+          isFocalPoint={focalPoint}
+        />))}
       </div>);
   }
 
@@ -51,10 +55,10 @@ class ReviewSummary extends Component {
   }
 }
 
-ReviewSummary.propTypes = {
+ReviewersSummary.propTypes = {
   reviewers: PropTypes.array,
   focalPoint: PropTypes.bool,
-  getReviewers: PropTypes.array,
+  getReviewers: PropTypes.func,
   loading: PropTypes.bool,
 };
 
@@ -68,4 +72,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   getReviewers: () => dispatch(loadReviewers(ownProps.id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReviewSummary);
+export default connect(mapStateToProps, mapDispatchToProps)(ReviewersSummary);

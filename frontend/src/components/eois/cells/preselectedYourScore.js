@@ -18,7 +18,7 @@ const renderExpandedCell = data => data.map((score, index) => (
   </SpreadContent>
 ));
 
-const ApplicationStatusCell = (props) => {
+const PreselectedYourScore = (props) => {
   const { id, score, breakdown } = props;
   const localScore = (score && score) || '-';
   return (
@@ -32,9 +32,12 @@ const ApplicationStatusCell = (props) => {
   );
 };
 
-ApplicationStatusCell.propTypes = {
-  id: PropTypes.string,
-  score: PropTypes.string,
+PreselectedYourScore.propTypes = {
+  id: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
+  score: PropTypes.number,
 };
 
-export default ApplicationStatusCell;
+export default PreselectedYourScore;

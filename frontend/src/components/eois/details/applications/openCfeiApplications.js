@@ -122,7 +122,7 @@ ApplicationsListContainer.propTypes = {
   loadApplications: PropTypes.func,
   loading: PropTypes.bool,
   query: PropTypes.object,
-  id: PropTypes.number,
+  id: PropTypes.string,
   allowedToEdit: PropTypes.bool,
 };
 

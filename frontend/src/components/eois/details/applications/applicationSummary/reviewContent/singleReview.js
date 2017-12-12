@@ -88,7 +88,7 @@ const SingleReview = (props) => {
 
 SingleReview.propTypes = {
   classes: PropTypes.object,
-  reviewer: PropTypes.number,
+  reviewer: PropTypes.string,
   reviewerInfo: PropTypes.object,
   assessmentInfo: PropTypes.object,
   isReviewerCurrentUser: PropTypes.bool,

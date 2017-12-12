@@ -74,7 +74,7 @@ FileForm.propTypes = {
   /**
    * section name
    */
-  sectionName: PropTypes.string.isRequired,
+  sectionName: PropTypes.string,
   /**
    * label used in field, also placeholder is built from it by adding 'Provide'
    */

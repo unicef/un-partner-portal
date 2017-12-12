@@ -87,7 +87,7 @@ class FileUploadButton extends Component {
           </Button>
           :
           <div className={classes.wrapContent}>
-            <Typography type="subheading" className={classes.iconLabel} spacingBottom >
+            <Typography type="subheading" className={classes.iconLabel} gutterBottom >
               <Attachment className={classes.icon} />
               {fileAdded}
               {!deleteDisabled && <IconButton onClick={() => this.handleRemove()}>

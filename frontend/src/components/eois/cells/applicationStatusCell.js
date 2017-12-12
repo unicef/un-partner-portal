@@ -16,22 +16,24 @@ const ApplicationStatusCell = (props) => {
   const Reject = WithGreyColor(!progress.startsWith('0')
     || status === APPLICATION_STATUSES.REJ)(RejectButton);
   const Download = WithGreyColor(!conceptNote)(GetConceptNoteButton);
-  return (
-    <TableCell>
-      <GridRow alignItems="center" >
-        <ApplicationStatusText status={status} />
-        {hovered && <GridRow spacing={8} columns={3}>
-          <Download id={id} conceptNote={conceptNote} />
-          <Preselect id={[id]} status={status} />
-          <Reject id={[id]} status={status} />
-        </GridRow>}
-      </GridRow >
-    </TableCell>
+  return (<TableCell>
+    <GridRow alignItems="center" >
+      <ApplicationStatusText status={status} />
+      {hovered && <GridRow spacing={8} columns={3}>
+        <Download id={id} conceptNote={conceptNote} />
+        <Preselect id={[id]} status={status} />
+        <Reject id={[id]} status={status} />
+      </GridRow>}
+    </GridRow >
+  </TableCell>
   );
 };
 
 ApplicationStatusCell.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   conceptNote: PropTypes.string,
   status: PropTypes.string,
   hovered: PropTypes.bool,

@@ -123,7 +123,7 @@ FeedbackContainer.propTypes = {
   feedback: PropTypes.array,
   loadFeedback: PropTypes.func,
   allowedToAdd: PropTypes.bool,
-  applicationId: PropTypes.number,
+  applicationId: PropTypes.string,
   count: PropTypes.number,
   extraTitle: PropTypes.string,
   feedbackId: PropTypes.string,
