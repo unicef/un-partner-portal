@@ -56,7 +56,7 @@ def stop():
     local('docker-compose stop')
 
 
-def fixtures(quantity=50, clean_before=True):
+def fakedata(quantity=50, clean_before=True):
     """
     Load example data from fakedata management command.
     """
@@ -67,7 +67,7 @@ def fixtures(quantity=50, clean_before=True):
     print "fab fixtures is done."
 
 
-def make_db():
+def reset_db():
     """
     Reset db, migrate and generate fixtures.
     Useful when changing branch with different migration.
@@ -76,8 +76,7 @@ def make_db():
     local('docker-compose exec backend python manage.py migrate')
     local('docker-compose exec backend python manage.py loaddata --app common initial.json')
     local('docker-compose exec backend python manage.py loaddata --app agency initial.json')
-    # we have reset_db instead of clean before
-    fixtures(clean_before=False)
+    fakedata(clean_before=False)
 
 
 def tests():
@@ -96,6 +95,6 @@ def remove_untagged_images():
 
 def pep8():
     """
-    Delete all untagged (<none>) images
+    Run python code linter
     """
     local('docker-compose exec backend flake8 ./ --count')
