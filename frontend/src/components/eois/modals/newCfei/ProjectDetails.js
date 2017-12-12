@@ -15,7 +15,7 @@ const messages = {
 };
 
 const ProjectDetails = (props) => {
-  const { dateFields, formName, displayPopulation } = props;
+  const { children, formName, displayPopulation } = props;
   return (
     <GridColumn>
       <Typography type="headline">
@@ -31,7 +31,7 @@ const ProjectDetails = (props) => {
         <fields.Goal />
         <fields.OtherInfo />
         <GridRow columns={4} >
-          {dateFields}
+          {children}
         </GridRow>
       </GridColumn>
     </GridColumn>
@@ -43,7 +43,6 @@ ProjectDetails.propTypes = {
   /**
    * array of date pickers
    */
-  dateFields: PropTypes.array,
   formName: PropTypes.string,
   displayPopulation: PropTypes.bool,
 

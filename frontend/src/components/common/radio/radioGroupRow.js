@@ -20,7 +20,7 @@ const RadioGroupRow = (props) => {
   return (<RadioGroup
     {...other}
     className={column ? classes.column : classes.row}
-    value={selectedValue}
+    value={`${selectedValue}`}
     onChange={(event, value) => onChange(event, value)}
   >
     {children}
@@ -29,9 +29,12 @@ const RadioGroupRow = (props) => {
 
 RadioGroupRow.propTypes = {
   classes: PropTypes.object,
-  selectedValue: PropTypes.string,
+  selectedValue: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool,
+  ]),
   onChange: PropTypes.func,
-  children: PropTypes.element,
+  children: PropTypes.node,
   column: PropTypes.array,
 };
 

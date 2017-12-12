@@ -13,7 +13,7 @@ import parse from 'autosuggest-highlight/parse';
 import MultipleSelectInput from '../fields/multipleSelectInput';
 
 export function renderInput(inputProps) {
-  const { name, value, label, ref, error, ...other } = inputProps;
+  const { name, value, label, ref, error, multiValues, handleClear, ...other } = inputProps;
   return (
     <FormControl fullWidth error={error}>
       <FormLabel>{label}</FormLabel>

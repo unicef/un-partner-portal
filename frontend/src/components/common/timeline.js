@@ -74,7 +74,6 @@ class Timeline extends Component {
             label="Estimated start date"
             align="right"
             color="dark"
-            flexSize={'auto'}
             fullWidth
           />
         </div>

@@ -17,7 +17,7 @@ function GridColumn(props) {
 }
 
 GridColumn.propTypes = {
-  children: PropTypes.array,
+  children: PropTypes.node,
   spacing: PropTypes.number,
 };
 

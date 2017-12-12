@@ -26,11 +26,10 @@ const DirectForm = (props) => {
       <GridColumn>
         <ProjectDetails
           formName="newDirectCfei"
-          dateFields={[
-            <fields.StartDate />,
-            <fields.EndDate minDate={start_date} />,
-          ]}
-        />
+        >
+          <fields.StartDate />
+          <fields.EndDate minDate={start_date} />
+        </ProjectDetails>
         <Typography type="headline">
           {messages.selectPartners}
         </Typography>

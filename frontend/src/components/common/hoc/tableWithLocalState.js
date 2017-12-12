@@ -59,7 +59,10 @@ class TableWithLocalState extends Component {
 }
 
 TableWithLocalState.propTypes = {
-  component: PropTypes.element,
+  component: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.func,
+  ]).isRequired,
   itemsCount: PropTypes.number,
   loadingFunction: PropTypes.func,
 };

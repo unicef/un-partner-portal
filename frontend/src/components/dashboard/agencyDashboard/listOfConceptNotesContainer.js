@@ -16,14 +16,14 @@ const ListOfConceptNotesContainer = (props) => {
     <HeaderList
       header={<Typography type="headline" >{messages.title}</Typography>}
       loading={loading}
-      rows={[<ListOfConceptNotesTable />]}
-    />
+    >
+      <ListOfConceptNotesTable />
+    </HeaderList>
   );
 };
 
 ListOfConceptNotesContainer.propTypes = {
   loading: PropTypes.bool,
-
 };
 
 export default ListOfConceptNotesContainer;

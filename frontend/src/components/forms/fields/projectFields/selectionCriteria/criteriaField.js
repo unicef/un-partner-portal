@@ -26,7 +26,7 @@ const CriteriaField = (props) => {
 CriteriaField.propTypes = {
   name: PropTypes.string,
   index: PropTypes.number,
-  fields: PropTypes.array,
+  fields: PropTypes.object,
   disabled: PropTypes.bool,
   values: PropTypes.array,
 };

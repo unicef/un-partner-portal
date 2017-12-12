@@ -9,7 +9,8 @@ const CountriesCell = (props) => {
 
   return (
     <TableCell>
-      {countries && countries.map(item => (<div><EoiCountryCell code={item} />{', '}</div>))}
+      {countries && countries.map(item =>
+          (<div key={item}><EoiCountryCell code={item} />{', '}</div>))}
     </TableCell>
   );
 };

@@ -16,8 +16,9 @@ const ListOfOpenCfeisContainer = (props) => {
     <HeaderList
       header={<Typography type="headline" >{messages.title}</Typography>}
       loading={loading}
-      rows={[<EmptyContent />]}
-    />
+    >
+      <EmptyContent />
+    </HeaderList>
   );
 };
 

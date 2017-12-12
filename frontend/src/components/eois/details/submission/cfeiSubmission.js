@@ -91,8 +91,9 @@ class CfeiSubmission extends Component {
       <div>
         <HeaderList
           header={this.titleHeader(cnUploaded)}
-          rows={[<ConceptNoteSubmission onRef={(ref) => { this.conceptForm = ref; }} />]}
-        />
+        >
+          <ConceptNoteSubmission onRef={(ref) => { this.conceptForm = ref; }} />
+        </HeaderList>
         <ControlledModal
           maxWidth="md"
           title={messages.confirmQuestion}

@@ -49,14 +49,10 @@ const SectorFieldArray = (props) => {
 };
 
 SectorFieldArray.propTypes = {
-  sectors: PropTypes.arrayOf(
-    PropTypes.objectOf(
-      {
-        value: PropTypes.string,
-        label: PropTypes.string,
-      },
-    ),
-  ),
+  sectors: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.number,
+    label: PropTypes.string,
+  })),
   readOnly: PropTypes.bool,
 };
 

@@ -27,6 +27,7 @@ function TextFieldForm(props) {
         {readOnly
           ? [
             <Field
+              key={0}
               name={fieldName}
               label={label}
               component={renderText}
@@ -34,8 +35,9 @@ function TextFieldForm(props) {
               {...textFieldProps}
             />]
           : [
-            <FormLabel>{label}</FormLabel>,
+            <FormLabel key={0}>{label}</FormLabel>,
             <Field
+              key={1}
               name={fieldName}
               placeholder={placeholder || `Provide ${label.toLowerCase()}`}
               component={renderTextField}
@@ -63,7 +65,7 @@ TextFieldForm.propTypes = {
   /**
    * props passed to wrapped TextField
    */
-  textFieldProps: PropTypes.node,
+  textFieldProps: PropTypes.object,
   /**
    * unique text used as placeholder
    */
