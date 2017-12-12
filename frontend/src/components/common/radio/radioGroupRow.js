@@ -7,7 +7,6 @@ export const styleSheet = () => ({
   row: {
     display: 'flex',
     flexDirection: 'row',
-    marginLeft: 14,
   },
   column: {
     display: 'flex',
