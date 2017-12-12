@@ -63,7 +63,7 @@ AgencyMembersContainer.propTypes = {
   totalCount: PropTypes.number.isRequired,
   loadMembers: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
-  agencyId: PropTypes.string,
+  agencyId: PropTypes.number,
   agencyName: PropTypes.string,
   query: PropTypes.object,
 };

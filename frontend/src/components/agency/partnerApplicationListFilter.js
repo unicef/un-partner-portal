@@ -213,7 +213,7 @@ PartnerApplicationListFilter.propTypes = {
   eoiTypes: PropTypes.array.isRequired,
   pathName: PropTypes.string,
   query: PropTypes.object,
-  agencyId: PropTypes.string,
+  agencyId: PropTypes.number,
 };
 
 const formEoiFilter = reduxForm({

@@ -3,8 +3,6 @@ import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 
 import Grid from 'material-ui/Grid';
-import { FormControl } from 'material-ui/Form';
-import FieldLabelWithTooltipIcon from '../common/fieldLabelWithTooltip';
 import { renderTextField, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
@@ -45,7 +43,6 @@ function TextFieldForm(props) {
           warn={warn && warning}
           {...textFieldProps}
         />
-
       }
     </Grid>
   );
@@ -64,7 +61,7 @@ TextFieldForm.propTypes = {
   /**
    * props passed to wrapped TextField
    */
-  textFieldProps: PropTypes.node,
+  textFieldProps: PropTypes.object,
   /**
    * unique text used as placeholder
    */
@@ -89,6 +86,10 @@ TextFieldForm.propTypes = {
    * for some text format, i.e. parseInt
    */
   normalize: PropTypes.func,
+  /**
+   * text for tooltip icon
+   */
+  infoText: PropTypes.node,
 };
 
 TextFieldForm.defaultProps = {

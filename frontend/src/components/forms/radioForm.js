@@ -1,26 +1,14 @@
 import React from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import { renderRadioField, renderText, renderBool } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
-
-const styleSheet = (theme) => {
-  const padding = theme.spacing.unit;
-
-  return {
-    padding: {
-      paddingRight: `${padding}px`,
-    },
-  };
-};
 
 const RadioForm = (props) => {
   const {
     fieldName,
     label,
-    classes,
     values,
     optional,
     validation,
@@ -46,7 +34,6 @@ const RadioForm = (props) => {
           name={fieldName}
           component={renderRadioField}
           options={values}
-          classes={classes}
           label={label}
           infoText={infoText}
           validate={optional ? [] : [required].concat(validation || [])}
@@ -59,7 +46,6 @@ const RadioForm = (props) => {
 };
 
 RadioForm.propTypes = {
-  classes: PropTypes.object.isRequired,
   /**
    * Name of the field used by react-form and as unique id.
    */
@@ -96,4 +82,4 @@ RadioForm.propTypes = {
   defaultValue: PropTypes.object,
 };
 
-export default withStyles(styleSheet, { name: 'RadioForm' })(RadioForm);
+export default RadioForm;

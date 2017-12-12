@@ -35,13 +35,13 @@ class partnerProfileStepper extends Component {
 
     const sections = steps.map((item, index) => {
       const section = (
-        <ProfileStepContainer item={item} index={index} singleSection={singleSection} />
+        <ProfileStepContainer key={item.name} item={item} index={index} singleSection={singleSection} />
       );
       return section;
     });
 
     return (
-      <Grid container direction="column" xs={12} className={classes.root} >
+      <Grid container direction="column" className={classes.root} >
         <Stepper linear activeStep={0} orientation="vertical" allActive>
           {sections}
         </Stepper>
@@ -89,11 +89,11 @@ partnerProfileStepper.propTypes = {
   /**
    * component to be wrapped
    */
-  steps: PropTypes.element.isRequired,
+  steps: PropTypes.array,
   /**
    * whether step is the last, to control buttons appearance
    */
-  last: PropTypes.boolean,
+  last: PropTypes.bool,
   /**
    * Read only mode
    */

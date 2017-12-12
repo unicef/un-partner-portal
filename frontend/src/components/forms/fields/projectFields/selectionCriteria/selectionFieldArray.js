@@ -82,7 +82,7 @@ const SelectionFieldArray = (props) => {
 SelectionFieldArray.propTypes = {
   readOnly: PropTypes.bool,
   hasWeighting: PropTypes.bool,
-  criteria: PropTypes.object,
+  criteria: PropTypes.array,
   form: PropTypes.string,
 };
 

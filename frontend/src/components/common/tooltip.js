@@ -37,7 +37,10 @@ Tooltip.propTypes = {
   /**
   * tooltip content, can be a string or object
   */
-  text: PropTypes.string,
+  text: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.node,
+  ]),
   classes: PropTypes.object,
   id: PropTypes.string,
 

@@ -42,14 +42,13 @@ class FileForm extends Component {
       <Grid item>
         <FormControl fullWidth>
           {readOnly
-            ? [
-              <Field
+            ? <Field
                 name={fieldName}
                 label={label}
                 component={renderFileDownload(this.props)}
                 infoText={infoText}
                 optional={optional}
-              />]
+              />
             :
             <div>
               <Field
@@ -98,7 +97,7 @@ FileForm.propTypes = {
   /**
    * unique text used as placeholder
    */
-  placeholder: PropTypes.text,
+  placeholder: PropTypes.string,
   /**
    * if field is optional
    */

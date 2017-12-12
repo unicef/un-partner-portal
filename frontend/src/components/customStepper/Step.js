@@ -27,6 +27,7 @@ function Step(props) {
     orientation,
     children,
     classes,
+    dispatch,
     ...other
   } = props;
 

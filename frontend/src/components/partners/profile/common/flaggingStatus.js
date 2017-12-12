@@ -12,23 +12,27 @@ const messages = {
 const FlaggingStatus = (props) => {
   const { flags: { red, yellow }, noFlagText } = props;
   if (red || yellow) {
-    return (<Grid container spacing={4}>
-      {yellow > 0 && ([<Grid item>
-        <Typography>
-          {yellow}
-        </Typography>
-      </Grid>,
-      <Grid item>
-        <FlagIcon color={FLAGS.YELLOW} />
-      </Grid>])}
-      {red > 0 && ([<Grid item>
-        <Typography>
-          {red}
-        </Typography>
-      </Grid>,
-      <Grid item>
-        <FlagIcon color={FLAGS.RED} />
-      </Grid>])}
+    return (<Grid container spacing={0}>
+      {yellow > 0 && ([
+        <Grid item key={0}>
+          <Typography>
+            {yellow}
+          </Typography>
+        </Grid>,
+        <Grid item key={1}>
+          <FlagIcon color={FLAGS.YELLOW} />
+        </Grid>,
+      ])}
+      {red > 0 && ([
+        <Grid item key={0}>
+          <Typography>
+            {red}
+          </Typography>
+        </Grid>,
+        <Grid item key={1}>
+          <FlagIcon color={FLAGS.RED} />
+        </Grid>,
+      ])}
     </Grid>);
   }
   if (noFlagText) return <Typography>{messages.noFlag}</Typography>;

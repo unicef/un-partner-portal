@@ -17,17 +17,18 @@ const renderLabel = ({ value, offset, position, viewBox, ...params }) => (
 );
 
 const CustomPieChart = (props) => {
-  const { label, colors, data, containerProps, pieProps } = props;
+  const { label, colors, data, containerProps, defaultPieProps, pieProps } = props;
   return (
     <ResponsiveContainer {...containerProps}>
       <PieChart>
         <Pie
           data={data}
+          {...defaultPieProps}
           {...pieProps}
         >
           <Label value={label} content={renderLabel} position="center" />
           {
-            data.map((entry, index) => <Cell fill={colors[index % colors.length]} />)
+            data.map(({ name }, index) => <Cell key={name} fill={colors[index % colors.length]} />)
           }
         </Pie>
       </PieChart>
@@ -42,6 +43,7 @@ CustomPieChart.propTypes = {
   data: PropTypes.array,
   containerProps: PropTypes.object,
   pieProps: PropTypes.object,
+  defaultPieProps: PropTypes.object,
 };
 
 CustomPieChart.defaultProps = {
@@ -49,7 +51,7 @@ CustomPieChart.defaultProps = {
     width: '100%',
     height: 200,
   },
-  pieProps: {
+  defaultPieProps: {
     outerRadius: 100,
     innerRadius: '80%',
   },

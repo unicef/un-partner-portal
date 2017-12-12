@@ -40,7 +40,7 @@ class DSFeedback extends Component {
 
 DSFeedback.propTypes = {
   applications: PropTypes.array,
-  loading: PropTypes.func,
+  loading: PropTypes.bool,
   loadApplications: PropTypes.func,
   shouldAddFeedback: PropTypes.bool,
 };

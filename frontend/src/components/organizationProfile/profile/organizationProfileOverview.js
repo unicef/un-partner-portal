@@ -69,7 +69,7 @@ class OrganizationProfileOverview extends Component {
     return (
       <div>
         {messages.sections.map(item =>
-          (<div>
+          (<div key={item.label}>
             <CollapsableItem
               expanded={R.indexOf(item, messages.sections) === FIRST_INDEX}
               title={item.label}
@@ -90,7 +90,7 @@ OrganizationProfileOverview.propTypes = {
   changeTab: PropTypes.func.isRequired,
   partnerId: PropTypes.string.isRequired,
   loadPartnerProfileDetails: PropTypes.func,
-  completion: PropTypes.array,
+  completion: PropTypes.object,
 };
 
 const mapDispatch = dispatch => ({

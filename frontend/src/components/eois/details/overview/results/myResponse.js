@@ -13,10 +13,13 @@ const messages = {
 
 const MyResponse = (props) => {
   const { application, status } = props;
-  return (<HeaderList
-    header={<Typography type="headline" >{messages.title}</Typography>}
-    rows={[<ResponseForm application={application} status={status} />]}
-  />);
+  return (
+    <HeaderList
+      header={<Typography type="headline" >{messages.title}</Typography>}
+    >
+      <ResponseForm application={application} status={status} />
+    </HeaderList>
+  );
 };
 
 MyResponse.propTypes = {

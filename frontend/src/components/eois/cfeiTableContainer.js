@@ -33,7 +33,7 @@ class CfeiTableContainer extends Component {
   }
 
   render() {
-    const { cfei, loading, role, type, count } = this.props;
+    const { cfei, loading, role, type, count = 0 } = this.props;
     return (
       <Grid item>
         <TableWithStateInUrl
@@ -54,7 +54,7 @@ CfeiTableContainer.propTypes = {
   loading: PropTypes.bool,
   role: PropTypes.string,
   type: PropTypes.string,
-  count: PropTypes.string,
+  count: PropTypes.number,
 };
 
 const mapStateToProps = (state, ownProps) => ({

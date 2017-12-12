@@ -79,7 +79,7 @@ class PartnerProfileStepperContainer extends Component {
 PartnerProfileStepperContainer.propTypes = {
   name: PropTypes.string,
   handleSubmit: PropTypes.func,
-  steps: PropTypes.arrayOf(PropTypes.objectOf({
+  steps: PropTypes.arrayOf(PropTypes.shape({
     component: PropTypes.element,
     label: PropTypes.string,
     name: PropTypes.string,

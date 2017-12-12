@@ -85,7 +85,7 @@ class RenderArrayMembers extends Component {
         {error && <FormHelperText className={classes.errorText} error>{error}</FormHelperText>}
         <List className={classes.list}>
           {fields.map((member, index) => (
-            <div>
+            <div key={member}>
               <ListItem classes={{ default: classes.default }} key={index} >
                 <div className={classes.root}>
                   <div className={classes.container}>
@@ -126,20 +126,26 @@ class RenderArrayMembers extends Component {
 
 RenderArrayMembers.propTypes = {
   fields: PropTypes.object,
-  meta: PropTypes.bool,
+  meta: PropTypes.object,
   classes: PropTypes.object,
   /**
    * form or whole component displayed on the outer grey section
    * will recieve name to create unique field name, index of the field,
    * and all fields to read from already added values
    */
-  outerField: PropTypes.node,
+  outerField: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.func,
+  ]),
   /**
     * form or whole component displayed on the inner darker grey section
     * will recieve name to create unique field name, index of the field,
     * and all fields to read from already added values
     */
-  innerField: PropTypes.node,
+  innerField: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.func,
+  ]),
   /**
    * limit of the field array length
    */
@@ -201,13 +207,19 @@ ArrayForm.propTypes = {
    * will recieve name to create unique field name, index of the field,
    * and all fields to read from already added values
    */
-  outerField: PropTypes.node,
+  outerField: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.func,
+  ]),
   /**
     * form or whole component displayed on the inner darker grey section
     * will recieve name to create unique field name, index of the field,
     * and all fields to read from already added values
     */
-  innerField: PropTypes.node,
+  innerField: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.func,
+  ]),
   /**
    * name of the field
    */
