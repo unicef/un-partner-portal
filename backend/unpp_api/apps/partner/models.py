@@ -425,6 +425,9 @@ class PartnerDirector(TimeStampedModel):
     fullname = models.CharField(max_length=512, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
     authorized = models.NullBooleanField()
+    telephone = models.CharField(max_length=255, null=True, blank=True)
+    fax = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(max_length=255, null=True, blank=True)
 
     class Meta:
         ordering = ['id']
