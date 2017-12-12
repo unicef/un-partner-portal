@@ -87,7 +87,7 @@ SimpleCollapsableItem.propTypes = {
   ]).isRequired,
   expanded: PropTypes.bool,
   component: PropTypes.node,
-  handleChange: PropTypes.array,
+  handleChange: PropTypes.func,
 };
 
 export default withStyles(styleSheet, { name: 'SimpleCollapsableItem' })(SimpleCollapsableItem);

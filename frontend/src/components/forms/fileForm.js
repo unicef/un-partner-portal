@@ -70,7 +70,7 @@ FileForm.propTypes = {
   /**
    * form name
    */
-  formName: PropTypes.string.isRequired,
+  formName: PropTypes.string,
   /**
    * section name
    */
