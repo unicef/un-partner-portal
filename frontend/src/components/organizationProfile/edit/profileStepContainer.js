@@ -23,7 +23,7 @@ const ProfileStepContainer = (props) => {
         {item.label}
       </StepLabel>
         : <div />}
-      <StepContent>
+      <StepContent visibleOverflow>
         {item.component}
       </StepContent>
     </Step>

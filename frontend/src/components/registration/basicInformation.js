@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 
 
 import Grid from 'material-ui/Grid';
-import { selectNormalizedCountries } from '../../store';
 import TextFieldForm from '../forms/textFieldForm';
 import PolarRadio from '../forms/fields/PolarRadio';
 import CountryField from '../forms/fields/projectFields/locationField/countryField';

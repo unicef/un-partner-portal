@@ -86,7 +86,7 @@ const RADIO_VALUES = [
 const OrganizationTypes = (props) => {
   const { classes, organization, organizationTypes, office, reset } = props;
   return (
-    <Grid item>
+    <Grid container direction="column" spacing={24}>
       <Grid item>
         <div className={classes.info}>
           <Typography color="inherit" >

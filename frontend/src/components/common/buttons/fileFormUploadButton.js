@@ -13,6 +13,7 @@ import FileUpload from 'material-ui-icons/FileUpload';
 import Attachment from 'material-ui-icons/Attachment';
 import { fileNameFromUrl } from '../../../helpers/formHelper';
 import { uploadFile, uploadClearFile, uploadRemoveFile } from '../../../reducers/commonFileUpload';
+import FieldLabelWithTooltip from '../fieldLabelWithTooltip';
 
 const messages = {
   upload: 'upload file',
@@ -88,11 +89,19 @@ class FileFormUploadButton extends Component {
       fileUrl,
       input,
       label,
+      infoText,
       loading } = this.props;
     const url = R.is(String, input.value) ? input.value : fileUrl;
     return (
       <FormControl>
-        {label && <FormLabel>{label}</FormLabel>}
+        {label && <FieldLabelWithTooltip
+          infoText={infoText}
+          tooltipIconProps={{
+            name: input.name,
+          }}
+        >
+          {label}
+        </FieldLabelWithTooltip>}
         <div>
           <input
             onChange={this.handleChange}

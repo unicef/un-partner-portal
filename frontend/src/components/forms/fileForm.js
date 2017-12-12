@@ -26,8 +26,17 @@ class FileForm extends Component {
   }
 
   render() {
-    const { fieldName, label, optional, formName, sectionName,
-      validation, warn, readOnly, deleteDisabled, ...other } = this.props;
+    const { fieldName,
+      label,
+      optional,
+      formName,
+      sectionName,
+      validation,
+      warn,
+      readOnly,
+      deleteDisabled,
+      infoText,
+      ...other } = this.props;
 
     return (
       <Grid item>
@@ -38,6 +47,7 @@ class FileForm extends Component {
                 name={fieldName}
                 label={label}
                 component={renderFileDownload(this.props)}
+                infoText={infoText}
                 optional={optional}
               />]
             :
@@ -47,6 +57,7 @@ class FileForm extends Component {
                 component={FileFormUploadButton}
                 fieldName={fieldName}
                 label={label}
+                infoText={infoText}
                 sectionName={sectionName}
                 formName={formName}
                 deleteDisabled={deleteDisabled}
@@ -108,6 +119,10 @@ FileForm.propTypes = {
    * Don't display 'X' button
    */
   deleteDisabled: PropTypes.bool,
+  /** 
+   * render additional tooltip with label
+   */
+  infoText: PropTypes.node,
 };
 
 FileForm.defaultProps = {

@@ -28,6 +28,7 @@ const RadioForm = (props) => {
     defaultValue,
     renderTextSelection,
     readOnly,
+    infoText,
     ...other } = props;
 
   return (
@@ -36,6 +37,7 @@ const RadioForm = (props) => {
         ? <Field
           name={fieldName}
           component={renderTextSelection ? renderText : renderBool}
+          infoText={infoText}
           values={values}
           optional={optional}
           label={label}
@@ -46,6 +48,7 @@ const RadioForm = (props) => {
           options={values}
           classes={classes}
           label={label}
+          infoText={infoText}
           validate={optional ? [] : [required].concat(validation || [])}
           warn={warn ? [warning] : []}
           defaultValue={defaultValue}

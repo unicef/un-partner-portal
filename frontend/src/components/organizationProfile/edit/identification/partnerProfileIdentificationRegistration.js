@@ -23,6 +23,10 @@ const messages = {
   number: 'Registration number (If applicable)',
   document: 'Registration Document',
   comment: 'Please comment',
+  govDocTooltip: 'Governing document: is a formal document with information about the structure ' +
+  'and governance of an organization, outlining the purposes of the organization and how it will ' +
+  'be run. A governing document may come in the form of a trust deed, constitution, memorandum ' +
+  'and articles of association, or another formal, legal document.',
 };
 
 const PartnerProfileIdentificationRegistration = (props) => {
@@ -61,6 +65,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   label={messages.governingDoc}
                   warn
                   readOnly={readOnly}
+                  infoText={messages.govDocTooltip}
                 />
               </Grid>}
           </Grid>

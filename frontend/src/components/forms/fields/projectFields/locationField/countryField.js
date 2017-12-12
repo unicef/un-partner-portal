@@ -50,7 +50,6 @@ const CountryField = (props) => {
 
         <TooltipIcon
           infoText={infoText}
-          Icon={InfoIcon}
         />
 
       )}

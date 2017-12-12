@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import R from 'ramda';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-import InfoIcon from 'material-ui-icons/Info';
+
 import Grid from 'material-ui/Grid';
 import { renderSelectField, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
@@ -76,7 +76,6 @@ class SelectForm extends Component {
             <Grid item xs={1} >
               <TooltipIcon
                 infoText={infoText}
-                Icon={InfoIcon}
               />
             </Grid>
           )}
