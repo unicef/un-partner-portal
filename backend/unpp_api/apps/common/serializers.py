@@ -34,7 +34,7 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                 # ForeignKey related to partner - RelatedManager object - here we add or update if exist related item
                 for data in self.initial_data.get(related_name, []):
                     for field in self.exclude_fields.get(related_name, []):
-                        data.pop(field)
+                        field in data and data.pop(field)
                     _id = data.get("id")
                     if _id:
                         getattr(instance, related_name).filter(id=_id).update(**data)
