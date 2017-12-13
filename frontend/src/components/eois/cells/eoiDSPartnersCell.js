@@ -32,7 +32,7 @@ const eoiDSPartnersCell = (props) => {
 };
 
 eoiDSPartnersCell.propTypes = {
-  partners: PropTypes.string.isRequired,
+  partners: PropTypes.array.isRequired,
   id: PropTypes.number,
   classes: PropTypes.object,
 };

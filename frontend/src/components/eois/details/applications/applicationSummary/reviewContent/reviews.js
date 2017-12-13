@@ -28,8 +28,9 @@ const Reviews = (props) => {
     <HeaderList
       header={<Typography type="headline" >{messages.title}</Typography>}
       loading={loading}
-      rows={renderContent(reviews)}
-    />
+    >
+      {renderContent(reviews)}
+    </HeaderList>
   );
 };
 

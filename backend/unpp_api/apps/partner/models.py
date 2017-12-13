@@ -200,6 +200,10 @@ class PartnerProfile(TimeStampedModel):
     partnership_collaborate_institution = models.NullBooleanField()
     partnership_collaborate_institution_desc = models.CharField(max_length=200, null=True, blank=True)
 
+    any_partnered_with_un = models.NullBooleanField()
+    any_accreditation = models.NullBooleanField()
+    any_reference = models.NullBooleanField()
+
     # Banking Information
     have_bank_account = models.NullBooleanField(
         verbose_name="Does the organization have a bank account?")
@@ -318,11 +322,26 @@ class PartnerProfile(TimeStampedModel):
     @property
     def collaboration_complete(self):
         required_fields = {
+            'any_partnered_with_un': self.any_partnered_with_un is not None,
             'collaborations_partnership': self.partner.collaborations_partnership.exists(),
             'partnership_collaborate_institution': self.partnership_collaborate_institution is not None,
             'partnership_collaborate_institution_desc':
                 self.partnership_collaborate_institution_desc if self.partnership_collaborate_institution else True,
         }
+
+        if not self.any_partnered_with_un:
+            required_fields.pop('collaborations_partnership')
+            required_fields.pop('any_partnered_with_un')
+
+        if self.any_accreditation:
+            any_accreditation = self.partner.collaboration_evidences.filter(
+                mode=COLLABORATION_EVIDENCE_MODES.accreditation)
+            required_fields.update({"any_accreditation": any_accreditation})
+
+        if self.any_reference:
+            any_reference = self.partner.collaboration_evidences.filter(
+                mode=COLLABORATION_EVIDENCE_MODES.reference)
+            required_fields.update({"any_reference": any_reference})
 
         return all(required_fields.values())
 
@@ -345,10 +364,9 @@ class PartnerProfile(TimeStampedModel):
             'experienced_staff_desc': self.experienced_staff_desc if self.experienced_staff else True,
             'area_policies': self.partner.area_policies.filter(document_policies__isnull=True).exists() is False,
 
-            # partner academy does not contain those fields as is completed
-            # 'have_bank_account': self.have_bank_account is not None,
-            # 'have_separate_bank_account': self.have_separate_bank_account is not None,
-            # 'explain': self.explain if self.have_separate_bank_account is False else True,
+            'have_bank_account': self.have_bank_account is not None,
+            'have_separate_bank_account': self.have_separate_bank_account is not None,
+            'explain': self.explain if self.have_separate_bank_account is False else True,
 
             'most_recent_audit_report': self.partner.audit.most_recent_audit_report or self.partner.audit.link_report,
             'regular_audited': self.partner.audit.regular_audited is not None,
@@ -426,9 +444,9 @@ class PartnerDirector(TimeStampedModel):
     fullname = models.CharField(max_length=512, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
     authorized = models.NullBooleanField()
-    # telephone = models.CharField(max_length=255, null=True, blank=True)
-    # fax = models.CharField(max_length=255, null=True, blank=True)
-    # email = models.EmailField(max_length=255, null=True, blank=True)
+    telephone = models.CharField(max_length=255, null=True, blank=True)
+    fax = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(max_length=255, null=True, blank=True)
 
     class Meta:
         ordering = ['id']

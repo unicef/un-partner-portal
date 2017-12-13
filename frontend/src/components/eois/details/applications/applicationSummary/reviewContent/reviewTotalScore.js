@@ -57,8 +57,9 @@ const ReviewsTotalScore = (props) => {
       </SpreadContent>
       }
       loading={loading}
-      rows={renderContent(loading, madeReviews, totalReviewers, justReason)}
-    />
+    >
+      {renderContent(loading, madeReviews, totalReviewers, justReason)}
+    </HeaderList>
   );
 };
 

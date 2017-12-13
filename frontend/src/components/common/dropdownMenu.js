@@ -73,10 +73,10 @@ class DropdownMenu extends React.Component {
 
 DropdownMenu.propTypes = {
   classes: PropTypes.object,
-  options: PropTypes.objectOf({
+  options: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     content: PropTypes.node,
-  }),
+  })),
 };
 
 export default withStyles(styleSheet, { name: 'DropdownMenu' })(DropdownMenu);

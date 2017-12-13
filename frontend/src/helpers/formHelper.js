@@ -15,7 +15,7 @@ import DatePicker from 'material-ui-old/DatePicker';
 import Typography from 'material-ui/Typography';
 import RadioGroupRow from '../components/common/radio/radioGroupRow';
 import RadioHeight from '../components/common/radio/radioHeight';
-import { formatDateForPrint } from './dates';
+import { formatDateForPrint, formatDateForDatePicker } from './dates';
 import { numerical, validateReviewScores } from '../helpers/validation';
 import {
   renderInput,
@@ -177,7 +177,6 @@ export const renderSelectField = ({
 export const renderRadioField = ({ input,
   label,
   defaultValue,
-  classes,
   meta: { touched, error, warning },
   options, ...other
 }) => (
@@ -191,9 +190,8 @@ export const renderRadioField = ({ input,
       >
         {options.map((value, index) => (
           <FormControlLabel
-            className={classes.padding}
             key={index}
-            value={value.value}
+            value={`${value.value}`}
             control={<RadioHeight />}
             label={value.label}
           />))}</RadioGroupRow>
@@ -295,18 +293,32 @@ export const renderNumberField = ({
 };
 
 export const renderDatePicker = ({
-  input,
+  input: { value, onChange, ...inputOther },
   meta: { touched, error, warning },
   ...other
-}) => (
+}) => {
+  const datePickerProps = {};
+
+  if (!value) {
+    // noop
+  } else if (typeof value === 'object' && value.valueOf()) {
+    datePickerProps.value = value;
+  } else if (typeof value === 'string' && value !== 'Invalid date') {
+    datePickerProps.value = formatDateForDatePicker(value);
+  }
+
+  return (
   <div>
     <DatePicker
       errorText={(touched && error) || warning}
-      {...input}
-      onChange={(event, value) => input.onChange(value)}
+      {...datePickerProps}
+      {...inputOther}
+      onChange={(event, val) => onChange(val)}
       {...other}
     />
-  </div>);
+  </div>
+  );
+};
 
 export const renderText = ({
   className,
@@ -315,9 +327,12 @@ export const renderText = ({
   optional,
   label,
   date,
+  meta,
+  multiline,
+  inputProps,
   ...other
 }) => {
-  let value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (other.inputProps ? other.inputProps.initial : null);
+  let value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (inputProps ? inputProps.initial : null);
 
   if (!value) value = '-';
 
@@ -328,7 +343,7 @@ export const renderText = ({
     }, values).map(matchedValue => matchedValue.label).join(', ');
   }
 
-  if (R.isEmpty(value) || R.isNil(value)) value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (other.inputProps ? other.inputProps.initial : null);
+  if (R.isEmpty(value) || R.isNil(value)) value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (inputProps ? inputProps.initial : null);
   if (date) value = formatDateForPrint(value);
   if (R.isEmpty(value) || R.isNil(value)) value = '-';
 
@@ -359,6 +374,7 @@ export const renderBool = ({
   values,
   optional,
   label,
+  meta,
   ...other
 }) => (
   <FormControl fullWidth>

@@ -60,7 +60,8 @@ export const selectVerifications = (state, partnerId) => {
 
 export const selectMostRecentVerification = (state, partnerId) => {
   const mainVerif = selectIndexWithDefaultEmptyObject(partnerId, state.data);
-  const { mostRecentVerification = [] } = mainVerif;
+  const { mostRecentVerification = {} } = mainVerif;
+
   return mostRecentVerification;
 };
 

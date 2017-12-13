@@ -60,6 +60,11 @@ class ConceptNoteSubmission extends Component {
     this.handleCheck = this.handleCheck.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.clearState = this.clearState.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.onRef(this);
   }
 
   handleCheck(event, checked) {
@@ -75,6 +80,10 @@ class ConceptNoteSubmission extends Component {
     this.props.uploadConceptNote(values);
   }
 
+  clearState() {
+    this.setState({ checked: false });
+  }
+
   render() {
     const { classes, submitDate, deadlineDate, loader, errorUpload,
       cnUploaded, handleSubmit, cn } = this.props;
@@ -83,16 +92,18 @@ class ConceptNoteSubmission extends Component {
       <form onSubmit={handleSubmit(this.handleSubmit)}>
         <PaddedContent>
           <CnFileSection
-            component={<FileForm
-              fieldName="cn"
-              deleteDisabled={cnUploaded}
-            />}
+            component={
+              <FileForm
+                fieldName="cn"
+                optional
+                deleteDisabled={cnUploaded}
+              />}
             displayHint={cn}
           />
           <Typography className={classes.alignRight} type="caption">
             {`${messages.deadline} ${formatDateForPrint(deadlineDate)}`}
           </Typography>
-          <ProfileConfirmation onChange={(event, check) => this.handleCheck(event, check)} />
+          <ProfileConfirmation checked={cnUploaded || this.state.checked} disabled={cnUploaded} onChange={(event, check) => this.handleCheck(event, check)} />
           <div className={classes.alignRight}>
             {cnUploaded
               ? <Typography type="body1">
@@ -144,6 +155,7 @@ ConceptNoteSubmission.propTypes = {
   submitDate: PropTypes.string,
   handleSubmit: PropTypes.func,
   cn: PropTypes.number,
+  onRef: PropTypes.func,
 };
 
 const formConceptNoteSubmission = reduxForm({

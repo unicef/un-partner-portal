@@ -139,12 +139,19 @@ SelectForm.propTypes = {
   /**
    * default value String
    */
-  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  defaultValue: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ])),
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   /**
    * whether values should be divided into sections, expects this data format: 
    * [sectionName: string, valuesForSection: [{value, label}] ]
    */
-  sections: PropTypes.array,
+  sections: PropTypes.bool,
   /**
    * if select field should be multiple
    */

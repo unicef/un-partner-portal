@@ -127,8 +127,9 @@ const title = type => () => (
 const ProjectDetails = ({ type, role, partner, partnerId, displayGoal }) => (
   <HeaderList
     header={title(type)}
-    rows={[<Fields type={type} role={role} partner={partner} partnerId={partnerId} displayGoal={displayGoal} />]}
-  />
+  >
+    <Fields type={type} role={role} partner={partner} partnerId={partnerId} displayGoal={displayGoal} />
+  </HeaderList>
 );
 
 ProjectDetails.propTypes = {

@@ -23,7 +23,7 @@ const ProjectPartners = (props) => {
 ProjectPartners.propTypes = {
   fieldName: PropTypes.string,
   label: PropTypes.string,
-  getPartners: PropTypes.array,
+  getPartners: PropTypes.func,
   disabled: PropTypes.bool,
 };
 

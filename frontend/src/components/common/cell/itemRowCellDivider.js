@@ -37,7 +37,7 @@ const ItemRowCellDivider = (props) => {
         <Typography color={labelSecondary ? 'secondary' : 'inherit'} type="body1" >{label}</Typography>
         <div className={classes.alignRight}>
           { Array.isArray(content)
-            ? content.map(item => <Typography type="body1" >{item}</Typography>)
+            ? content.map(item => <Typography key={item} type="body1">{item}</Typography>)
             : <Typography type="body1" >{content}</Typography>
           }
         </div>
@@ -55,7 +55,10 @@ ItemRowCellDivider.propTypes = {
   classes: PropTypes.object.isRequired,
   label: PropTypes.string.isRequired,
   labelSecondary: PropTypes.bool,
-  content: PropTypes.string,
+  content: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.array,
+  ]),
   divider: PropTypes.bool,
 };
 

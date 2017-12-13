@@ -51,7 +51,7 @@ const PartnerOverviewFlagMenu = (props) => {
 
 PartnerOverviewFlagMenu.propTypes = {
   params: PropTypes.object,
-  dialogOpen: PropTypes.bool,
+  dialogOpen: PropTypes.object,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
 };

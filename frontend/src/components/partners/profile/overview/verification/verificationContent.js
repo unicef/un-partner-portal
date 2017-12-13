@@ -38,21 +38,24 @@ class VerificationContent extends Component {
   render() {
     const { mostRecentVerification, loading, previousCount, verifications, partnerId } = this.props;
     if (loading && isEmpty(verifications)) return <Loader loading={loading}><EmptyContent /></Loader>;
+
     return (
       <Loader loading={loading}>
-        <PaddedContent>
-          <VerificationItem verification={mostRecentVerification} />
-        </PaddedContent>
-        {previousCount > 0 && <SimpleCollapsableItem
-          handleChange={this.handleChange}
-          expanded={this.state.expanded}
-          title={<Typography type="caption">{`${messages.previous}: ${previousCount}`}</Typography>}
-          component={<PreviousVerificationsList
-            partnerId={partnerId}
-            count={previousCount}
-            verifications={verifications}
+        <div>
+          <PaddedContent>
+            <VerificationItem verification={mostRecentVerification} />
+          </PaddedContent>
+          {previousCount > 0 && <SimpleCollapsableItem
+            handleChange={this.handleChange}
+            expanded={this.state.expanded}
+            title={<Typography type="caption">{`${messages.previous}: ${previousCount}`}</Typography>}
+            component={<PreviousVerificationsList
+              partnerId={partnerId}
+              count={previousCount}
+              verifications={verifications}
+            />}
           />}
-        />}
+        </div>
       </Loader>
     );
   }

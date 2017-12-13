@@ -16,7 +16,7 @@ const title = () => (
 );
 
 const renderRow = (partners, isUserFocalPoint, id) => partners.map((partner, index) => (
-  <PaddedContent>
+  <PaddedContent key={partner.id}>
     <SingleSelectedPartner
       key={`partner_${index}`}
       isFocalPoint={isUserFocalPoint}
@@ -32,8 +32,9 @@ const SelectedPartners = (props) => {
   return (
     <HeaderList
       header={title}
-      rows={renderRow(partners, isUserFocalPoint, id)}
-    />
+    >
+      {renderRow(partners, isUserFocalPoint, id)}
+    </HeaderList>
   );
 };
 
