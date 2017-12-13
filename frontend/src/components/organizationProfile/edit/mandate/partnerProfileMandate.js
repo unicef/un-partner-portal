@@ -100,7 +100,7 @@ class PartnerProfileMandate extends Component {
 
     const changed = changedValues(initMandateMission, mandateMission);
 
-    const assocExperiences = R.assoc('experiences', convertExperiences, changed);
+    const assocExperiences = R.assoc('experiences', R.filter(item => !R.isNil(item.specialization_id), convertExperiences), changed);
 
     return updateTab(partnerId, 'mandate-mission', assocExperiences)
       .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))

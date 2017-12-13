@@ -1,8 +1,6 @@
 /* eslint-disable react/prop-types */
 import R from 'ramda';
 
-export const isArrayEmpty = array => Array.isArray(array) && ((!R.isEmpty(array) && R.isEmpty(array[0])) || R.isEmpty(array));
-
 export const mapInnerFields = (key, json, structure) => R.mapObjIndexed((value, mapKey) => {
   if (R.has(mapKey, json)) {
     return json[mapKey];

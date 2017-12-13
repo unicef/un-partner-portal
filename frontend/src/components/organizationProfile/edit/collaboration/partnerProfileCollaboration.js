@@ -89,14 +89,12 @@ class PartnerProfileCollaboration extends Component {
 
     const collaboration = flatten(R.assoc('collaboration_evidences', mergedEvidences, changedHistory));
     const initCollaboration = flatten(R.assoc('collaboration_evidences', [], unflattenCollInit));
-    let changed = changedValues(initCollaboration, collaboration);
-
-    if (isArrayEmpty(initCollaboration.collaborations_partnership)) {
-      changed = R.dissoc('collaborations_partnership', changed);
-    }
-    // const filterPartnerships = R.assoc('collaborations_partnership', R.filter(item => !R.isEmpty(item), changed.collaborations_partnership), changed);
-    console.log(changed);
-    return updateTab(partnerId, 'collaboration', changed)
+    const changed = changedValues(initCollaboration, collaboration);
+    
+    const filterPartnerships = R.assoc('collaborations_partnership', R.filter(item => !R.isNil(item.agency_id), changed.collaborations_partnership), changed);
+    const filterRefAcc = R.assoc('collaboration_evidences', R.filter(item => !R.isNil(item.organization_name), filterPartnerships.collaboration_evidences), filterPartnerships);
+    
+    return updateTab(partnerId, 'collaboration', filterRefAcc)
       .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
       .catch((error) => {
         const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
