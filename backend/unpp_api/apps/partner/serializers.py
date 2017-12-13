@@ -382,12 +382,13 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
     org_head = serializers.SerializerMethodField()
     mailing_address = PartnerMailingAddressSerializer()
     experiences = PartnerExperienceSerializer(many=True)
-    population_of_concern = serializers.CharField(source="mandate_mission.population_of_concern")
+    population_of_concern = serializers.ListField(source="mandate_mission.concern_groups")
     year_establishment = serializers.IntegerField(source="profile.year_establishment")
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
     annual_budget = serializers.CharField(source="profile.annual_budget")
     key_result = serializers.CharField(source="report.key_result")
     mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
+    partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
 
     class Meta:
         model = Partner
@@ -407,6 +408,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'annual_budget',
             'key_result',
             'mandate_and_mission',
+            'partner_additional',
         )
 
     def get_org_head(self, obj):
