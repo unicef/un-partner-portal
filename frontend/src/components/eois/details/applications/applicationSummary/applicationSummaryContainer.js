@@ -14,8 +14,8 @@ import {
   loadCfei,
 } from '../../../../../reducers/cfeiDetails';
 import {
-  loadPartnerDetails,
-} from '../../../../../reducers/partnerProfileDetails';
+  loadPartnerProfileSummary,
+} from '../../../../../reducers/agencyPartnerProfile';
 
 class ApplicationSummaryHeader extends Component {
   componentWillMount() {
@@ -67,7 +67,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   getApplication: () => dispatch(loadApplication(ownProps.params.applicationId)),
   getCfeiDetails: eoi => dispatch(loadCfei(eoi)),
-  getPartnerDetails: partner => dispatch(loadPartnerDetails(partner)),
+  getPartnerDetails: partner => dispatch(loadPartnerProfileSummary(partner)),
   downloadReviews: () => dispatch(loadApplicationReviews(ownProps.params.applicationId)),
 });
 
