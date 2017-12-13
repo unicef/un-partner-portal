@@ -31,31 +31,26 @@ class FileForm extends Component {
 
     return (
       <Grid item>
-        <FormControl fullWidth>
-          {readOnly
-            ? <Field
-                name={fieldName}
-                label={label}
-                component={renderFileDownload(this.props)}
-                optional={optional}
-              />
-            :
-            <div>
-              <Field
-                name={fieldName}
-                component={FileFormUploadButton}
-                fieldName={fieldName}
-                label={label}
-                sectionName={sectionName}
-                formName={formName}
-                deleteDisabled={deleteDisabled}
-                validate={(optional ? [] : [required].concat(validation || []))}
-                warn={warn && warning}
-                {...other}
-              />
-            </div>
-          }
-        </FormControl>
+        {readOnly
+          ? <Field
+            name={fieldName}
+            label={label}
+            component={renderFileDownload(this.props)}
+            optional={optional}
+          />
+          : <Field
+            name={fieldName}
+            component={FileFormUploadButton}
+            fieldName={fieldName}
+            label={label}
+            sectionName={sectionName}
+            formName={formName}
+            deleteDisabled={deleteDisabled}
+            validate={(optional ? [] : [required].concat(validation || []))}
+            warn={warn && warning}
+            {...other}
+          />
+        }
       </Grid>
     );
   }
@@ -103,7 +98,7 @@ FileForm.propTypes = {
    * read only mode
    */
   readOnly: PropTypes.bool,
-  /** 
+  /**
    * Don't display 'X' button
    */
   deleteDisabled: PropTypes.bool,

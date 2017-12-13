@@ -5,7 +5,7 @@ import {
 } from './normalizationHelpers';
 import { sendRequest } from '../helpers/apiHelper';
 import apiMeta, { success } from './apiMeta';
-import { loadPartnerDetails } from './partnerProfileDetails';
+import { loadPartnerProfileSummary } from './agencyPartnerProfile';
 
 import { getPartnerVerifications, postPartnerVerifications } from '../helpers/api/api';
 
@@ -75,7 +75,7 @@ export const updatePartnerVerifications = (partnerId, body) =>
   dispatch => postPartnerVerifications(partnerId, body)
     .then((newVerification) => {
       dispatch(loadPartnerVerifications(partnerId));
-      dispatch(loadPartnerDetails(partnerId));
+      dispatch(loadPartnerProfileSummary(partnerId));
       return newVerification;
     });
 

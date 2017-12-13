@@ -231,10 +231,14 @@ export const renderFileDownload = () => ({ input, label }) => (<FormControl full
       role="button"
       tabIndex={0}
       onClick={() => { window.open(input.value); }}
+      style={{
+        cursor: 'pointer',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+      }}
     >
-      <Typography >
-        {fileNameFromUrl(input.value)}
-      </Typography>
+      {fileNameFromUrl(input.value)}
     </div>
   </div>
 </FormControl>);
@@ -257,7 +261,7 @@ export const renderTextField = ({
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
     {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
     {/* show limit of characters
-       {other.inputProps && other.inputProps.maxLength && 
+       {other.inputProps && other.inputProps.maxLength &&
         <FormHelperText style={{ marginLeft: 'auto' }}>
         {input.value.length}/{other.inputProps.maxLength}
         </FormHelperText>} */}
@@ -308,15 +312,15 @@ export const renderDatePicker = ({
   }
 
   return (
-  <div>
-    <DatePicker
-      errorText={(touched && error) || warning}
-      {...datePickerProps}
-      {...inputOther}
-      onChange={(event, val) => onChange(val)}
-      {...other}
-    />
-  </div>
+    <div>
+      <DatePicker
+        errorText={(touched && error) || warning}
+        {...datePickerProps}
+        {...inputOther}
+        onChange={(event, val) => onChange(val)}
+        {...other}
+      />
+    </div>
   );
 };
 

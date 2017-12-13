@@ -18,27 +18,49 @@ const messages = {
 };
 
 const directorForm = (director, readOnly) => (
-  <GridRow columns={4}>
-    <TextFieldForm
-      fieldName={`${director}.fullname`}
-      label="Full Name"
-      warn
-      readOnly={readOnly}
-    />
-    <TextFieldForm
-      fieldName={`${director}.job_title`}
-      label="Job Title/Position"
-      warn
-      readOnly={readOnly}
-    />
-    <RadioForm
-      fieldName={`${director}.authorized`}
-      values={BOOL_VAL}
-      warn
-      label="Authorised Officer?"
-      readOnly={readOnly}
-    />
-  </GridRow>
+  <GridColumn>
+    <GridRow columns={3}>
+      <TextFieldForm
+        fieldName={`${director}.fullname`}
+        label="Full Name"
+        warn
+        readOnly={readOnly}
+      />
+      <TextFieldForm
+        fieldName={`${director}.job_title`}
+        label="Job Title/Position"
+        warn
+        readOnly={readOnly}
+      />
+      <RadioForm
+        fieldName={`${director}.authorized`}
+        values={BOOL_VAL}
+        warn
+        label="Authorised Officer?"
+        readOnly={readOnly}
+      />
+    </GridRow>
+    <GridRow columns={3}>
+      <TextFieldForm
+        fieldName={`${director}.telephone`}
+        label="Telephone"
+        warn
+        readOnly={readOnly}
+      />
+      <TextFieldForm
+        fieldName={`${director}.fax`}
+        label="Fax (optional)"
+        optional
+        readOnly={readOnly}
+      />
+      <TextFieldForm
+        fieldName={`${director}.email`}
+        label="Email"
+        warn
+        readOnly={readOnly}
+      />
+    </GridRow>
+  </GridColumn>
 );
 
 const authorisedOfficerForm = (officer, readOnly) => (
@@ -84,18 +106,16 @@ const PartnerProfileContactInfoOfficials = (props) => {
   const { readOnly, hasBoardOfDirectors, hasAuthorisedOfficers } = props;
 
   return (<FormSection name="authorised_officials">
-    <Grid container direction="column" spacing={16}>
-      <Grid item sm={12} xs={12}>
-        <RadioForm
-          label={messages.boardOfDirectors}
-          fieldName="have_board_directors"
-          values={BOOL_VAL}
-          warn
-          readOnly={readOnly}
-        />
-      </Grid>
-      {visibleIfYes(hasBoardOfDirectors) && <Grid item sm={12} xs={12}>
-        <ArrayForm
+    <GridColumn>
+      <RadioForm
+        label={messages.boardOfDirectors}
+        fieldName="have_board_directors"
+        values={BOOL_VAL}
+        warn
+        readOnly={readOnly}
+      />
+      {visibleIfYes(hasBoardOfDirectors)
+        ? <ArrayForm
           limit={15}
           initial
           label={messages.directos}
@@ -103,17 +123,16 @@ const PartnerProfileContactInfoOfficials = (props) => {
           outerField={director => directorForm(director, readOnly)}
           readOnly={readOnly}
         />
-      </Grid>}
-      <Grid item sm={12} xs={12}>
-        <RadioForm
-          label={messages.authorisedOfficers}
-          fieldName="have_authorised_officers"
-          values={BOOL_VAL}
-          warn
-          readOnly={readOnly}
-        />
-      </Grid>
-      {visibleIfYes(hasAuthorisedOfficers) && <Grid item sm={12} xs={12}>
+        : null}
+      <RadioForm
+        label={messages.authorisedOfficers}
+        fieldName="have_authorised_officers"
+        values={BOOL_VAL}
+        warn
+        readOnly={readOnly}
+      />
+
+      {visibleIfYes(hasAuthorisedOfficers) ?
         <ArrayForm
           limit={15}
           initial
@@ -122,8 +141,8 @@ const PartnerProfileContactInfoOfficials = (props) => {
           outerField={officer => authorisedOfficerForm(officer, readOnly)}
           readOnly={readOnly}
         />
-      </Grid>}
-    </Grid>
+        : null}
+    </GridColumn>
   </FormSection>
   );
 };

@@ -275,6 +275,10 @@ export function getPartnerProfileDetails(partnerId, options) {
   return authorizedGet({ uri: `/partners/${partnerId}`, options });
 }
 
+export function getPartnerProfileSummary(partnerId, options) {
+  return authorizedGet({ uri: `/partners/${partnerId}/summary/`, options });
+}
+
 export function getPartnerNames(params, options) {
   return get('/partners/short', params, options);
 }
