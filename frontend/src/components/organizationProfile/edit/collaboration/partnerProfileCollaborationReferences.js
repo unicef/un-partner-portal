@@ -58,7 +58,7 @@ const PartnerProfileCollaborationReferences = (props) => {
 
   return (<FormSection name="reference">
     <RadioForm
-      fieldName="has_partnership"
+      fieldName="any_reference"
       label={messages.info}
       values={BOOL_VAL}
       warn
@@ -86,6 +86,6 @@ PartnerProfileCollaborationReferences.propTypes = {
 const selector = formValueSelector('partnerProfile');
 export default connect(
   state => ({
-    hasReferences: selector(state, 'collaboration.history.partnership_collaborate_institution'),
+    hasReferences: selector(state, 'collaboration.reference.any_reference'),
   }),
 )(PartnerProfileCollaborationReferences);

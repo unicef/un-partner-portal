@@ -58,7 +58,7 @@ const PartnerProfileCollaborationAccreditation = (props) => {
 
   return (<FormSection name="accreditation">
     <RadioForm
-      fieldName="has_partnership"
+      fieldName="any_accreditation"
       label={messages.info}
       values={BOOL_VAL}
       warn
@@ -86,6 +86,6 @@ PartnerProfileCollaborationAccreditation.propTypes = {
 const selector = formValueSelector('partnerProfile');
 export default connect(
   state => ({
-    hasAccreditations: selector(state, 'collaboration.history.partnership_collaborate_institution'),
+    hasAccreditations: selector(state, 'collaboration.accreditation.any_accreditation'),
   }),
 )(PartnerProfileCollaborationAccreditation);

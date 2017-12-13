@@ -74,7 +74,7 @@ const PartnerProfileCollaborationHistory = (props) => {
   return (<FormSection name="history">
     <GridColumn>
       <RadioForm
-        fieldName="has_partnership"
+        fieldName="any_partnered_with_un"
         label={messages.hasCollaborated}
         values={BOOL_VAL}
         warn
@@ -127,7 +127,7 @@ const selector = formValueSelector('partnerProfile');
 export default connect(
   state => ({
     agency: [],
-    hasPartnerShip: selector(state, 'collaboration.history.partnership_collaborate_institution'),
+    hasPartnership: selector(state, 'collaboration.history.any_partnered_with_un'),
     hasCollaborated: selector(state, 'collaboration.history.partnership_collaborate_institution'),
   }),
 )(PartnerProfileCollaborationHistory);

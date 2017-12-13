@@ -123,12 +123,15 @@ const partnerDetailsStructure = {
       collaborations_partnership_others: null,
       partnership_collaborate_institution: null,
       partnership_collaborate_institution_desc: null,
+      any_partnered_with_un: null,
     },
     accreditation: {
       accreditations: null,
+      any_accreditation: null,
     },
     reference: {
       references: null,
+      any_reference: null,
     },
     collaboration_evidences: null,
   },
