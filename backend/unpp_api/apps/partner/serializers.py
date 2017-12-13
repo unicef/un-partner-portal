@@ -714,6 +714,9 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
     related_names = [
         "profile", "collaborations_partnership", "collaboration_evidences"
     ]
+    exclude_fields = {
+        "collaborations_partnership": PartnerCollaborationPartnershipSerializer.Meta.read_only_fields
+    }
 
     @transaction.atomic
     def update(self, instance, validated_data):
