@@ -32,6 +32,7 @@ class WeightField extends Component {
           },
           disabled,
         }}
+        normalize={value => +value}
         validation={[weight]}
         {...other}
       />
