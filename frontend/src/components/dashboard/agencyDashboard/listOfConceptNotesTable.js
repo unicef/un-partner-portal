@@ -66,7 +66,7 @@ class ListOfConceptNotesTable extends Component {
 }
 
 ListOfConceptNotesTable.propTypes = {
-  loading: PropTypes.string,
+  loading: PropTypes.bool,
   data: PropTypes.array,
   loadApplications: PropTypes.func,
   itemsCount: PropTypes.number,

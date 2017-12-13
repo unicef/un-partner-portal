@@ -24,17 +24,17 @@ function TextFieldForm(props) {
   return (
     <FormControl fullWidth>
       {readOnly
-        ? [
-          <Field
+        ? <Field
             name={fieldName}
             label={label}
             component={renderText}
             optional={optional}
             {...textFieldProps}
-          />]
+          />
         : [
-          <FormLabel>{label}</FormLabel>,
+          <FormLabel key={0}>{label}</FormLabel>,
           <Field
+            key={1}
             name={fieldName}
             placeholder={placeholder || `Provide ${label.toLowerCase()}`}
             component={SelectYearModal}
@@ -42,7 +42,8 @@ function TextFieldForm(props) {
             normalize={normalize}
             warn={warn && warning}
             {...textFieldProps}
-          />]
+          />
+        ]
       }
     </FormControl>
   );

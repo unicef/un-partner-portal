@@ -25,7 +25,7 @@ class Agencies extends Component {
         fieldName={fieldName}
         label={label}
         values={agencies}
-        defaultValue={agencyId}
+        defaultValue={`${agencyId}`}
         {...other}
       />
     );
@@ -37,8 +37,8 @@ Agencies.propTypes = {
   label: PropTypes.string,
   agencies: PropTypes.array,
   disabled: PropTypes.bool,
-  loadAgencies: PropTypes.array,
-  agencyId: PropTypes.string,
+  loadAgencies: PropTypes.func,
+  agencyId: PropTypes.number,
 };
 
 Agencies.defaultProps = {

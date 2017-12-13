@@ -90,30 +90,30 @@ class FeedbackContainer extends Component {
           </Typography>
         }
         loading={loading}
-        rows={
-          [(R.isEmpty(feedback) && !allowedToAdd)
-            ? loading
-              ? <EmptyContent />
-              : <PaddedContent big><Typography>{messages.noInfo}</Typography></PaddedContent>
-            : <PaddedContent big>
-              {allowedToAdd && <FeedbackForm applicationId={applicationId} />}
-              {feedback.map(singleFeedback => (<SingleFeedback
-                key={singleFeedback.id}
-                feedback={singleFeedback}
-              />))}
-              <Grid container justify="center" >
-                <Grid item>
-                  <Pagination
-                    count={count}
-                    rowsPerPage={page_size}
-                    page={page}
-                    onChangePage={this.handleChangePage}
-                    onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                  />
-                </Grid>
+      >
+        {(R.isEmpty(feedback) && !allowedToAdd) ? loading
+            ? <EmptyContent />
+            : <PaddedContent big><Typography>{messages.noInfo}</Typography></PaddedContent>
+          : <PaddedContent big>
+            {allowedToAdd && <FeedbackForm applicationId={applicationId} />}
+            {feedback.map(singleFeedback => (<SingleFeedback
+              key={singleFeedback.id}
+              feedbackId={singleFeedback.id}
+              feedback={singleFeedback}
+            />))}
+            <Grid container justify="center" >
+              <Grid item>
+                <Pagination
+                  count={count}
+                  rowsPerPage={page_size}
+                  page={page}
+                  onChangePage={this.handleChangePage}
+                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                />
               </Grid>
-            </PaddedContent>]}
-      />
+            </Grid>
+          </PaddedContent>}
+      </HeaderList>
     );
   }
 }
@@ -126,23 +126,24 @@ FeedbackContainer.propTypes = {
   applicationId: PropTypes.number,
   count: PropTypes.number,
   extraTitle: PropTypes.string,
+  feedbackId: PropTypes.string,
 };
 
 FeedbackContainer.defaultProps = {
-  key: 'default',
+  feedbackId: 'default',
 };
 
 const mapStateToProps = (state, ownProps) => {
   const { applicationId } = ownProps;
   return {
-    loading: state.applicationFeedback.status.loading[ownProps.key],
+    loading: state.applicationFeedback.status.loading[ownProps.feedbackId],
     feedback: selectApplicationFeedback(state, applicationId),
     count: selectApplicationFeedbackCount(state, applicationId),
   };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  loadFeedback: params => dispatch(loadApplicationFeedback(ownProps.applicationId, params, ownProps.key)),
+  loadFeedback: params => dispatch(loadApplicationFeedback(ownProps.applicationId, params, ownProps.feedbackId)),
 });
 
 

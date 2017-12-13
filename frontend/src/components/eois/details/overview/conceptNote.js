@@ -17,20 +17,18 @@ const ConceptNote = (props) => {
   return (
     <HeaderList
       header={<Typography type="headline" >{title}</Typography>}
-      rows={[
-        <PaddedContent>
-          <Loader loading={loading}>
-            {!loading && <GridColumn alignItems="center">
-              <FileDownloadButton fileUrl={conceptNote} />
-              {date && <Typography type="caption">
-                {`${messages.caption}: ${formatDateForPrint(date)}`}
-              </Typography>}
-            </GridColumn>}
-          </Loader>
-        </PaddedContent>,
-
-      ]}
-    />
+    >
+      <PaddedContent>
+        <Loader loading={loading}>
+          {!loading && <GridColumn alignItems="center">
+            <FileDownloadButton fileUrl={conceptNote} />
+            {date && <Typography type="caption">
+              {`${messages.caption}: ${formatDateForPrint(date)}`}
+            </Typography>}
+          </GridColumn>}
+        </Loader>
+      </PaddedContent>
+    </HeaderList>
   );
 };
 

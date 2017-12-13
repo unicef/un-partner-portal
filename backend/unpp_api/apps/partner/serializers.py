@@ -1,6 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 
+from agency.serializers import AgencySerializer
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
@@ -227,6 +228,8 @@ class PartnerFundingSerializer(serializers.ModelSerializer):
 
 class PartnerCollaborationPartnershipSerializer(serializers.ModelSerializer):
 
+    agency = AgencySerializer()
+
     class Meta:
         model = PartnerCollaborationPartnership
         fields = "__all__"
@@ -371,6 +374,47 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
         if obj.is_hq is False:
             return PartnerHeadOrganizationSerializer(obj.hq.org_head).data
         return
+
+
+class PartnerProfileSummarySerializer(serializers.ModelSerializer):
+
+    location_of_office = PointSerializer()
+    org_head = serializers.SerializerMethodField()
+    mailing_address = PartnerMailingAddressSerializer()
+    experiences = PartnerExperienceSerializer(many=True)
+    population_of_concern = serializers.ListField(source="mandate_mission.concern_groups")
+    year_establishment = serializers.IntegerField(source="profile.year_establishment")
+    collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
+    annual_budget = serializers.CharField(source="profile.annual_budget")
+    key_result = serializers.CharField(source="report.key_result")
+    mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
+    partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
+
+    class Meta:
+        model = Partner
+        fields = (
+            'id',
+            'legal_name',
+            'display_type',
+            'is_hq',
+            'country_code',
+            'location_of_office',
+            'org_head',
+            'mailing_address',
+            'experiences',
+            'population_of_concern',
+            'year_establishment',
+            'collaborations_partnership',
+            'annual_budget',
+            'key_result',
+            'mandate_and_mission',
+            'partner_additional',
+        )
+
+    def get_org_head(self, obj):
+        if obj.is_hq is False:
+            return PartnerHeadOrganizationSerializer(obj.hq.org_head).data
+        return PartnerHeadOrganizationSerializer(obj.org_head).data
 
 
 class PartnersListSerializer(serializers.ModelSerializer):
@@ -672,6 +716,9 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
     related_names = [
         "profile", "collaborations_partnership", "collaboration_evidences"
     ]
+    exclude_fields = {
+        "collaborations_partnership": PartnerCollaborationPartnershipSerializer.Meta.read_only_fields
+    }
 
     @transaction.atomic
     def update(self, instance, validated_data):
@@ -715,7 +762,7 @@ class PartnerProfileProjectImplementationSerializer(
     have_separate_bank_account = serializers.BooleanField(
         source="profile.have_separate_bank_account")
     explain = serializers.CharField(
-        source="profile.explain")
+        source="profile.explain", allow_blank=True, allow_null=True)
 
     regular_audited = serializers.BooleanField(source="audit.regular_audited")
     regular_audited_comment = serializers.CharField(

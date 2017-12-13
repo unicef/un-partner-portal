@@ -58,10 +58,12 @@ const HeaderOptionsContainer = (props) => {
       </GridColumn>);
   }
 
-  return (<GridRow justify="center" alignItems="center">
-    <EoiStatusCell status={cfeiStatus} />
-    {options}
-  </GridRow>);
+  return (
+    <GridRow justify="center" alignItems="center">
+      {cfeiStatus && <EoiStatusCell status={cfeiStatus} />}
+      {options}
+    </GridRow>
+  );
 };
 
 HeaderOptionsContainer.propTypes = {

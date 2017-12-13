@@ -174,9 +174,7 @@ class EoiFilter extends Component {
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
-                selectFieldProps={{
-                  multiple: true,
-                }}
+                multiple
                 values={specs}
                 sections
                 optional
@@ -187,7 +185,6 @@ class EoiFilter extends Component {
                 fieldName="active"
                 label={messages.labels.status}
                 values={STATUS_VAL}
-                defaultValue
                 optional
               />
             </Grid>
@@ -248,7 +245,7 @@ EoiFilter.propTypes = {
   classes: PropTypes.object.isRequired,
   specs: PropTypes.array.isRequired,
   pathName: PropTypes.string,
-  agencyId: PropTypes.string,
+  agencyId: PropTypes.number,
   query: PropTypes.object,
 };
 

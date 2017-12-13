@@ -26,6 +26,7 @@ const adminLevel = (name, index) => (
 
 const LocationFieldArray = (props) => {
   const { ...other } = props;
+  
   return (<ArrayForm
     limit={230}
     label={messages.adminLevel}

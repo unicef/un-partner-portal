@@ -84,7 +84,7 @@ const NewPartners = (props) => {
 NewPartners.propTypes = {
   number: PropTypes.number,
   classes: PropTypes.object,
-  dayBreakdown: PropTypes.array,
+  dayBreakdown: PropTypes.object,
 };
 
 export default withStyles(styleSheet, { name: 'NewPartners;' })(NewPartners);

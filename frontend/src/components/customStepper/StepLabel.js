@@ -68,7 +68,7 @@ function StepLabel(props) {
     classes[orientation],
   );
 
-  return (
+  return React.Children.count(children) ? (
     <span className={className} {...other}>
       {icon && (
         <span className={classes.iconContainer}>
@@ -82,7 +82,7 @@ function StepLabel(props) {
       )}
       <Typography className={error ? classes.errorText : null} type="body1">{children}</Typography>
     </span>
-  );
+  ) : null;
 }
 
 StepLabel.propTypes = {

@@ -38,8 +38,8 @@ const IconWithTextButton = (props) => {
 
 IconWithTextButton.propTypes = {
   classes: PropTypes.object,
-  onClick: PropTypes.function,
-  icon: PropTypes.component,
+  onClick: PropTypes.func,
+  icon: PropTypes.element,
   text: PropTypes.string,
   textProps: PropTypes.object,
 };

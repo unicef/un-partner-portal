@@ -11,7 +11,6 @@ extend_list_avoid_repeats(INSTALLED_APPS, [
     'rest_framework_swagger',
 ])
 
-
 # Sendgrid stuff
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')

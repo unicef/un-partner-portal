@@ -104,7 +104,7 @@ class HeaderNavigation extends Component {
       <div className={classes.root}>
         <Grid item>
           <Grid alignItems="center" className={classes.container} container>
-            <SpreadContent className={classes.flex} >
+            <SpreadContent className={{ [classes.flex]: true }}>
               <div className={paddingClass}>
                 { backButton
                   ? <IconButton
@@ -151,15 +151,15 @@ class HeaderNavigation extends Component {
 HeaderNavigation.propTypes = {
   classes: PropTypes.object.isRequired,
   index: PropTypes.number,
-  title: PropTypes.string.isRequired,
-  titleObject: PropTypes.object.isRequired,
+  title: PropTypes.string,
+  titleObject: PropTypes.object,
   backButton: PropTypes.bool,
   handleBackButton: PropTypes.func,
   tabs: PropTypes.array,
   customTabs: PropTypes.func,
   children: PropTypes.node,
-  header: PropTypes.Component,
-  handleChange: PropTypes.Func,
+  header: PropTypes.node,
+  handleChange: PropTypes.func,
 };
 
 export default withStyles(styleSheet, { name: 'HeaderNavigation' })(HeaderNavigation);

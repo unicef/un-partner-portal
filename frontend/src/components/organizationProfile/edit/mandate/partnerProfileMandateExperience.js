@@ -79,14 +79,10 @@ const PartnerProfileMandateExperience = (props) => {
 PartnerProfileMandateExperience.propTypes = {
   readOnly: PropTypes.bool,
   yearsOfExp: PropTypes.array,
-  sectors: PropTypes.arrayOf(
-    PropTypes.objectOf(
-      {
-        value: PropTypes.string,
-        label: PropTypes.string,
-      },
-    ),
-  ),
+  sectors: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.number,
+    label: PropTypes.string,
+  })),
 };
 
 export default connect(

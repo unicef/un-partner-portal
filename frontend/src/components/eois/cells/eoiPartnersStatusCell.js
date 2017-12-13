@@ -29,7 +29,11 @@ const renderExpandedCell = (partners, classes) => (
       Partner status:
     </Typography>
     { partners.map(partnerStatus => (
-      <Typography className={classes.text} align="left">
+      <Typography 
+        key={partnerStatus.legal_name}
+        className={classes.text}
+        align="left"
+      >
         {`${partnerStatus.legal_name}
 ${partnerStatus.application_status}`}
       </Typography>
@@ -53,7 +57,7 @@ const EoiPartnerStatusCell = (props) => {
 
 EoiPartnerStatusCell.propTypes = {
   classes: PropTypes.object.isRequired,
-  status: PropTypes.object.isRequired,
+  status: PropTypes.string.isRequired,
   id: PropTypes.number.isRequired,
   partners: PropTypes.array,
 };

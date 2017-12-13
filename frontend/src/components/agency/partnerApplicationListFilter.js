@@ -149,9 +149,7 @@ class PartnerApplicationListFilter extends Component {
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
-                selectFieldProps={{
-                  multiple: true,
-                }}
+                multiple
                 values={specs}
                 sections
                 optional
@@ -215,7 +213,7 @@ PartnerApplicationListFilter.propTypes = {
   eoiTypes: PropTypes.array.isRequired,
   pathName: PropTypes.string,
   query: PropTypes.object,
-  agencyId: PropTypes.string,
+  agencyId: PropTypes.number,
 };
 
 const formEoiFilter = reduxForm({
