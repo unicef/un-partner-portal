@@ -699,9 +699,9 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
 
     collaboration_evidences = PartnerCollaborationEvidenceSerializer(many=True)
 
-    any_partnered_with_un = serializers.BooleanField(read_only=True, source="profile.any_partnered_with_un")
-    any_accreditation = serializers.BooleanField(read_only=True, source="profile.any_accreditation")
-    any_reference = serializers.BooleanField(read_only=True, source="profile.any_reference")
+    any_partnered_with_un = serializers.BooleanField(source="profile.any_partnered_with_un")
+    any_accreditation = serializers.BooleanField(source="profile.any_accreditation")
+    any_reference = serializers.BooleanField(source="profile.any_reference")
     has_finished = serializers.BooleanField(read_only=True, source="profile.collaboration_complete")
 
     class Meta:
