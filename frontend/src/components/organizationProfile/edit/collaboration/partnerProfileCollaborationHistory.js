@@ -22,7 +22,7 @@ const messages = {
 const AgencySelection = (values, readOnly, ...props) => (member, index, fields) => (
   <GridColumn>
     <AgencySelectField
-      fieldName={`${member}.agency`}
+      fieldName={`${member}.agency.name`}
       label={messages.selectAgency}
       readOnly={readOnly}
       warn

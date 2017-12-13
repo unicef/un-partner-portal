@@ -7,6 +7,7 @@ import {
   stopLoadingField,
   saveErrorMsg,
 } from './apiStatus';
+import { errorToBeAdded } from './errorReducer';
 
 export const CREATE_PROFILE_LOAD_STARTED = 'CREATE_PROFILE_LOAD_STARTED';
 export const CREATE_PROFILE_LOAD_SUCCESS = 'CREATE_PROFILE_LOAD_SUCCESS';
@@ -34,10 +35,12 @@ export const partnerProfilesLoadEnded = () => ({ type: PARTNER_PROFILES_LOAD_END
 
 const saveProfiles = (state, action) => R.assoc('hq', action.response, state);
 
+
 const messages = {
   loadFailed: 'Load partners failed.',
   loadingPartnersField: 'loading',
   loadingCreateProfile: 'createLoading',
+  creationFailed: 'Unable to create country profile, please try again',
 };
 
 const initialState = {
@@ -79,6 +82,7 @@ export const newCountryProfile = partnerId => (dispatch, getState) => {
     .catch((error) => {
       dispatch(createProfileLoadEnded());
       dispatch(createProfileLoadFailure(error));
+      dispatch(errorToBeAdded(error, 'newCountryProfile', messages.creationFailed));
     });
 };
 
