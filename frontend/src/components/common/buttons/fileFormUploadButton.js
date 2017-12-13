@@ -43,6 +43,9 @@ const styleSheet = theme => ({
   },
   link: {
     cursor: 'pointer',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
   },
 });
 
