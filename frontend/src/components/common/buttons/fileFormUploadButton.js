@@ -1,5 +1,5 @@
 import R from 'ramda';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
@@ -94,9 +94,9 @@ class FileFormUploadButton extends Component {
       loading } = this.props;
     const url = R.is(String, input.value) ? input.value : fileUrl;
     return (
-      <FormControl>
+      <FormControl fullWidth>
         {label && <FormLabel>{label}</FormLabel>}
-        <div>
+        <Fragment>
           <input
             onChange={this.handleChange}
             className={classes.root}
@@ -137,7 +137,7 @@ class FileFormUploadButton extends Component {
                 </IconButton>}
               </Typography>
             </div>}
-        </div>
+        </Fragment>
       </FormControl>
     );
   }
