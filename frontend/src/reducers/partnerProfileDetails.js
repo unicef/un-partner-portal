@@ -62,7 +62,7 @@ const normalizeSpecializations = (state) => {
   return R.assoc('experience', experiences, state.mandate_mission);
 };
 
-const normalizeHistory = historyItem => R.assoc('agency', historyItem.agency.id, historyItem);
+const normalizeHistory = historyItem => R.assoc('agency', R.path(['agency', 'id'], historyItem), historyItem);
 
 const normalizeCollaboration = (state) => {
   const types = [
