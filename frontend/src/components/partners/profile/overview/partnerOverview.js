@@ -31,7 +31,7 @@ PartnerOverview.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  partner: state.agencyPartnerProfile[ownProps.params.id] || {},
+  partner: state.agencyPartnerProfile.data[ownProps.params.id] || {},
 });
 
 

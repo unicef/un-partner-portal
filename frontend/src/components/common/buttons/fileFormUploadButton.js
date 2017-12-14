@@ -1,5 +1,5 @@
 import R from 'ramda';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
@@ -44,6 +44,9 @@ const styleSheet = theme => ({
   },
   link: {
     cursor: 'pointer',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
   },
 });
 
@@ -102,7 +105,7 @@ class FileFormUploadButton extends Component {
         >
           {label}
         </FieldLabelWithTooltip>}
-        <div>
+        <Fragment>
           <input
             onChange={this.handleChange}
             className={classes.root}
@@ -143,7 +146,7 @@ class FileFormUploadButton extends Component {
                 </IconButton>}
               </Typography>
             </div>}
-        </div>
+        </Fragment>
       </FormControl>
     );
   }

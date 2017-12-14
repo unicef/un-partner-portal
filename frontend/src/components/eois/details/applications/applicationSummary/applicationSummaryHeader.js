@@ -70,7 +70,7 @@ class ApplicationSummaryHeader extends Component {
           return <Button disabled>{messages.retracted}</Button>;
         }
         return (<WithdrawApplicationButton
-          disabled={disabled}
+          disabled={disabled || !completedReview}
           raised
           applicationId={applicationId}
         />);

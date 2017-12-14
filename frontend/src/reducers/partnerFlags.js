@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import R from 'ramda';
 import { selectIndexWithDefaultEmptyObject } from './normalizationHelpers';
 import { getPartnerFlags, postPartnerFlags, patchPartnerFlags } from '../helpers/api/api';
-import { loadPartnerDetails } from './partnerProfileDetails';
+import { loadPartnerProfileSummary } from './agencyPartnerProfile';
 import { sendRequest } from '../helpers/apiHelper';
 import apiMeta, { success } from './apiMeta';
 
@@ -31,7 +31,7 @@ export const updatePartnerFlags = (partnerId, body, edit, flagId) => (dispatch) 
   return method(partnerId, body, flagId)
     .then((flag) => {
       dispatch(loadPartnerFlags(partnerId));
-      dispatch(loadPartnerDetails(partnerId));
+      dispatch(loadPartnerProfileSummary(partnerId));
       return flag;
     });
 };
