@@ -1,26 +1,14 @@
 import React from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import { renderRadioField, renderText, renderBool } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
-
-const styleSheet = (theme) => {
-  const padding = theme.spacing.unit;
-
-  return {
-    padding: {
-      paddingRight: `${padding}px`,
-    },
-  };
-};
 
 const RadioForm = (props) => {
   const {
     fieldName,
     label,
-    classes,
     values,
     optional,
     validation,
@@ -28,6 +16,7 @@ const RadioForm = (props) => {
     defaultValue,
     renderTextSelection,
     readOnly,
+    infoText,
     ...other } = props;
 
   return (
@@ -36,6 +25,7 @@ const RadioForm = (props) => {
         ? <Field
           name={fieldName}
           component={renderTextSelection ? renderText : renderBool}
+          infoText={infoText}
           values={values}
           optional={optional}
           label={label}
@@ -44,8 +34,8 @@ const RadioForm = (props) => {
           name={fieldName}
           component={renderRadioField}
           options={values}
-          classes={classes}
           label={label}
+          infoText={infoText}
           validate={optional ? [] : [required].concat(validation || [])}
           warn={warn ? [warning] : []}
           defaultValue={defaultValue}
@@ -56,7 +46,6 @@ const RadioForm = (props) => {
 };
 
 RadioForm.propTypes = {
-  classes: PropTypes.object.isRequired,
   /**
    * Name of the field used by react-form and as unique id.
    */
@@ -91,6 +80,10 @@ RadioForm.propTypes = {
   renderTextSelection: PropTypes.bool,
 
   defaultValue: PropTypes.object,
+  /**
+   * text/component passed to tooltip
+   */
+  infoText: PropTypes.string,
 };
 
-export default withStyles(styleSheet, { name: 'RadioForm' })(RadioForm);
+export default RadioForm;

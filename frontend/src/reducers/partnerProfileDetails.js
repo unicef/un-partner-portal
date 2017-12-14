@@ -22,6 +22,8 @@ const initialState = {
   other_info: null,
 };
 
+const historyPath = ['collaboration', 'history', 'collaborations_partnership'];
+
 export const loadPartnerDetails = partnerId => (dispatch, getState) => {
   const session = getState().session;
 
@@ -60,6 +62,8 @@ const normalizeSpecializations = (state) => {
   return R.assoc('experience', experiences, state.mandate_mission);
 };
 
+const normalizeHistory = historyItem => R.assoc('agency', R.path(['agency', 'id'], historyItem), historyItem);
+
 const normalizeCollaboration = (state) => {
   const types = [
     'Acc',
@@ -70,9 +74,22 @@ const normalizeCollaboration = (state) => {
     evidence.mode === type, state.collaboration.collaboration_evidences);
   const normalizedArray = R.map(filterType, types);
 
-  const mergedAccreditations = R.assocPath(['collaboration', 'accreditation', 'accreditations'], R.isEmpty(normalizedArray[0]) ? [{}] : normalizedArray[0], state);
+  const mergedAccreditations = R.assocPath(
+    ['collaboration', 'accreditation', 'accreditations'],
+    R.isEmpty(normalizedArray[0]) ? [{}] : normalizedArray[0],
+    state);
 
-  return R.assocPath(['collaboration', 'reference', 'references'], R.isEmpty(normalizedArray[1]) ? [{}] : normalizedArray[1], mergedAccreditations);
+  const withNormalizedCollaborationHistory = R.assocPath(historyPath,
+    R.map(
+      normalizeHistory,
+      R.path(historyPath, mergedAccreditations),
+    ), mergedAccreditations);
+
+  return R.assocPath(
+    ['collaboration', 'reference', 'references'],
+    R.isEmpty(normalizedArray[1]) ? [{}] : normalizedArray[1],
+    withNormalizedCollaborationHistory,
+  );
 };
 
 const savePartnerProfileDetails = (state, action) => {

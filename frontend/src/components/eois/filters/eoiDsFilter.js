@@ -180,7 +180,6 @@ class EoiFilter extends Component {
                 fieldName="active"
                 label={messages.labels.status}
                 values={STATUS_VAL}
-                defaultValue
                 optional
               />
             </Grid>
@@ -231,7 +230,7 @@ EoiFilter.propTypes = {
   specs: PropTypes.array.isRequired,
   directSources: PropTypes.array.isRequired,
   pathName: PropTypes.string,
-  agencyId: PropTypes.string,
+  agencyId: PropTypes.number,
   query: PropTypes.object,
 };
 

@@ -49,11 +49,14 @@ class ReviewSummary extends Component {
 
   render() {
     const { loading } = this.props;
-    return (<HeaderList
-      loading={loading}
-      header={<Typography type="headline" >{messages.title}</Typography>}
-      rows={this.content()}
-    />);
+    return (
+      <HeaderList
+        loading={loading}
+        header={<Typography type="headline" >{messages.title}</Typography>}
+      >
+        {this.content()}
+      </HeaderList>
+    );
   }
 }
 

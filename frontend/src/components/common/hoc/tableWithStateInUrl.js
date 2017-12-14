@@ -69,7 +69,10 @@ class TableWithStateInUrl extends Component {
 }
 
 TableWithStateInUrl.propTypes = {
-  component: PropTypes.element,
+  component: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.func,
+  ]),
   query: PropTypes.object,
   pathName: PropTypes.string,
   pageSize: PropTypes.number,
@@ -81,8 +84,8 @@ TableWithStateInUrl.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   pathName: ownProps.location.pathname,
   query: ownProps.location.query,
-  pageSize: ownProps.location.query.page_size,
-  pageNumber: ownProps.location.query.page,
+  pageSize: +ownProps.location.query.page_size,
+  pageNumber: +ownProps.location.query.page,
 });
 
 export default withRouter(connect(mapStateToProps, null)(TableWithStateInUrl));

@@ -87,7 +87,7 @@ const DatePoint = (props) => {
     <div
       className={containerClass}
       style={{
-        'flex-basis': `${flexSize < 10 ? 10 : flexSize}%`,
+        flexBasis: `${flexSize < 10 ? 10 : flexSize}%`,
       }}
     >
       <div className={mainClass}>
@@ -136,7 +136,7 @@ DatePoint.propTypes = {
   /**
    * whether date element should take all remaining space
    */
-  fullWidth: PropTypes.array,
+  fullWidth: PropTypes.bool,
 };
 
 

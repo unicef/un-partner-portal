@@ -91,7 +91,7 @@ class MainAppBar extends Component {
           position="static"
           color="accent"
         >
-          <Typography type="display1" color="inherit" alignItems="center">
+          <Typography type="display1" color="inherit">
               UNPP
           </Typography>
         </AppBar>
@@ -154,8 +154,6 @@ class MainAppBar extends Component {
 }
 
 MainAppBar.propTypes = {
-  router: PropTypes.object.isRequired,
-  sidebar: PropTypes.array.isRequired,
   classes: PropTypes.object.isRequired,
   onItemClick: PropTypes.func,
 };

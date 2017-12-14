@@ -21,18 +21,8 @@ const styleSheet = (theme) => {
 };
 
 class HeaderList extends Component {
-  renderChildren() {
-    if (Array.isArray(this.props.rows)) {
-      return this.props.rows.map(item =>
-        (<div className={this.props.classes.container}><Divider />
-          {item}
-        </div>));
-    }
-    return this.props.rows;
-  }
-
   render() {
-    const { classes, header, loading } = this.props;
+    const { classes = {}, header, loading, children } = this.props;
     return (
       <Paper>
         <div>
@@ -42,8 +32,15 @@ class HeaderList extends Component {
               : header
             }
           </div>
-          <Loader loading={loading} >
-            {this.renderChildren()}
+          <Loader loading={loading}>
+            <div>
+              {React.Children.map(children, child => (
+                <div className={classes.container}>
+                  <Divider />
+                  {child}
+                </div>
+              ))}
+            </div>
           </Loader>
         </div>
       </Paper>
@@ -53,8 +50,11 @@ class HeaderList extends Component {
 
 HeaderList.propTypes = {
   classes: PropTypes.object.isRequired,
-  header: PropTypes.object,
-  rows: PropTypes.func.isRequired,
+  header: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.node,
+  ]),
+  children: PropTypes.node,
   loading: PropTypes.bool,
 };
 

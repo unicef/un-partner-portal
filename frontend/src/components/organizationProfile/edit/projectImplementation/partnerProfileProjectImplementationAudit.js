@@ -23,6 +23,18 @@ const messages = {
   formalCapacity: 'Has the organization undergone a formal capacity assessment?',
   indicateAssessments: 'Please indicate which assessment(s)',
   copyOfAssessment: 'Copy of the assessment report',
+  organizationUndergoesTooltip: ['Internal audit: refers to an independent, objective assurance ' +
+  'and consulting activity that is undertaken by either an organization’s own employees, or an ' +
+  'external auditor, to evaluate the effectiveness of an organization’s risk management, control ' +
+  'and governance processes.',
+  'Financial statement audit: also known as an external audit, refers to an audit that is ' +
+  'undertaken by an external auditor to provide independent assurance that an organization’s ' +
+  'management has, in its financial statements, presented a “true and fair” view of the ' +
+  'organization’s financial performance and position.',
+  'Donor audit: refers to an audit that is undertaken, either by an organization’s external ' +
+  'auditors or commissioned by donors themselves, to obtain assurance that expenditure on a ' +
+  'donor-funded project or programme is in compliance with the conditions of the donor agreement ' +
+  'and any other donor regulations.'].join('\n\n'),
 };
 
 const PartnerProfileProjectImplementationAudit = (props) => {
@@ -59,6 +71,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
             label={messages.organizationUndergoes}
             values={auditTypes}
             multiple
+            infoText={messages.organizationUndergoesTooltip}
             warn
             readOnly={readOnly}
           />
@@ -70,7 +83,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               formName="partnerProfile"
               fieldName="most_recent_audit_report"
               label={messages.copyOfRecentAudit}
-              optional={(mostRecentAuditReport || auditLinkReport)}
+              optional={!!(mostRecentAuditReport || auditLinkReport)}
               warn={!(mostRecentAuditReport || auditLinkReport)}
               readOnly={readOnly}
             />
@@ -80,7 +93,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               label={messages.insertLink}
               fieldName="audit_link_report"
               validation={[url]}
-              optional={(mostRecentAuditReport || auditLinkReport)}
+              optional={!!(mostRecentAuditReport || auditLinkReport)}
               warn={!(mostRecentAuditReport || auditLinkReport)}
               readOnly={readOnly}
             />
@@ -143,7 +156,10 @@ PartnerProfileProjectImplementationAudit.propTypes = {
   readOnly: PropTypes.bool,
   auditTypes: PropTypes.array,
   capacityAssessments: PropTypes.array,
-  isRegularyAudited: PropTypes.bool,
+  isRegularyAudited: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool,
+  ]),
   accountabilityIssues: PropTypes.bool,
   mostRecentAuditReport: PropTypes.string,
   auditLinkReport: PropTypes.string,

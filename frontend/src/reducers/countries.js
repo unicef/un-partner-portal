@@ -1,4 +1,6 @@
+
 import { getCountries } from '../helpers/api/api';
+import { sessionError } from '../reducers/session';
 
 export const LOAD_COUNTRIES_SUCCESS = 'LOAD_COUNTRIES_SUCCESS';
 
@@ -6,16 +8,14 @@ const initialState = {};
 
 const loadCountriesSuccess = countries => ({ type: LOAD_COUNTRIES_SUCCESS, countries });
 
-export const loadCountries = () => (dispatch) => {
-  if (!window.localStorage.countries) {
-    return getCountries()
-      .then((countries) => {
-        window.localStorage.setItem('countries', JSON.stringify(countries));
-        return dispatch(loadCountriesSuccess(countries));
-      });
-  }
-  return dispatch(loadCountriesSuccess(JSON.parse(window.localStorage.countries)));
-};
+// TODO: think of better way to handle countries, not just download them everytime
+export const loadCountries = () => dispatch => getCountries()
+  .then((countries) => {
+    dispatch(loadCountriesSuccess(countries));
+  }).catch((error) => {
+    dispatch(sessionError(error));
+  });
+
 
 export default function countriesReducer(state = initialState, action) {
   switch (action.type) {

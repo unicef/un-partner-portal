@@ -3,11 +3,9 @@ import R from 'ramda';
 import React from 'react';
 import Select from 'material-ui/Select';
 import TextField from 'material-ui/TextField';
-import Checkbox from 'material-ui/Checkbox';
-import Close from 'material-ui-icons/Close';
-import IconButton from 'material-ui/IconButton';
-import Autosuggest from 'react-autosuggest';
 import Input from 'material-ui/Input';
+import Checkbox from 'material-ui/Checkbox';
+import Autosuggest from 'react-autosuggest';
 import { FormControl, FormControlLabel, FormHelperText, FormLabel } from 'material-ui/Form';
 import Attachment from 'material-ui-icons/Attachment';
 import DateRange from 'material-ui-icons/DateRange';
@@ -15,8 +13,9 @@ import DatePicker from 'material-ui-old/DatePicker';
 import Typography from 'material-ui/Typography';
 import RadioGroupRow from '../components/common/radio/radioGroupRow';
 import RadioHeight from '../components/common/radio/radioHeight';
-import { formatDateForPrint } from './dates';
-import { numerical, validateReviewScores } from '../helpers/validation';
+import FieldLabelWithTooltipIcon from '../components/common/fieldLabelWithTooltip';
+import { formatDateForPrint, formatDateForDatePicker } from './dates';
+import { numerical } from '../helpers/validation';
 import {
   renderInput,
   renderMultipleInput,
@@ -71,14 +70,14 @@ const convertBool = (value) => {
 };
 
 export const visibleIfNo = (value) => {
-  if (value === BOOL_VAL[1].value || (typeof (value) === 'boolean' && !value)) { return true; }
+  if (value === BOOL_VAL[1].value || typeof (value) === 'boolean' && !value) { return true; }
 
   return false;
 };
 
 
 export const visibleIfYes = (value) => {
-  if (value === BOOL_VAL[0].value || (typeof (value) === 'boolean' && value)) { return true; }
+  if (value === BOOL_VAL[0].value || typeof (value) === 'boolean' && value) { return true; }
 
   return false;
 };
@@ -127,6 +126,7 @@ export const renderSelectField = ({
   label,
   values,
   placeholder,
+  infoText,
   ...other
 }) => {
   let valueForSelect;
@@ -136,7 +136,14 @@ export const renderSelectField = ({
     valueForSelect = input.value || defaultValue || 'placeholder_none';
   }
   return (<FormControl fullWidth error={(touched && error) || warning}>
-    <FormLabel>{label}</FormLabel>
+    <FieldLabelWithTooltipIcon
+      infoText={infoText}
+      tooltipIconProps={{
+        name: input.name,
+      }}
+    >
+      {label}
+    </FieldLabelWithTooltipIcon>
     <Select
       {...input}
       value={valueForSelect}
@@ -178,12 +185,20 @@ export const renderRadioField = ({ input,
   label,
   defaultValue,
   classes,
+  infoText,
   meta: { touched, error, warning },
   options, ...other
 }) => (
   <div>
     <FormControl fullWidth>
-      <FormLabel>{label}</FormLabel>
+      <FieldLabelWithTooltipIcon
+        infoText={infoText}
+        tooltipIconProps={{
+          name: input.name,
+        }}
+      >
+        {label}
+      </FieldLabelWithTooltipIcon>
       <RadioGroupRow
         selectedValue={!R.isEmpty(input.value) ? transformBool(input.value) : defaultValue}
         onChange={(event, value) => { input.onChange(transformBool(value)); }}
@@ -191,9 +206,8 @@ export const renderRadioField = ({ input,
       >
         {options.map((value, index) => (
           <FormControlLabel
-            className={classes.padding}
             key={index}
-            value={value.value}
+            value={`${value.value}`}
             control={<RadioHeight />}
             label={value.label}
           />))}</RadioGroupRow>
@@ -221,11 +235,19 @@ export const renderCheckbox = ({
         {label}
       </Typography>
     </div>
-    {((touched && error) || error || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+    {((touched && error) || error || warning)
+      && <FormHelperText error>{error || warning}</FormHelperText>}
   </div>);
 
-export const renderFileDownload = () => ({ input, label }) => (<FormControl fullWidth>
-  <FormLabel>{label}</FormLabel>
+export const renderFileDownload = () => ({ input, label, infoText }) => (<FormControl fullWidth>
+  <FieldLabelWithTooltipIcon
+    infoText={infoText}
+    tooltipIconProps={{
+      name: input.name,
+    }}
+  >
+    {label}
+  </FieldLabelWithTooltipIcon>
   <div style={{ display: 'flex', alignItems: 'center' }}>
     {input.value && <Attachment style={{ marginRight: 5 }} />}
     <div
@@ -233,10 +255,14 @@ export const renderFileDownload = () => ({ input, label }) => (<FormControl full
       role="button"
       tabIndex={0}
       onClick={() => { window.open(input.value); }}
+      style={{
+        cursor: 'pointer',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+      }}
     >
-      <Typography >
-        {fileNameFromUrl(input.value)}
-      </Typography>
+      {fileNameFromUrl(input.value)}
     </div>
   </div>
 </FormControl>);
@@ -246,8 +272,18 @@ export const renderTextField = ({
   className,
   meta: { touched, error, warning },
   input,
+  label,
+  infoText,
   ...other
-}) => (<div>
+}) => (<FormControl fullWidth>
+  <FieldLabelWithTooltipIcon
+    infoText={infoText}
+    tooltipIconProps={{
+      name: input.name,
+    }}
+  >
+    {label}
+  </FieldLabelWithTooltipIcon>
   <TextField
     className={className}
     id={input.name}
@@ -259,12 +295,12 @@ export const renderTextField = ({
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
     {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
     {/* show limit of characters
-       {other.inputProps && other.inputProps.maxLength && 
+       {other.inputProps && other.inputProps.maxLength &&
         <FormHelperText style={{ marginLeft: 'auto' }}>
         {input.value.length}/{other.inputProps.maxLength}
         </FormHelperText>} */}
   </div>
-</div>);
+</FormControl>);
 
 export const renderNumberField = ({
   name,
@@ -277,7 +313,7 @@ export const renderNumberField = ({
 
   return (
     <div>
-      <TextField
+      <Input
         className={className}
         id={name}
         error={(touched && !!error) || !!warning || !!rangeError}
@@ -295,18 +331,32 @@ export const renderNumberField = ({
 };
 
 export const renderDatePicker = ({
-  input,
+  input: { value, onChange, ...inputOther },
   meta: { touched, error, warning },
   ...other
-}) => (
-  <div>
-    <DatePicker
-      errorText={(touched && error) || warning}
-      {...input}
-      onChange={(event, value) => input.onChange(value)}
-      {...other}
-    />
-  </div>);
+}) => {
+  const datePickerProps = {};
+
+  if (!value) {
+    // noop
+  } else if (typeof value === 'object' && value.valueOf()) {
+    datePickerProps.value = value;
+  } else if (typeof value === 'string' && value !== 'Invalid date') {
+    datePickerProps.value = formatDateForDatePicker(value);
+  }
+
+  return (
+    <div>
+      <DatePicker
+        errorText={(touched && error) || warning}
+        {...datePickerProps}
+        {...inputOther}
+        onChange={(event, val) => onChange(val)}
+        {...other}
+      />
+    </div>
+  );
+};
 
 export const renderText = ({
   className,
@@ -314,10 +364,18 @@ export const renderText = ({
   values,
   optional,
   label,
+  infoText,
   date,
+  meta,
+  multiline,
+  inputProps,
   ...other
 }) => {
-  let value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (other.inputProps ? other.inputProps.initial : null);
+  let value = (!R.isNil(input.value) && !R.isEmpty(input.value))
+    ? input.value
+    : (inputProps
+      ? inputProps.initial
+      : null);
 
   if (!value) value = '-';
 
@@ -328,13 +386,26 @@ export const renderText = ({
     }, values).map(matchedValue => matchedValue.label).join(', ');
   }
 
-  if (R.isEmpty(value) || R.isNil(value)) value = !R.isNil(input.value) && !R.isEmpty(input.value) ? input.value : (other.inputProps ? other.inputProps.initial : null);
+  if (R.isEmpty(value) || R.isNil(value)) {
+    value = (!R.isNil(input.value) && !R.isEmpty(input.value))
+      ? input.value
+      : (inputProps
+        ? inputProps.initial
+        : null);
+  }
   if (date) value = formatDateForPrint(value);
   if (R.isEmpty(value) || R.isNil(value)) value = '-';
 
   return (
     <FormControl fullWidth>
-      {label && <FormLabel>{label}</FormLabel>}
+      {label && <FieldLabelWithTooltipIcon
+        infoText={infoText}
+        tooltipIconProps={{
+          name: input.name,
+        }}
+      >
+        {label}
+      </FieldLabelWithTooltipIcon>}
       <div style={{ display: 'flex', alignItems: 'center' }}>
         {date && <DateRange style={{
           marginRight: 5,
@@ -359,6 +430,7 @@ export const renderBool = ({
   values,
   optional,
   label,
+  meta,
   ...other
 }) => (
   <FormControl fullWidth>
@@ -388,6 +460,7 @@ export const renderAutocomplete = ({
   fieldValue,
   multiple,
   overlap,
+  infoText,
 }) => (<div>
   <Autosuggest
     id={`autosuggest-${name}`}
@@ -421,6 +494,7 @@ export const renderAutocomplete = ({
       multiValues,
       onChange: handleChange,
       handleClear: R.curry(handleClear)(onFormChange, handleMultiClear),
+      infoText,
       ...inputProps,
     }}
   />

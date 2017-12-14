@@ -12,16 +12,21 @@ import SpreadContent from '../../../../common/spreadContent';
 const COUNTRY = 'Country';
 
 const CountryField = (props) => {
-  const { fieldName,
+  const {
+    fieldName,
     label,
     suggestionsPool,
     countries,
     readOnly,
-    infoIcon,
     infoText,
     initial,
     initialMultiValues,
-    ...other } = props;
+    ...other
+  } = props;
+
+  if (!fieldName) {
+    return null;
+  }
 
   return readOnly ? (
     <SelectForm
@@ -37,24 +42,15 @@ const CountryField = (props) => {
       {...other}
     />
   ) : (
-    <SpreadContent>
-      <AutocompleteForm
-        fieldName={fieldName}
-        label={label}
-        initial={initial}
-        initialMultiValues={initialMultiValues}
-        suggestionsPool={suggestionsPool || countries}
-        {...other}
-      />
-      {infoIcon && (
-
-        <TooltipIcon
-          infoText={infoText}
-          Icon={InfoIcon}
-        />
-
-      )}
-    </SpreadContent>
+    <AutocompleteForm
+      fieldName={fieldName}
+      label={label}
+      initial={initial}
+      initialMultiValues={initialMultiValues}
+      suggestionsPool={suggestionsPool || countries}
+      infoText={infoText}
+      {...other}
+    />
   );
 };
 
@@ -63,8 +59,7 @@ CountryField.propTypes = {
   countries: PropTypes.array,
   label: PropTypes.string,
   readOnly: PropTypes.bool,
-  infoIcon: PropTypes.bool,
-  infoText: PropTypes.string,
+  infoText: PropTypes.node,
   initial: PropTypes.string,
   suggestionsPool: PropTypes.array,
 };

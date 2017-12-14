@@ -3,7 +3,6 @@ import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 
 import Grid from 'material-ui/Grid';
-import { FormControl, FormLabel } from 'material-ui/Form';
 import { renderTextField, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
@@ -19,33 +18,32 @@ function TextFieldForm(props) {
     warn,
     normalize,
     readOnly,
+    infoText,
   } = props;
 
   return (
     <Grid item>
-      <FormControl fullWidth>
-        {readOnly
-          ? [
-            <Field
-              name={fieldName}
-              label={label}
-              component={renderText}
-              optional={optional}
-              {...textFieldProps}
-            />]
-          : [
-            <FormLabel>{label}</FormLabel>,
-            <Field
-              name={fieldName}
-              placeholder={placeholder || `Provide ${label.toLowerCase()}`}
-              component={renderTextField}
-              validate={(optional ? (validation || []) : [required].concat(validation || []))}
-              normalize={normalize}
-              warn={warn && warning}
-              {...textFieldProps}
-            />]
-        }
-      </FormControl>
+      {readOnly
+        ? <Field
+          name={fieldName}
+          label={label}
+          component={renderText}
+          optional={optional}
+          infoText={infoText}
+          {...textFieldProps}
+        />
+        : <Field
+          name={fieldName}
+          placeholder={placeholder || `Provide ${label.toLowerCase()}`}
+          component={renderTextField}
+          label={label}
+          validate={(optional ? (validation || []) : [required].concat(validation || []))}
+          normalize={normalize}
+          infoText={infoText}
+          warn={warn ? warning : null}
+          {...textFieldProps}
+        />
+      }
     </Grid>
   );
 }
@@ -63,7 +61,7 @@ TextFieldForm.propTypes = {
   /**
    * props passed to wrapped TextField
    */
-  textFieldProps: PropTypes.node,
+  textFieldProps: PropTypes.object,
   /**
    * unique text used as placeholder
    */
@@ -88,6 +86,10 @@ TextFieldForm.propTypes = {
    * for some text format, i.e. parseInt
    */
   normalize: PropTypes.func,
+  /**
+   * text for tooltip icon
+   */
+  infoText: PropTypes.node,
 };
 
 TextFieldForm.defaultProps = {

@@ -1,12 +1,5 @@
 import { combineReducers } from 'redux';
 import R from 'ramda';
-import applicationReviewsStatus, {
-  loadApplicationReviewsStarted,
-  loadApplicationReviewsEnded,
-  loadApplicationReviewsSuccess,
-  loadApplicationReviewsFailure,
-  LOAD_APPLICATION_REVIEWS_SUCCESS,
-} from './applicationReviewsStatus';
 import {
   toObject,
   normalizeToId,
@@ -14,6 +7,18 @@ import {
 } from './normalizationHelpers';
 
 import { getApplicationReviews, postApplicationReview, putApplicationReview } from '../helpers/api/api';
+import { sendRequest } from '../helpers/apiHelper';
+import apiMeta, {
+  success,
+} from './apiMeta';
+import { errorToBeAdded } from './errorReducer';
+
+const errorMessage = 'Couldn\'t load reviews for this application, please refresh page and try ' +
+'again';
+const updateErrorMessage = 'Could save review, please try again';
+
+const APPLICATION_REVIEWS = 'APPLICATION_REVIEWS';
+const tag = 'applicationReviews';
 
 const initialState = {
   reviews: {},
@@ -21,19 +26,17 @@ const initialState = {
   reviewers: {},
 };
 
-export const loadApplicationReviews = id => (dispatch, getState) => {
-  dispatch(loadApplicationReviewsStarted());
-  return getApplicationReviews(id)
-    .then((reviews) => {
-      dispatch(loadApplicationReviewsEnded());
-      dispatch(loadApplicationReviewsSuccess(reviews, id));
-      return reviews;
-    })
-    .catch((error) => {
-      dispatch(loadApplicationReviewsEnded());
-      dispatch(loadApplicationReviewsFailure(error));
-    });
-};
+export const loadApplicationReviews = applicationId => sendRequest({
+  loadFunction: getApplicationReviews,
+  meta: {
+    reducerTag: tag,
+    actionTag: APPLICATION_REVIEWS,
+    isPaginated: false,
+  },
+  successParams: { applicationId },
+  errorHandling: { userMessage: errorMessage },
+  apiParams: [applicationId],
+});
 
 const normalizeReviews = (state, applicationId, reviews) =>
   R.forEach(
@@ -53,7 +56,7 @@ const normalizeReviews = (state, applicationId, reviews) =>
 
 const saveReviews = (state, action) => {
   const newState = R.clone(state);
-  normalizeReviews(newState, action.applicationId, action.reviews);
+  normalizeReviews(newState, action.applicationId, action.results);
   return newState;
 };
 
@@ -78,12 +81,14 @@ export const updateApplicationReview = (applicationId, reviewerId, assessmentId,
       .then((newReview) => {
         dispatch(loadApplicationReviews(applicationId));
         return newReview;
+      }).catch((error) => {
+        dispatch(errorToBeAdded(error, 'reviewUpdate', updateErrorMessage));
       });
   };
 
 const applicationReviews = (state = initialState, action) => {
   switch (action.type) {
-    case LOAD_APPLICATION_REVIEWS_SUCCESS: {
+    case success`${APPLICATION_REVIEWS}`: {
       return saveReviews(state, action);
     }
     default:
@@ -91,4 +96,4 @@ const applicationReviews = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ data: applicationReviews, status: applicationReviewsStatus });
+export default combineReducers({ data: applicationReviews, status: apiMeta(APPLICATION_REVIEWS) });

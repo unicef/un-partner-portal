@@ -54,7 +54,7 @@ TextWithColorBackground.propTypes = {
   classes: PropTypes.object,
   color: PropTypes.string,
   text: PropTypes.string,
-  className: PropTypes.object,
+  className: PropTypes.string,
   type: PropTypes.string,
 };
 

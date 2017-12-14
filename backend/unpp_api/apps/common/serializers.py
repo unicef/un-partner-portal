@@ -10,6 +10,8 @@ from .models import AdminLevel1, Point, Sector, Specialization, CommonFile
 
 class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
+    exclude_fields = {}
+
     def update_partner_related(self, instance, validated_data, related_names=[]):
         for related_name in related_names:
             if isinstance(getattr(instance, related_name), Model):
@@ -31,6 +33,8 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
                 # ForeignKey related to partner - RelatedManager object - here we add or update if exist related item
                 for data in self.initial_data.get(related_name, []):
+                    for field in self.exclude_fields.get(related_name, []):
+                        field in data and data.pop(field)
                     _id = data.get("id")
                     if _id:
                         getattr(instance, related_name).filter(id=_id).update(**data)

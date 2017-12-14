@@ -1,45 +1,46 @@
 import { combineReducers } from 'redux';
 import R from 'ramda';
-import applicationDetailsStatus, {
-  loadApplicationDetailStarted,
-  loadApplicationDetailEnded,
-  loadApplicationDetailSuccess,
-  loadApplicationDetailFailure,
-  LOAD_APPLICATION_DETAIL_SUCCESS,
-} from './applicationDetailsStatus';
+import { sendRequest } from '../helpers/apiHelper';
+import apiMeta, {
+  success,
+  loadSuccess,
+} from './apiMeta';
+import { errorToBeAdded } from './errorReducer';
 
 import { getApplicationDetails, patchApplication } from '../helpers/api/api';
 
+const errorMessage = 'Couldn\'t load details of this application, please refresh page and try again';
+const updateErrorMessage = 'Couldn\'t update application, please try again';
+
+export const APPLICATION_DETAILS = 'APPLICATION_DETAILS';
+const tag = 'applicationDetails';
+
 const initialState = {};
-export const LOAD_APPLICATION_SUMMARY = 'LOAD_APPLICATION_SUMMARY';
+
 export const UPDATE_APPLICATION_PARTNER_NAME = 'UPDATE_APPLICATION_PARTNER_NAME';
 
-export const loadApplicationSummary = (id, status, name) => (
-  { type: LOAD_APPLICATION_SUMMARY, id, status, name });
-
-export const loadApplication = id => (dispatch, getState) => {
-  dispatch(loadApplicationDetailStarted());
-  return getApplicationDetails(id)
-    .then((application) => {
-      dispatch(loadApplicationDetailEnded());
-      dispatch(loadApplicationDetailSuccess(application, getState));
-      return application;
-    })
-    .catch((error) => {
-      dispatch(loadApplicationDetailEnded());
-      dispatch(loadApplicationDetailFailure(error));
-    });
-};
+export const loadApplication = id => sendRequest({
+  loadFunction: getApplicationDetails,
+  meta: {
+    reducerTag: tag,
+    actionTag: APPLICATION_DETAILS,
+    isPaginated: false,
+  },
+  errorHandling: { userMessage: errorMessage },
+  apiParams: [id],
+});
 
 export const updateApplication = (applicationId, body) => (dispatch, getState) =>
   patchApplication(applicationId, body)
     .then((application) => {
-      dispatch(loadApplicationDetailSuccess(application, getState));
+      dispatch(loadSuccess(APPLICATION_DETAILS, { results: application, getState }));
       return application;
+    }).catch((error) => {
+      dispatch(errorToBeAdded(error, 'applicationUpdate', updateErrorMessage));
     });
 
 const saveApplication = (state, action) =>
-  R.assoc(action.application.id, R.mergeDeepRight(state[action.application.id], action.application), state);
+  R.assoc(action.results.id, R.mergeDeepRight(state[action.results.id], action.results), state);
 
 export function selectApplication(state, id) {
   return state[id] ? state[id] : null;
@@ -64,29 +65,17 @@ export function selectApplicationWithdrawStatus(state, id) {
 
 export function selectApplicationCurrentStatus(state, id) {
   const { [id]: { application_status = null } = {} } = state;
-  return application_status
+  return application_status;
 }
-
-const saveApplicationSync = (state, action) => {
-  if (selectApplication(state, action.id)) return state;
-  const { id, name, status } = action;
-  return R.assoc(
-    id,
-    { id, status, partner_name: name },
-    state);
-};
 
 const applicationDetails = (state = initialState, action) => {
   switch (action.type) {
-    case LOAD_APPLICATION_DETAIL_SUCCESS: {
+    case success`${APPLICATION_DETAILS}`: {
       return saveApplication(state, action);
-    }
-    case LOAD_APPLICATION_SUMMARY: {
-      return saveApplicationSync(state, action);
     }
     default:
       return state;
   }
 };
 
-export default combineReducers({ data: applicationDetails, status: applicationDetailsStatus });
+export default combineReducers({ data: applicationDetails, status: apiMeta(APPLICATION_DETAILS) });

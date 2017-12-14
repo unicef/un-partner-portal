@@ -57,7 +57,8 @@ const ListOfPendingOffers = (props) => {
     <HeaderList
       header={<Typography type="headline" >{messages.title}</Typography>}
       loading={loading}
-      rows={[<TableWithLocalState
+    >
+      <TableWithLocalState
         component={PaginatedList}
         items={data}
         itemsCount={itemsCount}
@@ -65,8 +66,8 @@ const ListOfPendingOffers = (props) => {
         loading={loading}
         templateCell={renderCells}
         loadingFunction={loadOffers}
-      />]}
-    />
+      />
+    </HeaderList>
   );
 };
 

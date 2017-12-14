@@ -1,33 +1,33 @@
 
 import React from 'react';
+import R from 'ramda';
+import { connect } from 'react-redux';
 import { TableCell } from 'material-ui/Table';
 import PropTypes from 'prop-types';
-import Tooltip from '../../common/tooltip';
+import Tooltip from '../../common/portalTooltip';
 import SpreadContent from '../../common/spreadContent';
-import TooltipText from '../../common/text/tooltipText';
 
-const renderExpandedCell = data => data.map((score, index) => (
-  <SpreadContent key={index}>
-    <TooltipText color="inherit" alignItems="left">
-      {score.label}
-    </TooltipText>
+const renderExpandedCell = (data, allCriteria) =>
+  R.map(([key, review], index) => (<SpreadContent key={index}>
+    {allCriteria[key]}
     <div style={{ minWidth: 50 }} />
-    <TooltipText color="inherit" alignItems="right">
-      {score.score}
-    </TooltipText>
-  </SpreadContent>
-));
+    {review.score}
+  </SpreadContent>), data);
 
 const ApplicationStatusCell = (props) => {
-  const { id, score, breakdown } = props;
+  const { id, score, breakdown, allCriteria } = props;
   const localScore = (score && score) || '-';
   return (
-    <TableCell data-tip data-for={`${id}-your-score-tooltip`}>
-      {localScore}
-      {score && score.breakdown && <Tooltip
+    <TableCell>
+      <Tooltip
         id={`${id}-your-score-tooltip`}
-        text={renderExpandedCell(breakdown)}
-      />}
+        title={renderExpandedCell(R.toPairs(breakdown) || [], allCriteria)}
+        disabled={score && score.breakdown}
+      >
+        <div>
+          {localScore}
+        </div>
+      </Tooltip>
     </TableCell>
   );
 };
@@ -35,6 +35,12 @@ const ApplicationStatusCell = (props) => {
 ApplicationStatusCell.propTypes = {
   id: PropTypes.string,
   score: PropTypes.string,
+  breakdown: PropTypes.object,
+  allCriteria: PropTypes.object,
 };
 
-export default ApplicationStatusCell;
+const mapStateToProps = state => ({
+  allCriteria: state.selectionCriteria,
+});
+
+export default connect(mapStateToProps)(ApplicationStatusCell);

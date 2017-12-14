@@ -60,7 +60,7 @@ ExpandedAssessment.propTypes = {
   assessmentInfo: PropTypes.object,
   isReviewerCurrentUser: PropTypes.bool,
   assessment: PropTypes.number,
-  allCriteria: PropTypes.array,
+  allCriteria: PropTypes.object,
 };
 
 const mapStateToProps = state => ({

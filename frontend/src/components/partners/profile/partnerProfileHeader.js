@@ -9,8 +9,8 @@ import Typography from 'material-ui/Typography';
 import PartnerProfileHeaderMenu from './partnerProfileHeaderMenu';
 import HeaderNavigation from '../../../components/common/headerNavigation';
 import {
-  loadPartnerDetails,
-} from '../../../reducers/partnerProfileDetails';
+  loadPartnerProfileSummary,
+} from '../../../reducers/agencyPartnerProfile';
 import {
   loadPartnerVerifications,
 } from '../../../reducers/partnerVerifications';
@@ -51,7 +51,7 @@ class PartnerProfileHeader extends Component {
   }
 
   componentWillMount() {
-    this.props.loadPartnerDetails();
+    this.props.loadPartnerSummary();
     this.props.loadPartnerVerifications();
   }
 
@@ -99,7 +99,7 @@ PartnerProfileHeader.propTypes = {
   children: PropTypes.node,
   location: PropTypes.string.isRequired,
   partnerId: PropTypes.string.isRequired,
-  loadPartnerDetails: PropTypes.func,
+  loadPartnerSummary: PropTypes.func,
   loadPartnerVerifications: PropTypes.func,
 };
 
@@ -109,7 +109,7 @@ PartnerTitle.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   tabs: state.agencyPartnerProfileNav.tabs,
-  partner: state.agencyPartnerProfile[ownProps.params.id] || {},
+  partner: state.agencyPartnerProfile.data[ownProps.params.id] || {},
   partnerId: ownProps.params.id,
   location: ownProps.location.pathname,
 });
@@ -118,7 +118,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   onItemClick: (id, path) => {
     history.push(path);
   },
-  loadPartnerDetails: () => dispatch(loadPartnerDetails(ownProps.params.id)),
+  loadPartnerSummary: () => dispatch(loadPartnerProfileSummary(ownProps.params.id)),
   loadPartnerVerifications: () => dispatch(
     loadPartnerVerifications(ownProps.params.id, { page_size: 5, page: 1 })),
 });
