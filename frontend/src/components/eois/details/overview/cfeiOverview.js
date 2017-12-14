@@ -15,11 +15,12 @@ import { ROLES, PROJECT_TYPES } from '../../../../helpers/constants';
 import ConceptNote from './conceptNote';
 
 const messages = {
-  cn: 'Concept Note Template',
+  cnTemplate: 'Concept Note Template',
+  cn: 'Concept Note',
 };
 
 const CfeiOverview = (props) => {
-  const { params: { id, type }, role, cn, partner, partnerId, displayGoal } = props;
+  const { params: { id, type }, role, cn, cn_template, partner, partnerId, displayGoal } = props;
 
   return (
     <form >
@@ -37,8 +38,9 @@ const CfeiOverview = (props) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <GridColumn >
-              {((role === ROLES.PARTNER && type === PROJECT_TYPES.OPEN)
-              || type === PROJECT_TYPES.UNSOLICITED)
+              {(role === ROLES.PARTNER && type === PROJECT_TYPES.OPEN)
+              && <ConceptNote title={messages.cnTemplate} conceptNote={cn_template} />}
+              {(type === PROJECT_TYPES.UNSOLICITED)
                 && <ConceptNote title={messages.cn} conceptNote={cn} />}
               {type === PROJECT_TYPES.OPEN
                 && <SelectionCriteria id={id} />}
@@ -58,6 +60,7 @@ CfeiOverview.propTypes = {
   params: PropTypes.object,
   role: PropTypes.string,
   cn: PropTypes.string,
+  cn_template: PropTypes.string,
   partner: PropTypes.string,
   partnerId: PropTypes.number,
   displayGoal: PropTypes.bool,
@@ -74,11 +77,13 @@ const mapStateToProps = (state, ownProps) => {
     partner_id = null,
     partner_name = null,
     selected_source = null,
+    cn_template = null,
     focal_points_detail = [],
   } = cfei || {};
   return {
     initialValues: assoc('focal_points', pluck('name', focal_points_detail), cfei),
     cn,
+    cn_template,
     partner: partner_name,
     partnerId: partner_id,
     role: state.session.role,
