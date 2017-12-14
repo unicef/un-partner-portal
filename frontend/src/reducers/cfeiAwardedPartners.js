@@ -9,10 +9,12 @@ import cfeiAwardedPartnersStatus, {
 } from './cfeiAwardedPartnersStatus';
 import { selectIndexWithDefaultEmptyArray, pickByMap } from './normalizationHelpers';
 import {
-  loadApplicationDetailSuccess,
-} from './applicationDetailsStatus';
+  APPLICATION_DETAILS,
+} from './applicationDetails';
 import { getCfeiAwardedPartners } from '../helpers/api/api';
-
+import {
+  loadSuccess,
+} from './apiMeta';
 
 const initialState = {};
 
@@ -23,14 +25,15 @@ export const loadAwardedPartners = cfeiId => (dispatch, getState) => {
       dispatch(loadCfeiAwardedPartnersEnded());
       dispatch(loadCfeiAwardedPartnersSuccess(awardedPartners, cfeiId));
       awardedPartners.forEach((awardedPartner) => {
-        dispatch(loadApplicationDetailSuccess(pickByMap({
+        dispatch(loadSuccess(APPLICATION_DETAILS, { results: pickByMap({
           id: 'application_id',
           did_accept: 'did_accept',
           did_decline: 'did_decline',
           did_win: 'did_win',
           did_withdraw: 'did_withdraw',
           withdraw_reason: 'withdraw_reason',
-        }, awardedPartner), getState));
+        }, awardedPartner),
+        getState }));
       });
       return awardedPartners;
     })

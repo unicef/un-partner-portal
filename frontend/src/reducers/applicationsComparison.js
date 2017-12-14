@@ -1,35 +1,34 @@
 import { combineReducers } from 'redux';
-import ApplicationsComparisonStatus, {
-  loadApplicationsComparisonStarted,
-  loadApplicationsComparisonEnded,
-  loadApplicationsComparisonSuccess,
-  loadApplicationsComparisonFailure,
-  LOAD_APPLICATIONS_COMPARISON_SUCCESS,
-} from './applicationsComparisonStatus';
 import { getApplicationComparison } from '../helpers/api/api';
+import { sendRequest } from '../helpers/apiHelper';
+import apiMeta, {
+  success,
+} from './apiMeta';
+
+const errorMessage = 'Couldn\'t load applications comparison, please refresh page and try again';
+
+const APPLICATIONS_COMPARISON = 'APPLICATIONS_COMPARISON';
+const tag = 'applicationsComparison';
 
 const initialState = [];
 
-export const loadApplicationComparison = (cfeiId, application_ids) => (dispatch) => {
-  dispatch(loadApplicationsComparisonStarted());
-  return getApplicationComparison(cfeiId, { application_ids: application_ids.join(',') })
-    .then((comparison) => {
-      dispatch(loadApplicationsComparisonEnded());
-      dispatch(loadApplicationsComparisonSuccess(comparison, cfeiId));
-      return comparison;
-    })
-    .catch((error) => {
-      dispatch(loadApplicationsComparisonEnded());
-      dispatch(loadApplicationsComparisonFailure(error));
-    });
-};
+export const loadApplicationComparison = (cfeiId, applicationIds) => sendRequest({
+  loadFunction: getApplicationComparison,
+  meta: {
+    reducerTag: tag,
+    actionTag: APPLICATIONS_COMPARISON,
+    isPaginated: false,
+  },
+  errorHandling: { userMessage: errorMessage },
+  apiParams: [cfeiId, { application_ids: applicationIds.join(',') }],
+});
 
 const saveApplicationsComparison = (state, action) =>
-  action.comparison;
+  action.results;
 
 const ApplicationsComparison = (state = initialState, action) => {
   switch (action.type) {
-    case LOAD_APPLICATIONS_COMPARISON_SUCCESS: {
+    case success`${APPLICATIONS_COMPARISON}`: {
       return saveApplicationsComparison(state, action);
     }
     default:
@@ -38,4 +37,4 @@ const ApplicationsComparison = (state = initialState, action) => {
 };
 
 export default combineReducers({ data: ApplicationsComparison,
-  status: ApplicationsComparisonStatus });
+  status: apiMeta(APPLICATIONS_COMPARISON) });
