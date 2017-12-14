@@ -9,6 +9,7 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const LOGIN_SUBMITTING = 'LOGIN_SUBMITTIN';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+export const SESSION_ERROR = 'SESSION_ERROR';
 
 const initialState = {
   role: undefined,
@@ -48,6 +49,11 @@ export const sessionReady = getState => ({
   type: SESSION_READY,
   session: { state: SESSION_STATUS.READY },
   getState,
+});
+
+export const sessionError = error => ({
+  type: SESSION_ERROR,
+  error,
 });
 
 export const loginSuccess = session => ({ type: LOGIN_SUCCESS, session });
@@ -153,6 +159,9 @@ export default function sessionReducer(state = initialState, action) {
     }
     case LOGOUT_SUCCESS: {
       return initialState;
+    }
+    case SESSION_ERROR: {
+      return R.assoc('error', action.error, state);
     }
     default:
       return state;

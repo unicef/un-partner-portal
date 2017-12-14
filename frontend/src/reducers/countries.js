@@ -1,5 +1,6 @@
-import R from 'ramda';
+
 import { getCountries } from '../helpers/api/api';
+import { sessionError } from '../reducers/session';
 
 export const LOAD_COUNTRIES_SUCCESS = 'LOAD_COUNTRIES_SUCCESS';
 
@@ -10,9 +11,11 @@ const loadCountriesSuccess = countries => ({ type: LOAD_COUNTRIES_SUCCESS, count
 // TODO: think of better way to handle countries, not just download them everytime
 export const loadCountries = () => dispatch => getCountries()
   .then((countries) => {
-    window.localStorage.setItem('countries', JSON.stringify(countries));
-    return dispatch(loadCountriesSuccess(countries));
+    dispatch(loadCountriesSuccess(countries));
+  }).catch((error) => {
+    dispatch(sessionError(error));
   });
+
 
 export default function countriesReducer(state = initialState, action) {
   switch (action.type) {
