@@ -11,7 +11,10 @@ import TextFieldForm from '../../../forms/textFieldForm';
 import { selectNormalizedBudgets } from '../../../../store';
 
 const messages = {
-  annualBudget: 'What is your organization\'s annual budget (in USD) for the current and two previous years?',
+  annualBudgetTooltip: 'Annual budget: refers to the organization’s total planned expenditures ' +
+    'for a fiscal year.',
+  annualBudget: 'What is your organization\'s annual budget (in USD) for the current and two ' +
+    'previous years?',
   budget: 'Budget',
   year: 'Year',
 };
@@ -56,6 +59,7 @@ const PartnerProfileFundingBudget = (props) => {
             disableDeleting
             outerField={budget => annualBudgetForm(budget, budgetTypes, readOnly)}
             readOnly={readOnly}
+            infoText={messages.annualBudgetTooltip}
           />
         </Grid>
       </Grid>

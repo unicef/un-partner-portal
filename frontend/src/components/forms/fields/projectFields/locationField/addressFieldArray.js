@@ -60,7 +60,7 @@ LocationFieldArray.propTypes = {
   country: PropTypes.string,
   readOnly: PropTypes.bool,
   loaded: PropTypes.bool,
-  classes: PropTypes.bool,
+  classes: PropTypes.object,
 };
 
 const WrappedLocationFieldArray = GoogleApiWrapper({

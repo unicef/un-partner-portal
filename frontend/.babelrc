@@ -3,5 +3,8 @@
   "presets": [
     "react-app",
     "stage-1"
+  ],
+  "plugins": [
+    "transform-object-assign"
   ]
 }

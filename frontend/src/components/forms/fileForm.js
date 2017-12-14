@@ -26,15 +26,24 @@ class FileForm extends Component {
   }
 
   render() {
-    const { fieldName, label, optional, formName, sectionName,
-      validation, warn, readOnly, deleteDisabled, ...other } = this.props;
-
+    const { fieldName,
+      label,
+      optional,
+      formName,
+      sectionName,
+      validation,
+      warn,
+      readOnly,
+      deleteDisabled,
+      infoText,
+      ...other } = this.props;
     return (
       <Grid item>
         {readOnly
           ? <Field
             name={fieldName}
             label={label}
+            infoText={infoText}
             component={renderFileDownload(this.props)}
             optional={optional}
           />
@@ -45,6 +54,7 @@ class FileForm extends Component {
             label={label}
             sectionName={sectionName}
             formName={formName}
+            infoText={infoText}
             deleteDisabled={deleteDisabled}
             validate={(optional ? [] : [required].concat(validation || []))}
             warn={warn && warning}
@@ -102,6 +112,10 @@ FileForm.propTypes = {
    * Don't display 'X' button
    */
   deleteDisabled: PropTypes.bool,
+  /** 
+   * render additional tooltip with label
+   */
+  infoText: PropTypes.node,
 };
 
 FileForm.defaultProps = {

@@ -13,6 +13,7 @@ import FileUpload from 'material-ui-icons/FileUpload';
 import Attachment from 'material-ui-icons/Attachment';
 import { fileNameFromUrl } from '../../../helpers/formHelper';
 import { uploadFile, uploadClearFile, uploadRemoveFile } from '../../../reducers/commonFileUpload';
+import FieldLabelWithTooltip from '../fieldLabelWithTooltip';
 
 const messages = {
   upload: 'upload file',
@@ -91,11 +92,19 @@ class FileFormUploadButton extends Component {
       fileUrl,
       input,
       label,
+      infoText,
       loading } = this.props;
     const url = R.is(String, input.value) ? input.value : fileUrl;
     return (
-      <FormControl fullWidth>
-        {label && <FormLabel>{label}</FormLabel>}
+      <FormControl>
+        {label && <FieldLabelWithTooltip
+          infoText={infoText}
+          tooltipIconProps={{
+            name: input.name,
+          }}
+        >
+          {label}
+        </FieldLabelWithTooltip>}
         <Fragment>
           <input
             onChange={this.handleChange}
@@ -122,7 +131,7 @@ class FileFormUploadButton extends Component {
               {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
             </div>
             : <div className={classes.wrapContent}>
-              <Typography type="subheading" className={classes.iconLabel} spacingBottom >
+              <Typography type="subheading" className={classes.iconLabel} gutterBottom >
                 <Attachment className={classes.icon} />
                 <div
                   role="button"
@@ -152,7 +161,7 @@ FileFormUploadButton.propTypes = {
   deleteDisabled: PropTypes.bool,
   loading: PropTypes.bool,
   fileUrl: PropTypes.string,
-  warning: PropTypes.string,
+  infoText: PropTypes.node,
   meta: PropTypes.object,
   uploadFile: PropTypes.func.isRequired,
   clearFile: PropTypes.func.isRequired,

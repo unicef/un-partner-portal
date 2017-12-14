@@ -7,64 +7,59 @@ import { withStyles } from 'material-ui/styles';
 
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
-import Tooltip from '../../common/tooltip';
+import Tooltip from '../../common/portalTooltip';
 import { selectSector, selectSpecializations } from '../../../store';
 
 const styleSheet = theme => ({
   mainText: {
     color: theme.palette.grey[300],
-    fontWeight: 400,
     fontSize: 12,
     padding: '4px 8px',
   },
   text: {
     color: theme.palette.grey[400],
-    fontWeight: 300,
     whiteSpace: 'pre-line',
     paddingLeft: 16,
+    paddingBottom: 8,
     fontSize: 12,
   },
   divider: {
     background: theme.palette.grey[400],
-    margin: '8px 0px',
   },
 });
 
 const renderShortCell = data => data.map(sector => sector.name).join(', ');
-const renderExpandedCell = (sectors, classes) => sectors.map((sector, index) => {
-  return (
-    <div key={sector.name}>
-      <Typography type="body2" color="inherit" className={classes.mainText}>
-        {sector.name}
+const renderExpandedCell = (sectors, classes) => sectors.map((sector, index) => (
+  <div key={sector.name}>
+    <Typography type="body2" color="inherit" className={classes.mainText}>
+      {sector.name}
+    </Typography>
+    {sector.areas.map(area => (
+      <Typography
+        key={area}
+        type="body1"
+        color="inherit"
+        className={classes.text}
+      >
+        {area}
       </Typography>
-      {sector.areas.map(area => (
-        <Typography
-          key={area}
-          type="body1"
-          color="inherit"
-          className={classes.text}
-        >
-          {area}
-        </Typography>
-      ))}
-      {index !== (Object.keys(sectors).length - 1) && <Divider className={classes.divider} />}
-    </div>
-  );
-});
+    ))}
+    {index !== (Object.keys(sectors).length - 1) && <Divider className={classes.divider} />}
+  </div>
+));
 
 
 const EoiSectorCell = (props) => {
   const { classes, id, sectors } = props;
   return (
-    <div>
-      <div data-tip data-for={`${id}-sector-tooltip`}>
+    <Tooltip
+      id={`${id}-sector-tooltip`}
+      title={renderExpandedCell(sectors, classes)}
+    >
+      <div>
         {renderShortCell(sectors)}
       </div>
-      <Tooltip
-        id={`${id}-sector-tooltip`}
-        text={renderExpandedCell(sectors, classes)}
-      />
-    </div>
+    </Tooltip>
   );
 };
 
