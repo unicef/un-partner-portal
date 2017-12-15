@@ -102,7 +102,7 @@ PartnerProfileEdit.propTypes = {
   loadPartnerDetails: PropTypes.func.isRequired,
   partnerProfile: PropTypes.object,
   partnerLoading: PropTypes.bool.isRequired,
-  completion: PropTypes.array,
+  completion: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => {

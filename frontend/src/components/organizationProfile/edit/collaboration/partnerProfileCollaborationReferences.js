@@ -1,9 +1,12 @@
 import React from 'react';
-import { FormSection } from 'redux-form';
+import { formValueSelector, FormSection } from 'redux-form';
+import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
 import ArrayForm from '../../../forms/arrayForm';
 import DatePickerForm from '../../../forms/datePickerForm';
+import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
+import RadioForm from '../../../forms/radioForm';
 import FileForm from '../../../forms/fileForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 
@@ -11,6 +14,7 @@ const messages = {
   reference: 'Reference',
   date: 'Date Received',
   referring: 'Name of referring organization',
+  info: 'Would you like to upload any reference letters for your organization?',
 };
 
 const Reference = readOnly => member => (
@@ -50,23 +54,38 @@ const ReferenceInner = readOnly => member => (
 );
 
 const PartnerProfileCollaborationReferences = (props) => {
-  const { readOnly } = props;
+  const { readOnly, hasReferences } = props;
 
   return (<FormSection name="reference">
-    <ArrayForm
-      fieldName="references"
-      initial
-      limit={15}
+    <RadioForm
+      fieldName="any_reference"
+      label={messages.info}
+      values={BOOL_VAL}
+      warn
       readOnly={readOnly}
-      outerField={Reference(readOnly)}
-      innerField={ReferenceInner(readOnly)}
     />
+    {visibleIfYes(hasReferences)
+      ? <ArrayForm
+        fieldName="references"
+        initial
+        limit={15}
+        readOnly={readOnly}
+        outerField={Reference(readOnly)}
+        innerField={ReferenceInner(readOnly)}
+      />
+      : null}
   </FormSection>
   );
 };
 
 PartnerProfileCollaborationReferences.propTypes = {
   readOnly: PropTypes.bool,
+  hasReferences: PropTypes.bool,
 };
 
-export default PartnerProfileCollaborationReferences;
+const selector = formValueSelector('partnerProfile');
+export default connect(
+  state => ({
+    hasReferences: selector(state, 'collaboration.reference.any_reference'),
+  }),
+)(PartnerProfileCollaborationReferences);

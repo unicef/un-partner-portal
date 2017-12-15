@@ -51,7 +51,7 @@ class AgencyProfile(TimeStampedModel):
         ordering = ['id']
 
     def __str__(self):
-        return "AgencyProfile: {} <pk:{}>".format(self.name, self.id)
+        return "AgencyProfile: {} <pk:{}>".format(self.agency.name, self.id)
 
     @classmethod
     def create_agency_profile(cls, sender, instance, created, **kwargs):

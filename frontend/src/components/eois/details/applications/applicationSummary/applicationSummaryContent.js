@@ -101,7 +101,7 @@ ApplicationSummaryContent.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   const application = selectApplication(state, ownProps.params.applicationId) || {};
   const { partner = {}, eoi, status, application_status } = application;
-  const partnerDetails = R.prop(R.prop('id', partner), state.agencyPartnerProfile);
+  const partnerDetails = R.prop(R.prop('id', partner), state.agencyPartnerProfile.data);
   const cfeiCriteria = selectCfeiCriteria(state, eoi);
   const cfeiStatus = selectCfeiStatus(state, eoi);
   const isUserFocalPoint = isUserAFocalPoint(state, eoi);
@@ -111,7 +111,7 @@ const mapStateToProps = (state, ownProps) => {
     application,
     partner,
     partnerDetails,
-    partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
+    partnerLoading: state.agencyPartnerProfile.status.loading,
     cfeiCriteria,
     eoi,
     shouldAddFeedback: isUserFocalPoint || isUserCreator,

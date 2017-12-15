@@ -77,6 +77,10 @@ DATABASES = {
     }
 }
 
+POSTGRES_SSL_MODE = os.getenv('POSTGRES_SSL_MODE', 'off')
+if POSTGRES_SSL_MODE == 'on':
+    DATABASES['default'].update({'OPTIONS': {"sslmode": 'require'}})
+
 MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -1,33 +1,34 @@
 import { combineReducers } from 'redux';
 import R from 'ramda';
-import cfeiReviewersStatus, {
-  loadCfeiReviewersStarted,
-  loadCfeiReviewersEnded,
-  loadCfeiReviewersSuccess,
-  loadCfeiReviewersFailure,
-  LOAD_CFEI_REVIEWERS_SUCCESS,
-} from './cfeiReviewersStatus';
 import { selectIndexWithDefaultEmptyArray } from './normalizationHelpers';
 import { getCfeiReviewers } from '../helpers/api/api';
+import { sendRequest } from '../helpers/apiHelper';
+import apiMeta, {
+  success,
+} from './apiMeta';
+
+const errorMessage = 'Couldn\'t load reviewers list, please refresh page and try again';
+
+const CFEI_REVIEWERS = 'CFEI_REVIEWERS';
+const tag = 'cfeiReviewers';
 
 const initialState = {};
 
-export const loadReviewers = cfeiId => (dispatch) => {
-  dispatch(loadCfeiReviewersStarted());
-  return getCfeiReviewers(cfeiId)
-    .then((reviewers) => {
-      dispatch(loadCfeiReviewersEnded());
-      dispatch(loadCfeiReviewersSuccess(reviewers, cfeiId));
-      return reviewers;
-    })
-    .catch((error) => {
-      dispatch(loadCfeiReviewersEnded());
-      dispatch(loadCfeiReviewersFailure(error));
-    });
-};
+export const loadReviewers = cfeiId => sendRequest({
+  loadFunction: getCfeiReviewers,
+  meta: {
+    reducerTag: tag,
+    actionTag: CFEI_REVIEWERS,
+    isPaginated: false,
+  },
+  successParams: { cfeiId },
+  errorHandling: { userMessage: errorMessage },
+  apiParams: [cfeiId],
+});
+
 
 const saveReviewers = (state, action) =>
-  R.assoc(action.id, action.reviewers, state);
+  R.assoc(action.cfeiId, action.results, state);
 
 export function selectReviewers(state, cfeiId) {
   return selectIndexWithDefaultEmptyArray(cfeiId, state);
@@ -35,7 +36,7 @@ export function selectReviewers(state, cfeiId) {
 
 const cfeiReviewers = (state = initialState, action) => {
   switch (action.type) {
-    case LOAD_CFEI_REVIEWERS_SUCCESS: {
+    case success`${CFEI_REVIEWERS}`: {
       return saveReviewers(state, action);
     }
     default:
@@ -43,4 +44,4 @@ const cfeiReviewers = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ data: cfeiReviewers, status: cfeiReviewersStatus });
+export default combineReducers({ data: cfeiReviewers, status: apiMeta(CFEI_REVIEWERS) });
