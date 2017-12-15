@@ -7,7 +7,7 @@ function GridColumn(props) {
   return (
     <Grid container direction="column" spacing={spacing} {...other}>
       {React.Children.map(children, child =>
-        (child && child.props.displayComponent !== false
+        (child
           ? <Grid item >
             {child}
           </Grid>
