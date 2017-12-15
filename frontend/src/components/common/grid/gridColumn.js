@@ -4,8 +4,6 @@ import Grid from 'material-ui/Grid';
 
 function GridColumn(props) {
   const { children, spacing, ...other } = props;
-  
-  console.log(React.Children.toArray(children))
   return (
     <Grid container direction="column" spacing={spacing} {...other}>
       {React.Children.map(children, child =>
