@@ -6,6 +6,8 @@ import { browserHistory as history } from 'react-router';
 import Grid from 'material-ui/Grid';
 import NewCfeiModalButton from './modals/newCfei/newCfeiModalButton';
 import HeaderNavigation from '../common/headerNavigation';
+import DisabledForAgencyEditor from '../common/hoc/disabledForAgencyEditor';
+
 
 const messages = {
   partner: 'Calls for Expressions of Interest',
@@ -52,7 +54,8 @@ class CfeiHeader extends Component {
         index={index}
         title={messages[role]}
         tabs={tabs}
-        header={!id && type && type !== 'unsolicited' && role === 'agency' && <NewCfeiModalButton type={type} />}
+        header={(!id && type && type !== 'unsolicited' && role === 'agency')
+          && <DisabledForAgencyEditor><NewCfeiModalButton type={type} /></DisabledForAgencyEditor>}
         handleChange={this.handleChange}
       >
         {(index !== -1) && children}
