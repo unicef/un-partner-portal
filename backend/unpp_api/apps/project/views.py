@@ -115,7 +115,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
 class EOIAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated,)
     queryset = EOI.objects.all()
 
     def get_serializer_class(self, *args, **kwargs):

@@ -5,6 +5,8 @@ import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import NewCfeiModal from './newCfeiModal';
 import withDialogHandling from '../../../common/hoc/withDialogHandling';
+import withConditionalDisplay from '../../../common/hoc/withConditionalDisplay';
+import { isUserNotAgencyReader } from '../../../../helpers/authHelpers';
 
 const messages = {
   open: 'New cfei',
@@ -39,4 +41,6 @@ NewCfeiModalButton.propTypes = {
 };
 
 
-export default withDialogHandling(withRouter(NewCfeiModalButton));
+export default withConditionalDisplay(
+  withDialogHandling(withRouter(NewCfeiModalButton)),
+  [isUserNotAgencyReader]);
