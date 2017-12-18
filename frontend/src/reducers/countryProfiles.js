@@ -24,7 +24,7 @@ export const CREATE_COUNTRY_PROFILE = 'CREATE_COUNTRY_PROFILE';
 export const INIT_COUNTRY_ID = -1;
 
 export const createProfileLoadStarted = () => ({ type: CREATE_PROFILE_LOAD_STARTED });
-export const createProfileLoadSuccess = () => ({ type: CREATE_PROFILE_LOAD_SUCCESS, response });
+export const createProfileLoadSuccess = (response) => ({ type: CREATE_PROFILE_LOAD_SUCCESS, response });
 export const createProfileLoadFailure = error => ({ type: CREATE_PROFILE_LOAD_FAILURE, error });
 export const createProfileLoadEnded = () => ({ type: CREATE_PROFILE_LOAD_ENDED });
 
@@ -75,9 +75,9 @@ export const newCountryProfile = partnerId => (dispatch, getState) => {
   const data = { chosen_country_to_create: [getState().countryProfiles.selectedCountryId] };
 
   return createCountryProfile(partnerId, data)
-    .then(() => {
+    .then((response) => {
       dispatch(createProfileLoadEnded());
-      dispatch(createProfileLoadSuccess());
+      dispatch(createProfileLoadSuccess(response));
     })
     .catch((error) => {
       dispatch(createProfileLoadEnded());
