@@ -12,7 +12,7 @@ const SectorItem = (props) => {
 };
 
 SectorItem.propTypes = {
-  sector: PropTypes.object.isRequired,
+  sector: PropTypes.string.isRequired,
 };
 
 export default withSectorType(SectorItem);

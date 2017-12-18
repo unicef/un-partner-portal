@@ -89,13 +89,13 @@ class ApplicationSummaryHeader extends Component {
         return (<EditReviewModalButton
           assessmentId={reviews[user]}
           scores={getAssessment(reviews[user])}
-          reviewer={user}
+          reviewer={`${user}`}
           disabled={disabled}
         />);
       }
       return (<AddReviewModalButton
         raised
-        reviewer={user}
+        reviewer={`${user}`}
         disabled={disabled}
       />);
     }
