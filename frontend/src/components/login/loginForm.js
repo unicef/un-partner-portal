@@ -64,7 +64,13 @@ const Login = (props) => {
             </div>
           </div>
           <Grid container justify="center" >
-            <Button onTouchTap={handleSubmit} raised color="accent" disabled={pristine || submitting}>
+            <Button
+              type="submit"
+              onTouchTap={handleSubmit}
+              raised
+              color="accent"
+              disabled={pristine || submitting}
+            >
             Log in
             </Button>
           </Grid>
