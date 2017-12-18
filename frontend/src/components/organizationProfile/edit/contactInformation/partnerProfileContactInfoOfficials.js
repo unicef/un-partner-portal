@@ -12,7 +12,7 @@ import GridColumn from '../../../common/grid/gridColumn';
 
 const messages = {
   boardOfDirectors: 'Does your organization have a board of director(s)?',
-  authorisedOfficers: 'Does your organization have a authorised officer(s)?',
+  authorisedOfficers: 'Does your organization have any other authorized officers who are not listed above?',
   directos: 'Board of Director(s)',
   officers: 'Authorised Officer(s)',
 };
