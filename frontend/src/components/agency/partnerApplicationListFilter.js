@@ -179,7 +179,6 @@ class PartnerApplicationListFilter extends Component {
                 label={messages.labels.show}
                 fieldName="did_win"
                 optional
-                warn
               />
             </Grid>
           </Grid>

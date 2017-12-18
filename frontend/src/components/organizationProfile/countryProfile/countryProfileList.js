@@ -19,6 +19,7 @@ const styleSheet = (theme) => {
       background: theme.palette.background.paper,
     },
     lineHeight: {
+      background: '#ffffff',
       lineHeight: '24px',
     },
   };
