@@ -114,10 +114,11 @@ class ApplicationSummaryHeader extends Component {
     } else if (error.message) {
       return <Typography >{error.message}</Typography>;
     }
+
     return (<HeaderNavigation
       title={`${messages.header} ${partner}`}
       header={<GridRow alignItems="center">
-        <ApplicationStatusText status={status} />
+        {status && <ApplicationStatusText status={status} />}
         {this.renderActionButton()}
       </GridRow>
       }
