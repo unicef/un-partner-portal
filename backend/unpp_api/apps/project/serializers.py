@@ -704,7 +704,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
         return get_countries_code_from_queryset(obj.eoi.locations)
 
     def get_specializations(self, obj):
-        return obj.eoi.specializations.all().values_list('id', flat=True)
+        return SimpleSpecializationSerializer(obj.eoi.specializations.all(), many=True).data
 
     def get_application_status(self, obj):
         return obj.eoi.application_status
