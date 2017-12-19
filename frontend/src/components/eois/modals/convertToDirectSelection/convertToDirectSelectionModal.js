@@ -45,7 +45,6 @@ class ConvertToDirectSelectionModal extends Component {
             title: messages.header,
             body: partnerName,
           }}
-          minWidth={40}
           buttons={{
             flat: {
               handleClick: handleDialogClose,

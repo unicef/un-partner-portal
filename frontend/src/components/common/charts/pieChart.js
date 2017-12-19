@@ -18,6 +18,7 @@ const renderLabel = ({ value, offset, position, viewBox, ...params }) => (
 
 const CustomPieChart = (props) => {
   const { label, colors, data, containerProps, defaultPieProps, pieProps } = props;
+
   return (
     <ResponsiveContainer {...containerProps}>
       <PieChart>

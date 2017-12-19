@@ -74,6 +74,7 @@ class PaginatedList extends Component {
       changeSorting,
       changePageSize,
       changePageNumber } = this.props;
+
     return (
       <ListLoader
         loading={loading}
@@ -88,8 +89,8 @@ class PaginatedList extends Component {
             onSortingChange={changeSorting}
           /> }
           <PagingState
-            currentPage={Number.isNaN(pageNumber) ? 0 : pageNumber - 1}
-            pageSize={Number.isNaN(pageNumber) ? 0 : pageSize}
+            currentPage={pageNumber - 1}
+            pageSize={pageSize}
             onPageSizeChange={changePageSize}
             onCurrentPageChange={changePageNumber}
             totalCount={itemsCount || 0}
