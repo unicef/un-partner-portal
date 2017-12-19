@@ -5,8 +5,7 @@ import PropTypes from 'prop-types';
 import ControlledModal from '../common/modals/controlledModal';
 import CountryOfficesHeader from './countryOfficesHeader';
 import CountryProfileList from './countryProfile/countryProfileList';
-import { selectCountryId, createCountryAndRefresh, INIT_COUNTRY_ID } from '../../reducers/countryProfiles';
-
+import { selectCountryId, createCountryAndRefresh } from '../../reducers/countryProfiles';
 
 const messages = {
   countryDialogTitle: 'Create new a country profile',
@@ -32,15 +31,15 @@ class CountryOfficesHeaderContainer extends React.Component {
 
   handleDialogClose() {
     this.setState({ showCountryModal: false });
-    this.props.setSelectedCountryId(INIT_COUNTRY_ID);
+    this.props.setSelectedCountryId(null);
   }
 
   handleDialogCreate() {
     this.setState({ showCountryModal: false });
 
-    if (this.props.selectedCountryId !== INIT_COUNTRY_ID) {
-      this.props.newCountryProfile(this.props.partnerId, this.props.selectedCountryId);
-      this.props.setSelectedCountryId(INIT_COUNTRY_ID);
+    if (!R.isEmpty(this.props.selectedCountries)) {
+      this.props.newCountryProfiles(this.props.partnerId, this.props.selectedCountries);
+      this.props.setSelectedCountryId(null);
     }
   }
 
@@ -86,21 +85,21 @@ CountryOfficesHeaderContainer.propTypes = {
   countryProfiles: PropTypes.array.isRequired,
   countryPresence: PropTypes.array.isRequired,
   setSelectedCountryId: PropTypes.func.isRequired,
-  newCountryProfile: PropTypes.func.isRequired,
-  selectedCountryId: PropTypes.number.isRequired,
+  newCountryProfiles: PropTypes.func.isRequired,
+  selectedCountries: PropTypes.array.isRequired,
   partnerId: PropTypes.number.isRequired,
   disableNewCountries: PropTypes.bool,
 };
 
 const mapDispatch = dispatch => ({
   setSelectedCountryId: countryId => dispatch(selectCountryId(countryId)),
-  newCountryProfile: (partnerId, countryId) => dispatch(createCountryAndRefresh(partnerId, countryId)),
+  newCountryProfiles: (partnerId, countryId) => dispatch(createCountryAndRefresh(partnerId, countryId)),
 });
 
 const mapStateToProps = state => ({
   countryProfiles: R.path(['hq', 'country_profiles'], state.countryProfiles) || [],
   countryPresence: R.path(['hq', 'country_presence'], state.countryProfiles) || [],
-  selectedCountryId: state.countryProfiles.selectedCountryId,
+  selectedCountries: state.countryProfiles.selectedCountries,
   partnerId: state.session.partnerId,
   disableNewCountries: !state.session.isProfileComplete,
 });
