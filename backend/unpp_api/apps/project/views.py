@@ -6,7 +6,11 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
 from rest_framework.views import APIView
 from rest_framework.generics import (
-    ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
+    ListCreateAPIView,
+    ListAPIView,
+    CreateAPIView,
+    RetrieveUpdateAPIView,
+    RetrieveAPIView,
 )
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -19,7 +23,6 @@ from common.consts import EOI_TYPES, DIRECT_SELECTION_SOURCE
 from common.paginations import SmallPagination
 from common.permissions import (
     IsAgencyMemberUser,
-    IsAtLeastMemberReader,
     IsAtLeastMemberEditor,
     IsAtLeastAgencyMemberEditor,
     IsAgencyProject,
@@ -36,7 +39,7 @@ from notification.helpers import (
     send_notification_cfei_completed,
     send_notification_application_updated,
     send_notificiation_application_created,
-    send_notification
+    send_notification,
 )
 from .models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from .serializers import (
@@ -65,7 +68,12 @@ from .serializers import (
     CompareSelectedSerializer,
 )
 
-from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
+from .filters import (
+    BaseProjectFilter,
+    ApplicationsFilter,
+    ApplicationsEOIFilter,
+    ApplicationsUnsolicitedFilter,
+)
 
 
 class BaseProjectAPIView(ListCreateAPIView):
@@ -350,7 +358,7 @@ class EOIApplicationsListAPIView(ListAPIView):
     serializer_class = ApplicationsListSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
-    filter_class = ApplicationsFilter
+    filter_class = ApplicationsEOIFilter
     ordering_fields = ('status', )
     lookup_field = lookup_url_kwarg = 'pk'
 
