@@ -20,9 +20,10 @@ const messages = {
 
 const PartnerProfileMandateCountryPresence = (props) => {
   const { readOnly, isCountryProfile, countries, profileId, staffGlobally } = props;
+
   return (
     <FormSection name="country_presence">
-      <GridColumn removeNullChildren>
+      <GridColumn>
         {!isCountryProfile
           ? <CountryField
             fieldName="country_presence"
@@ -32,7 +33,6 @@ const PartnerProfileMandateCountryPresence = (props) => {
             selectFieldProps={{
               multiple: true,
             }}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -50,7 +50,6 @@ const PartnerProfileMandateCountryPresence = (props) => {
             fieldName="staff_globally"
             label={messages.staffGlobaly}
             values={staffGlobally}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -60,7 +59,6 @@ const PartnerProfileMandateCountryPresence = (props) => {
             fieldName="staff_in_country"
             label={messages.staffCountry}
             values={staffGlobally}
-            optional
             warn
             readOnly={readOnly}
           />
@@ -75,6 +73,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
                 maxLength: '5000',
               },
             }}
+            warn
             readOnly={readOnly}
           />
           : null}
@@ -85,16 +84,17 @@ const PartnerProfileMandateCountryPresence = (props) => {
 
 PartnerProfileMandateCountryPresence.propTypes = {
   readOnly: PropTypes.bool,
-  isCountryProfile: PropTypes.object.isRequired,
+  isCountryProfile: PropTypes.bool.isRequired,
   profileId: PropTypes.string,
-  countries: PropTypes.array.isRequired,
+  countries: PropTypes.array,
   staffGlobally: PropTypes.array.isRequired,
 };
 
 const selector = formValueSelector('partnerProfile');
 
 const connected = connect((state, ownProps) => {
-  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
+    || state.agencyPartnersList.data.partners);
   return {
     countries: selector(state, 'mandate_mission.country_presence.country_presence'),
     isCountryProfile: partner ? !partner.is_hq : false,

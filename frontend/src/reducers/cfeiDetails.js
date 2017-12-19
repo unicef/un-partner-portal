@@ -14,8 +14,11 @@ import { } from './apiStatus';
 import { normalizeSingleCfei } from './cfei';
 import { getOpenCfeiDetails, getApplicationDetails } from '../helpers/api/api';
 import {
-  loadApplicationDetailSuccess,
-} from './applicationDetailsStatus';
+  loadSuccess,
+} from './apiMeta';
+import {
+  APPLICATION_DETAILS,
+} from './applicationDetails';
 
 const initialState = {};
 
@@ -27,10 +30,12 @@ export const loadCfei = id => (dispatch, getState) => {
       dispatch(loadCfeiDetailSuccess(cfei));
       if (cfei.direct_selected_partners) {
         cfei.direct_selected_partners.forEach((selectedPartner) => {
-          dispatch(loadApplicationDetailSuccess({
+          dispatch(loadSuccess(APPLICATION_DETAILS, { results: {
             id: selectedPartner.id,
             application_status: selectedPartner.application_status,
-          }, selectedPartner), getState);
+          },
+          selectedPartner,
+          getState }));
         });
       }
       return cfei;
@@ -89,12 +94,13 @@ const saveUCN = (state, action) => {
     id: ucn.id,
     reviewers: [],
     focal_points: [],
-    partner_name: ucn.partner.id,
+    partner_id: ucn.partner.id,
+    partner_name: ucn.partner.legal_name,
     display_type: ucn.partner.display_type,
     title: R.path(['proposal_of_eoi_details', 'title'], ucn),
     locations: normalizeLocations(ucn.locations_proposal_of_eoi),
     specializations: R.path(['proposal_of_eoi_details', 'specializations'], ucn),
-    agency: ucn.agency,
+    agency: R.path(['agency', 'name'], ucn),
     cn: ucn.cn,
     eoiConverted: ucn.eoi_converted,
   };
@@ -172,4 +178,4 @@ const cfeiDetails = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ cfeiDetails, cfeiDetailsStatus });
+export default combineReducers({ data: cfeiDetails, status: cfeiDetailsStatus });

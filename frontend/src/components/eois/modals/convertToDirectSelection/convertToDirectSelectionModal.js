@@ -3,13 +3,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
+import { selectCfeiDetails } from '../../../../store';
 import ControlledModal from '../../../common/modals/controlledModal';
 import { convertCnToDS } from '../../../../reducers/cnConvertToDS';
 import ConvertToDirectSelectionForm from './convertToDirectSelectionForm';
 
 const messages = {
   title: 'Convert to Direct Selection',
-  header: { title: 'You are converting into direct selection an unsolicited concept note submitted by partner:' },
+  header: 'You are converting into direct selection an unsolicited concept note submitted by partner:',
   save: 'save',
 };
 
@@ -24,14 +25,14 @@ class ConvertToDirectSelectionModal extends Component {
     this.props.handleDialogClose();
     const focal = R.assoc(
       'focal_points',
-      values.focal_points.map(id => ({ id })),
+      R.map(id => ({ id }), values.focal_points),
       values);
 
     this.props.convertToDS(focal);
   }
 
   render() {
-    const { id, submit, dialogOpen, handleDialogClose } = this.props;
+    const { id, submit, partnerName, dialogOpen, handleDialogClose } = this.props;
     return (
       <div>
         <ControlledModal
@@ -40,7 +41,10 @@ class ConvertToDirectSelectionModal extends Component {
           title={messages.title}
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
-          info={messages.header}
+          info={{
+            title: messages.header,
+            body: partnerName,
+          }}
           minWidth={40}
           buttons={{
             flat: {
@@ -64,11 +68,20 @@ ConvertToDirectSelectionModal.propTypes = {
   submit: PropTypes.func,
   convertToDS: PropTypes.func,
   handleDialogClose: PropTypes.func,
+  partnerName: PropTypes.string,
 };
 
-const mapStateToProps = state => ({
-  showLoading: state.newCfei.openCfeiSubmitting,
-});
+const mapStateToProps = (state, ownProps) => {
+  const cfei = selectCfeiDetails(state, ownProps.id);
+  const {
+    partner_name = null,
+  } = cfei || {};
+
+  return {
+    partnerName: partner_name,
+    showLoading: state.newCfei.openCfeiSubmitting,
+  };
+};
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   convertToDS: body => dispatch(convertCnToDS(body, ownProps.id)),

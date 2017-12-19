@@ -4,6 +4,7 @@ import Grid from 'material-ui/Grid';
 import Divider from 'material-ui/Divider';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import SpreadContent from '../../common/spreadContent';
 
 const styleSheet = (theme) => {
   const padding = theme.spacing.unit;
@@ -14,6 +15,7 @@ const styleSheet = (theme) => {
     },
     alignRight: {
       marginLeft: 'auto',
+      flexBasis: '33%',
     },
     padding: {
       padding: `0 0 0 ${padding}px`,
@@ -31,17 +33,15 @@ const ItemRowCellDivider = (props) => {
   const { label, content, divider, labelSecondary, classes } = props;
   return (
     <div>
-      <Grid container alignItems="center" justify="space-between" direction="row">
-        <Grid className={classes.row} item xs={8}>
-          <Typography color={labelSecondary ? 'secondary' : 'inherit'} type="body1" >{label}</Typography>
-        </Grid>
-        <Grid item xs={4} >
+      <SpreadContent>
+        <Typography color={labelSecondary ? 'secondary' : 'inherit'} type="body1" >{label}</Typography>
+        <div className={classes.alignRight}>
           { Array.isArray(content)
-            ? content.map(item => <Typography type="body1" >{item}</Typography>)
+            ? content.map(item => <Typography key={item} type="body1">{item}</Typography>)
             : <Typography type="body1" >{content}</Typography>
           }
-        </Grid>
-      </Grid>
+        </div>
+      </SpreadContent>
       {!divider
         ? <div className={classes.paddingTopBottom}>
           <Divider />
@@ -55,7 +55,10 @@ ItemRowCellDivider.propTypes = {
   classes: PropTypes.object.isRequired,
   label: PropTypes.string.isRequired,
   labelSecondary: PropTypes.bool,
-  content: PropTypes.string,
+  content: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.array,
+  ]),
   divider: PropTypes.bool,
 };
 

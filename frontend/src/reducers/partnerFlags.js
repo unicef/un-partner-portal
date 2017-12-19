@@ -1,44 +1,43 @@
 import { combineReducers } from 'redux';
 import R from 'ramda';
-import PartnerFlagsStatus, {
-  loadPartnerFlagsStarted,
-  loadPartnerFlagsEnded,
-  loadPartnerFlagsSuccess,
-  loadPartnerFlagsFailure,
-  LOAD_PARTNERS_FLAGS_SUCCESS,
-} from './partnerFlagsStatus';
 import { selectIndexWithDefaultEmptyObject } from './normalizationHelpers';
 import { getPartnerFlags, postPartnerFlags, patchPartnerFlags } from '../helpers/api/api';
-import { loadPartnerDetails } from './partnerProfileDetails';
+import { loadPartnerProfileSummary } from './agencyPartnerProfile';
+import { sendRequest } from '../helpers/apiHelper';
+import apiMeta, { success } from './apiMeta';
 
 const initialState = {};
 
-export const loadPartnerFlags = (partnerId, params) => (dispatch) => {
-  dispatch(loadPartnerFlagsStarted());
-  return getPartnerFlags(partnerId, params)
-    .then(({ results, count }) => {
-      dispatch(loadPartnerFlagsEnded());
-      dispatch(loadPartnerFlagsSuccess(results, partnerId, count));
-      return results;
-    })
-    .catch((error) => {
-      dispatch(loadPartnerFlagsEnded());
-      dispatch(loadPartnerFlagsFailure(error));
-    });
-};
+const errorMsg = 'Couldn\'t load flag details, ' +
+  'please refresh page and try again';
+
+const PARTNER_FLAGS = 'PARTNER_FLAGS';
+const tag = 'partnerFlags';
+
+export const loadPartnerFlags = (partnerId, params) => sendRequest({
+  loadFunction: getPartnerFlags,
+  meta: {
+    reducerTag: tag,
+    actionTag: PARTNER_FLAGS,
+    isPaginated: true,
+  },
+  successParams: { partnerId },
+  errorHandling: { userMessage: errorMsg },
+  apiParams: [partnerId, params],
+});
 
 export const updatePartnerFlags = (partnerId, body, edit, flagId) => (dispatch) => {
   const method = edit ? patchPartnerFlags : postPartnerFlags;
   return method(partnerId, body, flagId)
     .then((flag) => {
       dispatch(loadPartnerFlags(partnerId));
-      dispatch(loadPartnerDetails(partnerId));
+      dispatch(loadPartnerProfileSummary(partnerId));
       return flag;
     });
 };
 
 const savePartnerFlags = (state, action) =>
-  R.assoc(action.partnerId, { flags: action.flags, count: action.count }, state);
+  R.assoc(action.partnerId, { flags: action.results, count: action.count }, state);
 
 export const selectPartnerFlags = (state, partnerId) => {
   const { flags = [] } = selectIndexWithDefaultEmptyObject(partnerId, state.data);
@@ -52,7 +51,7 @@ export const selectPartnerFlagsCount = (state, partnerId) => {
 
 const PartnerFlags = (state = initialState, action) => {
   switch (action.type) {
-    case LOAD_PARTNERS_FLAGS_SUCCESS: {
+    case success`${PARTNER_FLAGS}`: {
       return savePartnerFlags(state, action);
     }
     default:
@@ -60,4 +59,4 @@ const PartnerFlags = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ data: PartnerFlags, status: PartnerFlagsStatus });
+export default combineReducers({ data: PartnerFlags, status: apiMeta(PARTNER_FLAGS) });

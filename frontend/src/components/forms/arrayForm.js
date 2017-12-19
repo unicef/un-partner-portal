@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
-import { FormControl, FormLabel, FormHelperText } from 'material-ui/Form';
+import { FormControl, FormHelperText } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
@@ -10,6 +10,7 @@ import DeleteIcon from 'material-ui-icons/Delete';
 import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
 import classname from 'classnames';
+import FieldLabelWithTooltipIcon from '../../components/common/fieldLabelWithTooltip';
 
 
 const messages = {
@@ -85,7 +86,7 @@ class RenderArrayMembers extends Component {
         {error && <FormHelperText className={classes.errorText} error>{error}</FormHelperText>}
         <List className={classes.list}>
           {fields.map((member, index) => (
-            <div>
+            <div key={member}>
               <ListItem classes={{ default: classes.default }} key={index} >
                 <div className={classes.root}>
                   <div className={classes.container}>
@@ -126,20 +127,26 @@ class RenderArrayMembers extends Component {
 
 RenderArrayMembers.propTypes = {
   fields: PropTypes.object,
-  meta: PropTypes.bool,
+  meta: PropTypes.object,
   classes: PropTypes.object,
   /**
    * form or whole component displayed on the outer grey section
    * will recieve name to create unique field name, index of the field,
    * and all fields to read from already added values
    */
-  outerField: PropTypes.node,
+  outerField: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.func,
+  ]),
   /**
     * form or whole component displayed on the inner darker grey section
     * will recieve name to create unique field name, index of the field,
     * and all fields to read from already added values
     */
-  innerField: PropTypes.node,
+  innerField: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.func,
+  ]),
   /**
    * limit of the field array length
    */
@@ -175,10 +182,18 @@ const ArrayForm = (props) => {
     disableAdding,
     disableDeleting,
     validate,
+    infoText,
     readOnly } = props;
   return (
     <FormControl fullWidth>
-      {label && <FormLabel>{label}</FormLabel>}
+      {label && <FieldLabelWithTooltipIcon
+        infoText={infoText}
+        tooltipIconProps={{
+          name: fieldName,
+        }}
+      >
+        {label}
+      </FieldLabelWithTooltipIcon>}
       <FieldArray
         limit={limit}
         name={fieldName}
@@ -201,13 +216,19 @@ ArrayForm.propTypes = {
    * will recieve name to create unique field name, index of the field,
    * and all fields to read from already added values
    */
-  outerField: PropTypes.node,
+  outerField: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.func,
+  ]),
   /**
     * form or whole component displayed on the inner darker grey section
     * will recieve name to create unique field name, index of the field,
     * and all fields to read from already added values
     */
-  innerField: PropTypes.node,
+  innerField: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.func,
+  ]),
   /**
    * name of the field
    */
@@ -236,6 +257,14 @@ ArrayForm.propTypes = {
    * if form should not be able to delete items
    */
   disableDeleting: PropTypes.bool,
+  /** 
+   * validations for the entire array
+   */
+  validate: PropTypes.array,
+  /**
+   * text/component for the tooltio
+   */
+  infoText: PropTypes.node,
 };
 
 export default withStyles(styleSheet, { name: 'ArrayForm' })(ArrayForm);

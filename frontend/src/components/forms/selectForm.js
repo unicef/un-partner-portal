@@ -1,56 +1,30 @@
 import React, { Component } from 'react';
+import R from 'ramda';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-import InfoIcon from 'material-ui-icons/Info';
+
 import Grid from 'material-ui/Grid';
-import Divider from 'material-ui/Divider';
-import Typography from 'material-ui/Typography';
-import { MenuItem } from 'material-ui-old/Menu';
-import { FormControl } from 'material-ui/Form';
 import { renderSelectField, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 import TooltipIcon from '../common/tooltipIcon';
-import PaddedContent from '../common/paddedContent';
+import { renderSelectOptions } from './selectHelpers/selectRenderers';
+
 
 class SelectForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selectedItem: undefined,
-      tooltipShown: false,
-      iconHovered: false,
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.hideTooltip = this.hideTooltip.bind(this);
-    this.showTooltip = this.showTooltip.bind(this);
-    this.handleMouseEnter = this.handleMouseEnter.bind(this);
-    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.parseFormValue = this.parseFormValue.bind(this);
   }
 
-  handleChange(event, value) {
-    this.setState({ selectedItem: value });
+  parseFormValue(value) {
+    if (this.props.multiple) {
+      return R.without('placeholder_none', value);
+    }
+    return value;
   }
-
-  hideTooltip() {
-    this.setState({ tooltipShown: false });
-  }
-
-  showTooltip() {
-    this.setState({ tooltipShown: true });
-  }
-
-  handleMouseEnter() {
-    this.showTooltip();
-  }
-
-  handleMouseLeave() {
-    this.hideTooltip();
-  }
-
   render() {
     const {
       fieldName,
-      infoIcon,
       infoText,
       label,
       placeholder,
@@ -62,94 +36,40 @@ class SelectForm extends Component {
       defaultValue,
       readOnly,
       sections,
+      multiple,
+      textFieldProps,
     } = this.props;
+
     return (
       <Grid item>
-        <Grid container direction="row" alignItems="flex-end" wrap="nowrap">
-          <Grid item xs={infoIcon ? 11 : 12}>
-            {readOnly ?
-              <FormControl fullWidth>
-                <Field
-                  name={fieldName}
-                  component={renderText}
-                  values={values}
-                  optional={optional}
-                  label={label}
-                />
-              </FormControl>
-              : <Field
-                name={fieldName}
-                component={renderSelectField}
-                {...selectFieldProps}
-                floatingLabelFixed
-                floatingLabelText={label}
-                hintText={placeholder || `Select ${label.toLowerCase()}`}
-                validate={optional ? [] : [required].concat(validation || [])}
-                warn={warn && warning}
-                defaultValue={defaultValue}
-                onChange={this.handleChange}
-                style={{
-                  height: '56px',
-                }}
-                inputStyle={{
-                  'margin-top': 0,
-                }}
-                floatingLabelStyle={{
-                  top: '22px',
-                }}
-                iconStyle={{
-                  fill: 'rgba(0, 0, 0, 0.42)',
-                  top: '10px',
-                }}
-                underlineStyle={{
-                  'border-top': '1px solid rgba(0, 0, 0, 0.42)',
-                  bottom: '6px',
-                }}
-                errorStyle={{
-                  bottom: 0,
-                }}
-                fullWidth
-                autoWidth
-              >
-                {sections
-                  ? values.map(([sectionName, sectionValues], index) =>
-                    [
-                      <PaddedContent>
-                        <Typography
-                          type="body2"
-                          key={`${fieldName}_sectionName_${index}`}
-                        >{sectionName}
-                        </Typography>
-                        <Divider key={`${fieldName}_divider_${index}`} />
-                      </PaddedContent>,
-                      sectionValues.map((value, innerIndex) => (
-                        <MenuItem
-                          key={`${value.value}_menuItem_${innerIndex}`}
-                          value={value.value}
-                          primaryText={value.label}
-                        />)),
-                    ],
-                  )
-                  : values.map((value, index) => (
-                    <MenuItem
-                      key={`${fieldName}_menuItem_${index}`}
-                      value={value.value}
-                      primaryText={value.label}
-                    />
-
-                  ))}
-              </Field>
-            }
-          </Grid>
-          {infoIcon && (
-            <Grid item xs={1} >
-              <TooltipIcon
-                infoText={infoText}
-                Icon={InfoIcon}
-              />
-            </Grid>
-          )}
-        </Grid>
+        {readOnly
+          ? <Field
+            name={fieldName}
+            component={renderText}
+            values={values}
+            optional={optional}
+            label={label}
+            infoText={infoText}
+            {...textFieldProps}
+          />
+          : <Field
+            name={fieldName}
+            component={renderSelectField}
+            parse={this.parseFormValue}
+            {...selectFieldProps}
+            label={label}
+            placeholder={placeholder || `Select ${label.toLowerCase()}`}
+            validate={optional ? [] : [required].concat(validation || [])}
+            warn={warn && warning}
+            defaultValue={defaultValue || multiple ? ['placeholder_none'] : 'placeholder_none'}
+            multiple={multiple}
+            fullWidth
+            infoText={infoText}
+            values={sections ? R.reduce((current, [_, nextValues]) => R.concat(current, nextValues), [], values) : values}
+          >
+            {renderSelectOptions(fieldName, values, sections)}
+          </Field>
+        }
       </Grid>
 
     );
@@ -173,10 +93,6 @@ SelectForm.propTypes = {
    * }
    */
   values: PropTypes.array.isRequired,
-  /**
-   * Whether to display info icon with tooltip next ot the field
-   */
-  infoIcon: PropTypes.bool,
   /**
    * text passed to tooltip
    */
@@ -208,12 +124,27 @@ SelectForm.propTypes = {
   /**
    * default value String
    */
-  defaultValue: PropTypes.string,
+  defaultValue: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ])),
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   /**
    * whether values should be divided into sections, expects this data format: 
    * [sectionName: string, valuesForSection: [{value, label}] ]
    */
-  sections: PropTypes.array,
+  sections: PropTypes.bool,
+  /**
+   * if select field should be multiple
+   */
+  multiple: PropTypes.bool,
+  /**
+   * props for read-only text field
+   */
+  textFieldProps: PropTypes.object,
 };
 
 export default SelectForm;

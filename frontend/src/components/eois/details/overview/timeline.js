@@ -19,13 +19,14 @@ const Timeline = (props) => {
   return (
     <HeaderList
       header={title}
-      rows={[<TimelineComponent
+    >
+      <TimelineComponent
         postedDate={posted}
         deadlineDate={deadline}
         notificationDate={notif}
         startDate={start}
-      />]}
-    />
+      />
+    </HeaderList>
   );
 };
 

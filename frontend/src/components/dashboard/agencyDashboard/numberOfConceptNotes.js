@@ -15,18 +15,29 @@ const styleSheet = theme => ({
   number: {
     paddingRight: theme.spacing.unit * 2,
   },
+  paper: {
+    height: '100%',
+  },
 });
 
 
 const NumberOfConceptNotes = (props) => {
   const { number, classes } = props;
   return (
-    <Paper>
+    <Paper className={classes.paper}>
       <PaddedContent>
         <GridRow>
           <Typography type="headline">{messages.title}</Typography>
           <GridColumn alignItems="flex-end">
-            <Typography className={classes.number} type="display2">{number}</Typography>
+            {[
+              <Typography
+                key={0}
+                className={classes.number}
+                type="display2"
+              >
+                {number}
+              </Typography>
+            ]}
           </GridColumn>
         </GridRow>
       </PaddedContent>

@@ -23,8 +23,8 @@ const JustificationField = (props) => {
       fieldName={`${name}.ds_justification_select`}
       label={messages.label}
       values={values}
+      multiple
       selectFieldProps={{
-        multiple: true,
         disabled,
       }}
       {...other}

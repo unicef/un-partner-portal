@@ -9,7 +9,7 @@ const EoiNameCell = (props) => {
   const { title, id, params: { type } } = props;
   const typeTo = type === PROJECT_TYPES.PINNED ? PROJECT_TYPES.OPEN : type;
   return (
-    <TableCell first limited>
+    <TableCell>
       <Typography
         component={Link}
         color="accent"

@@ -19,7 +19,7 @@ const labels = {
   partnerId: 'Partner ID',
   type: 'Type of organisation',
   country: 'Country',
-  location: 'Location',
+  location: 'Location of office',
   headOfOrganization: 'Head of organization',
   fullname: 'Full Name',
   jobTitle: 'Job Title/Position',
@@ -33,7 +33,7 @@ const labels = {
   populations: 'Populations of concern',
   experience: 'Years of establishment in country of origin',
   unExperience: 'UN Experience',
-  budget: 'Annual Budget',
+  budget: 'Annual Budget (current year)',
   results: 'Key results',
   mandate: 'Mandate and Mission',
   viewProfile: 'view profile',
@@ -42,7 +42,7 @@ const labels = {
 const fields = (partner, button) => (
   <PaddedContent>
     <ItemRowCellDivider label={labels.partnerName} content={R.prop('name', partner)} />
-    <ItemRowCellDivider label={labels.partnerId} content={R.prop('partnerId', partner)} />
+    <ItemRowCellDivider label={labels.partnerId} content={`${R.prop('partnerId', partner)}`} />
     <ItemRowCellDivider label={labels.type} content={R.prop('organisationType', partner)} />
     <ItemRowCellDivider label={labels.country} content={R.prop('operationCountry', partner)} />
     <ItemRowCellDivider label={labels.location} content={R.prop('location', partner)} />
@@ -86,9 +86,11 @@ const PartnerOverviewSummary = (props) => {
   return (
     <HeaderList
       header={summaryHeader(R.prop('lastUpdate', partner))}
-      rows={[fields(partner, button)]}
       loading={loading}
-    />);
+    >
+      {fields(partner, button)}
+    </HeaderList>
+  );
 };
 
 PartnerOverviewSummary.propTypes = {

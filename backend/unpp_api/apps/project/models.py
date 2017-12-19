@@ -302,4 +302,3 @@ class Assessment(TimeStampedModel):
             criteria_name = copied_score.pop('selection_criteria')
             output[criteria_name] = copied_score
         return output
-

@@ -5,9 +5,12 @@ const MapBounder = (props) => {
   const { map, bounds, rebound, clearBounds } = props;
   if (bounds && map && rebound) {
     map.fitBounds(bounds);
-    clearBounds();
+
+    setTimeout(() => {
+      clearBounds();
+    });
   }
-  return (<div />);
+  return null;
 };
 
 MapBounder.propTypes = {

@@ -22,6 +22,8 @@ const initialState = {
   other_info: null,
 };
 
+const historyPath = ['collaboration', 'history', 'collaborations_partnership'];
+
 export const loadPartnerDetails = partnerId => (dispatch, getState) => {
   const session = getState().session;
 
@@ -42,8 +44,8 @@ export const loadPartnerDetails = partnerId => (dispatch, getState) => {
 };
 
 const extractSector = list => ({
-  sector: list[0].specialization.category.id,
-  areas: list.map(area => area.specialization.id),
+  sector: R.path(['specialization', 'category', 'id'], list[0]),
+  areas: list.map(area => R.path(['specialization', 'id'], area)),
   years: list[0].years,
 });
 
@@ -53,12 +55,14 @@ export const groupSpecializationsByCategory = R.compose(
 );
 
 const normalizeSpecializations = (state) => {
-  const mergedExperiences = R.assoc('specializations',
+  const experiences = R.assoc('specializations',
     groupSpecializationsByCategory(state.mandate_mission.experience.experiences),
     state.mandate_mission.experience);
 
-  return R.assoc('experience', mergedExperiences, state.mandate_mission);
+  return R.assoc('experience', experiences, state.mandate_mission);
 };
+
+const normalizeHistory = historyItem => R.assoc('agency', R.path(['agency', 'id'], historyItem), historyItem);
 
 const normalizeCollaboration = (state) => {
   const types = [
@@ -70,9 +74,22 @@ const normalizeCollaboration = (state) => {
     evidence.mode === type, state.collaboration.collaboration_evidences);
   const normalizedArray = R.map(filterType, types);
 
-  const mergedAccreditations = R.assocPath(['collaboration', 'accreditation', 'accreditations'], normalizedArray[0], state);
+  const mergedAccreditations = R.assocPath(
+    ['collaboration', 'accreditation', 'accreditations'],
+    R.isEmpty(normalizedArray[0]) ? [{}] : normalizedArray[0],
+    state);
 
-  return R.assocPath(['collaboration', 'reference', 'references'], normalizedArray[1], mergedAccreditations);
+  const withNormalizedCollaborationHistory = R.assocPath(historyPath,
+    R.map(
+      normalizeHistory,
+      R.path(historyPath, mergedAccreditations),
+    ), mergedAccreditations);
+
+  return R.assocPath(
+    ['collaboration', 'reference', 'references'],
+    R.isEmpty(normalizedArray[1]) ? [{}] : normalizedArray[1],
+    withNormalizedCollaborationHistory,
+  );
 };
 
 const savePartnerProfileDetails = (state, action) => {

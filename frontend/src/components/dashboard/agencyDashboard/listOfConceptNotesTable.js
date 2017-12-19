@@ -12,7 +12,7 @@ import { formatDateForPrint } from '../../../helpers/dates';
 
 const columns = [
   { name: 'title', title: 'Project Title' },
-  { name: 'id', title: 'Cfei ID' },
+  { name: 'id', title: 'CFEI' },
   { name: 'deadline_date', title: 'Notification of results deadline' },
 ];
 
@@ -66,7 +66,7 @@ class ListOfConceptNotesTable extends Component {
 }
 
 ListOfConceptNotesTable.propTypes = {
-  loading: PropTypes.string,
+  loading: PropTypes.bool,
   data: PropTypes.array,
   loadApplications: PropTypes.func,
   itemsCount: PropTypes.number,

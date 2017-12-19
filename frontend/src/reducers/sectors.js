@@ -7,6 +7,7 @@ import {
   normId,
 } from './normalizationHelpers';
 import { mapValuesForSelectionField } from '../store';
+import { sessionError } from '../reducers/session';
 
 export const LOAD_SECTORS_SUCCESS = 'LOAD_SECTORS_SUCCESS';
 
@@ -15,7 +16,10 @@ const initialState = {};
 const loadSectorsSuccess = sectors => ({ type: LOAD_SECTORS_SUCCESS, sectors });
 
 export const loadSectors = () => dispatch => getSectors()
-  .then(sectors => dispatch(loadSectorsSuccess(sectors)));
+  .then(sectors => dispatch(loadSectorsSuccess(sectors)),
+  ).catch((error) => {
+    dispatch(sessionError(error));
+  });
 
 
 const flattenToSpecialization = item => flattenToObjectKey('specializations')(normId('specializations')(item));

@@ -120,7 +120,7 @@ class CfeiHeader extends Component {
     const index = this.updatePath();
     return (
       <Loader loading={loading}>
-        {!loading && this.renderContent(index)}
+        {loading ? null : this.renderContent(index)}
       </Loader>
     );
   }
@@ -138,7 +138,7 @@ CfeiHeader.propTypes = {
   loadProjectApplication: PropTypes.func,
   uploadCnClearState: PropTypes.func.isRequired,
   error: PropTypes.object,
-  cnFile: PropTypes.string,
+  cnFile: PropTypes.bool,
   type: PropTypes.string,
   loadUCN: PropTypes.func,
 };
@@ -149,9 +149,9 @@ const mapStateToProps = (state, ownProps) => ({
   role: state.session.role,
   title: selectCfeiTitle(state, ownProps.params.id),
   type: ownProps.params.type,
-  loading: state.cfeiDetails.cfeiDetailsStatus.loading,
+  loading: state.cfeiDetails.status.loading,
   cnFile: state.conceptNote.cnFile,
-  error: state.cfeiDetails.cfeiDetailsStatus.error,
+  error: state.cfeiDetails.status.error,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

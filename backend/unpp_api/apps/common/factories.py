@@ -511,7 +511,6 @@ class EOIFactory(factory.django.DjangoModelFactory):
     title = factory.Sequence(lambda n: "title {}".format(n))
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
-    # locations ... TODO when right time will come (when we need them - depending on endpoint)
     agency_office = factory.LazyFunction(get_random_agency_office)
     description = factory.Sequence(lambda n: "Brief background of the project {}".format(n))
     start_date = date.today()
@@ -616,7 +615,12 @@ class EOIFactory(factory.django.DjangoModelFactory):
         count = random.randint(0, 3)
         while count:
             count -= 1
-            self.locations.add(PointFactory())
+            point, create = Point.objects.get_or_create(**{
+                "lat": random.randint(-180, 180),
+                "lon": random.randint(-180, 180),
+                "admin_level_1": {"country_code": get_country_list(1)[0], "name": "name {}".format(self.pk)},
+            })
+            self.locations.add(point)
 
 
 class PartnerFlagFactory(factory.django.DjangoModelFactory):

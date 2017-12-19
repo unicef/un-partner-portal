@@ -28,7 +28,7 @@ const styleSheet = (theme) => {
       fill: theme.palette.primary[400],
     },
     headerIcon: {
-      marginRight: theme.spacing.unit *3,
+      marginRight: theme.spacing.unit,
     },
     bell: {
       position: 'absolute',

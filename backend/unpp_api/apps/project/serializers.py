@@ -13,7 +13,7 @@ from account.serializers import AgencyUserSerializer, IDUserSerializer, UserSeri
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
-from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer
+from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer, MixinPreventManyCommonFile
 from common.models import Point, Specialization
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
@@ -145,7 +145,7 @@ class ProposalEOIDetailsSerializer(serializers.Serializer):
 
 
 # TODO - break this up into different serializers for different purposes
-class ApplicationFullSerializer(serializers.ModelSerializer):
+class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
 
     cn = CommonFileSerializer()
     partner = PartnerSerializer(read_only=True)
@@ -163,10 +163,15 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('eoi',)
 
+    prevent_keys = ["cn"]
+
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
 
     def validate(self, data):
+
+        self.prevent_many_common_file_validator(data)
+
         if self.context['request'].method in ['PATCH', 'PUT']:
             kwargs = self.context['request'].parser_context.get('kwargs', {})
             application_id = kwargs.get(self.context['view'].lookup_field)
@@ -204,7 +209,7 @@ class ApplicationFullEOISerializer(ApplicationFullSerializer):
     eoi = BaseProjectSerializer(read_only=True)
 
 
-class CreateUnsolicitedProjectSerializer(serializers.Serializer):
+class CreateUnsolicitedProjectSerializer(MixinPreventManyCommonFile, serializers.Serializer):
 
     id = serializers.CharField(source="pk", read_only=True)
     locations = PointSerializer(many=True, source='locations_proposal_of_eoi')
@@ -213,8 +218,13 @@ class CreateUnsolicitedProjectSerializer(serializers.Serializer):
     specializations = serializers.ListField(source='proposal_of_eoi_details.specializations')
     cn = CommonFileSerializer()
 
+    prevent_keys = ["cn"]
+
     @transaction.atomic
     def create(self, validated_data):
+
+        self.prevent_many_common_file_validator(validated_data)
+
         partner = self.context['request'].active_partner
         locations = validated_data.pop('locations_proposal_of_eoi', [])
         agency = validated_data.pop('agency')
@@ -443,7 +453,7 @@ class AgencyProjectReadSerializer(serializers.ModelSerializer):
 
 
 # TODO - clean up for what is only needed on create
-class AgencyProjectUpdateSerializer(serializers.ModelSerializer):
+class AgencyProjectUpdateSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
 
     specializations = SimpleSpecializationSerializer(many=True)
     locations = PointSerializer(many=True)
@@ -849,7 +859,7 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         return ds_app
 
 
-class ReviewSummarySerializer(serializers.ModelSerializer):
+class ReviewSummarySerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
 
     review_summary_attachment = CommonFileSerializer()
 
@@ -858,6 +868,14 @@ class ReviewSummarySerializer(serializers.ModelSerializer):
         fields = (
             'review_summary_comment', 'review_summary_attachment'
         )
+
+    prevent_keys = ['review_summary_attachment']
+
+    def update(self, instance, validated_data):
+
+        self.prevent_many_common_file_validator(self.initial_data)
+
+        return super(ReviewSummarySerializer, self).update(instance, validated_data)
 
 
 class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):

@@ -18,6 +18,7 @@ import {
 import { Link } from 'react-router';
 import GridRow from '../../common/grid/gridRow';
 import PaddedContent from '../../common/paddedContent';
+import CaptionTypography from '../../common/typography/captionTypography';
 import { formatDateForChart } from '../../../helpers/dates';
 
 const messages = {
@@ -29,6 +30,9 @@ const messages = {
 const styleSheet = theme => ({
   number: {
     paddingRight: theme.spacing.unit * 2,
+  },
+  paper: {
+    height: '100%',
   },
 });
 
@@ -42,12 +46,12 @@ const NewPartners = (props) => {
       toPairs(dayBreakdown));
   }
   return (
-    <Paper>
+    <Paper className={classes.paper}>
       <PaddedContent>
         <GridRow>
           <div>
             <Typography type="headline">{messages.title}</Typography>
-            <Typography type="caption">{messages.caption}</Typography>
+            <CaptionTypography>{messages.caption}</CaptionTypography>
           </div>
           <Grid container justify="flex-end">
             <Grid item>
@@ -80,7 +84,7 @@ const NewPartners = (props) => {
 NewPartners.propTypes = {
   number: PropTypes.number,
   classes: PropTypes.object,
-  dayBreakdown: PropTypes.array,
+  dayBreakdown: PropTypes.object,
 };
 
 export default withStyles(styleSheet, { name: 'NewPartners;' })(NewPartners);

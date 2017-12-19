@@ -29,10 +29,10 @@ const HeaderActions = (props) => {
   const Preselect = WithGreyColor()(PreselectButton);
   const Reject = WithGreyColor()(RejectButton);
   return (
-    <GridRow spacing={0}>
+    <div>
       <Preselect id={ids} />
       <Reject id={ids} />
-    </GridRow>
+    </div>
   );
 };
 
@@ -44,9 +44,7 @@ const onTableRowClick = (row) => {
 const applicationsCells = ({ row, column, hovered }) => {
   if (column.name === 'name') {
     return (<PartnerProfileNameCell
-      verified={row.partner_additional.is_verified}
-      flags={row.partner_additional.flagging_status}
-      name={row.name}
+      info={row.partner_additional}
     />);
   }
   if (column.name === 'id') {
@@ -129,9 +127,9 @@ ApplicationsListContainer.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  applications: state.partnersApplicationsList.applicationsList.applications,
-  itemsCount: state.partnersApplicationsList.applicationsList.itemsCount,
-  columns: state.partnersApplicationsList.applicationsList.columns,
+  applications: state.partnersApplicationsList.data.applications,
+  itemsCount: state.partnersApplicationsList.data.itemsCount,
+  columns: state.partnersApplicationsList.data.columns,
   loading: state.partnersApplicationsList.status.loading,
   query: ownProps.location.query,
   id: ownProps.params.id,

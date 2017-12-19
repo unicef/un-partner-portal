@@ -61,6 +61,15 @@ function authorizedPost({ uri, params, body = {} }) {
     .then(response => response.data);
 }
 
+function authorizedDelete({ uri, params }) {
+  const options = {
+    params,
+    headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
+  };
+  return axios.delete(`${host}${uri}`, options)
+    .then(response => response.data);
+}
+
 function authorizedPatch({ uri, params, body = {} }) {
   const options = {
     params,
@@ -147,6 +156,10 @@ export function convertCnToDirectSelection(body, id) {
   return authorizedPost({ uri: `/projects/application/${id}/convert-unsolicited/`, body });
 }
 
+export function deleteConceptNote(projectId) {
+  return authorizedDelete({ uri: `/projects/${projectId}/partner-applications-delete/` });
+}
+
 export function uploadConceptNote(projectId, body) {
   return authorizedPost({ uri: `/projects/${projectId}/partner-applications/`, body });
 }
@@ -155,8 +168,8 @@ export function uploadCommonFile(body) {
   return authorizedPostUpload({ uri: '/common/file/', body });
 }
 
-export function getOpenCfeiDetails(id) {
-  return authorizedGet({ uri: `/projects/${id}` });
+export function getOpenCfeiDetails(id, options) {
+  return authorizedGet({ uri: `/projects/${id}`, options });
 }
 
 export function getUnsolicitedCN(params, options) {
@@ -167,57 +180,57 @@ export function patchPinnedCfei(body) {
   return authorizedPatch({ uri: '/projects/pins/', body });
 }
 
-export function getCfeiReviewSummary(id) {
-  return authorizedGet({ uri: `/projects/${id}/review-summary/` });
+export function getCfeiReviewSummary(id, options) {
+  return authorizedGet({ uri: `/projects/${id}/review-summary/`, options });
 }
 
 export function putCfeiReviewSummary(id, body) {
   return authorizedPatch({ uri: `/projects/${id}/review-summary/`, body });
 }
 
-export function getCfeiAwardedPartners(id) {
-  return authorizedGet({ uri: `/projects/${id}/applications/awarded-partners/` });
+export function getCfeiAwardedPartners(id, options) {
+  return authorizedGet({ uri: `/projects/${id}/applications/awarded-partners/`, options });
 }
 
-export function getCfeiReviewers(id) {
-  return authorizedGet({ uri: `/projects/${id}/applications/reviewers/` });
+export function getCfeiReviewers(id, options) {
+  return authorizedGet({ uri: `/projects/${id}/applications/reviewers/`, options });
 }
 
 // Applications
-export function getOpenCfeiApplications(id, filters) {
-  return authorizedGet({ uri: `/projects/${id}/applications`, params: filters });
+export function getOpenCfeiApplications(id, filters, options) {
+  return authorizedGet({ uri: `/projects/${id}/applications`, params: filters, options });
 }
 
-export function getProjectApplication(projectId) {
-  return authorizedGet({ uri: `/projects/${projectId}/partner-application/` });
+export function getProjectApplication(projectId, options) {
+  return authorizedGet({ uri: `/projects/${projectId}/partner-application/`, options });
 }
 
 export function changeApplicationStatus(id, status) {
   return authorizedPatch({ uri: `/projects/application/${id}/`, body: { status } });
 }
 
-export function getApplicationDetails(id) {
-  return authorizedGet({ uri: `/projects/application/${id}/` });
+export function getApplicationDetails(id, options) {
+  return authorizedGet({ uri: `/projects/application/${id}/`, options });
 }
 
 export function patchApplication(id, body) {
   return authorizedPatch({ uri: `/projects/application/${id}/`, body });
 }
 
-export function getApplicationConceptNotes(params) {
-  return authorizedGet({ uri: '/projects/applications/open/', params });
+export function getApplicationConceptNotes(params, options) {
+  return authorizedGet({ uri: '/projects/applications/open/', params, options });
 }
 
-export function getApplicationUnsolicitedConceptNotes(params) {
-  return authorizedGet({ uri: '/projects/applications/unsolicited/', params });
+export function getApplicationUnsolicitedConceptNotes(params, options) {
+  return authorizedGet({ uri: '/projects/applications/unsolicited/', params, options });
 }
 
-export function getApplicationDirect(params) {
-  return authorizedGet({ uri: '/projects/applications/direct/', params });
+export function getApplicationDirect(params, options) {
+  return authorizedGet({ uri: '/projects/applications/direct/', params, options });
 }
 
-export function getApplicationReviews(applicationId) {
-  return authorizedGet({ uri: `/projects/applications/${applicationId}/reviewers-status` });
+export function getApplicationReviews(applicationId, options) {
+  return authorizedGet({ uri: `/projects/applications/${applicationId}/reviewers-status`, options });
 }
 
 export function postApplicationReview(applicationId, reviewerId, body) {
@@ -232,10 +245,11 @@ export function putApplicationReview(applicationId, reviewerId, body) {
     body });
 }
 
-export function getApplicationFeedback(applicationId, params) {
+export function getApplicationFeedback(applicationId, params, options) {
   return authorizedGet({
     uri: `/projects/application/${applicationId}/feedback/`,
-    params });
+    params,
+    options });
 }
 
 export function postApplicationFeedback(applicationId, body) {
@@ -248,33 +262,37 @@ export function postUnsolicitedCN(body) {
   return authorizedPost({ uri: '/projects/applications/unsolicited/', body });
 }
 
-export function getPartnerApplications(params) {
-  return authorizedGet({ uri: '/projects/applications', params });
+export function getPartnerApplications(params, options) {
+  return authorizedGet({ uri: '/projects/applications', params, options });
 }
 
-export function getApplicationComparison(id, params) {
-  return authorizedGet({ uri: `/projects/${id}/applications/compare-selected/`, params });
+export function getApplicationComparison(id, params, options) {
+  return authorizedGet({ uri: `/projects/${id}/applications/compare-selected/`, params, options });
 }
 
 // Partners
-export function getPartnerProfileDetails(partnerId) {
-  return authorizedGet({ uri: `/partners/${partnerId}` });
+export function getPartnerProfileDetails(partnerId, options) {
+  return authorizedGet({ uri: `/partners/${partnerId}`, options });
+}
+
+export function getPartnerProfileSummary(partnerId, options) {
+  return authorizedGet({ uri: `/partners/${partnerId}/summary/`, options });
 }
 
 export function getPartnerNames(params, options) {
   return get('/partners/short', params, options);
 }
 
-export function getPartnersList(params) {
-  return authorizedGet({ uri: '/partners', params });
+export function getPartnersList(params, options) {
+  return authorizedGet({ uri: '/partners', params, options });
 }
 
-export function getMembersList(id, params) {
-  return authorizedGet({ uri: `/agencies/${id}/members`, params });
+export function getMembersList(id, params, options) {
+  return authorizedGet({ uri: `/agencies/${id}/members`, params, options });
 }
 
-export function getNotifications(params) {
-  return authorizedGet({ uri: '/notifications', params });
+export function getNotifications(params, options) {
+  return authorizedGet({ uri: '/notifications', params, options });
 }
 
 export function patchNotification(id, body) {
@@ -289,16 +307,16 @@ export function getPartnerProfileConfig() {
   return get('/config/partners/profile');
 }
 
-export function getPartnerOrganizationProfiles(id) {
-  return authorizedGet({ uri: `/partners/${id}/org-profile` });
+export function getPartnerOrganizationProfiles(id, options) {
+  return authorizedGet({ uri: `/partners/${id}/org-profile`, options });
 }
 
 export function createCountryProfile(id, body) {
   return authorizedPost({ uri: `/partners/${id}/country-profile/`, body });
 }
 
-export function getPartnerVerifications(id) {
-  return authorizedGet({ uri: `/partners/${id}/verifications` });
+export function getPartnerVerifications(id, params, options) {
+  return authorizedGet({ uri: `/partners/${id}/verifications`, params, options });
 }
 
 export function postPartnerVerifications(id, body) {
@@ -309,8 +327,8 @@ export function patchPartnerProfileTab(partnerId, tabName, body) {
   return authorizedPatch({ uri: `/partners/${partnerId}/${tabName}/`, body });
 }
 
-export function getPartnerFlags(id, params) {
-  return authorizedGet({ uri: `/partners/${id}/flags/`, params });
+export function getPartnerFlags(id, params, options) {
+  return authorizedGet({ uri: `/partners/${id}/flags/`, params, options });
 }
 
 export function postPartnerFlags(id, body) {
@@ -334,26 +352,26 @@ export function getAgencies(params = { page_size: 100 }, options) {
 }
 
 // Dashboard
-export function getDashboard() {
-  return authorizedGet({ uri: '/dashboard/' });
+export function getDashboard(options) {
+  return authorizedGet({ uri: '/dashboard/', options });
 }
 
-export function getApplicationsDecisions() {
-  return authorizedGet({ uri: '/dashboard/applications-decisions/' });
+export function getApplicationsDecisions(options) {
+  return authorizedGet({ uri: '/dashboard/applications-decisions/', options });
 }
 
-export function getApplicationsToScore(params) {
-  return authorizedGet({ uri: '/dashboard/applications-to-score/', params });
+export function getApplicationsToScore(params, options) {
+  return authorizedGet({ uri: '/dashboard/applications-to-score/', params, options });
 }
 
-export function getSubmittedCN(params) {
-  return authorizedGet({ uri: '/dashboard/submitted-cn/', params });
+export function getSubmittedCN(params, options) {
+  return authorizedGet({ uri: '/dashboard/submitted-cn/', params, options });
 }
 
-export function getPendingOffers(params) {
-  return authorizedGet({ uri: '/dashboard/pending-offers/', params });
+export function getPendingOffers(params, options) {
+  return authorizedGet({ uri: '/dashboard/pending-offers/', params, options });
 }
 
-export function getAdminOneLocations(countryCode) {
-  return authorizedGet({ uri: '/common/admin-levels', params: countryCode });
+export function getAdminOneLocations(countryCode, options) {
+  return authorizedGet({ uri: '/common/admin-levels', params: countryCode, options });
 }

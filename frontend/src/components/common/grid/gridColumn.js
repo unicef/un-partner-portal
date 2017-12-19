@@ -17,12 +17,12 @@ function GridColumn(props) {
 }
 
 GridColumn.propTypes = {
-  children: PropTypes.array,
+  children: PropTypes.node,
   spacing: PropTypes.number,
 };
 
 GridColumn.defaultProps = {
-  spacing: 16,
+  spacing: 24,
 };
 
 export default GridColumn;

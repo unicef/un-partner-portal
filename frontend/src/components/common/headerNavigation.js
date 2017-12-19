@@ -16,6 +16,11 @@ const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 2;
   const biggerPadding = theme.spacing.unit * 3;
   return {
+    root: {
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+    },
     container: {
       width: '100%',
       margin: '0',
@@ -42,6 +47,9 @@ const styleSheet = (theme) => {
     },
     backButtonHeight: {
       height: 24,
+    },
+    tabsContainer: {
+      maxWidth: '100%',
     },
     noPrint: {
       '@media print': {
@@ -79,6 +87,7 @@ class HeaderNavigation extends Component {
       tabs,
       children,
       header,
+      tabsProps,
       handleChange } = this.props;
     const paddingClass = className(
       {
@@ -92,41 +101,46 @@ class HeaderNavigation extends Component {
     );
 
     return (
-      <div>
-        <Grid alignItems="center" className={classes.container} container>
-          <SpreadContent className={classes.flex} >
-            <div className={paddingClass}>
-              { backButton
-                ? <IconButton
-                  className={`${classes.backButtonHeight} ${classes.noPrint}`}
-                  onClick={handleBackButton}
+      <div className={classes.root}>
+        <Grid item>
+          <Grid alignItems="center" className={classes.container} container>
+            <SpreadContent className={{ [classes.flex]: true }}>
+              <div className={paddingClass}>
+                { backButton
+                  ? <IconButton
+                    className={`${classes.backButtonHeight} ${classes.noPrint}`}
+                    onClick={handleBackButton}
+                  >
+                    <KeyboardArrowLeft />
+                  </IconButton>
+                  : null }
+                { typeof title === 'string'
+                  ? <Typography type="headline">
+                    {title}
+                  </Typography>
+                  : titleObject }
+              </div>
+              <div className={actionsClass} >
+                {header}
+              </div>
+            </SpreadContent>
+            {customTabs || tabs
+              ? <div className={`${classes.noPrint} ${classes.tabsContainer}`}>
+                <Tabs
+                  value={index}
+                  scrollable
+                  scrollButtons="off"
+                  textColor="accent"
+                  indicatorColor="accent"
+                  onChange={handleChange}
+                  {...tabsProps}
                 >
-                  <KeyboardArrowLeft />
-                </IconButton>
-                : null }
-              { typeof title === 'string'
-                ? <Typography type="headline">
-                  {title}
-                </Typography>
-                : titleObject }
-            </div>
-            <div className={actionsClass} >
-              {header}
-            </div>
-          </SpreadContent>
-          {customTabs || tabs
-            ? <div className={classes.noPrint}>
-              <Tabs
-                scrollable
-                value={index}
-                scrollButtons="off"
-                onChange={handleChange}
-              >
-                {customTabs ? customTabs() : this.renderTabs()}
-              </Tabs>
-            </div>
-            : null
-          }
+                  {customTabs ? customTabs() : this.renderTabs()}
+                </Tabs>
+              </div>
+              : null
+            }
+          </Grid>
         </Grid>
         {children}
       </div>
@@ -137,15 +151,15 @@ class HeaderNavigation extends Component {
 HeaderNavigation.propTypes = {
   classes: PropTypes.object.isRequired,
   index: PropTypes.number,
-  title: PropTypes.string.isRequired,
-  titleObject: PropTypes.object.isRequired,
+  title: PropTypes.string,
+  titleObject: PropTypes.object,
   backButton: PropTypes.bool,
   handleBackButton: PropTypes.func,
   tabs: PropTypes.array,
   customTabs: PropTypes.func,
   children: PropTypes.node,
-  header: PropTypes.Component,
-  handleChange: PropTypes.Func,
+  header: PropTypes.node,
+  handleChange: PropTypes.func,
 };
 
 export default withStyles(styleSheet, { name: 'HeaderNavigation' })(HeaderNavigation);

@@ -11,6 +11,7 @@ from rest_framework.generics import (
     CreateAPIView,
     RetrieveUpdateAPIView,
     RetrieveAPIView,
+    DestroyAPIView,
 )
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -31,6 +32,7 @@ from common.permissions import (
     IsConvertUnsolicitedEditor,
     IsApplicationFeedbackPerm,
     IsPartnerEOIApplicationCreate,
+    IsPartnerEOIApplicationDestroy,
     IsPartner,
 )
 from common.mixins import PartnerIdsMixin
@@ -123,7 +125,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
 class EOIAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated,)
     queryset = EOI.objects.all()
 
     def get_serializer_class(self, *args, **kwargs):
@@ -256,6 +258,20 @@ class AgencyApplicationListAPIView(ListAPIView):
     pagination_class = SmallPagination
 
 
+class PartnerEOIApplicationDestroyAPIView(DestroyAPIView):
+    """
+    Destroy Application (concept note) created by partner.
+    """
+    permission_classes = (IsAuthenticated, IsPartnerEOIApplicationDestroy)
+    queryset = Application.objects.all()
+    serializer_class = ApplicationFullSerializer
+
+    def delete(self, request, pk, *args, **kwargs):
+        app = get_object_or_404(Application, id=pk)
+        app.delete()
+        return Response({}, status=statuses.HTTP_204_NO_CONTENT)
+
+
 class PartnerEOIApplicationCreateAPIView(CreateAPIView):
     """
     Create Application for open EOI by partner.
@@ -280,7 +296,7 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
         if not self.request.active_partner.has_finished:
             return Response(
                 {'non_field_errors':
-                     ["You don't have the ability to submit an application if Your profile is not completed."]},
+                    ["You don't have the ability to submit an application if Your profile is not completed."]},
                 status=statuses.HTTP_400_BAD_REQUEST
             )
 
@@ -332,6 +348,25 @@ class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
                                    agency=eoi.agency)
 
         send_notificiation_application_created(instance)
+
+
+class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
+
+    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+    queryset = Application.objects.all()
+    serializer_class = CreateDirectApplicationNoCNSerializer
+
+    def delete(self, request, eoi_id, pk, *args, **kwargs):
+        self.eoi = get_object_or_404(EOI, id=eoi_id)
+
+        allowed_to_modify = \
+            list(self.eoi.focal_points.values_list('id', flat=True)) + [self.eoi.created_by_id]
+        if request.user.id not in allowed_to_modify or not self.eoi.is_direct:
+            raise PermissionDenied
+
+        app = get_object_or_404(Application, id=pk)
+        app.delete()
+        return Response({}, status=statuses.HTTP_204_NO_CONTENT)
 
 
 class ApplicationAPIView(RetrieveUpdateAPIView):

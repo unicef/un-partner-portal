@@ -1,9 +1,29 @@
 
 import R from 'ramda';
-import { LOAD_DETAILS_SUCCESS } from './partnerProfileDetailsStatus';
+import { combineReducers } from 'redux';
 import { groupSpecializationsByCategory } from './partnerProfileDetails';
+import { getPartnerProfileSummary } from '../helpers/api/api';
+import { sendRequest } from '../helpers/apiHelper';
+import apiMeta, {
+  success,
+} from './apiMeta';
 
+const errorMessage = 'Couldn\' load partner summary, please refresh page and try again';
 const initialState = {};
+
+const PARTNER_SUMMARY = 'AGENCY_PARTNER_PROFILE';
+const tag = 'agenncyPartnerProfile';
+
+export const loadPartnerProfileSummary = id => sendRequest({
+  loadFunction: getPartnerProfileSummary,
+  meta: {
+    reducerTag: tag,
+    actionTag: PARTNER_SUMMARY,
+    isPaginated: false,
+  },
+  errorHandling: { userMessage: errorMessage },
+  apiParams: [id],
+});
 
 const flatSectorsAndAreas = (sectors, sectorsState) => sectors.map((sector) => {
   const sectorName = sectorsState.allSectors[sector.sector];
@@ -13,18 +33,18 @@ const flatSectorsAndAreas = (sectors, sectorsState) => sectors.map((sector) => {
 });
 
 const savePartnerProfileOverview = (state, action) => {
-  const { partnerDetails, getState } = action;
+  const { results: partnerDetails, getState } = action;
   const wholeState = getState();
   const sectors = groupSpecializationsByCategory(partnerDetails.experiences);
   const profileOverview = {
     lastUpdate: '18 Sep 2017',
     name: R.prop('legal_name', partnerDetails),
-    verified: true,
-    partnerId: R.path(['profile', 'id'], partnerDetails),
-    organisationType: wholeState.partnerProfileConfig['partner-type'][R.prop(
-      'display_type', partnerDetails)],
-    operationCountry: wholeState.countries[R.path(['mailing_address', 'country'], partnerDetails)],
-    location: R.path(['mailing_address', 'city'], partnerDetails),
+    verified: R.path(['partner_additional', 'is_verified'], partnerDetails),
+    partnerId: R.prop('id', partnerDetails),
+    organisationType: R.path(['partnerProfileConfig', 'partner-type', R.prop(
+      'display_type', partnerDetails)], wholeState),
+    operationCountry: wholeState.countries[R.prop('country_code', partnerDetails)],
+    location: R.prop('location_of_office', partnerDetails),
     head: {
       fullname: R.path(['org_head', 'fullname'], partnerDetails),
       title: R.path(['org_head', 'job_title'], partnerDetails),
@@ -40,24 +60,26 @@ const savePartnerProfileOverview = (state, action) => {
       `phone: ${R.path(['mailing_address', 'telephone'], partnerDetails)}`,
     ],
     sectors: flatSectorsAndAreas(sectors, wholeState.sectors),
-    yearOfEstablishment: R.path(['profile', 'registration_date'], partnerDetails),
-    population: R.path(['mandate_mission', 'concern_groups'], partnerDetails).map(
+    yearOfEstablishment: R.prop('year_establishment', partnerDetails),
+    population: R.prop(['population_of_concern'], partnerDetails).map(
       item => wholeState.partnerProfileConfig['population-of-concern'][item]),
-    unExperience: (R.prop('collaborations_partnership', partnerDetails) || []).map(item => item.agency),
-    budget: R.path(['budgets', '0', 'budget'], partnerDetails),
-    keyResults: 'Yes',
-    mandateMission: R.path(['mandate_mission', 'description'], partnerDetails),
+    unExperience: (R.prop('collaborations_partnership', partnerDetails) || []).map(item => item.agency.name),
+    budget: R.path(['partnerProfileConfig', 'budget-choices', R.prop(['annual_budget'], partnerDetails)], wholeState),
+    keyResults: R.prop('key_result', partnerDetails),
+    mandateMission: R.prop('mandate_and_mission', partnerDetails),
     partnerStatus: R.prop('partner_additional', partnerDetails),
   };
-  return R.assoc(R.path(['profile', 'id'], partnerDetails), profileOverview, state);
+  return R.assoc(R.prop('id', partnerDetails), profileOverview, state);
 };
 
-export default function agencyPartnerProfileNavReducer(state = initialState, action) {
+function agencyPartnerProfile(state = initialState, action) {
   switch (action.type) {
-    case LOAD_DETAILS_SUCCESS: {
+    case success`${PARTNER_SUMMARY}`: {
       return savePartnerProfileOverview(state, action);
     }
     default:
       return state;
   }
 }
+
+export default combineReducers({ data: agencyPartnerProfile, status: apiMeta(PARTNER_SUMMARY) });

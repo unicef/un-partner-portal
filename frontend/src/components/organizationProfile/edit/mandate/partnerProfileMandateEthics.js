@@ -22,7 +22,7 @@ const PartnerProfileMandateEthics = (props) => {
 
   return (
     <FormSection name="ethics">
-      <GridColumn removeNullChildren>
+      <GridColumn>
         <RadioForm
           fieldName="ethic_safeguard"
           label={messages.violation}

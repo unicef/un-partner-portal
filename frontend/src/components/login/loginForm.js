@@ -16,7 +16,6 @@ const styleSheet = (theme) => {
   const paddingField = theme.spacing.unit * 3;
   return {
     root: {
-      width: '30vw',
       minHeight: '50vh',
     },
     fields: {
@@ -48,7 +47,7 @@ const Login = (props) => {
     <div >
       <form onSubmit={handleSubmit}>
         <GridColumn className={classes.root}>
-          <Grid className={classes.field} container justify="center" >
+          <Grid className={classes.field} container justify="center">
             <Typography type="display1" className={classes.logIn}>Log in</Typography>
           </Grid>
           <div className={classes.fields}>
@@ -65,7 +64,13 @@ const Login = (props) => {
             </div>
           </div>
           <Grid container justify="center" >
-            <Button onTouchTap={handleSubmit} raised color="accent" disabled={pristine || submitting}>
+            <Button
+              type="submit"
+              onTouchTap={handleSubmit}
+              raised
+              color="accent"
+              disabled={pristine || submitting}
+            >
             Log in
             </Button>
           </Grid>

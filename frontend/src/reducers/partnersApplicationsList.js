@@ -1,18 +1,16 @@
 import R from 'ramda';
 import { combineReducers } from 'redux';
-import applicationsListStatus, {
-  LOAD_APPLICATION_LIST_SUCCESS,
-  loadApplicationListStarted,
-  loadApplicationListEnded,
-  loadApplicationListSuccess,
-  loadApplicationListFailure,
-
-} from './partnersApplicationListStatus';
+import { sendRequest } from '../helpers/apiHelper';
+import apiMeta, { success } from './apiMeta';
 import { getOpenCfeiApplications, changeApplicationStatus } from '../helpers/api/api';
 import { APPLICATION_STATUSES } from '../helpers/constants';
 
 const APPLICATION_STATUS_CHANGED = 'APPLICATION_STATUS_CHANGED';
 
+const errorMsg = 'Couldn\'t load applications for this project, ' +
+  'please refresh page and try again';
+const PARTNERS_APPLICATIONS_LIST = 'PARTNERS_APPLICATIONS_LIST';
+const tag = 'partnersApplicationsList';
 const initialState = {
   columns: [
     { name: 'legal_name', title: 'Organization\'s Legal Name' },
@@ -27,18 +25,16 @@ const initialState = {
 const applicationStatusChanged = (ids, status) =>
   ({ type: APPLICATION_STATUS_CHANGED, ids, status });
 
-export const loadApplications = (id, filter) => (dispatch) => {
-  dispatch(loadApplicationListStarted());
-  return getOpenCfeiApplications(id, filter)
-    .then((response) => {
-      dispatch(loadApplicationListEnded());
-      dispatch(loadApplicationListSuccess(response));
-    })
-    .catch((error) => {
-      dispatch(loadApplicationListEnded());
-      dispatch(loadApplicationListFailure(error));
-    });
-};
+export const loadApplications = (id, filter) => sendRequest({
+  loadFunction: getOpenCfeiApplications,
+  meta: {
+    reducerTag: tag,
+    actionTag: PARTNERS_APPLICATIONS_LIST,
+    isPaginated: true,
+  },
+  errorHandling: { userMessage: errorMsg },
+  apiParams: [id, filter],
+});
 
 export const changeAppStatus = (ids, status) => (dispatch) => {
   const promises = ids.map(id => changeApplicationStatus(id, status));
@@ -49,8 +45,8 @@ export const changeAppStatus = (ids, status) => (dispatch) => {
 };
 
 const saveApplications = (state, action) => {
-  const itemsCount = R.assoc('itemsCount', action.applications.count, state);
-  return R.assoc('applications', action.applications.results, itemsCount);
+  const itemsCount = R.assoc('itemsCount', action.count, state);
+  return R.assoc('applications', action.results, itemsCount);
 };
 
 const changeStatus = (state, action) => {
@@ -74,7 +70,7 @@ const changeStatus = (state, action) => {
 
 function applicationsList(state = initialState, action) {
   switch (action.type) {
-    case LOAD_APPLICATION_LIST_SUCCESS: {
+    case success`${PARTNERS_APPLICATIONS_LIST}`: {
       return saveApplications(state, action);
     }
     case APPLICATION_STATUS_CHANGED: {
@@ -85,4 +81,5 @@ function applicationsList(state = initialState, action) {
   }
 }
 
-export default combineReducers({ applicationsList, status: applicationsListStatus });
+export default combineReducers({ data: applicationsList,
+  status: apiMeta(PARTNERS_APPLICATIONS_LIST) });

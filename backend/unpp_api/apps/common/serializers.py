@@ -1,10 +1,16 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from django.db.models.base import Model
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from .models import AdminLevel1, Point, Sector, Specialization, CommonFile
 
 
 class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
+
+    exclude_fields = {}
 
     def update_partner_related(self, instance, validated_data, related_names=[]):
         for related_name in related_names:
@@ -27,6 +33,8 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
                 # ForeignKey related to partner - RelatedManager object - here we add or update if exist related item
                 for data in self.initial_data.get(related_name, []):
+                    for field in self.exclude_fields.get(related_name, []):
+                        field in data and data.pop(field)
                     _id = data.get("id")
                     if _id:
                         getattr(instance, related_name).filter(id=_id).update(**data)
@@ -34,6 +42,58 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                         data['partner_id'] = instance.id
                         data['created_by'] = self.context['request'].user
                         getattr(instance, related_name).create(**data)
+
+
+class MixinPreventManyCommonFile(object):
+    """
+    Validator that check if partner A is using commonfile w/ id 3 and partner B then submits commonfile w/ id 3,
+    need to prevent it.
+    """
+
+    prevent_keys = []
+
+    def prevent_many_common_file_validator(self, data):
+
+        if self.prevent_keys:
+            values = []
+            for key in self.prevent_keys:
+                val = data.get(key)
+                if val:
+                    if isinstance(val, CommonFile):
+                        values.append(val.id)
+                    else:
+                        values.append(val)
+
+            # can not be the same
+            if len(list(set(values))) != len(values):
+                raise ValidationError(
+                    'Given related field common file id have to be unique.'
+                )
+
+            for value in values:
+                cfile = get_object_or_404(CommonFile, pk=value)
+                exist = any([
+                    cfile.assessment_reports.exists(),
+                    cfile.collaboration_evidences.exists(),
+                    cfile.concept_notes.exists(),
+                    cfile.ethic_fraud_policies.exists(),
+                    cfile.ethic_safeguard_policies.exists(),
+                    cfile.flag_attachments.exists(),
+                    cfile.gov_docs.exists(),
+                    cfile.governance_organigrams.exists(),
+                    cfile.most_recent_audit_reports.exists(),
+                    cfile.other_info_doc_1.exists(),
+                    cfile.other_info_doc_2.exists(),
+                    cfile.other_info_doc_3.exists(),
+                    cfile.others_info.exists(),
+                    cfile.registration_docs.exists(),
+                    cfile.reports.exists(),
+                    cfile.review_summary_attachments.exists(),
+                ])
+                if exist:
+                    raise ValidationError(
+                        'This given common file id {} can be used only once.'.format(value)
+                    )
 
 
 class ShortSectorSerializer(serializers.ModelSerializer):

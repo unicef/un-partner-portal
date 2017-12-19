@@ -1,9 +1,12 @@
 import React from 'react';
-import { FormSection } from 'redux-form';
+import { formValueSelector, FormSection } from 'redux-form';
+import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
 import ArrayForm from '../../../forms/arrayForm';
 import DatePickerForm from '../../../forms/datePickerForm';
+import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
+import RadioForm from '../../../forms/radioForm';
 import FileForm from '../../../forms/fileForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 
@@ -11,6 +14,7 @@ const messages = {
   accreditation: 'Accreditation',
   date: 'Date Received',
   certifying: 'Certifying/Accrediting Body',
+  info: 'Would you like to upload any accreditations received by your organization?',
 };
 
 const Accreditation = readOnly => member => (
@@ -50,23 +54,38 @@ const AccreditationInner = readOnly => member => (
 );
 
 const PartnerProfileCollaborationAccreditation = (props) => {
-  const { readOnly } = props;
+  const { readOnly, hasAccreditations } = props;
 
   return (<FormSection name="accreditation">
-    <ArrayForm
-      fieldName="accreditations"
-      initial
-      limit={15}
+    <RadioForm
+      fieldName="any_accreditation"
+      label={messages.info}
+      values={BOOL_VAL}
+      warn
       readOnly={readOnly}
-      outerField={Accreditation(readOnly)}
-      innerField={AccreditationInner(readOnly)}
     />
+    {visibleIfYes(hasAccreditations)
+      ? <ArrayForm
+        fieldName="accreditations"
+        initial
+        limit={15}
+        readOnly={readOnly}
+        outerField={Accreditation(readOnly)}
+        innerField={AccreditationInner(readOnly)}
+      />
+      : null}
   </FormSection>
   );
 };
 
 PartnerProfileCollaborationAccreditation.propTypes = {
   readOnly: PropTypes.bool,
+  hasAccreditations: PropTypes.bool,
 };
 
-export default PartnerProfileCollaborationAccreditation;
+const selector = formValueSelector('partnerProfile');
+export default connect(
+  state => ({
+    hasAccreditations: selector(state, 'collaboration.accreditation.any_accreditation'),
+  }),
+)(PartnerProfileCollaborationAccreditation);

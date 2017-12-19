@@ -15,33 +15,33 @@ import AlertDialog from '../common/alertDialog';
 import { selectNormalizedOrganizationTypes } from '../../store';
 
 const messages = {
-  header: 'The UN Partner Portal is solely intended for use by national NGOs, international NGOs, community based organizations,' +
-  'academic institutes, and Red Cross/Red Crescent societies. The UN Partner Portal' +
+  header: 'The UN Partner Portal is solely intended for use by national NGOs, international NGOs, community based organizations, ' +
+  'academic institutes, and Red Cross/Red Crescent societies. The UN Partner Portal ' +
   'is NOT intended for use by private sector companies, government ministries, or individuals.',
   learn: ' Learn more.',
-  tooltip: 'Community Based Organization (CBO): A community-based ' +
+  tooltip: ['Community Based Organization (CBO): A community-based ' +
   'organization is a grass-root association with small organizational' +
   ' and management structure, focused on improving the lives and ' +
-  'well-being of a specific community, with local coverage or reach.\n' +
+  'well-being of a specific community, with local coverage or reach.',
   'National NGO: A national NGO is a non-governmental organization ' +
   'that is established in only one country. National NGOs may have ' +
   'varying mandates, structures and systems depending on the country ' +
   'context and specific organization history, but are structured ' +
-  'according to areas of common interest and concern by citizens.\n' +
+  'according to areas of common interest and concern by citizens.',
   'International NGO: An international NGO is a non-governmental ' +
   'organization that has offices in more than one country. ' +
   'International NGOs are generally highly structured in terms of ' +
   'mandate, technical expertise and management systems, and are ' +
   'comprised of a headquarters office and varying networks of ' +
-  'regional and/or country-based offices.\n' +
+  'regional and/or country-based offices.',
   'Academic institution: An academic institution is an educational ' +
   'institution with degree-conferring authority that is dedicated to ' +
-  'education and research.\n' +
+  'education and research.',
   'Red Cross/Red Crescent Movement: The International Red Cross and ' +
   'Red Crescent Movement is an international humanitarian network ' +
   'composed of the International Committee of the Red Cross (ICRC), ' +
   'the International Federation of Red Cross and Red Crescent ' +
-  'Societies (IFRC) and 190 member Red Cross and Red Crescent Societies.',
+  'Societies (IFRC) and 190 member Red Cross and Red Crescent Societies.'].join('\n\n'),
   alertDialog: 'Access to the UN Partner Portal for country (local) offices of international NGOs is granted by the offices’ headquarters, ' +
    'who must first register an account for the organization. Please liaise with your organization’s headquarters for access.',
   labels: {
@@ -86,7 +86,7 @@ const RADIO_VALUES = [
 const OrganizationTypes = (props) => {
   const { classes, organization, organizationTypes, office, reset } = props;
   return (
-    <Grid item>
+    <Grid container direction="column" spacing={24}>
       <Grid item>
         <div className={classes.info}>
           <Typography color="inherit" >
@@ -99,7 +99,6 @@ const OrganizationTypes = (props) => {
         fieldName={'json.partner.display_type'}
         label={messages.labels.organizationType}
         values={organizationTypes}
-        infoIcon
         infoText={messages.tooltip}
       />
       {(organization === 'Int' || organization === 'RCC') && (

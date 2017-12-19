@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Grid from 'material-ui/Grid';
+import { withStyles } from 'material-ui/styles';
 import GridColumn from '../../common/grid/gridColumn';
 import GridRow from '../../common/grid/gridRow';
 import LastProfileUpdate from './lastProfileUpdate';
@@ -12,8 +14,21 @@ import NumberOfSubmittedCN from './numberOfSubmittedConceptNotes';
 import Loader from '../../common/loader';
 import WelcomeModal from '../../layout/incompleteProfile/welcomeModal';
 
+const styleSheet = () => ({
+  grid: {
+    height: 'calc(100% + 24px)',
+  },
+  largerBox: {
+    height: '35%',
+  },
+  smallerBox: {
+    height: '30%',
+  },
+});
+
 const PartnerDashboard = (props) => {
   const { loading,
+    classes,
     dashboard: {
       new_cfei_by_sectors_last_days_ago: newCfeiBySectors,
       num_of_submitted_cn: { count: numSubmittedCN, details: numSubmittedCNByAgency } = {},
@@ -33,17 +48,23 @@ const PartnerDashboard = (props) => {
             numSubmittedCNByAgency={numSubmittedCNByAgency}
           />
         </Loader>
-        <GridColumn>
-          <Loader loading={loading} >
-            <NumberOfPinnedCfei number={numPinnedCfei} />
-          </Loader>
-          <Loader loading={loading} >
-            <NumberOfAwards number={numAwards} />
-          </Loader>
-          <Loader loading={loading} >
-            <LastProfileUpdate date={lastUpdate} />
-          </Loader>
-        </GridColumn>
+        <Grid container direction="column" spacing={24} className={classes.grid}>
+          <Grid item className={classes.largerBox}>
+            <Loader loading={loading} >
+              <NumberOfPinnedCfei number={numPinnedCfei} />
+            </Loader>
+          </Grid>
+          <Grid item className={classes.largerBox}>
+            <Loader loading={loading} >
+              <NumberOfAwards number={numAwards} />
+            </Loader>
+          </Grid>
+          <Grid item className={classes.smallerBox}>
+            <Loader loading={loading} >
+              <LastProfileUpdate date={lastUpdate} />
+            </Loader>
+          </Grid>
+        </Grid>
       </GridRow>
       <ListOfSubmittedCN />
       <ListOfPendingOffers />
@@ -54,7 +75,9 @@ const PartnerDashboard = (props) => {
 PartnerDashboard.propTypes = {
   loading: PropTypes.bool,
   dashboard: PropTypes.object,
+  classes: PropTypes.object,
 };
 
 
-export default PartnerDashboard;
+export default withStyles(styleSheet,
+  { name: 'PartnerDashboard' })(PartnerDashboard);

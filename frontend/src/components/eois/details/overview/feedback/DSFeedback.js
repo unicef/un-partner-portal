@@ -40,13 +40,13 @@ class DSFeedback extends Component {
 
 DSFeedback.propTypes = {
   applications: PropTypes.array,
-  loading: PropTypes.func,
+  loading: PropTypes.bool,
   loadApplications: PropTypes.func,
   shouldAddFeedback: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  applications: state.partnersApplicationsList.applicationsList.applications || [],
+  applications: state.partnersApplicationsList.data.applications || [],
   loading: state.partnersApplicationsList.status.loading,
   shouldAddFeedback: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
 });

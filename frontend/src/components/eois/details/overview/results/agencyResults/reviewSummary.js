@@ -10,6 +10,8 @@ import { isUserAFocalPoint, selectCfeiReviewSummary } from '../../../../../../st
 import { loadReviewSummary } from '../../../../../../reducers/cfeiReviewSummary';
 import ChangeSummaryButton from '../../../../buttons/changeSummaryButton';
 import ReviewSummaryForm from '../../../../modals/changeSummary/changeSummaryForm';
+import withConditionalDisplay from '../../../../../common/hoc/withConditionalDisplay';
+import { isUserNotAgencyReader } from '../../../../../../helpers/authHelpers';
 
 const messages = {
   title: 'Review Summary',
@@ -49,11 +51,14 @@ class ReviewSummary extends Component {
 
   render() {
     const { loading } = this.props;
-    return (<HeaderList
-      loading={loading}
-      header={<Typography type="headline" >{messages.title}</Typography>}
-      rows={this.content()}
-    />);
+    return (
+      <HeaderList
+        loading={loading}
+        header={<Typography type="headline" >{messages.title}</Typography>}
+      >
+        {this.content()}
+      </HeaderList>
+    );
   }
 }
 
@@ -75,4 +80,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   getReviewSummary: () => dispatch(loadReviewSummary(ownProps.id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReviewSummary);
+export default withConditionalDisplay(
+  connect(mapStateToProps, mapDispatchToProps)(ReviewSummary),
+  [isUserNotAgencyReader]);

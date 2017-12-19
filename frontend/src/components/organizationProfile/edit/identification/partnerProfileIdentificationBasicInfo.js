@@ -14,7 +14,7 @@ const messages = {
   legalName: 'Organization\'s Legal Name',
   alias: 'Alias (if applicable)',
   acronym: 'Acronym (If applicable)',
-  formerLegalName: 'Organization\'s former Legal Name',
+  formerLegalName: 'Organization\'s former Legal Name (optional)',
   countryOrigin: 'Country of Origin',
   organizationType: 'Type of organization',
 };
@@ -54,17 +54,14 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
             <TextFieldForm
               label={messages.formerLegalName}
               fieldName="former_legal_name"
-              warn
+              optional
               readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
             />
           </Grid>
           <Grid item sm={6} xs={12}>
             <CountryField
-              fieldName="country_code"
               label={messages.countryOrigin}
               initialValue={country}
-              optional
-              warn
               readOnly
             />
           </Grid>
@@ -95,11 +92,20 @@ PartnerProfileIdentificationBasicInfo.propTypes = {
 const selector = formValueSelector('partnerProfile');
 
 const connected = connect((state, ownProps) => {
-  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
+  || state.agencyPartnersList.data.partners);
+  const displayType = partner ? partner.display_type : null;
+  const isCountryProfile = partner ? partner.is_hq : false;
+  let country = selector(state, 'identification.basic.country_code');
+
+  if (displayType === 'Int' && !isCountryProfile) {
+    const partners = R.filter(item => item.is_hq, state.session.partners);
+    country = !R.isEmpty(partners) ? partners[0].country_code : '';
+  }
   return {
-    isCountryProfile: partner ? partner.is_hq : false,
-    displayType: partner ? partner.display_type : null,
-    country: selector(state, 'identification.basic.country_code'),
+    country,
+    displayType,
+    isCountryProfile,
     organizationTypes: selectNormalizedOrganizationTypes(state),
   };
 }, null)(PartnerProfileIdentificationBasicInfo);

@@ -11,6 +11,9 @@ const messages = {
   typeOfDonor: 'Please select the type of donors that fund your agency',
   donorsList: 'Please list your main donors for programme activities',
   coreFunding: 'Please list your main donors for core funding',
+  coreFundingTooltip: 'Core funding: refers to financial support that covers an organization’s ' +
+  'basic "core" organizational and administrative costs, including salaries of non-project staff, '+
+  'rent, equipment, utilities and communications.',
 };
 
 const PartnerProfileFundingDonors = (props) => {
@@ -23,9 +26,7 @@ const PartnerProfileFundingDonors = (props) => {
           fieldName="major_donors"
           label={messages.typeOfDonor}
           values={partnerDonors}
-          selectFieldProps={{
-            multiple: true,
-          }}
+          multiple
           warn
           readOnly={readOnly}
         />
@@ -44,6 +45,7 @@ const PartnerProfileFundingDonors = (props) => {
         <TextFieldForm
           label={messages.coreFunding}
           fieldName="source_core_funding"
+          infoText={messages.coreFundingTooltip}
           textFieldProps={{
             multiline: true,
             inputProps: {

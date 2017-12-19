@@ -41,7 +41,7 @@ const messages = {
   },
 };
 
-const Fields = ({ type, role, partner, displayGoal }) => {
+const Fields = ({ type, role, partnerId, displayGoal }) => {
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return (<PaddedContent>
       <GridColumn >
@@ -68,7 +68,7 @@ const Fields = ({ type, role, partner, displayGoal }) => {
         {role === ROLES.AGENCY && <Grid container justify="flex-end">
           <Grid item>
             <Button
-              onClick={() => history.push(`/partner/${partner}/details`)}
+              onClick={() => history.push(`/partner/${partnerId}/details`)}
               color="accent"
             >
               {messages.labels.viewProfile}
@@ -107,7 +107,8 @@ const Fields = ({ type, role, partner, displayGoal }) => {
 Fields.propTypes = {
   type: PropTypes.string,
   role: PropTypes.string,
-  partner: PropTypes.number,
+  partner: PropTypes.string,
+  partnerId: PropTypes.number,
   displayGoal: PropTypes.bool,
 };
 
@@ -123,17 +124,19 @@ const title = type => () => (
   </SpreadContent>
 );
 
-const ProjectDetails = ({ type, role, partner, displayGoal }) => (
+const ProjectDetails = ({ type, role, partner, partnerId, displayGoal }) => (
   <HeaderList
     header={title(type)}
-    rows={[<Fields type={type} role={role} partner={partner} displayGoal={displayGoal} />]}
-  />
+  >
+    <Fields type={type} role={role} partner={partner} partnerId={partnerId} displayGoal={displayGoal} />
+  </HeaderList>
 );
 
 ProjectDetails.propTypes = {
   type: PropTypes.string,
   role: PropTypes.string,
-  partner: PropTypes.number,
+  partner: PropTypes.string,
+  partnerId: PropTypes.number,
   displayGoal: PropTypes.bool,
 };
 

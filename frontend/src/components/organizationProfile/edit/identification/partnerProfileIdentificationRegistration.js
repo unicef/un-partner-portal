@@ -8,20 +8,25 @@ import { withRouter } from 'react-router';
 import { visibleIfYes, visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
 import RadioForm from '../../../forms/radioForm';
 import FileForm from '../../../forms/fileForm';
+import YearFieldForm from '../../../forms/yearFieldForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import DatePickerForm from '../../../forms/datePickerForm';
 
 const messages = {
-  yearEstablishmentHq: 'Year of establishment in country of origin',
+  yearEstablishmentHq: 'Year of establishment in country of operation',
   yearEstablishment: 'Year of establishment in country',
   haveGovDoc: 'Does the Organization have a Governing Document?',
   governingDoc: 'Governing Document',
-  registrationCountryHq: 'Is the organization registered in the country of origin?',
-  registrationCountry: 'Is the organization registered to operate in the country?',
+  registrationCountry: 'Is organization registered to operate in the country of origin?',
+  registrationCountryHq: 'Is the organization registered to operate in the country?',
   date: 'Registration Date',
   number: 'Registration number (If applicable)',
   document: 'Registration Document',
   comment: 'Please comment',
+  govDocTooltip: 'Governing document: is a formal document with information about the structure ' +
+  'and governance of an organization, outlining the purposes of the organization and how it will ' +
+  'be run. A governing document may come in the form of a trust deed, constitution, memorandum ' +
+  'and articles of association, or another formal, legal document.',
 };
 
 const PartnerProfileIdentificationRegistration = (props) => {
@@ -29,11 +34,11 @@ const PartnerProfileIdentificationRegistration = (props) => {
 
   return (
     <FormSection name="registration">
-      <Grid container direction="column" gutter={16}>
+      <Grid container direction="column">
         <Grid item>
           <Grid container direction="row">
             <Grid item sm={4} xs={12}>
-              <TextFieldForm
+              <YearFieldForm
                 fieldName="year_establishment"
                 label={isCountryProfile
                   ? messages.yearEstablishment
@@ -60,6 +65,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   label={messages.governingDoc}
                   warn
                   readOnly={readOnly}
+                  infoText={messages.govDocTooltip}
                 />
               </Grid>}
           </Grid>
@@ -126,12 +132,13 @@ PartnerProfileIdentificationRegistration.propTypes = {
   isRegistered: PropTypes.bool,
   readOnly: PropTypes.bool,
   hasGovDoc: PropTypes.bool,
-  isCountryProfile: PropTypes.object.isRequired,
+  isCountryProfile: PropTypes.bool.isRequired,
 };
 
 const selector = formValueSelector('partnerProfile');
 const connected = connect((state, ownProps) => {
-  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners || state.agencyPartnersList.partners);
+  const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
+    || state.agencyPartnersList.data.partners);
 
   return {
     isCountryProfile: partner ? partner.is_hq : false,

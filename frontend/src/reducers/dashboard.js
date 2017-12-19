@@ -1,38 +1,33 @@
 import { combineReducers } from 'redux';
-import DashboardStatus, {
-  loadDashboardStarted,
-  loadDashboardEnded,
-  loadDashboardSuccess,
-  loadDashboardFailure,
-  LOAD_DASHBOARD_SUCCESS,
-} from './dashboardStatus';
-
+import { sendRequest } from '../helpers/apiHelper';
+import apiMeta, { success } from './apiMeta';
 import { getDashboard } from '../helpers/api/api';
+
+const DASHBOARD = 'DASHBOARD';
+const tag = 'dashboard';
+
+const errorMsg = 'Couldn\'t load dashboard information, ' +
+'please refresh page and try again';
 
 const initialState = {};
 
-export const loadDashboard = () => (dispatch) => {
-  dispatch(loadDashboardStarted());
-  return getDashboard()
-    .then((dashboard) => {
-      dispatch(loadDashboardEnded());
-      dispatch(loadDashboardSuccess(dashboard));
-      return dashboard;
-    })
-    .catch((error) => {
-      dispatch(loadDashboardEnded());
-      dispatch(loadDashboardFailure(error));
-    });
-};
+export const loadDashboard = () => sendRequest({
+  loadFunction: getDashboard,
+  meta: {
+    reducerTag: tag,
+    actionTag: DASHBOARD,
+  },
+  errorHandling: { userMessage: errorMsg },
+});
 
 const Dashboard = (state = initialState, action) => {
   switch (action.type) {
-    case LOAD_DASHBOARD_SUCCESS: {
-      return action.dashboard;
+    case success`${DASHBOARD}`: {
+      return action.results;
     }
     default:
       return state;
   }
 };
 
-export default combineReducers({ data: Dashboard, status: DashboardStatus });
+export default combineReducers({ data: Dashboard, status: apiMeta(DASHBOARD) });

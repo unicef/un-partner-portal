@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { isEmpty } from 'ramda';
 import { connect } from 'react-redux';
 import Typography from 'material-ui/Typography';
 import {
@@ -25,21 +26,37 @@ class VerificationContent extends Component {
     this.state = {
       expanded: false,
     };
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange() {
+    this.setState({
+      expanded: !this.state.expanded,
+    });
   }
 
   render() {
-    const { mostRecentVerification, loading, previousCount, verifications } = this.props;
-    if (loading) return <Loader loading={loading}><EmptyContent /></Loader>;
+    const { mostRecentVerification, loading, previousCount, verifications, partnerId } = this.props;
+    if (loading && isEmpty(verifications)) return <Loader loading={loading}><EmptyContent /></Loader>;
+
     return (
-      <div>
-        <PaddedContent>
-          <VerificationItem verification={mostRecentVerification} />
-        </PaddedContent>
-        {previousCount > 0 && <SimpleCollapsableItem
-          title={<Typography type="caption">{`${messages.previous}: ${previousCount}`}</Typography>}
-          component={<PreviousVerificationsList verifications={verifications} />}
-        />}
-      </div>
+      <Loader loading={loading}>
+        <div>
+          <PaddedContent>
+            <VerificationItem verification={mostRecentVerification} />
+          </PaddedContent>
+          {previousCount > 0 && <SimpleCollapsableItem
+            handleChange={this.handleChange}
+            expanded={this.state.expanded}
+            title={<Typography type="caption">{`${messages.previous}: ${previousCount}`}</Typography>}
+            component={<PreviousVerificationsList
+              partnerId={partnerId}
+              count={previousCount}
+              verifications={verifications}
+            />}
+          />}
+        </div>
+      </Loader>
     );
   }
 }
@@ -49,6 +66,7 @@ VerificationContent.propTypes = {
   loading: PropTypes.bool,
   previousCount: PropTypes.number,
   verifications: PropTypes.array,
+  partnerId: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({

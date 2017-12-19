@@ -9,7 +9,7 @@ import PartnerProfileCollaborationAccreditation from './partnerProfileCollaborat
 import PartnerProfileCollaborationReferences from './partnerProfileCollaborationReferences';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsUpdate';
-import { flatten } from '../../../../helpers/jsonMapper';
+import { flatten, isArrayEmpty } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
 import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
 
@@ -89,8 +89,12 @@ class PartnerProfileCollaboration extends Component {
 
     const collaboration = flatten(R.assoc('collaboration_evidences', mergedEvidences, changedHistory));
     const initCollaboration = flatten(R.assoc('collaboration_evidences', [], unflattenCollInit));
-
-    return updateTab(partnerId, 'collaboration', changedValues(initCollaboration, collaboration))
+    const changed = changedValues(initCollaboration, collaboration);
+    
+    const filterPartnerships = R.assoc('collaborations_partnership', R.filter(item => !R.isNil(item.agency_id), changed.collaborations_partnership), changed);
+    const filterRefAcc = R.assoc('collaboration_evidences', R.filter(item => !R.isNil(item.organization_name), filterPartnerships.collaboration_evidences), filterPartnerships);
+    
+    return updateTab(partnerId, 'collaboration', filterRefAcc)
       .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
       .catch((error) => {
         const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';

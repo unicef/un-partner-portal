@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from account.serializers import PartnerMemberSerializer
 from common.permissions import (
-    IsAtLeastMemberEditor,
     IsPartner,
     IsAtLeastEditorPartnerOnNotGET,
     IsRoleAdministratorOnNotGET,
@@ -15,6 +14,7 @@ from common.mixins import PatchOneFieldErrorMixin
 from .serializers import (
     OrganizationProfileSerializer,
     OrganizationProfileDetailsSerializer,
+    PartnerProfileSummarySerializer,
     PartnersListSerializer,
     PartnerShortSerializer,
     PartnerIdentificationSerializer,
@@ -47,6 +47,13 @@ class PartnerProfileAPIView(RetrieveAPIView):
 
     permission_classes = (IsAuthenticated, )
     serializer_class = OrganizationProfileDetailsSerializer
+    queryset = Partner.objects.all()
+
+
+class PartnerProfileSummaryAPIView(RetrieveAPIView):
+
+    permission_classes = (IsAuthenticated, )
+    serializer_class = PartnerProfileSummarySerializer
     queryset = Partner.objects.all()
 
 

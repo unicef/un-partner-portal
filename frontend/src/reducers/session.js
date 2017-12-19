@@ -9,6 +9,7 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const LOGIN_SUBMITTING = 'LOGIN_SUBMITTIN';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+export const SESSION_ERROR = 'SESSION_ERROR';
 
 const initialState = {
   role: undefined,
@@ -50,6 +51,11 @@ export const sessionReady = getState => ({
   getState,
 });
 
+export const sessionError = error => ({
+  type: SESSION_ERROR,
+  error,
+});
+
 export const loginSuccess = session => ({ type: LOGIN_SUCCESS, session });
 
 export const logoutSuccess = () => ({ type: LOGIN_SUCCESS });
@@ -86,6 +92,7 @@ export const loadUserData = () => (dispatch, getState) => {
         isHq: role === ROLES.PARTNER ? R.prop('is_hq', R.head(response.partners)) : null,
         displayType: role === ROLES.PARTNER ? R.prop('display_type', R.head(response.partners)) : null,
         logo: role === ROLES.PARTNER ? R.prop('logo', R.head(response.partners)) : null,
+        logoThumbnail: role === ROLES.PARTNER ? R.prop('org_logo_thumbnail', R.head(response.partners)) : null,
         isProfileComplete: role === ROLES.PARTNER ? R.path(['partner_additional', 'has_finished'],
           R.head(response.partners)) : null,
       };
@@ -152,6 +159,9 @@ export default function sessionReducer(state = initialState, action) {
     }
     case LOGOUT_SUCCESS: {
       return initialState;
+    }
+    case SESSION_ERROR: {
+      return R.assoc('error', action.error, state);
     }
     default:
       return state;

@@ -415,3 +415,13 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['info_to_share'], text)
         self.assertTrue(response.data['org_logo'] is not None)
+
+        response = self.client.patch(url, data={"other_doc_1": file_id}, format='json')
+        self.assertFalse(statuses.is_success(response.status_code))
+        self.assertEquals(response.data[0],
+                          'This given common file id {} can be used only once.'.format(file_id))
+
+        response = self.client.patch(url, data={"other_doc_1": file_id, "other_doc_3": file_id}, format='json')
+        self.assertFalse(statuses.is_success(response.status_code))
+        self.assertEquals(response.data[0],
+                          'Given related field common file id have to be unique.')

@@ -1,16 +1,11 @@
 import { combineReducers } from 'redux';
 import R from 'ramda';
-import partnerVerificationsStatus, {
-  loadPartnerVerificationsStarted,
-  loadPartnerVerificationsEnded,
-  loadPartnerVerificationsSuccess,
-  loadPartnerVerificationsFailure,
-  LOAD_PARTNER_VERIFICATIONS_SUCCESS,
-} from './partnerVerificationStatus';
 import {
   selectIndexWithDefaultEmptyObject,
 } from './normalizationHelpers';
-import { loadPartnerDetails } from './partnerProfileDetails';
+import { sendRequest } from '../helpers/apiHelper';
+import apiMeta, { success } from './apiMeta';
+import { loadPartnerProfileSummary } from './agencyPartnerProfile';
 
 import { getPartnerVerifications, postPartnerVerifications } from '../helpers/api/api';
 
@@ -18,27 +13,30 @@ const initialState = {
 };
 
 const SINGLE_VERIFICATION_ADDED = 'SINGLE_VERIFICATION_ADDED';
-const addSingleVerification = (partnerId, verification) =>
-  ({ type: SINGLE_VERIFICATION_ADDED, partnerId, verification });
 
-export const loadPartnerVerifications = id => (dispatch) => {
-  dispatch(loadPartnerVerificationsStarted());
-  return getPartnerVerifications(id)
-    .then((response) => {
-      dispatch(loadPartnerVerificationsEnded());
-      dispatch(loadPartnerVerificationsSuccess(response.results, id, response.count - 1));
-    })
-    .catch((error) => {
-      dispatch(loadPartnerVerificationsEnded());
-      dispatch(loadPartnerVerificationsFailure(error));
-    });
-};
+const errorMsg = 'Couldn\'t load partner verifications, ' +
+'please refresh page and try again';
+
+const PARTNER_VERIFICATIONS = 'PARTNER_VERIFICATIONS';
+const tag = 'partnerVerifications';
+
+export const loadPartnerVerifications = (id, params) => sendRequest({
+  loadFunction: getPartnerVerifications,
+  meta: {
+    reducerTag: tag,
+    actionTag: PARTNER_VERIFICATIONS,
+    isPaginated: true,
+  },
+  successParams: { partnerId: id },
+  errorHandling: { userMessage: errorMsg },
+  apiParams: [id, params],
+});
 
 const saveVerifications = (state, action) => {
-  const verifications = action.verifications;
+  const verifications = action.results;
   const mostRecentVerification = R.clone(selectIndexWithDefaultEmptyObject(0, verifications));
   return R.assoc(action.partnerId,
-    { mostRecentVerification, verifications, previousCount: action.count },
+    { mostRecentVerification, verifications, previousCount: action.count - 1 },
     state);
 };
 
@@ -62,7 +60,8 @@ export const selectVerifications = (state, partnerId) => {
 
 export const selectMostRecentVerification = (state, partnerId) => {
   const mainVerif = selectIndexWithDefaultEmptyObject(partnerId, state.data);
-  const { mostRecentVerification = [] } = mainVerif;
+  const { mostRecentVerification = {} } = mainVerif;
+
   return mostRecentVerification;
 };
 
@@ -76,13 +75,13 @@ export const updatePartnerVerifications = (partnerId, body) =>
   dispatch => postPartnerVerifications(partnerId, body)
     .then((newVerification) => {
       dispatch(loadPartnerVerifications(partnerId));
-      dispatch(loadPartnerDetails(partnerId));
+      dispatch(loadPartnerProfileSummary(partnerId));
       return newVerification;
     });
 
 const partnerVerifications = (state = initialState, action) => {
   switch (action.type) {
-    case LOAD_PARTNER_VERIFICATIONS_SUCCESS: {
+    case success`${PARTNER_VERIFICATIONS}`: {
       return saveVerifications(state, action);
     }
     case SINGLE_VERIFICATION_ADDED: {
@@ -93,5 +92,6 @@ const partnerVerifications = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ data: partnerVerifications, status: partnerVerificationsStatus });
+export default combineReducers({ data: partnerVerifications,
+  status: apiMeta(PARTNER_VERIFICATIONS) });
 

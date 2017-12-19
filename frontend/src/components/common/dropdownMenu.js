@@ -16,10 +16,6 @@ const styleSheet = theme => ({
       color: theme.palette.secondary[500],
     },
   },
-  buttonHeight: {
-    height: 24,
-    margin: theme.spacing.unit * 2,
-  },
 });
 
 class DropdownMenu extends React.Component {
@@ -47,7 +43,6 @@ class DropdownMenu extends React.Component {
     return (
       <div>
         <IconButton
-          className={classes.buttonHeight}
           aria-label="More"
           aria-owns={open ? 'long-menu' : null}
           aria-haspopup="true"
@@ -78,10 +73,10 @@ class DropdownMenu extends React.Component {
 
 DropdownMenu.propTypes = {
   classes: PropTypes.object,
-  options: PropTypes.objectOf({
+  options: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     content: PropTypes.node,
-  }),
+  })),
 };
 
 export default withStyles(styleSheet, { name: 'DropdownMenu' })(DropdownMenu);
