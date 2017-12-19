@@ -28,7 +28,7 @@ export const Background = props => (<TextFieldForm
 />);
 
 export const Goal = props => (<TextFieldForm
-  label="Goal, Objective, Expected Outcome and Results"
+  label="Expected Results"
   fieldName="goal"
   multiline
   textFieldProps={{
