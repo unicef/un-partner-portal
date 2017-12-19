@@ -66,8 +66,8 @@ class PartnerProfileStepperContainer extends Component {
             vertical: 'bottom',
             horizontal: 'left',
           }}
-          open={error}
-          message={error}
+          open={!!error}
+          message={error || []}
           autoHideDuration={6e3}
           onRequestClose={this.handleErrorClose}
         />
@@ -87,7 +87,7 @@ PartnerProfileStepperContainer.propTypes = {
   isStepWarning: PropTypes.func,
   noStepWarning: PropTypes.func,
   clearError: PropTypes.func,
-  error: PropTypes.string,
+  error: PropTypes.array,
   last: PropTypes.bool,
   submitting: PropTypes.bool,
   handleNext: PropTypes.func,

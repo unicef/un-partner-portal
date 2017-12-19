@@ -57,7 +57,7 @@ class FileForm extends Component {
             infoText={infoText}
             deleteDisabled={deleteDisabled}
             validate={(optional ? [] : [required].concat(validation || []))}
-            warn={warn && warning}
+            warn={warn ? warning : undefined}
             {...other}
           />
         }

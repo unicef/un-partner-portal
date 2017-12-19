@@ -14,8 +14,8 @@ const SectorsCell = (props) => {
   const uniqueSpecializations = selectSectorsBySpecializations(sectors, specializations);
   return (
     <TableCell>
-      {uniqueSpecializations.map(item => (
-        <SectorItem sectorId={item} />
+      {uniqueSpecializations.map((item, index) => (
+        <SectorItem key={index} sectorId={item} />
       ))}
     </TableCell>
   );
@@ -23,7 +23,7 @@ const SectorsCell = (props) => {
 
 SectorsCell.propTypes = {
   specializations: PropTypes.array.isRequired,
-  sectors: PropTypes.array.isRequired,
+  sectors: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({

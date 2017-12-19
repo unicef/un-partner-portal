@@ -178,7 +178,6 @@ class PartnerApplicationsNotesFilter extends Component {
                 fieldName="cfei_active"
                 label={messages.labels.status}
                 values={STATUS_VAL}
-                defaultValue
                 optional
               />
             </Grid>

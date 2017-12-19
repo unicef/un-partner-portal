@@ -118,10 +118,10 @@ class CfeiSubmission extends Component {
 }
 
 CfeiSubmission.propTypes = {
-  partnerId: PropTypes.string,
+  partnerId: PropTypes.number,
   projectId: PropTypes.string,
   applicationId: PropTypes.string,
-  cnUploaded: PropTypes.object,
+  cnUploaded: PropTypes.bool,
   deleteCn: PropTypes.func.isRequired,
   dispatch: PropTypes.func,
 };
