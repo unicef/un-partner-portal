@@ -21,10 +21,9 @@ export const PARTNER_PROFILES_LOAD_ENDED = 'PARTNER_PROFILES_LOAD_ENDED';
 
 export const SELECT_COUNTRY_ID = 'SELECT_COUNTRY_ID';
 export const CREATE_COUNTRY_PROFILE = 'CREATE_COUNTRY_PROFILE';
-export const INIT_COUNTRY_ID = -1;
 
 export const createProfileLoadStarted = () => ({ type: CREATE_PROFILE_LOAD_STARTED });
-export const createProfileLoadSuccess = (response) => ({ type: CREATE_PROFILE_LOAD_SUCCESS, response });
+export const createProfileLoadSuccess = response => ({ type: CREATE_PROFILE_LOAD_SUCCESS, response });
 export const createProfileLoadFailure = error => ({ type: CREATE_PROFILE_LOAD_FAILURE, error });
 export const createProfileLoadEnded = () => ({ type: CREATE_PROFILE_LOAD_ENDED });
 
@@ -35,7 +34,6 @@ export const partnerProfilesLoadEnded = () => ({ type: PARTNER_PROFILES_LOAD_END
 
 const saveProfiles = (state, action) => R.assoc('hq', action.response, state);
 
-
 const messages = {
   loadFailed: 'Load partners failed.',
   loadingPartnersField: 'loading',
@@ -45,7 +43,7 @@ const messages = {
 
 const initialState = {
   hq: null,
-  selectedCountryId: INIT_COUNTRY_ID,
+  selectedCountries: [],
   loading: false,
   createLoading: false,
 };
@@ -72,7 +70,7 @@ export const loadPartnerProfiles = (partnerId, addToSession) => (dispatch, getSt
 
 export const newCountryProfile = partnerId => (dispatch, getState) => {
   dispatch(createProfileLoadStarted());
-  const data = { chosen_country_to_create: [getState().countryProfiles.selectedCountryId] };
+  const data = { chosen_country_to_create: getState().countryProfiles.selectedCountries };
 
   return createCountryProfile(partnerId, data)
     .then((response) => {
@@ -92,21 +90,32 @@ export const createCountryAndRefresh = partnerId => dispatch =>
 
 export const selectCountryId = countryId => ({ type: SELECT_COUNTRY_ID, countryId });
 
-const setSelectedCountryId = (state, index) => R.assoc('selectedCountryId', index, state);
+const setSelectedCountryId = (state, countryId) => {
+  if (countryId == null) {
+    return R.assoc('selectedCountries', [], state);
+  } else if (R.contains(countryId, state.selectedCountries)) {
+    return R.assoc('selectedCountries', R.filter(item => item !== countryId, state.selectedCountries), state);
+  }
 
-const addCountryProfile = (state) => {
-  const countryId = state.selectedCountryId;
+  return R.assoc('selectedCountries', R.append(countryId, state.selectedCountries), state);
+};
 
-  let presenceCountry = R.find(R.propEq('id', countryId))(state.countryPresence);
-  presenceCountry = R.assoc('profile', true, presenceCountry);
-  presenceCountry = R.assoc('completed', false, presenceCountry);
-  presenceCountry = R.assoc('update', (new Date()).toString().split(' ').splice(1, 3)
-    .join(' '), presenceCountry);
+/* eslint-disable no-restricted-syntax */
+const addCountryProfiles = (state) => {
+  let newState = state;
 
-  let stateClone = R.assoc('countryPresence', R.filter(country => country.id !== presenceCountry.id, state.countryPresence), state);
-  stateClone = R.assoc('countryProfiles', R.append(presenceCountry, state.countryProfiles), stateClone);
+  for (const countryId of state.selectedCountries) {
+    let presenceCountry = R.find(R.propEq('id', countryId))(state.countryPresence);
+    presenceCountry = R.assoc('profile', true, presenceCountry);
+    presenceCountry = R.assoc('completed', false, presenceCountry);
+    presenceCountry = R.assoc('update', (new Date()).toString().split(' ').splice(1, 3)
+      .join(' '), presenceCountry);
 
-  return stateClone;
+    newState = R.assoc('countryPresence', R.filter(country => country.id !== presenceCountry.id, state.countryPresence), state);
+    newState = R.assoc('countryProfiles', R.append(presenceCountry, state.countryProfiles), stateClone);
+  }
+
+  return newState;
 };
 
 export default function countryProfilesReducer(state = initialState, action) {
@@ -137,7 +146,7 @@ export default function countryProfilesReducer(state = initialState, action) {
       return setSelectedCountryId(state, action.countryId);
     }
     case CREATE_COUNTRY_PROFILE: {
-      return addCountryProfile(state);
+      return addCountryProfiles(state);
     }
     default:
       return state;

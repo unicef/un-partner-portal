@@ -42,8 +42,8 @@ class CountryProfileList extends Component {
 
   handleToggle(country) {
     const currentIndex = this.props.countries.indexOf(country);
-    const list = new Array(this.props.countries.length).fill(false);
-    list[currentIndex] = true;
+    const list = this.state.checkedItems;
+    list[currentIndex] = !list[currentIndex];
     this.props.setSelectedCountryId(country);
 
     this.setState({
