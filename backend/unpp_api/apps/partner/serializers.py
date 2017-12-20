@@ -33,6 +33,7 @@ from .models import (
     PartnerInternalControl,
     PartnerPolicyArea,
     PartnerAuditAssessment,
+    PartnerAuditReport,
     PartnerReporting,
     PartnerMember,
 )
@@ -271,15 +272,24 @@ class PartnerPolicyAreaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
+class PartnerAuditReportSerializer(serializers.ModelSerializer):
 
     most_recent_audit_report = CommonFileSerializer()
-    assessment_report = CommonFileSerializer()
     audit_link_report = serializers.URLField(source="link_report")
 
     class Meta:
+        model = PartnerAuditReport
+        fields = ('org_audit', 'most_recent_audit_report', 'audit_link_report')
+
+
+class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
+
+    audit_reports = PartnerAuditReportSerializer(many=True)
+    assessment_report = CommonFileSerializer()
+
+    class Meta:
         model = PartnerAuditAssessment
-        exclude = ("link_report", )
+        fields = "__all__"
 
 
 class PartnerReportingSerializer(serializers.ModelSerializer):
@@ -773,10 +783,7 @@ class PartnerProfileProjectImplementationSerializer(
     regular_audited = serializers.BooleanField(source="audit.regular_audited")
     regular_audited_comment = serializers.CharField(
         source="audit.regular_audited_comment", allow_blank=True, allow_null=True)
-    org_audits = serializers.ListField(source="audit.org_audits")
-    most_recent_audit_report = CommonFileSerializer(
-        source="audit.most_recent_audit_report", allow_null=True)
-    audit_link_report = serializers.URLField(source="audit.link_report", allow_blank=True, allow_null=True)
+    audit_reports = PartnerAuditReportSerializer(many=True, source="audit.audit_reports")
     major_accountability_issues_highlighted = serializers.BooleanField(
         source="audit.major_accountability_issues_highlighted")
     comment = serializers.CharField(source="audit.comment", allow_blank=True, allow_null=True)
@@ -815,9 +822,7 @@ class PartnerProfileProjectImplementationSerializer(
 
             'regular_audited',
             'regular_audited_comment',
-            'org_audits',
-            'most_recent_audit_report',
-            'audit_link_report',
+            'audit_reports',
             'major_accountability_issues_highlighted',
             'comment',
             'capacity_assessment',
@@ -837,7 +842,7 @@ class PartnerProfileProjectImplementationSerializer(
         "internal_controls", "area_policies",
     ]
 
-    prevent_keys = ["report", "assessment_report", "most_recent_audit_report"]
+    prevent_keys = ["report", "assessment_report"]
 
     @transaction.atomic
     def update(self, instance, validated_data):

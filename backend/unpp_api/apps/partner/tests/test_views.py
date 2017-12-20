@@ -358,7 +358,6 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
 
         payload = response.data
-        del payload['most_recent_audit_report']
         del payload['publish_annual_reports']
         del payload['link_report']
         del payload['assessment_report']

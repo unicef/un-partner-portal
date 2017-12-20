@@ -81,7 +81,7 @@ class MixinPreventManyCommonFile(object):
                     cfile.flag_attachments.exists(),
                     cfile.gov_docs.exists(),
                     cfile.governance_organigrams.exists(),
-                    cfile.most_recent_audit_reports.exists(),
+                    cfile.partner_audit_reports.exists(),
                     cfile.other_info_doc_1.exists(),
                     cfile.other_info_doc_2.exists(),
                     cfile.other_info_doc_3.exists(),

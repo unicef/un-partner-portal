@@ -26,6 +26,7 @@ from partner.models import (
     PartnerInternalControl,
     PartnerPolicyArea,
     PartnerAuditAssessment,
+    PartnerAuditReport,
     PartnerReporting,
     PartnerMember,
 )
@@ -415,16 +416,19 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     def audit(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
-        PartnerAuditAssessment.objects.create(
+        audit_assessment = PartnerAuditAssessment.objects.create(
             partner=self,
             regular_audited_comment="fake regular audited comment {}".format(self.id),
-            org_audits=[ORG_AUDIT_CHOICES.donor],
-            most_recent_audit_report=cfile,
             assessment_report=cfile,
-            link_report="http://fake.unicef.org/fake_uri{}".format(self.id),
             major_accountability_issues_highlighted=True,
             comment="fake comment {}".format(self.id),
             assessments=[AUDIT_ASSESMENT_CHOICES.micro],
+        )
+        PartnerAuditReport.objects.create(
+            audit_assessment=audit_assessment,
+            org_audit=ORG_AUDIT_CHOICES.donor,
+            most_recent_audit_report=cfile,
+            link_report="http://fake.unicef.org/fake_uri{}".format(self.id),
         )
 
     @factory.post_generation
