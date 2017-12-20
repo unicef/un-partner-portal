@@ -177,7 +177,7 @@ export const renderSelectField = ({
     >
       {children}
     </Select>
-    {((touched && error) || warning) && <FormHelperText>{error}</FormHelperText>}
+    {((touched && error) || warning) && <FormHelperText>{error || warning}</FormHelperText>}
   </FormControl>);
 };
 
@@ -235,7 +235,7 @@ export const renderCheckbox = ({
         {label}
       </Typography>
     </div>
-    {((touched && error) || error || warning)
+    {((touched && error) || warning)
       && <FormHelperText error>{error || warning}</FormHelperText>}
   </div>);
 

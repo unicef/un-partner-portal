@@ -46,6 +46,7 @@ const InternalControls = (values, readOnly, ...props) => (member, index, fields)
           label={messages.segregationOf}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
       </Grid>
@@ -64,6 +65,7 @@ const CommentInner = (readOnly, ...props) => member => (
       },
     }}
     warn
+    optional
     readOnly={readOnly}
     {...props}
   />
@@ -92,6 +94,7 @@ const PolicyArea = (values, readOnly, ...props) => (member, index, fields) => {
           label={messages.documentedPolicies}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
       </Grid>
@@ -120,6 +123,7 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
           label={messages.experiencedStaff}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         {visibleIfYes(experiencedStaff)
@@ -134,6 +138,7 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
                 },
               }}
               warn
+              optional
               readOnly={readOnly}
             />
           </Grid>

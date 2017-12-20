@@ -62,6 +62,7 @@ const PartnerProfileCollaborationReferences = (props) => {
       label={messages.info}
       values={BOOL_VAL}
       warn
+      optional
       readOnly={readOnly}
     />
     {visibleIfYes(hasReferences)

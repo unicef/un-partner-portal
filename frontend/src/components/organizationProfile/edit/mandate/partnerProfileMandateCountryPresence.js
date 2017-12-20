@@ -34,6 +34,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
               multiple: true,
             }}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}
@@ -51,6 +52,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
             label={messages.staffGlobaly}
             values={staffGlobally}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}
@@ -60,6 +62,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
             label={messages.staffCountry}
             values={staffGlobally}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}
@@ -74,6 +77,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
               },
             }}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}

@@ -78,6 +78,7 @@ const PartnerProfileCollaborationHistory = (props) => {
         label={messages.hasCollaborated}
         values={BOOL_VAL}
         warn
+        optional
         readOnly={readOnly}
       />
       {visibleIfYes(hasPartnership)
@@ -95,6 +96,7 @@ const PartnerProfileCollaborationHistory = (props) => {
         label={messages.hasCollaborated}
         values={BOOL_VAL}
         warn
+        optional
         readOnly={readOnly}
       />
       {visibleIfYes(hasCollaborated)
@@ -108,6 +110,7 @@ const PartnerProfileCollaborationHistory = (props) => {
             },
           }}
           warn
+          optional
           readOnly={readOnly}
         />
         : null}

@@ -259,6 +259,7 @@ class PartnerProfile(TimeStampedModel):
             'have_authorised_officers': self.have_authorised_officers is not None,
             'connectivity': self.connectivity is not None,
             'connectivity_exuse': self.connectivity_excuse if self.connectivity is False else True,
+            'working_languages': len(self.working_languages) > 0,
         }
         return all(required_fields.values())
 
@@ -284,18 +285,19 @@ class PartnerProfile(TimeStampedModel):
             'ethic_fraud_comment': ethic_fraud_comment if ethic_fraud is False else True,
             'experiences': self.partner.experiences.exists(),
             'population_of_concern': population_of_concern is not None,
-            'concern_groups': self.partner.mandate_mission.concern_groups > 0 if population_of_concern else True,
+            'concern_groups': len(self.partner.mandate_mission.concern_groups) > 0  if population_of_concern else True,
             'security_high_risk_locations': self.partner.mandate_mission.security_high_risk_locations is not None,
             'security_high_risk_policy': self.partner.mandate_mission.security_high_risk_policy is not None,
             'security_desc': self.partner.mandate_mission.security_desc,
             'staff_in_country': self.partner.staff_in_country,
             'staff_globally': self.partner.staff_globally,
+            'country_presence': len(self.partner.country_presence) > 0 if self.partner.is_hq else True,
             # TODO - country presence for hq + country
         }
+        
         if not self.partner.is_hq:
             required_fields.pop('governance_hq')
             required_fields.pop('staff_globally')
-
         else:
             required_fields.pop('staff_in_country')
 
@@ -323,6 +325,8 @@ class PartnerProfile(TimeStampedModel):
     def collaboration_complete(self):
         required_fields = {
             'any_partnered_with_un': self.any_partnered_with_un is not None,
+            'any_accreditation': self.any_accreditation is not None,
+            'any_reference': self.any_reference is not None,
             'collaborations_partnership': self.partner.collaborations_partnership.exists(),
             'partnership_collaborate_institution': self.partnership_collaborate_institution is not None,
             'partnership_collaborate_institution_desc':
