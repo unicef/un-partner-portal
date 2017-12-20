@@ -237,3 +237,12 @@ SANCTION_MATCH_TYPES = Choices(
     ('Brd', 'board', 'Board Match'),
     ('Org', 'organization', 'Organization Name Match'),
 )
+
+NEW_APPLICATION_STATUSES = Choices(
+    ('Rev', 'review', 'Application Under Review'),
+    ('Uns', 'unsuccessful', 'Application Unsuccessful'),
+    ('Suc', 'successful', 'Application Successful'),
+    ('Acc', 'accepted', 'Selection Accepted'),
+    ('Dec', 'declined', 'Selection Declined'),
+    ('Ret', 'retracted', 'Selection Retracted'),
+)

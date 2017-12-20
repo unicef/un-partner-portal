@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-
+import { connect } from 'react-redux';
+import { compose } from 'ramda';
 import Typography from 'material-ui/Typography';
 import Tooltip from '../../common/portalTooltip';
 import EoiStatusCell from './eoiStatusCell';

@@ -43,6 +43,11 @@ const renderCells = ({ row, column }) => {
       <TableCell >
         <EoiSectorCell data={row.specializations} id={row.id} />
       </TableCell>);
+  } else if (column.name === 'application_status') {
+    return (
+      <TableCell >
+        <EoiSectorCell data={row.specializations} id={row.id} />
+      </TableCell>);
   }
   return undefined;
 };
