@@ -57,6 +57,7 @@ from .serializers import (
     CreateUnsolicitedProjectSerializer,
     ApplicationPartnerOpenSerializer,
     ApplicationPartnerUnsolicitedDirectSerializer,
+    ApplicationPartnerDirectSerializer,
     ApplicationFeedbackSerializer,
     ConvertUnsolicitedSerializer,
     ReviewSummarySerializer,
@@ -503,6 +504,11 @@ class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreate
 
 class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedListCreateAPIView):
     queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct).distinct()
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            return CreateUnsolicitedProjectSerializer
+        return ApplicationPartnerDirectSerializer
 
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id__in=self.get_partner_ids())
