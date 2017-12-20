@@ -71,12 +71,14 @@ const authorisedOfficerForm = (officer, readOnly) => (
         fieldName={`${officer}.fullname`}
         label="Full Name"
         warn
+        optional
         readOnly={readOnly}
       />
       <TextFieldForm
         fieldName={`${officer}.job_title`}
         label="Job Title/Position"
         warn
+        optional
         readOnly={readOnly}
       />
     </GridRow>
@@ -85,6 +87,7 @@ const authorisedOfficerForm = (officer, readOnly) => (
         fieldName={`${officer}.telephone`}
         label="Telephone"
         warn
+        optional
         readOnly={readOnly}
       />
       <TextFieldForm
@@ -97,6 +100,7 @@ const authorisedOfficerForm = (officer, readOnly) => (
         fieldName={`${officer}.email`}
         label="Email"
         warn
+        optional
         validation={[email]}
         readOnly={readOnly}
       />
