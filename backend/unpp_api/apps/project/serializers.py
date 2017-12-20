@@ -763,6 +763,15 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
         return obj.eoi_converted is not None
 
 
+class ApplicationPartnerDirectSerializer(ApplicationPartnerUnsolicitedDirectSerializer):
+
+    project_title = serializers.CharField(source="eoi.title")
+    specializations = serializers.SerializerMethodField()
+
+    def get_specializations(self, obj):
+        return SimpleSpecializationSerializer(obj.eoi.specializations.all(), many=True).data
+
+
 class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirectSerializer):
 
     has_yellow_flag = serializers.BooleanField(source="partner.has_yellow_flag")
