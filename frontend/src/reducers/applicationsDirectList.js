@@ -1,5 +1,4 @@
 import R from 'ramda';
-import { normalizeSingleCfei } from './cfei';
 import { getApplicationDirect } from '../helpers/api/api';
 import {
   clearError,
@@ -31,25 +30,14 @@ const initialState = {
     { name: 'status', title: 'Status' },
   ],
   loading: false,
-  items: [],
+  direct: [],
   totalCount: 0,
 };
 
 const saveApplicationsDirect = (state, action) => {
-  const applications = R.map(item =>
-    ({
-      id: item.id,
-      project_title: item.project_title,
-      agency_name: item.agency_name,
-      country: item.country,
-      specializations: R.path(['specializations'], item) ? normalizeSingleCfei(item).specializations : [],
-      submission_date: item.submission_date,
-      selected_source: item.selected_source,
-      status: item.status,
-    }), action.response.results);
-
-  return R.assoc('items', applications, R.assoc('totalCount', action.response.count, state));
-}; 
+  const partners = R.assoc('direct', action.response.results, state);
+  return R.assoc('totalCount', action.response.count, partners);
+};
 
 const messages = {
   loadFailed: 'Load applications failed.',

@@ -2,16 +2,16 @@ import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { TableCell } from 'material-ui/Table';
 import GridColumn from '../../common/grid/gridColumn';
 import PartnerApplicationsNotesFilter from './partnerApplicationsNotesFilter';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
+import ApplicationStatusCell from '../applicationStatusCell';
 import PaginatedList from '../../common/list/paginatedList';
 import WrappedCell from '../../common/cell/wrappedCell';
 import { loadApplicationsCn } from '../../../reducers/applicationsNotesList';
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import { formatDateForPrint } from '../../../helpers/dates';
-import EoiSectorCell from '../../eois/cells/eoiSectorCell';
+import SectorsCell from '../sectorsCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
 import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
 import CountriesCell from '../../partners/countriesCell';
@@ -27,7 +27,7 @@ const applicationCell = ({ row, column }) => {
   } else if (column.name === 'application_date') {
     return <WrappedCell content={formatDateForPrint(row.application_date)} />;
   } else if (column.name === 'specializations') {
-    return <TableCell><EoiSectorCell data={row.specializations} id={row.id} /></TableCell>;
+    return <SectorsCell specializations={row.specializations} />;
   } else if (column.name === 'country') {
     return <CountriesCell countries={row.country} />;
   }
@@ -81,7 +81,7 @@ PartnerApplicationsNotes.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  notes: state.applicationsNotesList.items,
+  notes: R.path(['conceptNotes'], state.applicationsNotesList) || [],
   itemsTotal: state.applicationsNotesList.totalCount,
   notesColumns: state.applicationsNotesList.columns,
   loading: state.applicationsNotesList.loading,
