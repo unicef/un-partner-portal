@@ -142,13 +142,13 @@ CONCERN_CHOICES = Choices(
 )
 
 STAFF_GLOBALLY_CHOICES = Choices(
-    ('SG1', 'to50', '1 to 50'),
-    ('SG2', 'to100', '51 to 100'),
-    ('SG3', 'to200', '101 to 200'),
-    ('SG4', 'to500', '201 to 500'),
-    ('SG5', 'to1000', '501 to 1000'),
-    ('SG6', 'to5000', '1001 to 5000'),
-    ('SG7', 'more5000', 'more than 5000'),
+    ('SG1', 'to50', '1 to 10'),
+    ('SG2', 'to100', '11 to 25'),
+    ('SG3', 'to200', '26 to 50'),
+    ('SG4', 'to500', '51 to 100'),
+    ('SG5', 'to1000', '101 to 250'),
+    ('SG6', 'to5000', '251 to 500'),
+    ('SG7', 'more5000', 'more than 500'),
 )
 
 POLICY_AREA_CHOICES = Choices(
