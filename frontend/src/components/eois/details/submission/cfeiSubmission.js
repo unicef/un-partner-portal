@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { browserHistory as history, withRouter, Link } from 'react-router';
+import { withRouter, Link } from 'react-router';
 import PropTypes from 'prop-types';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
@@ -14,6 +14,7 @@ import HeaderList from '../../../common/list/headerList';
 import ConceptNoteSubmission from './conceptNoteSubmission';
 import { deleteUploadedCn } from '../../../../reducers/conceptNote';
 import PaddedContent from '../../../common/paddedContent';
+import { isUserNotPartnerReader } from '../../../../helpers/authHelpers';
 
 const messages = {
   completeProfile: 'Complete Profile',
@@ -51,18 +52,21 @@ class CfeiSubmission extends Component {
     this.conceptForm.clearState();
   }
 
-  titleHeader(cnUploaded) {
+  titleHeader() {
+    const { cnUploaded, isReader } = this.props;
     return (
       <SpreadContent>
         <Typography type="headline">{messages.title}</Typography>
-        {cnUploaded && <IconButton onClick={() => this.onDelete()}><Delete /></IconButton>}
+        {cnUploaded
+          && isReader
+          && <IconButton onClick={() => this.onDelete()}><Delete /></IconButton>}
       </SpreadContent>
     );
   }
 
   render() {
     const { open } = this.state;
-    const { partnerId, cnUploaded, isHq, isProfileComplete } = this.props;
+    const { partnerId, cnUploaded, isReader, isHq, isProfileComplete } = this.props;
     if (isHq) {
       return (<Paper>
         <PaddedContent big >
@@ -75,13 +79,13 @@ class CfeiSubmission extends Component {
           <Typography>{messages.incomplete}</Typography>
           <Grid container justify="flex-end">
             <Grid item>
-              <Button
+              {isReader && <Button
                 component={Link}
                 to={`/profile/${partnerId}/edit/`}
                 color="accent"
               >
                 {messages.completeProfile}
-              </Button>
+              </Button>}
             </Grid>
           </Grid>
         </PaddedContent>
@@ -90,7 +94,7 @@ class CfeiSubmission extends Component {
     return (
       <div>
         <HeaderList
-          header={this.titleHeader(cnUploaded)}
+          header={this.titleHeader()}
         >
           <ConceptNoteSubmission onRef={(ref) => { this.conceptForm = ref; }} />
         </HeaderList>
@@ -124,6 +128,7 @@ CfeiSubmission.propTypes = {
   cnUploaded: PropTypes.object,
   deleteCn: PropTypes.func.isRequired,
   dispatch: PropTypes.func,
+  isReader: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -134,6 +139,7 @@ const mapStateToProps = (state, ownProps) => ({
   cnUploaded: state.conceptNote.cnFile,
   isHq: state.session.isHq,
   isProfileComplete: state.session.isProfileComplete,
+  isReader: isUserNotPartnerReader(state),
 });
 
 const mapDispatch = dispatch => ({

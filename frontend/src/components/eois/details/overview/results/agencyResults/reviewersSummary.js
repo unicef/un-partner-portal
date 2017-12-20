@@ -70,6 +70,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   getReviewers: () => dispatch(loadReviewers(ownProps.id)),
 });
 
-export default withConditionalDisplay(
+export default withConditionalDisplay([isUserNotAgencyReader])(
   connect(mapStateToProps, mapDispatchToProps)(ReviewersSummary),
-  [isUserNotAgencyReader]);
+);
