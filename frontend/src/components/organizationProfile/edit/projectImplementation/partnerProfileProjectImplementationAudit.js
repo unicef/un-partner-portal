@@ -39,15 +39,15 @@ const messages = {
 };
 
 const Audit = (values, readOnly, ...props) => (member, index, fields) => {
-  const chosenAudits = fields.getAll().map(field => field.audit);
-  const ownAudit = fields.get(index).audit;
+  const chosenAudits = fields.getAll().map(field => field.org_audit);
+  const ownAudit = fields.get(index).org_audit;
   const newValues = values.filter(value =>
     (ownAudit === value.value) || !(chosenAudits.includes(value.value)));
 
   return (<Grid container direction="row">
     <Grid item sm={12} xs={12}>
       <SelectForm
-        fieldName={`${member}.audit`}
+        fieldName={`${member}.org_audit`}
         label={messages.organizationUndergoes}
         infoText={messages.organizationUndergoesTooltip}
         values={newValues}
@@ -107,7 +107,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
           ? <ArrayForm
             label={messages.sectorsAndSpecialization}
             limit={auditTypes.length}
-            fieldName="audits"
+            fieldName="audit_reports"
             initial
             readOnly={readOnly}
             outerField={Audit(auditTypes, readOnly)}
