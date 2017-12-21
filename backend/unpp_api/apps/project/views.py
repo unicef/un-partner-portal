@@ -305,7 +305,7 @@ class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
     """
     Create Application for open EOI by partner.
     """
-    permission_classes = (IsAuthenticated, IsPartner, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsPartner)
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
