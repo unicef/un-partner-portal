@@ -503,6 +503,15 @@ class PartnerAuditAssessment(TimeStampedModel):
     class Meta:
         ordering = ['id']
 
+    def update_audit_reports(self, audit_reports):
+        self.audit_reports.all().delete()
+        for report in audit_reports:
+            self.audit_reports.create(
+                org_audit=report['org_audit'],
+                most_recent_audit_report=report.get('most_recent_audit_report'),
+                link_report=report.get('link_report'),
+            )
+
     def __str__(self):
         return "PartnerAuditAssessment <pk:{}>".format(self.id)
 

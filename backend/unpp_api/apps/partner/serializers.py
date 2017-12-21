@@ -272,7 +272,7 @@ class PartnerPolicyAreaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PartnerAuditReportSerializer(serializers.ModelSerializer):
+class PartnerAuditReportSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
 
     most_recent_audit_report = CommonFileSerializer()
     audit_link_report = serializers.URLField(source="link_report")
@@ -280,6 +280,12 @@ class PartnerAuditReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerAuditReport
         fields = ('org_audit', 'most_recent_audit_report', 'audit_link_report')
+
+    prevent_keys = ["most_recent_audit_report"]
+
+    def validate(self, data):
+        self.prevent_many_common_file_validator(data)
+        return super(PartnerAuditReportSerializer, self).validate(data)
 
 
 class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
@@ -844,8 +850,20 @@ class PartnerProfileProjectImplementationSerializer(
 
     prevent_keys = ["report", "assessment_report"]
 
+    def is_valid(self, raise_exception=False):
+        """
+        Need to raise exception in order to display correct
+        errors for `audit_reports`
+        """
+        return super(PartnerProfileProjectImplementationSerializer, self).is_valid(raise_exception=True)
+
     @transaction.atomic
     def update(self, instance, validated_data):
+        audit = validated_data.get('audit') or {}
+        audit_reports = audit.pop('audit_reports', None)
+        if audit_reports:
+            instance.audit.update_audit_reports(audit_reports)
+
         # std method does not support writable nested fields by default
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
 

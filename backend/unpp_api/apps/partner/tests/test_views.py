@@ -364,6 +364,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         del payload['report']
         del payload['key_result']
         del payload['last_report']
+        del payload['audit_reports'][0]['most_recent_audit_report']
         text = 'test'
         payload['financial_control_system_desc'] = text
         payload['management_approach_desc'] = text
