@@ -132,7 +132,7 @@ class EoiFilter extends Component {
   }
 
   render() {
-    const { classes, directSources, specs, handleSubmit, reset } = this.props;
+    const { classes, countryCode, directSources, specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -148,6 +148,7 @@ class EoiFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
@@ -258,6 +259,7 @@ const mapStateToProps = (state, ownProps) => {
     agencyId: state.session.agencyId,
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
+    countryCode: country_code,
     initialValues: {
       title,
       country_code,

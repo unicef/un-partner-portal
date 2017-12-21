@@ -9,6 +9,7 @@ import PartnersFilter from './partnersFilter';
 import PartnerProfileNameCell from './partnerProfileNameCell';
 import PaginatedList from '../common/list/paginatedList';
 import TableWithStateInUrl from '../common/hoc/tableWithStateInUrl';
+import OrganizationTypeCell from '../applications/organizationTypeCell';
 import PartnerProfileDetailItem from './partnerProfileDetailItem';
 import { loadPartnersList } from '../../reducers/agencyPartnersList';
 import PartnerProfileCountryCell from './partnerProfileCountryCell';
@@ -47,6 +48,8 @@ class PartnersContainer extends Component {
       return <PartnerProfileCountryCell code={row.country_code} />;
     } else if (column.name === 'experience_working') {
       return <PartnerProfileExperienceCell experience={row.experience_working} />;
+    } else if (column.name === 'display_type') {
+      return <OrganizationTypeCell orgType={row.display_type} />;
     }
 
     return undefined;

@@ -123,7 +123,7 @@ class PartnerApplicationListFilter extends Component {
   }
 
   render() {
-    const { classes, eoiTypes, specs, handleSubmit, reset } = this.props;
+    const { classes, countryCode, eoiTypes, specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -139,6 +139,7 @@ class PartnerApplicationListFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
@@ -239,6 +240,7 @@ const mapStateToProps = (state, ownProps) => {
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     agencyId: state.session.agencyId,
+    countryCode: country_code,
     initialValues: {
       project_title,
       country_code,

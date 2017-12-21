@@ -7,18 +7,22 @@ import { browserHistory as history, withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
-import SelectForm from '../forms/selectForm';
-import TextFieldForm from '../forms/textFieldForm';
-import CountryField from '../forms/fields/projectFields/locationField/countryField';
-import { selectNormalizedPopulationsOfConcernGroups, selectMappedSpecializations, selectNormalizedCountries, selectNormalizedOrganizationTypes } from '../../store';
-import resetChanges from '../eois/filters/eoiHelper';
+import SelectForm from '../../forms/selectForm';
+import TextFieldForm from '../../forms/textFieldForm';
+import CountryField from '../../forms/fields/projectFields/locationField/countryField';
+import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import { selectNormalizedPopulationsOfConcernGroups,
+  selectMappedSpecializations,
+  selectNormalizedCountries,
+  selectNormalizedOrganizationTypes } from '../../../store';
+import resetChanges from '../filters/eoiHelper';
 
 const messages = {
   choose: 'Choose',
   labels: {
     name: 'Legal Name',
     country: 'Country',
-    verificationStatus: 'Verification Status',
+    location: 'Location',
     typeOfOrganization: 'Type of Organization',
     sectorArea: 'Sector & Area of Specialization',
     populations: 'Populations of concern',
@@ -38,23 +42,7 @@ const styleSheet = theme => ({
   },
 });
 
-const VERIFICATION_MENU = [
-  {
-    value: 'none',
-    label: 'All',
-  },
-  {
-    value: 'true',
-    label: 'Verified',
-  },
-  {
-    value: 'false',
-    label: 'Not Verified',
-  },
-];
-
-
-class PartnersFilter extends Component {
+class OpenCfeiApplicationsFilter extends Component {
   constructor(props) {
     super(props);
 
@@ -88,16 +76,16 @@ class PartnersFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { legal_name, verification_status, display_type,
-      country_code, specializations, concern } = values;
+    const { legal_name, type_of_org,
+      country_code, specializations, concern, location } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         legal_name,
-        verification_status,
-        display_type,
+        type_of_org,
         country_code,
+        location,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         concern,
       }),
@@ -124,24 +112,6 @@ class PartnersFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <SelectForm
-                fieldName="verification_status"
-                label={messages.labels.verificationStatus}
-                values={VERIFICATION_MENU}
-                optional
-              />
-            </Grid>
-            <Grid item sm={4} xs={12}>
-              <SelectForm
-                fieldName="display_type"
-                label={messages.labels.typeOfOrganization}
-                values={partnersType}
-                optional
-              />
-            </Grid>
-          </Grid>
-          <Grid container direction="row" >
-            <Grid item sm={4} xs={12} >
               <CountryField
                 initialValue={countryCode}
                 fieldName="country_code"
@@ -150,11 +120,24 @@ class PartnersFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
+              <AdminOneLocation
+                fieldName="location"
+                formName="tableFilter"
+                observeFieldName="country_code"
+                label={messages.labels.location}
+                optional
+              />
+            </Grid>
+          </Grid>
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12}>
               <SelectForm
                 label={messages.labels.sectorArea}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
-                multiple
+                selectFieldProps={{
+                  multiple: true,
+                }}
                 values={specs}
                 sections
                 optional
@@ -165,6 +148,14 @@ class PartnersFilter extends Component {
                 fieldName="concern"
                 label={messages.labels.populations}
                 values={concernGroups}
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <SelectForm
+                fieldName="type_of_org"
+                label={messages.labels.typeOfOrganization}
+                values={partnersType}
                 optional
               />
             </Grid>
@@ -189,7 +180,7 @@ class PartnersFilter extends Component {
   }
 }
 
-PartnersFilter.propTypes = {
+OpenCfeiApplicationsFilter.propTypes = {
   /**
    *  reset function
    */
@@ -200,21 +191,22 @@ PartnersFilter.propTypes = {
   partnersType: PropTypes.array.isRequired,
   concernGroups: PropTypes.array.isRequired,
   pathName: PropTypes.string,
+  location: PropTypes.string,
   query: PropTypes.object,
 };
 
-const formPartnersFilter = reduxForm({
-  form: 'partnersFilter',
+const formOpenCfeiApplicationsFilter = reduxForm({
+  form: 'tableFilter',
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
   enableReinitialize: true,
-})(PartnersFilter);
+})(OpenCfeiApplicationsFilter);
 
 const mapStateToProps = (state, ownProps) => {
   const { query: { legal_name } = {} } = ownProps.location;
-  const { query: { verification_status } = {} } = ownProps.location;
-  const { query: { display_type } = {} } = ownProps.location;
+  const { query: { type_of_org } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
+  const { query: { location } = {} } = ownProps.location;
   const { query: { specializations = '' } = {} } = ownProps.location;
   const { query: { concern } = {} } = ownProps.location;
 
@@ -230,8 +222,8 @@ const mapStateToProps = (state, ownProps) => {
     countryCode: country_code,
     initialValues: {
       legal_name,
-      verification_status,
-      display_type,
+      location,
+      type_of_org,
       country_code,
       specializations: specializationsQ,
       concern,
@@ -239,7 +231,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const connected = connect(mapStateToProps, null)(formPartnersFilter);
-const withRouterPartnersFilter = withRouter(connected);
+const connected = connect(mapStateToProps, null)(formOpenCfeiApplicationsFilter);
+const withRouterCfeiFilter = withRouter(connected);
 
-export default (withStyles(styleSheet, { name: 'partnersFilter' })(withRouterPartnersFilter));
+export default (withStyles(styleSheet, { name: 'partnersFilter' })(withRouterCfeiFilter));

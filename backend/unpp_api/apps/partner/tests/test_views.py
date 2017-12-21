@@ -342,7 +342,6 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         payload['partnership_collaborate_institution'] = True
 
         response = self.client.patch(url, data=payload, format='json')
-
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(payload['partnership_collaborate_institution'])
         self.assertEquals(response.data['partnership_collaborate_institution_desc'], text)
