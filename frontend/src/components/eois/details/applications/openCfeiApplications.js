@@ -10,7 +10,7 @@ import TableWithStateInUrl from '../../../common/hoc/tableWithStateInUrl';
 import GridColumn from '../../../common/grid/gridColumn';
 import RejectButton from '../../buttons/rejectButton';
 import PreselectButton from '../../buttons/preselectButton';
-import GridRow from '../../../common/grid/gridRow';
+import OrganizationTypeCell from '../../../applications/organizationTypeCell';
 import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
 import ApplicationStatusCell from '../../cells/applicationStatusCell';
 import ApplicationCnIdCell from '../../cells/applicationCnIdCell';
@@ -46,14 +46,12 @@ const applicationsCells = ({ row, column, hovered }) => {
     return (<PartnerProfileNameCell
       info={row.partner_additional}
     />);
-  }
-  if (column.name === 'id') {
+  } else if (column.name === 'id') {
     return (<ApplicationCnIdCell
       id={row.id}
     />
     );
-  }
-  if (column.name === 'status') {
+  } else if (column.name === 'status') {
     return (<ApplicationStatusCell
       id={row.id}
       status={row.status}
@@ -62,7 +60,10 @@ const applicationsCells = ({ row, column, hovered }) => {
       progress={row.review_progress}
     />
     );
+  } else if (column.name === 'type_org') {
+    return <OrganizationTypeCell orgType={row.type_org} />;
   }
+
   return undefined;
 };
 /* eslint-enable react/prop-types */

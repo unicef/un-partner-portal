@@ -42,7 +42,7 @@ const styleSheet = theme => ({
   },
 });
 
-class PartnersFilter extends Component {
+class OpenCfeiApplicationsFilter extends Component {
   constructor(props) {
     super(props);
 
@@ -76,16 +76,16 @@ class PartnersFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { legal_name, display_type,
-      country_code, specializations, concern, locations } = values;
+    const { legal_name, type_of_org,
+      country_code, specializations, concern, location } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         legal_name,
-        display_type,
+        type_of_org,
         country_code,
-        locations,
+        location,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         concern,
       }),
@@ -121,7 +121,7 @@ class PartnersFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <AdminOneLocation
-                fieldName="locations"
+                fieldName="location"
                 formName="tableFilter"
                 observeFieldName="country_code"
                 label={messages.labels.location}
@@ -153,7 +153,7 @@ class PartnersFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <SelectForm
-                fieldName="display_type"
+                fieldName="type_of_org"
                 label={messages.labels.typeOfOrganization}
                 values={partnersType}
                 optional
@@ -180,7 +180,7 @@ class PartnersFilter extends Component {
   }
 }
 
-PartnersFilter.propTypes = {
+OpenCfeiApplicationsFilter.propTypes = {
   /**
    *  reset function
    */
@@ -195,18 +195,18 @@ PartnersFilter.propTypes = {
   query: PropTypes.object,
 };
 
-const formPartnersFilter = reduxForm({
+const formOpenCfeiApplicationsFilter = reduxForm({
   form: 'tableFilter',
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
   enableReinitialize: true,
-})(PartnersFilter);
+})(OpenCfeiApplicationsFilter);
 
 const mapStateToProps = (state, ownProps) => {
   const { query: { legal_name } = {} } = ownProps.location;
-  const { query: { display_type } = {} } = ownProps.location;
+  const { query: { type_of_org } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
-  const { query: { locations } = {} } = ownProps.location;
+  const { query: { location } = {} } = ownProps.location;
   const { query: { specializations = '' } = {} } = ownProps.location;
   const { query: { concern } = {} } = ownProps.location;
 
@@ -222,8 +222,8 @@ const mapStateToProps = (state, ownProps) => {
     countryCode: country_code,
     initialValues: {
       legal_name,
-      locations,
-      display_type,
+      location,
+      type_of_org,
       country_code,
       specializations: specializationsQ,
       concern,
@@ -231,7 +231,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const connected = connect(mapStateToProps, null)(formPartnersFilter);
-const withRouterPartnersFilter = withRouter(connected);
+const connected = connect(mapStateToProps, null)(formOpenCfeiApplicationsFilter);
+const withRouterCfeiFilter = withRouter(connected);
 
-export default (withStyles(styleSheet, { name: 'partnersFilter' })(withRouterPartnersFilter));
+export default (withStyles(styleSheet, { name: 'partnersFilter' })(withRouterCfeiFilter));
