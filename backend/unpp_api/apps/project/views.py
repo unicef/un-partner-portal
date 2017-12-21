@@ -6,7 +6,12 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status as statuses
 from rest_framework.views import APIView
 from rest_framework.generics import (
-    ListCreateAPIView, ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView, DestroyAPIView
+    ListCreateAPIView,
+    ListAPIView,
+    CreateAPIView,
+    RetrieveUpdateAPIView,
+    RetrieveAPIView,
+    DestroyAPIView,
 )
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -36,7 +41,7 @@ from notification.helpers import (
     send_notification_cfei_completed,
     send_notification_application_updated,
     send_notificiation_application_created,
-    send_notification
+    send_notification,
 )
 from .models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from .serializers import (
@@ -57,6 +62,7 @@ from .serializers import (
     CreateUnsolicitedProjectSerializer,
     ApplicationPartnerOpenSerializer,
     ApplicationPartnerUnsolicitedDirectSerializer,
+    ApplicationPartnerDirectSerializer,
     ApplicationFeedbackSerializer,
     ConvertUnsolicitedSerializer,
     ReviewSummarySerializer,
@@ -65,7 +71,12 @@ from .serializers import (
     CompareSelectedSerializer,
 )
 
-from .filters import BaseProjectFilter, ApplicationsFilter, ApplicationsUnsolicitedFilter
+from .filters import (
+    BaseProjectFilter,
+    ApplicationsFilter,
+    ApplicationsEOIFilter,
+    ApplicationsUnsolicitedFilter,
+)
 
 
 class BaseProjectAPIView(ListCreateAPIView):
@@ -115,7 +126,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
 class EOIAPIView(RetrieveUpdateAPIView):
 
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated,)
     queryset = EOI.objects.all()
 
     def get_serializer_class(self, *args, **kwargs):
@@ -304,7 +315,7 @@ class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
     """
     Create Application for open EOI by partner.
     """
-    permission_classes = (IsAuthenticated, IsPartner, IsAtLeastMemberEditor)
+    permission_classes = (IsAuthenticated, IsPartner)
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
@@ -383,7 +394,7 @@ class EOIApplicationsListAPIView(ListAPIView):
     serializer_class = ApplicationsListSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
-    filter_class = ApplicationsFilter
+    filter_class = ApplicationsEOIFilter
     ordering_fields = ('status', )
     lookup_field = lookup_url_kwarg = 'pk'
 
@@ -503,6 +514,11 @@ class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreate
 
 class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedListCreateAPIView):
     queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct).distinct()
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            return CreateUnsolicitedProjectSerializer
+        return ApplicationPartnerDirectSerializer
 
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id__in=self.get_partner_ids())

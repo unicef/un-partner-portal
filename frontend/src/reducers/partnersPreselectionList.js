@@ -1,5 +1,3 @@
-export const INIT_COUNTRY_ID = -1;
-
 const initialState = {
   columns: [
     { name: 'legal_name', title: 'Organization\'s Legal Name' },

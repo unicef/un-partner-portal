@@ -1,16 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { browserHistory as history, withRouter } from 'react-router';
+import { browserHistory as history } from 'react-router';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
-import Checkbox from 'material-ui/Checkbox';
-import Button from 'material-ui/Button';
-import Snackbar from 'material-ui/Snackbar';
-import { formatDateForPrint } from '../../../helpers/dates';
 import ControlledModal from '../../common/modals/controlledModal';
 import OrganizationProfileContent from '../../eois/details/submission/modal/organizationProfileContent';
 import withDialogHandling from '../../common/hoc/withDialogHandling';
+import { isUserNotPartnerReader } from '../../../helpers/authHelpers';
 
 const messages = {
   viewProfile: 'View your profile.',
@@ -28,7 +25,7 @@ const styleSheet = theme => ({
 });
 
 let ProfileViewLink = (props) => {
-  const { classes, handleDialogClose, handleDialogOpen, dialogOpen, partnerId } = props;
+  const { classes, handleDialogClose, handleDialogOpen, dialogOpen, partnerId, displayEdit } = props;
   return (
     <div>
       <Typography
@@ -48,10 +45,12 @@ let ProfileViewLink = (props) => {
             handleClick: handleDialogClose,
             label: messages.close,
           },
-          raised: {
-            handleClick: () => history.push(`/profile/${partnerId}/edit`),
-            label: messages.editProfile,
-          },
+          raised: displayEdit
+            ? {
+              handleClick: () => history.push(`/profile/${partnerId}/edit`),
+              label: messages.editProfile,
+            }
+            : null,
         }}
         removeContentPadding
         content={<OrganizationProfileContent />}
@@ -62,6 +61,7 @@ let ProfileViewLink = (props) => {
 
 const mapStateToProps = state => ({
   partnerId: state.session.partnerId,
+  displayEdit: isUserNotPartnerReader(state),
 });
 
 ProfileViewLink = connect(

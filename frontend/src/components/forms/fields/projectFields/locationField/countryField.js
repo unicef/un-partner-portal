@@ -76,4 +76,3 @@ export default connect(
     countries: selectNormalizedCountries(state),
   }),
 )(CountryField);
-

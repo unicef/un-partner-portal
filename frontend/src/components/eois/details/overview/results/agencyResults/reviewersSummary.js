@@ -9,13 +9,15 @@ import HeaderList from '../../../../../common/list/headerList';
 import { isUserAFocalPoint, selectCfeiReviewers } from '../../../../../../store';
 import { loadReviewers } from '../../../../../../reducers/cfeiReviewers';
 import SingleReviewer from './singleReviewer';
+import withConditionalDisplay from '../../../../../common/hoc/withConditionalDisplay';
+import { isUserNotAgencyReader } from '../../../../../../helpers/authHelpers';
 
 const messages = {
   title: 'Reviewers',
   empty: 'No Reviewers added yet',
 };
 
-class ReviewSummary extends Component {
+class ReviewersSummary extends Component {
   componentWillMount() {
     this.props.getReviewers();
   }
@@ -51,7 +53,7 @@ class ReviewSummary extends Component {
   }
 }
 
-ReviewSummary.propTypes = {
+ReviewersSummary.propTypes = {
   reviewers: PropTypes.array,
   focalPoint: PropTypes.bool,
   getReviewers: PropTypes.array,
@@ -68,4 +70,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   getReviewers: () => dispatch(loadReviewers(ownProps.id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReviewSummary);
+export default withConditionalDisplay([isUserNotAgencyReader])(
+  connect(mapStateToProps, mapDispatchToProps)(ReviewersSummary),
+);

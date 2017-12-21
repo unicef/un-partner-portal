@@ -72,7 +72,7 @@ class ApplicationsFilter(django_filters.FilterSet):
     def get_country_code(self, queryset, name, value):
         return queryset.filter(eoi__locations__admin_level_1__country_code=(value and value.upper()))
 
-    def get_locations(self, queryset, name, value):
+    def get_location(self, queryset, name, value):
         return queryset.filter(eoi__locations__admin_level_1=value)
 
     # TODO - remove once frontend has integrated with specializations
@@ -95,6 +95,39 @@ class ApplicationsFilter(django_filters.FilterSet):
         if value:
             return queryset.filter(eoi__is_completed=False)
         return queryset.filter(eoi__is_completed=True)
+
+    def get_type_of_org(self, queryset, name, value):
+        return queryset.filter(partner__display_type__icontains=value)
+
+
+class ApplicationsEOIFilter(django_filters.FilterSet):
+    legal_name = CharFilter(method='get_legal_name')
+    country_code = CharFilter(method='get_country_code')
+    location = CharFilter(method='get_location')
+    specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
+                                                name='partner__experiences__specialization',
+                                                queryset=Specialization.objects.all())
+    concern = CharFilter(method='get_concern')
+    type_of_org = CharFilter(method='get_type_of_org')
+
+    class Meta:
+        model = Application
+        fields = ['legal_name', 'country_code', 'location', 'specializations', 'concern', 'type_of_org']
+
+    def get_legal_name(self, queryset, name, value):
+        return queryset.filter(partner__legal_name__icontains=value)
+
+    def get_country_code(self, queryset, name, value):
+        return queryset.filter(partner__country_code=(value and value.upper()))
+
+    def get_location(self, queryset, name, value):
+        return queryset.filter(partner__country_presence__contains=[value and value.upper()])
+
+    def get_concern(self, queryset, name, value):
+        return queryset.filter(partner__mandate_mission__concern_groups__contains=[value])
+
+    def get_type_of_org(self, queryset, name, value):
+        return queryset.filter(partner__display_type__icontains=value)
 
 
 class ApplicationsUnsolicitedFilter(django_filters.FilterSet):

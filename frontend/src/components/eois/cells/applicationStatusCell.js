@@ -1,4 +1,3 @@
-import Typography from 'material-ui/Typography';
 import React from 'react';
 import { TableCell } from 'material-ui/Table';
 import PropTypes from 'prop-types';
