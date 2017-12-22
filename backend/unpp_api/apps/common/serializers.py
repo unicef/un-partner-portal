@@ -72,25 +72,7 @@ class MixinPreventManyCommonFile(object):
 
             for value in values:
                 cfile = get_object_or_404(CommonFile, pk=value)
-                exist = any([
-                    cfile.assessment_reports.exists(),
-                    cfile.collaboration_evidences.exists(),
-                    cfile.concept_notes.exists(),
-                    cfile.ethic_fraud_policies.exists(),
-                    cfile.ethic_safeguard_policies.exists(),
-                    cfile.flag_attachments.exists(),
-                    cfile.gov_docs.exists(),
-                    cfile.governance_organigrams.exists(),
-                    cfile.partner_audit_reports.exists(),
-                    cfile.other_info_doc_1.exists(),
-                    cfile.other_info_doc_2.exists(),
-                    cfile.other_info_doc_3.exists(),
-                    cfile.others_info.exists(),
-                    cfile.registration_docs.exists(),
-                    cfile.reports.exists(),
-                    cfile.review_summary_attachments.exists(),
-                ])
-                if exist:
+                if cfile.has_existing_reference:
                     raise ValidationError(
                         'This given common file id {} can be used only once.'.format(value)
                     )
@@ -173,6 +155,25 @@ class CommonFileSerializer(serializers.ModelSerializer):
         rep = super(CommonFileSerializer, self).to_representation(obj)
         return rep['file_field']
 
+    def to_internal_value(self, data):
+        try:
+            return CommonFile.objects.get(id=int(data))
+        except:
+            raise ValidationError('No File Exists with this ID')
+
+    class Meta:
+        model = CommonFile
+        fields = (
+            'id',
+            'file_field',
+        )
+
+
+class CommonFileDetailSerializer(serializers.ModelSerializer):
+    """
+    Accepts data in the same format as CommonFileSerializer
+    but displays both `id` and `file_field`
+    """
     def to_internal_value(self, data):
         try:
             return CommonFile.objects.get(id=int(data))
