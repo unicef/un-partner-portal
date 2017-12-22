@@ -106,7 +106,7 @@ class ConceptNoteSubmission extends Component {
                 optional
                 deleteDisabled={cnUploaded}
               />}
-            displayHint={cn}
+            displayHint={!!cn}
           />
           <Typography className={classes.alignRight} type="caption">
             {`${messages.deadline} ${formatDateForPrint(deadlineDate)}`}
@@ -166,11 +166,11 @@ ConceptNoteSubmission.propTypes = {
   uploadCnclearError: PropTypes.func.isRequired,
   loader: PropTypes.bool.isRequired,
   errorUpload: PropTypes.object,
-  cnUploaded: PropTypes.object,
+  cnUploaded: PropTypes.bool,
   deadlineDate: PropTypes.string,
   submitDate: PropTypes.string,
   handleSubmit: PropTypes.func,
-  cn: PropTypes.number,
+  cn: PropTypes.string,
   onRef: PropTypes.func,
 };
 
@@ -187,9 +187,9 @@ const mapStateToProps = (state, ownProps) => {
   let props = {
     displaySubmission,
     loader: state.conceptNote.loading,
-    cnUploaded: state.conceptNote.cnFile,
+    cnUploaded: !!state.conceptNote.cnFile,
     errorUpload: state.conceptNote.error,
-    deadlineDate: cfei ? cfei.deadline_date : {},
+    deadlineDate: cfei ? cfei.deadline_date : '',
     cn: selector(state, 'cn'),
   };
   if (cn) props = { ...props, initialValues: { cn }, submitDate: created };
