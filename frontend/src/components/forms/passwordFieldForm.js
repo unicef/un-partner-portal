@@ -83,7 +83,7 @@ PasswordFieldForm.propTypes = {
   /**
    * props passed to wrapped TextField
    */
-  textFieldProps: PropTypes.node,
+  textFieldProps: PropTypes.object,
   /**
    * unique text used as placeholder
    */
