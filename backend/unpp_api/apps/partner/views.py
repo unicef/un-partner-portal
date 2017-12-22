@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView
+
+from rest_framework.generics import (
+    ListAPIView,
+    CreateAPIView,
+    RetrieveAPIView,
+    RetrieveUpdateAPIView,
+)
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
+
 from account.serializers import PartnerMemberSerializer
 from common.permissions import (
     IsPartner,
     IsAtLeastEditorPartnerOnNotGET,
     IsRoleAdministratorOnNotGET,
+    IsAgencyMemberUser,
 )
 from common.paginations import SmallPagination
 from common.mixins import PatchOneFieldErrorMixin
@@ -59,7 +67,7 @@ class PartnerProfileSummaryAPIView(RetrieveAPIView):
 
 class PartnersListAPIView(ListAPIView):
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsAgencyMemberUser)
     queryset = Partner.objects.all()
     serializer_class = PartnersListSerializer
     pagination_class = SmallPagination
@@ -69,7 +77,7 @@ class PartnersListAPIView(ListAPIView):
 
 class PartnerShortListAPIView(ListAPIView):
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsAgencyMemberUser)
     queryset = Partner.objects.all()
     serializer_class = PartnerShortSerializer
     filter_backends = (DjangoFilterBackend, )

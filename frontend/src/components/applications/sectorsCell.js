@@ -6,12 +6,13 @@ import PropTypes from 'prop-types';
 import SectorItem from './sectorItem';
 
 const selectSectorsBySpecializations = (sectors, spec) =>
-  R.uniq(R.flatten(R.map(item => R.keys(item), R.map(sp => R.filter(item => R.contains(sp, item), sectors), spec))));
+  R.uniq(R.flatten(R.map(item => R.keys(item), R.map(sp => R.filter(item => R.contains(R.is(Object, sp) ? sp.id : sp, item), sectors), spec))));
 
 const SectorsCell = (props) => {
   const { sectors, specializations } = props;
 
   const uniqueSpecializations = selectSectorsBySpecializations(sectors, specializations);
+  
   return (
     <TableCell>
       {uniqueSpecializations.map((item, index) => (

@@ -103,9 +103,9 @@ class CollapsableItem extends Component {
               </div>
               : null
             }
-            <IconButton className={classes.noPrint} onClick={handleEditMode}>
+            {handleEditMode && <IconButton className={classes.noPrint} onClick={handleEditMode}>
               <ModeEdit className={classes.editIcon} />
-            </IconButton>
+            </IconButton>}
           </div>
         </div>
         <div className={`${classes.paddingContent} ${classes.print}`}>{component}</div>

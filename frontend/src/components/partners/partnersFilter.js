@@ -109,8 +109,17 @@ class PartnersFilter extends Component {
   }
 
   render() {
-    const { classes, countries, partnersType, concernGroups,
-      specs, handleSubmit, reset, initialValues } = this.props;
+    const {
+      classes,
+      countryCode,
+      countries,
+      partnersType,
+      concernGroups,
+      specs,
+      handleSubmit,
+      reset,
+      initialValues,
+    } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -143,6 +152,7 @@ class PartnersFilter extends Component {
           <Grid container direction="row" >
             <Grid item sm={4} xs={12} >
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 initialValue={initialValues.country_code}
@@ -227,6 +237,7 @@ const mapStateToProps = (state, ownProps) => {
     concernGroups: selectNormalizedPopulationsOfConcernGroups(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
+    countryCode: country_code,
     initialValues: {
       legal_name,
       verification_status,

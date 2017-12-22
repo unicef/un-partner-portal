@@ -12,6 +12,7 @@ import ResultRadio from './resultRadio';
 import ProfileConfirmation from '../../../../organizationProfile/common/profileConfirmation';
 import { PROJECT_STATUSES } from '../../../../../helpers/constants';
 import { formatDateForPrint } from '../../../../../helpers/dates';
+import { isUserNotPartnerReader } from '../../../../../helpers/authHelpers';
 
 const styleSheet = theme => ({
   container: {
@@ -33,7 +34,8 @@ const styleSheet = theme => ({
 
 const messages = {
   title: 'Result',
-  confirm: 'Your organization has been identified for a potential partnership via “direct selection”. Would you like to accept and move forward?',
+  confirm: 'Your organization has been identified for a potential partnership via “direct selection”.',
+  confirmQuestion: ' Would you like to accept and move forward?',
   confirmed: 'Selection confirmed',
   declined: 'Selection declined',
   button: 'send',
@@ -97,8 +99,9 @@ class ResultForm extends Component {
   }
 
   showForm() {
-    const { accepted, declined, status, decisionDate } = this.props;
+    const { accepted, declined, status, decisionDate, displayEdit } = this.props;
     const { change } = this.state;
+    if (!displayEdit) return null;
     if (accepted) {
       return (<div>
         <Typography>{messages.confirmed}</Typography>
@@ -124,7 +127,7 @@ class ResultForm extends Component {
     }
     return (
       <div>
-        <Typography>{messages.confirm}</Typography>
+        <Typography>{messages.confirmQuestion}</Typography>
         {this.baseForm()}
       </div>
     );
@@ -135,6 +138,7 @@ class ResultForm extends Component {
     return (
       <form onSubmit={handleSubmit(this.handleConfirmationSubmit)}>
         <PaddedContent>
+          <Typography>{messages.confirm}</Typography>
           {this.showForm()}
         </PaddedContent>
       </form>);
@@ -148,6 +152,7 @@ ResultForm.propTypes = {
   submitConfirmation: PropTypes.func,
   status: PropTypes.string,
   decisionDate: PropTypes.string,
+  displayEdit: PropTypes.string,
 };
 
 const formResult = reduxForm({
@@ -158,6 +163,7 @@ const mapStateToProps = (state, ownProps) => ({
   accepted: ownProps.application.did_accept,
   declined: ownProps.application.did_decline,
   decisionDate: formatDateForPrint(ownProps.application.decision_date),
+  displayEdit: isUserNotPartnerReader(state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

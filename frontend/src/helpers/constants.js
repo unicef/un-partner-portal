@@ -37,7 +37,14 @@ export const SESSION_STATUS = {
 };
 
 export const AGENCY_MEMBERS_POSITIONS = {
-  ADMINISTRATOR: 'Administrator',
+  ADMIN: 'Administrator',
+  EDITOR: 'Editor',
+  READER: 'Reader',
+};
+
+// duplicates of above, but incoming role changes will not be symmetrical
+export const PARTNER_MEMBERS_POSITIONS = {
+  ADMIN: 'Administrator',
   EDITOR: 'Editor',
   READER: 'Reader',
 };
