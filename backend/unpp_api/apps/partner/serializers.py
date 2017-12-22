@@ -880,9 +880,12 @@ class PartnerProfileProjectImplementationSerializer(
                 if report_file and report_file != report.most_recent_audit_report:
                     self.raise_error_if_file_is_already_referenced(report_file)
 
-                report.org_audit = report_data.get('org_audit')
-                report.most_recent_audit_report = report_file
-                report.link_report = report_data.get('link_report')
+                if 'org_audit' in report_data:
+                    report.org_audit = report_data.get('org_audit')
+                if 'link_report' in report_data:
+                    report.link_report = report_data.get('link_report')
+                if 'most_recent_audit_report' in report_data:
+                    report.most_recent_audit_report = report_file
 
                 report.save()
             else:
