@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import R from 'ramda';
-import React from 'react';
+import React, { Component } from 'react';
 import Select from 'material-ui/Select';
 import TextField from 'material-ui/TextField';
 import Input from 'material-ui/Input';
@@ -445,61 +445,98 @@ export const renderBool = ({
   </FormControl>
 );
 
-export const renderAutocomplete = ({
-  meta: { touched, error, warning },
-  input: { name, onChange: onFormChange, value: formValue, ...inputProps },
-  suggestions,
-  handleSuggestionsFetchRequested,
-  handleSuggestionsClearRequested,
-  classes,
-  label,
-  placeholder,
-  handleChange,
-  handleMultiChange,
-  handleMultiClear,
-  multiValues,
-  fieldValue,
-  multiple,
-  overlap,
-  infoText,
-}) => (<div>
-  <Autosuggest
-    id={`autosuggest-${name}`}
-    theme={{
-      container: classes.container,
-      suggestionsContainerOpen: overlap
-        ? `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenOverlap}`
-        : `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenExpand}`,
-      suggestionsList: classes.suggestionsList,
-      suggestion: classes.suggestion,
-    }}
-    renderInputComponent={multiple ? renderMultipleInput : renderInput}
-    suggestions={suggestions}
-    onSuggestionsFetchRequested={handleSuggestionsFetchRequested}
-    onSuggestionsClearRequested={handleSuggestionsClearRequested}
-    renderSuggestionsContainer={renderSuggestionsContainer}
-    getSuggestionValue={getSuggestionValue}
-    onSuggestionSelected={multiple
-      ? R.curry(setMultipleSuggestionValue)(formValue, handleChange, onFormChange, handleMultiChange)
-      : R.curry(setSuggestionValue)(onFormChange)
+export class AutocompleteRenderer extends Component {
+  componentWillReceiveProps({ input, multiple, handleChange }) {
+    if (!multiple && this.props.input.value && !input.value) {
+      handleChange({}, { newValue: '' });
     }
-    highlightFirstSuggestion
-    renderSuggestion={renderSuggestion}
-    inputProps={{
-      name,
-      error: (touched && (!!error || !!warning)),
+  }
+
+  render() {
+    const {
+      meta: { touched, error, warning },
+      input: { name, onChange: onFormChange, value: formValue, onBlur: _onBlur, ...inputProps },
+      suggestions,
+      handleSuggestionsFetchRequested,
+      handleSuggestionsClearRequested,
+      classes,
       label,
-      type: 'text',
       placeholder,
-      value: fieldValue,
+      handleChange,
+      handleMultiChange,
+      handleMultiClear,
       multiValues,
-      onChange: handleChange,
-      handleClear: R.curry(handleClear)(onFormChange, handleMultiClear),
+      fieldValue,
+      multiple,
+      overlap,
+      suggestionsPool,
       infoText,
-      ...inputProps,
-    }}
-  />
-  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
-  </div>
-</div>);
+    } = this.props;
+
+    return (
+      <div>
+        <Autosuggest
+          id={`autosuggest-${name}`}
+          theme={{
+            container: classes.container,
+            suggestionsContainerOpen: overlap
+              ? `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenOverlap}`
+              : `${classes.suggestionsContainerOpen} ${classes.suggestionsContainerOpenExpand}`,
+            suggestionsList: classes.suggestionsList,
+            suggestion: classes.suggestion,
+          }}
+          renderInputComponent={multiple ? renderMultipleInput : renderInput}
+          suggestions={suggestions}
+          onSuggestionsFetchRequested={handleSuggestionsFetchRequested}
+          onSuggestionsClearRequested={handleSuggestionsClearRequested}
+          renderSuggestionsContainer={renderSuggestionsContainer}
+          getSuggestionValue={getSuggestionValue}
+          onSuggestionSelected={multiple
+            ? R.curry(setMultipleSuggestionValue)(formValue, handleChange, onFormChange, handleMultiChange)
+            : R.curry(setSuggestionValue)(onFormChange)
+          }
+          highlightFirstSuggestion
+          renderSuggestion={renderSuggestion}
+          inputProps={{
+            name,
+            error: (touched && (!!error || !!warning)),
+            label,
+            type: 'text',
+            placeholder,
+            value: fieldValue,
+            multiValues,
+            onChange: handleChange,
+            onBlur(...args) {
+              if (typeof _onBlur === 'function') {
+                _onBlur(...args);
+              }
+
+              if (multiple) {
+                return;
+              }
+
+              const ev = args[0];
+
+              ev.persist();
+
+              setTimeout(() => {
+                const prevSelection = suggestionsPool.filter(s => s.value === formValue)[0];
+                const newValue = prevSelection ? prevSelection.label : '';
+
+                ev.target.value = newValue;
+
+                handleChange(ev, { newValue });
+              });
+            },
+            handleClear: R.curry(handleClear)(onFormChange, handleMultiClear),
+            infoText,
+            ...inputProps,
+          }}
+        />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+        </div>
+      </div>
+    );
+  }
+}

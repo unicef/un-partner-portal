@@ -70,7 +70,7 @@ CountryField.defaultProps = {
 
 export default connect(
   (state, ownProps) => ({
-    initial: state.countries[ownProps.initialValue],
+    initial: state.countries[ownProps.initialValue] || '',
     initialMultiValues: ownProps.initialMulti ? R.map(
       ([, label]) => label, R.toPairs(R.pick(ownProps.initialMulti, state.countries))) : [],
     countries: selectNormalizedCountries(state),

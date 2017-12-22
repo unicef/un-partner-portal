@@ -110,7 +110,7 @@ class PartnersFilter extends Component {
 
   render() {
     const { classes, countries, partnersType, concernGroups,
-      specs, handleSubmit, reset } = this.props;
+      specs, handleSubmit, reset, initialValues } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -145,6 +145,7 @@ class PartnersFilter extends Component {
               <CountryField
                 fieldName="country_code"
                 label={messages.labels.country}
+                initialValue={initialValues.country_code}
                 optional
               />
             </Grid>
