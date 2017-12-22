@@ -200,12 +200,15 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { project_title } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { agency } = {} } = ownProps.location;
-  const { query: { specializations = '' } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
   const { query: { selected_source } = {} } = ownProps.location;
   const { query: { ds_converted } = {} } = ownProps.location;
 
   const agencyQ = agency ? Number(agency) : agency;
-  const specializationsQ = specializations && R.map(Number, specializations.split(','));
+
+  const specializationsQ = specializations ?
+      R.map(Number, specializations.split(',')) : undefined;
+
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
