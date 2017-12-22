@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
+import { browserHistory as history } from 'react-router';
 import Loader from '../../../common/loader';
 import ControlledModal from '../../../common/modals/controlledModal';
 import { newCfeiProcessed, updateCfei } from '../../../../reducers/newCfei';
@@ -31,6 +32,7 @@ class CallPartnersModal extends Component {
   onFormSubmit(values) {
     return this.props.updateCfei(values).then(() => {
       this.props.newCfeiProcessed();
+      history.push(`/cfei/open/${this.props.id}/overview`);
     });
   }
 
@@ -40,6 +42,7 @@ class CallPartnersModal extends Component {
 
   onDialogClose() {
     this.props.newCfeiProcessed();
+    history.push(`/cfei/open/${this.props.id}/overview`);
   }
 
   render() {
@@ -70,6 +73,7 @@ class CallPartnersModal extends Component {
 }
 
 CallPartnersModal.propTypes = {
+  id: PropTypes.number,
   openDialog: PropTypes.bool,
   showLoading: PropTypes.bool,
   submit: PropTypes.func,

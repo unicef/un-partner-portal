@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
+import { browserHistory as history, withRouter } from 'react-router';
 import { submit, SubmissionError } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
@@ -127,6 +127,10 @@ class NewCfeiModal extends Component {
       (cfei) => {
         this.setState({ id: cfei && cfei.id });
         this.props.onDialogClose();
+
+        if (this.props.type !== PROJECT_TYPES.OPEN) {
+          history.push(`/cfei/${this.props.type}/${cfei.id}/overview`);
+        }
       }).catch((error) => {
       this.props.postError(error, getErrorMessage(this.props.type));
       throw new SubmissionError({
