@@ -13,7 +13,6 @@ from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (
     CommonFileSerializer,
-    CommonFileDetailSerializer,
     SpecializationSerializer,
     MixinPartnerRelatedSerializer,
     MixinPreventManyCommonFile,
@@ -278,7 +277,7 @@ class PartnerPolicyAreaSerializer(serializers.ModelSerializer):
 class PartnerAuditReportSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(required=False)
-    most_recent_audit_report = CommonFileDetailSerializer(allow_null=True)
+    most_recent_audit_report = CommonFileSerializer(allow_null=True)
     audit_link_report = serializers.URLField(source="link_report", allow_null=True)
 
     class Meta:

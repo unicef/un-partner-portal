@@ -169,25 +169,6 @@ class CommonFileSerializer(serializers.ModelSerializer):
         )
 
 
-class CommonFileDetailSerializer(serializers.ModelSerializer):
-    """
-    Accepts data in the same format as CommonFileSerializer
-    but displays both `id` and `file_field`
-    """
-    def to_internal_value(self, data):
-        try:
-            return CommonFile.objects.get(id=int(data))
-        except:
-            raise ValidationError('No File Exists with this ID')
-
-    class Meta:
-        model = CommonFile
-        fields = (
-            'id',
-            'file_field',
-        )
-
-
 class CommonFileUploadSerializer(serializers.ModelSerializer):
 
     class Meta:
