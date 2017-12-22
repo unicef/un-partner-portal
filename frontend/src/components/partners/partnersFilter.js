@@ -118,7 +118,6 @@ class PartnersFilter extends Component {
       specs,
       handleSubmit,
       reset,
-      initialValues,
     } = this.props;
 
     return (
@@ -155,7 +154,6 @@ class PartnersFilter extends Component {
                 initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
-                initialValue={initialValues.country_code}
                 optional
               />
             </Grid>
