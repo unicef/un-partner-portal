@@ -38,7 +38,6 @@ export const loadPartnerDetails = partnerId => (dispatch, getState) => {
       }
     })
     .catch((error) => {
-      debugger;
       dispatch(loadDetailsEnded());
       dispatch(loadDetailsFailure(error));
     });
