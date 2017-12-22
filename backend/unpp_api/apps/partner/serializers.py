@@ -11,11 +11,13 @@ from common.consts import (
 )
 from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
-from common.serializers import (CommonFileSerializer,
-                                SpecializationSerializer,
-                                MixinPartnerRelatedSerializer,
-                                MixinPreventManyCommonFile,
-                                PointSerializer)
+from common.serializers import (
+    CommonFileSerializer,
+    SpecializationSerializer,
+    MixinPartnerRelatedSerializer,
+    MixinPreventManyCommonFile,
+    PointSerializer
+)
 from .models import (
     Partner,
     PartnerProfile,
@@ -272,20 +274,15 @@ class PartnerPolicyAreaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PartnerAuditReportSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
+class PartnerAuditReportSerializer(serializers.ModelSerializer):
 
-    most_recent_audit_report = CommonFileSerializer()
-    audit_link_report = serializers.URLField(source="link_report")
+    id = serializers.IntegerField(required=False)
+    most_recent_audit_report = CommonFileSerializer(allow_null=True)
+    audit_link_report = serializers.URLField(source="link_report", allow_null=True)
 
     class Meta:
         model = PartnerAuditReport
-        fields = ('org_audit', 'most_recent_audit_report', 'audit_link_report')
-
-    prevent_keys = ["most_recent_audit_report"]
-
-    def validate(self, data):
-        self.prevent_many_common_file_validator(data)
-        return super(PartnerAuditReportSerializer, self).validate(data)
+        fields = ('id', 'org_audit', 'most_recent_audit_report', 'audit_link_report')
 
 
 class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
@@ -857,12 +854,49 @@ class PartnerProfileProjectImplementationSerializer(
         """
         return super(PartnerProfileProjectImplementationSerializer, self).is_valid(raise_exception=True)
 
+    def raise_error_if_file_is_already_referenced(self, cfile):
+        if cfile.has_existing_reference:
+            raise serializers.ValidationError({
+                'audit_reports': 'This given common file id {} can be used only once.'.format(cfile.id)
+            })
+
+    def update_audit_reports(self, instance, audit_reports):
+        audit = instance.audit
+
+        # Remove reports that are not part of the payload
+        payload_report_ids = [r['id'] for r in audit_reports if r.get('id')]
+        reports_to_remove = audit.audit_reports.exclude(id__in=payload_report_ids)
+        reports_to_remove.delete()
+
+        # Iterate through reports data and add or update items
+        for report_data in audit_reports:
+
+            report_id = report_data.pop('id', None)
+            report_file = report_data.get('most_recent_audit_report')
+
+            if report_id:
+                report = audit.audit_reports.get(id=report_id)
+
+                if report_file and report_file != report.most_recent_audit_report:
+                    self.raise_error_if_file_is_already_referenced(report_file)
+
+                report.org_audit = report_data.get('org_audit')
+                report.most_recent_audit_report = report_file
+                report.link_report = report_data.get('link_report')
+
+                report.save()
+            else:
+                if report_file:
+                    self.raise_error_if_file_is_already_referenced(report_file)
+
+                audit.audit_reports.create(**report_data)
+
     @transaction.atomic
     def update(self, instance, validated_data):
         audit = validated_data.get('audit') or {}
         audit_reports = audit.pop('audit_reports', None)
         if audit_reports:
-            instance.audit.update_audit_reports(audit_reports)
+            self.update_audit_reports(instance, audit_reports)
 
         # std method does not support writable nested fields by default
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
