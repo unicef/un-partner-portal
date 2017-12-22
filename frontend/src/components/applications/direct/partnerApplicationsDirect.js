@@ -1,6 +1,7 @@
 import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { TableCell } from 'material-ui/Table';
 import PropTypes from 'prop-types';
 import GridColumn from '../../common/grid/gridColumn';
 import PartnerApplicationsDirectFilter from './partnerApplicationsDirectFilter';
@@ -11,7 +12,7 @@ import { isQueryChanged } from '../../../helpers/apiHelper';
 import { formatDateForPrint } from '../../../helpers/dates';
 import WrappedCell from '../../common/cell/wrappedCell';
 import ApplicationStatusCell from '../applicationStatusCell';
-import SectorsCell from '../sectorsCell';
+import EoiSectorCell from '../../eois/cells/eoiSectorCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
 import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
 import CountriesCell from '../../partners/countriesCell';
@@ -28,7 +29,7 @@ const applicationCell = ({ row, column }) => {
   } else if (column.name === 'status') {
     return <ApplicationStatusCell appStatus={row.status} />;
   } else if (column.name === 'specializations') {
-    return <SectorsCell specializations={row.specializations} />;
+    return <TableCell><EoiSectorCell data={row.specializations} id={row.id} /></TableCell>;
   } else if (column.name === 'country') {
     return <CountriesCell countries={row.country} />;
   }
@@ -81,7 +82,7 @@ PartnerApplicationsDirect.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  items: R.path(['direct'], state.applicationsDirectList) || [],
+  items: state.applicationsDirectList.items,
   itemsTotal: state.applicationsDirectList.totalCount,
   loading: state.applicationsDirectList.loading,
   query: ownProps.location.query,

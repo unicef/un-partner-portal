@@ -11,15 +11,13 @@ import { addIncompleteStep, removeIncompleteStep } from '../../../reducers/partn
 class PartnerProfileStepperContainer extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      observedSteps: props.steps.map(step => step.name),
+    };
     this.handleErrorClose = this.handleErrorClose.bind(this);
   }
 
-  componentWillMount() {
-    this.setState({ observedSteps: this.props.steps.map(step => step.name) });
-  }
-
-  componentWillUpdate(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { name, isStepWarning, noStepWarning } = this.props;
 
     if (!nextProps.warnings || !nextProps.warnings[name]) {

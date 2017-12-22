@@ -16,10 +16,11 @@ const mapStateToProps = conditions => (state) => {
 };
 
 
-export default (WrappedComponent, conditions = [true]) => connect(mapStateToProps(conditions))(
+export default (conditions = [true]) => WrappedComponent => connect(mapStateToProps(conditions))(
   (props) => {
     const { displayComponent, ...other } = props;
     if (!displayComponent) return null;
+
     return (
       <WrappedComponent
         {...other}
