@@ -48,7 +48,7 @@ class ApplicationSummaryHeader extends Component {
 }
 
 ApplicationSummaryHeader.propTypes = {
-  cfeiDetailsExists: PropTypes.bool,
+  cfeiDetailsExists: PropTypes.func,
   getApplication: PropTypes.func,
   getCfeiDetails: PropTypes.func,
   getPartnerDetails: PropTypes.func,

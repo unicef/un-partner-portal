@@ -35,7 +35,10 @@ ModalContentHeader.propTypes = {
   /**
    * title text of the header
    */
-  titleText: PropTypes.string,
+  titleText: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
   /**
    * body text of the header
    */

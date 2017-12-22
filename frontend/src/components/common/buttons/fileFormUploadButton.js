@@ -155,7 +155,7 @@ class FileFormUploadButton extends Component {
 FileFormUploadButton.propTypes = {
   classes: PropTypes.object.isRequired,
   fieldName: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   fileAdded: PropTypes.object,
   input: PropTypes.object,
   deleteDisabled: PropTypes.bool,

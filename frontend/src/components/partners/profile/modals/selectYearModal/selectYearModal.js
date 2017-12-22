@@ -101,7 +101,7 @@ class SelectYearModal extends Component {
 
     for (let i = 0; i < currentYear - 1900; i += 1) {
       years.push(
-        <div ref={(field) => {
+        <div key={i} ref={(field) => {
           if ((currentYear - i) === currYear) {
             this.refItem = field;
           }

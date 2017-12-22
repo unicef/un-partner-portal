@@ -72,9 +72,12 @@ EditReviewModalButton.propTypes = {
   dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
-  scores: PropTypes.array,
+  scores: PropTypes.object,
   icon: PropTypes.bool,
-  assessmentId: PropTypes.string,
+  assessmentId: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
 };
 
 

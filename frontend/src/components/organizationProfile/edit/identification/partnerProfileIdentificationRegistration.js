@@ -141,7 +141,7 @@ const connected = connect((state, ownProps) => {
     || state.agencyPartnersList.data.partners);
 
   return {
-    isCountryProfile: partner ? partner.is_hq : false,
+    isCountryProfile: partner ? (partner.is_hq || false) : false,
     isRegistered: selector(state, 'identification.registration.registration_to_operate_in_country'),
     hasGovDoc: selector(state, 'identification.registration.have_gov_doc'),
   };

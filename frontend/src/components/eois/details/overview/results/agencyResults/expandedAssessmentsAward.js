@@ -35,7 +35,7 @@ const styleSheet = theme => ({
 
 });
 
-const ExpandedAssessment = (props) => {
+const ExpandedAssessmentAward = (props) => {
   const { classes,
     allCriteria,
     criteriaMap,
@@ -96,7 +96,7 @@ const ExpandedAssessment = (props) => {
   );
 };
 
-ExpandedAssessment.propTypes = {
+ExpandedAssessmentAward.propTypes = {
   classes: PropTypes.object,
   notifDate: PropTypes.string,
   acceptedDate: PropTypes.string,
@@ -104,7 +104,7 @@ ExpandedAssessment.propTypes = {
   assessmentCount: PropTypes.number,
   avgTotalScore: PropTypes.number,
   notes: PropTypes.array,
-  allCriteria: PropTypes.array,
+  allCriteria: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -132,4 +132,4 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default connect(
-  mapStateToProps)(withStyles(styleSheet)(ExpandedAssessment));
+  mapStateToProps)(withStyles(styleSheet)(ExpandedAssessmentAward));

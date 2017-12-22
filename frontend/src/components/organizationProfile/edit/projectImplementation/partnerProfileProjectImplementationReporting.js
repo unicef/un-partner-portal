@@ -66,7 +66,7 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                 sectionName="project_impl.report"
                 label={messages.mostRecentReport}
                 fieldName="report"
-                optional={(annualReport || annualReportLink)}
+                optional={!!(annualReport || annualReportLink)}
                 warn={!(annualReport || annualReportLink)}
                 readOnly={readOnly}
               />
@@ -76,7 +76,7 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                 label={messages.link}
                 fieldName="link_report"
                 validation={[url]}
-                optional={(annualReport || annualReportLink)}
+                optional={!!(annualReport || annualReportLink)}
                 warn={!(annualReport || annualReportLink)}
                 readOnly={readOnly}
               />

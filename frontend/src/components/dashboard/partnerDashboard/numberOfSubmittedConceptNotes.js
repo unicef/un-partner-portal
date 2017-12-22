@@ -31,11 +31,14 @@ const NumberOfSubmittedConceptNotes = (props) => {
           <Typography type="headline">{messages.title}</Typography>
           <DonutChart
             colors={chartColors}
-            label={total}
+            label={`${total}`}
             data={newData}
             containerProps={{
               width: '100%',
               height: 200,
+            }}
+            pieProps={{
+              dataKey: 'value',
             }}
           />
           {newData.map(({ name, value }, index) => (

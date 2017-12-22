@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import R from 'ramda';
@@ -19,27 +19,24 @@ const messages = {
 };
 
 const renderContent = (loading, madeReviews, totalReviewers, justReason) => {
-  if (loading) return [<EmptyContent />];
-  const content = (
-    [<PaddedContent>
+  if (loading) return <EmptyContent />;
+  return (
+    <PaddedContent>
       <Typography >
         {messages.assessmentMade`${madeReviews}${totalReviewers}`}
       </Typography>
-    </PaddedContent>,
-    ]);
-  if (justReason) {
-    content.push(
-      <PaddedContent>
-        <Typography type="caption" >
-          {messages.justification}
-        </Typography>
-        <Typography >
-          {justReason}
-        </Typography>
-      </PaddedContent>,
-    );
-  }
-  return content;
+      { justReason
+        ? <Fragment>
+          <Typography type="caption" >
+            {messages.justification}
+          </Typography>
+          <Typography >
+            {justReason}
+          </Typography>
+        </Fragment>
+        : null}
+    </PaddedContent>
+  );
 };
 
 const ReviewsTotalScore = (props) => {

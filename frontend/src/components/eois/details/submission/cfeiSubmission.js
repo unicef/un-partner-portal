@@ -57,7 +57,7 @@ class CfeiSubmission extends Component {
     return (
       <SpreadContent>
         <Typography type="headline">{messages.title}</Typography>
-        {cnUploaded
+        {!!cnUploaded
           && isReader
           && <IconButton onClick={() => this.onDelete()}><Delete /></IconButton>}
       </SpreadContent>
@@ -122,10 +122,13 @@ class CfeiSubmission extends Component {
 }
 
 CfeiSubmission.propTypes = {
-  partnerId: PropTypes.string,
+  partnerId: PropTypes.number,
   projectId: PropTypes.string,
-  applicationId: PropTypes.string,
-  cnUploaded: PropTypes.object,
+  applicationId: PropTypes.number,
+  cnUploaded: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool,
+  ]),
   deleteCn: PropTypes.func.isRequired,
   dispatch: PropTypes.func,
   isReader: PropTypes.bool,

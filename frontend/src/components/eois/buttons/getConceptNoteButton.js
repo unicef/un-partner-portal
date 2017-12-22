@@ -29,7 +29,7 @@ const GetConceptNoteButton = (props) => {
 };
 
 GetConceptNoteButton.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
   conceptNote: PropTypes.string,
 };
 

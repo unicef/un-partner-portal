@@ -72,7 +72,7 @@ const ListOfPendingOffers = (props) => {
 };
 
 ListOfPendingOffers.propTypes = {
-  loading: PropTypes.string,
+  loading: PropTypes.bool,
   data: PropTypes.array,
   loadOffers: PropTypes.func,
   itemsCount: PropTypes.number,

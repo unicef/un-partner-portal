@@ -28,9 +28,9 @@ const applicationCell = ({ row, column }) => {
       {formatDateForPrint(row.created)}
     </TableCell>);
   } else if (column.name === 'id') {
-    return <CnCell type={row.cfei_type} cnId={row.id} eoiId={row.eoi_id} />;
+    return <CnCell type={row.cfei_type} cnId={`${row.id}`} eoiId={`${row.eoi_id}`} />;
   } else if (column.name === 'title') {
-    return <TitleCell type={row.cfei_type} eoiId={row.eoi_id} title={row.title} />;
+    return <TitleCell type={row.cfei_type} eoiId={`${row.eoi_id}`} title={row.title} />;
   } else if (column.name === 'country_code') {
     return <CountriesCell countries={row.country_code} />;
   }

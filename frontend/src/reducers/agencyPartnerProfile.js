@@ -35,6 +35,7 @@ const flatSectorsAndAreas = (sectors, sectorsState) => sectors.map((sector) => {
 const savePartnerProfileOverview = (state, action) => {
   const { results: partnerDetails, getState } = action;
   const wholeState = getState();
+
   const sectors = groupSpecializationsByCategory(partnerDetails.experiences);
   const profileOverview = {
     lastUpdate: '18 Sep 2017',
