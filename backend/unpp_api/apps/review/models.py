@@ -50,6 +50,8 @@ class PartnerVerification(TimeStampedModel):
     rep_risk_comment = models.TextField(null=True, blank=True)
     is_yellow_flag = models.BooleanField()
     yellow_flag_comment = models.TextField(null=True, blank=True)
+    can_verify = models.BooleanField(default=False)
+    can_verify_comment = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ['-created']
@@ -58,8 +60,13 @@ class PartnerVerification(TimeStampedModel):
         return "Partner: {} Verified:{}>".format(self.partner, self.is_verified)
 
     def _passed_verify(self):
-        return all([self.is_cert_uploaded, self.is_mm_consistent, self.is_indicate_results,
-                    not self.is_rep_risk, not self.is_yellow_flag])
+        return all([
+            self.is_cert_uploaded,
+            self.is_mm_consistent,
+            self.is_indicate_results,
+            not self.is_rep_risk,
+            not self.is_yellow_flag or (self.is_yellow_flag and self.can_verify)
+        ])
 
     def save(self, *args, **kwargs):
         self.is_verified = self._passed_verify()
