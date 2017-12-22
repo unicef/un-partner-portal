@@ -66,7 +66,7 @@ class OrganizationProfileOverview extends Component {
 
   render() {
     const { completion, displayEdit } = this.props;
-    
+
     return (
       <div>
         {messages.sections.map(item =>
@@ -103,8 +103,8 @@ const mapDispatch = dispatch => ({
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
 });
 
-const mapStateToProps = (state, ownProps) => ({
-  partnerId: ownProps.params.id,
+const mapStateToProps = state => ({
+  partnerId: state.session.partnerId,
   completion: state.partnerProfileDetails.partnerProfileDetails.completion,
   displayEdit: !isUserAgencyReader(state),
 });
