@@ -261,6 +261,12 @@ class PartnerProfile(TimeStampedModel):
             'connectivity_exuse': self.connectivity_excuse if self.connectivity is False else True,
             'working_languages': len(self.working_languages) > 0,
         }
+
+        if self.have_board_directors:
+            required_fields['directors'] = self.directors.exists()
+        if self.have_authorised_officers:
+            required_fields['authorised_officers'] = self.authorised_officers.exists()
+
         return all(required_fields.values())
 
     @property
@@ -292,9 +298,10 @@ class PartnerProfile(TimeStampedModel):
             'staff_in_country': self.partner.staff_in_country,
             'staff_globally': self.partner.staff_globally,
             'country_presence': len(self.partner.country_presence) > 0 if self.partner.is_hq else True,
+            'experiences': self.partner.partner_experiences.exists(),
             # TODO - country presence for hq + country
         }
-        
+
         if not self.partner.is_hq:
             required_fields.pop('governance_hq')
             required_fields.pop('staff_globally')
@@ -338,14 +345,16 @@ class PartnerProfile(TimeStampedModel):
             required_fields.pop('any_partnered_with_un')
 
         if self.any_accreditation:
-            any_accreditation = self.partner.collaboration_evidences.filter(
-                mode=COLLABORATION_EVIDENCE_MODES.accreditation)
-            required_fields.update({"any_accreditation": any_accreditation})
+            accreditations = self.partner.collaboration_evidences.filter(
+                mode=COLLABORATION_EVIDENCE_MODES.accreditation
+            )
+            required_fields['accreditations'] = accreditations.exists()
 
         if self.any_reference:
-            any_reference = self.partner.collaboration_evidences.filter(
-                mode=COLLABORATION_EVIDENCE_MODES.reference)
-            required_fields.update({"any_reference": any_reference})
+            references = self.partner.collaboration_evidences.filter(
+                mode=COLLABORATION_EVIDENCE_MODES.reference
+            )
+            required_fields['references'] = references.exists()
 
         return all(required_fields.values())
 
