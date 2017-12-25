@@ -50,7 +50,7 @@ class PartnerVerification(TimeStampedModel):
     rep_risk_comment = models.TextField(null=True, blank=True)
     is_yellow_flag = models.BooleanField()
     yellow_flag_comment = models.TextField(null=True, blank=True)
-    can_verify = models.BooleanField(default=False)
+    can_verify = models.NullBooleanField()
     can_verify_comment = models.TextField(null=True, blank=True)
 
     class Meta:
