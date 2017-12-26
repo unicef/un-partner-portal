@@ -786,7 +786,7 @@ class PartnerProfileProjectImplementationSerializer(
     regular_audited = serializers.BooleanField(source="audit.regular_audited")
     regular_audited_comment = serializers.CharField(
         source="audit.regular_audited_comment", allow_blank=True, allow_null=True)
-    audit_reports = PartnerAuditReportSerializer(many=True, source="audit.audit_reports")
+    audit_reports = PartnerAuditReportSerializer(many=True)
     major_accountability_issues_highlighted = serializers.BooleanField(
         source="audit.major_accountability_issues_highlighted")
     comment = serializers.CharField(source="audit.comment", allow_blank=True, allow_null=True)
@@ -841,8 +841,7 @@ class PartnerProfileProjectImplementationSerializer(
         )
 
     related_names = [
-        "profile", "audit", "report",
-        "internal_controls", "area_policies",
+        "profile", "audit", "report", "internal_controls", "area_policies",
     ]
 
     prevent_keys = ["report", "assessment_report"]
@@ -860,46 +859,40 @@ class PartnerProfileProjectImplementationSerializer(
                 'audit_reports': 'This given common file id {} can be used only once.'.format(cfile.id)
             })
 
-    def update_audit_reports(self, instance, audit_reports):
-        audit = instance.audit
-
+    def update_audit_reports(self, instance, audit_reports_payload):
+        """
+        Need to use custom method to update audit reports due to additional
+        validation for file
+        """
         # Remove reports that are not part of the payload
-        payload_report_ids = [r['id'] for r in audit_reports if r.get('id')]
-        reports_to_remove = audit.audit_reports.exclude(id__in=payload_report_ids)
+        payload_report_ids = [r['id'] for r in audit_reports_payload if r.get('id')]
+        reports_to_remove = instance.audit_reports.exclude(id__in=payload_report_ids)
         reports_to_remove.delete()
 
         # Iterate through reports data and add or update items
-        for report_data in audit_reports:
+        for report_data in audit_reports_payload:
 
             report_id = report_data.pop('id', None)
             report_file = report_data.get('most_recent_audit_report')
 
             if report_id:
-                report = audit.audit_reports.get(id=report_id)
+                report = instance.audit_reports.get(id=report_id)
 
                 if report_file and report_file != report.most_recent_audit_report:
                     self.raise_error_if_file_is_already_referenced(report_file)
 
-                if 'org_audit' in report_data:
-                    report.org_audit = report_data.get('org_audit')
-                if 'link_report' in report_data:
-                    report.link_report = report_data.get('link_report')
-                if 'most_recent_audit_report' in report_data:
-                    report.most_recent_audit_report = report_file
-
-                report.save()
+                instance.audit_reports.filter(id=report_id).update(**report_data)
             else:
                 if report_file:
                     self.raise_error_if_file_is_already_referenced(report_file)
 
-                audit.audit_reports.create(**report_data)
+                report_data['created_by'] = self.context['request'].user
+                instance.audit_reports.create(**report_data)
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        audit = validated_data.get('audit') or {}
-        audit_reports = audit.pop('audit_reports', None)
-        if audit_reports:
-            self.update_audit_reports(instance, audit_reports)
+        if 'audit_reports' in validated_data:
+            self.update_audit_reports(instance, validated_data['audit_reports'])
 
         # std method does not support writable nested fields by default
         self.update_partner_related(instance, validated_data, related_names=self.related_names)

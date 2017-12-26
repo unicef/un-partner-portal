@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
                 ('org_audit', models.CharField(choices=[('Int', 'Internal audit'), ('Fin', 'Financial statement audit'), ('Don', 'Donor audit')], max_length=3)),
                 ('link_report', models.URLField(blank=True, null=True)),
-                ('audit_assessment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='audit_reports', to='partner.PartnerAuditAssessment')),
+                ('partner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='audit_reports', to='partner.Partner')),
                 ('most_recent_audit_report', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='partner_audit_reports', to='common.CommonFile')),
             ],
             options={

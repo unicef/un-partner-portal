@@ -508,13 +508,14 @@ class PartnerAuditAssessment(TimeStampedModel):
 
 
 class PartnerAuditReport(TimeStampedModel):
-    audit_assessment = models.ForeignKey(PartnerAuditAssessment, related_name="audit_reports")
+    created_by = models.ForeignKey('account.User', related_name='audit_reports')
+    partner = models.ForeignKey(Partner, related_name='audit_reports')
     org_audit = models.CharField(max_length=3, choices=ORG_AUDIT_CHOICES)
     most_recent_audit_report = models.ForeignKey(
         'common.CommonFile',
         null=True,
         blank=True,
-        related_name="partner_audit_reports",
+        related_name='partner_audit_reports',
     )
     link_report = models.URLField(null=True, blank=True)
 

@@ -12,21 +12,31 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
     exclude_fields = {}
 
+    def raise_error_if_file_is_already_referenced(self, field_name, cfile):
+        if cfile.has_existing_reference:
+            raise serializers.ValidationError({
+                field_name: 'This given common file id {} can be used only once.'.format(cfile.id)
+            })
+
     def update_partner_related(self, instance, validated_data, related_names=[]):
         for related_name in related_names:
             if isinstance(getattr(instance, related_name), Model):
+                related_model = getattr(instance, related_name)
                 if related_name not in validated_data:
                     continue  # for patch if we didn't patch some section in body
                 # OneToOneField related to partner - Model object
-                _id = getattr(instance, related_name).id
-                getattr(instance, related_name).__class__.objects.filter(id=_id).update(**validated_data[related_name])
+                _id = related_model.id
+                related_model.__class__.objects.filter(id=_id).update(**validated_data[related_name])
             else:
-                # ForeignKey related to partner - RelatedManager object - here we remove if we post/patch empty field
+                related_manager = getattr(instance, related_name)
+
+                # ForeignKey related to partner - RelatedManager object - here
+                # we remove if we post/patch empty field
                 related_items = self.initial_data.get(related_name)
                 if related_items is None:
                     continue  # for patch if we didn't patch some related object in body
                 # user can add and remove on update
-                for related_item in getattr(instance, related_name).all():
+                for related_item in related_manager.all():
                     if related_item.id not in map(lambda x: x.get("id"), related_items):
                         # here we remove related item that is not in list - so we don't need it!
                         related_item.delete()
@@ -36,12 +46,18 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                     for field in self.exclude_fields.get(related_name, []):
                         field in data and data.pop(field)
                     _id = data.get("id")
+
+                    # Check if data contains file that is already referenced
+                    for key, value in data.items():
+                        if isinstance(value, CommonFile):
+                            self.raise_error_if_file_is_already_referenced(key, value)
+
                     if _id:
-                        getattr(instance, related_name).filter(id=_id).update(**data)
+                        related_manager.filter(id=_id).update(**data)
                     else:
                         data['partner_id'] = instance.id
                         data['created_by'] = self.context['request'].user
-                        getattr(instance, related_name).create(**data)
+                        related_manager.create(**data)
 
 
 class MixinPreventManyCommonFile(object):

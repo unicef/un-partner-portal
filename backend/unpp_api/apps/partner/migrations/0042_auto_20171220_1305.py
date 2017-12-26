@@ -12,7 +12,7 @@ def move_audit_report_field_to_separate_model(apps, schema_editor):
     for audit in PartnerAuditAssessment.objects.all():
         if audit.org_audits:
             PartnerAuditReport.objects.create(
-                audit_assessment=audit,
+                partner=audit.partner,
                 org_audit=audit.org_audits[0],
                 most_recent_audit_report=audit.most_recent_audit_report,
                 link_report=audit.link_report,

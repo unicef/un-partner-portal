@@ -416,7 +416,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     def audit(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
-        audit_assessment = PartnerAuditAssessment.objects.create(
+        PartnerAuditAssessment.objects.create(
             partner=self,
             regular_audited_comment="fake regular audited comment {}".format(self.id),
             assessment_report=cfile,
@@ -424,11 +424,26 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             comment="fake comment {}".format(self.id),
             assessments=[AUDIT_ASSESMENT_CHOICES.micro],
         )
+
+    @factory.post_generation
+    def audit_reports(self, create, extracted, **kwargs):
+        cfile1 = CommonFile.objects.create()
+        cfile1.file_field.save('test1.csv', open(filename))
+        cfile2 = CommonFile.objects.create()
+        cfile2.file_field.save('test2.csv', open(filename))
         PartnerAuditReport.objects.create(
-            audit_assessment=audit_assessment,
+            created_by=User.objects.first(),
+            partner=self,
             org_audit=ORG_AUDIT_CHOICES.donor,
-            most_recent_audit_report=cfile,
-            link_report="http://fake.unicef.org/fake_uri{}".format(self.id),
+            most_recent_audit_report=cfile1,
+            link_report="http://fake.unicef.org/fake_uri{}_1".format(self.id),
+        )
+        PartnerAuditReport.objects.create(
+            created_by=User.objects.first(),
+            partner=self,
+            org_audit=ORG_AUDIT_CHOICES.internal,
+            most_recent_audit_report=cfile2,
+            link_report="http://fake.unicef.org/fake_uri{}_2".format(self.id),
         )
 
     @factory.post_generation
