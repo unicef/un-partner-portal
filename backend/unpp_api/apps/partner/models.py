@@ -302,7 +302,7 @@ class PartnerProfile(TimeStampedModel):
             'staff_in_country': self.partner.staff_in_country,
             'staff_globally': self.partner.staff_globally,
             'country_presence': len(self.partner.country_presence) > 0 if self.partner.is_hq else True,
-            'experiences': self.partner.partner_experiences.exists(),
+            'experiences': all([exp.is_complete for exp in self.partner.experiences.all()]),
             # TODO - country presence for hq + country
         }
 
@@ -401,6 +401,9 @@ class PartnerProfile(TimeStampedModel):
                 self.partner.report.last_report if self.partner.report.publish_annual_reports else True,
             'publish_annual_reports_artifact': rep_artifact if self.partner.report.publish_annual_reports else True,
         }
+
+        if self.partner.audit.regular_audited:
+            required_fields['audit_reports'] = [report.is_complete for report in self.partner.audit_reports.all()]
 
         return all(required_fields.values())
 
@@ -548,7 +551,8 @@ class PartnerAuditAssessment(TimeStampedModel):
 class PartnerAuditReport(TimeStampedModel):
     created_by = models.ForeignKey('account.User', related_name='audit_reports')
     partner = models.ForeignKey(Partner, related_name='audit_reports')
-    org_audit = models.CharField(max_length=3, choices=ORG_AUDIT_CHOICES)
+    org_audit = models.CharField(max_length=3, choices=ORG_AUDIT_CHOICES,
+                                 null=True, blank=True)
     most_recent_audit_report = models.ForeignKey(
         'common.CommonFile',
         null=True,
@@ -562,6 +566,14 @@ class PartnerAuditReport(TimeStampedModel):
 
     def __str__(self):
         return "PartnerAuditReport <pk:{}>".format(self.id)
+
+    @property
+    def is_complete(self):
+        required_fields = {
+            'org_audit': self.org_audit,
+            'file_or_link_report': self.most_recent_audit_report or self.link_report
+        }
+        return all(required_fields.values())
 
 
 class PartnerReporting(TimeStampedModel):
@@ -652,11 +664,13 @@ class PartnerMandateMission(TimeStampedModel):
 class PartnerExperience(TimeStampedModel):
     created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="experiences")
     partner = models.ForeignKey(Partner, related_name="experiences")
-    specialization = models.ForeignKey('common.Specialization', related_name="partner_experiences")
+    specialization = models.ForeignKey('common.Specialization', null=True, blank=True,
+                                       related_name="partner_experiences")
     years = models.CharField(
         max_length=3,
         choices=YEARS_OF_EXP_CHOICES,
-        default=YEARS_OF_EXP_CHOICES.less_1
+        null=True,
+        blank=True,
     )
 
     class Meta:
@@ -664,6 +678,14 @@ class PartnerExperience(TimeStampedModel):
 
     def __str__(self):
         return "PartnerExperience <pk:{}>".format(self.id)
+
+    @property
+    def is_complete(self):
+        required_fields = {
+            'specialization': self.specialization,
+            'years': self.years,
+        }
+        return all(required_fields.values())
 
 
 class PartnerInternalControl(TimeStampedModel):
