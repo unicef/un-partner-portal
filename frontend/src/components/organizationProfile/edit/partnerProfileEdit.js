@@ -8,6 +8,8 @@ import HeaderNavigation from '../../common/headerNavigation';
 import { loadPartnerDetails } from '../../../reducers/partnerProfileDetails';
 import Loader from '../../../components/common/loader';
 
+export const emptyMsg = 'There are no changes to be saved.';
+
 const messages = {
   edit: 'Edit Profile',
   hqProfile: 'Headquarters Profile',

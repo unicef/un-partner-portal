@@ -14,6 +14,7 @@ import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsU
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
 import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
+import { emptyMsg } from '../partnerProfileEdit';
 
 const STEPS = readOnly =>
   [
@@ -93,17 +94,24 @@ class PartnerProfileContactInfo extends Component {
 
     const mailing = R.assoc('mailing_address', address, flatten(unflattenMailing));
     const initMailing = R.assoc('mailing_address', addressInit, flatten(unflattenMailingInit));
+    const patchValues = changedValues(initMailing, mailing);
 
-    return updateTab(partnerId, 'contact-information', changedValues(initMailing, mailing))
-      .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
-      .catch((error) => {
-        const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
+    if (!R.isEmpty(patchValues)) {
+      return updateTab(partnerId, 'contact-information', patchValues)
+        .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
+        .catch((error) => {
+          const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
 
-        throw new SubmissionError({
-          ...error.response.data,
-          _error: errorMsg,
+          throw new SubmissionError({
+            ...error.response.data,
+            _error: errorMsg,
+          });
         });
-      });
+    }
+
+    throw new SubmissionError({
+      _error: emptyMsg,
+    });
   }
 
   render() {

@@ -24,18 +24,21 @@ const directorForm = (director, readOnly) => (
         fieldName={`${director}.fullname`}
         label="Full Name"
         warn
+        optional
         readOnly={readOnly}
       />
       <TextFieldForm
         fieldName={`${director}.job_title`}
         label="Job Title/Position"
         warn
+        optional
         readOnly={readOnly}
       />
       <RadioForm
         fieldName={`${director}.authorized`}
         values={BOOL_VAL}
         warn
+        optional
         label="Authorised Officer?"
         readOnly={readOnly}
       />
@@ -45,6 +48,7 @@ const directorForm = (director, readOnly) => (
         fieldName={`${director}.telephone`}
         label="Telephone"
         warn
+        optional
         readOnly={readOnly}
       />
       <TextFieldForm
@@ -57,6 +61,7 @@ const directorForm = (director, readOnly) => (
         fieldName={`${director}.email`}
         label="Email"
         warn
+        optional
         validation={[email]}
         readOnly={readOnly}
       />
