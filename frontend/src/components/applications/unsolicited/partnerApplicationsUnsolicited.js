@@ -26,7 +26,7 @@ const applicationCell = ({ row, column }) => {
     return <WrappedCell content={formatDateForPrint(row.submission_date)} />;
   } else if (column.name === 'id') {
     return (<ConceptNoteIDCell
-      cfeiId={row.id}
+      cfeiId={`${row.id}`}
       id={row.id}
       type={PROJECT_TYPES.UNSOLICITED}
     />);

@@ -161,7 +161,10 @@ PartnerProfileProjectImplementationAudit.propTypes = {
     PropTypes.bool,
   ]),
   accountabilityIssues: PropTypes.bool,
-  mostRecentAuditReport: PropTypes.string,
+  mostRecentAuditReport: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string,
+  ]),
   auditLinkReport: PropTypes.string,
 };
 

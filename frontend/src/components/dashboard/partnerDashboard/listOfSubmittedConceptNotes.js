@@ -27,12 +27,12 @@ const columns = [
 
 const renderCells = ({ row, column }) => {
   if (column.name === 'cn_id') {
-    return (<ApplicationIDCell type={row.cfei_type} eoiId={row.eoi_id} cnId={row.cn_id} />);
+    return (<ApplicationIDCell type={row.cfei_type} eoiId={`${row.eoi_id}`} cnId={`${row.cn_id}`} />);
   } else if (column.name === 'countries') {
     return (
       <TableCell >
         {row.countries.map((code, index) =>
-          (<span>
+          (<span key={code}>
             <EoiCountryCell code={code} />
             {(index === row.countries.length - 1) ? '' : ', '}
           </span>),
@@ -40,8 +40,8 @@ const renderCells = ({ row, column }) => {
       </TableCell>);
   } else if (column.name === 'specializations') {
     return (
-      <TableCell >
-        <EoiSectorCell data={row.specializations} id={row.id} />
+      <TableCell>
+        <EoiSectorCell data={row.specializations} id={row.cn_id} />
       </TableCell>);
   }
   return undefined;
@@ -73,7 +73,7 @@ const ListOfSubmittedCN = (props) => {
 };
 
 ListOfSubmittedCN.propTypes = {
-  loading: PropTypes.string,
+  loading: PropTypes.bool,
   data: PropTypes.array,
   loadCN: PropTypes.func,
   itemsCount: PropTypes.number,

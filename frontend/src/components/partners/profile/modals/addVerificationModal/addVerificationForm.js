@@ -21,26 +21,31 @@ const messages = {
 
 const verificationQuestions = [
   {
+    id: 0,
     question: messages.certUpload,
     questionFieldName: 'is_cert_uploaded',
     commentFieldName: 'cert_uploaded_comment',
   },
   {
+    id: 1,
     question: messages.mmConsistent,
     questionFieldName: 'is_mm_consistent',
     commentFieldName: 'mm_consistent_comment',
   },
   {
+    id: 2,
     question: messages.indicateResults,
     questionFieldName: 'is_indicate_results',
     commentFieldName: 'indicate_results_comment',
   },
   {
+    id: 3,
     question: messages.repRisk,
     questionFieldName: 'is_rep_risk',
     commentFieldName: 'rep_risk_comment',
   },
   {
+    id: 4,
     question: messages.yellowFlag,
     questionFieldName: 'is_yellow_flag',
     commentFieldName: 'yellow_flag_comment',

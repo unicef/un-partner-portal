@@ -36,13 +36,13 @@ const PartnerOverviewFlagMenu = (props) => {
       {dialogOpen[YELLOW] && <AddFlagModal
         partnerId={id}
         flag={YELLOW}
-        dialogOpen={dialogOpen}
+        dialogOpen={dialogOpen[YELLOW]}
         handleDialogClose={handleDialogClose}
       />}
       {dialogOpen[RED] && <AddFlagModal
         partnerId={id}
         flag={RED}
-        dialogOpen={dialogOpen}
+        dialogOpen={dialogOpen[RED]}
         handleDialogClose={handleDialogClose}
       />}
     </div>

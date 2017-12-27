@@ -74,7 +74,7 @@ const CompareApplicationContent = (props) => {
           }}
           className={`${classes.subGrid} ${classes.lightGrey}`}
         >
-          {names.map(name => <Typography type="body2">{name}</Typography>)}
+          {names.map((name, index) => <Typography key={ids[index]} type="body2">{name}</Typography>)}
         </div>
         <Divider />
 
@@ -83,8 +83,9 @@ const CompareApplicationContent = (props) => {
           className={classes.subGrid}
         >
           {ids.map((appId, index) => {
-            if (index === 0) return (<Typography>{appId}</Typography>);
+            if (index === 0) return (<Typography key={appId}>{appId}</Typography>);
             return (<Typography
+              key={appId}
               color="accent"
               component={Link}
               to={`/cfei/${type}/${id}/applications/${appId}`}
@@ -98,7 +99,7 @@ const CompareApplicationContent = (props) => {
           style={{ grid: `none / repeat(${columns}, 1fr)` }}
           className={classes.subGrid}
         >
-          {avgTotalScores.map(score => <Typography>{score}</Typography>)}
+          {avgTotalScores.map((score, index) => <Typography key={ids[index]}>{score}</Typography>)}
         </div>
         <Divider />
 
@@ -107,8 +108,8 @@ const CompareApplicationContent = (props) => {
           className={classes.subGrid}
         >
           {verification.map((singleVerification, index) => {
-            if (index === 0) return (<Typography>{singleVerification}</Typography>);
-            return (<VerificationText verified={singleVerification} />);
+            if (index === 0) return (<Typography key={ids[index]}>{singleVerification}</Typography>);
+            return (<VerificationText key={ids[index]} verified={singleVerification} />);
           })}
         </div>
         <Divider />
@@ -118,8 +119,8 @@ const CompareApplicationContent = (props) => {
           className={classes.subGrid}
         >
           {flagging.map((flag, index) => {
-            if (index === 0) return (<Typography>{flag}</Typography>);
-            return (<FlaggingStatus flags={flag} noFlagText />);
+            if (index === 0) return (<Typography key={ids[index]}>{flag}</Typography>);
+            return (<FlaggingStatus key={ids[index]} flags={flag} noFlagText />);
           })}
         </div>
         <Divider />
@@ -128,7 +129,7 @@ const CompareApplicationContent = (props) => {
           style={{ grid: `none / repeat(${columns}, 1fr)` }}
           className={classes.subGrid}
         >
-          {establishment.map(year => (<Typography>
+          {establishment.map((year, index) => (<Typography key={ids[index]}>
             {year}
           </Typography>))}
         </div>
@@ -139,7 +140,7 @@ const CompareApplicationContent = (props) => {
           style={{ grid: `none / repeat(${columns}, 1fr)` }}
           className={classes.subGrid}
         >
-          {unExp.map(exp => (<Typography>
+          {unExp.map((exp, index) => (<Typography key={ids[index]}>
             {exp}
           </Typography>))}
         </div>
@@ -150,8 +151,8 @@ const CompareApplicationContent = (props) => {
           className={classes.subGrid}
         >
           {budgets.map((budget, index) => {
-            if (index === 0) return (<Typography>{budget}</Typography>);
-            return (<Typography>
+            if (index === 0) return (<Typography key={ids[index]}>{budget}</Typography>);
+            return (<Typography key={ids[index]}>
               {budgetOptions[budget]}
             </Typography>);
           })}
@@ -166,6 +167,7 @@ const CompareApplicationContent = (props) => {
           <Typography type="body2">{messages.labelAward}</Typography>
           {applications.map((application, index) => (
             <AwardApplicationButtonContainer
+              key={ids[index]}
               loading={loading}
               status={APPLICATION_STATUSES.PRE}
               isVerified={verification[index + 1]}
@@ -198,8 +200,8 @@ const CompareApplicationContent = (props) => {
 
 CompareApplicationContent.propTypes = {
   comparison: PropTypes.array,
-  columns: PropTypes.array,
-  id: PropTypes.number,
+  columns: PropTypes.number,
+  id: PropTypes.string,
   type: PropTypes.string,
   classes: PropTypes.object,
   applications: PropTypes.array,

@@ -68,7 +68,7 @@ class CfeiHeader extends Component {
   cfeiTabs() {
     return this.props.tabs.map((tab, index) => {
       if (index === 1) {
-        return <CustomTab label={tab.label} key={index} checked={this.props.cnFile} />;
+        return <CustomTab label={tab.label} key={index} checked={!!this.props.cnFile} />;
       }
 
       return <CustomTab label={tab.label} key={index} />;
@@ -138,7 +138,10 @@ CfeiHeader.propTypes = {
   loadProjectApplication: PropTypes.func,
   uploadCnClearState: PropTypes.func.isRequired,
   error: PropTypes.object,
-  cnFile: PropTypes.bool,
+  cnFile: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool,
+  ]),
   type: PropTypes.string,
   loadUCN: PropTypes.func,
 };

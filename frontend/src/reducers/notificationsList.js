@@ -67,7 +67,7 @@ const initialState = {
   loading: false,
   totalCount: 0,
   items: [],
-  itemsPatch: [],
+  itemsPatch: {},
 };
 
 const extractNextPage = (next) => {

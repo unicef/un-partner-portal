@@ -63,11 +63,11 @@ class ReviewSummary extends Component {
 }
 
 ReviewSummary.propTypes = {
-  id: PropTypes.number,
-  summary: PropTypes.array,
+  id: PropTypes.string,
+  summary: PropTypes.object,
   focalPoint: PropTypes.bool,
   loading: PropTypes.bool,
-  getReviewSummary: PropTypes.bool,
+  getReviewSummary: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
