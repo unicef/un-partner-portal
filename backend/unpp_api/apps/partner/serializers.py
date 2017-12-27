@@ -287,7 +287,6 @@ class PartnerAuditReportSerializer(serializers.ModelSerializer):
 
 class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
 
-    audit_reports = PartnerAuditReportSerializer(many=True)
     assessment_report = CommonFileSerializer()
 
     class Meta:
