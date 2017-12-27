@@ -322,6 +322,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     internal_controls = PartnerInternalControlSerializer(many=True)
     area_policies = PartnerPolicyAreaSerializer(many=True)
     audit = PartnerAuditAssessmentSerializer()
+    audit_reports = PartnerAuditReportSerializer(many=True)
     report = PartnerReportingSerializer(required=False)
     location_field_offices = PointSerializer(many=True)
     is_finished = serializers.BooleanField(read_only=True, source="has_finished")
@@ -366,6 +367,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "internal_controls",
             "area_policies",
             "audit",
+            "audit_reports",
             "report",
             "is_finished",
             "identification_is_complete",
