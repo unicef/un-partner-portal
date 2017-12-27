@@ -90,18 +90,18 @@ class PartnerProfileProjectImplementation extends Component {
 
     const projectImplementation = flatten(formValues.project_impl);
     const initprojectImplementation = flatten(initialValues.project_impl);
-    let changedItems = changedValues(initprojectImplementation, projectImplementation);
-
-    if (changedItems.audit_reports) {
-      changedItems = R.map((item) => {
+    let patchValues = changedValues(initprojectImplementation, projectImplementation);
+debugger;
+    if (patchValues.audit_reports) {
+      const audits = R.map((item) => {
         if (!R.is(Number, item.most_recent_audit_report)) {
           return R.dissoc('most_recent_audit_report', item);
         }
         return item;
-      }, changedValues(initprojectImplementation, projectImplementation).audit_reports);
-    }
+      }, patchValues.audit_reports);
 
-    let patchValues = R.assoc('audit_reports', changedItems, changedValues(initprojectImplementation, projectImplementation));
+      patchValues = R.assoc('audit_reports', audits, patchValues);
+    }
 
     if (R.isEmpty(patchValues.audit_reports)) {
       patchValues = R.dissoc('audit_reports', patchValues);
