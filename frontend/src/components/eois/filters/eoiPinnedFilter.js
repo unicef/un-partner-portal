@@ -193,8 +193,8 @@ const mapStateToProps = (state, ownProps) => {
 
   const agencyQ = agency ? Number(agency) : agency;
 
-  const specializationsQ = specializations ?
-      R.map(Number, specializations.split(',')) : undefined;
+  const specializationsQ = specializations &&
+      R.map(Number, specializations.split(','));
 
   return {
     countries: selectNormalizedCountries(state),

@@ -218,8 +218,8 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { specializations } = {} } = ownProps.location;
   const { query: { concern } = {} } = ownProps.location;
 
-  const specializationsQ = specializations ?
-      R.map(Number, specializations.split(',')) : undefined;
+  const specializationsQ = specializations &&
+      R.map(Number, specializations.split(','));
 
   return {
     countries: selectNormalizedCountries(state),

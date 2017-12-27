@@ -268,8 +268,8 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { posted_to_date } = {} } = ownProps.location;
   const agencyQ = Number(agency);
 
-  const specializationsQ = specializations ?
-      R.map(Number, specializations.split(',')) : undefined;
+  const specializationsQ = specializations &&
+      R.map(Number, specializations.split(','));
 
   return {
     countries: selectNormalizedCountries(state),
