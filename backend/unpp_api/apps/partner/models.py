@@ -475,7 +475,7 @@ class PartnerDirector(TimeStampedModel):
         required_fields = {
             'fullname': self.fullname,
             'job_title': self.job_title,
-            'authorized': self.authorized,
+            'authorized': self.authorized is not None,
             'telephone': self.telephone,
             'email': self.email,
         }
