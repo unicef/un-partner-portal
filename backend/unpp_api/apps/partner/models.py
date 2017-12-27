@@ -380,8 +380,7 @@ class PartnerProfile(TimeStampedModel):
             'have_bank_account': self.have_bank_account is not None,
             'have_separate_bank_account': self.have_separate_bank_account is not None,
             'explain': self.explain if self.have_separate_bank_account is False else True,
-
-            'most_recent_audit_report': self.partner.audit.most_recent_audit_report or self.partner.audit.link_report,
+            # TODO audit_reports
             'regular_audited': self.partner.audit.regular_audited is not None,
             'regular_audited_comment':
                 self.partner.audit.regular_audited_comment if self.partner.audit.regular_audited is False else True,
@@ -501,14 +500,6 @@ class PartnerAuditAssessment(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="audit")
     regular_audited = models.NullBooleanField()
     regular_audited_comment = models.CharField(max_length=200, null=True, blank=True)
-    org_audits = ArrayField(
-        models.CharField(max_length=3, choices=ORG_AUDIT_CHOICES),
-        default=list,
-        null=True
-    )
-    most_recent_audit_report = models.ForeignKey(
-        'common.CommonFile', null=True, blank=True, related_name="most_recent_audit_reports")
-    link_report = models.URLField(null=True, blank=True)
     major_accountability_issues_highlighted = models.NullBooleanField(
         verbose_name="Were there any major accountability issues highlighted by audits in the past three years?")
     comment = models.CharField(max_length=200, null=True, blank=True)
@@ -527,6 +518,25 @@ class PartnerAuditAssessment(TimeStampedModel):
 
     def __str__(self):
         return "PartnerAuditAssessment <pk:{}>".format(self.id)
+
+
+class PartnerAuditReport(TimeStampedModel):
+    created_by = models.ForeignKey('account.User', related_name='audit_reports')
+    partner = models.ForeignKey(Partner, related_name='audit_reports')
+    org_audit = models.CharField(max_length=3, choices=ORG_AUDIT_CHOICES)
+    most_recent_audit_report = models.ForeignKey(
+        'common.CommonFile',
+        null=True,
+        blank=True,
+        related_name='partner_audit_reports',
+    )
+    link_report = models.URLField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerAuditReport <pk:{}>".format(self.id)
 
 
 class PartnerReporting(TimeStampedModel):
