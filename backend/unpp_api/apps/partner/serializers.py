@@ -895,10 +895,10 @@ class PartnerProfileProjectImplementationSerializer(
         if 'audit_reports' in validated_data:
             self.update_audit_reports(instance, validated_data['audit_reports'])
 
+        self.prevent_many_common_file_validator(self.initial_data)
+
         # std method does not support writable nested fields by default
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
-
-        self.prevent_many_common_file_validator(self.initial_data)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 

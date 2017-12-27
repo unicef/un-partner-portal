@@ -91,7 +91,7 @@ class PartnerProfileProjectImplementation extends Component {
     const projectImplementation = flatten(formValues.project_impl);
     const initprojectImplementation = flatten(initialValues.project_impl);
     let patchValues = changedValues(initprojectImplementation, projectImplementation);
-debugger;
+
     if (patchValues.audit_reports) {
       const audits = R.map((item) => {
         if (!R.is(Number, item.most_recent_audit_report)) {
