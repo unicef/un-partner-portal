@@ -264,11 +264,11 @@ class PartnerProfile(TimeStampedModel):
 
         if self.have_board_directors:
             required_fields['directors'] = all([
-                director.is_complete for director in self.directors.all()
+                director.is_complete for director in self.partner.directors.all()
             ])
         if self.have_authorised_officers:
             required_fields['authorised_officers'] = all([
-                auth_officer.is_complete for auth_officer in self.authorised_officers.all()
+                auth_officer.is_complete for auth_officer in self.partner.authorised_officers.all()
             ])
 
         return all(required_fields.values())
