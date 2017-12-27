@@ -1,3 +1,4 @@
+import R from 'ramda';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
@@ -88,8 +89,20 @@ class PartnerProfileProjectImplementation extends Component {
 
     const projectImplementation = flatten(formValues.project_impl);
     const initprojectImplementation = flatten(initialValues.project_impl);
+    let changedItems = changedValues(initprojectImplementation, projectImplementation);
+    
+    if (changedItems.audit_reports) {
+      changedItems = R.map((item) => {
+        if (!R.is(Number, item.most_recent_audit_report)) {
+          return R.dissoc('most_recent_audit_report', item);
+        }
+        return item;
+      }, changedValues(initprojectImplementation, projectImplementation).audit_reports);
+    }
 
-    return updateTab(partnerId, 'project-implementation', changedValues(initprojectImplementation, projectImplementation))
+    const mergedAudits = R.assoc('audit_reports', changedItems, changedValues(initprojectImplementation, projectImplementation));
+
+    return updateTab(partnerId, 'project-implementation', mergedAudits)
       .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
       .catch((error) => {
         const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
