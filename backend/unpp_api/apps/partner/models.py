@@ -263,9 +263,13 @@ class PartnerProfile(TimeStampedModel):
         }
 
         if self.have_board_directors:
-            required_fields['directors'] = self.directors.exists()
+            required_fields['directors'] = all([
+                director.is_complete for director in self.directors.all()
+            ])
         if self.have_authorised_officers:
-            required_fields['authorised_officers'] = self.authorised_officers.exists()
+            required_fields['authorised_officers'] = all([
+                auth_officer.is_complete for auth_officer in self.authorised_officers.all()
+            ])
 
         return all(required_fields.values())
 
@@ -466,6 +470,17 @@ class PartnerDirector(TimeStampedModel):
     def __str__(self):
         return "PartnerDirector <pk:{}>".format(self.id)
 
+    @property
+    def is_complete(self):
+        required_fields = {
+            'fullname': self.fullname,
+            'job_title': self.job_title,
+            'authorized': self.authorized,
+            'telephone': self.telephone,
+            'email': self.email,
+        }
+        return all(required_fields.values())
+
 
 class PartnerAuthorisedOfficer(TimeStampedModel):
     created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="authorised_officers")
@@ -481,6 +496,16 @@ class PartnerAuthorisedOfficer(TimeStampedModel):
 
     def __str__(self):
         return "PartnerAuthorisedOfficer <pk:{}>".format(self.id)
+
+    @property
+    def is_complete(self):
+        required_fields = {
+            'fullname': self.fullname,
+            'job_title': self.job_title,
+            'telephone': self.telephone,
+            'email': self.email,
+        }
+        return all(required_fields.values())
 
 
 class PartnerPolicyArea(TimeStampedModel):
