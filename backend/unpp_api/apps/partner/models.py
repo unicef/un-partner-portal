@@ -338,7 +338,6 @@ class PartnerProfile(TimeStampedModel):
             'any_partnered_with_un': self.any_partnered_with_un is not None,
             'any_accreditation': self.any_accreditation is not None,
             'any_reference': self.any_reference is not None,
-            'collaborations_partnership': self.partner.collaborations_partnership.exists(),
             'partnership_collaborate_institution': self.partnership_collaborate_institution is not None,
             'partnership_collaborate_institution_desc':
                 self.partnership_collaborate_institution_desc if self.partnership_collaborate_institution else True,
@@ -352,13 +351,16 @@ class PartnerProfile(TimeStampedModel):
             accreditations = self.partner.collaboration_evidences.filter(
                 mode=COLLABORATION_EVIDENCE_MODES.accreditation
             )
-            required_fields['accreditations'] = accreditations.exists()
+            required_fields['accreditations'] = all([a.is_complete for a in accreditations.all()])
 
         if self.any_reference:
             references = self.partner.collaboration_evidences.filter(
                 mode=COLLABORATION_EVIDENCE_MODES.reference
             )
-            required_fields['references'] = references.exists()
+            required_fields['references'] = all([r.is_complete for r in references.all()])
+
+        if self.any_partnered_with_un:
+            required_fields['collaborations'] = all([c.is_complete for c in self.partner.collaborations_partnership.all()])
 
         return all(required_fields.values())
 
@@ -742,7 +744,8 @@ class PartnerFunding(TimeStampedModel):
 class PartnerCollaborationPartnership(TimeStampedModel):
     created_by = models.ForeignKey('account.User', related_name="collaborations_partnership")
     partner = models.ForeignKey(Partner, related_name="collaborations_partnership")
-    agency = models.ForeignKey('agency.Agency', related_name="collaborations_partnership")
+    agency = models.ForeignKey('agency.Agency', related_name="collaborations_partnership",
+                               blank=True, null=True)
     description = models.CharField(max_length=200, blank=True, null=True)
     partner_number = models.CharField(max_length=200, blank=True, null=True)
 
@@ -753,6 +756,13 @@ class PartnerCollaborationPartnership(TimeStampedModel):
     def __str__(self):
         return "PartnerCollaborationPartnership <pk:{}>".format(self.id)
 
+    @property
+    def is_complete(self):
+        required_fields = {
+            'agency': self.agency,
+        }
+        return all(required_fields.values())
+
 
 class PartnerCollaborationEvidence(TimeStampedModel):
     """
@@ -760,9 +770,9 @@ class PartnerCollaborationEvidence(TimeStampedModel):
     """
     created_by = models.ForeignKey('account.User', related_name="collaboration_evidences")
     partner = models.ForeignKey(Partner, related_name="collaboration_evidences")
-    mode = models.CharField(max_length=3, choices=COLLABORATION_EVIDENCE_MODES)
-    organization_name = models.CharField(max_length=200)
-    date_received = models.DateField(verbose_name='Date Received', auto_now=True)
+    mode = models.CharField(max_length=3, choices=COLLABORATION_EVIDENCE_MODES, blank=True, null=True)
+    organization_name = models.CharField(max_length=200, blank=True, null=True)
+    date_received = models.DateField(verbose_name='Date Received', null=True)
     evidence_file = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="collaboration_evidences")
 
@@ -771,6 +781,16 @@ class PartnerCollaborationEvidence(TimeStampedModel):
 
     def __str__(self):
         return "PartnerCollaborationEvidence <pk:{}>".format(self.id)
+
+    @property
+    def is_complete(self):
+        required_fields = {
+            'mode': self.mode,
+            'organization_name': self.organization_name,
+            'date_received': self.date_received,
+            'evidence_file': self.evidence_file,
+        }
+        return all(required_fields.values())
 
 
 class PartnerOtherInfo(TimeStampedModel):
