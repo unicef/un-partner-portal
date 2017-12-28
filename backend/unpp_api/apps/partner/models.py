@@ -378,8 +378,8 @@ class PartnerProfile(TimeStampedModel):
             'feedback_mechanism_desc': self.feedback_mechanism_desc if self.have_feedback_mechanism else True,
             'have_system_track': self.have_system_track is not None,
             'financial_control_system_desc': self.financial_control_system_desc if self.have_system_track else True,
-            'internal_controls':
-                self.partner.internal_controls.filter(segregation_duties__isnull=True).exists() is False,
+            'internal_controls': all([c.is_complete for c in self.partner.internal_controls.all()]) \
+            if self.partner.internal_controls.exists() else False,
             'experienced_staff': self.experienced_staff is not None,
             'experienced_staff_desc': self.experienced_staff_desc if self.experienced_staff else True,
             'area_policies': self.partner.area_policies.filter(document_policies__isnull=True).exists() is False,
@@ -706,6 +706,14 @@ class PartnerInternalControl(TimeStampedModel):
 
     def __str__(self):
         return "PartnerInternalControl <pk:{}>".format(self.id)
+
+    @property
+    def is_complete(self):
+        required_fields = {
+            'segregation_duties': self.segregation_duties,
+            'comment': self.comment,
+        }
+        return all(required_fields.values())
 
 
 class PartnerBudget(TimeStampedModel):

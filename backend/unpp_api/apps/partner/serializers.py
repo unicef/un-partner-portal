@@ -579,10 +579,10 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
 
 class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
-    background_and_rationale = serializers.CharField(source="mandate_mission.background_and_rationale")
-    mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
-    governance_structure = serializers.CharField(source="mandate_mission.governance_structure")
-    governance_hq = serializers.CharField(source="mandate_mission.governance_hq")
+    background_and_rationale = serializers.CharField(source="mandate_mission.background_and_rationale", allow_blank=True)
+    mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission", allow_blank=True)
+    governance_structure = serializers.CharField(source="mandate_mission.governance_structure", allow_blank=True)
+    governance_hq = serializers.CharField(source="mandate_mission.governance_hq", allow_blank=True)
     governance_organigram = CommonFileSerializer(source="mandate_mission.governance_organigram", allow_null=True)
     ethic_safeguard = serializers.BooleanField(source="mandate_mission.ethic_safeguard")
     ethic_safeguard_policy = CommonFileSerializer(source="mandate_mission.ethic_safeguard_policy", allow_null=True)
@@ -594,7 +594,7 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     concern_groups = serializers.ListField(source="mandate_mission.concern_groups")
     security_high_risk_locations = serializers.BooleanField(source="mandate_mission.security_high_risk_locations")
     security_high_risk_policy = serializers.BooleanField(source="mandate_mission.security_high_risk_policy")
-    security_desc = serializers.CharField(source="mandate_mission.security_desc")
+    security_desc = serializers.CharField(source="mandate_mission.security_desc", allow_blank=True)
 
     experiences = PartnerExperienceSerializer(many=True)
     location_of_office = PointSerializer()
@@ -670,8 +670,8 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
     budgets = PartnerBudgetSerializer(many=True)
     hq_budgets = serializers.SerializerMethodField()
     major_donors = serializers.ListField(source="fund.major_donors")
-    source_core_funding = serializers.CharField(source="fund.source_core_funding")
-    main_donors_list = serializers.CharField(source="fund.main_donors_list")
+    source_core_funding = serializers.CharField(source="fund.source_core_funding", allow_blank=True)
+    main_donors_list = serializers.CharField(source="fund.main_donors_list", allow_blank=True)
 
     has_finished = serializers.BooleanField(read_only=True, source="profile.funding_complete")
 
@@ -796,7 +796,7 @@ class PartnerProfileProjectImplementationSerializer(
     assessments = serializers.ListField(source="audit.assessments")
     assessment_report = CommonFileSerializer(source="audit.assessment_report", allow_null=True)
 
-    key_result = serializers.CharField(source="report.key_result")
+    key_result = serializers.CharField(source="report.key_result", allow_blank=True)
     publish_annual_reports = serializers.BooleanField(source="report.publish_annual_reports")
     last_report = serializers.DateField(source="report.last_report", allow_null=True)
     report = CommonFileSerializer(source="report.report", allow_null=True)
