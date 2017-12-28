@@ -36,7 +36,6 @@ MEDIA_ROOT = os.path.join(DATA_VOLUME, '%s' % UPLOADS_DIR_NAME)
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
 
-
 # static resources related. See documentation at: http://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/
 STATIC_URL = '/api/static/'
 STATIC_ROOT = '%s/staticserve' % DATA_VOLUME
@@ -236,3 +235,5 @@ LOGGING = {
 
 DEFAULT_FAKE_DATA_OPEN_APPLICATIONS_COUNT = 21
 DEFAULT_FAKE_DATA_DIRECT_APPLICATIONS_COUNT = 6
+
+MAX_UPLOAD_SIZE = 31457280  # 30mb
