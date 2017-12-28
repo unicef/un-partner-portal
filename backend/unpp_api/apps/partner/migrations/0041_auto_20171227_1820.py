@@ -9,8 +9,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('partner', '0040_auto_20171212_0703'),
-        # TODO: Change to the following after optional fields are merged
-        # ('partner', '0044_auto_20171227_1426.py'),
     ]
 
     operations = [
