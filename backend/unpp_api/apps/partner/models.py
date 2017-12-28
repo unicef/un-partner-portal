@@ -403,7 +403,7 @@ class PartnerProfile(TimeStampedModel):
         }
 
         if self.partner.audit.regular_audited:
-            required_fields['audit_reports'] = [report.is_complete for report in self.partner.audit_reports.all()]
+            required_fields['audit_reports'] = all([report.is_complete for report in self.partner.audit_reports.all()])
 
         return all(required_fields.values())
 

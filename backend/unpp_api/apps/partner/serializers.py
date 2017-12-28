@@ -278,7 +278,7 @@ class PartnerAuditReportSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(required=False)
     most_recent_audit_report = CommonFileSerializer(allow_null=True)
-    audit_link_report = serializers.URLField(source="link_report", allow_null=True)
+    audit_link_report = serializers.URLField(source="link_report", allow_null=True, allow_blank=True)
 
     class Meta:
         model = PartnerAuditReport
