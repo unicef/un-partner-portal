@@ -36,7 +36,10 @@ PaddedContent.propTypes = {
   classes: PropTypes.object.isRequired,
   children: PropTypes.node,
   big: PropTypes.bool,
-  className: PropTypes.object,
+  className: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.string,
+  ]),
 };
 
 export default withStyles(styleSheet, { name: 'PaddedContent' })(PaddedContent);

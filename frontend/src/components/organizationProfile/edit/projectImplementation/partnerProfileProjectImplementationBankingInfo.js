@@ -59,7 +59,7 @@ const PartnerProfileProjectImplementationBankingInfo = (props) => {
 
 PartnerProfileProjectImplementationBankingInfo.propTypes = {
   readOnly: PropTypes.bool,
-  haveSeparateBankAccount: PropTypes.array,
+  haveSeparateBankAccount: PropTypes.bool,
 };
 
 const selector = formValueSelector('partnerProfile');

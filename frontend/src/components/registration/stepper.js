@@ -123,7 +123,7 @@ class RegistrationStepper extends React.Component {
           </Step>
         </Stepper>
         <AlertDialog
-          trigger={this.state.declarationAlert}
+          trigger={!!this.state.declarationAlert}
           title="Warning"
           text="You answered no to at least one of the questions, cannot proceed"
           handleDialogClose={() => this.setState({ declarationAlert: false })}
@@ -136,7 +136,7 @@ RegistrationStepper.propTypes = {
   /**
    * answers to all questions in declaration component, show dialog when at least one is false
    */
-  answers: PropTypes.arrayOf(PropTypes.string),
+  answers: PropTypes.arrayOf(PropTypes.bool),
   loadPartnerConfig: PropTypes.func,
   loadCountries: PropTypes.func,
   registerUser: PropTypes.func,

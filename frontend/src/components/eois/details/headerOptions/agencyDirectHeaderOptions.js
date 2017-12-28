@@ -47,7 +47,7 @@ const PartnerOpenHeaderOptions = (props) => {
 
 PartnerOpenHeaderOptions.propTypes = {
   params: PropTypes.object,
-  dialogOpen: PropTypes.bool,
+  dialogOpen: PropTypes.object,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
 };

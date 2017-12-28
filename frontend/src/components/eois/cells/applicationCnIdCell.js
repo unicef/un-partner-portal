@@ -5,19 +5,18 @@ import TableCell from './tableCell';
 
 const ApplicationCnIdCell = (props) => {
   const { id } = props;
-  return (
-    <TableCell first limited>
-      <Typography
-        color="accent"
-      >
-        <u>{id}</u>
-      </Typography>
-    </TableCell>
+  return (<TableCell first limited>
+    <Typography
+      color="accent"
+    >
+      <u>{id}</u>
+    </Typography>
+  </TableCell>
   );
 };
 
 ApplicationCnIdCell.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
 };
 
 export default ApplicationCnIdCell;

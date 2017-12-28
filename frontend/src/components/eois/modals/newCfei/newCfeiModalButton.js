@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { compose } from 'ramda';
 import { withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
@@ -41,6 +42,7 @@ NewCfeiModalButton.propTypes = {
 };
 
 
-export default withConditionalDisplay(
-  withDialogHandling(withRouter(NewCfeiModalButton)),
-  [isUserNotAgencyReader]);
+export default compose(
+  withConditionalDisplay([isUserNotAgencyReader]),
+  withDialogHandling,
+  withRouter)(NewCfeiModalButton);

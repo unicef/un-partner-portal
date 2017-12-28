@@ -139,7 +139,7 @@ class PartnerProfile(TimeStampedModel):
     former_legal_name = models.CharField(max_length=255, null=True, blank=True)
     connectivity = models.NullBooleanField(
         verbose_name='Does the organization have reliable access to internet in all of its operations?')
-    connectivity_excuse = models.CharField(max_length=200, null=True, blank=True)
+    connectivity_excuse = models.CharField(max_length=5000, null=True, blank=True)
     working_languages = ArrayField(
         models.CharField(max_length=3, choices=WORKING_LAGNUAGES_CHOICES),
         default=list,
@@ -198,7 +198,7 @@ class PartnerProfile(TimeStampedModel):
 
     # collaborate
     partnership_collaborate_institution = models.NullBooleanField()
-    partnership_collaborate_institution_desc = models.CharField(max_length=200, null=True, blank=True)
+    partnership_collaborate_institution_desc = models.CharField(max_length=5000, null=True, blank=True)
 
     any_partnered_with_un = models.NullBooleanField()
     any_accreditation = models.NullBooleanField()
@@ -735,14 +735,14 @@ class PartnerBudget(TimeStampedModel):
 
 class PartnerFunding(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="fund")
-    source_core_funding = models.CharField(max_length=200, verbose_name="Please state your source(s) of core funding")
+    source_core_funding = models.CharField(max_length=5000, verbose_name="Please state your source(s) of core funding")
     major_donors = ArrayField(
         models.CharField(max_length=3, choices=PARTNER_DONORS_CHOICES),
         default=list,
         null=True
     )
     main_donors_list = models.CharField(
-        max_length=200, blank=True, null=True, verbose_name="Please list your main donors")
+        max_length=5000, blank=True, null=True, verbose_name="Please list your main donors")
 
     class Meta:
         ordering = ['id']
@@ -756,7 +756,7 @@ class PartnerCollaborationPartnership(TimeStampedModel):
     partner = models.ForeignKey(Partner, related_name="collaborations_partnership")
     agency = models.ForeignKey('agency.Agency', related_name="collaborations_partnership",
                                blank=True, null=True)
-    description = models.CharField(max_length=200, blank=True, null=True)
+    description = models.CharField(max_length=5000, blank=True, null=True)
     partner_number = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:

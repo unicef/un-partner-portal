@@ -29,7 +29,7 @@ const TitleCell = (props) => {
   const { title, eoiId, type } = props;
 
   return (
-    <TableCell first limited>
+    <TableCell>
       <Typography
         component={Link}
         color="accent"

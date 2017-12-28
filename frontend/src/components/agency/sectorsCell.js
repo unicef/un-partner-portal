@@ -14,8 +14,8 @@ const SectorsCell = (props) => {
 
   return (
     <TableCell>
-      {uniqueSectors.map(item => (
-        <SectorItem sectorId={item} />
+      {uniqueSectors.map((item, index) => (
+        <SectorItem key={index} sectorId={item} />
       ))}
     </TableCell>
   );

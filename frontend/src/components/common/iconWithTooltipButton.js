@@ -10,21 +10,26 @@ const PreselectButton = (props) => {
       id={`${name}-button`}
       title={text}
       placement="bottom"
+      disableTriggerFocus={disabled}
+      disableTriggerHover={disabled}
+      disableTriggerTouch={disabled}
     >
-      <IconButton
-        color="inherit"
-        onClick={e => onClick(e)}
-        disabled={disabled}
-      >
-        {icon}
-      </IconButton>
+      <div>
+        <IconButton
+          color="inherit"
+          onClick={e => onClick(e)}
+          disabled={disabled}
+        >
+          {icon}
+        </IconButton>
+      </div>
     </Tooltip>
   );
 };
 
 
 PreselectButton.propTypes = {
-  icon: PropTypes.component,
+  icon: PropTypes.object,
   onClick: PropTypes.func,
   text: PropTypes.string,
   name: PropTypes.string,

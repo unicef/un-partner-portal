@@ -35,7 +35,11 @@ class ReviewersSummary extends Component {
     }
     return (
       <div>
-        {reviewers.map(reviewer => <SingleReviewer reviewer={reviewer} isFocalPoint={focalPoint} />)}
+        {reviewers.map(reviewer => (<SingleReviewer
+          key={reviewer.user_id}
+          reviewer={reviewer}
+          isFocalPoint={focalPoint}
+        />))}
       </div>);
   }
 
@@ -56,7 +60,7 @@ class ReviewersSummary extends Component {
 ReviewersSummary.propTypes = {
   reviewers: PropTypes.array,
   focalPoint: PropTypes.bool,
-  getReviewers: PropTypes.array,
+  getReviewers: PropTypes.func,
   loading: PropTypes.bool,
 };
 
@@ -70,6 +74,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   getReviewers: () => dispatch(loadReviewers(ownProps.id)),
 });
 
-export default withConditionalDisplay(
+export default withConditionalDisplay([isUserNotAgencyReader])(
   connect(mapStateToProps, mapDispatchToProps)(ReviewersSummary),
-  [isUserNotAgencyReader]);
+);

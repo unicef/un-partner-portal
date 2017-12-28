@@ -1,4 +1,5 @@
 import R from 'ramda';
+import { normalizeSingleCfei } from './cfei';
 import { getApplicationUnsolicitedConceptNotes } from '../helpers/api/api';
 import {
   clearError,
@@ -29,13 +30,24 @@ const initialState = {
     { name: 'is_direct', title: 'Chosen for direct selection' },
   ],
   loading: false,
-  unsolicited: [],
+  items: [],
   totalCount: 0,
 };
 
 const saveApplicationsUcn = (state, action) => {
-  const partners = R.assoc('unsolicited', action.response.results, state);
-  return R.assoc('totalCount', action.response.count, partners);
+  const applications = R.map(item =>
+    ({
+      id: item.id,
+      project_title: item.project_title,
+      agency_name: item.agency_name,
+      country: item.country,
+      title: R.path(['eoi', 'title'], item),
+      specializations: R.path(['specializations'], item) ? normalizeSingleCfei(item).specializations : [],
+      submission_date: item.submission_date,
+      is_direct: item.is_direct,
+    }), action.response.results);
+
+  return R.assoc('items', applications, R.assoc('totalCount', action.response.count, state));
 };
 
 const messages = {

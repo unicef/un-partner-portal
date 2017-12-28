@@ -104,7 +104,7 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
   }
 
   render() {
-    const { classes, countries, specs, handleSubmit, reset } = this.props;
+    const { classes, countryCode, countries, specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -120,6 +120,7 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
@@ -211,6 +212,7 @@ const mapStateToProps = (state, ownProps) => {
     directSources: selectNormalizedDirectSelectionSource(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
+    countryCode: country_code,
     initialValues: {
       project_title,
       country_code,

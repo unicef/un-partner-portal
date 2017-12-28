@@ -55,11 +55,7 @@ const ExpandedAssessment = (props) => {
 
 ExpandedAssessment.propTypes = {
   classes: PropTypes.object,
-  reviewer: PropTypes.number,
-  reviewerInfo: PropTypes.object,
   assessmentInfo: PropTypes.object,
-  isReviewerCurrentUser: PropTypes.bool,
-  assessment: PropTypes.number,
   allCriteria: PropTypes.object,
 };
 

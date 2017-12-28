@@ -130,7 +130,7 @@ OpenCfeiPreselections.propTypes = {
   loading: PropTypes.bool,
   query: PropTypes.object,
   itemsCount: PropTypes.number,
-  id: PropTypes.number,
+  id: PropTypes.string,
   allowedToEdit: PropTypes.bool,
   isReviewer: PropTypes.bool,
 };

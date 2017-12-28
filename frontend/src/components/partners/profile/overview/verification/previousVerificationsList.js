@@ -52,7 +52,7 @@ class PreviousVerificationsList extends Component {
     return (
       <Grid item className={classes.background} >
         {verifications.map(verification =>
-          (<GridColumn>
+          (<GridColumn key={verification.id}>
             <Divider />
             <PaddedContent>
               <VerificationItem verification={verification} />
@@ -75,7 +75,7 @@ PreviousVerificationsList.propTypes = {
   verifications: PropTypes.array,
   classes: PropTypes.object,
   getVerifications: PropTypes.func,
-  count: PropTypes.string,
+  count: PropTypes.number,
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

@@ -17,7 +17,10 @@ function GridRow(props) {
 }
 
 GridRow.propTypes = {
-  children: PropTypes.array,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]),
   columns: PropTypes.number.isRequired,
   spacing: PropTypes.number,
 };

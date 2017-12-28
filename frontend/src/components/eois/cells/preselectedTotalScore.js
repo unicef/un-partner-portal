@@ -29,9 +29,12 @@ const PreselectedTotalScore = (props) => {
 };
 
 PreselectedTotalScore.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   conceptNote: PropTypes.string,
-  score: PropTypes.string,
+  score: PropTypes.number,
   hovered: PropTypes.bool,
   allowedToEdit: PropTypes.bool,
 };

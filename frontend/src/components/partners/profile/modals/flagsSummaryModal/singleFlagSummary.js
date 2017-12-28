@@ -35,7 +35,7 @@ const SingleFlagSummary = (props) => {
   return (
     <form>
       <SingleFlagSummaryHeader flag={flag} />
-      <PaddedContent className={flag.is_valid === false && classes.whiteDrop}>
+      <PaddedContent className={!flag.is_valid ? classes.whiteDrop : null}>
         <GridColumn>
           <TextFieldForm
             label={messages.comments}

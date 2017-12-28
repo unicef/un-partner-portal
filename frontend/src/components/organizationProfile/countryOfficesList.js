@@ -1,4 +1,5 @@
 import React from 'react';
+import { path } from 'ramda';
 import PropTypes from 'prop-types';
 import HeaderList from '../../components/common/list/headerList';
 import OrganizationItem from './organizationItem';
@@ -10,12 +11,11 @@ const countryOfficesItems = profiles => profiles.map(item =>
     profileId={item.id}
     title={item.country_code}
     users={item.users}
-    completed={item.completed}
+    completed={path(['partner_additional', 'has_finished'], item)}
   />));
 
 const CountryOfficesList = (props) => {
   const { profiles } = props;
-
   return (
     <HeaderList
       header={<CountryOfficesHeaderContainer />}

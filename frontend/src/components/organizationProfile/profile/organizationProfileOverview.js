@@ -14,6 +14,7 @@ import PartnerProfileProjectImplementation from '../edit/projectImplementation/p
 import PartnerProfileOtherInfo from '../edit/otherInfo/partnerProfileOtherInfo';
 import { loadPartnerDetails } from '../../../reducers/partnerProfileDetails';
 import { changeTab } from '../../../reducers/partnerProfileEdit';
+import { isUserAgencyReader } from '../../../helpers/authHelpers';
 
 const FIRST_INDEX = 0;
 
@@ -64,8 +65,8 @@ class OrganizationProfileOverview extends Component {
 
 
   render() {
-    const { completion } = this.props;
-    
+    const { completion, displayEdit } = this.props;
+
     return (
       <div>
         {messages.sections.map(item =>
@@ -74,7 +75,10 @@ class OrganizationProfileOverview extends Component {
               expanded={R.indexOf(item, messages.sections) === FIRST_INDEX}
               title={item.label}
               warning={completion ? completion[completionTabs[R.indexOf(item, messages.sections)]] : false}
-              handleEditMode={() => this.handleEditMode(R.indexOf(item, messages.sections))}
+              handleEditMode={displayEdit
+                ? () => this.handleEditMode(R.indexOf(item, messages.sections))
+                : false
+              }
               component={messages.sectionComponents[R.indexOf(item, messages.sections)]}
             />
             <Divider />
@@ -91,6 +95,7 @@ OrganizationProfileOverview.propTypes = {
   partnerId: PropTypes.string.isRequired,
   loadPartnerProfileDetails: PropTypes.func,
   completion: PropTypes.object,
+  displayEdit: PropTypes.bool,
 };
 
 const mapDispatch = dispatch => ({
@@ -98,9 +103,10 @@ const mapDispatch = dispatch => ({
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
 });
 
-const mapStateToProps = (state, ownProps) => ({
-  partnerId: ownProps.params.id,
+const mapStateToProps = state => ({
+  partnerId: state.session.partnerId,
   completion: state.partnerProfileDetails.partnerProfileDetails.completion,
+  displayEdit: !isUserAgencyReader(state),
 });
 
 const connectedOrganizationProfileOverview = connect(

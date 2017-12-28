@@ -431,6 +431,7 @@ export const renderBool = ({
   optional,
   label,
   meta,
+  infoText,
   ...other
 }) => (
   <FormControl fullWidth>
