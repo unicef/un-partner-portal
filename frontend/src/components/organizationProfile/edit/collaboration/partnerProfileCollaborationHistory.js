@@ -26,6 +26,7 @@ const AgencySelection = (values, readOnly, ...props) => (member, index, fields) 
       fieldName={`${member}.agency`}
       label={messages.selectAgency}
       readOnly={readOnly}
+      optional
       warn
     />
   </GridColumn>
