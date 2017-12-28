@@ -52,6 +52,7 @@ const Audit = (values, readOnly, ...props) => (member, index, fields) => {
         infoText={messages.organizationUndergoesTooltip}
         values={newValues}
         readOnly={readOnly}
+        optional
         warn
         {...props}
       />
