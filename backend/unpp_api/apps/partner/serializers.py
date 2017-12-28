@@ -567,7 +567,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
         )
 
     related_names = [
-        "profile", "mailing_address", "directors", "authorised_officers"
+        "profile", "mailing_address", "directors", "authorised_officers", "org_head",
     ]
 
     @transaction.atomic
