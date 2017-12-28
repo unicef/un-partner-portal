@@ -710,7 +710,7 @@ class PartnerInternalControl(TimeStampedModel):
     @property
     def is_complete(self):
         required_fields = {
-            'segregation_duties': self.segregation_duties,
+            'segregation_duties': self.segregation_duties is not None,
             'comment': self.comment,
         }
         return all(required_fields.values())
