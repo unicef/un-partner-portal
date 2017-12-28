@@ -343,10 +343,6 @@ class PartnerProfile(TimeStampedModel):
                 self.partnership_collaborate_institution_desc if self.partnership_collaborate_institution else True,
         }
 
-        if not self.any_partnered_with_un:
-            required_fields.pop('collaborations_partnership')
-            required_fields.pop('any_partnered_with_un')
-
         if self.any_accreditation:
             accreditations = self.partner.collaboration_evidences.filter(
                 mode=COLLABORATION_EVIDENCE_MODES.accreditation
