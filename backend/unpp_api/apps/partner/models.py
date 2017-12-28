@@ -265,11 +265,12 @@ class PartnerProfile(TimeStampedModel):
         if self.have_board_directors:
             required_fields['directors'] = all([
                 director.is_complete for director in self.partner.directors.all()
-            ])
+            ]) if self.partner.directors.exists() else False
+
         if self.have_authorised_officers:
             required_fields['authorised_officers'] = all([
                 auth_officer.is_complete for auth_officer in self.partner.authorised_officers.all()
-            ])
+            ]) if self.partner.authorised_officers.exists() else False
 
         return all(required_fields.values())
 
@@ -302,7 +303,8 @@ class PartnerProfile(TimeStampedModel):
             'staff_in_country': self.partner.staff_in_country,
             'staff_globally': self.partner.staff_globally,
             'country_presence': len(self.partner.country_presence) > 0 if self.partner.is_hq else True,
-            'experiences': all([exp.is_complete for exp in self.partner.experiences.all()]),
+            'experiences': all([exp.is_complete for exp in self.partner.experiences.all()]) \
+            if self.partner.experiences.exists() else False,
             # TODO - country presence for hq + country
         }
 
@@ -347,16 +349,19 @@ class PartnerProfile(TimeStampedModel):
             accreditations = self.partner.collaboration_evidences.filter(
                 mode=COLLABORATION_EVIDENCE_MODES.accreditation
             )
-            required_fields['accreditations'] = all([a.is_complete for a in accreditations.all()])
+            required_fields['accreditations'] = all([a.is_complete for a in accreditations.all()]) \
+                if accreditations.exists() else False
 
         if self.any_reference:
             references = self.partner.collaboration_evidences.filter(
                 mode=COLLABORATION_EVIDENCE_MODES.reference
             )
-            required_fields['references'] = all([r.is_complete for r in references.all()])
+            required_fields['references'] = all([r.is_complete for r in references.all()]) \
+                if references.exists() else False
 
         if self.any_partnered_with_un:
-            required_fields['collaborations'] = all([c.is_complete for c in self.partner.collaborations_partnership.all()])
+            required_fields['collaborations'] = all([c.is_complete for c in self.partner.collaborations_partnership.all()]) \
+                if self.partner.collaborations_partnership.exists() else False
 
         return all(required_fields.values())
 
@@ -401,7 +406,8 @@ class PartnerProfile(TimeStampedModel):
         }
 
         if self.partner.audit.regular_audited:
-            required_fields['audit_reports'] = all([report.is_complete for report in self.partner.audit_reports.all()])
+            required_fields['audit_reports'] = all([report.is_complete for report in self.partner.audit_reports.all()]) \
+                if self.partner.audit_reports.exists() else False
 
         return all(required_fields.values())
 
