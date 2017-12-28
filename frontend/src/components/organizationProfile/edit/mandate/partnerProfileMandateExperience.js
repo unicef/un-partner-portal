@@ -27,7 +27,6 @@ const Sector = (values, yearsOfExp, readOnly, ...props) => (member, index, field
         label={messages.sector}
         values={newValues}
         readOnly={readOnly}
-        optional
         warn
         {...props}
       />
@@ -38,7 +37,6 @@ const Sector = (values, yearsOfExp, readOnly, ...props) => (member, index, field
         label={messages.years}
         values={yearsOfExp}
         readOnly={readOnly}
-        optional
         warn
         {...props}
       />
@@ -53,7 +51,6 @@ const Area = (readOnly, ...props) => (member, index, fields) => (
     disabled={!fields.get(index).sector}
     sectorId={fields.get(index).sector}
     readOnly={readOnly}
-    optional
     warn
     {...props}
   />

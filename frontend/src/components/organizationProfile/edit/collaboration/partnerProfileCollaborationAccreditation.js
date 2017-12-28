@@ -24,6 +24,7 @@ const Accreditation = readOnly => member => (
         label={messages.certifying}
         fieldName={`${member}.organization_name`}
         warn
+        optional
         readOnly={readOnly}
       />
     </Grid>
@@ -37,6 +38,7 @@ const AccreditationInner = readOnly => member => (
         label={messages.date}
         fieldName={`${member}.date_received`}
         warn
+        optional
         readOnly={readOnly}
       />
     </Grid>
@@ -47,6 +49,7 @@ const AccreditationInner = readOnly => member => (
         fieldName={`${member}.evidence_file`}
         label={messages.accreditation}
         warn
+        optional
         readOnly={readOnly}
       />
     </Grid>

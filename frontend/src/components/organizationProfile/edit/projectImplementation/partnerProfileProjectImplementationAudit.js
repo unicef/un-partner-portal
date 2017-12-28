@@ -71,7 +71,7 @@ const Info = (readOnly, ...props) => (member, index, fields) => {
         formName="partnerProfile"
         fieldName={`${member}.most_recent_audit_report`}
         label={messages.copyOfRecentAudit}
-        optional={!!(mostRecentAuditReport || auditLinkReport)}
+        optional
         warn={!(mostRecentAuditReport || auditLinkReport)}
         readOnly={readOnly}
       />
@@ -81,7 +81,7 @@ const Info = (readOnly, ...props) => (member, index, fields) => {
         label={messages.insertLink}
         fieldName={`${member}.audit_link_report`}
         validation={[url]}
-        optional={!!(mostRecentAuditReport || auditLinkReport)}
+        optional
         warn={!(mostRecentAuditReport || auditLinkReport)}
         readOnly={readOnly}
       />
