@@ -16,7 +16,7 @@ import { selectCfeiStatus,
   isUserACreator,
 } from '../../../../store';
 import GridColumn from '../../../common/grid/gridColumn';
-import GridRow from '../../../common/grid/gridRow';
+import Grid from 'material-ui/Grid';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
 
 const HeaderOptionsContainer = (props) => {
@@ -59,10 +59,10 @@ const HeaderOptionsContainer = (props) => {
   }
 
   return (
-    <GridRow justify="center" alignItems="center">
-      {cfeiStatus && <EoiStatusCell status={cfeiStatus} />}
-      {options}
-    </GridRow>
+    <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={24}>
+      {cfeiStatus && <Grid item><EoiStatusCell status={cfeiStatus} /></Grid>}
+      <Grid item>{options}</Grid>
+    </Grid>
   );
 };
 
