@@ -539,7 +539,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     have_authorised_officers = serializers.BooleanField(source="profile.have_authorised_officers")
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
-    org_head = PartnerHeadOrganizationSerializer(read_only=True)
+    org_head = PartnerHeadOrganizationSerializer()
     connectivity = serializers.BooleanField(source="profile.connectivity")
     connectivity_excuse = serializers.CharField(
         source="profile.connectivity_excuse", allow_null=True, allow_blank=True)
