@@ -91,10 +91,16 @@ class PartnerProfileContactInfo extends Component {
     const unflattenMailingInit = R.dissocPath('address', initialValues.mailing);
     const address = formValues.mailing.address;
     const addressInit = initialValues.mailing.address;
+    const orgHead = formValues.mailing.org_head;
+    const orgHeadInit = initialValues.mailing.org_head;
 
-    const mailing = R.assoc('mailing_address', address, flatten(unflattenMailing));
-    const initMailing = R.assoc('mailing_address', addressInit, flatten(unflattenMailingInit));
-    const patchValues = changedValues(initMailing, mailing);
+    let values = R.assoc('mailing_address', address, flatten(unflattenMailing));
+    let initValues = R.assoc('mailing_address', addressInit, flatten(unflattenMailingInit));
+
+    values = R.assoc('org_head', orgHead, values);
+    initValues = R.assoc('org_head', orgHeadInit, initValues);
+
+    const patchValues = changedValues(initValues, values);
 
     if (!R.isEmpty(patchValues)) {
       return updateTab(partnerId, 'contact-information', patchValues)
