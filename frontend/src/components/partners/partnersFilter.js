@@ -109,8 +109,16 @@ class PartnersFilter extends Component {
   }
 
   render() {
-    const { classes, countryCode, countries, partnersType, concernGroups,
-      specs, handleSubmit, reset } = this.props;
+    const {
+      classes,
+      countryCode,
+      countries,
+      partnersType,
+      concernGroups,
+      specs,
+      handleSubmit,
+      reset,
+    } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>

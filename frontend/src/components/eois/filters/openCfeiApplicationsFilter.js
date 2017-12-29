@@ -191,7 +191,7 @@ OpenCfeiApplicationsFilter.propTypes = {
   partnersType: PropTypes.array.isRequired,
   concernGroups: PropTypes.array.isRequired,
   pathName: PropTypes.string,
-  location: PropTypes.string,
+  location: PropTypes.object,
   query: PropTypes.object,
 };
 
