@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db.models.base import Model
 from django.shortcuts import get_object_or_404
+
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+
 from .models import AdminLevel1, Point, Sector, Specialization, CommonFile
 
 
@@ -188,6 +191,11 @@ class CommonFileSerializer(serializers.ModelSerializer):
 
 
 class CommonFileUploadSerializer(serializers.ModelSerializer):
+
+    def validate_file_field(self, value):
+        if value._size > settings.MAX_UPLOAD_SIZE:
+            raise serializers.ValidationError('File size exceeds maximum limit.')
+        return value
 
     class Meta:
         model = CommonFile
