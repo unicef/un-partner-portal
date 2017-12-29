@@ -302,12 +302,9 @@ class CreateProjectSerializer(CreateEOISerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        locations = validated_data['locations']
-        del validated_data['locations']
-        specializations = validated_data['specializations']
-        del validated_data['specializations']
-        focal_points = validated_data['focal_points']
-        del validated_data['focal_points']
+        locations = validated_data.pop('locations', [])
+        specializations = validated_data.pop('specializations', [])
+        focal_points = validated_data.pop('focal_points', [])
 
         validated_data['cn_template'] = validated_data['agency'].profile.eoi_template
         validated_data['created_by'] = self.context['request'].user
