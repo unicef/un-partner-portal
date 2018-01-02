@@ -223,10 +223,11 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { verification_status } = {} } = ownProps.location;
   const { query: { display_type } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
-  const { query: { specializations = '' } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
   const { query: { concern } = {} } = ownProps.location;
 
-  const specializationsQ = specializations && R.map(Number, specializations.split(','));
+  const specializationsQ = specializations &&
+      R.map(Number, specializations.split(','));
 
   return {
     countries: selectNormalizedCountries(state),
