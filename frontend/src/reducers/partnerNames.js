@@ -14,6 +14,8 @@ import apiMeta, {
   loadSuccess,
   loadFailure } from './apiMeta';
 
+import { amendPartnersCache } from '../reducers/cache';
+
 const initialState = {};
 const LOAD_PATNER_NAMES_SUCCESS = 'LOAD_PATNER_NAMES_SUCCESS';
 const PARTNER_NAMES = 'PARTNER_NAMES';
@@ -40,6 +42,7 @@ export const loadPartnerNamesForAutoComplete = params => (dispatch, getState) =>
     { cancelToken: newCancelToken.token })
     .then((response) => {
       dispatch(loadEnded(PARTNER_NAMES));
+      dispatch(amendPartnersCache(response))
       return toObject(flattenToObjectKey('legal_name'), response);
     }).catch((error) => {
       dispatch(loadEnded(PARTNER_NAMES));
