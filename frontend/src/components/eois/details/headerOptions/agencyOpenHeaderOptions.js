@@ -47,7 +47,7 @@ const PartnerOpenHeaderOptions = (props) => {
       {dialogOpen[edit] && <EditCfeiModal
         id={id}
         type="open"
-        dialogOpen={dialogOpen}
+        dialogOpen={dialogOpen[edit]}
         handleDialogClose={handleDialogClose}
       />}
       {dialogOpen[invite] && <AddInformedPartners
