@@ -38,7 +38,7 @@ class EditCfeiModal extends Component {
       <div>
         <ControlledModal
           maxWidth="md"
-          title={messages.title[type].title}
+          title={messages.title[type]}
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
           info={{
