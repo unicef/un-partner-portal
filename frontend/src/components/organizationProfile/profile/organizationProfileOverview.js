@@ -52,7 +52,7 @@ const messages = {
 class OrganizationProfileOverview extends Component {
   componentWillMount() {
     const { partnerId } = this.props;
-
+debugger;
     this.props.loadPartnerProfileDetails(partnerId);
   }
 
@@ -103,8 +103,8 @@ const mapDispatch = dispatch => ({
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
 });
 
-const mapStateToProps = state => ({
-  partnerId: state.session.partnerId,
+const mapStateToProps = (state, ownProps) => ({
+  partnerId: state.session.partnerId || ownProps.params.id,
   completion: state.partnerProfileDetails.partnerProfileDetails.completion,
   displayEdit: !isUserAgencyReader(state),
 });
