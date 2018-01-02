@@ -19,7 +19,7 @@ class Main extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { session,
       loadCountries,
       loadPartnerConfig,

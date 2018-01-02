@@ -11,15 +11,13 @@ import { addIncompleteStep, removeIncompleteStep } from '../../../reducers/partn
 class PartnerProfileStepperContainer extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      observedSteps: props.steps.map(step => step.name),
+    };
     this.handleErrorClose = this.handleErrorClose.bind(this);
   }
 
-  componentWillMount() {
-    this.setState({ observedSteps: this.props.steps.map(step => step.name) });
-  }
-
-  componentWillUpdate(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { name, isStepWarning, noStepWarning } = this.props;
 
     if (!nextProps.warnings || !nextProps.warnings[name]) {
@@ -66,8 +64,8 @@ class PartnerProfileStepperContainer extends Component {
             vertical: 'bottom',
             horizontal: 'left',
           }}
-          open={error}
-          message={error}
+          open={!!error}
+          message={error || []}
           autoHideDuration={6e3}
           onRequestClose={this.handleErrorClose}
         />
@@ -87,7 +85,7 @@ PartnerProfileStepperContainer.propTypes = {
   isStepWarning: PropTypes.func,
   noStepWarning: PropTypes.func,
   clearError: PropTypes.func,
-  error: PropTypes.string,
+  error: PropTypes.array,
   last: PropTypes.bool,
   submitting: PropTypes.bool,
   handleNext: PropTypes.func,

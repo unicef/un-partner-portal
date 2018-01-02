@@ -28,7 +28,7 @@ class DSFeedback extends Component {
         {applications.map(application =>
           (<Feedback
             key={application.id}
-            applicationId={application.id}
+            applicationId={`${application.id}`}
             extraTitle={application.legal_name}
             allowedToAdd={shouldAddFeedback}
           />))}

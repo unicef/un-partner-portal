@@ -12,6 +12,7 @@ import PaddedContent from '../../../../common/paddedContent';
 import TextFieldForm from '../../../../forms/textFieldForm';
 import { updateApplication } from '../../../../../reducers/partnerApplicationDetails';
 import ResultRadio from './resultRadio';
+import { isUserNotPartnerReader } from '../../../../../helpers/authHelpers';
 
 const styleSheet = theme => ({
   container: {
@@ -36,7 +37,8 @@ const messages = {
   expected: notifDate => `Notification of results will be made by: ${notifDate}`,
   labels: {
     notif: 'Notification of Results Date',
-    chosen: 'Your concept note has been selected for a potential partnership! Would you like to accept and move forward with your application?',
+    chosen: 'Your concept note has been selected for a potential partnership!',
+    chosenQuestion: 'Would you like to accept and move forward with your application?',
     confirm: 'Confirm your participation:',
     confirmed: 'Selection confirmed',
     declined: 'Selection declined',
@@ -51,7 +53,8 @@ const handleConfirmationSubmit = (values, dispatch, props) => {
   props.submitConfirmation(body);
 };
 
-const showForm = (accepted, declined, classes, handleSubmit) => {
+const showForm = (accepted, declined, classes, handleSubmit, displayActions) => {
+  if (!displayActions) return null;
   if (accepted) {
     return (
       <div className={classes.iconWithText}>
@@ -69,6 +72,7 @@ const showForm = (accepted, declined, classes, handleSubmit) => {
   }
   return (
     <div>
+      <Typography>{messages.labels.chosenQuestion}</Typography>
       <ResultRadio />
       <Grid container justify="flex-end">
         <Grid item>
@@ -85,7 +89,7 @@ const showForm = (accepted, declined, classes, handleSubmit) => {
 };
 
 const ResultForm = (props) => {
-  const { classes, handleSubmit, accepted, declined } = props;
+  const { classes, handleSubmit, accepted, declined, displayActions } = props;
   return (
     <form onSubmit={handleSubmit}>
       <PaddedContent>
@@ -98,10 +102,9 @@ const ResultForm = (props) => {
       <div className={classes.container}>
         <PaddedContent>
           <Typography>{messages.labels.chosen}</Typography>
-          {showForm(accepted, declined, classes, handleSubmit)}
+          {showForm(accepted, declined, classes, handleSubmit, displayActions)}
         </PaddedContent>
       </div>
-
     </form>);
 };
 
@@ -110,6 +113,7 @@ ResultForm.propTypes = {
   handleSubmit: PropTypes.func,
   accepted: PropTypes.bool,
   declined: PropTypes.bool,
+  displayActions: PropTypes.bool,
 };
 
 const formResult = reduxForm({
@@ -120,6 +124,7 @@ const mapStateToProps = (state, ownProps) => ({
   initialValues: {
     notifDate: ownProps.notifDate,
   },
+  displayActions: isUserNotPartnerReader(state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

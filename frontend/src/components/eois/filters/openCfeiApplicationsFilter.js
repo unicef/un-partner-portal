@@ -9,20 +9,23 @@ import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
 import TextFieldForm from '../../forms/textFieldForm';
-import Agencies from '../../forms/fields/projectFields/agencies';
-import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
 import CountryField from '../../forms/fields/projectFields/locationField/countryField';
-import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
-import resetChanges from '../../eois/filters/eoiHelper';
+import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import { selectNormalizedPopulationsOfConcernGroups,
+  selectMappedSpecializations,
+  selectNormalizedCountries,
+  selectNormalizedOrganizationTypes } from '../../../store';
+import resetChanges from '../filters/eoiHelper';
 
 const messages = {
   choose: 'Choose',
   labels: {
-    search: 'Search',
+    name: 'Legal Name',
     country: 'Country',
     location: 'Location',
-    sector: 'Sector & Area of Specialization',
-    agency: 'Agency',
+    typeOfOrganization: 'Type of Organization',
+    sectorArea: 'Sector & Area of Specialization',
+    populations: 'Populations of concern',
   },
   clear: 'clear',
   submit: 'submit',
@@ -39,19 +42,7 @@ const styleSheet = theme => ({
   },
 });
 
-
-export const STATUS_VAL = [
-  {
-    value: true,
-    label: 'Active',
-  },
-  {
-    value: false,
-    label: 'Completed',
-  },
-];
-
-class PartnerApplicationsUnsolicitedFilter extends Component {
+class OpenCfeiApplicationsFilter extends Component {
   constructor(props) {
     super(props);
 
@@ -64,7 +55,6 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
 
   componentWillMount() {
     const { pathName, query } = this.props;
-    resetChanges(pathName, query);
 
     history.push({
       pathname: pathName,
@@ -83,28 +73,32 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
     }
   }
 
-
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { project_title, agency, active, country_code, specializations, selected_source, ds_converted } = values;
+    const { legal_name, type_of_org,
+      country_code, specializations, concern, location } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
-        project_title,
-        agency,
-        active,
+        legal_name,
+        type_of_org,
         country_code,
+        location,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
-        selected_source,
-        ds_converted,
+        concern,
       }),
     });
   }
 
+  resetForm() {
+    resetChanges(this.props.pathName, this.props.query);
+  }
+
   render() {
-    const { classes, countryCode, countries, specs, handleSubmit, reset } = this.props;
+    const { classes, countryCode, countries, partnersType, concernGroups,
+      specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -112,9 +106,8 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
           <Grid container direction="row" >
             <Grid item sm={4} xs={12} >
               <TextFieldForm
-                label={messages.labels.search}
-                placeholder={messages.labels.search}
-                fieldName="project_title"
+                label={messages.labels.name}
+                fieldName="legal_name"
                 optional
               />
             </Grid>
@@ -128,7 +121,7 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <AdminOneLocation
-                fieldName="locations"
+                fieldName="location"
                 formName="tableFilter"
                 observeFieldName="country_code"
                 label={messages.labels.location}
@@ -137,22 +130,32 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
             </Grid>
           </Grid>
           <Grid container direction="row" >
-            <Grid item sm={4} xs={12} >
+            <Grid item sm={4} xs={12}>
               <SelectForm
-                label={messages.labels.sector}
+                label={messages.labels.sectorArea}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
-                multiple
+                selectFieldProps={{
+                  multiple: true,
+                }}
                 values={specs}
                 sections
                 optional
               />
             </Grid>
-            <Grid item sm={3} xs={12}>
-              <Agencies
-                fieldName="agency"
-                label={messages.labels.agency}
-                placeholder={messages.choose}
+            <Grid item sm={4} xs={12}>
+              <SelectForm
+                fieldName="concern"
+                label={messages.labels.populations}
+                values={concernGroups}
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <SelectForm
+                fieldName="type_of_org"
+                label={messages.labels.typeOfOrganization}
+                values={partnersType}
                 optional
               />
             </Grid>
@@ -160,7 +163,7 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>
@@ -168,7 +171,7 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
               color="accent"
               onTouchTap={handleSubmit(this.onSearch)}
             >
-              {messages.labels.search}
+              {messages.submit}
             </Button>
           </Grid>
         </Grid>
@@ -177,7 +180,7 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
   }
 }
 
-PartnerApplicationsUnsolicitedFilter.propTypes = {
+OpenCfeiApplicationsFilter.propTypes = {
   /**
    *  reset function
    */
@@ -185,49 +188,51 @@ PartnerApplicationsUnsolicitedFilter.propTypes = {
   classes: PropTypes.object.isRequired,
   countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
+  partnersType: PropTypes.array.isRequired,
+  concernGroups: PropTypes.array.isRequired,
   pathName: PropTypes.string,
+  location: PropTypes.object,
   query: PropTypes.object,
 };
 
-const formPartnerApplicationsUnsolicitedFilter = reduxForm({
+const formOpenCfeiApplicationsFilter = reduxForm({
   form: 'tableFilter',
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
   enableReinitialize: true,
-})(PartnerApplicationsUnsolicitedFilter);
+})(OpenCfeiApplicationsFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { project_title } = {} } = ownProps.location;
+  const { query: { legal_name } = {} } = ownProps.location;
+  const { query: { type_of_org } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
-  const { query: { agency } = {} } = ownProps.location;
+  const { query: { location } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
-  const { query: { selected_source } = {} } = ownProps.location;
-  const { query: { ds_converted } = {} } = ownProps.location;
-
-  const agencyQ = agency ? Number(agency) : agency;
+  const { query: { concern } = {} } = ownProps.location;
 
   const specializationsQ = specializations &&
       R.map(Number, specializations.split(','));
 
   return {
     countries: selectNormalizedCountries(state),
+    partnersType: selectNormalizedOrganizationTypes(state),
     specs: selectMappedSpecializations(state),
-    directSources: selectNormalizedDirectSelectionSource(state),
+    concernGroups: selectNormalizedPopulationsOfConcernGroups(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     countryCode: country_code,
     initialValues: {
-      project_title,
+      legal_name,
+      location,
+      type_of_org,
       country_code,
-      agency: agencyQ,
-      specialization: specializationsQ,
-      selected_source,
-      ds_converted,
+      specializations: specializationsQ,
+      concern,
     },
   };
 };
 
-const connected = connect(mapStateToProps, null)(formPartnerApplicationsUnsolicitedFilter);
-const withRouterFilter = withRouter(connected);
+const connected = connect(mapStateToProps, null)(formOpenCfeiApplicationsFilter);
+const withRouterCfeiFilter = withRouter(connected);
 
-export default (withStyles(styleSheet, { name: 'PartnerApplicationsUnsolicitedFilter' })(withRouterFilter));
+export default (withStyles(styleSheet, { name: 'partnersFilter' })(withRouterCfeiFilter));

@@ -66,7 +66,7 @@ const ApplicationStatusText = (props) => {
 
 ApplicationStatusText.propTypes = {
   classes: PropTypes.object.isRequired,
-  finalStatus: PropTypes.string,
+  finalStatus: PropTypes.object,
 };
 
 const mapStateToProps = (state, { status, applicationStatus }) => ({

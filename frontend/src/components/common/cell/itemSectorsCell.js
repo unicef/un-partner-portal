@@ -24,7 +24,7 @@ const styleSheet = theme => ({
 const SectorWithSpec = (classes, sectors, specializations, item) => {
   if (sectors[item.sector]) {
     return (
-      <div className={classes.padding}>
+      <div key={item.sector} className={classes.padding}>
         <div className={classes.color}>
           {sectors[item.sector]}
         </div>
@@ -65,9 +65,9 @@ const ItemWorkingLanguagesCell = (props) => {
 ItemWorkingLanguagesCell.propTypes = {
   classes: PropTypes.object,
   label: PropTypes.string.isRequired,
-  content: PropTypes.string,
-  sectors: PropTypes.array,
-  specializations: PropTypes.array,
+  content: PropTypes.array,
+  sectors: PropTypes.object,
+  specializations: PropTypes.object,
 };
 
 const connected = connect(state => ({

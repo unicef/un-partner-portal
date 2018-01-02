@@ -74,7 +74,7 @@ class SingleFlagSummaryHeader extends Component {
     return (
       <div>
         <PaddedContent className={classes.lightGrey}>
-          <SpreadContent className={flag.is_valid === false && classes.whiteDrop}>
+          <SpreadContent className={!flag.is_valid ? classes.whiteDrop : null}>
             <div className={classes.flexBox}>
               <FlagIcon color={flag.flag_type} />
               <Typography>

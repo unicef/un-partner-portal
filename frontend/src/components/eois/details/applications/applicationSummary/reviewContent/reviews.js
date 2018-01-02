@@ -13,7 +13,7 @@ const messages = {
 };
 
 const renderContent = (reviews) => {
-  if (R.isEmpty(reviews)) return [<EmptyContent />];
+  if (R.isEmpty(reviews)) return <EmptyContent />;
   return R.map(([reviewer, assessment]) => (<SingleReview
     key={reviewer}
     reviewer={reviewer}

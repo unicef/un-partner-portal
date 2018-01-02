@@ -76,12 +76,12 @@ export const loadUserData = () => (dispatch, getState) => {
         name: response.name,
         userId: response.id,
         email: response.email,
+        position: response.role,
         // token was valid so we can authorized user
         authorized: true,
         // agency specific field, but ok to have them undefined
         agencyName: response.agency_name,
         agencyId: response.agency_id,
-        position: response.role,
         officeName: response.office_name,
         officeId: response.office_id,
         // partner specific field, but ok to have them undefined

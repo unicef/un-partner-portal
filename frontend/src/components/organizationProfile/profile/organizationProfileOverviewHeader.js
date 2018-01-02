@@ -4,6 +4,8 @@ import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import OrganizationProfileHeaderOptions from './organizationProfileHeaderOptions';
+import withConditionalDisplay from '../../common/hoc/withConditionalDisplay';
+import { isUserNotPartnerReader } from '../../../helpers/authHelpers';
 
 const messages = {
   edit: 'Edit',
@@ -36,15 +38,17 @@ const styleSheet = (theme) => {
 
 const OrganizationProfileOverviewHeader = (props) => {
   const { classes, update, handleEditClick } = props;
-
+  const EditProfileButton = withConditionalDisplay([isUserNotPartnerReader])(() => (
+    <Button className={classes.noPrint} onClick={handleEditClick} raised color="accent">
+      {messages.edit}
+    </Button>
+  ));
   return (
     <div className={classes.root}>
       <div className={classes.text}>
         <Typography type="body1" color="inherit"> {messages.lastUpdate} {update}</Typography>
       </div>
-      <Button className={classes.noPrint} onClick={handleEditClick} raised color="accent">
-        {messages.edit}
-      </Button>
+      <EditProfileButton />
       <OrganizationProfileHeaderOptions className={classes.noPrint} />
     </div>
   );

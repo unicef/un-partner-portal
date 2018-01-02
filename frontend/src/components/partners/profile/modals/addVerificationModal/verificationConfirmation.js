@@ -1,17 +1,13 @@
 import React from 'react';
 import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
-import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import SpreadContent from '../../../../common/spreadContent';
-import PolarRadio from '../../../../forms/fields/PolarRadio';
-import TextForm from '../../../../forms/textFieldForm';
 import GridColumn from '../../../../common/grid/gridColumn';
 import PaddedContent from '../../../../common/paddedContent';
 import VerificationIcon from '../../icons/verificationIcon';
 import Loader from '../../../../common/loader';
 import EmptyContent from '../../../../common/emptyContent';
-import { isPartnerVerified } from '../../../../../helpers/verificationUtils';
 
 const messages = {
   status: 'Verification status: ',

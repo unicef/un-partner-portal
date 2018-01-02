@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class IsAgencyMemberUser(BasePermission):
 
-    def has_permission(self, request, user):
+    def has_permission(self, request, view):
         if not request.user.is_authenticated():
             return False
 

@@ -49,6 +49,7 @@ export const styles = (theme) => ({
     transform: 'scale(0)',
     transition: theme.transitions.create(['opacity', 'transform'], {
       duration: theme.transitions.duration.shortest,
+      
     }),
     [theme.breakpoints.up('sm')]: {
       minHeight: 22,
@@ -364,6 +365,7 @@ class Tooltip extends React.Component {
                     ...popperProps.style,
                     left: popperProps.style.left || 0,
                     ...restProps.style,
+                    pointerEvents: 'none',
                   }}>
                   <div
                     id={id}

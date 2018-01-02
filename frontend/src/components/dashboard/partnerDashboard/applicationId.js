@@ -27,7 +27,7 @@ const path = (type, eoiId, cnId) => {
 const CnCell = (props) => {
   const { eoiId, cnId, type } = props;
   return (
-    <TableCell first limited>
+    <TableCell>
       <Typography
         component={Link}
         color="accent"

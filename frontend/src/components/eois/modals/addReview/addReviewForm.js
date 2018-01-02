@@ -32,7 +32,7 @@ const styleSheet = theme => ({
 });
 
 const renderCriteriaBase = ({ classes, criteria, allCriteria, fields }) => (<div>
-  {fields.map((name, index) => (<div>
+  {fields.map((name, index) => (<div key={name}>
     <Grid container direction="row" alignItems="center" justify="center">
       <Grid item xs={9}>
         <Typography type="subheading">
@@ -54,7 +54,10 @@ const renderCriteriaBase = ({ classes, criteria, allCriteria, fields }) => (<div
               type: 'number',
             },
           }}
-          normalize={value => parseInt(value)}
+          normalize={(value) => {
+            if (value) return parseInt(value);
+            return value;
+          }}
         />
       </Grid>
       {criteria[index].weight && <Grid item xs={1}>
@@ -69,8 +72,8 @@ const renderCriteriaBase = ({ classes, criteria, allCriteria, fields }) => (<div
 renderCriteriaBase.propTypes = {
   classes: PropTypes.object,
   criteria: PropTypes.array,
-  allCriteria: PropTypes.array,
-  fields: PropTypes.array,
+  allCriteria: PropTypes.object,
+  fields: PropTypes.object,
 };
 
 const renderCriteria = withStyles(styleSheet)(renderCriteriaBase);
@@ -110,8 +113,8 @@ AddReview.propTypes = {
    */
   handleSubmit: PropTypes.func.isRequired,
   classes: PropTypes.object,
-  allCriteria: PropTypes.array,
-  criteria: PropTypes.object,
+  allCriteria: PropTypes.object,
+  criteria: PropTypes.array,
 };
 
 const formAddReview = reduxForm({

@@ -1,7 +1,7 @@
-import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { TableCell } from 'material-ui/Table';
 import GridColumn from '../../common/grid/gridColumn';
 import PartnerApplicationsNotesFilter from './partnerApplicationsUnsolicitedFilter';
 import DirectSelectionCell from './directSelectionCell';
@@ -12,7 +12,7 @@ import { loadApplicationsUcn } from '../../../reducers/applicationsUnsolicitedLi
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import { formatDateForPrint } from '../../../helpers/dates';
 import WrappedCell from '../../common/cell/wrappedCell';
-import SectorsCell from '../sectorsCell';
+import EoiSectorCell from '../../eois/cells/eoiSectorCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
 import CountriesCell from '../../partners/countriesCell';
 
@@ -26,12 +26,12 @@ const applicationCell = ({ row, column }) => {
     return <WrappedCell content={formatDateForPrint(row.submission_date)} />;
   } else if (column.name === 'id') {
     return (<ConceptNoteIDCell
-      cfeiId={row.id}
+      cfeiId={`${row.id}`}
       id={row.id}
       type={PROJECT_TYPES.UNSOLICITED}
     />);
   } else if (column.name === 'specializations') {
-    return <SectorsCell specializations={row.specializations} />;
+    return <TableCell><EoiSectorCell data={row.specializations} id={row.id} /></TableCell>;
   } else if (column.name === 'country') {
     return <CountriesCell countries={row.country} />;
   }
@@ -84,7 +84,7 @@ PartnerApplicationsUnsolicited.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  items: R.path(['unsolicited'], state.applicationsUnsolicitedList) || [],
+  items: state.applicationsUnsolicitedList.items,
   itemsTotal: state.applicationsUnsolicitedList.totalCount,
   loading: state.applicationsUnsolicitedList.loading,
   query: ownProps.location.query,

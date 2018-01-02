@@ -1,4 +1,5 @@
 import R from 'ramda';
+import { normalizeSingleCfei } from './cfei';
 import { getApplicationConceptNotes } from '../helpers/api/api';
 import {
   clearError,
@@ -31,13 +32,24 @@ const initialState = {
     { name: 'application_status', title: 'Status', width: 200 },
   ],
   loading: false,
-  conceptNotes: [],
+  items: [],
   totalCount: 0,
 };
 
 const saveApplicationsCn = (state, action) => {
-  const partners = R.assoc('conceptNotes', action.response.results, state);
-  return R.assoc('totalCount', action.response.count, partners);
+  const applications = R.map(item =>
+    ({
+      id: item.id,
+      project_title: item.project_title,
+      agency_name: item.agency_name,
+      eoi_id: item.eoi_id,
+      country: item.country,
+      specializations: R.path(['specializations'], item) ? normalizeSingleCfei(item).specializations : [],
+      application_date: item.application_date,
+      application_status: item.application_status,
+    }), action.response.results);
+
+  return R.assoc('items', applications, R.assoc('totalCount', action.response.count, state));
 };
 
 const messages = {

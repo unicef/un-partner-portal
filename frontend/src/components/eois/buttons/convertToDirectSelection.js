@@ -10,7 +10,15 @@ const messages = {
 };
 
 const ConvertToDS = (props) => {
-  const { id, handleDialogClose, handleDialogOpen, dialogOpen, ...other } = props;
+  const {
+    id,
+    handleDialogClose,
+    handleDialogOpen,
+    dialogOpen,
+    partnerId,
+    ...other,
+  } = props;
+
   return (
     <Grid item>
       <Button

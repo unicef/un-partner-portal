@@ -33,8 +33,11 @@ const PreselectedYourScore = (props) => {
 };
 
 PreselectedYourScore.propTypes = {
-  id: PropTypes.string,
-  score: PropTypes.string,
+  id: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
+  score: PropTypes.number,
   breakdown: PropTypes.object,
   allCriteria: PropTypes.object,
 };

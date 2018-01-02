@@ -57,7 +57,7 @@ class FileForm extends Component {
             infoText={infoText}
             deleteDisabled={deleteDisabled}
             validate={(optional ? [] : [required].concat(validation || []))}
-            warn={warn && warning}
+            warn={warn ? warning : undefined}
             {...other}
           />
         }
@@ -75,11 +75,11 @@ FileForm.propTypes = {
   /**
    * form name
    */
-  formName: PropTypes.string.isRequired,
+  formName: PropTypes.string,
   /**
    * section name
    */
-  sectionName: PropTypes.string.isRequired,
+  sectionName: PropTypes.string,
   /**
    * label used in field, also placeholder is built from it by adding 'Provide'
    */

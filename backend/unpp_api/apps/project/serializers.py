@@ -705,7 +705,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
         return get_countries_code_from_queryset(obj.eoi.locations)
 
     def get_specializations(self, obj):
-        return obj.eoi.specializations.all().values_list('id', flat=True)
+        return SimpleSpecializationSerializer(obj.eoi.specializations.all(), many=True).data
 
     def get_application_status(self, obj):
         return obj.eoi.application_status
@@ -763,6 +763,15 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
 
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
+
+
+class ApplicationPartnerDirectSerializer(ApplicationPartnerUnsolicitedDirectSerializer):
+
+    project_title = serializers.CharField(source="eoi.title")
+    specializations = serializers.SerializerMethodField()
+
+    def get_specializations(self, obj):
+        return SimpleSpecializationSerializer(obj.eoi.specializations.all(), many=True).data
 
 
 class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirectSerializer):
