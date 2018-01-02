@@ -52,7 +52,7 @@ const messages = {
 class OrganizationProfileOverview extends Component {
   componentWillMount() {
     const { partnerId } = this.props;
-debugger;
+
     this.props.loadPartnerProfileDetails(partnerId);
   }
 
