@@ -10,7 +10,7 @@ import { loadApplicationsDirect } from '../../../reducers/applicationsDirectList
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import { formatDateForPrint } from '../../../helpers/dates';
 import WrappedCell from '../../common/cell/wrappedCell';
-import ApplicationStatusCell from '../applicationStatusCell';
+import ApplicationStatusCell from '../../eois/cells/applicationStatusCell';
 import SectorsCell from '../sectorsCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
 import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
@@ -25,12 +25,17 @@ const applicationCell = ({ row, column }) => {
       id={row.id}
       type={PROJECT_TYPES.DIRECT}
     />);
-  } else if (column.name === 'status') {
-    return <ApplicationStatusCell appStatus={row.status} />;
   } else if (column.name === 'specializations') {
     return <SectorsCell specializations={row.specializations} />;
   } else if (column.name === 'country') {
     return <CountriesCell countries={row.country} />;
+  } else if (column.name === 'status') {
+    return (
+      <ApplicationStatusCell
+        status={'Pen'}
+        applicationStatus={row.application_status}
+        id={row.id}
+      />);
   }
 
   return undefined;

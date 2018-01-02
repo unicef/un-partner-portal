@@ -9,6 +9,7 @@ import PaginatedList from '../../common/list/paginatedList';
 import TableWithLocalState from '../../common/hoc/tableWithLocalState';
 import EoiCountryCell from '../../eois/cells/eoiCountryCell';
 import EoiSectorCell from '../../eois/cells/eoiSectorCell';
+import ApplicationStatusCell from '../../eois/cells/applicationStatusCell';
 import ApplicationIDCell from './applicationId';
 
 const messages = {
@@ -45,9 +46,11 @@ const renderCells = ({ row, column }) => {
       </TableCell>);
   } else if (column.name === 'application_status') {
     return (
-      <TableCell >
-        <EoiSectorCell data={row.specializations} id={row.id} />
-      </TableCell>);
+      <ApplicationStatusCell
+        status={'Pen'}
+        applicationStatus={row.application_status}
+        id={row.id}
+      />);
   }
   return undefined;
 };

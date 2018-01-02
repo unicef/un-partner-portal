@@ -14,7 +14,7 @@ const renderExpandedCell = (data, allCriteria) =>
     {review.score}
   </SpreadContent>), data);
 
-const ApplicationStatusCell = (props) => {
+const PreselectedYourScore = (props) => {
   const { id, score, breakdown, allCriteria } = props;
   const localScore = (score && score) || '-';
   return (
@@ -32,7 +32,7 @@ const ApplicationStatusCell = (props) => {
   );
 };
 
-ApplicationStatusCell.propTypes = {
+PreselectedYourScore.propTypes = {
   id: PropTypes.string,
   score: PropTypes.string,
   breakdown: PropTypes.object,
@@ -43,4 +43,4 @@ const mapStateToProps = state => ({
   allCriteria: state.selectionCriteria,
 });
 
-export default connect(mapStateToProps)(ApplicationStatusCell);
+export default connect(mapStateToProps)(PreselectedYourScore);

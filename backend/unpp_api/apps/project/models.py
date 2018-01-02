@@ -210,18 +210,18 @@ class Application(TimeStampedModel):
 
     @property
     def application_status(self):
-        if not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.open:
+        if not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.closed:
             return NEW_APPLICATION_STATUSES.review
-        elif not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.closed:
+        elif not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.completed:
             return NEW_APPLICATION_STATUSES.unsuccessful
+        elif self.did_win and self.did_withdraw:
+            return NEW_APPLICATION_STATUSES.retracted
         elif self.did_win and self.did_decline is False and self.did_accept is False and self.decision_date is None:
             return NEW_APPLICATION_STATUSES.successful
         elif self.did_win and self.did_accept and self.decision_date is not None:
             return NEW_APPLICATION_STATUSES.accepted
         elif self.did_win and self.did_decline and self.decision_date is not None:
             return NEW_APPLICATION_STATUSES.declined
-        elif self.did_win and self.did_withdraw:
-            return NEW_APPLICATION_STATUSES.retracted
 
     # RETURNS [{u'Cos': {u'scores': [23, 13], u'weight': 30}, u'avg': 23..]
     def get_scores_by_selection_criteria(self):

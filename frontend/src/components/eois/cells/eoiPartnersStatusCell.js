@@ -6,6 +6,7 @@ import { compose } from 'ramda';
 import Typography from 'material-ui/Typography';
 import Tooltip from '../../common/portalTooltip';
 import EoiStatusCell from './eoiStatusCell';
+import { selectNewApplicationStatuses } from '../../../store';
 
 
 const styleSheet = theme => ({
@@ -24,7 +25,7 @@ const styleSheet = theme => ({
   },
 });
 
-const renderExpandedCell = (partners, classes) => (
+const renderExpandedCell = (partners, classes, applicationStatuses) => (
   <div>
     <Typography type="body2" className={classes.mainText} align="left">
       Partner status:
@@ -36,18 +37,18 @@ const renderExpandedCell = (partners, classes) => (
         align="left"
       >
         {`${partnerStatus.legal_name}
-${partnerStatus.application_status}`}
+${applicationStatuses[partnerStatus.application_status] || ''}`}
       </Typography>
     ))}
   </div>
 );
 
 const EoiPartnerStatusCell = (props) => {
-  const { status, classes, id, partners } = props;
+  const { status, classes, id, partners, applicationStatuses } = props;
   return (
     <Tooltip
       id={`${id}-partner-status-tooltip`}
-      title={renderExpandedCell(partners, classes)}
+      title={renderExpandedCell(partners, classes, applicationStatuses)}
       disabled={!partners}
     >
       <div>
@@ -62,6 +63,15 @@ EoiPartnerStatusCell.propTypes = {
   status: PropTypes.string.isRequired,
   id: PropTypes.number.isRequired,
   partners: PropTypes.array,
+  applicationStatuses: PropTypes.object,
 };
 
-export default withStyles(styleSheet, { name: 'EoiPartnerStatusCell' })(EoiPartnerStatusCell);
+const mapStateToProps = state => ({
+  applicationStatuses: selectNewApplicationStatuses(state),
+});
+
+
+export default compose(
+  withStyles(styleSheet, { name: 'EoiPartnerStatusCell' }),
+  connect(mapStateToProps),
+)(EoiPartnerStatusCell);

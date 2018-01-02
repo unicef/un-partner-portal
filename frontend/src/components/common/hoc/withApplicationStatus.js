@@ -3,11 +3,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { selectApplicationStatuses } from '../../../store';
+import { selectNewApplicationStatuses } from '../../../store';
 
 const withApplicationStatus = ComposedComponent => connect(
   (state, ownProps) => ({
-    status: selectApplicationStatuses(state)[ownProps.appStatus],
+    status: selectNewApplicationStatuses(state)[ownProps.appStatus],
   }),
 )(ComposedComponent);
 

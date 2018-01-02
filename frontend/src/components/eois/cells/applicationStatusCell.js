@@ -1,4 +1,3 @@
-import Typography from 'material-ui/Typography';
 import React from 'react';
 import { TableCell } from 'material-ui/Table';
 import PropTypes from 'prop-types';
@@ -11,7 +10,7 @@ import { APPLICATION_STATUSES } from '../../../helpers/constants';
 import ApplicationStatusText from '../details/applications/applicationStatusText';
 
 const ApplicationStatusCell = (props) => {
-  const { id, conceptNote, status, hovered, progress } = props;
+  const { id, conceptNote, status, applicationStatus, hovered, progress } = props;
   const Preselect = WithGreyColor(status === APPLICATION_STATUSES.PRE)(PreselectButton);
   const Reject = WithGreyColor(!progress.startsWith('0')
     || status === APPLICATION_STATUSES.REJ)(RejectButton);
@@ -19,7 +18,7 @@ const ApplicationStatusCell = (props) => {
   return (
     <TableCell>
       <GridRow alignItems="center" >
-        <ApplicationStatusText status={status} />
+        <ApplicationStatusText status={status} applicationStatus={applicationStatus} />
         {hovered && <GridRow spacing={8} columns={3}>
           <Download id={id} conceptNote={conceptNote} />
           <Preselect id={[id]} status={status} />
@@ -36,6 +35,7 @@ ApplicationStatusCell.propTypes = {
   status: PropTypes.string,
   hovered: PropTypes.bool,
   progress: PropTypes.string,
+  applicationStatus: PropTypes.string,
 };
 
 ApplicationStatusCell.defaultProps = {

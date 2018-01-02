@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import GridColumn from '../../common/grid/gridColumn';
 import PartnerApplicationsNotesFilter from './partnerApplicationsNotesFilter';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
-import ApplicationStatusCell from '../applicationStatusCell';
+import ApplicationStatusCell from '../../eois/cells/applicationStatusCell';
 import PaginatedList from '../../common/list/paginatedList';
 import WrappedCell from '../../common/cell/wrappedCell';
 import { loadApplicationsCn } from '../../../reducers/applicationsNotesList';
@@ -30,6 +30,13 @@ const applicationCell = ({ row, column }) => {
     return <SectorsCell specializations={row.specializations} />;
   } else if (column.name === 'country') {
     return <CountriesCell countries={row.country} />;
+  } else if (column.name === 'application_status') {
+    return (
+      <ApplicationStatusCell
+        status={'Pen'}
+        applicationStatus={row.application_status}
+        id={row.id}
+      />);
   }
 
   return undefined;
