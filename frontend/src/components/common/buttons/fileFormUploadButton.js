@@ -64,15 +64,21 @@ class FileFormUploadButton extends Component {
     this.props.removeFile(this.props.fieldName);
   }
 
+  isFileSizeCorrect() {
+    const [file] = this.refInput.files;
+
+    return file && file.size / 1024 <= 32 * 1024;
+  }
+
   handleChange() {
     const { fileAdded, fieldName, input: { onChange } } = this.props;
     const [file] = this.refInput.files;
-    
+
     this.setState({
-      fileSizeError: file && file.size / 1024 > 32 * 1024,
+      fileSizeError: !this.isFileSizeCorrect(),
     });
 
-    if (file && file.size / 1024 <= 32 * 1024) {
+    if (this.isFileSizeCorrect()) {
       this.props.uploadFile(fieldName, file).then(id =>
         onChange(id));
     } else if (!fileAdded) {
