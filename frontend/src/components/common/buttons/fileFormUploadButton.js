@@ -67,18 +67,14 @@ class FileFormUploadButton extends Component {
   handleChange() {
     const { fileAdded, fieldName, input: { onChange } } = this.props;
     const [file] = this.refInput.files;
-
+    
     this.setState({
-      fileSizeError: false,
+      fileSizeError: file && file.size / 1024 > 32 * 1024,
     });
 
-    if (file && file.size / 1024 < 32 * 1024) {
+    if (file && file.size / 1024 <= 32 * 1024) {
       this.props.uploadFile(fieldName, file).then(id =>
         onChange(id));
-    } else if (file && file.size / 1024 > 32 * 1024) {
-      this.setState({
-        fileSizeError: true,
-      });
     } else if (!fileAdded) {
       this.handleRemove();
     }
@@ -105,7 +101,7 @@ class FileFormUploadButton extends Component {
       infoText,
       loading } = this.props;
     const url = R.is(String, input.value) ? input.value : fileUrl;
-    
+
     return (
       <FormControl>
         {label && <FieldLabelWithTooltip
