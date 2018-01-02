@@ -57,7 +57,7 @@ const PartnerOpenHeaderOptions = (props) => {
       />}
       {dialogOpen[manage] && <ManageReviewersModal
         id={id}
-        dialogOpen={dialogOpen}
+        dialogOpen={dialogOpen[manage]}
         handleDialogClose={handleDialogClose}
       />}
       {dialogOpen[complete] && <CompleteCfeiModal

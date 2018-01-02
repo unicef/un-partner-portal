@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import R from 'ramda';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'ramda';
@@ -6,7 +7,11 @@ import Typography from 'material-ui/Typography';
 import PaddedContent from '../../../../../common/paddedContent';
 import EmptyContent from '../../../../../common/emptyContent';
 import HeaderList from '../../../../../common/list/headerList';
-import { isUserAFocalPoint, selectCfeiReviewers } from '../../../../../../store';
+import {
+  isUserAFocalPoint,
+  selectCfeiReviewers,
+  selectCfeiDetails,
+} from '../../../../../../store';
 import { loadReviewers } from '../../../../../../reducers/cfeiReviewers';
 import SingleReviewer from './singleReviewer';
 import withConditionalDisplay from '../../../../../common/hoc/withConditionalDisplay';
@@ -18,8 +23,10 @@ const messages = {
 };
 
 class ReviewersSummary extends Component {
-  componentWillMount() {
-    this.props.getReviewers();
+  componentWillReceiveProps({ cfeiReviewers }) {
+    if (!R.equals(cfeiReviewers, this.props.cfeiReviewers)) {
+      this.props.getReviewers();
+    }
   }
 
   content() {
@@ -59,16 +66,22 @@ class ReviewersSummary extends Component {
 
 ReviewersSummary.propTypes = {
   reviewers: PropTypes.array,
+  cfeiReviewers: PropTypes.array,
   focalPoint: PropTypes.bool,
   getReviewers: PropTypes.func,
   loading: PropTypes.bool,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  focalPoint: isUserAFocalPoint(state, ownProps.id),
-  reviewers: selectCfeiReviewers(state, ownProps.id),
-  loading: state.cfeiReviewers.status.loading,
-});
+const mapStateToProps = (state, ownProps) => {
+  const cfei = selectCfeiDetails(state, ownProps.id);
+
+  return {
+    focalPoint: isUserAFocalPoint(state, ownProps.id),
+    reviewers: selectCfeiReviewers(state, ownProps.id),
+    cfeiReviewers: cfei ? cfei.reviewers : [],
+    loading: state.cfeiReviewers.status.loading,
+  };
+};
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   getReviewers: () => dispatch(loadReviewers(ownProps.id)),
