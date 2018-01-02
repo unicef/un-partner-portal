@@ -21,6 +21,7 @@ const applicationCell = ({ row, column }) => {
   if (column.name === 'submission_date') {
     return <WrappedCell content={formatDateForPrint(row.submission_date)} />;
   } else if (column.name === 'id') {
+
     return (<ConceptNoteIDCell
       cfeiId={`${row.eoi_id}`}
       id={row.id}

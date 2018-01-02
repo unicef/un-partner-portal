@@ -7,6 +7,7 @@ import { Link } from 'react-router';
 
 const ConceptNoteIDCell = (props) => {
   const { id, cfeiId, type } = props;
+  console.log(props)
   return (
     <TableCell>
       <Typography
