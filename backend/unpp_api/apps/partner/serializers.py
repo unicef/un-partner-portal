@@ -11,11 +11,13 @@ from common.consts import (
 )
 from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
-from common.serializers import (CommonFileSerializer,
-                                SpecializationSerializer,
-                                MixinPartnerRelatedSerializer,
-                                MixinPreventManyCommonFile,
-                                PointSerializer)
+from common.serializers import (
+    CommonFileSerializer,
+    SpecializationSerializer,
+    MixinPartnerRelatedSerializer,
+    MixinPreventManyCommonFile,
+    PointSerializer
+)
 from .models import (
     Partner,
     PartnerProfile,
@@ -33,6 +35,7 @@ from .models import (
     PartnerInternalControl,
     PartnerPolicyArea,
     PartnerAuditAssessment,
+    PartnerAuditReport,
     PartnerReporting,
     PartnerMember,
 )
@@ -271,15 +274,24 @@ class PartnerPolicyAreaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class PartnerAuditReportSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(required=False)
+    most_recent_audit_report = CommonFileSerializer(allow_null=True)
+    audit_link_report = serializers.URLField(source="link_report", allow_null=True)
+
+    class Meta:
+        model = PartnerAuditReport
+        fields = ('id', 'org_audit', 'most_recent_audit_report', 'audit_link_report')
+
+
 class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
 
-    most_recent_audit_report = CommonFileSerializer()
     assessment_report = CommonFileSerializer()
-    audit_link_report = serializers.URLField(source="link_report")
 
     class Meta:
         model = PartnerAuditAssessment
-        exclude = ("link_report", )
+        fields = "__all__"
 
 
 class PartnerReportingSerializer(serializers.ModelSerializer):
@@ -310,6 +322,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     internal_controls = PartnerInternalControlSerializer(many=True)
     area_policies = PartnerPolicyAreaSerializer(many=True)
     audit = PartnerAuditAssessmentSerializer()
+    audit_reports = PartnerAuditReportSerializer(many=True)
     report = PartnerReportingSerializer(required=False)
     location_field_offices = PointSerializer(many=True)
     is_finished = serializers.BooleanField(read_only=True, source="has_finished")
@@ -354,6 +367,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "internal_controls",
             "area_policies",
             "audit",
+            "audit_reports",
             "report",
             "is_finished",
             "identification_is_complete",
@@ -773,10 +787,7 @@ class PartnerProfileProjectImplementationSerializer(
     regular_audited = serializers.BooleanField(source="audit.regular_audited")
     regular_audited_comment = serializers.CharField(
         source="audit.regular_audited_comment", allow_blank=True, allow_null=True)
-    org_audits = serializers.ListField(source="audit.org_audits")
-    most_recent_audit_report = CommonFileSerializer(
-        source="audit.most_recent_audit_report", allow_null=True)
-    audit_link_report = serializers.URLField(source="audit.link_report", allow_blank=True, allow_null=True)
+    audit_reports = PartnerAuditReportSerializer(many=True)
     major_accountability_issues_highlighted = serializers.BooleanField(
         source="audit.major_accountability_issues_highlighted")
     comment = serializers.CharField(source="audit.comment", allow_blank=True, allow_null=True)
@@ -815,9 +826,7 @@ class PartnerProfileProjectImplementationSerializer(
 
             'regular_audited',
             'regular_audited_comment',
-            'org_audits',
-            'most_recent_audit_report',
-            'audit_link_report',
+            'audit_reports',
             'major_accountability_issues_highlighted',
             'comment',
             'capacity_assessment',
@@ -833,14 +842,59 @@ class PartnerProfileProjectImplementationSerializer(
         )
 
     related_names = [
-        "profile", "audit", "report",
-        "internal_controls", "area_policies",
+        "profile", "audit", "report", "internal_controls", "area_policies",
     ]
 
-    prevent_keys = ["report", "assessment_report", "most_recent_audit_report"]
+    prevent_keys = ["report", "assessment_report"]
+
+    def is_valid(self, raise_exception=False):
+        """
+        Need to raise exception in order to display correct
+        errors for `audit_reports`
+        """
+        return super(PartnerProfileProjectImplementationSerializer, self).is_valid(raise_exception=True)
+
+    def raise_error_if_file_is_already_referenced(self, cfile):
+        if cfile.has_existing_reference:
+            raise serializers.ValidationError({
+                'audit_reports': 'This given common file id {} can be used only once.'.format(cfile.id)
+            })
+
+    def update_audit_reports(self, instance, audit_reports_payload):
+        """
+        Need to use custom method to update audit reports due to additional
+        validation for file
+        """
+        # Remove reports that are not part of the payload
+        payload_report_ids = [r['id'] for r in audit_reports_payload if r.get('id')]
+        reports_to_remove = instance.audit_reports.exclude(id__in=payload_report_ids)
+        reports_to_remove.delete()
+
+        # Iterate through reports data and add or update items
+        for report_data in audit_reports_payload:
+
+            report_id = report_data.pop('id', None)
+            report_file = report_data.get('most_recent_audit_report')
+
+            if report_id:
+                report = instance.audit_reports.get(id=report_id)
+
+                if report_file and report_file != report.most_recent_audit_report:
+                    self.raise_error_if_file_is_already_referenced(report_file)
+
+                instance.audit_reports.filter(id=report_id).update(**report_data)
+            else:
+                if report_file:
+                    self.raise_error_if_file_is_already_referenced(report_file)
+
+                report_data['created_by'] = self.context['request'].user
+                instance.audit_reports.create(**report_data)
 
     @transaction.atomic
     def update(self, instance, validated_data):
+        if 'audit_reports' in validated_data:
+            self.update_audit_reports(instance, validated_data['audit_reports'])
+
         # std method does not support writable nested fields by default
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
 
