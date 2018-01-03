@@ -1,5 +1,6 @@
-
+import R from 'ramda';
 import React, { Component } from 'react';
+import { FormHelperText } from 'material-ui/Form';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { arrayPush, arrayRemove, formValueSelector, arrayRemoveAll } from 'redux-form';
@@ -51,6 +52,7 @@ class LocationsMapField extends Component {
     const {
       showMap,
     } = this.state;
+
     return (
       <div>
         <SpreadContent>
@@ -72,6 +74,7 @@ class LocationsMapField extends Component {
           removeLocation={this.removeLocation}
           removeAllLocations={this.removeAllLocations}
         />
+        {currentCountry && R.isEmpty(currentLocations) && <FormHelperText error>{'Select locations'}</FormHelperText>}
       </div>
     );
   }

@@ -1,6 +1,8 @@
 import { isEmpty, isNil, pluck, sum } from 'ramda';
 import { isDateBefore } from './dates';
 
+export const EMPTY_ERROR = 'NONE';
+
 export const required = value => ((value === undefined || value === null || isEmpty(value)) ? 'Required' : undefined);
 export const requiredBool = value => ((value === undefined || value === null || isEmpty(value) || !value) ? 'Required' : undefined);
 export const warning = value => (isEmpty(value) || isNil(value) || (Array.isArray(value) && isNil(value[0])) ? 'Required' : undefined);
@@ -55,6 +57,20 @@ export const selectionCriteria = (value) => {
     if (totalWeights !== max) return 'Sum of all weights must be equal to 100';
   }
   return undefined;
+};
+
+export const hasLocations = (values, allValues) => {
+  let error;
+
+  if (!isEmpty(values) && !isNil(values)) {
+    values.forEach((countryObj, countryIndex) => {
+      if (countryObj.country && !countryObj.locations) {
+        error = EMPTY_ERROR;
+      }
+    });
+  }
+
+  return error;
 };
 
 export const areFieldsMissing = (fields, values) => {
