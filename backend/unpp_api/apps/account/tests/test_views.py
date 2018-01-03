@@ -87,7 +87,7 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
         self.assertEquals(partner.internal_controls.count(),
                           len(list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values)))
 
-        # check if logout endpoint work correct
+        # check if logout endpoint works correctly
         url = reverse('rest_logout')
         response = self.client.post(url, data={}, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
@@ -97,3 +97,96 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
         user_data['password'] = 'fail'
         response = self.client.post(url, data=user_data, format='json')
         self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)
+
+
+class PreventDuplicateRegistrationsAPITestCase(APITestCase):
+
+    def setUp(self):
+        super(PreventDuplicateRegistrationsAPITestCase, self).setUp()
+        self.email = "test@myorg.org"
+        self.password = 'Test123!'
+
+        self.data = {
+            "partner": {
+                "legal_name": "Org Name",
+                "country_code": "PL",
+                "display_type": PARTNER_TYPES.international,
+            },
+            "user": {
+                "email": self.email,
+                "password": self.password,
+                "fullname": "John Doe",
+            },
+            "partner_profile": {
+                "alias_name": "Alias Org Name",
+                "acronym": "O",
+            },
+            "partner_head_organization": {
+                "fullname": "Jane Doe",
+                "email": "test2@myorg.org",
+            },
+            "partner_member": {
+                "title": "Project Manager",
+            },
+        }
+
+    def test_fails_to_register_duplicate_partner_in_same_country(self):
+        url = reverse('accounts:registration')
+
+        response = self.client.post(url, data=self.data, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED, msg=response.content)
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['partner']['legal_name'], self.data['partner']['legal_name'])
+        self.assertEquals(response.data['user']['email'], self.data['user']['email'])
+
+        duplicate_partner_data = self.data.copy()
+        duplicate_partner_data['user'] = {
+            "email": 'anotehr@mail.com',
+            "password": 'Test123123!',
+            "fullname": "John Doe Jr.",
+        }
+
+        response = self.client.post(url, data=duplicate_partner_data, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)
+        self.assertEqual(len(response.data['non_field_errors']), 1)
+
+    def test_allows_to_register_duplicate_partner_in_different_country(self):
+        url = reverse('accounts:registration')
+
+        response = self.client.post(url, data=self.data, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED, msg=response.content)
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['partner']['legal_name'], self.data['partner']['legal_name'])
+        self.assertEquals(response.data['user']['email'], self.data['user']['email'])
+
+        duplicate_partner_data = self.data.copy()
+        duplicate_partner_data['user'] = {
+            "email": 'anotehr@mail.com',
+            "password": 'Test123123!',
+            "fullname": "John Doe Jr.",
+        }
+        duplicate_partner_data['partner']['country_code'] = 'GB'
+
+        response = self.client.post(url, data=duplicate_partner_data, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED)
+
+    def test_fails_to_register_different_partner_for_existing_org_head(self):
+        url = reverse('accounts:registration')
+
+        response = self.client.post(url, data=self.data, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED, msg=response.content)
+        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEquals(response.data['partner']['legal_name'], self.data['partner']['legal_name'])
+        self.assertEquals(response.data['user']['email'], self.data['user']['email'])
+
+        duplicate_partner_data = self.data.copy()
+        duplicate_partner_data['user'] = {
+            "email": 'anotehr@mail.com',
+            "password": 'Test123123!',
+            "fullname": "John Doe Jr.",
+        }
+        duplicate_partner_data['partner']['legal_name'] = 'Other Organization'
+
+        response = self.client.post(url, data=duplicate_partner_data, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)
+        self.assertEqual(len(response.data['non_field_errors']), 1)
