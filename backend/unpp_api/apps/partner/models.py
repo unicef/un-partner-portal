@@ -114,8 +114,9 @@ class Partner(TimeStampedModel):
     @property
     def flagging_status(self):
         return {
-            'yellow': self.flags.filter(flag_type=FLAG_TYPES.yellow).count(),
-            'red': self.flags.filter(flag_type=FLAG_TYPES.red).count(),
+            'yellow': self.flags.filter(flag_type=FLAG_TYPES.yellow, is_valid=True).count(),
+            'red': self.flags.filter(flag_type=FLAG_TYPES.red, is_valid=True).count(),
+            'invalid': self.flags.filter(is_valid=False).count(),
         }
 
     @property
