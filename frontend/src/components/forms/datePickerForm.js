@@ -48,7 +48,7 @@ class DatePickerForm extends Component {
               component={readOnly ? renderText : renderDatePicker}
               validate={(optional ? (validation || []) : [required].concat(validation || []))}
               hintText={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
-              warn={warn && warning}
+              warn={warn ? warning : null}
               formatDate={formatDateForPrint}
               normalize={normalizeDate}
               textFieldStyle={{

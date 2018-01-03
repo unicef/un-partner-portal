@@ -15,6 +15,7 @@ import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsU
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
 import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
+import { emptyMsg } from '../partnerProfileEdit';
 
 const STEPS = readOnly => [
   {
@@ -89,29 +90,39 @@ class PartnerProfileProjectImplementation extends Component {
 
     const projectImplementation = flatten(formValues.project_impl);
     const initprojectImplementation = flatten(initialValues.project_impl);
-    let changedItems = changedValues(initprojectImplementation, projectImplementation);
-    
-    if (changedItems.audit_reports) {
-      changedItems = R.map((item) => {
+    let patchValues = changedValues(initprojectImplementation, projectImplementation);
+
+    if (patchValues.audit_reports) {
+      const audits = R.map((item) => {
         if (!R.is(Number, item.most_recent_audit_report)) {
           return R.dissoc('most_recent_audit_report', item);
         }
         return item;
-      }, changedValues(initprojectImplementation, projectImplementation).audit_reports);
+      }, patchValues.audit_reports);
+
+      patchValues = R.assoc('audit_reports', audits, patchValues);
     }
 
-    const mergedAudits = R.assoc('audit_reports', changedItems, changedValues(initprojectImplementation, projectImplementation));
+    if (R.isEmpty(patchValues.audit_reports)) {
+      patchValues = R.dissoc('audit_reports', patchValues);
+    }
 
-    return updateTab(partnerId, 'project-implementation', mergedAudits)
-      .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
-      .catch((error) => {
-        const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
+    if (!R.isEmpty(patchValues)) {
+      return updateTab(partnerId, 'project-implementation', patchValues)
+        .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
+        .catch((error) => {
+          const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
 
-        throw new SubmissionError({
-          ...error.response.data,
-          _error: errorMsg,
+          throw new SubmissionError({
+            ...error.response.data,
+            _error: errorMsg,
+          });
         });
-      });
+    }
+
+    throw new SubmissionError({
+      _error: emptyMsg,
+    });
   }
 
   render() {
