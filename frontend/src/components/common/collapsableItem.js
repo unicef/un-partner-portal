@@ -71,11 +71,8 @@ class CollapsableItem extends Component {
   constructor(props) {
     super(props);
 
+    this.state = { expanded: props.expanded };
     this.handleExpandClick = this.handleExpandClick.bind(this);
-  }
-
-  componentWillMount() {
-    this.state = { expanded: this.props.expanded };
   }
 
   handleExpandClick() {
@@ -131,7 +128,10 @@ CollapsableItem.propTypes = {
   expanded: PropTypes.bool,
   warning: PropTypes.bool,
   component: PropTypes.element,
-  handleEditMode: PropTypes.func.isRequired,
+  handleEditMode: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.bool,
+  ]),
 };
 
 export default withStyles(styleSheet, { name: 'CollapsableItem' })(CollapsableItem);

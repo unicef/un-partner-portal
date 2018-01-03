@@ -32,6 +32,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
           label={messages.resultsBasedApproach}
           values={BOOL_VAL}
           warn
+          optional
           infoText={messages.resultsBasedApproachTooltip}
           readOnly={readOnly}
         />
@@ -45,6 +46,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
                 maxLength: '5000',
               },
             }}
+            optional
             warn
             readOnly={readOnly}
           />
@@ -54,6 +56,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
           label={messages.monitoringSystem}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         {visibleIfYes(monitoringSystem)
@@ -66,6 +69,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
                 maxLength: '5000',
               },
             }}
+            optional
             warn
             readOnly={readOnly}
           />
@@ -75,6 +79,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
           label={messages.feedbackSystem}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         {visibleIfYes(feedbackSystem)
@@ -88,6 +93,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
               },
             }}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}

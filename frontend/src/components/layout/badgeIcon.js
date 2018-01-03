@@ -44,6 +44,7 @@ class BadgeIcon extends Component {
 
   render() {
     const { classes, notifications, handleClick } = this.props;
+
     return (
       <IconButton className={classes.headerIcon} color="contrast" onClick={(event) => { if (notifications > 0) handleClick(event); }}>
         <LensIcon className={classes.iconBox} />
@@ -52,7 +53,7 @@ class BadgeIcon extends Component {
           badgeContent={notifications}
           className={classes.iconBox}
           classes={{ badge: classes.badge }}
-        />}
+        >{''}</Badge>}
       </IconButton>
     );
   }

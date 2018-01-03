@@ -89,6 +89,7 @@ class NotificationsList extends Component {
 
   render() {
     const { classes, loading, items, itemsPatch, next } = this.props;
+
     return (
       <Paper className={classes.paper}>
         <div className={classes.header}>
@@ -113,6 +114,7 @@ class NotificationsList extends Component {
         <div className={classes.root}>
           {items.map(item =>
             (<NotificationItem
+              key={item.id}
               item={item}
               itemPatch={itemsPatch[item.notification.id]}
               handleReadNotification={this.handleReadNotification}
@@ -133,8 +135,8 @@ class NotificationsList extends Component {
 NotificationsList.propTypes = {
   classes: PropTypes.object,
   items: PropTypes.array,
-  next: PropTypes.String,
-  itemsPatch: PropTypes.array,
+  next: PropTypes.string,
+  itemsPatch: PropTypes.object,
   loadNotifications: PropTypes.func,
   markNotification: PropTypes.func,
   markAllNotifications: PropTypes.func,

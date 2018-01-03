@@ -70,7 +70,7 @@ RegistrationStep.propTypes = {
   /**
    * component to be wrapped
    */
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   /**
    * whether step is the first, to control buttons appearance
    */
@@ -84,7 +84,7 @@ RegistrationStep.propTypes = {
    */
   reset: PropTypes.func.isRequired,
   error: PropTypes.string,
-  clearError: PropTypes.object,
+  clearError: PropTypes.func,
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

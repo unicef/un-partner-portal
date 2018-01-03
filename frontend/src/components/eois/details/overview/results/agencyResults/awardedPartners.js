@@ -34,7 +34,11 @@ class AwardedPartners extends Component {
     return (
       <div>
         {awardedPartners.map(award =>
-          <SingleAward award={award} isFocalPoint={focalPoint} />)}
+          (<SingleAward
+            key={award.application_id}
+            award={award}
+            isFocalPoint={focalPoint}
+          />))}
       </div>);
   }
 

@@ -36,6 +36,7 @@ const annualBudgetForm = (budget, budgetTypes, readOnly) => (
         label={messages.budget}
         values={budgetTypes}
         warn
+        optional
         readOnly={readOnly}
       />
     </Grid>

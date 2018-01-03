@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router';
 
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
@@ -13,7 +12,14 @@ const messages = {
 
 
 const WithdrawApplicationButton = (props) => {
-  const { applicationId, handleDialogClose, handleDialogOpen, dialogOpen, ...other } = props;
+  const {
+    applicationId,
+    handleDialogClose,
+    handleDialogOpen,
+    dialogOpen,
+    ...other,
+  } = props;
+
   return (
     <Grid item>
       <Button
@@ -42,4 +48,4 @@ WithdrawApplicationButton.propTypes = {
 };
 
 
-export default withDialogHandling(withRouter(WithdrawApplicationButton));
+export default withDialogHandling(WithdrawApplicationButton);

@@ -1,5 +1,6 @@
-
+import R from 'ramda';
 import React, { Component } from 'react';
+import { FormHelperText } from 'material-ui/Form';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { arrayPush, arrayRemove, formValueSelector, arrayRemoveAll } from 'redux-form';
@@ -10,8 +11,7 @@ import LocationsMap from './locationsMap';
 
 
 const messages = {
-  label: 'Choose location(s) for this country - pick location(s) from the map ' +
-  '(optional). Remove locations by double-clicking the markers.',
+  label: 'Choose location(s) for this country - pick location(s) from the map. Remove locations by clicking the markers.',
   showMap: 'show map',
   hideMap: 'hide map',
 };
@@ -52,6 +52,7 @@ class LocationsMapField extends Component {
     const {
       showMap,
     } = this.state;
+
     return (
       <div>
         <SpreadContent>
@@ -73,6 +74,7 @@ class LocationsMapField extends Component {
           removeLocation={this.removeLocation}
           removeAllLocations={this.removeAllLocations}
         />
+        {currentCountry && R.isEmpty(currentLocations) && <FormHelperText error>{'Select locations'}</FormHelperText>}
       </div>
     );
   }

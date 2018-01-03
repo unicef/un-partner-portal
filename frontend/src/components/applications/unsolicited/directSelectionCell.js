@@ -8,7 +8,7 @@ const DirectSelectionCell = (props) => {
   const { directSelection } = props;
 
   return (
-    <TableCell disablePadding>
+    <TableCell padding="none">
       {directSelection
         ? <Check />
         : <Typography type="body2">-</Typography>

@@ -18,7 +18,7 @@ const messages = {
 };
 
 const ChangeSummaryForm = (props) => {
-  const { handleSubmit, readOnly, error, clearError } = props;
+  const { handleSubmit, readOnly, error, clearError, form } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn >
@@ -30,6 +30,7 @@ const ChangeSummaryForm = (props) => {
         />
         <FileForm
           fieldName="review_summary_attachment"
+          formName={form}
           label={messages.labels.attachment}
           optional
           readOnly={readOnly}
@@ -57,6 +58,7 @@ ChangeSummaryForm.propTypes = {
   readOnly: PropTypes.bool,
   clearError: PropTypes.func,
   error: PropTypes.string,
+  form: PropTypes.string,
 };
 
 const formChangeSummaryForm = reduxForm({

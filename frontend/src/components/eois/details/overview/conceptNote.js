@@ -6,6 +6,7 @@ import FileDownloadButton from '../../../common/buttons/fileDownloadButton';
 import { formatDateForPrint } from '../../../../helpers/dates';
 import Loader from '../../../common/loader';
 import PaddedContent from '../../../common/paddedContent';
+import EmptyContent from '../../../common/emptyContent';
 import GridColumn from '../../../common/grid/gridColumn';
 
 const messages = {
@@ -20,12 +21,12 @@ const ConceptNote = (props) => {
     >
       <PaddedContent>
         <Loader loading={loading}>
-          {!loading && <GridColumn alignItems="center">
+          {!loading ? (<GridColumn alignItems="center">
             <FileDownloadButton fileUrl={conceptNote} />
             {date && <Typography type="caption">
               {`${messages.caption}: ${formatDateForPrint(date)}`}
             </Typography>}
-          </GridColumn>}
+          </GridColumn>) : <EmptyContent />}
         </Loader>
       </PaddedContent>
     </HeaderList>

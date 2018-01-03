@@ -29,6 +29,7 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
             label={messages.accountingSystem}
             values={financialControlSystem}
             warn
+            optional
             readOnly={readOnly}
           />
         </Grid>
@@ -38,6 +39,7 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
             label={messages.methodAdopted}
             values={methodAccAdopted}
             warn
+            optional
             readOnly={readOnly}
             renderTextSelection
           />
@@ -48,6 +50,7 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
             label={messages.trackSystem}
             values={BOOL_VAL}
             warn
+            optional
             readOnly={readOnly}
           />
         </Grid>
@@ -63,6 +66,7 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
                 },
               }}
               warn
+              optional
               readOnly={readOnly}
             />
           </Grid>

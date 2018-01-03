@@ -18,16 +18,18 @@ const getPath = (x, y, width, height) => `M ${x},${y} h ${width} v ${height} h $
 
 const renderBar = (props) => {
   const { fill, x, y, width, height } = props;
-  return ([
-    <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />,
-    <line
-      x1={x - 4}
-      x2="100%"
-      y1={y + height + 8}
-      y2={y + height + 8}
-      stroke="rgba(0, 0, 0, 0.12)"
-    />,
-  ]);
+  return (
+    <React.Fragment>
+      <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />
+      <line
+        x1={x - 4}
+        x2="100%"
+        y1={y + height + 8}
+        y2={y + height + 8}
+        stroke="rgba(0, 0, 0, 0.12)"
+      />
+    </React.Fragment>
+  );
 };
 
 

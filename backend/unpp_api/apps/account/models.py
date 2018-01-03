@@ -25,8 +25,16 @@ class UserManager(BaseUserManager):
     def create_user(self, fullname, email, password=None, **extra_fields):
         return self._create_user(fullname, email, password, False, False, **extra_fields)
 
-    def create_superuser(self, fullname, email, password, **extra_fields):
-        return self._create_user(fullname, email, password, True, True, **extra_fields)
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self._create_user(None, email, password, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -43,7 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(
         'staff status',
         default=False,
-        help_text=('Designates whether the user can log into this admin site.'),
+        help_text='Designates whether the user can log into this admin site.',
     )
     is_active = models.BooleanField(
         'active',

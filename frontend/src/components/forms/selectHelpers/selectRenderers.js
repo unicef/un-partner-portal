@@ -127,7 +127,7 @@ export function renderSelectOptions(fieldName, values, sections) {
   return (
     // this is hack to get placeholder in place, display hidden option that is preselected
     // by default
-    [<option
+    [<SelectionItem
       value={PLACEHOLDER_VALUE}
       label={PLACEHOLDER_VALUE}
       key={`${fieldName}_${PLACEHOLDER_VALUE}`}

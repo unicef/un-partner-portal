@@ -34,8 +34,8 @@ const ItemWorkingLanguagesCell = (props) => {
 ItemWorkingLanguagesCell.propTypes = {
   classes: PropTypes.object,
   label: PropTypes.string.isRequired,
-  content: PropTypes.string,
-  workingLanguages: PropTypes.array,
+  content: PropTypes.array,
+  workingLanguages: PropTypes.object,
 };
 
 const connected = connect(state => ({

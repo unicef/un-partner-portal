@@ -32,7 +32,10 @@ SpreadContent.propTypes = {
   classes: PropTypes.object.isRequired,
   children: PropTypes.node,
   notFullWidth: PropTypes.bool,
-  className: PropTypes.object,
+  className: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.string,
+  ]),
 };
 
 export default withStyles(styleSheet, { name: 'SpreadContent' })(SpreadContent);

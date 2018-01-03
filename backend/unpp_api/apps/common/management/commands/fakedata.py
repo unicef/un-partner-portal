@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
-from .helpers import clean_up_data_in_db, generate_fake_data
+from common.management.commands.helpers import clean_up_data_in_db, generate_fake_data
 
 
 class Command(BaseCommand):
@@ -21,10 +21,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if options['clean_before']:
             clean_up_data_in_db()
-            print "Data cleaned!"
+            self.stdout.write("Data cleaned!")
             call_command("loaddata", "initial.json")
-            print "Agency, Sectors and Specialization initialized!"
+            self.stdout.write("Agency, Sectors and Specialization initialized!")
 
         generate_fake_data(options['quantity'])
 
-        print "Fake data script finish."
+        self.stdout.write("Fake data script done.")

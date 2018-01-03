@@ -32,6 +32,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
             label={messages.legalName}
             fieldName="legal_name"
             warn
+            optional
             readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
           />
           <Grid item sm={6} xs={12}>

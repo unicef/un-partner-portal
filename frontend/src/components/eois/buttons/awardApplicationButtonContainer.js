@@ -90,13 +90,16 @@ const AwardApplicationButtonContainer = (props) => {
 
 
 AwardApplicationButtonContainer.propTypes = {
-  applicationId: PropTypes.string,
+  applicationId: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   loading: PropTypes.bool,
   status: PropTypes.string,
   isVerified: PropTypes.bool,
   redFlags: PropTypes.number,
   completedReview: PropTypes.bool,
-  linkedButton: PropTypes.element,
+  linkedButton: PropTypes.bool,
   didWin: PropTypes.bool,
   didWithdraw: PropTypes.bool,
   eoiId: PropTypes.string,

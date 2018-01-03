@@ -8,6 +8,7 @@ upstream frontend {
 
 server {
     listen      80 default;
+    client_max_body_size 32M;
 
     location /api/ {
       uwsgi_pass backend;

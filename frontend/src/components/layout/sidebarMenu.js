@@ -50,7 +50,7 @@ function sidebarMenu(props) {
       <MenuLink
         active={pathname.includes(item.path)}
         label={item.label}
-        key={index}
+        key={item.label}
         icon={createElement(item.icon)}
         classes={{
           button: classes.button,
@@ -61,9 +61,9 @@ function sidebarMenu(props) {
     );
     if (item.path === '/settings' || item.path === '/profile') {
       return [
-        <Divider />,
+        <Divider key="divider-top" />,
         link,
-        <Divider />,
+        <Divider key="divider-bottom" />,
       ];
     }
     return link;

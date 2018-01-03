@@ -60,7 +60,10 @@ const Loader = (props) => {
 
 Loader.propTypes = {
   classes: PropTypes.object.isRequired,
-  children: PropTypes.element,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.array,
+  ]),
   loading: PropTypes.bool,
   fullscreen: PropTypes.bool,
   replaceContent: PropTypes.bool,

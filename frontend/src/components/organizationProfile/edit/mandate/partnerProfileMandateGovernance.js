@@ -30,6 +30,7 @@ const PartnerProfileMandateGovernance = (props) => {
             },
           }}
           warn
+          optional
           readOnly={readOnly}
         />
         {!isCountryProfile ? <TextFieldForm
@@ -42,6 +43,7 @@ const PartnerProfileMandateGovernance = (props) => {
             },
           }}
           warn
+          optional
           readOnly={readOnly}
         /> : null}
         <FileForm

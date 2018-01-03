@@ -15,7 +15,7 @@ const OrganizationTypeCell = (props) => {
 };
 
 OrganizationTypeCell.propTypes = {
-  type: PropTypes.object.isRequired,
+  type: PropTypes.string.isRequired,
 };
 
 export default withOrganizationType(OrganizationTypeCell);

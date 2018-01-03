@@ -1,7 +1,6 @@
 import React from 'react';
 import { formValueSelector, FormSection } from 'redux-form';
 import PropTypes from 'prop-types';
-import Grid from 'material-ui/Grid';
 import { connect } from 'react-redux';
 import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
@@ -9,6 +8,7 @@ import ArrayForm from '../../../forms/arrayForm';
 import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import GridRow from '../../../common/grid/gridRow';
 import GridColumn from '../../../common/grid/gridColumn';
+import { email } from '../../../../helpers/validation';
 
 const messages = {
   boardOfDirectors: 'Does your organization have a board of director(s)?',
@@ -24,18 +24,21 @@ const directorForm = (director, readOnly) => (
         fieldName={`${director}.fullname`}
         label="Full Name"
         warn
+        optional
         readOnly={readOnly}
       />
       <TextFieldForm
         fieldName={`${director}.job_title`}
         label="Job Title/Position"
         warn
+        optional
         readOnly={readOnly}
       />
       <RadioForm
         fieldName={`${director}.authorized`}
         values={BOOL_VAL}
         warn
+        optional
         label="Authorised Officer?"
         readOnly={readOnly}
       />
@@ -45,6 +48,7 @@ const directorForm = (director, readOnly) => (
         fieldName={`${director}.telephone`}
         label="Telephone"
         warn
+        optional
         readOnly={readOnly}
       />
       <TextFieldForm
@@ -57,6 +61,8 @@ const directorForm = (director, readOnly) => (
         fieldName={`${director}.email`}
         label="Email"
         warn
+        optional
+        validation={[email]}
         readOnly={readOnly}
       />
     </GridRow>
@@ -70,12 +76,14 @@ const authorisedOfficerForm = (officer, readOnly) => (
         fieldName={`${officer}.fullname`}
         label="Full Name"
         warn
+        optional
         readOnly={readOnly}
       />
       <TextFieldForm
         fieldName={`${officer}.job_title`}
         label="Job Title/Position"
         warn
+        optional
         readOnly={readOnly}
       />
     </GridRow>
@@ -84,6 +92,7 @@ const authorisedOfficerForm = (officer, readOnly) => (
         fieldName={`${officer}.telephone`}
         label="Telephone"
         warn
+        optional
         readOnly={readOnly}
       />
       <TextFieldForm
@@ -96,6 +105,8 @@ const authorisedOfficerForm = (officer, readOnly) => (
         fieldName={`${officer}.email`}
         label="Email"
         warn
+        optional
+        validation={[email]}
         readOnly={readOnly}
       />
     </GridRow>
@@ -112,6 +123,7 @@ const PartnerProfileContactInfoOfficials = (props) => {
         fieldName="have_board_directors"
         values={BOOL_VAL}
         warn
+        optional
         readOnly={readOnly}
       />
       {visibleIfYes(hasBoardOfDirectors)
@@ -129,6 +141,7 @@ const PartnerProfileContactInfoOfficials = (props) => {
         fieldName="have_authorised_officers"
         values={BOOL_VAL}
         warn
+        optional
         readOnly={readOnly}
       />
 

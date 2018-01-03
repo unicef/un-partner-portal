@@ -11,11 +11,13 @@ from common.consts import (
 )
 from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
-from common.serializers import (CommonFileSerializer,
-                                SpecializationSerializer,
-                                MixinPartnerRelatedSerializer,
-                                MixinPreventManyCommonFile,
-                                PointSerializer)
+from common.serializers import (
+    CommonFileSerializer,
+    SpecializationSerializer,
+    MixinPartnerRelatedSerializer,
+    MixinPreventManyCommonFile,
+    PointSerializer
+)
 from .models import (
     Partner,
     PartnerProfile,
@@ -33,6 +35,7 @@ from .models import (
     PartnerInternalControl,
     PartnerPolicyArea,
     PartnerAuditAssessment,
+    PartnerAuditReport,
     PartnerReporting,
     PartnerMember,
 )
@@ -152,7 +155,7 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
 
 class PartnerMailingAddressSerializer(serializers.ModelSerializer):
 
-    mailing_telephone = serializers.CharField(source="telephone")
+    mailing_telephone = serializers.CharField(source="telephone", allow_blank=True, allow_null=True)
     mailing_fax = serializers.CharField(source="fax", allow_null=True, allow_blank=True)
 
     class Meta:
@@ -271,15 +274,25 @@ class PartnerPolicyAreaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class PartnerAuditReportSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(required=False)
+
+    most_recent_audit_report = CommonFileSerializer(allow_null=True)
+    audit_link_report = serializers.URLField(source="link_report", allow_null=True, allow_blank=True)
+
+    class Meta:
+        model = PartnerAuditReport
+        fields = ('id', 'org_audit', 'most_recent_audit_report', 'audit_link_report')
+
+
 class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
 
-    most_recent_audit_report = CommonFileSerializer()
     assessment_report = CommonFileSerializer()
-    audit_link_report = serializers.URLField(source="link_report")
 
     class Meta:
         model = PartnerAuditAssessment
-        exclude = ("link_report", )
+        fields = "__all__"
 
 
 class PartnerReportingSerializer(serializers.ModelSerializer):
@@ -310,6 +323,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     internal_controls = PartnerInternalControlSerializer(many=True)
     area_policies = PartnerPolicyAreaSerializer(many=True)
     audit = PartnerAuditAssessmentSerializer()
+    audit_reports = PartnerAuditReportSerializer(many=True)
     report = PartnerReportingSerializer(required=False)
     location_field_offices = PointSerializer(many=True)
     is_finished = serializers.BooleanField(read_only=True, source="has_finished")
@@ -354,6 +368,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "internal_controls",
             "area_policies",
             "audit",
+            "audit_reports",
             "report",
             "is_finished",
             "identification_is_complete",
@@ -524,7 +539,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     have_authorised_officers = serializers.BooleanField(source="profile.have_authorised_officers")
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
-    org_head = PartnerHeadOrganizationSerializer(read_only=True)
+    org_head = PartnerHeadOrganizationSerializer()
     connectivity = serializers.BooleanField(source="profile.connectivity")
     connectivity_excuse = serializers.CharField(
         source="profile.connectivity_excuse", allow_null=True, allow_blank=True)
@@ -552,7 +567,7 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
         )
 
     related_names = [
-        "profile", "mailing_address", "directors", "authorised_officers"
+        "profile", "mailing_address", "directors", "authorised_officers", "org_head",
     ]
 
     @transaction.atomic
@@ -564,10 +579,10 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
 
 class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
-    background_and_rationale = serializers.CharField(source="mandate_mission.background_and_rationale")
-    mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
-    governance_structure = serializers.CharField(source="mandate_mission.governance_structure")
-    governance_hq = serializers.CharField(source="mandate_mission.governance_hq")
+    background_and_rationale = serializers.CharField(source="mandate_mission.background_and_rationale", allow_blank=True)
+    mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission", allow_blank=True)
+    governance_structure = serializers.CharField(source="mandate_mission.governance_structure", allow_blank=True)
+    governance_hq = serializers.CharField(source="mandate_mission.governance_hq", allow_blank=True)
     governance_organigram = CommonFileSerializer(source="mandate_mission.governance_organigram", allow_null=True)
     ethic_safeguard = serializers.BooleanField(source="mandate_mission.ethic_safeguard")
     ethic_safeguard_policy = CommonFileSerializer(source="mandate_mission.ethic_safeguard_policy", allow_null=True)
@@ -579,7 +594,7 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
     concern_groups = serializers.ListField(source="mandate_mission.concern_groups")
     security_high_risk_locations = serializers.BooleanField(source="mandate_mission.security_high_risk_locations")
     security_high_risk_policy = serializers.BooleanField(source="mandate_mission.security_high_risk_policy")
-    security_desc = serializers.CharField(source="mandate_mission.security_desc")
+    security_desc = serializers.CharField(source="mandate_mission.security_desc", allow_blank=True)
 
     experiences = PartnerExperienceSerializer(many=True)
     location_of_office = PointSerializer()
@@ -655,8 +670,8 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
     budgets = PartnerBudgetSerializer(many=True)
     hq_budgets = serializers.SerializerMethodField()
     major_donors = serializers.ListField(source="fund.major_donors")
-    source_core_funding = serializers.CharField(source="fund.source_core_funding")
-    main_donors_list = serializers.CharField(source="fund.main_donors_list")
+    source_core_funding = serializers.CharField(source="fund.source_core_funding", allow_blank=True)
+    main_donors_list = serializers.CharField(source="fund.main_donors_list", allow_blank=True)
 
     has_finished = serializers.BooleanField(read_only=True, source="profile.funding_complete")
 
@@ -773,10 +788,7 @@ class PartnerProfileProjectImplementationSerializer(
     regular_audited = serializers.BooleanField(source="audit.regular_audited")
     regular_audited_comment = serializers.CharField(
         source="audit.regular_audited_comment", allow_blank=True, allow_null=True)
-    org_audits = serializers.ListField(source="audit.org_audits")
-    most_recent_audit_report = CommonFileSerializer(
-        source="audit.most_recent_audit_report", allow_null=True)
-    audit_link_report = serializers.URLField(source="audit.link_report", allow_blank=True, allow_null=True)
+    audit_reports = PartnerAuditReportSerializer(many=True)
     major_accountability_issues_highlighted = serializers.BooleanField(
         source="audit.major_accountability_issues_highlighted")
     comment = serializers.CharField(source="audit.comment", allow_blank=True, allow_null=True)
@@ -784,7 +796,7 @@ class PartnerProfileProjectImplementationSerializer(
     assessments = serializers.ListField(source="audit.assessments")
     assessment_report = CommonFileSerializer(source="audit.assessment_report", allow_null=True)
 
-    key_result = serializers.CharField(source="report.key_result")
+    key_result = serializers.CharField(source="report.key_result", allow_blank=True)
     publish_annual_reports = serializers.BooleanField(source="report.publish_annual_reports")
     last_report = serializers.DateField(source="report.last_report", allow_null=True)
     report = CommonFileSerializer(source="report.report", allow_null=True)
@@ -815,9 +827,7 @@ class PartnerProfileProjectImplementationSerializer(
 
             'regular_audited',
             'regular_audited_comment',
-            'org_audits',
-            'most_recent_audit_report',
-            'audit_link_report',
+            'audit_reports',
             'major_accountability_issues_highlighted',
             'comment',
             'capacity_assessment',
@@ -833,18 +843,63 @@ class PartnerProfileProjectImplementationSerializer(
         )
 
     related_names = [
-        "profile", "audit", "report",
-        "internal_controls", "area_policies",
+        "profile", "audit", "report", "internal_controls", "area_policies",
     ]
 
-    prevent_keys = ["report", "assessment_report", "most_recent_audit_report"]
+    prevent_keys = ["report", "assessment_report"]
+
+    def is_valid(self, raise_exception=False):
+        """
+        Need to raise exception in order to display correct
+        errors for `audit_reports`
+        """
+        return super(PartnerProfileProjectImplementationSerializer, self).is_valid(raise_exception=True)
+
+    def raise_error_if_file_is_already_referenced(self, cfile):
+        if cfile.has_existing_reference:
+            raise serializers.ValidationError({
+                'audit_reports': 'This given common file id {} can be used only once.'.format(cfile.id)
+            })
+
+    def update_audit_reports(self, instance, audit_reports_payload):
+        """
+        Need to use custom method to update audit reports due to additional
+        validation for file
+        """
+        # Remove reports that are not part of the payload
+        payload_report_ids = [r['id'] for r in audit_reports_payload if r.get('id')]
+        reports_to_remove = instance.audit_reports.exclude(id__in=payload_report_ids)
+        reports_to_remove.delete()
+
+        # Iterate through reports data and add or update items
+        for report_data in audit_reports_payload:
+
+            report_id = report_data.pop('id', None)
+            report_file = report_data.get('most_recent_audit_report')
+
+            if report_id:
+                report = instance.audit_reports.get(id=report_id)
+
+                if report_file and report_file != report.most_recent_audit_report:
+                    self.raise_error_if_file_is_already_referenced(report_file)
+
+                instance.audit_reports.filter(id=report_id).update(**report_data)
+            else:
+                if report_file:
+                    self.raise_error_if_file_is_already_referenced(report_file)
+
+                report_data['created_by'] = self.context['request'].user
+                instance.audit_reports.create(**report_data)
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        # std method does not support writable nested fields by default
-        self.update_partner_related(instance, validated_data, related_names=self.related_names)
+        if 'audit_reports' in validated_data:
+            self.update_audit_reports(instance, validated_data['audit_reports'])
 
         self.prevent_many_common_file_validator(self.initial_data)
+
+        # std method does not support writable nested fields by default
+        self.update_partner_related(instance, validated_data, related_names=self.related_names)
 
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 

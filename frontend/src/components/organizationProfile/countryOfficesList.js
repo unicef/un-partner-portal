@@ -8,6 +8,7 @@ import CountryOfficesHeaderContainer from './countryOfficesHeaderContainer';
 const countryOfficesItems = profiles => profiles.map(item =>
   (<OrganizationItem
     isCountryItem
+    key={item.id}
     profileId={item.id}
     title={item.country_code}
     users={item.users}
