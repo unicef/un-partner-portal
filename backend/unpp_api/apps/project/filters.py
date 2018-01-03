@@ -17,11 +17,9 @@ class BaseProjectFilter(django_filters.FilterSet):
     specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
                                                 queryset=Specialization.objects.all())
     active = BooleanFilter(method='get_active', widget=BooleanWidget())
-    posted_from_date = DateFilter(name='created',
-                                  lookup_expr=('gt'))
-    posted_to_date = DateFilter(name='created',
-                                lookup_expr=('lt'))
-    selected_source = CharFilter(lookup_expr=('iexact'))
+    posted_from_date = DateFilter(name='created', lookup_expr='date__gte')
+    posted_to_date = DateFilter(name='created', lookup_expr='date__lte')
+    selected_source = CharFilter(lookup_expr='iexact')
 
     class Meta:
         model = EOI
