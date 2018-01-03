@@ -6,7 +6,7 @@ import R from 'ramda';
 import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
 import { withStyles } from 'material-ui/styles';
-import { renderText, renderAutocomplete } from '../../helpers/formHelper';
+import { renderText, AutocompleteRenderer } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 import { getSuggestions,
   getAsyncSuggestions,
@@ -49,6 +49,7 @@ const styles = theme => ({
   },
 });
 
+const xor = (a, b) => (!a & b) || (a && !b);
 
 class AutocompleteField extends React.Component {
   constructor(props) {
@@ -74,15 +75,20 @@ class AutocompleteField extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.props.multiple
-      && !this.props.initial
-      && nextProps.initial) {
-      this.setState({ value: nextProps.initial });
-    }
-    if (this.props.multiple
-        && this.props.initialMultiValues.length === 0
-        && nextProps.initialMultiValues.length !== 0) {
-      this.setState({ multiValues: nextProps.initialMultiValues });
+    if (!this.props.multiple) {
+      const current = !!this.props.initial;
+      const incoming = !!nextProps.initial;
+
+      if (xor(current, incoming)) {
+        this.setState({ value: nextProps.initial });
+      }
+    } else {
+      const current = !!this.props.initialMultiValues.length;
+      const incoming = !!nextProps.initialMultiValues.length;
+
+      if (xor(current, incoming)) {
+        this.setState({ multiValues: nextProps.initialMultiValues });
+      }
     }
   }
 
@@ -105,7 +111,8 @@ class AutocompleteField extends React.Component {
 
   handleChange(event, { newValue }) {
     this.setState({
-      value: (R.prop('label', newValue) ? newValue.label : newValue),
+      value: typeof newValue.label !== 'undefined' ?
+          newValue.label : newValue,
     });
   }
 
@@ -159,13 +166,14 @@ class AutocompleteField extends React.Component {
             name={fieldName}
             label={label}
             placeholder={placeholder || `Provide ${label.toLowerCase()}`}
-            component={renderAutocomplete}
+            component={AutocompleteRenderer}
             validate={(optional ? (validation || []) : [required].concat(validation || []))}
             normalize={normalizeSuggestion}
             warn={warn && warning}
             classes={classes}
             parse={this.parseFormValue}
             suggestions={this.state.suggestions}
+            suggestionsPool={this.props.suggestionsPool}
             infoText={infoText}
             overlap={overlap}
             handleSuggestionsFetchRequested={async

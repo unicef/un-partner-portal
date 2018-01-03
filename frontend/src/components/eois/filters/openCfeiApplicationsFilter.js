@@ -191,7 +191,7 @@ OpenCfeiApplicationsFilter.propTypes = {
   partnersType: PropTypes.array.isRequired,
   concernGroups: PropTypes.array.isRequired,
   pathName: PropTypes.string,
-  location: PropTypes.string,
+  location: PropTypes.object,
   query: PropTypes.object,
 };
 
@@ -207,10 +207,11 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { type_of_org } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { location } = {} } = ownProps.location;
-  const { query: { specializations = '' } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
   const { query: { concern } = {} } = ownProps.location;
 
-  const specializationsQ = specializations && R.map(Number, specializations.split(','));
+  const specializationsQ = specializations &&
+      R.map(Number, specializations.split(','));
 
   return {
     countries: selectNormalizedCountries(state),

@@ -246,12 +246,15 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { cfei_active } = {} } = ownProps.location;
   const { query: { status } = {} } = ownProps.location;
   const { query: { locations } = {} } = ownProps.location;
-  const { query: { specializations = '' } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
   const { query: { posted_from_date } = {} } = ownProps.location;
   const { query: { posted_to_date } = {} } = ownProps.location;
 
   const agencyQ = agency ? Number(agency) : agency;
-  const specializationsQ = specializations && R.map(Number, specializations.split(','));
+
+  const specializationsQ = specializations &&
+      R.map(Number, specializations.split(','));
+
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
