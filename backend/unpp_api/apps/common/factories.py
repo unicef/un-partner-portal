@@ -26,6 +26,7 @@ from partner.models import (
     PartnerInternalControl,
     PartnerPolicyArea,
     PartnerAuditAssessment,
+    PartnerAuditReport,
     PartnerReporting,
     PartnerMember,
 )
@@ -418,13 +419,31 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         PartnerAuditAssessment.objects.create(
             partner=self,
             regular_audited_comment="fake regular audited comment {}".format(self.id),
-            org_audits=[ORG_AUDIT_CHOICES.donor],
-            most_recent_audit_report=cfile,
             assessment_report=cfile,
-            link_report="http://fake.unicef.org/fake_uri{}".format(self.id),
             major_accountability_issues_highlighted=True,
             comment="fake comment {}".format(self.id),
             assessments=[AUDIT_ASSESMENT_CHOICES.micro],
+        )
+
+    @factory.post_generation
+    def audit_reports(self, create, extracted, **kwargs):
+        cfile1 = CommonFile.objects.create()
+        cfile1.file_field.save('test1.csv', open(filename))
+        cfile2 = CommonFile.objects.create()
+        cfile2.file_field.save('test2.csv', open(filename))
+        PartnerAuditReport.objects.create(
+            created_by=User.objects.first(),
+            partner=self,
+            org_audit=ORG_AUDIT_CHOICES.donor,
+            most_recent_audit_report=cfile1,
+            link_report="http://fake.unicef.org/fake_uri{}_1".format(self.id),
+        )
+        PartnerAuditReport.objects.create(
+            created_by=User.objects.first(),
+            partner=self,
+            org_audit=ORG_AUDIT_CHOICES.internal,
+            most_recent_audit_report=cfile2,
+            link_report="http://fake.unicef.org/fake_uri{}_2".format(self.id),
         )
 
     @factory.post_generation

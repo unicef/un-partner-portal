@@ -95,3 +95,31 @@ class CommonFile(TimeStampedModel):
 
     def __str__(self):
         return "CommonFile <pk:{}>".format(self.id)
+
+    @property
+    def has_existing_reference(self):
+        """
+        Returns True if this file is referenced from at least one other object
+        """
+        has_existing_reference = any([
+            self.assessment_reports.exists(),
+            self.collaboration_evidences.exists(),
+            self.concept_notes.exists(),
+            self.ethic_fraud_policies.exists(),
+            self.ethic_safeguard_policies.exists(),
+            self.flag_attachments.exists(),
+            self.gov_docs.exists(),
+            self.governance_organigrams.exists(),
+            self.partner_audit_reports.exists(),
+            self.other_info_doc_1.exists(),
+            self.other_info_doc_2.exists(),
+            self.other_info_doc_3.exists(),
+            self.others_info.exists(),
+            self.registration_docs.exists(),
+            self.reports.exists(),
+            self.review_summary_attachments.exists(),
+        ])
+
+        if has_existing_reference:
+            return True
+        return False
