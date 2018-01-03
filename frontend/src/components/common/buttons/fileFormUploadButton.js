@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
-import { FormControl, FormHelperText, FormLabel } from 'material-ui/Form';
+import { FormControl, FormHelperText } from 'material-ui/Form';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import { CircularProgress } from 'material-ui/Progress';
@@ -17,6 +17,7 @@ import FieldLabelWithTooltip from '../fieldLabelWithTooltip';
 
 const messages = {
   upload: 'upload file',
+  fileSizeError: 'Max file size: 32 MB',
 };
 
 const styleSheet = theme => ({
@@ -54,6 +55,7 @@ class FileFormUploadButton extends Component {
   constructor(props) {
     super(props);
 
+    this.state = { fileSizeError: false };
     this.handleChange = this.handleChange.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
   }
@@ -62,12 +64,21 @@ class FileFormUploadButton extends Component {
     this.props.removeFile(this.props.fieldName);
   }
 
+  isFileSizeCorrect() {
+    const [file] = this.refInput.files;
+
+    return file && file.size / 1024 <= 32 * 1024;
+  }
+
   handleChange() {
     const { fileAdded, fieldName, input: { onChange } } = this.props;
     const [file] = this.refInput.files;
 
+    this.setState({
+      fileSizeError: !this.isFileSizeCorrect(),
+    });
 
-    if (file) {
+    if (this.isFileSizeCorrect()) {
       this.props.uploadFile(fieldName, file).then(id =>
         onChange(id));
     } else if (!fileAdded) {
@@ -79,6 +90,7 @@ class FileFormUploadButton extends Component {
 
   handleRemove() {
     const { clearFile, fieldName, input: { onChange } } = this.props;
+
     clearFile(fieldName);
     onChange(null);
   }
@@ -95,6 +107,7 @@ class FileFormUploadButton extends Component {
       infoText,
       loading } = this.props;
     const url = R.is(String, input.value) ? input.value : fileUrl;
+
     return (
       <FormControl>
         {label && <FieldLabelWithTooltip
@@ -128,7 +141,7 @@ class FileFormUploadButton extends Component {
                   {messages.upload}
                 </label>
               </Button>
-              {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+              {((touched && error) || warning) && <FormHelperText error>{!this.state.fileSizeError ? (error || warning) : messages.fileSizeError}</FormHelperText>}
             </div>
             : <div className={classes.wrapContent}>
               <Typography type="subheading" className={classes.iconLabel} gutterBottom >
