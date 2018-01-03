@@ -34,6 +34,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
               multiple: true,
             }}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}
@@ -42,6 +43,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
             profileId={profileId}
             formName={'partnerProfile'}
             readOnly={readOnly}
+            optional
             name={'mandate_mission.country_presence.location_field_offices'}
           />
           : null}
@@ -51,6 +53,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
             label={messages.staffGlobaly}
             values={staffGlobally}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}
@@ -60,6 +63,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
             label={messages.staffCountry}
             values={staffGlobally}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}
@@ -74,6 +78,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
               },
             }}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}

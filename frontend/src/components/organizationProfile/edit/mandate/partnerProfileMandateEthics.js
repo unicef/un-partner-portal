@@ -28,6 +28,7 @@ const PartnerProfileMandateEthics = (props) => {
           label={messages.violation}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         {visibleIfNo(ethicsSafeguard)
@@ -42,6 +43,7 @@ const PartnerProfileMandateEthics = (props) => {
               },
             }}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}
@@ -52,6 +54,7 @@ const PartnerProfileMandateEthics = (props) => {
             fieldName="ethic_safeguard_policy"
             label={messages.policy}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}
@@ -60,6 +63,7 @@ const PartnerProfileMandateEthics = (props) => {
           label={messages.fraud}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         {visibleIfNo(ethicsFraud)
@@ -74,6 +78,7 @@ const PartnerProfileMandateEthics = (props) => {
               },
             }}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}
@@ -84,6 +89,7 @@ const PartnerProfileMandateEthics = (props) => {
             fieldName="ethic_fraud_policy"
             label={messages.policy}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}

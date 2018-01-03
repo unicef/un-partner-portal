@@ -52,6 +52,7 @@ const Audit = (values, readOnly, ...props) => (member, index, fields) => {
         infoText={messages.organizationUndergoesTooltip}
         values={newValues}
         readOnly={readOnly}
+        optional
         warn
         {...props}
       />
@@ -71,7 +72,7 @@ const Info = (readOnly, ...props) => (member, index, fields) => {
         formName="partnerProfile"
         fieldName={`${member}.most_recent_audit_report`}
         label={messages.copyOfRecentAudit}
-        optional={!!(mostRecentAuditReport || auditLinkReport)}
+        optional
         warn={!(mostRecentAuditReport || auditLinkReport)}
         readOnly={readOnly}
       />
@@ -81,7 +82,7 @@ const Info = (readOnly, ...props) => (member, index, fields) => {
         label={messages.insertLink}
         fieldName={`${member}.audit_link_report`}
         validation={[url]}
-        optional={!!(mostRecentAuditReport || auditLinkReport)}
+        optional
         warn={!(mostRecentAuditReport || auditLinkReport)}
         readOnly={readOnly}
       />
@@ -101,6 +102,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
           label={messages.isRegularyAudited}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         {visibleIfYes(isRegularyAudited)
@@ -123,6 +125,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               },
             }}
             warn
+            optional
             readOnly={readOnly}
           />}
 
@@ -131,6 +134,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
           label={messages.accountabilityIssues}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         {visibleIfYes(accountabilityIssues)
@@ -144,6 +148,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               },
             }}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}
@@ -152,6 +157,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
           label={messages.formalCapacity}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         {visibleIfYes(hasCapacityAssessment)
@@ -162,6 +168,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               values={capacityAssessments}
               multiple
               warn
+              optional
               readOnly={readOnly}
             />
             <FileForm
@@ -170,6 +177,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               fieldName="assessment_report"
               label={messages.copyOfAssessment}
               warn
+              optional
               readOnly={readOnly}
             />
           </div>
@@ -188,11 +196,6 @@ PartnerProfileProjectImplementationAudit.propTypes = {
     PropTypes.bool,
   ]),
   accountabilityIssues: PropTypes.bool,
-  mostRecentAuditReport: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.string,
-  ]),
-  auditLinkReport: PropTypes.string,
 };
 
 const selector = formValueSelector('partnerProfile');

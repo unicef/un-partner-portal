@@ -24,6 +24,7 @@ const PartnerProfileContactInfoLanguages = (props) => {
             label={messages.workingLanguages}
             values={workingLanguages}
             multiple
+            optional
             warn
             readOnly={readOnly}
           />
