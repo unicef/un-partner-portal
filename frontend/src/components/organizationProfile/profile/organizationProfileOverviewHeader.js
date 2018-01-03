@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Button from 'material-ui/Button';
-import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import OrganizationProfileHeaderOptions from './organizationProfileHeaderOptions';
