@@ -9,7 +9,7 @@ import PartnerProfileCollaborationAccreditation from './partnerProfileCollaborat
 import PartnerProfileCollaborationReferences from './partnerProfileCollaborationReferences';
 import PartnerProfileStepperContainer from '../partnerProfileStepperContainer';
 import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsUpdate';
-import { flatten, isArrayEmpty } from '../../../../helpers/jsonMapper';
+import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
 import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
 

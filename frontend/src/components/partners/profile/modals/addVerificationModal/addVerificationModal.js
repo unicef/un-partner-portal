@@ -91,7 +91,7 @@ AddVerificationModal.propTypes = {
 
 
 const mapStateToProps = (state, ownProps) => {
-  const partnerName = state.partnerNames[ownProps.partnerId];
+  const partnerName = state.agencyPartnerProfile.data[ownProps.params.id] ? state.agencyPartnerProfile.data[ownProps.params.id].name : '';
   return {
     partnerName,
   };

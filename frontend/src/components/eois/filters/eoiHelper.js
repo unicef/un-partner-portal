@@ -1,7 +1,7 @@
 import { browserHistory as history } from 'react-router';
 
 const resetChanges = (pathName, query) => {
-  const { page_size } = query;
+  const { page_size = 10 } = query;
 
   history.push({
     pathname: pathName,
