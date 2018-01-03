@@ -52,7 +52,11 @@ class OrganizationProfileHeader extends Component {
           index={index}
           children={children}
           handleBackButton={() => { history.goBack(); }}
-          header={<OrganizationProfileOverviewHeader update="12 Aug 2017" handleEditClick={() => { history.push(`/profile/${partnerId}/edit`); }} />}
+          header={<OrganizationProfileOverviewHeader
+            update="12 Aug 2017"
+            handleEditClick={() => { history.push(`/profile/${partnerId}/edit`); }}
+            partnerId={partnerId}
+          />}
           title={countryName}
           handleChange={this.handleChange}
         />

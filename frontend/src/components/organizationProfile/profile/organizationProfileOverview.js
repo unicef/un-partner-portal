@@ -15,6 +15,7 @@ import PartnerProfileOtherInfo from '../edit/otherInfo/partnerProfileOtherInfo';
 import { loadPartnerDetails } from '../../../reducers/partnerProfileDetails';
 import { changeTab } from '../../../reducers/partnerProfileEdit';
 import { isUserAgencyReader } from '../../../helpers/authHelpers';
+import { isUserHq, selectUserHqId } from '../../../store';
 
 const FIRST_INDEX = 0;
 
@@ -65,19 +66,19 @@ class OrganizationProfileOverview extends Component {
 
 
   render() {
-    const { completion, displayEdit } = this.props;
+    const { completion, hideEdit } = this.props;
 
     return (
-      <div>
+      <React.Fragment>
         {messages.sections.map(item =>
           (<div key={item.label}>
             <CollapsableItem
               expanded={R.indexOf(item, messages.sections) === FIRST_INDEX}
               title={item.label}
               warning={completion ? completion[completionTabs[R.indexOf(item, messages.sections)]] : false}
-              handleEditMode={displayEdit
-                ? () => this.handleEditMode(R.indexOf(item, messages.sections))
-                : false
+              handleEditMode={hideEdit
+                ? false
+                : () => this.handleEditMode(R.indexOf(item, messages.sections))
               }
               component={messages.sectionComponents[R.indexOf(item, messages.sections)]}
             />
@@ -85,17 +86,17 @@ class OrganizationProfileOverview extends Component {
           </div>
           ))
         }
-      </div>
+      </React.Fragment>
     );
   }
 }
 
 OrganizationProfileOverview.propTypes = {
   changeTab: PropTypes.func.isRequired,
-  partnerId: PropTypes.string.isRequired,
+  partnerId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   loadPartnerProfileDetails: PropTypes.func,
   completion: PropTypes.object,
-  displayEdit: PropTypes.bool,
+  hideEdit: PropTypes.bool,
 };
 
 const mapDispatch = dispatch => ({
@@ -103,11 +104,14 @@ const mapDispatch = dispatch => ({
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
 });
 
-const mapStateToProps = (state, ownProps) => ({
-  partnerId: state.session.partnerId || ownProps.params.id,
-  completion: state.partnerProfileDetails.partnerProfileDetails.completion,
-  displayEdit: !isUserAgencyReader(state),
-});
+const mapStateToProps = (state, ownProps) => {
+  return {
+    partnerId: state.session.partnerId || ownProps.params.id,
+    completion: state.partnerProfileDetails.partnerProfileDetails.completion,
+    hideEdit: (!isUserHq(state) && selectUserHqId(state) === +ownProps.params.id)
+      || isUserAgencyReader(state),
+  };
+};
 
 const connectedOrganizationProfileOverview = connect(
   mapStateToProps, mapDispatch)(OrganizationProfileOverview);

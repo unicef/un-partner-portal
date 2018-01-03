@@ -339,3 +339,9 @@ export const selectPartnerFlagsCount = (state, partnerId) =>
   partnerFlagsSelector.selectPartnerFlagsCount(state.partnerFlags, partnerId);
 
 export const selectAllErrorsMapped = state => errorSelector.selectAllErrorsMapped(state.error);
+
+export const isUserHq = state => state.session.isHq;
+
+export const selectUserHqId = state => state.session.hqId;
+
+export const selectUserPartnerId = state => state.session.partnerId;
