@@ -212,7 +212,7 @@ class ApplicationFullEOISerializer(ApplicationFullSerializer):
 class CreateUnsolicitedProjectSerializer(MixinPreventManyCommonFile, serializers.Serializer):
 
     id = serializers.CharField(source="pk", read_only=True)
-    locations = PointSerializer(many=True, source='locations_proposal_of_eoi')
+    locations = PointSerializer(many=True, source='locations_proposal_of_eoi', required=False)
     title = serializers.CharField(source='proposal_of_eoi_details.title')
     agency = serializers.CharField(source='agency.id')
     specializations = serializers.ListField(source='proposal_of_eoi_details.specializations')
@@ -294,6 +294,7 @@ class CreateDirectProjectSerializer(serializers.Serializer):
 
 
 class CreateProjectSerializer(CreateEOISerializer):
+    locations = PointSerializer(many=True, required=False)
 
     class Meta:
         model = EOI
@@ -301,12 +302,9 @@ class CreateProjectSerializer(CreateEOISerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        locations = validated_data['locations']
-        del validated_data['locations']
-        specializations = validated_data['specializations']
-        del validated_data['specializations']
-        focal_points = validated_data['focal_points']
-        del validated_data['focal_points']
+        locations = validated_data.pop('locations', [])
+        specializations = validated_data.pop('specializations', [])
+        focal_points = validated_data.pop('focal_points', [])
 
         validated_data['cn_template'] = validated_data['agency'].profile.eoi_template
         validated_data['created_by'] = self.context['request'].user
