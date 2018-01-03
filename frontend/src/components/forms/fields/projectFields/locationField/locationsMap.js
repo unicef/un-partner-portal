@@ -42,6 +42,7 @@ class LocationsMapBase extends Component {
     this.initMap = this.initMap.bind(this);
     this.mapClicked = this.mapClicked.bind(this);
     this.onMarkerOver = this.onMarkerOver.bind(this);
+    this.onMarkerOut = this.onMarkerOut.bind(this);
     this.clearBounds = this.clearBounds.bind(this);
     this.removeMarker = this.removeMarker.bind(this);
   }
@@ -62,11 +63,18 @@ class LocationsMapBase extends Component {
     }
   }
 
+  onMarkerOut(props, marker) {
+    this.setState({
+      activeLocation: null,
+      activeMarker: null,
+      showingInfoWindow: false,
+    });
+  }
+
   onMarkerOver(props, marker) {
     if (!this.state.activeMarker || !this.state.showingInfoWindow || (this.state.activeMarker
       && this.state.activeMarker.position.lat() !== marker.position.lat()
       && this.state.activeMarker.position.lng() !== marker.position.lng())) {
-      
       this.setState({
         activeLocation: props.location,
         activeMarker: marker,
@@ -147,6 +155,7 @@ class LocationsMapBase extends Component {
         location={admin_level_1.name}
         onClick={this.removeMarker}
         onMouseover={this.onMarkerOver}
+        onMouseout={this.onMarkerOut}
         position={{ lat, lng: lon }}
       />
     ));
