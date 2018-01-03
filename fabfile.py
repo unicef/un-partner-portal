@@ -64,7 +64,6 @@ def fakedata(quantity=50, clean_before=True):
     if clean_before:
         cmd += ' --clean_before'
     local(cmd)
-    print "fab fixtures is done."
 
 
 def reset_db():
