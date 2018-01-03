@@ -82,9 +82,11 @@ export const sendRequest = ({
       if (isPaginated) {
         const results = response.results;
         const count = response.count;
-        return dispatch(loadSuccess(actionTag, { results, count, ...successParams, getState }));
+        dispatch(loadSuccess(actionTag, { results, count, ...successParams, getState }));
+        return results;
       }
-      return dispatch(loadSuccess(actionTag, { results: response, ...successParams, getState }));
+      dispatch(loadSuccess(actionTag, { results: response, ...successParams, getState }));
+      return response;
     })
     .catch((error) => {
       if (!isCancel(error)) {

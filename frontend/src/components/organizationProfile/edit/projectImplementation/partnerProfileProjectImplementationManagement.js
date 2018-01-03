@@ -8,6 +8,10 @@ import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import GridColumn from '../../../common/grid/gridColumn';
 
 const messages = {
+  resultsBasedApproachTooltip: 'Results-based approach: aims to improve management effectiveness ' +
+  'and accountability by defining realistic expected results, monitoring progress toward the ' +
+  'achievement of expected results, integrating lessons learned into management decisions and ' +
+  'reporting on performance',
   resultsBasedApproach: 'Does the organization use a results-based approach to managing programmes and projects?',
   resultsDescription: 'Please provide a brief description of your management approach',
   monitoringSystem: 'Does your organization have a system for monitoring and evaluating its programmes and projects?',
@@ -28,6 +32,8 @@ const PartnerProfileProjectImplementationManagement = (props) => {
           label={messages.resultsBasedApproach}
           values={BOOL_VAL}
           warn
+          optional
+          infoText={messages.resultsBasedApproachTooltip}
           readOnly={readOnly}
         />
         {visibleIfYes(resultsBasedApproach)
@@ -40,6 +46,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
                 maxLength: '5000',
               },
             }}
+            optional
             warn
             readOnly={readOnly}
           />
@@ -49,6 +56,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
           label={messages.monitoringSystem}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         {visibleIfYes(monitoringSystem)
@@ -61,6 +69,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
                 maxLength: '5000',
               },
             }}
+            optional
             warn
             readOnly={readOnly}
           />
@@ -70,6 +79,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
           label={messages.feedbackSystem}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         {visibleIfYes(feedbackSystem)
@@ -83,6 +93,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
               },
             }}
             warn
+            optional
             readOnly={readOnly}
           />
           : null}

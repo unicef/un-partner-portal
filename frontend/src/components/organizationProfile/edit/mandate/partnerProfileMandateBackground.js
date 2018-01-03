@@ -25,6 +25,7 @@ const PartnerProfileMandateBackground = (props) => {
             },
           }}
           warn
+          optional
           readOnly={readOnly}
         />
         <TextFieldForm
@@ -36,6 +37,7 @@ const PartnerProfileMandateBackground = (props) => {
             },
           }}
           warn
+          optional
           readOnly={readOnly}
         />
       </GridColumn>

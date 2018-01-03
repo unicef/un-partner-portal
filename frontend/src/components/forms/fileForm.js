@@ -26,36 +26,41 @@ class FileForm extends Component {
   }
 
   render() {
-    const { fieldName, label, optional, formName, sectionName,
-      validation, warn, readOnly, deleteDisabled, ...other } = this.props;
-
+    const { fieldName,
+      label,
+      optional,
+      formName,
+      sectionName,
+      validation,
+      warn,
+      readOnly,
+      deleteDisabled,
+      infoText,
+      ...other } = this.props;
     return (
       <Grid item>
-        <FormControl fullWidth>
-          {readOnly
-            ? <Field
-                name={fieldName}
-                label={label}
-                component={renderFileDownload(this.props)}
-                optional={optional}
-              />
-            :
-            <div>
-              <Field
-                name={fieldName}
-                component={FileFormUploadButton}
-                fieldName={fieldName}
-                label={label}
-                sectionName={sectionName}
-                formName={formName}
-                deleteDisabled={deleteDisabled}
-                validate={(optional ? [] : [required].concat(validation || []))}
-                warn={warn && warning}
-                {...other}
-              />
-            </div>
-          }
-        </FormControl>
+        {readOnly
+          ? <Field
+            name={fieldName}
+            label={label}
+            infoText={infoText}
+            component={renderFileDownload(this.props)}
+            optional={optional}
+          />
+          : <Field
+            name={fieldName}
+            component={FileFormUploadButton}
+            fieldName={fieldName}
+            label={label}
+            sectionName={sectionName}
+            formName={formName}
+            infoText={infoText}
+            deleteDisabled={deleteDisabled}
+            validate={(optional ? [] : [required].concat(validation || []))}
+            warn={warn ? warning : undefined}
+            {...other}
+          />
+        }
       </Grid>
     );
   }
@@ -70,11 +75,11 @@ FileForm.propTypes = {
   /**
    * form name
    */
-  formName: PropTypes.string.isRequired,
+  formName: PropTypes.string,
   /**
    * section name
    */
-  sectionName: PropTypes.string.isRequired,
+  sectionName: PropTypes.string,
   /**
    * label used in field, also placeholder is built from it by adding 'Provide'
    */
@@ -103,10 +108,14 @@ FileForm.propTypes = {
    * read only mode
    */
   readOnly: PropTypes.bool,
-  /** 
+  /**
    * Don't display 'X' button
    */
   deleteDisabled: PropTypes.bool,
+  /** 
+   * render additional tooltip with label
+   */
+  infoText: PropTypes.node,
 };
 
 FileForm.defaultProps = {

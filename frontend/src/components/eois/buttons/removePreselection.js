@@ -27,7 +27,7 @@ const RemovePreselectionButton = (props) => {
 };
 
 RemovePreselectionButton.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.array,
   changeStatus: PropTypes.func,
 };
 

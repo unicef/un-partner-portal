@@ -71,11 +71,8 @@ class CollapsableItem extends Component {
   constructor(props) {
     super(props);
 
+    this.state = { expanded: props.expanded };
     this.handleExpandClick = this.handleExpandClick.bind(this);
-  }
-
-  componentWillMount() {
-    this.state = { expanded: this.props.expanded };
   }
 
   handleExpandClick() {
@@ -106,9 +103,9 @@ class CollapsableItem extends Component {
               </div>
               : null
             }
-            <IconButton className={classes.noPrint} onClick={handleEditMode}>
+            {handleEditMode && <IconButton className={classes.noPrint} onClick={handleEditMode}>
               <ModeEdit className={classes.editIcon} />
-            </IconButton>
+            </IconButton>}
           </div>
         </div>
         <div className={`${classes.paddingContent} ${classes.print}`}>{component}</div>

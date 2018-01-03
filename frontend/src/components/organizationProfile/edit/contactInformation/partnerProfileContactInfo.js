@@ -14,6 +14,7 @@ import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsU
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
 import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
+import { emptyMsg } from '../partnerProfileEdit';
 
 const STEPS = readOnly =>
   [
@@ -26,6 +27,10 @@ const STEPS = readOnly =>
       component: <PartnerProfileContactInfoOfficials readOnly={readOnly} />,
       label: 'Key Personnel',
       name: 'authorised_officials',
+      infoText: 'Authorised officer: a member of the organization who has been formally ' +
+      'empowered by that organization to conduct affairs on its behalf, and who has the ' +
+      'authority to enter the organization into legal agreements with the UN and others. An ' +
+      'organization may have one or more authorized officers.',
     },
     {
       component: <PartnerProfileContactInfoHeadOrganization readOnly={readOnly} />,
@@ -86,20 +91,33 @@ class PartnerProfileContactInfo extends Component {
     const unflattenMailingInit = R.dissocPath('address', initialValues.mailing);
     const address = formValues.mailing.address;
     const addressInit = initialValues.mailing.address;
+    const orgHead = formValues.mailing.org_head;
+    const orgHeadInit = initialValues.mailing.org_head;
 
-    const mailing = R.assoc('mailing_address', address, flatten(unflattenMailing));
-    const initMailing = R.assoc('mailing_address', addressInit, flatten(unflattenMailingInit));
+    let values = R.assoc('mailing_address', address, flatten(unflattenMailing));
+    let initValues = R.assoc('mailing_address', addressInit, flatten(unflattenMailingInit));
 
-    return updateTab(partnerId, 'contact-information', changedValues(initMailing, mailing))
-      .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
-      .catch((error) => {
-        const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
+    values = R.assoc('org_head', orgHead, values);
+    initValues = R.assoc('org_head', orgHeadInit, initValues);
 
-        throw new SubmissionError({
-          ...error.response.data,
-          _error: errorMsg,
+    const patchValues = changedValues(initValues, values);
+
+    if (!R.isEmpty(patchValues)) {
+      return updateTab(partnerId, 'contact-information', patchValues)
+        .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
+        .catch((error) => {
+          const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
+
+          throw new SubmissionError({
+            ...error.response.data,
+            _error: errorMsg,
+          });
         });
-      });
+    }
+
+    throw new SubmissionError({
+      _error: emptyMsg,
+    });
   }
 
   render() {

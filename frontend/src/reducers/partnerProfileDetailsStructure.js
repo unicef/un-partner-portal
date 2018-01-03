@@ -123,12 +123,15 @@ const partnerDetailsStructure = {
       collaborations_partnership_others: null,
       partnership_collaborate_institution: null,
       partnership_collaborate_institution_desc: null,
+      any_partnered_with_un: null,
     },
     accreditation: {
       accreditations: null,
+      any_accreditation: null,
     },
     reference: {
       references: null,
+      any_reference: null,
     },
     collaboration_evidences: null,
   },
@@ -161,9 +164,7 @@ const partnerDetailsStructure = {
     audit: {
       regular_audited: null,
       regular_audited_comment: null,
-      org_audits: null,
-      most_recent_audit_report: null,
-      audit_link_report: null,
+      audit_reports: null,
       major_accountability_issues_highlighted: null,
       comment: null,
       capacity_assessment: null,

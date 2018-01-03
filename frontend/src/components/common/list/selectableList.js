@@ -148,7 +148,7 @@ class SelectableList extends Component {
         >
           <PagingState
             currentPage={pageNumber - 1}
-            pageSize={pageSize}
+            pageSize={+pageSize}
             onPageSizeChange={(size) => { this.onPageSize(size); }}
             onCurrentPageChange={(page) => { updatePageNumber(page, pathName, query); }}
             totalCount={itemsCount}
@@ -204,10 +204,16 @@ SelectableList.propTypes = {
   items: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   templateCell: PropTypes.func,
-  itemsCount: PropTypes.object.isRequired,
-  pageSize: PropTypes.number.isRequired,
-  pageNumber: PropTypes.number.isRequired,
-  headerAction: PropTypes.component,
+  itemsCount: PropTypes.number.isRequired,
+  pageSize: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
+  pageNumber: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
+  headerAction: PropTypes.func,
   loading: PropTypes.bool,
   pathName: PropTypes.string.isRequired,
   query: PropTypes.object,
@@ -218,8 +224,8 @@ SelectableList.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   pathName: ownProps.location.pathname,
   query: ownProps.location.query,
-  pageSize: ownProps.location.query.page_size,
-  pageNumber: ownProps.location.query.page,
+  pageSize: ownProps.location.query.page_size || 0,
+  pageNumber: ownProps.location.query.page || 0,
 });
 
 const connectedSelectableList = connect(mapStateToProps, null)(SelectableList);

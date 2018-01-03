@@ -8,6 +8,8 @@ import HeaderNavigation from '../../common/headerNavigation';
 import { loadPartnerDetails } from '../../../reducers/partnerProfileDetails';
 import Loader from '../../../components/common/loader';
 
+export const emptyMsg = 'There are no changes to be saved.';
+
 const messages = {
   edit: 'Edit Profile',
   hqProfile: 'Headquarters Profile',
@@ -33,7 +35,7 @@ class PartnerProfileEdit extends Component {
     this.partnerProfileTabs = this.partnerProfileTabs.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     if (!this.props.partnerProfile.identification) {
       this.props.loadPartnerDetails();
     }
@@ -102,7 +104,7 @@ PartnerProfileEdit.propTypes = {
   loadPartnerDetails: PropTypes.func.isRequired,
   partnerProfile: PropTypes.object,
   partnerLoading: PropTypes.bool.isRequired,
-  completion: PropTypes.array,
+  completion: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => {

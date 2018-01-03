@@ -109,8 +109,16 @@ class PartnersFilter extends Component {
   }
 
   render() {
-    const { classes, countries, partnersType, concernGroups,
-      specs, handleSubmit, reset } = this.props;
+    const {
+      classes,
+      countryCode,
+      countries,
+      partnersType,
+      concernGroups,
+      specs,
+      handleSubmit,
+      reset,
+    } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -143,6 +151,7 @@ class PartnersFilter extends Component {
           <Grid container direction="row" >
             <Grid item sm={4} xs={12} >
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
@@ -214,10 +223,11 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { verification_status } = {} } = ownProps.location;
   const { query: { display_type } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
-  const { query: { specializations = '' } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
   const { query: { concern } = {} } = ownProps.location;
 
-  const specializationsQ = specializations && R.map(Number, specializations.split(','));
+  const specializationsQ = specializations &&
+      R.map(Number, specializations.split(','));
 
   return {
     countries: selectNormalizedCountries(state),
@@ -226,6 +236,7 @@ const mapStateToProps = (state, ownProps) => {
     concernGroups: selectNormalizedPopulationsOfConcernGroups(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
+    countryCode: country_code,
     initialValues: {
       legal_name,
       verification_status,

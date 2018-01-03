@@ -1,35 +1,44 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import InfoIcon from 'material-ui-icons/Info';
 import { withStyles } from 'material-ui/styles';
-import Grid from 'material-ui/Grid';
-import Tooltip from '../common/tooltip';
+import Tooltip from '../common/portalTooltip';
 
 const styleSheet = theme => ({
-  root: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
   infoIcon: {
     fill: theme.palette.text.secondary,
     '&:hover': {
       fill: theme.palette.text.primary,
     },
   },
+  tooltipText: {
+    whiteSpace: 'pre-line',
+    maxWidth: '50vw',
+  },
 });
 
 const TooltipIcon = (props) => {
-  const { classes, Icon, iconClass, infoText, displayTooltip, ...other } = props;
+  const { classes,
+    name,
+    icon: Icon,
+    iconClass,
+    infoText,
+    displayTooltip,
+    tooltipProps,
+    ...other } = props;
   return (
-    <Grid item className={classes.root} >
-      <div data-tip>
-        <Icon
-          className={iconClass || classes.infoIcon}
-          {...other}
-        />
-        { displayTooltip && <Tooltip text={infoText} /> }
-      </div>
-    </Grid>
+    <Tooltip
+      id={`${name}-button`}
+      title={infoText}
+      disabled={!displayTooltip}
+      classes={{ popper: classes.tooltipText }}
+      {...tooltipProps}
+    >
+      <Icon
+        className={`${iconClass} ${classes.infoIcon}`}
+        {...other}
+      />
+    </Tooltip>
   );
 };
 
@@ -39,11 +48,11 @@ TooltipIcon.propTypes = {
   /**
    * Icon to be displayed
    */
-  Icon: PropTypes.func,
+  icon: PropTypes.func,
   /**
-   * text passed to tooltip
+   * text/component displayed inside tooltip
    */
-  infoText: PropTypes.string,
+  infoText: PropTypes.node,
   /**
    * class for the icon
    */
@@ -52,10 +61,19 @@ TooltipIcon.propTypes = {
    * whether tooltip should be displayed at all
    */
   displayTooltip: PropTypes.bool,
+  /**
+   * name to build unique id with
+   */
+  name: PropTypes.string,
+  /** 
+   * props passed to tooltip
+   */
+  tooltipProps: PropTypes.object,
 };
 
 TooltipIcon.defaultProps = {
   displayTooltip: true,
+  icon: InfoIcon,
 };
 
 export default withStyles(styleSheet, { name: 'TooltipIcon' })(TooltipIcon);

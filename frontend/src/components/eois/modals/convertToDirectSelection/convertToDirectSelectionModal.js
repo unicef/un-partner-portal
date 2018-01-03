@@ -25,7 +25,7 @@ class ConvertToDirectSelectionModal extends Component {
     this.props.handleDialogClose();
     const focal = R.assoc(
       'focal_points',
-      values.focal_points.map(id => ({ id })),
+      R.map(id => ({ id }), values.focal_points),
       values);
 
     this.props.convertToDS(focal);
@@ -45,7 +45,6 @@ class ConvertToDirectSelectionModal extends Component {
             title: messages.header,
             body: partnerName,
           }}
-          minWidth={40}
           buttons={{
             flat: {
               handleClick: handleDialogClose,
@@ -84,7 +83,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  convertToDS: body => dispatch(convertCnToDS(body, ownProps.params.id)),
+  convertToDS: body => dispatch(convertCnToDS(body, ownProps.id)),
   submit: () => dispatch(submit('convertToDS')),
 });
 

@@ -49,10 +49,9 @@ const styleSheet = (theme) => {
 const PartnerProfileNameCell = (props) => {
   const { info, onClick } = props;
 
-  return (
-    <TableCell>
-      <ItemPartnerAdditionalInfo info={info} onClick={onClick} />
-    </TableCell>
+  return (<TableCell>
+    <ItemPartnerAdditionalInfo info={info} onClick={onClick} />
+  </TableCell>
   );
 };
 

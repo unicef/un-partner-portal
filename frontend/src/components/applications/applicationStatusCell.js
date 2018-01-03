@@ -15,7 +15,7 @@ const ApplicationStatusCell = (props) => {
 };
 
 ApplicationStatusCell.propTypes = {
-  status: PropTypes.object.isRequired,
+  status: PropTypes.string.isRequired,
 };
 
 export default withApplicationStatus(ApplicationStatusCell);

@@ -123,7 +123,7 @@ class PartnerApplicationListFilter extends Component {
   }
 
   render() {
-    const { classes, eoiTypes, specs, handleSubmit, reset } = this.props;
+    const { classes, countryCode, eoiTypes, specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -139,6 +139,7 @@ class PartnerApplicationListFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
@@ -179,7 +180,6 @@ class PartnerApplicationListFilter extends Component {
                 label={messages.labels.show}
                 fieldName="did_win"
                 optional
-                warn
               />
             </Grid>
           </Grid>
@@ -228,11 +228,14 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { agency } = {} } = ownProps.location;
   const { query: { did_win } = {} } = ownProps.location;
-  const { query: { specializations = '' } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
   const { query: { eoi } = {} } = ownProps.location;
 
   const agencyQ = Number(agency);
-  const specializationsQ = specializations && R.map(Number, specializations.split(','));
+
+  const specializationsQ = specializations &&
+      R.map(Number, specializations.split(','));
+
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
@@ -240,6 +243,7 @@ const mapStateToProps = (state, ownProps) => {
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     agencyId: state.session.agencyId,
+    countryCode: country_code,
     initialValues: {
       project_title,
       country_code,

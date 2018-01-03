@@ -1,43 +1,41 @@
 import { combineReducers } from 'redux';
-import SubmittedCNStatus, {
-  loadSubmittedCNStarted,
-  loadSubmittedCNEnded,
-  loadSubmittedCNSuccess,
-  loadSubmittedCNFailure,
-  LOAD_SUBMITTED_CN_SUCCESS,
-} from './submittedCNStatus';
 import { normalizeSingleCfei } from './cfei';
-
+import { sendRequest } from '../helpers/apiHelper';
+import apiMeta, {
+  success,
+} from './apiMeta';
 import { getSubmittedCN } from '../helpers/api/api';
+
+const errorMessage = 'Couldn\'t load submitted CN, please refresh page and try again';
+
+const SUBMITTED_CN = 'SUBMITTED_CN';
+const tag = 'submittedCN';
 
 const initialState = {
   applications: [],
   count: 0,
 };
 
-export const loadSubmittedCN = params => (dispatch) => {
-  dispatch(loadSubmittedCNStarted());
-  return getSubmittedCN(params)
-    .then(({ results, count }) => {
-      dispatch(loadSubmittedCNEnded());
-      dispatch(loadSubmittedCNSuccess(results, count));
-      return results;
-    })
-    .catch((error) => {
-      dispatch(loadSubmittedCNEnded());
-      dispatch(loadSubmittedCNFailure(error));
-    });
-};
+export const loadSubmittedCN = params => sendRequest({
+  loadFunction: getSubmittedCN,
+  meta: {
+    reducerTag: tag,
+    actionTag: SUBMITTED_CN,
+    isPaginated: true,
+  },
+  errorHandling: { userMessage: errorMessage },
+  apiParams: [params],
+});
 
 export const saveSubmittedCN = (action) => {
-  const { cfei, count } = action;
+  const { results: cfei, count } = action;
   const newSubmittedCN = cfei.map(normalizeSingleCfei);
   return { submittedCN: newSubmittedCN, count };
 };
 
-const SubmittedCN = (state = initialState, action) => {
+const submittedCN = (state = initialState, action) => {
   switch (action.type) {
-    case LOAD_SUBMITTED_CN_SUCCESS: {
+    case success`${SUBMITTED_CN}`: {
       return saveSubmittedCN(action);
     }
     default:
@@ -45,4 +43,4 @@ const SubmittedCN = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ data: SubmittedCN, status: SubmittedCNStatus });
+export default combineReducers({ data: submittedCN, status: apiMeta(SUBMITTED_CN) });

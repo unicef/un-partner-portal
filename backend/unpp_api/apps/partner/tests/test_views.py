@@ -342,7 +342,6 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         payload['partnership_collaborate_institution'] = True
 
         response = self.client.patch(url, data=payload, format='json')
-
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertTrue(payload['partnership_collaborate_institution'])
         self.assertEquals(response.data['partnership_collaborate_institution_desc'], text)
@@ -358,13 +357,14 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
 
         payload = response.data
-        del payload['most_recent_audit_report']
         del payload['publish_annual_reports']
         del payload['link_report']
         del payload['assessment_report']
         del payload['report']
         del payload['key_result']
         del payload['last_report']
+        del payload['audit_reports'][0]['most_recent_audit_report']
+        del payload['audit_reports'][1]['most_recent_audit_report']
         text = 'test'
         payload['financial_control_system_desc'] = text
         payload['management_approach_desc'] = text

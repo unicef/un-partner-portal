@@ -9,6 +9,7 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const LOGIN_SUBMITTING = 'LOGIN_SUBMITTIN';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+export const SESSION_ERROR = 'SESSION_ERROR';
 
 const initialState = {
   role: undefined,
@@ -50,6 +51,11 @@ export const sessionReady = getState => ({
   getState,
 });
 
+export const sessionError = error => ({
+  type: SESSION_ERROR,
+  error,
+});
+
 export const loginSuccess = session => ({ type: LOGIN_SUCCESS, session });
 
 export const logoutSuccess = () => ({ type: LOGIN_SUCCESS });
@@ -70,12 +76,12 @@ export const loadUserData = () => (dispatch, getState) => {
         name: response.name,
         userId: response.id,
         email: response.email,
+        position: response.role,
         // token was valid so we can authorized user
         authorized: true,
         // agency specific field, but ok to have them undefined
         agencyName: response.agency_name,
         agencyId: response.agency_id,
-        position: response.role,
         officeName: response.office_name,
         officeId: response.office_id,
         // partner specific field, but ok to have them undefined
@@ -153,6 +159,9 @@ export default function sessionReducer(state = initialState, action) {
     }
     case LOGOUT_SUCCESS: {
       return initialState;
+    }
+    case SESSION_ERROR: {
+      return R.assoc('error', action.error, state);
     }
     default:
       return state;

@@ -16,6 +16,7 @@ import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsU
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
 import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
+import { emptyMsg } from '../partnerProfileEdit';
 
 const STEPS = readOnly => [
   {
@@ -42,6 +43,9 @@ const STEPS = readOnly => [
     component: <PartnerProfileMandatePopulation readOnly={readOnly} />,
     label: 'Population of Concern',
     name: 'populations_of_concern',
+    infoText: 'Populations of Concern: is composed of various groups of people including ' +
+    'refugees, asylum-seekers, internally displaced persons (IDPs) protected/assisted by ' +
+    'UNHCR, stateless persons and returnees (returned refugees and IDPs).',
   },
   {
     component: <PartnerProfileMandateCountryPresence readOnly={readOnly} />,
@@ -100,18 +104,28 @@ class PartnerProfileMandate extends Component {
 
     const changed = changedValues(initMandateMission, mandateMission);
 
-    const assocExperiences = R.assoc('experiences', convertExperiences, changed);
+    let patchValues = R.assoc('experiences', R.filter(item => !R.isNil(item.specialization_id), convertExperiences), changed);
 
-    return updateTab(partnerId, 'mandate-mission', assocExperiences)
-      .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
-      .catch((error) => {
-        const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
+    if (R.isEmpty(patchValues.experiences)) {
+      patchValues = R.dissoc('experiences', patchValues);
+    }
 
-        throw new SubmissionError({
-          ...error.response.data,
-          _error: errorMsg,
+    if (!R.isEmpty(patchValues)) {
+      return updateTab(partnerId, 'mandate-mission', patchValues)
+        .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
+        .catch((error) => {
+          const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
+
+          throw new SubmissionError({
+            ...error.response.data,
+            _error: errorMsg,
+          });
         });
-      });
+    }
+
+    throw new SubmissionError({
+      _error: emptyMsg,
+    });
   }
 
   render() {

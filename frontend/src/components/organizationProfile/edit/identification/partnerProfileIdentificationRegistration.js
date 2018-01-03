@@ -23,6 +23,10 @@ const messages = {
   number: 'Registration number (If applicable)',
   document: 'Registration Document',
   comment: 'Please comment',
+  govDocTooltip: 'Governing document: is a formal document with information about the structure ' +
+  'and governance of an organization, outlining the purposes of the organization and how it will ' +
+  'be run. A governing document may come in the form of a trust deed, constitution, memorandum ' +
+  'and articles of association, or another formal, legal document.',
 };
 
 const PartnerProfileIdentificationRegistration = (props) => {
@@ -40,6 +44,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   ? messages.yearEstablishment
                   : messages.yearEstablishmentHq}
                 warn
+                optional
                 readOnly={readOnly}
               />
             </Grid>
@@ -49,6 +54,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                 label={messages.haveGovDoc}
                 values={BOOL_VAL}
                 warn
+                optional
                 readOnly={readOnly}
               />
             </Grid>
@@ -60,7 +66,9 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   sectionName="identification.registration"
                   label={messages.governingDoc}
                   warn
+                  optional
                   readOnly={readOnly}
+                  infoText={messages.govDocTooltip}
                 />
               </Grid>}
           </Grid>
@@ -73,6 +81,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
               : messages.registrationCountryHq}
             values={BOOL_VAL}
             warn
+            optional
             readOnly={readOnly}
           />
         </Grid>
@@ -84,6 +93,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                     fieldName="registration_date"
                     label={messages.date}
                     warn
+                    optional
                     readOnly={readOnly}
                   />
                 </Grid>
@@ -102,6 +112,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                     sectionName="identification.registration"
                     label={messages.document}
                     warn
+                    optional
                     readOnly={readOnly}
                   />
                 </Grid>
@@ -112,6 +123,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
             label={messages.comment}
             fieldName="registration_comment"
             warn
+            optional
             readOnly={readOnly}
           />
         </Grid>}
@@ -136,7 +148,7 @@ const connected = connect((state, ownProps) => {
     || state.agencyPartnersList.data.partners);
 
   return {
-    isCountryProfile: partner ? partner.is_hq : false,
+    isCountryProfile: partner ? (partner.is_hq || false) : false,
     isRegistered: selector(state, 'identification.registration.registration_to_operate_in_country'),
     hasGovDoc: selector(state, 'identification.registration.have_gov_doc'),
   };

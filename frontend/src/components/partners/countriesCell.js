@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TableCell } from 'material-ui/Table';
@@ -10,7 +11,7 @@ const CountriesCell = (props) => {
   return (
     <TableCell>
       {countries && countries.map(item =>
-          (<div key={item}><EoiCountryCell code={item} />{', '}</div>))}
+        (<div key={item}><EoiCountryCell code={item} />{R.last(countries) !== item ? ', ' : null }</div>))}
     </TableCell>
   );
 };

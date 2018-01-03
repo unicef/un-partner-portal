@@ -104,7 +104,7 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
   }
 
   render() {
-    const { classes, countries, specs, handleSubmit, reset } = this.props;
+    const { classes, countryCode, countries, specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -120,6 +120,7 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
@@ -199,18 +200,22 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { project_title } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { agency } = {} } = ownProps.location;
-  const { query: { specializations = '' } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
   const { query: { selected_source } = {} } = ownProps.location;
   const { query: { ds_converted } = {} } = ownProps.location;
 
   const agencyQ = agency ? Number(agency) : agency;
-  const specializationsQ = specializations && R.map(Number, specializations.split(','));
+
+  const specializationsQ = specializations &&
+      R.map(Number, specializations.split(','));
+
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
     directSources: selectNormalizedDirectSelectionSource(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
+    countryCode: country_code,
     initialValues: {
       project_title,
       country_code,

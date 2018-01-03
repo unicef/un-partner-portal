@@ -13,7 +13,6 @@ const PreselectButton = (props) => {
   const { id, status, changeStatus, ...other } = props;
   return (
     <IconWithTooltipButton
-      id={id}
       icon={<Preselect />}
       name="preselect"
       text={messages.text}
@@ -27,7 +26,10 @@ const PreselectButton = (props) => {
 };
 
 PreselectButton.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.string,
+  ]),
   status: PropTypes.string,
   changeStatus: PropTypes.func,
 };

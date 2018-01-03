@@ -14,6 +14,7 @@ const messages = {
   explainCollaboration: 'Briefly explain the collaboration with the agency selected (optional)',
   provideNumber: 'Please provide your Vendor/Partner Number (If applicable)',
   selectAgency: 'Please indicate whether your organization has collaborated with any UN agencies',
+  hasPartnership: 'Has your organization partnered with UN agency?',
   hasCollaborated: 'Has the organization collaborated with or participated as a member of a cluster, professional network, consortium or any similar institution?',
   collaborationDesc: 'Please state which cluster, network or consortium and briefly explain the ' +
             'collaboration',
@@ -25,6 +26,7 @@ const AgencySelection = (values, readOnly, ...props) => (member, index, fields) 
       fieldName={`${member}.agency`}
       label={messages.selectAgency}
       readOnly={readOnly}
+      optional
       warn
     />
   </GridColumn>
@@ -68,23 +70,34 @@ const PartnershipInner = (readOnly, ...props) => member => (
 );
 
 const PartnerProfileCollaborationHistory = (props) => {
-  const { readOnly, hasCollaborated, agency } = props;
+  const { readOnly, hasCollaborated, hasPartnership, agency } = props;
 
   return (<FormSection name="history">
     <GridColumn>
-      <ArrayForm
-        limit={15}
-        fieldName="collaborations_partnership"
-        initial
+      <RadioForm
+        fieldName="any_partnered_with_un"
+        label={messages.hasCollaborated}
+        values={BOOL_VAL}
+        warn
+        optional
         readOnly={readOnly}
-        outerField={AgencySelection(agency, readOnly)}
-        innerField={PartnershipInner(readOnly)}
       />
+      {visibleIfYes(hasPartnership)
+        ? <ArrayForm
+          limit={15}
+          fieldName="collaborations_partnership"
+          initial
+          readOnly={readOnly}
+          outerField={AgencySelection(agency, readOnly)}
+          innerField={PartnershipInner(readOnly)}
+        />
+        : null}
       <RadioForm
         fieldName="partnership_collaborate_institution"
         label={messages.hasCollaborated}
         values={BOOL_VAL}
         warn
+        optional
         readOnly={readOnly}
       />
       {visibleIfYes(hasCollaborated)
@@ -98,6 +111,7 @@ const PartnerProfileCollaborationHistory = (props) => {
             },
           }}
           warn
+          optional
           readOnly={readOnly}
         />
         : null}
@@ -109,6 +123,7 @@ const PartnerProfileCollaborationHistory = (props) => {
 PartnerProfileCollaborationHistory.propTypes = {
   readOnly: PropTypes.bool,
   hasCollaborated: PropTypes.bool,
+  hasPartnership: PropTypes.bool,
   agency: PropTypes.array,
 };
 
@@ -116,6 +131,7 @@ const selector = formValueSelector('partnerProfile');
 export default connect(
   state => ({
     agency: [],
+    hasPartnership: selector(state, 'collaboration.history.any_partnered_with_un'),
     hasCollaborated: selector(state, 'collaboration.history.partnership_collaborate_institution'),
   }),
 )(PartnerProfileCollaborationHistory);

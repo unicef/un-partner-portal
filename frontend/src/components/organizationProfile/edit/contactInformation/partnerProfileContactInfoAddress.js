@@ -50,6 +50,7 @@ const PartnerProfileContactInfoAddress = (props) => {
             values={MAILING_TYPE_VALUES}
             renderTextSelection
             warn
+            optional
             readOnly={readOnly}
           />
         </Grid>
@@ -60,6 +61,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                 label={isStreetAddress(mailingType) ? messages.streetAddress : messages.poBoxNumber}
                 fieldName="street"
                 warn
+                optional
                 readOnly={readOnly}
               />
             </Grid>
@@ -68,6 +70,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                 label={messages.city}
                 fieldName="city"
                 warn
+                optional
                 readOnly={readOnly}
               />
             </Grid>
@@ -78,6 +81,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                 values={countries}
                 initialValue={country}
                 warn
+                optional
                 readOnly={readOnly}
               />
             </Grid>
@@ -96,6 +100,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                     label={messages.telephone}
                     fieldName="mailing_telephone"
                     warn
+                    optional
                     readOnly={readOnly}
                   />
                 </Grid>

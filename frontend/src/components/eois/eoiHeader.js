@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 
-import Grid from 'material-ui/Grid';
 import NewCfeiModalButton from './modals/newCfei/newCfeiModalButton';
 import HeaderNavigation from '../common/headerNavigation';
 
@@ -12,7 +11,7 @@ const messages = {
   agency: 'Expressions of Interest',
 };
 
-class CfeiHeader extends Component {
+class EoiHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -52,7 +51,8 @@ class CfeiHeader extends Component {
         index={index}
         title={messages[role]}
         tabs={tabs}
-        header={!id && type && type !== 'unsolicited' && role === 'agency' && <NewCfeiModalButton type={type} />}
+        header={(!id && type && type !== 'unsolicited' && role === 'agency')
+          && <NewCfeiModalButton type={type} />}
         handleChange={this.handleChange}
       >
         {(index !== -1) && children}
@@ -61,7 +61,7 @@ class CfeiHeader extends Component {
   }
 }
 
-CfeiHeader.propTypes = {
+EoiHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
   role: PropTypes.string,
@@ -77,6 +77,6 @@ const mapStateToProps = (state, ownProps) => ({
 
 const containerCfeiHeader = connect(
   mapStateToProps,
-)(CfeiHeader);
+)(EoiHeader);
 
 export default containerCfeiHeader;

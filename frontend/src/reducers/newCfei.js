@@ -76,8 +76,9 @@ export const addDirectCfei = body => (dispatch, getState) => {
   };
   const params = history.getCurrentLocation().query;
   return postDirectCfei(finalBody)
-    .then(() => {
+    .then((direct) => {
       dispatch(loadCfei(PROJECT_TYPES.DIRECT, params));
+      return direct.eoi;
     });
 };
 
@@ -86,24 +87,23 @@ export const addUnsolicitedCN = body => (dispatch) => {
   const preparedBody = prepareBody(body);
   const params = history.getCurrentLocation().query;
   return postUnsolicitedCN(preparedBody)
-    .then(() => {
+    .then((unsolicited) => {
       dispatch(newCfeiSubmitted());
       dispatch(loadApplicationsUcn(params));
+      return unsolicited;
     });
 };
 
-export const updateCfei = (body, id) => (dispatch) => {
-  return patchCfei(body, id)
-    .then((cfei) => {
-      dispatch(loadCfeiDetailSuccess(cfei));
-    }).catch((error) => {
-      dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
-      throw new SubmissionError({
-        ...error.response.data,
-        _error: errorMsg,
-      });
+export const updateCfei = (body, id) => dispatch => patchCfei(body, id)
+  .then((cfei) => {
+    dispatch(loadCfeiDetailSuccess(cfei));
+  }).catch((error) => {
+    dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
+    throw new SubmissionError({
+      ...error.response.data,
+      _error: errorMsg,
     });
-};
+  });
 
 export const changePinStatusCfei = (id, isPinned) => dispatch =>
   patchPinnedCfei({

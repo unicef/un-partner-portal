@@ -33,7 +33,7 @@ class AddReviewModal extends Component {
           maxWidth="md"
           title={title}
           trigger={dialogOpen}
-          handleDialogClose={this.onDialogClose}
+          handleDialogClose={handleDialogClose}
           info={{ title: `${messages.header}: ${partnerName}` }}
           buttons={{
             flat: {
@@ -59,7 +59,7 @@ AddReviewModal.propTypes = {
   handleDialogClose: PropTypes.func,
   partnerName: PropTypes.string,
   title: PropTypes.string,
-  scores: PropTypes.array,
+  scores: PropTypes.object,
 };
 
 

@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import withSectorType from '../common/hoc/withSectorType';
 
-const ApplicationStatusCell = (props) => {
+const SectorItem = (props) => {
   const { sector } = props;
 
   return (
@@ -11,8 +11,8 @@ const ApplicationStatusCell = (props) => {
   );
 };
 
-ApplicationStatusCell.propTypes = {
-  sector: PropTypes.object.isRequired,
+SectorItem.propTypes = {
+  sector: PropTypes.string.isRequired,
 };
 
-export default withSectorType(ApplicationStatusCell);
+export default withSectorType(SectorItem);

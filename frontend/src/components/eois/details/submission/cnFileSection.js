@@ -45,7 +45,7 @@ CnFileSection.propTypes = {
   classes: PropTypes.object,
   component: PropTypes.element,
   displayHint: PropTypes.bool,
-  label: PropTypes.String,
+  label: PropTypes.string,
 };
 
 export default withStyles(styleSheet, { name: 'CnFileSection' })(CnFileSection);

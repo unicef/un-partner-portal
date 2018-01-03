@@ -138,7 +138,7 @@ class EoiFilter extends Component {
   }
 
   render() {
-    const { classes, countries, specs, handleSubmit, reset } = this.props;
+    const { classes, countryCode, countries, specs, handleSubmit, reset } = this.props;
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
         <Grid item xs={12} className={classes.filterContainer} >
@@ -153,6 +153,7 @@ class EoiFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
@@ -250,7 +251,7 @@ EoiFilter.propTypes = {
 };
 
 const formEoiFilter = reduxForm({
-  form: 'openFilter',
+  form: 'tableFilter',
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
   enableReinitialize: true,
@@ -262,17 +263,21 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { agency } = {} } = ownProps.location;
   const { query: { active } = {} } = ownProps.location;
   const { query: { locations } = {} } = ownProps.location;
-  const { query: { specializations = '' } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
   const { query: { posted_from_date } = {} } = ownProps.location;
   const { query: { posted_to_date } = {} } = ownProps.location;
   const agencyQ = Number(agency);
-  const specializationsQ = specializations && R.map(Number, specializations.split(','));
+
+  const specializationsQ = specializations &&
+      R.map(Number, specializations.split(','));
+
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
     agencyId: state.session.agencyId,
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
+    countryCode: country_code,
     initialValues: {
       title,
       country_code,

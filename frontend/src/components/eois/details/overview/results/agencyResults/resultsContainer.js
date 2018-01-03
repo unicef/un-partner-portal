@@ -24,7 +24,7 @@ const ResultsContainer = (props) => {
 };
 
 ResultsContainer.propTypes = {
-  id: PropTypes.number,
+  id: PropTypes.string,
 };
 
 export default ResultsContainer;

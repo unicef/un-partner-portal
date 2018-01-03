@@ -5,7 +5,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
 from common.paginations import SmallPagination
-from common.permissions import IsAtLeastAgencyMemberEditor
+from common.permissions import (
+    IsAtLeastAgencyMemberEditor,
+    IsAgencyMemberUser,
+)
 from .serializers import PartnerFlagSerializer, PartnerVerificationSerializer
 from .models import PartnerFlag, PartnerVerification
 
@@ -30,7 +33,7 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
     """
     Endpoint for getting and creating partner verifications
     """
-    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor,)
+    permission_classes = (IsAuthenticated, IsAgencyMemberUser,)
     serializer_class = PartnerVerificationSerializer
     pagination_class = SmallPagination
 

@@ -93,13 +93,13 @@ class EoiPartnerFilter extends Component {
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         posted_from_date,
         posted_to_date,
-        locations
+        locations,
       }),
     });
   }
 
   render() {
-    const { classes, countries, specs, handleSubmit, reset } = this.props;
+    const { classes, countryCode, countries, specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -115,6 +115,7 @@ class EoiPartnerFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
@@ -196,17 +197,21 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { agency } = {} } = ownProps.location;
   const { query: { active } = {} } = ownProps.location;
   const { query: { locations } = {} } = ownProps.location;
-  const { query: { specializations = '' } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
   const { query: { posted_from_date } = {} } = ownProps.location;
   const { query: { posted_to_date } = {} } = ownProps.location;
 
   const agencyQ = Number(agency);
-  const specializationsQ = specializations && R.map(Number, specializations.split(','));
+
+  const specializationsQ = specializations &&
+      R.map(Number, specializations.split(','));
+
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
+    countryCode: country_code,
     initialValues: {
       title,
       country_code,

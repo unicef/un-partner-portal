@@ -37,7 +37,7 @@ const ItemRowCellDivider = (props) => {
         <Typography color={labelSecondary ? 'secondary' : 'inherit'} type="body1" >{label}</Typography>
         <div className={classes.alignRight}>
           { Array.isArray(content)
-            ? content.map(item => <Typography key={item} type="body1">{item}</Typography>)
+            ? content.map((item, index) => (<Typography key={index} type="body1">{item}</Typography>))
             : <Typography type="body1" >{content}</Typography>
           }
         </div>

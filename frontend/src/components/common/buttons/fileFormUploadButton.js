@@ -1,10 +1,10 @@
 import R from 'ramda';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
-import { FormControl, FormHelperText, FormLabel } from 'material-ui/Form';
+import { FormControl, FormHelperText } from 'material-ui/Form';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import { CircularProgress } from 'material-ui/Progress';
@@ -13,9 +13,11 @@ import FileUpload from 'material-ui-icons/FileUpload';
 import Attachment from 'material-ui-icons/Attachment';
 import { fileNameFromUrl } from '../../../helpers/formHelper';
 import { uploadFile, uploadClearFile, uploadRemoveFile } from '../../../reducers/commonFileUpload';
+import FieldLabelWithTooltip from '../fieldLabelWithTooltip';
 
 const messages = {
   upload: 'upload file',
+  fileSizeError: 'Max file size: 32 MB',
 };
 
 const styleSheet = theme => ({
@@ -43,6 +45,9 @@ const styleSheet = theme => ({
   },
   link: {
     cursor: 'pointer',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
   },
 });
 
@@ -50,6 +55,7 @@ class FileFormUploadButton extends Component {
   constructor(props) {
     super(props);
 
+    this.state = { fileSizeError: false };
     this.handleChange = this.handleChange.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
   }
@@ -58,12 +64,21 @@ class FileFormUploadButton extends Component {
     this.props.removeFile(this.props.fieldName);
   }
 
+  isFileSizeCorrect() {
+    const [file] = this.refInput.files;
+
+    return file && file.size / 1024 <= 32 * 1024;
+  }
+
   handleChange() {
     const { fileAdded, fieldName, input: { onChange } } = this.props;
     const [file] = this.refInput.files;
 
+    this.setState({
+      fileSizeError: !this.isFileSizeCorrect(),
+    });
 
-    if (file) {
+    if (this.isFileSizeCorrect()) {
       this.props.uploadFile(fieldName, file).then(id =>
         onChange(id));
     } else if (!fileAdded) {
@@ -75,6 +90,7 @@ class FileFormUploadButton extends Component {
 
   handleRemove() {
     const { clearFile, fieldName, input: { onChange } } = this.props;
+
     clearFile(fieldName);
     onChange(null);
   }
@@ -88,12 +104,21 @@ class FileFormUploadButton extends Component {
       fileUrl,
       input,
       label,
+      infoText,
       loading } = this.props;
     const url = R.is(String, input.value) ? input.value : fileUrl;
+
     return (
       <FormControl>
-        {label && <FormLabel>{label}</FormLabel>}
-        <div>
+        {label && <FieldLabelWithTooltip
+          infoText={infoText}
+          tooltipIconProps={{
+            name: input.name,
+          }}
+        >
+          {label}
+        </FieldLabelWithTooltip>}
+        <Fragment>
           <input
             onChange={this.handleChange}
             className={classes.root}
@@ -116,10 +141,10 @@ class FileFormUploadButton extends Component {
                   {messages.upload}
                 </label>
               </Button>
-              {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+              {((touched && error) || warning) && <FormHelperText error>{!this.state.fileSizeError ? (error || warning) : messages.fileSizeError}</FormHelperText>}
             </div>
             : <div className={classes.wrapContent}>
-              <Typography type="subheading" className={classes.iconLabel} spacingBottom >
+              <Typography type="subheading" className={classes.iconLabel} gutterBottom >
                 <Attachment className={classes.icon} />
                 <div
                   role="button"
@@ -134,7 +159,7 @@ class FileFormUploadButton extends Component {
                 </IconButton>}
               </Typography>
             </div>}
-        </div>
+        </Fragment>
       </FormControl>
     );
   }
@@ -143,13 +168,13 @@ class FileFormUploadButton extends Component {
 FileFormUploadButton.propTypes = {
   classes: PropTypes.object.isRequired,
   fieldName: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   fileAdded: PropTypes.object,
   input: PropTypes.object,
   deleteDisabled: PropTypes.bool,
   loading: PropTypes.bool,
   fileUrl: PropTypes.string,
-  warning: PropTypes.string,
+  infoText: PropTypes.node,
   meta: PropTypes.object,
   uploadFile: PropTypes.func.isRequired,
   clearFile: PropTypes.func.isRequired,

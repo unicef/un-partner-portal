@@ -91,7 +91,7 @@ class OrganizationItem extends Component {
         </Grid>
 
         <Grid className={classes.right} item xs={1}>
-          {isCountryItem && completed ? <Warning className={classes.icon} /> : null}
+          {isCountryItem && !completed ? <Warning className={classes.icon} /> : null}
         </Grid>
 
         <Grid className={classes.right} item xs={1}>

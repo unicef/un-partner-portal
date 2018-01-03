@@ -12,7 +12,7 @@ import Pagination from '../../../../common/pagination';
 import Loader from '../../../../common/loader';
 
 
-class AwardedPartners extends Component {
+class FlagSummaryContainer extends Component {
   constructor() {
     super();
     this.state = {
@@ -70,7 +70,7 @@ class AwardedPartners extends Component {
   }
 }
 
-AwardedPartners.propTypes = {
+FlagSummaryContainer.propTypes = {
   flags: PropTypes.array,
   loading: PropTypes.bool,
   getFlags: PropTypes.func,
@@ -88,4 +88,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AwardedPartners));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FlagSummaryContainer));

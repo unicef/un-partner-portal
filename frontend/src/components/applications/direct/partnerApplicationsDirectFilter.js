@@ -106,7 +106,7 @@ class PartnerApplicationsNotesFilter extends Component {
         agency,
         cfei_active,
         country_code,
-        specialization
+        specialization,
       }),
     });
   }
@@ -125,7 +125,7 @@ class PartnerApplicationsNotesFilter extends Component {
   }
 
   render() {
-    const { classes, countries, specs, handleSubmit, cnStatus, reset } = this.props;
+    const { classes, countryCode, countries, specs, handleSubmit, cnStatus, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -133,6 +133,7 @@ class PartnerApplicationsNotesFilter extends Component {
           <Grid container direction="row" >
             <Grid item sm={4} xs={12}>
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
@@ -162,7 +163,6 @@ class PartnerApplicationsNotesFilter extends Component {
                 fieldName="cfei_active"
                 label={messages.labels.status}
                 values={STATUS_VAL}
-                defaultValue
                 optional
               />
             </Grid>
@@ -221,6 +221,7 @@ const mapStateToProps = (state, ownProps) => {
     cnStatus: selectNormalizedApplicationStatuses(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
+    countryCode: country_code,
     initialValues: {
       country_code,
       agency: agencyQ,

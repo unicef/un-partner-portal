@@ -7,10 +7,13 @@ import { updateCfei } from '../../../../reducers/newCfei';
 import EditCfeiForm from './editCfeiForm';
 
 const messages = {
-  title: 'Edit Call for Expressions of Interest',
+  title: {
+    open: 'Edit Call for Expressions of Interest',
+    direct: 'Edit Direct Selection',
+  },
   header: {
-    open: { title: 'This is an open selection' },
-    direct: { title: 'This is an direct CFEI' },
+    open: 'This is an open selection',
+    direct: 'This is a direct selection',
   },
   save: 'save',
 };
@@ -30,14 +33,17 @@ class EditCfeiModal extends Component {
 
   render() {
     const { id, submit, dialogOpen, handleDialogClose, type } = this.props;
+
     return (
       <div>
         <ControlledModal
           maxWidth="md"
-          title={messages.title}
+          title={messages.title[type]}
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
-          info={messages.header[type]}
+          info={{
+            title: messages.header[type],
+          }}
           buttons={{
             flat: {
               handleClick: handleDialogClose,

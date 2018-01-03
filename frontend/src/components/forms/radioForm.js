@@ -16,6 +16,7 @@ const RadioForm = (props) => {
     defaultValue,
     renderTextSelection,
     readOnly,
+    infoText,
     ...other } = props;
 
   return (
@@ -24,6 +25,7 @@ const RadioForm = (props) => {
         ? <Field
           name={fieldName}
           component={renderTextSelection ? renderText : renderBool}
+          infoText={infoText}
           values={values}
           optional={optional}
           label={label}
@@ -33,6 +35,7 @@ const RadioForm = (props) => {
           component={renderRadioField}
           options={values}
           label={label}
+          infoText={infoText}
           validate={optional ? [] : [required].concat(validation || [])}
           warn={warn ? [warning] : []}
           defaultValue={defaultValue}
@@ -77,6 +80,10 @@ RadioForm.propTypes = {
   renderTextSelection: PropTypes.bool,
 
   defaultValue: PropTypes.object,
+  /**
+   * text/component passed to tooltip
+   */
+  infoText: PropTypes.string,
 };
 
 export default RadioForm;

@@ -24,6 +24,7 @@ const PartnerProfileMandatePopulation = (props) => {
           label={messages.populationOfConcern}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         {visibleIfYes(populationOfConcern)
@@ -33,6 +34,7 @@ const PartnerProfileMandatePopulation = (props) => {
           values={populationsOfConcernGroups}
           multiple
           warn
+          optional
           readOnly={readOnly}
         />}
       </GridColumn>
