@@ -31,6 +31,7 @@ const initialState = {
   isHq: undefined,
   displayType: undefined,
   newlyRegistered: false,
+  hqId: undefined,
 };
 
 export const initSession = session => ({ type: SESSION_CHANGE, session });
@@ -86,6 +87,7 @@ export const loadUserData = () => (dispatch, getState) => {
         officeId: response.office_id,
         // partner specific field, but ok to have them undefined
         partners: response.partners,
+        hqId: role === ROLES.PARTNER ? R.propOr(null, 'id', R.find(item => item.is_hq === true, response.partners)) : null,
         partnerCountry: role === ROLES.PARTNER ? R.prop('country_code', R.head(response.partners)) : null,
         partnerId: role === ROLES.PARTNER ? R.prop('id', R.head(response.partners)) : null,
         partnerName: role === ROLES.PARTNER ? R.prop('legal_name', R.head(response.partners)) : null,
