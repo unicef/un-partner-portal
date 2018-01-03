@@ -120,7 +120,7 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
         return Pin.objects.filter(
             eoi__deadline_date__range=(today, today + timedelta(days=self.DAYS_AGO)),
             partner_id__in=self.get_partner_ids(),
-        ).distinct().count()
+        ).order_by().distinct('eoi').count()
 
     def get_num_of_awards(self, obj):
         return Application.objects.filter(did_win=True, partner_id__in=self.get_partner_ids()).count()
