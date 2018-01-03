@@ -41,7 +41,8 @@ class LocationsMapBase extends Component {
     this.geocoder = new google.maps.Geocoder();
     this.initMap = this.initMap.bind(this);
     this.mapClicked = this.mapClicked.bind(this);
-    this.onMarkerClick = this.onMarkerClick.bind(this);
+    this.onMarkerOver = this.onMarkerOver.bind(this);
+    this.onMarkerOut = this.onMarkerOut.bind(this);
     this.clearBounds = this.clearBounds.bind(this);
     this.removeMarker = this.removeMarker.bind(this);
   }
@@ -62,12 +63,24 @@ class LocationsMapBase extends Component {
     }
   }
 
-  onMarkerClick(props, marker) {
+  onMarkerOut(props, marker) {
     this.setState({
-      activeLocation: props.location,
-      activeMarker: marker,
-      showingInfoWindow: true,
+      activeLocation: null,
+      activeMarker: null,
+      showingInfoWindow: false,
     });
+  }
+
+  onMarkerOver(props, marker) {
+    if (!this.state.activeMarker || !this.state.showingInfoWindow || (this.state.activeMarker
+      && this.state.activeMarker.position.lat() !== marker.position.lat()
+      && this.state.activeMarker.position.lng() !== marker.position.lng())) {
+      this.setState({
+        activeLocation: props.location,
+        activeMarker: marker,
+        showingInfoWindow: true,
+      });
+    }
   }
 
   initMap(country) {
@@ -134,15 +147,16 @@ class LocationsMapBase extends Component {
   renderMarkers() {
     const { locations } = this.props;
 
-    return locations.map(({ lat, lon, admin_level_1 } , index) => (
+    return locations.map(({ lat, lon, admin_level_1 }, index) => (
       <Marker
         key={`${lat}_${lon}`}
         label=""
         index={index}
         location={admin_level_1.name}
-        onClick={this.onMarkerClick}
-        onDblclick={this.removeMarker}
-        position={{ lat: lat, lng: lon }}
+        onClick={this.removeMarker}
+        onMouseover={this.onMarkerOver}
+        onMouseout={this.onMarkerOut}
+        position={{ lat, lng: lon }}
       />
     ));
   }

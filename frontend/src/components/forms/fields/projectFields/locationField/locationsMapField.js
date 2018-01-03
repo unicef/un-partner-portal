@@ -10,8 +10,7 @@ import LocationsMap from './locationsMap';
 
 
 const messages = {
-  label: 'Choose location(s) for this country - pick location(s) from the map ' +
-  '(optional). Remove locations by double-clicking the markers.',
+  label: 'Choose location(s) for this country - pick location(s) from the map. Remove locations by clicking the markers.',
   showMap: 'show map',
   hideMap: 'hide map',
 };
