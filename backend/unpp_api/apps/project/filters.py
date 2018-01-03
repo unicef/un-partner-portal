@@ -109,6 +109,7 @@ class ApplicationsEOIFilter(django_filters.FilterSet):
                                                 queryset=Specialization.objects.all())
     concern = CharFilter(method='get_concern')
     type_of_org = CharFilter(method='get_type_of_org')
+    status = CharFilter(method='get_status')
 
     class Meta:
         model = Application
@@ -128,6 +129,9 @@ class ApplicationsEOIFilter(django_filters.FilterSet):
 
     def get_type_of_org(self, queryset, name, value):
         return queryset.filter(partner__display_type__icontains=value)
+
+    def get_status(self, queryset, name, value):
+        return queryset.filter(status=value)
 
 
 class ApplicationsUnsolicitedFilter(django_filters.FilterSet):

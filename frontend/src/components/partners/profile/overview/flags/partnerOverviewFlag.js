@@ -4,7 +4,6 @@ import R from 'ramda';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
-import GridColumn from '../../../../common/grid/gridColumn';
 import HeaderList from '../../../../common/list/headerList';
 import PaddedContent from '../../../../common/paddedContent';
 import SpreadContent from '../../../../common/spreadContent';
@@ -23,7 +22,7 @@ const flags = (displayMenu, flagItems = {}) => (
   <PaddedContent>
     <SpreadContent>
       <FlaggingStatus flags={flagItems} noFlagText />
-      {(flagItems.yellow > 0 || flagItems.red > 0)
+      {(flagItems.yellow > 0 || flagItems.red > 0 || flagItems.invalid > 0)
         && displayMenu
         && <FlagSummaryButton flagItems={flagItems} />}
     </SpreadContent>
