@@ -104,19 +104,12 @@ export const loadUserData = () => (dispatch, getState) => {
     })
     .catch((error) => {
       // TODO (marcindo) correct error handling for different scenarios
-      if (R.path(['response', 'status'], error) === 401) {
-        history.push('/login');
-        dispatch(initSession({
-          authorized: false,
-          role: ROLES.PARTNER,
-          error,
-        }));
-      }
-      // just save error somewhere for now
+      history.push('/login');
       dispatch(initSession({
-        error: error.message,
+        authorized: false,
+        role: ROLES.PARTNER,
+        error,
       }));
-      dispatch(sessionReady(getState));
     });
 };
 
