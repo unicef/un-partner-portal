@@ -10,6 +10,16 @@ import Loader from '../../../components/common/loader';
 
 export const emptyMsg = 'There are no changes to be saved.';
 
+export const placeholders = {
+  list: 'Please list',
+  provide: 'Please provide',
+  select: 'Please select',
+  explain: 'Briefly explain',
+  indicate: 'Please indicate',
+  state: 'Please state',
+  comment: 'Provide comment',
+};
+
 const messages = {
   edit: 'Edit Profile',
   hqProfile: 'Headquarters Profile',

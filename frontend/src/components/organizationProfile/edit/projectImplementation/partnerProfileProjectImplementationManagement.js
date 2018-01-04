@@ -6,6 +6,7 @@ import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import GridColumn from '../../../common/grid/gridColumn';
+import { placeholders } from '../partnerProfileEdit';
 
 const messages = {
   resultsBasedApproachTooltip: 'Results-based approach: aims to improve management effectiveness ' +
@@ -39,6 +40,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
         {visibleIfYes(resultsBasedApproach)
           ? <TextFieldForm
             label={messages.resultsDescription}
+            placeholder={placeholders.provide}
             fieldName="management_approach_desc"
             textFieldProps={{
               multiline: true,
@@ -62,6 +64,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
         {visibleIfYes(monitoringSystem)
           ? <TextFieldForm
             label={messages.meDescription}
+            placeholder={placeholders.explain}
             fieldName="system_monitoring_desc"
             textFieldProps={{
               multiline: true,
@@ -86,6 +89,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
           ? <TextFieldForm
             label={messages.feedbackDescription}
             fieldName="feedback_mechanism_desc"
+            placeholder={placeholders.explain}
             textFieldProps={{
               multiline: true,
               inputProps: {

@@ -7,6 +7,7 @@ import { visibleIfNo, visibleIfYes, BOOL_VAL } from '../../../../helpers/formHel
 import FileForm from '../../../forms/fileForm';
 import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import { placeholders } from '../partnerProfileEdit';
 
 const messages = {
   violation: 'Does the organization have a policy or code of conduct to safegaurd ' +
@@ -34,7 +35,7 @@ const PartnerProfileMandateEthics = (props) => {
         {visibleIfNo(ethicsSafeguard)
           ? <TextFieldForm
             label={messages.commnet}
-            placeholder=""
+            placeholder={placeholders.comment}
             fieldName="ethic_safeguard_comment"
             textFieldProps={{
               multiline: true,
@@ -69,7 +70,7 @@ const PartnerProfileMandateEthics = (props) => {
         {visibleIfNo(ethicsFraud)
           ? <TextFieldForm
             label={messages.commnet}
-            placeholder=""
+            placeholder={placeholders.comment}
             fieldName="ethic_fraud_comment"
             textFieldProps={{
               multiline: true,

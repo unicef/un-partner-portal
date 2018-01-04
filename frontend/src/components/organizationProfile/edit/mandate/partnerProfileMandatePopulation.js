@@ -7,6 +7,7 @@ import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import RadioForm from '../../../forms/radioForm';
 import SelectForm from '../../../forms/selectForm';
 import { selectNormalizedPopulationsOfConcernGroups } from '../../../../store';
+import { placeholders } from '../partnerProfileEdit';
 
 const messages = {
   populationOfConcern: 'Does your organization work with populations of concern as defined by UNHCR?',
@@ -33,6 +34,7 @@ const PartnerProfileMandatePopulation = (props) => {
           label={messages.concernGroups}
           values={populationsOfConcernGroups}
           multiple
+          placeholder={placeholders.select}
           warn
           optional
           readOnly={readOnly}

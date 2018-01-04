@@ -6,13 +6,14 @@ import GridColumn from '../../../common/grid/gridColumn';
 import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import { selectNormalizedPartnerDonors } from '../../../../store';
+import { placeholders } from '../partnerProfileEdit';
 
 const messages = {
   typeOfDonor: 'Please select the type of donors that fund your agency',
   donorsList: 'Please list your main donors for programme activities',
   coreFunding: 'Please list your main donors for core funding',
   coreFundingTooltip: 'Core funding: refers to financial support that covers an organization’s ' +
-  'basic "core" organizational and administrative costs, including salaries of non-project staff, '+
+  'basic "core" organizational and administrative costs, including salaries of non-project staff, ' +
   'rent, equipment, utilities and communications.',
 };
 
@@ -27,6 +28,7 @@ const PartnerProfileFundingDonors = (props) => {
           label={messages.typeOfDonor}
           values={partnerDonors}
           multiple
+          placeholder={placeholders.select}
           warn
           optional
           readOnly={readOnly}
@@ -34,6 +36,7 @@ const PartnerProfileFundingDonors = (props) => {
         <TextFieldForm
           label={messages.donorsList}
           fieldName="main_donors_list"
+          placeholder={placeholders.list}
           textFieldProps={{
             multiline: true,
             inputProps: {
@@ -46,6 +49,7 @@ const PartnerProfileFundingDonors = (props) => {
         />
         <TextFieldForm
           label={messages.coreFunding}
+          placeholder={placeholders.list}
           fieldName="source_core_funding"
           infoText={messages.coreFundingTooltip}
           textFieldProps={{

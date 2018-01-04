@@ -10,6 +10,7 @@ import TextFieldForm from '../../../forms/textFieldForm';
 import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import GridColumn from '../../../common/grid/gridColumn';
 import { url } from '../../../../helpers/validation';
+import { placeholders } from '../partnerProfileEdit';
 
 const messages = {
   keyResults: 'Briefly explain the key results achieved by your organization over the last year',
@@ -28,6 +29,7 @@ const PartnerProfileProjectImplementationReporting = (props) => {
         <TextFieldForm
           label={messages.keyResults}
           fieldName="key_result"
+          placeholder={placeholders.explain}
           textFieldProps={{
             multiline: true,
             inputProps: {
@@ -54,6 +56,7 @@ const PartnerProfileProjectImplementationReporting = (props) => {
               <DatePickerForm
                 label={messages.dateOfReport}
                 fieldName="last_report"
+                placeholder={placeholders.provide}
                 warn
                 optional
                 readOnly={readOnly}
@@ -78,6 +81,7 @@ const PartnerProfileProjectImplementationReporting = (props) => {
               <TextFieldForm
                 label={messages.link}
                 fieldName="link_report"
+                placeholder={placeholders.provide}
                 validation={[url]}
                 optional
                 warn={!(annualReport || annualReportLink)}

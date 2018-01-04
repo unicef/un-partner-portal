@@ -8,6 +8,7 @@ import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import { selectNormalizedMethodAccAdopted, selectNormalizedFinancialControlSystem } from '../../../../store';
 import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
+import { placeholders } from '../partnerProfileEdit';
 
 const messages = {
   accountingSystem: 'Your organization\'s accounting system',
@@ -58,6 +59,7 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
           ? <Grid item>
             <TextFieldForm
               label={messages.systemDescription}
+              placeholder={placeholders.explain}
               fieldName="financial_control_system_desc"
               textFieldProps={{
                 multiline: true,

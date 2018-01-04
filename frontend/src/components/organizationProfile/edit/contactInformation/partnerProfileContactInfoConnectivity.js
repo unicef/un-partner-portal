@@ -6,6 +6,7 @@ import Grid from 'material-ui/Grid';
 import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import { visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
+import { placeholders } from '../partnerProfileEdit';
 
 const messages = {
   internetAccess: 'Does the organization have reliable access to internet in all of its ' +
@@ -32,6 +33,7 @@ const PartnerProfileContactInfoConnectivity = (props) => {
         {visibleIfNo(hasInternetAccess) && <Grid item >
           <TextFieldForm
             label={messages.explenation}
+            placeholder={placeholders.explain}
             fieldName="connectivity_excuse"
             optional
             textFieldProps={{

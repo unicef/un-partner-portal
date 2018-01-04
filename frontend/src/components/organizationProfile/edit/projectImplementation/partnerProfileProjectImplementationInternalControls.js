@@ -10,6 +10,7 @@ import SelectForm from '../../../forms/selectForm';
 import ArrayForm from '../../../forms/arrayForm';
 import GridColumn from '../../../common/grid/gridColumn';
 import { selectNormalizedPolicyArea, selectNormalizedFunctionalResponsibility } from '../../../../store';
+import { placeholders } from '../partnerProfileEdit';
 
 const messages = {
   areaOfResponsibilityDesc: 'Area of Responsibility - Has the organization instituted safeguards to ensure the following functional responsibilities are appropriately segregated?',
@@ -58,6 +59,7 @@ const CommentInner = (readOnly, ...props) => member => (
   <TextFieldForm
     label={messages.pleaseComment}
     fieldName={`${member}.comment`}
+    placeholder={placeholders.comment}
     textFieldProps={{
       multiline: true,
       inputProps: {
@@ -131,6 +133,7 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
             <TextFieldForm
               label={messages.pleaseComment}
               fieldName="experienced_staff_desc"
+              placeholder={placeholders.comment}
               textFieldProps={{
                 multiline: true,
                 inputProps: {
