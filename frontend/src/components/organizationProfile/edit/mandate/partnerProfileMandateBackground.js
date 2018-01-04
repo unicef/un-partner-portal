@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormSection } from 'redux-form';
 import TextFieldForm from '../../../forms/textFieldForm';
 import GridColumn from '../../../common/grid/gridColumn';
-import { placeholders } from '../partnerProfileEdit';
+import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
   rationale: 'Briefly state the background and rationale for the establishment of the ' +
@@ -25,7 +25,7 @@ const PartnerProfileMandateBackground = (props) => {
               maxLength: '400',
             },
           }}
-          placeholder={placeholders.state}
+          placeholder={PLACEHOLDERS.state}
           warn
           optional
           readOnly={readOnly}
@@ -33,7 +33,7 @@ const PartnerProfileMandateBackground = (props) => {
         <TextFieldForm
           label={messages.mandate}
           fieldName="mandate_and_mission"
-          placeholder={placeholders.state}
+          placeholder={PLACEHOLDERS.state}
           textFieldProps={{
             inputProps: {
               maxLength: '400',

@@ -12,7 +12,7 @@ import { selectNormalizedAuditTypes, selectNormalizedCapacityAssessments } from 
 import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import GridColumn from '../../../common/grid/gridColumn';
 import { url } from '../../../../helpers/validation';
-import { placeholders } from '../partnerProfileEdit';
+import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
   isRegularyAudited: 'Is the organization regularly audited?',
@@ -53,7 +53,7 @@ const Audit = (values, readOnly, ...props) => (member, index, fields) => {
         infoText={messages.organizationUndergoesTooltip}
         values={newValues}
         readOnly={readOnly}
-        placeholder={placeholders.indicate}
+        placeholder={PLACEHOLDERS.indicate}
         optional
         warn
         {...props}
@@ -83,7 +83,7 @@ const Info = (readOnly, ...props) => (member, index, fields) => {
       <TextFieldForm
         label={messages.insertLink}
         fieldName={`${member}.audit_link_report`}
-        placeholder={placeholders.indicate}
+        placeholder={PLACEHOLDERS.indicate}
         validation={[url]}
         optional
         warn={!(mostRecentAuditReport || auditLinkReport)}
@@ -143,7 +143,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
         {visibleIfYes(accountabilityIssues)
           ? <TextFieldForm
             label={messages.comment}
-            placeholder={placeholders.provide}
+            placeholder={PLACEHOLDERS.provide}
             fieldName="comment"
             textFieldProps={{
               multiline: true,
@@ -172,7 +172,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
               values={capacityAssessments}
               multiple
               warn
-              placeholder={placeholders.select}
+              placeholder={PLACEHOLDERS.select}
               optional
               readOnly={readOnly}
             />

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import { selectNormalizedWorkingLanguages } from '../../../../store';
-import { placeholders } from '../partnerProfileEdit';
+import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
   workingLanguages: 'Working language(s) of your organization',
@@ -34,7 +34,7 @@ const PartnerProfileContactInfoLanguages = (props) => {
           <TextFieldForm
             label={messages.other}
             fieldName="working_languages_other"
-            placeholder={placeholders.state}
+            placeholder={PLACEHOLDERS.state}
             optional
             readOnly={readOnly}
           />

@@ -10,7 +10,7 @@ import { selectNormalizedStaffGlobalyChoices } from '../../../../store';
 import GridColumn from '../../../common/grid/gridColumn';
 import CountryField from '../../../forms/fields/projectFields/locationField/countryField';
 import AddressFieldArray from '../../../forms/fields/projectFields/locationField/addressFieldArray';
-import { placeholders } from '../partnerProfileEdit';
+import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
   operate: 'Select the countries in which the organization operates',
@@ -72,7 +72,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
           ? <TextFieldForm
             label={messages.countryDescription}
             fieldName="engagement_operate_desc"
-            placeholder={placeholders.comment}
+            placeholder={PLACEHOLDERS.comment}
             textFieldProps={{
               multiline: true,
               inputProps: {

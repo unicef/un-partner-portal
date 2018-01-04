@@ -6,7 +6,7 @@ import GridColumn from '../../../common/grid/gridColumn';
 import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import { selectNormalizedPartnerDonors } from '../../../../store';
-import { placeholders } from '../partnerProfileEdit';
+import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
   typeOfDonor: 'Please select the type of donors that fund your agency',
@@ -28,7 +28,7 @@ const PartnerProfileFundingDonors = (props) => {
           label={messages.typeOfDonor}
           values={partnerDonors}
           multiple
-          placeholder={placeholders.select}
+          placeholder={PLACEHOLDERS.select}
           warn
           optional
           readOnly={readOnly}
@@ -36,7 +36,7 @@ const PartnerProfileFundingDonors = (props) => {
         <TextFieldForm
           label={messages.donorsList}
           fieldName="main_donors_list"
-          placeholder={placeholders.list}
+          placeholder={PLACEHOLDERS.list}
           textFieldProps={{
             multiline: true,
             inputProps: {
@@ -49,7 +49,7 @@ const PartnerProfileFundingDonors = (props) => {
         />
         <TextFieldForm
           label={messages.coreFunding}
-          placeholder={placeholders.list}
+          placeholder={PLACEHOLDERS.list}
           fieldName="source_core_funding"
           infoText={messages.coreFundingTooltip}
           textFieldProps={{
