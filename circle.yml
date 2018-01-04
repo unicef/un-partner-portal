@@ -7,6 +7,7 @@ machine:
 
 dependencies:
   pre:
+    - mkdir -p /data/unpp_api/logs
     - pip install -r backend/requirements/dev.pip
 
 test:
