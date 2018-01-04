@@ -43,15 +43,13 @@ from notification.helpers import (
     send_notificiation_application_created,
     send_notification,
 )
-from .models import Assessment, Application, EOI, Pin, ApplicationFeedback
-from .serializers import (
+from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
+from project.serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
     CreateProjectSerializer,
     PartnerProjectSerializer,
     CreateDirectProjectSerializer,
-    AgencyProjectReadSerializer,
-    AgencyProjectUpdateSerializer,
     ApplicationFullSerializer,
     ApplicationFullEOISerializer,
     AgencyUnsolicitedApplicationSerializer,
@@ -69,9 +67,10 @@ from .serializers import (
     EOIReviewersAssessmentsSerializer,
     AwardedPartnersSerializer,
     CompareSelectedSerializer,
+    AgencyProjectSerializer,
 )
 
-from .filters import (
+from project.filters import (
     BaseProjectFilter,
     ApplicationsFilter,
     ApplicationsEOIFilter,
@@ -130,11 +129,7 @@ class EOIAPIView(RetrieveUpdateAPIView):
     queryset = EOI.objects.all()
 
     def get_serializer_class(self, *args, **kwargs):
-        if self.request.user.is_agency_user:
-            if self.request.method == 'GET':
-                return AgencyProjectReadSerializer
-            return AgencyProjectUpdateSerializer
-        return PartnerProjectSerializer
+        return AgencyProjectSerializer if self.request.user.is_agency_user else PartnerProjectSerializer
 
     def perform_update(self, serializer):
         eoi = self.get_object()

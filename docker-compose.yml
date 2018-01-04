@@ -52,5 +52,3 @@ services:
         - ./frontend/:/code
         - /code/node_modules
     command: bash -c "yarn run start"
-
-
