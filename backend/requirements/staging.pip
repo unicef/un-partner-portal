@@ -1,2 +1,5 @@
 # Swagger
 django-rest-swagger==2.1.2
+
+# Inspection
+django-silk==1.0.0

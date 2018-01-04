@@ -56,13 +56,31 @@ class PartnerProfileAPIView(RetrieveAPIView):
     permission_classes = (IsAuthenticated, )
     serializer_class = OrganizationProfileDetailsSerializer
     queryset = Partner.objects.all()
+    queryset = Partner.objects.\
+        prefetch_related("directors", "authorised_officers", "experiences", "budgets", "hq__budgets",
+                         "collaborations_partnership", "collaboration_evidences", "internal_controls",
+                         "area_policies", "location_field_offices", "collaboration_evidences__evidence_file",
+                         "collaborations_partnership__agency").\
+        select_related("profile", "mailing_address", "org_head", "hq__org_head", "mandate_mission", "fund",
+                       "other_info", "audit", "report", "report__report", "profile__gov_doc",
+                       "profile__registration_doc", "audit__most_recent_audit_report", "audit__assessment_report",
+                       "mandate_mission__governance_organigram", "mandate_mission__ethic_safeguard_policy",
+                       "mandate_mission__ethic_fraud_policy", "other_info__org_logo", "other_info__other_doc_1",
+                       "other_info__other_doc_2", "other_info__other_doc_3").\
+        all()
 
 
 class PartnerProfileSummaryAPIView(RetrieveAPIView):
 
     permission_classes = (IsAuthenticated, )
     serializer_class = PartnerProfileSummarySerializer
-    queryset = Partner.objects.all()
+    # TODO: add select related and prefetch_related to other queryset in the UNPP system
+    queryset = Partner.objects.\
+        prefetch_related("experiences", "experiences__specialization", "collaborations_partnership", 'budgets',
+                         "hq__budgets", "collaborations_partnership__agency").\
+        select_related('location_of_office', 'org_head', 'mailing_address', 'mandate_mission', 'profile',
+                       'report', 'hq', 'hq__org_head')\
+        .all()
 
 
 class PartnersListAPIView(ListAPIView):
@@ -91,14 +109,18 @@ class PartnerIdentificationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIVie
     """
     permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerIdentificationSerializer
-    queryset = PartnerProfile.objects.all()
+    queryset = PartnerProfile.objects.\
+        select_related('partner', 'partner__other_info', 'partner__mailing_address', 'partner__mandate_mission',
+                       'partner__audit', 'partner__report', 'gov_doc', 'registration_doc').all()
 
 
 class PartnerContactInformationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
 
     permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
     serializer_class = PartnerContactInformationSerializer
-    queryset = Partner.objects.all()
+    queryset = Partner.objects.\
+        prefetch_related("directors", "authorised_officers").\
+        select_related('mailing_address', 'profile', 'org_head', 'hq__org_head').all()
 
 
 class PartnerMandateMissionAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
@@ -147,7 +169,7 @@ class PartnersMemberListAPIView(ListAPIView):
 
     permission_classes = (IsAuthenticated, )
     serializer_class = PartnerMemberSerializer
-    queryset = PartnerMember.objects.all()
+    queryset = PartnerMember.objects.select_related("user").all()
     pagination_class = SmallPagination
     lookup_field = 'pk'
 

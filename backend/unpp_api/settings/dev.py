@@ -16,6 +16,11 @@ FRONTEND_URL = 'http://127.0.0.1:8080/'
 # other
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# extend MIDDLEWARE's
+MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
+
+# extend INSTALLED_APPS
+INSTALLED_APPS.append('silk')
 
 CACHES = {
     'default': {

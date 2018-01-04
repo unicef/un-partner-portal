@@ -26,6 +26,7 @@ if settings.IS_DEV or settings.IS_STAGING:
     schema_view = get_swagger_view(title='Swagger API')
     urlpatterns += [
         url(r'^api/doc/', schema_view),
+        url(r'^api/silk/', include('silk.urls', namespace='silk'))
     ]
 
 urlpatterns += staticfiles_urlpatterns('/api/static/')
