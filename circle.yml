@@ -2,6 +2,9 @@ machine:
   environment:
     ENV: dev
     SECRET_KEY: testing-on-circle-ci
+    POSTGRES_DB: postgres
+    POSTGRES_USER: postgres
+    POSTGRES_HOST: localhost
 
 dependencies:
   pre:

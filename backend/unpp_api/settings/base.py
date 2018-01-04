@@ -149,19 +149,6 @@ AUTHENTICATION_BACKENDS = [
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-# COMPRESS_PRECOMPILERS = (
-#     ('text/less', 'lessc {infile} {outfile}'),
-# )
-#
-# COMPRESS_CSS_FILTERS = [
-#     # css minimizer
-#     'compressor.filters.cssmin.CSSMinFilter',
-#     'compressor.filters.css_default.CssAbsoluteFilter'
-# ]
-# COMPRESS_JS_FILTERS = [
-#     'compressor.filters.jsmin.JSMinFilter'
-# ]
-
 USERSWITCH_OPTIONS = {
     'auth_backend':
         'django.contrib.auth.backends.ModelBackend',
