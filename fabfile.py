@@ -82,7 +82,7 @@ def tests():
     """
     Run unit tests.
     """
-    local('docker-compose exec backend python manage.py test --parallel')
+    local('docker-compose exec backend python manage.py test --parallel --noinput')
 
 
 def remove_untagged_images():
