@@ -67,7 +67,8 @@ class Account extends Component {
                   label="Password"
                   fieldName="json.user.password"
                   textFieldProps={{
-                    helperText: 'Use at least 8 characters. Include at least one uppercase letter and one number.',
+                    helperText: 'Use at least 8 characters. Include at least one lowercase ' +
+                    'letter, one uppercase letter and one number.',
                   }}
                   validation={[password]}
                 />
