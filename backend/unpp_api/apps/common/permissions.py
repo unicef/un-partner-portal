@@ -5,7 +5,6 @@ from agency.models import AgencyMember
 from partner.models import PartnerMember
 from project.models import Application
 from .consts import POWER_MEMBER_ROLES, MEMBER_ROLES
-from .models import CommonFile
 
 logger = logging.getLogger(__name__)
 
@@ -229,7 +228,7 @@ class IsPartnerEOIApplicationCreate(IsAtLeastPartnerMemberEditor):
             return False
 
         if request.method != 'GET':
-            return self.pass_at_least(request.user.member.role)
+            return request.user.member and self.pass_at_least(request.user.member.role)
         else:
             return True
 
@@ -245,7 +244,7 @@ class IsPartnerEOIApplicationDestroy(IsAtLeastPartnerMemberEditor):
             app = get_object_or_404(Application, id=app_id)
             if app.submitter == request.user.id:
                 return True
-            return self.pass_at_least(request.user.member.role)
+            return request.user.member and self.pass_at_least(request.user.member.role)
         else:
             return True
 

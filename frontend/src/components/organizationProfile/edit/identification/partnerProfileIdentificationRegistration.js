@@ -44,6 +44,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   ? messages.yearEstablishment
                   : messages.yearEstablishmentHq}
                 warn
+                optional
                 readOnly={readOnly}
               />
             </Grid>
@@ -53,6 +54,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                 label={messages.haveGovDoc}
                 values={BOOL_VAL}
                 warn
+                optional
                 readOnly={readOnly}
               />
             </Grid>
@@ -64,6 +66,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   sectionName="identification.registration"
                   label={messages.governingDoc}
                   warn
+                  optional
                   readOnly={readOnly}
                   infoText={messages.govDocTooltip}
                 />
@@ -78,6 +81,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
               : messages.registrationCountryHq}
             values={BOOL_VAL}
             warn
+            optional
             readOnly={readOnly}
           />
         </Grid>
@@ -89,6 +93,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                     fieldName="registration_date"
                     label={messages.date}
                     warn
+                    optional
                     readOnly={readOnly}
                   />
                 </Grid>
@@ -107,6 +112,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                     sectionName="identification.registration"
                     label={messages.document}
                     warn
+                    optional
                     readOnly={readOnly}
                   />
                 </Grid>
@@ -117,6 +123,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
             label={messages.comment}
             fieldName="registration_comment"
             warn
+            optional
             readOnly={readOnly}
           />
         </Grid>}

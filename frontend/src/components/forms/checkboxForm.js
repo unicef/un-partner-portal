@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { FormControl } from 'material-ui/Form';
 import { renderCheckbox } from '../../helpers/formHelper';
-import { requiredBool, warning } from '../../helpers/validation';
+import { requiredBool, warningBool } from '../../helpers/validation';
 
 function CheckboxForm(props) {
   const {
@@ -23,7 +23,7 @@ function CheckboxForm(props) {
           name={fieldName}
           component={renderCheckbox}
           validate={(optional ? (validation || []) : [requiredBool].concat(validation || []))}
-          warn={warn && warning}
+          warn={warn ? warningBool : null}
           disabled={readOnly}
           label={label}
           {...textFieldProps}

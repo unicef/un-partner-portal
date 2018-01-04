@@ -19,19 +19,23 @@ const { OPEN, PINNED, DIRECT, UNSOLICITED } = PROJECT_TYPES;
 class CfeiContainer extends Component {
   componentWillMount() {
     const { query, loadCfei, params: { type } } = this.props;
+
     loadCfei(type, query);
   }
 
-  shouldComponentUpdate(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { query, loadCfei, params: { type } } = this.props;
 
-    if (isQueryChanged(nextProps, query)) {
+    const typeChanged = type !== nextProps.params.type;
+    const queryChanged = isQueryChanged(nextProps, query);
+
+    if (typeChanged || queryChanged) {
       loadCfei(nextProps.params.type, nextProps.location.query);
-      return false;
-    } else if (type !== nextProps.params.type) {
+    }
+
+    if (typeChanged) {
       resetChanges(nextProps.location.pathname, query);
     }
-    return true;
   }
 
   filter() {

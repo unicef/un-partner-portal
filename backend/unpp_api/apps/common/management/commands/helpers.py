@@ -18,7 +18,6 @@ from common.consts import (
 from common.factories import (
     PartnerFactory,
     PartnerMemberFactory,
-    AgencyFactory,
     AgencyOfficeFactory,
     OtherAgencyFactory,
     AgencyMemberFactory,
@@ -79,7 +78,7 @@ from sanctionslist.models import (
 
 def clean_up_data_in_db():
     if settings.ENV == 'dev':
-        print "Deleting all ORM objects"
+        print("Deleting all ORM objects")
 
         User.objects.all().delete()
         UserProfile.objects.all().delete()
@@ -132,7 +131,7 @@ def clean_up_data_in_db():
         SanctionedName.objects.all().delete()
         SanctionedNameMatch.objects.all().delete()
 
-        print "All ORM objects deleted"
+        print("All ORM objects deleted")
 
 
 def generate_fake_data(quantity=50):
@@ -146,7 +145,7 @@ def generate_fake_data(quantity=50):
     password = 'Passw0rd!'
     admin.set_password(password)
     admin.save()
-    print "Superuser {}:{}/{}".format("created" if created else "updated", admin.fullname, password)
+    print("Superuser {}: {}/{}".format("created" if created else "updated", admin.email, password))
 
     # Agencies
     unicef = Agency.objects.get(name="UNICEF")
@@ -156,15 +155,15 @@ def generate_fake_data(quantity=50):
     AgencyOfficeFactory.create_batch(3, agency=unicef)
     AgencyOfficeFactory.create_batch(3, agency=wfp)
     AgencyOfficeFactory.create_batch(3, agency=unhcr)
-    print "Agencies and their offices are created"
+    print("Agencies and their offices are created")
     AgencyMemberFactory.create_batch(6, role=MEMBER_ROLES.admin)
     AgencyMemberFactory.create_batch(9)
 
     OtherAgencyFactory.create_batch(3)
-    print "Other Agencies are created."
+    print("Other Agencies are created.")
 
     PartnerFactory.create_batch(quantity)
-    print "{} Partner objects created".format(quantity)
+    print("{} Partner objects created".format(quantity))
 
     partner_all = Partner.objects.all().values_list('id', flat=True)
     # national
@@ -205,10 +204,10 @@ def generate_fake_data(quantity=50):
         PartnerMemberFactory(partner=partner, role=MEMBER_ROLES.admin, title='Head')
         PartnerMemberFactory(partner=partner, role=MEMBER_ROLES.editor, title='PM')
         PartnerMemberFactory(partner=partner, role=MEMBER_ROLES.reader, title='Assistant')
-    print "Other Relation to Partner objects created".format(quantity)
+    print("Other Relation to Partner objects created".format(quantity))
 
     EOIFactory.create_batch(quantity)
-    print "{} open EOI objects created".format(quantity)
+    print("{} open EOI objects created".format(quantity))
 
     # preselect
     for idx, eoi in enumerate(EOI.objects.filter(display_type=EOI_TYPES.open)):
@@ -231,9 +230,9 @@ def generate_fake_data(quantity=50):
         app.save()
 
     EOIFactory.create_batch(quantity, display_type=EOI_TYPES.direct, deadline_date=None)
-    print "{} direct EOI objects created with applications".format(quantity)
+    print("{} direct EOI objects created with applications".format(quantity))
 
     UnsolicitedFactory.create_batch(quantity/3, agency=unicef)
     UnsolicitedFactory.create_batch(quantity/3, agency=wfp)
     UnsolicitedFactory.create_batch(quantity/3, agency=unhcr)
-    print "Unsolicited concept notest for each agency created"
+    print("Unsolicited concept notest for each agency created")

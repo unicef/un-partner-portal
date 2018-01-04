@@ -28,6 +28,7 @@ const PartnerProfileFundingDonors = (props) => {
           values={partnerDonors}
           multiple
           warn
+          optional
           readOnly={readOnly}
         />
         <TextFieldForm
@@ -40,6 +41,7 @@ const PartnerProfileFundingDonors = (props) => {
             },
           }}
           warn
+          optional
           readOnly={readOnly}
         />
         <TextFieldForm
@@ -53,6 +55,7 @@ const PartnerProfileFundingDonors = (props) => {
             },
           }}
           warn
+          optional
           readOnly={readOnly}
         />
       </GridColumn>

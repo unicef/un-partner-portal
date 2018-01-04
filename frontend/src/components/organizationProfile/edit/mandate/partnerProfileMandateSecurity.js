@@ -26,6 +26,7 @@ const PartnerProfileMandateSecurity = (props) => {
               label={messages.highRiskLoaction}
               values={BOOL_VAL}
               warn
+              optional
               readOnly={readOnly}
             />
           </Grid>
@@ -35,6 +36,7 @@ const PartnerProfileMandateSecurity = (props) => {
               label={messages.highRiskPolicy}
               values={BOOL_VAL}
               warn
+              optional
               readOnly={readOnly}
             />
           </Grid>
@@ -49,6 +51,7 @@ const PartnerProfileMandateSecurity = (props) => {
             },
           }}
           warn
+          optional
           readOnly={readOnly}
         />
       </GridColumn>

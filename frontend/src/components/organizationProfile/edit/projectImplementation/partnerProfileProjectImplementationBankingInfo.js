@@ -26,6 +26,7 @@ const PartnerProfileProjectImplementationBankingInfo = (props) => {
           label={messages.hasBankAccount}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         <RadioForm
@@ -33,6 +34,7 @@ const PartnerProfileProjectImplementationBankingInfo = (props) => {
           label={messages.hasSeparateAccount}
           values={BOOL_VAL}
           warn
+          optional
           readOnly={readOnly}
         />
         {visibleIfNo(haveSeparateBankAccount)
@@ -45,6 +47,7 @@ const PartnerProfileProjectImplementationBankingInfo = (props) => {
                 maxLength: '5000',
               },
             }}
+            optional
             warn
             readOnly={readOnly}
           />

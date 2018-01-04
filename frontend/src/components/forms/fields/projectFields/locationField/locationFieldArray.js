@@ -5,7 +5,7 @@ import { GoogleApiWrapper } from 'google-maps-react';
 import ArrayForm from '../../../arrayForm';
 import LocationsMap from './locationsMapField';
 import LocationsCountry from './locationsCountry';
-
+import { hasLocations } from '../../../../../helpers/validation';
 
 const Country = formName => sector => (
   <LocationsCountry
@@ -14,19 +14,21 @@ const Country = formName => sector => (
   />
 );
 
-const Locations = (formName, loaded) => (name, index) => loaded && <LocationsMap
+const Locations = (formName, loaded) => (name, index) => loaded &&
+<LocationsMap
   formName={formName}
   name={name}
   index={index}
 />;
 
-
 const LocationFieldArray = (props) => {
   const { formName, readOnly, loaded, ...other } = props;
+
   return (<ArrayForm
     limit={230}
     label="Project Location"
     initial
+    validate={[hasLocations]}
     fieldName="countries"
     outerField={Country(formName, ...other)}
     innerField={Locations(formName, loaded, ...other)}

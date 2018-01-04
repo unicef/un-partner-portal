@@ -116,11 +116,11 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
         }
 
     def get_num_of_pinned_cfei(self, obj):
+        today = date.today()
         return Pin.objects.filter(
-            eoi__deadline_date__gte=date.today(),
-            eoi__deadline_date__lte=(date.today()+timedelta(days=self.DAYS_AGO)),
+            eoi__deadline_date__range=(today, today + timedelta(days=self.DAYS_AGO)),
             partner_id__in=self.get_partner_ids(),
-        ).count()
+        ).order_by().distinct('eoi').count()
 
     def get_num_of_awards(self, obj):
         return Application.objects.filter(did_win=True, partner_id__in=self.get_partner_ids()).count()

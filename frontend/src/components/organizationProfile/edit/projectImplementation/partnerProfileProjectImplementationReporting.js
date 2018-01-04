@@ -35,6 +35,7 @@ const PartnerProfileProjectImplementationReporting = (props) => {
             },
           }}
           warn
+          optional
           readOnly={readOnly}
         />
         <Grid container direction="row">
@@ -44,6 +45,7 @@ const PartnerProfileProjectImplementationReporting = (props) => {
               label={messages.publishAnnualReports}
               values={BOOL_VAL}
               warn
+              optional
               readOnly={readOnly}
             />
           </Grid>
@@ -53,6 +55,7 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                 label={messages.dateOfReport}
                 fieldName="last_report"
                 warn
+                optional
                 readOnly={readOnly}
               />
             </Grid>
@@ -66,7 +69,7 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                 sectionName="project_impl.report"
                 label={messages.mostRecentReport}
                 fieldName="report"
-                optional={!!(annualReport || annualReportLink)}
+                optional
                 warn={!(annualReport || annualReportLink)}
                 readOnly={readOnly}
               />
@@ -76,7 +79,7 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                 label={messages.link}
                 fieldName="link_report"
                 validation={[url]}
-                optional={!!(annualReport || annualReportLink)}
+                optional
                 warn={!(annualReport || annualReportLink)}
                 readOnly={readOnly}
               />
