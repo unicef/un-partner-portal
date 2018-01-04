@@ -1,0 +1,13 @@
+machine:
+  environment:
+    ENV: dev
+    SECRET_KEY: testing-on-circle-ci
+
+dependencies:
+  pre:
+    - pip install -r backend/dev.pip
+
+test:
+  override:
+    - cd backend && python manage.py test --noinput --parallel
+    - cd backend && flake8

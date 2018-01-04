@@ -579,7 +579,9 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
 
 class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
-    background_and_rationale = serializers.CharField(source="mandate_mission.background_and_rationale", allow_blank=True)
+    background_and_rationale = serializers.CharField(
+        source="mandate_mission.background_and_rationale", allow_blank=True
+    )
     mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission", allow_blank=True)
     governance_structure = serializers.CharField(source="mandate_mission.governance_structure", allow_blank=True)
     governance_hq = serializers.CharField(source="mandate_mission.governance_hq", allow_blank=True)

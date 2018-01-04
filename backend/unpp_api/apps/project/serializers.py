@@ -13,7 +13,12 @@ from account.serializers import AgencyUserSerializer, IDUserSerializer, UserSeri
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
-from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer, MixinPreventManyCommonFile
+from common.serializers import (
+    SimpleSpecializationSerializer,
+    PointSerializer,
+    CommonFileSerializer,
+    MixinPreventManyCommonFile,
+)
 from common.models import Point, Specialization
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
