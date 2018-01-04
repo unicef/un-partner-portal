@@ -4,10 +4,11 @@ machine:
     SECRET_KEY: testing-on-circle-ci
     POSTGRES_USER: ubuntu
     POSTGRES_HOST: localhost
+    UNPP_LOGS_PATH: ~/logs/
 
 dependencies:
   pre:
-    - mkdir -p /data/unpp_api/logs
+    - mkdir ~/logs/ -p
     - pip install -r backend/requirements/dev.pip
 
 test:
