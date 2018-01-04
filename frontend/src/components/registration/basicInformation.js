@@ -19,7 +19,7 @@ const messages = {
 };
 
 const BasicInformation = (props) => {
-  const { legalNameChange } = props;
+  const { legalNameChange, country } = props;
   return (
     <Grid item>
       <Grid container direction="column" spacing={16}>
@@ -58,6 +58,7 @@ const BasicInformation = (props) => {
           <CountryField
             fieldName="json.partner.country_code"
             label="Country of Origin"
+            initialValue={country}
             infoText={messages.tooltip}
           />
         </Grid>
@@ -86,12 +87,14 @@ BasicInformation.propTypes = {
    * value of legal name change field to determine if former legal name field have to be displayed
    */
   legalNameChange: PropTypes.bool,
+  country: PropTypes.string,
 };
 
 const selector = formValueSelector('registration');
 const connectedBasicInformation = connect(
   state => ({
     legalNameChange: selector(state, 'json.partner_profile.legal_name_change'),
+    country: selector(state, 'json.partner.country_code'),
   }),
 )(BasicInformation);
 
