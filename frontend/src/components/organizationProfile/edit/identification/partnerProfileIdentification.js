@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { withRouter, browserHistory as history } from 'react-router';
 import { connect } from 'react-redux';
@@ -10,6 +11,7 @@ import { patchPartnerProfile } from '../../../../reducers/partnerProfileDetailsU
 import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
 import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
+import { emptyMsg } from '../partnerProfileEdit';
 
 const STEPS = readOnly =>
   [
@@ -66,16 +68,24 @@ class PartnerProfileIdentification extends Component {
     const identification = flatten(formValues.identification);
     const initIndetification = flatten(initialValues.identification);
 
-    return updateTab(partnerId, 'identification', changedValues(initIndetification, identification))
-      .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
-      .catch((error) => {
-        const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
+    const patchValues = changedValues(initIndetification, identification);
 
-        throw new SubmissionError({
-          ...error.response.data,
-          _error: errorMsg,
+    if (!R.isEmpty(patchValues)) {
+      return updateTab(partnerId, 'identification', patchValues)
+        .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
+        .catch((error) => {
+          const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
+
+          throw new SubmissionError({
+            ...error.response.data,
+            _error: errorMsg,
+          });
         });
-      });
+    }
+
+    throw new SubmissionError({
+      _error: emptyMsg,
+    });
   }
 
   render() {

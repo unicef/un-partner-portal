@@ -17,11 +17,9 @@ class BaseProjectFilter(django_filters.FilterSet):
     specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
                                                 queryset=Specialization.objects.all())
     active = BooleanFilter(method='get_active', widget=BooleanWidget())
-    posted_from_date = DateFilter(name='created',
-                                  lookup_expr=('gt'))
-    posted_to_date = DateFilter(name='created',
-                                lookup_expr=('lt'))
-    selected_source = CharFilter(lookup_expr=('iexact'))
+    posted_from_date = DateFilter(name='created', lookup_expr='date__gte')
+    posted_to_date = DateFilter(name='created', lookup_expr='date__lte')
+    selected_source = CharFilter(lookup_expr='iexact')
 
     class Meta:
         model = EOI
@@ -109,6 +107,7 @@ class ApplicationsEOIFilter(django_filters.FilterSet):
                                                 queryset=Specialization.objects.all())
     concern = CharFilter(method='get_concern')
     type_of_org = CharFilter(method='get_type_of_org')
+    status = CharFilter(method='get_status')
 
     class Meta:
         model = Application
@@ -128,6 +127,9 @@ class ApplicationsEOIFilter(django_filters.FilterSet):
 
     def get_type_of_org(self, queryset, name, value):
         return queryset.filter(partner__display_type__icontains=value)
+
+    def get_status(self, queryset, name, value):
+        return queryset.filter(status=value)
 
 
 class ApplicationsUnsolicitedFilter(django_filters.FilterSet):

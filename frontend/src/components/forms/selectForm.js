@@ -59,8 +59,8 @@ class SelectForm extends Component {
             {...selectFieldProps}
             label={label}
             placeholder={placeholder || `Select ${label.toLowerCase()}`}
-            validate={optional ? [] : [required].concat(validation || [])}
-            warn={warn && warning}
+            validate={(optional ? (validation || []) : [required].concat(validation || []))}
+            warn={warn ? warning : null}
             defaultValue={defaultValue || multiple ? ['placeholder_none'] : 'placeholder_none'}
             multiple={multiple}
             fullWidth

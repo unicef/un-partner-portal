@@ -177,7 +177,7 @@ export const renderSelectField = ({
     >
       {children}
     </Select>
-    {((touched && error) || warning) && <FormHelperText>{error}</FormHelperText>}
+    {((touched && error) || warning) && <FormHelperText>{error || warning}</FormHelperText>}
   </FormControl>);
 };
 
@@ -235,7 +235,7 @@ export const renderCheckbox = ({
         {label}
       </Typography>
     </div>
-    {((touched && error) || error || warning)
+    {((touched && error) || warning)
       && <FormHelperText error>{error || warning}</FormHelperText>}
   </div>);
 
@@ -511,7 +511,7 @@ export class AutocompleteRenderer extends Component {
                 _onBlur(...args);
               }
 
-              if (multiple) {
+              if (multiple || !suggestionsPool) {
                 return;
               }
 
@@ -520,7 +520,7 @@ export class AutocompleteRenderer extends Component {
               ev.persist();
 
               setTimeout(() => {
-                const prevSelection = (suggestionsPool || []).filter(s => s.value === formValue)[0];
+                const prevSelection = suggestionsPool.filter(s => s.value === formValue)[0];
                 const newValue = prevSelection ? prevSelection.label : '';
 
                 ev.target.value = newValue;

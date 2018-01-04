@@ -25,6 +25,7 @@ const PartnerProfileContactInfoConnectivity = (props) => {
             label={messages.internetAccess}
             values={BOOL_VAL}
             warn
+            optional
             readOnly={readOnly}
           />
         </Grid>
@@ -32,6 +33,7 @@ const PartnerProfileContactInfoConnectivity = (props) => {
           <TextFieldForm
             label={messages.explenation}
             fieldName="connectivity_excuse"
+            optional
             textFieldProps={{
               multiline: true,
               inputProps: {

@@ -27,9 +27,6 @@ class AccountRegisterAPIView(APIView):
     permission_classes = (AllowAny, )
 
     def post(self, request, *args, **kwargs):
-        """
-
-        """
         serializer = PartnerRegistrationSerializer(data=self.request.data)
 
         if not serializer.is_valid():

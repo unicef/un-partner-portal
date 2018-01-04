@@ -24,6 +24,7 @@ const Reference = readOnly => member => (
         label={messages.referring}
         fieldName={`${member}.organization_name`}
         warn
+        optional
         readOnly={readOnly}
       />
     </Grid>
@@ -37,6 +38,7 @@ const ReferenceInner = readOnly => member => (
         label={messages.date}
         fieldName={`${member}.date_received`}
         warn
+        optional
         readOnly={readOnly}
       />
     </Grid>
@@ -47,6 +49,7 @@ const ReferenceInner = readOnly => member => (
         fieldName={`${member}.evidence_file`}
         label={messages.reference}
         warn
+        optional
         readOnly={readOnly}
       />
     </Grid>
@@ -62,6 +65,7 @@ const PartnerProfileCollaborationReferences = (props) => {
       label={messages.info}
       values={BOOL_VAL}
       warn
+      optional
       readOnly={readOnly}
     />
     {visibleIfYes(hasReferences)

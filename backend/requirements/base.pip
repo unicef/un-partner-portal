@@ -1,5 +1,5 @@
 # Django packages
-Django==1.11.3
+Django==1.11.8
 
 Fabric==1.13.1
 BeautifulSoup==3.2.1
@@ -9,7 +9,6 @@ ipython==5.4.1
 
 django_compressor==2.1
 
-# django-userswitch==0.2.2  # NOTE Ver <=0.2.2 is broken! See below for git version.
 django-common-helpers==0.9.1
 
 # REST framework

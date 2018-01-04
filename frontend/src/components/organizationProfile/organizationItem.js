@@ -111,7 +111,7 @@ OrganizationItem.propTypes = {
   completed: PropTypes.bool,
   title: PropTypes.string.isRequired,
   users: PropTypes.number.isRequired,
-  update: PropTypes.string.isRequired,
+  update: PropTypes.string,
 };
 
 OrganizationItem.defaultProps = {

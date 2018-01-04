@@ -128,7 +128,10 @@ CollapsableItem.propTypes = {
   expanded: PropTypes.bool,
   warning: PropTypes.bool,
   component: PropTypes.element,
-  handleEditMode: PropTypes.func.isRequired,
+  handleEditMode: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.bool,
+  ]),
 };
 
 export default withStyles(styleSheet, { name: 'CollapsableItem' })(CollapsableItem);
