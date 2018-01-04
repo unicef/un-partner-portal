@@ -23,7 +23,7 @@ from common.factories import (
     AgencyOfficeFactory,
     AgencyFactory,
     PartnerVerificationFactory,
-)
+    UserFactory, PartnerFactory)
 from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
@@ -711,3 +711,20 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
         self.assertTrue(
             response.data['review_summary_attachment'].find(CommonFile.objects.get(pk=file_id).file_field.url) > 0
         )
+
+
+class TestInvitedPartnersListAPIView(BaseAPITestCase):
+
+    quantity = 10
+    initial_factories = [
+        AgencyFactory,
+        UserFactory,
+        PartnerFactory,
+    ]
+
+    def test_serializes_full_objects(self):
+        eoi = EOI.objects.first()
+        url = reverse('projects:eoi-detail', kwargs={"pk": eoi.id})
+        response = self.client.get(url, format='json')
+        print response.status_code
+        print response.text
