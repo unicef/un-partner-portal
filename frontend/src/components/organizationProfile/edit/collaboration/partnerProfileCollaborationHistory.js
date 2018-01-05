@@ -9,6 +9,7 @@ import GridColumn from '../../../common/grid/gridColumn';
 import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import AgencySelectField from '../../../forms/fields/projectFields/agencies';
+import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
   explainCollaboration: 'Briefly explain the collaboration with the agency selected (optional)',
@@ -25,6 +26,7 @@ const AgencySelection = (values, readOnly, ...props) => (member, index, fields) 
     <AgencySelectField
       fieldName={`${member}.agency`}
       label={messages.selectAgency}
+      placeholder={PLACEHOLDERS.select}
       readOnly={readOnly}
       optional
       warn
@@ -36,6 +38,7 @@ const PartnershipInner = (readOnly, ...props) => member => (
   <div>
     <TextFieldForm
       label={messages.explainCollaboration}
+      placeholder={PLACEHOLDERS.explain}
       fieldName={`${member}.description`}
       textFieldProps={{
         multiline: true,
@@ -52,6 +55,7 @@ const PartnershipInner = (readOnly, ...props) => member => (
       <Grid item sm={6} xs={12}>
         <TextFieldForm
           label={messages.provideNumber}
+          placeholder={PLACEHOLDERS.provide}
           fieldName={`${member}.partner_number`}
           textFieldProps={{
             multiline: true,
@@ -104,6 +108,7 @@ const PartnerProfileCollaborationHistory = (props) => {
         ? <TextFieldForm
           label={messages.collaborationDesc}
           fieldName="partnership_collaborate_institution_desc"
+          placeholder={PLACEHOLDERS.state}
           textFieldProps={{
             multiline: true,
             inputProps: {

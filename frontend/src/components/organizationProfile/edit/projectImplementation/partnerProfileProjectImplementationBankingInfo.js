@@ -6,6 +6,7 @@ import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import { visibleIfNo, BOOL_VAL } from '../../../../helpers/formHelper';
 import GridColumn from '../../../common/grid/gridColumn';
+import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
   hasBankAccount: 'Does the organization have a bank account?',
@@ -41,6 +42,7 @@ const PartnerProfileProjectImplementationBankingInfo = (props) => {
           ? <TextFieldForm
             label={messages.explain}
             fieldName="explain"
+            placeholder={PLACEHOLDERS.explain}
             textFieldProps={{
               multiline: true,
               inputProps: {
