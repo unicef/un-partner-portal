@@ -442,6 +442,7 @@ class AgencyProjectReadSerializer(serializers.ModelSerializer):
             'direct_selected_partners',
             'created',
             'completed_date',
+            'contains_partner_accepted',
         )
 
     def get_direct_selected_partners(self, obj):
