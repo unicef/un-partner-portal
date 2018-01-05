@@ -28,6 +28,7 @@ const Sector = (values, yearsOfExp, readOnly, ...props) => (member, index, field
         values={newValues}
         readOnly={readOnly}
         warn
+        optional
         {...props}
       />
     </Grid>
@@ -38,6 +39,7 @@ const Sector = (values, yearsOfExp, readOnly, ...props) => (member, index, field
         values={yearsOfExp}
         readOnly={readOnly}
         warn
+        optional
         {...props}
       />
     </Grid>
@@ -52,6 +54,7 @@ const Area = (readOnly, ...props) => (member, index, fields) => (
     sectorId={fields.get(index).sector}
     readOnly={readOnly}
     warn
+    optional
     {...props}
   />
 );

@@ -6,6 +6,7 @@ import { TableCell } from 'material-ui/Table';
 import GridColumn from '../../common/grid/gridColumn';
 import PartnerApplicationsNotesFilter from './partnerApplicationsNotesFilter';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
+import ApplicationStatusCell from '../../eois/cells/applicationStatusCell';
 import PaginatedList from '../../common/list/paginatedList';
 import WrappedCell from '../../common/cell/wrappedCell';
 import { loadApplicationsCn } from '../../../reducers/applicationsNotesList';
@@ -30,6 +31,13 @@ const applicationCell = ({ row, column }) => {
     return <TableCell><EoiSectorCell data={row.specializations} id={row.id} /></TableCell>;
   } else if (column.name === 'country') {
     return <CountriesCell countries={row.country} />;
+  } else if (column.name === 'application_status') {
+    return (
+      <ApplicationStatusCell
+        status={'Pen'}
+        applicationStatus={row.application_status}
+        id={row.id}
+      />);
   }
 
   return undefined;

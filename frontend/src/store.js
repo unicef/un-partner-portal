@@ -168,6 +168,9 @@ export const selectNormalizedDirectJustification = state =>
 
 export const selectApplicationStatuses = state => state.partnerProfileConfig['application-statuses'];
 
+export const selectExtendedApplicationStatuses = state =>
+  state.partnerProfileConfig['extended-application-statuses'];
+
 export const selectOrganizationTypes = state => state.partnerProfileConfig['partner-type'];
 
 export const selectNormalizedApplicationStatuses = state =>
@@ -245,6 +248,9 @@ export const isCfeiCompleted = (state, id) =>
 
 export const isCfeiPinned = (state, id) =>
   cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.data, id);
+
+export const selectCfeiWinnersStatus = (state, id) =>
+  cfeiDetailsSelector.selectCfeiWinnersStatus(state.cfeiDetails.data, id);
 
 export const mapSelectCriteriaToSelection = state =>
   mapValuesForSelectionField(state.selectionCriteria);
