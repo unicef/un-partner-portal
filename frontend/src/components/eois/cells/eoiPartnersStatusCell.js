@@ -6,7 +6,7 @@ import { compose } from 'ramda';
 import Typography from 'material-ui/Typography';
 import Tooltip from '../../common/portalTooltip';
 import EoiStatusCell from './eoiStatusCell';
-import { selectNewApplicationStatuses } from '../../../store';
+import { selectExtendedApplicationStatuses } from '../../../store';
 
 
 const styleSheet = theme => ({
@@ -67,7 +67,7 @@ EoiPartnerStatusCell.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  applicationStatuses: selectNewApplicationStatuses(state),
+  applicationStatuses: selectExtendedApplicationStatuses(state),
 });
 
 

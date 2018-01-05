@@ -8,7 +8,7 @@ import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import SvgIcon from 'material-ui/SvgIcon';
 import { applicationStatuses } from '../../../../helpers/idMaps';
-import { selectNewApplicationStatuses } from '../../../../store';
+import { selectExtendedApplicationStatuses } from '../../../../store';
 
 
 const styleSheet = theme => ({
@@ -72,7 +72,7 @@ ApplicationStatusText.propTypes = {
 const mapStateToProps = (state, { status, applicationStatus }) => ({
   finalStatus: !applicationStatus || applicationStatus === 'Rev'
     ? { id: status, label: applicationStatuses[status] }
-    : { id: applicationStatus, label: selectNewApplicationStatuses(state)[applicationStatus] },
+    : { id: applicationStatus, label: selectExtendedApplicationStatuses(state)[applicationStatus] },
 });
 
 

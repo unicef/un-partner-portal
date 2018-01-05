@@ -6,7 +6,7 @@ import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import GridColumn from '../../../../common/grid/gridColumn';
 import { updateApplication } from '../../../../../reducers//applicationDetails';
-import { selectApplicationCurrentStatus, selectNewApplicationStatuses } from '../../../../../store';
+import { selectApplicationCurrentStatus, selectExtendedApplicationStatuses } from '../../../../../store';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 
 const messages = {
@@ -47,7 +47,7 @@ SingleSelectedPartner.propTypes = {
 };
 
 const mapStateToProps = (state, { partner: { id } }) => ({
-  applicationStatus: selectNewApplicationStatuses(state)[selectApplicationCurrentStatus(state, id)],
+  applicationStatus: selectExtendedApplicationStatuses(state)[selectApplicationCurrentStatus(state, id)],
 });
 
 

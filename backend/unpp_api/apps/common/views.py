@@ -31,7 +31,7 @@ from .consts import (
     COMPLETED_REASON,
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
-    NEW_APPLICATION_STATUSES
+    EXTENDED_APPLICATION_STATUSES
 )
 
 
@@ -79,7 +79,7 @@ class ConfigPPAPIView(APIView):
             "completed-reason": COMPLETED_REASON,
             "direct-selection-source": DIRECT_SELECTION_SOURCE,
             "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,
-            "new-application-statuses": NEW_APPLICATION_STATUSES,
+            "extended-application-statuses": EXTENDED_APPLICATION_STATUSES,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

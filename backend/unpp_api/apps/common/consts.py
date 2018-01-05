@@ -238,7 +238,7 @@ SANCTION_MATCH_TYPES = Choices(
     ('Org', 'organization', 'Organization Name Match'),
 )
 
-NEW_APPLICATION_STATUSES = Choices(
+EXTENDED_APPLICATION_STATUSES = Choices(
     ('Rev', 'review', 'Application Under Review'),
     ('Uns', 'unsuccessful', 'Application Unsuccessful'),
     ('Suc', 'successful', 'Application Successful'),
