@@ -452,42 +452,34 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             return SelectedPartnersSerializer(obj.applications.all(), many=True).data
 
     def update(self, instance, validated_data):
-        if 'invited_partners' in validated_data:
-            # TODO: Fix to handle POST-ing whole objects not only list of ID-s
-            del validated_data['invited_partners']
-            # user can add and remove on update - here we remove partners that are not in list
-            for partner in instance.invited_partners.all():
-                if partner.id not in self.initial_data.get('invited_partners', []):
-                    instance.invited_partners.remove(partner)
-
-        if 'reviewers' in validated_data:
-            del validated_data['reviewers']
-            for user in instance.reviewers.all():
-                if user.id not in self.initial_data.get('reviewers', []):
-                    instance.reviewers.remove(user)
-
-        if 'focal_points' in validated_data:
-            del validated_data['focal_points']
-            for user in instance.focal_points.all():
-                if user.id not in self.initial_data.get('focal_points', []):
-                    instance.focal_points.remove(user)
-
         if instance.completed_reason is None and validated_data.get('completed_reason') is not None and \
                 instance.completed_date is None and instance.is_completed is False:
             instance.completed_date = datetime.now()
             instance.is_completed = True
 
         instance = super(AgencyProjectSerializer, self).update(instance, validated_data)
-        for invited_partner in self.initial_data.get('invited_partners', []):
-            instance.invited_partners.add(Partner.objects.get(id=invited_partner))
 
-        for reviewer in self.initial_data.get('reviewers', []):
-            instance.reviewers.add(User.objects.get(id=reviewer))
+        invited_partners = self.initial_data.get('invited_partners', [])
+        if invited_partners:
+            invited_partner_ids = [p['id'] for p in invited_partners]
+            instance.invited_partners.through.objects.exclude(partner_id__in=invited_partner_ids).delete()
+            instance.invited_partners.add(*Partner.objects.filter(id__in=invited_partner_ids))
+        elif 'invited_partners' in self.initial_data:
+            instance.invited_partners.clear()
 
-        for focal_point in self.initial_data.get('focal_points', []):
-            instance.focal_points.add(User.objects.get(id=focal_point))
+        reviewers = self.initial_data.get('reviewers', [])
+        if reviewers:
+            instance.reviewers.through.objects.exclude(user_id__in=reviewers).delete()
+            instance.reviewers.add(*User.objects.filter(id__in=reviewers))
+        elif 'reviewers' in self.initial_data:
+            instance.reviewers.clear()
 
-        instance.save()
+        focal_points = self.initial_data.get('focal_points', [])
+        if focal_points is not None:
+            instance.focal_points.through.objects.exclude(user_id__in=focal_points).delete()
+            instance.focal_points.add(*User.objects.filter(id__in=focal_points))
+        elif 'focal_points' in self.initial_data:
+            instance.focal_points.clear()
 
         return instance
 

@@ -12,6 +12,7 @@ from rest_framework import status as statuses
 
 from account.models import User
 from agency.models import AgencyOffice, Agency
+from partner.serializers import PartnerShortSerializer
 from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
 from common.tests.base import BaseAPITestCase
@@ -175,21 +176,18 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         # invite partners
         url = reverse('projects:eoi-detail', kwargs={"pk": eoi.id})
         payload = {
-            "invited_partners": [
-                Partner.objects.first().id, Partner.objects.last().id
-            ]
+            "invited_partners": PartnerShortSerializer([
+                Partner.objects.first(), Partner.objects.last()
+            ], many=True).data
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(statuses.is_success(response.status_code), msg=response.content)
         self.assertEquals(response.data['id'], eoi.id)
-
         self.assertTrue(Partner.objects.first().id in [p['id'] for p in response.data['invited_partners']])
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
 
         payload = {
-            "invited_partners": [
-                Partner.objects.last().id,
-            ]
+            "invited_partners": PartnerShortSerializer([Partner.objects.last()], many=True).data
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
