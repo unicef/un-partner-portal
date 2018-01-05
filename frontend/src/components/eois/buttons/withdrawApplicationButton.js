@@ -17,7 +17,7 @@ const WithdrawApplicationButton = (props) => {
     handleDialogClose,
     handleDialogOpen,
     dialogOpen,
-    ...other,
+    ...other
   } = props;
 
   return (

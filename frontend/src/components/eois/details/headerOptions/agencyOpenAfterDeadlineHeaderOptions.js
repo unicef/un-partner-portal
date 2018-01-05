@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { compose } from 'ramda';
 import { withRouter } from 'react-router';
 import DropdownMenu from '../../../common/dropdownMenu';
 import SpreadContent from '../../../common/spreadContent';
@@ -10,6 +11,8 @@ import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHa
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import ManageReviewersModal from '../../modals/manageReviewers/manageReviewersModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
+import withConditionalDisplay from '../../../common/hoc/withConditionalDisplay';
+import { isUserNotAgencyReader } from '../../../../helpers/authHelpers';
 
 const edit = 'edit';
 const manage = 'manage';
@@ -64,4 +67,8 @@ PartnerOpenAfterDeadlineHeaderOptions.propTypes = {
   handleDialogOpen: PropTypes.func,
 };
 
-export default withMultipleDialogHandling(withRouter(PartnerOpenAfterDeadlineHeaderOptions));
+export default compose(
+  withMultipleDialogHandling,
+  withRouter,
+  withConditionalDisplay([isUserNotAgencyReader]),
+)(PartnerOpenAfterDeadlineHeaderOptions);

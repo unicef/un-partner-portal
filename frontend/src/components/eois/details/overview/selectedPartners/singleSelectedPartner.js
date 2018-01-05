@@ -5,8 +5,10 @@ import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import GridColumn from '../../../../common/grid/gridColumn';
-import { updateApplication } from '../../../../../reducers//applicationDetails';
+import { updateApplication } from '../../../../../reducers/applicationDetails';
+import { loadCfei } from '../../../../../reducers/cfeiDetails';
 import { selectApplicationCurrentStatus } from '../../../../../store';
+import { selectApplicationCurrentStatus, selectExtendedApplicationStatuses } from '../../../../../store';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 
 const messages = {
@@ -32,7 +34,7 @@ const SingleSelectedPartner = (props) => {
           />
         </Grid>}
         {displayAccept && <Grid item>
-          <Button color="accent" onClick={acceptSelection}>{messages.accept}</Button>
+          <Button color="accent" onClick={() => { acceptSelection().then(loadCfei); }}>{messages.accept}</Button>
         </Grid>}
       </Grid>
     }
@@ -43,18 +45,18 @@ SingleSelectedPartner.propTypes = {
   partner: PropTypes.object,
   isFocalPoint: PropTypes.bool,
   acceptSelection: PropTypes.func,
-  withdrawPartner: PropTypes.func,
   applicationStatus: PropTypes.string,
 };
 
 const mapStateToProps = (state, { partner: { id } }) => ({
-  applicationStatus: selectApplicationCurrentStatus(state, id),
+  applicationStatus: selectExtendedApplicationStatuses(state)[selectApplicationCurrentStatus(state, id)],
 });
 
 
 const mapDispatchToProps = (dispatch, { id, partner = {} }) => ({
   acceptSelection: () => dispatch(updateApplication(partner.id,
     { did_accept: true, did_decline: false })),
+  loadCfei: () => dispatch(loadCfei(partner.id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleSelectedPartner);

@@ -442,6 +442,7 @@ class AgencyProjectReadSerializer(serializers.ModelSerializer):
             'direct_selected_partners',
             'created',
             'completed_date',
+            'contains_partner_accepted',
         )
 
     def get_direct_selected_partners(self, obj):
@@ -591,6 +592,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'your_score',
             'your_score_breakdown',
             'review_progress',
+            'application_status',
         )
 
     def _get_my_assessment(self, obj):
@@ -737,6 +739,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             'is_direct',
             'partner_name',
             'partner_additional',
+            'application_status',
         )
 
     def get_project_title(self, obj):
