@@ -78,11 +78,11 @@ def reset_db():
     fakedata(clean_before=False)
 
 
-def tests():
+def tests(test_path=''):
     """
     Run unit tests.
     """
-    local('docker-compose exec backend python manage.py test --parallel --noinput')
+    local('docker-compose exec backend python manage.py test {} --parallel --noinput'.format(test_path))
 
 
 def remove_untagged_images():
