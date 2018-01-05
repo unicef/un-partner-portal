@@ -1,22 +1,43 @@
 import React from 'react';
+import R from 'ramda';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import SvgIcon from 'material-ui/SvgIcon';
 import { applicationStatuses } from '../../../../helpers/idMaps';
+import { selectExtendedApplicationStatuses } from '../../../../store';
 
 
 const styleSheet = theme => ({
   Pen: {
-    color: theme.palette.eoiStatus.open,
+    color: theme.palette.common.green,
   },
   Rej: {
     color: theme.palette.eoiStatus.closed,
   },
   Pre: {
     color: theme.palette.eoiStatus.completed,
+  },
+  Uns: {
+    color: theme.palette.error[500],
+  },
+  Suc: {
+    color: theme.palette.common.purple,
+  },
+  Acc: {
+    color: theme.palette.common.lightGreen,
+  },
+  Dec: {
+    color: theme.palette.common.orange,
+  },
+  Ret: {
+    color: theme.palette.eoiStatus.closed,
+  },
+  Default: {
+    color: theme.palette.secondary[500],
   },
   text: {
     whiteSpace: 'normal',
@@ -25,8 +46,8 @@ const styleSheet = theme => ({
 });
 
 const ApplicationStatusText = (props) => {
-  const { classes, status } = props;
-  const colorClass = classNames(classes[status]);
+  const { classes, finalStatus: { id, label } } = props;
+  const colorClass = classNames(classes[id] || classes.Default);
   return (
     <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={8}>
       <Grid item >
@@ -36,7 +57,7 @@ const ApplicationStatusText = (props) => {
       </Grid>
       <Grid item className={classes.text}>
         <Typography type="body1" color="inherit">
-          {applicationStatuses[status]}
+          {label}
         </Typography>
       </Grid>
     </Grid>
@@ -45,7 +66,17 @@ const ApplicationStatusText = (props) => {
 
 ApplicationStatusText.propTypes = {
   classes: PropTypes.object.isRequired,
-  status: PropTypes.string.isRequired,
+  finalStatus: PropTypes.object,
 };
 
-export default withStyles(styleSheet, { name: 'ApplicationStatusText' })(ApplicationStatusText);
+const mapStateToProps = (state, { status, applicationStatus }) => ({
+  finalStatus: !applicationStatus || applicationStatus === 'Rev'
+    ? { id: status, label: applicationStatuses[status] }
+    : { id: applicationStatus, label: selectExtendedApplicationStatuses(state)[applicationStatus] },
+});
+
+
+export default R.compose(
+  withStyles(styleSheet, { name: 'ApplicationStatusText' }),
+  connect(mapStateToProps),
+)(ApplicationStatusText);

@@ -15,6 +15,16 @@ server {
       include /etc/nginx/conf.d/uwsgi_params;
     }
 
+    location /api/uploads  {
+        alias /data/uploads/;
+        expires 1d;
+    }
+
+    location /api/static  {
+        alias /data/staticserve/;
+        expires 1d;
+    }
+
     location / {
       try_files $uri $uri/ @frontend;
     }

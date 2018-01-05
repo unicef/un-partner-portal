@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
@@ -11,7 +12,7 @@ import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
 import classname from 'classnames';
 import FieldLabelWithTooltipIcon from '../../components/common/fieldLabelWithTooltip';
-
+import { EMPTY_ERROR } from '../../helpers/validation';
 
 const messages = {
   addNew: '+ Add New',
@@ -83,7 +84,7 @@ class RenderArrayMembers extends Component {
     );
     return (
       <Paper elevation={0} className={paperClass} >
-        {error && <FormHelperText className={classes.errorText} error>{error}</FormHelperText>}
+        {error !== EMPTY_ERROR && error && <FormHelperText className={classes.errorText} error>{error}</FormHelperText>}
         <List className={classes.list}>
           {fields.map((member, index) => (
             <div key={member}>

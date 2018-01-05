@@ -8,6 +8,7 @@ import GridColumn from '../../../../common/grid/gridColumn';
 import { updateApplication } from '../../../../../reducers/applicationDetails';
 import { loadCfei } from '../../../../../reducers/cfeiDetails';
 import { selectApplicationCurrentStatus } from '../../../../../store';
+import { selectApplicationCurrentStatus, selectExtendedApplicationStatuses } from '../../../../../store';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 
 const messages = {
@@ -44,12 +45,11 @@ SingleSelectedPartner.propTypes = {
   partner: PropTypes.object,
   isFocalPoint: PropTypes.bool,
   acceptSelection: PropTypes.func,
-  withdrawPartner: PropTypes.func,
   applicationStatus: PropTypes.string,
 };
 
 const mapStateToProps = (state, { partner: { id } }) => ({
-  applicationStatus: selectApplicationCurrentStatus(state, id),
+  applicationStatus: selectExtendedApplicationStatuses(state)[selectApplicationCurrentStatus(state, id)],
 });
 
 

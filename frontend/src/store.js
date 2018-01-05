@@ -166,6 +166,9 @@ export const selectNormalizedDirectJustification = state =>
 
 export const selectApplicationStatuses = state => state.partnerProfileConfig['application-statuses'];
 
+export const selectExtendedApplicationStatuses = state =>
+  state.partnerProfileConfig['extended-application-statuses'];
+
 export const selectOrganizationTypes = state => state.partnerProfileConfig['partner-type'];
 
 export const selectNormalizedApplicationStatuses = state =>
@@ -342,3 +345,9 @@ export const selectPartnerFlagsCount = (state, partnerId) =>
   partnerFlagsSelector.selectPartnerFlagsCount(state.partnerFlags, partnerId);
 
 export const selectAllErrorsMapped = state => errorSelector.selectAllErrorsMapped(state.error);
+
+export const isUserHq = state => state.session.isHq;
+
+export const selectUserHqId = state => state.session.hqId;
+
+export const selectUserPartnerId = state => state.session.partnerId;

@@ -2,12 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import R from 'ramda';
 import { connect } from 'react-redux';
-import InfoIcon from 'material-ui-icons/Info';
 import SelectForm from '../../../selectForm';
 import AutocompleteForm from '../../../autoCompleteForm';
 import { selectNormalizedCountries } from '../../../../../store';
-import TooltipIcon from '../../../../common/tooltipIcon';
-import SpreadContent from '../../../../common/spreadContent';
 
 const COUNTRY = 'Country';
 

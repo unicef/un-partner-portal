@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { formValueSelector, SubmissionError } from 'redux-form';
 import PropTypes from 'prop-types';
-
+import { path } from 'ramda';
 import {
   Stepper,
   Step,
@@ -66,7 +66,7 @@ class RegistrationStepper extends React.Component {
 
   handleSubmit(values) {
     return this.props.registerUser(values.json).catch((error) => {
-      const errorMsg = messages.error;
+      const errorMsg = path(['response', 'data', 'non_field_errors'], error) || messages.error;
       if (error.response.data.user) {
         this.setState({ stepIndex: 3 });
       }

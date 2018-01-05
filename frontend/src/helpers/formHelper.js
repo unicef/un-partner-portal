@@ -512,7 +512,7 @@ export class AutocompleteRenderer extends Component {
                 _onBlur(...args);
               }
 
-              if (multiple) {
+              if (multiple || !suggestionsPool) {
                 return;
               }
 
@@ -521,7 +521,7 @@ export class AutocompleteRenderer extends Component {
               ev.persist();
 
               setTimeout(() => {
-                const prevSelection = (suggestionsPool || []).filter(s => s.value === formValue)[0];
+                const prevSelection = suggestionsPool.filter(s => s.value === formValue)[0];
                 const newValue = prevSelection ? prevSelection.label : '';
 
                 ev.target.value = newValue;
