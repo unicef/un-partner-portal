@@ -39,7 +39,6 @@ const styleSheet = theme => ({
   },
 });
 
-
 export const STATUS_VAL = [
   {
     value: true,
