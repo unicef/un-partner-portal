@@ -106,6 +106,7 @@ class ApplicationSummaryHeader extends Component {
     const {
       partner,
       status,
+      applicationStatus,
       children,
       error,
     } = this.props;
@@ -118,7 +119,7 @@ class ApplicationSummaryHeader extends Component {
     return (<HeaderNavigation
       title={`${messages.header} ${partner}`}
       header={<GridRow alignItems="center">
-        {status && <ApplicationStatusText status={status} />}
+        {status && <ApplicationStatusText status={status} applicationStatus={applicationStatus} />}
         {this.renderActionButton()}
       </GridRow>
       }
@@ -166,6 +167,7 @@ const mapStateToProps = (state, ownProps) => {
     did_win,
     did_withdraw,
     assessments_is_completed = false,
+    application_status,
     partner: {
       legal_name,
       partner_additional: {
@@ -178,6 +180,7 @@ const mapStateToProps = (state, ownProps) => {
   } = application;
   return {
     status: selectApplicationStatus(state, ownProps.params.applicationId),
+    applicationStatus: application_status,
     partner: legal_name,
     getAssessment: id => selectAssessment(state, id),
     loading: state.applicationDetails.status.loading,

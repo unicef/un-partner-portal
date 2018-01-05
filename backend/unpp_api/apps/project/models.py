@@ -13,6 +13,7 @@ from common.consts import (
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     COMPLETED_REASON,
+    EXTENDED_APPLICATION_STATUSES,
 )
 from common.utils import get_countries_code_from_queryset
 from validators import (
@@ -209,18 +210,18 @@ class Application(TimeStampedModel):
 
     @property
     def application_status(self):
-        if not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.open:
-            return 'Application Under Review'
-        elif not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.closed:
-            return 'Application Unsuccessful'
-        elif self.did_win and self.did_decline is False and self.did_accept is False and self.decision_date is None:
-            return 'Application Successful'
-        elif self.did_win and self.did_accept and self.decision_date is not None:
-            return 'Selection Accepted'
-        elif self.did_win and self.did_decline and self.decision_date is not None:
-            return 'Selection Declined'
+        if not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.closed:
+            return EXTENDED_APPLICATION_STATUSES.review
+        elif not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.completed:
+            return EXTENDED_APPLICATION_STATUSES.unsuccessful
         elif self.did_win and self.did_withdraw:
-            return 'Selection Retracted'
+            return EXTENDED_APPLICATION_STATUSES.retracted
+        elif self.did_win and self.did_decline is False and self.did_accept is False and self.decision_date is None:
+            return EXTENDED_APPLICATION_STATUSES.successful
+        elif self.did_win and self.did_accept and self.decision_date is not None:
+            return EXTENDED_APPLICATION_STATUSES.accepted
+        elif self.did_win and self.did_decline and self.decision_date is not None:
+            return EXTENDED_APPLICATION_STATUSES.declined
 
     # RETURNS [{u'Cos': {u'scores': [23, 13], u'weight': 30}, u'avg': 23..]
     def get_scores_by_selection_criteria(self):

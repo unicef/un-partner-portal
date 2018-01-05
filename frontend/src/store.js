@@ -166,6 +166,9 @@ export const selectNormalizedDirectJustification = state =>
 
 export const selectApplicationStatuses = state => state.partnerProfileConfig['application-statuses'];
 
+export const selectExtendedApplicationStatuses = state =>
+  state.partnerProfileConfig['extended-application-statuses'];
+
 export const selectOrganizationTypes = state => state.partnerProfileConfig['partner-type'];
 
 export const selectNormalizedApplicationStatuses = state =>

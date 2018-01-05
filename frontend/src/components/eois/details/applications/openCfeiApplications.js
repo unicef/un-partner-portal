@@ -55,6 +55,7 @@ const applicationsCells = ({ row, column, hovered }) => {
     return (<ApplicationStatusCell
       id={row.id}
       status={row.status}
+      applicationStatus={row.application_status}
       conceptNote={row.cn}
       hovered={hovered}
       progress={row.review_progress}

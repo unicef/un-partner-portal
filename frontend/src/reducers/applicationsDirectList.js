@@ -46,6 +46,8 @@ const saveApplicationsDirect = (state, action) => {
       submission_date: item.submission_date,
       selected_source: item.selected_source,
       status: item.status,
+      application_status: item.application_status,
+      eoi_id: item.eoi_id,
     }), action.response.results);
 
   return R.assoc('items', applications, R.assoc('totalCount', action.response.count, state));
