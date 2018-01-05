@@ -7,7 +7,6 @@ import Button from 'material-ui/Button';
 import GridColumn from '../../../../common/grid/gridColumn';
 import { updateApplication } from '../../../../../reducers/applicationDetails';
 import { loadCfei } from '../../../../../reducers/cfeiDetails';
-import { selectApplicationCurrentStatus } from '../../../../../store';
 import { selectApplicationCurrentStatus, selectExtendedApplicationStatuses } from '../../../../../store';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 
