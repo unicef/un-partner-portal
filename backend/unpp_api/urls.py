@@ -28,4 +28,4 @@ if settings.IS_DEV or settings.IS_STAGING:
         url(r'^api/doc/', schema_view),
     ]
 
-urlpatterns += staticfiles_urlpatterns('/api/static/')
+urlpatterns += staticfiles_urlpatterns()

@@ -21,10 +21,10 @@ DEFAULT_FROM_EMAIL = 'noreply@unpp.org'
 UN_SANCTIONS_LIST_EMAIL_ALERT = 'test@tivix.com'  # TODO - change to real one
 SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
 SITE_ID = 1
-TIME_ZONE = 'America/Los_Angeles'  # changed to UTC
+TIME_ZONE = 'America/Los_Angeles'
 LANGUAGE_CODE = 'en-us'
 USE_I18N = True
-SECRET_KEY = '7mtv%enh%j6v23jl*y2kf!@@@=uj1x1e2yb^dpkr3l83s&amp;_7+_'
+SECRET_KEY = os.getenv('SECRET_KEY')
 DEFAULT_CHARSET = 'utf-8'
 ROOT_URLCONF = 'unpp_api.urls'
 
@@ -149,19 +149,6 @@ AUTHENTICATION_BACKENDS = [
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-# COMPRESS_PRECOMPILERS = (
-#     ('text/less', 'lessc {infile} {outfile}'),
-# )
-#
-# COMPRESS_CSS_FILTERS = [
-#     # css minimizer
-#     'compressor.filters.cssmin.CSSMinFilter',
-#     'compressor.filters.css_default.CssAbsoluteFilter'
-# ]
-# COMPRESS_JS_FILTERS = [
-#     'compressor.filters.jsmin.JSMinFilter'
-# ]
-
 USERSWITCH_OPTIONS = {
     'auth_backend':
         'django.contrib.auth.backends.ModelBackend',
@@ -189,7 +176,7 @@ def extend_list_avoid_repeats(list_to_extend, extend_with):
     list_to_extend.extend(filter(lambda x: not list_to_extend.count(x), extend_with))
 
 
-LOGS_PATH = os.path.join(DATA_VOLUME, PROJECT_NAME, 'logs')
+LOGS_PATH = os.getenv('UNPP_LOGS_PATH', os.path.join(DATA_VOLUME, PROJECT_NAME, 'logs'))
 
 LOGGING = {
     'version': 1,

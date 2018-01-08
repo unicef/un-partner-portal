@@ -16,12 +16,12 @@ server {
     }
 
     location /api/uploads  {
-        alias /data/uploads/;
+        alias /data/uploads;
         expires 1d;
     }
 
     location /api/static  {
-        alias /data/staticserve/;
+        alias /data/staticserve;
         expires 1d;
     }
 
