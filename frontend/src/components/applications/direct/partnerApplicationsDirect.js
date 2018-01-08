@@ -11,7 +11,7 @@ import { loadApplicationsDirect } from '../../../reducers/applicationsDirectList
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import { formatDateForPrint } from '../../../helpers/dates';
 import WrappedCell from '../../common/cell/wrappedCell';
-import ApplicationStatusCell from '../applicationStatusCell';
+import ApplicationStatusCell from '../../eois/cells/applicationStatusCell';
 import EoiSectorCell from '../../eois/cells/eoiSectorCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
 import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
@@ -21,17 +21,23 @@ const applicationCell = ({ row, column }) => {
   if (column.name === 'submission_date') {
     return <WrappedCell content={formatDateForPrint(row.submission_date)} />;
   } else if (column.name === 'id') {
+
     return (<ConceptNoteIDCell
       cfeiId={`${row.eoi_id}`}
       id={row.id}
       type={PROJECT_TYPES.DIRECT}
     />);
-  } else if (column.name === 'status') {
-    return <ApplicationStatusCell appStatus={row.status} />;
   } else if (column.name === 'specializations') {
     return <TableCell><EoiSectorCell data={row.specializations} id={row.id} /></TableCell>;
   } else if (column.name === 'country') {
     return <CountriesCell countries={row.country} />;
+  } else if (column.name === 'status') {
+    return (
+      <ApplicationStatusCell
+        status={'Pen'}
+        applicationStatus={row.application_status}
+        id={row.id}
+      />);
   }
 
   return undefined;

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { compose } from 'ramda';
 import { withRouter } from 'react-router';
 import DropdownMenu from '../../../common/dropdownMenu';
 import SpreadContent from '../../../common/spreadContent';
@@ -8,6 +9,8 @@ import Complete from '../../buttons/completeCfeiButton';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
+import withConditionalDisplay from '../../../common/hoc/withConditionalDisplay';
+import { isUserNotAgencyReader } from '../../../../helpers/authHelpers';
 
 const edit = 'edit';
 const complete = 'complete';
@@ -52,4 +55,8 @@ PartnerOpenHeaderOptions.propTypes = {
   handleDialogOpen: PropTypes.func,
 };
 
-export default withMultipleDialogHandling(withRouter(PartnerOpenHeaderOptions));
+export default compose(
+  withMultipleDialogHandling,
+  withRouter,
+  withConditionalDisplay([isUserNotAgencyReader]),
+)(PartnerOpenHeaderOptions);

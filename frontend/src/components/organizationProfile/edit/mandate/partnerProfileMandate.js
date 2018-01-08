@@ -99,8 +99,12 @@ class PartnerProfileMandate extends Component {
     const mandateMission = flatten(formValues.mandate_mission);
     const initMandateMission = flatten(initialValues.mandate_mission);
 
-    const convertExperiences = R.flatten(R.map(item => R.map(area => R.assoc('years',
-      item.years, R.objOf('specialization_id', area)), item.areas), mandateMission.specializations));
+    const convertExperiences = mandateMission.specializations
+      ? R.flatten(R.map(item => (item.areas ?
+        R.map(area => R.assoc('years', item.years,
+          R.objOf('specialization_id', area)),
+        item.areas) : []), mandateMission.specializations))
+      : [];
 
     const changed = changedValues(initMandateMission, mandateMission);
 
