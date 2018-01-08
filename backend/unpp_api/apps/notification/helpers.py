@@ -10,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from account.models import User
 from common.consts import COMPLETED_REASON
 from .models import Notification, NotifiedUser
-from .consts import NOTIFICATION_KINDS
+from .consts import NOTIFICATION_DATA
 
 
 @transaction.atomic
@@ -27,10 +27,10 @@ def feed_alert(source, subject, body, users, obj):
     NotifiedUser.objects.bulk_create(notified_users)
 
 
-def send_notification(source, obj, users, context=None, send_in_feed=True,
+def send_notification(notification_type, obj, users, context=None, send_in_feed=True,
                       check_sent_for_source=True):
     """
-        source - key of dict in notification + unique check against
+        notification_type - check NotificationType class in const.py
         obj - object directly associated w/ notification. generic fk to it
         users - users who are receiving notif
         context - context to provide to template for email or body of notif
@@ -40,17 +40,17 @@ def send_notification(source, obj, users, context=None, send_in_feed=True,
     """
 
     if check_sent_for_source:
-        if notif_already_sent(obj, source):
+        if notification_already_sent(obj, notification_type):
             return
 
-    notif_dict = NOTIFICATION_KINDS.get(source)
+    notification_info = NOTIFICATION_DATA.get(notification_type)
 
-    cc = list(users.values_list('email', flat=True))
-    body = get_template_as_str(notif_dict.get('template_name'), context)
-    send_mail(notif_dict.get('subject'), body, settings.DEFAULT_FROM_EMAIL, cc)
+    targets = [u.email for u in users]
+    body = get_template_as_str(notification_info.get('template_name'), context)
+    send_mail(notification_info.get('subject'), body, settings.DEFAULT_FROM_EMAIL, targets)
 
     if send_in_feed:
-        feed_alert(source, notif_dict.get('subject'), body, users, obj)
+        feed_alert(notification_type, notification_info.get('subject'), body, users, obj)
 
 
 def get_template_as_str(filename, context):
@@ -76,10 +76,10 @@ def get_partner_users_for_app_qs(application_qs):
 
 
 # We don't want to send 2x of the same notification
-def notif_already_sent(obj, notif_source):
+def notification_already_sent(obj, notification_source):
     content_type = ContentType.objects.get_for_model(obj)
     return Notification.objects.filter(object_id=obj.id,
-                                       source=notif_source,
+                                       source=notification_source,
                                        content_type=content_type).exists()
 
 

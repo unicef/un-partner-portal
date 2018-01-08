@@ -1,83 +1,94 @@
 
-NOTIFICATION_KINDS = {
 
-    'account_active_profile_create': {
-            'template_name': 'account_approval_activated_create_profile',
-            'subject': ''
-    },
-    'account_active_send_to_org_head': {
-            'template_name': 'account_approval_activated_sent_to_head_org',
-            'subject': ''
-    },
-    'account_org_duplicate': {
-            'template_name': 'account_approval_rejection_application_duplicate',
-            'subject': ''
-    },
+class NotificationType(object):
+    # TODO: Investigate usage and replace references + improve naming
+    ACTIVE_ACCOUNT_PROFILE_CREATE = 'account_active_profile_create'
+    ACTIVE_ACCOUNT_SEND_TO_ORG_HEAD = 'account_active_send_to_org_head'
+    DUPLICATE_ORGANIZATION_ACCOUNT = 'account_org_duplicate'
+    ACCOUNT_REJECTED_BY_SANCTIONS = 'account_reject_sanctions'
+    ACCOUNT_REJECTED = 'account_create_reject'
+    CFEI_CANCELLED = 'cfei_cancel'
+    CFEI_APPLICATION_LOSS = 'cfei_application_lost'
+    CFEI_APPLICATION_WITHDRAWN = 'cfei_application_withdraw'
+    CFEI_APPLICATION_WIN = 'cfei_application_selected'
+    CFEI_APPLICATION_SUBMITTED = 'cfei_application_submitted'
+    UNSOLICITED_CONCEPT_NOTE_RECEIVED = 'unsol_application_submitted'
+    DIRECT_SELECTION_INITIATED = 'direct_select_un_int'
+    DIRECT_SELECTION_FROM_NOTE_INITIATED = 'direct_select_ucn'
+    CFEI_INVITE = 'cfei_invitation'
+    CFEI_DEADLINE_UPDATE = 'cfei_update_prev'
+    SELECTED_AS_CFEI_REVIEWER = 'agency_cfei_reviewers_selected'
+    PARTNER_DECISION_MADE = 'agency_application_decision_make'
 
-    'account_reject_sanctions': {
-            'template_name': 'account_approval_rejection_sanctions_list',
-            'subject': ''
-    },
 
-    'account_create_reject': {
-            'template_name': 'account_creation_rejection',
-            'subject': ''
+NOTIFICATION_DATA = {
+    NotificationType.ACTIVE_ACCOUNT_PROFILE_CREATE: {
+        'template_name': 'account_approval_activated_create_profile',
+        'subject': ''
     },
-
-    'cfei_cancel': {
-            'template_name': 'cancel_CFEI',
-            'subject': 'Call for Expression of Interest Canceled'
+    NotificationType.ACTIVE_ACCOUNT_SEND_TO_ORG_HEAD: {
+        'template_name': 'account_approval_activated_sent_to_head_org',
+        'subject': ''
     },
-
-    'cfei_application_lost': {
-            'template_name': 'CN_Assessment_not_successful',
-            'subject': 'Application Not Selected'
+    NotificationType.DUPLICATE_ORGANIZATION_ACCOUNT: {
+        'template_name': 'account_approval_rejection_application_duplicate',
+        'subject': ''
     },
-
-    'cfei_application_withdraw': {
-            'template_name': 'CN_Assessment_Withdraw',
-            'subject': 'Application Withdrawn'
+    NotificationType.ACCOUNT_REJECTED_BY_SANCTIONS: {
+        'template_name': 'account_approval_rejection_sanctions_list',
+        'subject': ''
     },
-
-    'cfei_application_selected': {
-            'template_name': 'CN_Assessment_successful',
-            'subject': 'Application Selected'
+    NotificationType.ACCOUNT_REJECTED: {
+        'template_name': 'account_creation_rejection',
+        'subject': ''
     },
-    'cfei_application_submitted': {
-            'template_name': 'CN_Submission',
-            'subject': 'Application Received'
+    NotificationType.CFEI_CANCELLED: {
+        'template_name': 'cancel_CFEI',
+        'subject': 'Call for Expression of Interest Canceled'
     },
-    'unsol_application_submitted': {
-            'template_name': 'CN_Unsolicited',
-            'subject': 'Unsolicited Concept Note Received'
+    NotificationType.CFEI_APPLICATION_LOSS: {
+        'template_name': 'CN_Assessment_not_successful',
+        'subject': 'Application Not Selected'
     },
-
-    'direct_select_un_int': {
-            'template_name': 'direct_selection_UN_initiated',
-            'subject': 'UN has identified your organization for a partnership opportunity via direct selection'
+    NotificationType.CFEI_APPLICATION_WITHDRAWN: {
+        'template_name': 'CN_Assessment_Withdraw',
+        'subject': 'Application Withdrawn'
     },
-
-    'direct_select_ucn': {
-            'template_name': 'direct_selection_via_UCN',
-            'subject': 'UN has identified your organization for a partnership opportunity via direct selection on'
-                       ' the basis of an unsolicited concept note'
+    NotificationType.CFEI_APPLICATION_WIN: {
+        'template_name': 'CN_Assessment_successful',
+        'subject': 'Application Selected'
     },
-
-    'cfei_invitation': {
-            'template_name': 'New_CFEI_Inviting',
-            'subject': 'UN New Partnership Opportunity'
+    NotificationType.CFEI_APPLICATION_SUBMITTED: {
+        'template_name': 'CN_Submission',
+        'subject': 'Application Received'
     },
-
-    'cfei_update_prev': {
-            'template_name': 'Update_CFEI_prev_invited_submited_app',
-            'subject': 'CFEI Deadline Updated'
+    NotificationType.UNSOLICITED_CONCEPT_NOTE_RECEIVED: {
+        'template_name': 'CN_Unsolicited',
+        'subject': 'Unsolicited Concept Note Received'
     },
-    'agency_cfei_reviewers_selected': {
-            'template_name': 'agency_reviewer_selection',
-            'subject': 'You have been selected as a reviewe'
+    NotificationType.DIRECT_SELECTION_INITIATED: {
+        'template_name': 'direct_selection_UN_initiated',
+        'subject': 'UN has identified your organization for a partnership opportunity via direct selection'
     },
-    'agency_application_decision_make': {
-            'template_name': 'agency_decision_selected_partner',
-            'subject': 'Prospective Partner Decision Made'
+    NotificationType.DIRECT_SELECTION_FROM_NOTE_INITIATED: {
+        'template_name': 'direct_selection_via_UCN',
+        'subject': 'UN has identified your organization for a partnership opportunity via direct selection on'
+                   ' the basis of an unsolicited concept note'
+    },
+    NotificationType.CFEI_INVITE: {
+        'template_name': 'New_CFEI_Inviting',
+        'subject': 'UN New Partnership Opportunity'
+    },
+    NotificationType.CFEI_DEADLINE_UPDATE: {
+        'template_name': 'Update_CFEI_prev_invited_submited_app',
+        'subject': 'CFEI Deadline Updated'
+    },
+    NotificationType.SELECTED_AS_CFEI_REVIEWER: {
+        'template_name': 'agency_reviewer_selection',
+        'subject': 'You have been selected as a reviewer'
+    },
+    NotificationType.PARTNER_DECISION_MADE: {
+        'template_name': 'agency_decision_selected_partner',
+        'subject': 'Prospective Partner Decision Made'
     },
 }
