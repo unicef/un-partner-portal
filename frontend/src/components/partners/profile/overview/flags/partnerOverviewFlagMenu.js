@@ -1,8 +1,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { compose, append } from 'ramda';
-import { connect } from 'react-redux';
+import { compose } from 'ramda';
 import { withRouter } from 'react-router';
 import DropdownMenu from '../../../../common/dropdownMenu';
 import FlagYellowButton from '../../buttons/flagYellowButton';
@@ -10,7 +9,6 @@ import FlagRedButton from '../../buttons/flagRedButton';
 import withMultipleDialogHandling from '../../../../common/hoc/withMultipleDialogHandling';
 import { FLAGS } from '../../../../../helpers/constants';
 import AddFlagModal from '../../modals/addFlagModal/addFlagModal';
-import { isUserAgencyAdmin } from '../../../../../helpers/authHelpers';
 
 const { RED, YELLOW } = FLAGS;
 
@@ -19,20 +17,17 @@ const PartnerOverviewFlagMenu = (props) => {
     dialogOpen,
     handleDialogClose,
     handleDialogOpen,
-    displayRedFlags,
   } = props;
-  let options = [
+  const options = [
     {
       name: YELLOW,
       content: <FlagYellowButton handleClick={() => handleDialogOpen(YELLOW)} />,
     },
-  ];
-  if (displayRedFlags) {
-    options = append({
+    {
       name: RED,
       content: <FlagRedButton handleClick={() => handleDialogOpen(RED)} />,
-    }, options);
-  }
+    },
+  ];
 
   return (
     <div>
@@ -60,16 +55,9 @@ PartnerOverviewFlagMenu.propTypes = {
   dialogOpen: PropTypes.object,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
-  displayRedFlags: PropTypes.bool,
 };
 
-const mapStateToProps = state => ({
-  displayRedFlags: isUserAgencyAdmin(state),
-});
-
-
 export default compose(
-  connect(mapStateToProps),
   withMultipleDialogHandling,
   withRouter,
 )(PartnerOverviewFlagMenu);
