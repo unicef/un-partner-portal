@@ -35,6 +35,7 @@ class CfeiHeader extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleBackButton = this.handleBackButton.bind(this);
     this.cfeiTabs = this.cfeiTabs.bind(this);
+    this.filterTaba = this.filterTabs.bind(this);
   }
 
   componentWillMount() {
@@ -49,8 +50,9 @@ class CfeiHeader extends Component {
   }
 
   updatePath() {
-    const { tabs, params: { type, id }, location } = this.props;
-    const tabIndex = tabs.findIndex(tab => location.match(`^/cfei/${type}/${id}/${tab.path}`));
+    const { params: { type, id }, location } = this.props;
+    const tabsToRender = this.filterTabs();
+    const tabIndex = tabsToRender.findIndex(tab => location.match(`^/cfei/${type}/${id}/${tab.path}`));
     if (tabIndex === -1) {
       // TODO: do real 404
       history.push('/');
@@ -59,8 +61,9 @@ class CfeiHeader extends Component {
   }
 
   handleChange(event, index) {
-    const { tabs, params: { type, id } } = this.props;
-    history.push(`/cfei/${type}/${id}/${tabs[index].path}`);
+    const { params: { type, id } } = this.props;
+    const tabsToRender = this.filterTabs();
+    history.push(`/cfei/${type}/${id}/${tabsToRender[index].path}`);
   }
 
   handleBackButton() {
@@ -68,8 +71,8 @@ class CfeiHeader extends Component {
     history.push(`/cfei/${type}`);
   }
 
-  cfeiTabs() {
-    const { tabs, role, isReader, status, isReviewer, cnFile, params: { type } } = this.props;
+  filterTabs() {
+    const { tabs, role, isReader, status, isReviewer, params: { type } } = this.props;
     let tabsToRender = tabs;
     if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
       tabsToRender = tabsToRender.filter(({ path }) => {
@@ -80,6 +83,12 @@ class CfeiHeader extends Component {
         return true;
       });
     }
+    return tabsToRender;
+  }
+
+  cfeiTabs() {
+    const { cnFile } = this.props;
+    const tabsToRender = this.filterTabs();
     return tabsToRender.map((tab, index) => {
       if (index === 1) {
         return <CustomTab label={tab.label} key={index} checked={!!cnFile} />;
