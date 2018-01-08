@@ -127,20 +127,22 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
 
     def get_last_profile_update(self, obj):
         # one to one
-        updates = [
-            obj.modified, obj.profile.modified, obj.mailing_address.modified, obj.org_head.modified,
-            obj.audit.modified, obj.report.modified, obj.mandate_mission.modified, obj.fund.modified,
-            obj.other_info.modified
+        update_timestamps = [
+            obj.modified, obj.profile.modified, obj.mailing_address.modified, obj.audit.modified,
+            obj.report.modified, obj.mandate_mission.modified, obj.fund.modified, obj.other_info.modified
         ]
-        # FK
-        updates.extend(obj.directors.values_list("modified", flat=True))
-        updates.extend(obj.authorised_officers.values_list("modified", flat=True))
-        updates.extend(obj.area_policies.values_list("modified", flat=True))
-        updates.extend(obj.experiences.values_list("modified", flat=True))
-        updates.extend(obj.internal_controls.values_list("modified", flat=True))
-        updates.extend(obj.budgets.values_list("modified", flat=True))
-        updates.extend(obj.collaborations_partnership.values_list("modified", flat=True))
-        updates.extend(obj.collaboration_evidences.values_list("modified", flat=True))
+        if obj.org_head:
+            update_timestamps.append(obj.org_head.modified)
 
-        updates.sort()
-        return updates[-1]
+        # FK
+        update_timestamps.extend(obj.directors.values_list("modified", flat=True))
+        update_timestamps.extend(obj.authorised_officers.values_list("modified", flat=True))
+        update_timestamps.extend(obj.area_policies.values_list("modified", flat=True))
+        update_timestamps.extend(obj.experiences.values_list("modified", flat=True))
+        update_timestamps.extend(obj.internal_controls.values_list("modified", flat=True))
+        update_timestamps.extend(obj.budgets.values_list("modified", flat=True))
+        update_timestamps.extend(obj.collaborations_partnership.values_list("modified", flat=True))
+        update_timestamps.extend(obj.collaboration_evidences.values_list("modified", flat=True))
+
+        update_timestamps.sort()
+        return update_timestamps[-1]
