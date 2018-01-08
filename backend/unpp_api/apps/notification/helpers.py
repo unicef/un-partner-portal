@@ -39,9 +39,8 @@ def send_notification(notification_type, obj, users, context=None, send_in_feed=
 
     """
 
-    if check_sent_for_source:
-        if notification_already_sent(obj, notification_type):
-            return
+    if check_sent_for_source and notification_already_sent(obj, notification_type):
+        return
 
     notification_info = NOTIFICATION_DATA.get(notification_type)
 
