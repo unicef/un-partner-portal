@@ -72,7 +72,6 @@ class SingleFlagSummaryHeader extends Component {
   render() {
     const { displayEdit, flag, classes, isYou } = this.props;
     const { expanded, checked } = this.state;
-    console.log(flag)
     return (
       <div>
         <PaddedContent className={classes.lightGrey}>
