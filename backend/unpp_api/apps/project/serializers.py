@@ -476,7 +476,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             instance.reviewers.clear()
 
         focal_points = self.initial_data.get('focal_points', [])
-        if focal_points is not None:
+        if focal_points:
             instance.focal_points.through.objects.exclude(user_id__in=focal_points).delete()
             instance.focal_points.add(*User.objects.filter(id__in=focal_points))
         elif 'focal_points' in self.initial_data:
