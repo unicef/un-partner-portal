@@ -149,19 +149,6 @@ AUTHENTICATION_BACKENDS = [
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-# COMPRESS_PRECOMPILERS = (
-#     ('text/less', 'lessc {infile} {outfile}'),
-# )
-#
-# COMPRESS_CSS_FILTERS = [
-#     # css minimizer
-#     'compressor.filters.cssmin.CSSMinFilter',
-#     'compressor.filters.css_default.CssAbsoluteFilter'
-# ]
-# COMPRESS_JS_FILTERS = [
-#     'compressor.filters.jsmin.JSMinFilter'
-# ]
-
 USERSWITCH_OPTIONS = {
     'auth_backend':
         'django.contrib.auth.backends.ModelBackend',
@@ -189,7 +176,7 @@ def extend_list_avoid_repeats(list_to_extend, extend_with):
     list_to_extend.extend(filter(lambda x: not list_to_extend.count(x), extend_with))
 
 
-LOGS_PATH = os.path.join(DATA_VOLUME, PROJECT_NAME, 'logs')
+LOGS_PATH = os.getenv('UNPP_LOGS_PATH', os.path.join(DATA_VOLUME, PROJECT_NAME, 'logs'))
 
 LOGGING = {
     'version': 1,

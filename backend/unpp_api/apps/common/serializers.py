@@ -88,7 +88,7 @@ class MixinPreventManyCommonFile(object):
 
             for value in values:
                 cfile = get_object_or_404(CommonFile, pk=value)
-                
+
                 if cfile.has_existing_reference:
                     raise ValidationError(
                         'This given common file id {} can be used only once.'.format(value)
