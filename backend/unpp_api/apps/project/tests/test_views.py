@@ -23,7 +23,7 @@ from common.factories import (
     AgencyOfficeFactory,
     AgencyFactory,
     PartnerVerificationFactory,
-    UserFactory, PartnerFactory)
+)
 from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
