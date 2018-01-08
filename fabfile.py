@@ -56,11 +56,11 @@ def stop():
     local('docker-compose stop')
 
 
-def migrate():
+def managepy(command=''):
     """
-    Run Django migrations
+    Run specified manage.py command
     """
-    cmd = 'docker-compose exec backend python manage.py migrate'
+    cmd = 'docker-compose exec backend python manage.py {}'.format(command)
     local(cmd)
 
 
