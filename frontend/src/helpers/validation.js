@@ -115,3 +115,9 @@ export const validateReviewScores = (values, props) => {
   }
   return {};
 };
+
+export const phoneNumber = (value) => {
+  if (value && !/^\+?[1-9]\d{1,14}$/.test(value.trim())) {
+    return 'Invalid phone number';
+  }
+};
