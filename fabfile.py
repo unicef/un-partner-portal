@@ -56,6 +56,14 @@ def stop():
     local('docker-compose stop')
 
 
+def migrate():
+    """
+    Run Django migrations
+    """
+    cmd = 'docker-compose exec backend python manage.py migrate'
+    local(cmd)
+
+
 def fakedata(quantity=50, clean_before=True):
     """
     Load example data from fakedata management command.
