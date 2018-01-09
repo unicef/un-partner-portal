@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
-from common.paginations import SmallPagination
+from common.pagination import SmallPagination
 from common.permissions import (
     IsAtLeastAgencyMemberEditor,
     IsAgencyMemberUser,

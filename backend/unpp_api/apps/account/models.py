@@ -82,7 +82,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.fullname
 
     def __str__(self):
-        return "{} - User".format(self.get_fullname())
+        return "[{}] {}".format(self.email, self.get_fullname())
 
     @property
     def is_agency_user(self):
@@ -135,7 +135,7 @@ class UserProfile(TimeStampedModel):
     user = models.OneToOneField(User, related_name="profile")
 
     def __str__(self):
-        return "{} - Profile".format(self.user.get_fullname())
+        return "[{}] {}".format(self.user.email, self.user.get_fullname())
 
     @classmethod
     def create_user_profile(cls, sender, instance, created, **kwargs):

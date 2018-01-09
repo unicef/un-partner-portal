@@ -6,6 +6,8 @@ import Loader from '../../../common/loader';
 import ControlledModal from '../../../common/modals/controlledModal';
 import { updateCfei } from '../../../../reducers/newCfei';
 import CallPartnersForm from './callPartnersForm';
+import { selectCfeiDetails } from '../../../../store';
+import { amendPartnersCache } from '../../../../reducers/cache';
 
 const messages = {
   title: 'Invite Partners',
@@ -25,21 +27,29 @@ class CallPartnersModal extends Component {
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
-  onFormSubmit(values) {
-    return this.props.updateCfei(values).then(() => {
+  onFormSubmit({ invited_partners: partnerIds }) {
+    const { partners } = this.props;
+
+    const selectedPartners = partnerIds
+        .map(selectedId => partners.find(({ id }) => id === selectedId))
+        .filter(Boolean);
+
+    return this.props.updateCfei({
+      invited_partners: selectedPartners,
+    }).then(() => {
       this.props.handleDialogClose();
     });
   }
 
-
   render() {
     const { id, submit, dialogOpen, handleDialogClose } = this.props;
+
     return (
       <div>
         <ControlledModal
           maxWidth="md"
           title={messages.title}
-          trigger={dialogOpen}
+          trigger={dialogOpen.invite}
           handleDialogClose={handleDialogClose}
           info={messages.header}
           buttons={{
@@ -56,23 +66,39 @@ class CallPartnersModal extends Component {
       </div >
     );
   }
+
+  componentDidMount() {
+    const { cachePartners, currentPartners } = this.props;
+
+    cachePartners(currentPartners);
+  }
 }
 
 CallPartnersModal.propTypes = {
-  id: PropTypes.number,
+  id: PropTypes.string,
   submit: PropTypes.func,
   dialogOpen: PropTypes.object,
   handleDialogClose: PropTypes.func,
   updateCfei: PropTypes.func,
+  partners: PropTypes.array,
+  currentPartners: PropTypes.array,
+  cachePartners: PropTypes.func,
 };
 
-const mapStateToProps = state => ({
-  showLoading: state.newCfei.openCfeiSubmitting,
-});
+const mapStateToProps = (state, ownProps) => {
+  const cfei = selectCfeiDetails(state, ownProps.id);
+
+  return {
+    showLoading: state.newCfei.openCfeiSubmitting,
+    partners: state.cache.partners,
+    currentPartners: cfei ? cfei.invited_partners : [],
+  };
+};
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   updateCfei: body => dispatch(updateCfei(body, ownProps.id)),
   submit: () => dispatch(submit('callPartners')),
+  cachePartners: (partners) => dispatch(amendPartnersCache(partners)),
 });
 
 const containerCallPartnersModal = connect(

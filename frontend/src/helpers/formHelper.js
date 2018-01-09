@@ -418,7 +418,7 @@ export const renderText = ({
           className={className}
           {...other}
         >
-          {value}
+          {Array.isArray(value) ? value.join(', ') : value}
         </Typography>
       </div>
     </FormControl>

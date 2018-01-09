@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from common.permissions import IsAtLeastMemberReader, IsAgencyMemberUser, IsPartner
 from common.mixins import PartnerIdsMixin
-from common.paginations import MediumPagination, SmallPagination
+from common.pagination import MediumPagination, SmallPagination
 from project.serializers import ApplicationFullEOISerializer, SubmittedCNSerializer, PendingOffersSerializer
 from project.models import Application
 from .serializers import AgencyDashboardSerializer, PartnerDashboardSerializer

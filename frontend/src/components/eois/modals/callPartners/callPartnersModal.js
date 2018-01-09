@@ -29,8 +29,16 @@ class CallPartnersModal extends Component {
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
-  onFormSubmit(values) {
-    return this.props.updateCfei(values).then(() => {
+  onFormSubmit({ invited_partners: partnerIds }) {
+    const { partners } = this.props;
+
+    const selectedPartners = partnerIds
+        .map(selectedId => partners.find(({ id }) => id === selectedId))
+        .filter(Boolean);
+
+    return this.props.updateCfei({
+      invited_partners: selectedPartners,
+    }).then(() => {
       this.props.newCfeiProcessed();
       history.push(`/cfei/open/${this.props.id}/overview`);
     });
@@ -79,11 +87,13 @@ CallPartnersModal.propTypes = {
   submit: PropTypes.func,
   newCfeiProcessed: PropTypes.func,
   updateCfei: PropTypes.func,
+  partners: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
   showLoading: state.newCfei.openCfeiSubmitting,
   openDialog: state.newCfei.openCfeiProcessing,
+  partners: state.cache.partners,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

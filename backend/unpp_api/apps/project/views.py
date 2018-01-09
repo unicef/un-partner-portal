@@ -21,7 +21,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from account.models import User
 from common.consts import EOI_TYPES, DIRECT_SELECTION_SOURCE
-from common.paginations import SmallPagination
+from common.pagination import SmallPagination
 from common.permissions import (
     IsAgencyMemberUser,
     IsAtLeastMemberEditor,
