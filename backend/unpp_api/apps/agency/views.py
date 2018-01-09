@@ -5,7 +5,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
-from common.paginations import MediumPagination
+from common.pagination import MediumPagination
 from account.models import User
 from account.serializers import AgencyUserSerializer
 from .serializers import AgencySerializer, AgencyOfficeSerializer

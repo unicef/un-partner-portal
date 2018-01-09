@@ -17,9 +17,8 @@ from common.permissions import (
     IsRoleAdministratorOnNotGET,
     IsAgencyMemberUser,
 )
-from common.paginations import SmallPagination
+from common.pagination import SmallPagination, TinyResultSetPagination
 from common.mixins import PatchOneFieldErrorMixin
-from partner.pagination import TinyResultSetPagination
 from partner.serializers import (
     OrganizationProfileSerializer,
     OrganizationProfileDetailsSerializer,
