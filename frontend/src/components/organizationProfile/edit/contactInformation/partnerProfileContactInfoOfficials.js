@@ -8,7 +8,7 @@ import ArrayForm from '../../../forms/arrayForm';
 import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import GridRow from '../../../common/grid/gridRow';
 import GridColumn from '../../../common/grid/gridColumn';
-import { email } from '../../../../helpers/validation';
+import { email, phoneNumber } from '../../../../helpers/validation';
 
 const messages = {
   boardOfDirectors: 'Does your organization have a board of director(s)?',
@@ -47,6 +47,7 @@ const directorForm = (director, readOnly) => (
       <TextFieldForm
         fieldName={`${director}.telephone`}
         label="Telephone"
+        validation={[phoneNumber]}
         warn
         optional
         readOnly={readOnly}
@@ -91,6 +92,7 @@ const authorisedOfficerForm = (officer, readOnly) => (
       <TextFieldForm
         fieldName={`${officer}.telephone`}
         label="Telephone"
+        validation={[phoneNumber]}
         warn
         optional
         readOnly={readOnly}
