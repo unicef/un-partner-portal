@@ -33,7 +33,7 @@ const CnCell = (props) => {
         color="accent"
         to={path(type, eoiId, cnId)}
       >
-        {eoiId || cnId}
+        {cnId}
       </Typography>
     </TableCell>
   );
