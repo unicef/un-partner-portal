@@ -44,15 +44,15 @@ def send_notification(notification_type, obj, users, context=None, send_in_feed=
     notification_info = NOTIFICATION_DATA.get(notification_type)
 
     targets = [u.email for u in users]
-    body = render_template_to_str(notification_info.get('template_name'), context)
+    body = render_notification_template_to_str(notification_info.get('template_name'), context)
     send_mail(notification_info.get('subject'), body, settings.DEFAULT_FROM_EMAIL, targets)
 
     if send_in_feed:
         feed_alert(notification_type, notification_info.get('subject'), body, users, obj)
 
 
-def render_template_to_str(template_name, context):
-    return loader.get_template(template_name).render(context)
+def render_notification_template_to_str(template_name, context):
+    return loader.get_template('notifications/{}'.format(template_name)).render(context)
 
 
 # Return all partner members. Potential limit in future?
