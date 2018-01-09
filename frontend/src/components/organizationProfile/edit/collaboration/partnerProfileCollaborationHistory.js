@@ -14,9 +14,10 @@ import { PLACEHOLDERS } from '../../../../helpers/constants';
 const messages = {
   explainCollaboration: 'Briefly explain the collaboration with the agency selected (optional)',
   provideNumber: 'Please provide your Vendor/Partner Number (If applicable)',
-  selectAgency: 'Please indicate whether your organization has collaborated with any UN agencies',
+  selectAgency: 'Please indicate which agency?',
   hasPartnership: 'Has your organization partnered with UN agency?',
-  hasCollaborated: 'Has the organization collaborated with or participated as a member of a cluster, professional network, consortium or any similar institution?',
+  hasCollaborated: 'Has your organization collaborated with any UN agency?',
+  hasCollaboratedOther: 'Has the organization collaborated with or participated as a member of a cluster, professional network, consortium or any similar institution?',
   collaborationDesc: 'Please state which cluster, network or consortium and briefly explain the ' +
             'collaboration',
 };
@@ -98,7 +99,7 @@ const PartnerProfileCollaborationHistory = (props) => {
         : null}
       <RadioForm
         fieldName="partnership_collaborate_institution"
-        label={messages.hasCollaborated}
+        label={messages.hasCollaboratedOther}
         values={BOOL_VAL}
         warn
         optional
