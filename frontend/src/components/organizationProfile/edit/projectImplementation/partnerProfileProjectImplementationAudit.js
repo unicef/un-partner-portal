@@ -132,29 +132,33 @@ const PartnerProfileProjectImplementationAudit = (props) => {
             readOnly={readOnly}
           />}
 
-        <RadioForm
-          fieldName="major_accountability_issues_highlighted"
-          label={messages.accountabilityIssues}
-          values={BOOL_VAL}
-          warn
-          optional
-          readOnly={readOnly}
-        />
-        {visibleIfYes(accountabilityIssues)
-          ? <TextFieldForm
-            label={messages.comment}
-            placeholder={PLACEHOLDERS.provide}
-            fieldName="comment"
-            textFieldProps={{
-              multiline: true,
-              inputProps: {
-                maxLength: '5000',
-              },
-            }}
-            warn
-            optional
-            readOnly={readOnly}
-          />
+        {visibleIfYes(isRegularyAudited)
+          ? <div>
+            <RadioForm
+              fieldName="major_accountability_issues_highlighted"
+              label={messages.accountabilityIssues}
+              values={BOOL_VAL}
+              warn
+              optional
+              readOnly={readOnly}
+            />
+            {visibleIfYes(accountabilityIssues)
+              ? <TextFieldForm
+                label={messages.comment}
+                placeholder={PLACEHOLDERS.provide}
+                fieldName="comment"
+                textFieldProps={{
+                  multiline: true,
+                  inputProps: {
+                    maxLength: '5000',
+                  },
+                }}
+                warn
+                optional
+                readOnly={readOnly}
+              />
+              : null}
+          </div>
           : null}
         <RadioForm
           fieldName="capacity_assessment"
