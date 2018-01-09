@@ -1,7 +1,8 @@
+# Building entire app locally
 Since entire application is build using docker, all parts need to be used together so docker-compose is the suggested solution.
 We use fabric to create wrappers for typical docker-compose commands. Those can be found in fabfile.py in main folder.
 
-Setup local development environment:
+## Setup local development environment:
 It is possible to run only frontend locally, provided user has yarn installed
 open frontend folder in console and use: `yarn install`
 then `yarn start`. This will run application on localhost:8080 in developer mode
@@ -11,7 +12,7 @@ Note that application cannot run with only frontend as user needs to login first
 so backend is required to really use application but some evaluations with frontend code
 and providing mocked responses are possible
 
-Docker local development setup:
+## Docker local development setup:
   .env file needs to be added to main folder, please make sure to populate fields SECRET_KEY (any string is ok for local environment)
   and GOOGLE_KEY - this needs to be google application key that has Geocoding API and Map API  enabled
   Simply copy .env.example, change name to .env and populate those two fields
