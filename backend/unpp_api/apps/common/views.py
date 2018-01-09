@@ -8,12 +8,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .serializers import (ConfigSectorSerializer, CommonFileUploadSerializer,
-                          AdminLevel1Serializer)
-from .models import Sector, CommonFile, AdminLevel1
-from .countries import COUNTRIES_ALPHA2_CODE_DICT
-from .paginations import MediumPagination
-from .consts import (
+from common.serializers import (
+    ConfigSectorSerializer,
+    CommonFileUploadSerializer,
+    AdminLevel1Serializer
+)
+from common.models import Sector, CommonFile, AdminLevel1
+from common.countries import COUNTRIES_ALPHA2_CODE_DICT
+from common.pagination import MediumPagination
+from common.consts import (
     STAFF_GLOBALLY_CHOICES,
     PARTNER_DONORS_CHOICES,
     WORKING_LAGNUAGES_CHOICES,
@@ -31,6 +34,7 @@ from .consts import (
     COMPLETED_REASON,
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
+    EXTENDED_APPLICATION_STATUSES
 )
 
 
@@ -78,6 +82,7 @@ class ConfigPPAPIView(APIView):
             "completed-reason": COMPLETED_REASON,
             "direct-selection-source": DIRECT_SELECTION_SOURCE,
             "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,
+            "extended-application-statuses": EXTENDED_APPLICATION_STATUSES,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

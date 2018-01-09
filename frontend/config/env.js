@@ -74,8 +74,6 @@ function getClientEnvironment(publicUrl) {
         // This should only be used as an escape hatch. Normally you would put
         // images into the `src` and `import` them in code to get their paths.
         PUBLIC_URL: publicUrl,
-        USERNAME: process.env.USERNAME,
-        PASSWORD: process.env.PASSWORD,
         GOOGLE_KEY: process.env.GOOGLE_KEY,
       }
     );

@@ -57,6 +57,7 @@ import submittedCN from './reducers/submittedCN';
 import applicationDecisions from './reducers/applicationsDecisions';
 import applicationComparison from './reducers/applicationsComparison';
 import notificationsList from './reducers/notificationsList';
+import cache from './reducers/cache';
 import error, * as errorSelector from './reducers/errorReducer';
 
 const mainReducer = combineReducers({
@@ -113,6 +114,7 @@ const mainReducer = combineReducers({
   applicationDecisions,
   applicationComparison,
   notificationsList,
+  cache,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -165,6 +167,9 @@ export const selectNormalizedDirectJustification = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-justifications']);
 
 export const selectApplicationStatuses = state => state.partnerProfileConfig['application-statuses'];
+
+export const selectExtendedApplicationStatuses = state =>
+  state.partnerProfileConfig['extended-application-statuses'];
 
 export const selectOrganizationTypes = state => state.partnerProfileConfig['partner-type'];
 
@@ -243,6 +248,9 @@ export const isCfeiCompleted = (state, id) =>
 
 export const isCfeiPinned = (state, id) =>
   cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.data, id);
+
+export const selectCfeiWinnersStatus = (state, id) =>
+  cfeiDetailsSelector.selectCfeiWinnersStatus(state.cfeiDetails.data, id);
 
 export const mapSelectCriteriaToSelection = state =>
   mapValuesForSelectionField(state.selectionCriteria);

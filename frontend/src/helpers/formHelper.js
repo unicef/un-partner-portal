@@ -210,6 +210,7 @@ export const renderRadioField = ({ input,
             value={`${value.value}`}
             control={<RadioHeight />}
             label={value.label}
+            disabled={value.disabled}
           />))}</RadioGroupRow>
     </FormControl>
     {((touched && error) || warning) &&
@@ -417,7 +418,7 @@ export const renderText = ({
           className={className}
           {...other}
         >
-          {value}
+          {Array.isArray(value) ? value.join(', ') : value}
         </Typography>
       </div>
     </FormControl>

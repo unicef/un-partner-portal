@@ -7,7 +7,7 @@ import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import CountryField from '../../../forms/fields/projectFields/locationField/countryField';
 import { selectNormalizedCountries } from '../../../../store';
-import { url, email } from '../../../../helpers/validation';
+import { url, email, phoneNumber } from '../../../../helpers/validation';
 
 const messages = {
   mailingType: 'Type of mailing address',
@@ -102,6 +102,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                     warn
                     optional
                     readOnly={readOnly}
+                    validation={[phoneNumber]}
                   />
                 </Grid>
                 <Grid item sm={3} xs={12}>

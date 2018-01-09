@@ -10,7 +10,7 @@ const messages = {
   title: 'Manage Reviewers',
   header: {
     title: 'Choose reviewers for this CFEI',
-    body: 'Email wll be sent to selected accounts',
+    body: 'Email will be sent to selected accounts',
   },
   save: 'send',
 };

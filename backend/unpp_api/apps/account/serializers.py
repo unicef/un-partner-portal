@@ -34,6 +34,7 @@ from partner.serializers import (
     PartnerHeadOrganizationRegisterSerializer,
     PartnerMemberSerializer,
 )
+from partner.validators import PartnerRegistrationValidator
 from .models import User
 
 
@@ -62,6 +63,9 @@ class PartnerRegistrationSerializer(serializers.Serializer):
     partner_head_organization = PartnerHeadOrganizationRegisterSerializer()
     partner_member = PartnerMemberSerializer()
 
+    class Meta:
+        validators = [PartnerRegistrationValidator()]
+
     @transaction.atomic
     def create(self, validated_data):
         validated_data['user']['fullname'] = validated_data['user']['email']
@@ -75,9 +79,9 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         partner_profile['partner_id'] = self.partner.id
         self.partner_profile = PartnerProfile.objects.create(**partner_profile)
 
-        partner_head_orge = validated_data['partner_head_organization']
-        partner_head_orge['partner_id'] = self.partner.id
-        self.partner_head_organization = PartnerHeadOrganization.objects.create(**partner_head_orge)
+        partner_head_org = validated_data['partner_head_organization']
+        partner_head_org['partner_id'] = self.partner.id
+        self.partner_head_organization = PartnerHeadOrganization.objects.create(**partner_head_org)
 
         PartnerMailingAddress.objects.create(partner=self.partner)
         PartnerAuditAssessment.objects.create(partner=self.partner)

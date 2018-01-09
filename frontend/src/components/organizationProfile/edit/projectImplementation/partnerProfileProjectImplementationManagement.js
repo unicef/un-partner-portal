@@ -6,6 +6,7 @@ import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import { visibleIfYes, BOOL_VAL } from '../../../../helpers/formHelper';
 import GridColumn from '../../../common/grid/gridColumn';
+import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
   resultsBasedApproachTooltip: 'Results-based approach: aims to improve management effectiveness ' +
@@ -17,7 +18,7 @@ const messages = {
   monitoringSystem: 'Does your organization have a system for monitoring and evaluating its programmes and projects?',
   meDescription: 'Briefly explain your M&E system',
   feedbackSystem: 'Does the organization have systems or procedures in place for ' +
-                'beneficaries to provide feedback on prject activities?',
+                'beneficaries to provide feedback on project activities?',
   feedbackDescription: 'Briefly explain your feedback mechanism',
 };
 
@@ -39,6 +40,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
         {visibleIfYes(resultsBasedApproach)
           ? <TextFieldForm
             label={messages.resultsDescription}
+            placeholder={PLACEHOLDERS.provide}
             fieldName="management_approach_desc"
             textFieldProps={{
               multiline: true,
@@ -62,6 +64,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
         {visibleIfYes(monitoringSystem)
           ? <TextFieldForm
             label={messages.meDescription}
+            placeholder={PLACEHOLDERS.explain}
             fieldName="system_monitoring_desc"
             textFieldProps={{
               multiline: true,
@@ -86,6 +89,7 @@ const PartnerProfileProjectImplementationManagement = (props) => {
           ? <TextFieldForm
             label={messages.feedbackDescription}
             fieldName="feedback_mechanism_desc"
+            placeholder={PLACEHOLDERS.explain}
             textFieldProps={{
               multiline: true,
               inputProps: {

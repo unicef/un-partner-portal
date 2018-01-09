@@ -13,10 +13,13 @@ class BaseAPITestCase(APITestCase):
     Base class for all api test case with generated fake data.
     """
 
+    USER_AGENCY = 'agency'
+    USER_PARTNER = 'partner'
+
     fixtures = [os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'fixtures', 'initial.json'), ]
     client_class = APIClient
     with_session_login = True
-    user_type = 'partner'  # or agency
+    user_type = USER_PARTNER  # or agency
     user_role = MEMBER_ROLES.admin
     initial_factories = [AgencyFactory, AgencyOfficeFactory, PartnerSimpleFactory]
     quantity = 1

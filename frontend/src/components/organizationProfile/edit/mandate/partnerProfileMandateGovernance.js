@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import GridColumn from '../../../common/grid/gridColumn';
 import TextFieldForm from '../../../forms/textFieldForm';
 import FileForm from '../../../forms/fileForm';
+import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
   structure: 'Briefly describe the organization\'s governance structure',
@@ -30,6 +31,7 @@ const PartnerProfileMandateGovernance = (props) => {
             },
           }}
           warn
+          placeholder={PLACEHOLDERS.state}
           optional
           readOnly={readOnly}
         />

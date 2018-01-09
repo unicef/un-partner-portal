@@ -9,6 +9,12 @@ import * as cfeiDetails from './cfeiDetails';
 import { PROJECT_TYPES } from '../helpers/constants';
 import { loadApplicationsUcn } from './applicationsUnsolicitedList';
 import { errorToBeAdded } from './errorReducer';
+import {
+  loadSuccess,
+} from './apiMeta';
+import {
+  APPLICATION_DETAILS,
+} from './applicationDetails';
 
 const errorMsg = 'Unable to update project';
 
@@ -94,9 +100,19 @@ export const addUnsolicitedCN = body => (dispatch) => {
     });
 };
 
-export const updateCfei = (body, id) => dispatch => patchCfei(body, id)
+export const updateCfei = (body, id) => (dispatch, getState) => patchCfei(body, id)
   .then((cfei) => {
     dispatch(loadCfeiDetailSuccess(cfei));
+    if (cfei.direct_selected_partners) {
+      cfei.direct_selected_partners.forEach((selectedPartner) => {
+        dispatch(loadSuccess(APPLICATION_DETAILS, { results: {
+          id: selectedPartner.id,
+          application_status: selectedPartner.application_status,
+        },
+        selectedPartner,
+        getState }));
+      });
+    }
   }).catch((error) => {
     dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
     throw new SubmissionError({

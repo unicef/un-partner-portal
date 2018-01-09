@@ -13,11 +13,16 @@ from account.serializers import AgencyUserSerializer, IDUserSerializer, UserSeri
 from agency.serializers import AgencySerializer
 from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
-from common.serializers import SimpleSpecializationSerializer, PointSerializer, CommonFileSerializer, MixinPreventManyCommonFile
+from common.serializers import (
+    SimpleSpecializationSerializer,
+    PointSerializer,
+    CommonFileSerializer,
+    MixinPreventManyCommonFile,
+)
 from common.models import Point, Specialization
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
-from .models import EOI, Application, Assessment, ApplicationFeedback
+from project.models import EOI, Application, Assessment, ApplicationFeedback
 
 
 class BaseProjectSerializer(serializers.ModelSerializer):
@@ -398,13 +403,14 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
         return None
 
 
-class AgencyProjectReadSerializer(serializers.ModelSerializer):
-    specializations = SimpleSpecializationSerializer(many=True)
-    locations = PointSerializer(many=True)
+class AgencyProjectSerializer(serializers.ModelSerializer):
+
+    specializations = SimpleSpecializationSerializer(many=True, read_only=True)
+    locations = PointSerializer(many=True, read_only=True)
     direct_selected_partners = serializers.SerializerMethodField()
     focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
     reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
-    invited_partners = PartnerShortSerializer(many=True)
+    invited_partners = PartnerShortSerializer(many=True, read_only=True)
 
     class Meta:
         model = EOI
@@ -442,97 +448,44 @@ class AgencyProjectReadSerializer(serializers.ModelSerializer):
             'direct_selected_partners',
             'created',
             'completed_date',
+            'contains_partner_accepted',
         )
+        read_only_fields = ('created', 'completed_date')
 
     def get_direct_selected_partners(self, obj):
         if obj.is_direct:
             # this is used by agency
-            query = obj.applications.all()
-            return SelectedPartnersSerializer(query, many=True).data
-        return
-
-
-# TODO - clean up for what is only needed on create
-class AgencyProjectUpdateSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
-
-    specializations = SimpleSpecializationSerializer(many=True)
-    locations = PointSerializer(many=True)
-    focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
-    reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
-
-    class Meta:
-        model = EOI
-        fields = (
-            'id',
-            'specializations',
-            'invited_partners',
-            'locations',
-            'assessments_criteria',
-            'created',
-            'start_date',
-            'end_date',
-            'deadline_date',
-            'notif_results_date',
-            'justification',
-            'completed_reason',
-            'completed_date',
-            'is_completed',
-            'display_type',
-            'status',
-            'title',
-            'agency',
-            'created_by',
-            'focal_points',
-            'focal_points_detail',
-            'agency_office',
-            'cn_template',
-            'description',
-            'goal',
-            'other_information',
-            'has_weighting',
-            'reviewers',
-            'reviewers_detail',
-            'selected_source',
-        )
-
-        read_only_fields = ('created', 'completed_date',)
+            return SelectedPartnersSerializer(obj.applications.all(), many=True).data
 
     def update(self, instance, validated_data):
-        if 'invited_partners' in validated_data:
-            del validated_data['invited_partners']
-            # user can add and remove on update - here we remove partners that are not in list
-            for partner in instance.invited_partners.all():
-                if partner.id not in self.initial_data.get('invited_partners', []):
-                    instance.invited_partners.remove(partner)
-
-        if 'reviewers' in validated_data:
-            del validated_data['reviewers']
-            for user in instance.reviewers.all():
-                if user.id not in self.initial_data.get('reviewers', []):
-                    instance.reviewers.remove(user)
-
-        if 'focal_points' in validated_data:
-            del validated_data['focal_points']
-            for user in instance.focal_points.all():
-                if user.id not in self.initial_data.get('focal_points', []):
-                    instance.focal_points.remove(user)
-
         if instance.completed_reason is None and validated_data.get('completed_reason') is not None and \
                 instance.completed_date is None and instance.is_completed is False:
             instance.completed_date = datetime.now()
             instance.is_completed = True
 
-        instance = super(AgencyProjectUpdateSerializer, self).update(instance, validated_data)
-        for invited_partner in self.initial_data.get('invited_partners', []):
-            instance.invited_partners.add(Partner.objects.get(id=invited_partner))
+        instance = super(AgencyProjectSerializer, self).update(instance, validated_data)
 
-        for reviewer in self.initial_data.get('reviewers', []):
-            instance.reviewers.add(User.objects.get(id=reviewer))
+        invited_partners = self.initial_data.get('invited_partners', [])
+        if invited_partners:
+            invited_partner_ids = [p['id'] for p in invited_partners]
+            instance.invited_partners.through.objects.exclude(partner_id__in=invited_partner_ids).delete()
+            instance.invited_partners.add(*Partner.objects.filter(id__in=invited_partner_ids))
+        elif 'invited_partners' in self.initial_data:
+            instance.invited_partners.clear()
 
-        for focal_point in self.initial_data.get('focal_points', []):
-            instance.focal_points.add(User.objects.get(id=focal_point))
+        reviewers = self.initial_data.get('reviewers', [])
+        if reviewers:
+            instance.reviewers.through.objects.exclude(user_id__in=reviewers).delete()
+            instance.reviewers.add(*User.objects.filter(id__in=reviewers))
+        elif 'reviewers' in self.initial_data:
+            instance.reviewers.clear()
 
-        instance.save()
+        focal_points = self.initial_data.get('focal_points', [])
+        if focal_points:
+            instance.focal_points.through.objects.exclude(user_id__in=focal_points).delete()
+            instance.focal_points.add(*User.objects.filter(id__in=focal_points))
+        elif 'focal_points' in self.initial_data:
+            instance.focal_points.clear()
 
         return instance
 
@@ -565,7 +518,7 @@ class AgencyProjectUpdateSerializer(MixinPreventManyCommonFile, serializers.Mode
                     raise serializers.ValidationError(
                         "Only Focal Point/Creator is allowed to modify a CFEI.")
 
-        return super(AgencyProjectUpdateSerializer, self).validate(data)
+        return super(AgencyProjectSerializer, self).validate(data)
 
 
 class ApplicationsListSerializer(serializers.ModelSerializer):
@@ -591,6 +544,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'your_score',
             'your_score_breakdown',
             'review_progress',
+            'application_status',
         )
 
     def _get_my_assessment(self, obj):
@@ -737,6 +691,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             'is_direct',
             'partner_name',
             'partner_additional',
+            'application_status',
         )
 
     def get_project_title(self, obj):

@@ -11,6 +11,7 @@ import FileForm from '../../../forms/fileForm';
 import YearFieldForm from '../../../forms/yearFieldForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import DatePickerForm from '../../../forms/datePickerForm';
+import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
   yearEstablishmentHq: 'Year of establishment in country of operation',
@@ -44,6 +45,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                   ? messages.yearEstablishment
                   : messages.yearEstablishmentHq}
                 warn
+                placeholder={PLACEHOLDERS.provide}
                 optional
                 readOnly={readOnly}
               />
@@ -94,6 +96,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                     label={messages.date}
                     warn
                     optional
+                    placeholder={PLACEHOLDERS.provide}
                     readOnly={readOnly}
                   />
                 </Grid>
@@ -102,6 +105,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
                     label={messages.number}
                     fieldName="registration_number"
                     optional
+                    placeholder={PLACEHOLDERS.provide}
                     readOnly={readOnly}
                   />
                 </Grid>

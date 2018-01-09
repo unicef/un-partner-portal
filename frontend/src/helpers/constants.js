@@ -59,3 +59,13 @@ export const FLAGS = {
   YELLOW: 'Yel',
   RED: 'Red',
 };
+
+export const PLACEHOLDERS = {
+  list: 'Please list',
+  provide: 'Please provide',
+  select: 'Please select',
+  explain: 'Briefly explain',
+  indicate: 'Please indicate',
+  state: 'Please state',
+  comment: 'Provide comment',
+};

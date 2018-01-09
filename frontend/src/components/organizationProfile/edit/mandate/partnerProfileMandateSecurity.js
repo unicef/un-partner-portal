@@ -6,6 +6,7 @@ import GridColumn from '../../../common/grid/gridColumn';
 import { BOOL_VAL } from '../../../../helpers/formHelper';
 import RadioForm from '../../../forms/radioForm';
 import TextFieldForm from '../../../forms/textFieldForm';
+import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
   highRiskLoaction: 'Does the organization have the ablility to work in high-risk security locations?',
@@ -44,6 +45,7 @@ const PartnerProfileMandateSecurity = (props) => {
         <TextFieldForm
           label={messages.description}
           fieldName="security_desc"
+          placeholder={PLACEHOLDERS.comment}
           textFieldProps={{
             multiline: true,
             inputProps: {

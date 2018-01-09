@@ -14,6 +14,8 @@ services:
     depends_on:
       - backend
       - frontend
+    volumes_from:
+      - backend
 
   backend:
     image: unicef/unpp-backend
@@ -27,6 +29,7 @@ services:
         REQUIREMENT_FILE: dev.pip
     volumes:
       - './backend:/code/'
+      - '/data'
     command: bash -c "/usr/local/bin/waitforit -host=db -port=5432 --timeout 30 && python /code/manage.py collectstatic --noinput && uwsgi --ini /code/unpp_api/uwsgi.ini"
     depends_on:
       - db
@@ -52,5 +55,3 @@ services:
         - ./frontend/:/code
         - /code/node_modules
     command: bash -c "yarn run start"
-
-

@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from operator import attrgetter
+
 from datetime import datetime, date, timedelta
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Count
 from rest_framework import serializers
@@ -116,31 +120,39 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
         }
 
     def get_num_of_pinned_cfei(self, obj):
+        today = date.today()
         return Pin.objects.filter(
-            eoi__deadline_date__gte=date.today(),
-            eoi__deadline_date__lte=(date.today()+timedelta(days=self.DAYS_AGO)),
+            eoi__deadline_date__range=(today, today + timedelta(days=self.DAYS_AGO)),
             partner_id__in=self.get_partner_ids(),
-        ).count()
+        ).order_by().distinct('eoi').count()
 
     def get_num_of_awards(self, obj):
         return Application.objects.filter(did_win=True, partner_id__in=self.get_partner_ids()).count()
 
     def get_last_profile_update(self, obj):
-        # one to one
-        updates = [
-            obj.modified, obj.profile.modified, obj.mailing_address.modified, obj.org_head.modified,
-            obj.audit.modified, obj.report.modified, obj.mandate_mission.modified, obj.fund.modified,
-            obj.other_info.modified
+        timestamp_fields = [
+            'org_head.modified', 'profile.modified', 'mailing_address.modified', 'audit.modified', 'report.modified',
+            'mandate_mission.modified', 'fund.modified', 'other_info.modified'
         ]
-        # FK
-        updates.extend(obj.directors.values_list("modified", flat=True))
-        updates.extend(obj.authorised_officers.values_list("modified", flat=True))
-        updates.extend(obj.area_policies.values_list("modified", flat=True))
-        updates.extend(obj.experiences.values_list("modified", flat=True))
-        updates.extend(obj.internal_controls.values_list("modified", flat=True))
-        updates.extend(obj.budgets.values_list("modified", flat=True))
-        updates.extend(obj.collaborations_partnership.values_list("modified", flat=True))
-        updates.extend(obj.collaboration_evidences.values_list("modified", flat=True))
 
-        updates.sort()
-        return updates[-1]
+        update_timestamps = [
+            obj.modified,
+        ]
+        for field_name in timestamp_fields:
+            try:
+                update_timestamps.append(attrgetter(field_name)(obj))
+            except ObjectDoesNotExist:
+                pass
+
+        # FK
+        update_timestamps.extend(obj.directors.values_list("modified", flat=True))
+        update_timestamps.extend(obj.authorised_officers.values_list("modified", flat=True))
+        update_timestamps.extend(obj.area_policies.values_list("modified", flat=True))
+        update_timestamps.extend(obj.experiences.values_list("modified", flat=True))
+        update_timestamps.extend(obj.internal_controls.values_list("modified", flat=True))
+        update_timestamps.extend(obj.budgets.values_list("modified", flat=True))
+        update_timestamps.extend(obj.collaborations_partnership.values_list("modified", flat=True))
+        update_timestamps.extend(obj.collaboration_evidences.values_list("modified", flat=True))
+
+        update_timestamps.sort()
+        return update_timestamps[-1]

@@ -6,7 +6,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from common.paginations import MediumPagination
+from common.pagination import MediumPagination
 from .serializers import NotifiedUserSerializer, NotificationSerializer, NotifiedSerializer
 from .models import NotifiedUser, Notification
 from .permissions import IsNotifiedOwner

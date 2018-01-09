@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
-import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 import HeaderOptionsContainer from './headerOptions/headerOptionsContainer';
@@ -12,13 +11,16 @@ import Loader from '../../common/loader';
 import {
   selectCfeiDetailsItemsByType,
   selectCfeiTitle,
+  selectCfeiStatus,
+  isUserAReviewer,
 } from '../../../store';
 import { loadCfei, loadUnsolicitedCfei } from '../../../reducers/cfeiDetails';
 import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
 import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
-import { ROLES, PROJECT_TYPES } from '../../../helpers/constants';
+import { ROLES, PROJECT_TYPES, PROJECT_STATUSES } from '../../../helpers/constants';
 import PaddedContent from '../../common/paddedContent';
 import MainContentWrapper from '../../common/mainContentWrapper';
+import { isUserAgencyReader } from '../../../helpers/authHelpers';
 
 const messages = {
   noCfei: 'Sorry but this project doesn\'t exist',
@@ -32,6 +34,8 @@ class CfeiHeader extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleBackButton = this.handleBackButton.bind(this);
+    this.cfeiTabs = this.cfeiTabs.bind(this);
+    this.filterTaba = this.filterTabs.bind(this);
   }
 
   componentWillMount() {
@@ -46,8 +50,9 @@ class CfeiHeader extends Component {
   }
 
   updatePath() {
-    const { tabs, params: { type, id }, location } = this.props;
-    const tabIndex = tabs.findIndex(tab => location.match(`^/cfei/${type}/${id}/${tab.path}`));
+    const { params: { type, id }, location } = this.props;
+    const tabsToRender = this.filterTabs();
+    const tabIndex = tabsToRender.findIndex(tab => location.match(`^/cfei/${type}/${id}/${tab.path}`));
     if (tabIndex === -1) {
       // TODO: do real 404
       history.push('/');
@@ -56,8 +61,9 @@ class CfeiHeader extends Component {
   }
 
   handleChange(event, index) {
-    const { tabs, params: { type, id } } = this.props;
-    history.push(`/cfei/${type}/${id}/${tabs[index].path}`);
+    const { params: { type, id } } = this.props;
+    const tabsToRender = this.filterTabs();
+    history.push(`/cfei/${type}/${id}/${tabsToRender[index].path}`);
   }
 
   handleBackButton() {
@@ -65,10 +71,27 @@ class CfeiHeader extends Component {
     history.push(`/cfei/${type}`);
   }
 
+  filterTabs() {
+    const { tabs, role, isReader, status, isReviewer, params: { type } } = this.props;
+    let tabsToRender = tabs;
+    if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
+      tabsToRender = tabsToRender.filter(({ path }) => {
+        if ((['applications', 'preselected'].includes(path) && isReader && !isReviewer)
+        || (path === 'results' && isReader && status !== PROJECT_STATUSES.COM)) {
+          return false;
+        }
+        return true;
+      });
+    }
+    return tabsToRender;
+  }
+
   cfeiTabs() {
-    return this.props.tabs.map((tab, index) => {
+    const { cnFile } = this.props;
+    const tabsToRender = this.filterTabs();
+    return tabsToRender.map((tab, index) => {
       if (index === 1) {
-        return <CustomTab label={tab.label} key={index} checked={!!this.props.cnFile} />;
+        return <CustomTab label={tab.label} key={index} checked={!!cnFile} />;
       }
 
       return <CustomTab label={tab.label} key={index} />;
@@ -144,6 +167,9 @@ CfeiHeader.propTypes = {
   ]),
   type: PropTypes.string,
   loadUCN: PropTypes.func,
+  isReader: PropTypes.bool,
+  isReviewer: PropTypes.bool,
+  status: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -155,6 +181,9 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.cfeiDetails.status.loading,
   cnFile: state.conceptNote.cnFile,
   error: state.cfeiDetails.status.error,
+  isReader: isUserAgencyReader(state),
+  status: selectCfeiStatus(state, ownProps.params.id),
+  isReviewer: isUserAReviewer(state, ownProps.params.id),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

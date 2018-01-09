@@ -56,6 +56,14 @@ def stop():
     local('docker-compose stop')
 
 
+def managepy(command=''):
+    """
+    Run specified manage.py command
+    """
+    cmd = 'docker-compose exec backend python manage.py {}'.format(command)
+    local(cmd)
+
+
 def fakedata(quantity=50, clean_before=True):
     """
     Load example data from fakedata management command.
@@ -78,11 +86,11 @@ def reset_db():
     fakedata(clean_before=False)
 
 
-def tests():
+def tests(test_path=''):
     """
     Run unit tests.
     """
-    local('docker-compose exec backend python manage.py test --parallel')
+    local('docker-compose exec backend python manage.py test {} --parallel --noinput'.format(test_path))
 
 
 def remove_untagged_images():
@@ -97,3 +105,31 @@ def pep8():
     Run python code linter
     """
     local('docker-compose exec backend flake8 ./ --count')
+
+
+def cloud_login():
+    """
+    Login into docker cloud services
+    """
+    local('docker login')
+
+
+def cloud_setup(namespace):
+    """
+    Set docker cloud namespace
+    """
+    local('export DOCKERCLOUD_NAMESPACE={}'.format(namespace))
+
+
+def cloud_list():
+    """
+    List docker cloud containers
+    """
+    local('docker-cloud container ps')
+
+
+def cloud_ssh(container_uuid):
+    """
+    SSH into a cloud container
+    """
+    local('docker-cloud container exec {} /bin/bash'.format(container_uuid))

@@ -21,7 +21,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from account.models import User
 from common.consts import EOI_TYPES, DIRECT_SELECTION_SOURCE
-from common.paginations import SmallPagination
+from common.pagination import SmallPagination
 from common.permissions import (
     IsAgencyMemberUser,
     IsAtLeastMemberEditor,
@@ -43,15 +43,13 @@ from notification.helpers import (
     send_notificiation_application_created,
     send_notification,
 )
-from .models import Assessment, Application, EOI, Pin, ApplicationFeedback
-from .serializers import (
+from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
+from project.serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
     CreateProjectSerializer,
     PartnerProjectSerializer,
     CreateDirectProjectSerializer,
-    AgencyProjectReadSerializer,
-    AgencyProjectUpdateSerializer,
     ApplicationFullSerializer,
     ApplicationFullEOISerializer,
     AgencyUnsolicitedApplicationSerializer,
@@ -69,9 +67,10 @@ from .serializers import (
     EOIReviewersAssessmentsSerializer,
     AwardedPartnersSerializer,
     CompareSelectedSerializer,
+    AgencyProjectSerializer,
 )
 
-from .filters import (
+from project.filters import (
     BaseProjectFilter,
     ApplicationsFilter,
     ApplicationsEOIFilter,
@@ -130,11 +129,7 @@ class EOIAPIView(RetrieveUpdateAPIView):
     queryset = EOI.objects.all()
 
     def get_serializer_class(self, *args, **kwargs):
-        if self.request.user.is_agency_user:
-            if self.request.method == 'GET':
-                return AgencyProjectReadSerializer
-            return AgencyProjectUpdateSerializer
-        return PartnerProjectSerializer
+        return AgencyProjectSerializer if self.request.user.is_agency_user else PartnerProjectSerializer
 
     def perform_update(self, serializer):
         eoi = self.get_object()
@@ -582,8 +577,8 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
-        user = get_object_or_404(eoi.reviewers.all(), id=self.kwargs['reviewer_id'])
-        #TODO - send notification reminder email w/ notification enhancement
+        get_object_or_404(eoi.reviewers.all(), id=self.kwargs['reviewer_id'])
+        # TODO - send notification reminder email w/ notification enhancement
 
         return Response(
             {"success": self.NOTIFICATION_MESSAGE_SENT},
