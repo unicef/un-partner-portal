@@ -325,27 +325,32 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         url = reverse('partners:collaboration', kwargs={"pk": partner.id})
 
         response = self.client.get(url, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEqual(response.status_code, statuses.HTTP_200_OK)
 
-        text = 'test'
-        payload = response.data
-        payload['collaboration_evidences'] = [
-            {
-                "evidence_file_id": CommonFile.objects.first().id,
-            }
-        ]
+        text = 'updated to test'
+
         collaborations_partnership = response.data['collaborations_partnership']
         for collaboration_partnership in collaborations_partnership:
             collaboration_partnership['description'] = text
             collaboration_partnership['partner_number'] = text
-        payload['partnership_collaborate_institution_desc'] = text
-        payload['partnership_collaborate_institution'] = True
 
-        response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        payload = {
+            'collaboration_evidences': [
+                {
+                    "evidence_file_id": CommonFile.objects.first().id,
+                }
+            ],
+            'collaborations_partnership': collaborations_partnership,
+            'partnership_collaborate_institution_desc': text,
+            'partnership_collaborate_institution': True
+        }
+
+        update_response = self.client.patch(url, data=payload, format='json')
+        self.assertEqual(update_response.status_code, statuses.HTTP_200_OK)
+
         self.assertTrue(payload['partnership_collaborate_institution'])
-        self.assertEquals(response.data['partnership_collaborate_institution_desc'], text)
-        for cp in response.data['collaborations_partnership']:
+        self.assertEquals(update_response.data['partnership_collaborate_institution_desc'], text)
+        for cp in update_response.data['collaborations_partnership']:
             self.assertEquals(cp['description'], text)
             self.assertEquals(cp['partner_number'], text)
 

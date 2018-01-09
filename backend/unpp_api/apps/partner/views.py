@@ -17,9 +17,9 @@ from common.permissions import (
     IsRoleAdministratorOnNotGET,
     IsAgencyMemberUser,
 )
-from common.paginations import SmallPagination
+from common.pagination import SmallPagination, TinyResultSetPagination
 from common.mixins import PatchOneFieldErrorMixin
-from .serializers import (
+from partner.serializers import (
     OrganizationProfileSerializer,
     OrganizationProfileDetailsSerializer,
     PartnerProfileSummarySerializer,
@@ -34,8 +34,8 @@ from .serializers import (
     PartnerProfileOtherInfoSerializer,
     PartnerCountryProfileSerializer,
 )
-from .filters import PartnersListFilter
-from .models import (
+from partner.filters import PartnersListFilter
+from partner.models import (
     Partner,
     PartnerProfile,
     PartnerMember,
@@ -82,6 +82,7 @@ class PartnerShortListAPIView(ListAPIView):
     serializer_class = PartnerShortSerializer
     filter_backends = (DjangoFilterBackend, )
     filter_class = PartnersListFilter
+    pagination_class = TinyResultSetPagination
 
 
 class PartnerIdentificationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):

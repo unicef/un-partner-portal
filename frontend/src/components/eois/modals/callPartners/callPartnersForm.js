@@ -14,6 +14,7 @@ const messages = {
 
 const CallPartnersForm = (props) => {
   const { handleSubmit, invitedPartners, countries, ...other } = props;
+
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
