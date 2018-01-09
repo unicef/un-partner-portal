@@ -18,6 +18,7 @@ class NotificationType(object):
     CFEI_INVITE = 'cfei_invitation'
     CFEI_DEADLINE_UPDATE = 'cfei_update_prev'
     SELECTED_AS_CFEI_REVIEWER = 'agency_cfei_reviewers_selected'
+    CFEI_REVIEW_REQUIRED = 'cfei_review_required'
     PARTNER_DECISION_MADE = 'agency_application_decision_make'
 
 
@@ -90,5 +91,9 @@ NOTIFICATION_DATA = {
     NotificationType.PARTNER_DECISION_MADE: {
         'template_name': 'agency_decision_selected_partner',
         'subject': 'Prospective Partner Decision Made'
+    },
+    NotificationType.CFEI_REVIEW_REQUIRED: {
+        'template_name': 'cfei_review_required',
+        'subject': 'Your CFEI review is required'
     },
 }

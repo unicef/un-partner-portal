@@ -36,14 +36,13 @@ from common.permissions import (
     IsPartner,
 )
 from common.mixins import PartnerIdsMixin
-from notification.consts import NotificationType
 from notification.helpers import (
     get_partner_users_for_app_qs,
     send_notification_cfei_completed,
     send_notification_application_updated,
     send_notificiation_application_created,
     send_notification,
-)
+    send_cfei_review_required_notification)
 from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from project.serializers import (
     BaseProjectSerializer,
@@ -578,7 +577,7 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
         user = get_object_or_404(eoi.reviewers.all(), id=self.kwargs['reviewer_id'])
 
-        send_notification(NotificationType.SELECTED_AS_CFEI_REVIEWER, eoi, [user])
+        send_cfei_review_required_notification(eoi, [user])
 
         return Response({
             "success": self.NOTIFICATION_MESSAGE_SENT

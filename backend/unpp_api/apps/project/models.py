@@ -114,7 +114,7 @@ class EOI(TimeStampedModel):
         return sum(map(lambda x: x.get('weight'), self.assessments_criteria)) == 100 if self.has_weighting else True
 
     def get_absolute_url(self):
-        return "{}cfei/open/1/overview".format(settings.FRONTEND_URL)
+        return "{}cfei/open/{}/overview".format(settings.FRONTEND_URL, self.id)
 
 
 class Pin(TimeStampedModel):
