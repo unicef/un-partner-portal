@@ -18,7 +18,7 @@ const messages = {
   monitoringSystem: 'Does your organization have a system for monitoring and evaluating its programmes and projects?',
   meDescription: 'Briefly explain your M&E system',
   feedbackSystem: 'Does the organization have systems or procedures in place for ' +
-                'beneficaries to provide feedback on prject activities?',
+                'beneficaries to provide feedback on project activities?',
   feedbackDescription: 'Briefly explain your feedback mechanism',
 };
 
