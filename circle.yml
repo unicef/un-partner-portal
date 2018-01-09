@@ -13,6 +13,5 @@ dependencies:
 
 test:
   override:
-# TODO: Run django tests
-#    - cd backend && python manage.py test --noinput --parallel
+    - cd backend && python manage.py test --noinput --parallel
     - cd backend && flake8
