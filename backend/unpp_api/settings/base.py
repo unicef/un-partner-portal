@@ -32,7 +32,7 @@ DATA_VOLUME = '/data'
 
 UPLOADS_DIR_NAME = 'uploads'
 MEDIA_URL = '/api/%s/' % UPLOADS_DIR_NAME
-MEDIA_ROOT = os.path.join(DATA_VOLUME, '%s' % UPLOADS_DIR_NAME)
+MEDIA_ROOT = os.getenv('UNPP_UPLOADS_PATH', os.path.join(DATA_VOLUME, '%s' % UPLOADS_DIR_NAME))
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
 
@@ -149,14 +149,6 @@ AUTHENTICATION_BACKENDS = [
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-USERSWITCH_OPTIONS = {
-    'auth_backend':
-        'django.contrib.auth.backends.ModelBackend',
-    'css_inline':
-        'position:fixed !important; bottom: 10px !important; left: 10px !important; opacity:0.50; z-index: 9999;',
-}
-
-# TODO - only enable TokenAuth for prod
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',

@@ -57,6 +57,7 @@ import submittedCN from './reducers/submittedCN';
 import applicationDecisions from './reducers/applicationsDecisions';
 import applicationComparison from './reducers/applicationsComparison';
 import notificationsList from './reducers/notificationsList';
+import cache from './reducers/cache';
 import error, * as errorSelector from './reducers/errorReducer';
 
 const mainReducer = combineReducers({
@@ -113,6 +114,7 @@ const mainReducer = combineReducers({
   applicationDecisions,
   applicationComparison,
   notificationsList,
+  cache,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
