@@ -5,10 +5,12 @@ machine:
     POSTGRES_USER: ubuntu
     POSTGRES_HOST: localhost
     UNPP_LOGS_PATH: /home/ubuntu/logs
+    UNPP_UPLOADS_PATH: /home/ubuntu/uploads
 
 dependencies:
   pre:
     - mkdir -p /home/ubuntu/logs
+    - mkdir -p /home/ubuntu/uploads
     - pip install -r backend/requirements/dev.pip
 
 test:
