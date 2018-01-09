@@ -66,19 +66,19 @@ class AgencyMembersFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { country_code, name } = values;
+    const { office_name, name } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
-        country_code,
+        office_name,
         name,
       }),
     });
   }
 
   render() {
-    const { classes, countryCode, handleSubmit, reset } = this.props;
+    const { classes, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit}>
@@ -93,10 +93,10 @@ class AgencyMembersFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <CountryField
-                initialValue={countryCode}
-                fieldName="country_code"
+              <TextFieldForm
                 label={messages.labels.office}
+                placeholder={messages.labels.office}
+                fieldName="office_name"
                 optional
               />
             </Grid>
@@ -140,14 +140,14 @@ const formAgencyMembersFilter = reduxForm({
 
 const mapStateToProps = (state, ownProps) => {
   const { query: { name } = {} } = ownProps.location;
-  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { office_name } = {} } = ownProps.location;
 
   return {
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {
       name,
-      country_code },
+      office_name },
   };
 };
 
