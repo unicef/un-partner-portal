@@ -47,4 +47,3 @@ class TestPartnerDashboardAPIView(BaseAPITestCase):
         url = reverse('dashboard:main')
         read_response = self.client.get(url, format='json')
         self.assertEqual(read_response.status_code, statuses.HTTP_200_OK)
-
