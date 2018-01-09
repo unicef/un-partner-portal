@@ -297,17 +297,17 @@ class PartnerProfile(TimeStampedModel):
             'ethic_fraud': ethic_fraud is not None,
             'ethic_fraud_policy': ethic_fraud_policy if ethic_fraud is True else True,
             'ethic_fraud_comment': ethic_fraud_comment if ethic_fraud is False else True,
-            'experiences': self.partner.experiences.exists(),
             'population_of_concern': population_of_concern is not None,
-            'concern_groups': len(self.partner.mandate_mission.concern_groups) > 0  if population_of_concern else True,
+            'concern_groups': len(self.partner.mandate_mission.concern_groups) > 0 if population_of_concern else True,
             'security_high_risk_locations': self.partner.mandate_mission.security_high_risk_locations is not None,
             'security_high_risk_policy': self.partner.mandate_mission.security_high_risk_policy is not None,
             'security_desc': self.partner.mandate_mission.security_desc,
             'staff_in_country': self.partner.staff_in_country,
             'staff_globally': self.partner.staff_globally,
             'country_presence': len(self.partner.country_presence) > 0 if self.partner.is_hq else True,
-            'experiences': all([exp.is_complete for exp in self.partner.experiences.all()]) \
-            if self.partner.experiences.exists() else False,
+            'experiences': all(
+                [exp.is_complete for exp in self.partner.experiences.all()]
+            ) if self.partner.experiences.exists() else False,
             # TODO - country presence for hq + country
         }
 
@@ -363,8 +363,9 @@ class PartnerProfile(TimeStampedModel):
                 if references.exists() else False
 
         if self.any_partnered_with_un:
-            required_fields['collaborations'] = all([c.is_complete for c in self.partner.collaborations_partnership.all()]) \
-                if self.partner.collaborations_partnership.exists() else False
+            required_fields['collaborations'] = all(
+                [c.is_complete for c in self.partner.collaborations_partnership.all()]
+            ) if self.partner.collaborations_partnership.exists() else False
 
         return all(required_fields.values())
 
@@ -381,8 +382,9 @@ class PartnerProfile(TimeStampedModel):
             'feedback_mechanism_desc': self.feedback_mechanism_desc if self.have_feedback_mechanism else True,
             'have_system_track': self.have_system_track is not None,
             'financial_control_system_desc': self.financial_control_system_desc if self.have_system_track else True,
-            'internal_controls': all([c.is_complete for c in self.partner.internal_controls.all()]) \
-            if self.partner.internal_controls.exists() else False,
+            'internal_controls': all(
+                [c.is_complete for c in self.partner.internal_controls.all()]
+            ) if self.partner.internal_controls.exists() else False,
             'experienced_staff': self.experienced_staff is not None,
             'experienced_staff_desc': self.experienced_staff_desc if self.experienced_staff else True,
             'area_policies': self.partner.area_policies.filter(document_policies__isnull=True).exists() is False,
@@ -409,8 +411,9 @@ class PartnerProfile(TimeStampedModel):
         }
 
         if self.partner.audit.regular_audited:
-            required_fields['audit_reports'] = all([report.is_complete for report in self.partner.audit_reports.all()]) \
-                if self.partner.audit_reports.exists() else False
+            required_fields['audit_reports'] = all(
+                [report.is_complete for report in self.partner.audit_reports.all()]
+            ) if self.partner.audit_reports.exists() else False
 
         return all(required_fields.values())
 

@@ -1,0 +1,19 @@
+machine:
+  environment:
+    ENV: dev
+    SECRET_KEY: testing-on-circle-ci
+    POSTGRES_USER: ubuntu
+    POSTGRES_HOST: localhost
+    UNPP_LOGS_PATH: /home/ubuntu/logs
+    UNPP_UPLOADS_PATH: /home/ubuntu/uploads
+
+dependencies:
+  pre:
+    - mkdir -p /home/ubuntu/logs
+    - mkdir -p /home/ubuntu/uploads
+    - pip install -r backend/requirements/dev.pip
+
+test:
+  override:
+    - cd backend && python manage.py test --noinput --parallel
+    - cd backend && flake8

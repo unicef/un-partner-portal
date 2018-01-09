@@ -24,7 +24,7 @@ from common.factories import (
     AgencyOfficeFactory,
     AgencyFactory,
     PartnerVerificationFactory,
-    UserFactory, PartnerFactory)
+)
 from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
@@ -390,7 +390,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         eoi.display_type = EOI_TYPES.direct
         eoi.save()
         url = reverse('projects:agency-applications-delete', kwargs={"pk": app_id, "eoi_id": eoi.id})
-        response = self.client.delete(url,format='json')
+        response = self.client.delete(url, format='json')
         self.assertTrue(statuses.is_success(response.status_code), "Application should be destroyed.")
 
 

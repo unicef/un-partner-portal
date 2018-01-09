@@ -577,8 +577,8 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
-        user = get_object_or_404(eoi.reviewers.all(), id=self.kwargs['reviewer_id'])
-        #TODO - send notification reminder email w/ notification enhancement
+        get_object_or_404(eoi.reviewers.all(), id=self.kwargs['reviewer_id'])
+        # TODO - send notification reminder email w/ notification enhancement
 
         return Response(
             {"success": self.NOTIFICATION_MESSAGE_SENT},

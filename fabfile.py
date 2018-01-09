@@ -56,6 +56,14 @@ def stop():
     local('docker-compose stop')
 
 
+def managepy(command=''):
+    """
+    Run specified manage.py command
+    """
+    cmd = 'docker-compose exec backend python manage.py {}'.format(command)
+    local(cmd)
+
+
 def fakedata(quantity=50, clean_before=True):
     """
     Load example data from fakedata management command.

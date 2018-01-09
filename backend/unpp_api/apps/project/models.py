@@ -96,7 +96,7 @@ class EOI(TimeStampedModel):
     @property
     def contains_the_winners(self):
         return self.applications.filter(did_win=True).exists()
-    
+
     @property
     def contains_partner_accepted(self):
         return self.applications.filter(did_accept=True, did_withdraw=False).exists()
