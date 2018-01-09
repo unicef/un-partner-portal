@@ -90,7 +90,7 @@ def tests(test_path=''):
     """
     Run unit tests.
     """
-    local('docker-compose exec backend python manage.py test {} --noinput'.format(test_path))
+    local('docker-compose exec backend python manage.py test {} --parallel --noinput'.format(test_path))
 
 
 def remove_untagged_images():
