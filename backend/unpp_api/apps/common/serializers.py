@@ -5,7 +5,7 @@ from django.db.models.base import Model
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from .models import AdminLevel1, Point, Sector, Specialization, CommonFile
+from common.models import AdminLevel1, Point, Sector, Specialization, CommonFile
 
 
 class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
@@ -20,13 +20,18 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
     def update_partner_related(self, instance, validated_data, related_names=[]):
         for related_name in related_names:
+            if related_name not in validated_data:
+                continue
+            field_data = validated_data.pop(related_name)
+
             if isinstance(getattr(instance, related_name), Model):
                 related_model = getattr(instance, related_name)
-                if related_name not in validated_data:
-                    continue  # for patch if we didn't patch some section in body
                 # OneToOneField related to partner - Model object
-                _id = related_model.id
-                related_model.__class__.objects.filter(id=_id).update(**validated_data[related_name])
+                related_model.__class__.objects.filter(
+                    id=related_model.id
+                ).update(**field_data)
+
+                related_model.refresh_from_db()
             else:
                 related_manager = getattr(instance, related_name)
 
@@ -62,8 +67,7 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
 class MixinPreventManyCommonFile(object):
     """
-    Validator that check if partner A is using commonfile w/ id 3 and partner B then submits commonfile w/ id 3,
-    need to prevent it.
+    Prevents same CommonFile from being submitted twice by different partners
     """
 
     prevent_keys = []

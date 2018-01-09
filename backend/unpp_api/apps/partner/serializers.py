@@ -709,7 +709,8 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
 
     partnership_collaborate_institution = serializers.BooleanField(
-        source="profile.partnership_collaborate_institution")
+        source="profile.partnership_collaborate_institution"
+    )
     partnership_collaborate_institution_desc = serializers.CharField(
         source="profile.partnership_collaborate_institution_desc",
         allow_null=True,
@@ -745,10 +746,9 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        # std method does not support writable nested fields by default
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
-
-        return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+        instance = super(PartnerProfileCollaborationSerializer, self).update(instance, validated_data)
+        return instance
 
 
 class PartnerProfileProjectImplementationSerializer(
