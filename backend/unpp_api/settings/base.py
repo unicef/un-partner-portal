@@ -149,14 +149,6 @@ AUTHENTICATION_BACKENDS = [
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-USERSWITCH_OPTIONS = {
-    'auth_backend':
-        'django.contrib.auth.backends.ModelBackend',
-    'css_inline':
-        'position:fixed !important; bottom: 10px !important; left: 10px !important; opacity:0.50; z-index: 9999;',
-}
-
-# TODO - only enable TokenAuth for prod
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
