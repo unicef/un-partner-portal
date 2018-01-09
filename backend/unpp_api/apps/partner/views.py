@@ -51,6 +51,8 @@ class OrganizationProfileAPIView(RetrieveAPIView):
     serializer_class = OrganizationProfileSerializer
     queryset = Partner.objects.all()
 
+    def get_queryset(self):
+
 
 class PartnerProfileAPIView(RetrieveAPIView):
 
