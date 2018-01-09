@@ -147,6 +147,11 @@ export function selectCfeiCriteria(state, id) {
   return assessments_criteria;
 }
 
+export function selectCfeiWinnersStatus(state, id) {
+  const { [id]: { contains_partner_accepted = false } = {} } = state;
+  return contains_partner_accepted;
+}
+
 export function isUserAReviewer(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
   if (cfei) return cfei.reviewers.includes(userId);

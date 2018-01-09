@@ -4,7 +4,7 @@ from django.db import transaction
 
 from rest_framework import serializers
 from rest_auth.serializers import LoginSerializer
-from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
+from rest_framework.validators import UniqueValidator
 
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,

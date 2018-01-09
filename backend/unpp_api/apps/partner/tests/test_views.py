@@ -424,5 +424,4 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         response = self.client.patch(url, data={"other_doc_1": file_id, "other_doc_3": file_id}, format='json')
         self.assertFalse(statuses.is_success(response.status_code))
-        self.assertEquals(response.data[0],
-                          'Given related field common file id have to be unique.')
+        self.assertEquals(response.data[0], 'Given related field common file id have to be unique.')

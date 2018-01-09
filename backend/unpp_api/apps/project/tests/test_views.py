@@ -182,7 +182,8 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], eoi.id)
-        self.assertTrue(Partner.objects.first().id in response.data['invited_partners'])
+
+        self.assertTrue(Partner.objects.first().id in [p['id'] for p in response.data['invited_partners']])
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
 
         payload = {
@@ -193,7 +194,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['id'], eoi.id)
-        self.assertTrue(Partner.objects.last().id in response.data['invited_partners'])
+        self.assertTrue(Partner.objects.last().id in [p['id'] for p in response.data['invited_partners']])
         self.assertTrue(Partner.objects.count(), 1)
         self.assertTrue(len(response.data['invited_partners']), 1)
         self.assertTrue(len(mail.outbox) > 0)  # mail.outbox is in shared resource, can have also other mails
@@ -391,7 +392,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         eoi.display_type = EOI_TYPES.direct
         eoi.save()
         url = reverse('projects:agency-applications-delete', kwargs={"pk": app_id, "eoi_id": eoi.id})
-        response = self.client.delete(url,format='json')
+        response = self.client.delete(url, format='json')
         self.assertTrue(statuses.is_success(response.status_code), "Application should be destroyed.")
 
 
@@ -711,3 +712,29 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
         self.assertTrue(
             response.data['review_summary_attachment'].find(CommonFile.objects.get(pk=file_id).file_field.url) > 0
         )
+
+
+class TestInvitedPartnersListAPIView(BaseAPITestCase):
+
+    user_type = 'agency'
+    quantity = 1
+
+    def setUp(self):
+        super(TestInvitedPartnersListAPIView, self).setUp()
+        PartnerSimpleFactory.create_batch(1)
+        AgencyOfficeFactory.create_batch(self.quantity)
+        AgencyMemberFactory.create_batch(self.quantity)
+        EOIFactory.create_batch(self.quantity)
+
+    def test_serializes_same_fields_on_get_and_patch(self):
+        eoi = EOI.objects.first()
+        self.client.force_login(eoi.created_by)
+        url = reverse('projects:eoi-detail', kwargs={"pk": eoi.id})
+        read_response = self.client.get(url, format='json')
+        self.assertEqual(read_response.status_code, statuses.HTTP_200_OK)
+
+        update_response = self.client.patch(url, {
+            'title': 'Another title'
+        })
+        self.assertEqual(update_response.status_code, statuses.HTTP_200_OK)
+        self.assertEqual(set(read_response.data.keys()), set(update_response.data.keys()))
