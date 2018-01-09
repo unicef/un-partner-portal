@@ -106,7 +106,7 @@ const mapDispatch = dispatch => ({
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    partnerId: state.session.partnerId || ownProps.params.id,
+    partnerId: ownProps.params.id || state.session.partnerId,
     completion: state.partnerProfileDetails.partnerProfileDetails.completion,
     hideEdit: (!isUserHq(state) && selectUserHqId(state) === +ownProps.params.id)
       || isUserAgencyReader(state),
