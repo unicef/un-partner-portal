@@ -8,12 +8,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .serializers import (ConfigSectorSerializer, CommonFileUploadSerializer,
-                          AdminLevel1Serializer)
-from .models import Sector, CommonFile, AdminLevel1
-from .countries import COUNTRIES_ALPHA2_CODE_DICT
-from .paginations import MediumPagination
-from .consts import (
+from common.serializers import (
+    ConfigSectorSerializer,
+    CommonFileUploadSerializer,
+    AdminLevel1Serializer
+)
+from common.models import Sector, CommonFile, AdminLevel1
+from common.countries import COUNTRIES_ALPHA2_CODE_DICT
+from common.pagination import MediumPagination
+from common.consts import (
     STAFF_GLOBALLY_CHOICES,
     PARTNER_DONORS_CHOICES,
     WORKING_LAGNUAGES_CHOICES,
