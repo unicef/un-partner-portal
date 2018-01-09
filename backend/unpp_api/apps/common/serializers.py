@@ -20,11 +20,11 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
     def update_partner_related(self, instance, validated_data, related_names=[]):
         for related_name in related_names:
-            if related_name not in validated_data:
-                continue
-            field_data = validated_data.pop(related_name)
+            field_data = validated_data.pop(related_name, None)
 
             if isinstance(getattr(instance, related_name), Model):
+                if not field_data:
+                    continue
                 related_model = getattr(instance, related_name)
                 # OneToOneField related to partner - Model object
                 related_model.__class__.objects.filter(
