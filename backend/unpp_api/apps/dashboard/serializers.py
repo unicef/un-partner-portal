@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from operator import attrgetter
+
 from datetime import datetime, date, timedelta
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Count
 from rest_framework import serializers
@@ -126,13 +130,19 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
         return Application.objects.filter(did_win=True, partner_id__in=self.get_partner_ids()).count()
 
     def get_last_profile_update(self, obj):
-        # one to one
-        update_timestamps = [
-            obj.modified, obj.profile.modified, obj.mailing_address.modified, obj.audit.modified,
-            obj.report.modified, obj.mandate_mission.modified, obj.fund.modified, obj.other_info.modified
+        timestamp_fields = [
+            'org_head.modified', 'profile.modified', 'mailing_address.modified', 'audit.modified', 'report.modified',
+            'mandate_mission.modified', 'fund.modified', 'other_info.modified'
         ]
-        if obj.org_head:
-            update_timestamps.append(obj.org_head.modified)
+
+        update_timestamps = [
+            obj.modified,
+        ]
+        for field_name in timestamp_fields:
+            try:
+                update_timestamps.append(attrgetter(field_name)(obj))
+            except ObjectDoesNotExist:
+                pass
 
         # FK
         update_timestamps.extend(obj.directors.values_list("modified", flat=True))
