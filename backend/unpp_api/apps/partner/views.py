@@ -20,6 +20,7 @@ from common.permissions import (
 from common.paginations import SmallPagination
 from common.mixins import PatchOneFieldErrorMixin
 from partner.pagination import TinyResultSetPagination
+from partner.permissions import IsAgencyUserOrPartnerMember
 from partner.serializers import (
     OrganizationProfileSerializer,
     OrganizationProfileDetailsSerializer,
@@ -47,28 +48,28 @@ class OrganizationProfileAPIView(RetrieveAPIView):
     """
     Endpoint for getting Organization Profile.
     """
-    permission_classes = (IsAuthenticated, IsPartner)
+    permission_classes = (IsAuthenticated, IsPartner, IsAgencyUserOrPartnerMember)
     serializer_class = OrganizationProfileSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerProfileAPIView(RetrieveAPIView):
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsAgencyUserOrPartnerMember)
     serializer_class = OrganizationProfileDetailsSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerProfileSummaryAPIView(RetrieveAPIView):
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsAgencyUserOrPartnerMember)
     serializer_class = PartnerProfileSummarySerializer
     queryset = Partner.objects.all()
 
 
 class PartnersListAPIView(ListAPIView):
 
-    permission_classes = (IsAuthenticated, IsAgencyMemberUser)
+    permission_classes = (IsAuthenticated, IsAgencyMemberUser, IsAgencyUserOrPartnerMember)
     queryset = Partner.objects.all()
     serializer_class = PartnersListSerializer
     pagination_class = SmallPagination
@@ -78,7 +79,7 @@ class PartnersListAPIView(ListAPIView):
 
 class PartnerShortListAPIView(ListAPIView):
 
-    permission_classes = (IsAuthenticated, IsAgencyMemberUser)
+    permission_classes = (IsAuthenticated, IsAgencyMemberUser, IsAgencyUserOrPartnerMember)
     queryset = Partner.objects.all()
     serializer_class = PartnerShortSerializer
     filter_backends = (DjangoFilterBackend, )
