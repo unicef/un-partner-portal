@@ -17,8 +17,7 @@ sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 ADMINS = (
     ('Alerts', 'unicef-unpp@tivix.com'),
 )
-DEFAULT_FROM_EMAIL = 'noreply@unpp.org'
-UN_SANCTIONS_LIST_EMAIL_ALERT = 'test@tivix.com'  # TODO - change to real one
+
 SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
 SITE_ID = 1
 TIME_ZONE = 'America/Los_Angeles'
@@ -54,6 +53,13 @@ DEBUG = True
 IS_DEV = False
 IS_STAGING = False
 IS_PROD = False
+
+UN_SANCTIONS_LIST_EMAIL_ALERT = 'test@tivix.com'  # TODO - change to real one
+DEFAULT_FROM_EMAIL = 'UNPP Stage <noreply@unpp.org>'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 # Get the ENV setting. Needs to be set in .bashrc or similar.
 ENV = os.getenv('ENV')
