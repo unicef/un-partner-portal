@@ -75,11 +75,15 @@ class Partner(TimeStampedModel):
 
     @property
     def is_hq(self):
-        return self.is_international and not self.hq
+        if self.is_international:
+            return self.hq in [None, '']
+        return None
 
     @property
     def is_country_profile(self):
-        return self.is_international and self.hq
+        if self.is_international:
+            return self.hq not in [None, '']
+        return None
 
     @property
     def country_profiles(self):
@@ -315,7 +319,7 @@ class PartnerProfile(TimeStampedModel):
 
     @property
     def funding_complete(self):
-        if self.partner.is_hq is False:
+        if not self.partner.is_hq:
             budgets = self.partner.hq.budgets.filter(budget__isnull=False)
         else:
             budgets = self.partner.budgets.filter(budget__isnull=False)

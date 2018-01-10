@@ -384,12 +384,10 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     def get_hq_budgets(self, obj):
         if obj.is_hq is False:
             return PartnerBudgetSerializer(obj.hq.budgets.all(), many=True).data
-        return
 
     def get_hq_org_head(self, obj):
         if obj.is_hq is False:
             return PartnerHeadOrganizationSerializer(obj.hq.org_head).data
-        return
 
 
 class PartnerProfileSummarySerializer(serializers.ModelSerializer):
