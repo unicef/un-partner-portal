@@ -35,7 +35,6 @@ const SingleAward = (props) => {
     withdrawReason,
     didWithdraw,
     cfeiCompleted } = props;
-    console.log(cfeiCompleted)
   return (<SimpleCollapsableItem
     title={
       <PaddedContent className={classes.fullWidth}>
@@ -69,7 +68,6 @@ SingleAward.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  console.log(ownProps.eoiId)
   const { withdraw_reason: withdrawReason,
     did_withdraw: didWithdraw,
   } = selectApplicationWithdrawalStatus(state, ownProps.award.application_id);
