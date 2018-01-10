@@ -940,13 +940,10 @@ class PartnerProfileOtherInfoSerializer(
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        # std method does not support writable nested fields by default
-
         self.prevent_many_common_file_validator(self.initial_data)
-
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
-
-        return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+        instance = super(PartnerProfileOtherInfoSerializer, self).update(instance, validated_data)
+        return instance
 
 
 class PartnerCountryProfileSerializer(serializers.ModelSerializer):
