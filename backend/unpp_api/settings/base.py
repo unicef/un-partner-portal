@@ -15,7 +15,7 @@ sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 # Other settings
 ####
 ADMINS = (
-    ('Alerts', 'unicef-unpp@tivix.com'),
+    ('Alerts', os.getenv('ADMIN_EMAIL') or 'unicef-unpp@tivix.com'),
 )
 
 SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
@@ -60,6 +60,7 @@ EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', '').lower() == 'true'
 
 # Get the ENV setting. Needs to be set in .bashrc or similar.
 ENV = os.getenv('ENV')
