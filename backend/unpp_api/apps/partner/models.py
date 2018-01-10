@@ -319,7 +319,7 @@ class PartnerProfile(TimeStampedModel):
 
     @property
     def funding_complete(self):
-        if not self.partner.is_hq:
+        if self.partner.is_hq is False:
             budgets = self.partner.hq.budgets.filter(budget__isnull=False)
         else:
             budgets = self.partner.budgets.filter(budget__isnull=False)
