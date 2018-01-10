@@ -133,3 +133,10 @@ def cloud_ssh(container_uuid):
     SSH into a cloud container
     """
     local('docker-cloud container exec {} /bin/bash'.format(container_uuid))
+
+
+def make_admin():
+    """
+    Create admin user for the backend
+    """
+    local('docker-compose exec backend python manage.py createsuperuser')

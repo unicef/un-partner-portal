@@ -1,11 +1,14 @@
 from __future__ import absolute_import
+
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 from common.management.commands.helpers import clean_up_data_in_db, generate_fake_data
+from common.utils import confirm
 
 
 class Command(BaseCommand):
-    help = 'Creates a set of ORM objects for development and stagging environment.'
+    help = 'Creates a set of ORM objects for development and staging environment.'
 
     def add_arguments(self, parser):
         parser.add_argument('quantity', type=int)
@@ -19,6 +22,12 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        prompt = 'You are about to run a script that generates test data'
+        if options['clean_before']:
+            prompt += ' and WIPES THE DATABASE'
+        if settings.IS_PROD and not confirm(prompt='{}. Are you sure?'.format(prompt)):
+            return
+
         if options['clean_before']:
             clean_up_data_in_db()
             self.stdout.write("Data cleaned!")
