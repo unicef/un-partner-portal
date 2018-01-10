@@ -11,6 +11,7 @@ import {
   isUserAFocalPoint,
   selectCfeiReviewers,
   selectCfeiDetails,
+  isCfeiCompleted,
 } from '../../../../../../store';
 import { loadReviewers } from '../../../../../../reducers/cfeiReviewers';
 import SingleReviewer from './singleReviewer';
@@ -23,6 +24,10 @@ const messages = {
 };
 
 class ReviewersSummary extends Component {
+  componentDidMount() {
+    this.props.getReviewers();
+  }
+
   componentWillReceiveProps({ cfeiReviewers }) {
     if (!R.equals(cfeiReviewers, this.props.cfeiReviewers)) {
       this.props.getReviewers();
@@ -30,7 +35,7 @@ class ReviewersSummary extends Component {
   }
 
   content() {
-    const { loading, reviewers, focalPoint } = this.props;
+    const { cfeiCompleted, loading, reviewers, focalPoint } = this.props;
     if (loading) {
       return <EmptyContent />;
     } else if (!reviewers || isEmpty(reviewers)) {
@@ -46,6 +51,7 @@ class ReviewersSummary extends Component {
           key={reviewer.user_id}
           reviewer={reviewer}
           isFocalPoint={focalPoint}
+          cfeiCompleted={cfeiCompleted}
         />))}
       </div>);
   }
@@ -70,6 +76,7 @@ ReviewersSummary.propTypes = {
   focalPoint: PropTypes.bool,
   getReviewers: PropTypes.func,
   loading: PropTypes.bool,
+  cfeiCompleted: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -80,6 +87,7 @@ const mapStateToProps = (state, ownProps) => {
     reviewers: selectCfeiReviewers(state, ownProps.id),
     cfeiReviewers: cfei ? cfei.reviewers : [],
     loading: state.cfeiReviewers.status.loading,
+    cfeiCompleted: isCfeiCompleted(state, ownProps.id),
   };
 };
 

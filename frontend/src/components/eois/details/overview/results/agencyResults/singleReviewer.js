@@ -23,7 +23,8 @@ const SingleReviewer = (props) => {
         send_reminder,
       } = {},
     } = {},
-    isFocalPoint } = props;
+    isFocalPoint,
+    cfeiCompleted } = props;
   return (
     <div>
       <PaddedContent>
@@ -32,7 +33,7 @@ const SingleReviewer = (props) => {
           <Typography type="caption">{`${counts} ${messages.assessments}`}</Typography>
         </SpreadContent>
       </PaddedContent >
-      {isFocalPoint && send_reminder && <Grid container justify="flex-end">
+      {!cfeiCompleted && isFocalPoint && send_reminder && <Grid container justify="flex-end">
         <Grid item>
           <Button color="accent">{messages.reminder}</Button>
         </Grid>
@@ -45,6 +46,7 @@ const SingleReviewer = (props) => {
 SingleReviewer.propTypes = {
   reviewer: PropTypes.object,
   isFocalPoint: PropTypes.bool,
+  cfeiCompleted: PropTypes.bool,
 };
 
 export default SingleReviewer;
