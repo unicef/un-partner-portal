@@ -67,6 +67,7 @@ class PartnerSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'is_hq',
+            'hq_id',
             'logo',
             'legal_name',
             'country_code',
