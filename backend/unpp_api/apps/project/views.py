@@ -43,8 +43,8 @@ from notification.helpers import (
     send_notification_application_updated,
     send_notificiation_application_created,
     send_notification,
-    send_cfei_review_required_notification, user_received_notification_recently)
-from notification.models import NotifiedUser
+    send_cfei_review_required_notification, user_received_notification_recently
+)
 from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from project.serializers import (
     BaseProjectSerializer,
