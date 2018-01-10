@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from dateutil.relativedelta import relativedelta
 from django.db import transaction
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template import loader
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 
 from account.models import User
 from common.consts import COMPLETED_REASON
@@ -13,11 +16,11 @@ from notification.consts import NOTIFICATION_DATA, NotificationType
 
 
 @transaction.atomic
-def feed_alert(source, subject, body, users, obj):
+def feed_alert(notification_type, subject, body, users, obj):
     notification = Notification.objects.create(
         name=subject,
         description=body,
-        source=source,
+        source=notification_type,
         content_object=obj,
     )
     notified_users = []
@@ -26,15 +29,16 @@ def feed_alert(source, subject, body, users, obj):
     NotifiedUser.objects.bulk_create(notified_users)
 
 
-def send_notification(notification_type, obj, users, context=None, send_in_feed=True,
-                      check_sent_for_source=True):
+def send_notification(
+        notification_type, obj, users, context=None, send_in_feed=True, check_sent_for_source=True
+):
     """
-        notification_type - check NotificationType class in const.py
-        obj - object directly associated w/ notification. generic fk to it
-        users - users who are receiving notif
-        context - context to provide to template for email or body of notif
-        send_in_feed - create notification feed element
-        check_sent_for_source - checks to confirm no duplicates are sent for source + object. false bypasses
+    notification_type - check NotificationType class in const.py
+    obj - object directly associated w/ notification. generic fk to it
+    users - users who are receiving notif
+    context - context to provide to template for email or body of notif
+    send_in_feed - create notification feed element
+    check_sent_for_source - checks to confirm no duplicates are sent for source + object. false bypasses
 
     """
 
@@ -71,11 +75,22 @@ def get_partner_users_for_app_qs(application_qs):
 
 
 # We don't want to send 2x of the same notification
-def notification_already_sent(obj, notification_source):
+def notification_already_sent(obj, notification_type):
     content_type = ContentType.objects.get_for_model(obj)
     return Notification.objects.filter(object_id=obj.id,
-                                       source=notification_source,
+                                       source=notification_type,
                                        content_type=content_type).exists()
+
+
+def user_received_notification_recently(user, obj, notification_type, time_ago=relativedelta(days=1)):
+    content_type = ContentType.objects.get_for_model(obj)
+    return NotifiedUser.objects.filter(
+        notification__source=notification_type,
+        notification__object_id=obj.id,
+        notification__content_type=content_type,
+        recipient=user,
+        created__gte=timezone.now() - time_ago
+    ).exists()
 
 
 def send_notification_cfei_completed(eoi):

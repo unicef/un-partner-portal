@@ -36,13 +36,15 @@ from common.permissions import (
     IsPartner,
 )
 from common.mixins import PartnerIdsMixin
+from notification.consts import NotificationType
 from notification.helpers import (
     get_partner_users_for_app_qs,
     send_notification_cfei_completed,
     send_notification_application_updated,
     send_notificiation_application_created,
     send_notification,
-    send_cfei_review_required_notification)
+    send_cfei_review_required_notification, user_received_notification_recently)
+from notification.models import NotifiedUser
 from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from project.serializers import (
     BaseProjectSerializer,
@@ -577,11 +579,15 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
         user = get_object_or_404(eoi.reviewers.all(), id=self.kwargs['reviewer_id'])
 
-        send_cfei_review_required_notification(eoi, [user])
+        if not user_received_notification_recently(user, eoi, NotificationType.CFEI_REVIEW_REQUIRED):
+            send_cfei_review_required_notification(eoi, [user])
+            message = self.NOTIFICATION_MESSAGE_SENT
+            status = statuses.HTTP_201_CREATED
+        else:
+            message = self.NOTIFICATION_MESSAGE_WAIT
+            status = statuses.HTTP_200_OK
 
-        return Response({
-            "success": self.NOTIFICATION_MESSAGE_SENT
-        }, status=statuses.HTTP_201_CREATED)
+        return Response({"success": message}, status=status)
 
 
 class AwardedPartnersListAPIView(ListAPIView):
