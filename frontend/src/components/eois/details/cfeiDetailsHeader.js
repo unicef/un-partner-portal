@@ -20,7 +20,7 @@ import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
 import { ROLES, PROJECT_TYPES, PROJECT_STATUSES } from '../../../helpers/constants';
 import PaddedContent from '../../common/paddedContent';
 import MainContentWrapper from '../../common/mainContentWrapper';
-import { isUserAgencyReader } from '../../../helpers/authHelpers';
+import { isUserAgencyReader, isUserAgencyEditor } from '../../../helpers/authHelpers';
 
 const messages = {
   noCfei: 'Sorry but this project doesn\'t exist',
@@ -72,12 +72,12 @@ class CfeiHeader extends Component {
   }
 
   filterTabs() {
-    const { tabs, role, isReader, status, isReviewer, params: { type } } = this.props;
+    const { tabs, role, isReaderEditor, status, isReviewer, params: { type } } = this.props;
     let tabsToRender = tabs;
     if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
       tabsToRender = tabsToRender.filter(({ path }) => {
-        if ((['applications', 'preselected'].includes(path) && isReader && !isReviewer)
-        || (path === 'results' && isReader && status !== PROJECT_STATUSES.COM)) {
+        if ((['applications', 'preselected'].includes(path) && isReaderEditor && !isReviewer)
+        || (path === 'results' && isReaderEditor && status !== PROJECT_STATUSES.COM)) {
           return false;
         }
         return true;
@@ -167,7 +167,7 @@ CfeiHeader.propTypes = {
   ]),
   type: PropTypes.string,
   loadUCN: PropTypes.func,
-  isReader: PropTypes.bool,
+  isReaderEditor: PropTypes.bool,
   isReviewer: PropTypes.bool,
   status: PropTypes.string,
 };
@@ -181,7 +181,7 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.cfeiDetails.status.loading,
   cnFile: state.conceptNote.cnFile,
   error: state.cfeiDetails.status.error,
-  isReader: isUserAgencyReader(state),
+  isReaderEditor: isUserAgencyReader(state) || isUserAgencyEditor(state),
   status: selectCfeiStatus(state, ownProps.params.id),
   isReviewer: isUserAReviewer(state, ownProps.params.id),
 });
