@@ -15,5 +15,5 @@ dependencies:
 
 test:
   override:
-    - cd backend && python manage.py test --noinput --parallel
+    - cd backend && python manage.py test --noinput
     - cd backend && flake8
