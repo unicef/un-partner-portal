@@ -451,7 +451,7 @@ class PartnerMailingAddress(TimeStampedModel):
 
 
 class PartnerHeadOrganization(TimeStampedModel):
-    partner = models.OneToOneField(Partner, related_name="org_head")
+    partner = models.OneToOneField(Partner, related_name="org_head", null=True, blank=True)
     fullname = models.CharField(max_length=512, null=True, blank=True)
     email = models.EmailField(max_length=255, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)

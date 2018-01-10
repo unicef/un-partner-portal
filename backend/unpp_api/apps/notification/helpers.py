@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import os
 from django.db import transaction
 from django.core.mail import send_mail
 from django.conf import settings
-from django.template import Context, Template
+from django.template import loader
 from django.contrib.contenttypes.models import ContentType
 
 from account.models import User
 from common.consts import COMPLETED_REASON
-from .models import Notification, NotifiedUser
-from .consts import NOTIFICATION_DATA
+from notification.models import Notification, NotifiedUser
+from notification.consts import NOTIFICATION_DATA, NotificationType
 
 
 @transaction.atomic
@@ -45,18 +44,15 @@ def send_notification(notification_type, obj, users, context=None, send_in_feed=
     notification_info = NOTIFICATION_DATA.get(notification_type)
 
     targets = [u.email for u in users]
-    body = get_template_as_str(notification_info.get('template_name'), context)
+    body = render_notification_template_to_str(notification_info.get('template_name'), context)
     send_mail(notification_info.get('subject'), body, settings.DEFAULT_FROM_EMAIL, targets)
 
     if send_in_feed:
         feed_alert(notification_type, notification_info.get('subject'), body, users, obj)
 
 
-def get_template_as_str(filename, context):
-    main_dir_name = os.path.dirname(os.path.abspath(__file__))
-    temp_file = open(os.path.join(main_dir_name, 'standard_emails', filename))
-    template = Template(temp_file.read())
-    return template.render(Context(context))
+def render_notification_template_to_str(template_name, context):
+    return loader.get_template('notifications/{}'.format(template_name)).render(context)
 
 
 # Return all partner members. Potential limit in future?
@@ -141,37 +137,10 @@ def send_notificiation_application_created(application):
             send_notification('direct_select_ucn', application, users)
 
 
-# TODO - below
-# def send_account_approval_activated_create_profile(context, users, obj=None):
-#     source = 'account_approval_activated_create_profile'
-#     subject = "Title"
-#     send_notification(subject, source, context, obj, users)
-
-
-# def send_account_approval_activated_sent_to_head_org(context, users, obj=None):
-#     source = 'account_approval_activated_sent_to_head_org'
-#     subject = "Title"
-#     send_notification(subject, source, context, obj, users)
-
-
-# def send_account_approval_rejection_application_duplicate(context, users, obj=None):
-#     source = 'account_approval_rejection_application_duplicate'
-#     subject = "Title"
-#     send_notification(subject, source, context, obj, users)
-
-
-# def send_account_approval_rejection_sanctions_list(context, users, obj=None):
-#     source = 'account_approval_rejection_application_duplicate'
-#     subject = "Title"
-#     send_notification(subject, source, context, obj, users)
-
-
-# def send_account_creation_rejection(context, users, obj=None):
-#     source = 'account_approval_rejection_application_duplicate'
-#     subject = "Title"
-#     send_notification(subject, source, context, obj, users)
-
-
-# TODO
-# Agency deadline
-# Agency accept/decline response from partners
+def send_cfei_review_required_notification(eoi, users):
+    send_notification(
+        NotificationType.CFEI_REVIEW_REQUIRED, eoi, users, send_in_feed=True, context={
+            'eoi_name': eoi.title,
+            'eoi_url': eoi.get_absolute_url()
+        }
+    )
