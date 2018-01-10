@@ -10,7 +10,6 @@ import PaddedContent from '../../../common/paddedContent';
 import ItemRowCell from '../../../common/cell/itemRowCell';
 import ItemRowCellDivider from '../../../common/cell/itemRowCellDivider';
 import SpreadContent from '../../../common/spreadContent';
-import { formatDateForPrint } from '../../../../helpers/dates';
 
 const labels = {
   profileSummary: 'Profile summary',
@@ -55,7 +54,7 @@ const fields = (partner, button) => (
     <ItemRowCellDivider labelSecondary label={labels.email} content={R.path(['head', 'email'], partner)} />
     <ItemRowCellDivider label={labels.contact} content={R.prop('contact', partner)} />
     <ItemRowCellDivider label={labels.sectors} content={R.prop('sectors', partner)} />
-    <ItemRowCellDivider label={labels.year} content={formatDateForPrint(R.prop('yearOfEstablishment', partner))} />
+    <ItemRowCellDivider label={labels.year} content={R.prop('yearOfEstablishment', partner)} />
     <ItemRowCellDivider label={labels.populations} content={R.prop('population', partner)} />
     <ItemRowCellDivider label={labels.unExperience} content={R.prop('unExperience', partner)} />
     <ItemRowCellDivider label={labels.budget} content={R.prop('budget', partner)} />
