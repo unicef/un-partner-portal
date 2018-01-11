@@ -20,7 +20,7 @@ ADMINS = (
 
 SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
 SITE_ID = 1
-TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'en-us'
 USE_I18N = True
 SECRET_KEY = os.getenv('SECRET_KEY')
