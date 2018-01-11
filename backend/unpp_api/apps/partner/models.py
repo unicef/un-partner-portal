@@ -324,10 +324,12 @@ class PartnerProfile(TimeStampedModel):
         else:
             budgets = self.partner.budgets.filter(budget__isnull=False)
 
-        current_year_exists = budgets.filter(year=date.today().year).exists()
+        current_year = date.today().year
+        recent_years_required = range(current_year - 2, current_year + 1)  # 3 most recent years
+        required_budgets = budgets.filter(year__in=recent_years_required)
 
         required_fields = {
-            'budgets': current_year_exists and (budgets.count() >= 3),
+            'budgets': required_budgets.count() == 3,
             'main_donors': self.partner.fund.major_donors,
             'main_donors_list': self.partner.fund.main_donors_list,
             'source_core_funding': self.partner.fund.source_core_funding
