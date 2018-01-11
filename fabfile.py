@@ -105,3 +105,38 @@ def pep8():
     Run python code linter
     """
     local('docker-compose exec backend flake8 ./ --count')
+
+
+def cloud_login():
+    """
+    Login into docker cloud services
+    """
+    local('docker login')
+
+
+def cloud_setup(namespace):
+    """
+    Set docker cloud namespace
+    """
+    local('export DOCKERCLOUD_NAMESPACE={}'.format(namespace))
+
+
+def cloud_list():
+    """
+    List docker cloud containers
+    """
+    local('docker-cloud container ps')
+
+
+def cloud_ssh(container_uuid):
+    """
+    SSH into a cloud container
+    """
+    local('docker-cloud container exec {} /bin/bash'.format(container_uuid))
+
+
+def make_admin():
+    """
+    Create admin user for the backend
+    """
+    local('docker-compose exec backend python manage.py createsuperuser')

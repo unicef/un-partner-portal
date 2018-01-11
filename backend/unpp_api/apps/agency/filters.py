@@ -11,15 +11,14 @@ from common.consts import MEMBER_ROLES
 
 class AgencyUserFilter(django_filters.FilterSet):
 
-    name = CharFilter(method='get_name')
+    name = CharFilter(name='fullname', lookup_expr='icontains')
+    office_name = CharFilter(name='agency_members__office__name', lookup_expr='icontains')
     role = MultipleChoiceFilter(
         widget=CSVWidget(),
         name='agency_members__role',
-        choices=MEMBER_ROLES)
+        choices=MEMBER_ROLES
+    )
 
     class Meta:
         model = User
-        fields = ['role', 'name']
-
-    def get_name(self, queryset, name, value):
-        return queryset.filter(fullname__icontains=value)
+        fields = ['role', 'name', 'office_name']

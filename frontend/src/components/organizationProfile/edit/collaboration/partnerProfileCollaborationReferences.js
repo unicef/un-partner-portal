@@ -24,6 +24,7 @@ const Reference = readOnly => member => (
         label={messages.referring}
         fieldName={`${member}.organization_name`}
         warn
+        multiline
         optional
         readOnly={readOnly}
       />

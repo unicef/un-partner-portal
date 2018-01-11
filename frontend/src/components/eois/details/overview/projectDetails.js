@@ -84,7 +84,7 @@ const Fields = ({ type, role, partnerId, displayGoal }) => {
       <FocalPoint readOnly />
       <LocationFieldReadOnlyArray />
       <SectorForm readOnly />
-      <TextField
+      <Agencies
         fieldName="agency"
         label={messages.labels.issued}
         readOnly
