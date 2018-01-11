@@ -906,11 +906,13 @@ class PartnerProfileProjectImplementationSerializer(
 
 
 class PartnerProfileOtherInfoSerializer(
-        MixinPreventManyCommonFile, MixinPartnerRelatedSerializer, serializers.ModelSerializer):
+        MixinPreventManyCommonFile, MixinPartnerRelatedSerializer, serializers.ModelSerializer
+):
 
     info_to_share = serializers.CharField(source="other_info.info_to_share", required=False,
                                           allow_blank=True)
     org_logo = CommonFileSerializer(source="other_info.org_logo", allow_null=True)
+    org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
     confirm_data_updated = serializers.BooleanField(source="other_info.confirm_data_updated")
 
     other_doc_1 = CommonFileSerializer(source='other_info.other_doc_1', allow_null=True)
@@ -924,6 +926,7 @@ class PartnerProfileOtherInfoSerializer(
         fields = (
             'info_to_share',
             'org_logo',
+            'org_logo_thumbnail',
             'confirm_data_updated',
             'other_doc_1',
             'other_doc_2',
@@ -939,13 +942,10 @@ class PartnerProfileOtherInfoSerializer(
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        # std method does not support writable nested fields by default
-
         self.prevent_many_common_file_validator(self.initial_data)
-
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
-
-        return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+        instance = super(PartnerProfileOtherInfoSerializer, self).update(instance, validated_data)
+        return instance
 
 
 class PartnerCountryProfileSerializer(serializers.ModelSerializer):

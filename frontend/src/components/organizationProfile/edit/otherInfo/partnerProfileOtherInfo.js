@@ -11,6 +11,7 @@ import { flatten } from '../../../../helpers/jsonMapper';
 import { changedValues } from '../../../../helpers/apiHelper';
 import { loadPartnerDetails } from '../../../../reducers/partnerProfileDetails';
 import { emptyMsg } from '../partnerProfileEdit';
+import { sessionChange } from '../../../../reducers/session';
 
 const STEPS = readOnly => [
   {
@@ -55,7 +56,7 @@ class PartnerProfileOtherInfo extends Component {
   }
 
   handleSubmit(formValues) {
-    const { initialValues, updateTab, partnerId, loadPartnerProfileDetails } = this.props;
+    const { updateThumbnail, initialValues, updateTab, partnerId, loadPartnerProfileDetails } = this.props;
 
     const otherInfo = flatten(formValues.other_info);
     const initOtherInfo = flatten(initialValues.other_info);
@@ -64,7 +65,10 @@ class PartnerProfileOtherInfo extends Component {
 
     if (!R.isEmpty(patchValues)) {
       return updateTab(partnerId, 'other-info', patchValues)
-        .then(() => loadPartnerProfileDetails(partnerId).then(() => this.onSubmit()))
+        .then(() => loadPartnerProfileDetails(partnerId).then((otherInfoResponse) => {
+          updateThumbnail(otherInfoResponse.org_logo_thumbnail);
+          this.onSubmit();
+        }))
         .catch((error) => {
           const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
 
@@ -82,7 +86,6 @@ class PartnerProfileOtherInfo extends Component {
 
   render() {
     const { readOnly } = this.props;
-
     return (
       <PartnerProfileStepperContainer
         name="other_info"
@@ -106,6 +109,7 @@ PartnerProfileOtherInfo.propTypes = {
   loadPartnerProfileDetails: PropTypes.func,
   params: PropTypes.object,
   tabs: PropTypes.array,
+  updateThumbnail: PropTypes.func,
 };
 
 const mapState = (state, ownProps) => ({
@@ -118,6 +122,7 @@ const mapDispatch = dispatch => ({
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
   updateTab: (partnerId, tabName, body) => dispatch(patchPartnerProfile(partnerId, tabName, body)),
   dispatch,
+  updateThumbnail: logoThumbnail => dispatch(sessionChange({ logoThumbnail })),
 });
 
 const connectedPartnerProfileOtherInfo = connect(mapState, mapDispatch)(PartnerProfileOtherInfo);

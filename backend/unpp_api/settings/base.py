@@ -216,7 +216,8 @@ LOGGING = {
         '': {
             'handlers': ['default', 'filesystem'],
             'level': 'INFO',
-            'propagate': True},
+            'propagate': True
+        },
         'django.request': {
             'handlers': ['mail_admins', 'default'],
             'level': 'ERROR',
