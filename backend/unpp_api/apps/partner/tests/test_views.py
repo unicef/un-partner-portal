@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
-from datetime import date
 import mock
 
 from django.urls import reverse
@@ -31,7 +30,6 @@ from common.factories import (
     PointFactory,
 )
 from common.consts import (
-    BUDGET_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     YEARS_OF_EXP_CHOICES,
     PARTNER_TYPES,
