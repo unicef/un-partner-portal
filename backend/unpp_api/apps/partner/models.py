@@ -75,14 +75,12 @@ class Partner(TimeStampedModel):
 
     @property
     def is_hq(self):
-        # TODO: Have a consistent return type: bool
         if self.is_international:
             return self.hq in [None, '']
         return None
 
     @property
     def is_country_profile(self):
-        # TODO: Have a consistent return type: bool
         if self.is_international:
             return self.hq not in [None, '']
         return None
