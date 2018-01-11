@@ -57,6 +57,12 @@ class OrganizationProfileOverview extends Component {
     this.props.loadPartnerProfileDetails(partnerId);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.partnerId !== this.props.partnerId) {
+      this.props.loadPartnerProfileDetails(nextProps.partnerId);
+    }
+  }
+
   handleEditMode(sectionIndex) {
     const { partnerId } = this.props;
 
@@ -104,14 +110,12 @@ const mapDispatch = dispatch => ({
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
 });
 
-const mapStateToProps = (state, ownProps) => {
-  return {
+const mapStateToProps = (state, ownProps) => ({
     partnerId: ownProps.params.id || state.session.partnerId,
     completion: state.partnerProfileDetails.partnerProfileDetails.completion,
     hideEdit: (!isUserHq(state) && selectUserHqId(state) === +ownProps.params.id)
       || isUserAgencyReader(state),
-  };
-};
+  });
 
 const connectedOrganizationProfileOverview = connect(
   mapStateToProps, mapDispatch)(OrganizationProfileOverview);
