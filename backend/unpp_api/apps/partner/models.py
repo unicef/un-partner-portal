@@ -835,13 +835,13 @@ class PartnerOtherInfo(TimeStampedModel):
         return "PartnerOtherInfo <pk:{}>".format(self.id)
 
     def save(self, *args, **kwargs):
-        has_logo = bool(self.org_logo and self.org_logo_thumbnail.name)
+        thumbnail_missing = bool(self.org_logo and not self.org_logo_thumbnail.name)
         logo_has_changed = bool(
             self.org_logo and self.org_logo_thumbnail.name and
             self.org_logo.file_field.name not in self.org_logo_thumbnail.name
         )
 
-        if has_logo or logo_has_changed:
+        if thumbnail_missing or logo_has_changed:
             try:
                 image_generator = Thumbnail(source=open(self.org_logo.file_field.path, 'rb'))
                 img = image_generator.generate()
