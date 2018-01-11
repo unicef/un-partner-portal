@@ -20,18 +20,16 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
     def update_partner_related(self, instance, validated_data, related_names=[]):
         for related_name in related_names:
-            field_data = validated_data.pop(related_name, None)
+            model_data = validated_data.pop(related_name, None)
 
             if isinstance(getattr(instance, related_name), Model):
-                if not field_data:
+                if not model_data:
                     continue
                 related_model = getattr(instance, related_name)
-                # OneToOneField related to partner - Model object
-                related_model.__class__.objects.filter(
-                    id=related_model.id
-                ).update(**field_data)
 
-                related_model.refresh_from_db()
+                for field_name, value in model_data.items():
+                    setattr(related_model, field_name, value)
+                related_model.save()
             else:
                 related_manager = getattr(instance, related_name)
 
@@ -53,9 +51,9 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                     _id = data.get("id")
 
                     # Check if data contains file that is already referenced
-                    for key, value in data.items():
+                    for field_name, value in data.items():
                         if isinstance(value, CommonFile):
-                            self.raise_error_if_file_is_already_referenced(key, value)
+                            self.raise_error_if_file_is_already_referenced(field_name, value)
 
                     if _id:
                         related_manager.filter(id=_id).update(**data)

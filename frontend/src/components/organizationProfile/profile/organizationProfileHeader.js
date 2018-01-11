@@ -76,9 +76,8 @@ OrganizationProfileHeader.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
-    || state.agencyPartnersList.data.partners);
+    || state.agencyPartnersList.data.partners) || {};
   const basicInfo = R.path(['partnerProfileDetails', 'partnerProfileDetails', 'identification', 'basic'], state);
-
   return {
     countryName: partner.is_hq ? messages.hqProfile : basicInfo ? basicInfo.legal_name : '',
     partnerId: ownProps.params.id,

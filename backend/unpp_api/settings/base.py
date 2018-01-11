@@ -15,12 +15,12 @@ sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 # Other settings
 ####
 ADMINS = (
-    ('Alerts', 'unicef-unpp@tivix.com'),
+    ('Alerts', os.getenv('ALERTS_EMAIL') or 'unicef-unpp@tivix.com'),
 )
 
 SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
 SITE_ID = 1
-TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'en-us'
 USE_I18N = True
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -60,7 +60,7 @@ EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', '').lower() == 'true'
 
 # Get the ENV setting. Needs to be set in .bashrc or similar.
 ENV = os.getenv('ENV')
@@ -184,6 +184,9 @@ LOGGING = {
         'standard': {
             'format': '%(asctime)s [%(levelname)s] %(name)s line %(lineno)d: %(message)s'
         },
+        'verbose': {
+            'format': '[%(asctime)s][%(levelname)s][%(name)s] %(filename)s.%(funcName)s:%(lineno)d %(message)s',
+        },
     },
     'filters': {
         'require_debug_false': {
@@ -196,6 +199,12 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'standard',
         },
+        'filesystem': {
+            'level': 'DEBUG',
+            'class': 'common.utils.DeferredRotatingFileHandler',
+            'filename': 'django.log',
+            'formatter': 'verbose',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
@@ -205,9 +214,10 @@ LOGGING = {
     },
     'loggers': {
         '': {
-            'handlers': ['default'],
+            'handlers': ['default', 'filesystem'],
             'level': 'INFO',
-            'propagate': True},
+            'propagate': True
+        },
         'django.request': {
             'handlers': ['mail_admins', 'default'],
             'level': 'ERROR',

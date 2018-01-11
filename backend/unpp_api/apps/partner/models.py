@@ -75,14 +75,12 @@ class Partner(TimeStampedModel):
 
     @property
     def is_hq(self):
-        # TODO: Have a consistent return type: bool
         if self.is_international:
             return self.hq in [None, '']
         return None
 
     @property
     def is_country_profile(self):
-        # TODO: Have a consistent return type: bool
         if self.is_international:
             return self.hq not in [None, '']
         return None
@@ -818,12 +816,15 @@ class PartnerOtherInfo(TimeStampedModel):
         'common.CommonFile', null=True, blank=True, related_name="others_info")
     org_logo_thumbnail = models.ImageField(null=True, blank=True)
 
-    other_doc_1 = models.ForeignKey('common.CommonFile', null=True,
-                                    blank=True, related_name='other_info_doc_1')
-    other_doc_2 = models.ForeignKey('common.CommonFile', null=True,
-                                    blank=True, related_name='other_info_doc_2')
-    other_doc_3 = models.ForeignKey('common.CommonFile', null=True,
-                                    blank=True, related_name='other_info_doc_3')
+    other_doc_1 = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name='other_info_doc_1'
+    )
+    other_doc_2 = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name='other_info_doc_2'
+    )
+    other_doc_3 = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name='other_info_doc_3'
+    )
 
     confirm_data_updated = models.NullBooleanField(default=False)
 
@@ -834,10 +835,13 @@ class PartnerOtherInfo(TimeStampedModel):
         return "PartnerOtherInfo <pk:{}>".format(self.id)
 
     def save(self, *args, **kwargs):
-        if self.org_logo is not None and self.org_logo_thumbnail.name is None or \
-                self.org_logo is not None and \
-                self.org_logo_thumbnail.name is not None and \
-                self.org_logo_thumbnail.name.find(self.org_logo.file_field.name) < 0:
+        thumbnail_missing = bool(self.org_logo and not self.org_logo_thumbnail.name)
+        logo_has_changed = bool(
+            self.org_logo and self.org_logo_thumbnail.name and
+            self.org_logo.file_field.name not in self.org_logo_thumbnail.name
+        )
+
+        if thumbnail_missing or logo_has_changed:
             try:
                 image_generator = Thumbnail(source=open(self.org_logo.file_field.path, 'rb'))
                 img = image_generator.generate()
@@ -849,6 +853,7 @@ class PartnerOtherInfo(TimeStampedModel):
                 self.org_logo_thumbnail.name = new_filename
                 with open(new_filepath, "wb") as thumb:
                     thumb.write(img.read())
+                os.chmod(new_filepath, 0o644)
 
             except Exception as exp:
                 logger.exception(exp)
