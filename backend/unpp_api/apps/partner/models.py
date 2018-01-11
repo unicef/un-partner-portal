@@ -727,14 +727,14 @@ class PartnerBudget(TimeStampedModel):
     created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="budgets")
     partner = models.ForeignKey(Partner, related_name="budgets")
     year = models.PositiveSmallIntegerField(
-        "Weight in percentage",
         help_text="Enter valid year.",
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
     budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        unique_together = ('partner', 'year')
+        ordering = ['-year', 'id']
 
     def __str__(self):
         return "PartnerBudget {} <pk:{}>".format(self.year, self.id)

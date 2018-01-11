@@ -18,6 +18,7 @@ from common.serializers import (
     MixinPreventManyCommonFile,
     PointSerializer
 )
+from partner.utilities import get_recent_budgets_for_partner
 from .models import (
     Partner,
     PartnerProfile,
@@ -315,7 +316,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     hq_org_head = serializers.SerializerMethodField()
     mandate_mission = PartnerMandateMissionSerializer()
     experiences = PartnerExperienceSerializer(many=True)
-    budgets = PartnerBudgetSerializer(many=True)
+    budgets = serializers.SerializerMethodField()
     hq_budgets = serializers.SerializerMethodField()
     fund = PartnerFundingSerializer()
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
@@ -381,13 +382,16 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "other_info_is_complete",
         )
 
-    def get_hq_budgets(self, obj):
-        if obj.is_hq is False:
-            return PartnerBudgetSerializer(obj.hq.budgets.all(), many=True).data
+    def get_hq_budgets(self, partner):
+        if partner.is_hq is False:
+            return PartnerBudgetSerializer(get_recent_budgets_for_partner(partner.hq), many=True).data
 
     def get_hq_org_head(self, obj):
         if obj.is_hq is False:
             return PartnerHeadOrganizationSerializer(obj.hq.org_head).data
+
+    def get_budgets(self, partner):
+        return PartnerBudgetSerializer(get_recent_budgets_for_partner(partner), many=True).data
 
 
 class PartnerProfileSummarySerializer(serializers.ModelSerializer):
@@ -648,7 +652,8 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
         instance.more_office_in_country = validated_data.get('more_office_in_country', instance.more_office_in_country)
         instance.staff_in_country = validated_data.get('staff_in_country', instance.staff_in_country)
         instance.engagement_operate_desc = validated_data.get(
-            'engagement_operate_desc', instance.engagement_operate_desc)
+            'engagement_operate_desc', instance.engagement_operate_desc
+        )
 
         if location_of_office:
             point, created = Point.objects.get_or_create(**location_of_office)
@@ -697,10 +702,9 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
-    def get_hq_budgets(self, obj):
-        if obj.is_hq is False:
-            return PartnerBudgetSerializer(obj.hq.budgets.all(), many=True).data
-        return
+    def get_hq_budgets(self, partner):
+        if partner.is_hq is False:
+            return PartnerBudgetSerializer(get_recent_budgets_for_partner(partner.hq), many=True).data
 
 
 class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
