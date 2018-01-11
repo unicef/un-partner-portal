@@ -4,6 +4,7 @@ import os
 import random
 from datetime import date, timedelta
 import mock
+from dateutil.relativedelta import relativedelta
 
 from django.urls import reverse
 from django.conf import settings
@@ -12,6 +13,7 @@ from rest_framework import status as statuses
 
 from account.models import User
 from agency.models import AgencyOffice, Agency
+from notification.consts import NotificationType
 from partner.serializers import PartnerShortSerializer
 from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
@@ -736,3 +738,44 @@ class TestInvitedPartnersListAPIView(BaseAPITestCase):
         })
         self.assertEqual(update_response.status_code, statuses.HTTP_200_OK)
         self.assertEqual(set(read_response.data.keys()), set(update_response.data.keys()))
+
+
+class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
+
+    user_type = 'agency'
+    quantity = 1
+
+    def setUp(self):
+        super(TestEOIReviewersAssessmentsNotifyAPIView, self).setUp()
+        PartnerSimpleFactory.create_batch(1)
+        AgencyOfficeFactory.create_batch(self.quantity)
+        AgencyMemberFactory.create_batch(self.quantity)
+        EOIFactory.create_batch(self.quantity)
+
+    def test_send_notification(self):
+        eoi = EOI.objects.first()
+
+        url = reverse('projects:eoi-reviewers-assessments-notify', kwargs={
+            "eoi_id": eoi.id, "reviewer_id": self.user.id
+        })
+        create_notification_response = self.client.post(url, format='json')
+        self.assertEqual(
+            create_notification_response.status_code, statuses.HTTP_201_CREATED,
+            msg=create_notification_response.content
+        )
+
+        notifications_response = self.client.get('/api/notifications/', format='json')
+        self.assertEqual(notifications_response.status_code, statuses.HTTP_200_OK)
+        self.assertEqual(notifications_response.data['count'], 1)
+        self.assertEqual(
+            notifications_response.data['results'][0]['notification']['source'], NotificationType.CFEI_REVIEW_REQUIRED
+        )
+
+        create_notification_response = self.client.post(url, format='json')
+        self.assertEqual(create_notification_response.status_code, statuses.HTTP_200_OK)
+        self.assertIn('wait', create_notification_response.content)
+
+        with mock.patch('notification.helpers.timezone.now') as mock_now:
+            mock_now.return_value = eoi.created + relativedelta(hours=25)
+            create_notification_response = self.client.post(url, format='json')
+            self.assertEqual(create_notification_response.status_code, statuses.HTTP_201_CREATED)
