@@ -93,7 +93,7 @@ NOTIFICATION_DATA = {
         'subject': 'Prospective Partner Decision Made'
     },
     NotificationType.CFEI_REVIEW_REQUIRED: {
-        'template_name': 'cfei_review_required',
+        'template_name': 'CFEI_review_required',
         'subject': 'Your CFEI review is required'
     },
 }
