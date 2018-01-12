@@ -183,6 +183,9 @@ LOGGING = {
         'standard': {
             'format': '%(asctime)s [%(levelname)s] %(name)s line %(lineno)d: %(message)s'
         },
+        'verbose': {
+            'format': '[%(asctime)s][%(levelname)s][%(name)s] %(filename)s.%(funcName)s:%(lineno)d %(message)s',
+        },
     },
     'filters': {
         'require_debug_false': {
@@ -195,6 +198,12 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'standard',
         },
+        'filesystem': {
+            'level': 'DEBUG',
+            'class': 'common.utils.DeferredRotatingFileHandler',
+            'filename': 'django.log',
+            'formatter': 'verbose',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
@@ -204,7 +213,7 @@ LOGGING = {
     },
     'loggers': {
         '': {
-            'handlers': ['default'],
+            'handlers': ['default', 'filesystem'],
             'level': 'INFO',
             'propagate': True},
         'django.request': {
