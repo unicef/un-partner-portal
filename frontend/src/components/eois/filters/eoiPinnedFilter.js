@@ -150,6 +150,7 @@ class EoiPinnedFilter extends Component {
               {messages.clear}
             </Button>
             <Button
+              type="submit"
               color="accent"
               onTouchTap={handleSubmit(this.onSearch)}
             >
@@ -184,7 +185,7 @@ const formEoiPinnedFilter = reduxForm({
 const mapStateToProps = (state, ownProps) => {
   const { query: { title } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
-  const { query: { agency } = {} } = ownProps.location;
+  const { query: { agency } = null } = ownProps.location;
   const { query: { active } = {} } = ownProps.location;
   const { query: { locations } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;

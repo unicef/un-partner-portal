@@ -49,7 +49,7 @@ const styleSheet = (theme) => {
       height: 24,
     },
     tabsContainer: {
-      maxWidth: '100%',
+      width: '100%',
     },
     noPrint: {
       '@media print': {

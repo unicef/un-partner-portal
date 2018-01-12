@@ -62,6 +62,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
           <Grid item sm={6} xs={12}>
             <CountryField
               label={messages.countryOrigin}
+              fieldName="country_code"
               initialValue={country}
               readOnly
             />

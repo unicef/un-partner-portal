@@ -68,7 +68,7 @@ class FileUploadButton extends Component {
     const { classes, fieldName, deleteDisabled, fileAdded } = this.props;
 
     return (
-      <div>
+      <React.fragment>
         <input
           onChange={this.handleChange}
           className={classes.root}
@@ -95,7 +95,7 @@ class FileUploadButton extends Component {
               </IconButton>}
             </Typography>
           </div>}
-      </div>
+      </React.fragment>
     );
   }
 }
