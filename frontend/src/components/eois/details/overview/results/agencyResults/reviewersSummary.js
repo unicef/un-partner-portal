@@ -23,6 +23,10 @@ const messages = {
 };
 
 class ReviewersSummary extends Component {
+  componentWillMount() {
+    this.props.getReviewers();
+  }
+
   componentWillReceiveProps({ cfeiReviewers }) {
     if (!R.equals(cfeiReviewers, this.props.cfeiReviewers)) {
       this.props.getReviewers();
