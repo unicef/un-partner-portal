@@ -325,8 +325,9 @@ class PartnerProfile(TimeStampedModel):
             budgets = self.partner.budgets.filter(budget__isnull=False)
 
         current_year = date.today().year
-        recent_years_required = range(current_year - 2, current_year + 1)  # 3 most recent years
-        required_budgets = budgets.filter(year__in=recent_years_required)
+        required_budgets = budgets.filter(year__in=[
+            current_year - 2, current_year - 1, current_year
+        ])
 
         required_fields = {
             'budgets': required_budgets.count() == 3,
