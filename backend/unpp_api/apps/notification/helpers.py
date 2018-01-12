@@ -1,24 +1,26 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import os
+
+from dateutil.relativedelta import relativedelta
 from django.db import transaction
 from django.core.mail import send_mail
 from django.conf import settings
-from django.template import Context, Template
+from django.template import loader
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 
 from account.models import User
 from common.consts import COMPLETED_REASON
-from .models import Notification, NotifiedUser
-from .consts import NOTIFICATION_KINDS
+from notification.models import Notification, NotifiedUser
+from notification.consts import NOTIFICATION_DATA, NotificationType
 
 
 @transaction.atomic
-def feed_alert(source, subject, body, users, obj):
+def feed_alert(notification_type, subject, body, users, obj):
     notification = Notification.objects.create(
         name=subject,
         description=body,
-        source=source,
+        source=notification_type,
         content_object=obj,
     )
     notified_users = []
@@ -27,37 +29,34 @@ def feed_alert(source, subject, body, users, obj):
     NotifiedUser.objects.bulk_create(notified_users)
 
 
-def send_notification(source, obj, users, context=None, send_in_feed=True,
-                      check_sent_for_source=True):
+def send_notification(
+        notification_type, obj, users, context=None, send_in_feed=True, check_sent_for_source=True
+):
     """
-        source - key of dict in notification + unique check against
-        obj - object directly associated w/ notification. generic fk to it
-        users - users who are receiving notif
-        context - context to provide to template for email or body of notif
-        send_in_feed - create notification feed element
-        check_sent_for_source - checks to confirm no duplicates are sent for source + object. false bypasses
+    notification_type - check NotificationType class in const.py
+    obj - object directly associated w/ notification. generic fk to it
+    users - users who are receiving notif
+    context - context to provide to template for email or body of notif
+    send_in_feed - create notification feed element
+    check_sent_for_source - checks to confirm no duplicates are sent for source + object. false bypasses
 
     """
 
-    if check_sent_for_source:
-        if notif_already_sent(obj, source):
-            return
+    if check_sent_for_source and notification_already_sent(obj, notification_type):
+        return
 
-    notif_dict = NOTIFICATION_KINDS.get(source)
+    notification_info = NOTIFICATION_DATA.get(notification_type)
 
-    cc = list(users.values_list('email', flat=True))
-    body = get_template_as_str(notif_dict.get('template_name'), context)
-    send_mail(notif_dict.get('subject'), body, settings.DEFAULT_FROM_EMAIL, cc)
+    targets = [u.email for u in users]
+    body = render_notification_template_to_str(notification_info.get('template_name'), context)
+    send_mail(notification_info.get('subject'), body, settings.DEFAULT_FROM_EMAIL, targets)
 
     if send_in_feed:
-        feed_alert(source, notif_dict.get('subject'), body, users, obj)
+        feed_alert(notification_type, notification_info.get('subject'), body, users, obj)
 
 
-def get_template_as_str(filename, context):
-    main_dir_name = os.path.dirname(os.path.abspath(__file__))
-    temp_file = open(os.path.join(main_dir_name, 'standard_emails', filename))
-    template = Template(temp_file.read())
-    return template.render(Context(context))
+def render_notification_template_to_str(template_name, context):
+    return loader.get_template('notifications/{}'.format(template_name)).render(context)
 
 
 # Return all partner members. Potential limit in future?
@@ -76,11 +75,22 @@ def get_partner_users_for_app_qs(application_qs):
 
 
 # We don't want to send 2x of the same notification
-def notif_already_sent(obj, notif_source):
+def notification_already_sent(obj, notification_type):
     content_type = ContentType.objects.get_for_model(obj)
     return Notification.objects.filter(object_id=obj.id,
-                                       source=notif_source,
+                                       source=notification_type,
                                        content_type=content_type).exists()
+
+
+def user_received_notification_recently(user, obj, notification_type, time_ago=relativedelta(days=1)):
+    content_type = ContentType.objects.get_for_model(obj)
+    return NotifiedUser.objects.filter(
+        notification__source=notification_type,
+        notification__object_id=obj.id,
+        notification__content_type=content_type,
+        recipient=user,
+        created__gte=timezone.now() - time_ago
+    ).exists()
 
 
 def send_notification_cfei_completed(eoi):
@@ -142,37 +152,10 @@ def send_notificiation_application_created(application):
             send_notification('direct_select_ucn', application, users)
 
 
-# TODO - below
-# def send_account_approval_activated_create_profile(context, users, obj=None):
-#     source = 'account_approval_activated_create_profile'
-#     subject = "Title"
-#     send_notification(subject, source, context, obj, users)
-
-
-# def send_account_approval_activated_sent_to_head_org(context, users, obj=None):
-#     source = 'account_approval_activated_sent_to_head_org'
-#     subject = "Title"
-#     send_notification(subject, source, context, obj, users)
-
-
-# def send_account_approval_rejection_application_duplicate(context, users, obj=None):
-#     source = 'account_approval_rejection_application_duplicate'
-#     subject = "Title"
-#     send_notification(subject, source, context, obj, users)
-
-
-# def send_account_approval_rejection_sanctions_list(context, users, obj=None):
-#     source = 'account_approval_rejection_application_duplicate'
-#     subject = "Title"
-#     send_notification(subject, source, context, obj, users)
-
-
-# def send_account_creation_rejection(context, users, obj=None):
-#     source = 'account_approval_rejection_application_duplicate'
-#     subject = "Title"
-#     send_notification(subject, source, context, obj, users)
-
-
-# TODO
-# Agency deadline
-# Agency accept/decline response from partners
+def send_cfei_review_required_notification(eoi, users):
+    send_notification(
+        NotificationType.CFEI_REVIEW_REQUIRED, eoi, users, send_in_feed=True, check_sent_for_source=False, context={
+            'eoi_name': eoi.title,
+            'eoi_url': eoi.get_absolute_url()
+        }
+    )

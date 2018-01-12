@@ -1,0 +1,6 @@
+Dear UN staff member,
+
+A Call of Expression of Interest "{{ eoi_name }}" required Your review.
+
+To view the call for expression of interest, please visit: {{ eoi_url }}
+Thank you.
