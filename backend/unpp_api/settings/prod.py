@@ -12,4 +12,3 @@ extend_list_avoid_repeats(INSTALLED_APPS, [
 ])
 
 DEFAULT_FROM_EMAIL = 'noreply@unpp.org'
-EMAIL_USE_TLS = True
