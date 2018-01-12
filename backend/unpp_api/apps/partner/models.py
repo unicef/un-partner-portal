@@ -324,10 +324,13 @@ class PartnerProfile(TimeStampedModel):
         else:
             budgets = self.partner.budgets.filter(budget__isnull=False)
 
-        current_year_exists = budgets.filter(year=date.today().year).exists()
+        current_year = date.today().year
+        required_budgets = budgets.filter(year__in=[
+            current_year - 2, current_year - 1, current_year
+        ])
 
         required_fields = {
-            'budgets': current_year_exists and (budgets.count() >= 3),
+            'budgets': required_budgets.count() == 3,
             'main_donors': self.partner.fund.major_donors,
             'main_donors_list': self.partner.fund.main_donors_list,
             'source_core_funding': self.partner.fund.source_core_funding
@@ -725,14 +728,14 @@ class PartnerBudget(TimeStampedModel):
     created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="budgets")
     partner = models.ForeignKey(Partner, related_name="budgets")
     year = models.PositiveSmallIntegerField(
-        "Weight in percentage",
         help_text="Enter valid year.",
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
     budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        unique_together = ('partner', 'year')
+        ordering = ['-year', 'id']
 
     def __str__(self):
         return "PartnerBudget {} <pk:{}>".format(self.year, self.id)
