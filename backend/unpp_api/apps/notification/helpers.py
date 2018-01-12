@@ -154,7 +154,7 @@ def send_notificiation_application_created(application):
 
 def send_cfei_review_required_notification(eoi, users):
     send_notification(
-        NotificationType.CFEI_REVIEW_REQUIRED, eoi, users, send_in_feed=True, context={
+        NotificationType.CFEI_REVIEW_REQUIRED, eoi, users, send_in_feed=True, check_sent_for_source=False, context={
             'eoi_name': eoi.title,
             'eoi_url': eoi.get_absolute_url()
         }
