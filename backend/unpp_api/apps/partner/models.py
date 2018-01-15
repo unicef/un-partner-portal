@@ -128,7 +128,7 @@ class Partner(TimeStampedModel):
             self.profile.mandatemission_complete,
             self.profile.funding_complete,
             self.profile.collaboration_complete,
-            self.profile.proj_impl_is_complete,
+            self.profile.project_implementation_is_complete,
             self.profile.other_info_is_complete,
         ])
 
