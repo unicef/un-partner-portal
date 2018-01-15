@@ -160,6 +160,7 @@ class EoiPartnerFilter extends Component {
               {messages.clear}
             </Button>
             <Button
+              type="submit"
               color="accent"
               onTouchTap={handleSubmit(this.onSearch)}
             >
@@ -194,14 +195,14 @@ const formEoiPartnerFilter = reduxForm({
 const mapStateToProps = (state, ownProps) => {
   const { query: { title } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
-  const { query: { agency } = {} } = ownProps.location;
+  const { query: { agency } = null } = ownProps.location;
   const { query: { active } = {} } = ownProps.location;
   const { query: { locations } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
   const { query: { posted_from_date } = {} } = ownProps.location;
   const { query: { posted_to_date } = {} } = ownProps.location;
 
-  const agencyQ = Number(agency);
+  const agencyQ = agency && Number(agency);
 
   const specializationsQ = specializations &&
       R.map(Number, specializations.split(','));
