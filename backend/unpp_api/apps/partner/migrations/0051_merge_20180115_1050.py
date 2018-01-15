@@ -10,6 +10,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('partner', '0050_auto_20180110_0042'),
         ('partner', '0050_auto_20180111_0540'),
+        ('partner', '0051_auto_20180115_0834'),
     ]
 
     operations = [
