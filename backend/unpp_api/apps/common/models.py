@@ -102,7 +102,7 @@ class CommonFile(TimeStampedModel):
         Returns True if this file is referenced from at least one other object
         """
         has_existing_reference = any([
-            self.assessment_reports.exists(),
+            self.partner_capacity_assessments.exists(),
             self.collaboration_evidences.exists(),
             self.concept_notes.exists(),
             self.ethic_fraud_policies.exists(),

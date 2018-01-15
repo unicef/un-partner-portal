@@ -29,7 +29,7 @@ from partner.models import (
     PartnerAuditReport,
     PartnerReporting,
     PartnerMember,
-)
+    PartnerCapacityAssessment)
 from project.models import EOI, Application, Assessment
 from review.models import PartnerFlag, PartnerVerification
 from .consts import (
@@ -43,7 +43,7 @@ from .consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     POLICY_AREA_CHOICES,
     ORG_AUDIT_CHOICES,
-    AUDIT_ASSESMENT_CHOICES,
+    AUDIT_ASSESSMENT_CHOICES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     EOI_TYPES,
     DIRECT_SELECTION_SOURCE,
@@ -419,10 +419,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         PartnerAuditAssessment.objects.create(
             partner=self,
             regular_audited_comment="fake regular audited comment {}".format(self.id),
-            assessment_report=cfile,
             major_accountability_issues_highlighted=True,
             comment="fake comment {}".format(self.id),
-            assessments=[AUDIT_ASSESMENT_CHOICES.micro],
         )
 
     @factory.post_generation
@@ -444,6 +442,23 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             org_audit=ORG_AUDIT_CHOICES.internal,
             most_recent_audit_report=cfile2,
             link_report="http://fake.unicef.org/fake_uri{}_2".format(self.id),
+        )
+
+    @factory.post_generation
+    def capacity_assessments(self, create, extracted, **kwargs):
+        cfile1 = CommonFile.objects.create()
+        cfile1.file_field.save('test1.csv', open(filename))
+        PartnerCapacityAssessment.objects.create(
+            created_by=User.objects.first(),
+            partner=self,
+            assessment_type=AUDIT_ASSESSMENT_CHOICES.micro,
+            report_file=cfile1,
+        )
+        PartnerCapacityAssessment.objects.create(
+            created_by=User.objects.first(),
+            partner=self,
+            assessment_type=AUDIT_ASSESSMENT_CHOICES.unhcr,
+            report_url="http://fake.unicef.org/fake_uri{}_2".format(self.id),
         )
 
     @factory.post_generation

@@ -358,7 +358,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         payload = response.data
         del payload['publish_annual_reports']
         del payload['link_report']
-        del payload['assessment_report']
+        del payload['capacity_assessments']
         del payload['report']
         del payload['key_result']
         del payload['last_report']

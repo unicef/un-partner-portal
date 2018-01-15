@@ -19,7 +19,7 @@ from common.serializers import (
     PointSerializer
 )
 from partner.utilities import get_recent_budgets_for_partner
-from .models import (
+from partner.models import (
     Partner,
     PartnerProfile,
     PartnerMailingAddress,
@@ -39,7 +39,7 @@ from .models import (
     PartnerAuditReport,
     PartnerReporting,
     PartnerMember,
-)
+    PartnerCapacityAssessment)
 
 
 class PartnerAdditionalSerializer(serializers.ModelSerializer):
@@ -288,9 +288,19 @@ class PartnerAuditReportSerializer(serializers.ModelSerializer):
         fields = ('id', 'org_audit', 'most_recent_audit_report', 'audit_link_report')
 
 
-class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
+class PartnerCapacityAssessmentSerializer(serializers.ModelSerializer):
 
-    assessment_report = CommonFileSerializer()
+    id = serializers.IntegerField(required=False)
+
+    report_file = CommonFileSerializer(allow_null=True)
+    report_url = serializers.URLField(allow_null=True, allow_blank=True)
+
+    class Meta:
+        model = PartnerCapacityAssessment
+        fields = ('id', 'assessment_type', 'report_file', 'report_url')
+
+
+class PartnerAuditAssessmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PartnerAuditAssessment
@@ -326,6 +336,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     area_policies = PartnerPolicyAreaSerializer(many=True)
     audit = PartnerAuditAssessmentSerializer()
     audit_reports = PartnerAuditReportSerializer(many=True)
+    capacity_assessments = PartnerCapacityAssessmentSerializer(many=True)
     report = PartnerReportingSerializer(required=False)
     location_field_offices = PointSerializer(many=True)
     is_finished = serializers.BooleanField(read_only=True, source="has_finished")
@@ -371,6 +382,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "area_policies",
             "audit",
             "audit_reports",
+            "capacity_assessments",
             "report",
             "is_finished",
             "identification_is_complete",
@@ -794,12 +806,10 @@ class PartnerProfileProjectImplementationSerializer(
     regular_audited_comment = serializers.CharField(
         source="audit.regular_audited_comment", allow_blank=True, allow_null=True)
     audit_reports = PartnerAuditReportSerializer(many=True)
+    capacity_assessments = PartnerCapacityAssessmentSerializer(many=True)
     major_accountability_issues_highlighted = serializers.BooleanField(
         source="audit.major_accountability_issues_highlighted")
     comment = serializers.CharField(source="audit.comment", allow_blank=True, allow_null=True)
-    capacity_assessment = serializers.BooleanField(source="audit.capacity_assessment")
-    assessments = serializers.ListField(source="audit.assessments")
-    assessment_report = CommonFileSerializer(source="audit.assessment_report", allow_null=True)
 
     key_result = serializers.CharField(source="report.key_result", allow_blank=True)
     publish_annual_reports = serializers.BooleanField(source="report.publish_annual_reports")
@@ -833,11 +843,9 @@ class PartnerProfileProjectImplementationSerializer(
             'regular_audited',
             'regular_audited_comment',
             'audit_reports',
+            'capacity_assessments',
             'major_accountability_issues_highlighted',
             'comment',
-            'capacity_assessment',
-            'assessments',
-            'assessment_report',
 
             'key_result',
             'publish_annual_reports',
@@ -851,7 +859,7 @@ class PartnerProfileProjectImplementationSerializer(
         "profile", "audit", "report", "internal_controls", "area_policies",
     ]
 
-    prevent_keys = ["report", "assessment_report"]
+    prevent_keys = ["report"]
 
     def is_valid(self, raise_exception=False):
         """
