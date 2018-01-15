@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from operator import attrgetter
-
 from datetime import datetime, date, timedelta
-from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Count
 from rest_framework import serializers
