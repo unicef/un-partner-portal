@@ -51,7 +51,7 @@ class ApplicationsToScoreListAPIView(ListAPIView):
         open_eois_as_reviewer = user.eoi_as_reviewer.filter(completed_reason=None, completed_date=None)
         return Application.objects.filter(
             eoi__in=open_eois_as_reviewer
-        ).exclude(assessments__reviewer=user).order_by('eoi__modified').distinct('eoi__modified')
+        ).exclude(assessments__reviewer=user).order_by('eoi__modified').distinct('eoi__modified', 'eoi')
 
 
 class ApplicationsPartnerDecisionsListAPIView(ListAPIView):
