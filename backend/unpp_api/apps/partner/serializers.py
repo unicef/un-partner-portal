@@ -345,7 +345,9 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     mandatemission_complete = serializers.BooleanField(read_only=True, source="profile.mandatemission_complete")
     funding_complete = serializers.BooleanField(read_only=True, source="profile.funding_complete")
     collaboration_complete = serializers.BooleanField(read_only=True, source="profile.collaboration_complete")
-    proj_impl_is_complete = serializers.BooleanField(read_only=True, source="profile.proj_impl_is_complete")
+    proj_impl_is_complete = serializers.BooleanField(
+        read_only=True, source="profile.project_implementation_is_complete"
+    )
     other_info_is_complete = serializers.BooleanField(read_only=True, source="profile.other_info_is_complete")
 
     class Meta:
@@ -817,7 +819,7 @@ class PartnerProfileProjectImplementationSerializer(
     report = CommonFileSerializer(source="report.report", allow_null=True)
     link_report = serializers.URLField(source="report.link_report", allow_blank=True, allow_null=True)
 
-    has_finished = serializers.BooleanField(read_only=True, source="profile.proj_impl_is_complete")
+    has_finished = serializers.BooleanField(read_only=True, source="profile.project_implementation_is_complete")
 
     class Meta:
         model = Partner

@@ -372,7 +372,7 @@ class PartnerProfile(TimeStampedModel):
         return all(required_fields.values())
 
     @property
-    def proj_impl_is_complete(self):
+    def project_implementation_is_complete(self):
         rep_artifact = self.partner.report.report or self.partner.report.link_report
 
         required_fields = {
@@ -410,6 +410,7 @@ class PartnerProfile(TimeStampedModel):
                 self.partner.report.last_report if self.partner.report.publish_annual_reports else True,
             'publish_annual_reports_artifact': rep_artifact if self.partner.report.publish_annual_reports else True,
 
+            # TODO: Is it enough that the latest assessment is complete, or do all need to be?
             'capacity_assessments':
                 self.partner.capacity_assessments.exists() and self.partner.capacity_assessments.latest(
                     'created').is_complete
