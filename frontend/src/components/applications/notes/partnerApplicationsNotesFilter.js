@@ -13,8 +13,11 @@ import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
 import CountryField from '../../forms/fields/projectFields/locationField/countryField';
-import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedApplicationStatuses } from '../../../store';
+import { selectMappedSpecializations,
+  selectNormalizedCountries,
+  selectNormalizedExtendedApplicationStatuses } from '../../../store';
 import resetChanges from '../../eois/filters/eoiHelper';
+import { APPLICATION_STATUSES } from '../../../helpers/constants';
 
 const messages = {
   choose: 'Choose',
@@ -258,7 +261,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
-    cnStatus: selectNormalizedApplicationStatuses(state),
+    cnStatus: R.prepend({ value: APPLICATION_STATUSES, label: 'Pending' }, selectNormalizedExtendedApplicationStatuses(state)),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     countryCode: country_code,
