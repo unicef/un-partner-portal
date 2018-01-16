@@ -6,6 +6,7 @@ import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
+import Grid from 'material-ui/Grid';
 import VerificationText from '../../../partners/profile/common/verificationText';
 import FlaggingStatus from '../../../partners/profile/common/flaggingStatus';
 import AwardApplicationButtonContainer from '../../buttons/awardApplicationButtonContainer';
@@ -14,6 +15,7 @@ import { APPLICATION_STATUSES } from '../../../../helpers/constants';
 const messages = {
   labelAward: 'Choose successful applicant(s)',
   award: 'Award',
+  print: 'Print',
 };
 
 const styleSheet = theme => ({
@@ -27,7 +29,7 @@ const styleSheet = theme => ({
   subGrid: {
     padding: theme.spacing.unit * 2,
     display: 'grid',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gridGap: `0px ${theme.spacing.unit * 2}px !important`,
   },
   button: {
@@ -47,6 +49,9 @@ const styleSheet = theme => ({
   },
   wrappedText: {
     wordBreak: 'break-word',
+  },
+  printButton: {
+    margin: theme.spacing.unit * 2,
   },
 });
 
@@ -210,6 +215,11 @@ class CompareApplicationContent extends React.Component {
           </div>
           <Divider />
         </div>
+        <Grid container justify="flex-end">
+          <Grid item>
+            <Button className={classes.printButton} onClick={this.print} color="accent">{messages.print}</Button>
+          </Grid>
+        </Grid>
       </div>
     );
   }
