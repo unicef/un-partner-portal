@@ -12,7 +12,7 @@ from .models import Partner
 class PartnersListFilter(django_filters.FilterSet):
 
     legal_name = CharFilter(method='get_legal_name')
-    is_verified = BooleanFilter(method='get_is_verified', widget=BooleanWidget())
+    is_verified = CharFilter(method='get_is_verified')
     display_type = CharFilter(method='get_display_type')
     country_code = CharFilter(method='get_country_code')
     country_codes = CharFilter(method='get_country_codes')
@@ -30,9 +30,12 @@ class PartnersListFilter(django_filters.FilterSet):
         return queryset.filter(legal_name__icontains=value)
 
     def get_is_verified(self, queryset, name, value):
-        if value:
+        if value == '1':
             return queryset.filter(verifications__is_verified=True)
-        return queryset.exclude(verifications__is_verified=True)
+        if value == '2':
+            return queryset.filter(verifications__is_verified=False)
+        if value == '3':
+            return queryset.filter(verifications__is_verified__isnull=True)
 
     def get_country_code(self, queryset, name, value):
         return queryset.filter(country_code=(value and value.upper()))
