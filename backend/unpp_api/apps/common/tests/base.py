@@ -25,14 +25,14 @@ class BaseAPITestCase(APITestCase):
     quantity = 1
 
     def setUp(self):
-        assert self.user_type in ['agency', 'partner'], "User type can be only agency or partner."
+        assert self.user_type in [self.USER_AGENCY, self.USER_PARTNER], "User type can be only agency or partner."
 
         for factory in self.initial_factories:
             factory.create_batch(self.quantity)
 
-        if self.user_type == 'partner':
+        if self.user_type == self.USER_PARTNER:
             self.user = PartnerMemberFactory.create_batch(1, role=self.user_role)[0].user
-        elif self.user_type == 'agency':
+        elif self.user_type == self.USER_AGENCY:
             self.user = AgencyMemberFactory.create_batch(1, role=self.user_role)[0].user
 
         # creating a session (login already created user in generate_fake_data)

@@ -16,6 +16,9 @@ class Notification(TimeStampedModel):
     object_id = models.PositiveIntegerField(null=True, blank=True)
     content_object = GenericForeignKey('content_type', 'object_id')
 
+    class Meta:
+        ordering = ['-created']
+
     def __str__(self):
         return "Notification {}".format(self.name)
 
@@ -24,6 +27,9 @@ class NotifiedUser(TimeStampedModel):
     notification = models.ForeignKey(Notification, related_name="notified")
     did_read = models.BooleanField(default=False)
     recipient = models.ForeignKey("account.User", related_name="notified")
+
+    class Meta:
+        ordering = ['created']
 
     def __str__(self):
         return "Notified User <{}>".format(self.id)

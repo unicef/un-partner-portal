@@ -10,9 +10,9 @@ import TextFieldForm from '../../../forms/textFieldForm';
 import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
-  violation: 'Does the organization have a policy or code of conduct to safegaurd ' +
+  violation: 'Does the organization have a policy or code of conduct to safeguard ' +
                 'against the violation and abuse of beneficiaries?',
-  fraud: 'Does the organization have a policy or code of conduct to safegaurd ' +
+  fraud: 'Does the organization have a policy or code of conduct to safeguard ' +
                 'against fraud and corruption?',
   commnet: 'Please comment',
   policy: 'Copy of your policy or code of conduct',

@@ -21,6 +21,8 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
     def update_partner_related(self, instance, validated_data, related_names=[]):
         for related_name in related_names:
             model_data = validated_data.pop(related_name, None)
+            if not hasattr(instance, related_name):
+                continue
 
             if isinstance(getattr(instance, related_name), Model):
                 if not model_data:
