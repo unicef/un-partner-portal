@@ -42,7 +42,7 @@ class PartnerSwitch extends Component {
   }
 
   handleRequestClose(partner) {
-    const { startRefresh, stopRefresh, isCurrentHq, currentHqId, partnerId} = this.props;
+    const { startRefresh, stopRefresh, isCurrentHq, currentHqId, partnerId } = this.props;
     if (partner.id) {
       this.props.saveNewCurrentPartner({
         partnerId: partner.id,
@@ -53,6 +53,7 @@ class PartnerSwitch extends Component {
         logo: partner.logo,
         logoThumbnail: partner.logoThumbnail,
         isProfileComplete: partner.partner_additional.has_finished,
+        lastUpdate: partner.last_profile_update,
       });
 
       this.setState({ open: false });
