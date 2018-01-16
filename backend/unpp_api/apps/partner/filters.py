@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 import django_filters
-from django_filters.filters import CharFilter, ModelMultipleChoiceFilter, BooleanFilter
-from django_filters.widgets import CSVWidget, BooleanWidget
+from django_filters.filters import CharFilter, ModelMultipleChoiceFilter
+from django_filters.widgets import CSVWidget
 
 from common.models import Specialization
 from .models import Partner
