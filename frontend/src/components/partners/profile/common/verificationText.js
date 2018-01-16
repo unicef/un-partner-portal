@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
+import { withStyles } from 'material-ui/styles';
 import VerificationIcon from '../icons/verificationIcon';
 
 const messages = {
@@ -10,6 +10,13 @@ const messages = {
   pending: 'Pending Verification ',
 };
 
+const styleSheet = () => ({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+});
+
 const verifiedText = (status) => {
   if (status) return messages.verified;
   else if (status === false) return messages.unverified;
@@ -17,21 +24,18 @@ const verifiedText = (status) => {
 };
 
 const VerificationText = (props) => {
-  const { verified } = props;
-  return (<Grid container spacing={0}>
-    <Grid item>
-      <VerificationIcon verified={verified} />
-    </Grid>
-    <Grid item>
-      <Typography type="body2">
-        {verifiedText(verified)}
-      </Typography>
-    </Grid>
-  </Grid>);
+  const { classes, verified } = props;
+  return (<div className={classes.container}>
+    <VerificationIcon verified={verified} />
+    <Typography type="body2">
+      {verifiedText(verified)}
+    </Typography>
+  </div>);
 };
 
 VerificationText.propTypes = {
   verified: PropTypes.bool,
+  classes: PropTypes.object,
 };
 
-export default VerificationText;
+export default withStyles(styleSheet)(VerificationText);
