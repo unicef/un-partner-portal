@@ -40,15 +40,15 @@ const styleSheet = theme => ({
 
 const VERIFICATION_MENU = [
   {
-    value: 'none',
-    label: 'All',
+    value: 'pending',
+    label: 'Pending',
   },
   {
-    value: 'true',
+    value: 'verified',
     label: 'Verified',
   },
   {
-    value: 'false',
+    value: 'unverified',
     label: 'Not Verified',
   },
 ];
@@ -88,14 +88,14 @@ class PartnersFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { legal_name, verification_status, display_type,
+    const { legal_name, is_verified, display_type,
       country_code, specializations, concern } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         legal_name,
-        verification_status,
+        is_verified,
         display_type,
         country_code,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
@@ -133,7 +133,7 @@ class PartnersFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <SelectForm
-                fieldName="verification_status"
+                fieldName="is_verified"
                 label={messages.labels.verificationStatus}
                 values={VERIFICATION_MENU}
                 optional
@@ -220,7 +220,7 @@ const formPartnersFilter = reduxForm({
 
 const mapStateToProps = (state, ownProps) => {
   const { query: { legal_name } = {} } = ownProps.location;
-  const { query: { verification_status } = {} } = ownProps.location;
+  const { query: { is_verified } = {} } = ownProps.location;
   const { query: { display_type } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
@@ -239,7 +239,7 @@ const mapStateToProps = (state, ownProps) => {
     countryCode: country_code,
     initialValues: {
       legal_name,
-      verification_status,
+      is_verified,
       display_type,
       country_code,
       specializations: specializationsQ,
