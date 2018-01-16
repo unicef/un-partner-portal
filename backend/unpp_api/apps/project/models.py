@@ -214,6 +214,7 @@ class Application(TimeStampedModel):
 
     @property
     def application_status(self):
+        # Any changes made here should be reflected in ApplicationsFilter.filter_applications_status
         if not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.closed:
             return EXTENDED_APPLICATION_STATUSES.review
         elif not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.completed:
