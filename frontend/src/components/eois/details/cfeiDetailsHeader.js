@@ -33,7 +33,6 @@ class CfeiHeader extends Component {
       index: 0,
     };
     this.handleChange = this.handleChange.bind(this);
-    this.handleBackButton = this.handleBackButton.bind(this);
     this.cfeiTabs = this.cfeiTabs.bind(this);
     this.filterTaba = this.filterTabs.bind(this);
   }
@@ -64,11 +63,6 @@ class CfeiHeader extends Component {
     const { params: { type, id } } = this.props;
     const tabsToRender = this.filterTabs();
     history.push(`/cfei/${type}/${id}/${tabsToRender[index].path}`);
-  }
-
-  handleBackButton() {
-    const { params: { type } } = this.props;
-    history.push(`/cfei/${type}`);
   }
 
   filterTabs() {
@@ -130,7 +124,7 @@ class CfeiHeader extends Component {
       header={<HeaderOptionsContainer role={role} type={type} id={id} />}
       handleChange={this.handleChange}
       backButton
-      handleBackButton={this.handleBackButton}
+      handleBackButton={() => { history.goBack(); }}
     >
       {(index !== -1) && children}
     </HeaderNavigation>);
