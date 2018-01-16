@@ -11,8 +11,7 @@ from rest_framework import serializers
 from account.models import User
 from account.serializers import AgencyUserSerializer, IDUserSerializer, UserSerializer
 from agency.serializers import AgencySerializer
-from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE, \
-    EXTENDED_APPLICATION_STATUSES
+from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
@@ -642,7 +641,6 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
     application_date = serializers.CharField(source="created")
-    application_status_display = serializers.SerializerMethodField()
 
     class Meta:
         model = Application
@@ -655,7 +653,6 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
             'specializations',
             'application_date',
             'application_status',
-            'application_status_display',
         )
 
     def get_country(self, obj):
@@ -663,11 +660,6 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
 
     def get_specializations(self, obj):
         return SimpleSpecializationSerializer(obj.eoi.specializations.all(), many=True).data
-
-    def get_application_status_display(self, application):
-        application_status = application.application_status
-        if application_status:
-            return dict(EXTENDED_APPLICATION_STATUSES)[application_status]
 
 
 class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer):
