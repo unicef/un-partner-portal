@@ -129,10 +129,9 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    fullname = fuzzy.FuzzyText()
+    fullname = factory.LazyFunction(get_fullname)
     email = factory.Sequence(lambda n: "fake-user-{}@unicef.org".format(n))
     password = factory.PostGenerationMethodCall('set_password', 'test')
-    fullname = factory.LazyFunction(get_fullname)
 
     profile = factory.RelatedFactory(UserProfileFactory, 'user')
 
@@ -158,6 +157,7 @@ class AdminLevel1Factory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = AdminLevel1
+        django_get_or_create = ('name', 'country_code')
 
 
 class PointFactory(factory.django.DjangoModelFactory):
