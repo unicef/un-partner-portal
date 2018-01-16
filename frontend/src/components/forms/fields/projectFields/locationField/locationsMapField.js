@@ -8,6 +8,7 @@ import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import SpreadContent from '../../../../common/spreadContent';
 import LocationsMap from './locationsMap';
+import { COUNTRIES } from '../../../../../helpers/constants';
 
 
 const messages = {
@@ -52,7 +53,6 @@ class LocationsMapField extends Component {
     const {
       showMap,
     } = this.state;
-
     return (
       <div>
         <SpreadContent>
@@ -74,7 +74,10 @@ class LocationsMapField extends Component {
           removeLocation={this.removeLocation}
           removeAllLocations={this.removeAllLocations}
         />
-        {currentCountry && R.isEmpty(currentLocations) && <FormHelperText error>{'Select locations'}</FormHelperText>}
+        {currentCountry
+            && R.isEmpty(currentLocations)
+            && countryCode !== COUNTRIES.palestine
+            && <FormHelperText error>{'Select locations'}</FormHelperText>}
       </div>
     );
   }

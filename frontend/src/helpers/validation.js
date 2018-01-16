@@ -1,5 +1,6 @@
 import { isEmpty, isNil, pluck, sum } from 'ramda';
 import { isDateBefore } from './dates';
+import { COUNTRIES } from './constants';
 
 export const EMPTY_ERROR = 'NONE';
 
@@ -61,10 +62,11 @@ export const selectionCriteria = (value) => {
 
 export const hasLocations = (values, allValues) => {
   let error;
-
   if (!isEmpty(values) && !isNil(values)) {
     values.forEach((countryObj, countryIndex) => {
-      if (countryObj.country && !countryObj.locations) {
+      if (countryObj.country
+          && !countryObj.locations
+          && countryObj.country !== COUNTRIES.palestine) {
         error = EMPTY_ERROR;
       }
     });
