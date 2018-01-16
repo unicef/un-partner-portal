@@ -87,7 +87,7 @@ class ApplicationsFilter(django_filters.FilterSet):
         return queryset.filter(partner__mandate_mission__concern_groups__contains=[value])
 
     def get_status(self, queryset, name, value):
-        return queryset.filter(Q(status=value) | Q(self__application_status=value))
+        return queryset.filter(status=value)
 
     def filter_applications_status(self, queryset, name, value):
         # Logic here should match Application.application_status property
