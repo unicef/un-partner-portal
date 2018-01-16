@@ -26,7 +26,7 @@ const messages = {
     country: 'Country',
     location: 'Location',
     sector: 'Sector & Area of Specialization',
-    status: 'Status',
+    applications_status: 'Status',
     cnStatus: 'CN Status',
     agency: 'Agency',
   },
@@ -100,14 +100,14 @@ class PartnerApplicationsNotesFilter extends Component {
     const { pathName, query } = this.props;
 
     const { project_title, agency, country_code, specializations,
-      posted_from_date, posted_to_date, cfei_active, status, locations } = values;
+      posted_from_date, posted_to_date, cfei_active, applications_status, locations } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         project_title,
         agency,
-        status,
+        applications_status,
         cfei_active,
         country_code,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
@@ -180,7 +180,7 @@ class PartnerApplicationsNotesFilter extends Component {
             <Grid item sm={4} xs={12}>
               <RadioForm
                 fieldName="cfei_active"
-                label={messages.labels.status}
+                label={messages.labels.applications_status}
                 values={STATUS_VAL}
                 optional
               />
@@ -189,7 +189,7 @@ class PartnerApplicationsNotesFilter extends Component {
               <SelectForm
                 label={messages.labels.cnStatus}
                 placeholder={messages.labels.choose}
-                fieldName="status"
+                fieldName="applications_status"
                 values={cnStatus}
                 optional
               />
@@ -247,7 +247,7 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { agency } = {} } = ownProps.location;
   const { query: { cfei_active } = {} } = ownProps.location;
-  const { query: { status } = {} } = ownProps.location;
+  const { query: { applications_status } = {} } = ownProps.location;
   const { query: { locations } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
   const { query: { posted_from_date } = {} } = ownProps.location;
@@ -261,7 +261,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
-    cnStatus: R.prepend({ value: APPLICATION_STATUSES, label: 'Pending' }, selectNormalizedExtendedApplicationStatuses(state)),
+    cnStatus: selectNormalizedExtendedApplicationStatuses(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     countryCode: country_code,
@@ -270,7 +270,7 @@ const mapStateToProps = (state, ownProps) => {
       country_code,
       agency: agencyQ,
       cfei_active,
-      status,
+      applications_status,
       locations,
       specializations: specializationsQ,
       posted_from_date,
