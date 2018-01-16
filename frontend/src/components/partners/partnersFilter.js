@@ -40,15 +40,15 @@ const styleSheet = theme => ({
 
 const VERIFICATION_MENU = [
   {
-    value: '3',
+    value: 'pending',
     label: 'Pending',
   },
   {
-    value: '1',
+    value: 'verified',
     label: 'Verified',
   },
   {
-    value: '2',
+    value: 'unverified',
     label: 'Not Verified',
   },
 ];

@@ -30,11 +30,11 @@ class PartnersListFilter(django_filters.FilterSet):
         return queryset.filter(legal_name__icontains=value)
 
     def get_is_verified(self, queryset, name, value):
-        if value == '1':
+        if value == 'verified':
             return queryset.filter(verifications__is_verified=True)
-        if value == '2':
+        if value == 'unverified':
             return queryset.filter(verifications__is_verified=False)
-        if value == '3':
+        if value == 'pending':
             return queryset.filter(verifications__is_verified__isnull=True)
 
     def get_country_code(self, queryset, name, value):
