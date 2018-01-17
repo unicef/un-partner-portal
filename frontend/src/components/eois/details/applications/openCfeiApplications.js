@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import withStyles from 'material-ui/styles/withStyles';
 import { browserHistory as history } from 'react-router';
 import OpenCfeiApplicationsFilter from '../../filters/openCfeiApplicationsFilter';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
@@ -22,19 +23,28 @@ import {
   isUserACreator,
 } from '../../../../store';
 
+
 /* eslint-disable react/prop-types */
-const HeaderActions = (props) => {
-  const { rows } = props;
+const styleSheetHeader = () => ({
+  container: {
+    display: 'flex',
+  },
+});
+
+const HeaderActionsBase = (props) => {
+  const { classes, rows } = props;
   const ids = rows.map(row => row.id);
   const Preselect = WithGreyColor()(PreselectButton);
   const Reject = WithGreyColor()(RejectButton);
   return (
-    <div>
+    <div className={classes.container}>
       <Preselect id={ids} />
       <Reject id={ids} />
     </div>
   );
 };
+
+const HeaderActions = withStyles(styleSheetHeader)(HeaderActionsBase);
 
 const onTableRowClick = (row) => {
   const loc = history.getCurrentLocation().pathname;
