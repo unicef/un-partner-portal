@@ -28,9 +28,6 @@ class OtherAgency(TimeStampedModel):
 
 
 class Agency(models.Model):
-    """
-
-    """
     name = models.CharField(max_length=255)
 
     class Meta:
@@ -41,9 +38,6 @@ class Agency(models.Model):
 
 
 class AgencyProfile(TimeStampedModel):
-    """
-
-    """
     eoi_template = models.FileField()
     agency = models.OneToOneField(Agency, related_name="profile")
 
@@ -63,9 +57,6 @@ class AgencyProfile(TimeStampedModel):
 
 
 class AgencyOffice(TimeStampedModel):
-    """
-
-    """
     name = models.CharField(max_length=255)
     agency = models.ForeignKey(Agency, related_name="agency_offices")
     countries_code = ArrayField(
@@ -81,9 +72,6 @@ class AgencyOffice(TimeStampedModel):
 
 
 class AgencyMember(TimeStampedModel):
-    """
-
-    """
     user = models.ForeignKey('account.User', related_name="agency_members")
     role = models.CharField(max_length=3, choices=MEMBER_ROLES, default=MEMBER_ROLES.reader)
     office = models.ForeignKey(AgencyOffice, related_name="agency_members")

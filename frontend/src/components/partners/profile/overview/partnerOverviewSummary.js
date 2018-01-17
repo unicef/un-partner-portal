@@ -55,7 +55,7 @@ const fields = (partner, button) => (
     <ItemRowCellDivider labelSecondary label={labels.email} content={R.path(['head', 'email'], partner)} />
     <ItemRowCellDivider label={labels.contact} content={R.prop('contact', partner)} />
     <ItemRowCellDivider label={labels.sectors} content={R.prop('sectors', partner)} />
-    <ItemRowCellDivider label={labels.year} content={formatDateForPrint(R.prop('yearOfEstablishment', partner))} />
+    <ItemRowCellDivider label={labels.year} content={R.prop('yearOfEstablishment', partner)} />
     <ItemRowCellDivider label={labels.populations} content={R.prop('population', partner)} />
     <ItemRowCellDivider label={labels.unExperience} content={R.prop('unExperience', partner)} />
     <ItemRowCellDivider label={labels.budget} content={R.prop('budget', partner)} />
@@ -77,7 +77,7 @@ const fields = (partner, button) => (
 const summaryHeader = lastUpdate => (
   <SpreadContent>
     <Typography type="headline" >{labels.profileSummary}</Typography>
-    <ItemRowCell alignRight label={labels.updated} content={lastUpdate} />
+    <ItemRowCell alignRight label={labels.updated} content={formatDateForPrint(lastUpdate)} />
   </SpreadContent>
 );
 

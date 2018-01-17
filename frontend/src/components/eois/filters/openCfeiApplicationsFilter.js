@@ -168,6 +168,7 @@ class OpenCfeiApplicationsFilter extends Component {
               {messages.clear}
             </Button>
             <Button
+              type="submit"
               color="accent"
               onTouchTap={handleSubmit(this.onSearch)}
             >

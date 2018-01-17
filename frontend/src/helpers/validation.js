@@ -4,8 +4,10 @@ import { isDateBefore } from './dates';
 export const EMPTY_ERROR = 'NONE';
 
 export const required = value => ((value === undefined || value === null || isEmpty(value)) ? 'Required' : undefined);
+export const requiredDate = value => ((value === undefined || value === null || isEmpty(value)) || value === 'Invalid date' ? 'Required' : undefined);
 export const requiredBool = value => ((value === undefined || value === null || isEmpty(value) || !value) ? 'Required' : undefined);
 export const warning = value => (isEmpty(value) || isNil(value) || (Array.isArray(value) && isNil(value[0])) ? 'Required' : undefined);
+export const warningDate = value => (isEmpty(value) || isNil(value) || (Array.isArray(value) && isNil(value[0])) || value === 'Invalid date' ? 'Required' : undefined);
 export const warningBool = value => (isEmpty(value) || isNil(value) || !value ? 'Required' : undefined);
 export const email = (value) => {
   if (value && value.length > 0) {
@@ -114,4 +116,10 @@ export const validateReviewScores = (values, props) => {
     return { scores: scoresError };
   }
   return {};
+};
+
+export const phoneNumber = (value) => {
+  if (value && !/^\+?[1-9]\d{1,14}$/.test(value.trim())) {
+    return 'Invalid phone number';
+  }
 };

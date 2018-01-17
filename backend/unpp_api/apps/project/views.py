@@ -36,12 +36,14 @@ from common.permissions import (
     IsPartner,
 )
 from common.mixins import PartnerIdsMixin
+from notification.consts import NotificationType
 from notification.helpers import (
     get_partner_users_for_app_qs,
     send_notification_cfei_completed,
     send_notification_application_updated,
     send_notificiation_application_created,
     send_notification,
+    send_cfei_review_required_notification, user_received_notification_recently
 )
 from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from project.serializers import (
@@ -117,8 +119,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
         instance = serializer.save()
 
         if instance.reviewers.exists():
-            send_notification('agency_cfei_reviewers_selected', instance,
-                              instance.reviewers.all())
+            send_notification('agency_cfei_reviewers_selected', instance, instance.reviewers.all())
 
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
@@ -165,8 +166,7 @@ class EOIAPIView(RetrieveUpdateAPIView):
                 new_reviewers.append(reviewer.id)
 
             if new_reviewers:
-                send_notification('agency_cfei_reviewers_selected', eoi,
-                                  User.objects.filter(id__in=new_reviewers))
+                send_notification('agency_cfei_reviewers_selected', eoi, User.objects.filter(id__in=new_reviewers))
 
         # Completed
         if instance.is_completed:
@@ -567,7 +567,7 @@ class EOIReviewersAssessmentsListAPIView(ListAPIView):
 
 class EOIReviewersAssessmentsNotifyAPIView(APIView):
     """
-    Created Notification to reminder users
+    Create Notification to remind users
     """
 
     NOTIFICATION_MESSAGE_SENT = "Notification message sent successfully"
@@ -577,13 +577,17 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
-        get_object_or_404(eoi.reviewers.all(), id=self.kwargs['reviewer_id'])
-        # TODO - send notification reminder email w/ notification enhancement
+        user = get_object_or_404(eoi.reviewers.all(), id=self.kwargs['reviewer_id'])
 
-        return Response(
-            {"success": self.NOTIFICATION_MESSAGE_SENT},
-            status=statuses.HTTP_201_CREATED
-        )
+        if not user_received_notification_recently(user, eoi, NotificationType.CFEI_REVIEW_REQUIRED):
+            send_cfei_review_required_notification(eoi, [user])
+            message = self.NOTIFICATION_MESSAGE_SENT
+            status = statuses.HTTP_201_CREATED
+        else:
+            message = self.NOTIFICATION_MESSAGE_WAIT
+            status = statuses.HTTP_200_OK
+
+        return Response({"success": message}, status=status)
 
 
 class AwardedPartnersListAPIView(ListAPIView):
@@ -593,8 +597,7 @@ class AwardedPartnersListAPIView(ListAPIView):
 
     def get_queryset(self):
         eoi_id = self.kwargs['eoi_id']
-        return Application.objects.filter(
-            did_win=True, did_decline=False, eoi_id=eoi_id)
+        return Application.objects.filter(did_win=True, did_decline=False, eoi_id=eoi_id)
 
 
 class CompareSelectedListAPIView(ListAPIView):

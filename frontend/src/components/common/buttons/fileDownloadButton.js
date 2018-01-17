@@ -6,6 +6,7 @@ import FileDownload from 'material-ui-icons/FileDownload';
 
 const messages = {
   download: 'download',
+  noFile: 'no file added',
 };
 
 const styleSheet = theme => ({
@@ -13,6 +14,7 @@ const styleSheet = theme => ({
     display: 'flex',
     cursor: 'pointer',
     alignItems: 'center',
+    textDecoration: 'none',
   },
   downloadIcon: {
     fill: theme.palette.secondary[700],
@@ -24,20 +26,20 @@ const FileDownloadButton = (props) => {
   const { classes, fileUrl } = props;
 
   return (
-    <div
-      role="button"
+    <a
       tabIndex={0}
+      href={fileUrl}
       className={classes.wrapContentButton}
-      onClick={() => { window.open(fileUrl); }}
+      download={messages.download}
     >
-      <FileDownload className={classes.downloadIcon} />
+      {fileUrl && <FileDownload className={classes.downloadIcon} />}
       <Typography
         color="accent"
         type="button"
       >
-        {messages.download}
+        {fileUrl ? messages.download : messages.noFile}
       </Typography>
-    </div>
+    </a>
   );
 };
 

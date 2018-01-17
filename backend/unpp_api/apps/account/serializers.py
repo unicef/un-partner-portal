@@ -200,8 +200,7 @@ class PartnerUserSerializer(UserSerializer):
 
     def get_partners(self, obj):
         partner_ids = obj.get_partner_ids_i_can_access()
-        return PartnerSerializer(Partner.objects.filter(id__in=partner_ids),
-                                 many=True).data
+        return PartnerSerializer(Partner.objects.filter(id__in=partner_ids), many=True).data
 
 
 class UserFullnameSerializer(serializers.ModelSerializer):

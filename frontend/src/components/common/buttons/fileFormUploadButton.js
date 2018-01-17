@@ -109,7 +109,7 @@ class FileFormUploadButton extends Component {
     const url = R.is(String, input.value) ? input.value : fileUrl;
 
     return (
-      <FormControl>
+      <FormControl fullWidth>
         {label && <FieldLabelWithTooltip
           infoText={infoText}
           tooltipIconProps={{
@@ -128,7 +128,7 @@ class FileFormUploadButton extends Component {
             type="file"
           />
           {!url
-            ? <div>
+            ? <React.Fragment>
               <Button dense color="accent" >
                 <label className={classes.iconLabel} htmlFor={`${fieldName}-input`}>
                   {loading
@@ -142,7 +142,7 @@ class FileFormUploadButton extends Component {
                 </label>
               </Button>
               {((touched && error) || warning) && <FormHelperText error>{!this.state.fileSizeError ? (error || warning) : messages.fileSizeError}</FormHelperText>}
-            </div>
+            </React.Fragment>
             : <div className={classes.wrapContent}>
               <Typography type="subheading" className={classes.iconLabel} gutterBottom >
                 <Attachment className={classes.icon} />
