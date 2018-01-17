@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from operator import attrgetter
+
 from datetime import date
 import os
 import logging
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator
@@ -75,14 +79,12 @@ class Partner(TimeStampedModel):
 
     @property
     def is_hq(self):
-        # TODO: Have a consistent return type: bool
         if self.is_international:
             return self.hq in [None, '']
         return None
 
     @property
     def is_country_profile(self):
-        # TODO: Have a consistent return type: bool
         if self.is_international:
             return self.hq not in [None, '']
         return None
@@ -133,6 +135,34 @@ class Partner(TimeStampedModel):
             self.profile.other_info_is_complete,
         ])
 
+    @property
+    def last_update_timestamp(self):
+        timestamp_fields = [
+            'org_head.modified', 'profile.modified', 'mailing_address.modified', 'audit.modified', 'report.modified',
+            'mandate_mission.modified', 'fund.modified', 'other_info.modified'
+        ]
+
+        update_timestamps = [
+            self.modified,
+        ]
+        for field_name in timestamp_fields:
+            try:
+                update_timestamps.append(attrgetter(field_name)(self))
+            except ObjectDoesNotExist:
+                pass
+
+        update_timestamps.extend(self.directors.values_list("modified", flat=True))
+        update_timestamps.extend(self.authorised_officers.values_list("modified", flat=True))
+        update_timestamps.extend(self.area_policies.values_list("modified", flat=True))
+        update_timestamps.extend(self.experiences.values_list("modified", flat=True))
+        update_timestamps.extend(self.internal_controls.values_list("modified", flat=True))
+        update_timestamps.extend(self.budgets.values_list("modified", flat=True))
+        update_timestamps.extend(self.collaborations_partnership.values_list("modified", flat=True))
+        update_timestamps.extend(self.collaboration_evidences.values_list("modified", flat=True))
+
+        update_timestamps.sort()
+        return update_timestamps[-1]
+
 
 class PartnerProfile(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="profile")
@@ -168,16 +198,16 @@ class PartnerProfile(TimeStampedModel):
     registration_to_operate_in_country = models.NullBooleanField()
     registration_doc = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="registration_docs")
     registration_date = models.DateField(null=True, blank=True)
-    registration_comment = models.CharField(max_length=255, null=True, blank=True)
+    registration_comment = models.TextField(max_length=5000, null=True, blank=True)
     registration_number = models.CharField(max_length=255, null=True, blank=True)
 
     # programme management
     have_management_approach = models.NullBooleanField()  # results_based_approach
-    management_approach_desc = models.CharField(max_length=200, null=True, blank=True)
+    management_approach_desc = models.TextField(max_length=5000, null=True, blank=True)
     have_system_monitoring = models.NullBooleanField()
-    system_monitoring_desc = models.CharField(max_length=200, null=True, blank=True)
+    system_monitoring_desc = models.TextField(max_length=5000, null=True, blank=True)
     have_feedback_mechanism = models.NullBooleanField()
-    feedback_mechanism_desc = models.CharField(max_length=200, null=True, blank=True)
+    feedback_mechanism_desc = models.TextField(max_length=5000, null=True, blank=True)
 
     # financial controls
     org_acc_system = models.CharField(
@@ -191,13 +221,14 @@ class PartnerProfile(TimeStampedModel):
         default=METHOD_ACC_ADOPTED_CHOICES.cash
     )
     have_system_track = models.NullBooleanField()
-    financial_control_system_desc = models.CharField(max_length=200, null=True, blank=True)
+    financial_control_system_desc = models.TextField(max_length=5000, null=True, blank=True)
 
     # internal control - other fields
     experienced_staff = models.NullBooleanField(
         verbose_name="Does the organization have an adequate number of experienced staff responsible "
-                     "for financial management in all operations?")
-    experienced_staff_desc = models.CharField(max_length=200, null=True, blank=True)
+                     "for financial management in all operations?"
+    )
+    experienced_staff_desc = models.TextField(max_length=5000, null=True, blank=True)
 
     # collaborate
     partnership_collaborate_institution = models.NullBooleanField()
@@ -213,7 +244,7 @@ class PartnerProfile(TimeStampedModel):
     have_separate_bank_account = models.NullBooleanField(
         verbose_name="Does the organization currently maintain, or has it previously maintained, a separate, "
                      "interest-bearing account for UN funded projects that require a separate account?")
-    explain = models.CharField(max_length=200, null=True, blank=True, verbose_name="Please explain")
+    explain = models.TextField(max_length=5000, null=True, blank=True, verbose_name="Please explain")
 
     class Meta:
         ordering = ['id']
@@ -326,10 +357,13 @@ class PartnerProfile(TimeStampedModel):
         else:
             budgets = self.partner.budgets.filter(budget__isnull=False)
 
-        current_year_exists = budgets.filter(year=date.today().year).exists()
+        current_year = date.today().year
+        required_budgets = budgets.filter(year__in=[
+            current_year - 2, current_year - 1, current_year
+        ])
 
         required_fields = {
-            'budgets': current_year_exists and (budgets.count() >= 3),
+            'budgets': required_budgets.count() == 3,
             'main_donors': self.partner.fund.major_donors,
             'main_donors_list': self.partner.fund.main_donors_list,
             'source_core_funding': self.partner.fund.source_core_funding
@@ -537,10 +571,10 @@ class PartnerPolicyArea(TimeStampedModel):
 class PartnerAuditAssessment(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="audit")
     regular_audited = models.NullBooleanField()
-    regular_audited_comment = models.CharField(max_length=200, null=True, blank=True)
+    regular_audited_comment = models.TextField(max_length=5000, null=True, blank=True)
     major_accountability_issues_highlighted = models.NullBooleanField(
         verbose_name="Were there any major accountability issues highlighted by audits in the past three years?")
-    comment = models.CharField(max_length=200, null=True, blank=True)
+    comment = models.TextField(max_length=5000, null=True, blank=True)
     capacity_assessment = models.NullBooleanField(
         verbose_name="Has the organization undergone a formal capacity assessment?")
     assessments = ArrayField(
@@ -589,7 +623,7 @@ class PartnerAuditReport(TimeStampedModel):
 
 class PartnerReporting(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="report")
-    key_result = models.CharField(max_length=200, null=True, blank=True)
+    key_result = models.TextField(max_length=5000, null=True, blank=True)
     publish_annual_reports = models.NullBooleanField()
     last_report = models.DateField(verbose_name='Date of most recent annual report', null=True, blank=True)
     report = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="reports")
@@ -605,28 +639,32 @@ class PartnerReporting(TimeStampedModel):
 class PartnerMandateMission(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="mandate_mission")
     # background
-    background_and_rationale = models.CharField(max_length=400, null=True, blank=True)
-    mandate_and_mission = models.CharField(max_length=400, null=True, blank=True)
+    background_and_rationale = models.TextField(max_length=5000, null=True, blank=True)
+    mandate_and_mission = models.TextField(max_length=5000, null=True, blank=True)
 
     # governance
-    governance_structure = models.CharField(
-        max_length=200, null=True, blank=True, verbose_name="Briefly describe the organization's governance structure")
-    governance_hq = models.CharField(
-        max_length=200, null=True, blank=True,
+    governance_structure = models.TextField(
+        max_length=5000, null=True, blank=True, verbose_name="Briefly describe the organization's governance structure"
+    )
+    governance_hq = models.TextField(
+        max_length=5000, null=True, blank=True,
         verbose_name="Briefly describe the headquarters oversight of country/branch office operations including "
-                     "any reporting requirements of the country/branch office to HQ")
+                     "any reporting requirements of the country/branch office to HQ"
+    )
     governance_organigram = models.ForeignKey(
-        'common.CommonFile', null=True, blank=True, related_name="governance_organigrams")
+        'common.CommonFile', null=True, blank=True, related_name="governance_organigrams"
+    )
 
     # ethics
     ethic_safeguard = models.NullBooleanField()
     ethic_safeguard_policy = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="ethic_safeguard_policies")
-    ethic_safeguard_comment = models.CharField(max_length=200, null=True, blank=True)
+    ethic_safeguard_comment = models.TextField(max_length=5000, null=True, blank=True)
     ethic_fraud = models.NullBooleanField()
     ethic_fraud_policy = models.ForeignKey(
-        'common.CommonFile', null=True, blank=True, related_name="ethic_fraud_policies")
-    ethic_fraud_comment = models.CharField(max_length=200, null=True, blank=True)
+        'common.CommonFile', null=True, blank=True, related_name="ethic_fraud_policies"
+    )
+    ethic_fraud_comment = models.TextField(max_length=5000, null=True, blank=True)
 
     # population of concern
     population_of_concern = models.NullBooleanField()
@@ -642,8 +680,8 @@ class PartnerMandateMission(TimeStampedModel):
     security_high_risk_policy = models.NullBooleanField(
         verbose_name="Does the organization have policies, procedures and practices related "
                      "to security risk management?")
-    security_desc = models.CharField(
-        max_length=200,
+    security_desc = models.TextField(
+        max_length=5000,
         null=True,
         blank=True,
         verbose_name="Briefly describe the organization's ability, if any, to scale-up operations in emergencies or "
@@ -656,8 +694,8 @@ class PartnerMandateMission(TimeStampedModel):
             'Has the organization collaborated with or a member of a cluster,'
             ' professional netwok, consortium or any similar insitutions?')
     )
-    description = models.CharField(
-        max_length=200,
+    description = models.TextField(
+        max_length=5000,
         blank=True,
         null=True,
         verbose_name=(
@@ -706,7 +744,7 @@ class PartnerInternalControl(TimeStampedModel):
         choices=FUNCTIONAL_RESPONSIBILITY_CHOICES,
     )
     segregation_duties = models.NullBooleanField()
-    comment = models.CharField(max_length=200, null=True, blank=True)
+    comment = models.TextField(max_length=5000, null=True, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -727,14 +765,14 @@ class PartnerBudget(TimeStampedModel):
     created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="budgets")
     partner = models.ForeignKey(Partner, related_name="budgets")
     year = models.PositiveSmallIntegerField(
-        "Weight in percentage",
         help_text="Enter valid year.",
         validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
     )
     budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        unique_together = ('partner', 'year')
+        ordering = ['-year', 'id']
 
     def __str__(self):
         return "PartnerBudget {} <pk:{}>".format(self.year, self.id)
@@ -813,17 +851,20 @@ class PartnerCollaborationEvidence(TimeStampedModel):
 class PartnerOtherInfo(TimeStampedModel):
     created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="other_info")
     partner = models.OneToOneField(Partner, related_name="other_info")
-    info_to_share = models.CharField(max_length=200, null=True, blank=True)
+    info_to_share = models.TextField(max_length=5000, null=True, blank=True)
     org_logo = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="others_info")
     org_logo_thumbnail = models.ImageField(null=True, blank=True)
 
-    other_doc_1 = models.ForeignKey('common.CommonFile', null=True,
-                                    blank=True, related_name='other_info_doc_1')
-    other_doc_2 = models.ForeignKey('common.CommonFile', null=True,
-                                    blank=True, related_name='other_info_doc_2')
-    other_doc_3 = models.ForeignKey('common.CommonFile', null=True,
-                                    blank=True, related_name='other_info_doc_3')
+    other_doc_1 = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name='other_info_doc_1'
+    )
+    other_doc_2 = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name='other_info_doc_2'
+    )
+    other_doc_3 = models.ForeignKey(
+        'common.CommonFile', null=True, blank=True, related_name='other_info_doc_3'
+    )
 
     confirm_data_updated = models.NullBooleanField(default=False)
 
@@ -834,10 +875,13 @@ class PartnerOtherInfo(TimeStampedModel):
         return "PartnerOtherInfo <pk:{}>".format(self.id)
 
     def save(self, *args, **kwargs):
-        if self.org_logo is not None and self.org_logo_thumbnail.name is None or \
-                self.org_logo is not None and \
-                self.org_logo_thumbnail.name is not None and \
-                self.org_logo_thumbnail.name.find(self.org_logo.file_field.name) < 0:
+        thumbnail_missing = bool(self.org_logo and not self.org_logo_thumbnail.name)
+        logo_has_changed = bool(
+            self.org_logo and self.org_logo_thumbnail.name and
+            self.org_logo.file_field.name not in self.org_logo_thumbnail.name
+        )
+
+        if thumbnail_missing or logo_has_changed:
             try:
                 image_generator = Thumbnail(source=open(self.org_logo.file_field.path, 'rb'))
                 img = image_generator.generate()
@@ -849,6 +893,7 @@ class PartnerOtherInfo(TimeStampedModel):
                 self.org_logo_thumbnail.name = new_filename
                 with open(new_filepath, "wb") as thumb:
                     thumb.write(img.read())
+                os.chmod(new_filepath, 0o644)
 
             except Exception as exp:
                 logger.exception(exp)

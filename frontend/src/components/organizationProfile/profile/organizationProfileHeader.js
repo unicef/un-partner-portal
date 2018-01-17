@@ -5,6 +5,7 @@ import { browserHistory as history } from 'react-router';
 import PropTypes from 'prop-types';
 import OrganizationProfileOverviewHeader from './organizationProfileOverviewHeader';
 import HeaderNavigation from '../../../components/common/headerNavigation';
+import { formatDateForPrint } from '../../../helpers/dates';
 
 const messages = {
   hqProfile: 'Headquarters Profile',
@@ -40,6 +41,7 @@ class OrganizationProfileHeader extends Component {
       children,
       partnerId,
       countryName,
+      lastUpdate,
     } = this.props;
 
     const index = this.updatePath();
@@ -54,7 +56,7 @@ class OrganizationProfileHeader extends Component {
           handleBackButton={() => { history.goBack(); }}
           header={<OrganizationProfileOverviewHeader
           // TODO: use date from backend not fixed one
-            update="12 Aug 2017"
+            update={formatDateForPrint(lastUpdate)}
             handleEditClick={() => { history.push(`/profile/${partnerId}/edit`); }}
             partnerId={partnerId}
           />}
@@ -72,18 +74,20 @@ OrganizationProfileHeader.propTypes = {
   countryName: PropTypes.string,
   location: PropTypes.string.isRequired,
   partnerId: PropTypes.string.isRequired,
+  lastUpdate: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
-    || state.agencyPartnersList.data.partners);
+    || state.agencyPartnersList.data.partners) || {};
   const basicInfo = R.path(['partnerProfileDetails', 'partnerProfileDetails', 'identification', 'basic'], state);
-
+  const lastUpdate = R.prop('last_profile_update', partner);
   return {
     countryName: partner.is_hq ? messages.hqProfile : basicInfo ? basicInfo.legal_name : '',
     partnerId: ownProps.params.id,
     location: ownProps.location.pathname,
     tabs: state.organizationProfileNav,
+    lastUpdate,
   };
 };
 

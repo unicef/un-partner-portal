@@ -42,24 +42,27 @@ class PartnerSwitch extends Component {
   }
 
   handleRequestClose(partner) {
+    const { startRefresh, stopRefresh, isCurrentHq, currentHqId, partnerId } = this.props;
     if (partner.id) {
       this.props.saveNewCurrentPartner({
         partnerId: partner.id,
         partnerCountry: partner.country_code,
         partnerName: partner.legal_name,
         isHq: partner.is_hq,
+        hqId: currentHqId || isCurrentHq ? partnerId : null,
         logo: partner.logo,
         logoThumbnail: partner.logoThumbnail,
         isProfileComplete: partner.partner_additional.has_finished,
+        lastUpdate: partner.last_profile_update,
       });
 
       this.setState({ open: false });
       const loc = history.getCurrentLocation();
-      this.props.startRefresh();
+      startRefresh();
       history.push('/');
       setTimeout(() => {
         history.push(loc);
-        this.props.stopRefresh();
+        stopRefresh();
       }, 100);
     }
 
@@ -123,6 +126,11 @@ PartnerSwitch.propTypes = {
   name: PropTypes.string,
   saveNewCurrentPartner: PropTypes.func,
   partnerId: PropTypes.number,
+  isCurrentHq: PropTypes.bool,
+  currentHqId: PropTypes.number,
+  stopRefresh: PropTypes.func,
+  startRefresh: PropTypes.func,
+
 };
 
 const mapStateToProps = state => ({
@@ -131,6 +139,8 @@ const mapStateToProps = state => ({
   partnerCountry: state.countries[state.session.partnerCountry],
   countries: state.countries,
   partnerId: state.session.partnerId,
+  isCurrentHq: state.session.isHq,
+  currentHqId: state.session.hqId,
 });
 
 const mapDispatchToProps = dispatch => ({

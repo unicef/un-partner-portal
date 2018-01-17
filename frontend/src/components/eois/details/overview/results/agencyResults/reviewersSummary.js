@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import R from 'ramda';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'ramda';
+import { isEmpty, equals } from 'ramda';
 import Typography from 'material-ui/Typography';
 import PaddedContent from '../../../../../common/paddedContent';
 import EmptyContent from '../../../../../common/emptyContent';
@@ -29,7 +28,7 @@ class ReviewersSummary extends Component {
   }
 
   componentWillReceiveProps({ cfeiReviewers }) {
-    if (!R.equals(cfeiReviewers, this.props.cfeiReviewers)) {
+    if (!equals(cfeiReviewers, this.props.cfeiReviewers)) {
       this.props.getReviewers();
     }
   }

@@ -14,6 +14,7 @@ import { formatDateForPrint } from '../../../../../helpers/dates';
 import { isUserAgencyAdmin } from '../../../../../helpers/authHelpers';
 import { updatePartnerFlags } from '../../../../../reducers/partnerFlags';
 import FlagIcon from '../../icons/flagIcon';
+import {FLAGS} from '../../../../../helpers/constants';
 
 const messages = {
   edit: 'edit',
@@ -142,12 +143,14 @@ SingleFlagSummaryHeader.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   isYou: (state.session.userId === ownProps.flag.submitter.id),
-  displayEdit: (isUserAgencyAdmin(state) || (state.session.userId === ownProps.flag.submitter.id))
+  displayEdit: (isUserAgencyAdmin(state)
+  || (state.session.userId === ownProps.flag.submitter.id && ownProps.flag.flag_type !== FLAGS.RED))
   && ownProps.flag.is_valid,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  invalidateFlag: flagId => dispatch(updatePartnerFlags(ownProps.params.id, { is_valid: false }, true, flagId)),
+  invalidateFlag: flagId => dispatch(
+    updatePartnerFlags(ownProps.params.id, { is_valid: false }, true, flagId)),
 });
 
 export default withRouter(connect(

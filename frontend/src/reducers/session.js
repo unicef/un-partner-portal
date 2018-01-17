@@ -12,26 +12,33 @@ export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const SESSION_ERROR = 'SESSION_ERROR';
 
 const initialState = {
-  role: undefined,
+  role: null,
   state: SESSION_STATUS.INITIAL,
   authorized: false,
-  user: undefined,
-  userId: undefined,
-  token: undefined,
-  userStatus: undefined,
+  user: null,
+  userId: null,
+  token: null,
+  userStatus: null,
   userLogged: false,
-  position: undefined,
-  agencyName: undefined,
-  agencyId: undefined,
-  officeName: undefined,
-  officeId: undefined,
-  partners: undefined,
-  error: undefined,
-  email: undefined,
-  isHq: undefined,
-  displayType: undefined,
+  position: null,
+  agencyName: null,
+  agencyId: null,
+  officeName: null,
+  officeId: null,
+  partners: null,
+  error: null,
+  email: null,
+  isHq: null,
+  displayType: null,
   newlyRegistered: false,
-  hqId: undefined,
+  hqId: null,
+  partnerCountry: null,
+  partnerId: null,
+  partnerName: null,
+  logo: null,
+  logoThumbnail: null,
+  isProfileComplete: null,
+  lastUpdate: null,
 };
 
 export const initSession = session => ({ type: SESSION_CHANGE, session });
@@ -72,7 +79,7 @@ export const loadUserData = () => (dispatch, getState) => {
     .then((response) => {
       const role = response.agency_name ? ROLES.AGENCY : ROLES.PARTNER;
       window.localStorage.setItem('role', role);
-      const sessionObject = {
+      let sessionObject = {
         role,
         name: response.name,
         userId: response.id,
@@ -80,24 +87,37 @@ export const loadUserData = () => (dispatch, getState) => {
         position: response.role,
         // token was valid so we can authorized user
         authorized: true,
-        // agency specific field, but ok to have them undefined
-        agencyName: response.agency_name,
-        agencyId: response.agency_id,
-        officeName: response.office_name,
-        officeId: response.office_id,
-        // partner specific field, but ok to have them undefined
-        partners: response.partners,
-        hqId: role === ROLES.PARTNER ? R.propOr(null, 'id', R.find(item => item.is_hq === true, response.partners)) : null,
-        partnerCountry: role === ROLES.PARTNER ? R.prop('country_code', R.head(response.partners)) : null,
-        partnerId: role === ROLES.PARTNER ? R.prop('id', R.head(response.partners)) : null,
-        partnerName: role === ROLES.PARTNER ? R.prop('legal_name', R.head(response.partners)) : null,
-        isHq: role === ROLES.PARTNER ? R.prop('is_hq', R.head(response.partners)) : null,
-        displayType: role === ROLES.PARTNER ? R.prop('display_type', R.head(response.partners)) : null,
-        logo: role === ROLES.PARTNER ? R.prop('logo', R.head(response.partners)) : null,
-        logoThumbnail: role === ROLES.PARTNER ? R.prop('org_logo_thumbnail', R.head(response.partners)) : null,
-        isProfileComplete: role === ROLES.PARTNER ? R.path(['partner_additional', 'has_finished'],
-          R.head(response.partners)) : null,
       };
+      const addToSession = R.mergeDeepRight(sessionObject);
+      // agency specific fields
+      if (role === ROLES.AGENCY) {
+        const agencyObject = {
+          agencyName: response.agency_name,
+          agencyId: response.agency_id,
+          officeName: response.office_name,
+          officeId: response.office_id,
+        };
+        sessionObject = addToSession(agencyObject);
+      }
+      // partner specific fields
+      if (role === ROLES.PARTNER) {
+        const mainPartner = R.head(response.partners);
+        const partnerObject = {
+          partners: response.partners,
+          hqId: R.propOr(null, 'hq_id', mainPartner),
+          partnerCountry: R.prop('country_code', mainPartner),
+          partnerId: R.prop('id', mainPartner),
+          partnerName: R.prop('legal_name', mainPartner),
+          isHq: R.prop('is_hq', mainPartner),
+          displayType: R.prop('display_type', mainPartner),
+          logo: R.prop('logo', mainPartner),
+          logoThumbnail: R.prop('org_logo_thumbnail', mainPartner),
+          isProfileComplete: R.path(['partner_additional', 'has_finished'],
+            mainPartner),
+          lastUpdate: R.prop('last_profile_update', mainPartner),
+        };
+        sessionObject = addToSession(partnerObject);
+      }
       dispatch(initSession(sessionObject));
       dispatch(sessionReady(getState));
       return sessionObject;

@@ -18,6 +18,7 @@ from common.serializers import (
     MixinPreventManyCommonFile,
     PointSerializer
 )
+from partner.utilities import get_recent_budgets_for_partner
 from .models import (
     Partner,
     PartnerProfile,
@@ -61,18 +62,21 @@ class PartnerSerializer(serializers.ModelSerializer):
                                 read_only=True)
     org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
+    last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
 
     class Meta:
         model = Partner
         fields = (
             'id',
             'is_hq',
+            'hq_id',
             'logo',
             'legal_name',
             'country_code',
             'display_type',
             'partner_additional',
             'org_logo_thumbnail',
+            'last_profile_update',
         )
 
 
@@ -314,7 +318,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     hq_org_head = serializers.SerializerMethodField()
     mandate_mission = PartnerMandateMissionSerializer()
     experiences = PartnerExperienceSerializer(many=True)
-    budgets = PartnerBudgetSerializer(many=True)
+    budgets = serializers.SerializerMethodField()
     hq_budgets = serializers.SerializerMethodField()
     fund = PartnerFundingSerializer()
     collaborations_partnership = PartnerCollaborationPartnershipSerializer(many=True)
@@ -380,15 +384,16 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "other_info_is_complete",
         )
 
-    def get_hq_budgets(self, obj):
-        if obj.is_hq is False:
-            return PartnerBudgetSerializer(obj.hq.budgets.all(), many=True).data
-        return
+    def get_hq_budgets(self, partner):
+        if partner.is_hq is False:
+            return PartnerBudgetSerializer(get_recent_budgets_for_partner(partner.hq), many=True).data
 
     def get_hq_org_head(self, obj):
         if obj.is_hq is False:
             return PartnerHeadOrganizationSerializer(obj.hq.org_head).data
-        return
+
+    def get_budgets(self, partner):
+        return PartnerBudgetSerializer(get_recent_budgets_for_partner(partner), many=True).data
 
 
 class PartnerProfileSummarySerializer(serializers.ModelSerializer):
@@ -404,6 +409,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
     key_result = serializers.CharField(source="report.key_result")
     mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
+    last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
 
     class Meta:
         model = Partner
@@ -424,6 +430,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'key_result',
             'mandate_and_mission',
             'partner_additional',
+            'last_profile_update',
         )
 
     def get_org_head(self, obj):
@@ -649,7 +656,8 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
         instance.more_office_in_country = validated_data.get('more_office_in_country', instance.more_office_in_country)
         instance.staff_in_country = validated_data.get('staff_in_country', instance.staff_in_country)
         instance.engagement_operate_desc = validated_data.get(
-            'engagement_operate_desc', instance.engagement_operate_desc)
+            'engagement_operate_desc', instance.engagement_operate_desc
+        )
 
         if location_of_office:
             point, created = Point.objects.get_or_create(**location_of_office)
@@ -698,10 +706,9 @@ class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
         return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
 
-    def get_hq_budgets(self, obj):
-        if obj.is_hq is False:
-            return PartnerBudgetSerializer(obj.hq.budgets.all(), many=True).data
-        return
+    def get_hq_budgets(self, partner):
+        if partner.is_hq is False:
+            return PartnerBudgetSerializer(get_recent_budgets_for_partner(partner.hq), many=True).data
 
 
 class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
@@ -907,11 +914,13 @@ class PartnerProfileProjectImplementationSerializer(
 
 
 class PartnerProfileOtherInfoSerializer(
-        MixinPreventManyCommonFile, MixinPartnerRelatedSerializer, serializers.ModelSerializer):
+        MixinPreventManyCommonFile, MixinPartnerRelatedSerializer, serializers.ModelSerializer
+):
 
     info_to_share = serializers.CharField(source="other_info.info_to_share", required=False,
                                           allow_blank=True)
     org_logo = CommonFileSerializer(source="other_info.org_logo", allow_null=True)
+    org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
     confirm_data_updated = serializers.BooleanField(source="other_info.confirm_data_updated")
 
     other_doc_1 = CommonFileSerializer(source='other_info.other_doc_1', allow_null=True)
@@ -925,6 +934,7 @@ class PartnerProfileOtherInfoSerializer(
         fields = (
             'info_to_share',
             'org_logo',
+            'org_logo_thumbnail',
             'confirm_data_updated',
             'other_doc_1',
             'other_doc_2',
@@ -940,13 +950,10 @@ class PartnerProfileOtherInfoSerializer(
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        # std method does not support writable nested fields by default
-
         self.prevent_many_common_file_validator(self.initial_data)
-
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
-
-        return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+        instance = super(PartnerProfileOtherInfoSerializer, self).update(instance, validated_data)
+        return instance
 
 
 class PartnerCountryProfileSerializer(serializers.ModelSerializer):

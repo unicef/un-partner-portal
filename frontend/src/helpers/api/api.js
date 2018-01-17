@@ -196,6 +196,10 @@ export function getCfeiReviewers(id, options) {
   return authorizedGet({ uri: `/projects/${id}/applications/reviewers/`, options });
 }
 
+export function notifyReviewer(id, reviewerId) {
+  return authorizedPost({ uri: `/projects/${id}/applications/reviewers/${reviewerId}/notify/` });
+}
+
 // Applications
 export function getOpenCfeiApplications(id, filters, options) {
   return authorizedGet({ uri: `/projects/${id}/applications`, params: filters, options });
