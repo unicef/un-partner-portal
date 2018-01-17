@@ -392,12 +392,6 @@ class PartnerProfile(TimeStampedModel):
             'have_bank_account': self.have_bank_account is not None,
             'have_separate_bank_account': self.have_separate_bank_account is not None,
             'explain': self.explain if self.have_separate_bank_account is False else True,
-            # TODO audit_reports
-            'regular_audited': self.partner.audit.regular_audited is not None,
-            'regular_audited_comment':
-                self.partner.audit.regular_audited_comment if self.partner.audit.regular_audited is False else True,
-            'major_accountability_issues_highlighted':
-                self.partner.audit.major_accountability_issues_highlighted is not None,
             'comment':
                 self.partner.audit.comment if self.partner.audit.major_accountability_issues_highlighted else True,
             'capacity_assessment': self.partner.audit.capacity_assessment is not None,
@@ -409,6 +403,14 @@ class PartnerProfile(TimeStampedModel):
                 self.partner.report.last_report if self.partner.report.publish_annual_reports else True,
             'publish_annual_reports_artifact': rep_artifact if self.partner.report.publish_annual_reports else True,
         }
+
+        regular_audited = self.partner.audit.regular_audited
+        required_fields['regular_audited'] = regular_audited is not None
+        if regular_audited is False:
+            required_fields['regular_audited_comment'] = self.partner.audit.regular_audited_comment
+            required_fields[
+                'major_accountability_issues_highlighted'
+            ] = self.partner.audit.major_accountability_issues_highlighted
 
         if self.partner.audit.regular_audited:
             required_fields['audit_reports'] = all(
