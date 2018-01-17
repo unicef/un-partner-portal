@@ -441,14 +441,13 @@ class PartnerProfile(TimeStampedModel):
         required_fields['regular_audited'] = regular_audited is not None
         if regular_audited is False:
             required_fields['regular_audited_comment'] = self.partner.audit.regular_audited_comment
-            major_accountability_issues_highlighted = self.partner.audit.major_accountability_issues_highlighted
-            required_fields[
-                'major_accountability_issues_highlighted'
-            ] = major_accountability_issues_highlighted is not None
-            if major_accountability_issues_highlighted:
-                required_fields['audit_comment'] = self.partner.audit.comment
 
-        if self.partner.audit.regular_audited:
+        major_accountability_issues_highlighted = self.partner.audit.major_accountability_issues_highlighted
+        required_fields['major_accountability_issues_highlighted'] = major_accountability_issues_highlighted is not None
+        if major_accountability_issues_highlighted:
+            required_fields['audit_comment'] = self.partner.audit.comment
+
+        if regular_audited:
             required_fields['audit_reports'] = all(
                 [report.is_complete for report in self.partner.audit_reports.all()]
             ) if self.partner.audit_reports.exists() else False
