@@ -17,15 +17,14 @@ const messages = {
 const SingleReviewer = (props) => {
   const {
     reviewer: {
-      user_id: userId,
       user_name: username,
       assessments: {
         counts,
-        eoi_id: eoiId,
         send_reminder: doSendReminder,
       } = {},
     } = {},
     isFocalPoint,
+    cfeiCompleted,
     notifyReviewer } = props;
   return (
     <div>
@@ -35,7 +34,7 @@ const SingleReviewer = (props) => {
           <Typography type="caption">{`${counts} ${messages.assessments}`}</Typography>
         </SpreadContent>
       </PaddedContent >
-      {isFocalPoint && doSendReminder && <Grid container justify="flex-end">
+      {!cfeiCompleted && isFocalPoint && doSendReminder && <Grid container justify="flex-end">
         <Grid item>
           <Button color="accent" onClick={notifyReviewer}>{messages.reminder}</Button>
         </Grid>
@@ -48,6 +47,7 @@ const SingleReviewer = (props) => {
 SingleReviewer.propTypes = {
   reviewer: PropTypes.object,
   isFocalPoint: PropTypes.bool,
+  cfeiCompleted: PropTypes.bool,
   notifyReviewer: PropTypes.func,
 };
 
