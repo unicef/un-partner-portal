@@ -3,9 +3,8 @@ import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { FormControl, FormLabel } from 'material-ui/Form';
-import moment from 'moment';
 import { renderDatePicker, renderText } from '../../helpers/formHelper';
-import { required, warning } from '../../helpers/validation';
+import { requiredDate, warningDate } from '../../helpers/validation';
 import { normalizeDate, formatDateForPrint } from '../../helpers/dates';
 
 class DatePickerForm extends Component {
@@ -46,9 +45,9 @@ class DatePickerForm extends Component {
             <Field
               name={fieldName}
               component={readOnly ? renderText : renderDatePicker}
-              validate={(optional ? (validation || []) : [required].concat(validation || []))}
+              validate={(optional ? (validation || []) : [requiredDate].concat(validation || []))}
               hintText={placeholder || `Provide ${label[0].toLowerCase() + label.slice(1)}`}
-              warn={warn ? warning : null}
+              warn={warn ? warningDate : null}
               formatDate={formatDateForPrint}
               normalize={normalizeDate}
               textFieldStyle={{

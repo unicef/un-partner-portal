@@ -345,6 +345,9 @@ export const renderDatePicker = ({
   } else if (typeof value === 'string' && value !== 'Invalid date') {
     datePickerProps.value = formatDateForDatePicker(value);
   }
+  const saveValueToStore = (event, val) => {
+    onChange(val);
+  };
 
   return (
     <div>
@@ -352,7 +355,8 @@ export const renderDatePicker = ({
         errorText={(touched && error) || warning}
         {...datePickerProps}
         {...inputOther}
-        onChange={(event, val) => onChange(val)}
+        onChange={saveValueToStore}
+        onDismiss={saveValueToStore}
         {...other}
       />
     </div>

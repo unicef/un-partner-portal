@@ -9,7 +9,7 @@ import SpreadContent from '../../../../../common/spreadContent';
 import WithdrawApplicationButton from '../../../../buttons/withdrawApplicationButton';
 import SimpleCollapsableItem from '../../../../../common/simpleCollapsableItem';
 import ExpandedAssessmentAward from './expandedAssessmentsAward';
-import { selectApplicationWithdrawalStatus } from '../../../../../../store';
+import { selectApplicationWithdrawalStatus, isCfeiCompleted } from '../../../../../../store';
 
 const messages = {
   retracted: 'Retracted',
@@ -33,7 +33,8 @@ const SingleAward = (props) => {
     award,
     isFocalPoint,
     withdrawReason,
-    didWithdraw } = props;
+    didWithdraw,
+    cfeiCompleted } = props;
   return (<SimpleCollapsableItem
     title={
       <PaddedContent className={classes.fullWidth}>
@@ -48,7 +49,7 @@ const SingleAward = (props) => {
               type="caption"
             >{withdrawReason}</Typography>
           </div>
-            : <WithdrawApplicationButton
+            : !cfeiCompleted && <WithdrawApplicationButton
               applicationId={award.application_id}
             />}
         </SpreadContent>
@@ -63,6 +64,7 @@ SingleAward.propTypes = {
   isFocalPoint: PropTypes.bool,
   withdrawReason: PropTypes.string,
   didWithdraw: PropTypes.bool,
+  cfeiCompleted: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -70,6 +72,7 @@ const mapStateToProps = (state, ownProps) => {
     did_withdraw: didWithdraw,
   } = selectApplicationWithdrawalStatus(state, ownProps.award.application_id);
   return {
+    cfeiCompleted: isCfeiCompleted(state, ownProps.eoiId),
     withdrawReason,
     didWithdraw,
   };
