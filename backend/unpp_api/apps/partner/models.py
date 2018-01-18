@@ -775,7 +775,7 @@ class PartnerBudget(TimeStampedModel):
         ordering = ['-year', 'id']
 
     def __str__(self):
-        return "PartnerBudget {} <pk:{}>".format(self.year, self.id)
+        return "[{}] Partner '{}' budget for {} ".format(self.pk, self.partner, self.year)
 
 
 class PartnerFunding(TimeStampedModel):
