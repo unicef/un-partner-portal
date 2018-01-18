@@ -63,9 +63,9 @@ class SkipUniqueTogetherValidationOnPatchMixin(object):
 
         # Do not validate unique_together on patch requests
         if request and request.method == 'PATCH':
-            def is_not_unique_validator(validator):
-                return validator.__class__ != UniqueTogetherValidator
-
-            validators = filter(is_not_unique_validator, validators)
+            validators = filter(
+                lambda validator: validator.__class__ != UniqueTogetherValidator,
+                validators
+            )
 
         return validators
