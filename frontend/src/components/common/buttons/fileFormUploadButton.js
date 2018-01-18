@@ -49,6 +49,9 @@ const styleSheet = theme => ({
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
   },
+  form: {
+    maxWidth: '100%',
+  },
 });
 
 class FileFormUploadButton extends Component {
@@ -109,7 +112,7 @@ class FileFormUploadButton extends Component {
     const url = R.is(String, input.value) ? input.value : fileUrl;
 
     return (
-      <FormControl fullWidth>
+      <FormControl className={classes.form}>
         {label && <FieldLabelWithTooltip
           infoText={infoText}
           tooltipIconProps={{

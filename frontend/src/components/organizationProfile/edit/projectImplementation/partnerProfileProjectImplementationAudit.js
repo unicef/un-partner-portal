@@ -93,6 +93,39 @@ const Info = (readOnly, ...props) => (member, index, fields) => {
   </Grid>);
 };
 
+const AssessmentType = (values, readOnly) => (member, index, fields) => {
+  return (<Grid container direction="row">
+    <Grid item sm={12} xs={12}>
+      <SelectForm
+        fieldName={`${member}.assessment_type`}
+        label={messages.indicateAssessments}
+        values={values}
+        warn
+        placeholder={PLACEHOLDERS.select}
+        optional
+        readOnly={readOnly}
+      />
+    </Grid>
+  </Grid>
+  );
+};
+
+const AssessmentReport = readOnly => (member, index, fields) => {
+  return (<Grid container direction="row">
+    <Grid item sm={6} xs={12}>
+      <FileForm
+        formName="partnerProfile"
+        sectionName={`${member}.report_file`}
+        fieldName={`${member}.report_file`}
+        label={messages.copyOfAssessment}
+        warn
+        optional
+        readOnly={readOnly}
+      />
+    </Grid>
+  </Grid>);
+};
+
 const PartnerProfileProjectImplementationAudit = (props) => {
   const { auditTypes, capacityAssessments, hasCapacityAssessment, isRegularyAudited,
     accountabilityIssues, readOnly } = props;
@@ -166,24 +199,14 @@ const PartnerProfileProjectImplementationAudit = (props) => {
         />
         {visibleIfYes(hasCapacityAssessment)
           ? <div>
-            <SelectForm
-              fieldName="assessments"
-              label={messages.indicateAssessments}
-              values={capacityAssessments}
-              multiple
-              warn
-              placeholder={PLACEHOLDERS.select}
-              optional
+            <ArrayForm
+              label={messages.sectorsAndSpecialization}
+              limit={200}
+              fieldName="capacity_assessments"
+              initial
               readOnly={readOnly}
-            />
-            <FileForm
-              formName="partnerProfile"
-              sectionName="project_impl.audit"
-              fieldName="assessment_report"
-              label={messages.copyOfAssessment}
-              warn
-              optional
-              readOnly={readOnly}
+              outerField={AssessmentType(capacityAssessments, readOnly)}
+              innerField={AssessmentReport(readOnly)}
             />
           </div>
           : null}

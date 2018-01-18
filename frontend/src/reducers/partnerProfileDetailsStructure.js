@@ -168,8 +168,7 @@ const partnerDetailsStructure = {
       major_accountability_issues_highlighted: null,
       comment: null,
       capacity_assessment: null,
-      assessments: null,
-      assessment_report: null,
+      capacity_assessments: null,
     },
     report: {
       key_result: null,
