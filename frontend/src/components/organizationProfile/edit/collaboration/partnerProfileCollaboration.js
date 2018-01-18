@@ -79,10 +79,14 @@ class PartnerProfileCollaboration extends Component {
       R.assoc('mode', 'Ref', item))), unflattenColl.reference.references);
 
     const mergedEvidences = R.map((item) => {
+      let newItem = item;
       if (!R.is(Number, item.evidence_file_id)) {
-        return R.dissoc('evidence_file_id', item);
+        newItem = R.dissoc('evidence_file_id', item);
       }
-      return item;
+      if (item.date_received === 'Invalid date') {
+        newItem = R.dissoc('date_received', item);
+      }
+      return newItem;
     }, R.concat(accreditation, reference));
 
     const historyPartnership = R.map(item => R.dissoc('agency', R.assoc('agency_id', item.agency, item)), unflattenColl.history.collaborations_partnership);

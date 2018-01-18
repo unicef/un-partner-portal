@@ -21,7 +21,7 @@ class AwardedPartners extends Component {
   }
 
   content() {
-    const { loading, awardedPartners, focalPoint } = this.props;
+    const { id, loading, awardedPartners, focalPoint } = this.props;
     if (loading) {
       return <EmptyContent />;
     } else if (!awardedPartners || isEmpty(awardedPartners)) {
@@ -36,6 +36,7 @@ class AwardedPartners extends Component {
         {awardedPartners.map(award =>
           (<SingleAward
             key={award.application_id}
+            eoiId={id}
             award={award}
             isFocalPoint={focalPoint}
           />))}
@@ -58,6 +59,10 @@ class AwardedPartners extends Component {
 }
 
 AwardedPartners.propTypes = {
+  id: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   awardedPartners: PropTypes.array,
   loading: PropTypes.bool,
   getAwardedPartners: PropTypes.func,

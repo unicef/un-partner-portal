@@ -10,6 +10,7 @@ import PaddedContent from '../../../common/paddedContent';
 import ItemRowCell from '../../../common/cell/itemRowCell';
 import ItemRowCellDivider from '../../../common/cell/itemRowCellDivider';
 import SpreadContent from '../../../common/spreadContent';
+import { formatDateForPrint } from '../../../../helpers/dates';
 
 const labels = {
   profileSummary: 'Profile summary',
@@ -76,7 +77,7 @@ const fields = (partner, button) => (
 const summaryHeader = lastUpdate => (
   <SpreadContent>
     <Typography type="headline" >{labels.profileSummary}</Typography>
-    <ItemRowCell alignRight label={labels.updated} content={lastUpdate} />
+    <ItemRowCell alignRight label={labels.updated} content={formatDateForPrint(lastUpdate)} />
   </SpreadContent>
 );
 

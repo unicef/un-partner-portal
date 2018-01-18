@@ -5,7 +5,7 @@
 2. Create .env file in `backend` with the reference of `.env.example` or receive .env file from your team member.
 3. Run `fab up` !
 4. Go to http://127.0.0.1:8080/ to see the frontend / REACT JS running. The Django app is running under http://127.0.0.1:8080/api/
-5. Run `fab fakedata` - load fake data like account, core, partner and other modules!
+5. Run `fab reset_db` - load fake data like account, core, partner and other modules!
 
 ## Development
 Here are some docker tips:

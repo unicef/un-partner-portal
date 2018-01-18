@@ -41,7 +41,10 @@ const WithdrawApplicationButton = (props) => {
 
 
 WithdrawApplicationButton.propTypes = {
-  applicationId: PropTypes.string,
+  applicationId: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,

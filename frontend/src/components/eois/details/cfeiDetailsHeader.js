@@ -20,7 +20,7 @@ import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
 import { ROLES, PROJECT_TYPES, PROJECT_STATUSES } from '../../../helpers/constants';
 import PaddedContent from '../../common/paddedContent';
 import MainContentWrapper from '../../common/mainContentWrapper';
-import { isUserAgencyReader } from '../../../helpers/authHelpers';
+import { isUserAgencyReader, isUserAgencyEditor } from '../../../helpers/authHelpers';
 
 const messages = {
   noCfei: 'Sorry but this project doesn\'t exist',
@@ -33,7 +33,6 @@ class CfeiHeader extends Component {
       index: 0,
     };
     this.handleChange = this.handleChange.bind(this);
-    this.handleBackButton = this.handleBackButton.bind(this);
     this.cfeiTabs = this.cfeiTabs.bind(this);
     this.filterTaba = this.filterTabs.bind(this);
   }
@@ -66,18 +65,13 @@ class CfeiHeader extends Component {
     history.push(`/cfei/${type}/${id}/${tabsToRender[index].path}`);
   }
 
-  handleBackButton() {
-    const { params: { type } } = this.props;
-    history.push(`/cfei/${type}`);
-  }
-
   filterTabs() {
-    const { tabs, role, isReader, status, isReviewer, params: { type } } = this.props;
+    const { tabs, role, isReaderEditor, status, isReviewer, params: { type } } = this.props;
     let tabsToRender = tabs;
     if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
       tabsToRender = tabsToRender.filter(({ path }) => {
-        if ((['applications', 'preselected'].includes(path) && isReader && !isReviewer)
-        || (path === 'results' && isReader && status !== PROJECT_STATUSES.COM)) {
+        if ((['applications', 'preselected'].includes(path) && isReaderEditor && !isReviewer)
+        || (path === 'results' && isReaderEditor && status !== PROJECT_STATUSES.COM)) {
           return false;
         }
         return true;
@@ -130,7 +124,7 @@ class CfeiHeader extends Component {
       header={<HeaderOptionsContainer role={role} type={type} id={id} />}
       handleChange={this.handleChange}
       backButton
-      handleBackButton={this.handleBackButton}
+      handleBackButton={() => { history.goBack(); }}
     >
       {(index !== -1) && children}
     </HeaderNavigation>);
@@ -167,7 +161,7 @@ CfeiHeader.propTypes = {
   ]),
   type: PropTypes.string,
   loadUCN: PropTypes.func,
-  isReader: PropTypes.bool,
+  isReaderEditor: PropTypes.bool,
   isReviewer: PropTypes.bool,
   status: PropTypes.string,
 };
@@ -181,7 +175,7 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.cfeiDetails.status.loading,
   cnFile: state.conceptNote.cnFile,
   error: state.cfeiDetails.status.error,
-  isReader: isUserAgencyReader(state),
+  isReaderEditor: isUserAgencyReader(state) || isUserAgencyEditor(state),
   status: selectCfeiStatus(state, ownProps.params.id),
   isReviewer: isUserAReviewer(state, ownProps.params.id),
 });

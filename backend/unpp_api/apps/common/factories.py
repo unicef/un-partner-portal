@@ -32,7 +32,7 @@ from partner.models import (
     PartnerCapacityAssessment)
 from project.models import EOI, Application, Assessment
 from review.models import PartnerFlag, PartnerVerification
-from .consts import (
+from common.consts import (
     PARTNER_TYPES,
     MEMBER_STATUSES,
     MEMBER_ROLES,
@@ -52,7 +52,7 @@ from .consts import (
     STAFF_GLOBALLY_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
 )
-from .countries import COUNTRIES_ALPHA2_CODE
+from common.countries import COUNTRIES_ALPHA2_CODE
 
 
 COUNTRIES = [x[0] for x in COUNTRIES_ALPHA2_CODE]
@@ -129,10 +129,9 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    fullname = fuzzy.FuzzyText()
+    fullname = factory.LazyFunction(get_fullname)
     email = factory.Sequence(lambda n: "fake-user-{}@unicef.org".format(n))
     password = factory.PostGenerationMethodCall('set_password', 'test')
-    fullname = factory.LazyFunction(get_fullname)
 
     profile = factory.RelatedFactory(UserProfileFactory, 'user')
 
@@ -154,10 +153,11 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 class AdminLevel1Factory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: "admin level 1 name {}".format(n))
-    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+    country_code = fuzzy.FuzzyChoice(COUNTRIES)
 
     class Meta:
         model = AdminLevel1
+        django_get_or_create = ('name', 'country_code')
 
 
 class PointFactory(factory.django.DjangoModelFactory):
@@ -172,7 +172,7 @@ class PointFactory(factory.django.DjangoModelFactory):
 class PartnerSimpleFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
     display_type = PARTNER_TYPES.national
-    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+    country_code = fuzzy.FuzzyChoice(COUNTRIES)
 
     class Meta:
         model = Partner
@@ -181,7 +181,7 @@ class PartnerSimpleFactory(factory.django.DjangoModelFactory):
 class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
     display_type = PARTNER_TYPES.cbo
-    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+    country_code = fuzzy.FuzzyChoice(COUNTRIES)
 
     # hq information
     country_presence = factory.LazyFunction(get_country_list)

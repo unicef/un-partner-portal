@@ -146,7 +146,7 @@ class FileFormUploadButton extends Component {
               </Button>
               {((touched && error) || warning) && <FormHelperText error>{!this.state.fileSizeError ? (error || warning) : messages.fileSizeError}</FormHelperText>}
             </React.Fragment>
-            : <React.Fragment className={classes.wrapContent}>
+            : <div className={classes.wrapContent}>
               <Typography type="subheading" className={classes.iconLabel} gutterBottom >
                 <Attachment className={classes.icon} />
                 <div
@@ -161,7 +161,7 @@ class FileFormUploadButton extends Component {
                   <Close className={classes.removeIcon} />
                 </IconButton>}
               </Typography>
-            </React.Fragment>}
+            </div>}
         </Fragment>
       </FormControl>
     );
