@@ -36,7 +36,7 @@ class PatchOneFieldErrorMixin(object):
         if not serializer.is_valid():
             return Response(
                 {
-                    # TODO: Why doesn't this properly handled nested errors
+                    # TODO: Why doesn't this properly handle nested errors
                     'non_field_errors': [
                         "Errors in field(s): [{}]".format(", ".join(serializer.errors.keys()))
                     ],
@@ -62,7 +62,7 @@ class SkipUniqueTogetherValidationOnPatchMixin(object):
         request = self.context.get('request')
         view = self.context.get('view')
 
-        # Do not validate unique_together on patch requests when nested
+        # Do not validate unique_together on patch requests when serializer is nested
         if request and request.method == 'PATCH' and view and view.get_serializer_class() != self.__class__:
             validators = filter(
                 lambda validator: validator.__class__ != UniqueTogetherValidator,
