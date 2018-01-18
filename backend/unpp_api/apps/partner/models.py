@@ -591,8 +591,10 @@ class PartnerAuditAssessment(TimeStampedModel):
     regular_audited = models.NullBooleanField()
     regular_audited_comment = models.TextField(max_length=5000, null=True, blank=True)
     major_accountability_issues_highlighted = models.NullBooleanField(
-        verbose_name="Were there any major accountability issues highlighted by audits in the past three years?")
+        verbose_name="Were there any major accountability issues highlighted by audits in the past three years?"
+    )
     comment = models.TextField(max_length=5000, null=True, blank=True)
+    regular_capacity_assessments = models.NullBooleanField()
 
     class Meta:
         ordering = ['id']
