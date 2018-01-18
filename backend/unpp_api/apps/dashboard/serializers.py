@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from operator import attrgetter
-
 from datetime import datetime, date, timedelta
-from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Count
 from rest_framework import serializers
@@ -86,7 +83,7 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
     num_of_submitted_cn = serializers.SerializerMethodField()
     num_of_pinned_cfei = serializers.SerializerMethodField()
     num_of_awards = serializers.SerializerMethodField()
-    last_profile_update = serializers.SerializerMethodField()
+    last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
 
     class Meta:
         model = Partner
@@ -128,31 +125,3 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
 
     def get_num_of_awards(self, obj):
         return Application.objects.filter(did_win=True, partner_id__in=self.get_partner_ids()).count()
-
-    def get_last_profile_update(self, obj):
-        timestamp_fields = [
-            'org_head.modified', 'profile.modified', 'mailing_address.modified', 'audit.modified', 'report.modified',
-            'mandate_mission.modified', 'fund.modified', 'other_info.modified'
-        ]
-
-        update_timestamps = [
-            obj.modified,
-        ]
-        for field_name in timestamp_fields:
-            try:
-                update_timestamps.append(attrgetter(field_name)(obj))
-            except ObjectDoesNotExist:
-                pass
-
-        # FK
-        update_timestamps.extend(obj.directors.values_list("modified", flat=True))
-        update_timestamps.extend(obj.authorised_officers.values_list("modified", flat=True))
-        update_timestamps.extend(obj.area_policies.values_list("modified", flat=True))
-        update_timestamps.extend(obj.experiences.values_list("modified", flat=True))
-        update_timestamps.extend(obj.internal_controls.values_list("modified", flat=True))
-        update_timestamps.extend(obj.budgets.values_list("modified", flat=True))
-        update_timestamps.extend(obj.collaborations_partnership.values_list("modified", flat=True))
-        update_timestamps.extend(obj.collaboration_evidences.values_list("modified", flat=True))
-
-        update_timestamps.sort()
-        return update_timestamps[-1]

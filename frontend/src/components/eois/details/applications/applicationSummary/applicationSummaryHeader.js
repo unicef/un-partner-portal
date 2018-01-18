@@ -33,16 +33,6 @@ const messages = {
 };
 
 class ApplicationSummaryHeader extends Component {
-  constructor() {
-    super();
-    this.handleBackButton = this.handleBackButton.bind(this);
-  }
-
-  handleBackButton() {
-    const { params: { type, id } } = this.props;
-    history.push(`/cfei/${type}/${id}/applications`);
-  }
-
   renderActionButton() {
     const { loading,
       isUserFocalPoint,
@@ -124,7 +114,7 @@ class ApplicationSummaryHeader extends Component {
       </GridRow>
       }
       backButton
-      handleBackButton={this.handleBackButton}
+      handleBackButton={() => { history.goBack(); }}
     >
       {children}
     </HeaderNavigation>);
@@ -158,6 +148,7 @@ ApplicationSummaryHeader.propTypes = {
   completedReview: PropTypes.bool,
   isCfeiCompleted: PropTypes.bool,
   cfeiStatus: PropTypes.string,
+  applicationStatus: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => {

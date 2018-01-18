@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from operator import attrgetter
+
 from datetime import date
 import os
 import logging
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator
@@ -131,6 +135,34 @@ class Partner(TimeStampedModel):
             self.profile.project_implementation_is_complete,
             self.profile.other_info_is_complete,
         ])
+
+    @property
+    def last_update_timestamp(self):
+        timestamp_fields = [
+            'org_head.modified', 'profile.modified', 'mailing_address.modified', 'audit.modified', 'report.modified',
+            'mandate_mission.modified', 'fund.modified', 'other_info.modified'
+        ]
+
+        update_timestamps = [
+            self.modified,
+        ]
+        for field_name in timestamp_fields:
+            try:
+                update_timestamps.append(attrgetter(field_name)(self))
+            except ObjectDoesNotExist:
+                pass
+
+        update_timestamps.extend(self.directors.values_list("modified", flat=True))
+        update_timestamps.extend(self.authorised_officers.values_list("modified", flat=True))
+        update_timestamps.extend(self.area_policies.values_list("modified", flat=True))
+        update_timestamps.extend(self.experiences.values_list("modified", flat=True))
+        update_timestamps.extend(self.internal_controls.values_list("modified", flat=True))
+        update_timestamps.extend(self.budgets.values_list("modified", flat=True))
+        update_timestamps.extend(self.collaborations_partnership.values_list("modified", flat=True))
+        update_timestamps.extend(self.collaboration_evidences.values_list("modified", flat=True))
+
+        update_timestamps.sort()
+        return update_timestamps[-1]
 
 
 class PartnerProfile(TimeStampedModel):
@@ -405,6 +437,9 @@ class PartnerProfile(TimeStampedModel):
             'comment':
                 self.partner.audit.comment if self.partner.audit.major_accountability_issues_highlighted else True,
 
+            'capacity_assessment': self.partner.audit.capacity_assessment is not None,
+            'assessment_report':
+                self.partner.audit.assessment_report if self.partner.audit.capacity_assessment else True,
             'key_result': self.partner.report.key_result,
             'publish_annual_reports': self.partner.report.publish_annual_reports is not None,
             'publish_annual_reports_last_report':
@@ -417,10 +452,20 @@ class PartnerProfile(TimeStampedModel):
                     'created').is_complete
         }
 
-        if self.partner.audit.regular_audited:
+        regular_audited = self.partner.audit.regular_audited
+        required_fields['regular_audited'] = regular_audited is not None
+        if regular_audited is False:
+            required_fields['regular_audited_comment'] = self.partner.audit.regular_audited_comment
+
+        if regular_audited:
             required_fields['audit_reports'] = all(
                 [report.is_complete for report in self.partner.audit_reports.all()]
             ) if self.partner.audit_reports.exists() else False
+            major_accountability_issues_highlighted = self.partner.audit.major_accountability_issues_highlighted
+            required_fields[
+                'major_accountability_issues_highlighted'] = major_accountability_issues_highlighted is not None
+            if major_accountability_issues_highlighted:
+                required_fields['audit_comment'] = self.partner.audit.comment
 
         return all(required_fields.values())
 
@@ -765,7 +810,7 @@ class PartnerBudget(TimeStampedModel):
         ordering = ['-year', 'id']
 
     def __str__(self):
-        return "PartnerBudget {} <pk:{}>".format(self.year, self.id)
+        return "[{}] Partner '{}' budget for {} ".format(self.pk, self.partner, self.year)
 
 
 class PartnerFunding(TimeStampedModel):

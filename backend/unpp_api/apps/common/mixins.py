@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from rest_framework import status as statuses
 from rest_framework.response import Response
+from rest_framework.validators import UniqueTogetherValidator
 
 from partner.models import Partner
 
@@ -34,7 +35,13 @@ class PatchOneFieldErrorMixin(object):
 
         if not serializer.is_valid():
             return Response(
-                {'non_field_errors': ["Errors in field(s): [{}]".format(", ".join(serializer.errors.keys()))]},
+                {
+                    # TODO: Why doesn't this properly handle nested errors
+                    'non_field_errors': [
+                        "Errors in field(s): [{}]".format(", ".join(serializer.errors.keys()))
+                    ],
+                    'full_non_field_errors': serializer.errors
+                },
                 status=statuses.HTTP_400_BAD_REQUEST
             )
 
@@ -46,3 +53,20 @@ class PatchOneFieldErrorMixin(object):
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
+
+
+class SkipUniqueTogetherValidationOnPatchMixin(object):
+
+    def get_validators(self):
+        validators = super(SkipUniqueTogetherValidationOnPatchMixin, self).get_validators()
+        request = self.context.get('request')
+        view = self.context.get('view')
+
+        # Do not validate unique_together on patch requests when serializer is nested
+        if request and request.method == 'PATCH' and view and view.get_serializer_class() != self.__class__:
+            validators = filter(
+                lambda validator: validator.__class__ != UniqueTogetherValidator,
+                validators
+            )
+
+        return validators
