@@ -60,9 +60,10 @@ class SkipUniqueTogetherValidationOnPatchMixin(object):
     def get_validators(self):
         validators = super(SkipUniqueTogetherValidationOnPatchMixin, self).get_validators()
         request = self.context.get('request')
+        view = self.context.get('view')
 
-        # Do not validate unique_together on patch requests
-        if request and request.method == 'PATCH':
+        # Do not validate unique_together on patch requests when nested
+        if request and request.method == 'PATCH' and view and view.get_serializer_class() != self.__class__:
             validators = filter(
                 lambda validator: validator.__class__ != UniqueTogetherValidator,
                 validators
