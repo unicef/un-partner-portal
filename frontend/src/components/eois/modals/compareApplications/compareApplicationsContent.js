@@ -64,6 +64,7 @@ class CompareApplicationContent extends React.Component {
   print() {
     const printWindow = this.printWindow.contentWindow;
     printWindow.document.open();
+    printWindow.document.title = 'comparison';
     printWindow.document.write(this.comparisonContent.innerHTML);
     const currentStyleSheet = document.querySelectorAll('style');
     const head = printWindow.document.head;
