@@ -93,38 +93,34 @@ const Info = (readOnly, ...props) => (member, index, fields) => {
   </Grid>);
 };
 
-const AssessmentType = (values, readOnly) => (member, index, fields) => {
-  return (<Grid container direction="row">
-    <Grid item sm={12} xs={12}>
-      <SelectForm
-        fieldName={`${member}.assessment_type`}
-        label={messages.indicateAssessments}
-        values={values}
-        warn
-        placeholder={PLACEHOLDERS.select}
-        optional
-        readOnly={readOnly}
-      />
-    </Grid>
+const AssessmentType = (values, readOnly) => (member, index, fields) => (<Grid container direction="row">
+  <Grid item sm={12} xs={12}>
+    <SelectForm
+      fieldName={`${member}.assessment_type`}
+      label={messages.indicateAssessments}
+      values={values}
+      warn
+      placeholder={PLACEHOLDERS.select}
+      optional
+      readOnly={readOnly}
+    />
   </Grid>
-  );
-};
+</Grid>
+);
 
-const AssessmentReport = readOnly => (member, index, fields) => {
-  return (<Grid container direction="row">
-    <Grid item sm={6} xs={12}>
-      <FileForm
-        formName="partnerProfile"
-        sectionName={`${member}.report_file`}
-        fieldName={`${member}.report_file`}
-        label={messages.copyOfAssessment}
-        warn
-        optional
-        readOnly={readOnly}
-      />
-    </Grid>
-  </Grid>);
-};
+const AssessmentReport = readOnly => (member, index, fields) => (<Grid container direction="row">
+  <Grid item sm={6} xs={12}>
+    <FileForm
+      formName="partnerProfile"
+      sectionName={`${member}.report_file`}
+      fieldName={`${member}.report_file`}
+      label={messages.copyOfAssessment}
+      warn
+      optional
+      readOnly={readOnly}
+    />
+  </Grid>
+</Grid>);
 
 const PartnerProfileProjectImplementationAudit = (props) => {
   const { auditTypes, capacityAssessments, hasCapacityAssessment, isRegularyAudited,
@@ -142,15 +138,41 @@ const PartnerProfileProjectImplementationAudit = (props) => {
           readOnly={readOnly}
         />
         {visibleIfYes(isRegularyAudited)
-          ? <ArrayForm
-            label={messages.sectorsAndSpecialization}
-            limit={auditTypes.length}
-            fieldName="audit_reports"
-            initial
-            readOnly={readOnly}
-            outerField={Audit(auditTypes, readOnly)}
-            innerField={Info(readOnly)}
-          />
+          ? <React.Fragment>
+            <ArrayForm
+              label={messages.sectorsAndSpecialization}
+              limit={auditTypes.length}
+              fieldName="audit_reports"
+              initial
+              readOnly={readOnly}
+              outerField={Audit(auditTypes, readOnly)}
+              innerField={Info(readOnly)}
+            />
+            <RadioForm
+              fieldName="major_accountability_issues_highlighted"
+              label={messages.accountabilityIssues}
+              values={BOOL_VAL}
+              warn
+              optional
+              readOnly={readOnly}
+            />
+            {visibleIfYes(accountabilityIssues)
+              ? <TextFieldForm
+                label={messages.comment}
+                placeholder={PLACEHOLDERS.provide}
+                fieldName="comment"
+                textFieldProps={{
+                  multiline: true,
+                  inputProps: {
+                    maxLength: '5000',
+                  },
+                }}
+                warn
+                optional
+                readOnly={readOnly}
+              />
+              : null}
+          </React.Fragment>
           : <TextFieldForm
             label={messages.comment}
             fieldName="regular_audited_comment"
@@ -165,30 +187,6 @@ const PartnerProfileProjectImplementationAudit = (props) => {
             readOnly={readOnly}
           />}
 
-        <RadioForm
-          fieldName="major_accountability_issues_highlighted"
-          label={messages.accountabilityIssues}
-          values={BOOL_VAL}
-          warn
-          optional
-          readOnly={readOnly}
-        />
-        {visibleIfYes(accountabilityIssues)
-          ? <TextFieldForm
-            label={messages.comment}
-            placeholder={PLACEHOLDERS.provide}
-            fieldName="comment"
-            textFieldProps={{
-              multiline: true,
-              inputProps: {
-                maxLength: '5000',
-              },
-            }}
-            warn
-            optional
-            readOnly={readOnly}
-          />
-          : null}
         <RadioForm
           fieldName="capacity_assessment"
           label={messages.formalCapacity}
