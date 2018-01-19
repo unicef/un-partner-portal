@@ -437,19 +437,11 @@ class PartnerProfile(TimeStampedModel):
             'comment':
                 self.partner.audit.comment if self.partner.audit.major_accountability_issues_highlighted else True,
 
-            'capacity_assessment': self.partner.audit.capacity_assessment is not None,
-            'assessment_report':
-                self.partner.audit.assessment_report if self.partner.audit.capacity_assessment else True,
             'key_result': self.partner.report.key_result,
             'publish_annual_reports': self.partner.report.publish_annual_reports is not None,
             'publish_annual_reports_last_report':
                 self.partner.report.last_report if self.partner.report.publish_annual_reports else True,
             'publish_annual_reports_artifact': rep_artifact if self.partner.report.publish_annual_reports else True,
-
-            # TODO: Is it enough that the latest assessment is complete, or do all need to be?
-            'capacity_assessments':
-                self.partner.capacity_assessments.exists() and self.partner.capacity_assessments.latest(
-                    'created').is_complete
         }
 
         regular_audited = self.partner.audit.regular_audited
@@ -466,6 +458,12 @@ class PartnerProfile(TimeStampedModel):
                 'major_accountability_issues_highlighted'] = major_accountability_issues_highlighted is not None
             if major_accountability_issues_highlighted:
                 required_fields['audit_comment'] = self.partner.audit.comment
+
+        regular_capacity_assessments = self.partner.audit.regular_capacity_assessments
+        if regular_capacity_assessments:
+            required_fields['capacity_assessments'] = all(
+                [report.is_complete for report in self.partner.capacity_assessments.all()]
+            ) if self.partner.audit_reports.exists() else False
 
         return all(required_fields.values())
 
