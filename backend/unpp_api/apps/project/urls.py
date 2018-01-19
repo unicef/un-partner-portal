@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .views import (
+from project.views import (
     OpenProjectAPIView,
     DirectProjectAPIView,
     PinProjectAPIView,

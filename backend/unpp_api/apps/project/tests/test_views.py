@@ -5,6 +5,7 @@ import random
 from datetime import date, timedelta
 import mock
 from dateutil.relativedelta import relativedelta
+from django.test import override_settings
 
 from django.urls import reverse
 from django.conf import settings
@@ -13,7 +14,7 @@ from rest_framework import status as statuses
 
 from account.models import User
 from agency.models import AgencyOffice, Agency
-from notification.consts import NotificationType
+from notification.consts import NotificationType, NOTIFICATION_DATA
 from partner.serializers import PartnerShortSerializer
 from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
@@ -125,6 +126,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['count'], self.quantity)
 
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_create_patch_project(self):
         ao = AgencyOffice.objects.first()
         payload = {
@@ -188,6 +190,9 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(Partner.objects.first().id in [p['id'] for p in response.data['invited_partners']])
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
 
+        self.assertTrue(len(mail.outbox) >= 1)
+        self.assertIn(NOTIFICATION_DATA[NotificationType.CFEI_INVITE]['subject'], [m.subject for m in mail.outbox])
+        self.assertTrue(any([eoi.get_absolute_url() in m.body for m in mail.outbox]))
         payload = {
             "invited_partners": PartnerShortSerializer([Partner.objects.last()], many=True).data
         }
