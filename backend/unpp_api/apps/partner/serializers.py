@@ -62,6 +62,7 @@ class PartnerSerializer(serializers.ModelSerializer):
                                 read_only=True)
     org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
+    last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
 
     class Meta:
         model = Partner
@@ -75,6 +76,7 @@ class PartnerSerializer(serializers.ModelSerializer):
             'display_type',
             'partner_additional',
             'org_logo_thumbnail',
+            'last_profile_update',
         )
 
 
@@ -407,6 +409,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
     key_result = serializers.CharField(source="report.key_result")
     mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
+    last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
 
     class Meta:
         model = Partner
@@ -427,6 +430,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'key_result',
             'mandate_and_mission',
             'partner_additional',
+            'last_profile_update',
         )
 
     def get_org_head(self, obj):

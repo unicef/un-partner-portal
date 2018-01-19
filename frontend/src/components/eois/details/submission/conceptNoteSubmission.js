@@ -24,7 +24,6 @@ import { isUserNotPartnerReader } from '../../../../helpers/authHelpers';
 
 const messages = {
   confirm: 'I confirm that my profile is up to date',
-  lastUpdate: 'Last profile update:',
   notSure: 'Not sure?',
   viewProfile: 'View your profile.',
   deadline: 'Application deadline: ',

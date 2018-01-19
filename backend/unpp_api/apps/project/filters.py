@@ -5,7 +5,7 @@ import django_filters
 from django_filters.filters import CharFilter, DateFilter, BooleanFilter, ModelMultipleChoiceFilter, ChoiceFilter
 from django_filters.widgets import BooleanWidget, CSVWidget
 
-from common.consts import EXTENDED_APPLICATION_STATUSES, EOI_STATUSES
+from common.consts import EXTENDED_APPLICATION_STATUSES
 from common.models import Specialization
 from .models import EOI, Application
 
@@ -94,11 +94,11 @@ class ApplicationsFilter(django_filters.FilterSet):
         filters = {
             EXTENDED_APPLICATION_STATUSES.review: {
                 'did_win': False,
-                'eoi__status': EOI_STATUSES.closed,
+                'eoi__is_completed': False,
             },
             EXTENDED_APPLICATION_STATUSES.unsuccessful: {
                 'did_win': False,
-                'eoi__status': EOI_STATUSES.completed,
+                'eoi__is_completed': True,
             },
             EXTENDED_APPLICATION_STATUSES.retracted: {
                 'did_win': True,

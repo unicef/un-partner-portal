@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from operator import attrgetter
+
 from datetime import date
 import os
 import logging
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator
@@ -130,6 +134,34 @@ class Partner(TimeStampedModel):
             self.profile.proj_impl_is_complete,
             self.profile.other_info_is_complete,
         ])
+
+    @property
+    def last_update_timestamp(self):
+        timestamp_fields = [
+            'org_head.modified', 'profile.modified', 'mailing_address.modified', 'audit.modified', 'report.modified',
+            'mandate_mission.modified', 'fund.modified', 'other_info.modified'
+        ]
+
+        update_timestamps = [
+            self.modified,
+        ]
+        for field_name in timestamp_fields:
+            try:
+                update_timestamps.append(attrgetter(field_name)(self))
+            except ObjectDoesNotExist:
+                pass
+
+        update_timestamps.extend(self.directors.values_list("modified", flat=True))
+        update_timestamps.extend(self.authorised_officers.values_list("modified", flat=True))
+        update_timestamps.extend(self.area_policies.values_list("modified", flat=True))
+        update_timestamps.extend(self.experiences.values_list("modified", flat=True))
+        update_timestamps.extend(self.internal_controls.values_list("modified", flat=True))
+        update_timestamps.extend(self.budgets.values_list("modified", flat=True))
+        update_timestamps.extend(self.collaborations_partnership.values_list("modified", flat=True))
+        update_timestamps.extend(self.collaboration_evidences.values_list("modified", flat=True))
+
+        update_timestamps.sort()
+        return update_timestamps[-1]
 
 
 class PartnerProfile(TimeStampedModel):
