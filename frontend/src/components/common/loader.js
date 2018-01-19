@@ -9,7 +9,11 @@ const styleSheet = theme => ({
   root: {
     width: '100%',
     height: '100%',
-
+  },
+  empty: {
+    display: 'none',
+    width: 0,
+    height: 0,
   },
   relative: {
     position: 'relative',
@@ -33,6 +37,7 @@ const Loader = (props) => {
   const className = classNames(
     classes.root,
     {
+      [classes.empty]: fullscreen && !loading,
       [classes.relative]: !fullscreen && loading,
       [classes.Fullscreen]: fullscreen && loading,
     });
