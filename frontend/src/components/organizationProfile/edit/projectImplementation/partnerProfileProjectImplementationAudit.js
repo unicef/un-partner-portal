@@ -188,7 +188,7 @@ const PartnerProfileProjectImplementationAudit = (props) => {
           />}
 
         <RadioForm
-          fieldName="capacity_assessment"
+          fieldName="regular_capacity_assessments"
           label={messages.formalCapacity}
           values={BOOL_VAL}
           warn
@@ -229,7 +229,7 @@ export default connect(
   state => ({
     isRegularyAudited: selector(state, 'project_impl.audit.regular_audited'),
     accountabilityIssues: selector(state, 'project_impl.audit.major_accountability_issues_highlighted'),
-    hasCapacityAssessment: selector(state, 'project_impl.audit.capacity_assessment'),
+    hasCapacityAssessment: selector(state, 'project_impl.audit.regular_capacity_assessments'),
     capacityAssessments: selectNormalizedCapacityAssessments(state),
     auditTypes: selectNormalizedAuditTypes(state),
   }),
