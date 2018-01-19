@@ -41,7 +41,7 @@ from notification.helpers import (
     get_partner_users_for_app_qs,
     send_notification_cfei_completed,
     send_notification_application_updated,
-    send_notificiation_application_created,
+    send_notification_application_created,
     send_notification,
     send_cfei_review_required_notification, user_received_notification_recently
 )
@@ -303,7 +303,7 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
                                    submitter_id=self.request.user.id,
                                    partner_id=self.request.active_partner.id,
                                    agency=self.eoi.agency)
-        send_notificiation_application_created(instance)
+        send_notification_application_created(instance)
 
 
 class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
@@ -343,7 +343,7 @@ class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
                                    submitter_id=self.request.user.id,
                                    agency=eoi.agency)
 
-        send_notificiation_application_created(instance)
+        send_notification_application_created(instance)
 
 
 class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
@@ -504,7 +504,7 @@ class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreate
 
     def perform_create(self, serializer):
         instance = serializer.save()
-        send_notificiation_application_created(instance)
+        send_notification_application_created(instance)
 
 
 class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedListCreateAPIView):
@@ -539,7 +539,7 @@ class ConvertUnsolicitedAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         instance = serializer.save()
-        send_notificiation_application_created(instance)
+        send_notification_application_created(instance)
 
 
 class ReviewSummaryAPIView(RetrieveUpdateAPIView):

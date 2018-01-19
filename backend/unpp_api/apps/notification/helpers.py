@@ -10,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 
 from account.models import User
-from common.consts import COMPLETED_REASON
+from common.consts import COMPLETED_REASON, EOI_STATUSES
 from notification.models import Notification, NotifiedUser
 from notification.consts import NOTIFICATION_DATA, NotificationType
 
@@ -96,60 +96,43 @@ def user_received_notification_recently(user, obj, notification_type, time_ago=r
 def send_notification_cfei_completed(eoi):
     if eoi.completed_reason == COMPLETED_REASON.canceled:
         users = get_partner_users_for_app_qs(eoi.applications.all())
-        send_notification('cfei_cancel', eoi, users)
+        send_notification(NotificationType.CFEI_CANCELLED, eoi, users)
 
     if eoi.completed_reason == COMPLETED_REASON.partners:
         users = get_partner_users_for_app_qs(eoi.applications.losers())
-        send_notification('cfei_application_lost', eoi, users)
+        send_notification(NotificationType.CFEI_APPLICATION_LOSS, eoi, users)
 
     if eoi.completed_reason == COMPLETED_REASON.no_candidate:
-        # TODO - perhaps a different message?
         users = get_partner_users_for_app_qs(eoi.applications.all())
-        send_notification('cfei_application_lost', eoi, users)
+        send_notification(NotificationType.CFEI_APPLICATION_LOSS, eoi, users)
 
 
 def send_notification_application_updated(application):
+    if application.eoi.status == EOI_STATUSES.open:
+        users = get_notify_partner_users_for_application(application)
 
-    if application.eoi.is_open:
-        # if did win
-        if application.did_win:
-            users = get_notify_partner_users_for_application(application)
-            send_notification('cfei_application_selected', application, users)
-
-        # if did withdraw
         if application.did_withdraw:
-            users = get_notify_partner_users_for_application(application)
-            send_notification('cfei_application_withdraw', application, users)
+            send_notification(NotificationType.CFEI_APPLICATION_WITHDRAWN, application, users)
+        elif application.did_win:
+            send_notification(NotificationType.CFEI_APPLICATION_WIN, application, users)
 
 
-def send_notificiation_application_created(application):
-
+def send_notification_application_created(application):
+    users = get_notify_partner_users_for_application(application)
     if application.eoi:
         if application.eoi.is_open:
-            users = get_notify_partner_users_for_application(application)
-            send_notification('cfei_application_submitted', application, users)
+            send_notification(NotificationType.CFEI_APPLICATION_SUBMITTED, application, users)
 
         if application.eoi.is_direct:
-            users = get_notify_partner_users_for_application(application)
-            send_notification('unsol_application_submitted', application, users)
+            context = {'eoi_title': application.eoi.title}
+            if hasattr(application.eoi, 'unsolicited_conversion'):
+                notification_type = NotificationType.DIRECT_SELECTION_FROM_NOTE_INITIATED
+            else:
+                notification_type = NotificationType.DIRECT_SELECTION_INITIATED
 
-        if application.eoi.is_direct and application.eoi.unsolicited_conversion:
-            users = get_notify_partner_users_for_application(application)
-            send_notification('direct_select_un_int', application, users,
-                              context={'eoi_title': application.eoi.title})
-
-        # Alert Agency Users if accept / decline
-        if application.did_win:
-            if application.did_accept or application.did_decline:
-                notify_ids = list(application.eoi.focal_points.all().values_list('id', flat=True))
-                notify_ids.append(application.eoi.created_by.id)
-                notify_users = User.objects.filter(id__in=notify_ids).distinct()
-                send_notification('agency_application_decision_made', application, notify_users)
-
-    else:
-        if application.is_unsolicited:
-            users = get_notify_partner_users_for_application(application)
-            send_notification('direct_select_ucn', application, users)
+            send_notification(notification_type, application, users, context=context)
+    elif application.is_unsolicited:
+        send_notification(NotificationType.UNSOLICITED_CONCEPT_NOTE_RECEIVED, application, users)
 
 
 def send_cfei_review_required_notification(eoi, users):

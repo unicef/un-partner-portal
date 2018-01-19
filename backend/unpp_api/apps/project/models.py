@@ -140,9 +140,7 @@ class ApplicationQuerySet(models.QuerySet):
 
 class Application(TimeStampedModel):
     is_unsolicited = models.BooleanField(default=False, verbose_name='Is unsolicited?')
-    proposal_of_eoi_details = JSONField(
-        default=dict([('title', ''), ('specializations', [])])
-    )
+    proposal_of_eoi_details = JSONField(default=dict([('title', ''), ('specializations', [])]))
     locations_proposal_of_eoi = models.ManyToManyField('common.Point', related_name="applications", blank=True)
     partner = models.ForeignKey('partner.Partner', related_name="applications")
     eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
@@ -167,8 +165,7 @@ class Application(TimeStampedModel):
         null=True
     )
     # Applies when application converted to EOI. Only applicable if this is unsolicited
-    eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion",
-                                         null=True, blank=True)
+    eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion", null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
 
     objects = ApplicationQuerySet.as_manager()
