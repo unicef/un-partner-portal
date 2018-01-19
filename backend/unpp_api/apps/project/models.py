@@ -140,9 +140,7 @@ class ApplicationQuerySet(models.QuerySet):
 
 class Application(TimeStampedModel):
     is_unsolicited = models.BooleanField(default=False, verbose_name='Is unsolicited?')
-    proposal_of_eoi_details = JSONField(
-        default=dict([('title', ''), ('specializations', [])])
-    )
+    proposal_of_eoi_details = JSONField(default=dict([('title', ''), ('specializations', [])]))
     locations_proposal_of_eoi = models.ManyToManyField('common.Point', related_name="applications", blank=True)
     partner = models.ForeignKey('partner.Partner', related_name="applications")
     eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
@@ -167,8 +165,7 @@ class Application(TimeStampedModel):
         null=True
     )
     # Applies when application converted to EOI. Only applicable if this is unsolicited
-    eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion",
-                                         null=True, blank=True)
+    eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion", null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
 
     objects = ApplicationQuerySet.as_manager()
@@ -214,9 +211,8 @@ class Application(TimeStampedModel):
 
     @property
     def application_status(self):
-        if not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.closed:
-            return EXTENDED_APPLICATION_STATUSES.review
-        elif not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.completed:
+        # Any changes made here should be reflected in ApplicationsFilter.filter_applications_status
+        if not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.completed:
             return EXTENDED_APPLICATION_STATUSES.unsuccessful
         elif self.did_win and self.did_withdraw:
             return EXTENDED_APPLICATION_STATUSES.retracted
@@ -226,6 +222,7 @@ class Application(TimeStampedModel):
             return EXTENDED_APPLICATION_STATUSES.accepted
         elif self.did_win and self.did_decline and self.decision_date is not None:
             return EXTENDED_APPLICATION_STATUSES.declined
+        return EXTENDED_APPLICATION_STATUSES.review
 
     # RETURNS [{u'Cos': {u'scores': [23, 13], u'weight': 30}, u'avg': 23..]
     def get_scores_by_selection_criteria(self):

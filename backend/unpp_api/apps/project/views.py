@@ -41,7 +41,7 @@ from notification.helpers import (
     get_partner_users_for_app_qs,
     send_notification_cfei_completed,
     send_notification_application_updated,
-    send_notificiation_application_created,
+    send_notification_application_created,
     send_notification,
     send_cfei_review_required_notification, user_received_notification_recently
 )
@@ -134,20 +134,20 @@ class EOIAPIView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         eoi = self.get_object()
-        curr_invited_parters = list(eoi.invited_partners.all().values_list('id', flat=True))
+        currently_invited_partners = list(eoi.invited_partners.all().values_list('id', flat=True))
         current_deadline = eoi.deadline_date
         current_reviewers = list(eoi.reviewers.all().values_list('id', flat=True))
 
         instance = serializer.save()
 
         # New partners added
-        for partner in instance.invited_partners.all():
-            if partner.id not in curr_invited_parters:
-                context = {
-                    'eoi_url': eoi.get_absolute_url()
-                }
-                send_notification('cfei_invitation', eoi, partner.get_users(),
-                                  check_sent_for_source=False, context=context)
+        for partner in instance.invited_partners.exclude(id__in=currently_invited_partners):
+            context = {
+                'eoi_url': eoi.get_absolute_url()
+            }
+            send_notification(
+                NotificationType.CFEI_INVITE, eoi, partner.get_users(), check_sent_for_source=False, context=context
+            )
 
         # Deadline Changed
         if current_deadline != instance.deadline_date:
@@ -303,7 +303,7 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
                                    submitter_id=self.request.user.id,
                                    partner_id=self.request.active_partner.id,
                                    agency=self.eoi.agency)
-        send_notificiation_application_created(instance)
+        send_notification_application_created(instance)
 
 
 class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
@@ -343,7 +343,7 @@ class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
                                    submitter_id=self.request.user.id,
                                    agency=eoi.agency)
 
-        send_notificiation_application_created(instance)
+        send_notification_application_created(instance)
 
 
 class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
@@ -504,7 +504,7 @@ class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreate
 
     def perform_create(self, serializer):
         instance = serializer.save()
-        send_notificiation_application_created(instance)
+        send_notification_application_created(instance)
 
 
 class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedListCreateAPIView):
@@ -539,7 +539,7 @@ class ConvertUnsolicitedAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         instance = serializer.save()
-        send_notificiation_application_created(instance)
+        send_notification_application_created(instance)
 
 
 class ReviewSummaryAPIView(RetrieveUpdateAPIView):

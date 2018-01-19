@@ -9,6 +9,7 @@ from common.consts import (
     PARTNER_TYPES,
     POLICY_AREA_CHOICES,
 )
+from common.mixins import SkipUniqueTogetherValidationOnPatchMixin
 from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (
@@ -219,7 +220,10 @@ class PartnerExperienceSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PartnerBudgetSerializer(serializers.ModelSerializer):
+class PartnerBudgetSerializer(SkipUniqueTogetherValidationOnPatchMixin, serializers.ModelSerializer):
+
+    created = serializers.DateTimeField(read_only=True)
+    modified = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = PartnerBudget
