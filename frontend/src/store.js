@@ -59,6 +59,7 @@ import applicationComparison from './reducers/applicationsComparison';
 import notificationsList from './reducers/notificationsList';
 import cache from './reducers/cache';
 import error, * as errorSelector from './reducers/errorReducer';
+import routesHistory from './reducers/routesHistory';
 
 const mainReducer = combineReducers({
   cfei,
@@ -115,6 +116,7 @@ const mainReducer = combineReducers({
   applicationComparison,
   notificationsList,
   cache,
+  routesHistory,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];

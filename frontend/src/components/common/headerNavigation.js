@@ -11,6 +11,7 @@ import Typography from 'material-ui/Typography';
 import className from 'classnames';
 import CustomTab from '../common/customTab';
 import SpreadContent from '../common/spreadContent';
+import BackButton from '../common/buttons/backButton';
 
 const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 2;
@@ -107,12 +108,7 @@ class HeaderNavigation extends Component {
             <SpreadContent className={{ [classes.flex]: true }}>
               <div className={paddingClass}>
                 { backButton
-                  ? <IconButton
-                    className={`${classes.backButtonHeight} ${classes.noPrint}`}
-                    onClick={handleBackButton}
-                  >
-                    <KeyboardArrowLeft />
-                  </IconButton>
+                  ? <BackButton />
                   : null }
                 { typeof title === 'string'
                   ? <Typography type="headline">
