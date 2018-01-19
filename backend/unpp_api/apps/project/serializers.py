@@ -637,7 +637,6 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
 class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
 
     project_title = serializers.CharField(source="eoi.title")
-    eoi_id = serializers.CharField(source="eoi.id")
     agency_name = serializers.CharField(source="agency.name")
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
@@ -661,9 +660,6 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
 
     def get_specializations(self, obj):
         return SimpleSpecializationSerializer(obj.eoi.specializations.all(), many=True).data
-
-    def get_application_status(self, obj):
-        return obj.eoi.application_status
 
 
 class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer):
