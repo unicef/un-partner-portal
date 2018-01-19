@@ -816,10 +816,13 @@ class PartnerProfileProjectImplementationSerializer(
     regular_audited_comment = serializers.CharField(
         source="audit.regular_audited_comment", allow_blank=True, allow_null=True)
     audit_reports = PartnerAuditReportSerializer(many=True)
-    capacity_assessments = PartnerCapacityAssessmentSerializer(many=True)
+
     major_accountability_issues_highlighted = serializers.BooleanField(
         source="audit.major_accountability_issues_highlighted")
     comment = serializers.CharField(source="audit.comment", allow_blank=True, allow_null=True)
+
+    regular_capacity_assessments = serializers.BooleanField(source="audit.regular_capacity_assessments")
+    capacity_assessments = PartnerCapacityAssessmentSerializer(many=True)
 
     key_result = serializers.CharField(source="report.key_result", allow_blank=True)
     publish_annual_reports = serializers.BooleanField(source="report.publish_annual_reports")
@@ -853,9 +856,11 @@ class PartnerProfileProjectImplementationSerializer(
             'regular_audited',
             'regular_audited_comment',
             'audit_reports',
-            'capacity_assessments',
             'major_accountability_issues_highlighted',
             'comment',
+
+            'regular_capacity_assessments'
+            'capacity_assessments',
 
             'key_result',
             'publish_annual_reports',
