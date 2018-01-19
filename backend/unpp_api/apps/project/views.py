@@ -134,20 +134,20 @@ class EOIAPIView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         eoi = self.get_object()
-        curr_invited_parters = list(eoi.invited_partners.all().values_list('id', flat=True))
+        currently_invited_partners = list(eoi.invited_partners.all().values_list('id', flat=True))
         current_deadline = eoi.deadline_date
         current_reviewers = list(eoi.reviewers.all().values_list('id', flat=True))
 
         instance = serializer.save()
 
         # New partners added
-        for partner in instance.invited_partners.all():
-            if partner.id not in curr_invited_parters:
-                context = {
-                    'eoi_url': eoi.get_absolute_url()
-                }
-                send_notification('cfei_invitation', eoi, partner.get_users(),
-                                  check_sent_for_source=False, context=context)
+        for partner in instance.invited_partners.exclude(id__in=currently_invited_partners):
+            context = {
+                'eoi_url': eoi.get_absolute_url()
+            }
+            send_notification(
+                NotificationType.CFEI_INVITE, eoi, partner.get_users(), check_sent_for_source=False, context=context
+            )
 
         # Deadline Changed
         if current_deadline != instance.deadline_date:

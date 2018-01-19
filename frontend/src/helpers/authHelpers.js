@@ -1,6 +1,7 @@
-import { AGENCY_MEMBERS_POSITIONS, PARTNER_MEMBERS_POSITIONS } from './constants';
+import { AGENCY_MEMBERS_POSITIONS, PARTNER_MEMBERS_POSITIONS, ROLES } from './constants';
 
 // AGENCY
+export const isUserAgency = state => state.session.role === ROLES.AGENCY;
 export const isUserAgencyReader = state =>
   state.session.position === AGENCY_MEMBERS_POSITIONS.READER;
 export const isUserNotAgencyReader = state =>
@@ -11,6 +12,7 @@ export const isUserAgencyAdmin = state =>
   state.session.position === AGENCY_MEMBERS_POSITIONS.ADMIN;
 
 // PARTNER
+export const isUserPartner = state => state.session.role === ROLES.PARTNER;
 export const isUserPartnerReader = state =>
   state.session.position === PARTNER_MEMBERS_POSITIONS.READER;
 export const isUserNotPartnerReader = state =>
