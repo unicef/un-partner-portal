@@ -426,14 +426,7 @@ class PartnerProfile(TimeStampedModel):
             'have_bank_account': self.have_bank_account is not None,
             'have_separate_bank_account': self.have_separate_bank_account is not None,
             'explain': self.explain if self.have_separate_bank_account is False else True,
-            # TODO audit_reports
-            'regular_audited': self.partner.audit.regular_audited is not None,
-            'regular_audited_comment':
-                self.partner.audit.regular_audited_comment if self.partner.audit.regular_audited is False else True,
-            'major_accountability_issues_highlighted':
-                self.partner.audit.major_accountability_issues_highlighted is not None,
-            'comment':
-                self.partner.audit.comment if self.partner.audit.major_accountability_issues_highlighted else True,
+
             'capacity_assessment': self.partner.audit.capacity_assessment is not None,
             'assessment_report':
                 self.partner.audit.assessment_report if self.partner.audit.capacity_assessment else True,
@@ -444,10 +437,20 @@ class PartnerProfile(TimeStampedModel):
             'publish_annual_reports_artifact': rep_artifact if self.partner.report.publish_annual_reports else True,
         }
 
-        if self.partner.audit.regular_audited:
+        regular_audited = self.partner.audit.regular_audited
+        required_fields['regular_audited'] = regular_audited is not None
+        if regular_audited is False:
+            required_fields['regular_audited_comment'] = self.partner.audit.regular_audited_comment
+
+        if regular_audited:
             required_fields['audit_reports'] = all(
                 [report.is_complete for report in self.partner.audit_reports.all()]
             ) if self.partner.audit_reports.exists() else False
+            major_accountability_issues_highlighted = self.partner.audit.major_accountability_issues_highlighted
+            required_fields[
+                'major_accountability_issues_highlighted'] = major_accountability_issues_highlighted is not None
+            if major_accountability_issues_highlighted:
+                required_fields['audit_comment'] = self.partner.audit.comment
 
         return all(required_fields.values())
 
@@ -775,7 +778,7 @@ class PartnerBudget(TimeStampedModel):
         ordering = ['-year', 'id']
 
     def __str__(self):
-        return "PartnerBudget {} <pk:{}>".format(self.year, self.id)
+        return "[{}] Partner '{}' budget for {} ".format(self.pk, self.partner, self.year)
 
 
 class PartnerFunding(TimeStampedModel):

@@ -171,6 +171,9 @@ export const selectApplicationStatuses = state => state.partnerProfileConfig['ap
 export const selectExtendedApplicationStatuses = state =>
   state.partnerProfileConfig['extended-application-statuses'];
 
+export const selectNormalizedExtendedApplicationStatuses = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['extended-application-statuses']);
+
 export const selectOrganizationTypes = state => state.partnerProfileConfig['partner-type'];
 
 export const selectNormalizedApplicationStatuses = state =>

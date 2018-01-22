@@ -248,7 +248,7 @@ class CreateUnsolicitedProjectSerializer(MixinPreventManyCommonFile, serializers
         )
 
         for location in locations:
-            point, created = Point.objects.get_or_create(**location)
+            point = Point.objects.get_point(**location)
             app.locations_proposal_of_eoi.add(point)
 
         return app
@@ -261,17 +261,14 @@ class CreateDirectProjectSerializer(serializers.Serializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        locations = validated_data['eoi']['locations']
-        del validated_data['eoi']['locations']
-        specializations = validated_data['eoi']['specializations']
-        del validated_data['eoi']['specializations']
-        focal_points = validated_data['eoi']['focal_points']
-        del validated_data['eoi']['focal_points']
+        locations = validated_data['eoi'].pop('locations')
+        specializations = validated_data['eoi'].pop('specializations')
+        focal_points = validated_data['eoi'].pop('focal_points')
 
         validated_data['eoi']['display_type'] = EOI_TYPES.direct
         eoi = EOI.objects.create(**validated_data['eoi'])
         for location in locations:
-            point, created = Point.objects.get_or_create(**location)
+            point = Point.objects.get_point(**location)
             eoi.locations.add(point)
 
         for specialization in specializations:
@@ -308,19 +305,16 @@ class CreateProjectSerializer(CreateEOISerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        locations = validated_data['locations']
-        del validated_data['locations']
-        specializations = validated_data['specializations']
-        del validated_data['specializations']
-        focal_points = validated_data['focal_points']
-        del validated_data['focal_points']
+        locations = validated_data.pop('locations')
+        specializations = validated_data.pop('specializations')
+        focal_points = validated_data.pop('focal_points')
 
         validated_data['cn_template'] = validated_data['agency'].profile.eoi_template
         validated_data['created_by'] = self.context['request'].user
         self.instance = EOI.objects.create(**validated_data)
 
         for location in locations:
-            point, created = Point.objects.get_or_create(**location)
+            point = Point.objects.get_point(**location)
             self.instance.locations.add(point)
 
         for specialization in specializations:
@@ -637,7 +631,6 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
 class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
 
     project_title = serializers.CharField(source="eoi.title")
-    eoi_id = serializers.CharField(source="eoi.id")
     agency_name = serializers.CharField(source="agency.name")
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
@@ -661,9 +654,6 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
 
     def get_specializations(self, obj):
         return SimpleSpecializationSerializer(obj.eoi.specializations.all(), many=True).data
-
-    def get_application_status(self, obj):
-        return obj.eoi.application_status
 
 
 class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer):

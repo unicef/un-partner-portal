@@ -34,8 +34,7 @@ const applicationCell = ({ row, column }) => {
   } else if (column.name === 'application_status') {
     return (
       <ApplicationStatusCell
-        status={'Pen'}
-        applicationStatus={row.application_status}
+        applicationStatus={row.application_status || 'Rev'}
         id={row.id}
       />);
   }

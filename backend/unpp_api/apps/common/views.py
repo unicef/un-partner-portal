@@ -14,7 +14,7 @@ from common.serializers import (
     AdminLevel1Serializer
 )
 from common.models import Sector, CommonFile, AdminLevel1
-from common.countries import COUNTRIES_ALPHA2_CODE_DICT
+from common.countries import COUNTRIES_ALPHA2_CODE_DICT, LOCATION_OPTIONAL_COUNTRIES
 from common.pagination import MediumPagination
 from common.consts import (
     STAFF_GLOBALLY_CHOICES,
@@ -83,6 +83,7 @@ class ConfigPPAPIView(APIView):
             "direct-selection-source": DIRECT_SELECTION_SOURCE,
             "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,
             "extended-application-statuses": EXTENDED_APPLICATION_STATUSES,
+            "countries-with-optional-location": LOCATION_OPTIONAL_COUNTRIES,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

@@ -9,6 +9,7 @@ from common.consts import (
     PARTNER_TYPES,
     POLICY_AREA_CHOICES,
 )
+from common.mixins import SkipUniqueTogetherValidationOnPatchMixin
 from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (
@@ -219,7 +220,10 @@ class PartnerExperienceSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PartnerBudgetSerializer(serializers.ModelSerializer):
+class PartnerBudgetSerializer(SkipUniqueTogetherValidationOnPatchMixin, serializers.ModelSerializer):
+
+    created = serializers.DateTimeField(read_only=True)
+    modified = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = PartnerBudget
@@ -660,12 +664,12 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
         )
 
         if location_of_office:
-            point, created = Point.objects.get_or_create(**location_of_office)
-            instance.location_of_office_id = point
+            point = Point.objects.get_point(**location_of_office)
+            instance.location_of_office = point
 
         self.instance.location_field_offices.clear()
         for location_of_office in location_field_offices:
-            point, created = Point.objects.get_or_create(**location_of_office)
+            point = Point.objects.get_point(**location_of_office)
             self.instance.location_field_offices.add(point)
 
         instance.save()

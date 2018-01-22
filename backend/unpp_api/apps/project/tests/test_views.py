@@ -5,6 +5,7 @@ import random
 from datetime import date, timedelta
 import mock
 from dateutil.relativedelta import relativedelta
+from django.test import override_settings
 
 from django.urls import reverse
 from django.conf import settings
@@ -13,7 +14,7 @@ from rest_framework import status as statuses
 
 from account.models import User
 from agency.models import AgencyOffice, Agency
-from notification.consts import NotificationType
+from notification.consts import NotificationType, NOTIFICATION_DATA
 from partner.serializers import PartnerShortSerializer
 from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
@@ -125,6 +126,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(statuses.is_success(response.status_code))
         self.assertEquals(response.data['count'], self.quantity)
 
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_create_patch_project(self):
         ao = AgencyOffice.objects.first()
         payload = {
@@ -188,6 +190,9 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(Partner.objects.first().id in [p['id'] for p in response.data['invited_partners']])
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
 
+        self.assertTrue(len(mail.outbox) >= 1)
+        self.assertIn(NOTIFICATION_DATA[NotificationType.CFEI_INVITE]['subject'], [m.subject for m in mail.outbox])
+        self.assertTrue(any([eoi.get_absolute_url() in m.body for m in mail.outbox]))
         payload = {
             "invited_partners": PartnerShortSerializer([Partner.objects.last()], many=True).data
         }
@@ -779,3 +784,96 @@ class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
             mock_now.return_value = eoi.created + relativedelta(hours=25)
             create_notification_response = self.client.post(url, format='json')
             self.assertEqual(create_notification_response.status_code, statuses.HTTP_201_CREATED)
+
+
+class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
+
+    user_type = 'agency'
+
+    def setUp(self):
+        super(TestLocationRequiredOnCFEICreate, self).setUp()
+        office = self.user.agency_members.first().office
+        self.base_payload = {
+            "specializations": [
+                24
+            ],
+            "assessments_criteria": [
+                {
+                    "selection_criteria": "LEP",
+                    "description": "asdasdasdasd"
+                }
+            ],
+            "title": "asdasdasd",
+            "focal_points": [
+                self.user.id
+            ],
+            "description": "asdasdas",
+            "goal": "asdasdsa",
+            "deadline_date": "2018-01-24",
+            "notif_results_date": "2018-01-25",
+            "start_date": "2018-01-25",
+            "end_date": "2018-01-28",
+            "has_weighting": False,
+            "locations": [
+                {
+                    "admin_level_1": {
+                        "country_code": "CV"
+                    },
+                }
+            ],
+            "agency": office.agency.id,
+            "agency_office": office.id,
+
+        }
+
+    def test_create_required(self):
+        payload = self.base_payload.copy()
+        url = reverse('projects:open')
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertEqual(create_response.status_code, statuses.HTTP_400_BAD_REQUEST)
+        self.assertIn('locations', create_response.data)
+
+        payload["locations"][0]['admin_level_1']['name'] = 'asd'
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertEqual(create_response.status_code, statuses.HTTP_400_BAD_REQUEST)
+        self.assertIn('locations', create_response.data)
+
+        payload["locations"][0]['lat'] = "14.95639"
+        payload["locations"][0]['lon'] = "-23.62782"
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertEqual(create_response.status_code, statuses.HTTP_201_CREATED)
+
+    def test_create_optional(self):
+        payload = self.base_payload.copy()
+        url = reverse('projects:open')
+
+        payload["locations"] = [
+            {
+                "admin_level_1": {
+                    "country_code": "PS"
+                },
+            }
+        ]
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertEqual(create_response.status_code, statuses.HTTP_201_CREATED)
+
+    def test_multiple_locations(self):
+        payload = self.base_payload.copy()
+        url = reverse('projects:open')
+        payload["locations"] = [
+            {
+                "admin_level_1": {
+                    "country_code": "CV",
+                    "name": "ASD",
+                },
+                'lat': "14.95639",
+                'lon': "-23.62782"
+            },
+            {
+                "admin_level_1": {
+                    "country_code": "PS"
+                },
+            }
+        ]
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertEqual(create_response.status_code, statuses.HTTP_201_CREATED)
