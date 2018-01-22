@@ -48,17 +48,16 @@ SingleSelectedPartner.propTypes = {
 
 const mapStateToProps = (state, {
   isFocalPoint,
-  applicationStatus,
   id: eoiId,
   partner: { id } }) => {
+  const currentStatus = selectApplicationCurrentStatus(state, id);
   const cfeiCompleted = isCfeiCompleted(state, eoiId);
   const displayAccept = isFocalPoint
-    && applicationStatus === 'Application Successful'
+    && currentStatus === 'Suc'
     && !cfeiCompleted;
   const displayWithdraw = isFocalPoint
-    && applicationStatus !== 'Selection Retracted'
+    && currentStatus !== 'Ret'
     && !cfeiCompleted;
-  const currentStatus = selectApplicationCurrentStatus(state, id);
   return {
     displayAccept,
     displayWithdraw,
