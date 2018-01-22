@@ -664,12 +664,12 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
         )
 
         if location_of_office:
-            point, created = Point.objects.get_or_create(**location_of_office)
-            instance.location_of_office_id = point
+            point = Point.objects.get_point(**location_of_office)
+            instance.location_of_office = point
 
         self.instance.location_field_offices.clear()
         for location_of_office in location_field_offices:
-            point, created = Point.objects.get_or_create(**location_of_office)
+            point = Point.objects.get_point(**location_of_office)
             self.instance.location_field_offices.add(point)
 
         instance.save()
