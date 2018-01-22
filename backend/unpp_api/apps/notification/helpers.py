@@ -59,7 +59,6 @@ def render_notification_template_to_str(template_name, context):
     return loader.get_template('notifications/{}'.format(template_name)).render(context)
 
 
-# Return all partner members. Potential limit in future?
 def get_notify_partner_users_for_application(application):
     users = User.objects.filter(partner_members__partner=application.partner)
     return users.distinct()
@@ -107,7 +106,7 @@ def send_notification_cfei_completed(eoi):
         send_notification(NotificationType.CFEI_APPLICATION_LOSS, eoi, users)
 
 
-def send_notification_application_updated(application):
+def send_agency_updated_application_notification(application):
     if application.eoi.status == EOI_STATUSES.open:
         users = get_notify_partner_users_for_application(application)
 
@@ -115,6 +114,14 @@ def send_notification_application_updated(application):
             send_notification(NotificationType.CFEI_APPLICATION_WITHDRAWN, application, users)
         elif application.did_win:
             send_notification(NotificationType.CFEI_APPLICATION_WIN, application, users)
+
+
+def send_partner_made_decision_notification(application):
+    if application.eoi.status == EOI_STATUSES.open:
+        users = application.eoi.focal_points.all()
+
+        if application.did_accept or application.did_decline:
+            send_notification(NotificationType.PARTNER_DECISION_MADE, application, users)
 
 
 def send_notification_application_created(application):

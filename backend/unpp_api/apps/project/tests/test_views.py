@@ -881,3 +881,19 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         self.assertIn(
             NOTIFICATION_DATA[NotificationType.CFEI_APPLICATION_WITHDRAWN]['subject'], [m.subject for m in mail.outbox]
         )
+        mail.outbox = []
+
+        partner1_application = partner1.applications.first()
+        application_url = reverse('projects:application', kwargs={'pk': partner1_application.pk})
+
+        accept_payload = {
+            "did_accept": True,
+            "did_decline": False
+        }
+
+        update_response = self.client.patch(application_url, data=accept_payload, format='json')
+        self.assertEqual(update_response.status_code, statuses.HTTP_200_OK)
+
+        self.assertIn(
+            NOTIFICATION_DATA[NotificationType.CFEI_APPLICATION_WIN]['subject'], [m.subject for m in mail.outbox]
+        )

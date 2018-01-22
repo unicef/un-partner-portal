@@ -40,11 +40,11 @@ from notification.consts import NotificationType
 from notification.helpers import (
     get_partner_users_for_app_qs,
     send_notification_cfei_completed,
-    send_notification_application_updated,
+    send_agency_updated_application_notification,
     send_notification_application_created,
     send_notification,
-    send_cfei_review_required_notification, user_received_notification_recently
-)
+    send_cfei_review_required_notification, user_received_notification_recently,
+    send_partner_made_decision_notification)
 from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from project.serializers import (
     BaseProjectSerializer,
@@ -367,8 +367,7 @@ class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
 
 class ApplicationAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated, IsApplicationAPIEditor)
-    queryset = Application.objects.select_related("partner", "eoi", "cn")\
-        .prefetch_related("eoi__reviewers").all()
+    queryset = Application.objects.select_related("partner", "eoi", "cn").prefetch_related("eoi__reviewers").all()
     serializer_class = ApplicationFullSerializer
 
     def perform_update(self, serializer):
@@ -379,7 +378,10 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
         else:
             instance = serializer.save()
 
-        send_notification_application_updated(instance)
+        if self.request.user.is_agency_user:
+            send_agency_updated_application_notification(instance)
+        elif self.request.user.is_partner_user:
+            send_partner_made_decision_notification(instance)
 
 
 class EOIApplicationsListAPIView(ListAPIView):
