@@ -4,7 +4,7 @@ from decimal import Decimal
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from model_utils.models import TimeStampedModel
-from .countries import COUNTRIES_ALPHA2_CODE
+from common.countries import COUNTRIES_ALPHA2_CODE
 
 
 class PointQuerySet(models.QuerySet):
@@ -61,9 +61,6 @@ class Point(models.Model):
 
 
 class Sector(models.Model):
-    """
-
-    """
     name = models.CharField(max_length=255)
 
     class Meta:
@@ -74,9 +71,6 @@ class Sector(models.Model):
 
 
 class Specialization(models.Model):
-    """
-
-    """
     name = models.CharField(max_length=255)
     category = models.ForeignKey(Sector, related_name="specializations")
 
@@ -101,25 +95,11 @@ class CommonFile(TimeStampedModel):
         """
         Returns True if this file is referenced from at least one other object
         """
-        has_existing_reference = any([
-            self.assessment_reports.exists(),
-            self.collaboration_evidences.exists(),
-            self.concept_notes.exists(),
-            self.ethic_fraud_policies.exists(),
-            self.ethic_safeguard_policies.exists(),
-            self.flag_attachments.exists(),
-            self.gov_docs.exists(),
-            self.governance_organigrams.exists(),
-            self.partner_audit_reports.exists(),
-            self.other_info_doc_1.exists(),
-            self.other_info_doc_2.exists(),
-            self.other_info_doc_3.exists(),
-            self.others_info.exists(),
-            self.registration_docs.exists(),
-            self.reports.exists(),
-            self.review_summary_attachments.exists(),
-        ])
+        for attr_name in dir(self):
+            if attr_name == CommonFile.has_existing_reference.fget.__name__ or not hasattr(self, attr_name):
+                continue
+            attribute = getattr(self, attr_name)
+            if callable(getattr(attribute, 'exists', None)) and attribute.exists():
+                return True
 
-        if has_existing_reference:
-            return True
         return False
