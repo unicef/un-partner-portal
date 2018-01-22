@@ -62,13 +62,13 @@ export const selectionCriteria = (value) => {
   return undefined;
 };
 
-export const hasLocations = (values, allValues) => {
+export const hasLocations = (values, allValues, { optionalLocations }) => {
   let error;
   if (!isEmpty(values) && !isNil(values)) {
-    values.forEach((countryObj, countryIndex) => {
+    values.forEach((countryObj) => {
       if (countryObj.country
           && !countryObj.locations
-          && countryObj.country !== COUNTRIES.palestine) {
+          && !optionalLocations.includes(countryObj.country)) {
         error = EMPTY_ERROR;
       }
     });

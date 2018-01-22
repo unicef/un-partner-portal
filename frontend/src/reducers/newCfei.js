@@ -34,6 +34,21 @@ export const newCfeiSubmitted = () => ({ type: NEW_CFEI_SUBMITTED });
 export const newCfeiProcessing = () => ({ type: NEW_CFEI_PROCESSING });
 export const newCfeiProcessed = () => ({ type: NEW_CFEI_PROCESSED });
 
+const mergeLocations = (acc, next) => {
+  if (!R.has('locations', next)) {
+    const newNext = R.assoc('locations', [
+      { admin_level_1:
+        {
+          name: next.country,
+          country_code: next.country,
+        },
+      }], next);
+    return R.mergeDeepWith(R.concat, acc, newNext);
+  }
+
+  return R.mergeDeepWith(R.concat, acc, next);
+};
+
 const prepareBody = (body) => {
   let newBody = R.clone(body);
   const flatSectors = mergeListsFromObjectArray(newBody.specializations, 'areas');
@@ -41,7 +56,7 @@ const prepareBody = (body) => {
   newBody = R.assoc('country_code', body.countries.map(country => country.country), newBody);
   newBody = R.assoc('locations',
     R.reduce(
-      R.mergeDeepWith(R.concat),
+      mergeLocations,
       0,
       body.countries,
     ).locations, newBody);

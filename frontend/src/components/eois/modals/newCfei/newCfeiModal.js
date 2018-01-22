@@ -12,6 +12,7 @@ import { addDirectCfei, addOpenCfei, addUnsolicitedCN } from '../../../../reduce
 import CallPartnersModal from '../callPartners/callPartnersModal';
 import { PROJECT_TYPES } from '../../../../helpers/constants';
 import { errorToBeAdded } from '../../../../reducers/errorReducer';
+import { selectCountriesWithOptionalLocations } from '../../../../store';
 
 const messages = {
   title: {
@@ -149,7 +150,7 @@ class NewCfeiModal extends Component {
   }
 
   render() {
-    const { open, type, onDialogClose } = this.props;
+    const { open, type, onDialogClose, optionalLocations } = this.props;
     return (
       <Grid item>
         <ControlledModal
@@ -168,6 +169,7 @@ class NewCfeiModal extends Component {
             },
           }}
           content={React.createElement(getModal(type), {
+            optionalLocations,
             onSubmit: this.handleSubmit,
             handleConfirmation: this.handleConfirmation })}
         />
@@ -184,7 +186,12 @@ NewCfeiModal.propTypes = {
   postCfei: PropTypes.func,
   submit: PropTypes.func,
   postError: PropTypes.func,
+  optionalLocations: PropTypes.array,
 };
+
+const mapStateToProps = state => ({
+  optionalLocations: selectCountriesWithOptionalLocations(state),
+});
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   postCfei: values => dispatch(getPostMethod(ownProps.type)(values)),
@@ -193,7 +200,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 const connected = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(NewCfeiModal);
 
