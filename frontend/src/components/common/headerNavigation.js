@@ -46,9 +46,6 @@ const styleSheet = (theme) => {
     flex: {
       alignItems: 'flex-end',
     },
-    backButtonHeight: {
-      height: 24,
-    },
     tabsContainer: {
       width: '100%',
     },
@@ -83,7 +80,7 @@ class HeaderNavigation extends Component {
       title,
       titleObject,
       backButton,
-      handleBackButton,
+      defaultReturn,
       customTabs,
       tabs,
       children,
@@ -108,7 +105,7 @@ class HeaderNavigation extends Component {
             <SpreadContent className={{ [classes.flex]: true }}>
               <div className={paddingClass}>
                 { backButton
-                  ? <BackButton />
+                  ? <BackButton defaultPath={defaultReturn} />
                   : null }
                 { typeof title === 'string'
                   ? <Typography type="headline">

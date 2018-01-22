@@ -52,7 +52,7 @@ class PartnerApplicationsHeader extends Component {
         handleChange={this.handleChange}
         header={!id && location.match('^/applications/unsolicited')
           && <NewCfeiModalButton type={PROJECT_TYPES.UNSOLICITED} />}
-        handleBackButton={() => { history.goBack(); }}
+        defaultReturn="/"
         backButton
       >
         {children}

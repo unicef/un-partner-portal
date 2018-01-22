@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import R from 'ramda';
 import { connect } from 'react-redux';
-import { browserHistory as history } from 'react-router';
+import { withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
@@ -99,6 +99,7 @@ class ApplicationSummaryHeader extends Component {
       applicationStatus,
       children,
       error,
+      params: { id },
     } = this.props;
     if (error.notFound) {
       return <Typography >{messages.noApplication}</Typography>;
@@ -114,7 +115,7 @@ class ApplicationSummaryHeader extends Component {
       </GridRow>
       }
       backButton
-      handleBackButton={() => { history.goBack(); }}
+      defaultReturn={`/cfei/open/${id}/preselected`}
     >
       {children}
     </HeaderNavigation>);
@@ -190,8 +191,8 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const containerApplicationSummaryHeader = connect(
-  mapStateToProps,
+export default R.compose(
+  withRouter,
+  connect(mapStateToProps),
 )(ApplicationSummaryHeader);
 
-export default containerApplicationSummaryHeader;

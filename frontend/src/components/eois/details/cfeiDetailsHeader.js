@@ -124,7 +124,7 @@ class CfeiHeader extends Component {
       header={<HeaderOptionsContainer role={role} type={type} id={id} />}
       handleChange={this.handleChange}
       backButton
-      handleBackButton={() => { history.goBack(); }}
+      defaultReturn="/cfei/open"
     >
       {(index !== -1) && children}
     </HeaderNavigation>);
