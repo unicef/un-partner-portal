@@ -38,11 +38,11 @@ class EOI(TimeStampedModel):
     cn_template = models.FileField(null=True, blank=True)
     specializations = models.ManyToManyField('common.Specialization', related_name="expressions_of_interest")
     # TODO: intended_pop_of_concern = Selection. Should have in help text only for UNHCR. TODO on select options
-    description = models.CharField(max_length=200, verbose_name='Brief background of the project')
+    description = models.CharField(max_length=5000, verbose_name='Brief background of the project')
     goal = models.CharField(
-        max_length=200, null=True, blank=True, verbose_name='Goal, Objective, Expected Outcome and Results.')
+        max_length=5000, null=True, blank=True, verbose_name='Goal, Objective, Expected Outcome and Results.')
     other_information = models.CharField(
-        max_length=200, null=True, blank=True, verbose_name='Other information (optional)')
+        max_length=5000, null=True, blank=True, verbose_name='Other information (optional)')
     start_date = models.DateField(verbose_name='Estimated Start Date')
     end_date = models.DateField(verbose_name='Estimated End Date')
     deadline_date = models.DateField(verbose_name='Estimated Deadline Date', null=True, blank=True)
