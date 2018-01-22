@@ -856,3 +856,24 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
         ]
         create_response = self.client.post(url, data=payload, format='json')
         self.assertEqual(create_response.status_code, statuses.HTTP_201_CREATED)
+
+    def test_multiple_locations(self):
+        payload = self.base_payload.copy()
+        url = reverse('projects:open')
+        payload["locations"] = [
+            {
+                "admin_level_1": {
+                    "country_code": "CV",
+                    "name": "ASD",
+                },
+                'lat': "14.95639",
+                'lon': "-23.62782"
+            },
+            {
+                "admin_level_1": {
+                    "country_code": "PS"
+                },
+            }
+        ]
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertEqual(create_response.status_code, statuses.HTTP_201_CREATED)
