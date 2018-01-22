@@ -27,7 +27,9 @@ from common.factories import (
     AgencyOfficeFactory,
     AgencyFactory,
     PartnerVerificationFactory,
-    OtherAgencyFactory, UserFactory, PartnerFactory)
+    UserFactory,
+    PartnerFactory,
+)
 from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
