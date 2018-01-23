@@ -2,8 +2,7 @@ import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { browserHistory as history, withRouter } from 'react-router';
-import Grid from 'material-ui/Grid';
+import { withRouter } from 'react-router';
 import Paper from 'material-ui/Paper';
 import MainContentWrapper from '../../components/common/mainContentWrapper';
 import HeaderNavigation from '../../components/common/headerNavigation';
@@ -27,9 +26,9 @@ class OrganizationProfile extends Component {
     const { countryProfiles, hqProfile, loading, createLoading } = this.props;
 
     return (
-      <HeaderNavigation title={messages.header}>
-        <MainContentWrapper>
-          <Loader loading={loading || createLoading} fullscreen >
+      <React.Fragment>
+        <HeaderNavigation title={messages.header}>
+          <MainContentWrapper>
             <GridColumn spacing={40}>
               <Paper>
                 <OrganizationItem
@@ -40,10 +39,10 @@ class OrganizationProfile extends Component {
               </Paper>
               <CountryOfficesList profiles={countryProfiles} />
             </GridColumn>
-          </Loader>
-        </MainContentWrapper>
-
-      </HeaderNavigation>
+          </MainContentWrapper>
+        </HeaderNavigation>
+        <Loader loading={loading || createLoading} fullscreen />
+      </React.Fragment>
     );
   }
 }

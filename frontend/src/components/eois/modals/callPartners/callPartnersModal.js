@@ -33,8 +33,8 @@ class CallPartnersModal extends Component {
     const { partners } = this.props;
 
     const selectedPartners = partnerIds
-        .map(selectedId => partners.find(({ id }) => id === selectedId))
-        .filter(Boolean);
+      .map(selectedId => partners.find(({ id }) => id === selectedId))
+      .filter(Boolean);
 
     return this.props.updateCfei({
       invited_partners: selectedPartners,
@@ -56,7 +56,7 @@ class CallPartnersModal extends Component {
   render() {
     const { openDialog, showLoading } = this.props;
     return (
-      <Loader loading={showLoading} fullscreen>
+      <React.Fragment>
         <ControlledModal
           maxWidth="md"
           title={messages.title}
@@ -75,7 +75,8 @@ class CallPartnersModal extends Component {
           }}
           content={<CallPartnersForm overlap={false} onSubmit={this.onFormSubmit} />}
         />
-      </Loader>
+        <Loader loading={showLoading} fullscreen />
+      </React.Fragment>
     );
   }
 }

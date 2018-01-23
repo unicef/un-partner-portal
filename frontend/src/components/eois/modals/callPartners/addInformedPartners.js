@@ -27,12 +27,16 @@ class CallPartnersModal extends Component {
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
+  componentDidMount() {
+    const { cachePartners, currentPartners } = this.props;
+    cachePartners(currentPartners);
+  }
+
   onFormSubmit({ invited_partners: partnerIds }) {
     const { partners } = this.props;
-
     const selectedPartners = partnerIds
-        .map(selectedId => partners.find(({ id }) => id === selectedId))
-        .filter(Boolean);
+      .map(selectedId => partners.find(({ id }) => id === selectedId))
+      .filter(Boolean);
 
     return this.props.updateCfei({
       invited_partners: selectedPartners,
@@ -42,8 +46,7 @@ class CallPartnersModal extends Component {
   }
 
   render() {
-    const { id, submit, dialogOpen, handleDialogClose } = this.props;
-
+    const { id, submitInvite, dialogOpen, handleDialogClose } = this.props;
     return (
       <div>
         <ControlledModal
@@ -57,7 +60,7 @@ class CallPartnersModal extends Component {
               handleClick: handleDialogClose,
             },
             raised: {
-              handleClick: submit,
+              handleClick: submitInvite,
               label: messages.save,
             },
           }}
@@ -66,17 +69,11 @@ class CallPartnersModal extends Component {
       </div >
     );
   }
-
-  componentDidMount() {
-    const { cachePartners, currentPartners } = this.props;
-
-    cachePartners(currentPartners);
-  }
 }
 
 CallPartnersModal.propTypes = {
   id: PropTypes.string,
-  submit: PropTypes.func,
+  submitInvite: PropTypes.func,
   dialogOpen: PropTypes.object,
   handleDialogClose: PropTypes.func,
   updateCfei: PropTypes.func,
@@ -97,8 +94,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   updateCfei: body => dispatch(updateCfei(body, ownProps.id)),
-  submit: () => dispatch(submit('callPartners')),
-  cachePartners: (partners) => dispatch(amendPartnersCache(partners)),
+  submitInvite: () => dispatch(submit('callPartners')),
+  cachePartners: partners => dispatch(amendPartnersCache(partners)),
 });
 
 const containerCallPartnersModal = connect(
