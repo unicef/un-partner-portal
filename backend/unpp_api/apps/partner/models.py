@@ -61,11 +61,11 @@ class Partner(TimeStampedModel):
     # country profile information
     location_of_office = models.ForeignKey('common.Point', related_name="location_of_offices", null=True, blank=True)
     more_office_in_country = models.NullBooleanField()
-    location_field_offices = models.ManyToManyField('common.Point', related_name="location_field_offices")
+    location_field_offices = models.ManyToManyField('common.Point', related_name="location_field_offices", blank=True)
     staff_in_country = models.CharField(max_length=3, choices=STAFF_GLOBALLY_CHOICES, null=True, blank=True)
-    engagement_operate_desc = models.CharField(
+    engagement_operate_desc = models.TextField(
         verbose_name="Briefly describe the organization's engagement with the communities in which you operate",
-        max_length=255, null=True, blank=True
+        null=True, blank=True
     )
 
     class Meta:

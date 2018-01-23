@@ -649,7 +649,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
         count = random.randint(0, 3)
         while count:
             count -= 1
-            point, create = Point.objects.get_or_create(**{
+            point = Point.objects.get_point(**{
                 "lat": random.randint(-180, 180),
                 "lon": random.randint(-180, 180),
                 "admin_level_1": {"country_code": get_country_list(1)[0], "name": "name {}".format(self.pk)},

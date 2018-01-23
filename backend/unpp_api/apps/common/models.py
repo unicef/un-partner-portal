@@ -9,19 +9,22 @@ from common.countries import COUNTRIES_ALPHA2_CODE
 
 class PointQuerySet(models.QuerySet):
 
-    def get_or_create(self, lat, lon, admin_level_1):
-        admin_inst, created = AdminLevel1.objects.get_or_create(**admin_level_1)
-        qs = self.filter(lat=lat, lon=lon, admin_level_1=admin_inst)
-        if qs.exists():
-            return qs.first(), False
-        return self.create(lat=lat, lon=lon, admin_level_1=admin_inst), True
+    def get_point(self, lat=None, lon=None, admin_level_1=None):
+        return self.get_or_create(
+            lat=lat,
+            lon=lon,
+            admin_level_1=AdminLevel1.objects.get_or_create(
+                name=admin_level_1.get('name'),
+                country_code=admin_level_1['country_code'],
+            )[0]
+        )[0]
 
 
 class AdminLevel1(models.Model):
     """
     Admin level 1 - is like California in USA or Mazowieckie in Poland
     """
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, null=True, blank=True)
     country_code = models.CharField(max_length=3, choices=COUNTRIES_ALPHA2_CODE)
 
     class Meta:
