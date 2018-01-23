@@ -48,7 +48,7 @@ const CountryProfileItem = (props) => {
 
 CountryProfileItem.propTypes = {
   classes: PropTypes.object.isRequired,
-  country: PropTypes.object.isRequired,
+  country: PropTypes.string.isRequired,
   selected: PropTypes.bool.isRequired,
   handleToggle: PropTypes.func.isRequired,
 };
