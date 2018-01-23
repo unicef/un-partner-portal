@@ -890,12 +890,10 @@ class PartnerProfileProjectImplementationSerializer(
             })
 
     def update_audit_reports(self, instance, audit_reports_payload):
-        # Remove reports that are not part of the payload
         payload_report_ids = [r['id'] for r in audit_reports_payload if r.get('id')]
         reports_to_remove = instance.audit_reports.exclude(id__in=payload_report_ids)
         reports_to_remove.delete()
 
-        # Iterate through reports data and add or update items
         for report_data in audit_reports_payload:
             report_id = report_data.pop('id', None)
             report_file = report_data.get('most_recent_audit_report')
@@ -915,12 +913,10 @@ class PartnerProfileProjectImplementationSerializer(
                 instance.audit_reports.create(**report_data)
 
     def update_capacity_assessments(self, instance, capacity_assessments_payload):
-        # Remove reports that are not part of the payload
         assessment_ids = [r['id'] for r in capacity_assessments_payload if r.get('id')]
         assessments_to_remove = instance.capacity_assessments.exclude(id__in=assessment_ids)
         assessments_to_remove.delete()
 
-        # Iterate through reports data and add or update items
         for assessment_data in capacity_assessments_payload:
             assessment_id = assessment_data.pop('id', None)
             report_file = assessment_data.get('report_file')
