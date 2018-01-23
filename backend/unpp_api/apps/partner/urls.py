@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .views import (
+from partner.views import (
     OrganizationProfileAPIView,
     PartnerProfileAPIView,
     PartnerProfileSummaryAPIView,

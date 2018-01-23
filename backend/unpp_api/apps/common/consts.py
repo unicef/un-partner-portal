@@ -95,7 +95,7 @@ PARTNER_DONORS_CHOICES = Choices(
     ('Oth', 'other', 'Other'),
 )
 
-WORKING_LAGNUAGES_CHOICES = Choices(
+WORKING_LANGUAGES_CHOICES = Choices(
     ('Ara', 'arabic', 'Arabic'),
     ('Chi', 'chinese', 'Chinese'),
     ('Eng', 'english', 'English'),
@@ -163,7 +163,7 @@ ORG_AUDIT_CHOICES = Choices(
     ('Don', 'donor', 'Donor audit'),
 )
 
-AUDIT_ASSESMENT_CHOICES = Choices(
+AUDIT_ASSESSMENT_CHOICES = Choices(
     ('HAC', 'micro', 'HACT micro-assessment'),
     ('OCH', 'ocha', 'OCHA CBPF (Country-Based Pooled Fund) capacity assessment'),
     ('UNH', 'unhcr', 'UNHCR procurement pre-qualification assessment '),

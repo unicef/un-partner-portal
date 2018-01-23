@@ -27,7 +27,7 @@ from common.consts import (
     METHOD_ACC_ADOPTED_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
-    WORKING_LAGNUAGES_CHOICES,
+    WORKING_LANGUAGES_CHOICES,
     MAILING_TYPES,
     YEARS_OF_EXP_CHOICES,
     CONCERN_CHOICES,
@@ -35,7 +35,7 @@ from common.consts import (
     PARTNER_DONORS_CHOICES,
     POLICY_AREA_CHOICES,
     ORG_AUDIT_CHOICES,
-    AUDIT_ASSESMENT_CHOICES,
+    AUDIT_ASSESSMENT_CHOICES,
     BUDGET_CHOICES,
     FLAG_TYPES,
 )
@@ -61,11 +61,12 @@ class Partner(TimeStampedModel):
     # country profile information
     location_of_office = models.ForeignKey('common.Point', related_name="location_of_offices", null=True, blank=True)
     more_office_in_country = models.NullBooleanField()
-    location_field_offices = models.ManyToManyField('common.Point', related_name="location_field_offices")
+    location_field_offices = models.ManyToManyField('common.Point', related_name="location_field_offices", blank=True)
     staff_in_country = models.CharField(max_length=3, choices=STAFF_GLOBALLY_CHOICES, null=True, blank=True)
-    engagement_operate_desc = models.CharField(
+    engagement_operate_desc = models.TextField(
         verbose_name="Briefly describe the organization's engagement with the communities in which you operate",
-        max_length=255, null=True, blank=True)
+        null=True, blank=True
+    )
 
     class Meta:
         ordering = ['id']
@@ -131,7 +132,7 @@ class Partner(TimeStampedModel):
             self.profile.mandatemission_complete,
             self.profile.funding_complete,
             self.profile.collaboration_complete,
-            self.profile.proj_impl_is_complete,
+            self.profile.project_implementation_is_complete,
             self.profile.other_info_is_complete,
         ])
 
@@ -174,7 +175,7 @@ class PartnerProfile(TimeStampedModel):
         verbose_name='Does the organization have reliable access to internet in all of its operations?')
     connectivity_excuse = models.CharField(max_length=5000, null=True, blank=True)
     working_languages = ArrayField(
-        models.CharField(max_length=3, choices=WORKING_LAGNUAGES_CHOICES),
+        models.CharField(max_length=3, choices=WORKING_LANGUAGES_CHOICES),
         default=list,
         null=True
     )
@@ -352,10 +353,7 @@ class PartnerProfile(TimeStampedModel):
 
     @property
     def funding_complete(self):
-        if self.partner.is_hq is False:
-            budgets = self.partner.hq.budgets.filter(budget__isnull=False)
-        else:
-            budgets = self.partner.budgets.filter(budget__isnull=False)
+        budgets = self.partner.budgets.filter(budget__isnull=False)
 
         current_year = date.today().year
         required_budgets = budgets.filter(year__in=[
@@ -404,8 +402,9 @@ class PartnerProfile(TimeStampedModel):
         return all(required_fields.values())
 
     @property
-    def proj_impl_is_complete(self):
+    def project_implementation_is_complete(self):
         rep_artifact = self.partner.report.report or self.partner.report.link_report
+
         required_fields = {
             'have_management_approach': self.have_management_approach is not None,
             'management_approach_desc':
@@ -427,9 +426,14 @@ class PartnerProfile(TimeStampedModel):
             'have_separate_bank_account': self.have_separate_bank_account is not None,
             'explain': self.explain if self.have_separate_bank_account is False else True,
 
-            'capacity_assessment': self.partner.audit.capacity_assessment is not None,
-            'assessment_report':
-                self.partner.audit.assessment_report if self.partner.audit.capacity_assessment else True,
+            'regular_audited': self.partner.audit.regular_audited is not None,
+            'regular_audited_comment':
+                self.partner.audit.regular_audited_comment if self.partner.audit.regular_audited is False else True,
+            'major_accountability_issues_highlighted':
+                self.partner.audit.major_accountability_issues_highlighted is not None,
+            'comment':
+                self.partner.audit.comment if self.partner.audit.major_accountability_issues_highlighted else True,
+
             'key_result': self.partner.report.key_result,
             'publish_annual_reports': self.partner.report.publish_annual_reports is not None,
             'publish_annual_reports_last_report':
@@ -451,6 +455,12 @@ class PartnerProfile(TimeStampedModel):
                 'major_accountability_issues_highlighted'] = major_accountability_issues_highlighted is not None
             if major_accountability_issues_highlighted:
                 required_fields['audit_comment'] = self.partner.audit.comment
+
+        regular_capacity_assessments = self.partner.audit.regular_capacity_assessments
+        if regular_capacity_assessments:
+            required_fields['capacity_assessments'] = all(
+                [report.is_complete for report in self.partner.capacity_assessments.all()]
+            ) if self.partner.audit_reports.exists() else False
 
         return all(required_fields.values())
 
@@ -576,17 +586,10 @@ class PartnerAuditAssessment(TimeStampedModel):
     regular_audited = models.NullBooleanField()
     regular_audited_comment = models.TextField(max_length=5000, null=True, blank=True)
     major_accountability_issues_highlighted = models.NullBooleanField(
-        verbose_name="Were there any major accountability issues highlighted by audits in the past three years?")
-    comment = models.TextField(max_length=5000, null=True, blank=True)
-    capacity_assessment = models.NullBooleanField(
-        verbose_name="Has the organization undergone a formal capacity assessment?")
-    assessments = ArrayField(
-        models.CharField(max_length=3, choices=AUDIT_ASSESMENT_CHOICES),
-        default=list,
-        null=True
+        verbose_name="Were there any major accountability issues highlighted by audits in the past three years?"
     )
-    assessment_report = models.ForeignKey(
-        'common.CommonFile', null=True, blank=True, related_name="assessment_reports")
+    comment = models.TextField(max_length=5000, null=True, blank=True)
+    regular_capacity_assessments = models.NullBooleanField()
 
     class Meta:
         ordering = ['id']
@@ -622,6 +625,32 @@ class PartnerAuditReport(TimeStampedModel):
             'file_or_link_report': self.most_recent_audit_report or self.link_report
         }
         return all(required_fields.values())
+
+
+class PartnerCapacityAssessment(TimeStampedModel):
+    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name='capacity_assessments')
+    partner = models.ForeignKey(Partner, related_name='capacity_assessments')
+    assessment_type = models.TextField(choices=AUDIT_ASSESSMENT_CHOICES, null=True, blank=True)
+    report_file = models.ForeignKey(
+        'common.CommonFile',
+        null=True,
+        blank=True,
+        related_name='partner_capacity_assessments',
+    )
+    report_url = models.URLField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "PartnerCapacityAssessment <pk:{}>".format(self.id)
+
+    @property
+    def is_complete(self):
+        return all((
+            self.assessment_type,
+            self.report_file or self.report_url
+        ))
 
 
 class PartnerReporting(TimeStampedModel):
