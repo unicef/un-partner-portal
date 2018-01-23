@@ -182,13 +182,14 @@ class PointSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if 'admin_level_1' in data and data['admin_level_1']['country_code'] not in LOCATION_OPTIONAL_COUNTRIES:
+            errors = {}
             for field in ('lat', 'lon'):
                 if not data.get(field):
-                    raise ValidationError({
-                        field: [
-                            'this field is required for {}'.format(data['admin_level_1']['country_code'])
-                        ]
-                    })
+                    errors[field] = [
+                        'this field is required for {}'.format(data['admin_level_1']['country_code'])
+                    ]
+            if errors:
+                raise ValidationError(errors)
         return super(PointSerializer, self).validate(data)
 
 
