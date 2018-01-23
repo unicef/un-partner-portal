@@ -119,7 +119,6 @@ class PartnerProfileProjectImplementation extends Component {
     if (R.isEmpty(patchValues.capacity_assessments)) {
       patchValues = R.dissoc('capacity_assessments', patchValues);
     }
-    debugger
 
     if (!R.isEmpty(patchValues)) {
       return updateTab(partnerId, 'project-implementation', patchValues)
