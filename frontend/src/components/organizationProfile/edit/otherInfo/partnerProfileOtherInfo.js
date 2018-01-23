@@ -56,7 +56,7 @@ class PartnerProfileOtherInfo extends Component {
   }
 
   handleSubmit(formValues) {
-    const { updateThumbnail, initialValues, updateTab, partnerId, loadPartnerProfileDetails } = this.props;
+    const { updateThumbnail, initialValues, updateTab, partnerId } = this.props;
 
     const otherInfo = flatten(formValues.other_info);
     const initOtherInfo = flatten(initialValues.other_info);
@@ -65,10 +65,10 @@ class PartnerProfileOtherInfo extends Component {
 
     if (!R.isEmpty(patchValues)) {
       return updateTab(partnerId, 'other-info', patchValues)
-        .then(() => loadPartnerProfileDetails(partnerId).then((otherInfoResponse) => {
-          updateThumbnail(otherInfoResponse.org_logo_thumbnail);
+        .then((response) => {
+          updateThumbnail(response.org_logo_thumbnail);
           this.onSubmit();
-        }))
+        })
         .catch((error) => {
           const errorMsg = error.response.data.non_field_errors || 'Error while saving sections. Please try again.';
 

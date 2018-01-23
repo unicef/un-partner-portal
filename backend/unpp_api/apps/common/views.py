@@ -19,7 +19,7 @@ from common.pagination import MediumPagination
 from common.consts import (
     STAFF_GLOBALLY_CHOICES,
     PARTNER_DONORS_CHOICES,
-    WORKING_LAGNUAGES_CHOICES,
+    WORKING_LANGUAGES_CHOICES,
     CONCERN_CHOICES,
     AUDIT_TYPES,
     FORMAL_CAPACITY_ASSESSMENT,
@@ -66,7 +66,7 @@ class ConfigPPAPIView(APIView):
             "financial-control-system": FINANCIAL_CONTROL_SYSTEM_CHOICES,
             "functional-responsibilities": FUNCTIONAL_RESPONSIBILITY_CHOICES,
             "partner-donors": PARTNER_DONORS_CHOICES,
-            "working-languages": WORKING_LAGNUAGES_CHOICES,
+            "working-languages": WORKING_LANGUAGES_CHOICES,
             "population-of-concern": CONCERN_CHOICES,
             "audit-types": AUDIT_TYPES,
             "formal-capacity-assessment": FORMAL_CAPACITY_ASSESSMENT,
