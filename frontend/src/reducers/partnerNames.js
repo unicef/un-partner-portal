@@ -42,7 +42,7 @@ export const loadPartnerNamesForAutoComplete = params => (dispatch, getState) =>
     { cancelToken: newCancelToken.token })
     .then((response) => {
       dispatch(loadEnded(PARTNER_NAMES));
-      dispatch(amendPartnersCache(response));
+      dispatch(amendPartnersCache(response.results));
       return toObject(flattenToObjectKey('legal_name'), response.results);
     }).catch((error) => {
       dispatch(loadEnded(PARTNER_NAMES));

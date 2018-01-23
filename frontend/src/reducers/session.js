@@ -66,7 +66,7 @@ export const sessionError = error => ({
 
 export const loginSuccess = session => ({ type: LOGIN_SUCCESS, session });
 
-export const logoutSuccess = () => ({ type: LOGIN_SUCCESS });
+export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
 
 export const loadUserData = () => (dispatch, getState) => {
   const token = getState().session.token;

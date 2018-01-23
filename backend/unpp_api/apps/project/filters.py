@@ -2,9 +2,10 @@
 from __future__ import unicode_literals
 from django.db.models import Q
 import django_filters
-from django_filters.filters import CharFilter, DateFilter, BooleanFilter, ModelMultipleChoiceFilter
+from django_filters.filters import CharFilter, DateFilter, BooleanFilter, ModelMultipleChoiceFilter, ChoiceFilter
 from django_filters.widgets import BooleanWidget, CSVWidget
 
+from common.consts import EXTENDED_APPLICATION_STATUSES
 from common.models import Specialization
 from .models import EOI, Application
 
@@ -57,6 +58,8 @@ class ApplicationsFilter(django_filters.FilterSet):
     did_win = BooleanFilter(widget=BooleanWidget())
     cfei_active = BooleanFilter(method='get_cfei_active', widget=BooleanWidget())
 
+    applications_status = ChoiceFilter(method='filter_applications_status', choices=EXTENDED_APPLICATION_STATUSES)
+
     class Meta:
         model = Application
         fields = ['project_title', 'legal_name', 'country_code', 'eoi', 'partner', 'status', 'did_win']
@@ -85,6 +88,41 @@ class ApplicationsFilter(django_filters.FilterSet):
 
     def get_status(self, queryset, name, value):
         return queryset.filter(status=value)
+
+    def filter_applications_status(self, queryset, name, value):
+        # Logic here should match Application.application_status property
+        filters = {
+            EXTENDED_APPLICATION_STATUSES.review: {
+                'did_win': False,
+                'eoi__is_completed': False,
+            },
+            EXTENDED_APPLICATION_STATUSES.unsuccessful: {
+                'did_win': False,
+                'eoi__is_completed': True,
+            },
+            EXTENDED_APPLICATION_STATUSES.retracted: {
+                'did_win': True,
+                'did_withdraw': True,
+            },
+            EXTENDED_APPLICATION_STATUSES.successful: {
+                'did_win': True,
+                'did_decline': False,
+                'did_accept': False,
+                'decision_date__isnull': True,
+            },
+            EXTENDED_APPLICATION_STATUSES.accepted: {
+                'did_win': True,
+                'did_accept': True,
+                'decision_date__isnull': False,
+            },
+            EXTENDED_APPLICATION_STATUSES.declined: {
+                'did_win': True,
+                'did_decline': True,
+                'decision_date__isnull': False,
+            },
+        }
+
+        return queryset.filter(**filters.get(value, {}))
 
     def get_agency(self, queryset, name, value):
         return queryset.filter(eoi__agency=value)
