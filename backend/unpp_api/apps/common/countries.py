@@ -134,7 +134,7 @@ COUNTRIES_ALPHA2_CODE = (
     ("UG", "Uganda"),
     ("UA", "Ukraine"),
     ("EG", "Egypt"),
-    ("TZ", "Tanzania, United Rep. of"),
+    ("TZ", "Tanzania, United Republic of"),
     ("BF", "Burkina Faso"),
     ("UY", "Uruguay"),
     ("UZ", "Uzbekistan"),
