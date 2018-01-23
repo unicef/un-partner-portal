@@ -19,8 +19,6 @@ const messages = {
   year: 'Year',
 };
 
-const isHqProfile = (isHq, displayType) => !isHq && displayType === 'Int';
-
 const annualBudgetForm = (budget, budgetTypes, readOnly) => (
   <Grid container direction="row">
     <Grid item sm={2} xs={12} >
@@ -44,15 +42,14 @@ const annualBudgetForm = (budget, budgetTypes, readOnly) => (
 );
 
 const PartnerProfileFundingBudget = (props) => {
-  const { readOnly, budgetTypes, isCountryProfile, displayType } = props;
-  const isHq = isHqProfile(isCountryProfile, displayType);
+  const { readOnly, budgetTypes } = props;
 
   return (
     <FormSection name="budgets">
       <Grid container direction="column" spacing={16}>
         <Grid item>
           <ArrayForm
-            fieldName={isHq ? 'hq_budgets' : 'budgets'}
+            fieldName={'budgets'}
             limit={3}
             label={messages.annualBudget}
             initial
@@ -71,8 +68,6 @@ const PartnerProfileFundingBudget = (props) => {
 PartnerProfileFundingBudget.propTypes = {
   readOnly: PropTypes.bool,
   budgetTypes: PropTypes.array.isRequired,
-  isCountryProfile: PropTypes.bool,
-  displayType: PropTypes.string,
 };
 
 
