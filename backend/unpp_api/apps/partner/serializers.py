@@ -890,10 +890,6 @@ class PartnerProfileProjectImplementationSerializer(
             })
 
     def update_audit_reports(self, instance, audit_reports_payload):
-        """
-        Need to use custom method to update audit reports due to additional
-        validation for file
-        """
         # Remove reports that are not part of the payload
         payload_report_ids = [r['id'] for r in audit_reports_payload if r.get('id')]
         reports_to_remove = instance.audit_reports.exclude(id__in=payload_report_ids)
@@ -901,7 +897,6 @@ class PartnerProfileProjectImplementationSerializer(
 
         # Iterate through reports data and add or update items
         for report_data in audit_reports_payload:
-
             report_id = report_data.pop('id', None)
             report_file = report_data.get('most_recent_audit_report')
 
@@ -919,10 +914,37 @@ class PartnerProfileProjectImplementationSerializer(
                 report_data['created_by'] = self.context['request'].user
                 instance.audit_reports.create(**report_data)
 
+    def update_capacity_assessments(self, instance, capacity_assessments_payload):
+        # Remove reports that are not part of the payload
+        assessment_ids = [r['id'] for r in capacity_assessments_payload if r.get('id')]
+        assessments_to_remove = instance.capacity_assessments.exclude(id__in=assessment_ids)
+        assessments_to_remove.delete()
+
+        # Iterate through reports data and add or update items
+        for assessment_data in capacity_assessments_payload:
+            assessment_id = assessment_data.pop('id', None)
+            report_file = assessment_data.get('report_file')
+
+            if assessment_id:
+                assessment = instance.capacity_assessments.get(id=assessment_id)
+
+                if report_file and report_file != assessment.report_file:
+                    self.raise_error_if_file_is_already_referenced(report_file)
+
+                instance.capacity_assessments.filter(id=assessment_id).update(**assessment_data)
+            else:
+                if report_file:
+                    self.raise_error_if_file_is_already_referenced(report_file)
+
+                assessment_data['created_by'] = self.context['request'].user
+                instance.capacity_assessments.create(**assessment_data)
+
     @transaction.atomic
     def update(self, instance, validated_data):
         if 'audit_reports' in validated_data:
             self.update_audit_reports(instance, validated_data['audit_reports'])
+        if 'capacity_assessments' in validated_data:
+            self.update_capacity_assessments(instance, validated_data['capacity_assessments'])
 
         self.prevent_many_common_file_validator(self.initial_data)
 

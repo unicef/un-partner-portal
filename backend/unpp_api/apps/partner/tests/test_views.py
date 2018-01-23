@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
+import random
+
 import mock
 
 from django.urls import reverse
@@ -33,7 +35,8 @@ from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     YEARS_OF_EXP_CHOICES,
     PARTNER_TYPES,
-)
+    ORG_AUDIT_CHOICES,
+    AUDIT_ASSESSMENT_CHOICES)
 
 
 class TestPartnerCountryProfileAPIView(BaseAPITestCase):
@@ -424,3 +427,67 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         response = self.client.patch(url, data={"other_doc_1": file_id, "other_doc_3": file_id}, format='json')
         self.assertFalse(statuses.is_success(response.status_code))
         self.assertEquals(response.data[0], 'Given related field common file id have to be unique.')
+
+    def test_add_audit_reports(self):
+        partner = Partner.objects.first()
+        url = reverse('partners:project-implementation', kwargs={"pk": partner.id})
+
+        files = []
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
+        for _ in range(2):
+            with open(filename) as doc:
+                response = self.client.post(reverse('common:file'), data={
+                    "file_field": doc
+                }, format='multipart')
+            self.assertEqual(response.status_code, statuses.HTTP_201_CREATED, msg=response.content)
+            files.append(dict(response.data))
+
+        update_payload = {
+            'audit_reports': [{
+                'most_recent_audit_report': f['id'],
+                'org_audit': random.choice(list(ORG_AUDIT_CHOICES))[0],
+            } for f in files]
+        }
+
+        update_response = self.client.patch(url, data=update_payload, format='json')
+        self.assertEqual(update_response.status_code, statuses.HTTP_200_OK)
+
+        updated_audit_reports = update_response.data['audit_reports']
+        self.assertEqual(len(updated_audit_reports), len(files))
+
+        for f in files:
+            self.assertTrue(
+                partner.audit_reports.filter(most_recent_audit_report_id=f['id']).exists()
+            )
+
+    def test_add_assessment_reports(self):
+        partner = Partner.objects.first()
+        url = reverse('partners:project-implementation', kwargs={"pk": partner.id})
+
+        files = []
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
+        for _ in range(2):
+            with open(filename) as doc:
+                response = self.client.post(reverse('common:file'), data={
+                    "file_field": doc
+                }, format='multipart')
+            self.assertEqual(response.status_code, statuses.HTTP_201_CREATED, msg=response.content)
+            files.append(dict(response.data))
+
+        update_payload = {
+            'capacity_assessments': [{
+                'report_file': f['id'],
+                'assessment_type': random.choice(list(AUDIT_ASSESSMENT_CHOICES))[0],
+            } for f in files]
+        }
+
+        update_response = self.client.patch(url, data=update_payload, format='json')
+        self.assertEqual(update_response.status_code, statuses.HTTP_200_OK)
+
+        updated_capacity_assessments = update_response.data['capacity_assessments']
+        self.assertEqual(len(updated_capacity_assessments), len(files))
+
+        for f in files:
+            self.assertTrue(
+                partner.capacity_assessments.filter(report_file_id=f['id']).exists()
+            )
