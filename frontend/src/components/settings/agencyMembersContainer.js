@@ -32,7 +32,7 @@ class AgencyMembersContainer extends Component {
     const { members, agencyName, columns, totalCount, loading } = this.props;
 
     return (
-      <div>
+      <React.Fragment>
         <Grid item>
           <HeaderNavigation title={agencyName} />
         </Grid>
@@ -52,7 +52,7 @@ class AgencyMembersContainer extends Component {
             </Grid>
           </Grid>
         </MainContentWrapper>
-      </div>
+      </React.Fragment>
     );
   }
 }

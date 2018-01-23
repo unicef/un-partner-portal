@@ -21,7 +21,7 @@ from common.serializers import (
 )
 from common.models import Point, Specialization
 from notification.consts import NotificationType
-from notification.helpers import user_received_notification_recently
+from notification.helpers import user_received_notification_recently, send_notification_application_created
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
 from project.models import EOI, Application, Assessment, ApplicationFeedback
@@ -280,23 +280,25 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         for focal_point in focal_points:
             eoi.focal_points.add(focal_point)
 
-        apps = []
-        for app in validated_data['applications']:
-            _app = Application.objects.create(
-                partner=app['partner'],
+        applications = []
+        for application in validated_data['applications']:
+            _application = Application.objects.create(
+                partner=application['partner'],
                 eoi=eoi,
                 agency=eoi.agency,
                 submitter=validated_data['eoi']['created_by'],
                 status=APPLICATION_STATUSES.pending,
                 did_win=True,
                 did_accept=False,
-                ds_justification_select=app['ds_justification_select'],
-                justification_reason=app['justification_reason'],
+                ds_justification_select=application['ds_justification_select'],
+                justification_reason=application['justification_reason'],
             )
-            apps.append(_app)
+            applications.append(_application)
+            send_notification_application_created(_application)
+
         return {
             "eoi": eoi,
-            "applications": apps,
+            "applications": applications,
         }
 
 
@@ -637,7 +639,6 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
 class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
 
     project_title = serializers.CharField(source="eoi.title")
-    eoi_id = serializers.CharField(source="eoi.id")
     agency_name = serializers.CharField(source="agency.name")
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
@@ -661,9 +662,6 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
 
     def get_specializations(self, obj):
         return SimpleSpecializationSerializer(obj.eoi.specializations.all(), many=True).data
-
-    def get_application_status(self, obj):
-        return obj.eoi.application_status
 
 
 class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer):
