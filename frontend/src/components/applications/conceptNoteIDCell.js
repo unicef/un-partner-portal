@@ -23,7 +23,7 @@ const ConceptNoteIDCell = (props) => {
 
 ConceptNoteIDCell.propTypes = {
   id: PropTypes.number,
-  cfeiId: PropTypes.string,
+  cfeiId: PropTypes.number,
 };
 
 export default ConceptNoteIDCell;

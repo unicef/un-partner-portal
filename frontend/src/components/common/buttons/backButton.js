@@ -26,7 +26,6 @@ class BackButton extends React.Component {
     this.state = {
       backRefer: props.previousPath,
     };
-    console.log(props.previousPath)
     this.handleClick = this.handleClick.bind(this);
   }
 

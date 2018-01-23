@@ -1,5 +1,3 @@
-const REGISTER_HISTORY = 'REGISTER_HISTORY'
-
 const defaultState = {
   currentPath: null,
   previousPath: null,
@@ -20,12 +18,3 @@ export default function singleRouteHistory(state = defaultState, action) {
       return state;
   }
 }
-
-
-function routesHistory(state = defaultState, action) {
-  switch (action.type) {
-    default:
-      return state;
-  }
-}
-
