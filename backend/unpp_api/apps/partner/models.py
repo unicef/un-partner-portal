@@ -353,10 +353,7 @@ class PartnerProfile(TimeStampedModel):
 
     @property
     def funding_complete(self):
-        if self.partner.is_hq is False:
-            budgets = self.partner.hq.budgets.filter(budget__isnull=False)
-        else:
-            budgets = self.partner.budgets.filter(budget__isnull=False)
+        budgets = self.partner.budgets.filter(budget__isnull=False)
 
         current_year = date.today().year
         required_budgets = budgets.filter(year__in=[
