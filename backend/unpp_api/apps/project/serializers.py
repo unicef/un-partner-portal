@@ -668,7 +668,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     is_direct = serializers.SerializerMethodField()
     partner_name = serializers.CharField(source="partner.legal_name")
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
-    selected_source = serializers.CharField(source="eoi.selected_source")
+    selected_source = serializers.CharField(source="eoi.selected_source", allow_null=True)
 
     class Meta:
         model = Application
@@ -729,10 +729,12 @@ class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirect
 
     class Meta:
         model = Application
-        fields = ApplicationPartnerUnsolicitedDirectSerializer.Meta.fields + ('has_red_flag',
-                                                                              'has_yellow_flag',
-                                                                              'partner_is_verified',
-                                                                              'is_ds_converted')
+        fields = ApplicationPartnerUnsolicitedDirectSerializer.Meta.fields + (
+            'has_red_flag',
+            'has_yellow_flag',
+            'partner_is_verified',
+            'is_ds_converted',
+        )
 
     def get_is_ds_converted(self, obj):
         return obj.eoi_converted is not None
