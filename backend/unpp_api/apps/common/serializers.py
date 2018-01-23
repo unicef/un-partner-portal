@@ -5,6 +5,8 @@ from django.db.models.base import Model
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+
+from common.countries import LOCATION_OPTIONAL_COUNTRIES
 from common.models import AdminLevel1, Point, Sector, Specialization, CommonFile
 
 
@@ -153,6 +155,15 @@ class AdminLevel1Serializer(serializers.ModelSerializer):
         fields = "__all__"
         validators = []  # Validation handled in custom get or create on point
 
+    def validate(self, data):
+        if data['country_code'] not in LOCATION_OPTIONAL_COUNTRIES and not data.get('name'):
+            raise ValidationError({
+                'name': [
+                    'this field is required for {}'.format(data['country_code'])
+                ]
+            })
+        return super(AdminLevel1Serializer, self).validate(data)
+
 
 class AdminLevel1CountrySerializer(serializers.ModelSerializer):
 
@@ -168,6 +179,18 @@ class PointSerializer(serializers.ModelSerializer):
     class Meta:
         model = Point
         fields = "__all__"
+
+    def validate(self, data):
+        if 'admin_level_1' in data and data['admin_level_1']['country_code'] not in LOCATION_OPTIONAL_COUNTRIES:
+            errors = {}
+            for field in ('lat', 'lon'):
+                if not data.get(field):
+                    errors[field] = [
+                        'this field is required for {}'.format(data['admin_level_1']['country_code'])
+                    ]
+            if errors:
+                raise ValidationError(errors)
+        return super(PointSerializer, self).validate(data)
 
 
 class CommonFileSerializer(serializers.ModelSerializer):
