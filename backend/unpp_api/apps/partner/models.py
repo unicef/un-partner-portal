@@ -85,6 +85,10 @@ class Partner(TimeStampedModel):
         return None
 
     @property
+    def country_of_origin(self):
+        return self.hq.country_code if self.hq else self.country_code
+
+    @property
     def is_country_profile(self):
         if self.is_international:
             return self.hq not in [None, '']

@@ -355,6 +355,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
         read_only=True, source="profile.project_implementation_is_complete"
     )
     other_info_is_complete = serializers.BooleanField(read_only=True, source="profile.other_info_is_complete")
+    country_of_origin = serializers.CharField()
 
     class Meta:
         model = Partner
@@ -400,6 +401,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "collaboration_complete",
             "proj_impl_is_complete",
             "other_info_is_complete",
+            "country_of_origin",
         )
 
     def get_hq_budgets(self, partner):
