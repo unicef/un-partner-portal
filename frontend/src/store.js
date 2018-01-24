@@ -171,6 +171,9 @@ export const selectApplicationStatuses = state => state.partnerProfileConfig['ap
 export const selectExtendedApplicationStatuses = state =>
   state.partnerProfileConfig['extended-application-statuses'];
 
+export const selectNormalizedExtendedApplicationStatuses = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['extended-application-statuses']);
+
 export const selectOrganizationTypes = state => state.partnerProfileConfig['partner-type'];
 
 export const selectNormalizedApplicationStatuses = state =>
@@ -199,6 +202,9 @@ export const selectNormalizedPolicyArea = state =>
 
 export const selectNormalizedDirectSelectionSource = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-source']);
+
+export const selectCountriesWithOptionalLocations = state =>
+  state.partnerProfileConfig['countries-with-optional-location'];
 
 export const selectNormalizedSpecializations = state =>
   mapValuesForSelectionField(state.sectors.allSpecializations);

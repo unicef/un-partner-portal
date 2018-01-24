@@ -8,6 +8,7 @@ import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import SpreadContent from '../../../../common/spreadContent';
 import LocationsMap from './locationsMap';
+import { selectCountriesWithOptionalLocations } from '../../../../../store';
 
 
 const messages = {
@@ -48,11 +49,10 @@ class LocationsMapField extends Component {
   }
 
   render() {
-    const { countryCode, currentCountry, currentLocations } = this.props;
+    const { countryCode, currentCountry, currentLocations, optionalLocations } = this.props;
     const {
       showMap,
     } = this.state;
-
     return (
       <div>
         <SpreadContent>
@@ -74,7 +74,10 @@ class LocationsMapField extends Component {
           removeLocation={this.removeLocation}
           removeAllLocations={this.removeAllLocations}
         />
-        {currentCountry && R.isEmpty(currentLocations) && <FormHelperText error>{'Select locations'}</FormHelperText>}
+        {currentCountry
+            && R.isEmpty(currentLocations)
+            && !optionalLocations.includes(countryCode)
+            && <FormHelperText error>{'Select locations'}</FormHelperText>}
       </div>
     );
   }
@@ -87,10 +90,12 @@ LocationsMapField.propTypes = {
   name: PropTypes.string,
   formName: PropTypes.string,
   dispatch: PropTypes.func,
+  optionalLocations: PropTypes.array,
 };
 
 export default connect(
   (state, ownProps) => {
+    const optionalLocations = selectCountriesWithOptionalLocations(state);
     const selector = formValueSelector(ownProps.formName);
     const { country, locations } = selector(state, `${ownProps.name}`);
     const currentCountry = country ? state.countries[country] : null;
@@ -99,6 +104,7 @@ export default connect(
       countryCode: country,
       currentCountry,
       currentLocations,
+      optionalLocations,
     };
   },
 )(LocationsMapField);

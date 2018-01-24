@@ -14,12 +14,12 @@ from common.serializers import (
     AdminLevel1Serializer
 )
 from common.models import Sector, CommonFile, AdminLevel1
-from common.countries import COUNTRIES_ALPHA2_CODE_DICT
+from common.countries import COUNTRIES_ALPHA2_CODE_DICT, LOCATION_OPTIONAL_COUNTRIES
 from common.pagination import MediumPagination
 from common.consts import (
     STAFF_GLOBALLY_CHOICES,
     PARTNER_DONORS_CHOICES,
-    WORKING_LAGNUAGES_CHOICES,
+    WORKING_LANGUAGES_CHOICES,
     CONCERN_CHOICES,
     AUDIT_TYPES,
     FORMAL_CAPACITY_ASSESSMENT,
@@ -66,7 +66,7 @@ class ConfigPPAPIView(APIView):
             "financial-control-system": FINANCIAL_CONTROL_SYSTEM_CHOICES,
             "functional-responsibilities": FUNCTIONAL_RESPONSIBILITY_CHOICES,
             "partner-donors": PARTNER_DONORS_CHOICES,
-            "working-languages": WORKING_LAGNUAGES_CHOICES,
+            "working-languages": WORKING_LANGUAGES_CHOICES,
             "population-of-concern": CONCERN_CHOICES,
             "audit-types": AUDIT_TYPES,
             "formal-capacity-assessment": FORMAL_CAPACITY_ASSESSMENT,
@@ -83,6 +83,7 @@ class ConfigPPAPIView(APIView):
             "direct-selection-source": DIRECT_SELECTION_SOURCE,
             "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,
             "extended-application-statuses": EXTENDED_APPLICATION_STATUSES,
+            "countries-with-optional-location": LOCATION_OPTIONAL_COUNTRIES,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

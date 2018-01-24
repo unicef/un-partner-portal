@@ -9,7 +9,7 @@ import TextFieldForm from '../../../forms/textFieldForm';
 import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
-  highRiskLoaction: 'Does the organization have the ablility to work in high-risk security locations?',
+  highRiskLoaction: 'Does the organization have the ability to work in high-risk security locations?',
   highRiskPolicy: 'Does the organization have policies, procedures and practices related to security risk management?',
   description: 'Briefly describe the organization\'s ability, if any, to scale-up operations in emergencies or other situations requiring rapid response.',
 };

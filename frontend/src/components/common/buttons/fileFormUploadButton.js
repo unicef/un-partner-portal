@@ -49,6 +49,9 @@ const styleSheet = theme => ({
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
   },
+  form: {
+    maxWidth: '100%',
+  },
 });
 
 class FileFormUploadButton extends Component {
@@ -109,7 +112,7 @@ class FileFormUploadButton extends Component {
     const url = R.is(String, input.value) ? input.value : fileUrl;
 
     return (
-      <FormControl fullWidth>
+      <FormControl className={classes.form}>
         {label && <FieldLabelWithTooltip
           infoText={infoText}
           tooltipIconProps={{
@@ -143,7 +146,7 @@ class FileFormUploadButton extends Component {
               </Button>
               {((touched && error) || warning) && <FormHelperText error>{!this.state.fileSizeError ? (error || warning) : messages.fileSizeError}</FormHelperText>}
             </React.Fragment>
-            : <React.Fragment className={classes.wrapContent}>
+            : <div className={classes.wrapContent}>
               <Typography type="subheading" className={classes.iconLabel} gutterBottom >
                 <Attachment className={classes.icon} />
                 <div
@@ -158,7 +161,7 @@ class FileFormUploadButton extends Component {
                   <Close className={classes.removeIcon} />
                 </IconButton>}
               </Typography>
-            </React.Fragment>}
+            </div>}
         </Fragment>
       </FormControl>
     );

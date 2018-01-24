@@ -1,23 +1,26 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { Marker, InfoWindow } from 'google-maps-react';
 import Typography from 'material-ui/Typography';
 import SearchBox from '../../../../common/map/SearchBox';
 import MapContainer from '../../../../common/map/MapContainer';
 import MapBounder from '../../../../common/map/MapBounder';
+import { errorToBeAdded } from '../../../../../reducers/errorReducer';
 
-
+const mapError = 'Mapping feature is not supported in this location';
+const GOOGLE_ERROR_STATIS = 'ZERO_RESULTS';
 /**
  * this component is controlled implementation of map.
- * To work, it needs to recieve focused country name, than it will center and zoom to this 
+ * To work, it needs to recieve focused country name, than it will center and zoom to this
  * specific country through geolocation.
  * It supports clicking on the map to make save specific location, but only in selected country.
  * The map is in controlled mode, that means it doesn't store locations, so it needs callbacks to
  * manipulate location storage: saveLocation, removeLocation, removeAllLocations
- * Markers, geolocation calls, search function, infoboxes are all controlled by this component 
+ * Markers, geolocation calls, search function, infoboxes are all controlled by this component
  * itself.
- * Model used to save location: 
+ * Model used to save location:
  * {
  *   country_code
  *   admin_level_1: { name },
@@ -63,7 +66,7 @@ class LocationsMapBase extends Component {
     }
   }
 
-  onMarkerOut(props, marker) {
+  onMarkerOut() {
     this.setState({
       activeLocation: null,
       activeMarker: null,
@@ -106,7 +109,7 @@ class LocationsMapBase extends Component {
   }
 
   mapClicked(mapProps, map, clickEvent) {
-    const { readOnly } = this.props;
+    const { readOnly, postError } = this.props;
 
     if (!readOnly) {
       const { currentCountryCode, saveLocation } = this.props;
@@ -116,7 +119,8 @@ class LocationsMapBase extends Component {
           let loc = results.find(location =>
             location.types.includes('administrative_area_level_1'));
           if (loc === undefined) {
-            loc = results.pop();
+            loc = results.find(location =>
+              location.types.includes('country'));
             countryCode = loc.address_components[0].short_name;
           } else {
             countryCode = loc.address_components[1].short_name;
@@ -130,6 +134,8 @@ class LocationsMapBase extends Component {
             lon: clickEvent.latLng.lng().toFixed(5),
           };
           saveLocation(newLocation);
+        } else if (status !== google.maps.GeocoderStatus.OK) {
+          postError(status);
         }
       });
     }
@@ -227,6 +233,16 @@ LocationsMapBase.propTypes = {
    * bool to disable map clicks to read only mode
    */
   readOnly: PropTypes.bool,
+  /**
+   * function to save error in redux and display snackbar
+   */
+  postError: PropTypes.func,
 };
 
-export default LocationsMapBase;
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  postError: error => dispatch(errorToBeAdded(
+    error, `pinNotAdded${ownProps.activeMarkercurrentCountryCode}`, mapError)),
+});
+
+
+export default connect(null, mapDispatchToProps)(LocationsMapBase);

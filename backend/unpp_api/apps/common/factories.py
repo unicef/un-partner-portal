@@ -29,10 +29,10 @@ from partner.models import (
     PartnerAuditReport,
     PartnerReporting,
     PartnerMember,
-)
+    PartnerCapacityAssessment)
 from project.models import EOI, Application, Assessment
 from review.models import PartnerFlag, PartnerVerification
-from .consts import (
+from common.consts import (
     PARTNER_TYPES,
     MEMBER_STATUSES,
     MEMBER_ROLES,
@@ -43,7 +43,7 @@ from .consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     POLICY_AREA_CHOICES,
     ORG_AUDIT_CHOICES,
-    AUDIT_ASSESMENT_CHOICES,
+    AUDIT_ASSESSMENT_CHOICES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     EOI_TYPES,
     DIRECT_SELECTION_SOURCE,
@@ -52,7 +52,7 @@ from .consts import (
     STAFF_GLOBALLY_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
 )
-from .countries import COUNTRIES_ALPHA2_CODE
+from common.countries import COUNTRIES_ALPHA2_CODE
 
 
 COUNTRIES = [x[0] for x in COUNTRIES_ALPHA2_CODE]
@@ -129,10 +129,9 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    fullname = fuzzy.FuzzyText()
+    fullname = factory.LazyFunction(get_fullname)
     email = factory.Sequence(lambda n: "fake-user-{}@unicef.org".format(n))
     password = factory.PostGenerationMethodCall('set_password', 'test')
-    fullname = factory.LazyFunction(get_fullname)
 
     profile = factory.RelatedFactory(UserProfileFactory, 'user')
 
@@ -154,10 +153,11 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 class AdminLevel1Factory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: "admin level 1 name {}".format(n))
-    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+    country_code = fuzzy.FuzzyChoice(COUNTRIES)
 
     class Meta:
         model = AdminLevel1
+        django_get_or_create = ('name', 'country_code')
 
 
 class PointFactory(factory.django.DjangoModelFactory):
@@ -172,7 +172,7 @@ class PointFactory(factory.django.DjangoModelFactory):
 class PartnerSimpleFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
     display_type = PARTNER_TYPES.national
-    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+    country_code = fuzzy.FuzzyChoice(COUNTRIES)
 
     class Meta:
         model = Partner
@@ -181,7 +181,7 @@ class PartnerSimpleFactory(factory.django.DjangoModelFactory):
 class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
     display_type = PARTNER_TYPES.cbo
-    country_code = factory.fuzzy.FuzzyChoice(COUNTRIES)
+    country_code = fuzzy.FuzzyChoice(COUNTRIES)
 
     # hq information
     country_presence = factory.LazyFunction(get_country_list)
@@ -419,10 +419,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         PartnerAuditAssessment.objects.create(
             partner=self,
             regular_audited_comment="fake regular audited comment {}".format(self.id),
-            assessment_report=cfile,
             major_accountability_issues_highlighted=True,
             comment="fake comment {}".format(self.id),
-            assessments=[AUDIT_ASSESMENT_CHOICES.micro],
         )
 
     @factory.post_generation
@@ -444,6 +442,23 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             org_audit=ORG_AUDIT_CHOICES.internal,
             most_recent_audit_report=cfile2,
             link_report="http://fake.unicef.org/fake_uri{}_2".format(self.id),
+        )
+
+    @factory.post_generation
+    def capacity_assessments(self, create, extracted, **kwargs):
+        cfile1 = CommonFile.objects.create()
+        cfile1.file_field.save('test1.csv', open(filename))
+        PartnerCapacityAssessment.objects.create(
+            created_by=User.objects.first(),
+            partner=self,
+            assessment_type=AUDIT_ASSESSMENT_CHOICES.micro,
+            report_file=cfile1,
+        )
+        PartnerCapacityAssessment.objects.create(
+            created_by=User.objects.first(),
+            partner=self,
+            assessment_type=AUDIT_ASSESSMENT_CHOICES.unhcr,
+            report_url="http://fake.unicef.org/fake_uri{}_2".format(self.id),
         )
 
     @factory.post_generation
@@ -634,7 +649,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
         count = random.randint(0, 3)
         while count:
             count -= 1
-            point, create = Point.objects.get_or_create(**{
+            point = Point.objects.get_point(**{
                 "lat": random.randint(-180, 180),
                 "lon": random.randint(-180, 180),
                 "admin_level_1": {"country_code": get_country_list(1)[0], "name": "name {}".format(self.pk)},

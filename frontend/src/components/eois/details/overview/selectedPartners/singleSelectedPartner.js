@@ -7,7 +7,7 @@ import Button from 'material-ui/Button';
 import GridColumn from '../../../../common/grid/gridColumn';
 import { updateApplication } from '../../../../../reducers/applicationDetails';
 import { loadCfei } from '../../../../../reducers/cfeiDetails';
-import { selectApplicationCurrentStatus, selectExtendedApplicationStatuses } from '../../../../../store';
+import { selectApplicationCurrentStatus, selectExtendedApplicationStatuses, isCfeiCompleted } from '../../../../../store';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 
 const messages = {
@@ -18,9 +18,7 @@ const messages = {
 
 
 const SingleSelectedPartner = (props) => {
-  const { partner, isFocalPoint, acceptSelection, applicationStatus } = props;
-  const displayAccept = isFocalPoint && applicationStatus === 'Application Successful';
-  const displayWithdraw = isFocalPoint && applicationStatus !== 'Selection Retracted';
+  const { partner, applicationStatus, acceptSelection, displayAccept, displayWithdraw } = props;
   return (<GridColumn>
     <Typography>{partner.partner_name}</Typography>
     <Typography type="caption">{applicationStatus}</Typography>
@@ -42,14 +40,30 @@ const SingleSelectedPartner = (props) => {
 
 SingleSelectedPartner.propTypes = {
   partner: PropTypes.object,
-  isFocalPoint: PropTypes.bool,
+  displayWithdraw: PropTypes.bool,
+  displayAccept: PropTypes.bool,
   acceptSelection: PropTypes.func,
   applicationStatus: PropTypes.string,
 };
 
-const mapStateToProps = (state, { partner: { id } }) => ({
-  applicationStatus: selectExtendedApplicationStatuses(state)[selectApplicationCurrentStatus(state, id)],
-});
+const mapStateToProps = (state, {
+  isFocalPoint,
+  id: eoiId,
+  partner: { id } }) => {
+  const currentStatus = selectApplicationCurrentStatus(state, id);
+  const cfeiCompleted = isCfeiCompleted(state, eoiId);
+  const displayAccept = isFocalPoint
+    && currentStatus === 'Suc'
+    && !cfeiCompleted;
+  const displayWithdraw = isFocalPoint
+    && currentStatus !== 'Ret'
+    && !cfeiCompleted;
+  return {
+    displayAccept,
+    displayWithdraw,
+    applicationStatus: selectExtendedApplicationStatuses(state)[currentStatus],
+  };
+};
 
 
 const mapDispatchToProps = (dispatch, { id, partner = {} }) => ({

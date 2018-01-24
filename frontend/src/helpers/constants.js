@@ -69,3 +69,7 @@ export const PLACEHOLDERS = {
   state: 'Please state',
   comment: 'Provide comment',
 };
+
+export const COUNTRIES = {
+  palestine: 'PS',
+};

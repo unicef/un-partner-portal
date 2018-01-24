@@ -38,7 +38,7 @@ const savePartnerProfileOverview = (state, action) => {
 
   const sectors = groupSpecializationsByCategory(partnerDetails.experiences);
   const profileOverview = {
-    lastUpdate: '18 Sep 2017',
+    lastUpdate: R.prop('last_profile_update', partnerDetails),
     name: R.prop('legal_name', partnerDetails),
     verified: R.path(['partner_additional', 'is_verified'], partnerDetails),
     partnerId: R.prop('id', partnerDetails),
