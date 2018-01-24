@@ -426,14 +426,6 @@ class PartnerProfile(TimeStampedModel):
             'have_separate_bank_account': self.have_separate_bank_account is not None,
             'explain': self.explain if self.have_separate_bank_account is False else True,
 
-            'regular_audited': self.partner.audit.regular_audited is not None,
-            'regular_audited_comment':
-                self.partner.audit.regular_audited_comment if self.partner.audit.regular_audited is False else True,
-            'major_accountability_issues_highlighted':
-                self.partner.audit.major_accountability_issues_highlighted is not None,
-            'comment':
-                self.partner.audit.comment if self.partner.audit.major_accountability_issues_highlighted else True,
-
             'key_result': self.partner.report.key_result,
             'publish_annual_reports': self.partner.report.publish_annual_reports is not None,
             'publish_annual_reports_last_report':
@@ -454,9 +446,10 @@ class PartnerProfile(TimeStampedModel):
             required_fields[
                 'major_accountability_issues_highlighted'] = major_accountability_issues_highlighted is not None
             if major_accountability_issues_highlighted:
-                required_fields['audit_comment'] = self.partner.audit.comment
+                required_fields['comment'] = self.partner.audit.comment
 
         regular_capacity_assessments = self.partner.audit.regular_capacity_assessments
+        required_fields['regular_capacity_assessments'] = regular_capacity_assessments is not None
         if regular_capacity_assessments:
             required_fields['capacity_assessments'] = all(
                 [report.is_complete for report in self.partner.capacity_assessments.all()]
