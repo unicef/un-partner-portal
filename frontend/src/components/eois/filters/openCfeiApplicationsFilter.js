@@ -82,6 +82,7 @@ class OpenCfeiApplicationsFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query, {
+        page: 1,
         legal_name,
         type_of_org,
         country_code,

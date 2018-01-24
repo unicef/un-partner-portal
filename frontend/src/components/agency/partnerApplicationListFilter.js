@@ -99,6 +99,7 @@ class PartnerApplicationListFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query, {
+        page: 1,
         project_title,
         agency: agencyQ,
         did_win,

@@ -86,6 +86,7 @@ class EoiPartnerFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query, {
+        page: 1,
         title,
         active,
         agency,
