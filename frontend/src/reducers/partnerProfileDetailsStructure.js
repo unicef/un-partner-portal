@@ -16,6 +16,7 @@ const partnerDetailsStructure = {
       former_legal_name: null,
       country_code: null,
       display_type: null,
+      country_of_origin: null,
     },
     registration: {
       hq: null,
