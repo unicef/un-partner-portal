@@ -36,12 +36,12 @@ const PartnerOpenHeaderOptions = (props) => {
       {dialogOpen[edit] && <EditCfeiModal
         id={id}
         type="direct"
-        dialogOpen={dialogOpen}
+        dialogOpen={dialogOpen[edit]}
         handleDialogClose={handleDialogClose}
       />}
       {dialogOpen[complete] && <CompleteCfeiModal
         id={id}
-        dialogOpen={dialogOpen}
+        dialogOpen={dialogOpen[complete]}
         handleDialogClose={handleDialogClose}
       />}
     </SpreadContent>

@@ -18,7 +18,12 @@ const messages = {
 
 
 const SingleSelectedPartner = (props) => {
-  const { partner, applicationStatus, acceptSelection, displayAccept, displayWithdraw } = props;
+  const { partner,
+    loadCfei,
+    applicationStatus,
+    acceptSelection,
+    displayAccept,
+    displayWithdraw } = props;
   return (<GridColumn>
     <Typography>{partner.partner_name}</Typography>
     <Typography type="caption">{applicationStatus}</Typography>
@@ -44,21 +49,21 @@ SingleSelectedPartner.propTypes = {
   displayAccept: PropTypes.bool,
   acceptSelection: PropTypes.func,
   applicationStatus: PropTypes.string,
+  loadCfei: PropTypes.func,
 };
 
 const mapStateToProps = (state, {
   isFocalPoint,
-  applicationStatus,
   id: eoiId,
   partner: { id } }) => {
+  const currentStatus = selectApplicationCurrentStatus(state, id);
   const cfeiCompleted = isCfeiCompleted(state, eoiId);
   const displayAccept = isFocalPoint
-    && applicationStatus === 'Application Successful'
+    && currentStatus === 'Suc'
     && !cfeiCompleted;
   const displayWithdraw = isFocalPoint
-    && applicationStatus !== 'Selection Retracted'
+    && currentStatus !== 'Ret'
     && !cfeiCompleted;
-  const currentStatus = selectApplicationCurrentStatus(state, id);
   return {
     displayAccept,
     displayWithdraw,
@@ -70,7 +75,7 @@ const mapStateToProps = (state, {
 const mapDispatchToProps = (dispatch, { id, partner = {} }) => ({
   acceptSelection: () => dispatch(updateApplication(partner.id,
     { did_accept: true, did_decline: false })),
-  loadCfei: () => dispatch(loadCfei(partner.id)),
+  loadCfei: () => dispatch(loadCfei(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleSelectedPartner);

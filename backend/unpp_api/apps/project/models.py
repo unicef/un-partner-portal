@@ -38,11 +38,11 @@ class EOI(TimeStampedModel):
     cn_template = models.FileField(null=True, blank=True)
     specializations = models.ManyToManyField('common.Specialization', related_name="expressions_of_interest")
     # TODO: intended_pop_of_concern = Selection. Should have in help text only for UNHCR. TODO on select options
-    description = models.CharField(max_length=200, verbose_name='Brief background of the project')
+    description = models.CharField(max_length=5000, verbose_name='Brief background of the project')
     goal = models.CharField(
-        max_length=200, null=True, blank=True, verbose_name='Goal, Objective, Expected Outcome and Results.')
+        max_length=5000, null=True, blank=True, verbose_name='Goal, Objective, Expected Outcome and Results.')
     other_information = models.CharField(
-        max_length=200, null=True, blank=True, verbose_name='Other information (optional)')
+        max_length=5000, null=True, blank=True, verbose_name='Other information (optional)')
     start_date = models.DateField(verbose_name='Estimated Start Date')
     end_date = models.DateField(verbose_name='Estimated End Date')
     deadline_date = models.DateField(verbose_name='Estimated Deadline Date', null=True, blank=True)
@@ -140,9 +140,7 @@ class ApplicationQuerySet(models.QuerySet):
 
 class Application(TimeStampedModel):
     is_unsolicited = models.BooleanField(default=False, verbose_name='Is unsolicited?')
-    proposal_of_eoi_details = JSONField(
-        default=dict([('title', ''), ('specializations', [])])
-    )
+    proposal_of_eoi_details = JSONField(default=dict([('title', ''), ('specializations', [])]))
     locations_proposal_of_eoi = models.ManyToManyField('common.Point', related_name="applications", blank=True)
     partner = models.ForeignKey('partner.Partner', related_name="applications")
     eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
@@ -167,8 +165,7 @@ class Application(TimeStampedModel):
         null=True
     )
     # Applies when application converted to EOI. Only applicable if this is unsolicited
-    eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion",
-                                         null=True, blank=True)
+    eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion", null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
 
     objects = ApplicationQuerySet.as_manager()

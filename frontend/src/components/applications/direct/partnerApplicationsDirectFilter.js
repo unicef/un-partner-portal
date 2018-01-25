@@ -103,6 +103,7 @@ class PartnerApplicationsNotesFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query, {
+        page: 1,
         agency,
         cfei_active,
         country_code,

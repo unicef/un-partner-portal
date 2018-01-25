@@ -34,14 +34,29 @@ export const newCfeiSubmitted = () => ({ type: NEW_CFEI_SUBMITTED });
 export const newCfeiProcessing = () => ({ type: NEW_CFEI_PROCESSING });
 export const newCfeiProcessed = () => ({ type: NEW_CFEI_PROCESSED });
 
-const prepareBody = (body) => {
+const mergeLocations = countries => (acc, next) => {
+  if (!R.has('locations', next)) {
+    const newNext = R.assoc('locations', [
+      { admin_level_1:
+        {
+          name: countries[next.country],
+          country_code: next.country,
+        },
+      }], next);
+    return R.mergeDeepWith(R.concat, acc, newNext);
+  }
+
+  return R.mergeDeepWith(R.concat, acc, next);
+};
+
+const prepareBody = (body, getState) => {
   let newBody = R.clone(body);
   const flatSectors = mergeListsFromObjectArray(newBody.specializations, 'areas');
   newBody = R.assoc('specializations', flatSectors, body);
   newBody = R.assoc('country_code', body.countries.map(country => country.country), newBody);
   newBody = R.assoc('locations',
     R.reduce(
-      R.mergeDeepWith(R.concat),
+      mergeLocations(getState().countries),
       0,
       body.countries,
     ).locations, newBody);
@@ -51,7 +66,7 @@ const prepareBody = (body) => {
 export const addOpenCfei = body => (dispatch, getState) => {
   dispatch(newCfeiSubmitting());
   const { agencyId, officeId } = getState().session;
-  const preparedBody = prepareBody(body);
+  const preparedBody = prepareBody(body, getState);
   const params = history.getCurrentLocation().query;
   return postOpenCfei(R.mergeWith(R.merge, preparedBody,
     { agency: agencyId, agency_office: officeId }))
@@ -70,7 +85,7 @@ export const addOpenCfei = body => (dispatch, getState) => {
 export const addDirectCfei = body => (dispatch, getState) => {
   dispatch(newCfeiSubmitting());
   const { agencyId, officeId } = getState().session;
-  const preparedBody = prepareBody(body);
+  const preparedBody = prepareBody(body, getState);
   const { applications, ...other } = preparedBody;
   const finalBody = {
     applications,
@@ -88,9 +103,9 @@ export const addDirectCfei = body => (dispatch, getState) => {
     });
 };
 
-export const addUnsolicitedCN = body => (dispatch) => {
+export const addUnsolicitedCN = body => (dispatch, getState) => {
   dispatch(newCfeiSubmitting());
-  const preparedBody = prepareBody(body);
+  const preparedBody = prepareBody(body, getState);
   const params = history.getCurrentLocation().query;
   return postUnsolicitedCN(preparedBody)
     .then((unsolicited) => {

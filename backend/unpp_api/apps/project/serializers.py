@@ -7,6 +7,7 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from account.models import User
 from account.serializers import AgencyUserSerializer, IDUserSerializer, UserSerializer
@@ -21,7 +22,8 @@ from common.serializers import (
 )
 from common.models import Point, Specialization
 from notification.consts import NotificationType
-from notification.helpers import user_received_notification_recently
+from notification.helpers import user_received_notification_recently, send_notification_application_created, \
+    send_notification_to_cfei_focal_points
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
 from project.models import EOI, Application, Assessment, ApplicationFeedback
@@ -125,6 +127,13 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
         exclude = ("cn", "eoi", "agency", "submitter")
+
+    def validate_partner(self, partner):
+        if not partner.is_verified:
+            raise ValidationError('Only verified partners are eligible for Direct Selections.')
+        if partner.is_hq:
+            raise ValidationError('HQs of International partners are not eligible for Direct Selections.')
+        return partner
 
 
 class CreateDirectApplicationNoCNSerializer(serializers.ModelSerializer):
@@ -248,7 +257,7 @@ class CreateUnsolicitedProjectSerializer(MixinPreventManyCommonFile, serializers
         )
 
         for location in locations:
-            point, created = Point.objects.get_or_create(**location)
+            point = Point.objects.get_point(**location)
             app.locations_proposal_of_eoi.add(point)
 
         return app
@@ -261,17 +270,14 @@ class CreateDirectProjectSerializer(serializers.Serializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        locations = validated_data['eoi']['locations']
-        del validated_data['eoi']['locations']
-        specializations = validated_data['eoi']['specializations']
-        del validated_data['eoi']['specializations']
-        focal_points = validated_data['eoi']['focal_points']
-        del validated_data['eoi']['focal_points']
+        locations = validated_data['eoi'].pop('locations')
+        specializations = validated_data['eoi'].pop('specializations')
+        focal_points = validated_data['eoi'].pop('focal_points')
 
         validated_data['eoi']['display_type'] = EOI_TYPES.direct
         eoi = EOI.objects.create(**validated_data['eoi'])
         for location in locations:
-            point, created = Point.objects.get_or_create(**location)
+            point = Point.objects.get_point(**location)
             eoi.locations.add(point)
 
         for specialization in specializations:
@@ -280,23 +286,26 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         for focal_point in focal_points:
             eoi.focal_points.add(focal_point)
 
-        apps = []
-        for app in validated_data['applications']:
-            _app = Application.objects.create(
-                partner=app['partner'],
+        applications = []
+        for application in validated_data['applications']:
+            _application = Application.objects.create(
+                partner=application['partner'],
                 eoi=eoi,
                 agency=eoi.agency,
                 submitter=validated_data['eoi']['created_by'],
                 status=APPLICATION_STATUSES.pending,
                 did_win=True,
                 did_accept=False,
-                ds_justification_select=app['ds_justification_select'],
-                justification_reason=app['justification_reason'],
+                ds_justification_select=application['ds_justification_select'],
+                justification_reason=application['justification_reason'],
             )
-            apps.append(_app)
+            applications.append(_application)
+            send_notification_application_created(_application)
+
+        send_notification_to_cfei_focal_points(eoi)
         return {
             "eoi": eoi,
-            "applications": apps,
+            "applications": applications,
         }
 
 
@@ -308,19 +317,16 @@ class CreateProjectSerializer(CreateEOISerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        locations = validated_data['locations']
-        del validated_data['locations']
-        specializations = validated_data['specializations']
-        del validated_data['specializations']
-        focal_points = validated_data['focal_points']
-        del validated_data['focal_points']
+        locations = validated_data.pop('locations')
+        specializations = validated_data.pop('specializations')
+        focal_points = validated_data.pop('focal_points')
 
         validated_data['cn_template'] = validated_data['agency'].profile.eoi_template
         validated_data['created_by'] = self.context['request'].user
         self.instance = EOI.objects.create(**validated_data)
 
         for location in locations:
-            point, created = Point.objects.get_or_create(**location)
+            point = Point.objects.get_point(**location)
             self.instance.locations.add(point)
 
         for specialization in specializations:
@@ -328,7 +334,7 @@ class CreateProjectSerializer(CreateEOISerializer):
 
         for focal_point in focal_points:
             self.instance.focal_points.add(focal_point)
-
+        send_notification_to_cfei_focal_points(self.instance)
         return self.instance
 
 
@@ -486,6 +492,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         if focal_points:
             instance.focal_points.through.objects.exclude(user_id__in=focal_points).delete()
             instance.focal_points.add(*User.objects.filter(id__in=focal_points))
+            send_notification_to_cfei_focal_points(instance)
         elif 'focal_points' in self.initial_data:
             instance.focal_points.clear()
 
@@ -672,7 +679,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     is_direct = serializers.SerializerMethodField()
     partner_name = serializers.CharField(source="partner.legal_name")
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
-    selected_source = serializers.CharField(source="eoi.selected_source")
+    selected_source = serializers.CharField(source="eoi.selected_source", allow_null=True)
 
     class Meta:
         model = Application
@@ -733,10 +740,12 @@ class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirect
 
     class Meta:
         model = Application
-        fields = ApplicationPartnerUnsolicitedDirectSerializer.Meta.fields + ('has_red_flag',
-                                                                              'has_yellow_flag',
-                                                                              'partner_is_verified',
-                                                                              'is_ds_converted')
+        fields = ApplicationPartnerUnsolicitedDirectSerializer.Meta.fields + (
+            'has_red_flag',
+            'has_yellow_flag',
+            'partner_is_verified',
+            'is_ds_converted',
+        )
 
     def get_is_ds_converted(self, obj):
         return obj.eoi_converted is not None
@@ -755,7 +764,7 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
 
     ds_justification_select = serializers.ListField()
     justification = serializers.CharField(source="eoi.justification")
-    focal_points = IDUserSerializer(many=True, source="eoi.focal_points")
+    focal_points = IDUserSerializer(many=True, source="eoi.focal_points", read_only=True)
     description = serializers.CharField(source="eoi.description")
     other_information = serializers.CharField(
         source="eoi.other_information", required=False, allow_blank=True, allow_null=True)
@@ -775,7 +784,6 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
     def create(self, validated_data):
         ds_justification_select = validated_data.pop('ds_justification_select')
         focal_points = self.initial_data.get('focal_points', [])
-        del validated_data['eoi']['focal_points']
         submitter = self.context['request'].user
         app_id = self.context['request'].parser_context['kwargs']['pk']
         app = get_object_or_404(
@@ -817,6 +825,8 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
             ds_justification_select=ds_justification_select,
             justification_reason=app.justification_reason
         )
+
+        send_notification_to_cfei_focal_points(eoi)
 
         return ds_app
 

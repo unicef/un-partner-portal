@@ -205,6 +205,9 @@ export const selectNormalizedPolicyArea = state =>
 export const selectNormalizedDirectSelectionSource = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-source']);
 
+export const selectCountriesWithOptionalLocations = state =>
+  state.partnerProfileConfig['countries-with-optional-location'];
+
 export const selectNormalizedSpecializations = state =>
   mapValuesForSelectionField(state.sectors.allSpecializations);
 

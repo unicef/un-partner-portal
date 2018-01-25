@@ -76,7 +76,8 @@ class PartnerProfileEdit extends Component {
     const index = this.updatePath();
 
     return (
-      <div ref={(ref) => { this.rootContainer = ref; }}>
+      <React.Fragment>
+        <div ref={(ref) => { this.rootContainer = ref; }} />
         <HeaderNavigation
           index={index}
           subTitle={messages.edit}
@@ -90,7 +91,7 @@ class PartnerProfileEdit extends Component {
           {(index !== -1) && children}
         </HeaderNavigation>
         <Loader loading={partnerLoading} fullscreen />
-      </div>
+      </React.Fragment>
     );
   }
 }

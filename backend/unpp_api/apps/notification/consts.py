@@ -20,6 +20,7 @@ class NotificationType(object):
     SELECTED_AS_CFEI_REVIEWER = 'agency_cfei_reviewers_selected'
     CFEI_REVIEW_REQUIRED = 'cfei_review_required'
     PARTNER_DECISION_MADE = 'agency_application_decision_make'
+    ADDED_AS_CFEI_FOCAL_POINT = 'added_as_cfei_local_point'
 
 
 NOTIFICATION_DATA = {
@@ -95,5 +96,9 @@ NOTIFICATION_DATA = {
     NotificationType.CFEI_REVIEW_REQUIRED: {
         'template_name': 'CFEI_review_required',
         'subject': 'Your CFEI review is required'
+    },
+    NotificationType.ADDED_AS_CFEI_FOCAL_POINT: {
+        'template_name': 'added_as_cfei_local_point',
+        'subject': 'You have been added as a CFEI focal point'
     },
 }

@@ -27,6 +27,8 @@ from common.factories import (
     AgencyOfficeFactory,
     AgencyFactory,
     PartnerVerificationFactory,
+    UserFactory,
+    PartnerFactory,
 )
 from common.models import Specialization, CommonFile
 from common.consts import (
@@ -295,7 +297,14 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         }
 
         response = self.client.post(self.url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)
+
+        for partner in Partner.objects.all():
+            PartnerVerificationFactory(partner=partner, submitter=self.user)
+
+        response = self.client.post(self.url, data=payload, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED)
+
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
         self.assertEquals(response.data['eoi']['display_type'], EOI_TYPES.direct)
@@ -784,3 +793,216 @@ class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
             mock_now.return_value = eoi.created + relativedelta(hours=25)
             create_notification_response = self.client.post(url, format='json')
             self.assertEqual(create_notification_response.status_code, statuses.HTTP_201_CREATED)
+
+
+class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
+
+    user_type = 'agency'
+
+    def setUp(self):
+        super(TestLocationRequiredOnCFEICreate, self).setUp()
+        office = self.user.agency_members.first().office
+        self.base_payload = {
+            "specializations": [
+                24
+            ],
+            "assessments_criteria": [
+                {
+                    "selection_criteria": "LEP",
+                    "description": "asdasdasdasd"
+                }
+            ],
+            "title": "asdasdasd",
+            "focal_points": [
+                self.user.id
+            ],
+            "description": "asdasdas",
+            "goal": "asdasdsa",
+            "deadline_date": "2018-01-24",
+            "notif_results_date": "2018-01-25",
+            "start_date": "2018-01-25",
+            "end_date": "2018-01-28",
+            "has_weighting": False,
+            "locations": [
+                {
+                    "admin_level_1": {
+                        "country_code": "CV"
+                    },
+                }
+            ],
+            "agency": office.agency.id,
+            "agency_office": office.id,
+
+        }
+
+    def test_create_required(self):
+        payload = self.base_payload.copy()
+        url = reverse('projects:open')
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertEqual(create_response.status_code, statuses.HTTP_400_BAD_REQUEST)
+        self.assertIn('locations', create_response.data)
+
+        payload["locations"][0]['admin_level_1']['name'] = 'asd'
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertEqual(create_response.status_code, statuses.HTTP_400_BAD_REQUEST)
+        self.assertIn('locations', create_response.data)
+
+        payload["locations"][0]['lat'] = "14.95639"
+        payload["locations"][0]['lon'] = "-23.62782"
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertEqual(create_response.status_code, statuses.HTTP_201_CREATED)
+
+    def test_create_optional(self):
+        payload = self.base_payload.copy()
+        url = reverse('projects:open')
+
+        payload["locations"] = [
+            {
+                "admin_level_1": {
+                    "country_code": "PS"
+                },
+            }
+        ]
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertEqual(create_response.status_code, statuses.HTTP_201_CREATED)
+
+    def test_multiple_locations(self):
+        payload = self.base_payload.copy()
+        url = reverse('projects:open')
+        payload["locations"] = [
+            {
+                "admin_level_1": {
+                    "country_code": "CV",
+                    "name": "ASD",
+                },
+                'lat': "14.95639",
+                'lon': "-23.62782"
+            },
+            {
+                "admin_level_1": {
+                    "country_code": "PS"
+                },
+            }
+        ]
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertEqual(create_response.status_code, statuses.HTTP_201_CREATED)
+
+
+class TestDirectSelectionTestCase(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_AGENCY
+    quantity = 2
+    initial_factories = [
+        AgencyFactory,
+        AgencyOfficeFactory,
+        UserFactory,
+        PartnerFactory,
+    ]
+
+    def setUp(self):
+        super(TestDirectSelectionTestCase, self).setUp()
+        for partner in Partner.objects.all():
+            factory = PartnerMemberFactory
+            factory.partner = partner
+            factory.create_batch(5)
+
+    def test_create_direct(self):
+        office = self.user.agency_members.first().office
+        partners = Partner.objects.all()[:2]
+        partner1, partner2 = partners
+        focal_point = User.objects.exclude(id=self.user.id).first()
+        direct_selection_payload = {
+            "applications": [
+                {
+                    "partner": partner1.id,
+                    "ds_justification_select": ["Loc"],
+                    "justification_reason": "123123"
+                }, {
+                    "partner": partner2.id,
+                    "ds_justification_select": ["Loc"],
+                    "justification_reason": "1231231241245125"
+                }],
+            "eoi": {
+                "countries": [
+                    {
+                        "country": "FR",
+                        "locations": [{
+                            "admin_level_1": {
+                                "name": "Île-de-France",
+                                "country_code": "FR"
+                            },
+                            "lat": "48.45289",
+                            "lon": "2.65182"
+                        }]
+                    }
+                ],
+                "specializations": [28, 27],
+                "title": "1213123",
+                "focal_points": [focal_point.id],
+                "description": "123123123",
+                "goal": "123123123",
+                "start_date": "2018-01-20",
+                "end_date": "2018-01-27",
+                "country_code": ["FR"],
+                "locations": [
+                    {
+                        "admin_level_1": {
+                            "name": "Île-de-France",
+                            "country_code": "FR"
+                        },
+                        "lat": "48.45289",
+                        "lon": "2.65182"
+                    }
+                ],
+                "agency": office.agency.id,
+                "agency_office": office.id
+            }}
+
+        url = reverse('projects:direct')
+        response = self.client.post(url, data=direct_selection_payload, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)
+
+        for partner in Partner.objects.all():
+            PartnerVerificationFactory(partner=partner, submitter=self.user)
+
+        response = self.client.post(url, data=direct_selection_payload, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED)
+
+        selection_emails = filter(
+            lambda msg: msg.subject == NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'],
+            mail.outbox
+        )
+        self.assertEqual(len(partners.values_list('partner_members__user')), len(selection_emails))
+        mail.outbox = []
+
+        partner2_application = partner2.applications.first()
+        application_url = reverse('projects:application', kwargs={'pk': partner2_application.pk})
+
+        retract_payload = {
+            "withdraw_reason": "because",
+            "did_withdraw": True,
+            "justification_reason": None
+        }
+
+        update_response = self.client.patch(application_url, data=retract_payload, format='json')
+        self.assertEqual(update_response.status_code, statuses.HTTP_200_OK)
+
+        self.assertIn(
+            NOTIFICATION_DATA[NotificationType.CFEI_APPLICATION_WITHDRAWN]['subject'], [m.subject for m in mail.outbox]
+        )
+        mail.outbox = []
+
+        partner1_application = partner1.applications.first()
+        application_url = reverse('projects:application', kwargs={'pk': partner1_application.pk})
+
+        accept_payload = {
+            "did_accept": True,
+            "did_decline": False
+        }
+
+        update_response = self.client.patch(application_url, data=accept_payload, format='json')
+        self.assertEqual(update_response.status_code, statuses.HTTP_200_OK)
+
+        self.assertIn(
+            NOTIFICATION_DATA[NotificationType.CFEI_APPLICATION_WIN]['subject'], [m.subject for m in mail.outbox]
+        )

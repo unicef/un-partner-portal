@@ -2,21 +2,19 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
-import Divider from 'material-ui/Divider';
 import R from 'ramda';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
-import HeaderList from '../../common/list/headerList';
+import { withStyles } from 'material-ui/styles';
 import { loadApplicationDecisions } from '../../../reducers/applicationsDecisions';
 import SpreadContent from '../../common/spreadContent';
 import PaddedContent from '../../common/paddedContent';
 import GridColumn from '../../common/grid/gridColumn';
 import { formatDateForPrint } from '../../../helpers/dates';
-import { ROLES } from '../../../helpers/constants';
 import Pagination from '../../common/pagination';
-import EmptyContent from '../../common/emptyContent';
 import TextWithBackground from '../../common/textWithColorBackground';
 import Loader from '../../common/loader';
+
 
 const messages = {
   title: 'Partner Decisions From 5 Past Days',
@@ -25,11 +23,22 @@ const messages = {
   declined: 'declined',
 };
 
-const SingleDecision = ({ id, partner: { legal_name }, eoi: { title }, modified, did_accept }) => (
+const styleSheet = () => ({
+  name: { flexBasis: '40%' },
+  status: { flexBasis: '40%' },
+});
+
+const SingleDecisionBase = ({
+  classes,
+  id,
+  partner: { legal_name },
+  eoi: { title },
+  modified, did_accept,
+}) => (
   <Paper key={id}>
     <PaddedContent>
       <SpreadContent>
-        <div>
+        <div className={classes.name}>
           <Typography type="body2">
             {legal_name}
           </Typography>
@@ -37,11 +46,13 @@ const SingleDecision = ({ id, partner: { legal_name }, eoi: { title }, modified,
             {`${id} | ${title}`}
           </Typography>
         </div>
-        <TextWithBackground
-          text={did_accept ? messages.accepted : messages.declined}
-          type="button"
-          color="green"
-        />
+        <div className={classes.status}>
+          <TextWithBackground
+            text={did_accept ? messages.accepted : messages.declined}
+            type="button"
+            color={did_accept ? 'green' : 'red'}
+          />
+        </div>
         <div>
           <Typography type="caption">
             {`${messages.decisionDate}:`}
@@ -53,6 +64,8 @@ const SingleDecision = ({ id, partner: { legal_name }, eoi: { title }, modified,
       </SpreadContent>
     </PaddedContent>
   </Paper>);
+
+const SingleDecision = withStyles(styleSheet, { name: 'SingleDecision' })(SingleDecisionBase);
 
 class PartnerDecisions extends Component {
   constructor() {
@@ -95,7 +108,7 @@ class PartnerDecisions extends Component {
       <Loader loading={loading} >
         <GridColumn>
           <Typography type="headline">{messages.title}</Typography>
-          {decisions.map(decision => SingleDecision(decision))}
+          {decisions.map(decision => React.createElement(SingleDecision, decision))}
           <Grid container justify="center" >
             <Grid item>
               <Pagination

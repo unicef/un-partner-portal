@@ -91,7 +91,6 @@ class PartnerProfileProjectImplementation extends Component {
     const projectImplementation = flatten(formValues.project_impl);
     const initprojectImplementation = flatten(initialValues.project_impl);
     let patchValues = changedValues(initprojectImplementation, projectImplementation);
-
     if (patchValues.audit_reports) {
       const audits = R.map((item) => {
         if (!R.is(Number, item.most_recent_audit_report)) {
@@ -102,9 +101,23 @@ class PartnerProfileProjectImplementation extends Component {
 
       patchValues = R.assoc('audit_reports', audits, patchValues);
     }
+    if (patchValues.capacity_assessments) {
+      const assessments = R.map((item) => {
+        if (!R.is(Number, item.report_file)) {
+          return R.dissoc('report_file', item);
+        }
+        return item;
+      }, patchValues.capacity_assessments);
+
+      patchValues = R.assoc('capacity_assessments', assessments, patchValues);
+    }
 
     if (R.isEmpty(patchValues.audit_reports)) {
       patchValues = R.dissoc('audit_reports', patchValues);
+    }
+
+    if (R.isEmpty(patchValues.capacity_assessments)) {
+      patchValues = R.dissoc('capacity_assessments', patchValues);
     }
 
     if (!R.isEmpty(patchValues)) {

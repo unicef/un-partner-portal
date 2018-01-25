@@ -64,10 +64,11 @@ const AwardApplicationButtonContainer = (props) => {
     >
       <div>
         {didWin
-          ? <Button color="accent" disabled>{didWithdraw ? messages.withdraw : messages.awarded}</Button>
+          ? <Button dense component={Link} color="accent" disabled>{didWithdraw ? messages.withdraw : messages.awarded}</Button>
           : linkedButton
             ? (<Button
               // className={classes.button}
+              dense
               raised
               component={Link}
               to={{

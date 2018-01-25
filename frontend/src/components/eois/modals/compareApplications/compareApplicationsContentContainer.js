@@ -29,7 +29,9 @@ class CompareApplicationContentContainer extends Component {
 
   render() {
     const { loading, applications, comparison, params: { id, type } } = this.props;
-    if (loading || R.isEmpty(comparison)) return <Loader loading={loading}><EmptyContent /></Loader>;
+    if (loading || R.isEmpty(comparison) || (applications.length !== comparison.length)) {
+      return <Loader loading={loading}><EmptyContent /></Loader>;
+    }
     const applicationMeta = R.map(R.pick(['did_win', 'did_withdraw', 'assessments_is_completed']),
       comparison);
     let fullComparison = R.prepend(labels, comparison);

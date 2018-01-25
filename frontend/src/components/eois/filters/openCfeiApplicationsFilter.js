@@ -82,6 +82,7 @@ class OpenCfeiApplicationsFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query, {
+        page: 1,
         legal_name,
         type_of_org,
         country_code,
@@ -136,9 +137,7 @@ class OpenCfeiApplicationsFilter extends Component {
                 label={messages.labels.sectorArea}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
-                selectFieldProps={{
-                  multiple: true,
-                }}
+                multiple
                 values={specs}
                 sections
                 optional

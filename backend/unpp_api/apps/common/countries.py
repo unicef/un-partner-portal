@@ -134,7 +134,7 @@ COUNTRIES_ALPHA2_CODE = (
     ("UG", "Uganda"),
     ("UA", "Ukraine"),
     ("EG", "Egypt"),
-    ("TZ", "Tanzania, United Rep. of"),
+    ("TZ", "Tanzania, United Republic of"),
     ("BF", "Burkina Faso"),
     ("UY", "Uruguay"),
     ("UZ", "Uzbekistan"),
@@ -227,3 +227,7 @@ COUNTRIES_ALPHA2_CODE = (
 )
 
 COUNTRIES_ALPHA2_CODE_DICT = dict(COUNTRIES_ALPHA2_CODE)
+
+LOCATION_OPTIONAL_COUNTRIES = [
+    'PS'
+]

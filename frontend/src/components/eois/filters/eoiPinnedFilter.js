@@ -63,28 +63,63 @@ class EoiPinnedFilter extends Component {
 
   componentWillMount() {
     const { pathName, query } = this.props;
-    resetChanges(pathName, query);
+
+    const ordering = 'deadline_date';
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { ordering },
+      ),
+    });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (R.isEmpty(nextProps.query)) {
+      const { pathname } = nextProps.location;
+      const ordering = 'deadline_date';
+
+      history.push({
+        pathname,
+        query: R.merge(this.props.query, { ordering }),
+      });
+    }
+  }
 
   onSearch(values) {
     const { pathName, query } = this.props;
 
     const { title, agency, active, country_code, specializations,
       posted_from_date, posted_to_date, locations } = values;
+    const ordering = 'deadline_date';
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
+        page: 1,
         title,
         agency,
         active,
+        ordering,
         country_code,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         posted_from_date,
         posted_to_date,
         locations,
       }),
+    });
+  }
+
+  resetForm() {
+    const query = resetChanges(this.props.pathName, this.props.query);
+
+    const { pathName } = this.props;
+
+    history.push({
+      pathname: pathName,
+      query: R.merge(query,
+        { ordering: 'deadline_date' },
+      ),
     });
   }
 
@@ -145,7 +180,7 @@ class EoiPinnedFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>

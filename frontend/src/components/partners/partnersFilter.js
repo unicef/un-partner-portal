@@ -94,6 +94,7 @@ class PartnersFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query, {
+        page: 1,
         legal_name,
         is_verified,
         display_type,

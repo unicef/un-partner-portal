@@ -105,6 +105,7 @@ class PartnerApplicationsNotesFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query, {
+        page: 1,
         project_title,
         agency,
         applications_status,
