@@ -20,6 +20,7 @@ import GridRow from '../../common/grid/gridRow';
 import PaddedContent from '../../common/paddedContent';
 import CaptionTypography from '../../common/typography/captionTypography';
 import { formatDateForChart } from '../../../helpers/dates';
+import moment from 'moment';
 
 const messages = {
   title: 'Number Of New Partners',
@@ -38,12 +39,21 @@ const styleSheet = theme => ({
 
 
 const NewPartners = (props) => {
-  const { number, classes, dayBreakdown = {} } = props;
+  let { number, classes, dayBreakdown = {} } = props;
   let data;
+  dayBreakdown = {
+    '2018-01-11': 3,
+
+    '2018-01-19': 2,
+    '2018-01-16': 1,
+    '2018-01-24': 3,
+    '2018-01-25': 1,
+    '2018-01-23': 3,
+  };
   if (!isEmpty(dayBreakdown)) {
     data = map(
       ([date, count]) => ({ date: formatDateForChart(date), count }),
-      toPairs(dayBreakdown));
+      toPairs(dayBreakdown).sort(([dateA], [dateB]) => moment(dateA).isAfter(dateB)));
   }
   return (
     <Paper className={classes.paper}>
@@ -65,7 +75,7 @@ const NewPartners = (props) => {
             margin={{ left: 0, right: 16, top: 16 }}
           >
             <XAxis dataKey="date" />
-            <YAxis />
+            <YAxis allowDecimals={false} />
             <CartesianGrid strokeDasharray="3 3" />
             <Tooltip />
             <Line type="monotone" dataKey="count" stroke="#2196f3" activeDot={{ r: 8 }} />
