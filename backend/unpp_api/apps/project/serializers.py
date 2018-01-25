@@ -21,7 +21,8 @@ from common.serializers import (
 )
 from common.models import Point, Specialization
 from notification.consts import NotificationType
-from notification.helpers import user_received_notification_recently, send_notification_application_created
+from notification.helpers import user_received_notification_recently, send_notification_application_created, \
+    send_notification_to_cfei_focal_points
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
 from project.models import EOI, Application, Assessment, ApplicationFeedback
@@ -293,6 +294,7 @@ class CreateDirectProjectSerializer(serializers.Serializer):
             applications.append(_application)
             send_notification_application_created(_application)
 
+        send_notification_to_cfei_focal_points(eoi)
         return {
             "eoi": eoi,
             "applications": applications,
@@ -324,7 +326,7 @@ class CreateProjectSerializer(CreateEOISerializer):
 
         for focal_point in focal_points:
             self.instance.focal_points.add(focal_point)
-
+        send_notification_to_cfei_focal_points(self.instance)
         return self.instance
 
 
@@ -482,6 +484,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         if focal_points:
             instance.focal_points.through.objects.exclude(user_id__in=focal_points).delete()
             instance.focal_points.add(*User.objects.filter(id__in=focal_points))
+            send_notification_to_cfei_focal_points(instance)
         elif 'focal_points' in self.initial_data:
             instance.focal_points.clear()
 
@@ -753,7 +756,7 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
 
     ds_justification_select = serializers.ListField()
     justification = serializers.CharField(source="eoi.justification")
-    focal_points = IDUserSerializer(many=True, source="eoi.focal_points")
+    focal_points = IDUserSerializer(many=True, source="eoi.focal_points", read_only=True)
     description = serializers.CharField(source="eoi.description")
     other_information = serializers.CharField(
         source="eoi.other_information", required=False, allow_blank=True, allow_null=True)
@@ -773,7 +776,6 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
     def create(self, validated_data):
         ds_justification_select = validated_data.pop('ds_justification_select')
         focal_points = self.initial_data.get('focal_points', [])
-        del validated_data['eoi']['focal_points']
         submitter = self.context['request'].user
         app_id = self.context['request'].parser_context['kwargs']['pk']
         app = get_object_or_404(
@@ -815,6 +817,8 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
             ds_justification_select=ds_justification_select,
             justification_reason=app.justification_reason
         )
+
+        send_notification_to_cfei_focal_points(eoi)
 
         return ds_app
 

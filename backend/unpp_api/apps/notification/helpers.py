@@ -149,3 +149,22 @@ def send_cfei_review_required_notification(eoi, users):
             'eoi_url': eoi.get_absolute_url()
         }
     )
+
+
+def send_notification_to_cfei_focal_points(eoi):
+    content_type = ContentType.objects.get_for_model(eoi)
+    users = eoi.focal_points.exclude(
+        notified__notification__source=NotificationType.ADDED_AS_CFEI_FOCAL_POINT,
+        notified__notification__object_id=eoi.id,
+        notified__notification__content_type=content_type,
+    )
+
+    send_notification(
+        NotificationType.ADDED_AS_CFEI_FOCAL_POINT, eoi, users,
+        send_in_feed=True,
+        check_sent_for_source=False,
+        context={
+            'eoi_name': eoi.title,
+            'eoi_url': eoi.get_absolute_url()
+        }
+    )
