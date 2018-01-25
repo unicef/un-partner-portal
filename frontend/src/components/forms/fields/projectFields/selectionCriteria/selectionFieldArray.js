@@ -23,9 +23,11 @@ const messages = {
 const insertWeight = (index, fields) => {
   const tempSelection = fields.get(index);
   if (!has('weight', tempSelection)) {
-    const fieldsLength = fields.length;
-    const isLast = index === fieldsLength - 1;
-    const newWeight = Math.floor(100 / fieldsLength) + (isLast ? (100 % fieldsLength) : 0);
+    const currentWeight = fields.getAll().reduce((acc, next) => {
+      return has('weight', next) ? acc + next.weight : acc;
+    }, 0);
+    const remainingWeight = 100 - currentWeight;
+    const newWeight = remainingWeight >= 0 ? remainingWeight : 0;
     fields.remove(index);
     fields.insert(index, { ...tempSelection, weight: newWeight });
   }
