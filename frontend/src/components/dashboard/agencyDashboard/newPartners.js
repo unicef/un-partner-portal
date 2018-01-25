@@ -39,17 +39,8 @@ const styleSheet = theme => ({
 
 
 const NewPartners = (props) => {
-  let { number, classes, dayBreakdown = {} } = props;
+  const { number, classes, dayBreakdown = {} } = props;
   let data;
-  dayBreakdown = {
-    '2018-01-11': 3,
-
-    '2018-01-19': 2,
-    '2018-01-16': 1,
-    '2018-01-24': 3,
-    '2018-01-25': 1,
-    '2018-01-23': 3,
-  };
   if (!isEmpty(dayBreakdown)) {
     data = map(
       ([date, count]) => ({ date: formatDateForChart(date), count }),
