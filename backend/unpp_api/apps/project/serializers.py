@@ -890,7 +890,7 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
 
     cn = CommonFileSerializer()
     partner_notified = serializers.SerializerMethodField()
-    partner_decision_date = serializers.SerializerMethodField()
+    partner_decision_date = serializers.DateField(source='decision_date', allow_null=True, read_only=True)
 
     body = serializers.SerializerMethodField()
 
@@ -931,9 +931,6 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
 
     def get_partner_notified(self, obj):
         return obj.accept_notification and obj.accept_notification.created
-
-    def get_partner_decision_date(self, obj):
-        return obj.decision_date
 
 
 class CompareSelectedSerializer(serializers.ModelSerializer):

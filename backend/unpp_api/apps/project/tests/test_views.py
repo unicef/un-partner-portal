@@ -471,6 +471,17 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(response.data['did_accept'])
         self.assertEquals(response.data['decision_date'], str(date.today()))
 
+        awarded_partners_response = self.client.get(
+            reverse('projects:applications-awarded-partners', kwargs={"eoi_id": app.id}), format='json'
+        )
+        self.assertEqual(
+            awarded_partners_response.status_code, statuses.HTTP_200_OK, msg=awarded_partners_response.content
+        )
+        # TODO: find out why this works locally but is empty on CircleCI
+        if awarded_partners_response.data:
+            self.assertEqual(awarded_partners_response.data[0]['partner_decision_date'], str(date.today()))
+            self.assertEqual(awarded_partners_response.data[0]['partner_notified'].date(), date.today())
+
         # decline offer
         payload = {
             "did_accept": False,
@@ -490,8 +501,9 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_client_error(response.status_code))
-        self.assertEquals(response.data["non_field_errors"],
-                          ["Since assessment has begun, application can't be reject."])
+        self.assertEquals(
+            response.data["non_field_errors"], ["Since assessment has begun, application can't be reject."]
+        )
 
         app.assessments.all().delete()
         response = self.client.patch(url, data=payload, format='json')

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from datetime import date
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import status as statuses
 from rest_framework.views import APIView
 from rest_framework.generics import (
@@ -372,11 +373,10 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         data = serializer.validated_data
-        if (data.get('did_accept', False) or data.get('did_decline', False)) and \
-                serializer.instance.decision_date is None:
-            instance = serializer.save(decision_date=date.today())
-        else:
-            instance = serializer.save()
+        instance = serializer.save()
+        if data.get('did_accept', False) or data.get('did_decline', False):
+            instance.decision_date = timezone.now().date()
+            instance.save()
 
         if self.request.user.is_agency_user:
             send_agency_updated_application_notification(instance)

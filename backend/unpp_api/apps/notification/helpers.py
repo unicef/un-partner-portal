@@ -26,7 +26,10 @@ def feed_alert(notification_type, subject, body, users, obj):
     notified_users = []
     for user in users:
         notified_users.append(NotifiedUser(notification=notification, did_read=False, recipient_id=user.id))
+
     NotifiedUser.objects.bulk_create(notified_users)
+
+    return notification
 
 
 def send_notification(
@@ -52,7 +55,7 @@ def send_notification(
     send_mail(notification_info.get('subject'), body, settings.DEFAULT_FROM_EMAIL, targets)
 
     if send_in_feed:
-        feed_alert(notification_type, notification_info.get('subject'), body, users, obj)
+        return feed_alert(notification_type, notification_info.get('subject'), body, users, obj)
 
 
 def render_notification_template_to_str(template_name, context):
@@ -113,7 +116,10 @@ def send_agency_updated_application_notification(application):
         if application.did_withdraw:
             send_notification(NotificationType.CFEI_APPLICATION_WITHDRAWN, application, users)
         elif application.did_win:
-            send_notification(NotificationType.CFEI_APPLICATION_WIN, application, users)
+            notification = send_notification(NotificationType.CFEI_APPLICATION_WIN, application, users)
+            if notification:
+                application.accept_notification = notification
+                application.save()
 
 
 def send_partner_made_decision_notification(application):
