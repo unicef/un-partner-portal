@@ -101,7 +101,7 @@ const connected = connect((state, ownProps) => {
   const country = selector(state, 'identification.basic.country_code');
   const countryOrigin = selector(state, 'identification.basic.country_of_origin');
   const countryCode = countryOrigin || country;
-  console.log('CODE:', countryCode);
+
   return {
     countryCode,
     displayType,
