@@ -297,7 +297,14 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         }
 
         response = self.client.post(self.url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)
+
+        for partner in Partner.objects.all():
+            PartnerVerificationFactory(partner=partner, submitter=self.user)
+
+        response = self.client.post(self.url, data=payload, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED)
+
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
         self.assertEquals(response.data['eoi']['display_type'], EOI_TYPES.direct)
@@ -952,6 +959,12 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
             }}
 
         url = reverse('projects:direct')
+        response = self.client.post(url, data=direct_selection_payload, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)
+
+        for partner in Partner.objects.all():
+            PartnerVerificationFactory(partner=partner, submitter=self.user)
+
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertEqual(response.status_code, statuses.HTTP_201_CREATED)
 

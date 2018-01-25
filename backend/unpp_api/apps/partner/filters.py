@@ -5,6 +5,7 @@ import django_filters
 from django_filters.filters import CharFilter, ModelMultipleChoiceFilter
 from django_filters.widgets import CSVWidget
 
+from common.consts import PARTNER_TYPES
 from common.models import Specialization
 from review.models import PartnerVerification
 from partner.models import Partner
@@ -22,6 +23,7 @@ class PartnersListFilter(django_filters.FilterSet):
     )
     concern = CharFilter(method='get_concern')
     limit = CharFilter(method='get_limit')
+    is_hq = CharFilter(method='filter_is_hq')
 
     class Meta:
         model = Partner
@@ -55,4 +57,11 @@ class PartnersListFilter(django_filters.FilterSet):
     def get_limit(self, queryset, name, value):
         if value.isdigit():
             return queryset[:value]
+        return queryset
+
+    def filter_is_hq(self, queryset, name, value):
+        if value and value.lower() == 'true':
+            queryset = queryset.filter(display_type=PARTNER_TYPES.international, hq=None)
+        if value and value.lower() == 'false':
+            queryset = queryset.exclude(display_type=PARTNER_TYPES.international, hq=None)
         return queryset
