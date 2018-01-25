@@ -7,6 +7,7 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from account.models import User
 from account.serializers import AgencyUserSerializer, IDUserSerializer, UserSerializer
@@ -125,6 +126,13 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
         exclude = ("cn", "eoi", "agency", "submitter")
+
+    def validate_partner(self, partner):
+        if not partner.is_verified:
+            raise ValidationError('Only verified partners are eligible for Direct Selections.')
+        if partner.is_hq:
+            raise ValidationError('HQs of International partners are not eligible for Direct Selections.')
+        return partner
 
 
 class CreateDirectApplicationNoCNSerializer(serializers.ModelSerializer):
