@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { compose, pluck, any } from 'ramda';
 import withStyles from 'material-ui/styles/withStyles';
-import { browserHistory as history } from 'react-router';
+import { browserHistory as history, withRouter } from 'react-router';
 import OpenCfeiApplicationsFilter from '../../filters/openCfeiApplicationsFilter';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
 import SelectableList from '../../../common/list/selectableList';
@@ -21,7 +22,9 @@ import {
   isCfeiCompleted,
   isUserAFocalPoint,
   isUserACreator,
+  selectCfeiStatus,
 } from '../../../../store';
+import { PROJECT_STATUSES } from '../../../../helpers/constants';
 
 
 /* eslint-disable react/prop-types */
@@ -32,10 +35,11 @@ const styleSheetHeader = () => ({
 });
 
 const HeaderActionsBase = (props) => {
-  const { classes, rows } = props;
+  const { classes, rows, preselectDisabled } = props;
   const ids = rows.map(row => row.id);
-  const Preselect = WithGreyColor()(PreselectButton);
-  const Reject = WithGreyColor()(RejectButton);
+  const anyReviewStarted = any(({ review_progress: progress }) => !progress.startsWith('0'), rows);
+  const Preselect = WithGreyColor(preselectDisabled)(PreselectButton);
+  const Reject = WithGreyColor(anyReviewStarted)(RejectButton);
   return (
     <div className={classes.container}>
       <Preselect id={ids} />
@@ -44,41 +48,29 @@ const HeaderActionsBase = (props) => {
   );
 };
 
-const HeaderActions = withStyles(styleSheetHeader)(HeaderActionsBase);
+const mapStateToPropsForHeaderActions = (state, ownProps) => ({
+  preselectDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
+});
+
+const HeaderActions = compose(
+  withRouter,
+  connect(mapStateToPropsForHeaderActions),
+  withStyles(styleSheetHeader),
+)(HeaderActionsBase);
+
 
 const onTableRowClick = (row) => {
   const loc = history.getCurrentLocation().pathname;
   history.push(`${loc}/${row.id}`);
 };
 
-const applicationsCells = ({ row, column, hovered }) => {
-  if (column.name === 'name') {
-    return (<PartnerProfileNameCell
-      info={row.partner_additional}
-    />);
-  } else if (column.name === 'id') {
-    return (<ApplicationCnIdCell
-      id={row.id}
-    />
-    );
-  } else if (column.name === 'status') {
-    return (<ApplicationStatusCell
-      id={row.id}
-      status={row.status}
-      applicationStatus={row.application_status}
-      conceptNote={row.cn}
-      hovered={hovered}
-      progress={row.review_progress}
-    />
-    );
-  } else if (column.name === 'type_org') {
-    return <OrganizationTypeCell orgType={row.type_org} />;
-  }
 
-  return undefined;
-};
 /* eslint-enable react/prop-types */
 class ApplicationsListContainer extends Component {
+  constructor() {
+    super();
+    this.applicationsCells = this.applicationsCells.bind(this);
+  }
   componentWillMount() {
     const { id, query } = this.props;
     this.props.loadApplications(id, query);
@@ -94,6 +86,35 @@ class ApplicationsListContainer extends Component {
     return true;
   }
 
+  applicationsCells({ row, column, hovered }) {
+    const { preselectDisabled } = this.props;
+    if (column.name === 'name') {
+      return (<PartnerProfileNameCell
+        info={row.partner_additional}
+      />);
+    } else if (column.name === 'id') {
+      return (<ApplicationCnIdCell
+        id={row.id}
+      />
+      );
+    } else if (column.name === 'status') {
+      return (<ApplicationStatusCell
+        id={row.id}
+        status={row.status}
+        applicationStatus={row.application_status}
+        conceptNote={row.cn}
+        hovered={hovered}
+        progress={row.review_progress}
+        preselectDisabled={preselectDisabled}
+      />
+      );
+    } else if (column.name === 'type_org') {
+      return <OrganizationTypeCell orgType={row.type_org} />;
+    }
+
+    return undefined;
+  }
+
   render() {
     const { applications, columns, loading, itemsCount, allowedToEdit } = this.props;
     return (
@@ -107,7 +128,7 @@ class ApplicationsListContainer extends Component {
               loading={loading}
               itemsCount={itemsCount}
               headerAction={HeaderActions}
-              templateCell={applicationsCells}
+              templateCell={this.applicationsCells}
               onTableRowClick={onTableRowClick}
               clickableRow
             />
@@ -117,7 +138,7 @@ class ApplicationsListContainer extends Component {
               columns={columns}
               loading={loading}
               itemsCount={itemsCount}
-              templateCell={applicationsCells}
+              templateCell={this.applicationsCells}
               onTableRowClick={onTableRowClick}
               clickableRow
             />}
@@ -136,6 +157,7 @@ ApplicationsListContainer.propTypes = {
   query: PropTypes.object,
   id: PropTypes.string,
   allowedToEdit: PropTypes.bool,
+  preselectDisabled: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -145,6 +167,7 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.partnersApplicationsList.status.loading,
   query: ownProps.location.query,
   id: ownProps.params.id,
+  preselectDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
   allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
     && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
 });
