@@ -453,7 +453,7 @@ class PartnerProfile(TimeStampedModel):
         if regular_capacity_assessments:
             required_fields['capacity_assessments'] = all(
                 [report.is_complete for report in self.partner.capacity_assessments.all()]
-            ) if self.partner.audit_reports.exists() else False
+            ) if self.partner.capacity_assessments.exists() else False
 
         return all(required_fields.values())
 
