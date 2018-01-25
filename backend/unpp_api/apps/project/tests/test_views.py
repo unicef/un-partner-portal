@@ -903,7 +903,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         office = self.user.agency_members.first().office
         partners = Partner.objects.all()[:2]
         partner1, partner2 = partners
-
+        focal_point = User.objects.exclude(id=self.user.id).first()
         direct_selection_payload = {
             "applications": [
                 {
@@ -931,7 +931,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
                 ],
                 "specializations": [28, 27],
                 "title": "1213123",
-                "focal_points": [self.user.id],
+                "focal_points": [focal_point.id],
                 "description": "123123123",
                 "goal": "123123123",
                 "start_date": "2018-01-20",
@@ -955,10 +955,11 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertEqual(response.status_code, statuses.HTTP_201_CREATED)
 
-        for subject in [m.subject for m in mail.outbox]:
-            self.assertEqual(subject, NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'])
-
-        self.assertEqual(len(partners.values_list('partner_members__user')), len(mail.outbox))
+        selection_emails = filter(
+            lambda msg: msg.subject == NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'],
+            mail.outbox
+        )
+        self.assertEqual(len(partners.values_list('partner_members__user')), len(selection_emails))
         mail.outbox = []
 
         partner2_application = partner2.applications.first()
