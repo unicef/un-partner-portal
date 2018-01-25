@@ -11,6 +11,7 @@ import VerificationQuestion from './verificationQuestion';
 const messages = {
   certUpload: 'Has partner uploaded its valid, non-expired registration certificate issued by the ' +
   'correct goverment body?',
+  missingReason: 'Is CSO\'s reason for missing registration certificate acceptable?',
   mmConsistent: 'Are the partner\'s mandate and mission consistent with that of the UN?',
   indicateResults: 'Do the partner\'s key results achieved indicate ability to deliver programme ' +
   'results?',
@@ -55,10 +56,15 @@ const verificationQuestions = [
     questionFieldName: 'can_verify',
     commentFieldName: 'can_verify_comment',
   },
+  {
+    question: messages.missingReason,
+    questionFieldName: 'is_reason_acceptable',
+    commentFieldName: 'reason_acceptable_comment',
+  },
 ];
 
 const AddVerification = (props) => {
-  const { handleSubmit, readOnly, isYellowFlag } = props;
+  const { handleSubmit, readOnly, isYellowFlag, notCertUploaded } = props;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -70,6 +76,17 @@ const AddVerification = (props) => {
           readOnly={readOnly}
         />
         <Divider />
+        {visibleIfYes(notCertUploaded)
+          ? <GridColumn>
+            <VerificationQuestion
+              question={verificationQuestions[6].question}
+              questionFieldName={verificationQuestions[6].questionFieldName}
+              commentFieldName={verificationQuestions[6].commentFieldName}
+              readOnly={readOnly}
+            />
+            <Divider />
+          </GridColumn>
+          : null}
       </GridColumn>
       <GridColumn>
         <VerificationQuestion
@@ -129,6 +146,7 @@ AddVerification.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   readOnly: PropTypes.bool,
   isYellowFlag: PropTypes.bool,
+  notCertUploaded: PropTypes.array,
 };
 
 const selector = formValueSelector('addVerification');
@@ -140,6 +158,7 @@ const formAddVerification = reduxForm({
 
 const mapStateToProps = state => ({
   isYellowFlag: selector(state, 'is_yellow_flag'),
+  notCertUploaded: selector(state, 'is_cert_uploaded') === false,
 });
 
 export default connect(mapStateToProps, null)(formAddVerification);
