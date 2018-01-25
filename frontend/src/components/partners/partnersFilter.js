@@ -41,7 +41,7 @@ const styleSheet = theme => ({
 const VERIFICATION_MENU = [
   {
     value: 'pending',
-    label: 'Pending',
+    label: 'Pending verification',
   },
   {
     value: 'verified',
@@ -49,10 +49,9 @@ const VERIFICATION_MENU = [
   },
   {
     value: 'unverified',
-    label: 'Not Verified',
+    label: 'Unverified',
   },
 ];
-
 
 class PartnersFilter extends Component {
   constructor(props) {
