@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 from datetime import date
 
-from django.conf import settings
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from model_utils.models import TimeStampedModel
