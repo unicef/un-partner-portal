@@ -40,6 +40,9 @@ const ReferenceInner = readOnly => member => (
         fieldName={`${member}.date_received`}
         warn
         optional
+        datePickerProps={{
+          maxDate: new Date(),
+        }}
         readOnly={readOnly}
       />
     </Grid>

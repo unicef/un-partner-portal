@@ -58,6 +58,9 @@ const PartnerProfileProjectImplementationReporting = (props) => {
                 fieldName="last_report"
                 placeholder={PLACEHOLDERS.provide}
                 warn
+                datePickerProps={{
+                  maxDate: new Date(),
+                }}
                 optional
                 readOnly={readOnly}
               />

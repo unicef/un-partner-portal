@@ -38,6 +38,9 @@ const AccreditationInner = readOnly => member => (
         label={messages.date}
         fieldName={`${member}.date_received`}
         warn
+        datePickerProps={{
+          maxDate: new Date(),
+        }}
         optional
         readOnly={readOnly}
       />
