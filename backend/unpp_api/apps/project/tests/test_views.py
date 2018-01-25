@@ -470,6 +470,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertEqual(
             awarded_partners_response.status_code, statuses.HTTP_200_OK, msg=awarded_partners_response.content
         )
+        self.assertEqual(len(awarded_partners_response.data), 1, msg=awarded_partners_response.data)
         self.assertEqual(awarded_partners_response.data[0]['partner_decision_date'], str(date.today()))
         self.assertEqual(awarded_partners_response.data[0]['partner_notified'].date(), date.today())
 
