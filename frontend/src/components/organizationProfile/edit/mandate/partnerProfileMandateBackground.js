@@ -20,12 +20,13 @@ const PartnerProfileMandateBackground = (props) => {
         <TextFieldForm
           label={messages.rationale}
           fieldName="background_and_rationale"
+          placeholder={PLACEHOLDERS.state}
           textFieldProps={{
+            multiline: true,
             inputProps: {
-              maxLength: '400',
+              maxLength: '5000',
             },
           }}
-          placeholder={PLACEHOLDERS.state}
           warn
           optional
           readOnly={readOnly}
@@ -35,8 +36,9 @@ const PartnerProfileMandateBackground = (props) => {
           fieldName="mandate_and_mission"
           placeholder={PLACEHOLDERS.state}
           textFieldProps={{
+            multiline: true,
             inputProps: {
-              maxLength: '400',
+              maxLength: '5000',
             },
           }}
           warn
