@@ -6,7 +6,8 @@ from django_filters.filters import CharFilter, ModelMultipleChoiceFilter
 from django_filters.widgets import CSVWidget
 
 from common.models import Specialization
-from .models import Partner
+from review.models import PartnerVerification
+from partner.models import Partner
 
 
 class PartnersListFilter(django_filters.FilterSet):
@@ -16,9 +17,9 @@ class PartnersListFilter(django_filters.FilterSet):
     display_type = CharFilter(method='get_display_type')
     country_code = CharFilter(method='get_country_code')
     country_codes = CharFilter(method='get_country_codes')
-    specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
-                                                name='experiences__specialization',
-                                                queryset=Specialization.objects.all())
+    specializations = ModelMultipleChoiceFilter(
+        widget=CSVWidget(), name='experiences__specialization', queryset=Specialization.objects.all()
+    )
     concern = CharFilter(method='get_concern')
     limit = CharFilter(method='get_limit')
 
@@ -30,10 +31,11 @@ class PartnersListFilter(django_filters.FilterSet):
         return queryset.filter(legal_name__icontains=value)
 
     def get_is_verified(self, queryset, name, value):
+        latest_verifications = PartnerVerification.objects.distinct('partner_id').order_by('partner_id', '-created')
         if value == 'verified':
-            return queryset.filter(verifications__is_verified=True)
+            return queryset.filter(verifications__in=latest_verifications, verifications__is_verified=True)
         if value == 'unverified':
-            return queryset.filter(verifications__is_verified=False)
+            return queryset.filter(verifications__in=latest_verifications, verifications__is_verified=False)
         if value == 'pending':
             return queryset.filter(verifications__is_verified__isnull=True)
 

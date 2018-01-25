@@ -31,15 +31,10 @@ class PartnerFlag(TimeStampedModel):
 
 
 class PartnerVerification(TimeStampedModel):
-    """
-    Verification on a Partner
-    """
-    partner = models.ForeignKey(
-        'partner.Partner', related_name="verifications")
+    partner = models.ForeignKey('partner.Partner', related_name="verifications")
     is_valid = models.BooleanField(default=True)
     is_verified = models.BooleanField()
-    submitter = models.ForeignKey(
-        'account.User', related_name="given_verifications")
+    submitter = models.ForeignKey('account.User', related_name="given_verifications")
     is_cert_uploaded = models.BooleanField()
     cert_uploaded_comment = models.TextField(null=True, blank=True)
     is_mm_consistent = models.BooleanField()
