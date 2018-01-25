@@ -71,6 +71,7 @@ class AgencyMembersFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query, {
+        page: 1,
         office_name,
         name,
       }),
