@@ -4,7 +4,6 @@ import os
 import random
 from datetime import date, timedelta
 import mock
-from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 from django.test import override_settings
 
