@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 import django_filters
-from django_filters.filters import CharFilter, ModelMultipleChoiceFilter, ChoiceFilter
+from django_filters.filters import CharFilter, ModelMultipleChoiceFilter
 from django_filters.widgets import CSVWidget
 
 from common.consts import PARTNER_TYPES
