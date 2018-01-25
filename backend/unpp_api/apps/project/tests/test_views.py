@@ -467,6 +467,9 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         awarded_partners_response = self.client.get(
             reverse('projects:applications-awarded-partners', kwargs={"eoi_id": app.id}), format='json'
         )
+        self.assertEqual(
+            awarded_partners_response.status_code, statuses.HTTP_200_OK, msg=awarded_partners_response.content
+        )
         self.assertEqual(awarded_partners_response.data[0]['partner_decision_date'], str(date.today()))
         self.assertEqual(awarded_partners_response.data[0]['partner_notified'].date(), date.today())
 
