@@ -20,6 +20,7 @@ import GridRow from '../../common/grid/gridRow';
 import PaddedContent from '../../common/paddedContent';
 import CaptionTypography from '../../common/typography/captionTypography';
 import { formatDateForChart } from '../../../helpers/dates';
+import moment from 'moment';
 
 const messages = {
   title: 'Number Of New Partners',
@@ -43,7 +44,7 @@ const NewPartners = (props) => {
   if (!isEmpty(dayBreakdown)) {
     data = map(
       ([date, count]) => ({ date: formatDateForChart(date), count }),
-      toPairs(dayBreakdown));
+      toPairs(dayBreakdown).sort(([dateA], [dateB]) => moment(dateA).isAfter(dateB)));
   }
   return (
     <Paper className={classes.paper}>
@@ -65,7 +66,7 @@ const NewPartners = (props) => {
             margin={{ left: 0, right: 16, top: 16 }}
           >
             <XAxis dataKey="date" />
-            <YAxis />
+            <YAxis allowDecimals={false} />
             <CartesianGrid strokeDasharray="3 3" />
             <Tooltip />
             <Line type="monotone" dataKey="count" stroke="#2196f3" activeDot={{ r: 8 }} />
