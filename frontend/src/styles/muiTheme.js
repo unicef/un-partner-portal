@@ -99,6 +99,21 @@ const theme = {
     MuiDefaultTab: {
       fontWeight: 400,
     },
+    MuiTableHead: {
+      root: {
+        fontSize: '0.9rem',
+      },
+    },
+    MuiTableBody: {
+      root: {
+        fontSize: '1rem',
+      },
+    },
+    MuiTab: {
+      rootLabelIcon: {
+        height: '48px',
+      },
+    },
   },
 };
 const getTheme = () => (

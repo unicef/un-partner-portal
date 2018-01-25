@@ -86,7 +86,7 @@ class PartnerProfileEdit extends Component {
           backButton
           handleBackButton={() => { history.goBack(); }}
           handleChange={this.handleChange}
-          tabsProps={{ scrollButtons: 'on' }}
+          tabsProps={{ scrollButtons: 'auto' }}
         >
           {(index !== -1) && children}
         </HeaderNavigation>
