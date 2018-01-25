@@ -206,8 +206,7 @@ class Application(TimeStampedModel):
 
     @property
     def partner_is_verified(self):
-        verification = self.partner.verifications.last() or False
-        return verification and verification.is_verified
+        return self.partner.is_verified
 
     @property
     def application_status(self):
