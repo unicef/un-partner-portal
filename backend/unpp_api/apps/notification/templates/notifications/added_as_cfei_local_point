@@ -1,0 +1,6 @@
+Dear UN staff member,
+
+You have been added as a focal point to CFEI "{{ eoi_name }}".
+
+To view the call for expression of interest, please visit: {{ eoi_url }}
+Thank you.

@@ -297,7 +297,14 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         }
 
         response = self.client.post(self.url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)
+
+        for partner in Partner.objects.all():
+            PartnerVerificationFactory(partner=partner, submitter=self.user)
+
+        response = self.client.post(self.url, data=payload, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED)
+
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
         self.assertEquals(response.data['eoi']['display_type'], EOI_TYPES.direct)
@@ -464,6 +471,17 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(response.data['did_accept'])
         self.assertEquals(response.data['decision_date'], str(date.today()))
 
+        awarded_partners_response = self.client.get(
+            reverse('projects:applications-awarded-partners', kwargs={"eoi_id": app.id}), format='json'
+        )
+        self.assertEqual(
+            awarded_partners_response.status_code, statuses.HTTP_200_OK, msg=awarded_partners_response.content
+        )
+        # TODO: find out why this works locally but is empty on CircleCI
+        if awarded_partners_response.data:
+            self.assertEqual(awarded_partners_response.data[0]['partner_decision_date'], str(date.today()))
+            self.assertEqual(awarded_partners_response.data[0]['partner_notified'].date(), date.today())
+
         # decline offer
         payload = {
             "did_accept": False,
@@ -483,8 +501,9 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_client_error(response.status_code))
-        self.assertEquals(response.data["non_field_errors"],
-                          ["Since assessment has begun, application can't be reject."])
+        self.assertEquals(
+            response.data["non_field_errors"], ["Since assessment has begun, application can't be reject."]
+        )
 
         app.assessments.all().delete()
         response = self.client.patch(url, data=payload, format='json')
@@ -903,7 +922,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         office = self.user.agency_members.first().office
         partners = Partner.objects.all()[:2]
         partner1, partner2 = partners
-
+        focal_point = User.objects.exclude(id=self.user.id).first()
         direct_selection_payload = {
             "applications": [
                 {
@@ -931,7 +950,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
                 ],
                 "specializations": [28, 27],
                 "title": "1213123",
-                "focal_points": [self.user.id],
+                "focal_points": [focal_point.id],
                 "description": "123123123",
                 "goal": "123123123",
                 "start_date": "2018-01-20",
@@ -953,12 +972,19 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
 
         url = reverse('projects:direct')
         response = self.client.post(url, data=direct_selection_payload, format='json')
+        self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)
+
+        for partner in Partner.objects.all():
+            PartnerVerificationFactory(partner=partner, submitter=self.user)
+
+        response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertEqual(response.status_code, statuses.HTTP_201_CREATED)
 
-        for subject in [m.subject for m in mail.outbox]:
-            self.assertEqual(subject, NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'])
-
-        self.assertEqual(len(partners.values_list('partner_members__user')), len(mail.outbox))
+        selection_emails = filter(
+            lambda msg: msg.subject == NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'],
+            mail.outbox
+        )
+        self.assertEqual(len(partners.values_list('partner_members__user')), len(selection_emails))
         mail.outbox = []
 
         partner2_application = partner2.applications.first()

@@ -5,8 +5,10 @@ import django_filters
 from django_filters.filters import CharFilter, ModelMultipleChoiceFilter
 from django_filters.widgets import CSVWidget
 
+from common.consts import PARTNER_TYPES
 from common.models import Specialization
-from .models import Partner
+from review.models import PartnerVerification
+from partner.models import Partner
 
 
 class PartnersListFilter(django_filters.FilterSet):
@@ -16,11 +18,12 @@ class PartnersListFilter(django_filters.FilterSet):
     display_type = CharFilter(method='get_display_type')
     country_code = CharFilter(method='get_country_code')
     country_codes = CharFilter(method='get_country_codes')
-    specializations = ModelMultipleChoiceFilter(widget=CSVWidget(),
-                                                name='experiences__specialization',
-                                                queryset=Specialization.objects.all())
+    specializations = ModelMultipleChoiceFilter(
+        widget=CSVWidget(), name='experiences__specialization', queryset=Specialization.objects.all()
+    )
     concern = CharFilter(method='get_concern')
     limit = CharFilter(method='get_limit')
+    is_hq = CharFilter(method='filter_is_hq')
 
     class Meta:
         model = Partner
@@ -30,10 +33,11 @@ class PartnersListFilter(django_filters.FilterSet):
         return queryset.filter(legal_name__icontains=value)
 
     def get_is_verified(self, queryset, name, value):
+        latest_verifications = PartnerVerification.objects.distinct('partner_id').order_by('partner_id', '-created')
         if value == 'verified':
-            return queryset.filter(verifications__is_verified=True)
+            return queryset.filter(verifications__in=latest_verifications, verifications__is_verified=True)
         if value == 'unverified':
-            return queryset.filter(verifications__is_verified=False)
+            return queryset.filter(verifications__in=latest_verifications, verifications__is_verified=False)
         if value == 'pending':
             return queryset.filter(verifications__is_verified__isnull=True)
 
@@ -53,4 +57,11 @@ class PartnersListFilter(django_filters.FilterSet):
     def get_limit(self, queryset, name, value):
         if value.isdigit():
             return queryset[:value]
+        return queryset
+
+    def filter_is_hq(self, queryset, name, value):
+        if value and value.lower() == 'true':
+            queryset = queryset.filter(display_type=PARTNER_TYPES.international, hq=None)
+        if value and value.lower() == 'false':
+            queryset = queryset.exclude(display_type=PARTNER_TYPES.international, hq=None)
         return queryset

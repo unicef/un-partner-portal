@@ -31,17 +31,14 @@ class PartnerFlag(TimeStampedModel):
 
 
 class PartnerVerification(TimeStampedModel):
-    """
-    Verification on a Partner
-    """
-    partner = models.ForeignKey(
-        'partner.Partner', related_name="verifications")
+    partner = models.ForeignKey('partner.Partner', related_name="verifications")
     is_valid = models.BooleanField(default=True)
     is_verified = models.BooleanField()
-    submitter = models.ForeignKey(
-        'account.User', related_name="given_verifications")
+    submitter = models.ForeignKey('account.User', related_name="given_verifications")
     is_cert_uploaded = models.BooleanField()
     cert_uploaded_comment = models.TextField(null=True, blank=True)
+    is_reason_acceptable = models.NullBooleanField()
+    reason_acceptable_comment = models.TextField(null=True, blank=True)
     is_mm_consistent = models.BooleanField()
     mm_consistent_comment = models.TextField(null=True, blank=True)
     is_indicate_results = models.BooleanField()
@@ -61,7 +58,7 @@ class PartnerVerification(TimeStampedModel):
 
     def _passed_verify(self):
         return all([
-            self.is_cert_uploaded,
+            self.is_cert_uploaded or (not self.is_cert_uploaded and self.is_reason_acceptable),
             self.is_mm_consistent,
             self.is_indicate_results,
             not self.is_rep_risk,

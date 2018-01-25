@@ -13,6 +13,8 @@ import {
   selectCfeiTitle,
   selectCfeiStatus,
   isUserAReviewer,
+  isUserACreator,
+  isUserAFocalPoint,
 } from '../../../store';
 import { loadCfei, loadUnsolicitedCfei } from '../../../reducers/cfeiDetails';
 import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
@@ -66,12 +68,17 @@ class CfeiHeader extends Component {
   }
 
   filterTabs() {
-    const { tabs, role, isReaderEditor, status, isReviewer, params: { type } } = this.props;
+    const { tabs,
+      role,
+      isOwner,
+      isReaderEditor,
+      status,
+      isReviewer, params: { type } } = this.props;
     let tabsToRender = tabs;
     if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
       tabsToRender = tabsToRender.filter(({ path }) => {
-        if ((['applications', 'preselected'].includes(path) && isReaderEditor && !isReviewer)
-        || (path === 'results' && isReaderEditor && status !== PROJECT_STATUSES.COM)) {
+        if ((['applications', 'preselected'].includes(path) && isReaderEditor && !isReviewer && !isOwner)
+        || (path === 'results' && isReaderEditor && status !== PROJECT_STATUSES.COM && !isReviewer && !isOwner)) {
           return false;
         }
         return true;
@@ -124,7 +131,7 @@ class CfeiHeader extends Component {
       header={<HeaderOptionsContainer role={role} type={type} id={id} />}
       handleChange={this.handleChange}
       backButton
-      handleBackButton={() => { history.goBack(); }}
+      defaultReturn="/cfei/open"
     >
       {(index !== -1) && children}
     </HeaderNavigation>);
@@ -164,6 +171,7 @@ CfeiHeader.propTypes = {
   isReaderEditor: PropTypes.bool,
   isReviewer: PropTypes.bool,
   status: PropTypes.string,
+  isOwner: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -178,6 +186,8 @@ const mapStateToProps = (state, ownProps) => ({
   isReaderEditor: isUserAgencyReader(state) || isUserAgencyEditor(state),
   status: selectCfeiStatus(state, ownProps.params.id),
   isReviewer: isUserAReviewer(state, ownProps.params.id),
+  isOwner: isUserACreator(state, ownProps.params.id)
+    || isUserAFocalPoint(state, ownProps.params.id),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

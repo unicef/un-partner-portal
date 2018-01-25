@@ -52,7 +52,6 @@ class Timeline extends Component {
             label="Posted"
             align="left"
             color="green"
-            flexSize={10}
           />
           <DatePoint
             bold

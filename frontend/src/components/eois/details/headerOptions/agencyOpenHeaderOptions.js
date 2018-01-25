@@ -55,7 +55,7 @@ const PartnerOpenHeaderOptions = (props) => {
       />}
       {dialogOpen[invite] && <AddInformedPartners
         id={id}
-        dialogOpen={dialogOpen}
+        dialogOpen={dialogOpen[invite]}
         handleDialogClose={handleDialogClose}
       />}
       {dialogOpen[manage] && <ManageReviewersModal
@@ -65,7 +65,7 @@ const PartnerOpenHeaderOptions = (props) => {
       />}
       {dialogOpen[complete] && <CompleteCfeiModal
         id={id}
-        dialogOpen={dialogOpen}
+        dialogOpen={dialogOpen[complete]}
         handleDialogClose={handleDialogClose}
       />}
     </SpreadContent>

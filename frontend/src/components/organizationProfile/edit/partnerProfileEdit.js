@@ -84,7 +84,7 @@ class PartnerProfileEdit extends Component {
           title={countryName}
           customTabs={() => this.partnerProfileTabs()}
           backButton
-          handleBackButton={() => { history.goBack(); }}
+          defaultReturn={`/profile/${id}/overview`}
           handleChange={this.handleChange}
           tabsProps={{ scrollButtons: 'on' }}
         >

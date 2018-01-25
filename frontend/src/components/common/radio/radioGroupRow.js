@@ -35,7 +35,7 @@ RadioGroupRow.propTypes = {
   ]),
   onChange: PropTypes.func,
   children: PropTypes.node,
-  column: PropTypes.array,
+  column: PropTypes.bool,
 };
 
 export default withStyles(styleSheet, { name: 'RadioGroupRow' })(RadioGroupRow);

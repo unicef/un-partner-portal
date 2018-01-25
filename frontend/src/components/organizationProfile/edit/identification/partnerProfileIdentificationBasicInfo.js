@@ -22,7 +22,7 @@ const messages = {
 const isReadOnly = (isHq, displayType, readOnly) => readOnly || !(!isHq && displayType === 'Int');
 
 const PartnerProfileIdentificationBasicInfo = (props) => {
-  const { isCountryProfile, displayType, readOnly, country, organizationTypes } = props;
+  const { isCountryProfile, displayType, readOnly, countryCode, organizationTypes } = props;
 
   return (
     <FormSection name="basic">
@@ -62,8 +62,8 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
           <Grid item sm={6} xs={12}>
             <CountryField
               label={messages.countryOrigin}
-              fieldName="country_code"
-              initialValue={country}
+              fieldName="country_code_origin"
+              initialValue={countryCode}
               readOnly
             />
           </Grid>
@@ -84,7 +84,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
 };
 
 PartnerProfileIdentificationBasicInfo.propTypes = {
-  country: PropTypes.string,
+  countryCode: PropTypes.string,
   readOnly: PropTypes.bool,
   isCountryProfile: PropTypes.bool,
   displayType: PropTypes.string,
@@ -98,14 +98,12 @@ const connected = connect((state, ownProps) => {
   || state.agencyPartnersList.data.partners);
   const displayType = partner ? partner.display_type : null;
   const isCountryProfile = partner ? partner.is_hq : false;
-  let country = selector(state, 'identification.basic.country_code');
+  const country = selector(state, 'identification.basic.country_code');
+  const countryOrigin = selector(state, 'identification.basic.country_of_origin');
+  const countryCode = countryOrigin || country;
 
-  if (displayType === 'Int' && !isCountryProfile) {
-    const partners = R.filter(item => item.is_hq, state.session.partners);
-    country = !R.isEmpty(partners) ? partners[0].country_code : '';
-  }
   return {
-    country,
+    countryCode,
     displayType,
     isCountryProfile,
     organizationTypes: selectNormalizedOrganizationTypes(state),

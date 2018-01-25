@@ -43,17 +43,17 @@ const PartnerOpenAfterDeadlineHeaderOptions = (props) => {
       {dialogOpen[edit] && <EditCfeiModal
         id={id}
         type="open"
-        dialogOpen={dialogOpen}
+        dialogOpen={dialogOpen[edit]}
         handleDialogClose={handleDialogClose}
       />}
       {dialogOpen[manage] && <ManageReviewersModal
         id={id}
-        dialogOpen={dialogOpen}
+        dialogOpen={dialogOpen[manage]}
         handleDialogClose={handleDialogClose}
       />}
       {dialogOpen[complete] && <CompleteCfeiModal
         id={id}
-        dialogOpen={dialogOpen}
+        dialogOpen={dialogOpen[complete]}
         handleDialogClose={handleDialogClose}
       />}
     </SpreadContent>

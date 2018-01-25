@@ -20,7 +20,7 @@ import resetChanges from '../filters/eoiHelper';
 const messages = {
   choose: 'Choose',
   labels: {
-    name: 'Legal Name',
+    name: 'Search',
     country: 'Country',
     location: 'Location',
     typeOfOrganization: 'Type of Organization',
@@ -82,6 +82,7 @@ class OpenCfeiApplicationsFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query, {
+        page: 1,
         legal_name,
         type_of_org,
         country_code,
@@ -108,6 +109,7 @@ class OpenCfeiApplicationsFilter extends Component {
               <TextFieldForm
                 label={messages.labels.name}
                 fieldName="legal_name"
+                placeholder={messages.labels.name}
                 optional
               />
             </Grid>
@@ -135,9 +137,7 @@ class OpenCfeiApplicationsFilter extends Component {
                 label={messages.labels.sectorArea}
                 placeholder={messages.labels.choose}
                 fieldName="specializations"
-                selectFieldProps={{
-                  multiple: true,
-                }}
+                multiple
                 values={specs}
                 sections
                 optional

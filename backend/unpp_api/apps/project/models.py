@@ -131,6 +131,7 @@ class Pin(TimeStampedModel):
 
 
 class ApplicationQuerySet(models.QuerySet):
+
     def winners(self):
         return self.filter(did_win=True, did_accept=True, did_withdraw=False)
 
@@ -206,8 +207,7 @@ class Application(TimeStampedModel):
 
     @property
     def partner_is_verified(self):
-        verification = self.partner.verifications.last() or False
-        return verification and verification.is_verified
+        return self.partner.is_verified
 
     @property
     def application_status(self):

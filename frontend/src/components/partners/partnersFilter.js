@@ -41,7 +41,7 @@ const styleSheet = theme => ({
 const VERIFICATION_MENU = [
   {
     value: 'pending',
-    label: 'Pending',
+    label: 'Pending verification',
   },
   {
     value: 'verified',
@@ -49,10 +49,9 @@ const VERIFICATION_MENU = [
   },
   {
     value: 'unverified',
-    label: 'Not Verified',
+    label: 'Unverified',
   },
 ];
-
 
 class PartnersFilter extends Component {
   constructor(props) {
@@ -94,6 +93,7 @@ class PartnersFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query, {
+        page: 1,
         legal_name,
         is_verified,
         display_type,

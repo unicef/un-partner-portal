@@ -10,7 +10,7 @@ import { APPLICATION_STATUSES } from '../../../helpers/constants';
 const concatText = (text, message) => `${text}${message} \n`;
 
 const messages = {
-  notVerified: 'Partner is not verified',
+  notVerified: 'Partner is unverified',
   notPreselected: 'Application is not preselected',
   redFlag: 'Partner has red flag',
   noReviews: 'All assessments are not done yet',
@@ -64,10 +64,11 @@ const AwardApplicationButtonContainer = (props) => {
     >
       <div>
         {didWin
-          ? <Button color="accent" disabled>{didWithdraw ? messages.withdraw : messages.awarded}</Button>
+          ? <Button dense component={Link} color="accent" disabled>{didWithdraw ? messages.withdraw : messages.awarded}</Button>
           : linkedButton
             ? (<Button
               // className={classes.button}
+              dense
               raised
               component={Link}
               to={{
