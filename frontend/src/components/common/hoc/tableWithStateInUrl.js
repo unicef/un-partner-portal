@@ -14,7 +14,7 @@ import {
 class TableWithStateInUrl extends Component {
   constructor(props) {
     super(props);
-    this.state = { page: 1, page_size: 10 };
+    this.state = { page: props.pageNumber || 1, page_size: props.pageSize || 10 };
     this.changeSorting = this.changeSorting.bind(this);
     this.changePageSize = this.changePageSize.bind(this);
     this.changePageNumber = this.changePageNumber.bind(this);
