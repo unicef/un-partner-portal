@@ -15,7 +15,7 @@ from common.consts import (
     COMPLETED_REASON,
     EXTENDED_APPLICATION_STATUSES,
 )
-from common.utils import get_countries_code_from_queryset
+from common.utils import get_countries_code_from_queryset, get_absolute_frontend_url
 from validators import (
     validate_weight_adjustments,
 )
@@ -114,7 +114,7 @@ class EOI(TimeStampedModel):
         return sum(map(lambda x: x.get('weight'), self.assessments_criteria)) == 100 if self.has_weighting else True
 
     def get_absolute_url(self):
-        return "{}cfei/open/{}/overview".format(settings.FRONTEND_URL, self.id)
+        return get_absolute_frontend_url("/cfei/open/{}/overview".format(self.pk))
 
 
 class Pin(TimeStampedModel):

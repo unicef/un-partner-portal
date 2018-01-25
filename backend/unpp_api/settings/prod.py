@@ -5,7 +5,6 @@ from .base import *  # noqa: ignore=F403
 # dev overrides
 DEBUG = False
 IS_STAGING = False
-FRONTEND_URL = 'http://unpp.tivixlabs.com/'
 
 extend_list_avoid_repeats(INSTALLED_APPS, [
     'rest_framework_swagger',
