@@ -109,7 +109,7 @@ class OpenCfeiApplicationsFilter extends Component {
               <TextFieldForm
                 label={messages.labels.name}
                 fieldName="legal_name"
-                placeholder="Search"
+                placeholder={messages.labels.name}
                 optional
               />
             </Grid>

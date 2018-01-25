@@ -82,7 +82,7 @@ class PartnerProfileHeader extends Component {
           backButton
           tabs={tabs}
           index={index}
-          handleBackButton={() => { history.goBack(); }}
+          defaultReturn="/partner"
           header={<PartnerProfileHeaderMenu handleMoreClick={() => { }} />}
           titleObject={PartnerTitle(this.props)}
           handleChange={this.handleChange}

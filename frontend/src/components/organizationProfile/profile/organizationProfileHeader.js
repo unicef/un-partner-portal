@@ -53,7 +53,7 @@ class OrganizationProfileHeader extends Component {
           tabs={tabs}
           index={index}
           children={children}
-          handleBackButton={() => { history.goBack(); }}
+          defaultReturn="/"
           header={<OrganizationProfileOverviewHeader
           // TODO: use date from backend not fixed one
             update={formatDateForPrint(lastUpdate)}
