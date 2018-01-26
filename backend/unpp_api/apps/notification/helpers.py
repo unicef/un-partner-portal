@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from dateutil.relativedelta import relativedelta
 from django.db import transaction
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import EmailMessage
 from django.conf import settings
 from django.template import loader
 from django.contrib.contenttypes.models import ContentType
