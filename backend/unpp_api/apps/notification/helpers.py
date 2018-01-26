@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from dateutil.relativedelta import relativedelta
 from django.db import transaction
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 from django.template import loader
 from django.contrib.contenttypes.models import ContentType
@@ -33,7 +33,7 @@ def feed_alert(notification_type, subject, body, users, obj):
 
 
 def send_notification(
-        notification_type, obj, users, context=None, send_in_feed=True, check_sent_for_source=True
+        notification_type, obj, users, context=None, send_in_feed=True, check_sent_for_source=True, use_bcc=False
 ):
     """
     notification_type - check NotificationType class in const.py
@@ -52,7 +52,16 @@ def send_notification(
 
     targets = [u.email for u in users]
     body = render_notification_template_to_str(notification_info.get('template_name'), context)
-    send_mail(notification_info.get('subject'), body, settings.DEFAULT_FROM_EMAIL, targets)
+
+    to, bcc = ([], targets) if use_bcc else (targets, [])
+
+    EmailMessage(
+        subject=notification_info.get('subject'),
+        body=body,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=to,
+        bcc=bcc
+    ).send()
 
     if send_in_feed:
         return feed_alert(notification_type, notification_info.get('subject'), body, users, obj)
@@ -63,17 +72,11 @@ def render_notification_template_to_str(template_name, context):
 
 
 def get_notify_partner_users_for_application(application):
-    users = User.objects.filter(partner_members__partner=application.partner)
-    return users.distinct()
+    return User.objects.filter(partner_members__partner=application.partner).distinct()
 
 
-def get_partner_users_for_app_qs(application_qs):
-    notify_user_ids = []
-    for application in application_qs:
-        users_qs = get_notify_partner_users_for_application(application)
-        notify_user_ids.extend(list(users_qs.values_list('id', flat=True)))
-
-    return User.objects.filter(id__in=notify_user_ids)
+def get_partner_users_for_application_queryset(application_qs):
+    return User.objects.filter(partner_members__partner__applications__in=application_qs).distinct()
 
 
 # We don't want to send 2x of the same notification
@@ -97,16 +100,12 @@ def user_received_notification_recently(user, obj, notification_type, time_ago=r
 
 def send_notification_cfei_completed(eoi):
     if eoi.completed_reason == COMPLETED_REASON.canceled:
-        users = get_partner_users_for_app_qs(eoi.applications.all())
-        send_notification(NotificationType.CFEI_CANCELLED, eoi, users)
+        users = get_partner_users_for_application_queryset(eoi.applications.all())
+        send_notification(NotificationType.CFEI_CANCELLED, eoi, users, use_bcc=True)
 
-    if eoi.completed_reason == COMPLETED_REASON.partners:
-        users = get_partner_users_for_app_qs(eoi.applications.losers())
-        send_notification(NotificationType.CFEI_APPLICATION_LOSS, eoi, users)
-
-    if eoi.completed_reason == COMPLETED_REASON.no_candidate:
-        users = get_partner_users_for_app_qs(eoi.applications.all())
-        send_notification(NotificationType.CFEI_APPLICATION_LOSS, eoi, users)
+    if eoi.completed_reason in {COMPLETED_REASON.partners, COMPLETED_REASON.no_candidate}:
+        users = get_partner_users_for_application_queryset(eoi.applications.losers())
+        send_notification(NotificationType.CFEI_APPLICATION_LOSS, eoi, users, use_bcc=True)
 
 
 def send_agency_updated_application_notification(application):
