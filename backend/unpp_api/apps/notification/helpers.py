@@ -103,8 +103,12 @@ def send_notification_cfei_completed(eoi):
         users = get_partner_users_for_application_queryset(eoi.applications.all())
         send_notification(NotificationType.CFEI_CANCELLED, eoi, users, use_bcc=True)
 
-    if eoi.completed_reason in {COMPLETED_REASON.partners, COMPLETED_REASON.no_candidate}:
+    if eoi.completed_reason == COMPLETED_REASON.partners:
         users = get_partner_users_for_application_queryset(eoi.applications.losers())
+        send_notification(NotificationType.CFEI_APPLICATION_LOSS, eoi, users, use_bcc=True)
+
+    if eoi.completed_reason == COMPLETED_REASON.no_candidate:
+        users = get_partner_users_for_application_queryset(eoi.applications.all())
         send_notification(NotificationType.CFEI_APPLICATION_LOSS, eoi, users, use_bcc=True)
 
 
