@@ -12,7 +12,7 @@ import TextFieldForm from '../../forms/textFieldForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
 import CountryField from '../../forms/fields/projectFields/locationField/countryField';
-import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
+import { selectMappedSpecializations, selectNormalizedDirectSelectionSource } from '../../../store';
 import resetChanges from '../../eois/filters/eoiHelper';
 
 const messages = {
@@ -63,7 +63,6 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
 
   componentWillMount() {
     const { pathName, query } = this.props;
-    resetChanges(pathName, query);
 
     history.push({
       pathname: pathName,
@@ -103,9 +102,20 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
     });
   }
 
-  render() {
-    const { classes, countryCode, countries, specs, handleSubmit, reset } = this.props;
+  resetForm() {
+    const query = resetChanges(this.props.pathName, this.props.query);
 
+    const { pathName } = this.props;
+
+    history.push({
+      pathname: pathName,
+      query,
+    });
+  }
+
+  render() {
+    const { classes, countryCode, specs, handleSubmit, reset } = this.props;
+    
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
         <Grid item xs={12} className={classes.filterContainer} >
@@ -160,7 +170,7 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>
@@ -183,7 +193,6 @@ PartnerApplicationsUnsolicitedFilter.propTypes = {
    */
   reset: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
-  countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
   pathName: PropTypes.string,
   query: PropTypes.object,
@@ -210,7 +219,6 @@ const mapStateToProps = (state, ownProps) => {
       R.map(Number, specializations.split(','));
 
   return {
-    countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
     directSources: selectNormalizedDirectSelectionSource(state),
     pathName: ownProps.location.pathname,
@@ -220,7 +228,7 @@ const mapStateToProps = (state, ownProps) => {
       project_title,
       country_code,
       agency: agencyQ,
-      specialization: specializationsQ,
+      specializations: specializationsQ,
       selected_source,
       ds_converted,
     },
