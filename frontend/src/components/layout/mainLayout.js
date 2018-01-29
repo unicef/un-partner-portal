@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import Grid from 'material-ui/Grid';
-import Paper from 'material-ui/Paper';
 import SidebarMenu from './sidebarMenu';
 import MainAppBar from './appBar';
 
@@ -10,30 +8,32 @@ import MainAppBar from './appBar';
 const styleSheet = theme => ({
   root: {
     margin: 'auto',
+    display: 'grid',
+    '-ms-grid-columns': '224px 1fr',
+    gridTemplateColumns: '224px auto',
+    '-ms-grid-rows': `${theme.spacing.unit * 8}px 1fr`,
+    gridTemplateRows: `${theme.spacing.unit * 8}px auto`,
+    height: '100vh',
+    width: '100vw',
   },
   rightItem: {
-    overflowX: 'scroll',
-    height: '100%',
-    width: '100%',
-    flexShrink: 1,
+    overflow: 'scroll',
+    background: theme.palette.primary[200],
+    '-ms-grid-column': 2,
+    '-ms-grid-row': 2,
   },
   border: {
   },
-  leftItem: {
+  fullWidth: {
     [theme.breakpoints.down('md')]: {
-      width: '100%',
+      '-ms-grid-column-span-end': 2,
+      gridColumnEnd: 'span 2',
     },
-    width: theme.spacing.unit * 28,
-    flex: '0 0 auto',
-    borderRight: `2px ${theme.palette.primary[300]} solid`,
   },
-  paper: {
-    minHeight: 'calc(100vh - 60px)',
-    display: 'flex',
-    width: '100%',
-    [theme.breakpoints.down('md')]: {
-      flexDirection: 'column',
-    },
+  leftItem: {
+    borderRight: `2px ${theme.palette.primary[300]} solid`,
+    '-ms-grid-column': 1,
+    '-ms-grid-row': 2,
   },
   noPrint: {
     '@media print': {
@@ -76,17 +76,15 @@ class MainLayout extends Component {
   render() {
     const { classes, children } = this.props;
     return (
-      <Grid container spacing={0} className={classes.root}>
+      <div className={classes.root}>
         <MainAppBar />
-        <Paper className={classes.paper}>
-          <div className={`${classes.leftItem} ${classes.noPrint}`}>
-            <SidebarMenu />
-          </div>
-          <div className={classes.rightItem}>
-            {children}
-          </div>
-        </Paper>
-      </Grid>
+        <div className={`${classes.leftItem} ${classes.noPrint} ${classes.fullWidth}`}>
+          <SidebarMenu />
+        </div>
+        <div className={`${classes.rightItem} ${classes.fullWidth}`}>
+          {children}
+        </div>
+      </div>
     );
   }
 }

@@ -33,6 +33,14 @@ const styleSheet = theme => ({
     display: 'flex',
     alignItems: 'center',
     minWidth: 72,
+    padding: theme.spacing.unit,
+    cursor: 'pointer',
+    '&:hover': {
+      color: theme.palette.secondary[700],
+    },
+    '&:active': {
+      backgroundColor: theme.palette.grey[300],
+    },
   },
   wrapContent: {
     display: 'inline-block',
@@ -132,18 +140,17 @@ class FileFormUploadButton extends Component {
           />
           {!url
             ? <React.Fragment>
-              <Button dense color="accent" >
-                <label className={classes.iconLabel} htmlFor={`${fieldName}-input`}>
-                  {loading
-                    ? <CircularProgress
-                      className={classes.icon}
-                      color="accent"
-                      size={20}
-                    />
-                    : <FileUpload className={classes.icon} />}
-                  {messages.upload}
-                </label>
-              </Button>
+              <Typography component={'label'} color="accent" type="button" className={classes.iconLabel} htmlFor={`${fieldName}-input`}>
+                {loading
+                  ? <CircularProgress
+                    className={classes.icon}
+                    color="accent"
+                    size={20}
+                  />
+                  : <FileUpload className={classes.icon} />}
+                {messages.upload}
+              </Typography>
+
               {((touched && error) || warning) && <FormHelperText error>{!this.state.fileSizeError ? (error || warning) : messages.fileSizeError}</FormHelperText>}
             </React.Fragment>
             : <div className={classes.wrapContent}>

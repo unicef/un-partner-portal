@@ -8,10 +8,9 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SelectForm from '../../forms/selectForm';
-import RadioForm from '../../forms/radioForm';
 import Agencies from '../../forms/fields/projectFields/agencies';
 import CountryField from '../../forms/fields/projectFields/locationField/countryField';
-import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedApplicationStatuses } from '../../../store';
+import { selectMappedSpecializations } from '../../../store';
 import resetChanges from '../../eois/filters/eoiHelper';
 
 const messages = {
@@ -20,8 +19,6 @@ const messages = {
     search: 'Search',
     country: 'Country',
     location: 'Location - Admin 1',
-    status: 'CFEI Status',
-    cnStatus: 'CN Status',
     agency: 'Agency',
     sector: 'Sector & Area of Specialization',
     fromDate: 'From date',
@@ -43,17 +40,6 @@ const styleSheet = theme => ({
   },
 });
 
-export const STATUS_VAL = [
-  {
-    value: true,
-    label: 'Active',
-  },
-  {
-    value: false,
-    label: 'Completed',
-  },
-];
-
 class PartnerApplicationsNotesFilter extends Component {
   constructor(props) {
     super(props);
@@ -67,15 +53,10 @@ class PartnerApplicationsNotesFilter extends Component {
 
   componentWillMount() {
     const { pathName, query } = this.props;
-    resetChanges(pathName, query);
-
-    const active = !!(this.props.query.cfei_active === 'true' || (typeof (this.props.query.cfei_active) === 'boolean' && this.props.query.cfei_active) || !this.props.query.cfei_active);
 
     history.push({
       pathname: pathName,
-      query: R.merge(query,
-        { cfei_active: active },
-      ),
+      query,
     });
   }
 
@@ -83,13 +64,9 @@ class PartnerApplicationsNotesFilter extends Component {
     if (R.isEmpty(nextProps.query)) {
       const { pathname } = nextProps.location;
 
-      const active = this.props.query.cfei_active ? this.props.query.cfei_active : true;
-
       history.push({
         pathname,
-        query: R.merge(this.props.query,
-          { cfei_active: active },
-        ),
+        query: this.props.query,
       });
     }
   }
@@ -98,16 +75,15 @@ class PartnerApplicationsNotesFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { agency, country_code, specialization, cfei_active } = values;
+    const { agency, country_code, specializations } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         page: 1,
         agency,
-        cfei_active,
         country_code,
-        specialization,
+        specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
       }),
     });
   }
@@ -119,14 +95,12 @@ class PartnerApplicationsNotesFilter extends Component {
 
     history.push({
       pathname: pathName,
-      query: R.merge(query,
-        { cfei_active: true },
-      ),
+      query,
     });
   }
 
   render() {
-    const { classes, countryCode, countries, specs, handleSubmit, cnStatus, reset } = this.props;
+    const { classes, countryCode, specs, handleSubmit, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
@@ -144,8 +118,9 @@ class PartnerApplicationsNotesFilter extends Component {
               <SelectForm
                 label={messages.labels.sector}
                 placeholder={messages.choose}
-                fieldName="specialization"
+                fieldName="specializations"
                 values={specs}
+                multiple
                 sections
                 optional
               />
@@ -154,16 +129,6 @@ class PartnerApplicationsNotesFilter extends Component {
               <Agencies
                 fieldName="agency"
                 label={messages.labels.agency}
-                optional
-              />
-            </Grid>
-          </Grid>
-          <Grid container direction="row" >
-            <Grid item sm={4} xs={12}>
-              <RadioForm
-                fieldName="cfei_active"
-                label={messages.labels.status}
-                values={STATUS_VAL}
                 optional
               />
             </Grid>
@@ -194,9 +159,7 @@ PartnerApplicationsNotesFilter.propTypes = {
    */
   reset: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
-  countries: PropTypes.array.isRequired,
   specs: PropTypes.array.isRequired,
-  cnStatus: PropTypes.array.isRequired,
   pathName: PropTypes.string,
   query: PropTypes.object,
 };
@@ -211,23 +174,22 @@ const formPartnerApplicationsNotesFilter = reduxForm({
 const mapStateToProps = (state, ownProps) => {
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { agency } = {} } = ownProps.location;
-  const { query: { cfei_active } = {} } = ownProps.location;
-  const { query: { specialization } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
 
   const agencyQ = agency ? Number(agency) : agency;
 
+  const specializationsQ = specializations &&
+      R.map(Number, specializations.split(','));
+
   return {
-    countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
-    cnStatus: selectNormalizedApplicationStatuses(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     countryCode: country_code,
     initialValues: {
       country_code,
       agency: agencyQ,
-      cfei_active,
-      specialization,
+      specializations: specializationsQ,
     },
   };
 };

@@ -71,7 +71,7 @@ if not ENV:
 DOMAIN_NAME = os.getenv('DJANGO_ALLOWED_HOST', 'localhost')
 WWW_ROOT = 'http://%s/' % DOMAIN_NAME
 ALLOWED_HOSTS = [DOMAIN_NAME]
-FRONTEND_URL = 'http://127.0.0.1:8080/'
+FRONTEND_HOST = os.getenv('UNPP_FRONTEND_HOST', DOMAIN_NAME)
 
 DATABASES = {
     'default': {

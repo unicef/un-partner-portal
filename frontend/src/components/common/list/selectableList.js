@@ -23,7 +23,7 @@ const table = {
 };
 
 const styleSheet = (theme) => {
-  const paddingSmall = theme.spacing.unit * 3;
+  const paddingSmall = theme.spacing.unit * 2;
   const paddingMedium = theme.spacing.unit * 4;
 
   return {

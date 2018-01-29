@@ -20,10 +20,7 @@ const styleSheet = () => ({
     height: 20,
   },
   editIcon: {
-    fill: '#FFFFFF',
-    '&:hover': {
-      fill: '#8B8C8D',
-    },
+    fill: '#8B8C8D',
   },
 });
 

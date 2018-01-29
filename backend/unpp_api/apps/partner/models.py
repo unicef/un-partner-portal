@@ -55,7 +55,8 @@ class Partner(TimeStampedModel):
     country_presence = ArrayField(
         models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE),
         default=list,
-        null=True
+        null=True,
+        blank=True,
     )
     staff_globally = models.CharField(max_length=3, choices=STAFF_GLOBALLY_CHOICES, null=True, blank=True)
     # country profile information
