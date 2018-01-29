@@ -32,6 +32,7 @@ const styleSheet = theme => ({
     // dark blue color added as extra to regular palette
     flexShrink: 1,
     backgroundColor: theme.palette.primary.strong,
+    '-ms-grid-column': 2,
   },
   iconBox: {
     width: 48,
