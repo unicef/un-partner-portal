@@ -1,5 +1,6 @@
 import R from 'ramda';
 import { patchPartnerProfileTab } from '../helpers/api/api';
+import { sessionChange } from './session';
 
 export const PATCH_DETAILS_STARTED = 'PATCH_DETAILS_STARTED';
 export const PATCH_DETAILS_ENDED = 'PATCH_DETAILS_ENDED';
@@ -31,10 +32,13 @@ export const patchDetailsSuccess = (partnerDetails, getState) =>
   ({ type: PATCH_DETAILS_SUCCESS, partnerDetails, getState });
 export const patchDetailsFailure = error => ({ type: PATCH_DETAILS_FAILURE, error });
 
-export const patchPartnerProfile = (partnerId, tabName, body) => (dispatch) => {
+export const patchPartnerProfile = (partnerId, tabName, body) => (dispatch, getState) => {
+  const session = getState().session;
+
   dispatch(patchDetailsStarted());
 
-  return patchPartnerProfileTab(partnerId, tabName, body);
+  return patchPartnerProfileTab(partnerId, tabName, body)
+    .then(() => dispatch(sessionChange(R.assoc('lastUpdate', new Date(), session))));
 };
 
 export default function partnerProfileDetailsStatus(state = initialState, action) {
