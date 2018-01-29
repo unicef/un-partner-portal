@@ -483,9 +483,14 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
 
         reviewers = self.initial_data.get('reviewers', [])
         if reviewers:
+            Assessment.objects.filter(
+                application__eoi=instance
+            ).exclude(reviewer_id__in=reviewers).update(archived=True)
             instance.reviewers.through.objects.exclude(user_id__in=reviewers).delete()
             instance.reviewers.add(*User.objects.filter(id__in=reviewers))
+            Assessment.all_objects.filter(application__eoi=instance, reviewer_id__in=reviewers).update(archived=False)
         elif 'reviewers' in self.initial_data:
+            Assessment.objects.filter(application__eoi=instance).update(archived=True)
             instance.reviewers.clear()
 
         focal_points = self.initial_data.get('focal_points', [])
@@ -571,7 +576,10 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
         return my_assessment.get_scores_as_dict() if my_assessment else None
 
     def get_review_progress(self, obj):
-        return "{}/{}".format(obj.assessments.count(), obj.eoi.reviewers.count())
+        review_count = obj.assessments.count()
+        reviewers_count = obj.eoi.reviewers.count()
+
+        return '{}/{}'.format(review_count, reviewers_count)
 
 
 class ReviewersApplicationSerializer(serializers.ModelSerializer):
