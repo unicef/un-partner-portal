@@ -17,7 +17,6 @@ const initialState = {
     { name: 'type_org', title: 'Type of Organization' },
     { name: 'id', title: 'Application ID' },
     { name: 'status', title: 'Status', width: 300 },
-    { name: 'review_progress', title: 'Status', width: 300 },
   ],
   applications: [],
   itemsCount: 0,

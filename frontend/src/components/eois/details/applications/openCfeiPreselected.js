@@ -83,10 +83,10 @@ class OpenCfeiPreselections extends Component {
         hovered={hovered}
         allowedToEdit={this.props.allowedToEdit}
       />);
-    } else if (column.name === 'reviews') {
-      
+    } else if (column.name === 'review_progress') {
       return (<PreselectedReviewsCell
-        reviews={row.your_score}
+        id={row.id}
+        reviews={row.review_progress}
       />);
     }
     return undefined;
