@@ -2,6 +2,7 @@ import os
 
 from logging.handlers import RotatingFileHandler
 
+from django.conf import settings
 from imagekit import ImageSpec
 from imagekit.processors import ResizeToFill
 
@@ -80,3 +81,14 @@ def confirm(prompt='Confirm', default=False):
             return True
         if ans.lower() == 'n':
             return False
+
+
+def get_absolute_frontend_url(relative_url):
+    if not relative_url.startswith('/'):
+        relative_url = '/' + relative_url
+
+    host = settings.FRONTEND_HOST
+    if host.endswith('/'):
+        host = host[:-1]
+
+    return 'http://' + host + relative_url
