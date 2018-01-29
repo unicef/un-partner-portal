@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 from datetime import date
 
-from django.conf import settings
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from model_utils.models import TimeStampedModel
@@ -15,7 +14,7 @@ from common.consts import (
     COMPLETED_REASON,
     EXTENDED_APPLICATION_STATUSES,
 )
-from common.utils import get_countries_code_from_queryset
+from common.utils import get_countries_code_from_queryset, get_absolute_frontend_url
 from validators import (
     validate_weight_adjustments,
 )
@@ -48,10 +47,8 @@ class EOI(TimeStampedModel):
     deadline_date = models.DateField(verbose_name='Estimated Deadline Date', null=True, blank=True)
     notif_results_date = models.DateField(verbose_name='Notification of Results Date', null=True, blank=True)
     has_weighting = models.BooleanField(default=True, verbose_name='Has weighting?')
-    invited_partners = \
-        models.ManyToManyField('partner.Partner', related_name="expressions_of_interest", blank=True)
-    reviewers = \
-        models.ManyToManyField('account.User', related_name="eoi_as_reviewer", blank=True)
+    invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest", blank=True)
+    reviewers = models.ManyToManyField('account.User', related_name="eoi_as_reviewer", blank=True)
     justification = models.TextField(null=True, blank=True)  # closed or completed
     completed_reason = models.CharField(max_length=3, choices=COMPLETED_REASON, null=True, blank=True)
     completed_date = models.DateTimeField(null=True, blank=True)
@@ -114,7 +111,7 @@ class EOI(TimeStampedModel):
         return sum(map(lambda x: x.get('weight'), self.assessments_criteria)) == 100 if self.has_weighting else True
 
     def get_absolute_url(self):
-        return "{}cfei/open/{}/overview".format(settings.FRONTEND_URL, self.id)
+        return get_absolute_frontend_url("/cfei/open/{}/overview".format(self.pk))
 
 
 class Pin(TimeStampedModel):
@@ -163,7 +160,8 @@ class Application(TimeStampedModel):
     ds_justification_select = ArrayField(
         models.CharField(max_length=3, choices=JUSTIFICATION_FOR_DIRECT_SELECTION),
         default=list,
-        null=True
+        null=True,
+        blank=True,
     )
     # Applies when application converted to EOI. Only applicable if this is unsolicited
     eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion", null=True, blank=True)
@@ -263,6 +261,12 @@ class ApplicationFeedback(TimeStampedModel):
         return "ApplicationFeedback <pk:{}>".format(self.id)
 
 
+class AssessmentManager(models.Manager):
+
+    def get_queryset(self):
+        return super(AssessmentManager, self).get_queryset().filter(archived=False)
+
+
 class Assessment(TimeStampedModel):
     created_by = models.ForeignKey('account.User', related_name="assessments_creator")
     modified_by = models.ForeignKey('account.User', related_name="assessments_editor", null=True, blank=True)
@@ -271,6 +275,7 @@ class Assessment(TimeStampedModel):
     scores = JSONField(default=[dict((('selection_criteria', None), ('score', 0)))])
     date_reviewed = models.DateField(auto_now=True, verbose_name='Date reviewed')
     note = models.TextField(null=True, blank=True)
+    archived = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['id']
@@ -278,6 +283,9 @@ class Assessment(TimeStampedModel):
 
     def __str__(self):
         return "Assessment <pk:{}>".format(self.id)
+
+    objects = AssessmentManager()
+    all_objects = models.Manager()
 
     __total_score = None
 

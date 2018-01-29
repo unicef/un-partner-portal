@@ -33,10 +33,11 @@ export const saveApplications = (action) => {
     title,
     id,
     deadline_date,
-  } }) => ({
+  }, eoi_applications_count }) => ({
     title,
     id,
     deadline_date,
+    eoi_applications_count,
   }));
   return { applications: newApplications, count };
 };
