@@ -12,6 +12,7 @@ import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
 import Compare from '../../buttons/compareButton';
 import PreselectedTotalScore from '../../cells/preselectedTotalScore';
 import PreselectedYourScore from '../../cells/preselectedYourScore';
+import PreselectedReviewsCell from '../../cells/preselectedReviewsCell';
 import { loadApplications } from '../../../../reducers/partnersApplicationsList';
 import { APPLICATION_STATUSES } from '../../../../helpers/constants';
 import { isQueryChanged } from '../../../../helpers/apiHelper';
@@ -81,6 +82,11 @@ class OpenCfeiPreselections extends Component {
         score={row.average_total_score}
         hovered={hovered}
         allowedToEdit={this.props.allowedToEdit}
+      />);
+    } else if (column.name === 'reviews') {
+      
+      return (<PreselectedReviewsCell
+        reviews={row.your_score}
       />);
     }
     return undefined;
