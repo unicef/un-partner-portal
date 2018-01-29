@@ -10,7 +10,7 @@ IS_DEV = True
 # domains/hosts etc.
 DOMAIN_NAME = 'localhost:8000'
 WWW_ROOT = 'http://%s/' % DOMAIN_NAME
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "10.0.2.2"]
 FRONTEND_URL = 'http://127.0.0.1:8080/'
 
 # other

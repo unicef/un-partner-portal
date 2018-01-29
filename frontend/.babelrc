@@ -2,9 +2,11 @@
 {
   "presets": [
     "react-app",
-    "stage-1"
+    "stage-1",
+    "env",
   ],
   "plugins": [
-    "transform-object-assign"
+    "transform-object-assign",
+    "transform-class-properties"
   ]
 }
