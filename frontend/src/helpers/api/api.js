@@ -23,7 +23,10 @@ function getCookie(name) {
 function buildHeaders(authorize = false, extraHeaders = {}) {
   const token = store.getState().session.token;
   const partnerId = store.getState().session.partnerId;
-  let headers = {};
+  let headers = {
+    Pragma: 'no-cache',
+    'Cache-Control': 'no-cache',
+  };
   if (authorize) headers = { ...headers, Authorization: `token ${token}` };
   if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };
   return { ...headers, ...extraHeaders };

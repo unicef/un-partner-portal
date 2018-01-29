@@ -9,7 +9,9 @@ const styleSheet = theme => ({
   root: {
     margin: 'auto',
     display: 'grid',
+    '-ms-grid-columns': '224px 1fr',
     gridTemplateColumns: '224px auto',
+    '-ms-grid-rows': `${theme.spacing.unit * 8}px 1fr`,
     gridTemplateRows: `${theme.spacing.unit * 8}px auto`,
     height: '100vh',
     width: '100vw',
@@ -17,16 +19,21 @@ const styleSheet = theme => ({
   rightItem: {
     overflow: 'scroll',
     background: theme.palette.primary[200],
+    '-ms-grid-column': 2,
+    '-ms-grid-row': 2,
   },
   border: {
   },
   fullWidth: {
     [theme.breakpoints.down('md')]: {
+      '-ms-grid-column-span-end': 2,
       gridColumnEnd: 'span 2',
     },
   },
   leftItem: {
     borderRight: `2px ${theme.palette.primary[300]} solid`,
+    '-ms-grid-column': 1,
+    '-ms-grid-row': 2,
   },
   noPrint: {
     '@media print': {
