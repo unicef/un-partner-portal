@@ -20,11 +20,6 @@ import SidebarMenu from './sidebarMenu';
 import Logout from './logout';
 
 const styleSheet = theme => ({
-  root: {
-    height: 60,
-    display: 'flex',
-    width: '100%',
-  },
   leftHeader: {
     [theme.breakpoints.down('xs')]: {
       width: '100%',
@@ -85,7 +80,7 @@ class MainAppBar extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.root}>
+      <React.Fragment>
         <AppBar
           className={`${classes.header} ${classes.leftHeader} ${classes.noPrint}`}
           position="static"
@@ -148,7 +143,7 @@ class MainAppBar extends Component {
         >
           <Logout />
         </Popover>
-      </div>
+      </React.Fragment>
     );
   }
 }

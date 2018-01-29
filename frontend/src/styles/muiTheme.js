@@ -99,6 +99,22 @@ const theme = {
     MuiDefaultTab: {
       fontWeight: 400,
     },
+    // TODO use those when font is reduced
+    // MuiTableHead: {
+    //   root: {
+    //     fontSize: '0.9rem',
+    //   },
+    // },
+    // MuiTableBody: {
+    //   root: {
+    //     fontSize: '1rem',
+    //   },
+    // },
+    MuiTab: {
+      rootLabelIcon: {
+        height: '48px',
+      },
+    },
   },
 };
 const getTheme = () => (
