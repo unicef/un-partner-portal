@@ -30,6 +30,7 @@ const styleSheet = (theme) => {
       '@media print': {
         borderBottom: '0',
       },
+      background: '#fff',
     },
     alignItems: {
       display: 'flex',
@@ -41,7 +42,6 @@ const styleSheet = (theme) => {
     alignItemsPadding: {
       display: 'flex',
       alignItems: 'flex-end',
-      paddingBottom: `${padding}px`,
     },
     flex: {
       alignItems: 'flex-end',
