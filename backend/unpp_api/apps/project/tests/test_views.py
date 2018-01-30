@@ -780,6 +780,7 @@ class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
 
     def test_send_notification(self):
         eoi = EOI.objects.first()
+        eoi.reviewers.add(self.user)
 
         url = reverse('projects:eoi-reviewers-assessments-notify', kwargs={
             "eoi_id": eoi.id, "reviewer_id": self.user.id
