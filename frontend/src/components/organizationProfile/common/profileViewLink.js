@@ -53,7 +53,7 @@ let ProfileViewLink = (props) => {
             : null,
         }}
         removeContentPadding
-        content={<OrganizationProfileContent />}
+        content={<OrganizationProfileContent partnerId={partnerId}/>}
       />
     </div >
   );

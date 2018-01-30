@@ -52,7 +52,7 @@ const styleSheet = (theme) => {
 };
 
 const OrganizationProfileContent = (props) => {
-  const { classes, verifiedStatus, flag, profileName } = props;
+  const { classes, verifiedStatus, flag, profileName, partnerId } = props;
 
   return (
     <div>
@@ -68,7 +68,7 @@ const OrganizationProfileContent = (props) => {
           {flag ? <Flag /> : null}
         </div>
       </PaddedContent>
-      <OrganizationProfileOverview />
+      <OrganizationProfileOverview partnerId={partnerId} />
     </div>
   );
 };
@@ -76,6 +76,7 @@ const OrganizationProfileContent = (props) => {
 OrganizationProfileContent.propTypes = {
   classes: PropTypes.object.isRequired,
   profileName: PropTypes.func.isRequired,
+  partnerId: PropTypes.string.isRequired,
   flag: PropTypes.string.isRequired,
   verifiedStatus: PropTypes.string.isRequired,
 };

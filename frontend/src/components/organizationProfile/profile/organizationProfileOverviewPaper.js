@@ -1,4 +1,7 @@
-import React from 'react';
+
+import PropTypes from 'prop-types';import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import Paper from 'material-ui/Paper';
 import { withStyles } from 'material-ui/styles';
 import OrganizationProfileOverview from './organizationProfileOverview';
@@ -12,14 +15,26 @@ const styleSheet = () => ({
   },
 });
 
-const OrganizationProfileOverviewPaper = ({ classes }) => (
+const OrganizationProfileOverviewPaper = ({ classes, partnerId }) => (
   <React.Fragment>
     <SwitchProfileOverview />
     <Paper className={classes.print}>
-      <OrganizationProfileOverview />
+      <OrganizationProfileOverview partnerId={partnerId} />
 
     </Paper>
   </React.Fragment>
 );
 
-export default withStyles(styleSheet)(OrganizationProfileOverviewPaper);
+OrganizationProfileOverviewPaper.propTypes = {
+  classes: PropTypes.object.isRequired,
+  partnerId: PropTypes.string.isRequired,
+};
+
+const mapStateToProps = (state, ownProps) => ({
+  partnerId: ownProps.params.id,
+});
+
+const connected = connect(mapStateToProps, null)(OrganizationProfileOverviewPaper);
+const profileWithRouter = withRouter(connected);
+
+export default withStyles(styleSheet)(profileWithRouter);
