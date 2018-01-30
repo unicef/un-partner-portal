@@ -17,30 +17,12 @@ const styleSheet = theme => ({
     alignContent: 'space-between',
   },
   logo: {
-    [theme.breakpoints.down('md')]: {
-      width: '100%',
-      position: 'inherit',
-    },
-    width: theme.spacing.unit * 28,
-    position: 'fixed',
-    bottom: 0,
+    width: '100%',
   },
   innerLogo: {
     padding: theme.spacing.unit * 2,
   },
-  icon: {
-    color: 'inherit',
-  },
-  button: {
-    '&:hover': {
-      backgroundColor: theme.palette.primary[200],
-      color: theme.palette.secondary[500],
-    },
-    '&.active': {
-      backgroundColor: theme.palette.primary[200],
-      color: theme.palette.secondary[500],
-    },
-  },
+
 });
 
 function sidebarMenu(props) {
@@ -52,10 +34,6 @@ function sidebarMenu(props) {
         label={item.label}
         key={item.label}
         icon={createElement(item.icon)}
-        classes={{
-          button: classes.button,
-          icon: classes.icon,
-        }}
         onClick={() => onItemClick(index, item.path)}
       />
     );

@@ -40,7 +40,7 @@ from common.permissions import (
 from common.mixins import PartnerIdsMixin
 from notification.consts import NotificationType
 from notification.helpers import (
-    get_partner_users_for_app_qs,
+    get_partner_users_for_application_queryset,
     send_notification_cfei_completed,
     send_agency_updated_application_notification,
     send_notification_application_created,
@@ -154,7 +154,7 @@ class EOIAPIView(RetrieveUpdateAPIView):
 
         # Deadline Changed
         if current_deadline != instance.deadline_date:
-            users = get_partner_users_for_app_qs(instance.applications.all())
+            users = get_partner_users_for_application_queryset(instance.applications.all())
             context = {
                 'initial_date': current_deadline,
                 'revised_date': instance.deadline_date,

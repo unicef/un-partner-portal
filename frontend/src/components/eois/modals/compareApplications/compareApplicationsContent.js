@@ -20,6 +20,7 @@ const messages = {
   print: 'Download',
 };
 
+
 const styleSheet = theme => ({
   lightGrey: {
     minWidth: '50vw',
@@ -91,20 +92,37 @@ class CompareApplicationContent extends React.Component {
           <div
             style={{
               grid: `none / repeat(${columns}, 1fr)`,
+              msGridColumns: '1fr '.repeat(columns),
+              msGridRow: 1,
             }}
             className={`${classes.subGrid} ${classes.lightGrey}`}
           >
-            {names.map((name, index) => <Typography key={ids[index]} type="body2">{name}</Typography>)}
+            {names.map((name, index) => (
+              <Typography 
+                style={{msGridColumn: index+1}}
+                key={ids[index]} 
+                type="body2"
+              >
+                {name}
+              </Typography>
+            ))}
           </div>
           <Divider />
 
           <div
-            style={{ grid: `none / repeat(${columns}, 1fr)` }}
+            style={{
+              grid: `none / repeat(${columns}, 1fr)`,
+              msGridColumns: '1fr '.repeat(columns),
+              msGridRow: 2,
+            }}
             className={classes.subGrid}
           >
             {ids.map((appId, index) => {
-              if (index === 0) return (<Typography key={appId}>{appId}</Typography>);
+              if (index === 0) return (<Typography
+                style={{msGridColumn: index+1}}
+                key={appId}>{appId}</Typography>);
               return (<Typography
+                style={{msGridColumn: index+1}}
                 key={appId}
                 color="accent"
                 component={Link}
@@ -116,40 +134,66 @@ class CompareApplicationContent extends React.Component {
           </div>
           <Divider />
           <div
-            style={{ grid: `none / repeat(${columns}, 1fr)` }}
+            style={{
+              grid: `none / repeat(${columns}, 1fr)`,
+              msGridColumns: '1fr '.repeat(columns),
+              msGridRow: 3,
+            }}
             className={classes.subGrid}
           >
-            {avgTotalScores.map((score, index) => <Typography key={ids[index]}>{score}</Typography>)}
+            {avgTotalScores.map((score, index) => (
+              <Typography
+                style={{msGridColumn: index+1}}
+                key={ids[index]}
+              >
+                {score}
+              </Typography>
+              ))}
           </div>
           <Divider />
 
           <div
-            style={{ grid: `none / repeat(${columns}, 1fr)` }}
+            style={{
+              grid: `none / repeat(${columns}, 1fr)`,
+              msGridColumns: '1fr '.repeat(columns),
+              msGridRow: 4,
+            }}
             className={classes.subGrid}
           >
             {verification.map((singleVerification, index) => {
-              if (index === 0) return (<Typography key={ids[index]}>{singleVerification}</Typography>);
-              return (<VerificationText key={ids[index]} verified={singleVerification} />);
+              if (index === 0) return (<Typography
+                style={{msGridColumn: index+1}}
+                key={ids[index]}>{singleVerification}</Typography>);
+              return (<div style={{msGridColumn: index+1}}><VerificationText
+                key={ids[index]} verified={singleVerification} /></div>);
             })}
           </div>
           <Divider />
 
           <div
-            style={{ grid: `none / repeat(${columns}, 1fr)` }}
+             style={{
+              grid: `none / repeat(${columns}, 1fr)`,
+              msGridColumns: '1fr '.repeat(columns),
+              msGridRow: 5,
+            }}
             className={classes.subGrid}
           >
             {flagging.map((flag, index) => {
-              if (index === 0) return (<Typography key={ids[index]}>{flag}</Typography>);
-              return (<FlaggingStatus key={ids[index]} flags={flag} noFlagText />);
+              if (index === 0) return (<Typography style={{msGridColumn: index+1}} key={ids[index]}>{flag}</Typography>);
+              return (<div style={{msGridColumn: index+1}}><FlaggingStatus key={ids[index]} flags={flag} noFlagText /></div>);
             })}
           </div>
           <Divider />
 
           <div
-            style={{ grid: `none / repeat(${columns}, 1fr)` }}
+            style={{
+              grid: `none / repeat(${columns}, 1fr)`,
+              msGridColumns: '1fr '.repeat(columns),
+              msGridRow: 6,
+            }}
             className={classes.subGrid}
           >
-            {establishment.map((year, index) => (<Typography key={ids[index]}>
+            {establishment.map((year, index) => (<Typography style={{msGridColumn: index+1}} key={ids[index]}>
               {year}
             </Typography>))}
           </div>
@@ -157,22 +201,30 @@ class CompareApplicationContent extends React.Component {
 
 
           <div
-            style={{ grid: `none / repeat(${columns}, 1fr)` }}
+            style={{
+              grid: `none / repeat(${columns}, 1fr)`,
+              msGridColumns: '1fr '.repeat(columns),
+              msGridRow: 7,
+            }}
             className={classes.subGrid}
           >
-            {unExp.map((exp, index) => (<Typography key={ids[index]}>
+            {unExp.map((exp, index) => (<Typography style={{msGridColumn: index+1}} key={ids[index]}>
               {exp}
             </Typography>))}
           </div>
           <Divider />
 
           <div
-            style={{ grid: `none / repeat(${columns}, 1fr)` }}
+            style={{
+              grid: `none / repeat(${columns}, 1fr)`,
+              msGridColumns: '1fr '.repeat(columns),
+              msGridRow: 8,
+            }}
             className={classes.subGrid}
           >
             {budgets.map((budget, index) => {
-              if (index === 0) return (<Typography key={ids[index]}>{budget}</Typography>);
-              return (<Typography className={classes.wrappedText} key={ids[index]}>
+              if (index === 0) return (<Typography style={{msGridColumn: index+1}} key={ids[index]}>{budget}</Typography>);
+              return (<Typography style={{msGridColumn: index+1}} className={classes.wrappedText} key={ids[index]}>
                 {budgetOptions[budget]}
               </Typography>);
             })}
@@ -181,11 +233,16 @@ class CompareApplicationContent extends React.Component {
         </div>
         <div>
           <div
-            style={{ grid: `none / repeat(${columns}, 1fr)` }}
+            style={{
+              grid: `none / repeat(${columns}, 1fr)`,
+              msGridColumns: '1fr '.repeat(columns),
+              msGridRow: 9,
+            }}
             className={classes.subGrid}
           >
             <Typography type="body2">{messages.labelAward}</Typography>
             {applications.map((application, index) => (
+              <div style={{msGridColumn: index+2}}>
               <AwardApplicationButtonContainer
                 key={ids[index]}
                 loading={loading}
@@ -198,7 +255,7 @@ class CompareApplicationContent extends React.Component {
                 didWin={applicationsMeta[index].did_win}
                 didWithdraw={applicationsMeta[index].did_withdraw}
                 linkedButton
-              />))}
+              /></div>))}
           </div>
           <Divider />
         </div>
