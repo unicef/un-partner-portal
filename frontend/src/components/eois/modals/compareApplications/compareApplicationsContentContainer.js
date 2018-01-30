@@ -6,6 +6,7 @@ import { withRouter } from 'react-router';
 import { pluckAll } from '../../../../reducers/normalizationHelpers';
 import CompareApplicationsContent from './compareApplicationsContent';
 import { loadApplicationComparison } from '../../../../reducers/applicationsComparison';
+import { downloadComparisonReport } from '../../../../reducers/applicationsComparisonReport';
 import EmptyContent from '../../../common/emptyContent';
 import Loader from '../../../common/loader';
 
@@ -28,7 +29,7 @@ class CompareApplicationContentContainer extends Component {
   }
 
   render() {
-    const { loading, applications, comparison, params: { id, type } } = this.props;
+    const { loading, report, loadReport, applications, comparison, params: { id, type } } = this.props;
     if (loading || R.isEmpty(comparison) || (applications.length !== comparison.length)) {
       return <Loader loading={loading}><EmptyContent /></Loader>;
     }
@@ -53,6 +54,8 @@ class CompareApplicationContentContainer extends Component {
       type={type}
       applicationsMeta={applicationMeta}
       loading={loading}
+      onPrint={loadReport}
+      report={report}
     />);
   }
 }
@@ -63,16 +66,22 @@ CompareApplicationContentContainer.propTypes = {
   params: PropTypes.object,
   loading: PropTypes.bool,
   applications: PropTypes.array,
+  loadReport: PropTypes.func,
+  report: PropTypes.string,
+  loadingReport: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
   loading: state.applicationComparison.status.loading,
+  loadingReport: state.applicationComparisonReport.status.loading,
   comparison: state.applicationComparison.data,
+  report: state.applicationComparisonReport.data,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = (dispatch, { params: { id }, applications }) => ({
   getComparison: () => dispatch(
-    loadApplicationComparison(ownProps.params.id, ownProps.applications)),
+    loadApplicationComparison(id, applications)),
+  loadReport: () => dispatch(downloadComparisonReport(id, applications)),
 });
 
 
