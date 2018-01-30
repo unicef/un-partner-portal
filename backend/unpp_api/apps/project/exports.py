@@ -99,12 +99,6 @@ class ApplicationCompareSpreadsheetGenerator(object):
                     current_row + 1, current_column, 'Red', self.error_format
                 )
                 worksheet.set_column(current_column, current_column, 10)
-                current_column += 1
-
-                worksheet.write(
-                    current_row + 1, current_column, 'Invalid', self.neutral_format
-                )
-                worksheet.set_column(current_column, current_column, 10)
             else:
                 worksheet.merge_range(
                     xl_rowcol_to_cell(
@@ -147,18 +141,15 @@ class ApplicationCompareSpreadsheetGenerator(object):
             red_flags = flagging_status['red']
             worksheet.write(current_row, 5, red_flags, self.error_format if red_flags else None)
 
-            invalid_flags = flagging_status['invalid']
-            worksheet.write(current_row, 6, invalid_flags, self.neutral_format if invalid_flags else None)
-
-            worksheet.write(current_row, 7, application.partner.profile.year_establishment)
+            worksheet.write(current_row, 6, application.partner.profile.year_establishment)
             worksheet.write(
-                current_row, 8,
+                current_row, 7,
                 ", ".join(application.partner.collaborations_partnership.all().values_list('agency__name', flat=True))
             )
 
             budget = application.partner.budgets.filter(year=timezone.now().year).first()
             if budget:
-                worksheet.write(current_row, 9, budget.get_budget_display())
+                worksheet.write(current_row, 8, budget.get_budget_display())
 
             current_row += 1
 
