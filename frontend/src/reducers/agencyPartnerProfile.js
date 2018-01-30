@@ -45,7 +45,7 @@ const savePartnerProfileOverview = (state, action) => {
     organisationType: R.path(['partnerProfileConfig', 'partner-type', R.prop(
       'display_type', partnerDetails)], wholeState),
     operationCountry: wholeState.countries[R.prop('country_code', partnerDetails)],
-    location: R.prop('location_of_office', partnerDetails),
+    location: R.prop('location_of_office', partnerDetails) || R.prop('country_presence_display', partnerDetails),
     head: {
       fullname: R.path(['org_head', 'fullname'], partnerDetails),
       title: R.path(['org_head', 'job_title'], partnerDetails),
@@ -55,10 +55,10 @@ const savePartnerProfileOverview = (state, action) => {
       email: R.path(['org_head', 'email'], partnerDetails),
     },
     contact: [
-      `${R.path(['mailing_address', 'street'], partnerDetails)}, ` +
-      `${R.path(['mailing_address', 'zip_code'], partnerDetails)} ` +
-      `${R.path(['mailing_address', 'city'], partnerDetails)}`,
-      `phone: ${R.path(['mailing_address', 'telephone'], partnerDetails)}`,
+      R.path(['mailing_address', 'street'], partnerDetails) ? `${R.path(['mailing_address', 'street'], partnerDetails)}, ` : '' +
+      `${R.path(['mailing_address', 'zip_code'], partnerDetails) || ''} ` +
+      `${R.path(['mailing_address', 'city'], partnerDetails) || ''}`,
+      R.path(['mailing_address', 'telephone'], partnerDetails) ? `phone: ${R.path(['mailing_address', 'telephone'], partnerDetails)}` : '',
     ],
     sectors: flatSectorsAndAreas(sectors, wholeState.sectors),
     yearOfEstablishment: R.prop('year_establishment', partnerDetails),
