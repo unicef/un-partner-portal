@@ -10,11 +10,11 @@ import { APPLICATION_STATUSES } from '../../../helpers/constants';
 import ApplicationStatusText from '../details/applications/applicationStatusText';
 
 const ApplicationStatusCell = (props) => {
-  const { id, conceptNote, status, applicationStatus, hovered, progress, preselectDisabled } = props;
+  const { id, conceptNote, status, applicationStatus, hovered, progress, changeDisabled } = props;
   const Preselect = WithGreyColor(status === APPLICATION_STATUSES.PRE
-    || preselectDisabled)(PreselectButton);
+    || changeDisabled)(PreselectButton);
   const Reject = WithGreyColor(!progress.startsWith('0')
-    || status === APPLICATION_STATUSES.REJ)(RejectButton);
+    || status === APPLICATION_STATUSES.REJ || changeDisabled)(RejectButton);
   const Download = WithGreyColor(!conceptNote)(GetConceptNoteButton);
   return (<TableCell>
     <GridRow alignItems="center" >
@@ -39,7 +39,7 @@ ApplicationStatusCell.propTypes = {
   hovered: PropTypes.bool,
   progress: PropTypes.string,
   applicationStatus: PropTypes.string,
-  preselectDisabled: PropTypes.bool,
+  changeDisabled: PropTypes.bool,
 };
 
 ApplicationStatusCell.defaultProps = {
