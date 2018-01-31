@@ -1,9 +1,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { browserHistory as history } from 'react-router';
-import IconButton from 'material-ui/IconButton';
-import KeyboardArrowLeft from 'material-ui-icons/KeyboardArrowLeft';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Tabs from 'material-ui/Tabs';

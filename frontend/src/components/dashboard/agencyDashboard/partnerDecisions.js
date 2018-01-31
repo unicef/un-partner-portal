@@ -35,7 +35,7 @@ const SingleDecisionBase = ({
   eoi: { title },
   modified, did_accept,
 }) => (
-  <Paper key={id}>
+  <Paper>
     <PaddedContent>
       <SpreadContent>
         <div className={classes.name}>
@@ -108,7 +108,7 @@ class PartnerDecisions extends Component {
       <Loader loading={loading} >
         <GridColumn>
           <Typography type="headline">{messages.title}</Typography>
-          {decisions.map(decision => React.createElement(SingleDecision, decision))}
+          {decisions.map(decision => React.createElement(SingleDecision, {...decision, key: decision.id}))}
           <Grid container justify="center" >
             <Grid item>
               <Pagination

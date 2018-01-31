@@ -7,15 +7,17 @@ import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
 import Grid from 'material-ui/Grid';
+import download from 'downloadjs';
 import VerificationText from '../../../partners/profile/common/verificationText';
 import FlaggingStatus from '../../../partners/profile/common/flaggingStatus';
 import AwardApplicationButtonContainer from '../../buttons/awardApplicationButtonContainer';
 import { APPLICATION_STATUSES } from '../../../../helpers/constants';
 
+
 const messages = {
   labelAward: 'Choose successful applicant(s)',
   award: 'Award',
-  print: 'Print',
+  print: 'Download',
 };
 
 
@@ -57,27 +59,10 @@ const styleSheet = theme => ({
 });
 
 class CompareApplicationContent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.print = this.print.bind(this);
-  }
-
-  print() {
-    const printWindow = this.printWindow.contentWindow;
-    printWindow.document.open();
-    printWindow.document.title = 'comparison';
-    printWindow.document.write(this.comparisonContent.innerHTML);
-    const currentStyleSheet = document.querySelectorAll('style');
-    const head = printWindow.document.head;
-    currentStyleSheet.forEach((style) => {
-      const newStyle = printWindow.document.createElement('style');
-      newStyle.type = 'text/css';
-      newStyle.textContent = style.textContent;
-      head.appendChild(newStyle);
-    });
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.report !== this.props.report) {
+      download(nextProps.report, 'UNPP_comparison_report.xlsx');
+    }
   }
 
   render() {
@@ -89,7 +74,8 @@ class CompareApplicationContent extends React.Component {
       applicationsMeta,
       id,
       type,
-      loading } = this.props;
+      loading,
+      onPrint } = this.props;
     const [names,
       ids,
       avgTotalScores,
@@ -275,25 +261,13 @@ class CompareApplicationContent extends React.Component {
         </div>
         <Grid container justify="flex-end">
           <Grid item>
-            <Button className={classes.printButton} onClick={this.print} color="accent">{messages.print}</Button>
+            <Button className={classes.printButton} onClick={onPrint} color="accent">{messages.print}</Button>
           </Grid>
         </Grid>
       </div>
     );
   }
 }
-// (<Button
-//   className={classes.button}
-//   raised
-//   component={Link}
-//   to={{
-//     pathname: `/cfei/${type}/${id}/applications/${application}`,
-//     hash: '#award-open',
-//   }}
-//   color="accent"
-// >
-//   {messages.award}
-// </Button>)
 
 CompareApplicationContent.propTypes = {
   comparison: PropTypes.array,
@@ -305,6 +279,8 @@ CompareApplicationContent.propTypes = {
   budgetOptions: PropTypes.object,
   loading: PropTypes.bool,
   applicationsMeta: PropTypes.array,
+  onPrint: PropTypes.func,
+  report: PropTypes.string,
 };
 
 const mapStateToProps = state => ({

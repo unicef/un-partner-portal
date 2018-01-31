@@ -16,11 +16,11 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Link } from 'react-router';
+import moment from 'moment';
 import GridRow from '../../common/grid/gridRow';
 import PaddedContent from '../../common/paddedContent';
 import CaptionTypography from '../../common/typography/captionTypography';
 import { formatDateForChart } from '../../../helpers/dates';
-import moment from 'moment';
 
 const messages = {
   title: 'Number Of New Partners',

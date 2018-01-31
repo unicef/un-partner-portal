@@ -10,7 +10,7 @@ import MapBounder from '../../../../common/map/MapBounder';
 import { errorToBeAdded } from '../../../../../reducers/errorReducer';
 
 const mapError = 'Mapping feature is not supported in this location';
-const GOOGLE_ERROR_STATIS = 'ZERO_RESULTS';
+
 /**
  * this component is controlled implementation of map.
  * To work, it needs to recieve focused country name, than it will center and zoom to this

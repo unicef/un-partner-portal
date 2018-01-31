@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from datetime import date
 from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status as statuses
@@ -46,6 +47,7 @@ from notification.helpers import (
     send_notification,
     send_cfei_review_required_notification, user_received_notification_recently,
     send_partner_made_decision_notification)
+from project.exports import ApplicationCompareSpreadsheetGenerator
 from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from project.serializers import (
     BaseProjectSerializer,
@@ -606,15 +608,28 @@ class CompareSelectedListAPIView(ListAPIView):
     permission_classes = (IsAgencyMemberUser, IsAtLeastMemberEditor)
     serializer_class = CompareSelectedSerializer
 
+    def get(self, request, *args, **kwargs):
+        export = self.request.query_params.get("export")
+        if export == 'xlsx':
+            response = HttpResponse(
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+            generator = ApplicationCompareSpreadsheetGenerator(self.get_queryset(), write_to=response)
+            generator.generate()
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(generator.filename)
+            return response
+
+        return super(CompareSelectedListAPIView, self).get(request, *args, **kwargs)
+
     def get_queryset(self):
         eoi_id = self.kwargs['eoi_id']
-        query = Application.objects.select_related("partner").filter(eoi_id=eoi_id)
+        queryset = Application.objects.select_related("partner").filter(eoi_id=eoi_id)
 
         application_ids = self.request.query_params.get("application_ids")
         if application_ids is not None:
             ids = filter(lambda x: x.isdigit(), application_ids.split(","))
-            query = query.filter(id__in=ids)
+            queryset = queryset.filter(id__in=ids)
         else:
-            query.none()
+            queryset.none()
 
-        return query
+        return queryset
