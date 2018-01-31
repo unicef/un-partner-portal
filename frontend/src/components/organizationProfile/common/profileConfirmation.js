@@ -31,7 +31,7 @@ const styleSheet = theme => ({
 });
 
 const ProfileConfirmation = (props) => {
-  const { classes, update, disabled, checked, onChange } = props;
+  const { classes, update, disabled, checked, partnerId, onChange } = props;
   return (
     <div className={classes.checkboxContainer}>
       <div className={classes.alignVertical}>
@@ -47,7 +47,7 @@ const ProfileConfirmation = (props) => {
               {`${messages.lastUpdate} ${formatDateForPrint(update)}. ${messages.notSure} `}
             </Typography>
             &nbsp;
-            <ProfileViewLink />
+            <ProfileViewLink partnerId={partnerId} />
           </div>
         </div>
       </div>
@@ -59,11 +59,13 @@ ProfileConfirmation.propTypes = {
   classes: PropTypes.object,
   disabled: PropTypes.bool,
   checked: PropTypes.bool,
+  partnerId: PropTypes.string,
   onChange: PropTypes.func,
   update: PropTypes.string,
 };
 
 const mapStateToProps = state => ({
+  partnerId: state.session.partnerId,
   update: state.session.lastUpdate,
 });
 
