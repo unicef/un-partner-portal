@@ -501,7 +501,7 @@ class PartnerIdentificationSerializer(MixinPreventManyCommonFile, serializers.Mo
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
     alias_name = serializers.CharField(allow_blank=True)
     acronym = serializers.CharField(allow_blank=True)
-    former_legal_name = serializers.CharField()
+    former_legal_name = serializers.CharField(max_length=255, allow_blank=True)
     country_origin = serializers.CharField(read_only=True)
     type_org = serializers.CharField(source="partner.display_type", read_only=True)
     gov_doc = CommonFileSerializer(allow_null=True)
