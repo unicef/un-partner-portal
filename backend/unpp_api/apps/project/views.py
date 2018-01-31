@@ -614,7 +614,9 @@ class CompareSelectedListAPIView(ListAPIView):
             response = HttpResponse(
                 content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             )
-            generator = ApplicationCompareSpreadsheetGenerator(self.get_queryset(), write_to=response)
+            generator = ApplicationCompareSpreadsheetGenerator(
+                self.filter_queryset(self.get_queryset()), write_to=response
+            )
             generator.generate()
             response['Content-Disposition'] = 'attachment; filename="{}"'.format(generator.filename)
             return response
