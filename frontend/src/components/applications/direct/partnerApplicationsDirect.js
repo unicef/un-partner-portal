@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { TableCell } from 'material-ui/Table';
 import PropTypes from 'prop-types';
 import GridColumn from '../../common/grid/gridColumn';
-import PartnerApplicationsDirectFilter from './partnerApplicationsDirectFilter';
+import PartnerApplicationsFilter from '../unsolicited/partnerApplicationsUnsolicitedFilter';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
 import PaginatedList from '../../common/list/paginatedList';
 import { loadApplicationsDirect } from '../../../reducers/applicationsDirectList';
@@ -65,7 +65,7 @@ class PartnerApplicationsDirect extends Component {
 
     return (
       <GridColumn container direction="column" spacing={24}>
-        <PartnerApplicationsDirectFilter />
+        <PartnerApplicationsFilter />
         <TableWithStateInUrl
           component={PaginatedList}
           items={items}
