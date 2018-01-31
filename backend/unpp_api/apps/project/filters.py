@@ -204,9 +204,8 @@ class ApplicationsUnsolicitedFilter(django_filters.FilterSet):
 
     def filter_specializations(self, queryset, name, value):
         if value:
-            query = Q(eoi__specializations=value)
-            value = list(value.values_list('id', flat=True))
-            for pk in value:
-                query |= Q(proposal_of_eoi_details__specializations__contains=pk)
+            query = Q(eoi__specializations__in=value)
+            for specialization in value:
+                query |= Q(proposal_of_eoi_details__specializations__contains=specialization.pk)
             return queryset.filter(query)
         return queryset
