@@ -21,7 +21,6 @@ import { isQueryChanged } from '../../../../helpers/apiHelper';
 import {
   isCfeiCompleted,
   isUserAFocalPoint,
-  isUserACreator,
   selectCfeiStatus,
 } from '../../../../store';
 import { PROJECT_STATUSES } from '../../../../helpers/constants';
@@ -35,11 +34,11 @@ const styleSheetHeader = () => ({
 });
 
 const HeaderActionsBase = (props) => {
-  const { classes, rows, preselectDisabled } = props;
+  const { classes, rows, changeDisabled } = props;
   const ids = rows.map(row => row.id);
   const anyReviewStarted = any(({ review_progress: progress }) => !progress.startsWith('0'), rows);
-  const Preselect = WithGreyColor(preselectDisabled)(PreselectButton);
-  const Reject = WithGreyColor(anyReviewStarted)(RejectButton);
+  const Preselect = WithGreyColor(changeDisabled)(PreselectButton);
+  const Reject = WithGreyColor(anyReviewStarted || changeDisabled)(RejectButton);
   return (
     <div className={classes.container}>
       <Preselect id={ids} />
@@ -49,7 +48,7 @@ const HeaderActionsBase = (props) => {
 };
 
 const mapStateToPropsForHeaderActions = (state, ownProps) => ({
-  preselectDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
+  changeDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
 });
 
 const HeaderActions = compose(
@@ -87,7 +86,7 @@ class ApplicationsListContainer extends Component {
   }
 
   applicationsCells({ row, column, hovered }) {
-    const { preselectDisabled } = this.props;
+    const { changeDisabled } = this.props;
     if (column.name === 'name') {
       return (<PartnerProfileNameCell
         info={row.partner_additional}
@@ -105,7 +104,7 @@ class ApplicationsListContainer extends Component {
         conceptNote={row.cn}
         hovered={hovered}
         progress={row.review_progress}
-        preselectDisabled={preselectDisabled}
+        changeDisabled={changeDisabled}
       />
       );
     } else if (column.name === 'type_org') {
@@ -157,7 +156,7 @@ ApplicationsListContainer.propTypes = {
   query: PropTypes.object,
   id: PropTypes.string,
   allowedToEdit: PropTypes.bool,
-  preselectDisabled: PropTypes.bool,
+  changeDisabled: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -167,9 +166,9 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.partnersApplicationsList.status.loading,
   query: ownProps.location.query,
   id: ownProps.params.id,
-  preselectDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
+  changeDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
   allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
-    && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
+    && (isUserAFocalPoint(state, ownProps.params.id)),
 });
 
 const mapDispatchToProps = dispatch => ({
