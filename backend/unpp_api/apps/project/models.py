@@ -247,7 +247,9 @@ class Application(TimeStampedModel):
 
     @property
     def assessments_is_completed(self):
-        return self.eoi and self.eoi.reviewers.count() == self.assessments.count()
+        return self.eoi and self.eoi.reviewers.count() == self.assessments.filter(
+            reviewer__in=self.eoi.reviewers.all()
+        ).count()
 
     def get_absolute_url(self):
         return get_absolute_frontend_url("/cfei/open/{}/applications/{}".format(self.eoi.pk, self.pk))
