@@ -38,7 +38,7 @@ const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
 
   return {
-    justification: cfei ? cfei.justification : '',
+    justification: cfei ? cfei.justification : messages.empty,
     cfeiCompleted: isCfeiCompleted(state, ownProps.id),
   };
 };
