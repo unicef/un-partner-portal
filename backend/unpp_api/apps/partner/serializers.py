@@ -419,6 +419,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
 class PartnerProfileSummarySerializer(serializers.ModelSerializer):
 
     location_of_office = PointSerializer()
+    country_presence_display = serializers.SerializerMethodField()
     org_head = serializers.SerializerMethodField()
     mailing_address = PartnerMailingAddressSerializer()
     experiences = PartnerExperienceSerializer(many=True)
@@ -440,6 +441,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'is_hq',
             'country_code',
             'location_of_office',
+            'country_presence_display',
             'org_head',
             'mailing_address',
             'experiences',
@@ -452,6 +454,14 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'partner_additional',
             'last_profile_update',
         )
+
+    def get_country_presence_display(self, partner):
+        if partner.is_hq:
+            return ', '.join(
+                map(lambda country_code: COUNTRIES_ALPHA2_CODE_DICT[country_code], partner.country_presence)
+            )
+        elif partner.location_of_office:
+            return COUNTRIES_ALPHA2_CODE_DICT.get(partner.location_of_office.admin_level_1.country_code, None)
 
     def get_org_head(self, obj):
         if obj.is_hq is False:
