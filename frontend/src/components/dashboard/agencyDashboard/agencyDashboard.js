@@ -6,7 +6,7 @@ import GridRow from '../../common/grid/gridRow';
 import NumberOfNewCfeis from './numberOfNewCfeis';
 import NumberOfConceptNotes from './numberOfConceptNotes';
 import ListOfConceptNotesContainer from './listOfConceptNotesContainer';
-import ListOfOpenCfeisContainer from './listOfOpenCfeisContainer';
+import ListOfOpenCfeiContainer from './listOfOpenCfeiContainer';
 import NewPartners from './newPartners';
 import NumberOfPartners from './numberOfPartners';
 import PartnerDecisions from './partnerDecisions';
@@ -46,7 +46,7 @@ const AgencyDashboard = (props) => {
         </Grid>
       </Grid>
       <ListOfConceptNotesContainer />
-      {/* <ListOfOpenCfeisContainer /> */}
+      <ListOfOpenCfeiContainer />
       <PartnerDecisions />
     </GridColumn>);
 };
