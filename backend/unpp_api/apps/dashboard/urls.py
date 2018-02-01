@@ -3,11 +3,14 @@ from __future__ import unicode_literals
 
 from django.conf.urls import url
 
-from .views import (DashboardAPIView,
-                    SubmittedCNListAPIView,
-                    PendingOffersListAPIView,
-                    ApplicationsToScoreListAPIView,
-                    ApplicationsPartnerDecisionsListAPIView, CurrentUsersActiveProjectsAPIView)
+from dashboard.views import (
+    DashboardAPIView,
+    SubmittedCNListAPIView,
+    PendingOffersListAPIView,
+    ApplicationsToScoreListAPIView,
+    ApplicationsPartnerDecisionsListAPIView,
+    CurrentUsersActiveProjectsAPIView,
+)
 
 urlpatterns = [
     url(r'^$', DashboardAPIView.as_view(), name="main"),
