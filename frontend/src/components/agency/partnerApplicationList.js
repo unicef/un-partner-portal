@@ -17,6 +17,7 @@ import DirectSelectionCell from '../../components/applications/unsolicited/direc
 import { loadPartnerApplications } from '../../reducers/agencyPartnerApplicationList';
 import { isQueryChanged } from '../../helpers/apiHelper';
 import CountriesCell from '../partners/countriesCell';
+import CustomGridColumn from '../common/grid/customGridColumn';
 
 const applicationCell = ({ row, column }) => {
   if (column.name === 'specializations') {
@@ -60,23 +61,17 @@ class AgencyMembersContainer extends Component {
     const { applications, columns, totalCount, loading } = this.props;
 
     return (
-      <MainContentWrapper>
-        <Grid container direction="column" spacing={24}>
-          <Grid item>
-            <PartnerApplicationListFilter />
-          </Grid>
-          <Grid item>
-            <TableWithStateInUrl
-              component={PaginatedList}
-              items={applications}
-              columns={columns}
-              itemsCount={totalCount}
-              loading={loading}
-              templateCell={applicationCell}
-            />
-          </Grid>
-        </Grid>
-      </MainContentWrapper>
+      <CustomGridColumn>
+        <PartnerApplicationListFilter />
+        <TableWithStateInUrl
+          component={PaginatedList}
+          items={applications}
+          columns={columns}
+          itemsCount={totalCount}
+          loading={loading}
+          templateCell={applicationCell}
+        />
+      </CustomGridColumn>
     );
   }
 }
@@ -105,5 +100,5 @@ const mapDispatch = dispatch => ({
 });
 
 const connectedAgencyMembersContainer =
-connect(mapStateToProps, mapDispatch)(AgencyMembersContainer);
+  connect(mapStateToProps, mapDispatch)(AgencyMembersContainer);
 export default withRouter(connectedAgencyMembersContainer);

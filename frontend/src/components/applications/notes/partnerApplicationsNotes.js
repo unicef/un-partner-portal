@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { TableCell } from 'material-ui/Table';
-import GridColumn from '../../common/grid/gridColumn';
+import CustomGridColumn from '../../common/grid/customGridColumn';
 import PartnerApplicationsNotesFilter from './partnerApplicationsNotesFilter';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
 import ApplicationStatusCell from '../../eois/cells/applicationStatusCell';
@@ -64,7 +64,7 @@ class PartnerApplicationsNotes extends Component {
     const { notes, notesColumns, itemsTotal, loading } = this.props;
 
     return (
-      <GridColumn spacing={24}>
+      <CustomGridColumn spacing={24}>
         <PartnerApplicationsNotesFilter />
         <TableWithStateInUrl
           component={PaginatedList}
@@ -74,7 +74,7 @@ class PartnerApplicationsNotes extends Component {
           loading={loading}
           templateCell={applicationCell}
         />
-      </GridColumn>
+      </CustomGridColumn>
     );
   }
 }

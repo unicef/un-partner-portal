@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { TableCell } from 'material-ui/Table';
-import GridColumn from '../../common/grid/gridColumn';
+import CustomGridColumn from '../../common/grid/customGridColumn';
 import PartnerApplicationsNotesFilter from './partnerApplicationsUnsolicitedFilter';
 import DirectSelectionCell from './directSelectionCell';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
@@ -60,7 +60,7 @@ class PartnerApplicationsUnsolicited extends Component {
     const { columns, items, loading, itemsTotal } = this.props;
 
     return (
-      <GridColumn spacing={24}>
+      <CustomGridColumn spacing={24}>
         <PartnerApplicationsNotesFilter />
         <TableWithStateInUrl
           component={PaginatedList}
@@ -70,7 +70,7 @@ class PartnerApplicationsUnsolicited extends Component {
           itemsCount={itemsTotal}
           templateCell={applicationCell}
         />
-      </GridColumn>
+      </CustomGridColumn>
     );
   }
 }

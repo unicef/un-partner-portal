@@ -15,17 +15,62 @@ import NumberOfSubmittedCN from './numberOfSubmittedConceptNotes';
 import Loader from '../../common/loader';
 import WelcomeModal from '../../layout/incompleteProfile/welcomeModal';
 
-const styleSheet = () => ({
-  grid: {
-    height: 'calc(100% + 24px)',
-  },
-  largerBox: {
-    height: '35%',
-  },
-  smallerBox: {
-    height: '30%',
-  },
-});
+const styleSheet = theme => {
+  const customPadding = theme.spacing.unit * 1.5;
+  return {
+    topGrid: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr 1fr',
+      gridTemplateRows: 'auto auto auto',
+      '-ms-grid-columns': '1fr 1fr 1fr',
+      '-ms-grid-rows': 'auto auto auto',
+      [theme.breakpoints.down('sm')]: {
+        display: 'flex',
+        flexDirection: 'column',
+      }
+    },
+    // custom padding here and below because grid gap not supported in IE 11
+    NumberOfCfeisBySector: {
+      gridRowEnd: 'span 3',
+      '-ms-grid-column': 1,
+      '-ms-grid-row': 1,
+      '-ms-grid-row-span': 3,
+      paddingRight: customPadding,
+    },
+    numberOfSubmittedCN: {
+      gridRowEnd: 'span 3',
+      '-ms-grid-column': 2,
+      '-ms-grid-row': 1,
+      '-ms-grid-row-span': 3,
+      paddingLeft: customPadding,
+      paddingRight: customPadding,
+    },
+    numberOfPinnedCfei: {
+      '-ms-grid-column': 3,
+      '-ms-grid-row': 1,
+      paddingBottom: customPadding,
+      paddingLeft: customPadding,
+    },
+    numberOfAwards: {
+      '-ms-grid-column': 3,
+      '-ms-grid-row': 2,
+      paddingTop: customPadding,
+      paddingBottom: customPadding,
+      paddingLeft: customPadding,
+    },
+    lastProfileUpdate: {
+      '-ms-grid-column': 3,
+      '-ms-grid-row': 3,
+      paddingTop: customPadding,
+      paddingLeft: customPadding,
+    },
+    gridItem: {
+      [theme.breakpoints.down('sm')]: {
+        padding: '12px 0'
+      }
+    },
+  };
+};
 
 const PartnerDashboard = (props) => {
   const { loading,
@@ -39,34 +84,36 @@ const PartnerDashboard = (props) => {
     } } = props;
   return (
     <GridColumn>
-      <GridRow columns={3}>
-        <Loader loading={loading} >
-          <NumberOfCfeisBySector newCfeiBySectors={newCfeiBySectors} />
-        </Loader>
-        <Loader loading={loading} >
-          <NumberOfSubmittedCN
-            numSubmittedCN={numSubmittedCN}
-            numSubmittedCNByAgency={numSubmittedCNByAgency}
-          />
-        </Loader>
-        <Grid container direction="column" spacing={24} className={classes.grid}>
-          <Grid item className={classes.largerBox}>
-            <Loader loading={loading} >
-              <NumberOfPinnedCfei number={numPinnedCfei} />
-            </Loader>
-          </Grid>
-          <Grid item className={classes.largerBox}>
-            <Loader loading={loading} >
-              <NumberOfAwards number={numAwards} />
-            </Loader>
-          </Grid>
-          <Grid item className={classes.smallerBox}>
-            <Loader loading={loading} >
-              <LastProfileUpdate date={lastUpdate} />
-            </Loader>
-          </Grid>
-        </Grid>
-      </GridRow>
+      <div className={classes.topGrid}>
+        <div className={`${classes.NumberOfCfeisBySector} ${classes.gridItem}`}>
+          <Loader loading={loading} >
+            <NumberOfCfeisBySector newCfeiBySectors={newCfeiBySectors} />
+          </Loader>
+        </div>
+        <div className={`${classes.numberOfSubmittedCN} ${classes.gridItem}`}>
+          <Loader loading={loading} >
+            <NumberOfSubmittedCN
+              numSubmittedCN={numSubmittedCN}
+              numSubmittedCNByAgency={numSubmittedCNByAgency}
+            />
+          </Loader>
+        </div>
+        <div className={`${classes.numberOfPinnedCfei} ${classes.gridItem}`}>
+          <Loader loading={loading} >
+            <NumberOfPinnedCfei number={numPinnedCfei} />
+          </Loader>
+        </div>
+        <div className={`${classes.numberOfAwards} ${classes.gridItem}`}>
+          <Loader loading={loading} >
+            <NumberOfAwards number={numAwards} />
+          </Loader>
+        </div>
+        <div className={`${classes.lastProfileUpdate} ${classes.gridItem}`}>
+          <Loader loading={loading} >
+            <LastProfileUpdate date={lastUpdate} />
+          </Loader>
+        </div>
+      </div>
       <ListOfSubmittedCN />
       <ListOfPendingOffers />
       <WelcomeModal />

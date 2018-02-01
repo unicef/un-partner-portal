@@ -15,6 +15,7 @@ const initialState = {
   role: null,
   state: SESSION_STATUS.INITIAL,
   authorized: false,
+  fontSize: '16px',
   user: null,
   userId: null,
   token: null,
