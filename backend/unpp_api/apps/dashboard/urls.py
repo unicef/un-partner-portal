@@ -7,7 +7,7 @@ from .views import (DashboardAPIView,
                     SubmittedCNListAPIView,
                     PendingOffersListAPIView,
                     ApplicationsToScoreListAPIView,
-                    ApplicationsPartnerDecisionsListAPIView)
+                    ApplicationsPartnerDecisionsListAPIView, CurrentUsersActiveProjectsAPIView)
 
 urlpatterns = [
     url(r'^$', DashboardAPIView.as_view(), name="main"),
@@ -17,4 +17,5 @@ urlpatterns = [
     # partner dashboard
     url(r'^submitted-cn/$', SubmittedCNListAPIView.as_view(), name="submitted-cn"),
     url(r'^pending-offers/$', PendingOffersListAPIView.as_view(), name="pending-offers"),
+    url(r'^open-projects/$', CurrentUsersActiveProjectsAPIView.as_view(), name="open-projects"),
 ]
