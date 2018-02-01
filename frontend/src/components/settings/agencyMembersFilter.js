@@ -23,7 +23,7 @@ const messages = {
 const styleSheet = theme => ({
   filterContainer: {
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px`,
-    background: '#F6F6F6',
+    background: theme.palette.primary[300],
   },
   button: {
     display: 'flex',
