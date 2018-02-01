@@ -8,9 +8,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from common.pagination import MediumPagination
 from account.models import User
 from account.serializers import AgencyUserSerializer
-from .serializers import AgencySerializer, AgencyOfficeSerializer
-from .models import Agency, AgencyOffice
-from .filters import AgencyUserFilter
+from agency.serializers import AgencySerializer, AgencyOfficeSerializer
+from agency.models import Agency, AgencyOffice
+from agency.filters import AgencyUserFilter, AgencyFilter
 
 
 class AgencyListAPIView(ListAPIView):
@@ -20,6 +20,8 @@ class AgencyListAPIView(ListAPIView):
     serializer_class = AgencySerializer
     pagination_class = MediumPagination
     permission_classes = (IsAuthenticated, )
+    filter_backends = (DjangoFilterBackend, )
+    filter_class = AgencyFilter
     queryset = Agency.objects.all()
 
 

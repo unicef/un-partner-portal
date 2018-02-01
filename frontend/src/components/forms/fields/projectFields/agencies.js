@@ -12,9 +12,7 @@ const messages = {
 
 class Agencies extends Component {
   componentWillMount() {
-    if (isEmpty(this.props.agencies)) {
-      this.props.loadAgencies();
-    }
+    this.props.loadAgencies(this.props.all);
   }
 
   render() {
@@ -39,10 +37,12 @@ Agencies.propTypes = {
   disabled: PropTypes.bool,
   loadAgencies: PropTypes.func,
   agencyId: PropTypes.number,
+  all: PropTypes.bool,
 };
 
 Agencies.defaultProps = {
   label: messages.label,
+  all: false,
 };
 
 export default connect(
@@ -51,6 +51,6 @@ export default connect(
     agencyId: state.session.agencyId,
   }),
   dispatch => ({
-    loadAgencies: () => dispatch(loadAgenciesNames()),
+    loadAgencies: all => dispatch(loadAgenciesNames(all)),
   }),
 )(Agencies);

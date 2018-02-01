@@ -21,10 +21,12 @@ const AGENCIES = 'AGENCIES';
 
 const loadAgenciesNamesSuccess = names => ({ type: LOAD_AGENCIES_NAMES_SUCCESS, names });
 
-export const loadAgenciesNames = () => (dispatch, getState) => {
+export const loadAgenciesNames = all => (dispatch, getState) => {
   const newCancelToken = getNewRequestToken(getState, tag);
   dispatch(loadStarted(AGENCIES, newCancelToken));
-  return getAgencies(undefined, { cancelToken: newCancelToken.token })
+  const params = { page_size: 100, exclude: all ? '' : 'other' };
+
+  return getAgencies(params, { cancelToken: newCancelToken.token })
     .then((names) => {
       dispatch(loadEnded(AGENCIES));
       dispatch(loadSuccess(AGENCIES, { names: names.results }));
@@ -47,7 +49,6 @@ const saveAgenciesNames = action =>
 function agencies(state = initialState, action) {
   switch (action.type) {
     case success`${AGENCIES}`: {
-      ;
       return saveAgenciesNames(action);
     }
     default:
