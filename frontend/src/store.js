@@ -61,6 +61,7 @@ import cache from './reducers/cache';
 import error, * as errorSelector from './reducers/errorReducer';
 import routesHistory from './reducers/routesHistory';
 import applicationComparisonReport from './reducers/applicationsComparisonReport';
+import openCfeiDashboardList from './reducers/openCfeiDashboardList';
 
 const mainReducer = combineReducers({
   cfei,
@@ -73,6 +74,7 @@ const mainReducer = combineReducers({
   applicationsNotesList,
   applicationsUnsolicitedList,
   applicationsDirectList,
+  openCfeiDashboardList,
   adminOneLocation,
   nav,
   session,

@@ -1,30 +1,28 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import HeaderList from '../../common/list/headerList';
-import EmptyContent from '../../common/emptyContent';
+import ListOfOpenCfeiTable from './listOfOpenCfeiTable';
 
 
 const messages = {
-  title: 'List of Open Calls for Expressions of Interest',
+  title: 'List of open CFEIs',
 };
 
-const ListOfOpenCfeisContainer = (props) => {
+const ListOfConceptNotesContainer = (props) => {
   const { loading } = props;
   return (
     <HeaderList
       header={<Typography type="headline" >{messages.title}</Typography>}
       loading={loading}
     >
-      <EmptyContent />
+      <ListOfOpenCfeiTable />
     </HeaderList>
   );
 };
 
-ListOfOpenCfeisContainer.propTypes = {
+ListOfConceptNotesContainer.propTypes = {
   loading: PropTypes.bool,
-
 };
 
-export default ListOfOpenCfeisContainer;
+export default ListOfConceptNotesContainer;
