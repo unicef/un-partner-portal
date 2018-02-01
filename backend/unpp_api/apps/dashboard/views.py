@@ -70,7 +70,7 @@ class CurrentUsersActiveProjectsAPIView(ListAPIView):
     def get_queryset(self):
         user = self.request.user
         today = date.today()
-        queryset = self.queryset.filter(deadline_date__gte=today, is_completed=False)
+        queryset = self.queryset.filter(display_type=EOI_TYPES.open, deadline_date__gte=today, is_completed=False)
         queryset = queryset.filter(
             Q(created_by=user) | Q(focal_points=user)
         )
