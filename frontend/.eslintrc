@@ -4,7 +4,7 @@
     "window": false,
     "document": false,
     "it": false,
-    "google": false,
+    "google": false
   },
   "rules": {
     "react/jsx-filename-extension": 0,

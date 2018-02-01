@@ -371,6 +371,10 @@ export function getApplicationsToScore(params, options) {
   return authorizedGet({ uri: '/dashboard/applications-to-score/', params, options });
 }
 
+export function getOpenCfeiDashboard(params, options) {
+  return authorizedGet({ uri: '/dashboard/open-projects/', params, options });
+}
+
 export function getSubmittedCN(params, options) {
   return authorizedGet({ uri: '/dashboard/submitted-cn/', params, options });
 }

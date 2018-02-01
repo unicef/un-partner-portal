@@ -150,7 +150,8 @@ class Application(TimeStampedModel):
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
     decision_date = models.DateField(null=True, blank=True)  # for accept or decline
     accept_notification = models.OneToOneField(
-        'notification.Notification', related_name="accept_notification", null=True, blank=True)
+        'notification.Notification', related_name="accept_notification", null=True, blank=True
+    )
     did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
     # did_withdraw is only applicable if did_win is True
     did_withdraw = models.BooleanField(default=False, verbose_name='Did withdraw?')
@@ -246,7 +247,12 @@ class Application(TimeStampedModel):
 
     @property
     def assessments_is_completed(self):
-        return self.eoi and self.eoi.reviewers.count() == self.assessments.count()
+        return self.eoi and self.eoi.reviewers.count() == self.assessments.filter(
+            reviewer__in=self.eoi.reviewers.all()
+        ).count()
+
+    def get_absolute_url(self):
+        return get_absolute_frontend_url("/cfei/open/{}/applications/{}".format(self.eoi.pk, self.pk))
 
 
 class ApplicationFeedback(TimeStampedModel):

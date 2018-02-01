@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { TableCell } from 'material-ui/Table';
 import PropTypes from 'prop-types';
-import GridColumn from '../../common/grid/gridColumn';
-import PartnerApplicationsDirectFilter from './partnerApplicationsDirectFilter';
+import CustomGridColumn from '../../common/grid/customGridColumn';
+import PartnerApplicationsFilter from '../unsolicited/partnerApplicationsUnsolicitedFilter';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
 import PaginatedList from '../../common/list/paginatedList';
 import { loadApplicationsDirect } from '../../../reducers/applicationsDirectList';
@@ -64,8 +64,8 @@ class PartnerApplicationsDirect extends Component {
     const { items, columns, itemsTotal, loading } = this.props;
 
     return (
-      <GridColumn container direction="column" spacing={24}>
-        <PartnerApplicationsDirectFilter />
+      <CustomGridColumn container direction="column" spacing={24}>
+        <PartnerApplicationsFilter />
         <TableWithStateInUrl
           component={PaginatedList}
           items={items}
@@ -74,7 +74,7 @@ class PartnerApplicationsDirect extends Component {
           itemsCount={itemsTotal}
           templateCell={applicationCell}
         />
-      </GridColumn>
+      </CustomGridColumn>
     );
   }
 }

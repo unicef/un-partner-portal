@@ -780,6 +780,7 @@ class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
 
     def test_send_notification(self):
         eoi = EOI.objects.first()
+        eoi.reviewers.add(self.user)
 
         url = reverse('projects:eoi-reviewers-assessments-notify', kwargs={
             "eoi_id": eoi.id, "reviewer_id": self.user.id
@@ -1018,3 +1019,48 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         self.assertIn(
             NOTIFICATION_DATA[NotificationType.CFEI_APPLICATION_WIN]['subject'], [m.subject for m in mail.outbox]
         )
+
+
+class TestApplicationsHiddenReviews(BaseAPITestCase):
+
+    quantity = 3
+
+    def setUp(self):
+        super(TestApplicationsHiddenReviews, self).setUp()
+        AgencyOfficeFactory.create_batch(self.quantity)
+        AgencyMemberFactory.create_batch(self.quantity)
+        EOIFactory.create_batch(self.quantity)
+        PartnerSimpleFactory.create_batch(self.quantity)
+
+    def test_assessments_is_completed(self):
+        eoi = EOI.objects.first()
+        application = eoi.applications.first()
+        application.assessments.all().delete()
+        self.assertEqual(application.assessments.count(), 0)
+
+        eoi.reviewers.clear()
+        user1, user2 = User.objects.all()[:2]
+        eoi.reviewers.add(user1, user2)
+        self.assertEqual(eoi.reviewers.count(), 2)
+
+        self.assertFalse(application.assessments_is_completed)
+
+        Assessment.objects.create(
+            created_by=user1,
+            reviewer=user1,
+            application=application,
+        )
+
+        assessment2 = Assessment.objects.create(
+            created_by=user2,
+            reviewer=user2,
+            application=application,
+        )
+
+        self.assertTrue(application.assessments_is_completed)
+
+        assessment2.archived = True
+        assessment2.save()
+        self.assertEqual(application.assessments.count(), 1)
+        eoi.reviewers.remove(user2)
+        self.assertTrue(application.assessments_is_completed)

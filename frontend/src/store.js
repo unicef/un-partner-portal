@@ -37,7 +37,7 @@ import partnersApplicationsList from './reducers/partnersApplicationsList';
 import partnersPreselectionList from './reducers/partnersPreselectionList';
 import selectionCriteria from './reducers/selectionCriteria';
 import adminOneLocation from './reducers/adminOneLocation';
-import partnerNames, * as partnerNamesSelector from './reducers/partnerNames';
+import partnerNames from './reducers/partnerNames';
 import applicationDetails, * as applicationDetailsSelector from './reducers/applicationDetails';
 import applicationReviews, * as applicationReviewsSelector from './reducers/applicationReviews';
 import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers';
@@ -60,6 +60,8 @@ import notificationsList from './reducers/notificationsList';
 import cache from './reducers/cache';
 import error, * as errorSelector from './reducers/errorReducer';
 import routesHistory from './reducers/routesHistory';
+import applicationComparisonReport from './reducers/applicationsComparisonReport';
+import openCfeiDashboardList from './reducers/openCfeiDashboardList';
 
 const mainReducer = combineReducers({
   cfei,
@@ -72,6 +74,7 @@ const mainReducer = combineReducers({
   applicationsNotesList,
   applicationsUnsolicitedList,
   applicationsDirectList,
+  openCfeiDashboardList,
   adminOneLocation,
   nav,
   session,
@@ -117,6 +120,7 @@ const mainReducer = combineReducers({
   notificationsList,
   cache,
   routesHistory,
+  applicationComparisonReport,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];

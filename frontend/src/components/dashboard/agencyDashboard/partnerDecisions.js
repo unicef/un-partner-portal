@@ -9,7 +9,7 @@ import { withStyles } from 'material-ui/styles';
 import { loadApplicationDecisions } from '../../../reducers/applicationsDecisions';
 import SpreadContent from '../../common/spreadContent';
 import PaddedContent from '../../common/paddedContent';
-import GridColumn from '../../common/grid/gridColumn';
+import CustomGridColumn from '../../common/grid/customGridColumn';
 import { formatDateForPrint } from '../../../helpers/dates';
 import Pagination from '../../common/pagination';
 import TextWithBackground from '../../common/textWithColorBackground';
@@ -35,7 +35,7 @@ const SingleDecisionBase = ({
   eoi: { title },
   modified, did_accept,
 }) => (
-  <Paper key={id}>
+  <Paper>
     <PaddedContent>
       <SpreadContent>
         <div className={classes.name}>
@@ -106,9 +106,9 @@ class PartnerDecisions extends Component {
     const { params: { page, page_size } } = this.state;
     return (
       <Loader loading={loading} >
-        <GridColumn>
+        <CustomGridColumn>
           <Typography type="headline">{messages.title}</Typography>
-          {decisions.map(decision => React.createElement(SingleDecision, decision))}
+          {decisions.map(decision => React.createElement(SingleDecision, {...decision, key: decision.id}))}
           <Grid container justify="center" >
             <Grid item>
               <Pagination
@@ -120,7 +120,7 @@ class PartnerDecisions extends Component {
               />
             </Grid>
           </Grid>
-        </GridColumn>
+        </CustomGridColumn>
       </Loader>
 
     );

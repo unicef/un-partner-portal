@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
+from django.db.models import Q
 from django.http import Http404
 
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
+from common.consts import EOI_TYPES
 from common.permissions import IsAtLeastMemberReader, IsAgencyMemberUser, IsPartner
 from common.mixins import PartnerIdsMixin
 from common.pagination import MediumPagination, SmallPagination
-from project.serializers import ApplicationFullEOISerializer, SubmittedCNSerializer, PendingOffersSerializer
-from project.models import Application
+from project.serializers import ApplicationFullEOISerializer, SubmittedCNSerializer, PendingOffersSerializer, \
+    AgencyProjectSerializer
+from project.models import Application, EOI
 from .serializers import AgencyDashboardSerializer, PartnerDashboardSerializer
 
 
@@ -52,6 +55,27 @@ class ApplicationsToScoreListAPIView(ListAPIView):
         return Application.objects.filter(
             eoi__in=open_eois_as_reviewer
         ).exclude(assessments__reviewer=user).order_by('eoi__modified').distinct('eoi__modified', 'eoi')
+
+
+class CurrentUsersActiveProjectsAPIView(ListAPIView):
+    """
+    Returns list of projects where deadline hasn't been reached yet, for which user is creator or focal point
+    """
+
+    queryset = EOI.objects.select_related("agency").prefetch_related("specializations").distinct()
+    serializer_class = AgencyProjectSerializer
+    permission_classes = (IsAgencyMemberUser, )
+    pagination_class = SmallPagination
+
+    def get_queryset(self):
+        user = self.request.user
+        today = date.today()
+        queryset = self.queryset.filter(display_type=EOI_TYPES.open, deadline_date__gte=today, is_completed=False)
+        queryset = queryset.filter(
+            Q(created_by=user) | Q(focal_points=user)
+        )
+
+        return queryset
 
 
 class ApplicationsPartnerDecisionsListAPIView(ListAPIView):
