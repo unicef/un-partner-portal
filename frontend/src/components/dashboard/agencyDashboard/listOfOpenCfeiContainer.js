@@ -6,7 +6,7 @@ import ListOfOpenCfeiTable from './listOfOpenCfeiTable';
 
 
 const messages = {
-  title: 'List of open CFEIs',
+  title: 'List of Open CFEIs',
 };
 
 const ListOfConceptNotesContainer = (props) => {
