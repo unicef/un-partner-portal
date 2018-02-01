@@ -41,7 +41,9 @@ const styleSheet = (theme) => {
       alignItems: 'flex-end',
     },
     flex: {
-      alignItems: 'flex-end',
+      alignItems: 'center',
+      paddingBottom: theme.spacing.unit,
+      minHeight: theme.spacing.unit * 6,
     },
     tabsContainer: {
       width: '100%',

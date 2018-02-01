@@ -18,6 +18,7 @@ import BadgeIcon from './badgeIcon';
 import NotificationsList from '../notifications/notificationsList';
 import SidebarMenu from './sidebarMenu';
 import Logout from './logout';
+import Options from './options';
 
 const styleSheet = theme => ({
   leftHeader: {
@@ -143,6 +144,7 @@ class MainAppBar extends Component {
           onRequestClose={this.handleProfileRequestClose}
         >
           <Logout />
+          <Options />
         </Popover>
       </React.Fragment>
     );
