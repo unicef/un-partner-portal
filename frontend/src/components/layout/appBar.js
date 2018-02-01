@@ -23,8 +23,8 @@ const styleSheet = theme => ({
     backgroundColor: theme.palette.secondary[500],
   },
   rightHeader: {
-    // dark blue color added as extra to regular palette
     flexShrink: 1,
+    // dark blue color added as extra to regular palette
     backgroundColor: theme.palette.primary.strong,
     '-ms-grid-column': 2,
   },
