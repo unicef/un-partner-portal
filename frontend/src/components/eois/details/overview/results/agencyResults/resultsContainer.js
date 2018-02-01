@@ -5,6 +5,7 @@ import GridColumn from '../../../../../common/grid/gridColumn';
 import AwardedPartners from './awardedPartners';
 import ReviewSummary from './reviewSummary';
 import ReviewersSummary from './reviewersSummary';
+import FinalizeJustification from './finalizeJustification';
 
 const ResultsContainer = (props) => {
   const { id } = props;
@@ -17,7 +18,10 @@ const ResultsContainer = (props) => {
         </GridColumn>
       </Grid>
       <Grid item xs={12} sm={4} >
-        <ReviewersSummary id={id} />
+        <GridColumn >
+          <ReviewersSummary id={id} />
+          <FinalizeJustification id={id} />
+        </GridColumn>
       </Grid>
     </Grid>
   );

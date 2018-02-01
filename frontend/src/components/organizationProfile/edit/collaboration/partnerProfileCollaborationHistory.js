@@ -30,6 +30,7 @@ const AgencySelection = (values, readOnly, ...props) => (member, index, fields) 
       placeholder={PLACEHOLDERS.select}
       readOnly={readOnly}
       optional
+      all
       warn
     />
   </GridColumn>
