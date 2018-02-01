@@ -1,19 +1,17 @@
 import React from 'react';
-import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
 import GridColumn from '../../common/grid/gridColumn';
-import GridRow from '../../common/grid/gridRow';
 import NumberOfNewCfeis from './numberOfNewCfeis';
 import NumberOfConceptNotes from './numberOfConceptNotes';
 import ListOfConceptNotesContainer from './listOfConceptNotesContainer';
-import ListOfOpenCfeisContainer from './listOfOpenCfeisContainer';
-import { withStyles } from 'material-ui/styles';
+import ListOfOpenCfeiContainer from './listOfOpenCfeiContainer';
 import NewPartners from './newPartners';
 import NumberOfPartners from './numberOfPartners';
 import PartnerDecisions from './partnerDecisions';
 import Loader from '../../common/loader';
 
-const styleSheet = theme => {
+const styleSheet = (theme) => {
   const customPadding = theme.spacing.unit * 1.5;
   return {
     topGrid: {
@@ -96,7 +94,7 @@ const AgencyDashboard = (props) => {
 
       </div>
       <ListOfConceptNotesContainer />
-      {/* <ListOfOpenCfeisContainer /> */}
+      <ListOfOpenCfeiContainer />
       <PartnerDecisions />
     </GridColumn>);
 };
