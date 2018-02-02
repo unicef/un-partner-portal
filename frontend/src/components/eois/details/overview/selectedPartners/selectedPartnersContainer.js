@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import HeaderList from '../../../../common/list/headerList';
 import PaddedContent from '../../../../common/paddedContent';
-import { selectCfeiDetails, isUserAFocalPoint } from '../../../../../store';
+import { selectCfeiDetails, isUserAFocalPoint, isUserACreator } from '../../../../../store';
 import SingleSelectedPartner from './singleSelectedPartner';
 
 const messages = {
@@ -49,7 +49,7 @@ const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
   return {
     partners: cfei ? cfei.direct_selected_partners : [],
-    isUserFocalPoint: isUserAFocalPoint(state, ownProps.id),
+    isUserFocalPoint: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
   };
 };
 

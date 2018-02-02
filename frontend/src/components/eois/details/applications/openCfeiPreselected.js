@@ -20,6 +20,7 @@ import {
   isCfeiCompleted,
   isUserAFocalPoint,
   isUserAReviewer,
+  isUserACreator,
 } from '../../../../store';
 
 /* eslint-disable react/prop-types */
@@ -148,7 +149,7 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.location.query,
   id: ownProps.params.id,
   allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
-    && (isUserAFocalPoint(state, ownProps.params.id)),
+    && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
   isReviewer: isUserAReviewer(state, ownProps.params.id),
 });
 
