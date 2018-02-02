@@ -22,6 +22,7 @@ import {
   isCfeiCompleted,
   isUserAFocalPoint,
   selectCfeiStatus,
+  isUserACreator,
 } from '../../../../store';
 import { PROJECT_STATUSES } from '../../../../helpers/constants';
 
@@ -168,7 +169,7 @@ const mapStateToProps = (state, ownProps) => ({
   id: ownProps.params.id,
   changeDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
   allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
-    && (isUserAFocalPoint(state, ownProps.params.id)),
+    && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
 });
 
 const mapDispatchToProps = dispatch => ({

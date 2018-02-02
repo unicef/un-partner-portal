@@ -73,7 +73,7 @@ const AwardApplicationButtonContainer = (props) => {
               component={Link}
               to={{
                 pathname: `/cfei/open/${eoiId}/applications/${applicationId}`,
-                hash: '#award-open',
+                hash: '#select-open',
               }}
               color="accent"
               disabled={disableAward}

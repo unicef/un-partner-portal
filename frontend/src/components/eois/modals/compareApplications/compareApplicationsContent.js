@@ -16,7 +16,6 @@ import { APPLICATION_STATUSES } from '../../../../helpers/constants';
 
 const messages = {
   labelAward: 'Choose successful applicant(s)',
-  award: 'Award',
   print: 'Download',
 };
 

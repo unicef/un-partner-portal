@@ -41,7 +41,7 @@ class awardApplicationModal extends Component {
         <ControlledModal
           maxWidth="md"
           title={messages.title}
-          trigger={dialogOpen || hash === '#award-open'}
+          trigger={dialogOpen || hash === '#select-open'}
           handleDialogClose={this.handleDialogClose}
           info={{ title: messages.header }}
           buttons={{

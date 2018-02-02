@@ -6,7 +6,7 @@ import Typography from 'material-ui/Typography';
 import PaddedContent from '../../../../../common/paddedContent';
 import EmptyContent from '../../../../../common/emptyContent';
 import HeaderList from '../../../../../common/list/headerList';
-import { isUserAFocalPoint, selectCfeiReviewSummary } from '../../../../../../store';
+import { isUserAFocalPoint, selectCfeiReviewSummary, isUserACreator } from '../../../../../../store';
 import { loadReviewSummary } from '../../../../../../reducers/cfeiReviewSummary';
 import ChangeSummaryButton from '../../../../buttons/changeSummaryButton';
 import ReviewSummaryForm from '../../../../modals/changeSummary/changeSummaryForm';
@@ -71,7 +71,7 @@ ReviewSummary.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  focalPoint: isUserAFocalPoint(state, ownProps.id),
+  focalPoint: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
   loading: state.cfeiReviewSummary.status.loading,
   summary: selectCfeiReviewSummary(state, ownProps.id),
 });
