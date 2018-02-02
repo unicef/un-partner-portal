@@ -5,6 +5,7 @@ import {
   selectCfeiDetails,
   isUserAFocalPoint,
   isUserAReviewer,
+  isUserACreator,
 } from '../../../../../store';
 import {
   loadApplication,
@@ -60,7 +61,9 @@ ApplicationSummaryHeader.propTypes = {
 
 const mapStateToProps = state => ({
   cfeiDetailsExists: cfeiId => !!selectCfeiDetails(state, cfeiId),
-  shouldGetReviews: eoi => isUserAFocalPoint(state, eoi) || isUserAReviewer(state, eoi),
+  shouldGetReviews: eoi => isUserAFocalPoint(state, eoi)
+    || isUserAReviewer(state, eoi)
+    || isUserACreator(state, eoi),
   user: state.session.userId,
 });
 

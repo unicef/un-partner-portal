@@ -69,6 +69,9 @@ const theme = {
       headline: {
         color: 'inherit',
       },
+      root: {
+        wordBreak: 'break-word',
+      },
     },
     MuiFormLabel: {
       root: {

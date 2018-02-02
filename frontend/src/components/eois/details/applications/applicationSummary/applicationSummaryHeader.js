@@ -17,6 +17,7 @@ import {
   selectAssessment,
   isCfeiCompleted,
   selectCfeiStatus,
+  isUserACreator,
 } from '../../../../../store';
 import ApplicationStatusText from '../applicationStatusText';
 import GridRow from '../../../../common/grid/gridRow';
@@ -37,6 +38,7 @@ class ApplicationSummaryHeader extends Component {
     const { loading,
       isUserFocalPoint,
       isUserReviewer,
+      isUserCreator,
       reviews,
       user,
       status,
@@ -54,7 +56,7 @@ class ApplicationSummaryHeader extends Component {
     || status !== APPLICATION_STATUSES.PRE
     || cfeiStatus !== PROJECT_STATUSES.CLO;
     if (isCfeiCompleted) return <div />;
-    if (isUserFocalPoint) {
+    if (isUserFocalPoint || isUserCreator) {
       if (didWin) {
         if (didWithdraw) {
           return <Button disabled>{messages.retracted}</Button>;
@@ -140,6 +142,7 @@ ApplicationSummaryHeader.propTypes = {
   user: PropTypes.number,
   isUserFocalPoint: PropTypes.bool,
   isUserReviewer: PropTypes.bool,
+  isUserCreator: PropTypes.bool,
   reviews: PropTypes.object,
   getAssessment: PropTypes.func,
   didWin: PropTypes.bool,
@@ -178,6 +181,7 @@ const mapStateToProps = (state, ownProps) => {
     loading: state.applicationDetails.status.loading,
     error: state.applicationDetails.status.error,
     isUserFocalPoint: isUserAFocalPoint(state, eoi),
+    isUserCreator: isUserACreator(state, eoi),
     cfeiStatus: selectCfeiStatus(state, eoi),
     isUserReviewer: isUserAReviewer(state, eoi),
     reviews,

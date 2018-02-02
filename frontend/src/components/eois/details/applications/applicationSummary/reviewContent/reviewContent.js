@@ -8,18 +8,18 @@ import Reviews from './reviews';
 import TotalScore from './reviewTotalScore';
 
 const ReviewContent = (props) => {
-  const { applicationId, isUserFocalPoint, isUserReviewer, justReason } = props;
+  const { applicationId, isUserFocalPoint, isUserReviewer, isUserCreator, justReason } = props;
   return (
     <GridColumn spacing={24}>
       <Grid container direction="row" spacing={24}>
         <Grid item xs={12} sm={8}>
           <Reviews
             applicationId={applicationId}
-            isUserFocalPoint={isUserFocalPoint}
+            isUserFocalPoint={isUserFocalPoint || isUserCreator}
             isUserReviewer={isUserReviewer}
           />
         </Grid>
-        {isUserFocalPoint && <Grid item xs={12} sm={4}>
+        {(isUserFocalPoint || isUserCreator) && <Grid item xs={12} sm={4}>
           <TotalScore applicationId={applicationId} justReason={justReason} />
         </Grid>}
       </Grid>
@@ -33,6 +33,7 @@ ReviewContent.propTypes = {
   isUserFocalPoint: PropTypes.bool,
   isUserReviewer: PropTypes.bool,
   justReason: PropTypes.string,
+  isUserCreator: PropTypes.bool,
 };
 
 export default ReviewContent;
