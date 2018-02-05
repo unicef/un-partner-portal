@@ -26,7 +26,6 @@ const styleSheet = theme => ({
   },
   container: {
     height: '100%',
-    padding: '0px 0px 0px 24px',
   },
   paper: {
     height: 'inherit',

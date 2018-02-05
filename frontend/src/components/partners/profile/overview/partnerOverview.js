@@ -12,7 +12,7 @@ const PartnerOverview = (props) => {
 
   return (
 
-    <Grid container direction="row">
+    <Grid container direction="row" spacing={24}>
       <Grid item xs={12} sm={8}>
         <PartnerOverviewSummary partner={partner} />
       </Grid>

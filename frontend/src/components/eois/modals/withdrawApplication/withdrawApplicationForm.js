@@ -6,7 +6,7 @@ import TextFieldForm from '../../../forms/textFieldForm';
 
 const messages = {
   label: 'Justification',
-  placeholder: 'I decided to withdraw this award because of the: ...',
+  placeholder: 'I decided to withdraw this selection because of the: ...',
 };
 
 const styleSheet = () => ({

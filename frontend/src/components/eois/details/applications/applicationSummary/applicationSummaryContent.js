@@ -43,6 +43,7 @@ const ApplicationSummaryContent = (props) => {
     partnerLoading,
     params: { applicationId },
     isUserFocalPoint,
+    isUserCreator,
     isUserReviewer,
     shouldSeeReviews,
     shouldAddFeedback,
@@ -72,6 +73,7 @@ const ApplicationSummaryContent = (props) => {
         <ReviewContent
           applicationId={applicationId}
           isUserFocalPoint={isUserFocalPoint}
+          isUserCreator={isUserCreator}
           isUserReviewer={isUserReviewer}
           justReason={application.justification_reason}
         />
@@ -95,6 +97,7 @@ ApplicationSummaryContent.propTypes = {
   shouldSeeReviews: PropTypes.bool,
   isUserFocalPoint: PropTypes.bool,
   isUserReviewer: PropTypes.bool,
+  isUserCreator: PropTypes.bool,
   shouldAddFeedback: PropTypes.bool,
 };
 
@@ -115,11 +118,12 @@ const mapStateToProps = (state, ownProps) => {
     cfeiCriteria,
     eoi,
     shouldAddFeedback: isUserFocalPoint || isUserCreator,
-    shouldSeeReviews: (isUserFocalPoint || isUserReviewer)
+    shouldSeeReviews: (isUserFocalPoint || isUserReviewer || isUserCreator)
     && status === APPLICATION_STATUSES.PRE
     && cfeiStatus === PROJECT_STATUSES.CLO,
     isUserFocalPoint,
     isUserReviewer,
+    isUserCreator,
   };
 };
 

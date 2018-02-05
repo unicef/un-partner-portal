@@ -12,6 +12,7 @@ import CfeiTableContainer from './cfeiTableContainer';
 import { isQueryChanged } from '../../helpers/apiHelper';
 import { PROJECT_TYPES, ROLES } from '../../helpers/constants';
 import resetChanges from './filters/eoiHelper';
+import CustomGridColumn from '../common/grid/customGridColumn';
 
 const { PARTNER, AGENCY } = ROLES;
 const { OPEN, PINNED, DIRECT, UNSOLICITED } = PROJECT_TYPES;
@@ -64,14 +65,10 @@ class CfeiContainer extends Component {
     const { role, params: { type } } = this.props;
 
     return (
-      <Grid container direction="column" spacing={24}>
-        <Grid item>
-          {this.filter()}
-        </Grid>
-        <Grid item>
-          <CfeiTableContainer role={role} type={type} />
-        </Grid>
-      </Grid>
+      <CustomGridColumn>
+        {this.filter()}
+        <CfeiTableContainer role={role} type={type} />
+      </CustomGridColumn>
     );
   }
 }

@@ -423,6 +423,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
     focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
     reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
     invited_partners = PartnerShortSerializer(many=True, read_only=True)
+    applications_count = serializers.SerializerMethodField(allow_null=True, read_only=True)
 
     class Meta:
         model = EOI
@@ -461,6 +462,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'created',
             'completed_date',
             'contains_partner_accepted',
+            'applications_count',
         )
         read_only_fields = ('created', 'completed_date')
 
@@ -468,6 +470,9 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         if obj.is_direct:
             # this is used by agency
             return SelectedPartnersSerializer(obj.applications.all(), many=True).data
+
+    def get_applications_count(self, eoi):
+        return eoi.applications.count()
 
     def update(self, instance, validated_data):
         if instance.completed_reason is None and validated_data.get('completed_reason') is not None and \

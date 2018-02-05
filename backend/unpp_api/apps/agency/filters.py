@@ -6,6 +6,7 @@ from django_filters.filters import MultipleChoiceFilter, CharFilter
 from django_filters.widgets import CSVWidget
 
 from account.models import User
+from agency.models import Agency
 from common.consts import MEMBER_ROLES
 
 
@@ -22,3 +23,12 @@ class AgencyUserFilter(django_filters.FilterSet):
     class Meta:
         model = User
         fields = ['role', 'name', 'office_name']
+
+
+class AgencyFilter(django_filters.FilterSet):
+
+    exclude = CharFilter(name='name', lookup_expr='iexact', exclude=True)
+
+    class Meta:
+        model = Agency
+        fields = ['name']

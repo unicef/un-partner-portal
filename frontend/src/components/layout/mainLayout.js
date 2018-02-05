@@ -26,7 +26,7 @@ const styleSheet = theme => ({
   },
   fullWidth: {
     [theme.breakpoints.down('md')]: {
-      '-ms-grid-column-span-end': 2,
+      '-ms-grid-column-span': 2,
       gridColumnEnd: 'span 2',
     },
   },

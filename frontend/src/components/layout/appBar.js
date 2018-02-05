@@ -3,21 +3,15 @@ import PropTypes from 'prop-types';
 
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import List from 'material-ui/List';
-import Divider from 'material-ui/Divider';
-import LoggedOrg from './loggedOrg/loggedOrg';
-import MenuLink from './menuLink';
-import Hidden from 'material-ui/Hidden';
 import Popover from 'material-ui/Popover';
 import AppBar from 'material-ui/AppBar';
 import Typography from 'material-ui/Typography';
-import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
 import AccountIcon from 'material-ui-icons/AccountCircle';
 import BadgeIcon from './badgeIcon';
 import NotificationsList from '../notifications/notificationsList';
-import SidebarMenu from './sidebarMenu';
 import Logout from './logout';
+import Options from './options';
 
 const styleSheet = theme => ({
   leftHeader: {
@@ -29,8 +23,8 @@ const styleSheet = theme => ({
     backgroundColor: theme.palette.secondary[500],
   },
   rightHeader: {
-    // dark blue color added as extra to regular palette
     flexShrink: 1,
+    // dark blue color added as extra to regular palette
     backgroundColor: theme.palette.primary.strong,
     '-ms-grid-column': 2,
   },
@@ -143,6 +137,7 @@ class MainAppBar extends Component {
           onRequestClose={this.handleProfileRequestClose}
         >
           <Logout />
+          <Options />
         </Popover>
       </React.Fragment>
     );
@@ -151,7 +146,6 @@ class MainAppBar extends Component {
 
 MainAppBar.propTypes = {
   classes: PropTypes.object.isRequired,
-  onItemClick: PropTypes.func,
 };
 
 export default withStyles(styleSheet, { name: 'MainAppBar' })(MainAppBar);

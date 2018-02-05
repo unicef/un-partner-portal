@@ -1,1 +1,30 @@
-[{"model": "agency.agency", "pk": 1, "fields": {"name": "UNICEF"}}, {"model": "agency.agency", "pk": 2, "fields": {"name": "WFP"}}, {"model": "agency.agency", "pk": 3, "fields": {"name": "UNHCR"}}, {"model": "agency.agency", "pk": 4, "fields": {"name": "Other"}}]
+[
+    {
+        "model":"agency.agency",
+        "pk":1,
+        "fields":{
+            "name":"UNICEF"
+        }
+    },
+    {
+        "model":"agency.agency",
+        "pk":2,
+        "fields":{
+            "name":"WFP"
+        }
+    },
+    {
+        "model":"agency.agency",
+        "pk":3,
+        "fields":{
+            "name":"UNHCR"
+        }
+    },
+    {
+        "model":"agency.agency",
+        "pk":4,
+        "fields":{
+            "name":"Other"
+        }
+    }
+]

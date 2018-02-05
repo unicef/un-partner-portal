@@ -11,6 +11,7 @@ import {
   selectCfeiReviewers,
   selectCfeiDetails,
   isCfeiCompleted,
+  isUserACreator,
 } from '../../../../../../store';
 import { loadReviewers } from '../../../../../../reducers/cfeiReviewers';
 import SingleReviewer from './singleReviewer';
@@ -82,7 +83,7 @@ const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
 
   return {
-    focalPoint: isUserAFocalPoint(state, ownProps.id),
+    focalPoint: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
     reviewers: selectCfeiReviewers(state, ownProps.id),
     cfeiReviewers: cfei ? cfei.reviewers : [],
     loading: state.cfeiReviewers.status.loading,

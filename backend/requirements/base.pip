@@ -38,3 +38,6 @@ uwsgi==2.0.15
 
 # Sentry
 raven==6.4.0
+
+# New Relic
+newrelic==2.100.0.84
