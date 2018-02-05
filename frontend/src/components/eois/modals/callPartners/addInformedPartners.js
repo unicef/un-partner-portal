@@ -52,7 +52,7 @@ class CallPartnersModal extends Component {
         <ControlledModal
           maxWidth="md"
           title={messages.title}
-          trigger={dialogOpen.invite}
+          trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
           info={messages.header}
           buttons={{

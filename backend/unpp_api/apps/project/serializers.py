@@ -226,7 +226,7 @@ class ApplicationFullEOISerializer(ApplicationFullSerializer):
     eoi_applications_count = serializers.SerializerMethodField(allow_null=True, read_only=True)
 
     def get_eoi_applications_count(self, application):
-        return application.eoi.applications.count()
+        return application.eoi and application.eoi.applications.count()
 
 
 class CreateUnsolicitedProjectSerializer(MixinPreventManyCommonFile, serializers.Serializer):
