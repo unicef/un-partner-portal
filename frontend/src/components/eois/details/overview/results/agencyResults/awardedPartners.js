@@ -6,7 +6,7 @@ import Typography from 'material-ui/Typography';
 import PaddedContent from '../../../../../common/paddedContent';
 import EmptyContent from '../../../../../common/emptyContent';
 import HeaderList from '../../../../../common/list/headerList';
-import { isUserAFocalPoint, selectCfeiAwardedPartners } from '../../../../../../store';
+import { isUserAFocalPoint, selectCfeiAwardedPartners, isUserACreator } from '../../../../../../store';
 import { loadAwardedPartners } from '../../../../../../reducers/cfeiAwardedPartners';
 import SingleAward from './singleAward';
 
@@ -70,7 +70,7 @@ AwardedPartners.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  focalPoint: isUserAFocalPoint(state, ownProps.id),
+  focalPoint: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
   loading: state.cfeiAwardedPartners.status.loading,
   awardedPartners: selectCfeiAwardedPartners(state, ownProps.id),
 });
