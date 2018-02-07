@@ -451,7 +451,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertEquals(response.data['non_field_errors'],
-                          ['You can not award an application if the profile has not been verified yet.'])
+                          ['You cannot award an application if the profile has not been verified yet.'])
 
         PartnerVerificationFactory(partner=app.partner, submitter=app.eoi.created_by)
 
@@ -502,7 +502,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(statuses.is_client_error(response.status_code))
         self.assertEquals(
-            response.data["non_field_errors"], ["Since assessment has begun, application can't be reject."]
+            response.data["non_field_errors"], ["Since assessment has begun, application can't be rejected."]
         )
 
         app.assessments.all().delete()
