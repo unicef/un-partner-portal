@@ -201,22 +201,21 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
 
             if data.get("status") == APPLICATION_STATUSES.rejected and \
                     Assessment.objects.filter(application=app).exists():
-                raise serializers.ValidationError("Since assessment has begun, application can't be reject.")
+                raise serializers.ValidationError("Since assessment has begun, application can't be rejected.")
 
             if app.eoi.is_completed:
-                raise serializers.ValidationError(
-                    "Since CEOI is completed, modification is forbidden.")
+                raise serializers.ValidationError("Since CEOI is completed, modification is forbidden.")
 
             if data.get("did_win") and not app.partner.is_verified:
                 raise serializers.ValidationError(
-                    "You can not award an application if the profile has not been verified yet.")
+                    "You cannot award an application if the profile has not been verified yet.")
             if data.get("did_win") and app.partner.has_red_flag:
                 raise serializers.ValidationError(
-                    "You can not award an application if the profile has red flag.")
-            if data.get("did_win") and \
-                    app.eoi.reviewers.count() != Assessment.objects.filter(application=app).count():
+                    "You cannot award an application if the profile has red flag.")
+            if data.get("did_win") and not app.assessments_is_completed:
                 raise serializers.ValidationError(
-                    "You can not award an application if all assessments have not been added for the application.")
+                    "You cannot award an application if all assessments have not been added for the application."
+                )
 
         return super(ApplicationFullSerializer, self).validate(data)
 
