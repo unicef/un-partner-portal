@@ -1,6 +1,9 @@
 # Django packages
 Django==1.11.8
 
+#apm
+elastic-apm==2.0.0
+
 Fabric==1.13.1
 BeautifulSoup==3.2.1
 Pillow==3.1.1
