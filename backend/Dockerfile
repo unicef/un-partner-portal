@@ -12,6 +12,8 @@ RUN apt-get update && \
     apt-get install --assume-yes --reinstall ca-certificates
 RUN apt-get install -y --no-install-recommends \
     build-essential \
+    libfreetype6 \
+    libfreetype6-dev \
     libcurl4-openssl-dev \
     libjpeg-dev \
     libgif-dev \
@@ -29,6 +31,10 @@ RUN apt-get install -y --no-install-recommends \
     python-dev \
     python-software-properties \
     python-setuptools
+RUN apt-get install -y --no-install-recommends \
+    python-pydot \
+    libgvc6 \
+    graphviz
 RUN apt-get install -y --no-install-recommends \
     postgresql-client \
     libpq-dev \
