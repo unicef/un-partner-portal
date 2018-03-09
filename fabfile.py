@@ -71,7 +71,7 @@ def preview_uwsgi_log():
 
 def fakedata(quantity=50, clean_before=True):
     """
-    Load example data from fakedata management command.
+    Create mock data for the django backend.
     """
     cmd = 'docker-compose exec backend python manage.py fakedata %d' % (int(quantity))
     if clean_before:
@@ -82,7 +82,7 @@ def fakedata(quantity=50, clean_before=True):
 def reset_db():
     """
     Reset db, migrate and generate fixtures.
-    Useful when changing branch with different migration.
+    Useful when changing branch with different migrations.
     """
     local('docker-compose exec backend python manage.py reset_db')
     local('docker-compose exec backend python manage.py migrate')
