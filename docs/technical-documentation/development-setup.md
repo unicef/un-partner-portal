@@ -1,7 +1,3 @@
----
-description: Tools used and setup instructions
----
-
 # Development Setup
 
 ## Local Setup
@@ -31,5 +27,5 @@ or running tests
 fab tests
 ```
 
-For the mose up-to-date reference just check `fabfile.py` in the repository root.
+For the most up-to-date reference just check `fabfile.py` in the repository root.
 

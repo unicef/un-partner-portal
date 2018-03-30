@@ -1,9 +1,3 @@
----
-description: >-
-  This page serves to explain how UNPP's ID System Process operates at a high
-  level.
----
-
 # ID System Process
 
 ## Features

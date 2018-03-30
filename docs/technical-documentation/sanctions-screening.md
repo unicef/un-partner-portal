@@ -1,9 +1,3 @@
----
-description: >-
-  This page serves as a resource for understanding how the UNPP product prevents
-  access and maintains security in regards to the UN Sanctions List.
----
-
 # Sanctions Screening
 
 ## Overview

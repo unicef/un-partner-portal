@@ -1,7 +1,3 @@
----
-description: Principles of design elements behind the UNPP Project
----
-
 # Design
 
 ## Consistency

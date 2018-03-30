@@ -1,9 +1,3 @@
----
-description: >-
-  This section provides an overview of the features on both Agency & Partner
-  portal users Dashboards.
----
-
 # Dashboard
 
 Upon logging into the UNPP portal, both an Agency User or a Partner User will be directed immediately to their account’s dashboard page. Each user has a set list of high-level reporting and analytics that will be present within the body section of the Dashboard. See below for further details.

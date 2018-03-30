@@ -1,7 +1,3 @@
----
-description: Overview of UNPP Project
----
-
 # About
 
 ## Purpose

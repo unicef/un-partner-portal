@@ -1,7 +1,3 @@
----
-description: Helpful links and documentation around UNPP User Roles and their permissions.
----
-
 # User Management
 
 ## User Identity Management
