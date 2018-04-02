@@ -20,9 +20,112 @@ There are three main tabs that live within this section:
 
 ![Unsolicited Concept Notes](../.gitbook/assets/image%20%283%29.png)
 
-![CFEI Overview](../.gitbook/assets/image%20%281%29.png)
+### CFEI Details
 
-###  
+Once selecting an individual CFEI from the available lists, the user will be able to dive deeper into the informations for this particular project.
+
+On the top section of the screen, the user will be presented with a few features to help them quickly identify the category, and status of the CFEI.
+
+A label is present just above the CFEI's **Title** to indicate if the CFEI is categorized as an "Open Selection" or not. 
+
+Just below the **Title **sits the following list of tabs:
+
+* Overview
+* Applications
+* Preselected List
+* Results
+
+#### CFEI Overview
+
+![CFEI Overview](../.gitbook/assets/cfei-overview.png)
+
+The CFEI Overview tab displays the following features to the User:
+
+* Timeline showing the following:
+  *  Date the CFEI was posted
+  * Application Deadline
+  * Notifications of Results
+  * Estimated Project Start Date
+* Project Details
+  * Project Title
+  * Project Focal Point\(s\)
+  * Sector and area of specialization
+  * Agency in which the CFEI was issues by
+  * Project Background
+  * Application Deadline
+  * Notification of Result
+  * Estimated Start Date
+  * Estimated End Date
+* Selection Criteria
+  * Criteria
+    * Weight of Criteria
+* Invited Partner\(s\)
+  * Name of Partner invited to participate in CFEI
+
+Furthermore, on the top right section of the CFEI: Overview screen, the user will be able to see the status of the CFEI with options to Finalize, Edit, and Manage Reviewers. 
+
+![CFEI Action Options](../.gitbook/assets/status-finalize-+-more.png)
+
+![CFEI Action Options](../.gitbook/assets/status-finalize-+-more-2.png)
+
+#### CFEI Applications
+
+The Second Tab on the list presents the user with an option to view a table list of  all Partner Applications for a specific CFEI.
+
+Content displayed in the table contains the following information separated by columns:
+
+* Organization's Legal Name
+* Type of Organization
+* Application ID
+* Status
+
+![CFEI Applications](../.gitbook/assets/cfei-applications.png)
+
+Featured on top of the Table List, are filters for the Agency User to quickly refine their search by the following options:
+
+* General Text Search
+* Country
+* Location
+* Sector & Area of Specialization
+* Population of Concern
+* Type of Organization
+
+#### CFEI Preselected List
+
+The third tab available is the "Preselected List". This is similar to the Applications List however, instead of displaying a list of Partners who have applied to the CFEI, it displays select Partners that were hand picked by Agency users to forego the Open Selection process. 
+
+![Preselected List](../.gitbook/assets/cfei-preselected-list.png)
+
+#### CFEI Results
+
+Lastly, a section remains available to the Agency User to view high level information regarding the results of the CFEI selection process. The Agency User is able to see the following features and information for a specific CFEI:
+
+* Review Summary
+  * Comments
+  * Attachments
+  * Ability to Add Summary if one is not already provided.
+* Selected Partner\(s\)
+  * List of Partners selected for the project.
+  * Ability to retract a previous selection.
+* Reviewers
+  * List view of Agency Reviewers and a total count of assessments made per reviewer. 
+    * Agency User has the ability to send reminders to the Reviewers.
+
+![CFEI: Results](../.gitbook/assets/cfei-results.png)
+
+#### CFEI: Finalization
+
+Once the process of creating an Call for Expression of Interest is made, a partner is reviewed and a selection is made, the last step is for the Agency User to Finalize the CFEI.
+
+On the top hand corner, a button for Finalizing is available. Once clicked, a modal will appear with the following options:
+
+* Confirm the desire to finalize the CFEI
+  * Choose reason for completing CFEI
+  * Add justification for completing CFEI
+
+![CFEI: Finalize](../.gitbook/assets/cfei-finalizing%20%281%29.png)
+
+
 
 
 
