@@ -125,7 +125,37 @@ On the top hand corner, a button for Finalizing is available. Once clicked, a mo
 
 ![CFEI: Finalize](../.gitbook/assets/cfei-finalizing%20%281%29.png)
 
+### Unsolicited Concept Notes
 
+When a CFEI has been created and either made public or sent directly to a specific partner\(s\) the Partner in return provides a documentation called a Concept Note back to the Agency in order to be selected for a project. 
 
+When viewing a list of CFEIs, the user can access a list of Unsolicited Concept Notes \(UCNs\) which display the following:
 
+* Project Details
+  * Organization's Legal Name
+  * Type of Organization
+  * Project Title
+  * Sector and area of Specialization
+* Concept Note
+  * Ability to download the Concept Note the Partner has Attached.
+
+Furthermore, the Agency User has the ability to view the partner's profile or Convert the UCN to a Direct Selection.
+
+![UCN Overview](../.gitbook/assets/ucn.png)
+
+When Converting to a Direct Selection, a modal will appear and the user must provide the following information to proceed:
+
+* Justification for Direct Selection
+* Justification Summary
+* Project / Programme Focal Point
+* Project Background
+* Other Information \(optional\)
+* Estimated Start Date
+* Estimated End Date.
+
+![Convert to Direct Selection](../.gitbook/assets/convert-to-direct-selection.png)
+
+The Agency User also has the ability to provide feedback for a specific UCN. By navigating to the Feedback Tab just below the UCN Title, the user will be presented with a Comments section, where they will be able to provide their feedback on the specific UCN.
+
+![](../.gitbook/assets/feedback.png)
 
