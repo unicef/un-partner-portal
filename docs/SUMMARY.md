@@ -21,6 +21,7 @@
 * [Searching and pinning CFEIs](partners/untitled.md)
 * [Answering for CFEI](partners/answering-for-cfei.md)
 * [Adding new Unsolicited Concept Note](partners/untitled-1.md)
+* [Responding to Direct Selection](partners/responding-to-direct-selection.md)
 
 ## Agencies
 
