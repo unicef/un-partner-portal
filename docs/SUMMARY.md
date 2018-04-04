@@ -20,7 +20,11 @@
 
 ## Agencies
 
+* [Overview](agencies/untitled.md)
+* [User Interface](agencies/user-interface.md)
+* [New CFEIs set up](agencies/new-cfeis-set-up.md)
 * [CFEIs](agencies/cfeis.md)
+* [Maintain the CFEI](agencies/untitled-1.md)
 
 ## Technical Documentation
 
