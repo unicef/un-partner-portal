@@ -17,6 +17,8 @@
 ## Partners
 
 * [Registration](partners/registration.md)
+* [User Interface](partners/user-interface.md)
+* [Searching and pinning CFEIs](partners/untitled.md)
 
 ## Agencies
 
