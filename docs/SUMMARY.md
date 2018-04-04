@@ -22,6 +22,7 @@
 * [Answering for CFEI](partners/answering-for-cfei.md)
 * [Adding new Unsolicited Concept Note](partners/untitled-1.md)
 * [Responding to Direct Selection](partners/responding-to-direct-selection.md)
+* [Organization Profile set up](partners/organization-profile-set-up.md)
 
 ## Agencies
 
