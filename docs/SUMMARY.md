@@ -25,12 +25,12 @@
 * [New CFEIs set up](agencies/new-cfeis-set-up.md)
 * [CFEIs](agencies/cfeis.md)
 * [Maintain the CFEI](agencies/untitled-1.md)
+* [Application's Assessment](agencies/applications-assessment.md)
 * [Maintain Direct Selection](agencies/maintain-direct-selection.md)
 * [Maintain Unsolicited Concept Note](agencies/maintain-unsolicited-concept-note.md)
 * [Partner's details](agencies/untitled-2.md)
 * [Partner Verification](agencies/partner-verification.md)
 * [Flagging a Partner](agencies/flagging-a-partner.md)
-* [Application's Assessment](agencies/applications-assessment.md)
 
 ## Technical Documentation
 

@@ -4,7 +4,7 @@ The overall user interface of UNPP for Agency consists of the following sections
 
 {% tabs %}
 {% tab title="Dashboard" %}
-Your content goes here.
+Screenshots with descriptions
 {% endtab %}
 
 {% tab title="CFEIs" %}
