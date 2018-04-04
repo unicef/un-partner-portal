@@ -29,7 +29,6 @@
 * [Maintain Unsolicited Concept Note](agencies/maintain-unsolicited-concept-note.md)
 * [Partner's details](agencies/untitled-2.md)
 * [Partner Verification](agencies/partner-verification.md)
-* [Flagging a Partner](agencies/flagging-a-partner.md)
 
 ## Technical Documentation
 
