@@ -19,6 +19,8 @@
 * [Registration](partners/registration.md)
 * [User Interface](partners/user-interface.md)
 * [Searching and pinning CFEIs](partners/untitled.md)
+* [Answering for CFEI](partners/answering-for-cfei.md)
+* [Adding new Unsolicited Concept Note](partners/untitled-1.md)
 
 ## Agencies
 
