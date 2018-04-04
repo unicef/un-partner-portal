@@ -28,6 +28,7 @@
 * [Maintain Direct Selection](agencies/maintain-direct-selection.md)
 * [Maintain Unsolicited Concept Note](agencies/maintain-unsolicited-concept-note.md)
 * [Partner's details](agencies/untitled-2.md)
+* Partner Verification
 
 ## Technical Documentation
 
