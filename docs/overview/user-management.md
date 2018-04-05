@@ -116,7 +116,7 @@ User Roles & Permissions Matrix
 
 ### R&P Matrix
 
-| ![](../.gitbook/assets/randp-matrix.png) |  |
+| ![](../.gitbook/assets/r-and-p-matrix.png) |  |
 | --- | --- |
 | ![](../.gitbook/assets/feature-permission%20%281%29.png) |  |
 

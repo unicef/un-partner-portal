@@ -30,7 +30,7 @@
 * [User Interface](agencies/user-interface.md)
 * [New CFEIs set up](agencies/new-cfeis-set-up.md)
 * [CFEIs](agencies/cfeis.md)
-* [Maintain the CFEI](agencies/untitled-1.md)
+* [Maintain Calls for Expression of Interest](agencies/untitled-1.md)
 * [Application's Assessment](agencies/applications-assessment.md)
 * [Maintain Direct Selection](agencies/maintain-direct-selection.md)
 * [Maintain Unsolicited Concept Note](agencies/maintain-unsolicited-concept-note.md)
