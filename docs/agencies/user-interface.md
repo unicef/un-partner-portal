@@ -30,7 +30,17 @@ User can filter the data by the following filters:
 
 ### Results
 
-Table placed below filters, represents filtered data. 
+Table placed below filters, shows the list of search results. Each row represents Expression of Interest with basic information, placed in columns with following labels:
+
+* Project Title
+* UN Agency
+* Country
+* Sector & Area of Specialization
+* Date Posted
+* Application Deadline
+* Status
+
+To view details of a single Call of Expression of Interest, user needs to click on the Project Title. This action will take him to a separate screen. Those screens are described here.
 
 ### 
 {% endtab %}
