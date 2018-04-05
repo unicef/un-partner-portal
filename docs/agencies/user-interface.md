@@ -50,8 +50,6 @@ Table placed below filters, shows the list of search results. Each row represent
 
 To add new Call of Expression of Interest, user needs to click on "New CFEI" button, placed on the top right of a screen header, which displays a modal window. The flow of adding new Call of Expression of Interest is described here.
 
-
-
 ## Direct Selection
 
 ### Filters
@@ -92,6 +90,34 @@ Column "Status" shows status of Direct Selection. When hover on this cell, toolt
 ### New Direct Selection
 
 To add new Direct Selection, user needs to click on "New Direct Selection" button, placed on the top right of a screen header, which displays a modal window. The flow of adding new Direct Selection is described here.
+
+## Unsolicited Concept Note
+
+### Filters
+
+User can filter the data by the following filters:
+
+* Search
+* Country
+* Location
+* Sector & Area of Specialization
+* Agency
+* checkbox for: Show only those chosen for "direct selection"
+
+### Results
+
+Table placed below filters, shows the list of search results. Each row represents Unsolicited Concept Notes with basic information, placed in columns with following labels:
+
+* Project Title
+* UN Agency
+* Partner
+* Country
+* Sector & Area of Specialization
+* Submission Date
+* Chosen for direct selection
+
+**Hover behavior   
+**Column "Sector & Area of Specialization" shows only Sectors, because of lack of space. When hover on a cell with a title, the tooltip with full description of Areas of Specialization grouped by Sector will be displayed.
 {% endtab %}
 
 {% tab title="Partners" %}
