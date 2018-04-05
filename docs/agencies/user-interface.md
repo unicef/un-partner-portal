@@ -40,7 +40,15 @@ Table placed below filters, shows the list of search results. Each row represent
 * Application Deadline
 * Status
 
-To view details of a single Call of Expression of Interest, user needs to click on the Project Title. This action will take him to a separate screen. Those screens are described here.
+**Hover behavior   
+**Column "Sector & Area of Specialization" shows only Sectors, because of lack of space. When hover on a cell with a title, the tooltip with full description of Areas of Specialization grouped by Sector will be displayed.
+
+**Details of single Call of Expression of Interest  
+**To view details of a single Call of Expression of Interest, user needs to click on the Project Title. This action will take him to a separate screen. Those screens are described here.
+
+### New Call of Expression of Interest
+
+To add new Call of Expression of Interest, user needs to click on "New CFEI" button, placed on the top right of a screen header, which displays a modal window. The flow of adding new Call of Expression of Interest is described here.
 
 ### 
 {% endtab %}
