@@ -121,7 +121,41 @@ Table placed below filters, shows the list of search results. Each row represent
 {% endtab %}
 
 {% tab title="Partners" %}
+This screen provides information about Partners registered in the UNPP. Agency user can filter the data and view detailed information about a Partner.
 
+### Filters
+
+To filter the data, user can use the following set of filters:
+
+* Legal Name
+* Verification Status
+* Type of Organization
+* Country
+* Sector & Are of Specialization
+* Population of Concern
+
+### Results
+
+All search results are displayed in a form of a list. Table contains columns with following labels:
+
+* Organization's Legal Name \(next to the the name of a Partner badges with verification status and types of flags are displayed\)
+* Acronym
+* Type of Organization
+* Country
+* Experience working with UN
+
+Each row of a list is expandable to provide additional information about a Partner:
+
+* Organization's mailing Address
+* Organization's generic Phone number
+* Website
+* Name of Head
+* Title of Head
+* Email of Head
+* Working languages
+* Sector and areas of specialization
+
+If provided information are not sufficient, user can access more detailed information by clicking Organization's Legal Name. User will be taken to separate set of screens then. Depending on the permission added to the user, the user will have an option to view information about Verification process, to read all observations added to the Profile \(not risk-related, risk related and escalated to the UN HQ Editor\) with option to run new verification process and add new observation. The user will be also able to view all profile details, Partner's users \(in read mode\) and applications submitted by this Partner. All screens and flows for theses processes are described here.
 {% endtab %}
 
 {% tab title="Reports" %}
