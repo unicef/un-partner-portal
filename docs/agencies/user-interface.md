@@ -159,7 +159,59 @@ If provided information are not sufficient, user can access more detailed inform
 {% endtab %}
 
 {% tab title="Reports" %}
+Reports section provides possibility to run reports based on set of filters. User can also see filtered data on the maps for better understanding Partners' presence and locations of the CFEIs. Reports can be exported as .csv. Reports section is divided by three tabs:
 
+* Partner information
+* CFEI Management
+* Verification and Flagging
+
+## Partner Information
+
+On this screen user can run the report about Partner Profile and Partner's Contact Information.
+
+### Filters
+
+When users enters this screen is able to choose desired information thanks to provided filter options:
+
+* Country
+* Type of Organization
+* Registered
+* UN Experience
+* Country Office
+* Sector & Area of Specialization
+
+When input fields are filled user can press Submit button to generate data in the form of a list and a map.
+
+### Results
+
+For quick access to export feature, export buttons are placed below the filters. If user wants to preview search results, map and a table are provided.
+
+On the map user can see selected area and markers suggesting Partners' presence in this area.
+
+Hover behavior: On hover over the marker user can view Partners offices in this location.
+
+Under the map a list of Parters is displayed. Table provides basic information about each Partner:
+
+* Organization's Legal Name
+* Number of Offices 
+* Type of Organization
+* Country
+* Experience working with UN
+
+Checking and unchecking the checkboxes placed in each row has an influence on data displayed on the map, as well on data to be exported.
+
+### Export reports
+
+Reports that can be export from this screen are:
+
+* Partner Profile Report
+* Contact Information Report
+
+## CFEI Management
+
+On this screen user can run the report about CFEIs.
+
+### Filters
 {% endtab %}
 
 {% tab title="User Management" %}
