@@ -163,7 +163,7 @@ Reports section provides possibility to run reports based on set of filters. Use
 
 * Partner information
 * CFEI Management
-* Verification and Flagging
+* Verification & Flagging
 
 ## Partner Information
 
@@ -188,7 +188,7 @@ For quick access to export feature, export buttons are placed below the filters.
 
 On the map user can see selected area and markers suggesting Partners' presence in this area.
 
-Hover behavior: On hover over the marker user can view Partners offices in this location.
+Hover behavior: On hover over the marker, user can view Partners offices in this location.
 
 Under the map a list of Parters is displayed. Table provides basic information about each Partner:
 
@@ -200,18 +200,61 @@ Under the map a list of Parters is displayed. Table provides basic information a
 
 Checking and unchecking the checkboxes placed in each row has an influence on data displayed on the map, as well on data to be exported.
 
-### Export reports
-
-Reports that can be export from this screen are:
-
-* Partner Profile Report
-* Contact Information Report
-
 ## CFEI Management
 
 On this screen user can run the report about CFEIs.
 
 ### Filters
+
+When users enters this screen is able to choose desired information thanks to provided filter options:
+
+* Country
+* Project Location
+* Type of Call
+* Status
+* Type of Organization
+* Sector & Area of Specialization
+* Posting Year
+
+When input fields are filled user can press Submit button to generate data in the form of a list and a map.
+
+### Results
+
+For quick access to export feature, export button is placed below the filters. If user wants to preview search results, map and a table are provided.
+
+Hover behavior: On hover over the marker, user can view CFEIs in this location.
+
+Under the map a list of CFEIs is displayed. Table provides basic information about each CFEI:
+
+* Project Name
+* Agency
+* Country
+* Project Location
+
+## Verification & Flagging
+
+On this screen user can run the report about Verification & Flagging details.
+
+### Filters
+
+When users enters this screen is able to choose desired information thanks to provided filter options:
+
+* Country
+* Type of Organization
+* Profile Type
+* Verification Status
+* Verification Status
+* Verification Year
+* Flagged
+
+### Results
+
+For quick access to export feature, export button is placed below the filters. If user wants to preview search results, a table is provided. Table provides basic information about each Partner:
+
+* Organization's Legal Name \(with badges indicating a status of Verification and Flagging\)
+* Acronym
+* Type of Organization
+* Country
 {% endtab %}
 
 {% tab title="User Management" %}
