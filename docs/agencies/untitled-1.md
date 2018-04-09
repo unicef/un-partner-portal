@@ -1,4 +1,6 @@
 # Maintain Calls for Expression of Interest
 
-Add description of tabs and actions available in tab "Calls for Expression of Interest" \(filters, columns in table, description of screens with CFEI details, description of available statuses that CFEI can have, etc.\)
+Once selecting an individual CFEI from the available lists, the user will be able to dive deeper into the informations for this particular project.
+
+On the top section of the screen, the user will be presented with a few features to help them quickly identify the category, and status of the CFEI.
 
