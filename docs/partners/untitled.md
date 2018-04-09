@@ -2,6 +2,8 @@
 
 ## Filtering
 
+![](../.gitbook/assets/pin%20%281%29.gif)
+
 ### Navigation
 
 Partners have the ability to search specific criteria for CFEIs they would like to apply to. Furthermore, Partners are able to pin selected CFEIs of interest. 
