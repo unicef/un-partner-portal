@@ -27,11 +27,20 @@ Screen contains a list of all verifications performed on the Partner's profile. 
 
 ## Observations
 
-Screen contains a list of all observations added to the profile. Table provides information about Type of observation, Date of observation and person, who added this observation. Rows of this table are expandable and show information about observation details, as shown on the screenshot below.
-
-screenshot
+Screen contains a list of all observations added to the profile. 
 
 ### Filters
 
+User can filter data by:
 
+* Type of observation
+* Observations added by user. This checkbox helps to filter data to find observations that can be edited by the user.
+
+### Results
+
+Table provides information about Type of observation, Date of observation and person, who added this observation. Rows of this table are expandable and show information about observation details, as shown on the screenshot below.
+
+screenshot
+
+Hover behavior: when user, who is an owner of the observation, hovers on the row, the edit icon is shown. This user can edit his observation and change the status of added observation
 
