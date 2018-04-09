@@ -60,5 +60,31 @@ Table provides basic information about users.
 
 ## Applications
 
-The purpose of this screen is to show all applications
+The purpose of this screen is to show all CFEIs that Partner submitted his application for.
+
+### Filters
+
+User can filter data by:
+
+* Search
+* Country
+* Sector & Area of Specialization
+* Type of Application
+* Agency
+* checkbox to show only selected applications
+
+### Results
+
+Table provides information about:
+
+* Project Title \(which is also a link to CFEI overview page\)
+* CN ID \(which is also a link to application details page\)
+* Type of Application
+* UN Agency
+* Country
+* Sector
+* Submission/Received date
+* Selected
+
+ 
 
