@@ -25,6 +25,8 @@ This is a section with detailed information about Partner's profile in view mode
 
 Screen contains a list of all verifications performed on the Partner's profile. Table provides information about Verification status, Date of verification and person, who added this verification. Rows of this table are expandable and show information about answers on verification questions.
 
+Flow for adding new verification is described **here**.
+
 ## Observations
 
 Screen contains a list of all observations added to the profile. 
@@ -42,5 +44,7 @@ Table provides information about Type of observation, Date of observation and pe
 
 screenshot
 
-Hover behavior: when user, who is an owner of the observation, hovers on the row, the edit icon is shown. This user can edit his observation and change the status of added observation
+**Hover behavior: **when user, who is an owner of the observation, hovers on the row, the edit icon is shown. This user can edit his observation and change the status of added observation. The full flow for adding and editing observations is described **here**.
+
+
 
