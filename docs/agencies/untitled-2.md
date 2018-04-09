@@ -46,5 +46,19 @@ screenshot
 
 **Hover behavior: **when user, who is an owner of the observation, hovers on the row, the edit icon is shown. This user can edit his observation and change the status of added observation. The full flow for adding and editing observations is described **here**.
 
+## Users
 
+Screen contains a list of Partner's users as a read only. 
+
+### Filters
+
+tbd
+
+### Results
+
+Table provides basic information about users.
+
+## Applications
+
+The purpose of this screen is to show all applications
 
