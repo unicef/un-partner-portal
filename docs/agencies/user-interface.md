@@ -120,6 +120,8 @@ To add new Direct Selection, user needs to click on "New Direct Selection" butto
 
 ## Unsolicited Concept Note
 
+![Unsolicited Concept Note tab](../.gitbook/assets/screen-shot-2018-04-10-at-16.11.36.png)
+
 ### Filters
 
 User can filter the data by the following filters:
@@ -130,6 +132,8 @@ User can filter the data by the following filters:
 * Sector & Area of Specialization
 * Agency
 * checkbox for: Show only those chosen for "direct selection"
+
+![Filters of Unsolicited Concept Note](../.gitbook/assets/screen-shot-2018-04-10-at-16.11.43.png)
 
 ### Results
 
@@ -143,8 +147,12 @@ Table placed below filters, shows the list of search results. Each row represent
 * Submission Date
 * Chosen for direct selection
 
+![Results of Unsolicited Concept Note](../.gitbook/assets/screen-shot-2018-04-10-at-16.11.50.png)
+
 **Hover behavior   
 **Column "Sector & Area of Specialization" shows only Sectors, because of lack of space. When hover on a cell with a title, the tooltip with full description of Areas of Specialization grouped by Sector will be displayed.
+
+![Hover on a Sector &amp; Area of Specialization cell](../.gitbook/assets/screen-shot-2018-04-10-at-16.11.56.png)
 {% endtab %}
 
 {% tab title="Partners" %}
