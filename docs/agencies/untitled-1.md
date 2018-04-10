@@ -56,7 +56,7 @@ Until status of Call for Expression of Interest is Open, user, with appropriate 
 
 The third tab available is the "Preselected List". This is similar to the Applications list however, instead of displaying a list of Partners who have applied to the CFEI, it displays selected Partners, that were hand picked by Agency users to forego the Open Selection process. 
 
-Depending on permissions, the content seen by a user may vary. 
+Depending on permissions, the content seen by a user in a table may vary. Columns: Review progress, Your score, Total score are displayed depending on given permissions.
 
 The Assessment of Applications is described **here.**
 
