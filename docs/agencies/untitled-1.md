@@ -66,13 +66,13 @@ Lastly, a section remains available to the Agency User to view high level inform
 
 On this screen, depending on permissions, user has an ability to:
 
-* add review summary
+* add/edit review summary
 * retract a previous selection
 * send reminder to a reviewer
 
 The Agency User is able to see the following features and information for a specific CFEI:
 
-* **Review Summary**: - Comment - Attachment - Ability to Add Summary if one is not already provided 
+* **Review Summary**: - Comment - Attachment - Ability to Add Summary if one is not already provided or edit if provided 
 * **Selected Partner\(s\)**: - List of Partners selected for the project - each row with Organization's Legal Name is expandable, so user can view average score per criteria, notes added by reviewer, information when Partner was notified and when he accepted the offer, ability to download Concept Note;  - Ability to retract a previous selection 
 * **Reviewers**: - List view of Agency Reviewers and a total count of assessments made per reviewer. Agency User has the ability to send reminders to the Reviewers 
 * **Justification for completion**
