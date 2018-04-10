@@ -13,11 +13,15 @@ For analysis purposes charts and numbers are provided on a separate cards for:
 * Number of New Calls for Expression of Interest - displays number and link to all CFEIs;
 * Number of Concept Notes to Score - displays a number
 
+![Dashboard - first part](../.gitbook/assets/screen-shot-2018-04-10-at-15.54.09.png)
+
 In the section below, user can view tables with more detailed information for:
 
 * List of Concept Notes requiring your scoring, with information about: Project Title CFEI - showed as link to CFEI's Overview tab Number of Applications Notification of results deadline 
 * List of Open CFEIs, with information about: Project Title CFEI - showed as link to CFEI's Overview tab Number of Applications Application deadline 
 * Partner Decisions From 5 Past Days
+
+![Dashboard - second part](../.gitbook/assets/screen-shot-2018-04-10-at-15.54.24.png)
 {% endtab %}
 
 {% tab title="CFEIs" %}
@@ -27,7 +31,11 @@ In this section user can add and view details of Expressions of Interests. Main 
 * Direct Selections
 * Unsolicited Concept Notes
 
-## Calls of Expression of Interest
+![CFEIs main screen](../.gitbook/assets/screen-shot-2018-04-10-at-16.04.48.png)
+
+## Calls for Expression of Interest
+
+![Calls for Expression of Interest tab](../.gitbook/assets/screen-shot-2018-04-10-at-16.05.50.png)
 
 ### Filters
 
@@ -41,6 +49,8 @@ User can filter the data by the following filters:
 * UN Agency
 * Date posted - choose date range \(From date, To date\)
 
+![Filters of Call for Expression of Interest](../.gitbook/assets/screen-shot-2018-04-10-at-16.05.29.png)
+
 ### Results
 
 Table placed below filters, shows the list of search results. Each row represents Expression of Interest with basic information, placed in columns with following labels:
@@ -53,8 +63,12 @@ Table placed below filters, shows the list of search results. Each row represent
 * Application Deadline
 * Status
 
+![Results of Call for Expression of Interest](../.gitbook/assets/screen-shot-2018-04-10-at-16.05.40.png)
+
 **Hover behavior   
 **Column "Sector & Area of Specialization" shows only Sectors, because of lack of space. When hover on a cell with a title, the tooltip with full description of Areas of Specialization grouped by Sector will be displayed.
+
+![Hover on a Sector &amp; Area of Specialization cell](../.gitbook/assets/screen-shot-2018-04-10-at-16.07.13.png)
 
 **Details of a single Call of Expression of Interest  
 **To view details of a single Call of Expression of Interest, user needs to click on the Project Title. This action will take the user to a separate screen. Those screens are described here.
