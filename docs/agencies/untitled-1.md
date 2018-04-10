@@ -4,14 +4,27 @@ Once selecting an individual CFEI from the available lists, the user will be abl
 
 On the top section of the screen, the user will be presented with a few features to help them quickly identify the category, and status of the CFEI. Users with appropriate permissions have also access to additional actions:
 
-* Edit
-* Invite Partner - possible until Application deadline reached
-* Manage Reviewers
-* Finalize
-
 ![Screen header with menu closed](../.gitbook/assets/screen-shot-2018-04-10-at-15.31.30.png)
 
 ![Screen header with menu open](../.gitbook/assets/screen-shot-2018-04-10-at-15.31.49.png)
+
+* **Edit**
+
+![Edit - modal window](../.gitbook/assets/edit.png)
+
+* **Invite Partners** - possible until Application deadline reached
+
+![Invite Partners - modal window](../.gitbook/assets/screen-shot-2018-04-10-at-15.30.55.png)
+
+* **Manage Reviewers**
+
+![Manage reviewers - modal window](../.gitbook/assets/screen-shot-2018-04-10-at-15.32.01.png)
+
+* **Finalize**
+
+![Finalize - modal window](../.gitbook/assets/screen-shot-2018-04-10-at-15.33.10.png)
+
+
 
 Screen is divided by tabs:
 
