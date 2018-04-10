@@ -4,7 +4,20 @@ The overall user interface of UNPP for Agency consists of the following sections
 
 {% tabs %}
 {% tab title="Dashboard" %}
-Screenshots with descriptions
+On a Dashboard user has quick preview of actions taking place in the portal and has an access to important links.
+
+For analysis purposes charts and numbers are provided on a separate cards for:
+
+* Number of New Partners from past 15 days - displays number, chart and a link to Partners main screen;
+* Number of Partners by type - displays donut chart with number inside it, below chart user can see a legend, where each Partner type is differentiated by color and a number for each type is added;
+* Number of New Calls for Expression of Interest - displays number and link to all CFEIs;
+* Number of Concept Notes to Score - displays a number
+
+In the section below, user can view tables with more detailed information for:
+
+* List of Concept Notes requiring your scoring, with information about: Project Title CFEI - showed as link to CFEI's Overview tab Number of Applications Notification of results deadline 
+* List of Open CFEIs, with information about: Project Title CFEI - showed as link to CFEI's Overview tab Number of Applications Application deadline 
+* Partner Decisions From 5 Past Days
 {% endtab %}
 
 {% tab title="CFEIs" %}
