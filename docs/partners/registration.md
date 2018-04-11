@@ -1,13 +1,14 @@
 # Registration
 
-### **Agency Registration Process:**
+## **Agency Registration Process**
 
 Currently, in order to access the portal and create an account, an Administrator from an Agency \(with access\) must first send an invitation by email for the new user to follow through to the login process.
 
-### **Partner Registration Process:**
+## **Partner Registration Process**
 
-Partners that would like to access the UNPP will need to follow the registration process available at the login screen.  
+Partners that would like to access the UNPP will need to follow the registration process available at the login screen.
 
+![Partner Registration](../.gitbook/assets/2018-04-11_18-35-37%20%281%29.gif)
 
 The new user needs to click on the “Register” button and fill out an application to register their account with the United Nations.  
 
