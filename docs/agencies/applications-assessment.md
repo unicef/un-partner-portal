@@ -1,4 +1,8 @@
 # Application's Assessment
 
-Add description of applications' assessment flow - adding reviews/scores for Partner's applications, compering applications, selecting Partners, withdrawing offers, finalizing CFEI, etc. 
+As a reviewer, Focal Point or person with appropriate permissions, user can reject or add an application to preselected list. 
+
+To view application's details, user need to click on Application ID. The following screen will be displayed:
+
+ 
 
