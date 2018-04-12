@@ -1,6 +1,6 @@
 # Application's Assessment
 
-## Applications tab
+## Reviewing list of submitted applications
 
 As a reviewer, Focal Point or person with appropriate permissions, user can reject or add an application to preselected list and download Concept Note directly from the list. Rejecting and preselecting is possible per application \(when user hovers over the row in a table, icons are displayed\) or for more than one application \(by selecting checkbox and using icons displayed in a table's header\):
 
@@ -8,7 +8,7 @@ As a reviewer, Focal Point or person with appropriate permissions, user can reje
 
 ![Application tab - two applications selected](../.gitbook/assets/screen-shot-2018-04-11-at-13.44.12.png)
 
-## Application details
+## Reviewing application details
 
 To view application's details, user needs to click on Application ID. The following screen will be displayed:
 
@@ -16,7 +16,7 @@ To view application's details, user needs to click on Application ID. The follow
 
 User has an option to view profile summary and go to profile details \(link on the bottom of Profile summary card\), download a Concept Note and provide optional feedback in Comments section of this screen.
 
-## Preselected list
+## Adding applications to Preselected list
 
 Applications added to Preselected list, may be removed from there, user can download a Concept Note directly from the list. 
 
@@ -32,7 +32,7 @@ When compare button is clicked, modal window will appear:
 
 Applicant\(s\) can be selected from this modal window and comparison report can be downloaded.
 
-## Reviewing applications
+## Adding a review of the application
 
 When user is selected to be a reviewer for a CFEI and application deadline is reached, user needs to review all preselected applications and add scores for each. Reviewing is possible from the Application details screen - button is placed in Reviewers card, next to reviewers name.
 
@@ -68,9 +68,7 @@ When Partner is selected, status of Application changes and Retract selection bu
 
 ![Application details screen - Partner selected](../.gitbook/assets/screen-shot-2018-04-12-at-11.57.26.png)
 
-
-
-## Results tab
+## Viewing results of CFEI assessment
 
 When CFEI is Closed/Under Review and assessment is not finished, the Results tab shows as follows:
 
@@ -80,9 +78,25 @@ When Partner is selected, the Results tab will be showing selected Partner with 
 
 ![](../.gitbook/assets/screen-shot-2018-04-12-at-11.59.10.png)
 
-If Agency user decides to retract selection for this Partner, the modal window will be displayed:
+
+
+## Retracting selection
+
+Retraction can be made from Results tab in CFEI and form Application details screen \(top right of header\). If Agency user decides to retract selection for this Partner, the modal window will be displayed:
 
 ![Retract selection - modal window](../.gitbook/assets/screen-shot-2018-04-12-at-12.06.38.png)
 
+The status of Application will change in the header on Application details screen as follows:
 
+![Selection retracted](../.gitbook/assets/screen-shot-2018-04-12-at-12.44.18.png)
+
+Information about retraction with justification will be displayed also on Results tab:
+
+![Results tab - offer retracted](../.gitbook/assets/screen-shot-2018-04-12-at-12.46.05.png)
+
+When different Partner will be selected, its Legal Name will be displayed on Results page, with option to retract selection:
+
+![Second Partner selected](../.gitbook/assets/screen-shot-2018-04-12-at-12.52.34.png)
+
+## Finalizing CFEI
 
