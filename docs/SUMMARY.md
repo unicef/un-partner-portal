@@ -31,7 +31,7 @@
 * [New CFEIs set up](agencies/new-cfeis-set-up.md)
 * [CFEIs](agencies/cfeis.md)
 * [Maintain Calls for Expression of Interest](agencies/untitled-1.md)
-* [Application's Assessment](agencies/applications-assessment.md)
+* [CFEI and Applications Assessment](agencies/applications-assessment.md)
 * [Maintain Direct Selection](agencies/maintain-direct-selection.md)
 * [Maintain Unsolicited Concept Note](agencies/maintain-unsolicited-concept-note.md)
 * [Partner's details](agencies/untitled-2.md)

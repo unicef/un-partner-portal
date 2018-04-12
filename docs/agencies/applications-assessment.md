@@ -1,4 +1,4 @@
-# Application's Assessment
+# CFEI and Applications Assessment
 
 ## Reviewing list of submitted applications
 
@@ -99,4 +99,16 @@ When different Partner will be selected, its Legal Name will be displayed on Res
 ![Second Partner selected](../.gitbook/assets/screen-shot-2018-04-12-at-12.52.34.png)
 
 ## Finalizing CFEI
+
+To finalize CFEI, user needs to click Finalize button in screen header, the following modal will appear:
+
+![Finalize CFEI - modal window](../.gitbook/assets/screen-shot-2018-04-12-at-13.18.51.png)
+
+Reason of completing the CFEI and justification must be provided. The status of CFEI will be changed and justification will be displayed in Results tab:
+
+![Result tab - after completion](../.gitbook/assets/screen-shot-2018-04-12-at-13.29.24.png)
+
+
+
+
 
