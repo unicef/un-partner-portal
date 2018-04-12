@@ -44,7 +44,7 @@ Table provides information about Type of observation, Date of observation and pe
 
 screenshot
 
-**Hover behavior: **when user, who is an owner of the observation, hovers on the row, the edit icon is shown. This user can edit his observation and change the status of added observation. The full flow for adding and editing observations is described **here**.
+**Hover behavior: **when user, who is an owner of the observation, hovers on the row, the edit icon is shown. This user can edit his observation and change the status of added observation. The full flow for adding and editing observations is described [**here**](https://unicef.gitbook.io/unpp/agencies/flagging-a-partner).
 
 ## Users
 
