@@ -40,6 +40,10 @@ To add a review, modal window will be opened:
 
 ![Adding a review - modal window](../.gitbook/assets/screen-shot-2018-04-11-at-16.06.03.png)
 
+Preview of added review is displayed in Review card with date of assessment and total score for this reviewer. Row is expandable - scores per criteria and notes are shown. Next to Reviewers card, Average total score for this Applicant and counter of assessment is shown.
+
+![Review added](../.gitbook/assets/screen-shot-2018-04-12-at-11.09.39.png)
+
 User can edit his review
 
 
