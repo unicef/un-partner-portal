@@ -1,5 +1,7 @@
 # Maintain Calls for Expression of Interest
 
+## General Information
+
 Once selecting an individual CFEI from the available lists, the user will be able to dive deeper into the informations for this particular project.
 
 On the top section of the screen, the user will be presented with a few features to help them quickly identify the category, and status of the CFEI. Users with appropriate permissions have also access to additional actions:
@@ -26,7 +28,13 @@ On the top section of the screen, the user will be presented with a few features
 
 
 
-Screen is divided by tabs:
+**Available statuses of a CFEI are:**
+
+* Open \(Partners can submit their Concept Notes\);
+* Closed/Under Review \(Application Deadline was reached, Partners can no longer submit Concept Notes, the assessment is in progress\);
+* Completed \(CFEI was finalized\).
+
+**Screen is divided by tabs:**
 
 * Overview
 * Applications
@@ -42,9 +50,13 @@ The CFEI Overview tab displays the following features to the User:
 * Selection Criteria - with Weight of Criteria if provided;
 * Invited Partner\(s\) - with name of Partner invited to participate in CFEI.
 
+![Overview tab](../.gitbook/assets/screen-shot-2018-04-12-at-15.49.44.png)
+
 ## Applications
 
 The Second Tab on the list presents the user with an option to view a table list of all Partner Applications for a specific CFEI.
+
+![Applications tab](../.gitbook/assets/screen-shot-2018-04-12-at-15.53.55.png)
 
 ### Filters
 
@@ -57,16 +69,30 @@ User can narrow down search results by using following filters:
 * Population of Concern
 * Type of Organization
 
+![Filters for Applications](../.gitbook/assets/screen-shot-2018-04-12-at-15.54.07.png)
+
 ### Search results
 
 Content displayed in the table contains the following information separated by columns:
 
 * Organization's Legal Name
 * Type of Organization
-* Application ID - which a link to Application details
+* Application ID - which is a link to Application details page
 * Status
 
-**Applications statuses: tbd**
+![List of search results in Applications tab](../.gitbook/assets/screen-shot-2018-04-12-at-15.54.13.png)
+
+**Available** **Applications statuses are: **
+
+* Pending
+* Preselected
+* Rejected
+* Application under review
+* Application Unsuccessful
+* Application Successful
+* Selection Accepted
+* Selection Declined
+* Selection Retracted
 
 Until status of Call for Expression of Interest is Open, user, with appropriate permissions, can select some of the applications to preselected list.
 
