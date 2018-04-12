@@ -100,9 +100,11 @@ Until status of Call for Expression of Interest is Open, user, with appropriate 
 
 The third tab available is the "Preselected List". This is similar to the Applications list however, instead of displaying a list of Partners who have applied to the CFEI, it displays selected Partners, that were hand picked by Agency users to forego the Open Selection process. 
 
-Depending on permissions, the content seen by a user in a table may vary. Columns: Review progress, Your score, Total score are displayed depending on given permissions.
+Depending on permissions, the content seen by a user in a table may vary. Columns: Review progress, Your score, Total score are displayed depending on given permissions as shown below:
 
-The Assessment of Applications is described **here.**
+![Preselected List tab](../.gitbook/assets/screen-shot-2018-04-12-at-16.18.51.png)
+
+The Assessment of Applications is described [**here**](https://unicef.gitbook.io/unpp/agencies/applications-assessment)**.**
 
 ## Results
 
