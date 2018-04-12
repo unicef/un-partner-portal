@@ -1,4 +1,4 @@
-# Flagging a Partner
+# Adding Observation to Partner's Profile
 
 Users can add observation to the Partner's Profile. This observation can be not risk-related or risk related \(yellow flag, escalated yellow flag\). Adding a red flag will be centralized to UN HQ. 
 

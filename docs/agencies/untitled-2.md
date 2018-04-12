@@ -25,7 +25,7 @@ This is a section with detailed information about Partner's profile in view mode
 
 Screen contains a list of all verifications performed on the Partner's profile. Table provides information about Verification status, Date of verification and person, who added this verification. Rows of this table are expandable and show information about answers on verification questions.
 
-Flow for adding new verification is described **here**.
+Flow for adding new verification is described [**here**](https://unicef.gitbook.io/unpp/agencies/partner-verification).
 
 ## Observations
 
