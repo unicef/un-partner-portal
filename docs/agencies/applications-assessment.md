@@ -1,6 +1,6 @@
 # CFEI and Applications Assessment
 
-## Reviewing list of submitted applications
+## Viewing list of submitted applications
 
 As a reviewer, Focal Point or person with appropriate permissions, user can reject or add an application to preselected list and download Concept Note directly from the list. Rejecting and preselecting is possible per application \(when user hovers over the row in a table, icons are displayed\) or for more than one application \(by selecting checkbox and using icons displayed in a table's header\):
 
@@ -8,7 +8,7 @@ As a reviewer, Focal Point or person with appropriate permissions, user can reje
 
 ![Application tab - two applications selected](../.gitbook/assets/screen-shot-2018-04-11-at-13.44.12.png)
 
-## Reviewing application details
+## Viewing application details
 
 To view application's details, user needs to click on Application ID. The following screen will be displayed:
 
@@ -46,7 +46,7 @@ Preview of added review is displayed in Reviews card with date of assessment and
 
 ![Preview of added review](../.gitbook/assets/screen-shot-2018-04-12-at-11.09.39.png)
 
-User can edit his review. Modal window is opened by clicking on edit icon:
+Users can edit their reviews. Modal window is opened by clicking on edit icon:
 
 ![Edit review - modal window](../.gitbook/assets/screen-shot-2018-04-12-at-11.31.26.png)
 
@@ -54,13 +54,13 @@ User can edit his review. Modal window is opened by clicking on edit icon:
 
 ## Selecting application\(s\)
 
-To select an application \(or more than one\), all assessments need to be done and Partner's profile needs to be verified. User can use button in modal window when compering applications or from the screen with Application details - button is placed in the screen header \(top right\).
+To select an application \(or more than one\), all assessments need to be done and Partner's profile needs to be verified. User can use button in modal window, when compering applications, or from the screen with Application details - button is placed in the screen header \(top right\).
 
 ![Selecting Applicant from Application details screen - selecting not possible yet](../.gitbook/assets/screen-shot-2018-04-12-at-11.33.23%20%281%29.png)
 
 ![Selecting Applicant from Application details screen](../.gitbook/assets/screen-shot-2018-04-12-at-11.44.02%20%281%29.png)
 
-When Select button is clicked, modal window will appear and user will need to provide justification for this selection. Partner will be notified about selection.
+When Select button is clicked, modal window will appear and user will need to provide justification for this selection. Partner will be notified about selection and will need to accept or decline the offer from Agency.
 
 ![Select Concept Note - modal window](../.gitbook/assets/screen-shot-2018-04-12-at-11.47.53.png)
 
@@ -74,15 +74,15 @@ When CFEI is Closed/Under Review and assessment is not finished, the Results tab
 
 ![Results tab when assessment is not finished](../.gitbook/assets/screen-shot-2018-04-12-at-11.39.49.png)
 
-When Partner is selected, the Results tab will be showing selected Partner with option to retract selection:
+When Partner is selected, the Results tab will be showing selected Partner, details of assessment \(in expandable row\) with option to retract selection:
 
-![](../.gitbook/assets/screen-shot-2018-04-12-at-11.59.10.png)
+![Results tab when assessment is finished - Partner selected](../.gitbook/assets/screen-shot-2018-04-12-at-11.59.10.png)
 
 
 
 ## Retracting selection
 
-Retraction can be made from Results tab in CFEI and form Application details screen \(top right of header\). If Agency user decides to retract selection for this Partner, the modal window will be displayed:
+Retraction can be made from Results tab in CFEI and from Application details screen \(top right in a header\). If Agency user decides to retract selection for this Partner, the modal window will be displayed and justification will need to be provided:
 
 ![Retract selection - modal window](../.gitbook/assets/screen-shot-2018-04-12-at-12.06.38.png)
 
@@ -90,11 +90,11 @@ The status of Application will change in the header on Application details scree
 
 ![Selection retracted](../.gitbook/assets/screen-shot-2018-04-12-at-12.44.18.png)
 
-Information about retraction with justification will be displayed also on Results tab:
+Information about retraction with justification will be displayed on Results tab as well:
 
 ![Results tab - offer retracted](../.gitbook/assets/screen-shot-2018-04-12-at-12.46.05.png)
 
-When different Partner will be selected, its Legal Name will be displayed on Results page, with option to retract selection:
+When different Partner is selected, its Legal Name will be displayed on Results page, with option to retract selection:
 
 ![Second Partner selected](../.gitbook/assets/screen-shot-2018-04-12-at-12.52.34.png)
 
