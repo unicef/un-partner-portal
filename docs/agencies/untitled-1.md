@@ -123,3 +123,7 @@ The Agency User is able to see the following features and information for a spec
 * **Reviewers**: - List view of Agency Reviewers and a total count of assessments made per reviewer. Agency User has the ability to send reminders to the Reviewers 
 * **Justification for completion**
 
+![Results tab](../.gitbook/assets/screen01.png)
+
+
+
