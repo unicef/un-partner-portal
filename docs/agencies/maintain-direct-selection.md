@@ -1,5 +1,34 @@
 # Maintain Direct Selection
 
+> if only PO taken under consideration
+
+## Direct Selection's details
+
+Header of this screen contains Project's Title, status and additional buttons that are different for different types of users, depending on their permissions.
+
+![Header for Focal Point and creator of this direct selection](../.gitbook/assets/screen-shot-2018-04-13-at-16.21.51.png)
+
+Creator of this direct selection and Focal Point have a possibility to Edit and Finalize direct selection, as well as accept offer on Partner's behalf and retract selection.
+
+![Direct selection menu](../.gitbook/assets/screen-shot-2018-04-13-at-16.21.56.png)
+
+In the Overview tab, user can see all details about Direct Selection, placed on cards:
+
+* Project Details
+* Selected Partner\(s\) - with possibility to accept in behalf of the Partner or to retract selection.
+
+![Direct Selection Overview tab](../.gitbook/assets/screen-shot-2018-04-13-at-16.21.39.png)
+
+## Finalizing Direct Selection
+
+Agency user with appropriate permissions can finalize Direct Selection by clicking on Finalize button, the following modal window will be displayed:
+
+![](../.gitbook/assets/screen-shot-2018-04-13-at-16.29.47.png)
+
+
+
+> If CR added to the flow
+
 Direct Selection can be added both by Basic Editor and Advanced Editor. Basic Editor has permissions to prepare and save Direct Selection as a Draft. Publishing Direct Selection can be done only by Advanced Editor.
 
 ## Direct Selection's details
@@ -9,7 +38,7 @@ Header of this screen contains Project's Title, status and additional buttons th
 In the Overview tab, user can see all details about Direct Selection, placed on cards:
 
 * Project Details
-* Selected Partner \(with information about the Partner's answer status and justification for Direct Selection\). Only Parter can be chosen for direct selection.
+* Selected Partner \(with information about the Partner's answer status and justification for Direct Selection\). 
 
 ## The flow for maintaining Direct Selection
 
