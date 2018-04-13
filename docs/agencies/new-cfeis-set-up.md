@@ -17,7 +17,7 @@ New Call for Expression of Interest will be added to the list. To view and maint
 
 To add new Direct Selection, user needs to click on the button placed in the top right of the page header - "New Direct Selection". The following modal window will be displayed \(all fields are required\):
 
-modal
+![](../.gitbook/assets/agency-cfei_03-2x.png)
 
 New Direct Selection will be added to the list. To view and maintain any actions, user needs to click the Project Title on the list.
 
