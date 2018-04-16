@@ -6,28 +6,64 @@ Current Plans to enhance are in place to include the ability to manage Portal Us
 
 Current user management is restricted to Super Administrators with access to the Django Administrative Interface \(as represented in the diagram above\).
 
-Future enhancements will elaborate on what is possible for High Level \(role\) Users to have control in regards to Roles & Permissions within both Agency and Partner Portals.
+Below, we elaborate on the enhancements for what will be possible for Portal Users to have control in regards to Roles & Permissions within both Agency and Partner Portals.
 
 ## Requirements
 
 In UNPP, user management is an important feature required to add users, assign and reassign roles and location and deactivate user accounts. Both CSOs and agency users need to have this ability.
 
-### Actions:
+### CSO User Management:
 
-* The user who registers the CSO account on the portal and the head of organization are automatically given administrator roles on the portal.
-* CSOs can add users to their organization and assign roles to the user.
-* For INGOs, users can be reassigned
-* CSOs can edit/change permissions for their users
-* CSOs can deactivate users from their organization
-* CSO users can view their user profiles, and set requests for notifications and the frequency of notifications
-* CSOs have responsibility for managing users on their account
-* Agencies can add users to their organization and assign roles to the user.
-* Agencies users can be relocated/reassigned
-* Agencies can edit/change permissions for their users
-* All agency users will have automatic reader rights on the portal and their access will be authenticated via their agency-specific active directory.
-* Agencies can deactivate users from their organization
-* Each agency has responsibility for managing users on their account
-* Agency superusers can deactivate a CSO organization and all its users
+#### Overview:
+
+The user management feature gives CSOs the ability to provision portal access to users from their organization. In addition, CSOs can assign roles and permissions, reassign users from one location to another as well as deactivate users from their organization’s account.
+
+#### Assumptions & Dependencies:
+
+* The CSO has been granted access to the portal.
+* The head of organization and person who registers the organization \(if different from the head of organization\) have administrator role and permissions for the account registered.
+
+The user who registers the CSO account on the portal and the head of organization are automatically given administrator roles on the portal.
+
+**Key Functionality & Controls**
+
+| Ability to add users to their organization |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Ability to assign roles and permissions to users in the organization |
+| Ability to deactivate users from the organization |
+| Ability to change user’s roles and permissions |
+| Ability to reassign users to a different location. |
+| Ability to restrict user management access to CSO administrator |
+| Ability to restrict a user to only adding users to their own organization |
+| Ability to restrict reassigning users to a different location to INGOs |
+| Ability to scan organization’s users against the UN Security Council’s Sanctions List |
+
+### Agency User Management:
+
+#### Overview:
+
+The user management feature allows for participating agency users to be assigned roles and permissions on the portal. It also allows for participating agencies to reassign users’ roles and location as well as deactivate user accounts. The user profile feature allows an agency user to view information on their user profile and edit some information on their profile.
+
+#### Assumptions & Dependencies:
+
+Participating agency users have access to the portal
+
+**Key Functionality & Controls: **
+
+| Ability for Ability for all participating agency users to have reader permissions as a default. |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Ability for participating agencies to assign additional roles & permissions to the agency’s users. |
+| Ability for participating agencies to assign users to multiple countries \(locations\) with the same or different roles & permissions in each country location. |
+| Ability for participating agencies to modify permissions within a role. |
+| Ability for participating agencies to reassign agency users to different country locations. |
+| Ability for participating agencies to deactivate user accounts. |
+| Ability for super administrators to add, assign roles & permissions, relocate users and deactivate users from a CSO account. |
+|  Ability for participating agencies users to view their user profile and perform the following actions:    • View their permissions setting  • Edit their contact details \(except for email\)  • Manage their notification frequency on CFEI updates |
+| Ability to restrict assignment of roles and permissions to users with administrator or HQ editor permissions. |
+| Ability to restrict user management of CSOs to users with super administrator permissions. |
+| Ability to restrict country administrators and HQ editors to managing users for their specific agency. |
+| Ability to restrict modification of permissions to within a role group, and permissions groupings. |
+| Ability to restrict altering permission settings to administrator or super user. |
 
 ### Who has permissions for User Identity Management:
 
@@ -35,22 +71,6 @@ In UNPP, user management is an important feature required to add users, assign a
 * Partner administrator \(for country location\)
 * UN country administrator\*
 * UN super administrator
-
-### Preconditions for User management:
-
-* CSO must be registered on the portal
-* User must have a valid email addres**s**
-
-### **Restrictions:**
-
-* An administrator can only create a user for their own organization
-* Partner HQ administrator can add user for all its country offices, but the country administrator can only add users for their country location
-* Only INGO HQs and Agencies have permissions to re-assign users
-* UN super administrator will deactivate any user accounts that appear on the UN Sanctions list
-
-### Things to consider:
-
-User roles in UNPP do not cleanly match to staff titles. Therefore, at least one staff in each country office will have to be assigned a country office administrator role, who will manually upgrade select users in the country office from the default ‘reader’ role.
 
 ## UNPP User Roles
 
