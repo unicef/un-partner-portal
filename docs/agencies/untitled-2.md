@@ -79,7 +79,7 @@ Header of this screen contains Organization's Legal Name with badges indicating 
 
 
 
-![Partner&apos;s details - menu in header](../.gitbook/assets/screen-shot-2018-04-16-at-11.44.48.png)
+![Partner&apos;s details - menu in header](../.gitbook/assets/screen-shot-2018-04-16-at-11.44.48%20%281%29.png)
 
 The main page is divided by tabs:
 
@@ -108,7 +108,7 @@ This is a section with detailed information about Partner's profile in view mode
 
 Screen contains a list of all verifications performed on the Partner's profile. Table provides information about Verification status, Date of verification and person, who added this verification. Rows of this table are expandable and show information about answers on verification questions.
 
-![Verifications tab](../.gitbook/assets/screen-shot-2018-04-16-at-11.46.58.png)
+![Verifications tab](../.gitbook/assets/screen-shot-2018-04-16-at-11.46.58%20%281%29.png)
 
 Flow for adding new verification is described [**here**](https://unicef.gitbook.io/unpp/agencies/partner-verification).
 
