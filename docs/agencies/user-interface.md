@@ -173,8 +173,6 @@ To filter the data, user can use the following set of filters:
 * Sector & Are of Specialization
 * Population of Concern
 
-
-
 ![Partners screen - filters](../.gitbook/assets/screen-shot-2018-04-16-at-14.04.50.png)
 
 ### Search Results
@@ -200,7 +198,7 @@ Each row of a list is expandable to provide additional information about a Partn
 
 ![Partners screen - search results](../.gitbook/assets/screen-shot-2018-04-16-at-14.04.55.png)
 
-If provided information are not sufficient, user can access more detailed information by clicking Organization's Legal Name. User will be taken to separate set of screens then. Depending on the permission added to the user, the user will have an option to view information about Verification process, to read all observations added to the Profile \(not risk-related, risk related and escalated to the UN HQ Editor\) with option to run new verification process and add new observation. The user will be also able to view all profile details, Partner's users \(in read mode\) and applications submitted by this Partner. All screens and flows for theses processes are described here.
+If provided information are not sufficient, user can access more detailed information by clicking Organization's Legal Name. User will be taken to separate set of screens then. Depending on the permission added to the user, the user will have an option to view information about Verification process, to read all observations added to the Profile \(not risk-related, risk related and escalated to the UN HQ Editor\) with option to run new verification process and add new observation. The user will be also able to view all profile details, Partner's users \(in read mode\) and applications submitted by this Partner. All screens and flows for theses processes are described [here](https://unicef.gitbook.io/unpp/agencies/untitled-2).
 {% endtab %}
 
 {% tab title="Reports" %}
