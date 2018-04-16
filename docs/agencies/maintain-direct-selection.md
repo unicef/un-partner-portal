@@ -46,7 +46,7 @@ In the Overview tab, user can see all details about Direct Selection, placed on 
 
 ![Direct selection Overview tab](../.gitbook/assets/screen-shot-2018-04-13-at-16.48.27.png)
 
-## The flow for maintaining Direct Selection
+## The flow for maintaining Waiver of Open Selection
 
 * When Direct Selection is created, it is saved as draft by default. The status of this Direct Selection is "Draft". 
 
@@ -78,7 +78,7 @@ In the Overview tab, user can see all details about Direct Selection, placed on 
 
 * If Direct Selection has status open, it can be finalized. Reason for finalizing Direct Selection need to be provided on the modal window that will be displayed:
 
-![Finalizing direct selection - modal window](../.gitbook/assets/screen-shot-2018-04-13-at-16.58.09.png)
+![](../.gitbook/assets/screen-shot-2018-04-16-at-10.34.41.png)
 
 ![Direct selection when finalized](../.gitbook/assets/screen-shot-2018-04-13-at-16.57.59.png)
 
