@@ -12,7 +12,8 @@
 * [Design](overview/design.md)
 * [Navigation](overview/navigation.md)
 * [Dashboard](overview/dashboard.md)
-* [User Management](overview/user-management.md)
+* [User Management](overview/user-management/README.md)
+  * [Direct Selection & Retention \(DSR\)](overview/user-management/direct-selection-and-retention-dsr.md)
 
 ## Partners
 
