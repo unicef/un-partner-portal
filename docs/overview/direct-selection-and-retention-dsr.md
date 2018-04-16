@@ -8,7 +8,7 @@ description: >-
 
 ## What is a CFEI?
 
-The Direct Selection & Retention feature is a subset to the larger, more encompassing function for creating and answering Calls for Expression of Interest \(CFEI\) between an Agency and a Partner. To learn more about this feature, please visit [CFEIs](agencies/cfeis.md) and [Answering a CFEI](partners/answering-for-cfei.md), respectively.
+The Direct Selection & Retention feature is a subset to the larger, more encompassing function for creating and answering Calls for Expression of Interest \(CFEI\) between an Agency and a Partner. To learn more about this feature, please visit [CFEIs](../agencies/cfeis.md) and [Answering a CFEI](../partners/answering-for-cfei.md), respectively.
 
 ## Agency: Direct Selection & Retention \(DSR\)
 
