@@ -301,7 +301,7 @@ For quick access to export feature, export button is placed below the filters. I
 {% endtab %}
 
 {% tab title="User Management" %}
-
+User Management screens are accessible from a link placed in main left navigation panel.
 {% endtab %}
 {% endtabs %}
 
