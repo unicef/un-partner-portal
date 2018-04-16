@@ -302,6 +302,10 @@ For quick access to export feature, export button is placed below the filters. I
 
 {% tab title="User Management" %}
 User Management screens are accessible from a link placed in main left navigation panel.
+
+
+
+![User Management link](../.gitbook/assets/screen-shot-2018-04-16-at-14.32.35.png)
 {% endtab %}
 {% endtabs %}
 
