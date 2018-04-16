@@ -306,6 +306,40 @@ User Management screens are accessible from a link placed in main left navigatio
 
 
 ![User Management link](../.gitbook/assets/screen-shot-2018-04-16-at-14.32.35.png)
+
+User Management is has the following items in left navigation:
+
+* back button to previous screen
+* Dashboard with information about user's permissions
+* Users with filters and list of users
+
+Screens for HQ administrator:
+
+![Dashboard](../.gitbook/assets/screen-shot-2018-04-16-at-14.34.00.png)
+
+![Users](../.gitbook/assets/screen-shot-2018-04-16-at-14.34.13.png)
+
+Adding new user is possible via button placed in top right of page header:
+
+![Add new user](../.gitbook/assets/screen-shot-2018-04-16-at-14.34.23.png)
+
+HQ Administrator can assign permissions for a user and relocate them among different offices.
+
+Editing or deactivating user is possible on hover over the appropriate row in the table - the following icons will be shown:
+
+![Hover effect](../.gitbook/assets/screen-shot-2018-04-16-at-14.34.33.png)
+
+![Deactivation](../.gitbook/assets/screen-shot-2018-04-16-at-14.34.39.png)
+
+![Editing user&apos;s profile - modal window](../.gitbook/assets/screen-shot-2018-04-16-at-14.34.45.png)
+
+Difference for Country administrator is following - this administrator can only add/edit users for his  country location:
+
+![Dashboard](../.gitbook/assets/screen-shot-2018-04-16-at-14.35.04.png)
+
+![Users](../.gitbook/assets/screen-shot-2018-04-16-at-14.35.15.png)
+
+![Add new user](../.gitbook/assets/screen-shot-2018-04-16-at-14.35.21.png)
 {% endtab %}
 {% endtabs %}
 
