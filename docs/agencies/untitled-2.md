@@ -79,7 +79,7 @@ Header of this screen contains Organization's Legal Name with badges indicating 
 
 
 
-![Partner&apos;s details - menu in header](../.gitbook/assets/screen-shot-2018-04-16-at-11.44.48%20%281%29.png)
+![Partner&apos;s details - menu in header](../.gitbook/assets/screen-shot-2018-04-16-at-11.44.48%20%282%29.png)
 
 The main page is divided by tabs:
 
