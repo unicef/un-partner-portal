@@ -1,9 +1,3 @@
----
-description: >-
-  This page intends to give a high level perspective into how Agencies can work
-  directly with Partners on given projects and the requirements within.
----
-
 # Direct Selection & Retention \(DSR\)
 
 ## What is a CFEI?

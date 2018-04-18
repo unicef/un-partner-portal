@@ -2,7 +2,7 @@
 
 ## User Identity Management
 
-Current Plans to enhance are in place to include the ability to manage Portal Users on the Frontend by building/adding a User Management System UI into the existing UNPP portal.
+Current Plans to enhance are in place to include the ability to manage Portal Users on the Frontend by developing a User Management System for the  UNPP portal.
 
 Current user management is restricted to Super Administrators with access to the Django Administrative Interface \(as represented in the diagram above\).
 
@@ -10,9 +10,9 @@ Below, we elaborate on the enhancements for what will be possible for Portal Use
 
 ## Requirements
 
-In UNPP, user management is an important feature required to add users, assign and reassign roles and location and deactivate user accounts. Both CSOs and agency users need to have this ability.
+In UNPP, user management is an important feature required to add users, assign and reassign roles and location and deactivate user accounts. Both **Partners** and **Agency** users need to have this ability.
 
-### CSO User Management:
+### Partner User Management:
 
 #### Overview:
 
@@ -37,6 +37,8 @@ The user who registers the CSO account on the portal and the head of organizatio
 | Ability to restrict a user to only adding users to their own organization |
 | Ability to restrict reassigning users to a different location to INGOs |
 | Ability to scan organization’s users against the UN Security Council’s Sanctions List |
+
+![](../.gitbook/assets/2018-04-18_17-13-04.gif)
 
 ### Agency User Management:
 
@@ -74,7 +76,7 @@ Participating agency users have access to the portal
 
 ## UNPP User Roles
 
-> _Please see most recent _[_R&P Matrix_](https://docs.google.com/spreadsheets/d/1uvAPFPDQr2gW6-w0Tn5qUoR33z_U1M9bUFrm2W5FtVw/edit?usp=sharing) _for further understanding._
+> _Please see most recent _[_R&P Matrix_](https://docs.google.com/spreadsheets/d/1h_C5XuKgNoV7QoiW1TqOjeLeXaTyfu4j12tTLRtKVIw/edit?usp=sharing) _for further understanding._
 
 UNPP currently has 8 types of user roles implemented throughout two types of users:
 

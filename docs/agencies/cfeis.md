@@ -1,9 +1,3 @@
----
-description: >-
-  Kasia's EDIT: move parts of this page to different locations - User Interface,
-  Maintain CFEI, etc. so this page could be deleted IMO
----
-
 # CFEIs
 
 Calls for Expression of Interests are live at the heart of UNPP’s Agency and Partner Relationships. This tool is key in communicating the needs for a project and the ability for UN Agency parties to identify and select the appropriate Partners for a particular Project.

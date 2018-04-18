@@ -4,7 +4,7 @@
 * [About](about.md)
 * [Glossary / Terminology](glossary-terminology.md)
 * FAQ
-* [Releases/Change Log](releaseschange-log.md)
+* [Releases/Change Log](releases-change-log.md)
 * [Report an Issue / Contact Us](report-an-issue-contact-us.md)
 
 ## Overview
@@ -20,25 +20,25 @@
 
 * [Registration](partners/registration.md)
 * [User Interface](partners/user-interface.md)
-* [Searching and pinning CFEIs](partners/untitled.md)
+* [Searching and pinning CFEIs](partners/searching-and-pinning-cfeis.md)
 * [Answering for CFEI](partners/answering-for-cfei.md)
-* [Adding new Unsolicited Concept Note](partners/untitled-1.md)
+* [Adding new Unsolicited Concept Note](partners/adding-new-unsolicited-concept-note.md)
 * [Responding to Direct Selection](partners/responding-to-direct-selection.md)
 * [Organization Profile set up](partners/organization-profile-set-up.md)
 
 ## Agencies
 
-* [Overview](agencies/untitled.md)
+* [Overview](agencies/overview.md)
 * [User Interface](agencies/user-interface.md)
 * [New CFEIs set up](agencies/new-cfeis-set-up.md)
 * [CFEIs](agencies/cfeis.md)
-* [Maintain Calls for Expression of Interest](agencies/untitled-1.md)
-* [CFEI and Applications Assessment](agencies/applications-assessment.md)
+* [Maintain Calls for Expression of Interest](agencies/maintain-calls-for-expression-of-interest.md)
+* [CFEI and Applications Assessment](agencies/cfei-and-applications-assessment.md)
 * [Maintain Direct Selection](agencies/maintain-direct-selection.md)
 * [Maintain Unsolicited Concept Note](agencies/maintain-unsolicited-concept-note.md)
-* [Partner's details](agencies/untitled-2.md)
+* [Partner's details](agencies/partners-details.md)
 * [Partner Verification](agencies/partner-verification.md)
-* [Adding Observation to Partner's Profile](agencies/flagging-a-partner.md)
+* [Adding Observation to Partner's Profile](agencies/adding-observation-to-partners-profile.md)
 
 ## Technical Documentation
 
