@@ -2,13 +2,15 @@
 
 ## User Identity Management
 
+### Overview
+
 Current Plans to enhance are in place to include the ability to manage Portal Users on the Frontend by developing a User Management System for the  UNPP portal.
 
 Current user management is restricted to Super Administrators with access to the Django Administrative Interface \(as represented in the diagram above\).
 
 Below, we elaborate on the enhancements for what will be possible for Portal Users to have control in regards to Roles & Permissions within both Agency and Partner Portals.
 
-## Requirements
+## Features
 
 In UNPP, user management is an important feature required to add users, assign and reassign roles and location and deactivate user accounts. Both **Partners** and **Agency** users need to have this ability.
 
@@ -17,6 +19,10 @@ In UNPP, user management is an important feature required to add users, assign a
 #### Overview:
 
 The user management feature gives CSOs the ability to provision portal access to users from their organization. In addition, CSOs can assign roles and permissions, reassign users from one location to another as well as deactivate users from their organization’s account.
+
+
+
+![](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-L1wyoElR0ykjtGXtNEN%2F-LAPYWnM_ktMJ6V_AgIQ%2F-LAPbPob-XxYk-oAYLbl%2F2018-04-18_17-13-04.gif?alt=media&token=afe66e39-2b28-4d1e-b837-d45267f51c4c)
 
 #### Assumptions & Dependencies:
 
@@ -38,13 +44,13 @@ The user who registers the CSO account on the portal and the head of organizatio
 | Ability to restrict reassigning users to a different location to INGOs |
 | Ability to scan organization’s users against the UN Security Council’s Sanctions List |
 
-![](../.gitbook/assets/2018-04-18_17-13-04.gif)
-
 ### Agency User Management:
 
 #### Overview:
 
 The user management feature allows for participating agency users to be assigned roles and permissions on the portal. It also allows for participating agencies to reassign users’ roles and location as well as deactivate user accounts. The user profile feature allows an agency user to view information on their user profile and edit some information on their profile.
+
+![](../.gitbook/assets/2018-04-18_17-29-15.gif)
 
 #### Assumptions & Dependencies:
 
@@ -78,57 +84,123 @@ Participating agency users have access to the portal
 
 > _Please see most recent _[_R&P Matrix_](https://docs.google.com/spreadsheets/d/1h_C5XuKgNoV7QoiW1TqOjeLeXaTyfu4j12tTLRtKVIw/edit?usp=sharing) _for further understanding._
 
-UNPP currently has 8 types of user roles implemented throughout two types of users:
+UNPP has introduced the following roles implemented in UNPP which are separated mainly by two types of users:
 
 * Partner Users
 * Agency Users
 
-> _NOTE: A change request is in place for including additional roles and more specific permissions._
-
-
-
 ### Partner User Roles
 
-**Global Admin**
+**HQ Administrator**
 
-* Ability to edit profiles.
-* Add/deactivate users. 
-* Provision organization \(country\) profiles.
-* Deactivate partner’s account.
-* Edit, submit, and delete concept notes.
+Partner HQ Administrator is a CSO user with ability to perform the following features:
 
-**Global Editor**
+* Register a CSO account.
+* Create and edit profiles.
+* Add/deactivate users.
+* Provision country profiles.
+* Deactivate CSO’s account.
+* Submit and delete concept notes.
+* Accept or decline partnership offers from the UN. 
+* The Partner HQ Administrator has the same permissions at both HQ and Country levels. 
+* The Partner HQ Administrator is only applicable to those CSOs that are international NGOs.
 
-* Ability to view and edit profiles, and can edit and submit concept notes.
+**HQ Editor**
 
-**Global Reader**
+Partner HQ Editor is a CSO user with the ability to perform the following features:
 
-* Ability to view and edit profiles, and can edit and submit concept notes.
+* Edit their organization’s profiles.
+* Submit and delete concept notes.
+* Accept or decline partnership offers from the UN. 
+* This user has the same permission at both HQ and Country levels. 
+* The Partner HQ Editor is only applicable to those CSOs that are international NGOs.
 
-**Partner Admin**
+**HQ Reader**
 
-* Ability to edit profiles, add/deactivate users, and edit, submit and delete concept notes. For national CSOs, the admin can also deactivate partner account.
+Partner Reader is a CSO user with view permissions at the country profile level. If a member of an INGO, this user also has view permissions of the HQ profile.
 
-**Partner Editor**
+**Country Admin**
 
-* Ability to view and edit profiles.
-* Edit and submit concept notes.
+Partner Country Administrator is a CSO user with specific permissions for a country profile of an organization.
 
-**Partner Reader**
+This user can perform the following actions:
 
-* Has the ability to view permissions at both HQ and Country levels.
+* Ability to view permissions of the HQ profile if a member of an international NGO. 
+* View and edit profiles.
+* add/deactivate users. 
+* submit and delete concept notes. 
+* accept or decline partnership offers from the UN. 
+* For national CSOs, this role can also deactivate partner account.
+
+**Country Editor**
+
+Partner Country Editor is a CSO user with specific permissions for a country profile of an organization, and view permissions of the HQ profile if a member of an international NGO. 
+
+This user can perform the following actions: 
+
+* Edit profiles
+* Submit and delete concept notes.
+* Accept or decline partnership offers from the UN.
+
+**Country Reader**
+
+Partner Reader is a CSO user with view permissions at the country profile level.
 
 ### Agency User Roles
 
-**Editor**
+**Super Administrator**
 
-* An agency user with ability to add new CFEIs and Direct Selections, along with the ability to respond to an Unsolicited Concept Note for their agency and providing feedback  to a partner. An agency editor can also verify and flag a partner’s profile.This user also has  view rights on other agency’s CFEIs and awarded Concept Notes.
-  * **CFEI Focal Point: **an Agency Editor with ability to manage all aspects of a CFEI’s assessment process, including the ability of entering a score on behalf of multiple reviewers. A creator of a CFEI and anyone indicated as a focal point in the CFEI form has this privilege.
-  * **CFEI Reviewer: **an Agency user  selected to review and score preselected concept notes in a CFEI. This user is restricted from viewing other reviewers’ scores. This permission is only limited to the CFEIs assigned to the user.
+Super Administrator is an agency user with full administrative permissions throughout UNPP.
+
+**HQ Editor**
+
+HQ Editor is an agency user with permissions to verify profiles of all CSOs on the portal, including the HQ profiles of INGOs. 
+
+The HQ editor can review observations that have been marked with a risk flag and escalated, and either mark these with a red risk flag or defer them back to country offices. 
+
+Additionally, this user can assign roles and permissions to users in their organization and manage the content on the knowledge library.
+
+**Administrator**
+
+Administrator is an agency user with permissions to assign roles and permissions to their agency users on the portal.
+
+**Advanced Editor**
+
+Advanced Editor is an agency user with ability to create CFEIs and DSRs including from Unsolicited Concept Notes for their agency. 
+
+This user can select a CSO for a partnership opportunity. An advanced editor can also verify and add observations to a CSO’s profile. 
+
+An advanced editor may be assigned by the CFEI focal point to be a member of the CFEI review team.
+
+**Basic Editor**
+
+Basic Editor is an agency user with ability to create CFEIs and DSRs including from Unsolicited Concept Notes for their agency. 
+
+A basic editor may be assigned by the CFEI focal point to be a member of the CFEI review team
+
+**CFEI Focal Point**
+
+CFEI Focal Point is an **advanced** or **basic** **editor** with ability to manage the assessment process of a specific CFEI, including the ability to:
+
+* Pre-select concept notes
+* Nominate the members of the review team
+* View all review scores. 
+
+A creator of a CFEI and anyone indicated as a focal point in the CFEI form has this privilege. 
+
+If the CFEI Focal point is an advanced editor, then the user can issue a partnership offer to a CSO.
+
+**CFEI Reviewer**
+
+CFEI Reviewer is an Agency user assigned by the **CFEI focal point** to review and score preselected concept notes in a CFEI. 
+
+This user is restricted from viewing other reviewers’ scores during the time that the assessment of concept notes is in progress. 
+
+This permission is only limited to the CFEIs assigned to the user.
 
 **Reader**
 
-* An agency user with view only rights across UNPP.
+Reader is an agency user with view only permissions on UNPP. This user also has view rights on other agency’s CFEIs and awarded Concept Notes.
 
 ## Resources
 
@@ -138,14 +210,7 @@ User Roles & Permissions Matrix
 
 ### R&P Matrix
 
-| ![](../.gitbook/assets/r-and-p-matrix.png) |  |
-| --- | --- |
-| ![](../.gitbook/assets/feature-permission%20%281%29.png) |  |
+![](../.gitbook/assets/r-and-p-matrix.png)
 
-### Matrix Notes
 
-1. Each role has default permissions. For example, an editor basic can perform 20/23 actions for a CFEI.
-2. Administrator can take away permissions within a default role. For example, make editor basic now only able to perform 15/23 actions for a CFEI
-3. Administrator cannot add more permissions than is in a default role. So editor basic cannot have 24 actions
-4. If a user needs additional actions, then they can be given higher role. E.g. give editor advanced role instead, and remove permissions from the default.
 
