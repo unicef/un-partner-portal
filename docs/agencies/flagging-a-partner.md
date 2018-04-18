@@ -36,7 +36,7 @@ HQ Editor to response to escalated risk flag, needs to edit this flag:
 
 ![HQ response to escalated risk flag](../.gitbook/assets/screen-shot-2018-04-16-at-13.48.43.png)
 
-> **when QR and separate tab**
+> **when CR and separate tab**
 
 Users can add observation to the Partner's Profile. This observation can be not risk-related or risk related \(yellow flag, escalated yellow flag\). Adding a red flag will be centralized to UN HQ. 
 
