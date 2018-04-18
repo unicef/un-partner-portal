@@ -1,8 +1,36 @@
 # Adding Observation to Partner's Profile
 
-> **if PO only**
+## Overview
 
+The observation feature allows participating agencies to record key brief notes, whether positive or negative, on collaboration experience, CSO performance or other key issues. An observation may be marked with a risk flag to indicate those observations that may involve reputational risk to the UN. 
 
+### Key Functionality & Controls
+
+| Ability to add an observation to a CSO’s profile at any time |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Ability to edit an observation on a CSO’s profile |
+| Ability to mark an observation as risk related by appending a yellow risk flag to the CSO’s profile |
+| Ability to escalate a yellow risk flag to HQ |
+| Ability to mark a CSO with an escalated risk flag for deactivation |
+| Ability to defer an escalated risk flag to the CO for resolution |
+| Ability for a risk flag that was escalated to HQ and subsequently deferred by HQ to be automatically downgraded to a yellow risk flag |
+| Ability to invalidate an observation and yellow risk flag, but retain the history of the observation or flag, even if it was found to be unsubstantiated or no longer relevant |
+| Ability to view details of past observations and flags made to a CSO’s profile |
+| Ability to view the date a CSO received an observation or risk flag, the name and agency of the person who gave the observation or risk flag |
+| Ability to escalate to HQ an organization that is not a legitimate CSO |
+| Ability for all the COs of an INGO to “inherit” the risk flags appended to its parent’s INGO HQ profile. |
+| Ability to send notification to the super administrator when a CSO account has been marked for deactivation. |
+| Ability to restrict adding observations and risk flags to advanced editor and HQ editor |
+| Ability to restrict editing or invalidating an observation or risk flag to the user who created the observation or risk flag |
+| Ability to restrict marking an account for deactivation \(red risk flag\) to HQ editor |
+| Ability to restrict the account deactivation of a CSO with a confirmed match on the UN Sanctions to the super administrator |
+| Ability to restrict deactivation of a CSO’s account to the super administrator |
+| Ability to require an agency user when flagging a CSO’s profile to provide the following information: Comment box for additional details |
+| • \(optional\) Contact information for additional follow-up |
+| • \(optional\) Attachment |
+| Ability to keep a record of CSO’s observations and flags. |
+| Ability to deactivate an INGO’s HQ and all subsidiary accounts if the HQ profile of an INGO receives a confirmed red flag. |
+| Ability to restrict viewing the comments on observations and flags to advanced editor and HQ editor. |
 
 ## Adding new Observation
 

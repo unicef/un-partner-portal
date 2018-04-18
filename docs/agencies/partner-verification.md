@@ -1,6 +1,37 @@
 # Partner Verification
 
-UN agencies conduct Partner Verification \(due diligence\) to review a CSO’s self-reported profile data, and perform an internet search/consultation of other sources.** **User, with appropriate permissions \(UN HQ Editor, Editor Advanced\) can run new Verification at any time, from a Partner's detailed page. Button is placed in a header, under the menu located in the top right of the page.
+## Overview
+
+UN agencies conduct Partner Verification \(due diligence\) to review a CSO’s self-reported profile data, and perform an internet search/consultation of other sources.** **
+
+User, with appropriate permissions \(UN HQ Editor, Editor Advanced\) can run new Verification at any time, from a Partner's detailed page. 
+
+Button is placed in a header, under the menu located in the top right of the page.
+
+### Key Functionality & Controls
+
+| Ability to automatically mark a CSO’s profile as “Pending Verification” by default upon entry into the portal. |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Ability to have automated periodic scans of a CSO and its key staff against the UN Security Council sanctions list on the following profile fields:   • Organization Name   •Alias    • Former Legal Name   • First + Last Name of Head of Organization   • Board Members   • Authorized Officials |
+| Ability to view potential matches on the UN Security Council Sanctions List and indicate if the organization or individual is ‘Not a true Match’ or a ‘Confirmed Match’. |
+| Ability to ensure that the name of a CSO is not flagged in subsequent scans if the potential match on the UN Sanctions list was manually determined to be ‘Not a true match’. |
+| Ability to review a CSO’s profile and mark the status of the profile as “Verified” if the CSO meets the verification requirements and “Unverified” if the CSO does not meet the verification requirements. |
+| Ability to automatically show if a CSO has an observation or risk flag against its profile, and the content of the observation during verification. |
+| Ability to review details of current and past verifications made to a CSO’s profile. |
+| Ability to view the date a CSO was verified, the name and agency of the person who performed the verification. |
+| Ability to notify agency user when a CSO’s profile was verified more than 5 years ago. |
+
+| Ability to restrict verification to advanced editor and HQ editor roles. |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Ability to restrict the user from verifying a CSO if the profile is incomplete. |
+| Ability to restrict verification if there is a potential match of the organization’s name or key personnel on the UN Security Council Sanctions List. |
+| Ability to restrict verification of INGO HQ’s to HQ editor. |
+| Ability to restrict verifying the CO of INGOs if the HQ profile has status ‘pending verification’ or ‘unverified’ and/or has a red risk flag. |
+| Ability to restrict verifying a CSO with a red risk flag. |
+| Ability to restrict viewing comments on a verification to advanced editor and HQ editor roles. |
+| Ability to prompt user to confirm verification prior to changing verification status. |
+| Ability to generate a report on the verification status of CSOs. |
+| Ability to compare how many CSOs in the portal have been verified. |
 
 ### Restrictions
 
