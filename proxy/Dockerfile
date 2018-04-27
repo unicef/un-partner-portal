@@ -22,7 +22,7 @@ RUN mkdir -p /etc/letsencrypt
 VOLUME /etc/letsencrypt
 
 RUN chmod a+rx /docker-entrypoint.sh
-RUN chmod a+rx /command.sh
+RUN chmod a+rx /main.sh
 ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh"]
 
 EXPOSE 80
