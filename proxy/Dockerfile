@@ -16,7 +16,7 @@ ADD nginx-site.conf.j2 /
 ADD uwsgi_params /etc/nginx/conf.d/uwsgi_params
 ADD docker-entrypoint.sh /
 ADD setup_ssl.py /
-ADD command.sh /
+ADD main.sh /
 
 RUN mkdir -p /etc/letsencrypt
 VOLUME /etc/letsencrypt
