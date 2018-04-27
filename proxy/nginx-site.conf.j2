@@ -16,6 +16,11 @@ server {
 
     client_max_body_size 100m;
 
+    location /.well-known/acme-challenge {
+        allow all;
+        root /usr/share/nginx/html;
+    }
+
     location /api/ {
       uwsgi_pass backend;
       include /etc/nginx/conf.d/uwsgi_params;
