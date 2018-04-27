@@ -28,4 +28,4 @@ ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh"]
 EXPOSE 80
 EXPOSE 443
 
-CMD ["/command.sh"]
+CMD ["/main.sh"]
