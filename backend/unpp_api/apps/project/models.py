@@ -15,7 +15,7 @@ from common.consts import (
     EXTENDED_APPLICATION_STATUSES,
 )
 from common.utils import get_countries_code_from_queryset, get_absolute_frontend_url
-from validators import (
+from project.validators import (
     validate_weight_adjustments,
 )
 

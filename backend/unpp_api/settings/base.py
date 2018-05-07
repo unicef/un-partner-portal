@@ -44,9 +44,6 @@ STATIC_ROOT = '%s/staticserve' % DATA_VOLUME
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-
-    # other finders..
-    "compressor.finders.CompressorFinder",
 )
 
 DEBUG = True
@@ -111,7 +108,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.static',
-                'django_common.context_processors.common_settings',
                 'django.template.context_processors.request',
             ],
         },
@@ -133,8 +129,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'django_filters',
-    # 'compressor',
-    'django_common',
     'imagekit',
 
     'common',
