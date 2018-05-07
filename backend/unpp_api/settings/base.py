@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEFAULT_CHARSET = 'utf-8'
 ROOT_URLCONF = 'unpp_api.urls'
 
-DATA_VOLUME = '/data'
+DATA_VOLUME = os.getenv('DATA_VOLUME', '/data')
 
 UPLOADS_DIR_NAME = 'uploads'
 MEDIA_URL = '/api/%s/' % UPLOADS_DIR_NAME
