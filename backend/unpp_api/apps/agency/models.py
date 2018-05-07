@@ -80,6 +80,9 @@ class AgencyMember(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
+        unique_together = (
+            'user', 'office'
+        )
 
     def __str__(self):
         return "AgencyMember <pk:{}>".format(self.id)
