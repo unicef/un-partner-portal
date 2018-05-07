@@ -178,18 +178,6 @@ def generate_fake_data(quantity=50):
     # hq & country profiles
     hq_pks = partner_all[2*(quantity/5):3*(quantity/5)]
     Partner.objects.filter(id__in=hq_pks).update(display_type=PARTNER_TYPES.international)
-    # country profiles
-    country_profiles_pks = partner_all[3*(quantity/5):quantity]
-
-    per_country = len(hq_pks) / len(country_profiles_pks)
-    for idx, hq_id in enumerate(hq_pks):
-        scope_pks = country_profiles_pks[idx*per_country: (idx+1)*per_country]
-        Partner.objects.filter(id__in=scope_pks).update(
-            hq_id=hq_id,
-            display_type=PARTNER_TYPES.international
-        )
-        PartnerHeadOrganization.objects.filter(partner_id__in=scope_pks).delete()
-        PartnerBudget.objects.filter(partner_id__in=scope_pks).delete()
 
     for idx, partner in enumerate(Partner.objects.all()):
         if idx % 2:
@@ -232,7 +220,8 @@ def generate_fake_data(quantity=50):
     EOIFactory.create_batch(quantity, display_type=EOI_TYPES.direct, deadline_date=None)
     print("{} direct EOI objects created with applications".format(quantity))
 
-    UnsolicitedFactory.create_batch(quantity/3, agency=unicef)
-    UnsolicitedFactory.create_batch(quantity/3, agency=wfp)
-    UnsolicitedFactory.create_batch(quantity/3, agency=unhcr)
+    unsolicited_count = int(quantity/3)
+    UnsolicitedFactory.create_batch(unsolicited_count, agency=unicef)
+    UnsolicitedFactory.create_batch(unsolicited_count, agency=wfp)
+    UnsolicitedFactory.create_batch(unsolicited_count, agency=unhcr)
     print("Unsolicited concept notest for each agency created")
