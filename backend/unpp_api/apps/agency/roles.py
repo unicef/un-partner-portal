@@ -6,6 +6,9 @@ from common.authentication_utilities import AutoNameEnum
 
 @unique
 class AgencyRole(AutoNameEnum):
+    """
+    Editing names here WILL break roles saved in DB
+    """
     # Global
     HQ_EDITOR = auto()
     ADMINISTRATOR = auto()
