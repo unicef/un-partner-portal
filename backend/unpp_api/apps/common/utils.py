@@ -71,7 +71,7 @@ def confirm(prompt='Confirm', default=False):
         prompt = '%s [%s]|%s: ' % (prompt, 'n', 'y')
 
     while True:
-        ans = raw_input(prompt)
+        ans = input(prompt)
         if not ans:
             return default
         if ans not in ['y', 'Y', 'n', 'N']:

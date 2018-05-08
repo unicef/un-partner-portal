@@ -81,7 +81,7 @@ def get_partner():
 
 
 def get_country_list(quantity=3):
-    return [random.choice(COUNTRIES) for idx in xrange(0, quantity)]
+    return [random.choice(COUNTRIES) for _ in range(0, quantity)]
 
 
 def get_fullname():
@@ -101,7 +101,7 @@ def get_job_title():
 
 
 def get_concerns(quantity=2):
-    return [random.choice(list(CONCERN_CHOICES._db_values)) for idx in xrange(0, quantity)]
+    return [random.choice(list(CONCERN_CHOICES._db_values)) for _ in range(0, quantity)]
 
 
 def get_year_of_exp():
@@ -109,7 +109,7 @@ def get_year_of_exp():
 
 
 def get_donors(quantity=2):
-    return [random.choice(list(PARTNER_DONORS_CHOICES._db_values)) for idx in xrange(0, quantity)]
+    return [random.choice(list(PARTNER_DONORS_CHOICES._db_values)) for _ in range(0, quantity)]
 
 
 def get_budget_choice():
@@ -206,7 +206,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def directors(self, create, extracted, **kwargs):
-        for x in xrange(0, 2):
+        for x in range(0, 2):
             PartnerDirector.objects.create(
                 partner=self,
                 fullname=get_fullname(),
@@ -215,7 +215,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def authorised_officers(self, create, extracted, **kwargs):
-        for x in xrange(0, 2):
+        for x in range(0, 2):
             PartnerAuthorisedOfficer.objects.create(
                 partner=self,
                 fullname=get_fullname(),
@@ -227,7 +227,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def experiences(self, create, extracted, **kwargs):
-        for x in xrange(0, 2):
+        for x in range(0, 2):
             PartnerExperience.objects.create(
                 partner=self,
                 specialization=Specialization.objects.all().order_by("?").first(),
@@ -464,7 +464,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     @factory.post_generation
     def report(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
-        cfile.file_field.save('test.csv', open(filename))
+        cfile.file_field.save('test.csv', open(filename, 'rb'))
         PartnerReporting.objects.create(
             partner=self,
             key_result="fake key result {}".format(self.id),
@@ -476,10 +476,10 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     @factory.post_generation
     def other_info(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
-        cfile.file_field.save('test.csv', open(filename))
+        cfile.file_field.save('test.csv', open(filename, 'rb'))
         logo_filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
         logo_file = CommonFile.objects.create()
-        logo_file.file_field.save('logo.png', open(logo_filename))
+        logo_file.file_field.save('logo.png', open(logo_filename, 'rb'))
         PartnerOtherInfo.objects.create(
             partner=self,
             info_to_share="fake info to share {}".format(self.id),
