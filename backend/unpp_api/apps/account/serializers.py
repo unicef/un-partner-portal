@@ -35,7 +35,7 @@ from partner.serializers import (
     PartnerMemberSerializer,
 )
 from partner.validators import PartnerRegistrationValidator
-from .models import User
+from account.models import User
 
 
 class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
@@ -141,46 +141,6 @@ class IDUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', )
-
-
-class AgencyUserSerializer(UserSerializer):
-
-    agency_name = serializers.SerializerMethodField()
-    agency_id = serializers.SerializerMethodField()
-    office_name = serializers.SerializerMethodField()
-    office_id = serializers.SerializerMethodField()
-    role = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = UserSerializer.Meta.fields + ('agency_name',
-                                               'agency_id',
-                                               'role',
-                                               'status',
-                                               'office_name',
-                                               'office_id',)
-
-    def _agency_member(self, obj):
-        return obj.agency_members.get()
-
-    def get_role(self, obj):
-        return self._agency_member(obj).get_role_display()
-
-    def get_status(self, obj):
-        return self._agency_member(obj).get_status_display()
-
-    def get_agency_name(self, obj):
-        return self._agency_member(obj).office.agency.name
-
-    def get_agency_id(self, obj):
-        return self._agency_member(obj).office.agency.id
-
-    def get_office_name(self, obj):
-        return self._agency_member(obj).office.name
-
-    def get_office_id(self, obj):
-        return self._agency_member(obj).office.id
 
 
 class PartnerUserSerializer(UserSerializer):

@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.core.exceptions import PermissionDenied
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
+from agency.permissions import AgencyPermission
 from common.pagination import MediumPagination
 from account.models import User
-from account.serializers import AgencyUserSerializer
-from agency.serializers import AgencySerializer, AgencyOfficeSerializer
+from agency.serializers import AgencySerializer, AgencyOfficeSerializer, AgencyUserOfficesSerializer, \
+    AgencyUserSerializer
 from agency.models import Agency, AgencyOffice
 from agency.filters import AgencyUserFilter, AgencyFilter
+from common.permissions import HasAgencyPermission
 
 
 class AgencyListAPIView(ListAPIView):
@@ -50,3 +53,26 @@ class AgencyMemberListAPIView(ListAPIView):
     def get_queryset(self):
         return User.objects.filter(
             agency_members__office__agency_id=self.kwargs['pk'])
+
+
+class AgencyUserOfficesView(ListAPIView):
+    """
+    All Users for an Agency + all of their office memberships
+    """
+    serializer_class = AgencyUserOfficesSerializer
+    pagination_class = MediumPagination
+    permission_classes = (
+        IsAuthenticated,
+        HasAgencyPermission(
+            AgencyPermission.OWN_AGENCY_LIST_USERS
+        ),
+    )
+    filter_backends = (DjangoFilterBackend, )
+    filter_class = AgencyUserFilter
+
+    def get_queryset(self):
+        agency = self.request.user.get_agency()
+        if not agency:
+            raise PermissionDenied
+
+        return User.objects.filter(agency_members__office__agency=agency)

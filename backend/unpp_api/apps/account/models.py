@@ -1,11 +1,14 @@
 from __future__ import unicode_literals
 
+from cached_property import threaded_cached_property
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
 
 from model_utils.models import TimeStampedModel
+
+from agency.roles import AgencyRole, ROLE_PERMISSIONS
 
 
 class UserManager(BaseUserManager):
@@ -64,8 +67,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     date_joined = models.DateTimeField(auto_now_add=True)
 
-    __partner_ids = None
-
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     objects = UserManager()
@@ -106,23 +107,24 @@ class User(AbstractBaseUser, PermissionsMixin):
         return False
 
     def get_agency(self):
-        if self.is_agency_user:
-            return self.agency_members.first().office.agency
+        agency_member = self.agency_members.first()
+        return agency_member and agency_member.office.agency
 
+    @threaded_cached_property
     def get_partner_ids_i_can_access(self):
-        # Returns country partners if member of HQ (since no db relation there)
-        if self.__partner_ids is not None:
-            return self.__partner_ids
-
         partner_members = self.partner_members.all()
-        self.__partner_ids = []
+        partner_ids = []
         for partner_member in partner_members:
-            self.__partner_ids.append(partner_member.partner.id)
+            partner_ids.append(partner_member.partner.id)
             if partner_member.partner.is_hq:
-                self.__partner_ids.extend(
-                    [p.id for p in partner_member.partner.country_profiles])
+                partner_ids.extend(partner_member.partner.country_profiles.values_list('id', flat=True))
 
-        return self.__partner_ids
+        return partner_ids
+
+    @property
+    def agency_permissions(self):
+        # TODO: determine actual role based on permissions
+        return ROLE_PERMISSIONS[AgencyRole.HQ_EDITOR]
 
 
 class UserProfile(TimeStampedModel):

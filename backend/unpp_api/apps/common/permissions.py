@@ -259,3 +259,15 @@ class IsAgencyProject(IsAtLeastMemberReader):
         elif request.user.is_agency_user:
             return self.pass_at_least(request.user.member.role)
         return False
+
+
+class HasAgencyPermission(BasePermission):
+
+    def __init__(self, *permissions):
+        self.permissions = permissions
+
+    def has_permission(self, request, view):
+        return set(self.permissions).issubset(request.user.agency_permissions)
+
+    def __call__(self, *args, **kwargs):
+        return self
