@@ -39,7 +39,7 @@ const CfeiOverview = (props) => {
           <Grid item xs={12} sm={4}>
             <GridColumn >
               {(role === ROLES.PARTNER && type === PROJECT_TYPES.OPEN)
-              && <ConceptNote title={messages.cnTemplate} conceptNote={cn_template} />}
+                && <ConceptNote title={messages.cnTemplate} conceptNote={cn_template} />}
               {(type === PROJECT_TYPES.UNSOLICITED)
                 && <ConceptNote title={messages.cn} conceptNote={cn} />}
               {type === PROJECT_TYPES.OPEN
@@ -80,6 +80,7 @@ const mapStateToProps = (state, ownProps) => {
     cn_template = null,
     focal_points_detail = [],
   } = cfei || {};
+
   return {
     initialValues: assoc('focal_points', pluck('name', focal_points_detail), cfei),
     cn,
@@ -87,7 +88,7 @@ const mapStateToProps = (state, ownProps) => {
     partner: partner_name,
     partnerId: partner_id,
     role: state.session.role,
-    displayGoal: selected_source === 'UNI',
+    displayGoal: true,
   };
 };
 
