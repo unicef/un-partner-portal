@@ -42,7 +42,9 @@ class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
 
     date_joined = serializers.DateTimeField(required=False, read_only=True)
     fullname = serializers.CharField(required=False, read_only=True)
-    email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
+    email = serializers.EmailField(validators=[
+        UniqueValidator(queryset=User.objects.all(), lookup='iexact')
+    ])
 
     class Meta:
         model = User
@@ -53,6 +55,7 @@ class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
             'password',
             'date_joined',
         )
+        extra_kwargs = {'password': {'write_only': True}}
 
 
 class PartnerRegistrationSerializer(serializers.Serializer):
@@ -116,7 +119,6 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         self.partner_member = PartnerMember.objects.create(**validated_data['partner_member'])
 
         user_data = RegisterSimpleAccountSerializer(instance=self.user).data
-        user_data.pop('password')
         self.instance_json = {
             "partner": PartnerSerializer(instance=self.partner).data,
             "user": user_data,

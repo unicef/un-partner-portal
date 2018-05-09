@@ -107,9 +107,13 @@ class User(AbstractBaseUser, PermissionsMixin):
             return Partner.objects.filter(id__in=partner_ids, is_locked=True).exists()
         return False
 
-    def get_agency(self):
-        agency_member = self.agency_members.first()
-        return agency_member and agency_member.office.agency
+    @threaded_cached_property
+    def agency(self):
+        from agency.models import Agency
+        agencies = Agency.objects.filter(agency_offices__agency_members__user=self)
+        if len(agencies) > 1:
+            raise Exception('User belongs to more than 1 agency!')
+        return agencies[0] if agencies else None
 
     @threaded_cached_property
     def partner_ids_i_can_access(self):

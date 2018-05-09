@@ -9,8 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from agency.permissions import AgencyPermission
 from common.pagination import MediumPagination
 from account.models import User
-from agency.serializers import AgencySerializer, AgencyOfficeSerializer, AgencyUserOfficesSerializer, \
-    AgencyUserSerializer
+from agency.serializers import AgencySerializer, AgencyOfficeSerializer, AgencyUserSerializer
 from agency.models import Agency, AgencyOffice
 from agency.filters import AgencyUserFilter, AgencyFilter
 from common.permissions import HasAgencyPermission
@@ -46,21 +45,6 @@ class AgencyMemberListAPIView(ListAPIView):
     """
     serializer_class = AgencyUserSerializer
     pagination_class = MediumPagination
-    permission_classes = (IsAuthenticated, )
-    filter_backends = (DjangoFilterBackend, )
-    filter_class = AgencyUserFilter
-
-    def get_queryset(self):
-        return User.objects.filter(
-            agency_members__office__agency_id=self.kwargs['pk'])
-
-
-class AgencyUserOfficesView(ListAPIView):
-    """
-    All Users for an Agency + all of their office memberships
-    """
-    serializer_class = AgencyUserOfficesSerializer
-    pagination_class = MediumPagination
     permission_classes = (
         IsAuthenticated,
         HasAgencyPermission(
@@ -71,8 +55,4 @@ class AgencyUserOfficesView(ListAPIView):
     filter_class = AgencyUserFilter
 
     def get_queryset(self):
-        agency = self.request.user.get_agency()
-        if not agency:
-            raise PermissionDenied
-
-        return User.objects.filter(agency_members__office__agency=agency)
+        return User.objects.filter(agency_members__office__agency=self.request.user.agency)

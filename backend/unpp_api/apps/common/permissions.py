@@ -187,7 +187,7 @@ class IsConvertUnsolicitedEditor(IsAtLeastMemberReader):
         if not request.user.is_agency_user:
             return False
 
-        user_agency = request.user.get_agency()
+        user_agency = request.user.agency
         member = request.user.member
         app_id = request.parser_context.get('kwargs', {}).get(view.lookup_field)
         app = get_object_or_404(Application.objects.select_related('eoi'), id=app_id)
@@ -211,7 +211,7 @@ class IsApplicationFeedbackPerm(IsAtLeastMemberReader):
             return False
 
         # agency
-        user_agency = request.user.get_agency()
+        user_agency = request.user.agency
         if app.agency.id != user_agency.id:
             return False
         if request.method != 'GET':
@@ -267,7 +267,7 @@ class HasAgencyPermission(BasePermission):
         self.permissions = permissions
 
     def has_permission(self, request, view):
-        return set(self.permissions).issubset(request.user.agency_permissions)
+        return request.user.agency and set(self.permissions).issubset(request.user.agency_permissions)
 
     def __call__(self, *args, **kwargs):
         return self
