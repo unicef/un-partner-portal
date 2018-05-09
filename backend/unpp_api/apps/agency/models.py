@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 from django.contrib.postgres.fields import ArrayField
 from model_utils.models import TimeStampedModel
 
-from agency.roles import AgencyRole
+from agency.roles import AgencyRole, ROLE_PERMISSIONS
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.consts import MEMBER_STATUSES
 from common.fields import FixedTextField
@@ -85,6 +85,10 @@ class AgencyMember(TimeStampedModel):
 
     def __str__(self):
         return "AgencyMember <pk:{}>".format(self.id)
+
+    @property
+    def user_permissions(self):
+        return ROLE_PERMISSIONS[AgencyRole[self.role]]
 
 
 post_save.connect(AgencyProfile.create_agency_profile, sender=Agency)

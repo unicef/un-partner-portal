@@ -8,8 +8,6 @@ from django.utils import timezone
 
 from model_utils.models import TimeStampedModel
 
-from agency.roles import AgencyRole, ROLE_PERMISSIONS
-
 
 class UserManager(BaseUserManager):
 
@@ -128,13 +126,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_partner_ids_i_can_access(self):
         return self.partner_ids_i_can_access
-
-    @property
-    def agency_permissions(self):
-        agency_member = self.agency_members.first()
-        if not agency_member:
-            return set()
-        return ROLE_PERMISSIONS[AgencyRole[agency_member.role]]
 
 
 class UserProfile(TimeStampedModel):

@@ -4,7 +4,7 @@ from rest_framework.permissions import BasePermission
 from agency.models import AgencyMember
 from partner.models import PartnerMember
 from project.models import Application
-from .consts import PARTNER_MEMBER_POWER, PARTNER_ROLES
+from common.consts import PARTNER_MEMBER_POWER, PARTNER_ROLES
 
 logger = logging.getLogger(__name__)
 
@@ -267,7 +267,7 @@ class HasAgencyPermission(BasePermission):
         self.permissions = permissions
 
     def has_permission(self, request, view):
-        return request.user.agency and set(self.permissions).issubset(request.user.agency_permissions)
+        return request.office_member and set(self.permissions).issubset(request.office_member.user_permissions)
 
     def __call__(self, *args, **kwargs):
         return self
