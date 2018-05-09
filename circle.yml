@@ -6,12 +6,16 @@ machine:
     POSTGRES_HOST: localhost
     UNPP_LOGS_PATH: /home/ubuntu/logs
     UNPP_UPLOADS_PATH: /home/ubuntu/uploads
+  python:
+    version: 3.6.2
 
 dependencies:
   pre:
     - mkdir -p /home/ubuntu/logs
     - mkdir -p /home/ubuntu/uploads
-    - pip install -r backend/requirements/dev.pip
+    - pip3 install -U pip
+    - pip3 install -U setuptools
+    - pip3 install -r backend/requirements/dev.pip
 
 test:
   override:

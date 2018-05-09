@@ -14,9 +14,9 @@ from sanctionslist.scans import sanctions_scan_partner
 from .serializers import (
     RegisterSimpleAccountSerializer,
     PartnerRegistrationSerializer,
-    AgencyUserSerializer,
     PartnerUserSerializer,
 )
+from agency.serializers import AgencyUserSerializer
 
 logger = logging.getLogger(__name__)
 

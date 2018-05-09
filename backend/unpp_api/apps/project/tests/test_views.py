@@ -34,7 +34,7 @@ from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
-    MEMBER_ROLES,
+    PARTNER_ROLES,
     APPLICATION_STATUSES,
     COMPLETED_REASON,
     EOI_TYPES,
@@ -377,7 +377,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
     quantity = 1
     user_type = 'agency'
-    user_role = MEMBER_ROLES.editor
+    user_role = PARTNER_ROLES.editor
 
     def setUp(self):
         super(TestAgencyApplicationsAPITestCase, self).setUp()
@@ -516,7 +516,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
     user_type = 'agency'
-    user_role = MEMBER_ROLES.editor
+    user_role = PARTNER_ROLES.editor
 
     initial_factories = [
         PartnerSimpleFactory,
@@ -800,7 +800,7 @@ class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
 
         create_notification_response = self.client.post(url, format='json')
         self.assertEqual(create_notification_response.status_code, statuses.HTTP_200_OK)
-        self.assertIn('wait', create_notification_response.content)
+        self.assertIn('success', create_notification_response.json())
 
         with mock.patch('notification.helpers.timezone.now') as mock_now:
             mock_now.return_value = eoi.created + relativedelta(hours=25)
@@ -981,10 +981,10 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertEqual(response.status_code, statuses.HTTP_201_CREATED)
 
-        selection_emails = filter(
+        selection_emails = list(filter(
             lambda msg: msg.subject == NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'],
             mail.outbox
-        )
+        ))
         self.assertEqual(len(partners.values_list('partner_members__user')), len(selection_emails))
         mail.outbox = []
 

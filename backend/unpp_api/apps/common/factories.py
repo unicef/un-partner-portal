@@ -35,7 +35,7 @@ from review.models import PartnerFlag, PartnerVerification
 from common.consts import (
     PARTNER_TYPES,
     MEMBER_STATUSES,
-    MEMBER_ROLES,
+    PARTNER_ROLES,
     CONCERN_CHOICES,
     YEARS_OF_EXP_CHOICES,
     PARTNER_DONORS_CHOICES,
@@ -499,7 +499,7 @@ class PartnerMemberFactory(factory.django.DjangoModelFactory):
     partner = factory.LazyFunction(get_partner)
     title = factory.LazyFunction(get_job_title)
     status = MEMBER_STATUSES.active
-    role = MEMBER_ROLES.admin
+    role = PARTNER_ROLES.admin
 
     class Meta:
         model = PartnerMember
@@ -534,7 +534,7 @@ class AgencyOfficeFactory(factory.django.DjangoModelFactory):
 class AgencyMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     office = factory.LazyFunction(get_random_agency_office)
-    role = MEMBER_ROLES.editor
+    role = PARTNER_ROLES.editor
     status = MEMBER_STATUSES.active
 
     class Meta:

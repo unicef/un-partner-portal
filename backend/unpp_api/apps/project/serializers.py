@@ -10,8 +10,8 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from account.models import User
-from account.serializers import AgencyUserSerializer, IDUserSerializer, UserSerializer
-from agency.serializers import AgencySerializer
+from account.serializers import IDUserSerializer, UserSerializer
+from agency.serializers import AgencySerializer, AgencyUserSerializer
 from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
@@ -646,7 +646,7 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
             for score in scores:
                 key = score.get('selection_criteria')
                 val = score.get('score')
-                criterion = filter(lambda x: x.get('selection_criteria') == key, assessments_criteria)
+                criterion = list(filter(lambda x: x.get('selection_criteria') == key, assessments_criteria))
                 if len(criterion) == 1 and val > criterion[0].get('weight'):
                     raise serializers.ValidationError(
                         "The maximum score is equal to the value entered for the weight.")
