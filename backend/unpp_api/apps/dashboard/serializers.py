@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from datetime import datetime, date, timedelta
+from functools import reduce
 
 from django.db.models import Count
 from rest_framework import serializers
@@ -99,7 +100,7 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
         cfei_new = EOI.objects.filter(
             start_date__gte=(date.today()-timedelta(days=self.DAYS_AGO))
         ).values_list('specializations__category__name', 'id').distinct()
-        mapped = map(lambda x: x[0], cfei_new)
+        mapped = list(map(lambda x: x[0], cfei_new))
         result = {}
         for sector in Sector.objects.all():
             result[sector.name] = mapped.count(sector.name)

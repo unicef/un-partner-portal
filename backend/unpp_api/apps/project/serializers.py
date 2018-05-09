@@ -646,7 +646,7 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
             for score in scores:
                 key = score.get('selection_criteria')
                 val = score.get('score')
-                criterion = filter(lambda x: x.get('selection_criteria') == key, assessments_criteria)
+                criterion = list(filter(lambda x: x.get('selection_criteria') == key, assessments_criteria))
                 if len(criterion) == 1 and val > criterion[0].get('weight'):
                     raise serializers.ValidationError(
                         "The maximum score is equal to the value entered for the weight.")

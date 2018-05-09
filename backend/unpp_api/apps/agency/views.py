@@ -64,7 +64,7 @@ class AgencyUserOfficesView(ListAPIView):
     permission_classes = (
         IsAuthenticated,
         HasAgencyPermission(
-            AgencyPermission.OWN_AGENCY_LIST_USERS
+            AgencyPermission.MY_AGENCY_LIST_USERS
         ),
     )
     filter_backends = (DjangoFilterBackend, )

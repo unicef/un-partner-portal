@@ -26,10 +26,10 @@ class AgencyRole(AutoNameEnum):
 ROLE_PERMISSIONS = {
     AgencyRole.HQ_EDITOR: frozenset([
         AgencyPermission.RESET_CSO_USER_PASSWORD,
-        AgencyPermission.OWN_AGENCY_LIST_USERS,
-        AgencyPermission.OWN_AGENCY_ADD_USER,
-        AgencyPermission.OWN_AGENCY_DEACTIVATE_USER,
-        AgencyPermission.OWN_AGENCY_RELOCATE_USER,
+        AgencyPermission.MY_AGENCY_LIST_USERS,
+        AgencyPermission.MY_AGENCY_ADD_USER,
+        AgencyPermission.MY_AGENCY_DEACTIVATE_USER,
+        AgencyPermission.MY_AGENCY_RELOCATE_USER,
         AgencyPermission.VIEW_DASHBOARD,
         AgencyPermission.RECEIVE_NOTIFICATIONS,
         AgencyPermission.CSO_LIST_VIEW,
@@ -39,9 +39,9 @@ ROLE_PERMISSIONS = {
     ]),
     AgencyRole.ADMINISTRATOR: frozenset([
         AgencyPermission.RESET_CSO_USER_PASSWORD,
-        AgencyPermission.OWN_AGENCY_ADD_USER,
-        AgencyPermission.OWN_AGENCY_DEACTIVATE_USER,
-        AgencyPermission.OWN_AGENCY_RELOCATE_USER,
+        AgencyPermission.MY_AGENCY_ADD_USER,
+        AgencyPermission.MY_AGENCY_DEACTIVATE_USER,
+        AgencyPermission.MY_AGENCY_RELOCATE_USER,
         AgencyPermission.VIEW_DASHBOARD,
         AgencyPermission.RECEIVE_NOTIFICATIONS,
         AgencyPermission.CSO_LIST_VIEW,
