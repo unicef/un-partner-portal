@@ -6,6 +6,8 @@ machine:
     POSTGRES_HOST: localhost
     UNPP_LOGS_PATH: /home/ubuntu/logs
     UNPP_UPLOADS_PATH: /home/ubuntu/uploads
+  python:
+    version: 3.6.2
 
 dependencies:
   pre:
