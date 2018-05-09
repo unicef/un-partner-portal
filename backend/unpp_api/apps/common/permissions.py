@@ -4,7 +4,7 @@ from rest_framework.permissions import BasePermission
 from agency.models import AgencyMember
 from partner.models import PartnerMember
 from project.models import Application
-from .consts import POWER_MEMBER_ROLES, MEMBER_ROLES
+from .consts import PARTNER_MEMBER_POWER, PARTNER_ROLES
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ class IsAtLeastMemberReader(BasePermission):
     Allows access only to user that has at least Reader role (Partner or Agency member).
     """
 
-    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.reader]
+    MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.reader]
 
     def pass_at_least(self, role):
         """
@@ -32,7 +32,7 @@ class IsAtLeastMemberReader(BasePermission):
         :param role: one of common.consts.MEMBER_ROLES
         :rtype Boolean
         """
-        power = POWER_MEMBER_ROLES[role]
+        power = PARTNER_MEMBER_POWER[role]
         return power >= self.MIN_POWER
 
     def has_permission(self, request, view):
@@ -59,12 +59,12 @@ class IsAtLeastMemberReader(BasePermission):
 
 class IsAtLeastMemberEditor(IsAtLeastMemberReader):
 
-    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+    MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.editor]
 
 
 class IsAtLeastAgencyMemberEditor(IsAtLeastMemberReader):
 
-    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+    MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.editor]
 
     def has_permission(self, request, view):
         if PartnerMember.objects.filter(user=request.user).exists():
@@ -84,7 +84,7 @@ class IsAtLeastAgencyMemberEditor(IsAtLeastMemberReader):
 
 class IsAtLeastPartnerMemberEditor(IsAtLeastMemberReader):
 
-    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+    MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.editor]
 
     def has_permission(self, request, view):
         if AgencyMember.objects.filter(user=request.user).exists():
@@ -135,7 +135,7 @@ class IsAgency(BasePermission):
 
 class IsAtLeastEditorPartnerOnNotGET(IsAtLeastMemberReader):
 
-    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+    MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.editor]
 
     def has_permission(self, request, view):
         if request.method != 'GET':
@@ -147,12 +147,12 @@ class IsAtLeastEditorPartnerOnNotGET(IsAtLeastMemberReader):
 
 class IsRoleAdministratorOnNotGET(IsAtLeastEditorPartnerOnNotGET):
 
-    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.admin]
+    MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.admin]
 
 
 class IsApplicationAPIEditor(IsAtLeastMemberReader):
 
-    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+    MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.editor]
 
     def has_permission(self, request, view):
         app_id = request.parser_context.get('kwargs', {}).get(view.lookup_field)
@@ -176,7 +176,7 @@ class IsApplicationAPIEditor(IsAtLeastMemberReader):
 
 class IsConvertUnsolicitedEditor(IsAtLeastMemberReader):
 
-    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+    MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.editor]
 
     def has_object_permission(self, request, view, obj):
         if obj.is_unsolicited:
@@ -199,7 +199,7 @@ class IsConvertUnsolicitedEditor(IsAtLeastMemberReader):
 
 class IsApplicationFeedbackPerm(IsAtLeastMemberReader):
 
-    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+    MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.editor]
 
     def has_permission(self, request, view):
         app_id = request.parser_context.get('kwargs', {}).get(view.lookup_field)
@@ -251,7 +251,7 @@ class IsPartnerEOIApplicationDestroy(IsAtLeastPartnerMemberEditor):
 
 class IsAgencyProject(IsAtLeastMemberReader):
 
-    MIN_POWER = POWER_MEMBER_ROLES[MEMBER_ROLES.editor]
+    MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.editor]
 
     def has_permission(self, request, view):
         if request.method == 'GET':

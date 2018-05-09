@@ -34,7 +34,7 @@ from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
-    MEMBER_ROLES,
+    PARTNER_ROLES,
     APPLICATION_STATUSES,
     COMPLETED_REASON,
     EOI_TYPES,
@@ -377,7 +377,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
     quantity = 1
     user_type = 'agency'
-    user_role = MEMBER_ROLES.editor
+    user_role = PARTNER_ROLES.editor
 
     def setUp(self):
         super(TestAgencyApplicationsAPITestCase, self).setUp()
@@ -516,7 +516,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
     user_type = 'agency'
-    user_role = MEMBER_ROLES.editor
+    user_role = PARTNER_ROLES.editor
 
     initial_factories = [
         PartnerSimpleFactory,

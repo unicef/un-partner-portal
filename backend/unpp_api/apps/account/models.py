@@ -49,6 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=512,
         help_text='Your fullname like first and last name, 512 characters.')
 
+    # TODO: add case insensitive unique index
     email = models.EmailField('email address', max_length=254, unique=True)
 
     is_staff = models.BooleanField(
@@ -61,7 +62,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=True,
         help_text=(
             'Designates whether this user should be treated as active. '
-            'Unselect this instead of deleting accounts.'
+            'Deselect this instead of deleting accounts.'
         ),
     )
 
@@ -126,8 +127,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def agency_permissions(self):
-        # TODO: determine actual role based on permissions
-        return ROLE_PERMISSIONS[AgencyRole.HQ_EDITOR]
+        agency_member = self.agency_members.first()
+        if not agency_member:
+            return set()
+        return ROLE_PERMISSIONS[AgencyRole[agency_member.role]]
 
 
 class UserProfile(TimeStampedModel):

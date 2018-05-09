@@ -22,6 +22,21 @@ class AgencyRole(AutoNameEnum):
     EDITOR_BASIC_PAM = auto()
     EDITOR_ADVANCED_MFT = auto()
 
+    @classmethod
+    def get_choices(cls):
+        return [(role.name, ROLE_LABELS[role]) for role in cls]
+
+
+ROLE_LABELS = {
+    AgencyRole.ADMINISTRATOR: 'Administrator',
+    AgencyRole.HQ_EDITOR: 'HQ Editor',
+    AgencyRole.READER: 'Reader',
+    AgencyRole.EDITOR_BASIC: 'Basic Editor',
+    AgencyRole.EDITOR_ADVANCED: 'Advanced Editor',
+    AgencyRole.EDITOR_BASIC_PAM: 'Basic Editor (PAM USER)',
+    AgencyRole.EDITOR_ADVANCED_MFT: 'Advanced Editor (MFT USER)',
+}
+
 
 ROLE_PERMISSIONS = {
     AgencyRole.HQ_EDITOR: frozenset([

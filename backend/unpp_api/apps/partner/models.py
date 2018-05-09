@@ -21,7 +21,7 @@ from common.consts import (
     SATISFACTION_SCALES,
     PARTNER_REVIEW_TYPES,
     PARTNER_TYPES,
-    MEMBER_ROLES,
+    PARTNER_ROLES,
     MEMBER_STATUSES,
     COLLABORATION_EVIDENCE_MODES,
     METHOD_ACC_ADOPTED_CHOICES,
@@ -937,7 +937,7 @@ class PartnerMember(TimeStampedModel):
     user = models.ForeignKey('account.User', related_name="partner_members")
     partner = models.ForeignKey(Partner, related_name="partner_members")
     title = models.CharField(max_length=255)
-    role = models.CharField(max_length=3, choices=MEMBER_ROLES, default=MEMBER_ROLES.reader)
+    role = models.CharField(max_length=3, choices=PARTNER_ROLES, default=PARTNER_ROLES.reader)
     status = models.CharField(max_length=3, choices=MEMBER_STATUSES, default=MEMBER_STATUSES.invited)
 
     class Meta:
