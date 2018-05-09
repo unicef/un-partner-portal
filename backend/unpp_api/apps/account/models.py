@@ -111,7 +111,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return agency_member and agency_member.office.agency
 
     @threaded_cached_property
-    def get_partner_ids_i_can_access(self):
+    def partner_ids_i_can_access(self):
         partner_members = self.partner_members.all()
         partner_ids = []
         for partner_member in partner_members:
@@ -120,6 +120,9 @@ class User(AbstractBaseUser, PermissionsMixin):
                 partner_ids.extend(partner_member.partner.country_profiles.values_list('id', flat=True))
 
         return partner_ids
+
+    def get_partner_ids_i_can_access(self):
+        return self.partner_ids_i_can_access
 
     @property
     def agency_permissions(self):
