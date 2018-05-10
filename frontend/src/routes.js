@@ -41,6 +41,12 @@ import cfeiDirectResponse from './components/eois/details/overview/results/respo
 import cfeiFeedback from './components/eois/details/overview/feedback';
 import partnerApplicationList from './components/agency/partnerApplicationList';
 
+// ID portal
+import mainLayoutIdPortal from './idPortal/mainLayout';
+import mainIdPortal from './idPortal/main';
+import dashboardIdPortal from './idPortal/dashboard';
+
+
 const history = syncHistoryWithStore(browserHistory, store);
 
 function checkPartnerType(nextState, replace) {
@@ -123,6 +129,13 @@ const allRoutes = () => (
             </Route>
           </Route>
           <Route path="settings" component={agencyMembersContainer} />
+        </Route>
+      </Route>
+      <Route component={mainIdPortal}>
+        <Route path="/idp" component={mainLayoutIdPortal} >
+          <IndexRedirect to="dashboard" />
+          <Route path="dashboard" component={dashboardIdPortal} />
+          <Route path="users" component={dashboardIdPortal} />
         </Route>
       </Route>
     </Route>

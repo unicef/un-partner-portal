@@ -63,6 +63,10 @@ import routesHistory from './reducers/routesHistory';
 import applicationComparisonReport from './reducers/applicationsComparisonReport';
 import openCfeiDashboardList from './reducers/openCfeiDashboardList';
 
+// ID portal
+
+import idPortalNav from './idPortal/reducers/nav';
+
 const mainReducer = combineReducers({
   cfei,
   cfeiNav,
@@ -121,6 +125,9 @@ const mainReducer = combineReducers({
   cache,
   routesHistory,
   applicationComparisonReport,
+
+  //ID portal
+  idPortalNav,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];

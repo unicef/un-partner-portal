@@ -8,16 +8,15 @@ import AppBar from 'material-ui/AppBar';
 import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import AccountIcon from 'material-ui-icons/AccountCircle';
-import BadgeIcon from './badgeIcon';
-import NotificationsList from '../notifications/notificationsList';
-import Logout from './logout';
-import Options from './options';
+import BadgeIcon from '../components/layout/badgeIcon';
+import Logout from '../components/layout/logout';
+import Options from '../components/layout/options';
 
 const styleSheet = theme => ({
   leftHeader: {
     [theme.breakpoints.down('xs')]: {
       width: '100%',
-    },
+    }, 
     width: theme.spacing.unit * 28,
     justifyContent: 'center',
     zIndex: 1,
@@ -107,22 +106,6 @@ class MainAppBar extends Component {
             </Grid>
           </Grid>
         </AppBar>
-        <Popover
-          id="notifications"
-          anchorEl={this.state.notifAnchor}
-          open={this.state.verificationOpen}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          onRequestClose={this.handleVerificationRequestClose}
-        >
-          <NotificationsList />
-        </Popover>
         <Popover
           id="partnerProfile"
           anchorEl={this.state.profileAnchor}
