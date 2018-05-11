@@ -7,7 +7,7 @@ export const PARTNER = 'partner';
 export const AGENCY = 'agency';
 
 const initialState = [
-  { path: '/dashboard', label: 'Dashboard', roles: [PARTNER, AGENCY], icon: dashboardIcon },
+  { path: '/idp/dashboard', label: 'Dashboard', roles: [PARTNER, AGENCY], icon: dashboardIcon },
   { path: '/idp/users', label: 'Users', roles: [PARTNER, AGENCY], icon: partnersIcon },
 ];
 
