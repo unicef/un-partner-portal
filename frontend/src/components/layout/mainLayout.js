@@ -52,7 +52,7 @@ class MainLayout extends Component {
       profileOpen: false,
     };
     this.handleVerificationClick = this.handleVerificationClick.bind(this);
-    this.handleVerificationRequestClose = this.handleVerificationRequestClose.bind(this);
+    this.handleVerificationClose = this.handleVerificationClose.bind(this);
     this.handleProfileClick = this.handleProfileClick.bind(this);
     this.handleProfileRequestClose = this.handleProfileRequestClose.bind(this);
   }
@@ -61,7 +61,7 @@ class MainLayout extends Component {
     this.setState({ verificationOpen: true, notifAnchor: event.currentTarget });
   }
 
-  handleVerificationRequestClose() {
+  handleVerificationClose() {
     this.setState({ verificationOpen: false });
   }
 

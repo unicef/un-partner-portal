@@ -54,7 +54,7 @@ class DropdownMenu extends React.Component {
           id="long-menu"
           anchorEl={anchorEl}
           open={open}
-          onRequestClose={this.handleRequestClose}
+          onClose={this.handleRequestClose}
         >
           {options.map(option => (
             <MenuItem

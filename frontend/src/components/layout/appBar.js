@@ -52,7 +52,7 @@ class MainAppBar extends Component {
       profileOpen: false,
     };
     this.handleVerificationClick = this.handleVerificationClick.bind(this);
-    this.handleVerificationRequestClose = this.handleVerificationRequestClose.bind(this);
+    this.handleVerificationClose = this.handleVerificationClose.bind(this);
     this.handleProfileClick = this.handleProfileClick.bind(this);
     this.handleProfileRequestClose = this.handleProfileRequestClose.bind(this);
   }
@@ -61,7 +61,7 @@ class MainAppBar extends Component {
     this.setState({ verificationOpen: true, notifAnchor: event.currentTarget });
   }
 
-  handleVerificationRequestClose() {
+  handleVerificationClose() {
     this.setState({ verificationOpen: false });
   }
 
@@ -118,7 +118,7 @@ class MainAppBar extends Component {
             vertical: 'top',
             horizontal: 'right',
           }}
-          onRequestClose={this.handleVerificationRequestClose}
+          onClose={this.handleVerificationClose}
         >
           <NotificationsList />
         </Popover>
@@ -134,7 +134,7 @@ class MainAppBar extends Component {
             vertical: 'top',
             horizontal: 'right',
           }}
-          onRequestClose={this.handleProfileRequestClose}
+          onClose={this.handleProfileRequestClose}
         >
           <Logout />
           <Options />
