@@ -45,32 +45,6 @@ const styleSheet = theme => ({
 class MainLayout extends Component {
   constructor() {
     super();
-    this.state = {
-      notifAnchor: null,
-      profileAnchor: null,
-      verificationOpen: false,
-      profileOpen: false,
-    };
-    this.handleVerificationClick = this.handleVerificationClick.bind(this);
-    this.handleVerificationRequestClose = this.handleVerificationRequestClose.bind(this);
-    this.handleProfileClick = this.handleProfileClick.bind(this);
-    this.handleProfileRequestClose = this.handleProfileRequestClose.bind(this);
-  }
-
-  handleVerificationClick(event) {
-    this.setState({ verificationOpen: true, notifAnchor: event.currentTarget });
-  }
-
-  handleVerificationRequestClose() {
-    this.setState({ verificationOpen: false });
-  }
-
-  handleProfileClick(event) {
-    this.setState({ profileOpen: true, profileAnchor: event.currentTarget });
-  }
-
-  handleProfileRequestClose() {
-    this.setState({ profileOpen: false });
   }
 
   render() {

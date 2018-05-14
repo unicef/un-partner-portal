@@ -16,7 +16,7 @@ const styleSheet = theme => ({
   leftHeader: {
     [theme.breakpoints.down('xs')]: {
       width: '100%',
-    }, 
+    },
     width: theme.spacing.unit * 28,
     justifyContent: 'center',
     zIndex: 1,
@@ -47,29 +47,19 @@ class MainAppBar extends Component {
     super();
     this.state = {
       notifAnchor: null,
-      profileAnchor: null,
-      verificationOpen: false,
+      profileAnchor: null, 
       profileOpen: false,
-    };
-    this.handleVerificationClick = this.handleVerificationClick.bind(this);
-    this.handleVerificationRequestClose = this.handleVerificationRequestClose.bind(this);
+    }; 
+
     this.handleProfileClick = this.handleProfileClick.bind(this);
-    this.handleProfileRequestClose = this.handleProfileRequestClose.bind(this);
-  }
-
-  handleVerificationClick(event) {
-    this.setState({ verificationOpen: true, notifAnchor: event.currentTarget });
-  }
-
-  handleVerificationRequestClose() {
-    this.setState({ verificationOpen: false });
+    this.handleProfileOnClose = this.handleProfileOnClose.bind(this);
   }
 
   handleProfileClick(event) {
     this.setState({ profileOpen: true, profileAnchor: event.currentTarget });
   }
 
-  handleProfileRequestClose() {
+  handleProfileOnClose() {
     this.setState({ profileOpen: false });
   }
   render() {
@@ -97,9 +87,6 @@ class MainAppBar extends Component {
             spacing={0}
           >
             <Grid item>
-              <BadgeIcon handleClick={this.handleVerificationClick} />
-            </Grid>
-            <Grid item>
               <IconButton color="contrast" onClick={this.handleProfileClick}>
                 <AccountIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
               </IconButton>
@@ -118,7 +105,7 @@ class MainAppBar extends Component {
             vertical: 'top',
             horizontal: 'right',
           }}
-          onRequestClose={this.handleProfileRequestClose}
+          onClose={this.handleProfileOnClose}
         >
           <Logout />
           <Options />

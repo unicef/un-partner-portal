@@ -17,7 +17,6 @@ const messages = {
 };
 
 const styleSheet = (theme) => {
-  const paddingSmall = theme.spacing.unit / 2;
   const padding = theme.spacing.unit;
   const paddingMedium = theme.spacing.unit * 2;
 
@@ -77,10 +76,10 @@ class YourRole extends Component {
 
       <Grid item xs={4}>
         <Typography type="caption">
-          {"HQ Administrator"}
+          {'HQ Administrator'}
         </Typography>
       </Grid>
-    </Grid>)
+    </Grid>);
   }
 
   render() {
