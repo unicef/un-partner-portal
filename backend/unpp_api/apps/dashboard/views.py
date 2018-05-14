@@ -9,7 +9,7 @@ from django.http import Http404
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from common.consts import EOI_TYPES
+from common.consts import CFEI_TYPES
 from common.permissions import IsAtLeastMemberReader, IsAgencyMemberUser, IsPartner
 from common.mixins import PartnerIdsMixin
 from common.pagination import MediumPagination, SmallPagination
@@ -70,7 +70,7 @@ class CurrentUsersActiveProjectsAPIView(ListAPIView):
     def get_queryset(self):
         user = self.request.user
         today = date.today()
-        queryset = self.queryset.filter(display_type=EOI_TYPES.open, deadline_date__gte=today, is_completed=False)
+        queryset = self.queryset.filter(display_type=CFEI_TYPES.open, deadline_date__gte=today, is_completed=False)
         queryset = queryset.filter(
             Q(created_by=user) | Q(focal_points=user)
         )

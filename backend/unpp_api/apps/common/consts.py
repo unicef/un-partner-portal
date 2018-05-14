@@ -24,7 +24,7 @@ PARTNER_TYPES = Choices(
     ('RCC', 'red_cross', 'Red Cross/Red Crescent Movement'),
 )
 
-EOI_TYPES = Choices(
+CFEI_TYPES = Choices(
     ('Ope', 'open', 'Open'),
     ('Dir', 'direct', 'Direct'),
 )

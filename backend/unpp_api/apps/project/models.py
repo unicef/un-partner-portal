@@ -6,7 +6,7 @@ from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from model_utils.models import TimeStampedModel
 from common.consts import (
-    EOI_TYPES,
+    CFEI_TYPES,
     APPLICATION_STATUSES,
     EOI_STATUSES,
     DIRECT_SELECTION_SOURCE,
@@ -25,7 +25,7 @@ class EOI(TimeStampedModel):
     Call of Expression of Interest
     """
     # TODO: this model is very heavy !!! we should think to split fields like file texts to some "EOI_profil" ..
-    display_type = models.CharField(max_length=3, choices=EOI_TYPES, default=EOI_TYPES.open)
+    display_type = models.CharField(max_length=3, choices=CFEI_TYPES, default=CFEI_TYPES.open)
     title = models.CharField(max_length=255)
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
     created_by = models.ForeignKey('account.User', related_name="expressions_of_interest")
@@ -36,12 +36,13 @@ class EOI(TimeStampedModel):
     # always be taken from the agency; we always keep their base template of the one they used.
     cn_template = models.FileField(null=True, blank=True)
     specializations = models.ManyToManyField('common.Specialization', related_name="expressions_of_interest")
-    # TODO: intended_pop_of_concern = Selection. Should have in help text only for UNHCR. TODO on select options
     description = models.CharField(max_length=5000, verbose_name='Brief background of the project')
     goal = models.CharField(
-        max_length=5000, null=True, blank=True, verbose_name='Goal, Objective, Expected Outcome and Results.')
+        max_length=5000, null=True, blank=True, verbose_name='Goal, Objective, Expected Outcome and Results.'
+    )
     other_information = models.CharField(
-        max_length=5000, null=True, blank=True, verbose_name='Other information (optional)')
+        max_length=5000, null=True, blank=True, verbose_name='Other information (optional)'
+    )
     start_date = models.DateField(verbose_name='Estimated Start Date')
     end_date = models.DateField(verbose_name='Estimated End Date')
     deadline_date = models.DateField(verbose_name='Estimated Deadline Date', null=True, blank=True)
@@ -66,7 +67,7 @@ class EOI(TimeStampedModel):
         ordering = ['id']
 
     def __str__(self):
-        return "EOI {} <pk:{}>".format(self.title, self.id)
+        return "CFEI {} <pk:{}>".format(self.title, self.id)
 
     @property
     def status(self):
@@ -80,11 +81,11 @@ class EOI(TimeStampedModel):
 
     @property
     def is_open(self):
-        return self.display_type == EOI_TYPES.open
+        return self.display_type == CFEI_TYPES.open
 
     @property
     def is_direct(self):
-        return self.display_type == EOI_TYPES.direct
+        return self.display_type == CFEI_TYPES.direct
 
     @property
     def is_overdue_deadline(self):

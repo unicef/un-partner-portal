@@ -22,13 +22,14 @@ from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.models import User
-from common.consts import EOI_TYPES, DIRECT_SELECTION_SOURCE
+from agency.permissions import AgencyPermission
+from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE
 from common.pagination import SmallPagination
 from common.permissions import (
     IsAgencyMemberUser,
     IsAtLeastMemberEditor,
     IsAtLeastAgencyMemberEditor,
-    IsAgencyProject,
+    IsPartnerMember,
     IsEOIReviewerAssessments,
     IsApplicationAPIEditor,
     IsConvertUnsolicitedEditor,
@@ -36,7 +37,7 @@ from common.permissions import (
     IsPartnerEOIApplicationCreate,
     IsPartnerEOIApplicationDestroy,
     IsPartner,
-)
+    HasAgencyPermission, IsRelatedToCFEI)
 from common.mixins import PartnerIdsMixin
 from notification.consts import NotificationType
 from notification.helpers import (
@@ -101,10 +102,10 @@ class OpenProjectAPIView(BaseProjectAPIView):
     """
     Endpoint for getting OPEN Call of Expression of Interest.
     """
-    permission_classes = (IsAuthenticated, IsAgencyProject)
+    permission_classes = (IsAuthenticated, IsPartnerMember)
 
     def get_queryset(self):
-        queryset = self.queryset.filter(display_type=EOI_TYPES.open)
+        queryset = self.queryset.filter(display_type=CFEI_TYPES.open)
 
         if self.request.user.is_agency_user:
             return queryset
@@ -181,11 +182,11 @@ class DirectProjectAPIView(BaseProjectAPIView):
     Endpoint for getting DIRECT Call of Expression of Interest.
     """
 
-    permission_classes = (IsAuthenticated, IsAgencyProject)
+    permission_classes = (IsAuthenticated, IsPartnerMember)
     serializer_class = DirectProjectSerializer
 
     def get_queryset(self):
-        return self.queryset.filter(display_type=EOI_TYPES.direct).distinct()
+        return self.queryset.filter(display_type=CFEI_TYPES.direct).distinct()
 
     def post(self, request, *args, **kwargs):
         data = request.data or {}
@@ -388,8 +389,9 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
 
 class EOIApplicationsListAPIView(ListAPIView):
     permission_classes = (IsAgencyMemberUser, )
-    queryset = Application.objects.select_related("partner", "eoi", "cn")\
-        .prefetch_related("assessments", "eoi__reviewers").all()
+    queryset = Application.objects.select_related(
+        "partner", "eoi", "cn"
+    ).prefetch_related("assessments", "eoi__reviewers").all()
     serializer_class = ApplicationsListSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
@@ -403,17 +405,24 @@ class EOIApplicationsListAPIView(ListAPIView):
 
 
 class ReviewersStatusAPIView(ListAPIView):
-    permission_classes = (IsAgencyMemberUser, IsAtLeastMemberEditor)
-    queryset = User.objects.all()
+    permission_classes = (
+        HasAgencyPermission(
+            AgencyPermission.CFEI_VIEW_APPLICATIONS,
+        ),
+        IsRelatedToCFEI(
+            cfei_field='eoi',
+
+        ),
+    )
     serializer_class = ReviewersApplicationSerializer
-    lookup_field = 'pk'
     lookup_url_kwarg = 'application_id'
 
     def get_queryset(self, *args, **kwargs):
         application_id = self.kwargs.get(self.lookup_url_kwarg)
-        app = get_object_or_404(Application.objects.select_related('eoi').prefetch_related('eoi__reviewers'),
-                                pk=application_id)
-        return User.objects.filter(pk__in=app.eoi.reviewers.all().values_list("pk"))
+        application = get_object_or_404(
+            Application.objects.select_related('eoi').prefetch_related('eoi__reviewers'), pk=application_id
+        )
+        return application.eoi.reviewers.all()
 
 
 class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
@@ -481,7 +490,7 @@ class UnsolicitedProjectAPIView(ListAPIView):
 
 class PartnerApplicationOpenListAPIView(PartnerIdsMixin, ListAPIView):
     permission_classes = (IsAuthenticated, IsPartner)
-    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.open).distinct()
+    queryset = Application.objects.filter(eoi__display_type=CFEI_TYPES.open).distinct()
     serializer_class = ApplicationPartnerOpenSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
@@ -512,7 +521,7 @@ class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreate
 
 
 class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedListCreateAPIView):
-    queryset = Application.objects.filter(eoi__display_type=EOI_TYPES.direct).distinct()
+    queryset = Application.objects.filter(eoi__display_type=CFEI_TYPES.direct).distinct()
 
     def get_serializer_class(self, *args, **kwargs):
         if self.request.method == 'POST':

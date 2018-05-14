@@ -37,7 +37,7 @@ from common.consts import (
     PARTNER_ROLES,
     APPLICATION_STATUSES,
     COMPLETED_REASON,
-    EOI_TYPES,
+    CFEI_TYPES,
     EOI_STATUSES,
 )
 from project.views import PinProjectAPIView
@@ -307,7 +307,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
-        self.assertEquals(response.data['eoi']['display_type'], EOI_TYPES.direct)
+        self.assertEquals(response.data['eoi']['display_type'], CFEI_TYPES.direct)
         self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
         app = Application.objects.get(pk=response.data['applications'][0]['id'])
         self.assertEquals(app.submitter, self.user)
@@ -403,7 +403,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['id'], app_id)
 
         # agent member should delete only direct application
-        eoi.display_type = EOI_TYPES.direct
+        eoi.display_type = CFEI_TYPES.direct
         eoi.save()
         url = reverse('projects:agency-applications-delete', kwargs={"pk": app_id, "eoi_id": eoi.id})
         response = self.client.delete(url, format='json')
@@ -688,7 +688,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         self.assertEquals(eoi.description, payload['description'])
         self.assertEquals(eoi.start_date, start_date)
         self.assertEquals(eoi.end_date, end_date)
-        self.assertEquals(eoi.display_type, EOI_TYPES.direct)
+        self.assertEquals(eoi.display_type, CFEI_TYPES.direct)
         self.assertEquals(eoi.status, EOI_STATUSES.open)
         self.assertEquals(eoi.focal_points.all().count(), len(focal_points))
         self.assertEquals(eoi.created_by, user)

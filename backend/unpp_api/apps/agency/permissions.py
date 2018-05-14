@@ -42,3 +42,15 @@ class AgencyPermission(AutoNameEnum):
     CFEI_PUBLISHED_EDIT_DATES = auto()  # If creator / focal point
     CFEI_PUBLISHED_INVITE_CSO = auto()  # If creator / focal point
     CFEI_PUBLISHED_CANCEL = auto()  # If creator / focal point
+
+    # Assess Applications Submitted for CFEI Published by Own Agency
+    CFEI_MANAGE_REVIEWERS = auto()  # If creator / focal point
+    CFEI_VIEW_APPLICATIONS = auto()  # If creator / focal point
+    CFEI_PRESELECT_APPLICATIONS = auto()  # If creator / focal point
+    CFEI_ASSES_PRESELECTED_APPLICATIONS = auto()  # If creator / focal point
+    CFEI_VIEW_MY_ASSESSMENT = auto()  # If creator / focal point
+    CFEI_EDIT_MY_ASSESSMENT = auto()  # If creator / focal point
+    CFEI_VIEW_ALL_ASSESSMENTS = auto()  # If creator / focal point
+    CFEI_EDIT_ALL_ASSESSMENTS = auto()  # If creator / focal point
+    CFEI_ADD_REVIEW_SUMMARY = auto()  # If creator / focal point
+    CFEI_RECOMMEND_PARTNER_FOR_SELECTION = auto()  # If creator / focal point

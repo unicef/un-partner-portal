@@ -1,7 +1,11 @@
 import logging
+
+from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
 from agency.models import AgencyMember
+from agency.roles import AgencyRole
+from common.utils import rgetattr
 from partner.models import PartnerMember
 from project.models import Application
 from common.consts import PARTNER_MEMBER_POWER, PARTNER_ROLES
@@ -249,7 +253,7 @@ class IsPartnerEOIApplicationDestroy(IsAtLeastPartnerMemberEditor):
             return True
 
 
-class IsAgencyProject(IsAtLeastMemberReader):
+class IsPartnerMember(IsAtLeastMemberReader):
 
     MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.editor]
 
@@ -261,7 +265,14 @@ class IsAgencyProject(IsAtLeastMemberReader):
         return False
 
 
-class HasAgencyPermission(BasePermission):
+class CustomizablePermission(BasePermission):
+
+    def __call__(self, *args, **kwargs):
+        # Need this to get around calling __init__ when setting up permission
+        return self
+
+
+class HasAgencyPermission(CustomizablePermission):
 
     def __init__(self, *permissions):
         self.permissions = permissions
@@ -269,5 +280,39 @@ class HasAgencyPermission(BasePermission):
     def has_permission(self, request, view):
         return request.office_member and set(self.permissions).issubset(request.office_member.user_permissions)
 
-    def __call__(self, *args, **kwargs):
-        return self
+
+class IsRelatedToCFEI(CustomizablePermission):
+    """
+    By default check whether request.user is creator
+    """
+
+    def __init__(self, cfei_field=None, **role_to_field_mappings):
+        self.cfei_field = cfei_field
+        self.role_to_field_mappings = role_to_field_mappings
+
+    def has_object_permission(self, request, view, obj):
+        if not self.cfei_field:
+            cfei = obj
+        else:
+            cfei = rgetattr(obj, self.cfei_field)
+        if request.office_member:
+            if not self.role_to_field_mappings:
+                return cfei.created_by == request.user
+            else:
+                fields_to_check = self.role_to_field_mappings.get(
+                    AgencyRole[request.office_member.role], ['created_by']
+                )
+                for field_name in fields_to_check:
+                    field = getattr(cfei, field_name, None)
+                    if not field:
+                        raise ImproperlyConfigured(
+                            f'Field {field_name} not found on CFEI model.'
+                        )
+                    if hasattr(field, 'objects'):
+                        if field.objects.filter(pk=request.user.pk).exists():
+                            return True
+                    else:
+                        if field == request.user:
+                            return True
+
+        return False

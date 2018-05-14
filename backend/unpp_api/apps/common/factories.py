@@ -45,7 +45,7 @@ from common.consts import (
     ORG_AUDIT_CHOICES,
     AUDIT_ASSESSMENT_CHOICES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
-    EOI_TYPES,
+    CFEI_TYPES,
     DIRECT_SELECTION_SOURCE,
     BUDGET_CHOICES,
     SELECTION_CRITERIA_CHOICES,
@@ -605,7 +605,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
     def applications(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
-        if self.display_type == EOI_TYPES.direct:
+        if self.display_type == CFEI_TYPES.direct:
             for partner in Partner.objects.all().order_by("?")[:settings.DEFAULT_FAKE_DATA_DIRECT_APPLICATIONS_COUNT]:
                 Application.objects.create(
                     partner=partner,
@@ -620,7 +620,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
             self.selected_source = DIRECT_SELECTION_SOURCE.un
             self.save()
 
-        elif self.display_type == EOI_TYPES.open:
+        elif self.display_type == CFEI_TYPES.open:
             for partner in Partner.objects.all().order_by("?")[:settings.DEFAULT_FAKE_DATA_OPEN_APPLICATIONS_COUNT]:
                 app = Application.objects.create(
                     partner=partner,

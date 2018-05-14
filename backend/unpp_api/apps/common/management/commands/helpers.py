@@ -11,7 +11,7 @@ from agency.models import (
 )
 from agency.roles import AgencyRole
 from common.consts import (
-    EOI_TYPES,
+    CFEI_TYPES,
     PARTNER_ROLES,
     PARTNER_TYPES,
     FLAG_TYPES,
@@ -199,7 +199,7 @@ def generate_fake_data(quantity=50):
     print("{} open EOI objects created".format(quantity))
 
     # preselect
-    for idx, eoi in enumerate(EOI.objects.filter(display_type=EOI_TYPES.open)):
+    for idx, eoi in enumerate(EOI.objects.filter(display_type=CFEI_TYPES.open)):
         app = eoi.applications.all().order_by("?").first()
         if app is None:
             # if someone will run fake date without clean database, their can be EOI with no applications
@@ -218,7 +218,7 @@ def generate_fake_data(quantity=50):
 
         app.save()
 
-    EOIFactory.create_batch(quantity, display_type=EOI_TYPES.direct, deadline_date=None)
+    EOIFactory.create_batch(quantity, display_type=CFEI_TYPES.direct, deadline_date=None)
     print("{} direct EOI objects created with applications".format(quantity))
 
     unsolicited_count = int(quantity/3)
