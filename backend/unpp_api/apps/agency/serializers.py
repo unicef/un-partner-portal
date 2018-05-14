@@ -23,9 +23,16 @@ class OtherAgencySerializer(serializers.ModelSerializer):
 
 class AgencyOfficeSerializer(serializers.ModelSerializer):
 
+    agency = AgencySerializer()
+
     class Meta:
         model = AgencyOffice
-        fields = ('id', 'name', 'countries_code',)
+        fields = (
+            'id',
+            'name',
+            'countries_code',
+            'agency',
+        )
 
 
 class AgencyMemberSerializer(serializers.ModelSerializer):
