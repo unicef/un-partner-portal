@@ -38,7 +38,7 @@ from common.permissions import (
     IsPartnerEOIApplicationDestroy,
     IsPartner,
     HasAgencyPermission, IsRelatedToCFEI)
-from common.mixins import PartnerIdsMixin
+from common.mixins import PartnerIdsMixin, FilterByCFEIRoleMixin
 from notification.consts import NotificationType
 from notification.helpers import (
     get_partner_users_for_application_queryset,
@@ -336,7 +336,12 @@ class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
     """
     Create Application for direct EOI by agency.
     """
-    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+    permission_classes = (
+        IsAuthenticated,
+        HasAgencyPermission(
+
+        ),
+    )
     queryset = Application.objects.all()
     serializer_class = CreateDirectApplicationNoCNSerializer
 
@@ -350,23 +355,18 @@ class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
         send_notification_application_created(instance)
 
 
-class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
+class AgencyEOIApplicationDestroyAPIView(FilterByCFEIRoleMixin, DestroyAPIView):
 
-    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+    permission_classes = (
+        IsAuthenticated,
+        HasAgencyPermission(
+
+        ),
+    )
     queryset = Application.objects.all()
     serializer_class = CreateDirectApplicationNoCNSerializer
-
-    def delete(self, request, eoi_id, pk, *args, **kwargs):
-        self.eoi = get_object_or_404(EOI, id=eoi_id)
-
-        allowed_to_modify = \
-            list(self.eoi.focal_points.values_list('id', flat=True)) + [self.eoi.created_by_id]
-        if request.user.id not in allowed_to_modify or not self.eoi.is_direct:
-            raise PermissionDenied
-
-        app = get_object_or_404(Application, id=pk)
-        app.delete()
-        return Response({}, status=statuses.HTTP_204_NO_CONTENT)
+    lookup_url_kwarg = 'eoi_id'
+    cfei_lookup = 'eoi'
 
 
 class ApplicationAPIView(RetrieveUpdateAPIView):

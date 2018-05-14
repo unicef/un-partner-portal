@@ -228,7 +228,7 @@ class Application(TimeStampedModel):
     def get_scores_by_selection_criteria(self):
         assessments_criteria = self.eoi.get_assessment_criteria_as_dict()
         for assessment in self.assessments.all():
-            for key, val in assessment.get_scores_as_dict().iteritems():
+            for key, val in assessment.get_scores_as_dict().items():
                 assessments_criteria[key].setdefault('scores', []).append(val['score'])
 
         for key in assessments_criteria.keys():
@@ -305,7 +305,7 @@ class Assessment(TimeStampedModel):
             else:
                 assessment_weights = app_eoi.get_assessment_criteria_as_dict()
                 comb_dict = assessment_weights.copy()
-                for k, v in self.get_scores_as_dict().iteritems():
+                for k, v in self.get_scores_as_dict().items():
                     comb_dict[k]['score'] = v['score']
 
                 self.__total_score = sum([v['score'] for v in comb_dict.values()])
