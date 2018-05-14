@@ -6,10 +6,10 @@ import { withRouter } from 'react-router';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
-import MainContentWrapper from '../components/common/mainContentWrapper';
-import HeaderNavigation from '../components/common/headerNavigation';
-import GridColumn from '../components/common/grid/gridColumn';
-import HeaderList from '../components/common/list/headerList';
+import MainContentWrapper from '../../components/common//mainContentWrapper';
+import HeaderNavigation from '../../components/common/headerNavigation';
+import GridColumn from '../../components/common/grid/gridColumn';
+import HeaderList from '../../components/common/list/headerList';
 
 const messages = {
   header: 'Dashboard',
