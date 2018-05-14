@@ -53,8 +53,10 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
         partner = Partner.objects.first()
         url = reverse('partners:country-profile', kwargs={"pk": partner.id})
         response = self.client.get(url, format='json')
-        chosen_country_to_create = map(lambda x: x['country_code'],
-                                       filter(lambda x: x['exist'] is False, response.data['countries_profile']))
+        chosen_country_to_create = list(map(
+            lambda x: x['country_code'],
+            filter(lambda x: x['exist'] is False, response.data['countries_profile'])
+        ))
         payload = {
             'chosen_country_to_create': chosen_country_to_create,
         }
@@ -392,7 +394,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
     def test_other_info(self):
         url = reverse('common:file')
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
-        with open(filename) as doc:
+        with open(filename, 'rb') as doc:
             payload = {
                 "file_field": doc
             }
@@ -435,7 +437,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         files = []
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
         for _ in range(2):
-            with open(filename) as doc:
+            with open(filename, 'rb') as doc:
                 response = self.client.post(reverse('common:file'), data={
                     "file_field": doc
                 }, format='multipart')
@@ -467,7 +469,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         files = []
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
         for _ in range(2):
-            with open(filename) as doc:
+            with open(filename, 'rb') as doc:
                 response = self.client.post(reverse('common:file'), data={
                     "file_field": doc
                 }, format='multipart')

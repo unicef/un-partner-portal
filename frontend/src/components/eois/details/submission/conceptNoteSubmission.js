@@ -141,7 +141,7 @@ class ConceptNoteSubmission extends Component {
           open={alert}
           message={errorMsg}
           autoHideDuration={6e3}
-          onRequestClose={this.handleDialogClose}
+          onClose={this.handleDialogClose}
         />
         <Snackbar
           anchorOrigin={{
@@ -151,7 +151,7 @@ class ConceptNoteSubmission extends Component {
           open={!R.isEmpty(errorUpload)}
           message={errorUpload ? errorUpload.message || '' : ''}
           autoHideDuration={6e3}
-          onRequestClose={this.handleDialogClose}
+          onClose={this.handleDialogClose}
         />
         <Loader loading={loader} fullscreen />
       </form >

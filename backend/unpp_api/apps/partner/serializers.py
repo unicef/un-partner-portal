@@ -1,7 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
 
-from agency.serializers import AgencySerializer
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
@@ -40,7 +39,8 @@ from partner.models import (
     PartnerAuditReport,
     PartnerReporting,
     PartnerMember,
-    PartnerCapacityAssessment)
+    PartnerCapacityAssessment,
+)
 
 
 class PartnerAdditionalSerializer(serializers.ModelSerializer):
@@ -239,12 +239,16 @@ class PartnerFundingSerializer(serializers.ModelSerializer):
 
 class PartnerCollaborationPartnershipSerializer(serializers.ModelSerializer):
 
-    agency = AgencySerializer()
+    agency = serializers.SerializerMethodField()
 
     class Meta:
         model = PartnerCollaborationPartnership
         fields = "__all__"
         read_only_fields = ('partner', 'agency')
+
+    def get_agency(self, partnership):
+        from agency.serializers import AgencySerializer
+        return AgencySerializer(instance=partnership.agency).data
 
 
 class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):

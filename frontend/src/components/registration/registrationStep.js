@@ -52,7 +52,7 @@ const RegistrationStep = (props) => {
         open={error}
         message={error}
         autoHideDuration={6e3}
-        onRequestClose={clearError}
+        onClose={clearError}
       />
     </form >
   );

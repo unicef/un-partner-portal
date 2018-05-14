@@ -67,7 +67,7 @@ class PartnerProfileStepperContainer extends Component {
           open={!!error}
           message={error || []}
           autoHideDuration={6e3}
-          onRequestClose={this.handleErrorClose}
+          onClose={this.handleErrorClose}
         />
       </div>
     );

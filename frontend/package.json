@@ -36,7 +36,7 @@
     "html-webpack-plugin": "2.29.0",
     "jest": "20.0.4",
     "lodash": "^4.17.4",
-    "material-ui": "v1.0.0-beta.21",
+    "material-ui": "v1.0.0-beta.25",
     "material-ui-icons": "^1.0.0-beta.17",
     "material-ui-old": "npm:material-ui",
     "moment": "^2.18.1",

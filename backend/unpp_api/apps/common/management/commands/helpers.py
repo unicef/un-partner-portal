@@ -9,9 +9,10 @@ from agency.models import (
     AgencyOffice,
     AgencyMember,
 )
+from agency.roles import AgencyRole
 from common.consts import (
     EOI_TYPES,
-    MEMBER_ROLES,
+    PARTNER_ROLES,
     PARTNER_TYPES,
     FLAG_TYPES,
 )
@@ -156,7 +157,7 @@ def generate_fake_data(quantity=50):
     AgencyOfficeFactory.create_batch(3, agency=wfp)
     AgencyOfficeFactory.create_batch(3, agency=unhcr)
     print("Agencies and their offices are created")
-    AgencyMemberFactory.create_batch(6, role=MEMBER_ROLES.admin)
+    AgencyMemberFactory.create_batch(6, role=AgencyRole.ADMINISTRATOR.name)
     AgencyMemberFactory.create_batch(9)
 
     OtherAgencyFactory.create_batch(3)
@@ -189,9 +190,9 @@ def generate_fake_data(quantity=50):
         else:
             PartnerFlagFactory(partner=partner, flag_type=FLAG_TYPES.red)
 
-        PartnerMemberFactory(partner=partner, role=MEMBER_ROLES.admin, title='Head')
-        PartnerMemberFactory(partner=partner, role=MEMBER_ROLES.editor, title='PM')
-        PartnerMemberFactory(partner=partner, role=MEMBER_ROLES.reader, title='Assistant')
+        PartnerMemberFactory(partner=partner, role=PARTNER_ROLES.admin, title='Head')
+        PartnerMemberFactory(partner=partner, role=PARTNER_ROLES.editor, title='PM')
+        PartnerMemberFactory(partner=partner, role=PARTNER_ROLES.reader, title='Assistant')
     print("Other Relation to Partner objects created".format(quantity))
 
     EOIFactory.create_batch(quantity)
