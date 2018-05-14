@@ -196,8 +196,8 @@ class Tooltip extends React.Component {
       this.setState({ open: true })
     }
 
-    if (this.props.onRequestOpen) {
-      this.props.onRequestOpen(event, true)
+    if (this.props.onOpen) {
+      this.props.onOpen(event, true)
     }
   }
 
@@ -232,8 +232,8 @@ class Tooltip extends React.Component {
       this.setState({ open: false })
     }
 
-    if (this.props.onRequestClose) {
-      this.props.onRequestClose(event, false)
+    if (this.props.onClose) {
+      this.props.onClose(event, false)
     }
   }
 
@@ -285,8 +285,8 @@ class Tooltip extends React.Component {
       id,
       leaveDelay,
       open: openProp,
-      onRequestClose,
-      onRequestOpen,
+      onClose,
+      onOpen,
       theme,
       title,
       placement: rawPlacement,

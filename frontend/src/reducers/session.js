@@ -78,7 +78,7 @@ export const loadUserData = () => (dispatch, getState) => {
   dispatch(sessionInitializing());
   return getUserData(token)
     .then((response) => {
-      const role = response.agency_name ? ROLES.AGENCY : ROLES.PARTNER;
+      const role = response.office_memberships ? ROLES.AGENCY : ROLES.PARTNER;
       window.localStorage.setItem('role', role);
       let sessionObject = {
         role,
@@ -91,12 +91,15 @@ export const loadUserData = () => (dispatch, getState) => {
       };
       const addToSession = R.mergeDeepRight(sessionObject);
       // agency specific fields
+
+      debugger;
       if (role === ROLES.AGENCY) {
         const agencyObject = {
-          agencyName: response.agency_name,
-          agencyId: response.agency_id,
-          officeName: response.office_name,
-          officeId: response.office_id,
+          agencyName: response.office_memberships[0].office.name,
+          agencyId: response.office_memberships[0].office.id,
+          officeName: response.office_memberships[0].office.name,
+          officeId: response.office_memberships[0].office.id,
+          officeMembership: response.office_memberships,
         };
         sessionObject = addToSession(agencyObject);
       }
@@ -124,6 +127,7 @@ export const loadUserData = () => (dispatch, getState) => {
       return sessionObject;
     })
     .catch((error) => {
+      debugger;
       // TODO (marcindo) correct error handling for different scenarios
       history.push('/login');
       dispatch(initSession({
