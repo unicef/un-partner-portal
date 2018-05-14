@@ -45,6 +45,7 @@ import partnerApplicationList from './components/agency/partnerApplicationList';
 import mainLayoutIdPortal from './idPortal/mainLayout';
 import mainIdPortal from './idPortal/main';
 import dashboardIdPortal from './idPortal/dashboard/dashboard';
+import usersIdPortal from './idPortal/users';
 
 
 const history = syncHistoryWithStore(browserHistory, store);
@@ -135,7 +136,7 @@ const allRoutes = () => (
         <Route path="/idp" component={mainLayoutIdPortal} >
           <IndexRedirect to="dashboard" />
           <Route path="dashboard" component={dashboardIdPortal} />
-          <Route path="users" component={dashboardIdPortal} />
+          <Route path="users" component={usersIdPortal} />
         </Route>
       </Route>
     </Route>
