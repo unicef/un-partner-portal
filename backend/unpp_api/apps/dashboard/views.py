@@ -9,8 +9,9 @@ from django.http import Http404
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
+from agency.permissions import AgencyPermission
 from common.consts import CFEI_TYPES
-from common.permissions import IsAtLeastMemberReader, IsAgencyMemberUser, IsPartner
+from common.permissions import IsAgencyMemberUser, IsPartner, HasAgencyPermission
 from common.mixins import PartnerIdsMixin
 from common.pagination import MediumPagination, SmallPagination
 from project.serializers import ApplicationFullEOISerializer, SubmittedCNSerializer, PendingOffersSerializer, \
@@ -23,7 +24,12 @@ class DashboardAPIView(RetrieveAPIView):
     """
     Generic Dashboard view for partner or agency user
     """
-    permission_classes = (IsAuthenticated, IsAtLeastMemberReader)
+    permission_classes = (
+        IsAuthenticated,
+        HasAgencyPermission(
+            AgencyPermission.VIEW_DASHBOARD
+        ),
+    )
 
     def get_serializer_class(self):
         if self.request.user.is_agency_user:
