@@ -21,7 +21,7 @@ const SnackbarContainer = (props) => {
           open
           message={error.userMessage}
           autoHideDuration={4e3 * ((errors.length - index))}
-          onRequestClose={() => { clearError(error.id); }}
+          onClose={() => { clearError(error.id); }}
         />))}
     </div>
   );
