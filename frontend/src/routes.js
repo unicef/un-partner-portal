@@ -44,7 +44,7 @@ import partnerApplicationList from './components/agency/partnerApplicationList';
 // ID portal
 import mainLayoutIdPortal from './idPortal/mainLayout';
 import mainIdPortal from './idPortal/main';
-import dashboardIdPortal from './idPortal/dashboard';
+import dashboardIdPortal from './idPortal/dashboard/dashboard';
 
 
 const history = syncHistoryWithStore(browserHistory, store);
