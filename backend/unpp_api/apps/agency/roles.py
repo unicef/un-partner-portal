@@ -54,6 +54,7 @@ ROLE_PERMISSIONS = {
     ]),
     AgencyRole.ADMINISTRATOR: frozenset([
         AgencyPermission.RESET_CSO_USER_PASSWORD,
+        AgencyPermission.MY_AGENCY_LIST_USERS,
         AgencyPermission.MY_AGENCY_ADD_USER,
         AgencyPermission.MY_AGENCY_DEACTIVATE_USER,
         AgencyPermission.MY_AGENCY_RELOCATE_USER,
