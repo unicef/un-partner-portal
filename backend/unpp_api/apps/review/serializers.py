@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 
 from common.serializers import CommonFileSerializer
-from account.serializers import AgencyUserSerializer
+from agency.serializers import AgencyUserSerializer
 from .models import PartnerFlag, PartnerVerification
 
 

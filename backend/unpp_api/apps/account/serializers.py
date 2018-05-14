@@ -8,7 +8,7 @@ from rest_framework.validators import UniqueValidator
 
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
-    MEMBER_ROLES,
+    PARTNER_ROLES,
     MEMBER_STATUSES,
     POLICY_AREA_CHOICES,
 )
@@ -35,14 +35,16 @@ from partner.serializers import (
     PartnerMemberSerializer,
 )
 from partner.validators import PartnerRegistrationValidator
-from .models import User
+from account.models import User
 
 
 class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
 
     date_joined = serializers.DateTimeField(required=False, read_only=True)
     fullname = serializers.CharField(required=False, read_only=True)
-    email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
+    email = serializers.EmailField(validators=[
+        UniqueValidator(queryset=User.objects.all(), lookup='iexact')
+    ])
 
     class Meta:
         model = User
@@ -53,6 +55,7 @@ class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
             'password',
             'date_joined',
         )
+        extra_kwargs = {'password': {'write_only': True}}
 
 
 class PartnerRegistrationSerializer(serializers.Serializer):
@@ -111,12 +114,11 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         partner_member = validated_data['partner_member']
         partner_member['partner_id'] = self.partner.id
         partner_member['user_id'] = self.user.id
-        partner_member['role'] = MEMBER_ROLES.admin
+        partner_member['role'] = PARTNER_ROLES.admin
         partner_member['status'] = MEMBER_STATUSES.active
         self.partner_member = PartnerMember.objects.create(**validated_data['partner_member'])
 
         user_data = RegisterSimpleAccountSerializer(instance=self.user).data
-        user_data.pop('password')
         self.instance_json = {
             "partner": PartnerSerializer(instance=self.partner).data,
             "user": user_data,
@@ -141,46 +143,6 @@ class IDUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', )
-
-
-class AgencyUserSerializer(UserSerializer):
-
-    agency_name = serializers.SerializerMethodField()
-    agency_id = serializers.SerializerMethodField()
-    office_name = serializers.SerializerMethodField()
-    office_id = serializers.SerializerMethodField()
-    role = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = UserSerializer.Meta.fields + ('agency_name',
-                                               'agency_id',
-                                               'role',
-                                               'status',
-                                               'office_name',
-                                               'office_id',)
-
-    def _agency_member(self, obj):
-        return obj.agency_members.get()
-
-    def get_role(self, obj):
-        return self._agency_member(obj).get_role_display()
-
-    def get_status(self, obj):
-        return self._agency_member(obj).get_status_display()
-
-    def get_agency_name(self, obj):
-        return self._agency_member(obj).office.agency.name
-
-    def get_agency_id(self, obj):
-        return self._agency_member(obj).office.agency.id
-
-    def get_office_name(self, obj):
-        return self._agency_member(obj).office.name
-
-    def get_office_id(self, obj):
-        return self._agency_member(obj).office.id
 
 
 class PartnerUserSerializer(UserSerializer):

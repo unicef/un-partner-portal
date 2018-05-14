@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from cached_property import threaded_cached_property
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.db.models.signals import post_save
@@ -46,6 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=512,
         help_text='Your fullname like first and last name, 512 characters.')
 
+    # TODO: add case insensitive unique index
     email = models.EmailField('email address', max_length=254, unique=True)
 
     is_staff = models.BooleanField(
@@ -58,13 +60,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=True,
         help_text=(
             'Designates whether this user should be treated as active. '
-            'Unselect this instead of deleting accounts.'
+            'Deselect this instead of deleting accounts.'
         ),
     )
 
     date_joined = models.DateTimeField(auto_now_add=True)
-
-    __partner_ids = None
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -105,24 +105,27 @@ class User(AbstractBaseUser, PermissionsMixin):
             return Partner.objects.filter(id__in=partner_ids, is_locked=True).exists()
         return False
 
-    def get_agency(self):
-        if self.is_agency_user:
-            return self.agency_members.first().office.agency
+    @threaded_cached_property
+    def agency(self):
+        from agency.models import Agency
+        agencies = Agency.objects.filter(agency_offices__agency_members__user=self)
+        if len(agencies) > 1:
+            raise Exception('User belongs to more than 1 agency!')
+        return agencies[0] if agencies else None
+
+    @threaded_cached_property
+    def partner_ids_i_can_access(self):
+        partner_members = self.partner_members.all()
+        partner_ids = []
+        for partner_member in partner_members:
+            partner_ids.append(partner_member.partner.id)
+            if partner_member.partner.is_hq:
+                partner_ids.extend(partner_member.partner.country_profiles.values_list('id', flat=True))
+
+        return partner_ids
 
     def get_partner_ids_i_can_access(self):
-        # Returns country partners if member of HQ (since no db relation there)
-        if self.__partner_ids is not None:
-            return self.__partner_ids
-
-        partner_members = self.partner_members.all()
-        self.__partner_ids = []
-        for partner_member in partner_members:
-            self.__partner_ids.append(partner_member.partner.id)
-            if partner_member.partner.is_hq:
-                self.__partner_ids.extend(
-                    [p.id for p in partner_member.partner.country_profiles])
-
-        return self.__partner_ids
+        return self.partner_ids_i_can_access
 
 
 class UserProfile(TimeStampedModel):

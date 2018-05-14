@@ -109,7 +109,7 @@ class PartnerSwitch extends Component {
           id="switch-partner"
           anchorEl={this.state.anchorEl}
           open={this.state.open}
-          onRequestClose={this.handleRequestClose}
+          onClose={this.handleRequestClose}
         >
           {this.renderMenuItems(partners, countries)}
         </Menu>

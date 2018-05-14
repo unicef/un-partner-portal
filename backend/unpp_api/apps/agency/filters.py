@@ -7,7 +7,7 @@ from django_filters.widgets import CSVWidget
 
 from account.models import User
 from agency.models import Agency
-from common.consts import MEMBER_ROLES
+from agency.roles import AgencyRole
 
 
 class AgencyUserFilter(django_filters.FilterSet):
@@ -17,7 +17,7 @@ class AgencyUserFilter(django_filters.FilterSet):
     role = MultipleChoiceFilter(
         widget=CSVWidget(),
         name='agency_members__role',
-        choices=MEMBER_ROLES
+        choices=AgencyRole.get_choices()
     )
 
     class Meta:

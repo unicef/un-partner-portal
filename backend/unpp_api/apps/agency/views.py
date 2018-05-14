@@ -5,12 +5,13 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
+from agency.permissions import AgencyPermission
 from common.pagination import MediumPagination
 from account.models import User
-from account.serializers import AgencyUserSerializer
-from agency.serializers import AgencySerializer, AgencyOfficeSerializer
+from agency.serializers import AgencySerializer, AgencyOfficeSerializer, AgencyUserSerializer
 from agency.models import Agency, AgencyOffice
 from agency.filters import AgencyUserFilter, AgencyFilter
+from common.permissions import HasAgencyPermission
 
 
 class AgencyListAPIView(ListAPIView):
@@ -43,10 +44,14 @@ class AgencyMemberListAPIView(ListAPIView):
     """
     serializer_class = AgencyUserSerializer
     pagination_class = MediumPagination
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (
+        IsAuthenticated,
+        HasAgencyPermission(
+            AgencyPermission.MY_AGENCY_LIST_USERS
+        ),
+    )
     filter_backends = (DjangoFilterBackend, )
     filter_class = AgencyUserFilter
 
     def get_queryset(self):
-        return User.objects.filter(
-            agency_members__office__agency_id=self.kwargs['pk'])
+        return User.objects.filter(agency_members__office__agency=self.request.user.agency)

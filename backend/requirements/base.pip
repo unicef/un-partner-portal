@@ -5,7 +5,7 @@ Django==1.11.8
 elastic-apm==2.0.0
 
 Pillow==5.0.0
-python-memcached==1.58
+python-memcached==1.59
 ipython==5.4.1
 
 # REST framework
@@ -22,6 +22,7 @@ requests==2.18.4
 python-dateutil==2.6.1
 django-imagekit==4.0.1
 XlsxWriter==1.0.2
+cached-property==1.4.2
 
 # Testing
 astroid==1.5.2

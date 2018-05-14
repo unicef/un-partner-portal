@@ -34,7 +34,7 @@ class DashboardAPIView(RetrieveAPIView):
 
     def get_object(self):
         if self.request.user.is_agency_user:
-            return self.request.user.get_agency()
+            return self.request.user.agency
         if self.request.user.is_partner_user:
             return self.request.active_partner
         raise Http404('User has no relation to agency or partners')
@@ -91,7 +91,7 @@ class ApplicationsPartnerDecisionsListAPIView(ListAPIView):
     def get_queryset(self):
         date_N_days_ago = datetime.now() - timedelta(days=self.DAYS_AGO)
         user = self.request.user
-        agency = user.get_agency()
+        agency = user.agency
         won_applications = Application.objects.filter(eoi__agency=agency,
                                                       decision_date__gte=date_N_days_ago,
                                                       did_win=True).exclude(is_unsolicited=True)
