@@ -7,7 +7,6 @@ import { browserHistory as history, withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import List from 'material-ui/List';
-import Divider from 'material-ui/Divider'; 
 import MenuLink from '../components/layout/menuLink';
 
 const styleSheet = theme => ({
@@ -21,13 +20,12 @@ const styleSheet = theme => ({
   innerLogo: {
     padding: theme.spacing.unit * 2,
   },
-
 });
 
 function sidebarMenu(props) {
   const { classes, router: { location: { pathname } }, sidebar, onItemClick } = props;
 
-  const links = sidebar.map((item, index) => { 
+  const links = sidebar.map((item, index) => {
     const link = (
       <MenuLink
         active={pathname.includes(item.path)}
@@ -37,7 +35,7 @@ function sidebarMenu(props) {
         onClick={() => onItemClick(index, item.path)}
       />
     );
-    
+
     return link;
   });
 
