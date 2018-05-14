@@ -333,11 +333,11 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
     @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
     def test_create(self):
         eoi_id = EOI.objects.first().id
-        cfile = CommonFile.objects.create()
-        cfile.file_field.save('test.csv', open(filename))
+        common_file = CommonFile.objects.create()
+        common_file.file_field.save('test.csv', open(filename))
         url = reverse('projects:partner-applications', kwargs={"pk": eoi_id})
         payload = {
-            "cn": cfile.id,
+            "cn": common_file.id,
         }
         response = self.client.post(url, data=payload, headers={'Partner-ID': Partner.objects.last()}, format='json')
         self.assertTrue(statuses.is_success(response.status_code))
@@ -345,11 +345,11 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['id'], app_id)
         self.assertEquals(response.data['eoi'], eoi_id)
         self.assertEquals(response.data['submitter']['id'], self.user.id)
-        cfile = CommonFile.objects.create()
-        cfile.file_field.save('test.csv', open(filename))
+        common_file = CommonFile.objects.create()
+        common_file.file_field.save('test.csv', open(filename))
 
         payload = {
-            "cn": cfile.id,
+            "cn": common_file.id,
         }
         response = self.client.post(url, data=payload, format='json')
         self.assertFalse(statuses.is_success(response.status_code))
@@ -547,7 +547,6 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             'note': note,
         }
         response = self.client.post(url, data=payload, format='json')
-        self.assertFalse(statuses.is_success(response.status_code))
         self.assertEquals(response.status_code, statuses.HTTP_403_FORBIDDEN)
 
         # add logged agency member to eoi/application reviewers
@@ -865,7 +864,7 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
         create_response = self.client.post(url, data=payload, format='json')
         self.assertEqual(create_response.status_code, statuses.HTTP_201_CREATED)
 
-    def test_create_optional(self):
+    def test_create_with_optional_location(self):
         payload = self.base_payload.copy()
         url = reverse('projects:open')
 

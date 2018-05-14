@@ -1,11 +1,8 @@
 import logging
 
-from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
 from agency.models import AgencyMember
-from agency.roles import AgencyRole
-from common.utils import rgetattr
 from partner.models import PartnerMember
 from project.models import Application
 from common.consts import PARTNER_MEMBER_POWER, PARTNER_ROLES
@@ -154,30 +151,6 @@ class IsRoleAdministratorOnNotGET(IsAtLeastEditorPartnerOnNotGET):
     MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.admin]
 
 
-class IsApplicationAPIEditor(IsAtLeastMemberReader):
-
-    MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.editor]
-
-    def has_permission(self, request, view):
-        app_id = request.parser_context.get('kwargs', {}).get(view.lookup_field)
-        app = get_object_or_404(Application.objects.select_related('eoi'), id=app_id)
-        am = AgencyMember.objects.filter(user=request.user).first()
-        if am is not None:
-            if app.agency != am.office.agency:
-                return False
-            if request.method == 'GET':
-                return True  # all
-            else:
-                return self.pass_at_least(am.role)
-
-        else:
-            if app.partner.id in request.user.get_partner_ids_i_can_access():
-                if request.method == 'GET':
-                    return True  # all
-                else:
-                    return self.pass_at_least(request.user.member.role)
-
-
 class IsConvertUnsolicitedEditor(IsAtLeastMemberReader):
 
     MIN_POWER = PARTNER_MEMBER_POWER[PARTNER_ROLES.editor]
@@ -272,47 +245,17 @@ class CustomizablePermission(BasePermission):
         return self
 
 
-class HasAgencyPermission(CustomizablePermission):
+class HasUNPPPermission(CustomizablePermission):
 
-    def __init__(self, *permissions):
-        self.permissions = permissions
+    def __init__(self, agency_permissions=None, partner_permissions=None):
+        self.agency_permissions = agency_permissions or []
+        self.partner_permissions = partner_permissions or []
 
     def has_permission(self, request, view):
-        return request.office_member and set(self.permissions).issubset(request.office_member.user_permissions)
-
-
-class IsRelatedToCFEI(CustomizablePermission):
-    """
-    By default check whether request.user is creator
-    """
-
-    def __init__(self, cfei_field=None, **role_to_field_mappings):
-        self.cfei_field = cfei_field
-        self.role_to_field_mappings = role_to_field_mappings
-
-    def has_object_permission(self, request, view, obj):
-        if not self.cfei_field:
-            cfei = obj
-        else:
-            cfei = rgetattr(obj, self.cfei_field)
         if request.office_member:
-            if not self.role_to_field_mappings:
-                return cfei.created_by == request.user
-            else:
-                fields_to_check = self.role_to_field_mappings.get(
-                    AgencyRole[request.office_member.role], ['created_by']
-                )
-                for field_name in fields_to_check:
-                    field = getattr(cfei, field_name, None)
-                    if not field:
-                        raise ImproperlyConfigured(
-                            f'Field {field_name} not found on CFEI model.'
-                        )
-                    if hasattr(field, 'objects'):
-                        if field.objects.filter(pk=request.user.pk).exists():
-                            return True
-                    else:
-                        if field == request.user:
-                            return True
+            return set(self.agency_permissions).issubset(request.office_member.user_permissions)
+        elif request.active_partner:
+            # TODO
+            return True
 
         return False

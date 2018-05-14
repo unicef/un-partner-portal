@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from agency.permissions import AgencyPermission
 from common.consts import CFEI_TYPES
-from common.permissions import IsAgencyMemberUser, IsPartner, HasAgencyPermission
+from common.permissions import IsAgencyMemberUser, IsPartner, HasUNPPPermission
 from common.mixins import PartnerIdsMixin
 from common.pagination import MediumPagination, SmallPagination
 from project.serializers import ApplicationFullEOISerializer, SubmittedCNSerializer, PendingOffersSerializer, \
@@ -26,8 +26,10 @@ class DashboardAPIView(RetrieveAPIView):
     """
     permission_classes = (
         IsAuthenticated,
-        HasAgencyPermission(
-            AgencyPermission.VIEW_DASHBOARD
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.VIEW_DASHBOARD,
+            ]
         ),
     )
 

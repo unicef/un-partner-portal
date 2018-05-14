@@ -28,16 +28,13 @@ from common.pagination import SmallPagination
 from common.permissions import (
     IsAgencyMemberUser,
     IsAtLeastMemberEditor,
-    IsAtLeastAgencyMemberEditor,
-    IsPartnerMember,
-    IsEOIReviewerAssessments,
-    IsApplicationAPIEditor,
     IsConvertUnsolicitedEditor,
     IsApplicationFeedbackPerm,
     IsPartnerEOIApplicationCreate,
     IsPartnerEOIApplicationDestroy,
     IsPartner,
-    HasAgencyPermission, IsRelatedToCFEI)
+    HasUNPPPermission,
+)
 from common.mixins import PartnerIdsMixin, FilterByCFEIRoleMixin
 from notification.consts import NotificationType
 from notification.helpers import (
@@ -102,7 +99,12 @@ class OpenProjectAPIView(BaseProjectAPIView):
     """
     Endpoint for getting OPEN Call of Expression of Interest.
     """
-    permission_classes = (IsAuthenticated, IsPartnerMember)
+    permission_classes = (
+        IsAuthenticated,
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
 
     def get_queryset(self):
         queryset = self.queryset.filter(display_type=CFEI_TYPES.open)
@@ -182,7 +184,12 @@ class DirectProjectAPIView(BaseProjectAPIView):
     Endpoint for getting DIRECT Call of Expression of Interest.
     """
 
-    permission_classes = (IsAuthenticated, IsPartnerMember)
+    permission_classes = (
+        IsAuthenticated,
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = DirectProjectSerializer
 
     def get_queryset(self):
@@ -338,8 +345,8 @@ class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
     """
     permission_classes = (
         IsAuthenticated,
-        HasAgencyPermission(
-
+        HasUNPPPermission(
+            #  TODO: Permissions
         ),
     )
     queryset = Application.objects.all()
@@ -359,8 +366,8 @@ class AgencyEOIApplicationDestroyAPIView(FilterByCFEIRoleMixin, DestroyAPIView):
 
     permission_classes = (
         IsAuthenticated,
-        HasAgencyPermission(
-
+        HasUNPPPermission(
+            #  TODO: Permissions
         ),
     )
     queryset = Application.objects.all()
@@ -370,7 +377,12 @@ class AgencyEOIApplicationDestroyAPIView(FilterByCFEIRoleMixin, DestroyAPIView):
 
 
 class ApplicationAPIView(RetrieveUpdateAPIView):
-    permission_classes = (IsAuthenticated, IsApplicationAPIEditor)
+    permission_classes = (
+        IsAuthenticated,
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     queryset = Application.objects.select_related("partner", "eoi", "cn").prefetch_related("eoi__reviewers").all()
     serializer_class = ApplicationFullSerializer
 
@@ -406,12 +418,8 @@ class EOIApplicationsListAPIView(ListAPIView):
 
 class ReviewersStatusAPIView(ListAPIView):
     permission_classes = (
-        HasAgencyPermission(
+        HasUNPPPermission(
             AgencyPermission.CFEI_VIEW_APPLICATIONS,
-        ),
-        IsRelatedToCFEI(
-            cfei_field='eoi',
-
         ),
     )
     serializer_class = ReviewersApplicationSerializer
@@ -429,7 +437,12 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     """
     Only reviewers, EOI creator & focal points are allowed to create/modify assessments.
     """
-    permission_classes = (IsAuthenticated, IsAtLeastMemberEditor, IsEOIReviewerAssessments)
+    permission_classes = (
+        IsAuthenticated,
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     queryset = Assessment.objects.all()
     serializer_class = ReviewerAssessmentsSerializer
     lookup_field = 'reviewer_id'
@@ -441,12 +454,12 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         request.data['reviewer'] = reviewer_id
         request.data['application'] = application_id
 
-    def check_complex_permissions(self, request):
+    def check_complex_permissions(self):
         # only reviewer can create assessment
-        application_id = request.parser_context.get('kwargs', {}).get('application_id')
+        application_id = self.request.parser_context.get('kwargs', {}).get('application_id')
         app = Application.objects.select_related('eoi').get(id=application_id)
         eoi = app.eoi
-        if eoi.reviewers.filter(id=request.user.id).exists():
+        if eoi.reviewers.filter(id=self.request.user.id).exists():
             return
         raise PermissionDenied
 
@@ -471,6 +484,7 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
             self.lookup_url_kwarg: self.kwargs.get(self.lookup_url_kwarg),
         })
         self.check_object_permissions(self.request, obj)
+        self.check_complex_permissions()
         return obj
 
     def update(self, request, application_id, *args, **kwargs):
@@ -559,7 +573,12 @@ class ReviewSummaryAPIView(RetrieveUpdateAPIView):
     """
     Endpoint for review summary - comment & attachement
     """
-    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor)
+    permission_classes = (
+        IsAuthenticated,
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = ReviewSummarySerializer
     queryset = EOI.objects.all()
 
@@ -586,7 +605,12 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
     NOTIFICATION_MESSAGE_SENT = "Notification message sent successfully"
     NOTIFICATION_MESSAGE_WAIT = "Notification message sent recently. Need to wait 24 hours."
 
-    permission_classes = (IsAgencyMemberUser, IsAtLeastMemberEditor)
+    permission_classes = (
+        IsAgencyMemberUser,
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
 
     def post(self, request, *args, **kwargs):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])

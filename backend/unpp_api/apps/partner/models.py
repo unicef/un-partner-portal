@@ -956,7 +956,7 @@ class PartnerReview(TimeStampedModel):
     display_type = models.CharField(max_length=3, choices=PARTNER_REVIEW_TYPES)
     eoi = models.ForeignKey('project.EOI', related_name="partner_reviews")
     performance_pm = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
-    peformance_financial = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
+    performance_financial = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
     performance_com_eng = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
     ethical_concerns = models.NullBooleanField(verbose_name='Ethical concerns?')
     does_recommend = models.NullBooleanField(verbose_name='Does recommend?')
