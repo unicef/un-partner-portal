@@ -57,12 +57,16 @@ export function renderMultipleInput(inputProps) {
         {label}
       </FieldLabelWithTooltipIcon>
       <TextField
-        inputProps={{
-          inputRef: ref,
-          ...other,
-        }}
+        // inputProps={{
+        //   inputRef: ref,
+        //   ...other,
+        // }}
         InputProps={{
           inputComponent: MultipleSelectInput,
+          inputProps: {
+            inputRef: ref,
+            ...other,
+          },
         }}
       />
     </FormControl>
