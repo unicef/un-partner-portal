@@ -92,7 +92,6 @@ export const loadUserData = () => (dispatch, getState) => {
       const addToSession = R.mergeDeepRight(sessionObject);
       // agency specific fields
 
-      debugger;
       if (role === ROLES.AGENCY) {
         const agencyObject = {
           agencyName: response.office_memberships[0].office.name,
@@ -127,7 +126,6 @@ export const loadUserData = () => (dispatch, getState) => {
       return sessionObject;
     })
     .catch((error) => {
-      debugger;
       // TODO (marcindo) correct error handling for different scenarios
       history.push('/login');
       dispatch(initSession({

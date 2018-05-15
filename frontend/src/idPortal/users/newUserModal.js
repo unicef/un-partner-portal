@@ -19,6 +19,11 @@ class NewUserModal extends Component {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleDialogSubmit = this.handleDialogSubmit.bind(this);
+  }
+
+  handleDialogSubmit() {
+    this.props.submit();
   }
 
   handleSubmit(values) {
