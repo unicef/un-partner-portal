@@ -1,5 +1,6 @@
 from datetime import date
 
+from cached_property import threaded_cached_property
 from django.db import transaction
 
 from rest_framework import serializers
@@ -149,20 +150,35 @@ class PartnerUserSerializer(UserSerializer):
 
     partners = serializers.SerializerMethodField()
     role = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField()
 
-    def _partner_member(self, obj):
-        return obj.partner_members.get()
+    def _partner_member(self, user):
+        request = self.context.get('request')
+        if request and request.partner_member:
+            return request.partner_member
 
-    def get_role(self, obj):
-        return self._partner_member(obj).get_role_display()
+        return user.partner_members.get()
+
+    def get_role(self, user):
+        return self._partner_member(user).get_role_display()
 
     class Meta:
         model = User
-        fields = UserSerializer.Meta.fields + ('partners', 'role', 'is_account_locked')
+        fields = UserSerializer.Meta.fields + (
+            'partners',
+            'role',
+            'is_account_locked',
+            'permissions',
+        )
 
     def get_partners(self, obj):
         partner_ids = obj.get_partner_ids_i_can_access()
         return PartnerSerializer(Partner.objects.filter(id__in=partner_ids), many=True).data
+
+    def get_permissions(self, user):
+        return [
+            p.name for p in self._partner_member(user).user_permissions
+        ]
 
 
 class UserFullnameSerializer(serializers.ModelSerializer):

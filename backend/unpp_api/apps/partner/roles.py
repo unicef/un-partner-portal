@@ -25,9 +25,9 @@ ROLE_LABELS = {
 }
 
 
-# HQ Roels have different permission scopes than ordinary roles
+# HQ Roles have different permission scopes than ordinary roles
 PARTNER_ROLE_PERMISSIONS = {
-    True: {  # HQ
+    True: {  # INGO HQ
         PartnerRole.ADMIN: frozenset([
             PartnerPermission.REGISTER,
             PartnerPermission.VIEW_INGO_DASHBOARD,
@@ -41,8 +41,20 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.VIEW_DASHBOARD,
         ]),
     },
-    False: {
+    False: {  # INGO Country Profile
         PartnerRole.ADMIN: frozenset([
+            PartnerPermission.VIEW_DASHBOARD,
+        ]),
+        PartnerRole.EDITOR: frozenset([
+            PartnerPermission.VIEW_DASHBOARD,
+        ]),
+        PartnerRole.READER: frozenset([
+            PartnerPermission.VIEW_DASHBOARD,
+        ]),
+    },
+    None: {  # NGO
+        PartnerRole.ADMIN: frozenset([
+            PartnerPermission.REGISTER,
             PartnerPermission.VIEW_DASHBOARD,
         ]),
         PartnerRole.EDITOR: frozenset([

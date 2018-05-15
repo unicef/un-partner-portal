@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.functional import SimpleLazyObject
 from django.conf import settings
 
-from partner.models import Partner
+from partner.models import PartnerMember
 
 
 def get_partner_object(request):
@@ -10,22 +10,14 @@ def get_partner_object(request):
     partner = None
     partner_member = None
 
-    if hasattr(request.user, 'partner_members'):
-        if partner_id:
-            try:
-                partner = request.user.partner_members.get(id=partner_id)
-            except Partner.DoesNotExist:
-                pass
-
-        # for easier development process
+    if request.user.is_authenticated() and partner_id:
+        partner_member = PartnerMember.objects.filter(user=request.user, partner_id=partner_id).first()
+        if partner_member:
+            partner = partner_member.partner
         # should be removed when we finish whole logic for http headers (like: HTTP_ACTIVE_PARTNER)
-        # TODO
-        if settings.IS_DEV:
-            member = request.user.partner_members.first()
-            partner = member and member.partner
-
-        if partner:
-            partner_member = partner.partner_members.filter(user=request.user).first()
+        elif settings.IS_DEV:
+            partner_member = request.user.partner_members.first()
+            partner = partner_member and partner_member.partner
 
     return partner, partner_member
 
