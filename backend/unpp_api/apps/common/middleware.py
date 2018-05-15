@@ -7,18 +7,20 @@ from partner.models import Partner
 
 def get_partner_object(request):
     partner_id = request.META.get('HTTP_PARTNER_ID', None)
+    partner = None
 
     if partner_id:
         try:
-            return Partner.objects.get(id=partner_id)
+            partner = Partner.objects.get(id=partner_id)
         except Partner.DoesNotExist:
-            return None
+            pass
+
     # for easier development process
     # should be removed when we finish whole logic for http headers (like: HTTP_ACTIVE_PARTNER)
     # TODO
     if settings.IS_DEV:
-        return Partner.objects.first()
-    return None
+        partner = Partner.objects.first()
+    return partner, None
 
 
 class ActivePartnerMiddleware(object):
@@ -26,7 +28,7 @@ class ActivePartnerMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        request.active_partner = SimpleLazyObject(lambda: get_partner_object(request))
+        request.active_partner, request.partner_member = SimpleLazyObject(lambda: get_partner_object(request))
         response = self.get_response(request)
         return response
 

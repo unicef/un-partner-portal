@@ -12,7 +12,6 @@ from agency.models import (
 from agency.roles import AgencyRole
 from common.consts import (
     CFEI_TYPES,
-    PARTNER_ROLES,
     PARTNER_TYPES,
     FLAG_TYPES,
 )
@@ -59,6 +58,7 @@ from partner.models import (
     PartnerMember,
     PartnerReview,
 )
+from partner.roles import PartnerRole
 from project.models import (
     EOI,
     Pin,
@@ -190,9 +190,9 @@ def generate_fake_data(quantity=50):
         else:
             PartnerFlagFactory(partner=partner, flag_type=FLAG_TYPES.red)
 
-        PartnerMemberFactory(partner=partner, role=PARTNER_ROLES.admin, title='Head')
-        PartnerMemberFactory(partner=partner, role=PARTNER_ROLES.editor, title='PM')
-        PartnerMemberFactory(partner=partner, role=PARTNER_ROLES.reader, title='Assistant')
+        PartnerMemberFactory(partner=partner, role=PartnerRole.ADMIN.name, title='Head')
+        PartnerMemberFactory(partner=partner, role=PartnerRole.EDITOR.name, title='PM')
+        PartnerMemberFactory(partner=partner, role=PartnerRole.READER.name, title='Assistant')
     print("Other Relation to Partner objects created".format(quantity))
 
     EOIFactory.create_batch(quantity)

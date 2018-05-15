@@ -38,7 +38,7 @@ ROLE_LABELS = {
 }
 
 
-ROLE_PERMISSIONS = {
+AGENCY_ROLE_PERMISSIONS = {
     AgencyRole.HQ_EDITOR: frozenset([
         AgencyPermission.RESET_CSO_USER_PASSWORD,
         AgencyPermission.MY_AGENCY_LIST_USERS,

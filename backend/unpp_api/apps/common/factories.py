@@ -31,12 +31,12 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
     PartnerCapacityAssessment)
+from partner.roles import PartnerRole
 from project.models import EOI, Application, Assessment
 from review.models import PartnerFlag, PartnerVerification
 from common.consts import (
     PARTNER_TYPES,
     MEMBER_STATUSES,
-    PARTNER_ROLES,
     CONCERN_CHOICES,
     YEARS_OF_EXP_CHOICES,
     PARTNER_DONORS_CHOICES,
@@ -500,7 +500,7 @@ class PartnerMemberFactory(factory.django.DjangoModelFactory):
     partner = factory.LazyFunction(get_partner)
     title = factory.LazyFunction(get_job_title)
     status = MEMBER_STATUSES.active
-    role = PARTNER_ROLES.admin
+    role = PartnerRole.ADMIN.name
 
     class Meta:
         model = PartnerMember

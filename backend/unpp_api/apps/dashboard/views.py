@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from agency.permissions import AgencyPermission
 from common.consts import CFEI_TYPES
-from common.permissions import IsAgencyMemberUser, IsPartner, HasUNPPPermission
+from common.permissions import HasUNPPPermission
 from common.mixins import PartnerIdsMixin
 from common.pagination import MediumPagination, SmallPagination
 from project.serializers import ApplicationFullEOISerializer, SubmittedCNSerializer, PendingOffersSerializer, \
@@ -54,7 +54,11 @@ class ApplicationsToScoreListAPIView(ListAPIView):
     """
 
     serializer_class = ApplicationFullEOISerializer
-    permission_classes = (IsAgencyMemberUser, )
+    permission_classes = (
+        HasUNPPPermission(
+            # TODO: Permissions
+        ),
+    )
     pagination_class = MediumPagination
 
     def get_queryset(self):
@@ -72,7 +76,11 @@ class CurrentUsersActiveProjectsAPIView(ListAPIView):
 
     queryset = EOI.objects.select_related("agency").prefetch_related("specializations").distinct()
     serializer_class = AgencyProjectSerializer
-    permission_classes = (IsAgencyMemberUser, )
+    permission_classes = (
+        HasUNPPPermission(
+            # TODO: Permissions
+        ),
+    )
     pagination_class = SmallPagination
 
     def get_queryset(self):
@@ -93,7 +101,11 @@ class ApplicationsPartnerDecisionsListAPIView(ListAPIView):
 
     DAYS_AGO = 5
     serializer_class = ApplicationFullEOISerializer
-    permission_classes = (IsAgencyMemberUser, )
+    permission_classes = (
+        HasUNPPPermission(
+            # TODO: Permissions
+        ),
+    )
     pagination_class = MediumPagination
 
     def get_queryset(self):
@@ -112,7 +124,11 @@ class SubmittedCNListAPIView(PartnerIdsMixin, ListAPIView):
     Returns list of partner submitted concept notes
     """
     serializer_class = SubmittedCNSerializer
-    permission_classes = (IsAuthenticated, IsPartner)
+    permission_classes = (
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     pagination_class = SmallPagination
 
     def get_queryset(self):
@@ -124,7 +140,11 @@ class PendingOffersListAPIView(PartnerIdsMixin, ListAPIView):
     Returns list of pending offers for partner
     """
     serializer_class = PendingOffersSerializer
-    permission_classes = (IsAuthenticated, IsPartner)
+    permission_classes = (
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     pagination_class = SmallPagination
 
     def get_queryset(self):

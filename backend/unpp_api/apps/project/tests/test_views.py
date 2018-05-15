@@ -35,7 +35,6 @@ from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
-    PARTNER_ROLES,
     APPLICATION_STATUSES,
     COMPLETED_REASON,
     CFEI_TYPES,
@@ -520,7 +519,6 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
     user_type = 'agency'
-    user_role = PARTNER_ROLES.editor
 
     initial_factories = [
         PartnerSimpleFactory,

@@ -35,18 +35,6 @@ APPLICATION_STATUSES = Choices(
     ('Rej', 'rejected', 'Rejected'),
 )
 
-PARTNER_ROLES = Choices(
-    ('Adm', 'admin', 'Administrator'),
-    ('Edi', 'editor', 'Editor'),
-    ('Rea', 'reader', 'Reader'),
-)
-
-PARTNER_MEMBER_POWER = {
-    PARTNER_ROLES.admin: 0,
-    PARTNER_ROLES.editor: -1,
-    PARTNER_ROLES.reader: -2,
-}
-
 MEMBER_STATUSES = Choices(
     ('Act', 'active', 'Active'),
     ('Dea', 'deactivated', 'Deactivated'),
