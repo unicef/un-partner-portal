@@ -10,9 +10,10 @@ import PaginatedList from '../../components/common/list/paginatedList';
 import TableWithStateInUrl from '../../components/common/hoc/tableWithStateInUrl';
 import { loadMembersList } from '../../reducers/agencyMembersList';
 import { isQueryChanged } from '../../helpers/apiHelper';
-import NewUserModalButton from './../users/newUserModalButton';
+import NewUserModalButton from './newUserModalButton';
+import UserDetailsExpand from './userDetailsExpand';
 
-class UserManagementContainer extends Component {
+class UsersContainer extends Component {
   componentWillMount() {
     const { query, agencyId } = this.props;
     this.props.loadMembers(agencyId, query);
@@ -52,6 +53,7 @@ class UserManagementContainer extends Component {
                 columns={columns}
                 itemsCount={totalCount}
                 loading={loading}
+                expandedCell={row => <UserDetailsExpand partner={row} />}
               />
             </Grid>
           </Grid>
@@ -61,7 +63,7 @@ class UserManagementContainer extends Component {
   }
 }
 
-UserManagementContainer.propTypes = {
+UsersContainer.propTypes = {
   members: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   totalCount: PropTypes.number.isRequired,
@@ -86,5 +88,5 @@ const mapDispatch = dispatch => ({
   loadMembers: (agencyId, params) => dispatch(loadMembersList(agencyId, params)),
 });
 
-const connectedUserManagementContainer = connect(mapStateToProps, mapDispatch)(UserManagementContainer);
-export default withRouter(connectedUserManagementContainer);
+const connectedUsersContainer = connect(mapStateToProps, mapDispatch)(UsersContainer);
+export default withRouter(connectedUsersContainer);
