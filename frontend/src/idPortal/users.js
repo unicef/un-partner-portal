@@ -10,6 +10,7 @@ import PaginatedList from '../components/common/list/paginatedList';
 import TableWithStateInUrl from '../components/common/hoc/tableWithStateInUrl';
 import { loadMembersList } from '../reducers/agencyMembersList';
 import { isQueryChanged } from '../helpers/apiHelper';
+import NewUserModalButton from './users/newUserModalButton';
 
 class UserManagementContainer extends Component {
   componentWillMount() {
@@ -34,7 +35,10 @@ class UserManagementContainer extends Component {
     return (
       <React.Fragment>
         <Grid item>
-          <HeaderNavigation title={agencyName} />
+          <HeaderNavigation
+            title="Users"
+            header={<NewUserModalButton />}
+          />
         </Grid>
         <MainContentWrapper>
           <Grid container direction="column" spacing={24}>
