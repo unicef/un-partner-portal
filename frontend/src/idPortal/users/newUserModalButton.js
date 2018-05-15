@@ -14,7 +14,7 @@ const messages = {
 const NewUserModalButton = (props) => {
   const { handleDialogClose, handleDialogOpen, dialogOpen } = props;
   return (
-    <Grid item>
+    <React.Fragment>
       <Button
         raised
         color="accent"
@@ -23,7 +23,7 @@ const NewUserModalButton = (props) => {
         {messages.user}
       </Button>
       <NewUserModal open={dialogOpen} onDialogClose={handleDialogClose} />
-    </Grid>
+    </React.Fragment>
 
   );
 };

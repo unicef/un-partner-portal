@@ -7,15 +7,16 @@ import { withStyles } from 'material-ui/styles';
 import { browserHistory as history, withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
-import TextFieldForm from '../components/forms/textFieldForm';
-import CountryField from '../components/forms/fields/projectFields/locationField/countryField';
-import resetChanges from '../components/eois/filters/eoiHelper';
+import TextFieldForm from '../../components/forms/textFieldForm';
+import CountryField from '../../components/forms/fields/projectFields/locationField/countryField';
+import resetChanges from '../../components/eois/filters/eoiHelper';
 
 const messages = {
   choose: 'Choose',
   labels: {
     search: 'Search',
     office: 'Office',
+    role: 'Role',
   },
   clear: 'clear',
 };
@@ -31,7 +32,7 @@ const styleSheet = theme => ({
   },
 });
 
-class AgencyMembersFilter extends Component {
+class UsersFilter extends Component {
   constructor(props) {
     super(props);
 
@@ -103,8 +104,8 @@ class AgencyMembersFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <TextFieldForm
-                label="Role"
-                placeholder={messages.labels.office}
+                label={messages.labels.role}
+                placeholder={messages.labels.role}
                 fieldName="user_role"
                 optional
               />
@@ -130,7 +131,7 @@ class AgencyMembersFilter extends Component {
   }
 }
 
-AgencyMembersFilter.propTypes = {
+UsersFilter.propTypes = {
   /**
    *  reset function
    */
@@ -140,12 +141,12 @@ AgencyMembersFilter.propTypes = {
   query: PropTypes.object,
 };
 
-const formAgencyMembersFilter = reduxForm({
+const formUsersFilter = reduxForm({
   form: 'tableFilter',
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
   enableReinitialize: true,
-})(AgencyMembersFilter);
+})(UsersFilter);
 
 const mapStateToProps = (state, ownProps) => {
   const { query: { name } = {} } = ownProps.location;
@@ -160,7 +161,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const connected = connect(mapStateToProps, null)(formAgencyMembersFilter);
+const connected = connect(mapStateToProps, null)(formUsersFilter);
 const withRouterFilter = withRouter(connected);
 
-export default (withStyles(styleSheet, { name: 'AgencyMembersFilter' })(withRouterFilter));
+export default (withStyles(styleSheet, { name: 'UsersFilter' })(withRouterFilter));
