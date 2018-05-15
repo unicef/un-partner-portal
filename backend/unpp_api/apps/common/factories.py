@@ -8,6 +8,7 @@ import factory
 from factory import fuzzy
 from account.models import User, UserProfile
 from agency.models import OtherAgency, Agency, AgencyOffice, AgencyMember
+from agency.roles import AgencyRole
 from common.models import Specialization, Point, AdminLevel1, CommonFile
 from partner.models import (
     Partner,
@@ -534,7 +535,7 @@ class AgencyOfficeFactory(factory.django.DjangoModelFactory):
 class AgencyMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     office = factory.LazyFunction(get_random_agency_office)
-    role = PARTNER_ROLES.editor
+    role = AgencyRole.ADMINISTRATOR.name
     status = MEMBER_STATUSES.active
 
     class Meta:

@@ -96,6 +96,7 @@ ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DRAFT_MANAGE,
         AgencyPermission.CFEI_DRAFT_MANAGE_FOCAL_POINT,
         AgencyPermission.CFEI_DRAFT_INVITE_CSO,
+        AgencyPermission.CFEI_DIRECT_INDICATE_CSO,
     ]),
     AgencyRole.EDITOR_BASIC_PAM: frozenset([
         AgencyPermission.VIEW_DASHBOARD,

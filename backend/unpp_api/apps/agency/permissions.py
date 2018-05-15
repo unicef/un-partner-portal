@@ -54,3 +54,16 @@ class AgencyPermission(AutoNameEnum):
     CFEI_EDIT_ALL_ASSESSMENTS = auto()  # If creator / focal point
     CFEI_ADD_REVIEW_SUMMARY = auto()  # If creator / focal point
     CFEI_RECOMMEND_PARTNER_FOR_SELECTION = auto()  # If creator / focal point
+
+    # Direct Selection & Retention
+    CFEI_DIRECT_VIEW_OVERVIEW_WITH_JUSTIFICATION = auto()
+    CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS = auto()
+    CFEI_DIRECT_INDICATE_CSO = auto()
+    CFEI_DIRECT_SAVE_DRAFT = auto()
+    CFEI_DIRECT_EDIT_DRAFT = auto()
+    CFEI_DIRECT_DELETE_DRAFT = auto()
+    CFEI_DIRECT_SEND_DRAFT_TO_FOCAL_POINT = auto()
+    CFEI_DIRECT_EDIT_SENT = auto()
+    CFEI_DIRECT_PUBLISH = auto()
+    CFEI_DIRECT_EDIT_PUBLISHED = auto()
+    CFEI_DIRECT_CANCEL = auto()

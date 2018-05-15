@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
@@ -178,6 +179,12 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
         model = Application
         fields = '__all__'
         read_only_fields = ('eoi',)
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Application.objects.all(),
+                fields=('eoi', 'partner')
+            )
+        ]
 
     prevent_keys = ["cn"]
 
@@ -204,7 +211,7 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
                 raise serializers.ValidationError("Since assessment has begun, application can't be rejected.")
 
             if app.eoi.is_completed:
-                raise serializers.ValidationError("Since CEOI is completed, modification is forbidden.")
+                raise serializers.ValidationError("Since CFEI is completed, modification is forbidden.")
 
             if data.get("did_win") and not app.partner.is_verified:
                 raise serializers.ValidationError(
