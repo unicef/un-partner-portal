@@ -7,8 +7,8 @@ const messages = {
 const initialState = {
   columns: [
     { name: 'name', title: 'Name' },
-    { name: 'office_name', title: 'Office' },
-    { name: 'role', title: 'Role' },
+    // { name: 'office_name', title: 'Office' },
+    // { name: 'role', title: 'Role' },
     { name: 'email', title: 'E-mail' },
     { name: 'status', title: 'Status' },
   ],
