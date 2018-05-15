@@ -39,7 +39,7 @@ from common.consts import (
     BUDGET_CHOICES,
     FLAG_TYPES,
 )
-from partner.roles import PartnerRole
+from partner.roles import PartnerRole, PARTNER_ROLE_PERMISSIONS
 
 logger = logging.getLogger(__name__)
 
@@ -948,6 +948,14 @@ class PartnerMember(TimeStampedModel):
 
     def __str__(self):
         return "PartnerMember: {} <pk:{}>".format(self.title, self.id)
+
+    def get_role_display(self):
+        prefix = 'HQ' if self.partner.is_hq else ''
+        return prefix + PartnerRole.get_choices().get(self.role, self.role)
+
+    @property
+    def user_permissions(self):
+        return PARTNER_ROLE_PERMISSIONS[self.partner.is_hq][PartnerRole[self.role]]
 
 
 class PartnerReview(TimeStampedModel):

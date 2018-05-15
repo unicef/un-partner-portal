@@ -9,12 +9,6 @@ class PartnerRole(AutoNameEnum):
     """
     Editing names here WILL break roles saved in DB
     """
-    # HQ
-    HQ_ADMIN = auto()
-    HQ_EDITOR = auto()
-    HQ_READER = auto()
-
-    # Country profile
     ADMIN = auto()
     EDITOR = auto()
     READER = auto()
@@ -25,35 +19,37 @@ class PartnerRole(AutoNameEnum):
 
 
 ROLE_LABELS = {
-    PartnerRole.HQ_ADMIN: 'HQ Administrator',
-    PartnerRole.HQ_EDITOR: 'HQ Editor',
-    PartnerRole.HQ_READER: 'HQ Reader',
     PartnerRole.ADMIN: 'Administrator',
     PartnerRole.EDITOR: 'Editor',
     PartnerRole.READER: 'Reader',
 }
 
 
+# HQ Roels have different permission scopes than ordinary roles
 PARTNER_ROLE_PERMISSIONS = {
-    PartnerRole.HQ_ADMIN: frozenset([
-        PartnerPermission.REGISTER,
-        PartnerPermission.VIEW_INGO_DASHBOARD,
-        PartnerPermission.VIEW_DASHBOARD,
-    ]),
-    PartnerRole.HQ_EDITOR: frozenset([
-        PartnerPermission.VIEW_INGO_DASHBOARD,
-        PartnerPermission.VIEW_DASHBOARD,
-    ]),
-    PartnerRole.HQ_READER: frozenset([
-        PartnerPermission.VIEW_DASHBOARD,
-    ]),
-    PartnerRole.ADMIN: frozenset([
-        PartnerPermission.VIEW_DASHBOARD,
-    ]),
-    PartnerRole.EDITOR: frozenset([
-        PartnerPermission.VIEW_DASHBOARD,
-    ]),
-    PartnerRole.READER: frozenset([
-        PartnerPermission.VIEW_DASHBOARD,
-    ]),
+    True: {  # HQ
+        PartnerRole.ADMIN: frozenset([
+            PartnerPermission.REGISTER,
+            PartnerPermission.VIEW_INGO_DASHBOARD,
+            PartnerPermission.VIEW_DASHBOARD,
+        ]),
+        PartnerRole.EDITOR: frozenset([
+            PartnerPermission.VIEW_INGO_DASHBOARD,
+            PartnerPermission.VIEW_DASHBOARD,
+        ]),
+        PartnerRole.READER: frozenset([
+            PartnerPermission.VIEW_DASHBOARD,
+        ]),
+    },
+    False: {
+        PartnerRole.ADMIN: frozenset([
+            PartnerPermission.VIEW_DASHBOARD,
+        ]),
+        PartnerRole.EDITOR: frozenset([
+            PartnerPermission.VIEW_DASHBOARD,
+        ]),
+        PartnerRole.READER: frozenset([
+            PartnerPermission.VIEW_DASHBOARD,
+        ]),
+    }
 }
