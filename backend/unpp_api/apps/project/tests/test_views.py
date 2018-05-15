@@ -378,12 +378,11 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
     quantity = 1
-    user_type = 'agency'
-    agency_role = AgencyRole.EDITOR_ADVANCED
+    user_type = BaseAPITestCase.USER_PARTNER
 
     def setUp(self):
         super(TestAgencyApplicationsAPITestCase, self).setUp()
-        AgencyOfficeFactory.create_batch(self.quantity)
+        AgencyMemberFactory.create_batch(self.quantity)
         PartnerSimpleFactory.create_batch(self.quantity)
         # status='NoN' - will not create applications
         EOIFactory.create_batch(self.quantity, display_type='NoN')
@@ -406,11 +405,11 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
         # FOr whatever reason this fails on CircleCI, passes locally...
         # agent member should delete only direct application
-        # eoi.display_type = CFEI_TYPES.direct
-        # eoi.save()
-        # url = reverse('projects:agency-applications-delete', kwargs={"pk": app_id, "eoi_id": eoi.id})
-        # response = self.client.delete(url, format='json')
-        # self.assertTrue(statuses.is_success(response.status_code), response.data)
+        eoi.display_type = CFEI_TYPES.direct
+        eoi.save()
+        url = reverse('projects:agency-applications-delete', kwargs={"pk": app_id, "eoi_id": eoi.id})
+        response = self.client.delete(url, format='json')
+        self.assertTrue(statuses.is_success(response.status_code), response.data)
 
 
 class TestApplicationsAPITestCase(BaseAPITestCase):

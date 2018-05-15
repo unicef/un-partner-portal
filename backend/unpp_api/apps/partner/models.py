@@ -950,8 +950,10 @@ class PartnerMember(TimeStampedModel):
         return "PartnerMember: {} <pk:{}>".format(self.title, self.id)
 
     def get_role_display(self):
-        prefix = 'HQ' if self.partner.is_hq else ''
-        return prefix + PartnerRole.get_choices().get(self.role, self.role)
+        # This is one of the "magical" django methods and cannot be called directly using super call
+        field_object = self._meta.get_field('role')
+        prefix = 'HQ ' if self.partner.is_hq else ''
+        return prefix + self._get_FIELD_display(field_object)
 
     @property
     def user_permissions(self):

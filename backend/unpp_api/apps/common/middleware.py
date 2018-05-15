@@ -8,19 +8,26 @@ from partner.models import Partner
 def get_partner_object(request):
     partner_id = request.META.get('HTTP_PARTNER_ID', None)
     partner = None
+    partner_member = None
 
-    if partner_id:
-        try:
-            partner = Partner.objects.get(id=partner_id)
-        except Partner.DoesNotExist:
-            pass
+    if hasattr(request.user, 'partner_members'):
+        if partner_id:
+            try:
+                partner = request.user.partner_members.get(id=partner_id)
+            except Partner.DoesNotExist:
+                pass
 
-    # for easier development process
-    # should be removed when we finish whole logic for http headers (like: HTTP_ACTIVE_PARTNER)
-    # TODO
-    if settings.IS_DEV:
-        partner = Partner.objects.first()
-    return partner, None
+        # for easier development process
+        # should be removed when we finish whole logic for http headers (like: HTTP_ACTIVE_PARTNER)
+        # TODO
+        if settings.IS_DEV:
+            member = request.user.partner_members.first()
+            partner = member and member.partner
+
+        if partner:
+            partner_member = partner.partner_members.filter(user=request.user).first()
+
+    return partner, partner_member
 
 
 class ActivePartnerMiddleware(object):
@@ -58,6 +65,6 @@ class ActiveAgencyOfficeMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        request.office_member = SimpleLazyObject(lambda: get_office_member_object(request))
+        request.agency_member = SimpleLazyObject(lambda: get_office_member_object(request))
         response = self.get_response(request)
         return response

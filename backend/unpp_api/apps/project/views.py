@@ -35,6 +35,7 @@ from notification.helpers import (
     send_notification,
     send_cfei_review_required_notification, user_received_notification_recently,
     send_partner_made_decision_notification)
+from partner.permissions import PartnerPermission
 from project.exports import ApplicationCompareSpreadsheetGenerator
 from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from project.serializers import (
@@ -288,14 +289,16 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
     """
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CFEI_SUBMIT_CONCEPT_NOTE,
+            ]
         ),
     )
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
     def post(self, request, *args, **kwargs):
-        if self.request.active_partner.is_hq and request.user.member.partner.id != self.request.active_partner.id:
+        if request.partner_member.partner.is_hq:
             raise serializers.ValidationError(
                 "You don't have the ability to submit an application if "
                 "you are currently toggled under the HQ profile."

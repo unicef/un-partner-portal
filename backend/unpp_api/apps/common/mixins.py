@@ -86,7 +86,7 @@ class FilterByCFEIRoleMixin(object):
         else:
             prefix = ''
 
-        if self.request.office_member:
+        if self.request.agency_member:
             if not self.role_to_field_mappings:
                 queryset = queryset.filter(**{
                     prefix + 'created_by': self.request.user
@@ -94,7 +94,7 @@ class FilterByCFEIRoleMixin(object):
             else:
                 queryset_filter = Q()
                 fields_to_check = self.role_to_field_mappings.get(
-                    AgencyRole[self.request.office_member.role], ['created_by']
+                    AgencyRole[self.request.agency_member.role], ['created_by']
                 )
                 for field_name in fields_to_check:
                     queryset_filter |= Q(**{
