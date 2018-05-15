@@ -401,7 +401,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
             "justification_reason": "a good reason",
         }
         response = self.client.post(url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED)
         app_id = Application.objects.last().id
         self.assertEquals(response.data['id'], app_id)
 
