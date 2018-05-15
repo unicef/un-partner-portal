@@ -302,7 +302,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
             PartnerVerificationFactory(partner=partner, submitter=self.user)
 
         response = self.client.post(self.url, data=payload, format='json')
-        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED, msg=response.data)
 
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)

@@ -127,6 +127,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_partner_ids_i_can_access(self):
         return self.partner_ids_i_can_access
 
+    @threaded_cached_property
+    def status(self):
+        if not self.last_login:
+            return 'Invited'
+        elif self.is_active:
+            return 'Active'
+        else:
+            return 'Deactivated'
+
 
 class UserProfile(TimeStampedModel):
     """

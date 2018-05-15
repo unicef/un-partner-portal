@@ -45,7 +45,6 @@ class AgencyMemberListAPIView(ListAPIView):
     serializer_class = AgencyUserSerializer
     pagination_class = MediumPagination
     permission_classes = (
-        IsAuthenticated,
         HasUNPPPermission(
             agency_permissions=[
                 AgencyPermission.MY_AGENCY_LIST_USERS
