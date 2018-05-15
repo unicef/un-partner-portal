@@ -10,14 +10,16 @@ def get_partner_object(request):
     partner = None
     partner_member = None
 
-    if request.user.is_authenticated() and partner_id:
-        partner_member = PartnerMember.objects.filter(user=request.user, partner_id=partner_id).first()
-        if partner_member:
-            partner = partner_member.partner
-        # should be removed when we finish whole logic for http headers (like: HTTP_ACTIVE_PARTNER)
-        elif settings.IS_DEV:
+    if request.user.is_authenticated():
+        if partner_id:
+            partner_member = PartnerMember.objects.filter(user=request.user, partner_id=partner_id).first()
+
+        # TODO: remove when we finish whole logic for http headers (like: HTTP_ACTIVE_PARTNER)
+        if not partner_member and settings.IS_DEV:
             partner_member = request.user.partner_members.first()
-            partner = partner_member and partner_member.partner
+
+    if partner_member:
+        partner = partner_member.partner
 
     return partner, partner_member
 
