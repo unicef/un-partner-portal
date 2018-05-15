@@ -14,7 +14,6 @@ from rest_framework import status as statuses
 
 from account.models import User
 from agency.models import AgencyOffice, Agency
-from agency.roles import AgencyRole
 from notification.consts import NotificationType, NOTIFICATION_DATA
 from partner.serializers import PartnerShortSerializer
 from project.models import Assessment, Application, EOI, Pin
