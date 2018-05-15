@@ -28,7 +28,6 @@ from common.pagination import SmallPagination
 from common.permissions import (
     IsAgencyMemberUser,
     IsAtLeastMemberEditor,
-    IsConvertUnsolicitedEditor,
     IsApplicationFeedbackPerm,
     IsPartnerEOIApplicationCreate,
     IsPartnerEOIApplicationDestroy,
