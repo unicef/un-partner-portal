@@ -410,7 +410,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         eoi.save()
         url = reverse('projects:agency-applications-delete', kwargs={"pk": app_id, "eoi_id": eoi.id})
         response = self.client.delete(url, format='json')
-        self.assertTrue(statuses.is_success(response.status_code), "Application should be destroyed.")
+        self.assertTrue(statuses.is_success(response.status_code), response.data)
 
 
 class TestApplicationsAPITestCase(BaseAPITestCase):
