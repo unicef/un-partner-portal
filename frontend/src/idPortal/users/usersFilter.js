@@ -7,9 +7,9 @@ import { withStyles } from 'material-ui/styles';
 import { browserHistory as history, withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
-import TextFieldForm from '../components/forms/textFieldForm';
-import CountryField from '../components/forms/fields/projectFields/locationField/countryField';
-import resetChanges from '../components/eois/filters/eoiHelper';
+import TextFieldForm from '../../components/forms/textFieldForm';
+import CountryField from '../../components/forms/fields/projectFields/locationField/countryField';
+import resetChanges from '../../components/eois/filters/eoiHelper';
 
 const messages = {
   choose: 'Choose',

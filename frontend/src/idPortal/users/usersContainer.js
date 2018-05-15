@@ -3,14 +3,14 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { browserHistory as history, withRouter } from 'react-router';
-import MainContentWrapper from '../components/common/mainContentWrapper';
-import HeaderNavigation from '../components/common/headerNavigation';
+import MainContentWrapper from '../../components/common/mainContentWrapper';
+import HeaderNavigation from '../../components/common/headerNavigation';
 import AgencyMembersFilter from './usersFilter';
-import PaginatedList from '../components/common/list/paginatedList';
-import TableWithStateInUrl from '../components/common/hoc/tableWithStateInUrl';
-import { loadMembersList } from '../reducers/agencyMembersList';
-import { isQueryChanged } from '../helpers/apiHelper';
-import NewUserModalButton from './users/newUserModalButton';
+import PaginatedList from '../../components/common/list/paginatedList';
+import TableWithStateInUrl from '../../components/common/hoc/tableWithStateInUrl';
+import { loadMembersList } from '../../reducers/agencyMembersList';
+import { isQueryChanged } from '../../helpers/apiHelper';
+import NewUserModalButton from './../users/newUserModalButton';
 
 class UserManagementContainer extends Component {
   componentWillMount() {
