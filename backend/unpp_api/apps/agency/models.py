@@ -8,7 +8,6 @@ from model_utils.models import TimeStampedModel
 
 from agency.roles import AgencyRole, AGENCY_ROLE_PERMISSIONS
 from common.countries import COUNTRIES_ALPHA2_CODE
-from common.consts import MEMBER_STATUSES
 from common.fields import FixedTextField
 
 
@@ -75,7 +74,6 @@ class AgencyMember(TimeStampedModel):
     role = FixedTextField(choices=AgencyRole.get_choices(), default=AgencyRole.READER.name)
     office = models.ForeignKey(AgencyOffice, related_name="agency_members")
     telephone = models.CharField(max_length=255, null=True, blank=True)
-    status = models.CharField(max_length=3, choices=MEMBER_STATUSES, default=MEMBER_STATUSES.invited)
 
     class Meta:
         ordering = ['id']

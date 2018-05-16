@@ -36,7 +36,6 @@ from project.models import EOI, Application, Assessment
 from review.models import PartnerFlag, PartnerVerification
 from common.consts import (
     PARTNER_TYPES,
-    MEMBER_STATUSES,
     CONCERN_CHOICES,
     YEARS_OF_EXP_CHOICES,
     PARTNER_DONORS_CHOICES,
@@ -66,7 +65,7 @@ def get_random_agency():
 
 
 def get_random_agency_office():
-    return AgencyOffice.objects.order_by("?").first()
+    return AgencyOffice.objects.order_by("?").first() or AgencyOfficeFactory.create_batch(1)[0]
 
 
 def get_agency_member():
@@ -499,7 +498,6 @@ class PartnerMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     partner = factory.LazyFunction(get_partner)
     title = factory.LazyFunction(get_job_title)
-    status = MEMBER_STATUSES.active
     role = PartnerRole.ADMIN.name
 
     class Meta:
@@ -536,7 +534,6 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     office = factory.LazyFunction(get_random_agency_office)
     role = AgencyRole.ADMINISTRATOR.name
-    status = MEMBER_STATUSES.active
 
     class Meta:
         model = AgencyMember

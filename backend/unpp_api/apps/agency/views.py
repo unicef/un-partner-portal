@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -53,6 +53,23 @@ class AgencyMemberListAPIView(ListAPIView):
     )
     filter_backends = (DjangoFilterBackend, )
     filter_class = AgencyUserFilter
+
+    def get_queryset(self):
+        return User.objects.filter(agency_members__office__agency=self.request.user.agency)
+
+
+class AgencyMemberInviteAPIView(CreateAPIView, UpdateAPIView):
+    """
+    Crete User and AgencyMember relations
+    """
+    serializer_class = AgencyUserSerializer
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.MY_AGENCY_ADD_USER
+            ]
+        ),
+    )
 
     def get_queryset(self):
         return User.objects.filter(agency_members__office__agency=self.request.user.agency)

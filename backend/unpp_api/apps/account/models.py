@@ -129,12 +129,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @threaded_cached_property
     def status(self):
-        if not self.last_login:
-            return 'Invited'
-        elif self.is_active:
-            return 'Active'
-        else:
+        if not self.is_active:
             return 'Deactivated'
+        elif not self.last_login:
+            return 'Invited'
+        else:
+            return 'Active'
 
 
 class UserProfile(TimeStampedModel):

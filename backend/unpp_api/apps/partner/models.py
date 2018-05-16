@@ -22,7 +22,6 @@ from common.consts import (
     SATISFACTION_SCALES,
     PARTNER_REVIEW_TYPES,
     PARTNER_TYPES,
-    MEMBER_STATUSES,
     COLLABORATION_EVIDENCE_MODES,
     METHOD_ACC_ADOPTED_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
@@ -938,7 +937,6 @@ class PartnerMember(TimeStampedModel):
     partner = models.ForeignKey(Partner, related_name="partner_members")
     title = models.CharField(max_length=255)
     role = FixedTextField(choices=PartnerRole.get_choices(), default=PartnerRole.READER.name)
-    status = models.CharField(max_length=3, choices=MEMBER_STATUSES, default=MEMBER_STATUSES.invited)
 
     class Meta:
         ordering = ['id']

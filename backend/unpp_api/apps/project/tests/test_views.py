@@ -247,6 +247,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
 
+    # TODO: This test is not deterministic - randomly fails
     def test_create_direct_project(self):
         ao = AgencyOffice.objects.first()
         payload = {
