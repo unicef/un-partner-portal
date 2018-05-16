@@ -66,7 +66,7 @@ import openCfeiDashboardList from './reducers/openCfeiDashboardList';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
-import idPortalUsersList from './idPortal/reducers/usersList'
+import idPortalUsersList from './idPortal/reducers/usersList';
 
 const mainReducer = combineReducers({
   cfei,
@@ -127,7 +127,7 @@ const mainReducer = combineReducers({
   routesHistory,
   applicationComparisonReport,
 
-  //ID portal
+  // ID portal
   idPortalNav,
   idPortalUsersList,
 });
@@ -220,6 +220,9 @@ export const selectNormalizedDirectSelectionSource = state =>
 
 export const selectCountriesWithOptionalLocations = state =>
   state.partnerProfileConfig['countries-with-optional-location'];
+
+export const selectNormalizedRoleChoices = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['user-role-choices']);
 
 export const selectNormalizedSpecializations = state =>
   mapValuesForSelectionField(state.sectors.allSpecializations);

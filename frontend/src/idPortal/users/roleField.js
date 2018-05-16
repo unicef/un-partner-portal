@@ -1,10 +1,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import ArrayForm from '../../components/forms/arrayForm';
 import SelectForm from '../../components/forms/selectForm';
 import LocationsCountry from '../../components/forms/fields/projectFields/locationField/locationsCountry';
 import { hasLocations } from '../../helpers/validation';
+import { selectNormalizedRoleChoices } from '../../store';
 
 const Country = formName => sector => (
   <LocationsCountry
@@ -13,25 +15,19 @@ const Country = formName => sector => (
   />
 );
 
-//TODO import roles from constants
-const Roles = (values, readOnly, ...props) => (member, index, fields) => {
-  const chosenSectors = fields.getAll().map(field => field.sector);
-  const ownSector = fields.get(index).sector;
-  const newValues = values.filter(value =>
-    (ownSector === value.value) || !(chosenSectors.includes(value.value)));
-  return (<SelectForm
+// TODO import roles from constants
+const Roles = (values, readOnly, ...props) => () => (
+  <SelectForm
     fieldName={'role'}
     label="Roles"
-    values={[]}
+    values={values}
     readOnly={readOnly}
     {...props}
   />
-  );
-};
-
+);
 
 const RoleField = (props) => {
-  const { formName, readOnly, loaded, ...other } = props;
+  const { formName, roleChoices, readOnly, loaded, ...other } = props;
 
   return (<ArrayForm
     limit={230}
@@ -40,7 +36,7 @@ const RoleField = (props) => {
     validate={[hasLocations]}
     fieldName="countries"
     outerField={Country(formName, ...other)}
-    innerField={Roles(['a', 'b', 'c'], readOnly, ...other)}
+    innerField={Roles(roleChoices, readOnly, ...other)}
     {...other}
   />);
 };
@@ -48,8 +44,13 @@ const RoleField = (props) => {
 RoleField.propTypes = {
   formName: PropTypes.string,
   readOnly: PropTypes.bool,
+  roleChoices: PropTypes.array,
   loaded: PropTypes.bool,
 };
 
-export default RoleField;
+export default connect(
+  (state, ownProps) => ({
+    roleChoices: selectNormalizedRoleChoices(state),
+  }),
+)(RoleField);
 
