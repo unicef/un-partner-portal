@@ -62,11 +62,11 @@ class ConfigPPAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
         if self.request.partner_member:
-            choices = PartnerRole.get_choices()
+            choices = dict(PartnerRole.get_choices())
         elif self.request.agency_member:
-            choices = AgencyRole.get_choices()
+            choices = dict(AgencyRole.get_choices())
         else:
-            choices = []
+            choices = {}
 
         data = {
             "financial-control-system": FINANCIAL_CONTROL_SYSTEM_CHOICES,

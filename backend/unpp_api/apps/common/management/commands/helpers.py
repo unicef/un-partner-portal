@@ -1,3 +1,4 @@
+import random
 from datetime import date
 from django.conf import settings
 
@@ -159,6 +160,13 @@ def generate_fake_data(quantity=50):
     print("Agencies and their offices are created")
     AgencyMemberFactory.create_batch(6, role=AgencyRole.ADMINISTRATOR.name)
     AgencyMemberFactory.create_batch(9)
+    for user in User.objects.exclude(agency_members=None).iterator():
+        AgencyMemberFactory.create_batch(
+            1,
+            role=random.choice(list(AgencyRole)).name,
+            office=user.agency.agency_offices.exclude(agency_members__user=user).order_by('?').first(),
+            user=user,
+        )
 
     OtherAgencyFactory.create_batch(3)
     print("Other Agencies are created.")
@@ -225,4 +233,4 @@ def generate_fake_data(quantity=50):
     UnsolicitedFactory.create_batch(unsolicited_count, agency=unicef)
     UnsolicitedFactory.create_batch(unsolicited_count, agency=wfp)
     UnsolicitedFactory.create_batch(unsolicited_count, agency=unhcr)
-    print("Unsolicited concept notest for each agency created")
+    print("Unsolicited concept notes for each agency created")

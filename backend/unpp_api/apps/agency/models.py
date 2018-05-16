@@ -3,11 +3,10 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.db.models.signals import post_save
-from django.contrib.postgres.fields import ArrayField
+from django_countries.fields import CountryField
 from model_utils.models import TimeStampedModel
 
 from agency.roles import AgencyRole, AGENCY_ROLE_PERMISSIONS
-from common.countries import COUNTRIES_ALPHA2_CODE
 from common.fields import FixedTextField
 
 
@@ -55,18 +54,24 @@ class AgencyProfile(TimeStampedModel):
 
 
 class AgencyOffice(TimeStampedModel):
-    name = models.CharField(max_length=255)
+    """
+    AgencyOffice model is just a lean country container for permission purposes
+    """
     agency = models.ForeignKey(Agency, related_name="agency_offices")
-    countries_code = ArrayField(
-        models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE),
-        default=list
-    )
+    country = CountryField()
 
     class Meta:
         ordering = ['id']
+        unique_together = (
+            'agency', 'country'
+        )
 
     def __str__(self):
         return "AgencyOffice: {} <pk:{}>".format(self.name, self.id)
+
+    @property
+    def name(self):
+        return self.country.name
 
 
 class AgencyMember(TimeStampedModel):

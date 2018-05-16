@@ -1,4 +1,5 @@
 from django.db import transaction
+from django_countries.serializers import CountryFieldMixin
 from rest_framework import serializers
 
 from account.models import User
@@ -23,7 +24,7 @@ class OtherAgencySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class AgencyOfficeSerializer(serializers.ModelSerializer):
+class AgencyOfficeSerializer(CountryFieldMixin, serializers.ModelSerializer):
 
     agency = AgencySerializer()
 
@@ -32,7 +33,7 @@ class AgencyOfficeSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
-            'countries_code',
+            'country',
             'agency',
         )
 

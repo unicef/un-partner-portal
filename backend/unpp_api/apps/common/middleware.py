@@ -35,21 +35,22 @@ class ActivePartnerMiddleware(object):
 
 
 def get_office_member_object(request):
-    agency_members = request.user.agency_members.first()
-    if not agency_members:
-        return None
-
-    office_id = request.META.get('HTTP_AGENCY_OFFICE_ID', None)
-
-    if office_id:
-        try:
-            return request.user.agency_members.filter(office_id=office_id)
-        except ObjectDoesNotExist:
+    if request.user.is_authenticated():
+        agency_members = request.user.agency_members.first()
+        if not agency_members:
             return None
 
-    if settings.IS_DEV:
-        # TODO: Remove once header is added on the frontend
-        return request.user.agency_members.first()
+        office_id = request.META.get('HTTP_AGENCY_OFFICE_ID', None)
+
+        if office_id:
+            try:
+                return request.user.agency_members.filter(office_id=office_id)
+            except ObjectDoesNotExist:
+                return None
+
+        if settings.IS_DEV:
+            # TODO: Remove once header is added on the frontend
+            return request.user.agency_members.first()
     return None
 
 
