@@ -12,6 +12,7 @@ ipython==5.4.1
 djangorestframework==3.7.7
 django-filter==1.0.4
 django-rest-auth==0.9.3
+django-countries==5.3
 
 # Other Python packages
 psycopg2==2.7.1

@@ -84,6 +84,10 @@ def get_country_list(quantity=3):
     return [random.choice(COUNTRIES) for _ in range(0, quantity)]
 
 
+def get_country():
+    return random.choice(COUNTRIES)[0]
+
+
 def get_fullname():
     return random.choice([
         "William Collins",
@@ -522,12 +526,12 @@ class OtherAgencyFactory(factory.django.DjangoModelFactory):
 
 class AgencyOfficeFactory(factory.django.DjangoModelFactory):
 
-    name = factory.Sequence(lambda n: "agency office {}".format(n))
     agency = factory.LazyFunction(get_random_agency)
-    countries_code = factory.LazyFunction(get_country_list)
+    country = factory.LazyFunction(get_country)
 
     class Meta:
         model = AgencyOffice
+        django_get_or_create = ('agency', 'country')
 
 
 class AgencyMemberFactory(factory.django.DjangoModelFactory):
