@@ -27,8 +27,10 @@ const WithdrawAward = (props) => {
         fieldName="withdraw_reason"
         textFieldProps={{
           multiline: true,
-          inputProps: {
-            maxLength: '5000',
+          InputProps: {
+            inputProps: {
+              maxLength: '5000',
+            },
           },
         }}
       />

@@ -38,8 +38,10 @@ const LocationFieldArray = (props) => {
         fieldName={'countryName'}
         optional
         textFieldProps={{
-          inputProps: {
-            initial: country,
+          InputProps: {
+            inputProps: {
+              initial: country,
+            },
           },
         }}
         readOnly

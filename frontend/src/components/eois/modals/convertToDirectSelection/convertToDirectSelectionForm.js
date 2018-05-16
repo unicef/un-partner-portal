@@ -42,8 +42,10 @@ const ConvertToDirectSelectionForm = (props) => {
           placeholder={messages.explain}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
         />
@@ -59,8 +61,10 @@ const ConvertToDirectSelectionForm = (props) => {
           label={messages.briefBackground}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
         />
@@ -69,8 +73,10 @@ const ConvertToDirectSelectionForm = (props) => {
           label={messages.other}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           optional

@@ -38,8 +38,10 @@ const PartnerProfileContactInfoConnectivity = (props) => {
             optional
             textFieldProps={{
               multiline: true,
-              inputProps: {
-                maxLength: '5000',
+              InputProps: {
+                inputProps: {
+                  maxLength: '5000',
+                },
               },
             }}
             warn

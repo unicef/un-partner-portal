@@ -39,8 +39,10 @@ const PartnerProfileFundingDonors = (props) => {
           placeholder={PLACEHOLDERS.list}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           warn
@@ -54,8 +56,10 @@ const PartnerProfileFundingDonors = (props) => {
           infoText={messages.coreFundingTooltip}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           warn

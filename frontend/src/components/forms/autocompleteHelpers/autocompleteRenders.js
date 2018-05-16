@@ -36,8 +36,10 @@ export function renderInput(inputProps) {
       <TextField
         value={value}
         inputRef={ref}
-        inputProps={{
-          ...other,
+        InputProps={{
+          inputProps: {
+            ...other,
+          },
         }}
       />
     </FormControl>
@@ -57,10 +59,6 @@ export function renderMultipleInput(inputProps) {
         {label}
       </FieldLabelWithTooltipIcon>
       <TextField
-        // inputProps={{
-        //   inputRef: ref,
-        //   ...other,
-        // }}
         InputProps={{
           inputComponent: MultipleSelectInput,
           inputProps: {

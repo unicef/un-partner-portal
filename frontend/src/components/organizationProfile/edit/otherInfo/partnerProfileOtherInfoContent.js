@@ -26,8 +26,10 @@ const PartnerProfileOtherInfoContent = (props) => {
           fieldName="info_to_share"
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           optional

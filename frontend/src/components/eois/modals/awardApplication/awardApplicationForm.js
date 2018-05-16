@@ -26,8 +26,10 @@ const AddReview = (props) => {
         fieldName="justification_reason"
         textFieldProps={{
           multiline: true,
-          inputProps: {
-            maxLength: '5000',
+          InputProps: {
+            inputProps: {
+              maxLength: '5000',
+            },
           },
         }}
       />

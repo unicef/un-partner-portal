@@ -44,8 +44,10 @@ const PartnershipInner = (readOnly, ...props) => member => (
       fieldName={`${member}.description`}
       textFieldProps={{
         multiline: true,
-        inputProps: {
-          maxLength: '5000',
+        InputProps: {
+          inputProps: {
+            maxLength: '5000',
+          },
         },
       }}
       optional
@@ -61,8 +63,10 @@ const PartnershipInner = (readOnly, ...props) => member => (
           fieldName={`${member}.partner_number`}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           optional
@@ -113,8 +117,10 @@ const PartnerProfileCollaborationHistory = (props) => {
           placeholder={PLACEHOLDERS.state}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           warn
