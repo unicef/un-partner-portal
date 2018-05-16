@@ -8,6 +8,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
+from agency.roles import AgencyRole
+from common.permissions import HasUNPPPermission
 from common.serializers import (
     ConfigSectorSerializer,
     CommonFileUploadSerializer,
@@ -36,6 +38,7 @@ from common.consts import (
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     EXTENDED_APPLICATION_STATUSES
 )
+from partner.roles import PartnerRole
 
 
 class ConfigCountriesAPIView(APIView):
@@ -96,6 +99,25 @@ class ConfigSectorsAPIView(APIView):
         """
         data = ConfigSectorSerializer(Sector.objects.all(), many=True).data
         return Response(data, status=statuses.HTTP_200_OK)
+
+
+class UserRolesAPIView(APIView):
+
+    permission_classes = (
+        HasUNPPPermission(),
+    )
+
+    def get(self, request, *args, **kwargs):
+        if self.request.partner_member:
+            choices = PartnerRole.get_choices()
+        elif self.request.agency_member:
+            choices = AgencyRole.get_choices()
+        else:
+            choices = []
+
+        return Response({
+            'options': choices
+        }, status=statuses.HTTP_200_OK)
 
 
 class CommonFileCreateAPIView(CreateAPIView):

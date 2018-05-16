@@ -11,8 +11,7 @@ from agency.models import (
 )
 from agency.roles import AgencyRole
 from common.consts import (
-    EOI_TYPES,
-    PARTNER_ROLES,
+    CFEI_TYPES,
     PARTNER_TYPES,
     FLAG_TYPES,
 )
@@ -59,6 +58,7 @@ from partner.models import (
     PartnerMember,
     PartnerReview,
 )
+from partner.roles import PartnerRole
 from project.models import (
     EOI,
     Pin,
@@ -190,16 +190,16 @@ def generate_fake_data(quantity=50):
         else:
             PartnerFlagFactory(partner=partner, flag_type=FLAG_TYPES.red)
 
-        PartnerMemberFactory(partner=partner, role=PARTNER_ROLES.admin, title='Head')
-        PartnerMemberFactory(partner=partner, role=PARTNER_ROLES.editor, title='PM')
-        PartnerMemberFactory(partner=partner, role=PARTNER_ROLES.reader, title='Assistant')
+        PartnerMemberFactory(partner=partner, role=PartnerRole.ADMIN.name, title='Head')
+        PartnerMemberFactory(partner=partner, role=PartnerRole.EDITOR.name, title='PM')
+        PartnerMemberFactory(partner=partner, role=PartnerRole.READER.name, title='Assistant')
     print("Other Relation to Partner objects created".format(quantity))
 
     EOIFactory.create_batch(quantity)
     print("{} open EOI objects created".format(quantity))
 
     # preselect
-    for idx, eoi in enumerate(EOI.objects.filter(display_type=EOI_TYPES.open)):
+    for idx, eoi in enumerate(EOI.objects.filter(display_type=CFEI_TYPES.open)):
         app = eoi.applications.all().order_by("?").first()
         if app is None:
             # if someone will run fake date without clean database, their can be EOI with no applications
@@ -218,7 +218,7 @@ def generate_fake_data(quantity=50):
 
         app.save()
 
-    EOIFactory.create_batch(quantity, display_type=EOI_TYPES.direct, deadline_date=None)
+    EOIFactory.create_batch(quantity, display_type=CFEI_TYPES.direct, deadline_date=None)
     print("{} direct EOI objects created with applications".format(quantity))
 
     unsolicited_count = int(quantity/3)

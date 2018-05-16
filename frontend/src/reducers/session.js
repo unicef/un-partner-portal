@@ -126,7 +126,7 @@ export const loadUserData = () => (dispatch, getState) => {
       return sessionObject;
     })
     .catch((error) => {
-      // TODO (marcindo) correct error handling for different scenarios
+      // TODO correct error handling for different scenarios
       history.push('/login');
       dispatch(initSession({
         authorized: false,

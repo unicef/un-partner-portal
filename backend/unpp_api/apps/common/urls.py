@@ -6,6 +6,7 @@ from .views import (
     ConfigPPAPIView,
     ConfigSectorsAPIView,
     CommonFileCreateAPIView,
+    UserRolesAPIView,
 )
 
 
@@ -14,6 +15,7 @@ urlpatterns = [
     url(r'^admin-levels/$', ConfigAdminLevel1ListAPIView.as_view(), name="admin-levels"),
     url(r'^partners/profile/$', ConfigPPAPIView.as_view(), name="partners-profile"),
     url(r'^sectors/$', ConfigSectorsAPIView.as_view(), name="sectors"),
+    url(r'^roles/$', UserRolesAPIView.as_view(), name="roles"),
 
     url(r'^file/$', CommonFileCreateAPIView.as_view(), name="file"),
 ]

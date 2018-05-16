@@ -25,8 +25,9 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
     def test_create_flag(self):
         partner = Partner.objects.first()
 
-        url = reverse('partner-reviews:flags',
-                      kwargs={"partner_id": partner.id})
+        url = reverse(
+            'partner-reviews:flags', kwargs={"partner_id": partner.id}
+        )
 
         payload = {
             "comment": "This is a comment on a flag",

@@ -11,12 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.serializers import PartnerMemberSerializer
-from common.permissions import (
-    IsPartner,
-    IsAtLeastEditorPartnerOnNotGET,
-    IsRoleAdministratorOnNotGET,
-    IsAgencyMemberUser,
-)
+from common.permissions import HasUNPPPermission
 from common.pagination import SmallPagination, TinyResultSetPagination
 from common.mixins import PatchOneFieldErrorMixin
 from partner.serializers import (
@@ -46,7 +41,9 @@ class OrganizationProfileAPIView(RetrieveAPIView):
     """
     Endpoint for getting Organization Profile.
     """
-    permission_classes = (IsAuthenticated, IsPartner)
+    permission_classes = (
+        HasUNPPPermission(),
+    )
     serializer_class = OrganizationProfileSerializer
     queryset = Partner.objects.all()
 
@@ -67,7 +64,12 @@ class PartnerProfileSummaryAPIView(RetrieveAPIView):
 
 class PartnersListAPIView(ListAPIView):
 
-    permission_classes = (IsAuthenticated, IsAgencyMemberUser)
+    permission_classes = (
+        IsAuthenticated,
+        HasUNPPPermission(
+            # TODO: Permissions
+        ),
+    )
     queryset = Partner.objects.all()
     serializer_class = PartnersListSerializer
     pagination_class = SmallPagination
@@ -77,7 +79,12 @@ class PartnersListAPIView(ListAPIView):
 
 class PartnerShortListAPIView(ListAPIView):
 
-    permission_classes = (IsAuthenticated, IsAgencyMemberUser)
+    permission_classes = (
+        IsAuthenticated,
+        HasUNPPPermission(
+            # TODO: Permissions
+        ),
+    )
     queryset = Partner.objects.all()
     serializer_class = PartnerShortSerializer
     filter_backends = (DjangoFilterBackend, )
@@ -90,56 +97,81 @@ class PartnerIdentificationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIVie
     PartnerIdentificationAPIView endpoint return specific partner profile data via serializer,
     by given pk (PartnerProfile)
     """
-    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
+    permission_classes = (
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = PartnerIdentificationSerializer
     queryset = PartnerProfile.objects.all()
 
 
 class PartnerContactInformationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
-
-    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
+    permission_classes = (
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = PartnerContactInformationSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerMandateMissionAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
-
-    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
+    permission_classes = (
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = PartnerProfileMandateMissionSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerFundingAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
-
-    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
+    permission_classes = (
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = PartnerProfileFundingSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerCollaborationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
-
-    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
+    permission_classes = (
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = PartnerProfileCollaborationSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerProjectImplementationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
-
-    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
+    permission_classes = (
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = PartnerProfileProjectImplementationSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerOtherInfoAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
-
-    permission_classes = (IsAuthenticated, IsAtLeastEditorPartnerOnNotGET)
+    permission_classes = (
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = PartnerProfileOtherInfoSerializer
     queryset = Partner.objects.all()
 
 
 class PartnerCountryProfileAPIView(CreateAPIView, RetrieveAPIView):
-
-    permission_classes = (IsAuthenticated, IsPartner, IsRoleAdministratorOnNotGET)
+    permission_classes = (
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = PartnerCountryProfileSerializer
     queryset = Partner.objects.all()
 

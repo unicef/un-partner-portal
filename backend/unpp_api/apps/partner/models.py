@@ -14,6 +14,7 @@ from django.core.validators import MinValueValidator
 from model_utils.models import TimeStampedModel
 
 from account.models import User
+from common.fields import FixedTextField
 from common.validators import MaxCurrentYearValidator
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.utils import Thumbnail
@@ -21,7 +22,6 @@ from common.consts import (
     SATISFACTION_SCALES,
     PARTNER_REVIEW_TYPES,
     PARTNER_TYPES,
-    PARTNER_ROLES,
     MEMBER_STATUSES,
     COLLABORATION_EVIDENCE_MODES,
     METHOD_ACC_ADOPTED_CHOICES,
@@ -39,7 +39,7 @@ from common.consts import (
     BUDGET_CHOICES,
     FLAG_TYPES,
 )
-
+from partner.roles import PartnerRole, PARTNER_ROLE_PERMISSIONS
 
 logger = logging.getLogger(__name__)
 
@@ -937,14 +937,27 @@ class PartnerMember(TimeStampedModel):
     user = models.ForeignKey('account.User', related_name="partner_members")
     partner = models.ForeignKey(Partner, related_name="partner_members")
     title = models.CharField(max_length=255)
-    role = models.CharField(max_length=3, choices=PARTNER_ROLES, default=PARTNER_ROLES.reader)
+    role = FixedTextField(choices=PartnerRole.get_choices(), default=PartnerRole.READER.name)
     status = models.CharField(max_length=3, choices=MEMBER_STATUSES, default=MEMBER_STATUSES.invited)
 
     class Meta:
         ordering = ['id']
+        unique_together = (
+            'user', 'partner'
+        )
 
     def __str__(self):
         return "PartnerMember: {} <pk:{}>".format(self.title, self.id)
+
+    def get_role_display(self):
+        # This is one of the "magical" django methods and cannot be called directly using super call
+        field_object = self._meta.get_field('role')
+        prefix = 'HQ ' if self.partner.is_hq else ''
+        return prefix + self._get_FIELD_display(field_object)
+
+    @property
+    def user_permissions(self):
+        return PARTNER_ROLE_PERMISSIONS[self.partner.is_hq][PartnerRole[self.role]]
 
 
 class PartnerReview(TimeStampedModel):
@@ -956,7 +969,7 @@ class PartnerReview(TimeStampedModel):
     display_type = models.CharField(max_length=3, choices=PARTNER_REVIEW_TYPES)
     eoi = models.ForeignKey('project.EOI', related_name="partner_reviews")
     performance_pm = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
-    peformance_financial = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
+    performance_financial = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
     performance_com_eng = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
     ethical_concerns = models.NullBooleanField(verbose_name='Ethical concerns?')
     does_recommend = models.NullBooleanField(verbose_name='Does recommend?')
