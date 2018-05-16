@@ -1,9 +1,7 @@
-import itertools
 from django.db import transaction
 from rest_framework import serializers
 
 from account.models import User
-from account.serializers import UserSerializer
 from agency.fields import CurrentAgencyFilteredPKField
 from agency.models import Agency, OtherAgency, AgencyOffice, AgencyMember
 
