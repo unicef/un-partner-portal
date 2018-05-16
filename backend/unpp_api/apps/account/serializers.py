@@ -8,7 +8,6 @@ from rest_framework.validators import UniqueValidator
 
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
-    MEMBER_STATUSES,
     POLICY_AREA_CHOICES,
 )
 from partner.models import (
@@ -115,7 +114,6 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         partner_member['partner_id'] = self.partner.id
         partner_member['user_id'] = self.user.id
         partner_member['role'] = PartnerRole.ADMIN.name
-        partner_member['status'] = MEMBER_STATUSES.active
         self.partner_member = PartnerMember.objects.create(**validated_data['partner_member'])
 
         user_data = RegisterSimpleAccountSerializer(instance=self.user).data
@@ -135,7 +133,12 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'name', 'email',)
+        fields = (
+            'id',
+            'name',
+            'email',
+            'status',
+        )
 
 
 class IDUserSerializer(serializers.ModelSerializer):

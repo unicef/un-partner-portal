@@ -35,12 +35,6 @@ APPLICATION_STATUSES = Choices(
     ('Rej', 'rejected', 'Rejected'),
 )
 
-MEMBER_STATUSES = Choices(
-    ('Act', 'active', 'Active'),
-    ('Dea', 'deactivated', 'Deactivated'),
-    ('Inv', 'invited', 'Invited'),
-)
-
 EOI_STATUSES = Choices(
     ('Ope', 'open', 'Open'),
     ('Clo', 'closed', 'Closed/Under Review'),

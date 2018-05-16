@@ -9,7 +9,6 @@ from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 from agency.roles import AgencyRole
-from common.permissions import HasUNPPPermission
 from common.serializers import (
     ConfigSectorSerializer,
     CommonFileUploadSerializer,
@@ -62,9 +61,13 @@ class ConfigAdminLevel1ListAPIView(ListAPIView):
 class ConfigPPAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
-        """
-        Return list of defined countries in backend.
-        """
+        if self.request.partner_member:
+            choices = PartnerRole.get_choices()
+        elif self.request.agency_member:
+            choices = AgencyRole.get_choices()
+        else:
+            choices = []
+
         data = {
             "financial-control-system": FINANCIAL_CONTROL_SYSTEM_CHOICES,
             "functional-responsibilities": FUNCTIONAL_RESPONSIBILITY_CHOICES,
@@ -87,6 +90,7 @@ class ConfigPPAPIView(APIView):
             "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,
             "extended-application-statuses": EXTENDED_APPLICATION_STATUSES,
             "countries-with-optional-location": LOCATION_OPTIONAL_COUNTRIES,
+            "user-role-choices": choices,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 
@@ -99,25 +103,6 @@ class ConfigSectorsAPIView(APIView):
         """
         data = ConfigSectorSerializer(Sector.objects.all(), many=True).data
         return Response(data, status=statuses.HTTP_200_OK)
-
-
-class UserRolesAPIView(APIView):
-
-    permission_classes = (
-        HasUNPPPermission(),
-    )
-
-    def get(self, request, *args, **kwargs):
-        if self.request.partner_member:
-            choices = PartnerRole.get_choices()
-        elif self.request.agency_member:
-            choices = AgencyRole.get_choices()
-        else:
-            choices = []
-
-        return Response({
-            'options': choices
-        }, status=statuses.HTTP_200_OK)
 
 
 class CommonFileCreateAPIView(CreateAPIView):
