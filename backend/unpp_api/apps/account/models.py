@@ -108,7 +108,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     @threaded_cached_property
     def agency(self):
         from agency.models import Agency
-        agencies = Agency.objects.filter(agency_offices__agency_members__user=self)
+        agencies = Agency.objects.filter(agency_offices__agency_members__user=self).distinct()
         if len(agencies) > 1:
             raise Exception('User belongs to more than 1 agency!')
         return agencies[0] if agencies else None
