@@ -130,7 +130,7 @@ class SelectYearModal extends Component {
           readOnly
           placeholder={placeholder}
           value={value}
-          InputProps={{
+          inputProps={{
             ...other,
           }}
           onClick={this.handleDialogOpen}
