@@ -44,7 +44,7 @@ export const AGENCY_MEMBERS_POSITIONS = {
 
 // duplicates of above, but incoming role changes will not be symmetrical
 export const PARTNER_MEMBERS_POSITIONS = {
-  ADMIN: 'Administrator',
+  ADMIN: 'HQ Administrator',
   EDITOR: 'Editor',
   READER: 'Reader',
 };
