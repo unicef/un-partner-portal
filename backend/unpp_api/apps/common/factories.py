@@ -8,6 +8,7 @@ import factory
 from factory import fuzzy
 from account.models import User, UserProfile
 from agency.models import OtherAgency, Agency, AgencyOffice, AgencyMember
+from agency.roles import AgencyRole
 from common.models import Specialization, Point, AdminLevel1, CommonFile
 from partner.models import (
     Partner,
@@ -30,12 +31,12 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
     PartnerCapacityAssessment)
+from partner.roles import PartnerRole
 from project.models import EOI, Application, Assessment
 from review.models import PartnerFlag, PartnerVerification
 from common.consts import (
     PARTNER_TYPES,
     MEMBER_STATUSES,
-    PARTNER_ROLES,
     CONCERN_CHOICES,
     YEARS_OF_EXP_CHOICES,
     PARTNER_DONORS_CHOICES,
@@ -45,7 +46,7 @@ from common.consts import (
     ORG_AUDIT_CHOICES,
     AUDIT_ASSESSMENT_CHOICES,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
-    EOI_TYPES,
+    CFEI_TYPES,
     DIRECT_SELECTION_SOURCE,
     BUDGET_CHOICES,
     SELECTION_CRITERIA_CHOICES,
@@ -499,7 +500,7 @@ class PartnerMemberFactory(factory.django.DjangoModelFactory):
     partner = factory.LazyFunction(get_partner)
     title = factory.LazyFunction(get_job_title)
     status = MEMBER_STATUSES.active
-    role = PARTNER_ROLES.admin
+    role = PartnerRole.ADMIN.name
 
     class Meta:
         model = PartnerMember
@@ -534,7 +535,7 @@ class AgencyOfficeFactory(factory.django.DjangoModelFactory):
 class AgencyMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     office = factory.LazyFunction(get_random_agency_office)
-    role = PARTNER_ROLES.editor
+    role = AgencyRole.ADMINISTRATOR.name
     status = MEMBER_STATUSES.active
 
     class Meta:
@@ -605,7 +606,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
     def applications(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
-        if self.display_type == EOI_TYPES.direct:
+        if self.display_type == CFEI_TYPES.direct:
             for partner in Partner.objects.all().order_by("?")[:settings.DEFAULT_FAKE_DATA_DIRECT_APPLICATIONS_COUNT]:
                 Application.objects.create(
                     partner=partner,
@@ -620,7 +621,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
             self.selected_source = DIRECT_SELECTION_SOURCE.un
             self.save()
 
-        elif self.display_type == EOI_TYPES.open:
+        elif self.display_type == CFEI_TYPES.open:
             for partner in Partner.objects.all().order_by("?")[:settings.DEFAULT_FAKE_DATA_OPEN_APPLICATIONS_COUNT]:
                 app = Application.objects.create(
                     partner=partner,

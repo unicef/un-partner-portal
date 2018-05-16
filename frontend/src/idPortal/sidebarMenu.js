@@ -1,13 +1,14 @@
 import React, { createElement } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
 import { browserHistory as history, withRouter } from 'react-router';
-
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import List from 'material-ui/List';
+import Typography from 'material-ui/Typography';
 import MenuLink from '../components/layout/menuLink';
+import BackButton from '../components/common/buttons/backButton';
+import PaddedContent from '../components/common/paddedContent';
 
 const styleSheet = theme => ({
   sidebar: {
@@ -19,6 +20,17 @@ const styleSheet = theme => ({
   },
   innerLogo: {
     padding: theme.spacing.unit * 2,
+  },
+  accent: {
+    backgroundColor: theme.palette.secondary[500],
+  },
+  oneLine: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing.unit * 1.6,
+  },
+  textColor: {
+    color: '#ffffff',
   },
 });
 
@@ -42,6 +54,14 @@ function sidebarMenu(props) {
   return (
     <Grid className={classes.sidebar} container spacing={0}>
       <List>
+        <div className={classes.accent}>
+          <div className={classes.oneLine}>
+            <BackButton defaultPath="/" arrowBack />
+            <Typography type="body" className={classes.textColor}>
+              User<br />Management
+            </Typography>
+          </div>
+        </div>
         {links}
       </List>
     </Grid>

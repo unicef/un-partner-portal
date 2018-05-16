@@ -24,7 +24,7 @@ PARTNER_TYPES = Choices(
     ('RCC', 'red_cross', 'Red Cross/Red Crescent Movement'),
 )
 
-EOI_TYPES = Choices(
+CFEI_TYPES = Choices(
     ('Ope', 'open', 'Open'),
     ('Dir', 'direct', 'Direct'),
 )
@@ -34,18 +34,6 @@ APPLICATION_STATUSES = Choices(
     ('Pre', 'preselected', 'Preselected'),
     ('Rej', 'rejected', 'Rejected'),
 )
-
-PARTNER_ROLES = Choices(
-    ('Adm', 'admin', 'Administrator'),
-    ('Edi', 'editor', 'Editor'),
-    ('Rea', 'reader', 'Reader'),
-)
-
-PARTNER_MEMBER_POWER = {
-    PARTNER_ROLES.admin: 0,
-    PARTNER_ROLES.editor: -1,
-    PARTNER_ROLES.reader: -2,
-}
 
 MEMBER_STATUSES = Choices(
     ('Act', 'active', 'Active'),

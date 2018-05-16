@@ -2,23 +2,26 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.functional import SimpleLazyObject
 from django.conf import settings
 
-from partner.models import Partner
+from partner.models import PartnerMember
 
 
 def get_partner_object(request):
     partner_id = request.META.get('HTTP_PARTNER_ID', None)
+    partner = None
+    partner_member = None
 
-    if partner_id:
-        try:
-            return Partner.objects.get(id=partner_id)
-        except Partner.DoesNotExist:
-            return None
-    # for easier development process
-    # should be removed when we finish whole logic for http headers (like: HTTP_ACTIVE_PARTNER)
-    # TODO
-    if settings.IS_DEV:
-        return Partner.objects.first()
-    return None
+    if request.user.is_authenticated():
+        if partner_id:
+            partner_member = PartnerMember.objects.filter(user=request.user, partner_id=partner_id).first()
+
+        # TODO: remove when we finish whole logic for http headers (like: HTTP_ACTIVE_PARTNER)
+        if not partner_member and settings.IS_DEV:
+            partner_member = request.user.partner_members.first()
+
+    if partner_member:
+        partner = partner_member.partner
+
+    return partner, partner_member
 
 
 class ActivePartnerMiddleware(object):
@@ -26,7 +29,7 @@ class ActivePartnerMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        request.active_partner = SimpleLazyObject(lambda: get_partner_object(request))
+        request.active_partner, request.partner_member = SimpleLazyObject(lambda: get_partner_object(request))
         response = self.get_response(request)
         return response
 
@@ -56,6 +59,6 @@ class ActiveAgencyOfficeMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        request.office_member = SimpleLazyObject(lambda: get_office_member_object(request))
+        request.agency_member = SimpleLazyObject(lambda: get_office_member_object(request))
         response = self.get_response(request)
         return response

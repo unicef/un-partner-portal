@@ -202,7 +202,7 @@ class CommonFileSerializer(serializers.ModelSerializer):
     def to_internal_value(self, data):
         try:
             return CommonFile.objects.get(id=int(data))
-        except:
+        except CommonFile.DoesNotExist:
             raise ValidationError('No File Exists with this ID')
 
     class Meta:

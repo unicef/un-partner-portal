@@ -8,11 +8,12 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
 from agency.serializers import AgencySerializer, AgencyUserSerializer
-from common.consts import APPLICATION_STATUSES, EOI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
+from common.consts import APPLICATION_STATUSES, CFEI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
@@ -178,6 +179,12 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
         model = Application
         fields = '__all__'
         read_only_fields = ('eoi',)
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Application.objects.all(),
+                fields=('eoi', 'partner')
+            )
+        ]
 
     prevent_keys = ["cn"]
 
@@ -204,7 +211,7 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
                 raise serializers.ValidationError("Since assessment has begun, application can't be rejected.")
 
             if app.eoi.is_completed:
-                raise serializers.ValidationError("Since CEOI is completed, modification is forbidden.")
+                raise serializers.ValidationError("Since CFEI is completed, modification is forbidden.")
 
             if data.get("did_win") and not app.partner.is_verified:
                 raise serializers.ValidationError(
@@ -277,7 +284,7 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         specializations = validated_data['eoi'].pop('specializations')
         focal_points = validated_data['eoi'].pop('focal_points')
 
-        validated_data['eoi']['display_type'] = EOI_TYPES.direct
+        validated_data['eoi']['display_type'] = CFEI_TYPES.direct
         eoi = EOI.objects.create(**validated_data['eoi'])
         for location in locations:
             point = Point.objects.get_point(**location)
@@ -768,6 +775,7 @@ class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirect
 
 
 class ApplicationFeedbackSerializer(serializers.ModelSerializer):
+
     provider = AgencyUserSerializer(read_only=True)
 
     class Meta:
@@ -811,7 +819,7 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
 
         eoi = EOI(**validated_data['eoi'])
         eoi.created_by = submitter
-        eoi.display_type = EOI_TYPES.direct
+        eoi.display_type = CFEI_TYPES.direct
         eoi.title = app.proposal_of_eoi_details.get('title')
         eoi.agency = app.agency
         # we can use get direct because agent have one agency office

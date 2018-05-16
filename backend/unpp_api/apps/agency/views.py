@@ -11,7 +11,7 @@ from account.models import User
 from agency.serializers import AgencySerializer, AgencyOfficeSerializer, AgencyUserSerializer
 from agency.models import Agency, AgencyOffice
 from agency.filters import AgencyUserFilter, AgencyFilter
-from common.permissions import HasAgencyPermission
+from common.permissions import HasUNPPPermission
 
 
 class AgencyListAPIView(ListAPIView):
@@ -46,8 +46,10 @@ class AgencyMemberListAPIView(ListAPIView):
     pagination_class = MediumPagination
     permission_classes = (
         IsAuthenticated,
-        HasAgencyPermission(
-            AgencyPermission.MY_AGENCY_LIST_USERS
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.MY_AGENCY_LIST_USERS
+            ]
         ),
     )
     filter_backends = (DjangoFilterBackend, )

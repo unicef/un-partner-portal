@@ -38,7 +38,7 @@ ROLE_LABELS = {
 }
 
 
-ROLE_PERMISSIONS = {
+AGENCY_ROLE_PERMISSIONS = {
     AgencyRole.HQ_EDITOR: frozenset([
         AgencyPermission.RESET_CSO_USER_PASSWORD,
         AgencyPermission.MY_AGENCY_LIST_USERS,
@@ -54,6 +54,7 @@ ROLE_PERMISSIONS = {
     ]),
     AgencyRole.ADMINISTRATOR: frozenset([
         AgencyPermission.RESET_CSO_USER_PASSWORD,
+        AgencyPermission.MY_AGENCY_LIST_USERS,
         AgencyPermission.MY_AGENCY_ADD_USER,
         AgencyPermission.MY_AGENCY_DEACTIVATE_USER,
         AgencyPermission.MY_AGENCY_RELOCATE_USER,
@@ -95,6 +96,7 @@ ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DRAFT_MANAGE,
         AgencyPermission.CFEI_DRAFT_MANAGE_FOCAL_POINT,
         AgencyPermission.CFEI_DRAFT_INVITE_CSO,
+        AgencyPermission.CFEI_DIRECT_INDICATE_CSO,
     ]),
     AgencyRole.EDITOR_BASIC_PAM: frozenset([
         AgencyPermission.VIEW_DASHBOARD,

@@ -7,7 +7,7 @@ from functools import reduce
 from django.db.models import Count
 from rest_framework import serializers
 
-from common.consts import EOI_TYPES, PARTNER_TYPES
+from common.consts import CFEI_TYPES, PARTNER_TYPES
 from common.mixins import PartnerIdsMixin
 from common.models import Sector
 from partner.models import Partner
@@ -45,7 +45,7 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
 
     def get_new_cfei_last_15_by_day_count(self, obj):
         return EOI.objects.filter(created__gte=self._get_days_ago_date(),
-                                  display_type=EOI_TYPES.open).count()
+                                  display_type=CFEI_TYPES.open).count()
 
     def get_num_cn_to_score(self, obj):
         user = self.context['request'].user

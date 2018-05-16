@@ -23,9 +23,16 @@ class OtherAgencySerializer(serializers.ModelSerializer):
 
 class AgencyOfficeSerializer(serializers.ModelSerializer):
 
+    agency = AgencySerializer()
+
     class Meta:
         model = AgencyOffice
-        fields = ('id', 'name', 'countries_code',)
+        fields = (
+            'id',
+            'name',
+            'countries_code',
+            'agency',
+        )
 
 
 class AgencyMemberSerializer(serializers.ModelSerializer):
@@ -33,6 +40,7 @@ class AgencyMemberSerializer(serializers.ModelSerializer):
     office = AgencyOfficeSerializer()
     status_display = serializers.CharField(source='get_status_display')
     role_display = serializers.CharField(source='get_role_display')
+    permissions = serializers.SerializerMethodField()
 
     class Meta:
         model = AgencyMember
@@ -44,7 +52,13 @@ class AgencyMemberSerializer(serializers.ModelSerializer):
             'telephone',
             'status',
             'status_display',
+            'permissions',
         )
+
+    def get_permissions(self, agency_member):
+        return [
+            p.name for p in agency_member.user_permissions
+        ]
 
 
 class AgencyUserSerializer(UserSerializer):

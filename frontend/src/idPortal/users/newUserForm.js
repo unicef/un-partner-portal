@@ -5,10 +5,12 @@ import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
 import GridRow from '../../components/common/grid/gridRow';
 import TextFieldForm from '../../components/forms/textFieldForm';
-import GridColumn from '../../components/common/grid/gridColumn'; 
+import GridColumn from '../../components/common/grid/gridColumn';
 import { email } from '../../helpers/validation';
+import RoleField from './roleField';
 
 const messages = {
+  formName: 'newUserForm',
   selectPartners: 'Select Partners',
   selectionCriteria: 'Selection Criteria',
   firstName: 'First name',
@@ -16,8 +18,7 @@ const messages = {
   email: 'E-mail',
 };
 
-
-const NewUserFrom = (props) => {
+const NewUserForm = (props) => {
   const { handleSubmit } = props;
   return (
     <form onSubmit={handleSubmit}>
@@ -37,24 +38,20 @@ const NewUserFrom = (props) => {
           fieldName="email"
           validation={[email]}
         />
+        <RoleField formName="newUserForm" />
       </GridColumn>
     </form >
   );
 };
 
-NewUserFrom.propTypes = {
+NewUserForm.propTypes = {
   /**
      * callback for form submit
      */
   handleSubmit: PropTypes.func.isRequired,
-
 };
-
-const connectedNewUserForm = connect(
-  null,
-)(NewUserFrom);
 
 export default reduxForm({
   form: 'newUserForm',
-})(connectedNewUserForm);
+})(NewUserForm);
 

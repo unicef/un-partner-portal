@@ -1,4 +1,5 @@
 import os
+import functools
 
 from logging.handlers import RotatingFileHandler
 
@@ -92,3 +93,14 @@ def get_absolute_frontend_url(relative_url):
         host = host[:-1]
 
     return 'http://' + host + relative_url
+
+
+def rsetattr(obj, attr, val):
+    pre, _, post = attr.rpartition('.')
+    return setattr(rgetattr(obj, pre) if pre else obj, post, val)
+
+
+def rgetattr(obj, attr, *args):
+    def _getattr(obj, attr):
+        return getattr(obj, attr, *args)
+    return functools.reduce(_getattr, [obj] + attr.split('.'))

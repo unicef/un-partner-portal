@@ -98,12 +98,15 @@ class PartnerShortSerializer(serializers.ModelSerializer):
 
 class PartnerMemberSerializer(serializers.ModelSerializer):
 
+    role_display = serializers.CharField(source='get_role_display', read_only=True)
+
     class Meta:
         model = PartnerMember
         fields = (
             'id',
             'title',
             'role',
+            'role_display',
         )
 
 

@@ -6,18 +6,22 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
 from common.pagination import SmallPagination
 from common.permissions import (
-    IsAtLeastAgencyMemberEditor,
-    IsAgencyMemberUser,
+    HasUNPPPermission,
 )
-from .serializers import PartnerFlagSerializer, PartnerVerificationSerializer
-from .models import PartnerFlag, PartnerVerification
+from review.serializers import PartnerFlagSerializer, PartnerVerificationSerializer
+from review.models import PartnerFlag, PartnerVerification
 
 
 class PartnerFlagListCreateAPIView(ListCreateAPIView):
     """
     Endpoint for getting and creating flags
     """
-    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor,)
+    permission_classes = (
+        IsAuthenticated,
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = PartnerFlagSerializer
     pagination_class = SmallPagination
 
@@ -33,7 +37,12 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
     """
     Endpoint for getting and creating partner verifications
     """
-    permission_classes = (IsAuthenticated, IsAgencyMemberUser,)
+    permission_classes = (
+        IsAuthenticated,
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = PartnerVerificationSerializer
     pagination_class = SmallPagination
 
@@ -49,7 +58,12 @@ class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     """
     Endpoint for updating valid status. Only accepts is_valid
     """
-    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor,)
+    permission_classes = (
+        IsAuthenticated,
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = PartnerFlagSerializer
 
     def get_queryset(self):
@@ -66,7 +80,12 @@ class PartnerVerificationRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     """
     Endpoint for updating valid status. Only accepts is_valid
     """
-    permission_classes = (IsAuthenticated, IsAtLeastAgencyMemberEditor,)
+    permission_classes = (
+        IsAuthenticated,
+        HasUNPPPermission(
+            #  TODO: Permissions
+        ),
+    )
     serializer_class = PartnerVerificationSerializer
 
     def get_queryset(self):
