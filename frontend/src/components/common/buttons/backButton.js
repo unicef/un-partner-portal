@@ -5,11 +5,15 @@ import { connect } from 'react-redux';
 import { compose } from 'ramda';
 import IconButton from 'material-ui/IconButton';
 import KeyboardArrowLeft from 'material-ui-icons/KeyboardArrowLeft';
+import ArrowBack from 'material-ui-icons/ArrowBack';
 import { withStyles } from 'material-ui/styles';
 
 const styleSheet = theme => ({
   backButtonHeight: {
     height: theme.spacing.unit * 3,
+  },
+  btnColor: {
+    color: '#ffffff', 
   },
   noPrint: {
     '@media print': {
@@ -34,13 +38,13 @@ class BackButton extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, arrowBack } = this.props;
     return (
       <IconButton
         className={`${classes.backButtonHeight} ${classes.noPrint}`}
         onClick={this.handleClick}
       >
-        <KeyboardArrowLeft />
+        {arrowBack ? <ArrowBack className={classes.btnColor} /> : <KeyboardArrowLeft />}
       </IconButton>
     );
   }
@@ -49,6 +53,7 @@ class BackButton extends React.Component {
 BackButton.propTypes = {
   classes: PropTypes.object,
   previousPath: PropTypes.string,
+  arrowBack: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
