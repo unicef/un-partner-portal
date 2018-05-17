@@ -12,6 +12,7 @@ import cfeiNav from './reducers/cfeiNav';
 import newCfei from './reducers/newCfei';
 import nav from './reducers/nav';
 import session from './reducers/session';
+import offices from './reducers/offices';
 import countries from './reducers/countries';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
@@ -67,6 +68,7 @@ import openCfeiDashboardList from './reducers/openCfeiDashboardList';
 
 import idPortalNav from './idPortal/reducers/nav';
 import idPortalUsersList from './idPortal/reducers/usersList';
+import idPortalNewUser from './idPortal/reducers/newUser';
 
 const mainReducer = combineReducers({
   cfei,
@@ -82,6 +84,7 @@ const mainReducer = combineReducers({
   openCfeiDashboardList,
   adminOneLocation,
   nav,
+  offices,
   session,
   error,
   countries,
@@ -130,6 +133,7 @@ const mainReducer = combineReducers({
   // ID portal
   idPortalNav,
   idPortalUsersList,
+  idPortalNewUser,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
@@ -155,6 +159,11 @@ const makeFormItem = (list) => {
 export const mapValuesForSelectionField = (state, compareField = 'label') => {
   const compare = (a, b) => a[compareField].localeCompare(b[compareField]);
   return R.sort(compare, R.map(makeFormItem, R.toPairs(state)));
+};
+
+export const mapArrayForSelectionField = (state, compareField = 'label') => {
+  const compare = (a, b) => a[compareField].localeCompare(b[compareField]);
+  return R.sort(compare, R.map(item => makeFormItem(R.values(item)), state));
 };
 
 export const selectNormalizedCountries = state =>
@@ -223,6 +232,9 @@ export const selectCountriesWithOptionalLocations = state =>
 
 export const selectNormalizedRoleChoices = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['user-role-choices']);
+
+export const selectNormalizedOffices = state =>
+  mapArrayForSelectionField(state.offices);
 
 export const selectNormalizedSpecializations = state =>
   mapValuesForSelectionField(state.sectors.allSpecializations);

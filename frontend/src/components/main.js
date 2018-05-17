@@ -9,6 +9,7 @@ import { loadPartnerConfig } from '../reducers/partnerProfileConfig';
 import { loadSectors } from '../reducers/sectors';
 import getTheme, { muiOldTheme } from '../styles/muiTheme';
 import SnackbarContainer from './common/snackbarContainer';
+import { loadOffices } from '../reducers/offices';
 
 class Main extends Component {
   constructor() {
@@ -20,15 +21,16 @@ class Main extends Component {
   }
 
   componentDidMount() {
-    const { session,
-      loadCountries,
-      loadPartnerConfig,
-      loadSectors,
+    const { getCountries,
+      getPartnerConfig,
+      getSectors,
+      getOffices,
     } = this.props;
     const configPromises = [
-      loadCountries(),
-      loadPartnerConfig(),
-      loadSectors(),
+      getCountries(),
+      getPartnerConfig(),
+      getSectors(),
+      getOffices(),
     ];
     Promise.all(configPromises).then(() => {
       this.setState({ configLoaded: true });
@@ -56,6 +58,10 @@ Main.propTypes = {
   loadSectors: PropTypes.func,
   children: PropTypes.node,
   session: PropTypes.object,
+  getCountries: PropTypes.func,
+  getSectors: PropTypes.func,
+  getOffices: PropTypes.func,
+  getPartnerConfig: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -64,11 +70,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadCountries: () => dispatch(loadCountries()),
-  loadSectors: () => dispatch(loadSectors()),
-  loadPartnerConfig: () => dispatch(loadPartnerConfig()),
+  getCountries: () => dispatch(loadCountries()),
+  getSectors: () => dispatch(loadSectors()),
+  getOffices: () => dispatch(loadOffices()),
+  getPartnerConfig: () => dispatch(loadPartnerConfig()),
 });
-
 
 export default connect(
   mapStateToProps,

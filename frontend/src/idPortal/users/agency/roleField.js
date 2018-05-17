@@ -2,23 +2,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import ArrayForm from '../../components/forms/arrayForm';
-import SelectForm from '../../components/forms/selectForm';
-import LocationsCountry from '../../components/forms/fields/projectFields/locationField/locationsCountry';
-import { hasLocations } from '../../helpers/validation';
-import { selectNormalizedRoleChoices } from '../../store';
+import ArrayForm from '../../../components/forms/arrayForm';
+import SelectForm from '../../../components/forms/selectForm';
+import LocationsCountry from '../../../components/forms/fields/projectFields/locationField/locationsCountry';
+import { hasLocations } from '../../../helpers/validation';
+import { selectNormalizedRoleChoices } from '../../../store';
 
-const Country = formName => sector => (
+const Country = formName => member => (
   <LocationsCountry
-    name={sector}
+    name={member}
     formName={formName}
   />
 );
 
 // TODO import roles from constants
-const Roles = (values, readOnly, ...props) => () => (
+const Roles = (values, readOnly, ...props) => member => (
   <SelectForm
-    fieldName={'role'}
+    fieldName={`${member}.role`}
     label="Roles"
     values={values}
     readOnly={readOnly}
