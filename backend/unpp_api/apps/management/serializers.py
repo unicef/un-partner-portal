@@ -98,7 +98,7 @@ class PartnerOfficeManagementSerializer(serializers.ModelSerializer):
 
 class PartnerMemberManagementSerializer(serializers.ModelSerializer):
 
-    office = AgencyOfficeManagementSerializer(read_only=True)
+    office = PartnerOfficeManagementSerializer(read_only=True, source='partner')
     office_id = CurrentPartnerFilteredPKField(queryset=Partner.objects.all(), write_only=True)
     role_display = serializers.CharField(source='get_role_display', read_only=True)
 
