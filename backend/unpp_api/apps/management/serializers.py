@@ -53,6 +53,7 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
             'status',
             'office_memberships',
         )
+        extra_kwargs = {'fullname': {'read_only': True}}
 
     def validate(self, attrs):
         validated_data = super(AgencyUserManagementSerializer, self).validate(attrs)
@@ -76,7 +77,8 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
         if update:
             AgencyMember.objects.filter(user=user).exclude(pk__in=memberships).delete()
         else:
-            pass
+            user.set_unusable_password()
+            user.save()
             # TODO: Invite email
 
         return user
@@ -130,6 +132,7 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
             'status',
             'office_memberships',
         )
+        extra_kwargs = {'fullname': {'read_only': True}}
 
     def validate(self, attrs):
         validated_data = super(PartnerUserManagementSerializer, self).validate(attrs)
@@ -153,7 +156,8 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
         if update:
             PartnerMember.objects.filter(user=user).exclude(pk__in=memberships).delete()
         else:
-            pass
+            user.set_random_password()
+            user.save()
             # TODO: Invite email
 
         return user
