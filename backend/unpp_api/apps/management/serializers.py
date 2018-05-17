@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from account.models import User
-from management.fields import CurrentAgencyFilteredPKField
+from management.fields import CurrentAgencyFilteredPKField, CurrentPartnerFilteredPKField
 from agency.models import AgencyMember, AgencyOffice
 from partner.models import PartnerMember, Partner
 
@@ -97,7 +97,7 @@ class PartnerOfficeManagementSerializer(serializers.ModelSerializer):
 class PartnerMemberManagementSerializer(serializers.ModelSerializer):
 
     office = AgencyOfficeManagementSerializer(read_only=True)
-    office_id = CurrentAgencyFilteredPKField(queryset=AgencyOffice.objects.all(), write_only=True)
+    office_id = CurrentPartnerFilteredPKField(queryset=Partner.objects.all(), write_only=True)
     role_display = serializers.CharField(source='get_role_display', read_only=True)
 
     class Meta:

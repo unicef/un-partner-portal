@@ -26,3 +26,5 @@ class PartnerPermission(AutoNameEnum):
     DSR_ANSWER = auto()
 
     RECEIVE_NOTIFICATIONS = auto()
+
+    MANAGE_OFFICE_USERS = auto()

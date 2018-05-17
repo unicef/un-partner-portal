@@ -32,6 +32,7 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.REGISTER,
             PartnerPermission.VIEW_INGO_DASHBOARD,
             PartnerPermission.VIEW_DASHBOARD,
+            PartnerPermission.MANAGE_OFFICE_USERS,
         ]),
         PartnerRole.EDITOR: frozenset([
             PartnerPermission.VIEW_INGO_DASHBOARD,
@@ -44,6 +45,7 @@ PARTNER_ROLE_PERMISSIONS = {
     False: {  # INGO Country Profile
         PartnerRole.ADMIN: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
+            PartnerPermission.MANAGE_OFFICE_USERS,
         ]),
         PartnerRole.EDITOR: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
@@ -56,6 +58,7 @@ PARTNER_ROLE_PERMISSIONS = {
         PartnerRole.ADMIN: frozenset([
             PartnerPermission.REGISTER,
             PartnerPermission.VIEW_DASHBOARD,
+            PartnerPermission.MANAGE_OFFICE_USERS,
         ]),
         PartnerRole.EDITOR: frozenset([
             PartnerPermission.VIEW_DASHBOARD,

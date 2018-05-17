@@ -25,7 +25,7 @@ from agency.permissions import AgencyPermission
 from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE
 from common.pagination import SmallPagination
 from common.permissions import HasUNPPPermission
-from common.mixins import PartnerIdsMixin, FilterByCFEIRoleMixin
+from common.mixins import PartnerIdsMixin
 from notification.consts import NotificationType
 from notification.helpers import (
     get_partner_users_for_application_queryset,
@@ -370,13 +370,13 @@ class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
         send_notification_application_created(instance)
 
 
-class AgencyEOIApplicationDestroyAPIView(FilterByCFEIRoleMixin, DestroyAPIView):
+class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
 
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
                 AgencyPermission.CFEI_DIRECT_INDICATE_CSO,
-            ]
+            ],
         ),
     )
     queryset = Application.objects.all()
