@@ -310,8 +310,8 @@ export function patchNotifications(body) {
   return authorizedPatch({ uri: '/notifications/', body });
 }
 
-export function getPartnerProfileConfig() {
-  return get('/config/partners/profile');
+export function getGlobalConfig() {
+  return get('/config/general/');
 }
 
 export function getPartnerOrganizationProfiles(id, options) {

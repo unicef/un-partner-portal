@@ -105,7 +105,7 @@ def remove_untagged_images():
     local('docker rmi $(docker images | grep "^<none>" | awk "{print $3}")')
 
 
-def pep8():
+def lint():
     """
     Run python code linter
     """
