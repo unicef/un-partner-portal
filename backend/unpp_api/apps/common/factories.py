@@ -85,7 +85,7 @@ def get_country_list(quantity=3):
 
 
 def get_country():
-    return random.choice(COUNTRIES)[0]
+    return random.choice(COUNTRIES)
 
 
 def get_fullname():

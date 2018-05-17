@@ -14,3 +14,13 @@ class TestGeneralConfigAPIView(BaseAPITestCase):
         url = reverse('config:general-config')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestAPISwaggerView(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.ADMINISTRATOR
+
+    def test_view(self):
+        response = self.client.get('/api/doc/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

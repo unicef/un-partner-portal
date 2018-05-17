@@ -431,7 +431,9 @@ class EOIApplicationsListAPIView(ListAPIView):
 class ReviewersStatusAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
     serializer_class = ReviewersApplicationSerializer
@@ -468,9 +470,8 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     def check_permissions(self, request):
         super(ReviewerAssessmentsAPIView, self).check_permissions(request)
         application_id = self.kwargs.get('application_id')
-        app = Application.objects.select_related('eoi').get(id=application_id)
-        eoi = app.eoi
-        if eoi.reviewers.filter(id=self.request.user.id).exists():
+        app = Application.objects.select_related('eoi').filter(id=application_id).first()
+        if app and app.eoi.reviewers.filter(id=self.request.user.id).exists():
             return
         raise PermissionDenied
 
