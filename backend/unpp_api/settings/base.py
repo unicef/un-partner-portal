@@ -131,6 +131,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'django_filters',
     'imagekit',
+    'django_countries',
 
     'common',
     'account',
@@ -140,6 +141,7 @@ INSTALLED_APPS = [
     'review',
     'notification',
     'sanctionslist',
+    'management',
 ]
 
 # auth / django-registration params
@@ -157,7 +159,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    )
+    ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'account.serializers.CustomLoginSerializer',

@@ -58,7 +58,7 @@ class ConfigAdminLevel1ListAPIView(ListAPIView):
     pagination_class = MediumPagination
 
 
-class ConfigPPAPIView(APIView):
+class GeneralConfigAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
         if self.request.partner_member:
