@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^api/agencies/', include('agency.urls', namespace='agencies')),
     url(r'^api/partners/', include('partner.urls', namespace='partners')),
     url(r'^api/partners/', include('review.urls', namespace='partner-reviews')),
+    url(r'^api/manage/', include('management.urls', namespace='management')),
     url(r'^api/notifications/', include('notification.urls', namespace='notifications')),
     url(r'^api/dashboard/', include('dashboard.urls', namespace='dashboard')),
     url(r'^api/rest-auth/', include('rest_auth.urls')),

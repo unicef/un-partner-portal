@@ -1,9 +1,7 @@
-from django.db import transaction
 from django_countries.serializers import CountryFieldMixin
 from rest_framework import serializers
 
 from account.models import User
-from agency.fields import CurrentAgencyFilteredPKField
 from agency.models import Agency, OtherAgency, AgencyOffice, AgencyMember
 
 
@@ -41,7 +39,6 @@ class AgencyOfficeSerializer(CountryFieldMixin, serializers.ModelSerializer):
 class AgencyMemberSerializer(serializers.ModelSerializer):
 
     office = AgencyOfficeSerializer(read_only=True)
-    office_id = CurrentAgencyFilteredPKField(queryset=AgencyOffice.objects.all(), write_only=True)
     role_display = serializers.CharField(source='get_role_display', read_only=True)
     permissions = serializers.SerializerMethodField()
 
@@ -83,30 +80,3 @@ class AgencyUserSerializer(serializers.ModelSerializer):
             'status',
             'office_memberships',
         )
-
-    def validate(self, attrs):
-        validated_data = super(AgencyUserSerializer, self).validate(attrs)
-        self.context['agency_members'] = validated_data.pop('agency_members')
-        validated_data['fullname'] = f'{validated_data.pop("first_name")} {validated_data.pop("last_name")}'
-        return validated_data
-
-    @transaction.atomic
-    def save(self):
-        update = bool(self.instance)
-        user = super(AgencyUserSerializer, self).save()
-
-        memberships = []
-        for member_data in self.context['agency_members']:
-            memberships.append(AgencyMember.objects.update_or_create(
-                user=user,
-                office=member_data.pop('office_id'),
-                defaults=member_data
-            )[0].pk)
-
-        if update:
-            AgencyMember.objects.filter(user=user).exclude(pk__in=memberships).delete()
-        else:
-            pass
-            # TODO: Invite email
-
-        return user

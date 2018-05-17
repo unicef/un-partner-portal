@@ -8,10 +8,7 @@ class AgencyPermission(AutoNameEnum):
 
     # User Management
     RESET_CSO_USER_PASSWORD = auto()
-    MY_AGENCY_LIST_USERS = auto()
-    MY_AGENCY_ADD_USER = auto()
-    MY_AGENCY_DEACTIVATE_USER = auto()
-    MY_AGENCY_RELOCATE_USER = auto()
+    MANAGE_OWN_AGENCY_USERS = auto()
 
     # General
     VIEW_DASHBOARD = auto()

@@ -131,6 +131,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'django_filters',
     'imagekit',
+    'django_countries',
 
     'common',
     'account',
@@ -140,6 +141,7 @@ INSTALLED_APPS = [
     'review',
     'notification',
     'sanctionslist',
+    'management',
 ]
 
 # auth / django-registration params

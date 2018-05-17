@@ -3,12 +3,12 @@ import random
 from django.urls import reverse
 
 from agency.roles import AgencyRole
-from common.factories import AgencyFactory, UserFactory, PartnerFactory, AgencyOfficeFactory
+from common.factories import AgencyFactory, UserFactory, PartnerFactory, AgencyOfficeFactory, AgencyMemberFactory
 from common.tests.base import BaseAPITestCase
 from rest_framework import status
 
 
-class TestPartnerCountryProfileAPIView(BaseAPITestCase):
+class TestAgencyUserManagement(BaseAPITestCase):
 
     quantity = 1
     initial_factories = [
@@ -20,7 +20,7 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
     agency_role = AgencyRole.ADMINISTRATOR
 
     def test_invite_agency_user(self):
-        url = reverse('agencies:invite-member')
+        url = reverse('management:user-add')
         payload = {
             'first_name': 'John',
             'last_name': 'Doe',
@@ -48,13 +48,13 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
             'role': random.choice(list(AgencyRole)).name
         } for office in new_offices]
 
-        url = reverse('agencies:update-member', kwargs={'pk': response.data['id']})
+        url = reverse('management:user-details', kwargs={'pk': response.data['id']})
         response = self.client.patch(url, data=payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg=response.data)
         self.assertEqual(len(response.data['office_memberships']), 2)
 
     def test_deactivate_user(self):
-        url = reverse('agencies:invite-member')
+        url = reverse('management:user-add')
         payload = {
             'first_name': 'John',
             'last_name': 'Doe',
@@ -70,7 +70,14 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
         # Test Update
         payload['is_active'] = False
 
-        url = reverse('agencies:update-member', kwargs={'pk': response.data['id']})
+        url = reverse('management:user-details', kwargs={'pk': response.data['id']})
         response = self.client.patch(url, data=payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg=response.data)
         self.assertEqual(response.data['status'], 'Deactivated')
+
+    def test_list_users(self):
+        office = AgencyOfficeFactory.create_batch(1, agency=self.user.agency)[0]
+        AgencyMemberFactory.create_batch(5, office=office)
+        url = reverse('management:user-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg=response.data)
