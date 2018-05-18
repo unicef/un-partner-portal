@@ -154,6 +154,11 @@ const getTheme = () => (
         closed: '#233944',
         open: '#72C300',
       },
+      userStatus: {
+        invited: '#FF6D00',
+        active: '#8BC34A',
+        deactivated: '#263238',
+      },
       dateColors: {
         dark: '#233944',
         green: '#72C300',

@@ -5,6 +5,9 @@ import { PagingState, SortingState, RowDetailState } from '@devexpress/dx-react-
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import {
+  Template, TemplateConnector, TemplateRenderer,
+} from '@devexpress/dx-react-core';
+import {
   TableRow as TableRowMUI,
 } from 'material-ui/Table';
 import ListLoader from './listLoader';
@@ -24,11 +27,33 @@ const styleSheet = (theme) => {
   };
 };
 
+const getSelectTableRowTemplateArgs = (
+  { selectByRowClick, highlightSelected, hovered, ...restParams }, // current selection
+// action that changes row selection
+) => {
+  const { rowId, row } = restParams.tableRow;
+  return ({
+    ...restParams,
+    row,
+    selectByRowClick,
+    rowId,
+    hovered: hovered === rowId,
+  });
+};
+
 class PaginatedList extends Component {
   constructor(props) {
     super(props);
     this.changeExpandedDetails = expandedRows => this.setState({ expandedRows });
     this.tableRowTemplate = this.tableRowTemplate.bind(this);
+
+
+    this.state = {
+      hovered: null,
+    };
+
+    this.handleRowMouseEnter = this.handleRowMouseEnter.bind(this);
+    this.handleRowMouseLeave = this.handleRowMouseLeave.bind(this);
   }
 
   navigationHeader() {
@@ -47,12 +72,22 @@ class PaginatedList extends Component {
     });
   }
 
-  tableRowTemplate({ row, children }) {
+  handleRowMouseEnter(newHovered) {
+    this.setState({ hoveredRow: newHovered });
+  }
+
+  handleRowMouseLeave() {
+    this.setState({ hoveredRow: null });
+  }
+
+  tableRowTemplate({ row, children, rowId }) {
     return (
       <TableRowMUI
         hover
         style={{ cursor: this.props.clickableRow ? 'pointer' : 'auto' }}
         onClick={() => { if (this.props.clickableRow) this.props.onTableRowClick(row); }}
+        onMouseEnter={() => this.handleRowMouseEnter(rowId)}
+        onMouseLeave={() => this.handleRowMouseLeave()}
       >
         {children}
       </TableRowMUI>
@@ -75,6 +110,7 @@ class PaginatedList extends Component {
       changePageSize,
       changePageNumber } = this.props;
 
+    const { hoveredRow } = this.state;
     return (
       <ListLoader
         loading={loading}
@@ -100,10 +136,36 @@ class PaginatedList extends Component {
           <RowDetailState onExpandedRowsChange={this.changeExpandedDetails} />}
 
           <TableView
-            tableCellTemplate={templateCell}
             table
             tableRowTemplate={this.tableRowTemplate}
+            tableCellTemplate={({ row, column, tableRow: { rowId } }) =>
+              templateCell({ row, column, hovered: hoveredRow === rowId })}
           />
+          <Template
+            name="tableViewRow"
+            // use custom template only for table data rows
+            predicate={({ tableRow }) => tableRow.type === 'data'}
+          >
+            {params => (
+              <TemplateConnector>
+                {(getters, actions) => (
+                  <TemplateRenderer
+                  // custom template
+                    template={this.tableRowTemplate}
+                    // custom template params
+                    params={
+                      getSelectTableRowTemplateArgs({
+                        selectByRowClick: true,
+                        highlightSelected: true,
+                        hovered: hoveredRow,
+                        ...params,
+                      }, getters, actions)
+                    }
+                  />
+                )}
+              </TemplateConnector>
+            )}
+          </Template>
           <TableHeaderRow allowSorting={allowSorting} />
 
           {expandable &&

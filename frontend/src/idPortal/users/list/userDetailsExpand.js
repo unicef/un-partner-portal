@@ -2,12 +2,9 @@ import R from 'ramda';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import ItemColumnCell from '../../components/common/cell/itemColumnCell';
-import GridColumn from '../../components/common/grid/gridColumn';
-import GridRow from '../../components/common/grid/gridRow';
-import ItemWorkingLanguagesCell from '../../components/common/cell/itemWorkingLanguagesCell';
-import ItemSectorsCell from '../../components/common/cell/itemSectorsCell';
-import PaddedContent from '../../components/common/paddedContent';
+import GridColumn from '../../../components/common/grid/gridColumn';
+import GridRow from '../../../components/common/grid/gridRow';
+import PaddedContent from '../../../components/common/paddedContent';
 
 const messages = {
   role: 'Role per Office',
@@ -46,13 +43,13 @@ const styleSheet = (theme) => {
 };
 
 const UserDetailsExpand = (props) => {
-  const { classes, partner } = props;
+  const { classes, user } = props;
 
-  if (partner) {
+  if (user) {
     return (
       <GridColumn className={classes.container}>
         <GridRow columns={1} spacing={24}>
-          <ItemSectorsCell label={messages.specialisation} content={partner.experiences} />
+          {user.status}
         </GridRow>
       </GridColumn>
     );
@@ -65,7 +62,7 @@ const UserDetailsExpand = (props) => {
 
 UserDetailsExpand.propTypes = {
   classes: PropTypes.object.isRequired,
-  partner: PropTypes.object,
+  user: PropTypes.object,
 };
 
 export default withStyles(styleSheet, { name: 'UserDetailsExpand' })(UserDetailsExpand);

@@ -3,27 +3,39 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { browserHistory as history, withRouter } from 'react-router';
-import MainContentWrapper from '../../components/common/mainContentWrapper';
-import HeaderNavigation from '../../components/common/headerNavigation';
+import MainContentWrapper from '../../../components/common/mainContentWrapper';
+import HeaderNavigation from '../../../components/common/headerNavigation';
 import AgencyMembersFilter from './usersFilter';
-import PaginatedList from '../../components/common/list/paginatedList';
-import TableWithStateInUrl from '../../components/common/hoc/tableWithStateInUrl';
-import { loadMembersList } from '../../reducers/agencyMembersList';
-import { isQueryChanged } from '../../helpers/apiHelper';
-import NewUserModalButton from './newUser/newUserModalButton';
+import PaginatedList from '../../../components/common/list/paginatedList';
+import TableWithStateInUrl from '../../../components/common/hoc/tableWithStateInUrl';
+import { loadUsersList } from '../../reducers/usersList';
+import { isQueryChanged } from '../../../helpers/apiHelper';
+import NewUserModalButton from './../newUser/newUserModalButton';
 import UserDetailsExpand from './userDetailsExpand';
+import UserStatusCell from './userStatusCell';
+
+const tableCells = ({ row, column, hovered }) => {
+  if (column.name === 'status') {
+    return (<UserStatusCell
+      hovered={hovered}
+      status={row.status}
+    />);
+  }
+
+  return undefined;
+};
 
 class UsersContainer extends Component {
   componentWillMount() {
-    const { query, agencyId } = this.props;
-    this.props.loadMembers(agencyId, query);
+    const { query } = this.props;
+    this.props.loadUsers(query);
   }
 
   shouldComponentUpdate(nextProps) {
-    const { query, agencyId } = this.props;
+    const { query } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
-      this.props.loadMembers(agencyId, nextProps.location.query);
+      this.props.loadUsers(nextProps.location.query);
       return false;
     }
 
@@ -31,7 +43,7 @@ class UsersContainer extends Component {
   }
 
   render() {
-    const { members, agencyName, columns, totalCount, loading } = this.props;
+    const { members, columns, totalCount, loading } = this.props;
 
     return (
       <React.Fragment>
@@ -53,7 +65,9 @@ class UsersContainer extends Component {
                 columns={columns}
                 itemsCount={totalCount}
                 loading={loading}
-                expandedCell={row => <UserDetailsExpand partner={row} />}
+                expandable
+                templateCell={tableCells}
+                expandedCell={row => <UserDetailsExpand user={row} />}
               />
             </Grid>
           </Grid>
@@ -67,25 +81,24 @@ UsersContainer.propTypes = {
   members: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   totalCount: PropTypes.number.isRequired,
-  loadMembers: PropTypes.func.isRequired,
+  loadUsers: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
-  agencyId: PropTypes.number,
   agencyName: PropTypes.string,
   query: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  members: state.agencyMembersList.members,
-  totalCount: state.agencyMembersList.totalCount,
+  members: state.idPortalUsersList.users,
+  totalCount: state.idPortalUsersList.totalCount,
   columns: state.idPortalUsersList.columns,
-  loading: state.agencyMembersList.loading,
+  loading: state.idPortalUsersList.loading,
   query: ownProps.location.query,
   agencyId: state.session.agencyId,
   agencyName: state.session.agencyName,
 });
 
 const mapDispatch = dispatch => ({
-  loadMembers: (agencyId, params) => dispatch(loadMembersList(agencyId, params)),
+  loadUsers: params => dispatch(loadUsersList(params)),
 });
 
 const connectedUsersContainer = connect(mapStateToProps, mapDispatch)(UsersContainer);

@@ -17,9 +17,11 @@ export const usersLoadSuccess = response => ({ type: USERS_LOAD_SUCCESS, respons
 export const usersLoadFailure = error => ({ type: USERS_LOAD_FAILURE, error });
 export const usersLoadEnded = () => ({ type: USERS_LOAD_ENDED });
 
+
+//TODO add pagination
 const saveUsers = (state, action) => {
-  const users = R.assoc('users', action.response.results, state);
-  return R.assoc('totalCount', action.response.count, users);
+  const users = R.assoc('users', action.response, state);
+  return R.assoc('totalCount', action.response.length, users);
 };
 
 const messages = {
@@ -28,9 +30,7 @@ const messages = {
 
 const initialState = {
   columns: [
-    { name: 'name', title: 'Name' },
-    // { name: 'office_name', title: 'Office' },
-    // { name: 'role', title: 'Role' },
+    { name: 'fullname', title: 'Name' },
     { name: 'email', title: 'E-mail' },
     { name: 'status', title: 'Status' },
   ],
@@ -40,9 +40,9 @@ const initialState = {
 };
 
 
-export const loadUsersList = (agencyId, params) => (dispatch) => {
+export const loadUsersList = params => (dispatch) => {
   dispatch(usersLoadStarted());
-  return getUsersList(agencyId, params)
+  return getUsersList(params)
     .then((users) => {
       dispatch(usersLoadEnded());
       dispatch(usersLoadSuccess(users));

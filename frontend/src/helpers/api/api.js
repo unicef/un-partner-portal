@@ -147,10 +147,6 @@ export function postOpenCfei(body) {
   return authorizedPost({ uri: '/projects/open/', body });
 }
 
-export function postNewUser(body) {
-  return authorizedPost({ uri: '/manage/user/', body });
-}
-
 export function postDirectCfei(body) {
   return authorizedPost({ uri: '/projects/direct/', body });
 }
@@ -302,10 +298,6 @@ export function getMembersList(id, params, options) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params, options });
 }
 
-export function getUsersList(params, options) {
-  return authorizedGet({ uri: '/api/agencies/members/', params, options });
-}
-
 export function getNotifications(params, options) {
   return authorizedGet({ uri: '/notifications', params, options });
 }
@@ -397,4 +389,14 @@ export function getPendingOffers(params, options) {
 
 export function getAdminOneLocations(countryCode, options) {
   return authorizedGet({ uri: '/common/admin-levels', params: countryCode, options });
+}
+
+// ID portal
+
+export function postNewUser(body) {
+  return authorizedPost({ uri: '/manage/user/', body });
+}
+
+export function getUsersList(params, options) {
+  return authorizedGet({ uri: '/manage/users/', params, options });
 }
