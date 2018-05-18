@@ -65,13 +65,13 @@ Table placed below filters, shows the list of search results. Each row represent
 
 ![Results of Call for Expression of Interest](../.gitbook/assets/screen-shot-2018-04-10-at-16.05.40.png)
 
-**Hover behavior   
-**Column "Sector & Area of Specialization" shows only Sectors, because of lack of space. When hover on a cell with a title, the tooltip with full description of Areas of Specialization grouped by Sector will be displayed.
+**Hover behavior**   
+Column "Sector & Area of Specialization" shows only Sectors, because of lack of space. When hover on a cell with a title, the tooltip with full description of Areas of Specialization grouped by Sector will be displayed.
 
 ![Hover on a Sector &amp; Area of Specialization cell](../.gitbook/assets/screen-shot-2018-04-10-at-16.07.13.png)
 
-**Details of a single Call of Expression of Interest  
-**To view details of a single Call of Expression of Interest, user needs to click on the Project Title. This action will take the user to a separate screen. Those screens are described here.
+**Details of a single Call of Expression of Interest**  
+To view details of a single Call of Expression of Interest, user needs to click on the Project Title. This action will take the user to a separate screen. Those screens are described here.
 
 ### New Call of Expression of Interest
 
@@ -103,16 +103,16 @@ Table placed below filters, shows the list of search results. Each row represent
 * Direct Selection Source
 * Status
 
-**Hover behavior **
+**Hover behavior** 
 
 Column "Partner" shows the name of the Partner. In case of too long name, when hover on the cell tooltip with full name is displayed.  
-**  
-**Column "Sector & Area of Specialization" shows only Sectors, because of lack of space. When hover on a cell with a title, the tooltip with full description of Areas of Specialization grouped by Sector will be displayed.
+  
+****Column "Sector & Area of Specialization" shows only Sectors, because of lack of space. When hover on a cell with a title, the tooltip with full description of Areas of Specialization grouped by Sector will be displayed.
 
 Column "Status" shows status of Direct Selection. When hover on this cell, tooltip with Partner status is displayed.
 
-**Details of a single Direct Selection  
-**To view details of a single Direct Selection, user needs to click on the Project Title. This action will take the user to a separate screen. Those screens are described here.
+**Details of a single Direct Selection**  
+To view details of a single Direct Selection, user needs to click on the Project Title. This action will take the user to a separate screen. Those screens are described here.
 
 ### New Direct Selection
 
@@ -149,8 +149,8 @@ Table placed below filters, shows the list of search results. Each row represent
 
 ![Results of Unsolicited Concept Note](../.gitbook/assets/screen-shot-2018-04-10-at-16.11.50.png)
 
-**Hover behavior   
-**Column "Sector & Area of Specialization" shows only Sectors, because of lack of space. When hover on a cell with a title, the tooltip with full description of Areas of Specialization grouped by Sector will be displayed.
+**Hover behavior**   
+Column "Sector & Area of Specialization" shows only Sectors, because of lack of space. When hover on a cell with a title, the tooltip with full description of Areas of Specialization grouped by Sector will be displayed.
 
 ![Hover on a Sector &amp; Area of Specialization cell](../.gitbook/assets/screen-shot-2018-04-10-at-16.11.56.png)
 {% endtab %}

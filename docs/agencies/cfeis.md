@@ -28,7 +28,7 @@ On the top section of the screen, the user will be presented with a few features
 
 A label is present just above the CFEI's **Title** to indicate if the CFEI is categorized as an "Open Selection" or not. 
 
-Just below the **Title **sits the following list of tabs:
+Just below the **Title** sits the following list of tabs:
 
 * Overview
 * Applications
