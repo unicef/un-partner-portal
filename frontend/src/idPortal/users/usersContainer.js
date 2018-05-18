@@ -10,7 +10,7 @@ import PaginatedList from '../../components/common/list/paginatedList';
 import TableWithStateInUrl from '../../components/common/hoc/tableWithStateInUrl';
 import { loadMembersList } from '../../reducers/agencyMembersList';
 import { isQueryChanged } from '../../helpers/apiHelper';
-import NewUserModalButton from './newUserModalButton';
+import NewUserModalButton from './newUser/newUserModalButton';
 import UserDetailsExpand from './userDetailsExpand';
 
 class UsersContainer extends Component {
