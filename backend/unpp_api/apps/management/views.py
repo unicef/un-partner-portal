@@ -4,6 +4,7 @@ from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
 from account.models import User
 from agency.models import AgencyOffice
 from agency.permissions import AgencyPermission
+from common.pagination import SmallPagination
 from common.permissions import HasUNPPPermission
 from management.serializers import AgencyUserManagementSerializer, PartnerOfficeManagementSerializer, \
     AgencyOfficeManagementSerializer, PartnerUserManagementSerializer
@@ -23,6 +24,7 @@ class UserViewSet(CreateAPIView, ListAPIView, UpdateAPIView):
             ]
         ),
     )
+    pagination_class = SmallPagination
 
     def get_serializer_class(self):
         if self.request.agency_member:
