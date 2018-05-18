@@ -13,7 +13,7 @@ class PartnerUserFilter(django_filters.FilterSet):
     office = django_filters.CharFilter(name='partner_members__partner__legal_name', lookup_expr='icontains')
     role = django_filters.MultipleChoiceFilter(
         widget=CSVWidget(),
-        name='agency_members__role',
+        name='partner_members__role',
         choices=PartnerRole.get_choices()
     )
 
@@ -32,6 +32,7 @@ class AgencyUserFilter(PartnerUserFilter):
     )
 
     def filter_office(self, queryset, name, value):
+        # country is stored as code so need to hack around this to filter by name
         country_codes = queryset.values_list('agency_members__office__country', flat=True).distinct(
             'agency_members__office__country'
         ).order_by()
