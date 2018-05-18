@@ -147,6 +147,10 @@ export function postOpenCfei(body) {
   return authorizedPost({ uri: '/projects/open/', body });
 }
 
+export function postNewUser(body) {
+  return authorizedPost({ uri: '/manage/user/', body });
+}
+
 export function postDirectCfei(body) {
   return authorizedPost({ uri: '/projects/direct/', body });
 }
@@ -312,6 +316,10 @@ export function patchNotifications(body) {
 
 export function getGlobalConfig() {
   return get('/config/general/');
+}
+
+export function getOffices() {
+  return get('/manage/offices/');
 }
 
 export function getPartnerOrganizationProfiles(id, options) {

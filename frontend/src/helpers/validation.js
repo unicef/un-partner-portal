@@ -68,7 +68,7 @@ export const hasLocations = (values, allValues, { optionalLocations }) => {
     values.forEach((countryObj) => {
       if (countryObj.country
           && !countryObj.locations
-          && !optionalLocations.includes(countryObj.country)) {
+          && optionalLocations && !optionalLocations.includes(countryObj.country)) {
         error = EMPTY_ERROR;
       }
     });

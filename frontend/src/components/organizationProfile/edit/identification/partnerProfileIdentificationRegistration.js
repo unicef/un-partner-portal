@@ -128,6 +128,14 @@ const PartnerProfileIdentificationRegistration = (props) => {
             fieldName="registration_comment"
             warn
             optional
+            textFieldProps={{
+              multiline: true,
+              InputProps: {
+                inputProps: {
+                  maxLength: '50',
+                },
+              },
+            }}
             readOnly={readOnly}
           />
         </Grid>}

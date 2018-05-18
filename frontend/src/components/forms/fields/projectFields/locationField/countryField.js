@@ -32,8 +32,10 @@ const CountryField = (props) => {
       values={countries}
       readOnly={readOnly}
       textFieldProps={{
-        inputProps: {
-          initial,
+        InputProps: {
+          inputProps: {
+            initial,
+          },
         },
       }}
       {...other}

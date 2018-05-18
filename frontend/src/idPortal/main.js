@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import MuiThemeProviderLegacy from 'material-ui-old/styles/MuiThemeProvider';
+import getTheme, { muiOldTheme } from '../styles/muiTheme';
+import SnackbarContainer from '../components/common/snackbarContainer';
 import { loadCountries } from '../reducers/countries';
 import { loadPartnerConfig } from '../reducers/partnerProfileConfig';
 import { loadSectors } from '../reducers/sectors';
-import getTheme, { muiOldTheme } from '../styles/muiTheme';
-import SnackbarContainer from './common/snackbarContainer';
 import { loadOffices } from '../reducers/offices';
 
 class Main extends Component {
@@ -53,11 +53,9 @@ class Main extends Component {
 }
 
 Main.propTypes = {
-  loadCountries: PropTypes.func,
-  loadPartnerConfig: PropTypes.func,
-  loadSectors: PropTypes.func,
   children: PropTypes.node,
   session: PropTypes.object,
+  loadPartnerConfig: PropTypes.func,
   getCountries: PropTypes.func,
   getSectors: PropTypes.func,
   getOffices: PropTypes.func,
@@ -66,8 +64,8 @@ Main.propTypes = {
 
 const mapStateToProps = state => ({
   session: state.session,
-
 });
+
 
 const mapDispatchToProps = dispatch => ({
   getCountries: () => dispatch(loadCountries()),

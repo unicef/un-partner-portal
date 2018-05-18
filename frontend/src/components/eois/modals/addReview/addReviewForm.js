@@ -48,10 +48,12 @@ const renderCriteriaBase = ({ classes, criteria, allCriteria, fields }) => (<div
           fieldName={`${name}.score`}
           placeholder="Score..."
           textFieldProps={{
-            inputProps: {
-              min: '1',
-              max: criteria[index].weight || '100',
-              type: 'number',
+            InputProps: {
+              inputProps: {
+                min: '1',
+                max: criteria[index].weight || '100',
+                type: 'number',
+              },
             },
           }}
           normalize={(value) => {

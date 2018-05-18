@@ -63,8 +63,10 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
               fieldName="financial_control_system_desc"
               textFieldProps={{
                 multiline: true,
-                inputProps: {
-                  maxLength: '5000',
+                InputProps: {
+                  inputProps: {
+                    maxLength: '5000',
+                  },
                 },
               }}
               warn

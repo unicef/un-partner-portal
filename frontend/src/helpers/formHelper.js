@@ -295,11 +295,10 @@ export const renderTextField = ({
   />
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
     {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
-    {/* show limit of characters
-       {other.inputProps && other.inputProps.maxLength &&
-        <FormHelperText style={{ marginLeft: 'auto' }}>
-        {input.value.length}/{other.inputProps.maxLength}
-        </FormHelperText>} */}
+      {/* {other.InputProps.inputProps && other.InputProps.inputProps.maxLength &&
+      <FormHelperText style={{ marginLeft: 'auto' }}>
+      {input.value.length}/{other.InputProps.inputProps.maxLength}
+      </FormHelperText>} */}
   </div>
 </FormControl>);
 
@@ -310,7 +309,7 @@ export const renderNumberField = ({
   input,
   ...other
 }) => {
-  const rangeError = numerical(other.inputProps.min, other.inputProps.max)(input.value);
+  const rangeError = numerical(other.InputProps.inputProps.min, other.InputProps.inputProps.max)(input.value);
 
   return (
     <div>
@@ -326,7 +325,7 @@ export const renderNumberField = ({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         {((touched && error) || warning || rangeError) &&
           <FormHelperText error>{error || warning || rangeError}</FormHelperText>}
-        {other.inputProps && other.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
+        {other.InputProps.inputProps && other.InputProps.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
       </div>
     </div>);
 };
@@ -373,13 +372,13 @@ export const renderText = ({
   date,
   meta,
   multiline,
-  inputProps,
+  InputProps,
   ...other
 }) => {
   let value = (!R.isNil(input.value) && !R.isEmpty(input.value))
     ? input.value
-    : (inputProps
-      ? inputProps.initial
+    : (InputProps
+      ? InputProps.inputProps.initial
       : null);
 
   if (!value) value = '-';
@@ -394,8 +393,8 @@ export const renderText = ({
   if (R.isEmpty(value) || R.isNil(value)) {
     value = (!R.isNil(input.value) && !R.isEmpty(input.value))
       ? input.value
-      : (inputProps
-        ? inputProps.initial
+      : (InputProps
+        ? InputProps.inputProps.initial
         : null);
   }
   if (date) value = formatDateForPrint(value);
