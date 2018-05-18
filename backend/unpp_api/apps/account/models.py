@@ -1,5 +1,8 @@
 from __future__ import unicode_literals
 
+import random
+import string
+
 from cached_property import threaded_cached_property
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
@@ -135,6 +138,9 @@ class User(AbstractBaseUser, PermissionsMixin):
             return 'Invited'
         else:
             return 'Active'
+
+    def set_random_password(self):
+        self.set_password(''.join(random.choices(string.printable, k=256)))
 
 
 class UserProfile(TimeStampedModel):
