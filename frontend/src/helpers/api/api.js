@@ -298,6 +298,10 @@ export function getMembersList(id, params, options) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params, options });
 }
 
+export function getUsersList(params, options) {
+  return authorizedGet({ uri: '/api/agencies/members/', params, options });
+}
+
 export function getNotifications(params, options) {
   return authorizedGet({ uri: '/notifications', params, options });
 }
