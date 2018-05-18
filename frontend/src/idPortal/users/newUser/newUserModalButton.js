@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'ramda';
 import { withRouter } from 'react-router';
-import Grid from 'material-ui/Grid';
+import { connect } from 'react-redux';
 import Button from 'material-ui/Button';
 import NewUserModal from './newUserModal';
-import withDialogHandling from '../../components/common/hoc/withDialogHandling'; 
+import withDialogHandling from '../../../components/common/hoc/withDialogHandling';
 
 const messages = {
   user: 'New user',
@@ -24,16 +24,20 @@ const NewUserModalButton = (props) => {
       </Button>
       <NewUserModal open={dialogOpen} onDialogClose={handleDialogClose} />
     </React.Fragment>
-
   );
 };
 
-NewUserModalButton.propTypes = {
+NewUserModalButton.propTypes = { 
   dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
 };
 
+const mapStateToProps = state => ({
+  role: state.session.role,
+});
+
 export default compose(
   withDialogHandling,
+  connect(mapStateToProps),
   withRouter)(NewUserModalButton);

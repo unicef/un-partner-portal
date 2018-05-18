@@ -3,10 +3,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
-import GridRow from '../../components/common/grid/gridRow';
-import TextFieldForm from '../../components/forms/textFieldForm';
-import GridColumn from '../../components/common/grid/gridColumn';
-import { email } from '../../helpers/validation';
+import GridRow from '../../../components/common/grid/gridRow';
+import TextFieldForm from '../../../components/forms/textFieldForm';
+import GridColumn from '../../../components/common/grid/gridColumn';
+import { email } from '../../../helpers/validation';
 import RoleField from './roleField';
 
 const messages = {
@@ -26,11 +26,11 @@ const NewUserForm = (props) => {
         <GridRow columns={2} >
           <TextFieldForm
             label={messages.firstName}
-            fieldName="firstName"
+            fieldName="first_name"
           />
           <TextFieldForm
             label={messages.firstName}
-            fieldName="lastName"
+            fieldName="last_name"
           />
         </GridRow>
         <TextFieldForm

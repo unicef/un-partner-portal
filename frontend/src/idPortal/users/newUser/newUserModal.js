@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { submit, SubmissionError } from 'redux-form';
-import Grid from 'material-ui/Grid';
+import { addNewUser } from '../../reducers/newUser';
 import NewUserForm from './newUserForm';
-import ControlledModal from '../../components/common/modals/controlledModal';
-import { errorToBeAdded } from '../../reducers/errorReducer';
+import ControlledModal from '../../../components/common/modals/controlledModal';
+import { errorToBeAdded } from '../../../reducers/errorReducer';
+import Loader from '../../../components/common/loader';
 
 const messages = {
   title: 'Add new user',
@@ -27,28 +28,22 @@ class NewUserModal extends Component {
   }
 
   handleSubmit(values) {
-    // TODO post new user
-    // return this.props.postCfei(values).then(
-    //   (cfei) => {
-    //     this.setState({ id: cfei && cfei.id });
-    //     this.props.onDialogClose();
-
-    //     if (this.props.type !== PROJECT_TYPES.OPEN) {
-    //       history.push(`/cfei/${this.props.type}/${cfei.id}/overview`);
-    //     }
-    //   }).catch((error) => {
-    //     this.props.postError(error, messages.error);
-    //     throw new SubmissionError({
-    //       ...error.response.data,
-    //       _error: getErrorMessage(this.props.type),
-    //     });
-    //   });
+    return this.props.postUser(values).then((user) => {
+      this.props.onDialogClose();
+    }).catch((error) => {
+      this.props.postError(error, messages.error);
+      throw new SubmissionError({
+        ...error.response.data,
+        _error: messages.error,
+      });
+    });
   }
 
   render() {
-    const { onDialogClose, open } = this.props;
+    const { onDialogClose, open, showLoading } = this.props;
+    
     return (
-      <Grid item>
+      <React.Fragment>
         <ControlledModal
           maxWidth="md"
           title={messages.title}
@@ -65,7 +60,8 @@ class NewUserModal extends Component {
           }}
           content={<NewUserForm onSubmit={this.handleSubmit} />}
         />
-      </Grid>
+        <Loader loading={showLoading} fullscreen />
+      </React.Fragment>
     );
   }
 }
@@ -74,16 +70,23 @@ NewUserModal.propTypes = {
   open: PropTypes.bool,
   onDialogClose: PropTypes.func,
   submit: PropTypes.func,
+  showLoading: PropTypes.bool,
+  postUser: PropTypes.func,
   postError: PropTypes.func,
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapStateToProps = state => ({
+  showLoading: state.idPortalNewUser.status.loading,
+});
+
+const mapDispatchToProps = dispatch => ({
+  postUser: body => dispatch(addNewUser(body)),
   submit: () => dispatch(submit('newUserForm')),
-  postError: (error, message) => dispatch(errorToBeAdded(error, `newProject${ownProps.type}`, message)),
+  postError: (error, message) => dispatch(errorToBeAdded(error, 'newUser', message)),
 });
 
 const connected = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(NewUserModal);
 
