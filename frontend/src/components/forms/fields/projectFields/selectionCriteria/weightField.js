@@ -25,10 +25,12 @@ class WeightField extends Component {
         label={messages.labels.weight}
         fieldName={`${name}.weight`}
         textFieldProps={{
-          inputProps: {
-            min: '1',
-            max: '100',
-            type: 'number',
+          InputProps: {
+            inputProps: {
+              min: '1',
+              max: '100',
+              type: 'number',
+            },
           },
           disabled,
         }}

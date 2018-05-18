@@ -43,8 +43,10 @@ const VerificationQuestion = (props) => {
           fieldName={commentFieldName}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '300',
+            InputProps: {
+              inputProps: {
+                maxLength: '300',
+              },
             },
           }}
           readOnly={readOnly}

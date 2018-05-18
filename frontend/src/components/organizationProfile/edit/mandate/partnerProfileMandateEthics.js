@@ -39,8 +39,10 @@ const PartnerProfileMandateEthics = (props) => {
             fieldName="ethic_safeguard_comment"
             textFieldProps={{
               multiline: true,
-              inputProps: {
-                maxLength: '5000',
+              InputProps: {
+                inputProps: {
+                  maxLength: '5000',
+                },
               },
             }}
             warn
@@ -74,8 +76,10 @@ const PartnerProfileMandateEthics = (props) => {
             fieldName="ethic_fraud_comment"
             textFieldProps={{
               multiline: true,
-              inputProps: {
-                maxLength: '5000',
+              InputProps: {
+                inputProps: {
+                  maxLength: '5000',
+                },
               },
             }}
             warn

@@ -26,8 +26,10 @@ const PartnerProfileMandateGovernance = (props) => {
           fieldName="governance_structure"
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           warn
@@ -40,8 +42,10 @@ const PartnerProfileMandateGovernance = (props) => {
           fieldName="governance_hq"
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           warn
