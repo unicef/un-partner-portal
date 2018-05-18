@@ -353,6 +353,20 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             self.assertEquals(cp['description'], text)
             self.assertEquals(cp['partner_number'], text)
 
+        collaborations_partnership = dict(update_response.data['collaborations_partnership'][0])
+        collaborations_partnership.pop('id')
+        collaborations_partnership['agency_id'] = collaborations_partnership.pop('agency')['id']
+
+        payload = {
+            'collaborations_partnership': [
+                collaborations_partnership,
+                collaborations_partnership
+            ]
+        }
+        update_response = self.client.patch(url, data=payload, format='json')
+        self.assertEqual(update_response.status_code, statuses.HTTP_400_BAD_REQUEST)
+        self.assertIn('collaborations_partnership', response.data)
+
     def test_project_implementation(self):
         partner = Partner.objects.first()
         url = reverse('partners:project-implementation', kwargs={"pk": partner.id})

@@ -20,6 +20,7 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                 field_name: 'This given common file id {} can be used only once.'.format(cfile.id)
             })
 
+    # TODO: Proper validation of nested writes
     def update_partner_related(self, instance, validated_data, related_names=[]):
         for related_name in related_names:
             model_data = validated_data.pop(related_name, None)
@@ -52,6 +53,7 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                 for data in self.initial_data.get(related_name, []):
                     for field in self.exclude_fields.get(related_name, []):
                         field in data and data.pop(field)
+
                     _id = data.get("id")
 
                     # Check if data contains file that is already referenced

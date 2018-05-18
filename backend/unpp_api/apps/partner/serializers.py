@@ -788,6 +788,20 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
         "collaborations_partnership": PartnerCollaborationPartnershipSerializer.Meta.read_only_fields
     }
 
+    def validate(self, attrs):
+        # Workaround for issues that MixinPartnerRelatedSerializer present, this approach should be redone
+        partner_agency_set = set()
+        collaborations_partnerships = self.initial_data.get('collaborations_partnership', [])
+        for collaborations_partnership in self.initial_data.get('collaborations_partnership', []):
+            partner_agency_set.add((
+                collaborations_partnership.get('partner_id'), collaborations_partnership.get('agency_id'),
+            ))
+        if not len(partner_agency_set) == len(collaborations_partnerships):
+            raise serializers.ValidationError({
+                'collaborations_partnership': 'Only one partnership statement per agency is allowed'
+            })
+        return attrs
+
     @transaction.atomic
     def update(self, instance, validated_data):
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
