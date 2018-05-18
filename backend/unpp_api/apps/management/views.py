@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
 
 from account.models import User
@@ -6,6 +7,7 @@ from agency.models import AgencyOffice
 from agency.permissions import AgencyPermission
 from common.pagination import SmallPagination
 from common.permissions import HasUNPPPermission
+from management.filters import AgencyUserFilter, PartnerUserFilter
 from management.serializers import AgencyUserManagementSerializer, PartnerOfficeManagementSerializer, \
     AgencyOfficeManagementSerializer, PartnerUserManagementSerializer
 from partner.models import Partner
@@ -25,6 +27,14 @@ class UserViewSet(CreateAPIView, ListAPIView, UpdateAPIView):
         ),
     )
     pagination_class = SmallPagination
+    filter_backends = (DjangoFilterBackend,)
+
+    @property
+    def filter_class(self):
+        if self.request.agency_member:
+            return AgencyUserFilter
+        elif self.request.partner_member:
+            return PartnerUserFilter
 
     def get_serializer_class(self):
         if self.request.agency_member:
