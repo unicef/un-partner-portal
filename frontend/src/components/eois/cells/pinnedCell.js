@@ -7,7 +7,7 @@ import Typography from 'material-ui/Typography';
 import PinIcon from '../../common/pinIcon';
 import { isCfeiPinned } from '../../../store';
 
-const PinnedCell = ({ pinned }) => pinned ? (
+const PinnedCell = ({ pinned }) => (pinned ? (
   <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={8}>
     <Grid item>
       <PinIcon />
@@ -16,7 +16,7 @@ const PinnedCell = ({ pinned }) => pinned ? (
       <Typography type="body1" color="inherit">Pinned</Typography>
     </Grid>
   </Grid>
-) : null;
+) : null);
 
 PinnedCell.propTypes = {
   id: PropTypes.string,
@@ -26,5 +26,5 @@ PinnedCell.propTypes = {
 export default connect(
   (state, ownProps) => ({
     pinned: isCfeiPinned(state, ownProps.id),
-  })
+  }),
 )(PinnedCell);

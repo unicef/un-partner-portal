@@ -156,6 +156,7 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { name } = {} } = ownProps.location;
   const { query: { role } = {} } = ownProps.location;
   const { query: { office } = {} } = ownProps.location;
+  const officeQ = office && Number(office);
 
   return {
     pathName: ownProps.location.pathname,
@@ -164,8 +165,8 @@ const mapStateToProps = (state, ownProps) => {
     query: ownProps.location.query,
     initialValues: {
       name,
-      role, 
-      office },
+      role,
+      office: officeQ },
   };
 };
 

@@ -2,13 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
-import { deactivateUser } from '../../reducers/newUser';
+import { deactivateUser } from '../../reducers/deactivateUser';
 import DropdownMenu from '../../../components/common/dropdownMenu';
 import DeactivateUserButton from './deactivateUserButton';
 import Loader from '../../../components/common/loader';
 
 const MoreUserButton = (props) => {
-  const { id, deactivate, ...other } = props;
+  const { id, deactivate, loading, ...other } = props;
   return (
     <div>
       <DropdownMenu
@@ -21,7 +21,7 @@ const MoreUserButton = (props) => {
           ]
         }
       />
-      <Loader loading={false} fullscreen />
+      <Loader loading={loading} fullscreen />
     </div>
   );
 };
@@ -32,12 +32,12 @@ MoreUserButton.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  loading: state.idPortalUsersList.loading,
+  loading: state.idPortalDeactivateUser.status.loading,
 });
 
 const mapDispatch = dispatch => ({
   deactivate: id => dispatch(deactivateUser(id)),
 });
 
-const connectedUMoreUserButton = connect(null, mapDispatch)(MoreUserButton);
+const connectedUMoreUserButton = connect(mapStateToProps, mapDispatch)(MoreUserButton);
 export default withRouter(connectedUMoreUserButton);
