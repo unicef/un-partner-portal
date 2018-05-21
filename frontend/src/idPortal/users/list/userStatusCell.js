@@ -7,6 +7,9 @@ import Grid from 'material-ui/Grid';
 import SvgIcon from 'material-ui/SvgIcon';
 import { TableCell } from 'material-ui/Table';
 import GridRow from '../../../components/common/grid/gridRow';
+import WithGreyColor from '../../../components/common/hoc/withGreyButtonStyle';
+import EditUserButton from './editUserButton';
+import MoreUserButton from './moreUserButton';
 
 const styleSheet = theme => ({
   Active: {
@@ -22,12 +25,19 @@ const styleSheet = theme => ({
     whiteSpace: 'normal',
     maxWidth: 80,
   },
+  options: {
+    display: 'flex',
+    float: 'right',
+    alignItems: 'center',
+  },
 });
 
 const UserStatusCell = (props) => {
-  const { classes, status, hovered } = props;
+  const { classes, status, hovered, id } = props;
   const colorClass = classNames(classes[status]);
-  
+  const Edit = WithGreyColor(false)(EditUserButton);
+  const More = WithGreyColor(false)(MoreUserButton);
+
   return (
     <TableCell>
       <GridRow alignItems="center" >
@@ -43,9 +53,10 @@ const UserStatusCell = (props) => {
             </Typography>
           </Grid>
         </Grid>
-        {hovered && <GridRow spacing={8} columns={3}>
-          {'TEST'}
-        </GridRow>}
+        {hovered && status !== 'Deactivated' && <div className={classes.options}>
+          <Edit id={id} />
+          <More id={id} />
+        </div>}
       </GridRow>
     </TableCell>
   );
@@ -54,7 +65,9 @@ const UserStatusCell = (props) => {
 UserStatusCell.propTypes = {
   classes: PropTypes.object.isRequired,
   status: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
   hovered: PropTypes.bool,
+  status: PropTypes.string,
 };
 
 export default withStyles(styleSheet, { name: 'UserStatusCell' })(UserStatusCell);

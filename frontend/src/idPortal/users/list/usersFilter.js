@@ -7,9 +7,10 @@ import { withStyles } from 'material-ui/styles';
 import { browserHistory as history, withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
+import SelectForm from '../../../components/forms/selectForm';
 import TextFieldForm from '../../../components/forms/textFieldForm';
-import CountryField from '../../../components/forms/fields/projectFields/locationField/countryField';
 import resetChanges from '../../../components/eois/filters/eoiHelper';
+import { selectNormalizedRoleChoices, selectNormalizedOffices } from '../../../store';
 
 const messages = {
   choose: 'Choose',
@@ -67,20 +68,21 @@ class UsersFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { office_name, name } = values;
+    const { role, name, office } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         page: 1,
-        office_name,
+        role,
         name,
+        office,
       }),
     });
   }
 
   render() {
-    const { classes, handleSubmit, reset } = this.props;
+    const { classes, handleSubmit, roleChoices, offices, reset } = this.props;
 
     return (
       <form onSubmit={handleSubmit}>
@@ -95,18 +97,18 @@ class UsersFilter extends Component {
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <TextFieldForm
+              <SelectForm
+                fieldName={'office'}
                 label={messages.labels.office}
-                placeholder={messages.labels.office}
-                fieldName="office_name"
+                values={offices}
                 optional
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <TextFieldForm
+              <SelectForm
+                fieldName={'role'}
                 label={messages.labels.role}
-                placeholder={messages.labels.role}
-                fieldName="user_role"
+                values={roleChoices}
                 optional
               />
             </Grid>
@@ -138,6 +140,8 @@ UsersFilter.propTypes = {
   reset: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
   pathName: PropTypes.string,
+  roleChoices: PropTypes.array,
+  offices: PropTypes.array,
   query: PropTypes.object,
 };
 
@@ -150,14 +154,19 @@ const formUsersFilter = reduxForm({
 
 const mapStateToProps = (state, ownProps) => {
   const { query: { name } = {} } = ownProps.location;
-  const { query: { office_name } = {} } = ownProps.location;
+  const { query: { role } = {} } = ownProps.location;
+  const { query: { office } = {} } = ownProps.location;
+  const officeQ = office && Number(office);
 
   return {
     pathName: ownProps.location.pathname,
+    roleChoices: selectNormalizedRoleChoices(state),
+    offices: selectNormalizedOffices(state),
     query: ownProps.location.query,
     initialValues: {
       name,
-      office_name },
+      role,
+      office: officeQ },
   };
 };
 

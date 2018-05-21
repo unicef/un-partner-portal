@@ -20,8 +20,8 @@ export const usersLoadEnded = () => ({ type: USERS_LOAD_ENDED });
 
 //TODO add pagination
 const saveUsers = (state, action) => {
-  const users = R.assoc('users', action.response, state);
-  return R.assoc('totalCount', action.response.length, users);
+  const users = R.assoc('users', action.response.results, state);
+  return R.assoc('totalCount', action.response.count, users);
 };
 
 const messages = {
