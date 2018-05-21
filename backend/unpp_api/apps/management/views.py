@@ -44,13 +44,16 @@ class UserViewSet(CreateAPIView, ListAPIView, UpdateAPIView):
 
     def get_queryset(self):
         if self.request.agency_member:
-            return User.objects.filter(agency_members__office__agency=self.request.user.agency).distinct('id')
+            queryset = User.objects.filter(agency_members__office__agency=self.request.user.agency).distinct('id')
         elif self.request.partner_member:
             query = Q(partner_members__partner=self.request.partner_member.partner)
             if self.request.partner_member.partner.is_hq:
                 query |= Q(partner_members__partner__hq=self.request.partner_member.partner)
 
-            return User.objects.filter(query).distinct('id')
+            queryset = User.objects.filter(query).distinct('id')
+
+        # We don't want user to edit own account
+        return queryset.exclude(id=self.request.user.id)
 
 
 class OfficeListView(ListAPIView):
