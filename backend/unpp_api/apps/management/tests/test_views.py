@@ -149,6 +149,10 @@ class TestPartnerUserManagement(BaseAPITestCase):
 
         response = self.client.post(url, data=payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
+        url = reverse('management:user-list')
+        list_response = self.client.get(url)
+        self.assertEqual(list_response.status_code, status.HTTP_200_OK, msg=response.data)
+        initial_count = list_response.data['count']
 
         url = reverse('management:user-details', kwargs={'pk': response.data['id']})
         response = self.client.patch(url, data={
@@ -156,6 +160,12 @@ class TestPartnerUserManagement(BaseAPITestCase):
         })
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg=response.data)
         self.assertEqual(response.data['status'], 'Deactivated')
+
+        url = reverse('management:user-list')
+        list_response = self.client.get(url)
+        self.assertEqual(list_response.status_code, status.HTTP_200_OK, msg=response.data)
+        # Check that inactive users are still listed
+        self.assertEqual(list_response.data['count'], initial_count)
 
     def test_list_users(self):
         partner = PartnerFactory.create_batch(1)[0]
