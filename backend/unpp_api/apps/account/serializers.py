@@ -40,7 +40,7 @@ from account.models import User
 class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
 
     date_joined = serializers.DateTimeField(required=False, read_only=True)
-    fullname = serializers.CharField(required=False, read_only=True)
+    fullname = serializers.CharField(required=False)
     email = serializers.EmailField(validators=[
         UniqueValidator(queryset=User.objects.all(), lookup='iexact')
     ])
