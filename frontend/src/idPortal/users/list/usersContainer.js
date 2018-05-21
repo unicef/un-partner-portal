@@ -17,6 +17,7 @@ import UserStatusCell from './userStatusCell';
 const tableCells = ({ row, column, hovered }) => {
   if (column.name === 'status') {
     return (<UserStatusCell
+      id={row.id}
       hovered={hovered}
       status={row.status}
     />);

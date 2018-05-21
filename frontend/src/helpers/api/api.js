@@ -397,6 +397,10 @@ export function postNewUser(body) {
   return authorizedPost({ uri: '/manage/user/', body });
 }
 
+export function patchDeactivateUser(id, body) {
+  return authorizedPatch({ uri: `/manage/user/${id}/`, body });
+}
+
 export function getUsersList(params, options) {
   return authorizedGet({ uri: '/manage/users/', params, options });
 }

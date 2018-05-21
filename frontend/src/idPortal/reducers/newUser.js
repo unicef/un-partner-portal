@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { postNewUser } from '../../helpers/api/api';
+import { postNewUser, patchDeactivateUser } from '../../helpers/api/api';
 import apiMeta, {
   success,
   loadStarted,
@@ -8,6 +8,7 @@ import apiMeta, {
   loadFailure } from '../../reducers/apiMeta';
 
 export const NEW_USER = 'NEW_USER';
+export const DEACTIVATE_USER = 'DEACTIVATE_USER';
 
 const initialState = {
   newUserSubmitting: false,
@@ -30,9 +31,32 @@ export const addNewUser = body => (dispatch, getState) => {
     });
 };
 
+export const deactivateUser = id => (dispatch, getState) => {
+  const body = {
+    is_active: false,
+  }; 
+
+  dispatch(loadStarted(DEACTIVATE_USER));
+
+  return patchDeactivateUser(id, body)
+    .then((user) => {
+      dispatch(loadEnded(DEACTIVATE_USER));
+      dispatch(loadSuccess(DEACTIVATE_USER));
+      return user;
+    })
+    .catch((error) => {
+      dispatch(loadEnded(DEACTIVATE_USER));
+      dispatch(loadFailure(DEACTIVATE_USER, error));
+      throw error;
+    });
+};
+
+
 function userReducer(state = initialState, action) {
-  console.log('ACTION', action);
   switch (action && action.type) {
+    case success`${DEACTIVATE_USER}`: {
+      return state;
+    }
     case success`${NEW_USER}`: {
       return state;
     }
