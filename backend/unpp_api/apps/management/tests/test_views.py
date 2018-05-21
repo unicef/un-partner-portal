@@ -150,11 +150,10 @@ class TestPartnerUserManagement(BaseAPITestCase):
         response = self.client.post(url, data=payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
 
-        # Test Update
-        payload['is_active'] = False
-
         url = reverse('management:user-details', kwargs={'pk': response.data['id']})
-        response = self.client.patch(url, data=payload)
+        response = self.client.patch(url, data={
+            'is_active': False
+        })
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg=response.data)
         self.assertEqual(response.data['status'], 'Deactivated')
 

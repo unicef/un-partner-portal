@@ -59,7 +59,12 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         validated_data = super(AgencyUserManagementSerializer, self).validate(attrs)
         self.context['agency_members'] = validated_data.pop('agency_members', [])
-        validated_data['fullname'] = f'{validated_data.pop("first_name")} {validated_data.pop("last_name")}'
+
+        first_name = validated_data.pop("first_name", None)
+        last_name = validated_data.pop("last_name", None)
+        if first_name and last_name:
+            validated_data['fullname'] = f'{first_name} {last_name}'
+
         return validated_data
 
     @transaction.atomic
@@ -138,7 +143,12 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         validated_data = super(PartnerUserManagementSerializer, self).validate(attrs)
         self.context['partner_members'] = validated_data.pop('partner_members', [])
-        validated_data['fullname'] = f'{validated_data.pop("first_name")} {validated_data.pop("last_name")}'
+
+        first_name = validated_data.pop("first_name", None)
+        last_name = validated_data.pop("last_name", None)
+        if first_name and last_name:
+            validated_data['fullname'] = f'{first_name} {last_name}'
+
         return validated_data
 
     @transaction.atomic
