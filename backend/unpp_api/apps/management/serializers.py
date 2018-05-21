@@ -58,7 +58,7 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         validated_data = super(AgencyUserManagementSerializer, self).validate(attrs)
-        self.context['agency_members'] = validated_data.pop('agency_members')
+        self.context['agency_members'] = validated_data.pop('agency_members', [])
         validated_data['fullname'] = f'{validated_data.pop("first_name")} {validated_data.pop("last_name")}'
         return validated_data
 
@@ -137,7 +137,7 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         validated_data = super(PartnerUserManagementSerializer, self).validate(attrs)
-        self.context['partner_members'] = validated_data.pop('partner_members')
+        self.context['partner_members'] = validated_data.pop('partner_members', [])
         validated_data['fullname'] = f'{validated_data.pop("first_name")} {validated_data.pop("last_name")}'
         return validated_data
 
