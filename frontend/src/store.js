@@ -69,6 +69,7 @@ import openCfeiDashboardList from './reducers/openCfeiDashboardList';
 import idPortalNav from './idPortal/reducers/nav';
 import idPortalUsersList from './idPortal/reducers/usersList';
 import idPortalNewUser from './idPortal/reducers/newUser';
+import idPortalDeactivateUser from './idPortal/reducers/deactivateUser';
 
 const mainReducer = combineReducers({
   cfei,
@@ -134,6 +135,7 @@ const mainReducer = combineReducers({
   idPortalNav,
   idPortalUsersList,
   idPortalNewUser,
+  idPortalDeactivateUser,
 });
 
 const middelware = [thunk, routerMiddleware(browserHistory)];
