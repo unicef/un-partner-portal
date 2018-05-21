@@ -132,6 +132,7 @@ INSTALLED_APPS = [
     'django_filters',
     'imagekit',
     'django_countries',
+    'mail_templated',
 
     'common',
     'account',

@@ -4,6 +4,7 @@ from rest_framework import serializers
 from account.models import User
 from management.fields import CurrentAgencyFilteredPKField, CurrentPartnerFilteredPKField
 from agency.models import AgencyMember, AgencyOffice
+from management.invites import send_partner_user_invite, send_agency_user_invite
 from partner.models import PartnerMember, Partner
 
 
@@ -79,7 +80,7 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
         else:
             user.set_unusable_password()
             user.save()
-            # TODO: Invite email
+            send_agency_user_invite(user, self.context['request'].user)
 
         return user
 
@@ -158,6 +159,6 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
         else:
             user.set_random_password()
             user.save()
-            # TODO: Invite email
+            send_partner_user_invite(user, self.context['request'].user)
 
         return user
