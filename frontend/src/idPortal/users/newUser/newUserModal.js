@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { submit, SubmissionError } from 'redux-form';
+import { loadUsersList } from '../../reducers/usersList';
 import { addNewUser } from '../../reducers/newUser';
 import NewUserForm from './newUserForm';
 import ControlledModal from '../../../components/common/modals/controlledModal';
@@ -30,6 +31,7 @@ class NewUserModal extends Component {
   handleSubmit(values) {
     return this.props.postUser(values).then((user) => {
       this.props.onDialogClose();
+      this.props.loadUsers();
     }).catch((error) => {
       this.props.postError(error, messages.error);
       throw new SubmissionError({
@@ -72,6 +74,7 @@ NewUserModal.propTypes = {
   submit: PropTypes.func,
   showLoading: PropTypes.bool,
   postUser: PropTypes.func,
+  loadUsers: PropTypes.func,
   postError: PropTypes.func,
 };
 
@@ -82,6 +85,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   postUser: body => dispatch(addNewUser(body)),
   submit: () => dispatch(submit('newUserForm')),
+  loadUsers: params => dispatch(loadUsersList(params)),
   postError: (error, message) => dispatch(errorToBeAdded(error, 'newUser', message)),
 });
 

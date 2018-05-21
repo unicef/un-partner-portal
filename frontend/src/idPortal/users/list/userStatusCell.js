@@ -27,7 +27,7 @@ const styleSheet = theme => ({
 const UserStatusCell = (props) => {
   const { classes, status, hovered } = props;
   const colorClass = classNames(classes[status]);
-  console.log(hovered);
+  
   return (
     <TableCell>
       <GridRow alignItems="center" >

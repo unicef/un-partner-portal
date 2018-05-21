@@ -2,6 +2,7 @@ import R from 'ramda';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import Typography from 'material-ui/Typography';
 import GridColumn from '../../../components/common/grid/gridColumn';
 import GridRow from '../../../components/common/grid/gridRow';
 import PaddedContent from '../../../components/common/paddedContent';
@@ -12,8 +13,9 @@ const messages = {
 
 const styleSheet = (theme) => {
   const padding = theme.spacing.unit;
-  const paddingSmall = theme.spacing.unit * 2;
-  const paddingMedium = theme.spacing.unit * 4;
+  const paddingSmall = theme.spacing.unit / 2;
+  const paddingMedium = theme.spacing.unit * 2;
+
   return {
     alignCenter: {
       display: 'flex',
@@ -26,7 +28,10 @@ const styleSheet = (theme) => {
       display: 'flex',
     },
     padding: {
-      padding: `0 0 0 ${padding}px`,
+      padding: `0 0 ${padding}px 0`,
+    },
+    paddingSmall: {
+      padding: `0 0 ${paddingSmall}px 0`,
     },
     icon: {
       fill: theme.palette.primary[300],
@@ -44,14 +49,16 @@ const styleSheet = (theme) => {
 
 const UserDetailsExpand = (props) => {
   const { classes, user } = props;
-
+  
   if (user) {
     return (
-      <GridColumn className={classes.container}>
-        <GridRow columns={1} spacing={24}>
-          {user.status}
-        </GridRow>
-      </GridColumn>
+      <div className={classes.container}>
+        <Typography className={classes.padding} type="caption">{messages.role}</Typography>
+        {user.office_memberships.map(item => (
+          <Typography className={classes.paddingSmall} type="body1">
+            {item.office && item.office.name} - {item.role_display}</Typography>),
+        )}
+      </div>
     );
   }
 
