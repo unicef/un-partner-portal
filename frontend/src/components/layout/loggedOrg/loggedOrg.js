@@ -9,6 +9,7 @@ import Typography from 'material-ui/Typography';
 import GridColumn from '../../common/grid/gridColumn';
 import { ROLES } from '../../../helpers/constants';
 import PartnerSwitch from './partnerSwitch';
+import AgencySwitch from './agencySwitch';
 
 const messages = {
   logged: 'Logged in as:',
@@ -19,12 +20,11 @@ function loggedOrg(props) {
   return (
     <GridColumn>
       <Typography type="caption">
-        {messages.logged}
+        {messages.logged}         {name} 
+
       </Typography>
       {logo && <img alt={name} src={logo} />}
-      {role === ROLES.AGENCY && <Typography type="body2">
-        {name}
-      </Typography>}
+      {role === ROLES.AGENCY && <AgencySwitch />}
       {role === ROLES.PARTNER && <PartnerSwitch />}
     </GridColumn>
   );

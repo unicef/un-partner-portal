@@ -93,12 +93,13 @@ export const loadUserData = () => (dispatch, getState) => {
       // agency specific fields
 
       if (role === ROLES.AGENCY) {
+        const offices = R.head(response.office_memberships);
         const agencyObject = {
-          agencyName: response.office_memberships[0].office.name,
-          agencyId: response.office_memberships[0].office.id,
-          officeName: response.office_memberships[0].office.name,
-          officeId: response.office_memberships[0].office.id,
-          officeMembership: response.office_memberships,
+          officeId: R.prop('office_id', offices),
+          officeName: R.path(['office', 'name'], offices),
+          offices: response.office_memberships,
+          office_role: R.prop('role_display', offices),
+          agencyName: R.path(['office', 'agency', 'name'], offices),
         };
         sessionObject = addToSession(agencyObject);
       }
