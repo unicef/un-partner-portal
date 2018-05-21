@@ -13,7 +13,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
 from agency.serializers import AgencySerializer, AgencyUserSerializer
-from common.consts import APPLICATION_STATUSES, CFEI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
+from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
@@ -535,7 +535,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             if self.context['request'].user.id in allowed_to_modify:
                 pass
             else:
-                if self.instance.status == EOI_STATUSES.closed and \
+                if self.instance.status == CFEI_STATUSES.closed and \
                         not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
                     raise serializers.ValidationError(
                         "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s).")
@@ -638,7 +638,7 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
         kwargs = self.context['request'].parser_context.get('kwargs', {})
         application_id = kwargs.get(self.context['view'].lookup_url_kwarg)
         app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
-        if app.eoi.status != EOI_STATUSES.closed:
+        if app.eoi.status != CFEI_STATUSES.closed:
             raise serializers.ValidationError("Assessment allowed once deadline is passed.")
         scores = data.get('scores')
         application = self.instance and self.instance.application or data.get('application')

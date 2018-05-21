@@ -8,7 +8,7 @@ from model_utils.models import TimeStampedModel
 from common.consts import (
     CFEI_TYPES,
     APPLICATION_STATUSES,
-    EOI_STATUSES,
+    CFEI_STATUSES,
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     COMPLETED_REASON,
@@ -24,7 +24,6 @@ class EOI(TimeStampedModel):
     """
     Call of Expression of Interest
     """
-    # TODO: this model is very heavy !!! we should think to split fields like file texts to some "EOI_profil" ..
     display_type = models.CharField(max_length=3, choices=CFEI_TYPES, default=CFEI_TYPES.open)
     title = models.CharField(max_length=255)
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
@@ -61,7 +60,11 @@ class EOI(TimeStampedModel):
     )
     review_summary_comment = models.TextField(null=True, blank=True)
     review_summary_attachment = models.ForeignKey(
-        'common.CommonFile', null=True, blank=True, related_name='review_summary_attachments')
+        'common.CommonFile', null=True, blank=True, related_name='review_summary_attachments'
+    )
+    is_published = models.BooleanField(
+        default=False, help_text='Whether CFEI is a draft or has been published'
+    )
 
     class Meta:
         ordering = ['id']
@@ -73,11 +76,13 @@ class EOI(TimeStampedModel):
     def status(self):
         today = date.today()
         if self.is_completed:
-            return EOI_STATUSES.completed
+            return CFEI_STATUSES.draft
+        elif self.is_completed:
+            return CFEI_STATUSES.completed
         elif self.is_completed is False and self.deadline_date and today > self.deadline_date:
-            return EOI_STATUSES.closed
+            return CFEI_STATUSES.closed
         else:
-            return EOI_STATUSES.open
+            return CFEI_STATUSES.open
 
     @property
     def is_open(self):
@@ -212,7 +217,7 @@ class Application(TimeStampedModel):
     @property
     def application_status(self):
         # Any changes made here should be reflected in ApplicationsFilter.filter_applications_status
-        if not self.did_win and self.eoi and self.eoi.status == EOI_STATUSES.completed:
+        if not self.did_win and self.eoi and self.eoi.status == CFEI_STATUSES.completed:
             return EXTENDED_APPLICATION_STATUSES.unsuccessful
         elif self.did_win and self.did_withdraw:
             return EXTENDED_APPLICATION_STATUSES.retracted

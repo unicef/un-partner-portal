@@ -37,7 +37,7 @@ from common.consts import (
     APPLICATION_STATUSES,
     COMPLETED_REASON,
     CFEI_TYPES,
-    EOI_STATUSES,
+    CFEI_STATUSES,
 )
 from project.views import PinProjectAPIView
 from project.serializers import ConvertUnsolicitedSerializer
@@ -689,7 +689,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         self.assertEquals(eoi.start_date, start_date)
         self.assertEquals(eoi.end_date, end_date)
         self.assertEquals(eoi.display_type, CFEI_TYPES.direct)
-        self.assertEquals(eoi.status, EOI_STATUSES.open)
+        self.assertEquals(eoi.status, CFEI_STATUSES.open)
         self.assertEquals(eoi.focal_points.all().count(), len(focal_points))
         self.assertEquals(eoi.created_by, user)
         self.assertEquals(Application.objects.count(), 2)
