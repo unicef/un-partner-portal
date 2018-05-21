@@ -56,6 +56,13 @@ class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
         )
         extra_kwargs = {'password': {'write_only': True}}
 
+    def save(self):
+        user = super(RegisterSimpleAccountSerializer, self).save()
+        if 'password' in self.validated_data:
+            user.set_password(self.validated_data['password'])
+            user.save()
+        return user
+
 
 class PartnerRegistrationSerializer(serializers.Serializer):
 
@@ -66,14 +73,15 @@ class PartnerRegistrationSerializer(serializers.Serializer):
     partner_member = PartnerMemberSerializer()
 
     class Meta:
-        validators = [PartnerRegistrationValidator()]
+        validators = (
+            PartnerRegistrationValidator(),
+        )
 
     @transaction.atomic
     def create(self, validated_data):
-        validated_data['user']['fullname'] = validated_data['user']['email']
-        self.user = User.objects.create(**validated_data['user'])
-        self.user.set_password(validated_data['user']['password'])
-        self.user.save()
+        user_serializer = RegisterSimpleAccountSerializer(data=validated_data.pop('user'))
+        user_serializer.is_valid()
+        user_serializer.save()
 
         self.partner = Partner.objects.create(**validated_data['partner'])
 
@@ -112,19 +120,17 @@ class PartnerRegistrationSerializer(serializers.Serializer):
 
         partner_member = validated_data['partner_member']
         partner_member['partner_id'] = self.partner.id
-        partner_member['user_id'] = self.user.id
+        partner_member['user'] = user_serializer.instance
         partner_member['role'] = PartnerRole.ADMIN.name
         self.partner_member = PartnerMember.objects.create(**validated_data['partner_member'])
 
-        user_data = RegisterSimpleAccountSerializer(instance=self.user).data
-        self.instance_json = {
+        return {
             "partner": PartnerSerializer(instance=self.partner).data,
-            "user": user_data,
+            "user": user_serializer.data,
             "partner_profile": PartnerProfileSerializer(instance=self.partner_profile).data,
             "partner_head_organization": PartnerHeadOrganizationRegisterSerializer(self.partner_head_organization).data,
             "partner_member": PartnerMemberSerializer(instance=self.partner_member).data,
         }
-        return self.instance_json
 
 
 class UserSerializer(serializers.ModelSerializer):

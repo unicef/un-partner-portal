@@ -50,7 +50,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=512,
         help_text='Your fullname like first and last name, 512 characters.')
 
-    # TODO: add case insensitive unique index
     email = models.EmailField('email address', max_length=254, unique=True)
 
     is_staff = models.BooleanField(
