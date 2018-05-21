@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.conf import settings
 from rest_framework import status as statuses
 
+from agency.models import Agency
 from partner.models import (
     Partner,
     PartnerProfile,
@@ -96,6 +97,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         PartnerFactory,
         PointFactory,
     ]
+    user_type = BaseAPITestCase.USER_PARTNER
 
     def test_identification(self):
         profile = PartnerProfile.objects.first()
@@ -345,7 +347,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         }
 
         update_response = self.client.patch(url, data=payload, format='json')
-        self.assertEqual(update_response.status_code, statuses.HTTP_200_OK)
+        self.assertEqual(update_response.status_code, statuses.HTTP_200_OK, msg=update_response.data)
 
         self.assertTrue(payload['partnership_collaborate_institution'])
         self.assertEquals(update_response.data['partnership_collaborate_institution_desc'], text)
@@ -354,8 +356,9 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             self.assertEquals(cp['partner_number'], text)
 
         collaborations_partnership = dict(update_response.data['collaborations_partnership'][0])
+
         collaborations_partnership.pop('id')
-        collaborations_partnership['agency_id'] = collaborations_partnership.pop('agency')['id']
+        collaborations_partnership['agency_id'] = Agency.objects.first().id
 
         payload = {
             'collaborations_partnership': [
@@ -363,9 +366,10 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
                 collaborations_partnership
             ]
         }
+
         update_response = self.client.patch(url, data=payload, format='json')
         self.assertEqual(update_response.status_code, statuses.HTTP_400_BAD_REQUEST)
-        self.assertIn('collaborations_partnership', response.data)
+        self.assertIn('collaborations_partnership', update_response.data['full_non_field_errors'])
 
     def test_project_implementation(self):
         partner = Partner.objects.first()

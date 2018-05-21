@@ -2,7 +2,7 @@
 
 ## Overview
 
-UN agencies conduct Partner Verification \(due diligence\) to review a CSO’s self-reported profile data, and perform an internet search/consultation of other sources.** **
+UN agencies conduct Partner Verification \(due diligence\) to review a CSO’s self-reported profile data, and perform an internet search/consultation of other sources. ****
 
 User, with appropriate permissions \(UN HQ Editor, Editor Advanced\) can run new Verification at any time, from a Partner's detailed page. 
 

@@ -25,6 +25,7 @@
 * [Adding new Unsolicited Concept Note](partners/adding-new-unsolicited-concept-note.md)
 * [Responding to Direct Selection](partners/responding-to-direct-selection.md)
 * [Organization Profile set up](partners/organization-profile-set-up.md)
+* [Pre-Screening](partners/pre-screening.md)
 
 ## Agencies
 

@@ -135,7 +135,7 @@ Table provides information about Type of observation, Date of observation and pe
 
 ![Observations tab - Search Results](../.gitbook/assets/screen-shot-2018-04-16-at-11.48.19.png)
 
-**Hover behavior: **when user, who is an owner of the observation, hovers on the row, the edit icon is shown. This user can edit his observation and change the status of added observation. The full flow for adding and editing observations is described [**here**](https://unicef.gitbook.io/unpp/agencies/flagging-a-partner).
+**Hover behavior:** when user, who is an owner of the observation, hovers on the row, the edit icon is shown. This user can edit his observation and change the status of added observation. The full flow for adding and editing observations is described [**here**](https://unicef.gitbook.io/unpp/agencies/flagging-a-partner).
 
 ![Observations tab - Search Results hover](../.gitbook/assets/screen-shot-2018-04-16-at-11.49.24.png)
 

@@ -1,6 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 
+from agency.serializers import AgencySerializer
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
@@ -8,6 +9,7 @@ from common.consts import (
     PARTNER_TYPES,
     POLICY_AREA_CHOICES,
 )
+from common.defaults import ActivePartnerIDDefault
 from common.mixins import SkipUniqueTogetherValidationOnPatchMixin
 from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
@@ -242,16 +244,24 @@ class PartnerFundingSerializer(serializers.ModelSerializer):
 
 class PartnerCollaborationPartnershipSerializer(serializers.ModelSerializer):
 
-    agency = serializers.SerializerMethodField()
+    agency = AgencySerializer(read_only=True)
+    agency_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    partner_id = serializers.IntegerField(write_only=True, default=ActivePartnerIDDefault())
 
     class Meta:
         model = PartnerCollaborationPartnership
-        fields = "__all__"
-        read_only_fields = ('partner', 'agency')
-
-    def get_agency(self, partnership):
-        from agency.serializers import AgencySerializer
-        return AgencySerializer(instance=partnership.agency).data
+        fields = (
+            'id',
+            'partner',
+            'partner_id',
+            'agency',
+            'agency_id',
+            'description',
+            'partner_number',
+        )
+        read_only_fields = (
+            'partner', 'agency'
+        )
 
 
 class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
@@ -789,7 +799,6 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
     }
 
     def validate(self, attrs):
-        # Workaround for issues that MixinPartnerRelatedSerializer present, this approach should be redone
         partner_agency_set = set()
         collaborations_partnerships = self.initial_data.get('collaborations_partnership', [])
         for collaborations_partnership in self.initial_data.get('collaborations_partnership', []):

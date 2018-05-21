@@ -52,7 +52,7 @@ In the Overview tab, user can see all details about Direct Selection, placed on 
 
 ![Draft - as Basic Editor](../.gitbook/assets/screen-shot-2018-04-13-at-16.49.59.png)
 
-* If Direct Selection was created by Basic Editor, options available for this user are:  **Edit** - user can edit Direct Selection before it is sent do Advanced Editor. All information for Direct Selection are editable. **Download as PDF.** **Delete ** - user can delete Direct Selection before it is sent do Advanced Editor. **Send** - the main button on this screen - user can send this Direct Selection do Advanced Editor, who can publish it. The status of Direct Selection will be changed to "Sent". If Partner was selected, he won't get any notification until Direct Select is published.
+* If Direct Selection was created by Basic Editor, options available for this user are:  **Edit** - user can edit Direct Selection before it is sent do Advanced Editor. All information for Direct Selection are editable. **Download as PDF.** **Delete**  - user can delete Direct Selection before it is sent do Advanced Editor. **Send** - the main button on this screen - user can send this Direct Selection do Advanced Editor, who can publish it. The status of Direct Selection will be changed to "Sent". If Partner was selected, he won't get any notification until Direct Select is published.
 
 ![Menu options](../.gitbook/assets/screen-shot-2018-04-13-at-16.50.08.png)
 
@@ -62,7 +62,7 @@ In the Overview tab, user can see all details about Direct Selection, placed on 
 
 
 
-* If Advanced Editor views Direct Selection, that was sent to him by Basic Editor, options available for this user are:  **Edit **- when edited and saved, the status of the Direct Selection will not change and will remain "Sent". **Publish** - the main button on this screen - user can publish this Direct Selection. The status of Direct Selection will be changed to "Open". Partner will get notification about selection.
+* If Advanced Editor views Direct Selection, that was sent to him by Basic Editor, options available for this user are:  **Edit** - when edited and saved, the status of the Direct Selection will not change and will remain "Sent". **Publish** - the main button on this screen - user can publish this Direct Selection. The status of Direct Selection will be changed to "Open". Partner will get notification about selection.
 
 ![View of Sent WOS - Advanced Editor](../.gitbook/assets/screen-shot-2018-04-13-at-16.51.06.png)
 
@@ -72,7 +72,7 @@ In the Overview tab, user can see all details about Direct Selection, placed on 
 
 
 
-* If Direct Selection was created by Advanced Editor, options available for this user are:  **Edit** - user can edit Direct Selection before it is published. All information for Direct Selection are editable.  **Delete **- user can delete Direct Selection before it is published. **Publish** - the main button on this screen - user can publish this Direct Selection. The status of Direct Selection will be changed to "Open". Partner will get notification about selection.
+* If Direct Selection was created by Advanced Editor, options available for this user are:  **Edit** - user can edit Direct Selection before it is published. All information for Direct Selection are editable.  **Delete** - user can delete Direct Selection before it is published. **Publish** - the main button on this screen - user can publish this Direct Selection. The status of Direct Selection will be changed to "Open". Partner will get notification about selection.
 
 
 

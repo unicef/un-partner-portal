@@ -82,7 +82,7 @@ Content displayed in the table contains the following information separated by c
 
 ![List of search results in Applications tab](../.gitbook/assets/screen-shot-2018-04-12-at-15.54.13.png)
 
-**Available** **Applications statuses are: **
+**Available** **Applications statuses are:** 
 
 * Pending
 * Preselected
