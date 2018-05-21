@@ -58,7 +58,7 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         validated_data = super(AgencyUserManagementSerializer, self).validate(attrs)
-        self.context['agency_members'] = validated_data.pop('agency_members', [])
+        self.context['agency_members'] = validated_data.pop('agency_members', None)
 
         first_name = validated_data.pop("first_name", None)
         last_name = validated_data.pop("last_name", None)
@@ -72,17 +72,17 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
         update = bool(self.instance)
         user = super(AgencyUserManagementSerializer, self).save()
 
-        memberships = []
-        for member_data in self.context['agency_members']:
-            memberships.append(AgencyMember.objects.update_or_create(
-                user=user,
-                office=member_data.pop('office_id'),
-                defaults=member_data
-            )[0].pk)
-
-        if update:
+        if self.context['agency_members'] is not None:
+            memberships = []
+            for member_data in self.context['agency_members']:
+                memberships.append(AgencyMember.objects.update_or_create(
+                    user=user,
+                    office=member_data.pop('office_id'),
+                    defaults=member_data
+                )[0].pk)
             AgencyMember.objects.filter(user=user).exclude(pk__in=memberships).delete()
-        else:
+
+        if not update:
             user.set_unusable_password()
             user.save()
             send_agency_user_invite(user, self.context['request'].user)
@@ -142,7 +142,7 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         validated_data = super(PartnerUserManagementSerializer, self).validate(attrs)
-        self.context['partner_members'] = validated_data.pop('partner_members', [])
+        self.context['partner_members'] = validated_data.pop('partner_members', None)
 
         first_name = validated_data.pop("first_name", None)
         last_name = validated_data.pop("last_name", None)
@@ -156,17 +156,17 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
         update = bool(self.instance)
         user = super(PartnerUserManagementSerializer, self).save()
 
-        memberships = []
-        for member_data in self.context['partner_members']:
-            memberships.append(PartnerMember.objects.update_or_create(
-                user=user,
-                partner=member_data.pop('office_id'),
-                defaults=member_data
-            )[0].pk)
-
-        if update:
+        if self.context['partner_members'] is not None:
+            memberships = []
+            for member_data in self.context['partner_members']:
+                memberships.append(PartnerMember.objects.update_or_create(
+                    user=user,
+                    partner=member_data.pop('office_id'),
+                    defaults=member_data
+                )[0].pk)
             PartnerMember.objects.filter(user=user).exclude(pk__in=memberships).delete()
-        else:
+
+        if not update:
             user.set_random_password()
             user.save()
             send_partner_user_invite(user, self.context['request'].user)
