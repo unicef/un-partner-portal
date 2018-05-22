@@ -1,15 +1,31 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
 from account.models import User
 
 
-class UserAdmin(admin.ModelAdmin):
+class CustomUserAdmin(UserAdmin):
     list_display = ('fullname', 'email', 'is_staff')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     search_fields = ('fullname', 'email')
     ordering = ('email', )
+    readonly_fields = (
+        'last_login', 'date_joined'
+    )
+    fieldsets = (
+        (None, {'fields': ('fullname', 'email', 'password')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser',
+                                       'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'password1', 'password2'),
+        }),
+    )
 
 
-admin.site.register(User, UserAdmin)
+admin.site.register(User, CustomUserAdmin)
