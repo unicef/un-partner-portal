@@ -14,6 +14,7 @@ from rest_framework import status as statuses
 
 from account.models import User
 from agency.models import AgencyOffice, Agency
+from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
 from notification.consts import NotificationType, NOTIFICATION_DATA
 from partner.serializers import PartnerShortSerializer
 from project.models import Assessment, Application, EOI, Pin
@@ -133,7 +134,9 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         payload = {
             'title': "EOI title",
             'agency': ao.agency.id,
-            'focal_points': [User.objects.first().id],
+            'focal_points': [
+                AgencyMemberFactory.create_batch(1, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])[0].user.id
+            ],
             'locations': [
                 {
                     "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
@@ -213,7 +216,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             "deadline_date": date.today() + timedelta(days=10),
             "notif_results_date": date.today() + timedelta(days=15),
             "focal_points": [
-                User.objects.filter(is_superuser=False, agency_members__isnull=False).first().id,
+                AgencyMemberFactory.create_batch(1, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])[0].user.id,
             ]
         }
         response = self.client.patch(url, data=payload, format='json')
@@ -239,6 +242,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
     quantity = 2
     url = reverse('projects:direct')
     user_type = 'agency'
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     def setUp(self):
         super(TestDirectProjectsAPITestCase, self).setUp()
@@ -254,7 +258,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
             'eoi': {
                 'title': "EOI title",
                 'agency': ao.agency.id,
-                'focal_points': [User.objects.first().id],
+                'focal_points': [self.user.id],
                 'locations': [
                     {
                         "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
@@ -670,7 +674,9 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         url = reverse('projects:convert-unsolicited', kwargs={'pk': response.data['id']})
         start_date = date.today()
         end_date = date.today() + timedelta(days=30)
-        focal_points = [x for x in User.objects.filter(agency_members__isnull=False).values("id")[1:]]
+        focal_points = [
+            am.user.id for am in AgencyMemberFactory.create_batch(5, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])
+        ]
         payload = {
             'ds_justification_select': [JUSTIFICATION_FOR_DIRECT_SELECTION.other],
             'justification': 'Explain justification for creating direct selection',
@@ -923,7 +929,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         office = self.user.agency_members.first().office
         partners = Partner.objects.all()[:2]
         partner1, partner2 = partners
-        focal_point = User.objects.exclude(id=self.user.id).first()
+        focal_point = AgencyMemberFactory.create_batch(1, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])[0].user
         direct_selection_payload = {
             "applications": [
                 {

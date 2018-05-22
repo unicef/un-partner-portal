@@ -7,7 +7,7 @@ from django_filters.widgets import CSVWidget, BooleanWidget
 
 from account.models import User
 from agency.models import Agency
-from agency.roles import AgencyRole
+from agency.roles import AgencyRole, VALID_FOCAL_POINT_ROLE_NAMES
 
 
 class AgencyUserFilter(django_filters.FilterSet):
@@ -28,15 +28,10 @@ class AgencyUserFilter(django_filters.FilterSet):
         fields = ['role', 'name', 'office_name']
 
     def filter_focal_points(self, queryset, name, value):
-        valid_focal_point_role_names = {
-            AgencyRole.EDITOR_ADVANCED.name,
-            AgencyRole.EDITOR_ADVANCED_MFT.name,
-        }
-
         if value is True:
-            queryset = queryset.filter(agency_members__role__in=valid_focal_point_role_names)
+            queryset = queryset.filter(agency_members__role__in=VALID_FOCAL_POINT_ROLE_NAMES)
         elif value is False:
-            queryset = queryset.exclude(agency_members__role__in=valid_focal_point_role_names)
+            queryset = queryset.exclude(agency_members__role__in=VALID_FOCAL_POINT_ROLE_NAMES)
 
         return queryset
 
