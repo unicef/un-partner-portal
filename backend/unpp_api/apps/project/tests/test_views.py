@@ -994,6 +994,8 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         mail.outbox = []
 
         partner2_application = partner2.applications.first()
+        partner2_application.eoi.is_published = True
+        partner2_application.eoi.save()
         application_url = reverse('projects:application', kwargs={'pk': partner2_application.pk})
 
         retract_payload = {
