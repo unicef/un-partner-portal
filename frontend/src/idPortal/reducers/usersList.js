@@ -17,8 +17,6 @@ export const usersLoadSuccess = response => ({ type: USERS_LOAD_SUCCESS, respons
 export const usersLoadFailure = error => ({ type: USERS_LOAD_FAILURE, error });
 export const usersLoadEnded = () => ({ type: USERS_LOAD_ENDED });
 
-
-//TODO add pagination
 const saveUsers = (state, action) => {
   const users = R.assoc('users', action.response.results, state);
   return R.assoc('totalCount', action.response.count, users);

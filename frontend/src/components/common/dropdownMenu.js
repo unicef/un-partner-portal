@@ -16,6 +16,12 @@ const styleSheet = theme => ({
       color: theme.palette.secondary[500],
     },
   },
+  grey: {
+    color: theme.palette.primary[700],
+    '&:hover': {
+      color: theme.palette.primary[900],
+    },
+  },
 });
 
 class DropdownMenu extends React.Component {
@@ -48,7 +54,7 @@ class DropdownMenu extends React.Component {
           aria-haspopup="true"
           onClick={this.handleClick}
         >
-          <MoreVertIcon />
+          <MoreVertIcon className={classes.grey} />
         </IconButton>
         <Menu
           id="long-menu"

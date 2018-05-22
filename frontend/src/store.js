@@ -69,6 +69,7 @@ import openCfeiDashboardList from './reducers/openCfeiDashboardList';
 import idPortalNav from './idPortal/reducers/nav';
 import idPortalUsersList from './idPortal/reducers/usersList';
 import idPortalNewUser from './idPortal/reducers/newUser';
+import idPortalEditUser from './idPortal/reducers/editUser';
 import idPortalDeactivateUser from './idPortal/reducers/deactivateUser';
 
 const mainReducer = combineReducers({
@@ -135,6 +136,7 @@ const mainReducer = combineReducers({
   idPortalNav,
   idPortalUsersList,
   idPortalNewUser,
+  idPortalEditUser,
   idPortalDeactivateUser,
 });
 

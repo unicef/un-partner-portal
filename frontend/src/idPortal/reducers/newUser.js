@@ -30,7 +30,7 @@ export const addNewUser = body => (dispatch, getState) => {
     });
 };
 
-function userReducer(state = initialState, action) {
+function userNewReducer(state = initialState, action) {
   switch (action && action.type) {
     case success`${NEW_USER}`: {
       return state;
@@ -40,4 +40,4 @@ function userReducer(state = initialState, action) {
   }
 }
 
-export default combineReducers({ data: userReducer, status: apiMeta(NEW_USER) });
+export default combineReducers({ data: userNewReducer, status: apiMeta(NEW_USER) });

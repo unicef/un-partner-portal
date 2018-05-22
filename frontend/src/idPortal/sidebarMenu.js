@@ -8,7 +8,6 @@ import List from 'material-ui/List';
 import Typography from 'material-ui/Typography';
 import MenuLink from '../components/layout/menuLink';
 import BackButton from '../components/common/buttons/backButton';
-import PaddedContent from '../components/common/paddedContent';
 
 const styleSheet = theme => ({
   sidebar: {
@@ -57,7 +56,7 @@ function sidebarMenu(props) {
         <div className={classes.accent}>
           <div className={classes.oneLine}>
             <BackButton defaultPath="/" arrowBack />
-            <Typography type="body" className={classes.textColor}>
+            <Typography className={classes.textColor}>
               User<br />Management
             </Typography>
           </div>
