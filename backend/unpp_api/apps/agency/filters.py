@@ -34,9 +34,9 @@ class AgencyUserFilter(django_filters.FilterSet):
         }
 
         if value is True:
-            queryset.filter(agency_members__role__in=valid_focal_point_role_names)
+            queryset = queryset.filter(agency_members__role__in=valid_focal_point_role_names)
         elif value is False:
-            queryset.exclude(agency_members__role__in=valid_focal_point_role_names)
+            queryset = queryset.exclude(agency_members__role__in=valid_focal_point_role_names)
 
         return queryset
 
