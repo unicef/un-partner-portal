@@ -25,8 +25,7 @@ class TestAgencyUserManagement(BaseAPITestCase):
     def test_invite_agency_user(self):
         url = reverse('management:user-add')
         payload = {
-            'first_name': 'John',
-            'last_name': 'Doe',
+            'fullname': 'John Doe',
             'email': 'john.doe@test.com',
         }
 
@@ -59,8 +58,7 @@ class TestAgencyUserManagement(BaseAPITestCase):
     def test_deactivate_user(self):
         url = reverse('management:user-add')
         payload = {
-            'first_name': 'John',
-            'last_name': 'Doe',
+            'fullname': 'John Doe',
             'email': 'john.doe@test.com',
             'office_memberships': [{
                 'office_id': self.user.member.office.id,
@@ -103,8 +101,7 @@ class TestPartnerUserManagement(BaseAPITestCase):
 
         url = reverse('management:user-add')
         payload = {
-            'first_name': 'John',
-            'last_name': 'Doe',
+            'fullname': 'John Doe',
             'email': 'john.doe@test.com',
         }
 
@@ -139,8 +136,7 @@ class TestPartnerUserManagement(BaseAPITestCase):
     def test_deactivate_user(self):
         url = reverse('management:user-add')
         payload = {
-            'first_name': 'John',
-            'last_name': 'Doe',
+            'fullname': 'John Doe',
             'email': 'john.doe@test.com',
             'office_memberships': [{
                 'office_id': self.user.member.partner_id,

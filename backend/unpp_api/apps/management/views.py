@@ -43,6 +43,7 @@ class UserViewSet(CreateAPIView, ListAPIView, UpdateAPIView):
             return PartnerUserManagementSerializer
 
     def get_queryset(self):
+        queryset = User.objects.none()
         if self.request.agency_member:
             queryset = User.objects.filter(agency_members__office__agency=self.request.user.agency).distinct('id')
         elif self.request.partner_member:
@@ -78,9 +79,10 @@ class OfficeListView(ListAPIView):
                 query |= Q(hq=self.request.partner_member.partner)
 
             return Partner.objects.filter(query)
+        return Partner.objects.none()
 
     def get_serializer_class(self):
         if self.request.agency_member:
             return AgencyOfficeManagementSerializer
-        elif self.request.partner_member:
+        else:
             return PartnerOfficeManagementSerializer

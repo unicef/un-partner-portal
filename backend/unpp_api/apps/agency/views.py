@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from agency.permissions import AgencyPermission
 from common.pagination import MediumPagination
 from account.models import User
-from agency.serializers import AgencySerializer, AgencyOfficeSerializer, AgencyUserSerializer
+from agency.serializers import AgencySerializer, AgencyOfficeSerializer, AgencyUserListSerializer
 from agency.models import Agency, AgencyOffice
 from agency.filters import AgencyUserFilter, AgencyFilter
 from common.permissions import HasUNPPPermission
@@ -42,7 +42,7 @@ class AgencyMemberListAPIView(ListAPIView):
     """
     All Users for an Agency in the system
     """
-    serializer_class = AgencyUserSerializer
+    serializer_class = AgencyUserListSerializer
     pagination_class = MediumPagination
     permission_classes = (
         HasUNPPPermission(

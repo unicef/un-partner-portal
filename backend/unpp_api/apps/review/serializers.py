@@ -4,13 +4,13 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 
 from common.serializers import CommonFileSerializer
-from agency.serializers import AgencyUserSerializer
+from agency.serializers import AgencyUserListSerializer
 from .models import PartnerFlag, PartnerVerification
 
 
 class PartnerFlagSerializer(serializers.ModelSerializer):
 
-    submitter = AgencyUserSerializer(read_only=True)
+    submitter = AgencyUserListSerializer(read_only=True)
     attachment = CommonFileSerializer(required=False)
 
     class Meta:
@@ -21,7 +21,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
 
 class PartnerVerificationSerializer(serializers.ModelSerializer):
 
-    submitter = AgencyUserSerializer(read_only=True)
+    submitter = AgencyUserListSerializer(read_only=True)
 
     class Meta:
         model = PartnerVerification
