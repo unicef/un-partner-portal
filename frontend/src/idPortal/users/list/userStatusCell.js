@@ -7,7 +7,6 @@ import Grid from 'material-ui/Grid';
 import SvgIcon from 'material-ui/SvgIcon';
 import { TableCell } from 'material-ui/Table';
 import GridRow from '../../../components/common/grid/gridRow';
-import WithGreyColor from '../../../components/common/hoc/withGreyButtonStyle';
 import EditUserButton from './editUserButton';
 import MoreUserButton from './moreUserButton';
 
@@ -30,16 +29,17 @@ const styleSheet = theme => ({
     float: 'right',
     alignItems: 'center',
   },
+  root: {
+    height: 58,
+  },
 });
 
 const UserStatusCell = (props) => {
   const { classes, status, hovered, id } = props;
   const colorClass = classNames(classes[status]);
-  const Edit = WithGreyColor(false)(EditUserButton);
-  const More = WithGreyColor(false)(MoreUserButton);
 
   return (
-    <TableCell>
+    <TableCell className={classes.root}>
       <GridRow alignItems="center" >
         <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={8}>
           <Grid item >
@@ -54,8 +54,8 @@ const UserStatusCell = (props) => {
           </Grid>
         </Grid>
         {hovered && status !== 'Deactivated' && <div className={classes.options}>
-          <Edit id={id} />
-          <More id={id} />
+          <EditUserButton id={id} />
+          <MoreUserButton id={id} />
         </div>}
       </GridRow>
     </TableCell>
