@@ -21,7 +21,7 @@ class BaseAPITestCase(APITestCase):
     fixtures = [os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'fixtures', 'initial.json'), ]
     client_class = APIClient
     with_session_login = True
-    user_type = USER_PARTNER  # or agency
+    user_type = USER_PARTNER
 
     partner_role = PartnerRole.ADMIN
     agency_role = AgencyRole.ADMINISTRATOR
@@ -44,3 +44,9 @@ class BaseAPITestCase(APITestCase):
         if self.with_session_login:
             self.client = self.client_class()
             self.client.login(email=self.user.email, password='test')
+
+    def set_current_user_role(self, role):
+        if self.user_type == self.USER_PARTNER:
+            self.user.partner_members.update(role=role)
+        elif self.user_type == self.USER_AGENCY:
+            self.user.agency_members.update(role=role)

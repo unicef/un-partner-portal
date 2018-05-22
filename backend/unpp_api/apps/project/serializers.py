@@ -469,8 +469,9 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'completed_date',
             'contains_partner_accepted',
             'applications_count',
+            'is_published',
         )
-        read_only_fields = ('created', 'completed_date')
+        read_only_fields = ('created', 'completed_date', 'is_published')
 
     def get_direct_selected_partners(self, obj):
         if obj.is_direct:
@@ -825,6 +826,7 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         # we can use get direct because agent have one agency office
         eoi.agency_office = submitter.agency_members.get().office
         eoi.selected_source = DIRECT_SELECTION_SOURCE.ucn
+        eoi.is_published = True
 
         eoi.save()
         for focal_point in focal_points:

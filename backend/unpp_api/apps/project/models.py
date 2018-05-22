@@ -75,7 +75,7 @@ class EOI(TimeStampedModel):
     @property
     def status(self):
         today = date.today()
-        if self.is_completed:
+        if not self.is_published:
             return CFEI_STATUSES.draft
         elif self.is_completed:
             return CFEI_STATUSES.completed
