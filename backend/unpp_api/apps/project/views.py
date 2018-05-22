@@ -84,8 +84,9 @@ class BaseProjectAPIView(ListCreateAPIView):
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = BaseProjectFilter
-    ordering_fields = ('deadline_date', 'created', 'start_date',
-                       'status', 'completed_date')
+    ordering_fields = (
+        'deadline_date', 'created', 'start_date', 'status', 'completed_date'
+    )
 
 
 class OpenProjectAPIView(BaseProjectAPIView):
@@ -591,7 +592,9 @@ class ConvertUnsolicitedAPIView(CreateAPIView):
     queryset = Application.objects.all()
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_PUBLISH,
+            ]
         ),
     )
 
@@ -709,3 +712,26 @@ class CompareSelectedListAPIView(ListAPIView):
             queryset.none()
 
         return queryset
+
+
+class PublishEOIAPIView(RetrieveAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_PUBLISH,
+            ]
+        ),
+    )
+    serializer_class = AgencyProjectSerializer
+    queryset = EOI.objects.filter(is_published=False)
+
+    def check_object_permissions(self, request, obj):
+        super(PublishEOIAPIView, self).check_object_permissions(request, obj)
+        if not obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
+            self.permission_denied(request)
+
+    def post(self, *args, **kwargs):
+        obj = self.get_object()
+        obj.is_published = True
+        obj.save()
+        return Response(AgencyProjectSerializer(obj).data)

@@ -35,7 +35,8 @@ APPLICATION_STATUSES = Choices(
     ('Rej', 'rejected', 'Rejected'),
 )
 
-EOI_STATUSES = Choices(
+CFEI_STATUSES = Choices(
+    ('Dra', 'draft', 'Draft'),
     ('Ope', 'open', 'Open'),
     ('Clo', 'closed', 'Closed/Under Review'),
     ('Com', 'completed', 'Completed'),

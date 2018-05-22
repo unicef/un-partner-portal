@@ -10,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 
 from account.models import User
-from common.consts import COMPLETED_REASON, EOI_STATUSES
+from common.consts import COMPLETED_REASON, CFEI_STATUSES
 from notification.models import Notification, NotifiedUser
 from notification.consts import NOTIFICATION_DATA, NotificationType
 
@@ -113,7 +113,7 @@ def send_notification_cfei_completed(eoi):
 
 
 def send_agency_updated_application_notification(application):
-    if application.eoi.status == EOI_STATUSES.open:
+    if application.eoi.status == CFEI_STATUSES.open:
         users = get_notify_partner_users_for_application(application)
 
         if application.did_withdraw:
@@ -126,7 +126,7 @@ def send_agency_updated_application_notification(application):
 
 
 def send_partner_made_decision_notification(application):
-    if application.eoi.status == EOI_STATUSES.open:
+    if application.eoi.status == CFEI_STATUSES.open:
         users = application.eoi.focal_points.all()
 
         if application.did_accept or application.did_decline:

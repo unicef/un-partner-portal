@@ -12,8 +12,9 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
+
 from agency.serializers import AgencySerializer, AgencyUserListSerializer
-from common.consts import APPLICATION_STATUSES, CFEI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
+from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
@@ -465,8 +466,9 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'completed_date',
             'contains_partner_accepted',
             'applications_count',
+            'is_published',
         )
-        read_only_fields = ('created', 'completed_date')
+        read_only_fields = ('created', 'completed_date', 'is_published')
 
     def get_direct_selected_partners(self, obj):
         if obj.is_direct:
@@ -525,7 +527,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             if self.context['request'].user.id in allowed_to_modify:
                 pass
             else:
-                if self.instance.status == EOI_STATUSES.closed and \
+                if self.instance.status == CFEI_STATUSES.closed and \
                         not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
                     raise serializers.ValidationError(
                         "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s).")
@@ -628,16 +630,16 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
         kwargs = self.context['request'].parser_context.get('kwargs', {})
         application_id = kwargs.get(self.context['view'].lookup_url_kwarg)
         app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
-        if app.eoi.status != EOI_STATUSES.closed:
+        if app.eoi.status != CFEI_STATUSES.closed:
             raise serializers.ValidationError("Assessment allowed once deadline is passed.")
         scores = data.get('scores')
         application = self.instance and self.instance.application or data.get('application')
         assessments_criteria = application.eoi.assessments_criteria
 
-        if scores and not set(map(lambda x: x['selection_criteria'], scores)).__eq__(
-                set(map(lambda x: x['selection_criteria'], assessments_criteria))):
-            raise serializers.ValidationError(
-                "You can score only selection criteria defined in CFEI.")
+        if scores and not {s['selection_criteria'] for s in scores} == {
+            ac['selection_criteria'] for ac in assessments_criteria
+        }:
+            raise serializers.ValidationError("You can score only selection criteria defined in CFEI.")
 
         if scores and application.eoi.has_weighting:
             for score in scores:
@@ -645,11 +647,9 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
                 val = score.get('score')
                 criterion = list(filter(lambda x: x.get('selection_criteria') == key, assessments_criteria))
                 if len(criterion) == 1 and val > criterion[0].get('weight'):
-                    raise serializers.ValidationError(
-                        "The maximum score is equal to the value entered for the weight.")
+                    raise serializers.ValidationError("The maximum score is equal to the value entered for the weight.")
                 elif len(criterion) != 1:
-                    raise serializers.ValidationError(
-                        "Selection criterion '{}' defined improper.".format(key))
+                    raise serializers.ValidationError("Selection criterion '{}' defined improper.".format(key))
 
         return super(ReviewerAssessmentsSerializer, self).validate(data)
 
@@ -815,6 +815,7 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         # we can use get direct because agent have one agency office
         eoi.agency_office = submitter.agency_members.get().office
         eoi.selected_source = DIRECT_SELECTION_SOURCE.ucn
+        eoi.is_published = True
 
         eoi.save()
 
