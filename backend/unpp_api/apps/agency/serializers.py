@@ -40,7 +40,6 @@ class AgencyMemberSerializer(serializers.ModelSerializer):
 
     office = AgencyOfficeSerializer(read_only=True)
     role_display = serializers.CharField(source='get_role_display', read_only=True)
-    permissions = serializers.SerializerMethodField()
 
     class Meta:
         model = AgencyMember
@@ -51,6 +50,15 @@ class AgencyMemberSerializer(serializers.ModelSerializer):
             'office',
             'office_id',
             'telephone',
+        )
+
+
+class AgencyMemberFullSerializer(AgencyMemberSerializer):
+
+    permissions = serializers.SerializerMethodField()
+
+    class Meta(AgencyMemberSerializer.Meta):
+        fields = AgencyMemberSerializer.Meta.fields + (
             'permissions',
         )
 
@@ -60,7 +68,7 @@ class AgencyMemberSerializer(serializers.ModelSerializer):
         ]
 
 
-class AgencyUserSerializer(serializers.ModelSerializer):
+class AgencyUserListSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(source='fullname', read_only=True)
     first_name = serializers.CharField(write_only=True)
@@ -80,3 +88,8 @@ class AgencyUserSerializer(serializers.ModelSerializer):
             'status',
             'office_memberships',
         )
+
+
+class AgencyUserSerializer(AgencyUserListSerializer):
+
+    office_memberships = AgencyMemberFullSerializer(many=True, source='agency_members', allow_empty=False)

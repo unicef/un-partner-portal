@@ -12,7 +12,8 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
-from agency.serializers import AgencySerializer, AgencyUserSerializer
+
+from agency.serializers import AgencySerializer, AgencyUserListSerializer
 from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
@@ -28,6 +29,7 @@ from notification.helpers import user_received_notification_recently, send_notif
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
 from project.models import EOI, Application, Assessment, ApplicationFeedback
+from project.utilities import update_cfei_focal_points
 
 
 class BaseProjectSerializer(serializers.ModelSerializer):
@@ -192,7 +194,6 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
         return obj.eoi_converted is not None
 
     def validate(self, data):
-
         self.prevent_many_common_file_validator(data)
 
         if self.context['request'].method in ['PATCH', 'PUT']:
@@ -200,8 +201,7 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
             application_id = kwargs.get(self.context['view'].lookup_field)
             app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
 
-            allowed_to_modify_status = \
-                list(app.eoi.focal_points.values_list('id', flat=True)) + [app.eoi.created_by_id]
+            allowed_to_modify_status = list(app.eoi.focal_points.values_list('id', flat=True)) + [app.eoi.created_by_id]
             if data.get("status") and self.context['request'].user.id not in allowed_to_modify_status:
                 raise serializers.ValidationError(
                     "Only Focal Point/Creator is allowed to pre-select/reject an application.")
@@ -293,26 +293,23 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         for specialization in specializations:
             eoi.specializations.add(specialization)
 
-        for focal_point in focal_points:
-            eoi.focal_points.add(focal_point)
-
         applications = []
-        for application in validated_data['applications']:
-            _application = Application.objects.create(
-                partner=application['partner'],
+        for application_data in validated_data['applications']:
+            application = Application.objects.create(
+                partner=application_data['partner'],
                 eoi=eoi,
                 agency=eoi.agency,
                 submitter=validated_data['eoi']['created_by'],
                 status=APPLICATION_STATUSES.pending,
                 did_win=True,
                 did_accept=False,
-                ds_justification_select=application['ds_justification_select'],
-                justification_reason=application['justification_reason'],
+                ds_justification_select=application_data['ds_justification_select'],
+                justification_reason=application_data['justification_reason'],
             )
-            applications.append(_application)
-            send_notification_application_created(_application)
+            applications.append(application)
+            send_notification_application_created(application)
 
-        send_notification_to_cfei_focal_points(eoi)
+        update_cfei_focal_points(eoi, [f.id for f in focal_points])
         return {
             "eoi": eoi,
             "applications": applications,
@@ -509,13 +506,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             Assessment.objects.filter(application__eoi=instance).update(archived=True)
             instance.reviewers.clear()
 
-        focal_points = self.initial_data.get('focal_points', [])
-        if focal_points:
-            instance.focal_points.through.objects.exclude(user_id__in=focal_points).delete()
-            instance.focal_points.add(*User.objects.filter(id__in=focal_points))
-            send_notification_to_cfei_focal_points(instance)
-        elif 'focal_points' in self.initial_data:
-            instance.focal_points.clear()
+        update_cfei_focal_points(instance, self.initial_data.get('focal_points'))
 
         return instance
 
@@ -775,7 +766,7 @@ class AgencyUnsolicitedApplicationSerializer(ApplicationPartnerUnsolicitedDirect
 
 class ApplicationFeedbackSerializer(serializers.ModelSerializer):
 
-    provider = AgencyUserSerializer(read_only=True)
+    provider = AgencyUserListSerializer(read_only=True)
 
     class Meta:
         model = ApplicationFeedback
@@ -827,8 +818,7 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         eoi.is_published = True
 
         eoi.save()
-        for focal_point in focal_points:
-            eoi.focal_points.add(focal_point['id'])
+
         for specialization in app.proposal_of_eoi_details.get('specializations', []):
             eoi.specializations.add(specialization)
         for location in app.locations_proposal_of_eoi.all():
@@ -849,8 +839,7 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
             ds_justification_select=ds_justification_select,
             justification_reason=app.justification_reason
         )
-
-        send_notification_to_cfei_focal_points(eoi)
+        update_cfei_focal_points(eoi, focal_points)
 
         return ds_app
 

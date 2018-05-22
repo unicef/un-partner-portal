@@ -1,5 +1,6 @@
 import logging
 
+from rest_framework.exceptions import NotAuthenticated
 from rest_framework.permissions import IsAuthenticated
 
 logger = logging.getLogger(__name__)
@@ -26,6 +27,9 @@ class HasUNPPPermission(CustomizablePermission):
             return set(self.agency_permissions).issubset(request.agency_member.user_permissions)
         elif self.partner_permissions is not None and request.partner_member:
             return set(self.partner_permissions).issubset(request.partner_member.user_permissions)
+
+        if not any((request.agency_member, request.partner_member)):
+            raise NotAuthenticated('Neither Partner nor Agency info available for current user')
 
         # TODO: Disallow by default once all views have permissions properly saved up
         return True

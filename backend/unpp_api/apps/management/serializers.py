@@ -37,8 +37,6 @@ class AgencyMemberManagementSerializer(serializers.ModelSerializer):
 
 class AgencyUserManagementSerializer(serializers.ModelSerializer):
 
-    first_name = serializers.CharField(write_only=True)
-    last_name = serializers.CharField(write_only=True)
     office_memberships = AgencyMemberManagementSerializer(many=True, source='agency_members', allow_empty=False)
 
     class Meta:
@@ -47,24 +45,16 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'is_active',
-            'first_name',
-            'last_name',
             'fullname',
             'email',
             'status',
             'office_memberships',
         )
-        extra_kwargs = {'fullname': {'read_only': True}}
+        extra_kwargs = {'fullname': {'required': True}}
 
     def validate(self, attrs):
         validated_data = super(AgencyUserManagementSerializer, self).validate(attrs)
         self.context['agency_members'] = validated_data.pop('agency_members', None)
-
-        first_name = validated_data.pop("first_name", None)
-        last_name = validated_data.pop("last_name", None)
-        if first_name and last_name:
-            validated_data['fullname'] = f'{first_name} {last_name}'
-
         return validated_data
 
     @transaction.atomic
@@ -121,8 +111,6 @@ class PartnerMemberManagementSerializer(serializers.ModelSerializer):
 
 class PartnerUserManagementSerializer(serializers.ModelSerializer):
 
-    first_name = serializers.CharField(write_only=True)
-    last_name = serializers.CharField(write_only=True)
     office_memberships = PartnerMemberManagementSerializer(many=True, source='partner_members', allow_empty=False)
 
     class Meta:
@@ -131,24 +119,16 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'is_active',
-            'first_name',
-            'last_name',
             'fullname',
             'email',
             'status',
             'office_memberships',
         )
-        extra_kwargs = {'fullname': {'read_only': True}}
+        extra_kwargs = {'fullname': {'required': True}}
 
     def validate(self, attrs):
         validated_data = super(PartnerUserManagementSerializer, self).validate(attrs)
         self.context['partner_members'] = validated_data.pop('partner_members', None)
-
-        first_name = validated_data.pop("first_name", None)
-        last_name = validated_data.pop("last_name", None)
-        if first_name and last_name:
-            validated_data['fullname'] = f'{first_name} {last_name}'
-
         return validated_data
 
     @transaction.atomic

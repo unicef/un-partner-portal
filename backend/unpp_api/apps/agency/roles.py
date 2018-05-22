@@ -116,3 +116,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_PUBLISH,
     ]),
 }
+
+VALID_FOCAL_POINT_ROLE_NAMES = frozenset([
+    AgencyRole.EDITOR_ADVANCED.name,
+    AgencyRole.MFT_USER.name,
+])

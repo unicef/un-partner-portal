@@ -2,12 +2,12 @@
 from __future__ import unicode_literals
 
 import django_filters
-from django_filters.filters import MultipleChoiceFilter, CharFilter
-from django_filters.widgets import CSVWidget
+from django_filters.filters import MultipleChoiceFilter, CharFilter, BooleanFilter
+from django_filters.widgets import CSVWidget, BooleanWidget
 
 from account.models import User
 from agency.models import Agency
-from agency.roles import AgencyRole
+from agency.roles import AgencyRole, VALID_FOCAL_POINT_ROLE_NAMES
 
 
 class AgencyUserFilter(django_filters.FilterSet):
@@ -19,10 +19,21 @@ class AgencyUserFilter(django_filters.FilterSet):
         name='agency_members__role',
         choices=AgencyRole.get_choices()
     )
+    focal = BooleanFilter(
+        method='filter_focal_points', widget=BooleanWidget(), label='Can be selected as focal point'
+    )
 
     class Meta:
         model = User
         fields = ['role', 'name', 'office_name']
+
+    def filter_focal_points(self, queryset, name, value):
+        if value is True:
+            queryset = queryset.filter(agency_members__role__in=VALID_FOCAL_POINT_ROLE_NAMES)
+        elif value is False:
+            queryset = queryset.exclude(agency_members__role__in=VALID_FOCAL_POINT_ROLE_NAMES)
+
+        return queryset
 
 
 class AgencyFilter(django_filters.FilterSet):
