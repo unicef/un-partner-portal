@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import { browserHistory as history, withRouter } from 'react-router';
 
+import SettingsIcon from 'material-ui-icons/Settings';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import List from 'material-ui/List';
@@ -22,11 +23,27 @@ const styleSheet = theme => ({
   innerLogo: {
     padding: theme.spacing.unit * 2,
   },
-
+  icon: {
+    padding: '0',
+    transform: 'translate(20px, 0)',
+  },
+  default: {
+    fontSize: '14px',
+  },
 });
 
+const messages = {
+  button: 'User Management',
+};
+
 function sidebarMenu(props) {
-  const { classes, router: { location: { pathname } }, sidebar, onItemClick } = props;
+  const {
+    classes,
+    router: { location: { pathname } },
+    sidebar,
+    onItemClick,
+    onSettingsClick,
+  } = props;
   const links = sidebar.map((item, index) => {
     const link = (
       <MenuLink
@@ -57,6 +74,15 @@ function sidebarMenu(props) {
         <div className={classes.innerLogo}>
           <LoggedOrg />
         </div>
+        <MenuLink
+          label={messages.button}
+          icon={createElement(SettingsIcon)}
+          onClick={() => onSettingsClick('/idp/')}
+          classes={{
+            icon: classes.icon,
+            default: classes.default,
+          }}
+        />
         <Divider />
       </div>
     </Grid>
@@ -69,6 +95,7 @@ sidebarMenu.propTypes = {
   sidebar: PropTypes.array.isRequired,
   classes: PropTypes.object.isRequired,
   onItemClick: PropTypes.func,
+  onSettingsClick: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -77,6 +104,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = () => ({
   onItemClick: (id, path) => {
+    history.push(path);
+  },
+  onSettingsClick: (path) => {
     history.push(path);
   },
 });
