@@ -727,9 +727,9 @@ class PublishEOIAPIView(RetrieveAPIView):
     queryset = EOI.objects.filter(is_published=False)
 
     def check_object_permissions(self, request, obj):
-        return super(PublishEOIAPIView, self).check_object_permissions(request, obj) and (
-            obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists()
-        )
+        super(PublishEOIAPIView, self).check_object_permissions(request, obj)
+        if not obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
+            self.permission_denied(request)
 
     def post(self, *args, **kwargs):
         obj = self.get_object()

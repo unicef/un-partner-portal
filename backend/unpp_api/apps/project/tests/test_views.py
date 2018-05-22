@@ -923,6 +923,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
             factory.partner = partner
             factory.create_batch(5)
 
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_create_direct(self):
         office = self.user.agency_members.first().office
         partners = Partner.objects.all()[:2]
