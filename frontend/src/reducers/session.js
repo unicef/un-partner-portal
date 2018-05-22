@@ -98,7 +98,7 @@ export const loadUserData = () => (dispatch, getState) => {
           officeId: R.prop('office_id', offices),
           officeName: R.path(['office', 'name'], offices),
           offices: response.office_memberships,
-          office_role: R.prop('role_display', offices),
+          officeRole: R.prop('role_display', offices),
           agencyName: R.path(['office', 'agency', 'name'], offices),
         };
         sessionObject = addToSession(agencyObject);

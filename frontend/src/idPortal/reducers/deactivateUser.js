@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { patchDeactivateUser } from '../../helpers/api/api';
+import { patchUser } from '../../helpers/api/api';
 import { loadUsersList } from '../reducers/usersList';
 import apiMeta, {
   success,
@@ -23,7 +23,7 @@ export const deactivateUser = id => (dispatch, getState) => {
 
   dispatch(loadStarted(DEACTIVATE_USER));
 
-  return patchDeactivateUser(id, body)
+  return patchUser(id, body)
     .then((user) => {
       dispatch(loadEnded(DEACTIVATE_USER));
       dispatch(loadSuccess(DEACTIVATE_USER));
@@ -38,7 +38,7 @@ export const deactivateUser = id => (dispatch, getState) => {
 };
 
 
-function userReducer(state = initialState, action) {
+function userDeactivateReducer(state = initialState, action) {
   switch (action && action.type) {
     case success`${DEACTIVATE_USER}`: {
       return state;
@@ -48,4 +48,4 @@ function userReducer(state = initialState, action) {
   }
 }
 
-export default combineReducers({ data: userReducer, status: apiMeta(DEACTIVATE_USER) });
+export default combineReducers({ data: userDeactivateReducer, status: apiMeta(DEACTIVATE_USER) });

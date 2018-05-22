@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
-import { browserHistory as history, withRouter } from 'react-router';
+import { withRouter } from 'react-router';
 import MainContentWrapper from '../../../components/common/mainContentWrapper';
 import HeaderNavigation from '../../../components/common/headerNavigation';
 import AgencyMembersFilter from './usersFilter';
@@ -84,7 +84,6 @@ UsersContainer.propTypes = {
   totalCount: PropTypes.number.isRequired,
   loadUsers: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
-  agencyName: PropTypes.string,
   query: PropTypes.object,
 };
 

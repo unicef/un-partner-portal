@@ -23,7 +23,7 @@ const styleSheet = theme => ({
   },
   text: {
     whiteSpace: 'normal',
-    maxWidth: 80,
+    maxWidth: 100,
   },
   options: {
     display: 'flex',
@@ -67,7 +67,6 @@ UserStatusCell.propTypes = {
   status: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   hovered: PropTypes.bool,
-  status: PropTypes.string,
 };
 
 export default withStyles(styleSheet, { name: 'UserStatusCell' })(UserStatusCell);

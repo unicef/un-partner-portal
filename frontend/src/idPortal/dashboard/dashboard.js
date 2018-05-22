@@ -61,7 +61,7 @@ class YourRole extends Component {
   }
 
   role() {
-    const { classes, name } = this.props;
+    const { classes, name, officeRole } = this.props;
 
     return (<Grid
       alignItems="center"
@@ -76,7 +76,7 @@ class YourRole extends Component {
 
       <Grid item xs={4}>
         <Typography type="caption">
-          {'HQ Administrator'}
+          {officeRole}
         </Typography>
       </Grid>
     </Grid>);
@@ -108,6 +108,7 @@ YourRole.propTypes = {
 
 const mapStateToProps = state => ({
   name: state.session.partnerName || state.session.agencyName,
+  officeRole: state.session.officeRole,
 });
 
 const connectedYourRole = connect(mapStateToProps, null)(YourRole);

@@ -22,7 +22,7 @@ const NewUserModalButton = (props) => {
       >
         {messages.user}
       </Button>
-      <NewUserModal open={dialogOpen} onDialogClose={handleDialogClose} />
+      <NewUserModal open={dialogOpen} handleDialogClose={handleDialogClose} />
     </React.Fragment>
   );
 };
