@@ -645,10 +645,10 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
         application = self.instance and self.instance.application or data.get('application')
         assessments_criteria = application.eoi.assessments_criteria
 
-        if scores and not set(map(lambda x: x['selection_criteria'], scores)).__eq__(
-                set(map(lambda x: x['selection_criteria'], assessments_criteria))):
-            raise serializers.ValidationError(
-                "You can score only selection criteria defined in CFEI.")
+        if scores and not {s['selection_criteria'] for s in scores} == {
+            ac['selection_criteria'] for ac in assessments_criteria
+        }:
+            raise serializers.ValidationError("You can score only selection criteria defined in CFEI.")
 
         if scores and application.eoi.has_weighting:
             for score in scores:
@@ -656,11 +656,9 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
                 val = score.get('score')
                 criterion = list(filter(lambda x: x.get('selection_criteria') == key, assessments_criteria))
                 if len(criterion) == 1 and val > criterion[0].get('weight'):
-                    raise serializers.ValidationError(
-                        "The maximum score is equal to the value entered for the weight.")
+                    raise serializers.ValidationError("The maximum score is equal to the value entered for the weight.")
                 elif len(criterion) != 1:
-                    raise serializers.ValidationError(
-                        "Selection criterion '{}' defined improper.".format(key))
+                    raise serializers.ValidationError("Selection criterion '{}' defined improper.".format(key))
 
         return super(ReviewerAssessmentsSerializer, self).validate(data)
 

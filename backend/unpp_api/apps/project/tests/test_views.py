@@ -172,7 +172,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 30},
         ])
         response = self.client.post(self.url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
         eoi = EOI.objects.last()
         self.assertEquals(response.data['title'], payload['title'])
         self.assertEquals(eoi.created_by.id, self.user.id)
@@ -558,13 +558,14 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         self.assertTrue(status.is_client_error(response.status_code))
         self.assertEquals(response.data['non_field_errors'], ['Assessment allowed once deadline is passed.'])
         app.eoi.deadline_date = date.today() - timedelta(days=1)
+        app.eoi.is_published = True
         app.eoi.save()
 
         response = self.client.post(url, data=payload, format='json')
-        self.assertTrue(status.is_client_error(response.status_code),
-                        'You can score only selection criteria defined in CFEI.')
-        self.assertEquals(response.data['non_field_errors'],
-                          ["You can score only selection criteria defined in CFEI."])
+        self.assertTrue(status.is_client_error(response.status_code))
+        self.assertEqual(
+            response.data['non_field_errors'], ["You can score only selection criteria defined in CFEI."]
+        )
 
         scores = []
         for criterion in app.eoi.assessments_criteria:
