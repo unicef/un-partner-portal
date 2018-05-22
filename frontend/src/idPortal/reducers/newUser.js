@@ -31,7 +31,6 @@ export const addNewUser = body => (dispatch, getState) => {
 };
 
 function userReducer(state = initialState, action) {
-  console.log('ACTION', action);
   switch (action && action.type) {
     case success`${NEW_USER}`: {
       return state;

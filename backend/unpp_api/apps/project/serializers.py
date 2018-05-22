@@ -192,7 +192,6 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
         return obj.eoi_converted is not None
 
     def validate(self, data):
-
         self.prevent_many_common_file_validator(data)
 
         if self.context['request'].method in ['PATCH', 'PUT']:
@@ -200,8 +199,7 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
             application_id = kwargs.get(self.context['view'].lookup_field)
             app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
 
-            allowed_to_modify_status = \
-                list(app.eoi.focal_points.values_list('id', flat=True)) + [app.eoi.created_by_id]
+            allowed_to_modify_status = list(app.eoi.focal_points.values_list('id', flat=True)) + [app.eoi.created_by_id]
             if data.get("status") and self.context['request'].user.id not in allowed_to_modify_status:
                 raise serializers.ValidationError(
                     "Only Focal Point/Creator is allowed to pre-select/reject an application.")
