@@ -27,8 +27,7 @@ class HasUNPPPermission(CustomizablePermission):
         if not any((request.agency_member, request.partner_member)):
             raise NotAuthenticated('Neither Partner nor Agency info available for current user')
 
-        # TODO: Disallow by default once all views have permissions properly saved up
-        return True
+        return False
 
 
 # class method decorator
