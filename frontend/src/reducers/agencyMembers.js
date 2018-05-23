@@ -47,11 +47,11 @@ export const selectPossibleFocalPointsReviewers = (state) => {
 
 export const loadAgencyMembersForAutoComplete = params => (dispatch, getState) => {
   const newCancelToken = getNewRequestToken(getState, tag);
-  const agencyId = getState().session.agencyId;
+  const officeId = getState().session.officeId;
   dispatch(loadStarted(AGENCY_MEMBERS, newCancelToken));
   return getAgencyMembers(
-    agencyId,
-    { role: 'Adm,Edi', ...params },
+    officeId,
+    { focal: true, ...params },
     { cancelToken: newCancelToken.token })
     .then((response) => {
       dispatch(loadEnded(AGENCY_MEMBERS));
