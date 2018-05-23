@@ -113,7 +113,8 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
 
     quantity = 2
     url = reverse('projects:open')
-    user_type = 'agency'
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     def setUp(self):
         super(TestOpenProjectsAPITestCase, self).setUp()
@@ -820,7 +821,8 @@ class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
 
 class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
 
-    user_type = 'agency'
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     def setUp(self):
         super(TestLocationRequiredOnCFEICreate, self).setUp()
