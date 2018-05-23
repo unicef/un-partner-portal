@@ -55,4 +55,9 @@ class AgencyMemberListAPIView(ListAPIView):
     filter_class = AgencyUserFilter
 
     def get_queryset(self):
-        return User.objects.filter(agency_members__office__agency=self.request.user.agency)
+        queryset = User.objects.filter(
+            agency_members__office__agency=self.request.user.agency
+        )
+        if 'pk' in self.kwargs:
+            queryset = queryset.filter(agency_members__office__agency_id=self.kwargs['pk'])
+        return queryset
