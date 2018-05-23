@@ -33,7 +33,7 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.CFEI_VIEW,
             PartnerPermission.VIEW_INGO_DASHBOARD,
             PartnerPermission.VIEW_DASHBOARD,
-            PartnerPermission.MANAGE_OFFICE_USERS,
+            PartnerPermission.MANAGE_USERS,
             PartnerPermission.CFEI_PINNING,
         ]),
         PartnerRole.EDITOR: frozenset([
@@ -50,7 +50,7 @@ PARTNER_ROLE_PERMISSIONS = {
         PartnerRole.ADMIN: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
             PartnerPermission.CFEI_VIEW,
-            PartnerPermission.MANAGE_OFFICE_USERS,
+            PartnerPermission.MANAGE_USERS,
             PartnerPermission.CFEI_PINNING,
         ]),
         PartnerRole.EDITOR: frozenset([
@@ -67,7 +67,7 @@ PARTNER_ROLE_PERMISSIONS = {
         PartnerRole.ADMIN: frozenset([
             PartnerPermission.REGISTER,
             PartnerPermission.VIEW_DASHBOARD,
-            PartnerPermission.MANAGE_OFFICE_USERS,
+            PartnerPermission.MANAGE_USERS,
             PartnerPermission.CFEI_VIEW,
             PartnerPermission.CFEI_PINNING,
         ]),

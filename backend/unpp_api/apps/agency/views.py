@@ -47,7 +47,7 @@ class AgencyMemberListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.MANAGE_OWN_AGENCY_USERS
+                AgencyPermission.MANAGE_USERS
             ]
         ),
     )
