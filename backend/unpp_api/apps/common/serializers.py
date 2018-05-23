@@ -10,6 +10,7 @@ from common.countries import LOCATION_OPTIONAL_COUNTRIES
 from common.models import AdminLevel1, Point, Sector, Specialization, CommonFile
 
 
+# This whole approach is way too hacky, if this behaviour causes any more bugs this should be removed alltogether
 class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
     exclude_fields = {}
@@ -39,30 +40,34 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
                 if model_data is None:
                     continue
-                # user can add and remove on update
-                for related_item in related_manager.all():
-                    if related_item.id not in map(lambda x: x.get("id"), model_data):
-                        related_item.delete()
 
-                # ForeignKey related to partner - RelatedManager object - here we add or update if exist related item
-                for data in model_data:
+                valid_ids = []
+
+                related_serializer = self.fields[related_name].child.__class__
+                for object_data in self.initial_data[related_name]:
                     for field in self.exclude_fields.get(related_name, []):
-                        field in data and data.pop(field)
+                        field in object_data and object_data.pop(field)
 
-                    _id = data.get("id")
-
-                    # Check if data contains file that is already referenced
-                    for field_name, value in data.items():
+                    for field_name, value in object_data.items():
                         if isinstance(value, CommonFile):
                             self.raise_error_if_file_is_already_referenced(field_name, value)
 
-                    if _id:
-                        related_manager.filter(id=_id).update(**data)
-                    else:
-                        data['partner_id'] = instance.id
-                        if hasattr(related_manager.model, 'created_by'):
-                            data['created_by'] = self.context['request'].user
-                        related_manager.create(**data)
+                    _id = object_data.pop('id', None)
+                    object_data['partner'] = instance.id
+                    object_data['partner_id'] = instance.id
+
+                    if not _id and hasattr(related_manager.model, 'created_by'):
+                        object_data['created_by'] = self.context['request'].user.id
+
+                    serializer = related_serializer(
+                        related_serializer.Meta.model.objects.filter(id=_id).first(),
+                        data=object_data
+                    )
+                    serializer.is_valid(raise_exception=True)
+                    valid_ids.append(serializer.save().id)
+
+                # user can add and remove on update
+                related_manager.exclude(id__in=valid_ids).delete()
 
 
 class MixinPreventManyCommonFile(object):
