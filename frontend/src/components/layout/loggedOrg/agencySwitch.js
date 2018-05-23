@@ -95,9 +95,6 @@ class AgencySwitch extends Component {
             <ExpandMoreIcon />
           </IconButton>
         </GridRow>
-        {/* <Typography type="body2">
-          {`${name}, ${officeCountry} `}
-        </Typography> */}
         <Menu
           id="switch-office"
           anchorEl={this.state.anchorEl}
