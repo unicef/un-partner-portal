@@ -98,6 +98,9 @@ class OpenProjectAPIView(BaseProjectAPIView):
             agency_permissions=[
                 AgencyPermission.CFEI_VIEW_LIST,
             ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
         ),
     )
 
@@ -180,7 +183,12 @@ class DirectProjectAPIView(BaseProjectAPIView):
 
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_LIST,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
         ),
     )
     serializer_class = DirectProjectSerializer
@@ -188,19 +196,17 @@ class DirectProjectAPIView(BaseProjectAPIView):
     def get_queryset(self):
         return self.queryset.filter(display_type=CFEI_TYPES.direct).distinct()
 
+    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS])
     def post(self, request, *args, **kwargs):
         data = request.data or {}
         try:
             data['eoi']['created_by'] = request.user.id
             data['eoi']['selected_source'] = DIRECT_SELECTION_SOURCE.un
         except Exception:
-            pass  # serializer.is_valid() will take care of right response
+            pass
 
         serializer = CreateDirectProjectSerializer(data=request.data)
-
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
-
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
@@ -220,10 +226,9 @@ class PinProjectAPIView(BaseProjectAPIView):
     ERROR_MSG_WRONG_PARAMS = "Couldn't properly identify input parameters like 'eoi_ids' and 'pin'."
 
     def get_queryset(self):
-        today = date.today()
-        return self.queryset.filter(pins__partner_id=self.request.active_partner.id,
-                                    deadline_date__gte=today)\
-                            .distinct()
+        return self.queryset.filter(
+            pins__partner_id=self.request.active_partner.id, deadline_date__gte=date.today()
+        ).distinct()
 
     def patch(self, request, *args, **kwargs):
         eoi_ids = request.data.get("eoi_ids")

@@ -916,6 +916,7 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
 class TestDirectSelectionTestCase(BaseAPITestCase):
 
     user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
     quantity = 2
     initial_factories = [
         AgencyFactory,
