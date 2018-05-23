@@ -30,13 +30,17 @@ PARTNER_ROLE_PERMISSIONS = {
     True: {  # INGO HQ
         PartnerRole.ADMIN: frozenset([
             PartnerPermission.REGISTER,
+            PartnerPermission.CFEI_VIEW,
             PartnerPermission.VIEW_INGO_DASHBOARD,
             PartnerPermission.VIEW_DASHBOARD,
             PartnerPermission.MANAGE_OFFICE_USERS,
+            PartnerPermission.CFEI_PINNING,
         ]),
         PartnerRole.EDITOR: frozenset([
             PartnerPermission.VIEW_INGO_DASHBOARD,
+            PartnerPermission.CFEI_VIEW,
             PartnerPermission.VIEW_DASHBOARD,
+            PartnerPermission.CFEI_PINNING,
         ]),
         PartnerRole.READER: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
@@ -45,13 +49,18 @@ PARTNER_ROLE_PERMISSIONS = {
     False: {  # INGO Country Profile
         PartnerRole.ADMIN: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
+            PartnerPermission.CFEI_VIEW,
             PartnerPermission.MANAGE_OFFICE_USERS,
+            PartnerPermission.CFEI_PINNING,
         ]),
         PartnerRole.EDITOR: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
+            PartnerPermission.CFEI_VIEW,
+            PartnerPermission.CFEI_PINNING,
         ]),
         PartnerRole.READER: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
+            PartnerPermission.CFEI_VIEW,
         ]),
     },
     None: {  # NGO
@@ -59,12 +68,17 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.REGISTER,
             PartnerPermission.VIEW_DASHBOARD,
             PartnerPermission.MANAGE_OFFICE_USERS,
+            PartnerPermission.CFEI_VIEW,
+            PartnerPermission.CFEI_PINNING,
         ]),
         PartnerRole.EDITOR: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
+            PartnerPermission.CFEI_VIEW,
+            PartnerPermission.CFEI_PINNING,
         ]),
         PartnerRole.READER: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
+            PartnerPermission.CFEI_VIEW,
         ]),
     }
 }

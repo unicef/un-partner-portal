@@ -204,7 +204,9 @@ class PinProjectAPIView(BaseProjectAPIView):
 
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
         ),
     )
 
@@ -216,8 +218,9 @@ class PinProjectAPIView(BaseProjectAPIView):
             pins__partner_id=self.request.active_partner.id, deadline_date__gte=date.today()
         ).distinct()
 
+    @has_unpp_permission(partner_permissions=[PartnerPermission.CFEI_PINNING])
     def patch(self, request, *args, **kwargs):
-        eoi_ids = request.data.get("eoi_ids")
+        eoi_ids = request.data.get("eoi_ids", [])
         pin = request.data.get("pin")
         if EOI.objects.filter(id__in=eoi_ids).count() != len(eoi_ids):
             raise serializers.ValidationError({
@@ -225,20 +228,20 @@ class PinProjectAPIView(BaseProjectAPIView):
             })
 
         partner_id = self.request.active_partner.id
-        if pin and len(eoi_ids) > 0:
-            pins = []
-            for eoi in eoi_ids:
-                pins.append(Pin(eoi_id=eoi, partner_id=partner_id, pinned_by=request.user))
-            Pin.objects.bulk_create(pins)
+        if pin and eoi_ids:
+            Pin.objects.bulk_create([
+                Pin(eoi_id=eoi_id, partner_id=partner_id, pinned_by=request.user) for eoi_id in eoi_ids
+            ])
+
             return Response({"eoi_ids": eoi_ids}, status=statuses.HTTP_201_CREATED)
-        elif pin is False and len(eoi_ids) > 0:
+        elif pin is False and eoi_ids:
             Pin.objects.filter(eoi_id__in=eoi_ids, partner_id=partner_id, pinned_by=request.user).delete()
+
             return Response(status=statuses.HTTP_204_NO_CONTENT)
         else:
-            return Response(
-                {"error": self.ERROR_MSG_WRONG_PARAMS},
-                status=statuses.HTTP_400_BAD_REQUEST
-            )
+            raise serializers.ValidationError({
+                'non_field_errors': self.ERROR_MSG_WRONG_PARAMS
+            })
 
 
 class AgencyApplicationListAPIView(ListAPIView):
