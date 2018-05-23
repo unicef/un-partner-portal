@@ -24,7 +24,7 @@ from account.models import User
 from agency.permissions import AgencyPermission
 from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE
 from common.pagination import SmallPagination
-from common.permissions import HasUNPPPermission
+from common.permissions import HasUNPPPermission, has_unpp_permission
 from common.mixins import PartnerIdsMixin
 from notification.consts import NotificationType
 from notification.helpers import (
@@ -84,8 +84,9 @@ class BaseProjectAPIView(ListCreateAPIView):
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = BaseProjectFilter
-    ordering_fields = ('deadline_date', 'created', 'start_date',
-                       'status', 'completed_date')
+    ordering_fields = (
+        'deadline_date', 'created', 'start_date', 'status', 'completed_date'
+    )
 
 
 class OpenProjectAPIView(BaseProjectAPIView):
@@ -94,7 +95,12 @@ class OpenProjectAPIView(BaseProjectAPIView):
     """
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_LIST,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
         ),
     )
 
@@ -108,16 +114,14 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
         return queryset.filter(deadline_date__gte=today, is_completed=False)
 
+    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_CREATE])
     def post(self, request, *args, **kwargs):
         serializer = CreateProjectSerializer(data=request.data, context={'request': request})
-
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
-
+        serializer.is_valid(raise_exception=True)
         instance = serializer.save()
 
         if instance.reviewers.exists():
-            send_notification('agency_cfei_reviewers_selected', instance, instance.reviewers.all())
+            send_notification(NotificationType.SELECTED_AS_CFEI_REVIEWER, instance, instance.reviewers.all())
 
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
@@ -179,7 +183,12 @@ class DirectProjectAPIView(BaseProjectAPIView):
 
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_LIST,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
         ),
     )
     serializer_class = DirectProjectSerializer
@@ -187,19 +196,17 @@ class DirectProjectAPIView(BaseProjectAPIView):
     def get_queryset(self):
         return self.queryset.filter(display_type=CFEI_TYPES.direct).distinct()
 
+    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS])
     def post(self, request, *args, **kwargs):
         data = request.data or {}
         try:
             data['eoi']['created_by'] = request.user.id
             data['eoi']['selected_source'] = DIRECT_SELECTION_SOURCE.un
         except Exception:
-            pass  # serializer.is_valid() will take care of right response
+            pass
 
         serializer = CreateDirectProjectSerializer(data=request.data)
-
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
-
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
@@ -219,10 +226,9 @@ class PinProjectAPIView(BaseProjectAPIView):
     ERROR_MSG_WRONG_PARAMS = "Couldn't properly identify input parameters like 'eoi_ids' and 'pin'."
 
     def get_queryset(self):
-        today = date.today()
-        return self.queryset.filter(pins__partner_id=self.request.active_partner.id,
-                                    deadline_date__gte=today)\
-                            .distinct()
+        return self.queryset.filter(
+            pins__partner_id=self.request.active_partner.id, deadline_date__gte=date.today()
+        ).distinct()
 
     def patch(self, request, *args, **kwargs):
         eoi_ids = request.data.get("eoi_ids")
@@ -591,7 +597,9 @@ class ConvertUnsolicitedAPIView(CreateAPIView):
     queryset = Application.objects.all()
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_PUBLISH,
+            ]
         ),
     )
 
@@ -709,3 +717,26 @@ class CompareSelectedListAPIView(ListAPIView):
             queryset.none()
 
         return queryset
+
+
+class PublishEOIAPIView(RetrieveAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_PUBLISH,
+            ]
+        ),
+    )
+    serializer_class = AgencyProjectSerializer
+    queryset = EOI.objects.filter(is_published=False)
+
+    def check_object_permissions(self, request, obj):
+        super(PublishEOIAPIView, self).check_object_permissions(request, obj)
+        if not obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
+            self.permission_denied(request)
+
+    def post(self, *args, **kwargs):
+        obj = self.get_object()
+        obj.is_published = True
+        obj.save()
+        return Response(AgencyProjectSerializer(obj).data)

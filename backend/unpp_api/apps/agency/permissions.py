@@ -53,8 +53,8 @@ class AgencyPermission(AutoNameEnum):
     CFEI_RECOMMEND_PARTNER_FOR_SELECTION = auto()  # If creator / focal point
 
     # Direct Selection & Retention
-    CFEI_DIRECT_VIEW_OVERVIEW_WITH_JUSTIFICATION = auto()
     CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS = auto()
+    CFEI_DIRECT_VIEW_OVERVIEW_WITH_JUSTIFICATION = auto()
     CFEI_DIRECT_INDICATE_CSO = auto()
     CFEI_DIRECT_SAVE_DRAFT = auto()
     CFEI_DIRECT_EDIT_DRAFT = auto()

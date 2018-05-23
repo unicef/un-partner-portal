@@ -12,8 +12,9 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
+
 from agency.serializers import AgencySerializer, AgencyUserListSerializer
-from common.consts import APPLICATION_STATUSES, CFEI_TYPES, EOI_STATUSES, DIRECT_SELECTION_SOURCE
+from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
@@ -28,6 +29,7 @@ from notification.helpers import user_received_notification_recently, send_notif
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
 from project.models import EOI, Application, Assessment, ApplicationFeedback
+from project.utilities import update_cfei_focal_points
 
 
 class BaseProjectSerializer(serializers.ModelSerializer):
@@ -291,26 +293,23 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         for specialization in specializations:
             eoi.specializations.add(specialization)
 
-        for focal_point in focal_points:
-            eoi.focal_points.add(focal_point)
-
         applications = []
-        for application in validated_data['applications']:
-            _application = Application.objects.create(
-                partner=application['partner'],
+        for application_data in validated_data['applications']:
+            application = Application.objects.create(
+                partner=application_data['partner'],
                 eoi=eoi,
                 agency=eoi.agency,
                 submitter=validated_data['eoi']['created_by'],
                 status=APPLICATION_STATUSES.pending,
                 did_win=True,
                 did_accept=False,
-                ds_justification_select=application['ds_justification_select'],
-                justification_reason=application['justification_reason'],
+                ds_justification_select=application_data['ds_justification_select'],
+                justification_reason=application_data['justification_reason'],
             )
-            applications.append(_application)
-            send_notification_application_created(_application)
+            applications.append(application)
+            send_notification_application_created(application)
 
-        send_notification_to_cfei_focal_points(eoi)
+        update_cfei_focal_points(eoi, [f.id for f in focal_points])
         return {
             "eoi": eoi,
             "applications": applications,
@@ -467,8 +466,9 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'completed_date',
             'contains_partner_accepted',
             'applications_count',
+            'is_published',
         )
-        read_only_fields = ('created', 'completed_date')
+        read_only_fields = ('created', 'completed_date', 'is_published')
 
     def get_direct_selected_partners(self, obj):
         if obj.is_direct:
@@ -506,13 +506,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             Assessment.objects.filter(application__eoi=instance).update(archived=True)
             instance.reviewers.clear()
 
-        focal_points = self.initial_data.get('focal_points', [])
-        if focal_points:
-            instance.focal_points.through.objects.exclude(user_id__in=focal_points).delete()
-            instance.focal_points.add(*User.objects.filter(id__in=focal_points))
-            send_notification_to_cfei_focal_points(instance)
-        elif 'focal_points' in self.initial_data:
-            instance.focal_points.clear()
+        update_cfei_focal_points(instance, self.initial_data.get('focal_points'))
 
         return instance
 
@@ -533,7 +527,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             if self.context['request'].user.id in allowed_to_modify:
                 pass
             else:
-                if self.instance.status == EOI_STATUSES.closed and \
+                if self.instance.status == CFEI_STATUSES.closed and \
                         not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
                     raise serializers.ValidationError(
                         "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s).")
@@ -636,16 +630,16 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
         kwargs = self.context['request'].parser_context.get('kwargs', {})
         application_id = kwargs.get(self.context['view'].lookup_url_kwarg)
         app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
-        if app.eoi.status != EOI_STATUSES.closed:
+        if app.eoi.status != CFEI_STATUSES.closed:
             raise serializers.ValidationError("Assessment allowed once deadline is passed.")
         scores = data.get('scores')
         application = self.instance and self.instance.application or data.get('application')
         assessments_criteria = application.eoi.assessments_criteria
 
-        if scores and not set(map(lambda x: x['selection_criteria'], scores)).__eq__(
-                set(map(lambda x: x['selection_criteria'], assessments_criteria))):
-            raise serializers.ValidationError(
-                "You can score only selection criteria defined in CFEI.")
+        if scores and not {s['selection_criteria'] for s in scores} == {
+            ac['selection_criteria'] for ac in assessments_criteria
+        }:
+            raise serializers.ValidationError("You can score only selection criteria defined in CFEI.")
 
         if scores and application.eoi.has_weighting:
             for score in scores:
@@ -653,11 +647,9 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
                 val = score.get('score')
                 criterion = list(filter(lambda x: x.get('selection_criteria') == key, assessments_criteria))
                 if len(criterion) == 1 and val > criterion[0].get('weight'):
-                    raise serializers.ValidationError(
-                        "The maximum score is equal to the value entered for the weight.")
+                    raise serializers.ValidationError("The maximum score is equal to the value entered for the weight.")
                 elif len(criterion) != 1:
-                    raise serializers.ValidationError(
-                        "Selection criterion '{}' defined improper.".format(key))
+                    raise serializers.ValidationError("Selection criterion '{}' defined improper.".format(key))
 
         return super(ReviewerAssessmentsSerializer, self).validate(data)
 
@@ -823,10 +815,10 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         # we can use get direct because agent have one agency office
         eoi.agency_office = submitter.agency_members.get().office
         eoi.selected_source = DIRECT_SELECTION_SOURCE.ucn
+        eoi.is_published = True
 
         eoi.save()
-        for focal_point in focal_points:
-            eoi.focal_points.add(focal_point['id'])
+
         for specialization in app.proposal_of_eoi_details.get('specializations', []):
             eoi.specializations.add(specialization)
         for location in app.locations_proposal_of_eoi.all():
@@ -847,8 +839,7 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
             ds_justification_select=ds_justification_select,
             justification_reason=app.justification_reason
         )
-
-        send_notification_to_cfei_focal_points(eoi)
+        update_cfei_focal_points(eoi, focal_points)
 
         return ds_app
 

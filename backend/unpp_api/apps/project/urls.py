@@ -26,6 +26,7 @@ from project.views import (
     AwardedPartnersListAPIView,
     CompareSelectedListAPIView,
     EOIReviewersAssessmentsNotifyAPIView,
+    PublishEOIAPIView,
 )
 
 
@@ -71,6 +72,7 @@ urlpatterns = [
         ApplicationFeedbackListCreateAPIView.as_view(),
         name="application-feedback"),
     url(r'^(?P<pk>\d+)/applications/$', EOIApplicationsListAPIView.as_view(), name="applications"),
+    url(r'^(?P<pk>\d+)/publish/$', PublishEOIAPIView.as_view(), name="eoi-publish"),
     url(r'^open/$', OpenProjectAPIView.as_view(), name="open"),
     url(r'^direct/$', DirectProjectAPIView.as_view(), name="direct"),
     url(r'^pins/$', PinProjectAPIView.as_view(), name="pins"),
