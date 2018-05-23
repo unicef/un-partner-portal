@@ -208,7 +208,7 @@ class PinProjectAPIView(BaseProjectAPIView):
         ),
     )
 
-    ERROR_MSG_WRONG_EOI_PKS = "At least one of given EOI primary key doesn't exists."
+    ERROR_MSG_WRONG_EOI_PKS = "At least one of given CFEIs could not be found."
     ERROR_MSG_WRONG_PARAMS = "Couldn't properly identify input parameters like 'eoi_ids' and 'pin'."
 
     def get_queryset(self):
@@ -220,10 +220,10 @@ class PinProjectAPIView(BaseProjectAPIView):
         eoi_ids = request.data.get("eoi_ids")
         pin = request.data.get("pin")
         if EOI.objects.filter(id__in=eoi_ids).count() != len(eoi_ids):
-            return Response(
-                {"error": self.ERROR_MSG_WRONG_EOI_PKS},
-                status=statuses.HTTP_400_BAD_REQUEST
-            )
+            raise serializers.ValidationError({
+                'non_field_errors': self.ERROR_MSG_WRONG_EOI_PKS
+            })
+
         partner_id = self.request.active_partner.id
         if pin and len(eoi_ids) > 0:
             pins = []

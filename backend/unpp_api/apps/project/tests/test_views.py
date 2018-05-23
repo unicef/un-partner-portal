@@ -60,7 +60,7 @@ class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
         response = self.client.patch(url, data={"eoi_ids": [1, 2, 3], "pin": True}, format='json')
 
         self.assertFalse(status.is_success(response.status_code))
-        self.assertEquals(response.data['error'], PinProjectAPIView.ERROR_MSG_WRONG_EOI_PKS)
+        self.assertEquals(response.data['non_field_errors'], PinProjectAPIView.ERROR_MSG_WRONG_EOI_PKS)
         self.assertEquals(Pin.objects.count(), 0)
 
 

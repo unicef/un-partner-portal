@@ -36,15 +36,15 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                     setattr(related_model, field_name, value)
                 related_model.save()
             else:
-                related_manager = getattr(instance, related_name)
-
+                model_data = self.initial_data.get(related_name)
                 if model_data is None:
                     continue
 
+                related_manager = getattr(instance, related_name)
                 valid_ids = []
 
                 related_serializer = self.fields[related_name].child.__class__
-                for object_data in self.initial_data[related_name]:
+                for object_data in model_data:
                     for field in self.exclude_fields.get(related_name, []):
                         field in object_data and object_data.pop(field)
 

@@ -219,6 +219,7 @@ class PartnerMandateMissionSerializer(serializers.ModelSerializer):
 class PartnerExperienceSerializer(serializers.ModelSerializer):
 
     specialization = SpecializationSerializer(read_only=True)
+    specialization_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
 
     class Meta:
         model = PartnerExperience
