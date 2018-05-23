@@ -108,7 +108,7 @@ YourRole.propTypes = {
 
 const mapStateToProps = state => ({
   name: state.session.partnerName || state.session.agencyName,
-  officeRole: state.session.officeRole,
+  officeRole: state.session.position || state.session.officeRole,
 });
 
 const connectedYourRole = connect(mapStateToProps, null)(YourRole);
