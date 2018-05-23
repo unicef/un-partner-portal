@@ -47,6 +47,8 @@ class AgencySwitch extends Component {
       this.props.saveNewCurrentOffice({
         officeId: office.office.id,
         officeName: office.office.name,
+        officeRole: office.role_display,
+        permissions: office.permissions,
       });
 
       this.setState({ open: false });

@@ -100,12 +100,14 @@ export const loadUserData = () => (dispatch, getState) => {
           offices: response.office_memberships,
           officeRole: R.prop('role_display', offices),
           agencyName: R.path(['office', 'agency', 'name'], offices),
+          permissions: R.path(['permissions'], offices),
         };
         sessionObject = addToSession(agencyObject);
       }
       // partner specific fields
       if (role === ROLES.PARTNER) {
         const mainPartner = R.head(response.partners);
+
         const partnerObject = {
           partners: response.partners,
           hqId: R.propOr(null, 'hq_id', mainPartner),
@@ -115,6 +117,7 @@ export const loadUserData = () => (dispatch, getState) => {
           isHq: R.prop('is_hq', mainPartner),
           displayType: R.prop('display_type', mainPartner),
           logo: R.prop('logo', mainPartner),
+          permissions: R.prop('permissions', response),
           logoThumbnail: R.prop('org_logo_thumbnail', mainPartner),
           isProfileComplete: R.path(['partner_additional', 'has_finished'],
             mainPartner),

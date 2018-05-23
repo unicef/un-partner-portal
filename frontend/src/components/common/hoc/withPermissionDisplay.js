@@ -4,16 +4,12 @@ import React from 'react';
 import R from 'ramda';
 import { connect } from 'react-redux';
 
-const mapStateToProps = conditions => (state) => {
-  const displayComponent = R.reduce((acc, next) => {
-    if (typeof next === 'function') return acc && next(state);
-    return acc && next;
-  }, true, conditions);
+const mapStateToProps = permission => (state) => {
+  const displayComponent = R.contains(permission, state.session.permissions);
   return {
     displayComponent,
   };
 };
-
 
 export default (conditions = [true]) => WrappedComponent => connect(mapStateToProps(conditions))(
   (props) => {
