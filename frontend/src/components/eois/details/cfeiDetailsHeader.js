@@ -40,8 +40,8 @@ class CfeiHeader extends Component {
   }
 
   componentWillMount() {
-    const { role, type, loadCfeiDetails, loadProjectApplication, loadUCN, params } = this.props;
-    if (role === ROLES.PARTNER) loadProjectApplication(params);
+    const { role, type, loadCfeiDetails, loadProjectApplication, loadUCN } = this.props;
+    if (role === ROLES.PARTNER) loadProjectApplication();
     if (type === PROJECT_TYPES.UNSOLICITED) loadUCN();
     else loadCfeiDetails();
   }
@@ -193,7 +193,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   uploadCnClearState: () => dispatch(clearLocalState()),
   loadCfeiDetails: () => dispatch(loadCfei(ownProps.params.id)),
-  loadProjectApplication: params => dispatch(projectApplicationExists(ownProps.params.id, params)),
+  loadProjectApplication: () => dispatch(projectApplicationExists(ownProps.params.id)),
   loadUCN: () => dispatch(loadUnsolicitedCfei(ownProps.params.id)),
 });
 
