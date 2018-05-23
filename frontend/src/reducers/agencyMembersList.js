@@ -40,9 +40,9 @@ const initialState = {
   members: [],
 };
 
-export const loadMembersList = (agencyId, params) => (dispatch) => {
+export const loadMembersList = (agencyId, params, options) => (dispatch) => {
   dispatch(membersLoadStarted());
-  return getMembersList(agencyId, params)
+  return getMembersList(agencyId, params, options)
     .then((members) => {
       dispatch(membersLoadEnded());
       dispatch(membersLoadSuccess(members));

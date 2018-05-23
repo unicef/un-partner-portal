@@ -19,10 +19,10 @@ class UserViewSet(CreateAPIView, ListAPIView, UpdateAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.MANAGE_OWN_AGENCY_USERS,
+                AgencyPermission.MANAGE_USERS,
             ],
             partner_permissions=[
-                PartnerPermission.MANAGE_OFFICE_USERS,
+                PartnerPermission.MANAGE_USERS,
             ]
         ),
     )
@@ -62,10 +62,10 @@ class OfficeListView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.MANAGE_OWN_AGENCY_USERS,
+                AgencyPermission.MANAGE_USERS,
             ],
             partner_permissions=[
-                PartnerPermission.MANAGE_OFFICE_USERS,
+                PartnerPermission.MANAGE_USERS,
             ]
         ),
     )

@@ -77,7 +77,14 @@ class BaseProjectAPIView(ListCreateAPIView):
     Base endpoint for Call of Expression of Interest.
     """
     permission_classes = (
-        HasUNPPPermission(),
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_LIST,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
+        ),
     )
     queryset = EOI.objects.select_related("agency").prefetch_related("specializations").distinct()
     serializer_class = BaseProjectSerializer
@@ -93,16 +100,6 @@ class OpenProjectAPIView(BaseProjectAPIView):
     """
     Endpoint for getting OPEN Call of Expression of Interest.
     """
-    permission_classes = (
-        HasUNPPPermission(
-            agency_permissions=[
-                AgencyPermission.CFEI_VIEW_LIST,
-            ],
-            partner_permissions=[
-                PartnerPermission.CFEI_VIEW
-            ]
-        ),
-    )
 
     def get_queryset(self):
         queryset = self.queryset.filter(display_type=CFEI_TYPES.open)
@@ -110,9 +107,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
         if self.request.user.is_agency_user:
             return queryset
 
-        today = date.today()
-
-        return queryset.filter(deadline_date__gte=today, is_completed=False)
+        return queryset.filter(deadline_date__gte=date.today(), is_completed=False)
 
     @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_CREATE])
     def post(self, request, *args, **kwargs):
@@ -160,16 +155,18 @@ class EOIAPIView(RetrieveUpdateAPIView):
                 'revised_date': instance.deadline_date,
                 'eoi_url': eoi.get_absolute_url()
             }
-            send_notification('cfei_update_prev', eoi, users, context=context)
+            send_notification(NotificationType.CFEI_DEADLINE_UPDATE, eoi, users, context=context)
 
         # New Reviewers Added
-        new_reviewers = []
+        new_reviewer_ids = []
         for reviewer in instance.reviewers.all():
             if reviewer.id not in current_reviewers:
-                new_reviewers.append(reviewer.id)
+                new_reviewer_ids.append(reviewer.id)
 
-            if new_reviewers:
-                send_notification('agency_cfei_reviewers_selected', eoi, User.objects.filter(id__in=new_reviewers))
+            if new_reviewer_ids:
+                send_notification(
+                    NotificationType.SELECTED_AS_CFEI_REVIEWER, eoi, User.objects.filter(id__in=new_reviewer_ids)
+                )
 
         # Completed
         if instance.is_completed:
@@ -180,17 +177,6 @@ class DirectProjectAPIView(BaseProjectAPIView):
     """
     Endpoint for getting DIRECT Call of Expression of Interest.
     """
-
-    permission_classes = (
-        HasUNPPPermission(
-            agency_permissions=[
-                AgencyPermission.CFEI_VIEW_LIST,
-            ],
-            partner_permissions=[
-                PartnerPermission.CFEI_VIEW
-            ]
-        ),
-    )
     serializer_class = DirectProjectSerializer
 
     def get_queryset(self):
@@ -218,11 +204,13 @@ class PinProjectAPIView(BaseProjectAPIView):
 
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
         ),
     )
 
-    ERROR_MSG_WRONG_EOI_PKS = "At least one of given EOI primary key doesn't exists."
+    ERROR_MSG_WRONG_EOI_PKS = "At least one of given CFEIs could not be found."
     ERROR_MSG_WRONG_PARAMS = "Couldn't properly identify input parameters like 'eoi_ids' and 'pin'."
 
     def get_queryset(self):
@@ -230,29 +218,30 @@ class PinProjectAPIView(BaseProjectAPIView):
             pins__partner_id=self.request.active_partner.id, deadline_date__gte=date.today()
         ).distinct()
 
+    @has_unpp_permission(partner_permissions=[PartnerPermission.CFEI_PINNING])
     def patch(self, request, *args, **kwargs):
-        eoi_ids = request.data.get("eoi_ids")
+        eoi_ids = request.data.get("eoi_ids", [])
         pin = request.data.get("pin")
         if EOI.objects.filter(id__in=eoi_ids).count() != len(eoi_ids):
-            return Response(
-                {"error": self.ERROR_MSG_WRONG_EOI_PKS},
-                status=statuses.HTTP_400_BAD_REQUEST
-            )
+            raise serializers.ValidationError({
+                'non_field_errors': self.ERROR_MSG_WRONG_EOI_PKS
+            })
+
         partner_id = self.request.active_partner.id
-        if pin and len(eoi_ids) > 0:
-            pins = []
-            for eoi in eoi_ids:
-                pins.append(Pin(eoi_id=eoi, partner_id=partner_id, pinned_by=request.user))
-            Pin.objects.bulk_create(pins)
+        if pin and eoi_ids:
+            Pin.objects.bulk_create([
+                Pin(eoi_id=eoi_id, partner_id=partner_id, pinned_by=request.user) for eoi_id in eoi_ids
+            ])
+
             return Response({"eoi_ids": eoi_ids}, status=statuses.HTTP_201_CREATED)
-        elif pin is False and len(eoi_ids) > 0:
+        elif pin is False and eoi_ids:
             Pin.objects.filter(eoi_id__in=eoi_ids, partner_id=partner_id, pinned_by=request.user).delete()
+
             return Response(status=statuses.HTTP_204_NO_CONTENT)
         else:
-            return Response(
-                {"error": self.ERROR_MSG_WRONG_PARAMS},
-                status=statuses.HTTP_400_BAD_REQUEST
-            )
+            raise serializers.ValidationError({
+                'non_field_errors': self.ERROR_MSG_WRONG_PARAMS
+            })
 
 
 class AgencyApplicationListAPIView(ListAPIView):

@@ -52,20 +52,20 @@ def partner_has_finished(*args, **kwargs):
 
 class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
 
+    user_type = BaseAPITestCase.USER_PARTNER
+
     def test_pin_unpin_project_wrong_eois(self):
-        """
-        Register partner via registration process.
-        """
         url = reverse('projects:pins')
         response = self.client.patch(url, data={"eoi_ids": [1, 2, 3], "pin": True}, format='json')
 
         self.assertFalse(status.is_success(response.status_code))
-        self.assertEquals(response.data['error'], PinProjectAPIView.ERROR_MSG_WRONG_EOI_PKS)
+        self.assertEquals(response.data['non_field_errors'], PinProjectAPIView.ERROR_MSG_WRONG_EOI_PKS)
         self.assertEquals(Pin.objects.count(), 0)
 
 
 class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
 
+    user_type = BaseAPITestCase.USER_PARTNER
     quantity = 2
     url = reverse('projects:pins')
 
@@ -76,20 +76,14 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
         EOIFactory.create_batch(self.quantity)
 
     def test_pin_unpin_project_wrong_params(self):
-        """
-        Register partner via registration process.
-        """
         eoi_ids = EOI.objects.all().values_list('id', flat=True)
         response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": None}, format='json')
 
-        self.assertFalse(status.is_success(response.status_code))
-        self.assertEquals(response.data['error'], PinProjectAPIView.ERROR_MSG_WRONG_PARAMS)
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEquals(response.data['non_field_errors'], PinProjectAPIView.ERROR_MSG_WRONG_PARAMS)
         self.assertEquals(Pin.objects.count(), 0)
 
     def test_pin_unpin_project(self):
-        """
-        Register partner via registration process.
-        """
         # add pins
         eoi_ids = EOI.objects.all().values_list('id', flat=True)
         response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": True}, format='json')

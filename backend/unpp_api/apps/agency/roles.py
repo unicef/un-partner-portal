@@ -41,7 +41,7 @@ ROLE_LABELS = {
 AGENCY_ROLE_PERMISSIONS = {
     AgencyRole.HQ_EDITOR: frozenset([
         AgencyPermission.RESET_CSO_USER_PASSWORD,
-        AgencyPermission.MANAGE_OWN_AGENCY_USERS,
+        AgencyPermission.MANAGE_USERS,
         AgencyPermission.VIEW_DASHBOARD,
         AgencyPermission.RECEIVE_NOTIFICATIONS,
         AgencyPermission.CSO_LIST_VIEW,
@@ -51,7 +51,7 @@ AGENCY_ROLE_PERMISSIONS = {
     ]),
     AgencyRole.ADMINISTRATOR: frozenset([
         AgencyPermission.RESET_CSO_USER_PASSWORD,
-        AgencyPermission.MANAGE_OWN_AGENCY_USERS,
+        AgencyPermission.MANAGE_USERS,
         AgencyPermission.VIEW_DASHBOARD,
         AgencyPermission.RECEIVE_NOTIFICATIONS,
         AgencyPermission.CSO_LIST_VIEW,

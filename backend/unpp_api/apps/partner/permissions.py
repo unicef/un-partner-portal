@@ -27,4 +27,4 @@ class PartnerPermission(AutoNameEnum):
 
     RECEIVE_NOTIFICATIONS = auto()
 
-    MANAGE_OFFICE_USERS = auto()
+    MANAGE_USERS = auto()
