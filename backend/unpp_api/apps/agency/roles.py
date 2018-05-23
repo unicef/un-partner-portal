@@ -19,8 +19,8 @@ class AgencyRole(AutoNameEnum):
     EDITOR_ADVANCED = auto()
 
     # UNHCR
-    EDITOR_BASIC_PAM = auto()
-    EDITOR_ADVANCED_MFT = auto()
+    PAM_USER = auto()
+    MFT_USER = auto()
 
     @classmethod
     def get_choices(cls):
@@ -33,8 +33,8 @@ ROLE_LABELS = {
     AgencyRole.READER: 'Reader',
     AgencyRole.EDITOR_BASIC: 'Basic Editor',
     AgencyRole.EDITOR_ADVANCED: 'Advanced Editor',
-    AgencyRole.EDITOR_BASIC_PAM: 'Basic Editor (PAM USER)',
-    AgencyRole.EDITOR_ADVANCED_MFT: 'Advanced Editor (MFT USER)',
+    AgencyRole.PAM_USER: 'PAM USER',
+    AgencyRole.MFT_USER: 'MFT USER',
 }
 
 
@@ -91,8 +91,9 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DRAFT_MANAGE_FOCAL_POINT,
         AgencyPermission.CFEI_DRAFT_INVITE_CSO,
         AgencyPermission.CFEI_DIRECT_INDICATE_CSO,
+        AgencyPermission.CFEI_PUBLISH,
     ]),
-    AgencyRole.EDITOR_BASIC_PAM: frozenset([
+    AgencyRole.PAM_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
         AgencyPermission.RECEIVE_NOTIFICATIONS,
         AgencyPermission.CSO_LIST_VIEW,
@@ -105,12 +106,18 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DRAFT_INVITE_CSO,
         AgencyPermission.CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH,
     ]),
-    AgencyRole.EDITOR_ADVANCED_MFT: frozenset([
+    AgencyRole.MFT_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
         AgencyPermission.RECEIVE_NOTIFICATIONS,
         AgencyPermission.CSO_LIST_VIEW,
         AgencyPermission.CSO_PROFILE_VIEW,
         AgencyPermission.CFEI_VIEW_LIST,
         AgencyPermission.CFEI_VIEW_FINALIZED_RESULTS,
+        AgencyPermission.CFEI_PUBLISH,
     ]),
 }
+
+VALID_FOCAL_POINT_ROLE_NAMES = frozenset([
+    AgencyRole.EDITOR_ADVANCED.name,
+    AgencyRole.MFT_USER.name,
+])

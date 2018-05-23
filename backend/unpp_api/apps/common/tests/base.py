@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from rest_framework.test import APITestCase, APIClient
 
-from agency.roles import AgencyRole
+from agency.roles import AgencyRole, AGENCY_ROLE_PERMISSIONS
 from common.factories import (
     PartnerSimpleFactory, PartnerMemberFactory, AgencyFactory, AgencyOfficeFactory, AgencyMemberFactory
 )
@@ -21,7 +21,7 @@ class BaseAPITestCase(APITestCase):
     fixtures = [os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'fixtures', 'initial.json'), ]
     client_class = APIClient
     with_session_login = True
-    user_type = USER_PARTNER  # or agency
+    user_type = USER_PARTNER
 
     partner_role = PartnerRole.ADMIN
     agency_role = AgencyRole.ADMINISTRATOR
@@ -44,3 +44,24 @@ class BaseAPITestCase(APITestCase):
         if self.with_session_login:
             self.client = self.client_class()
             self.client.login(email=self.user.email, password='test')
+
+    def set_current_user_role(self, role):
+        if self.user_type == self.USER_PARTNER:
+            self.user.partner_members.update(role=role)
+        elif self.user_type == self.USER_AGENCY:
+            self.user.agency_members.update(role=role)
+
+    def get_agency_with_and_without_permissions(self, agency_permission):
+        roles_with_permission = []
+        roles_without_permission = []
+
+        for role, permission_set in AGENCY_ROLE_PERMISSIONS.items():
+            if agency_permission in permission_set:
+                roles_with_permission.append(role)
+            else:
+                roles_without_permission.append(role)
+
+        return roles_with_permission, roles_without_permission
+
+    def assertResponseStatusIs(self, response, status_code):
+        return self.assertEqual(response.status_code, status_code, msg=response.data)
