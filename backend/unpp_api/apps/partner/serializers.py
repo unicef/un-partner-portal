@@ -266,7 +266,7 @@ class PartnerCollaborationPartnershipSerializer(serializers.ModelSerializer):
 
 class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
 
-    evidence_file = CommonFileSerializer()
+    evidence_file = CommonFileSerializer(read_only=True)
 
     class Meta:
         model = PartnerCollaborationEvidence
@@ -694,8 +694,6 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        # std method does not support writable nested fields by default
-
         location_field_offices = validated_data.get('location_field_offices', [])
         location_of_office = validated_data.get('location_of_office')
         instance.country_presence = validated_data.get('country_presence', instance.country_presence)
@@ -718,8 +716,9 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
         instance.save()
 
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
+        instance.refresh_from_db()
 
-        return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+        return instance
 
 
 class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
