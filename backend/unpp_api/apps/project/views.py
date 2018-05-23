@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from datetime import date
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -250,14 +251,21 @@ class AgencyApplicationListAPIView(ListAPIView):
     """
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
-    queryset = Application.objects.all()
+
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = ApplicationsFilter
     serializer_class = ApplicationFullEOISerializer
     pagination_class = SmallPagination
+
+    def get_queryset(self):
+        return Application.objects.filter(
+            Q(eoi__created_by=self.request.user) | Q(eoi__focal_points=self.request.user)
+        )
 
 
 class PartnerEOIApplicationDestroyAPIView(DestroyAPIView):
