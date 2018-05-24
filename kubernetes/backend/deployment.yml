@@ -1,0 +1,74 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: backend
+  annotations:
+    revision: "{{CF_SHORT_REVISION}}"
+  namespace: {{NAMESPACE}}
+spec:
+  ports:
+  - protocol: TCP
+    port: 8000
+  type: NodePort
+  selector:
+    app: backend-container
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+  annotations:
+    revision: "{{CF_SHORT_REVISION}}"
+  namespace: {{NAMESPACE}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-container
+  template:
+    metadata:
+      labels:
+        app: backend-container
+    spec:
+      containers:
+        - name: backend
+          image: unicef/unpp-backend:{{CF_SHORT_REVISION}}
+          volumeMounts:
+            - name: static-volume
+              mountPath: /data
+          command: ["bash"]
+          args: ["-c", "uwsgi --ini /code/unpp_api/uwsgi.ini"]
+          ports:
+            - containerPort: 8000
+          env:
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: unpp-staging-secrets
+                  key: SECRET_KEY
+            - name: ENV
+              value: {{ENV}}
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: unpp-staging-secrets
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: unpp-staging-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: unpp-staging-secrets
+                  key: POSTGRES_HOST
+            - name: DJANGO_ALLOWED_HOST
+              value: {{DJANGO_ALLOWED_HOST}}
+      volumes:
+      - name: static-volume
+        persistentVolumeClaim:
+          claimName: static-volume-claim

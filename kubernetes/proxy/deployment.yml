@@ -1,0 +1,53 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: proxy-service
+  annotations:
+    revision: "{{CF_SHORT_REVISION}}"
+  namespace: {{NAMESPACE}}
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+  selector:
+    app: proxy-container
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: proxy
+  labels:
+    app: proxy
+  annotations:
+    revision: "{{CF_SHORT_REVISION}}"
+  namespace: {{NAMESPACE}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: proxy-container
+  template:
+    metadata:
+      labels:
+        app: proxy-container
+    spec:
+      containers:
+        - name: proxy
+          image: unicef/unpp-proxy:{{CF_SHORT_REVISION}}
+          volumeMounts:
+            - name: static-volume
+              mountPath: /data
+          ports:
+            - containerPort: 80
+          env:
+            - name: DJANGO_APPLICATION_SERVICE_HOST
+              value: backend
+            - name: FRONTEND_SERVICE_HOST
+              value: frontend
+      volumes:
+      - name: static-volume
+        persistentVolumeClaim:
+          claimName: static-volume-claim
