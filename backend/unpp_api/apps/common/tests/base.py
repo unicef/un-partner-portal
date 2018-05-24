@@ -63,5 +63,5 @@ class BaseAPITestCase(APITestCase):
 
         return roles_with_permission, roles_without_permission
 
-    def assertResponseStatusIs(self, response, status_code):
-        return self.assertEqual(response.status_code, status_code, msg=response.data)
+    def assertResponseStatusIs(self, response, status_code, msg=None):
+        return self.assertEqual(response.status_code, status_code, msg=msg or response.data)

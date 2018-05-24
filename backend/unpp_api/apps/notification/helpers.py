@@ -42,7 +42,6 @@ def send_notification(
     context - context to provide to template for email or body of notif
     send_in_feed - create notification feed element
     check_sent_for_source - checks to confirm no duplicates are sent for source + object. false bypasses
-
     """
 
     if check_sent_for_source and notification_already_sent(obj, notification_type):
@@ -54,14 +53,13 @@ def send_notification(
     body = render_notification_template_to_str(notification_info.get('template_name'), context)
 
     to, bcc = ([], targets) if use_bcc else (targets, [])
-
     EmailMessage(
         subject=notification_info.get('subject'),
         body=body,
         from_email=settings.DEFAULT_FROM_EMAIL,
         to=to,
-        bcc=bcc
-    ).send()
+        bcc=bcc,
+    ).send(fail_silently=False)
 
     if send_in_feed:
         return feed_alert(notification_type, notification_info.get('subject'), body, users, obj)

@@ -196,11 +196,8 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
     def validate(self, data):
         self.prevent_many_common_file_validator(data)
 
-        if self.context['request'].method in ['PATCH', 'PUT']:
-            kwargs = self.context['request'].parser_context.get('kwargs', {})
-            application_id = kwargs.get(self.context['view'].lookup_field)
-            app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
-
+        if self.instance:
+            app = self.instance
             allowed_to_modify_status = list(app.eoi.focal_points.values_list('id', flat=True)) + [app.eoi.created_by_id]
             if data.get("status") and self.context['request'].user.id not in allowed_to_modify_status:
                 raise serializers.ValidationError(

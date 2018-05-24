@@ -16,6 +16,7 @@ class PartnerPermission(AutoNameEnum):
     CFEI_PINNING = auto()
     CFEI_SEND_CLARIFICATION_REQUEST = auto()
     CFEI_SUBMIT_CONCEPT_NOTE = auto()
+    CFEI_VIEW_CONCEPT_NOTE = auto()
     CFEI_ANSWER_SELECTION = auto()
     UCN_VIEW = auto()
     UCN_DRAFT = auto()

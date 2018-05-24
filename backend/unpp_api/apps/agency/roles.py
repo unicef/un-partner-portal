@@ -79,6 +79,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DRAFT_INVITE_CSO,
         AgencyPermission.CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH,
         AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS,
+        AgencyPermission.CFEI_VIEW_APPLICATIONS,
+        AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
     ]),
     AgencyRole.EDITOR_ADVANCED: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -94,6 +96,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_INDICATE_CSO,
         AgencyPermission.CFEI_PUBLISH,
         AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS,
+        AgencyPermission.CFEI_VIEW_APPLICATIONS,
+        AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
     ]),
     AgencyRole.PAM_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -108,6 +112,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DRAFT_INVITE_CSO,
         AgencyPermission.CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH,
         AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS,
+        AgencyPermission.CFEI_VIEW_APPLICATIONS,
+        AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
     ]),
     AgencyRole.MFT_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -117,6 +123,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_VIEW_LIST,
         AgencyPermission.CFEI_VIEW_FINALIZED_RESULTS,
         AgencyPermission.CFEI_PUBLISH,
+        AgencyPermission.CFEI_VIEW_APPLICATIONS,
+        AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
     ]),
 }
 
