@@ -78,6 +78,7 @@ const mapStateToProps = (state, ownProps) => {
     partner_name = null,
     selected_source = null,
     cn_template = null,
+    goal = null,
     focal_points_detail = [],
   } = cfei || {};
   return {
@@ -87,7 +88,7 @@ const mapStateToProps = (state, ownProps) => {
     partner: partner_name,
     partnerId: partner_id,
     role: state.session.role,
-    displayGoal: selected_source === 'UNI',
+    displayGoal: true,
   };
 };
 
