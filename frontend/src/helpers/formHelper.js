@@ -420,6 +420,7 @@ export const renderText = ({
         />}
         <Typography
           className={className}
+          style={{ whiteSpace: 'pre-wrap' }}
           {...other}
         >
           {Array.isArray(value) ? value.join(', ') : value}
