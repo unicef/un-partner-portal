@@ -167,7 +167,7 @@ steps:
               - master
 
     delete_jobs:
-        title: Delete backend jobs with label redeploy: true
+        title: Delete backend jobs with label redeploy
         image: codefresh/kube-helm:master
         environment:
             - KUBECONTEXT=${{KUBECONTEXT}}
