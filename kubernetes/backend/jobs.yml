@@ -23,20 +23,11 @@ spec:
             - name: ENV
               value: {{ENV}}
             - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: unpp-staging-secrets
-                  key: POSTGRES_DB
+              value: {{POSTGRES_DB}}
             - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: unpp-staging-secrets
-                  key: POSTGRES_USER
+              value: {{POSTGRES_USER}}
             - name: POSTGRES_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: unpp-staging-secrets
-                  key: POSTGRES_HOST
+              value: {{POSTGRES_HOST}}
             - name: DJANGO_ALLOWED_HOST
               value: {{DJANGO_ALLOWED_HOST}}
 
