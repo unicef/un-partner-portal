@@ -455,19 +455,27 @@ class ReviewersStatusAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
             ]
         ),
     )
     serializer_class = ReviewersApplicationSerializer
     lookup_url_kwarg = 'application_id'
 
-    def get_queryset(self, *args, **kwargs):
-        application_id = self.kwargs.get(self.lookup_url_kwarg)
-        application = get_object_or_404(
-            Application.objects.select_related('eoi').prefetch_related('eoi__reviewers'), pk=application_id
+    def get_object(self):
+        return get_object_or_404(
+            Application.objects.select_related('eoi').prefetch_related('eoi__reviewers'),
+            pk=self.kwargs.get(self.lookup_url_kwarg)
         )
-        return application.eoi.reviewers.all()
+
+    def check_permissions(self, request):
+        super(ReviewersStatusAPIView, self).check_permissions(request)
+        eoi = self.get_object().eoi
+        if not eoi.created_by == request.user and not eoi.focal_points.filter(pk=request.user.pk).exists():
+            raise PermissionDenied('Only creators / focal points can list assessments')
+
+    def get_queryset(self, *args, **kwargs):
+        return self.get_object().eoi.reviewers.all()
 
 
 class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
