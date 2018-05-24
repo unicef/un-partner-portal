@@ -203,5 +203,5 @@ steps:
         when:
           branch:
             only:
-              - staging
+              - develop
               - master
