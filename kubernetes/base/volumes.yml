@@ -3,7 +3,7 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: static-volume
+  name: static-volume-prod
   labels:
     type: local
 spec:
@@ -13,12 +13,12 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: /data
+    path: /data-prod
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: static-volume-claim
+  name: static-volume-claim-prod
   labels:
     type: local
 spec:
@@ -34,7 +34,7 @@ spec:
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: db-volume
+  name: db-volume-prod
   labels:
     type: local
 spec:
@@ -44,12 +44,12 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: /db
+    path: /db-prod
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: db-volume-claim
+  name: db-volume-claim-prod
   labels:
     type: local
 spec:

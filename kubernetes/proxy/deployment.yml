@@ -38,7 +38,7 @@ spec:
         - name: proxy
           image: unicef/unpp-proxy:{{CF_SHORT_REVISION}}
           volumeMounts:
-            - name: static-volume
+            - name: static-volume-{{ENV}}
               mountPath: /data
           ports:
             - containerPort: 80
@@ -48,6 +48,6 @@ spec:
             - name: FRONTEND_SERVICE_HOST
               value: frontend
       volumes:
-      - name: static-volume
+      - name: static-volume-{{ENV}}
         persistentVolumeClaim:
-          claimName: static-volume-claim
+          claimName: static-volume-claim-{{ENV}}

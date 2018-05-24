@@ -32,3 +32,12 @@ spec:
           image: unicef/unpp-db
           ports:
             - containerPort: 5432
+          volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: db-volume-{{ENV}}
+      volumes:
+      - name: db-volume-{{ENV}}
+        persistentVolumeClaim:
+          claimName: db-volume-claim-{{ENV}}
+      }
+      }

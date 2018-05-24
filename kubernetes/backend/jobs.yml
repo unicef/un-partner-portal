@@ -6,7 +6,7 @@ metadata:
   annotations:
     revision: "{{CF_SHORT_REVISION}}"
   labels:
-    redeploy: true 
+    redeploy: "true" 
   namespace: {{NAMESPACE}}
 spec:
   template:
@@ -20,7 +20,7 @@ spec:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: unpp-staging-secrets
+                  name: unpp-{{ENV}}-secrets
                   key: SECRET_KEY
             - name: ENV
               value: {{ENV}}
@@ -43,7 +43,7 @@ metadata:
   annotations:
     revision: "{{CF_SHORT_REVISION}}"
   labels:
-    redeploy: true
+    redeploy: "true"
   namespace: {{NAMESPACE}}
 spec:
   template:
@@ -60,7 +60,7 @@ spec:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: unpp-staging-secrets
+                  name: unpp-{{ENV}}-secrets
                   key: SECRET_KEY
             - name: ENV
               valueFrom:
@@ -86,6 +86,6 @@ spec:
       volumes:
       - name: static-volume
         persistentVolumeClaim:
-          claimName: static-volume-claim
+          claimName: static-volume-claim-{{ENV}}
       restartPolicy: Never
   backoffLimit: 4
