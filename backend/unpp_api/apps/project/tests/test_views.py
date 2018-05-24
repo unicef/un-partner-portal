@@ -572,10 +572,12 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
         # add logged agency member to eoi/application reviewers
         app.eoi.reviewers.add(self.user)
-
         response = self.client.post(url, data=payload, format='json')
-        self.assertTrue(status.is_client_error(response.status_code))
-        self.assertEquals(response.data['non_field_errors'], ['Assessment allowed once deadline is passed.'])
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['non_field_errors'],
+            ['Assessment allowed once deadline is passed.']
+        )
         app.eoi.deadline_date = date.today() - timedelta(days=1)
         app.eoi.is_published = True
         app.eoi.save()
@@ -635,7 +637,8 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             'scores': scores,
             'note': note,
         }
-        response = self.client.put(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['note'], payload['note'])
         self.assertEquals(response.data['scores'], payload['scores'])
 
