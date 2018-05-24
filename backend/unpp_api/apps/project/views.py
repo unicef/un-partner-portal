@@ -427,7 +427,9 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
 class EOIApplicationsListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
     queryset = Application.objects.select_related(
@@ -435,14 +437,16 @@ class EOIApplicationsListAPIView(ListAPIView):
     ).prefetch_related("assessments", "eoi__reviewers").all()
     serializer_class = ApplicationsListSerializer
     pagination_class = SmallPagination
-    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_backends = (
+        DjangoFilterBackend,
+        OrderingFilter,
+    )
     filter_class = ApplicationsEOIFilter
     ordering_fields = ('status', )
     lookup_field = lookup_url_kwarg = 'pk'
 
     def get_queryset(self, *args, **kwargs):
-        eoi_id = self.kwargs.get(self.lookup_field)
-        return self.queryset.filter(eoi_id=eoi_id)
+        return self.queryset.filter(eoi_id=self.kwargs.get(self.lookup_field))
 
 
 class ReviewersStatusAPIView(ListAPIView):
