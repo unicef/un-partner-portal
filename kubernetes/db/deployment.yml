@@ -39,5 +39,3 @@ spec:
       - name: db-volume-{{ENV}}
         persistentVolumeClaim:
           claimName: db-volume-claim-{{ENV}}
-      }
-      }
