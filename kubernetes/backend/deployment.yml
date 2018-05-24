@@ -62,4 +62,4 @@ spec:
       volumes:
       - name: static-volume
         persistentVolumeClaim:
-          claimName: static-volume-claim
+          claimName: static-volume-claim-prod
