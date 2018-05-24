@@ -427,7 +427,9 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
 class EOIApplicationsListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
     queryset = Application.objects.select_related(
@@ -435,33 +437,45 @@ class EOIApplicationsListAPIView(ListAPIView):
     ).prefetch_related("assessments", "eoi__reviewers").all()
     serializer_class = ApplicationsListSerializer
     pagination_class = SmallPagination
-    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_backends = (
+        DjangoFilterBackend,
+        OrderingFilter,
+    )
     filter_class = ApplicationsEOIFilter
     ordering_fields = ('status', )
     lookup_field = lookup_url_kwarg = 'pk'
 
     def get_queryset(self, *args, **kwargs):
-        eoi_id = self.kwargs.get(self.lookup_field)
-        return self.queryset.filter(eoi_id=eoi_id)
+        return self.queryset.filter(eoi_id=self.kwargs.get(self.lookup_field)).filter(
+            Q(eoi__created_by=self.request.user) | Q(eoi__focal_points=self.request.user)
+        )
 
 
 class ReviewersStatusAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
             ]
         ),
     )
     serializer_class = ReviewersApplicationSerializer
     lookup_url_kwarg = 'application_id'
 
-    def get_queryset(self, *args, **kwargs):
-        application_id = self.kwargs.get(self.lookup_url_kwarg)
-        application = get_object_or_404(
-            Application.objects.select_related('eoi').prefetch_related('eoi__reviewers'), pk=application_id
+    def get_object(self):
+        return get_object_or_404(
+            Application.objects.select_related('eoi').prefetch_related('eoi__reviewers'),
+            pk=self.kwargs.get(self.lookup_url_kwarg)
         )
-        return application.eoi.reviewers.all()
+
+    def check_permissions(self, request):
+        super(ReviewersStatusAPIView, self).check_permissions(request)
+        eoi = self.get_object().eoi
+        if not eoi.created_by == request.user and not eoi.focal_points.filter(pk=request.user.pk).exists():
+            raise PermissionDenied('Only creators / focal points can list assessments')
+
+    def get_queryset(self, *args, **kwargs):
+        return self.get_object().eoi.reviewers.all()
 
 
 class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):

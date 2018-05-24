@@ -5,6 +5,8 @@ metadata:
   name: backend-migration
   annotations:
     revision: "{{CF_SHORT_REVISION}}"
+  labels:
+    redeploy: true 
   namespace: {{NAMESPACE}}
 spec:
   template:
@@ -38,6 +40,11 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: backend-collectstatic
+  annotations:
+    revision: "{{CF_SHORT_REVISION}}"
+  labels:
+    redeploy: true
+  namespace: {{NAMESPACE}}
 spec:
   template:
     spec:

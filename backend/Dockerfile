@@ -29,7 +29,6 @@ RUN apt-get install -y --no-install-recommends \
     git-core
 RUN apt-get install -y --no-install-recommends \
     python-dev \
-    python-software-properties \
     python-setuptools
 RUN apt-get install -y --no-install-recommends \
     python-pydot \

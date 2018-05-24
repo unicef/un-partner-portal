@@ -81,6 +81,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS,
         AgencyPermission.CFEI_VIEW_APPLICATIONS,
         AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
+        AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
     ]),
     AgencyRole.EDITOR_ADVANCED: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -98,6 +99,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS,
         AgencyPermission.CFEI_VIEW_APPLICATIONS,
         AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
+        AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
     ]),
     AgencyRole.PAM_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -114,6 +116,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS,
         AgencyPermission.CFEI_VIEW_APPLICATIONS,
         AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
+        AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
     ]),
     AgencyRole.MFT_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -125,6 +128,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_PUBLISH,
         AgencyPermission.CFEI_VIEW_APPLICATIONS,
         AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
+        AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
     ]),
 }
 
