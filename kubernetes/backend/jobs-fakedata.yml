@@ -6,7 +6,7 @@ metadata:
     revision: "{{CF_SHORT_REVISION}}"
   namespace: {{NAMESPACE}}
   labels:
-    redeploy: false
+    redeploy: "false"
 spec:
   template:
     spec:

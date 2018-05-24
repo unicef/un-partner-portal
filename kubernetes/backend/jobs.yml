@@ -6,7 +6,7 @@ metadata:
   annotations:
     revision: "{{CF_SHORT_REVISION}}"
   labels:
-    redeploy: true 
+    redeploy: "true" 
   namespace: {{NAMESPACE}}
 spec:
   template:
@@ -43,7 +43,7 @@ metadata:
   annotations:
     revision: "{{CF_SHORT_REVISION}}"
   labels:
-    redeploy: true
+    redeploy: "true"
   namespace: {{NAMESPACE}}
 spec:
   template:
