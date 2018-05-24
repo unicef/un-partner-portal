@@ -446,7 +446,9 @@ class EOIApplicationsListAPIView(ListAPIView):
     lookup_field = lookup_url_kwarg = 'pk'
 
     def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(eoi_id=self.kwargs.get(self.lookup_field))
+        return self.queryset.filter(eoi_id=self.kwargs.get(self.lookup_field)).filter(
+            Q(eoi__created_by=self.request.user) | Q(eoi__focal_points=self.request.user)
+        )
 
 
 class ReviewersStatusAPIView(ListAPIView):
