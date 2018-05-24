@@ -35,15 +35,18 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.VIEW_DASHBOARD,
             PartnerPermission.MANAGE_USERS,
             PartnerPermission.CFEI_PINNING,
+            PartnerPermission.CFEI_ANSWER_SELECTION,
         ]),
         PartnerRole.EDITOR: frozenset([
             PartnerPermission.VIEW_INGO_DASHBOARD,
             PartnerPermission.CFEI_VIEW,
             PartnerPermission.VIEW_DASHBOARD,
             PartnerPermission.CFEI_PINNING,
+            PartnerPermission.CFEI_ANSWER_SELECTION,
         ]),
         PartnerRole.READER: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
+            PartnerPermission.CFEI_VIEW,
         ]),
     },
     False: {  # INGO Country Profile
@@ -52,11 +55,13 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.CFEI_VIEW,
             PartnerPermission.MANAGE_USERS,
             PartnerPermission.CFEI_PINNING,
+            PartnerPermission.CFEI_ANSWER_SELECTION,
         ]),
         PartnerRole.EDITOR: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
             PartnerPermission.CFEI_VIEW,
             PartnerPermission.CFEI_PINNING,
+            PartnerPermission.CFEI_ANSWER_SELECTION,
         ]),
         PartnerRole.READER: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
@@ -70,11 +75,13 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.MANAGE_USERS,
             PartnerPermission.CFEI_VIEW,
             PartnerPermission.CFEI_PINNING,
+            PartnerPermission.CFEI_ANSWER_SELECTION,
         ]),
         PartnerRole.EDITOR: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
             PartnerPermission.CFEI_VIEW,
             PartnerPermission.CFEI_PINNING,
+            PartnerPermission.CFEI_ANSWER_SELECTION,
         ]),
         PartnerRole.READER: frozenset([
             PartnerPermission.VIEW_DASHBOARD,

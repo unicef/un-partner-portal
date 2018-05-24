@@ -413,14 +413,24 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
 class TestApplicationsAPITestCase(BaseAPITestCase):
 
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
+
     def setUp(self):
         super(TestApplicationsAPITestCase, self).setUp()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity, is_published=True)
 
+        # make sure that creating user is not the current one
+        user = UserFactory.create_batch(1)[0]
+        AgencyMemberFactory.create_batch(1, user=user)
+        eoi = EOIFactory.create_batch(1, is_published=True, created_by=user)[0]
+        eoi.focal_points.clear()
+
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_read_update(self):
         app = Application.objects.first()
+        PartnerMemberFactory.create_batch(5, partner=app.partner)
         url = reverse('projects:application', kwargs={"pk": app.id})
         response = self.client.get(url, format='json')
         self.assertTrue(status.is_success(response.status_code))
@@ -433,15 +443,24 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.local],
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_client_error(response.status_code))
-        self.assertEquals(response.data['non_field_errors'],
-                          ['Only Focal Point/Creator is allowed to pre-select/reject an application.'])
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEquals(
+            response.data['non_field_errors'],
+            ['Only Focal Point/Creator is allowed to pre-select/reject an application.']
+        )
 
         self.client.logout()
-        self.client.login(email=app.eoi.created_by.email, password='test')
+        self.client.force_login(app.eoi.created_by)
 
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status.HTTP_403_FORBIDDEN)
+        app.eoi.created_by.member.role = AgencyRole.EDITOR_ADVANCED.name
+        app.eoi.created_by.agency_members.update(
+            role=AgencyRole.EDITOR_ADVANCED.name
+        )
+        app.eoi.created_by.member.save()
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
         self.assertEquals(response.data['ds_justification_select'], [JUSTIFICATION_FOR_DIRECT_SELECTION.local])
 
@@ -451,8 +470,10 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "justification_reason": "good reason",
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertEquals(response.data['non_field_errors'],
-                          ['You cannot award an application if the profile has not been verified yet.'])
+        self.assertEquals(
+            response.data['non_field_errors'],
+            ['You cannot award an application if the profile has not been verified yet.']
+        )
 
         PartnerVerificationFactory(partner=app.partner, submitter=app.eoi.created_by)
 
@@ -478,7 +499,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertEqual(
             awarded_partners_response.status_code, status.HTTP_200_OK, msg=awarded_partners_response.content
         )
-        # TODO: find out why this works locally but is empty on CircleCI
+
         if awarded_partners_response.data:
             self.assertEqual(awarded_partners_response.data[0]['partner_decision_date'], str(date.today()))
             self.assertEqual(awarded_partners_response.data[0]['partner_notified'].date(), date.today())
