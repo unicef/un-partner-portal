@@ -8,10 +8,10 @@ metadata:
   namespace: {{NAMESPACE}}
 spec:
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
-  type: LoadBalancer
+   - name: http
+     protocol: TCP
+     port: 80
+  type: NodePort
   selector:
     app: proxy-container
 ---
