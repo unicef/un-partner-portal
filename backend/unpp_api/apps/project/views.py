@@ -274,16 +274,14 @@ class PartnerEOIApplicationDestroyAPIView(DestroyAPIView):
     """
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CFEI_SUBMIT_CONCEPT_NOTE
+            ]
         ),
     )
-    queryset = Application.objects.all()
-    serializer_class = ApplicationFullSerializer
 
-    def delete(self, request, pk, *args, **kwargs):
-        app = get_object_or_404(Application, id=pk)
-        app.delete()
-        return Response({}, status=statuses.HTTP_204_NO_CONTENT)
+    def get_queryset(self):
+        return Application.objects.filter(partner=self.request.active_partner)
 
 
 class PartnerEOIApplicationCreateAPIView(CreateAPIView):
