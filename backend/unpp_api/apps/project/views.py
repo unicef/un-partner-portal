@@ -481,7 +481,7 @@ class ReviewersStatusAPIView(ListAPIView):
 class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
         ),
     )
     serializer_class = ReviewerAssessmentsSerializer
@@ -496,11 +496,6 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         ).exists():
             raise PermissionDenied
 
-    def create(self, request, *args, **kwargs):
-        request.data['application'] = self.kwargs.get(self.application_url_kwarg)
-        request.data['reviewer'] = self.kwargs.get(self.reviewer_url_kwarg)
-        return super(ReviewerAssessmentsAPIView, self).create(request, *args, **kwargs)
-
     def get_queryset(self, *args, **kwargs):
         return Assessment.objects.filter(application_id=self.kwargs.get(self.application_url_kwarg))
 
@@ -513,10 +508,15 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def create(self, request, *args, **kwargs):
+        request.data['application'] = self.kwargs.get(self.application_url_kwarg)
+        request.data['reviewer'] = self.kwargs.get(self.reviewer_url_kwarg)
+        return super(ReviewerAssessmentsAPIView, self).create(request, *args, **kwargs)
+
     def perform_update(self, serializer):
+        if not self.get_object().created_by == self.request.user:
+            raise PermissionDenied
         super(ReviewerAssessmentsAPIView, self).perform_update(serializer)
-        serializer.instance.modified_by = self.request.user
-        serializer.instance.save()
 
 
 class UnsolicitedProjectAPIView(ListAPIView):

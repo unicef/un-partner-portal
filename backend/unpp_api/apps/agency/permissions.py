@@ -48,7 +48,6 @@ class AgencyPermission(AutoNameEnum):
     CFEI_VIEW_MY_ASSESSMENT = auto()  # If creator / focal point
     CFEI_EDIT_MY_ASSESSMENT = auto()  # If creator / focal point
     CFEI_VIEW_ALL_ASSESSMENTS = auto()  # If creator / focal point
-    CFEI_EDIT_ALL_ASSESSMENTS = auto()  # If creator / focal point
     CFEI_ADD_REVIEW_SUMMARY = auto()  # If creator / focal point
     CFEI_RECOMMEND_PARTNER_FOR_SELECTION = auto()  # If creator / focal point
 
