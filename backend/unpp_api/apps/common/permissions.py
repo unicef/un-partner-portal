@@ -35,13 +35,13 @@ class HasUNPPPermission(CustomizablePermission):
 def has_unpp_permission(agency_permissions=None, partner_permissions=None):
     def has_unpp_permission_method_decorator(class_method):
 
-        def has_unpp_permission_inner(self, request, *args, **kwargs):
-            if agency_permissions is not None and request.agency_member:
-                if set(agency_permissions).issubset(request.agency_member.user_permissions):
-                    return class_method(self, request, *args, **kwargs)
-            elif partner_permissions is not None and request.partner_member:
-                if set(partner_permissions).issubset(request.partner_member.user_permissions):
-                    return class_method(self, request, *args, **kwargs)
+        def has_unpp_permission_inner(self, *args, **kwargs):
+            if agency_permissions is not None and self.request.agency_member:
+                if set(agency_permissions).issubset(self.request.agency_member.user_permissions):
+                    return class_method(self, *args, **kwargs)
+            elif partner_permissions is not None and self.request.partner_member:
+                if set(partner_permissions).issubset(self.request.partner_member.user_permissions):
+                    return class_method(self, *args, **kwargs)
             raise PermissionDenied()
 
         return has_unpp_permission_inner

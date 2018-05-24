@@ -295,11 +295,10 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
             ]
         ),
     )
-    queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
-    def post(self, request, *args, **kwargs):
-        if request.partner_member.partner.is_hq:
+    def perform_create(self, serializer):
+        if self.request.partner_member.partner.is_hq:
             raise serializers.ValidationError(
                 "You don't have the ability to submit an application if "
                 "you are currently toggled under the HQ profile."
@@ -309,12 +308,8 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
                 "You don't have the ability to submit an application if Your profile is not completed."
             )
 
-        self.eoi = get_object_or_404(EOI, id=self.kwargs.get('pk'))
-        return super(PartnerEOIApplicationCreateAPIView, self).post(request, *args, **kwargs)
-
-    def perform_create(self, serializer):
         instance = serializer.save(
-            eoi=self.eoi,
+            eoi=get_object_or_404(EOI, id=self.kwargs.get('pk')),
             submitter_id=self.request.user.id,
             partner_id=self.request.active_partner.id,
             agency=self.eoi.agency
@@ -323,29 +318,22 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
 
 
 class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
-    """
-    Create Application for open EOI by partner.
-    """
+
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW,
+            ]
         ),
     )
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
     def get_object(self):
-        queryset = self.filter_queryset(self.get_queryset())
-        eoi_id = self.kwargs.get(self.lookup_field)
-        partner_id = self.request.active_partner.id
-        if partner_id:
-            obj = get_object_or_404(queryset, **{
-                'partner_id': partner_id,
-                'eoi_id': eoi_id,
-            })
-            self.check_object_permissions(self.request, obj)
-            return obj
-        return Application.objects.none()
+        return get_object_or_404(self.get_queryset(), **{
+            'partner_id': self.request.active_partner.id,
+            'eoi_id': self.kwargs.get(self.lookup_field),
+        })
 
 
 class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
@@ -383,18 +371,46 @@ class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
     queryset = Application.objects.all()
     serializer_class = CreateDirectApplicationNoCNSerializer
     lookup_url_kwarg = 'eoi_id'
-    cfei_lookup = 'eoi'
+
+    def get_queryset(self):
+        return super(AgencyEOIApplicationDestroyAPIView, self).get_queryset().filter(
+            eoi__agency=self.request.user.agency
+        )
 
 
 class ApplicationAPIView(RetrieveUpdateAPIView):
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW,
+            ],
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
-    queryset = Application.objects.select_related("partner", "eoi", "cn").prefetch_related("eoi__reviewers").all()
+    queryset = Application.objects.select_related(
+        "partner", "eoi", "cn"
+    ).prefetch_related("eoi__reviewers").all()
     serializer_class = ApplicationFullSerializer
 
+    def get_queryset(self):
+        queryset = super(ApplicationAPIView, self).get_queryset()
+        if self.request.agency_member:
+            return queryset.filter(eoi__agency=self.request.user.agency)
+        elif self.request.active_partner:
+            return queryset.filter(partner=self.request.active_partner)
+
+        return queryset.none()
+
+    @has_unpp_permission(
+        partner_permissions=[
+            PartnerPermission.CFEI_ANSWER_SELECTION,
+        ],
+        agency_permissions=[
+            AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
+        ]
+    )
     def perform_update(self, serializer):
         data = serializer.validated_data
         instance = serializer.save()
@@ -402,9 +418,9 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
             instance.decision_date = timezone.now().date()
             instance.save()
 
-        if self.request.user.is_agency_user:
+        if self.request.agency_member:
             send_agency_updated_application_notification(instance)
-        elif self.request.user.is_partner_user:
+        elif self.request.active_partner:
             send_partner_made_decision_notification(instance)
 
 
