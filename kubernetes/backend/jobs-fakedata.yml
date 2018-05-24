@@ -5,6 +5,8 @@ metadata:
   annotations:
     revision: "{{CF_SHORT_REVISION}}"
   namespace: {{NAMESPACE}}
+  labels:
+    redeploy: false
 spec:
   template:
     spec:
