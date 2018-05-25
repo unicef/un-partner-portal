@@ -712,7 +712,9 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
 class AwardedPartnersListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW,
+            ]
         ),
     )
     serializer_class = AwardedPartnersSerializer
@@ -726,7 +728,9 @@ class AwardedPartnersListAPIView(ListAPIView):
 class CompareSelectedListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+            ]
         ),
     )
     serializer_class = CompareSelectedSerializer
@@ -747,8 +751,7 @@ class CompareSelectedListAPIView(ListAPIView):
         return super(CompareSelectedListAPIView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        eoi_id = self.kwargs['eoi_id']
-        queryset = Application.objects.select_related("partner").filter(eoi_id=eoi_id)
+        queryset = Application.objects.select_related("partner").filter(eoi_id=self.kwargs['eoi_id'])
 
         application_ids = self.request.query_params.get("application_ids")
         if application_ids is not None:
