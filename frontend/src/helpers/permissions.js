@@ -1,17 +1,10 @@
 import R from 'ramda';
 
-export const checkPermission = (permission, state) => { 
-  return R.contains(permission, state.session.permissions);
-}
+export const checkPermission = (permission, state) =>
+  R.contains(permission, state.session.permissions);
 
 export const PARTNER_PERMISSIONS = {
-  // Registration & General
-  REGISTER: 'REGISTER',
-  VIEW_DASHBOARD: 'VIEW_DASHBOARD',
-  VIEW_INGO_DASHBOARD: 'VIEW_INGO_DASHBOARD',
-
   // Applications
-  CFEI_VIEW: 'CFEI_VIEW', // ALL USERS HAVE ACCESS
   CFEI_PINNING: 'CFEI_PINNING', // DONE
   CFEI_SEND_CLARIFICATION_REQUEST: 'CFEI_SEND_CLARIFICATION_REQUEST', // TODO
   CFEI_SUBMIT_CONCEPT_NOTE: 'CFEI_SUBMIT_CONCEPT_NOTE',
@@ -32,7 +25,6 @@ export const AGENCY_PERMISSIONS = {
   RESET_CSO_USER_PASSWORD: 'RESET_CSO_USER_PASSWORD',
 
   // General
-  VIEW_DASHBOARD: 'VIEW_DASHBOARD',
   CSO_LIST_VIEW: 'CSO_LIST_VIEW',
   CSO_PROFILE_VIEW: 'CSO_PROFILE_VIEW',
 
@@ -89,4 +81,6 @@ export const AGENCY_PERMISSIONS = {
 export const COMMON_PERMISSIONS = {
   MANAGE_USERS: 'MANAGE_USERS', // DONE
   RECEIVE_NOTIFICATIONS: 'RECEIVE_NOTIFICATIONS', // DONE
+  VIEW_DASHBOARD: 'VIEW_DASHBOARD', // ALL USERS HAVE ACCESS
+  CFEI_VIEW: 'CFEI_VIEW', // ALL USERS HAVE ACCESS
 };
