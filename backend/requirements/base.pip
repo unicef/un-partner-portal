@@ -25,6 +25,7 @@ django-imagekit==4.0.1
 XlsxWriter==1.0.2
 cached-property==1.4.2
 django-mail-templated==2.6.5
+names==0.3.0
 
 # Testing
 astroid==1.5.2

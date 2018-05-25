@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.6.5-alpine3.7
 
 ARG env
 ENV ENV ${env:-dev}
@@ -6,45 +6,9 @@ ENV ENV ${env:-dev}
 ARG requirement_file
 ENV REQUIREMENT_FILE ${requirement_file:-dev.pip}
 
-# Install dependencies
-RUN apt-get update && \
-    # fix certificates for easy_install "certificate verify failed"
-    apt-get install --assume-yes --reinstall ca-certificates
-RUN apt-get install -y --no-install-recommends \
-    build-essential \
-    libfreetype6 \
-    libfreetype6-dev \
-    libcurl4-openssl-dev \
-    libjpeg-dev \
-    libgif-dev \
-    libffi-dev \
-    libpng-dev \
-    libtiff-dev \
-    libxml2-dev \
-    libxslt-dev \
-    xmlsec1 \
-    vim \
-    ntp
-RUN apt-get install -y --no-install-recommends \
-    git-core
-RUN apt-get install -y --no-install-recommends \
-    python-dev \
-    python-software-properties \
-    python-setuptools
-RUN apt-get install -y --no-install-recommends \
-    python-pydot \
-    libgvc6 \
-    graphviz
-RUN apt-get install -y --no-install-recommends \
-    postgresql-client \
-    libpq-dev \
-    python-psycopg2
-RUN apt-get install -y --no-install-recommends \
-    python-gdal \
-    gdal-bin \
-    libgdal-dev \
-    libgdal1h \
-    libgdal1-dev
+RUN apk update
+RUN apk add --upgrade --no-cache "postgresql-client" "postgresql-contrib" "postgresql-dev" bash curl
+RUN apk add --upgrade --no-cache g++ linux-headers gcc make libffi-dev git wget jpeg-dev zlib-dev libpng-dev graphviz-dev
 
 # Install Python tools
 RUN pip install --upgrade \

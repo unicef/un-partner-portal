@@ -47,6 +47,8 @@ class AgencySwitch extends Component {
       this.props.saveNewCurrentOffice({
         officeId: office.office.id,
         officeName: office.office.name,
+        officeRole: office.role_display,
+        permissions: office.permissions,
       });
 
       this.setState({ open: false });
@@ -95,9 +97,6 @@ class AgencySwitch extends Component {
             <ExpandMoreIcon />
           </IconButton>
         </GridRow>
-        {/* <Typography type="body2">
-          {`${name}, ${officeCountry} `}
-        </Typography> */}
         <Menu
           id="switch-office"
           anchorEl={this.state.anchorEl}

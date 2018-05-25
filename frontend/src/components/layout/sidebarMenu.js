@@ -1,9 +1,7 @@
 import React, { createElement } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
 import { browserHistory as history, withRouter } from 'react-router';
-
 import SettingsIcon from 'material-ui-icons/Settings';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
@@ -11,6 +9,7 @@ import List from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import LoggedOrg from './loggedOrg/loggedOrg';
 import MenuLink from './menuLink';
+import { checkPermission, COMMON_PERMISSIONS } from '../../helpers/permissions';
 
 const styleSheet = theme => ({
   sidebar: {
@@ -25,6 +24,7 @@ const styleSheet = theme => ({
   },
   icon: {
     padding: '0',
+    opacity: '0.6',
     transform: 'translate(20px, 0)',
   },
   default: {
@@ -41,6 +41,7 @@ function sidebarMenu(props) {
     classes,
     router: { location: { pathname } },
     sidebar,
+    hasPermission,
     onItemClick,
     onSettingsClick,
   } = props;
@@ -74,7 +75,7 @@ function sidebarMenu(props) {
         <div className={classes.innerLogo}>
           <LoggedOrg />
         </div>
-        <MenuLink
+        {hasPermission && <MenuLink
           label={messages.button}
           icon={createElement(SettingsIcon)}
           onClick={() => onSettingsClick('/idp/')}
@@ -82,7 +83,7 @@ function sidebarMenu(props) {
             icon: classes.icon,
             default: classes.default,
           }}
-        />
+        />}
         <Divider />
       </div>
     </Grid>
@@ -94,12 +95,14 @@ sidebarMenu.propTypes = {
   router: PropTypes.object.isRequired,
   sidebar: PropTypes.array.isRequired,
   classes: PropTypes.object.isRequired,
+  hasPermission: PropTypes.bool.isRequired,
   onItemClick: PropTypes.func,
   onSettingsClick: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
   sidebar: state.nav,
+  hasPermission: checkPermission(COMMON_PERMISSIONS.MANAGE_USERS, state),
 });
 
 const mapDispatchToProps = () => ({

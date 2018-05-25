@@ -1,0 +1,205 @@
+version: '1.0'
+
+steps:
+
+    build_backend:
+        type: build
+        image_name: unicef/unpp-backend
+        dockerfile: Dockerfile
+        working_directory: ${{main_clone}}/backend
+        tag: ${{CF_BRANCH}}
+        build_arguments:
+            - env=$ENV
+
+    build_db:
+        type: build
+        image_name: unicef/unpp-db
+        dockerfile: Dockerfile
+        working_directory: ${{main_clone}}/db
+        tag: ${{CF_BRANCH}}        
+
+    build_frontend:
+        type: build
+        image_name: unicef/unpp-frontend
+        dockerfile: Dockerfile
+        working_directory: ${{main_clone}}/frontend
+        tag: ${{CF_BRANCH}}
+    
+    build_proxy:
+        type: build
+        image_name: unicef/unpp-proxy
+        dockerfile: Dockerfile
+        working_directory: ${{main_clone}}/proxy
+        tag: ${{CF_BRANCH}}
+
+    composition_step:
+        type: composition
+        composition: 'unicef-unpp'
+        composition_candidates:
+            test:
+                image: ${{build_backend}}
+                depends_on:
+                    - proxy
+                    - backend
+                command: 'bash -c "/usr/local/bin/waitforit -host=backend -port=8000 -timeout=30 -- python /code/manage.py test --parallel"'
+        composition_variables:
+            - POSTGRES_DB=postgres
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=
+            - POSTGRES_HOST=db
+            - SECRET_KEY=asdfqwef124rf
+            - ENV=dev
+            - DJANGO_ALLOWED_HOST="*"
+
+    push_backend_to_hub:
+        type: push
+        title: Pushing backend image to docker hub
+        registry: unicef-dockerhub
+        candidate: ${{build_backend}}
+        tags: 
+            - ${{CF_BRANCH}}
+            - ${{CF_SHORT_REVISION}}
+            - latest
+        when:
+            branch:
+                only: 
+                    - develop
+                    - master
+
+    push_db_to_hub:
+        type: push
+        title: Pushing db image to docker hub
+        registry: unicef-dockerhub
+        candidate: ${{build_db}}
+        tags: 
+            - ${{CF_BRANCH}}
+            - ${{CF_SHORT_REVISION}}
+            - latest
+        when:
+            branch:
+                only: 
+                    - develop
+                    - master
+
+    push_frontend_to_hub:
+        type: push
+        title: Pushing frontend image to docker hub
+        registry: unicef-dockerhub
+        candidate: ${{build_frontend}}
+        tags: 
+            - ${{CF_BRANCH}}
+            - ${{CF_SHORT_REVISION}}
+            - latest
+        when:
+            branch:
+                only: 
+                    - develop
+                    - master
+
+    push_proxy_to_hub:
+        type: push
+        title: Pushing proxy image to docker hub
+        candidate: ${{build_proxy}}
+        registry: unicef-dockerhub
+        tags: 
+            - ${{CF_BRANCH}}
+            - ${{CF_SHORT_REVISION}}
+            - latest
+        when:
+            branch:
+                only: 
+                    - develop
+                    - master
+
+    deploy_backend:
+        title: Deploying backend
+        image: codefresh/cf-deploy-kubernetes
+        tag: latest
+        working_directory: ${{main_clone}}
+        commands:
+          - /cf-deploy-kubernetes ./kubernetes/backend/deployment.yml
+        environment:
+          - KUBECONTEXT=${{KUBECONTEXT}}
+          - KUBERNETES_NAMESPACE=${{NAMESPACE}}
+          - ENV=${{ENV}}
+          - DJANGO_ALLOWED_HOST=${{DJANGO_ALLOWED_HOST}}
+          - POSTGRES_USER=${{POSTGRES_USER}}
+          - POSTGRES_DB=${{POSTGRES_DB}}
+          - POSTGRES_HOST=${{POSTGRES_HOST}}
+        when:
+          branch:
+            only:
+              - develop
+              - master
+
+    deploy_frontend:
+        title: Deploying frontend
+        image: codefresh/cf-deploy-kubernetes
+        tag: latest
+        working_directory: ${{main_clone}}
+        commands:
+          - /cf-deploy-kubernetes ./kubernetes/frontend/deployment.yml
+        environment:
+          - KUBECONTEXT=${{KUBECONTEXT}}
+          - KUBERNETES_NAMESPACE=${{NAMESPACE}}
+          - ENV=${{ENV}}
+        when:
+          branch:
+            only:
+              - develop
+              - master
+
+    deploy_proxy:
+        title: Deploying nginx proxy
+        image: codefresh/cf-deploy-kubernetes
+        tag: latest
+        working_directory: ${{main_clone}}
+        commands:
+          - /cf-deploy-kubernetes ./kubernetes/proxy/deployment.yml
+        environment:
+          - KUBECONTEXT=${{KUBECONTEXT}}
+          - KUBERNETES_NAMESPACE=${{NAMESPACE}}
+          - ENV=${{ENV}}
+        when:
+          branch:
+            only:
+              - develop
+              - master
+
+    delete_jobs:
+        title: Delete backend jobs with label redeploy
+        image: codefresh/kube-helm:master
+        environment:
+            - KUBECONTEXT=${{KUBECONTEXT}}
+            - NAMESPACE=${{NAMESPACE}}
+        commands:
+            - kubectl config get-contexts
+            - kubectl config use-context ${{KUBECONTEXT}}
+            - >-
+              kubectl --namespace ${{NAMESPACE}} delete job -lredeploy=true
+        when:
+          branch:
+            only:
+              - develop
+              - master
+
+    deploy_jobs:
+        title: Creating backend jobs (skipping fakedata)
+        image: codefresh/cf-deploy-kubernetes
+        tag: ${{CF_SHORT_REVISION}}
+        working_directory: ${{main_clone}}
+        commands:
+          - /cf-deploy-kubernetes ./kubernetes/backend/jobs.yml
+        environment:
+          - KUBECONTEXT=${{KUBECONTEXT}}
+          - KUBERNETES_NAMESPACE=${{NAMESPACE}}
+          - ENV=${{ENV}}
+          - DJANGO_ALLOWED_HOST=${{DJANGO_ALLOWED_HOST}}
+          - POSTGRES_USER=${{POSTGRES_USER}}
+          - POSTGRES_DB=${{POSTGRES_DB}}
+          - POSTGRES_HOST=${{POSTGRES_HOST}}
+        when:
+          branch:
+            only:
+              - develop
+              - master

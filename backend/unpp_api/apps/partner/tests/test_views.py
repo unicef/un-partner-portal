@@ -280,8 +280,14 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             ],
             'governance_organigram': file_id,
             'experiences': [
-                {'id': experience.id, 'years': YEARS_OF_EXP_CHOICES.more_10},
-                {'specialization_id': 1, 'years': YEARS_OF_EXP_CHOICES.more_10}
+                {
+                    'id': experience.id,
+                    'years': YEARS_OF_EXP_CHOICES.more_10
+                },
+                {
+                    'specialization_id': 1,
+                    'years': YEARS_OF_EXP_CHOICES.years15
+                }
             ]
         }
 
@@ -295,7 +301,8 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertTrue(response.data['population_of_concern'])
         self.assertEquals(len(response.data['experiences']), 2)
         self.assertEquals(response.data['experiences'][0]['years'], YEARS_OF_EXP_CHOICES.more_10)
-        self.assertEquals(response.data['experiences'][1]['years'], YEARS_OF_EXP_CHOICES.more_10)
+        self.assertIsNotNone(response.data['experiences'][0]['specialization'])
+        self.assertEquals(response.data['experiences'][1]['years'], YEARS_OF_EXP_CHOICES.years15)
         self.assertEquals(len(response.data['location_field_offices']), 2)
         self.assertTrue(Point.objects.last().id in [office['id'] for office in response.data['location_field_offices']])
 

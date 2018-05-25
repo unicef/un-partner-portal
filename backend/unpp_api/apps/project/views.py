@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from datetime import date
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -77,7 +78,14 @@ class BaseProjectAPIView(ListCreateAPIView):
     Base endpoint for Call of Expression of Interest.
     """
     permission_classes = (
-        HasUNPPPermission(),
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
+        ),
     )
     queryset = EOI.objects.select_related("agency").prefetch_related("specializations").distinct()
     serializer_class = BaseProjectSerializer
@@ -93,16 +101,6 @@ class OpenProjectAPIView(BaseProjectAPIView):
     """
     Endpoint for getting OPEN Call of Expression of Interest.
     """
-    permission_classes = (
-        HasUNPPPermission(
-            agency_permissions=[
-                AgencyPermission.CFEI_VIEW_LIST,
-            ],
-            partner_permissions=[
-                PartnerPermission.CFEI_VIEW
-            ]
-        ),
-    )
 
     def get_queryset(self):
         queryset = self.queryset.filter(display_type=CFEI_TYPES.open)
@@ -110,9 +108,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
         if self.request.user.is_agency_user:
             return queryset
 
-        today = date.today()
-
-        return queryset.filter(deadline_date__gte=today, is_completed=False)
+        return queryset.filter(deadline_date__gte=date.today(), is_completed=False)
 
     @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_CREATE])
     def post(self, request, *args, **kwargs):
@@ -160,16 +156,18 @@ class EOIAPIView(RetrieveUpdateAPIView):
                 'revised_date': instance.deadline_date,
                 'eoi_url': eoi.get_absolute_url()
             }
-            send_notification('cfei_update_prev', eoi, users, context=context)
+            send_notification(NotificationType.CFEI_DEADLINE_UPDATE, eoi, users, context=context)
 
         # New Reviewers Added
-        new_reviewers = []
+        new_reviewer_ids = []
         for reviewer in instance.reviewers.all():
             if reviewer.id not in current_reviewers:
-                new_reviewers.append(reviewer.id)
+                new_reviewer_ids.append(reviewer.id)
 
-            if new_reviewers:
-                send_notification('agency_cfei_reviewers_selected', eoi, User.objects.filter(id__in=new_reviewers))
+            if new_reviewer_ids:
+                send_notification(
+                    NotificationType.SELECTED_AS_CFEI_REVIEWER, eoi, User.objects.filter(id__in=new_reviewer_ids)
+                )
 
         # Completed
         if instance.is_completed:
@@ -180,17 +178,6 @@ class DirectProjectAPIView(BaseProjectAPIView):
     """
     Endpoint for getting DIRECT Call of Expression of Interest.
     """
-
-    permission_classes = (
-        HasUNPPPermission(
-            agency_permissions=[
-                AgencyPermission.CFEI_VIEW_LIST,
-            ],
-            partner_permissions=[
-                PartnerPermission.CFEI_VIEW
-            ]
-        ),
-    )
     serializer_class = DirectProjectSerializer
 
     def get_queryset(self):
@@ -218,11 +205,13 @@ class PinProjectAPIView(BaseProjectAPIView):
 
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
         ),
     )
 
-    ERROR_MSG_WRONG_EOI_PKS = "At least one of given EOI primary key doesn't exists."
+    ERROR_MSG_WRONG_EOI_PKS = "At least one of given CFEIs could not be found."
     ERROR_MSG_WRONG_PARAMS = "Couldn't properly identify input parameters like 'eoi_ids' and 'pin'."
 
     def get_queryset(self):
@@ -230,29 +219,30 @@ class PinProjectAPIView(BaseProjectAPIView):
             pins__partner_id=self.request.active_partner.id, deadline_date__gte=date.today()
         ).distinct()
 
+    @has_unpp_permission(partner_permissions=[PartnerPermission.CFEI_PINNING])
     def patch(self, request, *args, **kwargs):
-        eoi_ids = request.data.get("eoi_ids")
+        eoi_ids = request.data.get("eoi_ids", [])
         pin = request.data.get("pin")
         if EOI.objects.filter(id__in=eoi_ids).count() != len(eoi_ids):
-            return Response(
-                {"error": self.ERROR_MSG_WRONG_EOI_PKS},
-                status=statuses.HTTP_400_BAD_REQUEST
-            )
+            raise serializers.ValidationError({
+                'non_field_errors': self.ERROR_MSG_WRONG_EOI_PKS
+            })
+
         partner_id = self.request.active_partner.id
-        if pin and len(eoi_ids) > 0:
-            pins = []
-            for eoi in eoi_ids:
-                pins.append(Pin(eoi_id=eoi, partner_id=partner_id, pinned_by=request.user))
-            Pin.objects.bulk_create(pins)
+        if pin and eoi_ids:
+            Pin.objects.bulk_create([
+                Pin(eoi_id=eoi_id, partner_id=partner_id, pinned_by=request.user) for eoi_id in eoi_ids
+            ])
+
             return Response({"eoi_ids": eoi_ids}, status=statuses.HTTP_201_CREATED)
-        elif pin is False and len(eoi_ids) > 0:
+        elif pin is False and eoi_ids:
             Pin.objects.filter(eoi_id__in=eoi_ids, partner_id=partner_id, pinned_by=request.user).delete()
+
             return Response(status=statuses.HTTP_204_NO_CONTENT)
         else:
-            return Response(
-                {"error": self.ERROR_MSG_WRONG_PARAMS},
-                status=statuses.HTTP_400_BAD_REQUEST
-            )
+            raise serializers.ValidationError({
+                'non_field_errors': self.ERROR_MSG_WRONG_PARAMS
+            })
 
 
 class AgencyApplicationListAPIView(ListAPIView):
@@ -261,14 +251,21 @@ class AgencyApplicationListAPIView(ListAPIView):
     """
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
-    queryset = Application.objects.all()
+
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = ApplicationsFilter
     serializer_class = ApplicationFullEOISerializer
     pagination_class = SmallPagination
+
+    def get_queryset(self):
+        return Application.objects.filter(
+            Q(eoi__created_by=self.request.user) | Q(eoi__focal_points=self.request.user)
+        )
 
 
 class PartnerEOIApplicationDestroyAPIView(DestroyAPIView):
@@ -277,16 +274,14 @@ class PartnerEOIApplicationDestroyAPIView(DestroyAPIView):
     """
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CFEI_SUBMIT_CONCEPT_NOTE
+            ]
         ),
     )
-    queryset = Application.objects.all()
-    serializer_class = ApplicationFullSerializer
 
-    def delete(self, request, pk, *args, **kwargs):
-        app = get_object_or_404(Application, id=pk)
-        app.delete()
-        return Response({}, status=statuses.HTTP_204_NO_CONTENT)
+    def get_queryset(self):
+        return Application.objects.filter(partner=self.request.active_partner)
 
 
 class PartnerEOIApplicationCreateAPIView(CreateAPIView):
@@ -300,11 +295,10 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
             ]
         ),
     )
-    queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
-    def post(self, request, *args, **kwargs):
-        if request.partner_member.partner.is_hq:
+    def perform_create(self, serializer):
+        if self.request.partner_member.partner.is_hq:
             raise serializers.ValidationError(
                 "You don't have the ability to submit an application if "
                 "you are currently toggled under the HQ profile."
@@ -314,12 +308,8 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
                 "You don't have the ability to submit an application if Your profile is not completed."
             )
 
-        self.eoi = get_object_or_404(EOI, id=self.kwargs.get('pk'))
-        return super(PartnerEOIApplicationCreateAPIView, self).post(request, *args, **kwargs)
-
-    def perform_create(self, serializer):
         instance = serializer.save(
-            eoi=self.eoi,
+            eoi=get_object_or_404(EOI, id=self.kwargs.get('pk')),
             submitter_id=self.request.user.id,
             partner_id=self.request.active_partner.id,
             agency=self.eoi.agency
@@ -328,29 +318,22 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
 
 
 class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
-    """
-    Create Application for open EOI by partner.
-    """
+
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW,
+            ]
         ),
     )
     queryset = Application.objects.all()
     serializer_class = ApplicationFullSerializer
 
     def get_object(self):
-        queryset = self.filter_queryset(self.get_queryset())
-        eoi_id = self.kwargs.get(self.lookup_field)
-        partner_id = self.request.active_partner.id
-        if partner_id:
-            obj = get_object_or_404(queryset, **{
-                'partner_id': partner_id,
-                'eoi_id': eoi_id,
-            })
-            self.check_object_permissions(self.request, obj)
-            return obj
-        return Application.objects.none()
+        return get_object_or_404(self.get_queryset(), **{
+            'partner_id': self.request.active_partner.id,
+            'eoi_id': self.kwargs.get(self.reviewer_url_kwargs),
+        })
 
 
 class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
@@ -388,18 +371,46 @@ class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
     queryset = Application.objects.all()
     serializer_class = CreateDirectApplicationNoCNSerializer
     lookup_url_kwarg = 'eoi_id'
-    cfei_lookup = 'eoi'
+
+    def get_queryset(self):
+        return super(AgencyEOIApplicationDestroyAPIView, self).get_queryset().filter(
+            eoi__agency=self.request.user.agency
+        )
 
 
 class ApplicationAPIView(RetrieveUpdateAPIView):
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW,
+            ],
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
-    queryset = Application.objects.select_related("partner", "eoi", "cn").prefetch_related("eoi__reviewers").all()
+    queryset = Application.objects.select_related(
+        "partner", "eoi", "cn"
+    ).prefetch_related("eoi__reviewers").all()
     serializer_class = ApplicationFullSerializer
 
+    def get_queryset(self):
+        queryset = super(ApplicationAPIView, self).get_queryset()
+        if self.request.agency_member:
+            return queryset.filter(eoi__agency=self.request.user.agency)
+        elif self.request.active_partner:
+            return queryset.filter(partner=self.request.active_partner)
+
+        return queryset.none()
+
+    @has_unpp_permission(
+        partner_permissions=[
+            PartnerPermission.CFEI_ANSWER_SELECTION,
+        ],
+        agency_permissions=[
+            AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
+        ]
+    )
     def perform_update(self, serializer):
         data = serializer.validated_data
         instance = serializer.save()
@@ -407,34 +418,13 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
             instance.decision_date = timezone.now().date()
             instance.save()
 
-        if self.request.user.is_agency_user:
+        if self.request.agency_member:
             send_agency_updated_application_notification(instance)
-        elif self.request.user.is_partner_user:
+        elif self.request.active_partner:
             send_partner_made_decision_notification(instance)
 
 
 class EOIApplicationsListAPIView(ListAPIView):
-    permission_classes = (
-        HasUNPPPermission(
-            # TODO: Permissions
-        ),
-    )
-    queryset = Application.objects.select_related(
-        "partner", "eoi", "cn"
-    ).prefetch_related("assessments", "eoi__reviewers").all()
-    serializer_class = ApplicationsListSerializer
-    pagination_class = SmallPagination
-    filter_backends = (DjangoFilterBackend, OrderingFilter)
-    filter_class = ApplicationsEOIFilter
-    ordering_fields = ('status', )
-    lookup_field = lookup_url_kwarg = 'pk'
-
-    def get_queryset(self, *args, **kwargs):
-        eoi_id = self.kwargs.get(self.lookup_field)
-        return self.queryset.filter(eoi_id=eoi_id)
-
-
-class ReviewersStatusAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
@@ -442,78 +432,101 @@ class ReviewersStatusAPIView(ListAPIView):
             ]
         ),
     )
+    queryset = Application.objects.select_related(
+        "partner", "eoi", "cn"
+    ).prefetch_related("assessments", "eoi__reviewers").all()
+    serializer_class = ApplicationsListSerializer
+    pagination_class = SmallPagination
+    filter_backends = (
+        DjangoFilterBackend,
+        OrderingFilter,
+    )
+    filter_class = ApplicationsEOIFilter
+    ordering_fields = ('status', )
+    lookup_field = lookup_url_kwarg = 'pk'
+
+    def get_queryset(self, *args, **kwargs):
+        return self.queryset.filter(eoi_id=self.kwargs.get(self.lookup_field)).filter(
+            Q(eoi__created_by=self.request.user) | Q(eoi__focal_points=self.request.user)
+        )
+
+
+class ReviewersStatusAPIView(ListAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+            ]
+        ),
+    )
     serializer_class = ReviewersApplicationSerializer
     lookup_url_kwarg = 'application_id'
 
-    def get_queryset(self, *args, **kwargs):
-        application_id = self.kwargs.get(self.lookup_url_kwarg)
-        application = get_object_or_404(
-            Application.objects.select_related('eoi').prefetch_related('eoi__reviewers'), pk=application_id
+    def get_object(self):
+        return get_object_or_404(
+            Application.objects.select_related('eoi').prefetch_related('eoi__reviewers'),
+            pk=self.kwargs.get(self.lookup_url_kwarg)
         )
-        return application.eoi.reviewers.all()
+
+    def check_permissions(self, request):
+        super(ReviewersStatusAPIView, self).check_permissions(request)
+        eoi = self.get_object().eoi
+        if not eoi.created_by == request.user and not eoi.focal_points.filter(pk=request.user.pk).exists():
+            raise PermissionDenied('Only creators / focal points can list assessments')
+
+    def get_queryset(self, *args, **kwargs):
+        return self.get_object().eoi.reviewers.all()
 
 
 class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
-    """
-    Only reviewers, EOI creator & focal points are allowed to create/modify assessments.
-    """
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+            ]
         ),
     )
-    queryset = Assessment.objects.all()
     serializer_class = ReviewerAssessmentsSerializer
-    lookup_field = 'reviewer_id'
-    lookup_url_kwarg = 'application_id'
-
-    def set_bunch_of_required_data(self, request):
-        reviewer_id = request.parser_context.get('kwargs', {}).get(self.lookup_field)
-        application_id = request.parser_context.get('kwargs', {}).get(self.lookup_url_kwarg)
-        request.data['reviewer'] = reviewer_id
-        request.data['application'] = application_id
+    reviewer_url_kwarg = 'reviewer_id'
+    application_url_kwarg = 'application_id'
 
     def check_permissions(self, request):
         super(ReviewerAssessmentsAPIView, self).check_permissions(request)
-        application_id = self.kwargs.get('application_id')
-        app = Application.objects.select_related('eoi').filter(id=application_id).first()
-        if app and app.eoi.reviewers.filter(id=self.request.user.id).exists():
-            return
-        raise PermissionDenied
-
-    def create(self, request, *args, **kwargs):
-        self.set_bunch_of_required_data(request)
-        request.data['created_by'] = request.user.id
-        return super(ReviewerAssessmentsAPIView, self).create(request, *args, **kwargs)
+        if not Application.objects.filter(
+            id=self.kwargs.get(self.application_url_kwarg),
+            eoi__reviewers=self.request.user
+        ).exists():
+            raise PermissionDenied
 
     def get_queryset(self, *args, **kwargs):
-        application_id = self.kwargs.get(self.lookup_url_kwarg)
-        return Assessment.objects.filter(application_id=application_id)
+        return Assessment.objects.filter(application_id=self.kwargs.get(self.application_url_kwarg))
 
     def get_object(self):
-        """
-            we have defined:
-                unique_together = (("reviewer", "application"), )
-            so get will return only one item by given reviewer & application
-        """
-        queryset = self.filter_queryset(self.get_queryset())
-        obj = get_object_or_404(queryset, **{
-            self.lookup_field: self.kwargs.get(self.lookup_field),
-            self.lookup_url_kwarg: self.kwargs.get(self.lookup_url_kwarg),
-        })
+        obj = get_object_or_404(
+            self.get_queryset(),
+            reviewer_id=self.kwargs.get(self.reviewer_url_kwarg),
+            application_id=self.kwargs.get(self.application_url_kwarg),
+        )
         self.check_object_permissions(self.request, obj)
         return obj
 
-    def update(self, request, *args, **kwargs):
-        self.set_bunch_of_required_data(request)
-        request.data['modified_by'] = request.user.id
-        return super(ReviewerAssessmentsAPIView, self).update(request, *args, **kwargs)
+    def create(self, request, *args, **kwargs):
+        request.data['application'] = self.kwargs.get(self.application_url_kwarg)
+        request.data['reviewer'] = self.kwargs.get(self.reviewer_url_kwarg)
+        return super(ReviewerAssessmentsAPIView, self).create(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        if not serializer.instance.created_by == self.request.user:
+            raise PermissionDenied
+        super(ReviewerAssessmentsAPIView, self).perform_update(serializer)
 
 
-class UnsolicitedProjectAPIView(ListAPIView):
+class UnsolicitedProjectListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
     queryset = Application.objects.filter(is_unsolicited=True).distinct()
@@ -526,7 +539,9 @@ class UnsolicitedProjectAPIView(ListAPIView):
 class PartnerApplicationOpenListAPIView(PartnerIdsMixin, ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.UCN_VIEW,
+            ]
         ),
     )
     queryset = Application.objects.filter(eoi__display_type=CFEI_TYPES.open).distinct()
@@ -542,7 +557,9 @@ class PartnerApplicationOpenListAPIView(PartnerIdsMixin, ListAPIView):
 class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreateAPIView):
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.UCN_VIEW,
+            ]
         ),
     )
     queryset = Application.objects.filter(is_unsolicited=True).distinct()
@@ -558,18 +575,25 @@ class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreate
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id__in=self.get_partner_ids())
 
+    @has_unpp_permission(partner_permissions=[PartnerPermission.UCN_DRAFT])
     def perform_create(self, serializer):
-        instance = serializer.save()
-        send_notification_application_created(instance)
+        super(PartnerApplicationUnsolicitedListCreateAPIView, self).perform_create(serializer)
+        send_notification_application_created(serializer.instance)
 
 
-class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedListCreateAPIView):
+class PartnerApplicationDirectListCreateAPIView(PartnerIdsMixin, ListAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            partner_permissions=[
+                PartnerPermission.DSR_VIEW,
+            ]
+        ),
+    )
     queryset = Application.objects.filter(eoi__display_type=CFEI_TYPES.direct).distinct()
-
-    def get_serializer_class(self, *args, **kwargs):
-        if self.request.method == 'POST':
-            return CreateUnsolicitedProjectSerializer
-        return ApplicationPartnerDirectSerializer
+    filter_class = ApplicationsUnsolicitedFilter
+    pagination_class = SmallPagination
+    filter_backends = (DjangoFilterBackend, )
+    serializer_class = ApplicationPartnerDirectSerializer
 
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id__in=self.get_partner_ids())
@@ -580,7 +604,9 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
     pagination_class = SmallPagination
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
 
@@ -588,8 +614,7 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
         return ApplicationFeedback.objects.filter(application=self.kwargs['pk'])
 
     def perform_create(self, serializer):
-        serializer.save(provider=self.request.user,
-                        application_id=self.kwargs['pk'])
+        serializer.save(provider=self.request.user, application_id=self.kwargs['pk'])
 
 
 class ConvertUnsolicitedAPIView(CreateAPIView):
@@ -610,33 +635,47 @@ class ConvertUnsolicitedAPIView(CreateAPIView):
 
 class ReviewSummaryAPIView(RetrieveUpdateAPIView):
     """
-    Endpoint for review summary - comment & attachement
+    Endpoint for review summary - comment & attachment
     """
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
     serializer_class = ReviewSummarySerializer
     queryset = EOI.objects.all()
 
+    def check_object_permissions(self, request, obj):
+        super(ReviewSummaryAPIView, self).check_object_permissions(request, obj)
+        if request.method == 'GET':
+            return
+        if obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
+            return
+        self.permission_denied(request)
+
+    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_ADD_REVIEW_SUMMARY])
+    def perform_update(self, serializer):
+        super(ReviewSummaryAPIView, self).perform_update(serializer)
+
 
 class EOIReviewersAssessmentsListAPIView(ListAPIView):
     """
-    Reviewers with they assessments - summary
+    Reviewers with their assessments - summary
     """
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+            ]
         ),
     )
-    queryset = User.objects.all()
     serializer_class = EOIReviewersAssessmentsSerializer
     lookup_field = 'eoi_id'
 
     def get_queryset(self):
-        eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
-        return eoi.reviewers.all()
+        return get_object_or_404(EOI, id=self.kwargs['eoi_id']).reviewers.all()
 
 
 class EOIReviewersAssessmentsNotifyAPIView(APIView):
@@ -649,7 +688,9 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
 
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+            ]
         ),
     )
 
@@ -671,7 +712,9 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
 class AwardedPartnersListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW,
+            ]
         ),
     )
     serializer_class = AwardedPartnersSerializer
@@ -685,7 +728,9 @@ class AwardedPartnersListAPIView(ListAPIView):
 class CompareSelectedListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+            ]
         ),
     )
     serializer_class = CompareSelectedSerializer
@@ -706,8 +751,7 @@ class CompareSelectedListAPIView(ListAPIView):
         return super(CompareSelectedListAPIView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        eoi_id = self.kwargs['eoi_id']
-        queryset = Application.objects.select_related("partner").filter(eoi_id=eoi_id)
+        queryset = Application.objects.select_related("partner").filter(eoi_id=self.kwargs['eoi_id'])
 
         application_ids = self.request.query_params.get("application_ids")
         if application_ids is not None:
@@ -732,8 +776,9 @@ class PublishEOIAPIView(RetrieveAPIView):
 
     def check_object_permissions(self, request, obj):
         super(PublishEOIAPIView, self).check_object_permissions(request, obj)
-        if not obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
-            self.permission_denied(request)
+        if obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
+            return
+        self.permission_denied(request)
 
     def post(self, *args, **kwargs):
         obj = self.get_object()

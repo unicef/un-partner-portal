@@ -742,8 +742,9 @@ class PartnerMandateMission(TimeStampedModel):
 class PartnerExperience(TimeStampedModel):
     created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="experiences")
     partner = models.ForeignKey(Partner, related_name="experiences")
-    specialization = models.ForeignKey('common.Specialization', null=True, blank=True,
-                                       related_name="partner_experiences")
+    specialization = models.ForeignKey(
+        'common.Specialization', null=True, blank=True, related_name="partner_experiences"
+    )
     years = models.CharField(
         max_length=3,
         choices=YEARS_OF_EXP_CHOICES,
