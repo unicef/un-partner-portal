@@ -521,10 +521,12 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         super(ReviewerAssessmentsAPIView, self).perform_update(serializer)
 
 
-class UnsolicitedProjectAPIView(ListAPIView):
+class UnsolicitedProjectListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
     queryset = Application.objects.filter(is_unsolicited=True).distinct()
@@ -537,7 +539,9 @@ class UnsolicitedProjectAPIView(ListAPIView):
 class PartnerApplicationOpenListAPIView(PartnerIdsMixin, ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.UCN_VIEW,
+            ]
         ),
     )
     queryset = Application.objects.filter(eoi__display_type=CFEI_TYPES.open).distinct()
