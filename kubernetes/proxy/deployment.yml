@@ -11,7 +11,8 @@ spec:
    - name: http
      protocol: TCP
      port: 80
-  type: LoadBalancer
+     targetPort: 80
+  type: NodePort
   selector:
     app: proxy-container
 ---
