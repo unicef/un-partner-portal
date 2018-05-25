@@ -17,7 +17,7 @@ class AgencyPermission(AutoNameEnum):
     CSO_PROFILE_VIEW = auto()
 
     # CFEI
-    CFEI_VIEW_LIST = auto()  # View Overview of all CFEIs with open and closed/under review status
+    CFEI_VIEW = auto()  # View Overview of all CFEIs with open and closed/under review status
     CFEI_VIEW_FINALIZED_RESULTS = auto()  # View results tab of finalized CFEI for all agencies: Selected CSO & CN
 
     # Create Draft CFEI for Own Agency

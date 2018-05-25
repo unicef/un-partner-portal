@@ -739,7 +739,8 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
 
 class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
 
-    user_type = 'agency'
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     def test_add_review(self):
         url = reverse('common:file')
@@ -755,21 +756,20 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
         file_id = response.data['id']
 
         PartnerMemberFactory()  # eoi is creating applications that need partner member
-        EOIFactory(created_by=self.user)
-        eoi = EOI.objects.first()
+        eoi = EOIFactory.create_batch(1, created_by=self.user)[0]
         url = reverse('projects:review-summary', kwargs={"pk": eoi.id})
         payload = {
             'review_summary_comment': "comment",
         }
-        response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        response = self.client.patch(url, data=payload)
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['review_summary_comment'], payload['review_summary_comment'])
 
         payload = {
             'review_summary_comment': "comment",
             'review_summary_attachment': file_id
         }
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertTrue(status.is_success(response.status_code))
         self.assertEquals(response.data['review_summary_comment'], payload['review_summary_comment'])
         self.assertTrue(

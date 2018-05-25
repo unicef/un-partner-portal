@@ -183,7 +183,9 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
         exclude = (
             'accept_notification',
         )
-        read_only_fields = ('eoi',)
+        read_only_fields = (
+            'eoi', 'review_summary_comment', 'review_summary_attachment'
+        )
         validators = [
             UniqueTogetherValidator(
                 queryset=Application.objects.all(),

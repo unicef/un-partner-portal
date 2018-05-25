@@ -80,7 +80,7 @@ class BaseProjectAPIView(ListCreateAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_LIST,
+                AgencyPermission.CFEI_VIEW,
             ],
             partner_permissions=[
                 PartnerPermission.CFEI_VIEW
@@ -604,7 +604,9 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
     pagination_class = SmallPagination
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
 
@@ -633,15 +635,29 @@ class ConvertUnsolicitedAPIView(CreateAPIView):
 
 class ReviewSummaryAPIView(RetrieveUpdateAPIView):
     """
-    Endpoint for review summary - comment & attachement
+    Endpoint for review summary - comment & attachment
     """
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ]
         ),
     )
     serializer_class = ReviewSummarySerializer
     queryset = EOI.objects.all()
+
+    def check_object_permissions(self, request, obj):
+        super(ReviewSummaryAPIView, self).check_object_permissions(request, obj)
+        if request.method == 'GET':
+            return
+        if obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
+            return
+        self.permission_denied(request)
+
+    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_ADD_REVIEW_SUMMARY])
+    def perform_update(self, serializer):
+        super(ReviewSummaryAPIView, self).perform_update(serializer)
 
 
 class EOIReviewersAssessmentsListAPIView(ListAPIView):
@@ -755,8 +771,9 @@ class PublishEOIAPIView(RetrieveAPIView):
 
     def check_object_permissions(self, request, obj):
         super(PublishEOIAPIView, self).check_object_permissions(request, obj)
-        if not obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
-            self.permission_denied(request)
+        if obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
+            return
+        self.permission_denied(request)
 
     def post(self, *args, **kwargs):
         obj = self.get_object()
