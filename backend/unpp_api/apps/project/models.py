@@ -135,6 +135,7 @@ class Pin(TimeStampedModel):
 
 class ApplicationQuerySet(models.QuerySet):
 
+
     def winners(self):
         return self.filter(did_win=True, did_accept=True, did_withdraw=False)
 
@@ -173,6 +174,10 @@ class Application(TimeStampedModel):
     # Applies when application converted to EOI. Only applicable if this is unsolicited
     eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion", null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
+
+    is_published = models.NullBooleanField(
+        help_text='Whether application is a draft or has been published (applicable to UCN)'
+    )
 
     objects = ApplicationQuerySet.as_manager()
 

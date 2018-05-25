@@ -557,7 +557,9 @@ class PartnerApplicationOpenListAPIView(PartnerIdsMixin, ListAPIView):
 class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreateAPIView):
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.UCN_VIEW,
+            ]
         ),
     )
     queryset = Application.objects.filter(is_unsolicited=True).distinct()
@@ -573,18 +575,24 @@ class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreate
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id__in=self.get_partner_ids())
 
+    @has_unpp_permission(partner_permissions=[PartnerPermission.UCN_DRAFT])
     def perform_create(self, serializer):
-        instance = serializer.save()
-        send_notification_application_created(instance)
+        super(PartnerApplicationUnsolicitedListCreateAPIView, self).perform_create(serializer)
+        send_notification_application_created(serializer.instance)
 
 
-class PartnerApplicationDirectListCreateAPIView(PartnerApplicationUnsolicitedListCreateAPIView):
+class PartnerApplicationDirectListCreateAPIView(PartnerIdsMixin, ListAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            partner_permissions=[
+                PartnerPermission.DSR_VIEW,
+            ]
+        ),
+    )
     queryset = Application.objects.filter(eoi__display_type=CFEI_TYPES.direct).distinct()
-
-    def get_serializer_class(self, *args, **kwargs):
-        if self.request.method == 'POST':
-            return CreateUnsolicitedProjectSerializer
-        return ApplicationPartnerDirectSerializer
+    filter_class = ApplicationsUnsolicitedFilter
+    pagination_class = SmallPagination
+    filter_backends = (DjangoFilterBackend, )
 
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id__in=self.get_partner_ids())
@@ -603,8 +611,7 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
         return ApplicationFeedback.objects.filter(application=self.kwargs['pk'])
 
     def perform_create(self, serializer):
-        serializer.save(provider=self.request.user,
-                        application_id=self.kwargs['pk'])
+        serializer.save(provider=self.request.user, application_id=self.kwargs['pk'])
 
 
 class ConvertUnsolicitedAPIView(CreateAPIView):

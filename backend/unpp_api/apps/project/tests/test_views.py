@@ -651,6 +651,9 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
 class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
 
+    user_type = BaseAPITestCase.USER_PARTNER
+    partner_role = PartnerRole.ADMIN
+
     def test_create_convert(self):
         url = reverse('projects:applications-unsolicited')
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
@@ -677,8 +680,8 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
             "specializations": Specialization.objects.all()[:3].values_list("id", flat=True),
             "cn": cfile.id,
         }
-        response = self.client.post(url, data=payload, format='json', header={'Partner-ID': partner_id})
-        self.assertTrue(status.is_success(response.status_code))
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         app = Application.objects.last()
         self.assertEquals(response.data['id'], str(app.id))
         self.assertEquals(app.cn.id, cfile.id)

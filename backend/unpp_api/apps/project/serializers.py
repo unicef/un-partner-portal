@@ -265,7 +265,6 @@ class CreateUnsolicitedProjectSerializer(MixinPreventManyCommonFile, serializers
 
     @transaction.atomic
     def create(self, validated_data):
-
         self.prevent_many_common_file_validator(validated_data)
 
         partner = self.context['request'].active_partner
@@ -274,6 +273,7 @@ class CreateUnsolicitedProjectSerializer(MixinPreventManyCommonFile, serializers
 
         app = Application.objects.create(
             is_unsolicited=True,
+            is_published=False,
             partner_id=partner.id,
             eoi=None,
             agency_id=agency['id'],

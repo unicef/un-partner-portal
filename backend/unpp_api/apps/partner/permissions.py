@@ -21,7 +21,7 @@ class PartnerPermission(AutoNameEnum):
     # Unsolicited Concept Notes
     UCN_VIEW = auto()
     UCN_DRAFT = auto()
-    UCN_SAVE = auto()
+    UCN_EDIT = auto()
     UCN_SUBMIT = auto()
     UCN_DELETE = auto()
 
