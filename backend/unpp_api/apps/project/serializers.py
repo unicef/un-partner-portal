@@ -180,7 +180,9 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
 
     class Meta:
         model = Application
-        fields = '__all__'
+        exclude = (
+            'accept_notification',
+        )
         read_only_fields = ('eoi',)
         validators = [
             UniqueTogetherValidator(
@@ -190,6 +192,23 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
         ]
 
     prevent_keys = ["cn"]
+
+    def get_extra_kwargs(self):
+        extra_kwargs = super(ApplicationFullSerializer, self).get_extra_kwargs()
+        request = self.context['request']
+        if request.agency_member:
+            extra_kwargs['did_accept'] = {
+                'read_only': True
+            }
+            extra_kwargs['did_decline'] = {
+                'read_only': True
+            }
+        elif request.active_partner:
+            extra_kwargs['did_win'] = {
+                'read_only': True
+            }
+
+        return extra_kwargs
 
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
@@ -213,10 +232,10 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
 
             if data.get("did_win") and not app.partner.is_verified:
                 raise serializers.ValidationError(
-                    "You cannot award an application if the profile has not been verified yet.")
+                    "You cannot award an application if the profile has not been verified yet."
+                )
             if data.get("did_win") and app.partner.has_red_flag:
-                raise serializers.ValidationError(
-                    "You cannot award an application if the profile has red flag.")
+                raise serializers.ValidationError("You cannot award an application if the profile has red flag.")
             if data.get("did_win") and not app.assessments_is_completed:
                 raise serializers.ValidationError(
                     "You cannot award an application if all assessments have not been added for the application."
