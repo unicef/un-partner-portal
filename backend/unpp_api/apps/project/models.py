@@ -174,6 +174,10 @@ class Application(TimeStampedModel):
     eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion", null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
 
+    is_published = models.NullBooleanField(
+        help_text='Whether application is a draft or has been published (applicable to UCN)'
+    )
+
     objects = ApplicationQuerySet.as_manager()
 
     class Meta:

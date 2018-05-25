@@ -1,5 +1,7 @@
 import random
 from datetime import date
+
+import names
 from django.conf import settings
 
 from account.models import User, UserProfile
@@ -26,7 +28,7 @@ from common.factories import (
     UnsolicitedFactory,
     PartnerVerificationFactory,
     PartnerFlagFactory,
-)
+    UserFactory)
 from common.models import (
     AdminLevel1,
     Point,
@@ -234,3 +236,17 @@ def generate_fake_data(quantity=50):
     UnsolicitedFactory.create_batch(unsolicited_count, agency=wfp)
     UnsolicitedFactory.create_batch(unsolicited_count, agency=unhcr)
     print("Unsolicited concept notes for each agency created")
+
+    # Make sure each office has at least one user with each role
+    for office in AgencyOffice.objects.all():
+        for role in AgencyRole:
+            user = UserFactory.create_batch(
+                1,
+                fullname=names.get_full_name()
+            )[0]
+            AgencyMemberFactory.create_batch(
+                1,
+                user=user,
+                role=role.name,
+                office=office
+            )

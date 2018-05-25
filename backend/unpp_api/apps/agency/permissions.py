@@ -17,7 +17,7 @@ class AgencyPermission(AutoNameEnum):
     CSO_PROFILE_VIEW = auto()
 
     # CFEI
-    CFEI_VIEW_LIST = auto()  # View Overview of all CFEIs with open and closed/under review status
+    CFEI_VIEW = auto()  # View Overview of all CFEIs with open and closed/under review status
     CFEI_VIEW_FINALIZED_RESULTS = auto()  # View results tab of finalized CFEI for all agencies: Selected CSO & CN
 
     # Create Draft CFEI for Own Agency
@@ -48,7 +48,6 @@ class AgencyPermission(AutoNameEnum):
     CFEI_VIEW_MY_ASSESSMENT = auto()  # If creator / focal point
     CFEI_EDIT_MY_ASSESSMENT = auto()  # If creator / focal point
     CFEI_VIEW_ALL_ASSESSMENTS = auto()  # If creator / focal point
-    CFEI_EDIT_ALL_ASSESSMENTS = auto()  # If creator / focal point
     CFEI_ADD_REVIEW_SUMMARY = auto()  # If creator / focal point
     CFEI_RECOMMEND_PARTNER_FOR_SELECTION = auto()  # If creator / focal point
 
