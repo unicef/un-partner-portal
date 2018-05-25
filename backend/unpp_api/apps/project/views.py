@@ -593,6 +593,7 @@ class PartnerApplicationDirectListCreateAPIView(PartnerIdsMixin, ListAPIView):
     filter_class = ApplicationsUnsolicitedFilter
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
+    serializer_class = ApplicationPartnerDirectSerializer
 
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id__in=self.get_partner_ids())

@@ -135,7 +135,6 @@ class Pin(TimeStampedModel):
 
 class ApplicationQuerySet(models.QuerySet):
 
-
     def winners(self):
         return self.filter(did_win=True, did_accept=True, did_withdraw=False)
 

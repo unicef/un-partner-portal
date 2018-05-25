@@ -657,7 +657,6 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
     def test_create_convert(self):
         url = reverse('projects:applications-unsolicited')
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        partner_id = Partner.objects.first().id
 
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
