@@ -662,20 +662,20 @@ class ReviewSummaryAPIView(RetrieveUpdateAPIView):
 
 class EOIReviewersAssessmentsListAPIView(ListAPIView):
     """
-    Reviewers with they assessments - summary
+    Reviewers with their assessments - summary
     """
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+            ]
         ),
     )
-    queryset = User.objects.all()
     serializer_class = EOIReviewersAssessmentsSerializer
     lookup_field = 'eoi_id'
 
     def get_queryset(self):
-        eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
-        return eoi.reviewers.all()
+        return get_object_or_404(EOI, id=self.kwargs['eoi_id']).reviewers.all()
 
 
 class EOIReviewersAssessmentsNotifyAPIView(APIView):
@@ -688,7 +688,9 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
 
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+            ]
         ),
     )
 
