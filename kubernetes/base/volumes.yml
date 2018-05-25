@@ -3,7 +3,7 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: static-volume
+  name: static-volume-{{ENV}}
   labels:
     type: local
 spec:
@@ -13,12 +13,12 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: /data
+    path: /data-{{ENV}}
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: static-volume-claim
+  name: static-volume-claim-{{ENV}}
   labels:
     type: local
 spec:
@@ -34,7 +34,7 @@ spec:
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: db-volume
+  name: db-volume-{{ENV}}
   labels:
     type: local
 spec:
@@ -44,12 +44,12 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: /db
+    path: /db-{{ENV}}
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: db-volume-claim
+  name: db-volume-claim-{{ENV}}
   labels:
     type: local
 spec:

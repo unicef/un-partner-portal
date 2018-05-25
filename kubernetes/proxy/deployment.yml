@@ -8,10 +8,11 @@ metadata:
   namespace: {{NAMESPACE}}
 spec:
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
-  type: LoadBalancer
+   - name: http
+     protocol: TCP
+     port: 80
+     hostport: 30080
+  type: NodePort
   selector:
     app: proxy-container
 ---
@@ -38,16 +39,17 @@ spec:
         - name: proxy
           image: unicef/unpp-proxy:{{CF_SHORT_REVISION}}
           volumeMounts:
-            - name: static-volume
+            - name: static-volume-{{ENV}}
               mountPath: /data
           ports:
             - containerPort: 80
+              hostPort: 30080
           env:
             - name: DJANGO_APPLICATION_SERVICE_HOST
               value: backend
             - name: FRONTEND_SERVICE_HOST
               value: frontend
       volumes:
-      - name: static-volume
+      - name: static-volume-{{ENV}}
         persistentVolumeClaim:
-          claimName: static-volume-claim
+          claimName: static-volume-claim-{{ENV}}

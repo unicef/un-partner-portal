@@ -37,7 +37,7 @@ spec:
         - name: backend
           image: unicef/unpp-backend:{{CF_SHORT_REVISION}}
           volumeMounts:
-            - name: static-volume
+            - name: static-volume-{{ENV}}
               mountPath: /data
           command: ["bash"]
           args: ["-c", "uwsgi --ini /code/unpp_api/uwsgi.ini"]
@@ -47,7 +47,7 @@ spec:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: unpp-staging-secrets
+                  name: unpp-{{ENV}}-secrets
                   key: SECRET_KEY
             - name: ENV
               value: {{ENV}}
@@ -60,6 +60,6 @@ spec:
             - name: DJANGO_ALLOWED_HOST
               value: {{DJANGO_ALLOWED_HOST}}
       volumes:
-      - name: static-volume
+      - name: static-volume-{{ENV}}
         persistentVolumeClaim:
-          claimName: static-volume-claim
+          claimName: static-volume-claim-{{ENV}}

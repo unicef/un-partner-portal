@@ -31,14 +31,12 @@ PARTNER_ROLE_PERMISSIONS = {
         PartnerRole.ADMIN: frozenset([
             PartnerPermission.REGISTER,
             PartnerPermission.CFEI_VIEW,
-            PartnerPermission.VIEW_INGO_DASHBOARD,
             PartnerPermission.VIEW_DASHBOARD,
             PartnerPermission.MANAGE_USERS,
             PartnerPermission.CFEI_PINNING,
             PartnerPermission.CFEI_ANSWER_SELECTION,
         ]),
         PartnerRole.EDITOR: frozenset([
-            PartnerPermission.VIEW_INGO_DASHBOARD,
             PartnerPermission.CFEI_VIEW,
             PartnerPermission.VIEW_DASHBOARD,
             PartnerPermission.CFEI_PINNING,

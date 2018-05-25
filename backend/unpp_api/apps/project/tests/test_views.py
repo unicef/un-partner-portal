@@ -16,6 +16,7 @@ from account.models import User
 from agency.models import AgencyOffice, Agency
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
 from notification.consts import NotificationType, NOTIFICATION_DATA
+from partner.roles import PartnerRole
 from partner.serializers import PartnerShortSerializer
 from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
@@ -484,6 +485,9 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(len(mail.outbox) > 0)
         mail.outbox = []
 
+        partner_user = UserFactory.create_batch(1)[0]
+        PartnerMemberFactory.create_batch(1, user=partner_user, partner=app.partner, role=PartnerRole.ADMIN.name)
+        self.client.force_login(partner_user)
         # accept offer
         payload = {
             "did_accept": True,
@@ -492,6 +496,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(status.is_success(response.status_code))
         self.assertTrue(response.data['did_accept'])
         self.assertEquals(response.data['decision_date'], str(date.today()))
+        self.client.force_login(app.eoi.created_by)
 
         awarded_partners_response = self.client.get(
             reverse('projects:applications-awarded-partners', kwargs={"eoi_id": app.id}), format='json'
@@ -504,7 +509,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             self.assertEqual(awarded_partners_response.data[0]['partner_decision_date'], str(date.today()))
             self.assertEqual(awarded_partners_response.data[0]['partner_notified'].date(), date.today())
 
-        # decline offer
+        self.client.force_login(partner_user)
         payload = {
             "did_accept": False,
             "did_decline": True,
@@ -514,7 +519,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertFalse(response.data['did_accept'])
         self.assertTrue(response.data['did_decline'])
 
-        # withdraw
+        self.client.force_login(app.eoi.created_by)
         reason = "They are better then You."
         payload = {
             "did_withdraw": True,
@@ -537,7 +542,8 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
 class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
-    user_type = 'agency'
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     initial_factories = [
         PartnerSimpleFactory,
@@ -572,10 +578,12 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
         # add logged agency member to eoi/application reviewers
         app.eoi.reviewers.add(self.user)
-
         response = self.client.post(url, data=payload, format='json')
-        self.assertTrue(status.is_client_error(response.status_code))
-        self.assertEquals(response.data['non_field_errors'], ['Assessment allowed once deadline is passed.'])
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['non_field_errors'],
+            ['Assessment allowed once deadline is passed.']
+        )
         app.eoi.deadline_date = date.today() - timedelta(days=1)
         app.eoi.is_published = True
         app.eoi.save()
@@ -635,7 +643,8 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             'scores': scores,
             'note': note,
         }
-        response = self.client.put(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['note'], payload['note'])
         self.assertEquals(response.data['scores'], payload['scores'])
 

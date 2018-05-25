@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.fields import CurrentUserDefault
 from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
@@ -179,7 +180,9 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
 
     class Meta:
         model = Application
-        fields = '__all__'
+        exclude = (
+            'accept_notification',
+        )
         read_only_fields = ('eoi',)
         validators = [
             UniqueTogetherValidator(
@@ -189,6 +192,23 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
         ]
 
     prevent_keys = ["cn"]
+
+    def get_extra_kwargs(self):
+        extra_kwargs = super(ApplicationFullSerializer, self).get_extra_kwargs()
+        request = self.context['request']
+        if request.agency_member:
+            extra_kwargs['did_accept'] = {
+                'read_only': True
+            }
+            extra_kwargs['did_decline'] = {
+                'read_only': True
+            }
+        elif request.active_partner:
+            extra_kwargs['did_win'] = {
+                'read_only': True
+            }
+
+        return extra_kwargs
 
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
@@ -212,10 +232,10 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
 
             if data.get("did_win") and not app.partner.is_verified:
                 raise serializers.ValidationError(
-                    "You cannot award an application if the profile has not been verified yet.")
+                    "You cannot award an application if the profile has not been verified yet."
+                )
             if data.get("did_win") and app.partner.has_red_flag:
-                raise serializers.ValidationError(
-                    "You cannot award an application if the profile has red flag.")
+                raise serializers.ValidationError("You cannot award an application if the profile has red flag.")
             if data.get("did_win") and not app.assessments_is_completed:
                 raise serializers.ValidationError(
                     "You cannot award an application if all assessments have not been added for the application."
@@ -605,8 +625,6 @@ class ReviewersApplicationSerializer(serializers.ModelSerializer):
 
 
 class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
-    created_by = serializers.IntegerField(source="created_by_id", required=False)
-    modified_by = serializers.IntegerField(source="modified_by_id", required=False)
     total_score = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -622,15 +640,36 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
             'date_reviewed',
             'note',
         )
+        extra_kwargs = {
+            'created_by': {
+                'default': CurrentUserDefault(),
+            },
+            'modified_by': {
+                'default': CurrentUserDefault(),
+            },
+        }
+        read_only_fields = (
+            'created_by', 'modified_by'
+        )
+
+    def get_extra_kwargs(self):
+        extra_kwargs = super(ReviewerAssessmentsSerializer, self).get_extra_kwargs()
+
+        if self.instance:
+            extra_kwargs['application'] = {
+                'read_only': True
+            }
+        return extra_kwargs
 
     def validate(self, data):
         kwargs = self.context['request'].parser_context.get('kwargs', {})
-        application_id = kwargs.get(self.context['view'].lookup_url_kwarg)
+        application_id = kwargs.get(self.context['view'].application_url_kwarg)
         app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
         if app.eoi.status != CFEI_STATUSES.closed:
             raise serializers.ValidationError("Assessment allowed once deadline is passed.")
+
         scores = data.get('scores')
-        application = self.instance and self.instance.application or data.get('application')
+        application = self.instance and self.instance.application or app
         assessments_criteria = application.eoi.assessments_criteria
 
         if scores and not {s['selection_criteria'] for s in scores} == {

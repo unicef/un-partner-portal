@@ -6,7 +6,7 @@ metadata:
   annotations:
     revision: "{{CF_SHORT_REVISION}}"
   labels:
-    redeploy: true 
+    redeploy: "true" 
   namespace: {{NAMESPACE}}
 spec:
   template:
@@ -20,7 +20,7 @@ spec:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: unpp-staging-secrets
+                  name: unpp-{{ENV}}-secrets
                   key: SECRET_KEY
             - name: ENV
               value: {{ENV}}
@@ -43,7 +43,7 @@ metadata:
   annotations:
     revision: "{{CF_SHORT_REVISION}}"
   labels:
-    redeploy: true
+    redeploy: "true"
   namespace: {{NAMESPACE}}
 spec:
   template:
@@ -54,38 +54,27 @@ spec:
         command: ["bash"]
         args: ["-c", "python /code/manage.py collectstatic --noinput"]
         volumeMounts:
-          - name: static-volume
+          - name: static-volume-{{ENV}}
             mountPath: /data
         env:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: unpp-staging-secrets
+                  name: unpp-{{ENV}}-secrets
                   key: SECRET_KEY
             - name: ENV
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+              value: {{ENV}}
             - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: unpp-staging-secrets
-                  key: POSTGRES_DB
+              value: {{POSTGRES_DB}}
             - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: unpp-staging-secrets
-                  key: POSTGRES_USER
+              value: {{POSTGRES_USER}}
             - name: POSTGRES_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: unpp-staging-secrets
-                  key: POSTGRES_HOST
+              value: {{POSTGRES_HOST}}
             - name: DJANGO_ALLOWED_HOST
-              value: unpp-stage.tivixlabs.com
+              value: {{DJANGO_ALLOWED_HOST}}
       volumes:
-      - name: static-volume
+      - name: static-volume-{{ENV}}
         persistentVolumeClaim:
-          claimName: static-volume-claim
+          claimName: static-volume-claim-{{ENV}}
       restartPolicy: Never
   backoffLimit: 4
