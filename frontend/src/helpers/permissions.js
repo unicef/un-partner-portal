@@ -29,7 +29,6 @@ export const AGENCY_PERMISSIONS = {
   CSO_PROFILE_VIEW: 'CSO_PROFILE_VIEW',
 
   // CFEI
-  CFEI_VIEW_LIST: 'CFEI_VIEW_LIST', // View Overview of all CFEIs with open and closed/under review status
   CFEI_VIEW_FINALIZED_RESULTS: 'CFEI_VIEW_FINALIZED_RESULTS', // View results tab of finalized CFEI for all agencies: Selected CSO & CN
 
   // Create Draft CFEI for Own Agency
