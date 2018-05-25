@@ -55,9 +55,24 @@ class AgencyMemberListAPIView(ListAPIView):
     filter_class = AgencyUserFilter
 
     def get_queryset(self):
-        queryset = User.objects.filter(
+        return User.objects.filter(
             agency_members__office__agency=self.request.user.agency
         )
-        if 'pk' in self.kwargs:
-            queryset = queryset.filter(agency_members__office_id=self.kwargs['pk'])
-        return queryset
+
+
+class AgencyOfficeMemberListAPIView(AgencyMemberListAPIView):
+    """
+    All Users for an Agency Office in the system
+    """
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW  # TODO: Check where this is used and fix permission
+            ]
+        ),
+    )
+
+    def get_queryset(self):
+        super(AgencyOfficeMemberListAPIView, self).get_queryset().filter(
+            agency_members__office_id=self.kwargs['pk']
+        )
