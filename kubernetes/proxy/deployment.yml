@@ -43,6 +43,7 @@ spec:
               mountPath: /data
           ports:
             - containerPort: 80
+              HostPort: {{HOSTPORT}}
           env:
             - name: DJANGO_APPLICATION_SERVICE_HOST
               value: backend
