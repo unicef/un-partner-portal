@@ -537,7 +537,8 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
 class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
-    user_type = 'agency'
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     initial_factories = [
         PartnerSimpleFactory,
