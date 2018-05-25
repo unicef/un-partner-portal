@@ -37,8 +37,10 @@ spec:
         - name: backend
           image: unicef/unpp-backend:{{CF_SHORT_REVISION}}
           volumeMounts:
-            - name: static-volume
+            - name: static-volume-{{ENV}}
               mountPath: /data
+            }
+            }
           command: ["bash"]
           args: ["-c", "uwsgi --ini /code/unpp_api/uwsgi.ini"]
           ports:
