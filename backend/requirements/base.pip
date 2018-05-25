@@ -25,6 +25,7 @@ django-imagekit==4.0.1
 XlsxWriter==1.0.2
 cached-property==1.4.2
 django-mail-templated==2.6.5
+dj-static==0.0.6
 
 # Testing
 astroid==1.5.2
@@ -34,7 +35,7 @@ factory_boy==2.8.1
 mock==2.0.0
 
 # WSGI
-uwsgi==2.0.17
+gunicorn==19.6.0
 
 # Sentry
 raven==6.4.0
