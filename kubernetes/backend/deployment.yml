@@ -47,7 +47,11 @@ spec:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
+<<<<<<< HEAD
                   name: unpp-staging-secrets
+=======
+                  name: unpp-{{ENV}}-secrets
+>>>>>>> master
                   key: SECRET_KEY
             - name: ENV
               value: {{ENV}}
@@ -62,4 +66,8 @@ spec:
       volumes:
       - name: static-volume
         persistentVolumeClaim:
+<<<<<<< HEAD
           claimName: static-volume-claim
+=======
+          claimName: static-volume-claim-{{ENV}}
+>>>>>>> master

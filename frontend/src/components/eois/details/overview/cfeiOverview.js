@@ -78,6 +78,7 @@ const mapStateToProps = (state, ownProps) => {
     partner_name = null,
     selected_source = null,
     cn_template = null,
+    goal = null,
     focal_points_detail = [],
   } = cfei || {};
 
