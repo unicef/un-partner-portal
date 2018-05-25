@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
 import { initSession, loadUserData } from '../reducers/session';
 import { loadCountries } from '../reducers/countries';
 import { SESSION_STATUS } from '../helpers/constants';
@@ -28,7 +27,6 @@ class Auth extends Component {
         <Loader loading={status === SESSION_STATUS.CHANGING} fullscreen />
         {(status === SESSION_STATUS.READY) ? children : null}
       </React.Fragment>
-
     );
   }
 }
