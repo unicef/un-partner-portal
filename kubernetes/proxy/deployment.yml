@@ -11,7 +11,8 @@ spec:
    - name: http
      protocol: TCP
      port: 80
-  type: LoadBalancer
+     hostport: 30080
+  type: NodePort
   selector:
     app: proxy-container
 ---
@@ -42,6 +43,7 @@ spec:
               mountPath: /data
           ports:
             - containerPort: 80
+              hostPort: 30080
           env:
             - name: DJANGO_APPLICATION_SERVICE_HOST
               value: backend

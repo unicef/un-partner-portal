@@ -10,7 +10,7 @@ spec:
   ports:
   - protocol: TCP
     port: 8000
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: backend-container
 ---
