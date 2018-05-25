@@ -10,7 +10,7 @@ spec:
   ports:
   - protocol: TCP
     port: 8000
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: backend-container
 ---
@@ -39,8 +39,6 @@ spec:
           volumeMounts:
             - name: static-volume-{{ENV}}
               mountPath: /data
-            }
-            }
           command: ["bash"]
           args: ["-c", "uwsgi --ini /code/unpp_api/uwsgi.ini"]
           ports:
@@ -49,11 +47,7 @@ spec:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-<<<<<<< HEAD
-                  name: unpp-staging-secrets
-=======
                   name: unpp-{{ENV}}-secrets
->>>>>>> master
                   key: SECRET_KEY
             - name: ENV
               value: {{ENV}}
@@ -66,10 +60,6 @@ spec:
             - name: DJANGO_ALLOWED_HOST
               value: {{DJANGO_ALLOWED_HOST}}
       volumes:
-      - name: static-volume
+      - name: static-volume-{{ENV}}
         persistentVolumeClaim:
-<<<<<<< HEAD
-          claimName: static-volume-claim
-=======
           claimName: static-volume-claim-{{ENV}}
->>>>>>> master
