@@ -54,7 +54,7 @@ spec:
         command: ["bash"]
         args: ["-c", "python /code/manage.py collectstatic --noinput"]
         volumeMounts:
-          - name: static-volume
+          - name: static-volume-{{ENV}}
             mountPath: /data
         env:
             - name: SECRET_KEY
@@ -73,7 +73,7 @@ spec:
             - name: DJANGO_ALLOWED_HOST
               value: {{DJANGO_ALLOWED_HOST}}
       volumes:
-      - name: static-volume
+      - name: static-volume-{{ENV}}
         persistentVolumeClaim:
           claimName: static-volume-claim-{{ENV}}
       restartPolicy: Never
