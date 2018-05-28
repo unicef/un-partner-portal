@@ -3,14 +3,16 @@ import PropTypes from 'prop-types';
 import IconWithTextButton from '../../../components/common/iconWithTextButton';
 
 const messages = {
-  text: 'Deactivate User\'s Account',
+  deactivate: 'Deactivate User\'s Account',
+  activate: 'Activate User\'s Account',
 };
 
 const DeactivateUserButton = (props) => {
-  const { handleClick } = props;
+  const { handleClick, isActive } = props;
+  
   return (
     <IconWithTextButton
-      text={messages.text}
+      text={isActive ? messages.deactivate : messages.activate}
       onClick={handleClick}
     />
   );
@@ -18,6 +20,7 @@ const DeactivateUserButton = (props) => {
 
 DeactivateUserButton.propTypes = {
   handleClick: PropTypes.func,
+  isActive: PropTypes.bool,
 };
 
 export default DeactivateUserButton;

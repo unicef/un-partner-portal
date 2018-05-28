@@ -8,7 +8,7 @@ import DeactivateUserButton from './deactivateUserButton';
 import Loader from '../../../components/common/loader';
 
 const MoreUserButton = (props) => {
-  const { id, deactivate, loading, ...other } = props;
+  const { id, deactivate, isActive, loading, ...other } = props;
   return (
     <div>
       <DropdownMenu
@@ -16,7 +16,7 @@ const MoreUserButton = (props) => {
           [
             {
               name: 'deactivateItem',
-              content: <DeactivateUserButton handleClick={() => deactivate(id)} />,
+              content: <DeactivateUserButton isActive={isActive} handleClick={() => deactivate(id, isActive)} />,
             },
           ]
         }
@@ -29,6 +29,7 @@ const MoreUserButton = (props) => {
 MoreUserButton.propTypes = {
   id: PropTypes.number,
   deactivate: PropTypes.func,
+  isActive: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -36,7 +37,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatch = dispatch => ({
-  deactivate: id => dispatch(deactivateUser(id)),
+  deactivate: (id, isActive) => dispatch(deactivateUser(id, isActive)),
 });
 
 const connectedUMoreUserButton = connect(mapStateToProps, mapDispatch)(MoreUserButton);

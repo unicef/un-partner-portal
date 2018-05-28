@@ -73,6 +73,6 @@ class AgencyOfficeMemberListAPIView(AgencyMemberListAPIView):
     )
 
     def get_queryset(self):
-        super(AgencyOfficeMemberListAPIView, self).get_queryset().filter(
+        return super(AgencyOfficeMemberListAPIView, self).get_queryset().filter(
             agency_members__office_id=self.kwargs['pk']
         )
