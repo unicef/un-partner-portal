@@ -43,7 +43,8 @@
 
 ## Technical Documentation
 
-* [Development Setup](technical-documentation/development-setup.md)
+* [Development Setup](technical-documentation/development-setup/README.md)
+  * [Development Data](technical-documentation/development-setup/development-data.md)
 * [Deployment / DevOps](technical-documentation/deployment-devops.md)
 * [ID System Process](technical-documentation/id-system-process.md)
 * [Sanctions Screening](technical-documentation/sanctions-screening.md)
