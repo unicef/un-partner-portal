@@ -16,9 +16,9 @@ const initialState = {
   error: {},
 };
 
-export const deactivateUser = id => (dispatch, getState) => {
+export const deactivateUser = (id, isActive) => (dispatch, getState) => {
   const body = {
-    is_active: false,
+    is_active: !isActive,
   };
 
   dispatch(loadStarted(DEACTIVATE_USER));
