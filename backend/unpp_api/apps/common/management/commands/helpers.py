@@ -138,9 +138,7 @@ def clean_up_data_in_db():
         print("All ORM objects deleted")
 
 
-def generate_fake_data(quantity=50):
-    assert quantity in [50, 100, 150, 200], "Quantity have to be: 50 or 100, 150, 200."
-
+def generate_fake_data():
     admin, created = User.objects.get_or_create(fullname='admin', defaults={
         'email': 'admin@unicef.org',
         'is_superuser': True,
