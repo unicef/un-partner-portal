@@ -1,8 +1,7 @@
 import random
-from datetime import date
-
-import names
+from coolname import generate
 from django.conf import settings
+from django_countries import countries
 
 from account.models import User, UserProfile
 from agency.models import (
@@ -14,9 +13,7 @@ from agency.models import (
 )
 from agency.roles import AgencyRole
 from common.consts import (
-    CFEI_TYPES,
     PARTNER_TYPES,
-    FLAG_TYPES,
 )
 from common.factories import (
     PartnerFactory,
@@ -138,9 +135,18 @@ def clean_up_data_in_db():
         print("All ORM objects deleted")
 
 
-def generate_fake_data(quantity=50):
-    assert quantity in [50, 100, 150, 200], "Quantity have to be: 50 or 100, 150, 200."
+USERNAME_AGENCY_ROLE_POSTFIXES = {
+    AgencyRole.ADMINISTRATOR.name: 'admin',
+    AgencyRole.HQ_EDITOR.name: 'editor-hq',
+    AgencyRole.READER.name: 'reader',
+    AgencyRole.EDITOR_BASIC.name: 'editor',
+    AgencyRole.EDITOR_ADVANCED.name: 'editor-adv',
+    AgencyRole.PAM_USER.name: 'pam',
+    AgencyRole.MFT_USER.name: 'mft',
+}
 
+
+def generate_fake_data(country_count=3):
     admin, created = User.objects.get_or_create(fullname='admin', defaults={
         'email': 'admin@unicef.org',
         'is_superuser': True,
@@ -151,102 +157,73 @@ def generate_fake_data(quantity=50):
     admin.save()
     print("Superuser {}: {}/{}".format("created" if created else "updated", admin.email, password))
 
-    # Agencies
-    unicef = Agency.objects.get(name="UNICEF")
-    wfp = Agency.objects.get(name="WFP")
-    unhcr = Agency.objects.get(name="UNHCR")
+    agencies = [
+        Agency.objects.get(name="UNICEF"),
+        Agency.objects.get(name="WFP"),
+        Agency.objects.get(name="UNHCR"),
+    ]
 
-    AgencyOfficeFactory.create_batch(3, agency=unicef)
-    AgencyOfficeFactory.create_batch(3, agency=wfp)
-    AgencyOfficeFactory.create_batch(3, agency=unhcr)
-    print("Agencies and their offices are created")
-    AgencyMemberFactory.create_batch(6, role=AgencyRole.ADMINISTRATOR.name)
-    AgencyMemberFactory.create_batch(9)
-    for user in User.objects.exclude(agency_members=None).iterator():
-        AgencyMemberFactory.create_batch(
-            1,
-            role=random.choice(list(AgencyRole)).name,
-            office=user.agency.agency_offices.exclude(agency_members__user=user).order_by('?').first(),
-            user=user,
-        )
+    chosen_countries = random.choices(countries, k=country_count)
+    for agency in agencies:
+        for index, (country_code, country_name) in enumerate(chosen_countries):
+            print(f'Creating {agency.name} in {country_name}')
+            index += 1
+            office = AgencyOfficeFactory(country=country_code, agency=agency)
+            for role_name, display_name in AgencyRole.get_choices(agency=agency):
+                user = UserFactory(
+                    email=f'agency-{index}-{USERNAME_AGENCY_ROLE_POSTFIXES[role_name]}@{agency.name.lower()}.org'
+                )
+                AgencyMemberFactory(user=user, office=office, role=role_name)
 
-    OtherAgencyFactory.create_batch(3)
-    print("Other Agencies are created.")
+                EOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user, is_published=True)
+                EOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user)
+                print(f'Created {user}')
 
-    PartnerFactory.create_batch(quantity)
-    print("{} Partner objects created".format(quantity))
+    OtherAgencyFactory.create_batch(1)
 
-    partner_all = Partner.objects.all().values_list('id', flat=True)
-    # national
-    national_pks = partner_all[quantity/10:quantity/5]
-    Partner.objects.filter(id__in=national_pks).update(display_type=PARTNER_TYPES.national)
-    # academic
-    academic_pks = partner_all[quantity/5:quantity/5+quantity/10]
-    Partner.objects.filter(id__in=academic_pks).update(display_type=PARTNER_TYPES.academic)
-    # red_cross
-    red_cross_pks = partner_all[quantity/5+quantity/10:2*(quantity/5)]
-    Partner.objects.filter(id__in=red_cross_pks).update(display_type=PARTNER_TYPES.red_cross)
-    # hq & country profiles
-    hq_pks = partner_all[2*(quantity/5):3*(quantity/5)]
-    Partner.objects.filter(id__in=hq_pks).update(display_type=PARTNER_TYPES.international)
+    partner_count = 2
+    ingo_names = [
+        ' '.join(x.capitalize() for x in generate(random.randint(2, 3))) for _ in range(partner_count)
+    ]
+    ingo_hqs = [
+        PartnerFactory(
+            legal_name=f'{name} HQ', display_type=PARTNER_TYPES.international
+        ) for name in ingo_names
+    ]
+    for hq in ingo_hqs:
+        PartnerVerificationFactory(partner=hq)
 
-    for idx, partner in enumerate(Partner.objects.all()):
-        if idx % 2:
-            PartnerFlagFactory(partner=partner)
-            if idx % 3:
-                PartnerVerificationFactory(partner=partner, is_cert_uploaded=False)
-            elif idx % 2:
-                PartnerVerificationFactory(partner=partner)
-        else:
-            PartnerFlagFactory(partner=partner, flag_type=FLAG_TYPES.red)
+    standard_partners_created = 0
+    ingo_partners_created = 0
+    for country_code, country_name in chosen_countries:
+        for index in range(partner_count):
+            for partner_type, display_type in PARTNER_TYPES:
+                if partner_type == PARTNER_TYPES.international:
+                    partner_name = f'{ingo_names[index]} - {country_name}'
+                    hq = ingo_hqs[index]
+                    ingo_partners_created += 1
+                else:
+                    partner_name = ' '.join(x.capitalize() for x in generate(random.randint(2, 3)))
+                    hq = None
+                    standard_partners_created += 1
 
-        PartnerMemberFactory(partner=partner, role=PartnerRole.ADMIN.name, title='Head')
-        PartnerMemberFactory(partner=partner, role=PartnerRole.EDITOR.name, title='PM')
-        PartnerMemberFactory(partner=partner, role=PartnerRole.READER.name, title='Assistant')
-    print("Other Relation to Partner objects created".format(quantity))
+                partner = PartnerFactory(
+                    hq=hq, display_type=partner_type, legal_name=partner_name, country_presence=[country_code]
+                )
 
-    EOIFactory.create_batch(quantity)
-    print("{} open EOI objects created".format(quantity))
+                if index == partner_count - 1:
+                    PartnerFlagFactory(partner=partner)
+                else:
+                    PartnerVerificationFactory(partner=partner)
 
-    # preselect
-    for idx, eoi in enumerate(EOI.objects.filter(display_type=CFEI_TYPES.open)):
-        app = eoi.applications.all().order_by("?").first()
-        if app is None:
-            # if someone will run fake date without clean database, their can be EOI with no applications
-            continue
-        app.did_win = True
-        if idx % 4:
-            app.decision_date = date.today()
-            app.did_withdraw = True
-            app.withdraw_reason = "fake reason"
-        elif idx % 2:
-            app.decision_date = date.today()
-            app.did_accept = True
-        elif idx % 7:
-            app.decision_date = date.today()
-            app.did_decline = True
+                for role_code, display_name in PartnerRole.get_choices():
+                    postfix = f'ingo-{ingo_partners_created}' if hq else standard_partners_created
+                    user = UserFactory(email=f'partner-{postfix}-{role_code.lower()}@partner.org')
+                    PartnerMemberFactory(user=user, role=role_code, partner=partner)
+                    if hq:
+                        PartnerMemberFactory(user=user, role=role_code, partner=hq)
+                    print(f'Created {user}')
+                if random.randint(1, 2) == 2:
+                    UnsolicitedFactory.create_batch(random.randint(1, 3))
 
-        app.save()
-
-    EOIFactory.create_batch(quantity, display_type=CFEI_TYPES.direct, deadline_date=None)
-    print("{} direct EOI objects created with applications".format(quantity))
-
-    unsolicited_count = int(quantity/3)
-    UnsolicitedFactory.create_batch(unsolicited_count, agency=unicef)
-    UnsolicitedFactory.create_batch(unsolicited_count, agency=wfp)
-    UnsolicitedFactory.create_batch(unsolicited_count, agency=unhcr)
-    print("Unsolicited concept notes for each agency created")
-
-    # Make sure each office has at least one user with each role
-    for office in AgencyOffice.objects.all():
-        for role in AgencyRole:
-            user = UserFactory.create_batch(
-                1,
-                fullname=names.get_full_name()
-            )[0]
-            AgencyMemberFactory.create_batch(
-                1,
-                user=user,
-                role=role.name,
-                office=office
-            )
+    # TODO: Make sure partner profiles are complete
