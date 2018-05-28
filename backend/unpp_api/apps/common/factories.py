@@ -65,15 +65,17 @@ def get_random_agency():
 
 
 def get_random_agency_office():
-    return AgencyOffice.objects.order_by("?").first() or AgencyOfficeFactory.create_batch(1)[0]
+    return AgencyOffice.objects.order_by("?").first() or AgencyOfficeFactory()
 
 
 def get_agency_member():
-    return User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?").first()
+    member = User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?").first()
+    return member or AgencyMemberFactory().user
 
 
 def get_partner_member():
-    return User.objects.filter(is_superuser=False, partner_members__isnull=False).order_by("?").first()
+    member = User.objects.filter(is_superuser=False, partner_members__isnull=False).order_by("?").first()
+    return member or PartnerMemberFactory().user
 
 
 def get_partner():
@@ -130,6 +132,7 @@ class GroupFactory(factory.django.DjangoModelFactory):
 class UserProfileFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = UserProfile
+        django_get_or_create = ('user', )
 
 
 class UserFactory(factory.django.DjangoModelFactory):
