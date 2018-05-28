@@ -72,7 +72,7 @@ class CfeiContainer extends Component {
 
     return (
       <CustomGridColumn>
-        this.filter()
+        {this.filter()}
         <CfeiTableContainer role={role} type={type} />
       </CustomGridColumn>
     );
