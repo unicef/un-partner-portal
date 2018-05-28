@@ -20,6 +20,7 @@ const tableCells = ({ row, column, hovered }) => {
       id={row.id}
       hovered={hovered}
       status={row.status}
+      active={row.is_active}
     />);
   }
 
