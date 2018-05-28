@@ -18,11 +18,6 @@ import CustomGridColumn from '../common/grid/customGridColumn';
 const { PARTNER, AGENCY } = ROLES;
 const { OPEN, PINNED, DIRECT, UNSOLICITED } = PROJECT_TYPES;
 
-// const messages = {
-//   title: 'Permission restriction',
-//   body: 'You dont have permissions to view this page',
-// };
-
 class CfeiContainer extends Component {
   componentWillMount() {
     const { query, loadCfei, params: { type } } = this.props;
