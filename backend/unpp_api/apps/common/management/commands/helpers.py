@@ -193,21 +193,23 @@ def generate_fake_data(country_count=3):
     for hq in ingo_hqs:
         PartnerVerificationFactory(partner=hq)
 
-    partners_created = 0
+    standard_partners_created = 0
+    ingo_partners_created = 0
     for country_code, country_name in chosen_countries:
         for index in range(partner_count):
             for partner_type, display_type in PARTNER_TYPES:
                 if partner_type == PARTNER_TYPES.international:
                     partner_name = f'{ingo_names[index]} - {country_name}'
                     hq = ingo_hqs[index]
+                    ingo_partners_created += 1
                 else:
                     partner_name = ' '.join(x.capitalize() for x in generate(random.randint(2, 3)))
                     hq = None
+                    standard_partners_created += 1
 
                 partner = PartnerFactory(
                     hq=hq, display_type=partner_type, legal_name=partner_name, country_presence=[country_code]
                 )
-                partners_created += 1
 
                 if index == partner_count - 1:
                     PartnerFlagFactory(partner=partner)
@@ -215,7 +217,8 @@ def generate_fake_data(country_count=3):
                     PartnerVerificationFactory(partner=partner)
 
                 for role_code, display_name in PartnerRole.get_choices():
-                    user = UserFactory(email=f'partner-{partners_created}-{role_code.lower()}@partner.org')
+                    postfix = f'ingo-{ingo_partners_created}' if hq else standard_partners_created
+                    user = UserFactory(email=f'partner-{postfix}-{role_code.lower()}@partner.org')
                     PartnerMemberFactory(user=user, role=role_code, partner=partner)
                     if hq:
                         PartnerMemberFactory(user=user, role=role_code, partner=hq)
