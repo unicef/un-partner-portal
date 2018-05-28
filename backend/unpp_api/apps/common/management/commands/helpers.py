@@ -207,9 +207,9 @@ def generate_fake_data(country_count=3):
                     hq = None
                     standard_partners_created += 1
 
-                partner = PartnerFactory(
-                    hq=hq, display_type=partner_type, legal_name=partner_name, country_presence=[country_code]
-                )
+                partner = PartnerFactory(hq=hq, display_type=partner_type, legal_name=partner_name)
+                partner.country_presence = [country_code]
+                partner.save()
 
                 if index == partner_count - 1:
                     PartnerFlagFactory(partner=partner)
