@@ -60,13 +60,13 @@ spec:
             - name: DJANGO_ALLOWED_HOST
               value: {{DJANGO_ALLOWED_HOST}}
             - name: EMAIL_HOST
-              value: {{EMAIL_HOST}}
+              value: "{{EMAIL_HOST}}"
             - name: EMAIL_PORT
-              value: {{EMAIL_PORT}}
+              value: "{{EMAIL_PORT}}"
             - name: EMAIL_HOST_USER
-              value: {{EMAIL_HOST_USER}}
+              value: "{{EMAIL_HOST_USER}}"
             - name: EMAIL_HOST_PASSWORD
-              value: {{EMAIL_HOST_PASSWORD}}
+              value: "{{EMAIL_HOST_PASSWORD}}"
       volumes:
       - name: static-volume-{{ENV}}
         persistentVolumeClaim:
