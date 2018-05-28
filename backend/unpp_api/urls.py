@@ -7,6 +7,10 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
+def test_raise_exception_view(request):
+    raise Exception('Testing Error Reporting')
+
+
 urlpatterns = [
     url(r'^api/admin/', include(admin.site.urls)),
     url(r'^api/accounts/', include('account.urls', namespace='accounts')),
@@ -20,6 +24,7 @@ urlpatterns = [
     url(r'^api/notifications/', include('notification.urls', namespace='notifications')),
     url(r'^api/dashboard/', include('dashboard.urls', namespace='dashboard')),
     url(r'^api/rest-auth/', include('rest_auth.urls')),
+    url(r'^api/test-raise-exception/', test_raise_exception_view),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.IS_DEV or settings.IS_STAGING:
