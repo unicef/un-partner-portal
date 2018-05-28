@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
+import Card from 'material-ui';
 import { loadCfei } from '../../reducers/cfei';
 import EoiUnFilter from './filters/eoiUnFilter';
 import EoiFilter from './filters/eoiFilter';
@@ -16,6 +17,11 @@ import CustomGridColumn from '../common/grid/customGridColumn';
 
 const { PARTNER, AGENCY } = ROLES;
 const { OPEN, PINNED, DIRECT, UNSOLICITED } = PROJECT_TYPES;
+
+// const messages = {
+//   title: 'Permission restriction',
+//   body: 'You dont have permissions to view this page',
+// };
 
 class CfeiContainer extends Component {
   componentWillMount() {
@@ -66,7 +72,7 @@ class CfeiContainer extends Component {
 
     return (
       <CustomGridColumn>
-        {this.filter()}
+        this.filter()
         <CfeiTableContainer role={role} type={type} />
       </CustomGridColumn>
     );

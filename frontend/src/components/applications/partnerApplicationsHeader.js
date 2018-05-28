@@ -71,6 +71,7 @@ PartnerApplicationsHeader.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   location: ownProps.location.pathname,
   tabs: state.partnerApplicationsNav.tabs,
+  hasPermission: checkPermission(COMMON_PERMISSIONS.MANAGE_USERS, state),
 });
 
 export default connect(
