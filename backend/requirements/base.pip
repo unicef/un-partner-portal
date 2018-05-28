@@ -26,6 +26,7 @@ XlsxWriter==1.0.2
 cached-property==1.4.2
 django-mail-templated==2.6.5
 names==0.3.0
+coolname==1.0.4
 
 # Testing
 astroid==1.5.2
