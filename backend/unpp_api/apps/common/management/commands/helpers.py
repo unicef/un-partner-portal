@@ -140,13 +140,13 @@ def clean_up_data_in_db():
 
 
 USERNAME_AGENCY_ROLE_POSTFIXES = {
-    AgencyRole.ADMINISTRATOR: 'admin',
-    AgencyRole.HQ_EDITOR: 'hq-editor',
-    AgencyRole.READER: 'reader',
-    AgencyRole.EDITOR_BASIC: 'editor',
-    AgencyRole.EDITOR_ADVANCED: 'adv-editor',
-    AgencyRole.PAM_USER: 'pam',
-    AgencyRole.MFT_USER: 'mft',
+    AgencyRole.ADMINISTRATOR.name: 'admin',
+    AgencyRole.HQ_EDITOR.name: 'editor-hq',
+    AgencyRole.READER.name: 'reader',
+    AgencyRole.EDITOR_BASIC.name: 'editor',
+    AgencyRole.EDITOR_ADVANCED.name: 'editor-adv',
+    AgencyRole.PAM_USER.name: 'pam',
+    AgencyRole.MFT_USER.name: 'mft',
 }
 
 
@@ -174,29 +174,18 @@ def generate_fake_data(country_count=3):
             print(f'Creating {agency.name} in {country_name}')
             index += 1
             office = AgencyOfficeFactory.create_batch(1, country=country_code, agency=agency)[0]
-            for role in AgencyRole.get_choices(agency)
+            for role_name, display_name in AgencyRole.get_choices(agency=agency):
+                user = UserFactory.create_batch(
+                    1,
+                    email=f'user-{index}-{USERNAME_AGENCY_ROLE_POSTFIXES[role_name]}@{agency.name.lower()}.org'
+                )[0]
+                AgencyMemberFactory.create_batch(1, user=user, office=office, role=role_name)
 
+                EOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user, is_published=True)
+                EOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user)
+                print(f'Created {user}')
 
-            print(office)
-
-
-
-
-
-
-    print("Agencies and their offices are created")
-    AgencyMemberFactory.create_batch(6, role=AgencyRole.ADMINISTRATOR.name)
-    AgencyMemberFactory.create_batch(9)
-    for user in User.objects.exclude(agency_members=None).iterator():
-        AgencyMemberFactory.create_batch(
-            1,
-            role=random.choice(list(AgencyRole)).name,
-            office=user.agency.agency_offices.exclude(agency_members__user=user).order_by('?').first(),
-            user=user,
-        )
-
-    OtherAgencyFactory.create_batch(3)
-    print("Other Agencies are created.")
+    OtherAgencyFactory.create_batch(1)
 
     PartnerFactory.create_batch(quantity)
     print("{} Partner objects created".format(quantity))
@@ -264,7 +253,7 @@ def generate_fake_data(country_count=3):
 
     # Make sure each office has at least one user with each role
     for office in AgencyOffice.objects.all():
-        for role in AgencyRole:
+        for role_name in AgencyRole:
             user = UserFactory.create_batch(
                 1,
                 fullname=names.get_full_name()
@@ -272,6 +261,6 @@ def generate_fake_data(country_count=3):
             AgencyMemberFactory.create_batch(
                 1,
                 user=user,
-                role=role.name,
+                role=role_name.name,
                 office=office
             )
