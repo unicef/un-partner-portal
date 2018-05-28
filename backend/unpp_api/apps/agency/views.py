@@ -67,7 +67,7 @@ class AgencyOfficeMemberListAPIView(AgencyMemberListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW  # TODO: Check where this is used and fix permission
+                AgencyPermission.CFEI_VIEW  # TODO: Check where this endpoint is used and fix permission
             ]
         ),
     )
