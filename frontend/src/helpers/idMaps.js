@@ -13,6 +13,7 @@ export const applicationStatuses = {
 };
 
 export const projectStatuses = {
+  Dra: 'Draft',
   Ope: 'Open',
   Clo: 'Closed/Under Review',
   Com: 'Completed',

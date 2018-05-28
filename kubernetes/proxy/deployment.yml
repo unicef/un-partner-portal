@@ -27,6 +27,8 @@ metadata:
   namespace: {{NAMESPACE}}
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: proxy-container
@@ -43,6 +45,7 @@ spec:
               mountPath: /data
           ports:
             - containerPort: 80
+              hostPort: {{HOSTPORT}}
           env:
             - name: DJANGO_APPLICATION_SERVICE_HOST
               value: backend

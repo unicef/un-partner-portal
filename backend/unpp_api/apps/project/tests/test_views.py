@@ -805,7 +805,8 @@ class TestInvitedPartnersListAPIView(BaseAPITestCase):
 
 class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
 
-    user_type = 'agency'
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
     quantity = 1
 
     def setUp(self):
