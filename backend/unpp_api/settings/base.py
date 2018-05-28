@@ -15,7 +15,7 @@ sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 # Other settings
 ####
 ADMINS = (
-    ('Alerts', os.getenv('ALERTS_EMAIL') or 'unicef+unpp@tivix.com'),
+    ('Alerts', os.getenv('ALERTS_EMAIL') or 'unicef-unpp@tivix.com'),
 )
 
 SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
