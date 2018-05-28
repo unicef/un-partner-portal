@@ -35,7 +35,7 @@ const styleSheet = theme => ({
 });
 
 const UserStatusCell = (props) => {
-  const { classes, status, hovered, id } = props;
+  const { classes, status, active, hovered, id } = props;
   const colorClass = classNames(classes[status]);
 
   return (
@@ -53,10 +53,10 @@ const UserStatusCell = (props) => {
             </Typography>
           </Grid>
         </Grid>
-        {hovered && status !== 'Deactivated' && <div className={classes.options}>
-          <EditUserButton id={id} />
-          <MoreUserButton id={id} />
-        </div>}
+        <div className={classes.options}>
+          {hovered && status !== 'Deactivated' && <EditUserButton id={id} />}
+          {hovered && <MoreUserButton isActive={active} id={id} />}
+        </div>
       </GridRow>
     </TableCell>
   );
@@ -65,7 +65,8 @@ const UserStatusCell = (props) => {
 UserStatusCell.propTypes = {
   classes: PropTypes.object.isRequired,
   status: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
+  active: PropTypes.bool.isRequired,
+  id: PropTypes.number.isRequired,
   hovered: PropTypes.bool,
 };
 
