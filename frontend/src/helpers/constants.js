@@ -53,6 +53,7 @@ export const PROJECT_STATUSES = {
   OPE: 'Ope',
   CLO: 'Clo',
   COM: 'Com',
+  DRA: 'Dra',
 };
 
 export const FLAGS = {

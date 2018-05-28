@@ -662,20 +662,20 @@ class ReviewSummaryAPIView(RetrieveUpdateAPIView):
 
 class EOIReviewersAssessmentsListAPIView(ListAPIView):
     """
-    Reviewers with they assessments - summary
+    Reviewers with their assessments - summary
     """
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+            ]
         ),
     )
-    queryset = User.objects.all()
     serializer_class = EOIReviewersAssessmentsSerializer
     lookup_field = 'eoi_id'
 
     def get_queryset(self):
-        eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
-        return eoi.reviewers.all()
+        return get_object_or_404(EOI, id=self.kwargs['eoi_id']).reviewers.all()
 
 
 class EOIReviewersAssessmentsNotifyAPIView(APIView):
@@ -688,7 +688,9 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
 
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+            ]
         ),
     )
 
@@ -710,7 +712,9 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
 class AwardedPartnersListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW,
+            ]
         ),
     )
     serializer_class = AwardedPartnersSerializer
@@ -724,7 +728,9 @@ class AwardedPartnersListAPIView(ListAPIView):
 class CompareSelectedListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+            ]
         ),
     )
     serializer_class = CompareSelectedSerializer
@@ -745,8 +751,7 @@ class CompareSelectedListAPIView(ListAPIView):
         return super(CompareSelectedListAPIView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        eoi_id = self.kwargs['eoi_id']
-        queryset = Application.objects.select_related("partner").filter(eoi_id=eoi_id)
+        queryset = Application.objects.select_related("partner").filter(eoi_id=self.kwargs['eoi_id'])
 
         application_ids = self.request.query_params.get("application_ids")
         if application_ids is not None:

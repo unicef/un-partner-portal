@@ -64,7 +64,7 @@ class GeneralConfigAPIView(APIView):
         if self.request.partner_member:
             choices = dict(PartnerRole.get_choices())
         elif self.request.agency_member:
-            choices = dict(AgencyRole.get_choices())
+            choices = dict(AgencyRole.get_choices(self.request.user.agency))
         else:
             choices = {}
 
