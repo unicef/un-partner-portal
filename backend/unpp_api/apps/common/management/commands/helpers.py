@@ -3,6 +3,7 @@ from datetime import date
 
 import names
 from django.conf import settings
+from django_countries import countries
 
 from account.models import User, UserProfile
 from agency.models import (
@@ -138,7 +139,19 @@ def clean_up_data_in_db():
         print("All ORM objects deleted")
 
 
-def generate_fake_data():
+USERNAME_AGENCY_ROLE_POSTFIXES = {
+    AgencyRole.ADMINISTRATOR: 'admin',
+    AgencyRole.HQ_EDITOR: 'hq-editor',
+    AgencyRole.READER: 'reader',
+    AgencyRole.EDITOR_BASIC: 'editor',
+    AgencyRole.EDITOR_ADVANCED: 'adv-editor',
+    AgencyRole.PAM_USER: 'pam',
+    AgencyRole.MFT_USER: 'mft',
+}
+
+
+def generate_fake_data(country_count=3):
+    quantity = 50
     admin, created = User.objects.get_or_create(fullname='admin', defaults={
         'email': 'admin@unicef.org',
         'is_superuser': True,
@@ -149,14 +162,28 @@ def generate_fake_data():
     admin.save()
     print("Superuser {}: {}/{}".format("created" if created else "updated", admin.email, password))
 
-    # Agencies
-    unicef = Agency.objects.get(name="UNICEF")
-    wfp = Agency.objects.get(name="WFP")
-    unhcr = Agency.objects.get(name="UNHCR")
+    agencies = [
+        Agency.objects.get(name="UNICEF"),
+        Agency.objects.get(name="WFP"),
+        Agency.objects.get(name="UNHCR"),
+    ]
 
-    AgencyOfficeFactory.create_batch(3, agency=unicef)
-    AgencyOfficeFactory.create_batch(3, agency=wfp)
-    AgencyOfficeFactory.create_batch(3, agency=unhcr)
+    chosen_countries = random.choices(countries, k=country_count)
+    for agency in agencies:
+        for index, (country_code, country_name) in enumerate(chosen_countries):
+            print(f'Creating {agency.name} in {country_name}')
+            index += 1
+            office = AgencyOfficeFactory.create_batch(1, country=country_code, agency=agency)[0]
+            for role in AgencyRole.get_choices(agency)
+
+
+            print(office)
+
+
+
+
+
+
     print("Agencies and their offices are created")
     AgencyMemberFactory.create_batch(6, role=AgencyRole.ADMINISTRATOR.name)
     AgencyMemberFactory.create_batch(9)
