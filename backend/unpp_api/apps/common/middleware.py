@@ -5,6 +5,9 @@ from django.conf import settings
 from partner.models import PartnerMember
 
 
+# TODO: Remove dev fallbacks, fix tests when it's done
+
+
 def get_partner_object(request):
     partner_id = request.META.get('HTTP_PARTNER_ID', None)
     partner = None
