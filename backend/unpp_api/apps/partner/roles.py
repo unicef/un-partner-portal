@@ -41,6 +41,8 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.UCN_EDIT,
             PartnerPermission.UCN_SUBMIT,
             PartnerPermission.UCN_DELETE,
+            PartnerPermission.EDIT_PROFILE,
+            PartnerPermission.EDIT_HQ_PROFILE,
         ]),
         PartnerRole.EDITOR: frozenset([
             PartnerPermission.CREATE_COUNTRY_OFFICE,
@@ -53,6 +55,8 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.UCN_EDIT,
             PartnerPermission.UCN_SUBMIT,
             PartnerPermission.UCN_DELETE,
+            PartnerPermission.EDIT_PROFILE,
+            PartnerPermission.EDIT_HQ_PROFILE,
         ]),
         PartnerRole.READER: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
@@ -72,6 +76,7 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.UCN_EDIT,
             PartnerPermission.UCN_SUBMIT,
             PartnerPermission.UCN_DELETE,
+            PartnerPermission.EDIT_PROFILE,
         ]),
         PartnerRole.EDITOR: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
@@ -83,6 +88,7 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.UCN_EDIT,
             PartnerPermission.UCN_SUBMIT,
             PartnerPermission.UCN_DELETE,
+            PartnerPermission.EDIT_PROFILE,
         ]),
         PartnerRole.READER: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
@@ -103,6 +109,7 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.UCN_EDIT,
             PartnerPermission.UCN_SUBMIT,
             PartnerPermission.UCN_DELETE,
+            PartnerPermission.EDIT_PROFILE,
         ]),
         PartnerRole.EDITOR: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
@@ -114,6 +121,7 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.UCN_EDIT,
             PartnerPermission.UCN_SUBMIT,
             PartnerPermission.UCN_DELETE,
+            PartnerPermission.EDIT_PROFILE,
         ]),
         PartnerRole.READER: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
