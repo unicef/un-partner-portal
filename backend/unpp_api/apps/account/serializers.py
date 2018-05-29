@@ -165,7 +165,7 @@ class PartnerUserSerializer(UserSerializer):
         if request and request.partner_member:
             return request.partner_member
 
-        return user.partner_members.get()
+        return user.partner_members.first()
 
     def get_role(self, user):
         return self._partner_member(user).get_role_display()
