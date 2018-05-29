@@ -4,16 +4,10 @@ Django==1.11.13
 #apm
 elastic-apm==2.0.0
 Fabric==1.13.1
-BeautifulSoup==3.2.1
-Pillow==3.1.1
-python-memcached==1.58
-ipython==5.4.1
-azure-storage==0.20.2
-django_compressor==2.1
-
 Pillow==5.0.0
 python-memcached==1.59
 ipython==5.4.1
+azure-storage==0.20.2
 
 # REST framework
 djangorestframework==3.7.7
@@ -24,7 +18,6 @@ django-countries==5.3
 # Other Python packages
 psycopg2==2.7.1
 django-model-utils==2.6.1  # latest 3.0.0 but need to check changes
-dj-static==0.0.6
 python-json-logger==0.1.7
 xmltodict==0.11.0
 requests==2.18.4
@@ -43,7 +36,7 @@ pylint==1.7.1
 factory_boy==2.11.1
 mock==2.0.0
 
-gunicorn==19.6.0
+uWSGI==2.0.17
 
 # Sentry
 raven==6.4.0
