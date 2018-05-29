@@ -124,7 +124,14 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
 class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
     permission_classes = (
-        HasUNPPPermission(),
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
+        ),
     )
     queryset = EOI.objects.all()
 
