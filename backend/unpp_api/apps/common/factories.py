@@ -86,6 +86,10 @@ def get_new_common_file():
 
 
 def get_cfei_title():
+    return f'Help the {generate(2)[-1].title()}'
+
+
+def get_partner_name():
     return f'Save the {generate(2)[-1].title()}'
 
 
@@ -103,9 +107,9 @@ def get_country():
 
 def get_fullname():
     return random.choice([
-        "William Collins",
-        "Elizabeth Bennet",
-        "Jack Sparow"
+        "William Turner",
+        "Elizabeth Swann",
+        "Jack Sparrow"
     ])
 
 
@@ -197,7 +201,7 @@ class PartnerSimpleFactory(factory.django.DjangoModelFactory):
 
 
 class PartnerFactory(factory.django.DjangoModelFactory):
-    legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
+    legal_name = factory.LazyFunction(get_partner_name)
     display_type = PARTNER_TYPES.cbo
     country_code = fuzzy.FuzzyChoice(COUNTRIES)
 
