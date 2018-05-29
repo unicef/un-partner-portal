@@ -79,6 +79,12 @@ def get_partner_member():
     return member or PartnerMemberFactory().user
 
 
+def get_new_common_file():
+    cfile = CommonFile.objects.create()
+    cfile.file_field.save('test.csv', open(filename))
+    return cfile
+
+
 def get_cfei_title():
     return f'Save the {generate(2)[-1].title()}'
 

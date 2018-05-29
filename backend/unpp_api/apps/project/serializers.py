@@ -140,7 +140,7 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
         return partner
 
 
-class CreateDirectApplicationNoCNSerializer(serializers.ModelSerializer):
+class CreateDirectApplicationNoCNSerializer(CreateDirectApplicationSerializer):
 
     class Meta:
         model = Application
@@ -160,8 +160,9 @@ class ProposalEOIDetailsSerializer(serializers.Serializer):
     title = serializers.CharField()
 
     def get_specializations(self, obj):
-        return SimpleSpecializationSerializer(Specialization.objects.filter(id__in=obj.get('specializations')),
-                                              many=True).data
+        return SimpleSpecializationSerializer(
+            Specialization.objects.filter(id__in=obj.get('specializations')), many=True
+        ).data
 
 
 # TODO - break this up into different serializers for different purposes
@@ -295,7 +296,7 @@ class CreateUnsolicitedProjectSerializer(MixinPreventManyCommonFile, serializers
 class CreateDirectProjectSerializer(serializers.Serializer):
 
     eoi = CreateDirectEOISerializer()
-    applications = CreateDirectApplicationSerializer(many=True)
+    applications = CreateDirectApplicationNoCNSerializer(many=True)
 
     @transaction.atomic
     def create(self, validated_data):
@@ -324,6 +325,7 @@ class CreateDirectProjectSerializer(serializers.Serializer):
                 did_accept=False,
                 ds_justification_select=application_data['ds_justification_select'],
                 justification_reason=application_data['justification_reason'],
+                ds_attachment=application_data.get('ds_attachment'),
             )
             applications.append(application)
             send_notification_application_created(application)

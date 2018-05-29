@@ -31,7 +31,7 @@ from common.factories import (
     PartnerVerificationFactory,
     UserFactory,
     PartnerFactory,
-)
+    get_new_common_file)
 from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
@@ -291,13 +291,14 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
                         JUSTIFICATION_FOR_DIRECT_SELECTION.known,
                         JUSTIFICATION_FOR_DIRECT_SELECTION.local,
                     ],
+                    "ds_attachment": get_new_common_file().id,
                     "justification_reason": "To save those we love."
                 }
             ]
         }
 
         response = self.client.post(self.url, data=payload, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
 
         for partner in Partner.objects.all():
             PartnerVerificationFactory(partner=partner, submitter=self.user)
@@ -311,12 +312,17 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
         app = Application.objects.get(pk=response.data['applications'][0]['id'])
         self.assertEquals(app.submitter, self.user)
-        self.assertEquals(app.ds_justification_select,
-                          [JUSTIFICATION_FOR_DIRECT_SELECTION.known, JUSTIFICATION_FOR_DIRECT_SELECTION.local])
+        self.assertEquals(
+            app.ds_justification_select,
+            [JUSTIFICATION_FOR_DIRECT_SELECTION.known, JUSTIFICATION_FOR_DIRECT_SELECTION.local]
+        )
         app = Application.objects.get(pk=response.data['applications'][1]['id'])
         self.assertEquals(app.submitter, self.user)
-        self.assertEquals(app.ds_justification_select,
-                          [JUSTIFICATION_FOR_DIRECT_SELECTION.known, JUSTIFICATION_FOR_DIRECT_SELECTION.local])
+        self.assertEquals(
+            app.ds_justification_select,
+            [JUSTIFICATION_FOR_DIRECT_SELECTION.known, JUSTIFICATION_FOR_DIRECT_SELECTION.local]
+        )
+        self.assertIsNotNone(response.data['applications'][-1]['ds_attachment'])
 
 
 # TODO: Enable once direct selection is reworked
@@ -393,13 +399,15 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         eoi.focal_points.add(self.user)
         url = reverse('projects:agency-applications', kwargs={"pk": eoi.id})
 
+        partner = Partner.objects.last()
+        PartnerVerificationFactory(partner=partner)
         payload = {
-            "partner": Partner.objects.last().id,
+            "partner": partner.id,
             "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.known],
             "justification_reason": "a good reason",
         }
         response = self.client.post(url, data=payload, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         app_id = Application.objects.last().id
         self.assertEquals(response.data['id'], app_id)
 
