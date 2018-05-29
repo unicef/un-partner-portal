@@ -19,6 +19,8 @@ export const isUserNotPartnerReader = state =>
   state.session.position !== PARTNER_MEMBERS_POSITIONS.READER;
 export const isUserPartnerEditor = state =>
   state.session.position === PARTNER_MEMBERS_POSITIONS.EDITOR;
-export const isUserPartnerAdmin = state =>
-  state.session.position === PARTNER_MEMBERS_POSITIONS.ADMIN;
+export const isUserPartnerAdmin = state => true;
+// export const isUserPartnerAdmin = state =>
+//   state.session.position === PARTNER_MEMBERS_POSITIONS.ADMIN;
 
+// TODO; Refactor

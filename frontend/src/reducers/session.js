@@ -119,6 +119,7 @@ export const loadUserData = () => (dispatch, getState) => {
           displayType: R.prop('display_type', mainPartner),
           logo: R.prop('logo', mainPartner),
           permissions: R.prop('permissions', response),
+          officeRole: R.prop('role', response),
           logoThumbnail: R.prop('org_logo_thumbnail', mainPartner),
           isProfileComplete: R.path(['partner_additional', 'has_finished'],
             mainPartner),

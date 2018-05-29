@@ -47,7 +47,7 @@ class CountryOfficesHeader extends React.Component {
     </Button>);
   }
   newCountryButton = withConditionalDisplay([isUserPartnerAdmin])(this.newCountryButtonBase)
-
+  // TODO CHECK PERMISSIONS PROPERLY 
   render() {
     const { classes, disableNewCountries } = this.props;
     const AddCountryButton = this.newCountryButton;

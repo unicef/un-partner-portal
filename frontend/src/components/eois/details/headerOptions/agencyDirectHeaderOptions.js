@@ -58,5 +58,6 @@ PartnerOpenHeaderOptions.propTypes = {
 export default compose(
   withMultipleDialogHandling,
   withRouter,
+  // TODO permisions for finalizing DS/R
   withConditionalDisplay([isUserNotAgencyReader]),
 )(PartnerOpenHeaderOptions);
