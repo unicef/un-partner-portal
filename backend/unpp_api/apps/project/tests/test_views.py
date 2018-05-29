@@ -278,14 +278,6 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
             },
             'applications': [
                 {
-                    "partner": Partner.objects.first().id,
-                    "ds_justification_select": [
-                        JUSTIFICATION_FOR_DIRECT_SELECTION.known,
-                        JUSTIFICATION_FOR_DIRECT_SELECTION.local,
-                    ],
-                    "justification_reason": "To save those we love."
-                },
-                {
                     "partner": Partner.objects.last().id,
                     "ds_justification_select": [
                         JUSTIFICATION_FOR_DIRECT_SELECTION.known,
@@ -293,7 +285,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
                     ],
                     "ds_attachment": get_new_common_file().id,
                     "justification_reason": "To save those we love."
-                }
+                },
             ]
         }
 
@@ -316,7 +308,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
             app.ds_justification_select,
             [JUSTIFICATION_FOR_DIRECT_SELECTION.known, JUSTIFICATION_FOR_DIRECT_SELECTION.local]
         )
-        app = Application.objects.get(pk=response.data['applications'][1]['id'])
+        app = Application.objects.get(pk=response.data['applications'][0]['id'])
         self.assertEquals(app.submitter, self.user)
         self.assertEquals(
             app.ds_justification_select,
@@ -1024,9 +1016,14 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        for partner in Partner.objects.all():
+        for partner in partners:
             PartnerVerificationFactory(partner=partner, submitter=self.user)
 
+        response = self.client.post(url, data=direct_selection_payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('applications', response.data)
+
+        direct_selection_payload['applications'].pop()
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -1034,29 +1031,12 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
             lambda msg: msg.subject == NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'],
             mail.outbox
         ))
-        self.assertEqual(len(partners.values_list('partner_members__user')), len(selection_emails))
+        self.assertEqual(len(selection_emails), 1)
+
         mail.outbox = []
-
-        partner2_application = partner2.applications.first()
-        partner2_application.eoi.is_published = True
-        partner2_application.eoi.save()
-        application_url = reverse('projects:application', kwargs={'pk': partner2_application.pk})
-
-        retract_payload = {
-            "withdraw_reason": "because",
-            "did_withdraw": True,
-            "justification_reason": None
-        }
-
-        update_response = self.client.patch(application_url, data=retract_payload, format='json')
-        self.assertEqual(update_response.status_code, status.HTTP_200_OK)
-
-        self.assertIn(
-            NOTIFICATION_DATA[NotificationType.CFEI_APPLICATION_WITHDRAWN]['subject'], [m.subject for m in mail.outbox]
-        )
-        mail.outbox = []
-
         partner1_application = partner1.applications.first()
+        partner1_application.eoi.is_published = True
+        partner1_application.eoi.save()
         application_url = reverse('projects:application', kwargs={'pk': partner1_application.pk})
 
         accept_payload = {
