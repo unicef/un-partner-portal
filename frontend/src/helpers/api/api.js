@@ -30,7 +30,7 @@ function buildHeaders(authorize = false, extraHeaders = {}) {
   };
   if (authorize) headers = { ...headers, Authorization: `token ${token}` };
   if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };
-  if (officeId) headers = { ...headers, AGENCY_OFFICE_ID: officeId };
+  if (officeId) headers = { ...headers, 'Agency-Office-ID': officeId };
   return { ...headers, ...extraHeaders };
 }
 
