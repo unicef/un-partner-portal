@@ -1,6 +1,7 @@
 import random
 import os
 from datetime import date, timedelta
+from coolname import generate
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
@@ -76,6 +77,10 @@ def get_agency_member():
 def get_partner_member():
     member = User.objects.filter(is_superuser=False, partner_members__isnull=False).order_by("?").first()
     return member or PartnerMemberFactory().user
+
+
+def get_cfei_title():
+    return f'Save the {generate(2)[-1].title()}'
 
 
 def get_partner():
@@ -547,7 +552,7 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
 
 
 class EOIFactory(factory.django.DjangoModelFactory):
-    title = factory.Sequence(lambda n: "title {}".format(n))
+    title = factory.LazyFunction(get_cfei_title)
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
     agency_office = factory.LazyFunction(get_random_agency_office)
