@@ -30,6 +30,7 @@ PARTNER_ROLE_PERMISSIONS = {
     True: {  # INGO HQ
         PartnerRole.ADMIN: frozenset([
             PartnerPermission.REGISTER,
+            PartnerPermission.CREATE_COUNTRY_OFFICE,
             PartnerPermission.CFEI_VIEW,
             PartnerPermission.VIEW_DASHBOARD,
             PartnerPermission.MANAGE_USERS,
@@ -42,6 +43,7 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.UCN_DELETE,
         ]),
         PartnerRole.EDITOR: frozenset([
+            PartnerPermission.CREATE_COUNTRY_OFFICE,
             PartnerPermission.CFEI_VIEW,
             PartnerPermission.VIEW_DASHBOARD,
             PartnerPermission.CFEI_PINNING,

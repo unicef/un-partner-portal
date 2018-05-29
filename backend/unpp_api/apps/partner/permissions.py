@@ -9,6 +9,7 @@ class PartnerPermission(AutoNameEnum):
     # Registration & General
     REGISTER = auto()
     VIEW_DASHBOARD = auto()
+    CREATE_COUNTRY_OFFICE = auto()
 
     # Applications
     CFEI_VIEW = auto()
