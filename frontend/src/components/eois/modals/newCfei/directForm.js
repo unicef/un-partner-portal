@@ -13,8 +13,7 @@ import ProjectDetails from './ProjectDetails';
 import PartnersForm from '../../../forms/fields/projectFields/partnersField/partnersFieldArray';
 
 const messages = {
-
-  selectPartners: 'Select Partners',
+  selectPartners: 'Select Partner',
   selectionCriteria: 'Selection Criteria',
 };
 

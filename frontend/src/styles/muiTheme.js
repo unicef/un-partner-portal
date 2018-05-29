@@ -153,6 +153,7 @@ const getTheme = () => (
         completed: '#5B92E5',
         closed: '#233944',
         open: '#72C300',
+        draft: '#A1A1A1',
       },
       userStatus: {
         invited: '#FF6D00',

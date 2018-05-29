@@ -16,6 +16,9 @@ const styleSheet = theme => ({
   Pen: {
     color: theme.palette.common.green,
   },
+  Dra: {
+    color: theme.palette.eoiStatus.draft,
+  },
   Rej: {
     color: theme.palette.eoiStatus.closed,
   },
