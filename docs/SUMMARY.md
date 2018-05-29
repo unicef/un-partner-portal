@@ -15,6 +15,7 @@
 * [User Management](overview/user-management.md)
 * [Direct Selection & Retention \(DSR\)](overview/direct-selection-and-retention-dsr.md)
 * [Reports](overview/reports.md)
+* [ERP Integration](overview/erp-integration.md)
 
 ## Partners
 
