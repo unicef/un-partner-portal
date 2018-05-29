@@ -6,8 +6,13 @@ import GridColumn from '../../../../common/grid/gridColumn';
 import JustificationField from './justificationField';
 import JustificationSummary from './justificationSummary';
 import AutocompleteForm from '../../../autoCompleteForm';
+import FileForm from '../../../fileForm';
 import { mapValuesForSelectionField } from '../../../../../store';
 import { loadPartnerNamesForAutoComplete } from '../../../../../reducers/partnerNames';
+
+const messages = {
+  attachment: 'Attachment (Optional)',
+};
 
 const Partner = (getPartners, readOnly, ...props) => (member, index, fields) => (
   <GridColumn>
@@ -31,6 +36,12 @@ const Partner = (getPartners, readOnly, ...props) => (member, index, fields) => 
       disabled={!fields.get(index).partner}
       readOnly={readOnly}
       {...props}
+    />
+    <FileForm
+      fieldName={`${member}.ds_attachment`}
+      formName="newDirectCfei"
+      label={messages.attachment}
+      optional
     />
   </GridColumn>);
 
