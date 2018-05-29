@@ -14,6 +14,10 @@ def get_partner_object(request):
         if partner_id:
             partner_member = PartnerMember.objects.filter(user=request.user, partner_id=partner_id).first()
 
+        # TODO: remove when we finish whole logic for http headers (like: HTTP_ACTIVE_PARTNER)
+        if not partner_member and settings.IS_DEV:
+            partner_member = request.user.partner_members.first()
+
     if partner_member:
         partner = partner_member.partner
 
@@ -40,10 +44,13 @@ def get_office_member_object(request):
 
         if office_id:
             try:
-                return request.user.agency_members.get(office_id=office_id)
+                return request.user.agency_members.filter(office_id=office_id)
             except ObjectDoesNotExist:
                 return None
 
+        if settings.IS_DEV:
+            # TODO: Remove once header is added on the frontend
+            return request.user.agency_members.first()
     return None
 
 
