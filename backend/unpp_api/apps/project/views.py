@@ -180,22 +180,24 @@ class DirectProjectAPIView(BaseProjectAPIView):
     """
     serializer_class = DirectProjectSerializer
 
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return self.serializer_class
+        return CreateDirectProjectSerializer
+
     def get_queryset(self):
         return self.queryset.filter(display_type=CFEI_TYPES.direct).distinct()
 
     @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS])
     def post(self, request, *args, **kwargs):
-        data = request.data or {}
+        data = request.data
         try:
             data['eoi']['created_by'] = request.user.id
             data['eoi']['selected_source'] = DIRECT_SELECTION_SOURCE.un
         except Exception:
             pass
 
-        serializer = CreateDirectProjectSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=statuses.HTTP_201_CREATED)
+        return super(DirectProjectAPIView, self).post(request, *args, **kwargs)
 
 
 class PinProjectAPIView(BaseProjectAPIView):

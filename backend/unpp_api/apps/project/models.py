@@ -170,6 +170,7 @@ class Application(TimeStampedModel):
         null=True,
         blank=True,
     )
+    ds_attachment = models.ForeignKey('common.CommonFile', related_name="ds_applications", null=True, blank=True)
     # Applies when application converted to EOI. Only applicable if this is unsolicited
     eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion", null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
