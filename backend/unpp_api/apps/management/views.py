@@ -5,6 +5,7 @@ from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
 from account.models import User
 from agency.models import AgencyOffice
 from agency.permissions import AgencyPermission
+from agency.roles import AgencyRole
 from common.pagination import SmallPagination
 from common.permissions import HasUNPPPermission
 from management.filters import AgencyUserFilter, PartnerUserFilter
@@ -72,7 +73,11 @@ class OfficeListView(ListAPIView):
 
     def get_queryset(self):
         if self.request.agency_member:
-            return AgencyOffice.objects.filter(agency=self.request.user.agency)
+            queryset = AgencyOffice.objects.filter(agency=self.request.user.agency)
+            if not self.request.agency_member.role == AgencyRole.HQ_EDITOR.name:
+                # Only HQ_EDITOR users can assign users freely between all offices
+                queryset = queryset.filter(agency_members__user=self.request.user)
+            return queryset
         elif self.request.partner_member:
             query = Q(id=self.request.partner_member.partner_id)
             if self.request.partner_member.partner.is_hq:

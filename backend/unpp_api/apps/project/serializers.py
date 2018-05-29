@@ -298,6 +298,14 @@ class CreateDirectProjectSerializer(serializers.Serializer):
     eoi = CreateDirectEOISerializer()
     applications = CreateDirectApplicationNoCNSerializer(many=True)
 
+    def validate(self, attrs):
+        validated_data = super(CreateDirectProjectSerializer, self).validate(attrs)
+        if len(validated_data['applications']) > 1:
+            raise serializers.ValidationError({
+                'applications': 'Only one application is allowed for DSR'
+            })
+        return validated_data
+
     @transaction.atomic
     def create(self, validated_data):
         locations = validated_data['eoi'].pop('locations')

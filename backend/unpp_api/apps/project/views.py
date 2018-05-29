@@ -122,9 +122,16 @@ class OpenProjectAPIView(BaseProjectAPIView):
         return Response(serializer.data, status=statuses.HTTP_201_CREATED)
 
 
-class EOIAPIView(RetrieveUpdateAPIView):
+class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
     permission_classes = (
-        HasUNPPPermission(),
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
+        ),
     )
     queryset = EOI.objects.all()
 
@@ -172,6 +179,12 @@ class EOIAPIView(RetrieveUpdateAPIView):
         # Completed
         if instance.is_completed:
             send_notification_cfei_completed(instance)
+
+    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_MANAGE])
+    def perform_destroy(self, instance):
+        if instance.is_published:
+            raise serializers.ValidationError('Published CFEIs cannot be deleted.')
+        return super(EOIAPIView, self).perform_destroy(instance)
 
 
 class DirectProjectAPIView(BaseProjectAPIView):

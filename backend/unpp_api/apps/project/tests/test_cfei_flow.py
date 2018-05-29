@@ -86,11 +86,8 @@ class TestDSRCFEI(BaseAPITestCase):
                     "partner": partner1.id,
                     "ds_justification_select": ["Loc"],
                     "justification_reason": "123123"
-                }, {
-                    "partner": partner2.id,
-                    "ds_justification_select": ["Loc"],
-                    "justification_reason": "1231231241245125"
-                }],
+                },
+            ],
             "eoi": {
                 "countries": [
                     {

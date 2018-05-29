@@ -1,6 +1,8 @@
 from django.db.models import Q
 from rest_framework import serializers
 
+from agency.roles import AgencyRole
+
 
 class CurrentAgencyFilteredPKField(serializers.PrimaryKeyRelatedField):
 
@@ -9,7 +11,11 @@ class CurrentAgencyFilteredPKField(serializers.PrimaryKeyRelatedField):
         request = self.context.get('request')
 
         if request and queryset:
-            return queryset.filter(agency=request.user.agency)
+            queryset = queryset.filter(agency=request.user.agency)
+            if not request.agency_member.role == AgencyRole.HQ_EDITOR.name:
+                # Only HQ_EDITOR users can assign users freely between all offices
+                queryset = queryset.filter(agency_members__user=request.user)
+            return queryset
 
         return queryset.none()
 
