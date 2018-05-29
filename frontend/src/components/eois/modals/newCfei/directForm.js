@@ -7,15 +7,16 @@ import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 
 import * as fields from '../../../forms/fields/projectFields/commonFields';
+import FileForm from '../../../forms/fileForm';
 import GridColumn from '../../../common/grid/gridColumn';
 
 import ProjectDetails from './ProjectDetails';
 import PartnersForm from '../../../forms/fields/projectFields/partnersField/partnersFieldArray';
 
 const messages = {
-
-  selectPartners: 'Select Partners',
+  selectPartners: 'Select Partner',
   selectionCriteria: 'Selection Criteria',
+  attachment: 'Attachement (Optional)',
 };
 
 
@@ -34,6 +35,12 @@ const DirectForm = (props) => {
           {messages.selectPartners}
         </Typography>
         <PartnersForm />
+        <FileForm
+          fieldName="ds_attachment"
+          formName="newDirectCfei"
+          label={messages.attachment}
+          optional
+        />
       </GridColumn>
     </form >
   );

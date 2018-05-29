@@ -17,7 +17,7 @@ import { selectCountriesWithOptionalLocations } from '../../../../store';
 const messages = {
   title: {
     open: 'Create new Call for Expressions of Interests',
-    direct: 'Create new direct selection',
+    direct: 'Create new direct selection/retention',
     unsolicited: 'Create new Unsolicited Concept Note',
   },
   header: {
@@ -31,7 +31,7 @@ const messages = {
   },
   error: {
     open: 'Unable to create new Call for Expressions of Interests',
-    direct: 'Unable to create new direct selection',
+    direct: 'Unable to create new direct selection/retention',
     unsolicited: 'Unable to create new Unsolicited Concept Note',
   },
 

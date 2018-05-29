@@ -11,7 +11,7 @@ import { isUserNotAgencyReader } from '../../../../helpers/authHelpers';
 
 const messages = {
   open: 'New cfei',
-  direct: 'new direct selection',
+  direct: 'new direct selection/retention',
   unsolicited: 'New Unsolicited Concept Note',
 };
 
