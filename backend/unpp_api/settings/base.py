@@ -141,6 +141,7 @@ INSTALLED_APPS = [
     'partner',
     'project',
     'review',
+    'storages',
     'notification',
     'sanctionslist',
 ]
