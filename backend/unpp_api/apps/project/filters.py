@@ -19,13 +19,23 @@ class BaseProjectFilter(django_filters.FilterSet):
         widget=CSVWidget(), queryset=Specialization.objects.all()
     )
     active = BooleanFilter(method='filter_active', widget=BooleanWidget())
+    is_published = BooleanFilter(method='filter_is_published', widget=BooleanWidget())
     posted_from_date = DateFilter(name='created', lookup_expr='date__gte')
     posted_to_date = DateFilter(name='created', lookup_expr='date__lte')
     selected_source = CharFilter(lookup_expr='iexact')
 
     class Meta:
         model = EOI
-        fields = ['title', 'country_code', 'locations', 'specializations', 'agency', 'active', 'selected_source']
+        fields = [
+            'title',
+            'country_code',
+            'locations',
+            'specializations',
+            'agency',
+            'active',
+            'selected_source',
+            'is_published',
+        ]
 
     def filter_title(self, queryset, name, value):
         return queryset.filter(title__icontains=value)
@@ -40,6 +50,13 @@ class BaseProjectFilter(django_filters.FilterSet):
         if value:
             return queryset.filter(is_completed=False)
         return queryset.filter(is_completed=True)
+
+    def filter_is_published(self, queryset, name, value):
+        if value:
+            return queryset.filter(is_published=True)
+        elif value is False:
+            return queryset.filter(is_published=False)
+        return queryset
 
 
 class ApplicationsFilter(django_filters.FilterSet):

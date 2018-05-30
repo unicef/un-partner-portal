@@ -11,9 +11,11 @@ from common.consts import (
     CFEI_STATUSES,
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
-    COMPLETED_REASON,
+    ALL_COMPLETED_REASONS,
     EXTENDED_APPLICATION_STATUSES,
+    DSR_FINALIZE_RETENTION_CHOICES,
 )
+from common.fields import FixedTextField
 from common.utils import get_countries_code_from_queryset, get_absolute_frontend_url
 from project.validators import (
     validate_weight_adjustments,
@@ -50,7 +52,9 @@ class EOI(TimeStampedModel):
     invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest", blank=True)
     reviewers = models.ManyToManyField('account.User', related_name="eoi_as_reviewer", blank=True)
     justification = models.TextField(null=True, blank=True)  # closed or completed
-    completed_reason = models.CharField(max_length=3, choices=COMPLETED_REASON, null=True, blank=True)
+    completed_reason = FixedTextField(choices=ALL_COMPLETED_REASONS, null=True, blank=True)
+    completed_retention = models.CharField(max_length=3, choices=DSR_FINALIZE_RETENTION_CHOICES, null=True, blank=True)
+    completed_comment = models.TextField(null=True, blank=True)
     completed_date = models.DateTimeField(null=True, blank=True)
     is_completed = models.BooleanField(default=False)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
@@ -170,6 +174,7 @@ class Application(TimeStampedModel):
         null=True,
         blank=True,
     )
+    ds_attachment = models.ForeignKey('common.CommonFile', related_name="ds_applications", null=True, blank=True)
     # Applies when application converted to EOI. Only applicable if this is unsolicited
     eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion", null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner

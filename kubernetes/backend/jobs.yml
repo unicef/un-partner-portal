@@ -15,7 +15,7 @@ spec:
       - name: backend-migration-container
         image: unicef/unpp-backend:{{CF_SHORT_REVISION}}
         command: ["bash"]
-        args: ["-c", "python /code/manage.py migrate"]
+        args: ["-c", "python /code/manage.py migrate --noinput"]
         env:
             - name: SECRET_KEY
               valueFrom:

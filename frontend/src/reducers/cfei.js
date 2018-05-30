@@ -12,7 +12,7 @@ const errorMessage = type => `Couldn't load ${type}, please refresh page and try
 
 const messages = {
   loadingCN: errorMessage('Calls for Expression of Interests'),
-  loadingDS: errorMessage('Direct Selections'),
+  loadingDS: errorMessage('Direct Selection/Retention'),
   loadingUCN: errorMessage('Unsolicited Concept Notes'),
 };
 
