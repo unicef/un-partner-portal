@@ -356,6 +356,12 @@ export const isUserAFocalPoint = (state, cfeiId) => cfeiDetailsSelector.isUserAF
 export const selectNormalizedCompletionReasons = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['completed-reason']);
 
+export const selectNormalizedDsrFinalizeOptions = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-completed-reason']);
+
+export const selectNormalizedTimePeriods = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-retention']);
+
 export const selectPartnerApplicationDetails = (state, cfeiId) =>
   partnerAppDetailsSelector.selectApplication(state.partnerAppDetails, cfeiId);
 

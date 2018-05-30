@@ -19,6 +19,7 @@ function TextFieldForm(props) {
     normalize,
     readOnly,
     infoText,
+    formControlStyle,
   } = props;
 
   return (
@@ -41,6 +42,7 @@ function TextFieldForm(props) {
           normalize={normalize}
           infoText={infoText}
           warn={warn ? warning : null}
+          formControlStyle={formControlStyle}
           {...textFieldProps}
         />
       }
@@ -90,6 +92,8 @@ TextFieldForm.propTypes = {
    * text for tooltip icon
    */
   infoText: PropTypes.node,
+
+  formControlStyle: PropTypes.object,
 };
 
 TextFieldForm.defaultProps = {

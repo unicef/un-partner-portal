@@ -10,6 +10,7 @@ import SendDsrButton from '../../buttons/sendDsrButton';
 import PublishDsrButton from '../../buttons/publishDsrButton';
 import SendDsrModal from '../../modals/completeDsr/sendDsrModal';
 import PublishDsrModal from '../../modals/completeDsr/publishDsrModal';
+import FinalizeDsrModal from '../../modals/completeDsr/finalizeDsrModal'
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
@@ -59,7 +60,7 @@ const PartnerOpenHeaderOptions = (props) => {
         dialogOpen={dialogOpen[publish]}
         handleDialogClose={handleDialogClose}
       />}
-      {dialogOpen[complete] && <CompleteCfeiModal
+      {dialogOpen[complete] && <FinalizeDsrModal
         id={id}
         dialogOpen={dialogOpen[complete]}
         handleDialogClose={handleDialogClose}

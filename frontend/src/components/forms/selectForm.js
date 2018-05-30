@@ -35,6 +35,7 @@ class SelectForm extends Component {
       validation,
       defaultValue,
       readOnly,
+      formControlStyle,
       sections,
       multiple,
       textFieldProps,
@@ -63,6 +64,7 @@ class SelectForm extends Component {
             warn={warn ? warning : null}
             defaultValue={defaultValue || multiple ? ['placeholder_none'] : 'placeholder_none'}
             multiple={multiple}
+            formControlStyle={formControlStyle}
             fullWidth
             infoText={infoText}
             values={sections ? R.reduce((current, [_, nextValues]) => R.concat(current, nextValues), [], values) : values}
@@ -145,6 +147,8 @@ SelectForm.propTypes = {
    * props for read-only text field
    */
   textFieldProps: PropTypes.object,
+
+  formControlStyle: PropTypes.object,
 };
 
 export default SelectForm;

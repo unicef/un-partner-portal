@@ -36,7 +36,7 @@ from common.consts import (
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     EXTENDED_APPLICATION_STATUSES,
-    DSR_COMPLETED_REASON,
+    ALL_DSR_COMPLETED_REASONS,
     DSR_FINALIZE_RETENTION_CHOICES,
 )
 from partner.roles import PartnerRole
@@ -88,7 +88,7 @@ class GeneralConfigAPIView(APIView):
             "policy-area-choices": POLICY_AREA_CHOICES,
             "application-statuses": APPLICATION_STATUSES,
             "completed-reason": COMPLETED_REASON,
-            "direct-selection-completed-reason": DSR_COMPLETED_REASON,
+            "direct-selection-completed-reason": ALL_DSR_COMPLETED_REASONS,
             "direct-selection-source": DIRECT_SELECTION_SOURCE,
             "direct-selection-retention": DSR_FINALIZE_RETENTION_CHOICES,
             "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,

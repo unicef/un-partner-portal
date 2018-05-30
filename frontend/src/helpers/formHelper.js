@@ -126,6 +126,7 @@ export const renderSelectField = ({
   label,
   values,
   placeholder,
+  formControlStyle,
   infoText,
   ...other
 }) => {
@@ -135,7 +136,7 @@ export const renderSelectField = ({
   } else {
     valueForSelect = input.value || defaultValue || 'placeholder_none';
   }
-  return (<FormControl fullWidth error={(touched && error) || warning}>
+  return (<FormControl fullWidth style={formControlStyle} error={(touched && error) || warning}>
     <FieldLabelWithTooltipIcon
       infoText={infoText}
       tooltipIconProps={{
@@ -275,32 +276,36 @@ export const renderTextField = ({
   input,
   label,
   infoText,
+  formControlStyle,
   ...other
-}) => (<FormControl fullWidth>
-  <FieldLabelWithTooltipIcon
-    infoText={infoText}
-    tooltipIconProps={{
-      name: input.name,
-    }}
-  >
-    {label}
-  </FieldLabelWithTooltipIcon>
-  <TextField
-    className={className}
-    id={input.name}
-    error={(touched && !!error) || !!warning}
-    fullWidth
-    {...input}
-    {...other}
-  />
-  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+}) => {
+  console.log('TEST', formControlStyle);
+  return (<FormControl fullWidth style={formControlStyle}>
+    <FieldLabelWithTooltipIcon
+      infoText={infoText}
+      tooltipIconProps={{
+        name: input.name,
+      }}
+    >
+      {label}
+    </FieldLabelWithTooltipIcon>
+    <TextField
+      className={className}
+      id={input.name}
+      error={(touched && !!error) || !!warning}
+      fullWidth
+      {...input}
+      {...other}
+    />
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
       {/* {other.InputProps.inputProps && other.InputProps.inputProps.maxLength &&
       <FormHelperText style={{ marginLeft: 'auto' }}>
       {input.value.length}/{other.InputProps.inputProps.maxLength}
       </FormHelperText>} */}
-  </div>
-</FormControl>);
+    </div>
+  </FormControl>);
+};
 
 export const renderNumberField = ({
   name,
