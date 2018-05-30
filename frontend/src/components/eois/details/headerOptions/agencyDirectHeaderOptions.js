@@ -22,7 +22,8 @@ const PartnerOpenHeaderOptions = (props) => {
     handleDialogOpen } = props;
   return (
     <SpreadContent>
-      <Complete handleClick={() => handleDialogOpen(complete)} />
+      <Complete handleClick={() => handleDialogOpen(complete)} /> 
+      {/* tutaj button do innego */}
       <DropdownMenu
         options={
           [

@@ -30,7 +30,6 @@ class CompleteCfeiModal extends Component {
     return (
       <div>
         <ControlledModal
-          maxWidth="md"
           fullWidth
           title={messages.title}
           trigger={dialogOpen}
