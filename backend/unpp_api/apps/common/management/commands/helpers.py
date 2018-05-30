@@ -1,5 +1,4 @@
 import random
-from coolname import generate
 from django.conf import settings
 from django_countries import countries
 
@@ -78,7 +77,7 @@ from sanctionslist.models import (
 
 
 def clean_up_data_in_db():
-    if settings.ENV == 'dev':
+    if not settings.IS_PROD:
         print("Deleting all ORM objects")
 
         User.objects.all().delete()
@@ -182,13 +181,8 @@ def generate_fake_data(country_count=3):
     OtherAgencyFactory.create_batch(1)
 
     partner_count = 2
-    ingo_names = [
-        ' '.join(x.capitalize() for x in generate(random.randint(2, 3))) for _ in range(partner_count)
-    ]
     ingo_hqs = [
-        PartnerFactory(
-            legal_name=f'{name} HQ', display_type=PARTNER_TYPES.international
-        ) for name in ingo_names
+        PartnerFactory(display_type=PARTNER_TYPES.international) for _ in range(partner_count)
     ]
     for hq in ingo_hqs:
         PartnerVerificationFactory(partner=hq)
@@ -199,15 +193,18 @@ def generate_fake_data(country_count=3):
         for index in range(partner_count):
             for partner_type, display_type in PARTNER_TYPES:
                 if partner_type == PARTNER_TYPES.international:
-                    partner_name = f'{ingo_names[index]} - {country_name}'
-                    hq = ingo_hqs[index]
+                    partner_kwargs = {
+                        'legal_name': f'{ingo_hqs[index].legal_name} - {country_name}',
+                        'hq': ingo_hqs[index]
+                    }
                     ingo_partners_created += 1
                 else:
-                    partner_name = ' '.join(x.capitalize() for x in generate(random.randint(2, 3)))
-                    hq = None
+                    partner_kwargs = {
+                        'hq': None
+                    }
                     standard_partners_created += 1
 
-                partner = PartnerFactory(hq=hq, display_type=partner_type, legal_name=partner_name)
+                partner = PartnerFactory(display_type=partner_type, **partner_kwargs)
                 partner.country_presence = [country_code]
                 partner.save()
 
@@ -217,11 +214,11 @@ def generate_fake_data(country_count=3):
                     PartnerVerificationFactory(partner=partner)
 
                 for role_code, display_name in PartnerRole.get_choices():
-                    postfix = f'ingo-{ingo_partners_created}' if hq else standard_partners_created
+                    postfix = f'ingo-{ingo_partners_created}' if partner.hq else standard_partners_created
                     user = UserFactory(email=f'partner-{postfix}-{role_code.lower()}@partner.org')
                     PartnerMemberFactory(user=user, role=role_code, partner=partner)
-                    if hq:
-                        PartnerMemberFactory(user=user, role=role_code, partner=hq)
+                    if partner.hq:
+                        PartnerMemberFactory(user=user, role=role_code, partner=partner.hq)
                     print(f'Created {user}')
                 if random.randint(1, 2) == 2:
                     UnsolicitedFactory.create_batch(random.randint(1, 3))

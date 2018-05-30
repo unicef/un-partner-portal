@@ -157,6 +157,10 @@ export function patchCfei(body, id) {
   return authorizedPatch({ uri: `/projects/${id}/`, body });
 }
 
+export function publishDsr(id) {
+  return authorizedPost({ uri: `/projects/${id}/publish/` });
+}
+
 export function convertCnToDirectSelection(body, id) {
   return authorizedPost({ uri: `/projects/application/${id}/convert-unsolicited/`, body });
 }

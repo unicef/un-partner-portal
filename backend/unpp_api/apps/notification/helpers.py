@@ -97,7 +97,7 @@ def user_received_notification_recently(user, obj, notification_type, time_ago=r
 
 
 def send_notification_cfei_completed(eoi):
-    if eoi.completed_reason == COMPLETED_REASON.canceled:
+    if eoi.completed_reason == COMPLETED_REASON.cancelled:
         users = get_partner_users_for_application_queryset(eoi.applications.all())
         send_notification(NotificationType.CFEI_CANCELLED, eoi, users, use_bcc=True)
 

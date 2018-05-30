@@ -15,7 +15,7 @@ from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
 
 from agency.serializers import AgencySerializer, AgencyUserListSerializer
-from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE
+from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE, DSR_COMPLETED_REASON
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
@@ -377,6 +377,7 @@ class CreateProjectSerializer(CreateEOISerializer):
 class SelectedPartnersSerializer(serializers.ModelSerializer):
     partner_id = serializers.CharField(source="partner.id")
     partner_name = serializers.CharField(source="partner.legal_name")
+    ds_attachment = CommonFileSerializer(read_only=True)
 
     class Meta:
         model = Application
@@ -385,6 +386,9 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
             'partner_id',
             'partner_name',
             'application_status',
+            'ds_justification_select',
+            'justification_reason',
+            'ds_attachment',
         )
 
 
@@ -493,6 +497,8 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'direct_selected_partners',
             'created',
             'completed_date',
+            'completed_retention',
+            'completed_comment',
             'contains_partner_accepted',
             'applications_count',
             'is_published',
@@ -543,6 +549,13 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         assessments_criteria = data.get('assessments_criteria', [])
         has_weighting = data.get('has_weighting', False)
 
+        if data.get('completed_reason') == DSR_COMPLETED_REASON.accepted_retention and not data.get(
+            'completed_retention'
+        ):
+            raise serializers.ValidationError({
+                'completed_retention': 'This field is required'
+            })
+
         if has_weighting is True and all(map(lambda x: 'weight' in x, assessments_criteria)) is False:
             raise serializers.ValidationError(
                 "Weight criteria must be provided since `has_weighting` is selected.")
@@ -561,12 +574,10 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError(
                         "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s).")
                 elif self.instance.is_completed:
-                    raise serializers.ValidationError(
-                        "CFEI is completed. Modify is forbidden.")
+                    raise serializers.ValidationError("CFEI is completed. Modify is forbidden.")
 
                 if self.context['request'].user.id not in allowed_to_modify:
-                    raise serializers.ValidationError(
-                        "Only Focal Point/Creator is allowed to modify a CFEI.")
+                    raise serializers.ValidationError("Only Focal Point/Creator is allowed to modify a CFEI.")
 
         return super(AgencyProjectSerializer, self).validate(data)
 
