@@ -223,11 +223,11 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         justification = "mission completed"
         payload = {
             "justification": justification,
-            "completed_reason": COMPLETED_REASON.canceled,
+            "completed_reason": COMPLETED_REASON.cancelled,
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertTrue(status.is_success(response.status_code))
-        self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.canceled)
+        self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.cancelled)
         self.assertTrue(response.data['completed_date'])
         self.assertTrue(response.data['is_completed'])
         self.assertEquals(response.data['justification'], justification)
