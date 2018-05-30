@@ -25,7 +25,7 @@ from account.models import User
 from agency.permissions import AgencyPermission
 from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE
 from common.pagination import SmallPagination
-from common.permissions import HasUNPPPermission, has_unpp_permission
+from common.permissions import HasUNPPPermission, check_unpp_permission
 from common.mixins import PartnerIdsMixin
 from notification.consts import NotificationType
 from notification.helpers import (
@@ -110,7 +110,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
         return queryset.filter(deadline_date__gte=date.today(), is_completed=False)
 
-    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_CREATE])
+    @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_CREATE])
     def post(self, request, *args, **kwargs):
         serializer = CreateProjectSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
@@ -180,7 +180,7 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
         if instance.is_completed:
             send_notification_cfei_completed(instance)
 
-    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_MANAGE])
+    @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_MANAGE])
     def perform_destroy(self, instance):
         if instance.is_published:
             raise serializers.ValidationError('Published CFEIs cannot be deleted.')
@@ -201,7 +201,7 @@ class DirectProjectAPIView(BaseProjectAPIView):
     def get_queryset(self):
         return self.queryset.filter(display_type=CFEI_TYPES.direct).distinct()
 
-    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS])
+    @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS])
     def post(self, request, *args, **kwargs):
         data = request.data
         try:
@@ -234,7 +234,7 @@ class PinProjectAPIView(BaseProjectAPIView):
             pins__partner_id=self.request.active_partner.id, deadline_date__gte=date.today()
         ).distinct()
 
-    @has_unpp_permission(partner_permissions=[PartnerPermission.CFEI_PINNING])
+    @check_unpp_permission(partner_permissions=[PartnerPermission.CFEI_PINNING])
     def patch(self, request, *args, **kwargs):
         eoi_ids = request.data.get("eoi_ids", [])
         pin = request.data.get("pin")
@@ -418,7 +418,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
 
         return queryset.none()
 
-    @has_unpp_permission(
+    @check_unpp_permission(
         partner_permissions=[
             PartnerPermission.CFEI_ANSWER_SELECTION,
         ],
@@ -590,7 +590,7 @@ class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreate
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id__in=self.get_partner_ids())
 
-    @has_unpp_permission(partner_permissions=[PartnerPermission.UCN_DRAFT])
+    @check_unpp_permission(partner_permissions=[PartnerPermission.UCN_DRAFT])
     def perform_create(self, serializer):
         super(PartnerApplicationUnsolicitedListCreateAPIView, self).perform_create(serializer)
         send_notification_application_created(serializer.instance)
@@ -670,7 +670,7 @@ class ReviewSummaryAPIView(RetrieveUpdateAPIView):
             return
         self.permission_denied(request)
 
-    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_ADD_REVIEW_SUMMARY])
+    @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_ADD_REVIEW_SUMMARY])
     def perform_update(self, serializer):
         super(ReviewSummaryAPIView, self).perform_update(serializer)
 

@@ -27,13 +27,14 @@ from project.views import (
     CompareSelectedListAPIView,
     EOIReviewersAssessmentsNotifyAPIView,
     PublishEOIAPIView,
+    EOISendToPublishAPIView,
 )
 
 
 urlpatterns = [
     url(r'^(?P<pk>\d+)/$', EOIAPIView.as_view(), name="eoi-detail"),
     url(r'^(?P<pk>\d+)/publish/$', PublishEOIAPIView.as_view(), name="eoi-publish"),
-    url(r'^(?P<pk>\d+)/send-to-publish/$', PublishEOIAPIView.as_view(), name="eoi-sent-to-publish"),
+    url(r'^(?P<pk>\d+)/send-to-publish/$', EOISendToPublishAPIView.as_view(), name="eoi-send-to-publish"),
     url(r'^applications/$', AgencyApplicationListAPIView.as_view(), name="agency-applications-list"),
     url(r'^(?P<pk>\d+)/partner-applications/$',
         PartnerEOIApplicationCreateAPIView.as_view(),
