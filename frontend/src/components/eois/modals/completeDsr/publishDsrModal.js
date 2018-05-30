@@ -5,7 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import { Typography } from 'material-ui';
 import PaddedContent from '../../../common/paddedContent';
 import ControlledModal from '../../../common/modals/controlledModal';
-import { updateCfei } from '../../../../reducers/newCfei';
+import { publishCfeiRequest } from '../../../../reducers/publishCfei';
 
 const messages = {
   title: 'Are you sure you want to publish this DS/R?',
@@ -20,6 +20,11 @@ const styleSheet = theme => ({
 });
 
 class PublishDsrModal extends Component {
+  constructor(props) {
+    super(props);
+    this.publish = this.publish.bind(this);
+  }
+
   publish() {
     return this.props.publishDsr().then(() => {
       this.props.handleDialogClose();
@@ -63,11 +68,11 @@ PublishDsrModal.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  showLoading: state.newCfei.openCfeiSubmitting,
+  showLoading: state.publishCfei.status.publishSubmitting,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  publishDsr: () => dispatch(updateCfei(ownProps.id)), // TODO send
+  publishDsr: () => dispatch(publishCfeiRequest(ownProps.id)),
 });
 
 const connected = connect(mapStateToProps, mapDispatchToProps)(PublishDsrModal);

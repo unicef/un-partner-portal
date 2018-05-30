@@ -7,7 +7,9 @@ import SpreadContent from '../../../common/spreadContent';
 import EditButton from '../../buttons/editCfeiButton';
 import Complete from '../../buttons/completeCfeiButton';
 import SendDsrButton from '../../buttons/sendDsrButton';
+import PublishDsrButton from '../../buttons/publishDsrButton';
 import SendDsrModal from '../../modals/completeDsr/sendDsrModal';
+import PublishDsrModal from '../../modals/completeDsr/publishDsrModal';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
@@ -28,6 +30,7 @@ const PartnerOpenHeaderOptions = (props) => {
     <SpreadContent>
       <Complete handleClick={() => handleDialogOpen(complete)} />
       <SendDsrButton handleClick={() => handleDialogOpen(send)} />
+      <PublishDsrButton handleClick={() => handleDialogOpen(publish)} />
       <DropdownMenu
         options={
           [
@@ -48,6 +51,12 @@ const PartnerOpenHeaderOptions = (props) => {
         id={id}
         type="direct"
         dialogOpen={dialogOpen[send]}
+        handleDialogClose={handleDialogClose}
+      />}
+      {dialogOpen[publish] && <PublishDsrModal
+        id={id}
+        type="direct"
+        dialogOpen={dialogOpen[publish]}
         handleDialogClose={handleDialogClose}
       />}
       {dialogOpen[complete] && <CompleteCfeiModal

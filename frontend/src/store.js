@@ -63,7 +63,8 @@ import error, * as errorSelector from './reducers/errorReducer';
 import routesHistory from './reducers/routesHistory';
 import applicationComparisonReport from './reducers/applicationsComparisonReport';
 import openCfeiDashboardList from './reducers/openCfeiDashboardList';
-
+import publishCfei from './reducers/publishCfei';
+import sendCfei from './reducers/sendCfei';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -78,6 +79,8 @@ const mainReducer = combineReducers({
   cfeiDetails,
   cfeiDetailsNav,
   newCfei,
+  publishCfei,
+  sendCfei,
   organizationProfileNav,
   partnerApplicationsNav,
   applicationsNotesList,

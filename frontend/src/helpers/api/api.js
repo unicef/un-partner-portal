@@ -157,7 +157,7 @@ export function patchCfei(body, id) {
   return authorizedPatch({ uri: `/projects/${id}/`, body });
 }
 
-export function publishDsr(id) {
+export function publishCfei(id) {
   return authorizedPost({ uri: `/projects/${id}/publish/` });
 }
 

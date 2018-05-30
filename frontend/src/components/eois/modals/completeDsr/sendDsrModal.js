@@ -63,7 +63,7 @@ SendDsrModal.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  showLoading: state.newCfei.openCfeiSubmitting,
+  showLoading: state.sendCfei.status.sendSubmitting,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
