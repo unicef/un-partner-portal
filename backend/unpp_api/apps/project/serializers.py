@@ -377,6 +377,7 @@ class CreateProjectSerializer(CreateEOISerializer):
 class SelectedPartnersSerializer(serializers.ModelSerializer):
     partner_id = serializers.CharField(source="partner.id")
     partner_name = serializers.CharField(source="partner.legal_name")
+    ds_attachment = CommonFileSerializer(read_only=True)
 
     class Meta:
         model = Application
@@ -385,6 +386,9 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
             'partner_id',
             'partner_name',
             'application_status',
+            'ds_justification_select',
+            'justification_reason',
+            'ds_attachment',
         )
 
 
