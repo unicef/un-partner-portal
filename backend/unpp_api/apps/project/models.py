@@ -123,6 +123,14 @@ class EOI(TimeStampedModel):
     def get_absolute_url(self):
         return get_absolute_frontend_url("/cfei/open/{}/overview".format(self.pk))
 
+    @property
+    def completed_reason_display(self):
+        display = self.get_completed_reason_display()
+
+        if self.completed_reason == ALL_COMPLETED_REASONS.accepted_retention:
+            display += f' {self.get_completed_retention_display()}'
+        return display
+
 
 class Pin(TimeStampedModel):
     eoi = models.ForeignKey(EOI, related_name="pins")

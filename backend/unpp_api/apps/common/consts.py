@@ -241,8 +241,8 @@ EXTENDED_APPLICATION_STATUSES = Choices(
 )
 
 DSR_FINALIZE_RETENTION_CHOICES = Choices(
-    ('1YR', 'For one year'),
-    ('2YR', 'For second year'),
-    ('3YR', 'For a third year'),
-    ('4YR', 'For a fourth year'),
+    ('1YR', 'one year'),
+    ('2YR', 'second year'),
+    ('3YR', 'a third year'),
+    ('4YR', 'a fourth year'),
 )
