@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { publishCfei } from '../helpers/api/api';
+import { errorToBeAdded } from './errorReducer';
 import apiMeta, {
   success,
   loadStarted,
@@ -9,6 +10,8 @@ import apiMeta, {
 import { loadCfei } from './cfeiDetails';
 
 export const PUBLISH_CFEI = 'PUBLISH_CFEI';
+
+const errorMsg = 'Unable to publish project';
 
 const initialState = {
   submitting: false,
@@ -28,7 +31,7 @@ export const publishCfeiRequest = id => (dispatch) => {
     .catch((error) => {
       dispatch(loadEnded(PUBLISH_CFEI));
       dispatch(loadFailure(PUBLISH_CFEI, error));
-      throw error;
+      dispatch(errorToBeAdded(error, 'cfeiPublish', errorMsg));
     });
 };
 

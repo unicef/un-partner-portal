@@ -58,6 +58,7 @@ EditUserButton.propTypes = {
   handleDialogOpen: PropTypes.func,
 };
 
+
 export default compose(
   withMultipleDialogHandling,
   withRouter,

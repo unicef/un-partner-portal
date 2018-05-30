@@ -26,8 +26,6 @@ const HeaderOptionsContainer = (props) => {
     cfeiCompleted,
     cfeiStatus,
     cfeiConverted,
-    isCreator,
-    isFocalPoint,
     id,
     partnerId,
     completedJustification,
@@ -46,7 +44,7 @@ const HeaderOptionsContainer = (props) => {
       options = <PartnerOpenHeaderOptions />;
     }
   } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
-    return <AgencyDirectHeaderOptions isFocalPoint={isFocalPoint} isCreator={isCreator} isPublished={isCfeiPublished} />;
+    options = !cfeiCompleted ? <AgencyDirectHeaderOptions id={id} /> : null;
   }
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return !cfeiConverted && role === ROLES.AGENCY
@@ -78,8 +76,6 @@ HeaderOptionsContainer.propTypes = {
   id: PropTypes.string,
   partnerId: PropTypes.string,
   allowedToEdit: PropTypes.bool,
-  isCreator: PropTypes.bool,
-  isFocalPoint: PropTypes.bool,
   completedJustification: PropTypes.string,
   completedReasons: PropTypes.object,
 };
@@ -91,8 +87,6 @@ const mapStateToProps = (state, ownProps) => ({
   completedJustification: selectCfeiJustification(state, ownProps.id),
   completedReasons: state.partnerProfileConfig['completed-reason'] || {},
   cfeiConverted: selectCfeiConverted(state, ownProps.id),
-  isCreator: isUserACreator(state, ownProps.id),
-  isFocalPoint: isUserAFocalPoint(state, ownProps.id),
   allowedToEdit: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
 });
 

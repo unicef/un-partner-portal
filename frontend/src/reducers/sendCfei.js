@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { sendCfei } from '../helpers/api/api';
+import { errorToBeAdded } from './errorReducer';
 import apiMeta, {
   success,
   loadStarted,
@@ -7,6 +8,9 @@ import apiMeta, {
   loadSuccess,
   loadFailure } from '../reducers/apiMeta';
 import { loadCfei } from './cfeiDetails';
+
+
+const errorMsg = 'Unable to send project';
 
 export const SEND_CFEI = 'SEND_CFEI';
 
@@ -20,7 +24,6 @@ export const sendCfeiRequest = id => (dispatch) => {
   dispatch(loadStarted(SEND_CFEI));
   return sendCfei(id)
     .then((response) => {
-      debugger;
       dispatch(loadEnded(SEND_CFEI));
       dispatch(loadSuccess(SEND_CFEI));
       dispatch(loadCfei(id));
@@ -29,7 +32,7 @@ export const sendCfeiRequest = id => (dispatch) => {
     .catch((error) => {
       dispatch(loadEnded(SEND_CFEI));
       dispatch(loadFailure(SEND_CFEI, error));
-      throw error;
+      dispatch(errorToBeAdded(error, 'cfeiPublish', errorMsg));
     });
 };
 
