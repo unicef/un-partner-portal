@@ -37,6 +37,7 @@ APPLICATION_STATUSES = Choices(
 
 CFEI_STATUSES = Choices(
     ('Dra', 'draft', 'Draft'),
+    ('Sen', 'sent', 'Sent'),
     ('Ope', 'open', 'Open'),
     ('Clo', 'closed', 'Closed/Under Review'),
     ('Com', 'completed', 'Completed'),

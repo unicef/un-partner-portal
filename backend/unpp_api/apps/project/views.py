@@ -778,6 +778,31 @@ class CompareSelectedListAPIView(ListAPIView):
         return queryset
 
 
+class EOISendToPublishAPIView(RetrieveAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH,
+            ]
+        ),
+    )
+    serializer_class = AgencyProjectSerializer
+    queryset = EOI.objects.filter(is_published=False)
+
+    def check_object_permissions(self, request, obj):
+        super(EOISendToPublishAPIView, self).check_object_permissions(request, obj)
+        if obj.created_by == request.user:
+            return
+        self.permission_denied(request)
+
+    def post(self, *args, **kwargs):
+        # TODO: Notify focal point
+        obj = self.get_object()
+        obj.sent_for_publishing = True
+        obj.save()
+        return Response(AgencyProjectSerializer(obj).data)
+
+
 class PublishEOIAPIView(RetrieveAPIView):
     permission_classes = (
         HasUNPPPermission(

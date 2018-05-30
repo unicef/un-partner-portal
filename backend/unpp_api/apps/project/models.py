@@ -66,6 +66,9 @@ class EOI(TimeStampedModel):
     review_summary_attachment = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name='review_summary_attachments'
     )
+    sent_for_publishing = models.BooleanField(
+        default=False, help_text='Whether CFEI has been forwarded to focal point to be published'
+    )
     is_published = models.BooleanField(
         default=False, help_text='Whether CFEI is a draft or has been published'
     )
@@ -78,12 +81,13 @@ class EOI(TimeStampedModel):
 
     @property
     def status(self):
-        today = date.today()
-        if not self.is_published:
+        if self.sent_for_publishing:
+            return CFEI_STATUSES.sent
+        elif not self.is_published:
             return CFEI_STATUSES.draft
         elif self.is_completed:
             return CFEI_STATUSES.completed
-        elif self.is_completed is False and self.deadline_date and today > self.deadline_date:
+        elif self.is_completed is False and self.deadline_date and date.today() > self.deadline_date:
             return CFEI_STATUSES.closed
         else:
             return CFEI_STATUSES.open
