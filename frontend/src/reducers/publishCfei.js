@@ -11,8 +11,8 @@ import { loadCfei } from './cfeiDetails';
 export const PUBLISH_CFEI = 'PUBLISH_CFEI';
 
 const initialState = {
-  publishSubmitting: false,
-  publishProcessing: false,
+  submitting: false,
+  processing: false,
   error: {},
 };
 

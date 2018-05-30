@@ -51,7 +51,7 @@ class PublishDsrModal extends Component {
           }}
           content={
             <PaddedContent>
-              <Typography className={classes.text} type="disaply1">{messages.info}</Typography>
+              <Typography className={classes.text}>{messages.info}</Typography>
             </PaddedContent>
           }
         />
@@ -68,7 +68,7 @@ PublishDsrModal.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  showLoading: state.publishCfei.status.publishSubmitting,
+  showLoading: state.publishCfei.status.loading,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

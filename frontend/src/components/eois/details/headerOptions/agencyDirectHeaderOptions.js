@@ -23,6 +23,9 @@ const complete = 'complete';
 
 const PartnerOpenHeaderOptions = (props) => {
   const { params: { id },
+    isFocalPoint,
+    isCreator,
+    isPublished,
     dialogOpen,
     handleDialogClose,
     handleDialogOpen } = props;
@@ -74,6 +77,8 @@ PartnerOpenHeaderOptions.propTypes = {
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
   isPublished: PropTypes.bool,
+  isCreator: PropTypes.bool,
+  isFocalPoint: PropTypes.bool,
 };
 
 export default compose(

@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { publishCfei } from '../helpers/api/api';
+import { sendCfei } from '../helpers/api/api';
 import apiMeta, {
   success,
   loadStarted,
@@ -11,15 +11,16 @@ import { loadCfei } from './cfeiDetails';
 export const SEND_CFEI = 'SEND_CFEI';
 
 const initialState = {
-  publishSubmitting: false,
-  publishProcessing: false,
+  submitting: false,
+  processing: false,
   error: {},
 };
 
-export const publishDsrRequest = id => (dispatch) => {
+export const sendCfeiRequest = id => (dispatch) => {
   dispatch(loadStarted(SEND_CFEI));
-  return publishCfei(id)
+  return sendCfei(id)
     .then((response) => {
+      debugger;
       dispatch(loadEnded(SEND_CFEI));
       dispatch(loadSuccess(SEND_CFEI));
       dispatch(loadCfei(id));

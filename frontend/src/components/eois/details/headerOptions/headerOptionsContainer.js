@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import { PROJECT_TYPES, ROLES, PROJECT_STATUSES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
@@ -17,7 +18,6 @@ import { selectCfeiStatus,
   isUserACreator,
 } from '../../../../store';
 import GridColumn from '../../../common/grid/gridColumn';
-import Grid from 'material-ui/Grid';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
 
 const HeaderOptionsContainer = (props) => {
@@ -26,6 +26,8 @@ const HeaderOptionsContainer = (props) => {
     cfeiCompleted,
     cfeiStatus,
     cfeiConverted,
+    isCreator,
+    isFocalPoint,
     id,
     partnerId,
     completedJustification,
@@ -44,7 +46,7 @@ const HeaderOptionsContainer = (props) => {
       options = <PartnerOpenHeaderOptions />;
     }
   } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
-    options = (allowedToEdit && !cfeiCompleted) ? <AgencyDirectHeaderOptions isPublished={isCfeiPublished} /> : null;
+    return <AgencyDirectHeaderOptions isFocalPoint={isFocalPoint} isCreator={isCreator} isPublished={isCfeiPublished} />;
   }
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return !cfeiConverted && role === ROLES.AGENCY
@@ -76,6 +78,8 @@ HeaderOptionsContainer.propTypes = {
   id: PropTypes.string,
   partnerId: PropTypes.string,
   allowedToEdit: PropTypes.bool,
+  isCreator: PropTypes.bool,
+  isFocalPoint: PropTypes.bool,
   completedJustification: PropTypes.string,
   completedReasons: PropTypes.object,
 };
@@ -87,6 +91,8 @@ const mapStateToProps = (state, ownProps) => ({
   completedJustification: selectCfeiJustification(state, ownProps.id),
   completedReasons: state.partnerProfileConfig['completed-reason'] || {},
   cfeiConverted: selectCfeiConverted(state, ownProps.id),
+  isCreator: isUserACreator(state, ownProps.id),
+  isFocalPoint: isUserAFocalPoint(state, ownProps.id),
   allowedToEdit: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
 });
 

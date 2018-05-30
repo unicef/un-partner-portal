@@ -5,7 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import { Typography } from 'material-ui';
 import PaddedContent from '../../../common/paddedContent';
 import ControlledModal from '../../../common/modals/controlledModal';
-import { updateCfei } from '../../../../reducers/newCfei';
+import { sendCfeiRequest } from '../../../../reducers/sendCfei';
 
 const messages = {
   title: 'Are you sure you want to send this direct selection/retention to the focal point?',
@@ -20,6 +20,11 @@ const styleSheet = theme => ({
 });
 
 class SendDsrModal extends Component {
+  constructor(props) {
+    super(props);
+    this.send = this.send.bind(this);
+  }
+
   send() {
     return this.props.sendDsr().then(() => {
       this.props.handleDialogClose();
@@ -46,7 +51,7 @@ class SendDsrModal extends Component {
           }}
           content={
             <PaddedContent>
-              <Typography className={classes.text} type="disaply1">{messages.info}</Typography>
+              <Typography className={classes.text} >{messages.info}</Typography>
             </PaddedContent>
           }
         />
@@ -63,11 +68,11 @@ SendDsrModal.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  showLoading: state.sendCfei.status.sendSubmitting,
+  showLoading: state.sendCfei.status.loading,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  sendDsr: () => dispatch(updateCfei(ownProps.id)), // TODO send
+  sendDsr: () => dispatch(sendCfeiRequest(ownProps.id)),
 });
 
 const connected = connect(mapStateToProps, mapDispatchToProps)(SendDsrModal);
