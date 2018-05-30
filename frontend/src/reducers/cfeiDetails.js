@@ -137,6 +137,11 @@ export function isCfeiCompleted(state, id) {
   return !!completed_reason;
 }
 
+export function isCfeiPublished(state, id) {
+  const { [id]: { is_published = null } = {} } = state;
+  return is_published;
+}
+
 export function isCfeiPinned(state, id) {
   const { [id]: { is_pinned = null } = {} } = state;
   return is_pinned;

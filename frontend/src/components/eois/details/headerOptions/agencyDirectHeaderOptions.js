@@ -6,6 +6,8 @@ import DropdownMenu from '../../../common/dropdownMenu';
 import SpreadContent from '../../../common/spreadContent';
 import EditButton from '../../buttons/editCfeiButton';
 import Complete from '../../buttons/completeCfeiButton';
+import SendDsrButton from '../../buttons/sendDsrButton';
+import SendDsrModal from '../../modals/completeDsr/sendDsrModal';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
@@ -13,6 +15,8 @@ import withConditionalDisplay from '../../../common/hoc/withConditionalDisplay';
 import { isUserNotAgencyReader } from '../../../../helpers/authHelpers';
 
 const edit = 'edit';
+const send = 'send';
+const publish = 'publish';
 const complete = 'complete';
 
 const PartnerOpenHeaderOptions = (props) => {
@@ -23,6 +27,7 @@ const PartnerOpenHeaderOptions = (props) => {
   return (
     <SpreadContent>
       <Complete handleClick={() => handleDialogOpen(complete)} />
+      <SendDsrButton handleClick={() => handleDialogOpen(send)} />
       <DropdownMenu
         options={
           [
@@ -39,6 +44,12 @@ const PartnerOpenHeaderOptions = (props) => {
         dialogOpen={dialogOpen[edit]}
         handleDialogClose={handleDialogClose}
       />}
+      {dialogOpen[send] && <SendDsrModal
+        id={id}
+        type="direct"
+        dialogOpen={dialogOpen[send]}
+        handleDialogClose={handleDialogClose}
+      />}
       {dialogOpen[complete] && <CompleteCfeiModal
         id={id}
         dialogOpen={dialogOpen[complete]}
@@ -53,6 +64,7 @@ PartnerOpenHeaderOptions.propTypes = {
   dialogOpen: PropTypes.object,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
+  isPublished: PropTypes.bool,
 };
 
 export default compose(

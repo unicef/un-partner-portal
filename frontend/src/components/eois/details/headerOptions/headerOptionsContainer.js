@@ -9,6 +9,7 @@ import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
 import AgencyOpenAfterDeadlineHeaderOptions from './agencyOpenAfterDeadlineHeaderOptions';
 import EoiStatusCell from '../../cells/eoiStatusCell';
 import { selectCfeiStatus,
+  isCfeiPublished,
   isCfeiCompleted,
   selectCfeiConverted,
   selectCfeiJustification,
@@ -43,7 +44,7 @@ const HeaderOptionsContainer = (props) => {
       options = <PartnerOpenHeaderOptions />;
     }
   } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
-    options = (allowedToEdit && !cfeiCompleted) ? <AgencyDirectHeaderOptions /> : null;
+    options = (allowedToEdit && !cfeiCompleted) ? <AgencyDirectHeaderOptions isPublished={isCfeiPublished} /> : null;
   }
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return !cfeiConverted && role === ROLES.AGENCY
@@ -81,6 +82,7 @@ HeaderOptionsContainer.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   cfeiCompleted: isCfeiCompleted(state, ownProps.id),
+  cfeiPublished: isCfeiPublished(state, ownProps.id),
   cfeiStatus: selectCfeiStatus(state, ownProps.id),
   completedJustification: selectCfeiJustification(state, ownProps.id),
   completedReasons: state.partnerProfileConfig['completed-reason'] || {},

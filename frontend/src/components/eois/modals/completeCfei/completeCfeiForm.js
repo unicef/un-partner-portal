@@ -63,6 +63,7 @@ const formEditCfei = reduxForm({
 
 const mapStateToProps = (state, { params: { id, type } }) => {
   const completionReasons = selectNormalizedCompletionReasons(state);
+  
   const status = selectCfeiStatus(state, id);
   const reviewStarted = (status === PROJECT_STATUSES.OPE && type !== PROJECT_TYPES.DIRECT);
   const hasWinners = selectCfeiWinnersStatus(state, id);
