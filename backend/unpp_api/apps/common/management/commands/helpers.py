@@ -1,5 +1,4 @@
 import random
-from coolname import generate
 from django.conf import settings
 from django_countries import countries
 
@@ -78,7 +77,7 @@ from sanctionslist.models import (
 
 
 def clean_up_data_in_db():
-    if not setttings.IS_PROD:
+    if not settings.IS_PROD:
         print("Deleting all ORM objects")
 
         User.objects.all().delete()
