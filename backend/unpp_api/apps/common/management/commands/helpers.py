@@ -78,7 +78,7 @@ from sanctionslist.models import (
 
 
 def clean_up_data_in_db():
-    if settings.ENV == 'dev':
+    if not setttings.IS_PROD:
         print("Deleting all ORM objects")
 
         User.objects.all().delete()
