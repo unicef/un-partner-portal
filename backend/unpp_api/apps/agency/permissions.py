@@ -81,3 +81,7 @@ class AgencyPermission(AutoNameEnum):
     VIEW_PROFILE_OBSERVATION_COMMENTS = auto()
     VIEW_PROFILE_FLAG_COUNT = auto()
     VIEW_PROFILE_FLAG_COMMENTS = auto()
+
+    # Add Observation & risk flags all
+    ADD_FLAG_OBSERVATION_ALL_CSO_PROFILES = auto()
+    ADD_FLAG_OBSERVATION_COUNTRY_CSO_PROFILES = auto()

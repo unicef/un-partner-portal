@@ -71,6 +71,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.VIEW_PROFILE_OBSERVATION_COMMENTS,
         AgencyPermission.VIEW_PROFILE_FLAG_COUNT,
         AgencyPermission.VIEW_PROFILE_FLAG_COMMENTS,
+        AgencyPermission.ADD_FLAG_OBSERVATION_ALL_CSO_PROFILES,
     ]),
     AgencyRole.ADMINISTRATOR: frozenset([
         AgencyPermission.RESET_CSO_USER_PASSWORD,
@@ -168,6 +169,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.VIEW_PROFILE_OBSERVATION_COMMENTS,
         AgencyPermission.VIEW_PROFILE_FLAG_COUNT,
         AgencyPermission.VIEW_PROFILE_FLAG_COMMENTS,
+        AgencyPermission.ADD_FLAG_OBSERVATION_COUNTRY_CSO_PROFILES,
     ]),
     AgencyRole.MFT_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -198,6 +200,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.VIEW_PROFILE_OBSERVATION_COMMENTS,
         AgencyPermission.VIEW_PROFILE_FLAG_COUNT,
         AgencyPermission.VIEW_PROFILE_FLAG_COMMENTS,
+        AgencyPermission.ADD_FLAG_OBSERVATION_COUNTRY_CSO_PROFILES,
     ]),
     AgencyRole.PAM_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
