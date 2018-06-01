@@ -470,7 +470,7 @@ class ReviewersStatusAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+                AgencyPermission.CFEI_VIEW_ALL_REVIEWS,
             ]
         ),
     )
@@ -497,7 +497,7 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+                AgencyPermission.CFEI_VIEW_ALL_REVIEWS,
             ]
         ),
     )
@@ -682,7 +682,7 @@ class EOIReviewersAssessmentsListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+                AgencyPermission.CFEI_VIEW_ALL_REVIEWS,
             ]
         ),
     )
@@ -704,7 +704,7 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+                AgencyPermission.CFEI_VIEW_ALL_REVIEWS,
             ]
         ),
     )
@@ -744,7 +744,7 @@ class CompareSelectedListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+                AgencyPermission.CFEI_VIEW_ALL_REVIEWS,
             ]
         ),
     )
