@@ -32,6 +32,7 @@ RUN apt-get install -y --no-install-recommends \
     postgresql-client \
     libpq-dev \
     python-psycopg2
+
 RUN apt-get install -y --no-install-recommends \
     python-gdal \
     gdal-bin \
