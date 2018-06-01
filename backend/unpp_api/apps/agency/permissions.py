@@ -17,7 +17,6 @@ class AgencyPermission(AutoNameEnum):
 
     # CFEI
     CFEI_VIEW = auto()  # View Overview of all CFEIs with open and closed/under review status
-    CFEI_VIEW_FINALIZED_RESULTS = auto()  # View results tab of finalized CFEI for all agencies: Selected CSO & CN
 
     # Create Draft CFEI for Own Agency
     CFEI_DRAFT_CREATE = auto()
@@ -50,15 +49,21 @@ class AgencyPermission(AutoNameEnum):
     CFEI_SELECT_PARTNER = auto()  # If creator
     CFEI_DESELECT_PARTNER = auto()  # If creator / focal point
 
+    # Finalize CFEI Published by Own agency
+    CFEI_FINALIZE = auto()  # If creator / focal point
+    CFEI_FINALIZED_VIEW_ALL_REVIEWS = auto()  # If creator / focal point / reviewer
+    CFEI_FINALIZED_VIEW_WINNER_AND_CN = auto()  # View results tab of finalized CFEI for all agencies: Selected CSO & CN
+    CFEI_FINALIZED_VIEW_ALL_INFO = auto()
+
     # Direct Selection & Retention
     CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS = auto()
-    CFEI_DIRECT_VIEW_OVERVIEW_WITH_JUSTIFICATION = auto()
     CFEI_DIRECT_INDICATE_CSO = auto()
     CFEI_DIRECT_SAVE_DRAFT = auto()
     CFEI_DIRECT_EDIT_DRAFT = auto()
     CFEI_DIRECT_DELETE_DRAFT = auto()
     CFEI_DIRECT_SEND_DRAFT_TO_FOCAL_POINT = auto()
-    CFEI_DIRECT_EDIT_SENT = auto()
-    CFEI_DIRECT_PUBLISH = auto()
+    CFEI_DIRECT_EDIT_SENT = auto()  # If creator / focal point
+    CFEI_DIRECT_PUBLISH = auto()  # If creator / focal point
     CFEI_DIRECT_EDIT_PUBLISHED = auto()
     CFEI_DIRECT_CANCEL = auto()
+    CFEI_DIRECT_FINALIZE = auto()  # If creator / focal point
