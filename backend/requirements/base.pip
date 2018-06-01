@@ -35,7 +35,7 @@ factory_boy==2.8.1
 mock==2.0.0
 
 # WSGI
-gunicorn==19.6.0
+uWSGI==2.0.17
 
 # Sentry
 raven==6.4.0

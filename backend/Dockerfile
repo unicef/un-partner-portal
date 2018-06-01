@@ -35,8 +35,7 @@ RUN apt-get install -y --no-install-recommends \
 RUN apt-get install -y --no-install-recommends \
     python-gdal \
     gdal-bin \
-    libgdal-dev \
-    libgdal20
+    libgdal-dev
 
 # Install Python tools
 RUN pip install --upgrade \
