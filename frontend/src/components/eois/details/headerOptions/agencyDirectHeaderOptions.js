@@ -13,6 +13,8 @@ import Complete from '../../buttons/completeCfeiButton';
 import SendDsrButton from '../../buttons/sendDsrButton';
 import PublishDsrButton from '../../buttons/publishDsrButton';
 import SendDsrModal from '../../modals/completeDsr/sendDsrModal';
+import DeleteDsrModal from '../../modals/completeDsr/deleteDsrModal';
+import CancelDsrModal from '../../modals/completeDsr/cancelDsrModal';
 import PublishDsrModal from '../../modals/completeDsr/publishDsrModal';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
@@ -27,6 +29,7 @@ import { selectCfeiStatus,
 
 const edit = 'edit';
 const del = 'del';
+const cancel = 'cancel';
 const download = 'download';
 const send = 'send';
 const publish = 'publish';
@@ -36,12 +39,9 @@ class PartnerOpenHeaderOptions extends Component {
   constructor(props) {
     super(props);
 
-    this.sendDropdownMenuOptions = this.sendDropdownMenuOptions.bind(this);
+    this.sendOptions = this.sendOptions.bind(this);
+    this.publishOptions = this.publishOptions.bind(this);
     this.isActionAllowed = this.isActionAllowed.bind(this);
-  }
-
-  handleDelete() {
-    // TODO delete
   }
 
   sendOptions() {
@@ -102,9 +102,6 @@ class PartnerOpenHeaderOptions extends Component {
       status,
       isAdvEd,
       isMFT,
-      isPAM,
-      isBasEd,
-      isCreator,
       isFocalPoint } = this.props;
 
     const options = [
@@ -128,7 +125,7 @@ class PartnerOpenHeaderOptions extends Component {
       options.push(
         {
           name: del,
-          content: <CancelButton handleClick={() => handleDialogOpen(del)} />,
+          content: <CancelButton handleClick={() => handleDialogOpen(cancel)} />,
         });
     }
 
@@ -153,18 +150,30 @@ class PartnerOpenHeaderOptions extends Component {
 
     return (
       <SpreadContent>
-        {isPublished && this.isActionAllowed(hasFinalizePermission) && <Complete handleClick={() => handleDialogOpen(complete)} />}
+        {isPublished && this.isActionAllowed(hasFinalizePermission)
+          && <Complete handleClick={() => handleDialogOpen(complete)} />}
 
-        {!isCompleted && status === 'Dra' && isCreator && hasSendPermission && <SendDsrButton handleClick={() => handleDialogOpen(send)} />}
+        {!isCompleted && status === 'Dra' && isCreator && hasSendPermission
+         && <SendDsrButton handleClick={() => handleDialogOpen(send)} />}
 
         {!isPublished && !isCompleted && status === 'Sen' && hasPublishPermission &&
-      (((isFocalPoint || isCreator) && isAdvEd) || (isFocalPoint && isMFT))
-       && <PublishDsrButton handleClick={() => handleDialogOpen(publish)} />}
+            (((isFocalPoint || isCreator) && isAdvEd) || (isFocalPoint && isMFT))
+         && <PublishDsrButton handleClick={() => handleDialogOpen(publish)} />}
 
         {(status === 'Dra' || status === 'Sen') && <DropdownMenu
           options={status === 'Dra' ? this.sendOptions() : this.publishOptions()}
         />}
 
+        {dialogOpen[cancel] && <CancelDsrModal
+          id={id}
+          dialogOpen={dialogOpen[cancel]}
+          handleDialogClose={handleDialogClose}
+        />}
+        {dialogOpen[del] && <DeleteDsrModal
+          id={id}
+          dialogOpen={dialogOpen[del]}
+          handleDialogClose={handleDialogClose}
+        />}
         {dialogOpen[edit] && <EditCfeiModal
           id={id}
           type="direct"
@@ -232,7 +241,7 @@ const mapStateToProps = (state, ownProps) => ({
   hasEditSentPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_EDIT_SENT, state),
   hasEditPublishedPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_EDIT_PUBLISHED, state),
   hasCancelPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_CANCEL, state),
-  hasFinalizePermission: checkPermission(COMMON_PERMISSIONS.CFEI_FINALIZE),
+  hasFinalizePermission: checkPermission(COMMON_PERMISSIONS.CFEI_FINALIZE, state),
   isAdvEd: isRoleOffice(AGENCY_ROLES.EDITOR_ADVANCED, state),
   isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
   isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),
