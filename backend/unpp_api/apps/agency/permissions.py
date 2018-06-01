@@ -85,3 +85,10 @@ class AgencyPermission(AutoNameEnum):
     # Add Observation & risk flags all
     ADD_FLAG_OBSERVATION_ALL_CSO_PROFILES = auto()
     ADD_FLAG_OBSERVATION_COUNTRY_CSO_PROFILES = auto()
+
+    # Reports
+    RUN_REPORT_CSO_PROFILE = auto()
+    RUN_REPORT_CSO_MAPPING = auto()
+    RUN_REPORT_CSO_CONTACT = auto()
+    RUN_REPORT_CFEI_MANAGEMENT = auto()
+    RUN_REPORT_VERIFICATION_AND_FLAGGING = auto()
