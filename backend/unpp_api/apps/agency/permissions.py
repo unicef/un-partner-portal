@@ -13,8 +13,7 @@ class AgencyPermission(AutoNameEnum):
     # General
     VIEW_DASHBOARD = auto()
     RECEIVE_NOTIFICATIONS = auto()
-    CSO_LIST_VIEW = auto()
-    CSO_PROFILE_VIEW = auto()
+    CSO_LIST_AND_DETAIL_VIEW = auto()
 
     # CFEI
     CFEI_VIEW = auto()  # View Overview of all CFEIs with open and closed/under review status
@@ -22,9 +21,7 @@ class AgencyPermission(AutoNameEnum):
 
     # Create Draft CFEI for Own Agency
     CFEI_DRAFT_CREATE = auto()
-    CFEI_DRAFT_MANAGE = auto()  # Save, edit, delete - if is the creator
-    CFEI_DRAFT_MANAGE_FOCAL_POINT = auto()  # If is the creator
-    CFEI_DRAFT_INVITE_CSO = auto()  # If is the creator
+    CFEI_DRAFT_MANAGE = auto()  # Save, edit, delete, manage CSO's, focal points - if is the creator
     CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH = auto()  # If is the creator
 
     # Publish Draft CFEI for Own Agency
@@ -34,8 +31,7 @@ class AgencyPermission(AutoNameEnum):
     CFEI_PUBLISH = auto()  # If creator
 
     # Modify Published CFEI for Own Agency
-    CFEI_PUBLISHED_SEE_CLARIFICATION_QUESTIONS = auto()  # If creator / focal point
-    CFEI_PUBLISHED_ANSWER_CLARIFICATION_QUESTIONS = auto()  # If creator / focal point
+    CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS = auto()  # If creator / focal point
     CFEI_PUBLISHED_EDIT_DATES = auto()  # If creator / focal point
     CFEI_PUBLISHED_INVITE_CSO = auto()  # If creator / focal point
     CFEI_PUBLISHED_CANCEL = auto()  # If creator / focal point
@@ -44,12 +40,15 @@ class AgencyPermission(AutoNameEnum):
     CFEI_MANAGE_REVIEWERS = auto()  # If creator / focal point
     CFEI_VIEW_APPLICATIONS = auto()  # If creator / focal point
     CFEI_PRESELECT_APPLICATIONS = auto()  # If creator / focal point
-    CFEI_ASSES_PRESELECTED_APPLICATIONS = auto()  # If creator / focal point
-    CFEI_VIEW_MY_ASSESSMENT = auto()  # If creator / focal point
-    CFEI_EDIT_MY_ASSESSMENT = auto()  # If creator / focal point
-    CFEI_VIEW_ALL_ASSESSMENTS = auto()  # If creator / focal point
+    CFEI_REVIEW_APPLICATIONS = auto()  # If creator / focal point
+    CFEI_VIEW_ALL_REVIEWS = auto()  # If creator / focal point
     CFEI_ADD_REVIEW_SUMMARY = auto()  # If creator / focal point
     CFEI_RECOMMEND_PARTNER_FOR_SELECTION = auto()  # If creator / focal point
+
+    # Approve Partner Selection for CFEI Published by Own Agency
+    CFEI_SELECT_RECOMMENDED_PARTNER = auto()  # If focal point
+    CFEI_SELECT_PARTNER = auto()  # If creator
+    CFEI_DESELECT_PARTNER = auto()  # If creator / focal point
 
     # Direct Selection & Retention
     CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS = auto()
