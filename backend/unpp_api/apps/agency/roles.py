@@ -63,6 +63,10 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
         AgencyPermission.CFEI_VIEW,
         AgencyPermission.CFEI_FINALIZED_VIEW_WINNER_AND_CN,
+        AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
+        AgencyPermission.VERIFY_INGO_HQ,
+        AgencyPermission.VERIFY_CSOS_GLOBALLY,
+        AgencyPermission.VERIFY_CSOS_FOR_OWN_COUNTRY,
     ]),
     AgencyRole.ADMINISTRATOR: frozenset([
         AgencyPermission.RESET_CSO_USER_PASSWORD,
@@ -110,6 +114,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_SEND_DRAFT_TO_FOCAL_POINT,
         AgencyPermission.CFEI_DIRECT_EDIT_PUBLISHED,
         AgencyPermission.CFEI_DIRECT_CANCEL,
+
+        AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
     ]),
     AgencyRole.EDITOR_ADVANCED: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -146,6 +152,10 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_PUBLISH,
         AgencyPermission.CFEI_DIRECT_EDIT_PUBLISHED,
         AgencyPermission.CFEI_DIRECT_CANCEL,
+
+        AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
+
+        AgencyPermission.VERIFY_CSOS_FOR_OWN_COUNTRY,
     ]),
     AgencyRole.MFT_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -170,6 +180,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_PUBLISH,
         AgencyPermission.CFEI_DIRECT_EDIT_PUBLISHED,
         AgencyPermission.CFEI_DIRECT_CANCEL,
+
+        AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
     ]),
     AgencyRole.PAM_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -202,6 +214,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_SEND_DRAFT_TO_FOCAL_POINT,
         AgencyPermission.CFEI_DIRECT_EDIT_PUBLISHED,
         AgencyPermission.CFEI_DIRECT_CANCEL,
+
+        AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
     ]),
 }
 

@@ -67,3 +67,11 @@ class AgencyPermission(AutoNameEnum):
     CFEI_DIRECT_EDIT_PUBLISHED = auto()
     CFEI_DIRECT_CANCEL = auto()
     CFEI_DIRECT_FINALIZE = auto()  # If creator / focal point
+
+    # Sanctions check
+    REVIEW_AND_MARK_SANCTIONS_MATCHES = auto()
+
+    # Conduct Verification
+    VERIFY_INGO_HQ = auto()
+    VERIFY_CSOS_GLOBALLY = auto()
+    VERIFY_CSOS_FOR_OWN_COUNTRY = auto()
