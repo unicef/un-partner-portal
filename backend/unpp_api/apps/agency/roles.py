@@ -67,6 +67,10 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.VERIFY_INGO_HQ,
         AgencyPermission.VERIFY_CSOS_GLOBALLY,
         AgencyPermission.VERIFY_CSOS_FOR_OWN_COUNTRY,
+        AgencyPermission.VIEW_PROFILE_OBSERVATION_COUNT,
+        AgencyPermission.VIEW_PROFILE_OBSERVATION_COMMENTS,
+        AgencyPermission.VIEW_PROFILE_FLAG_COUNT,
+        AgencyPermission.VIEW_PROFILE_FLAG_COMMENTS,
     ]),
     AgencyRole.ADMINISTRATOR: frozenset([
         AgencyPermission.RESET_CSO_USER_PASSWORD,
@@ -76,6 +80,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
         AgencyPermission.CFEI_VIEW,
         AgencyPermission.CFEI_FINALIZED_VIEW_WINNER_AND_CN,
+        AgencyPermission.VIEW_PROFILE_OBSERVATION_COUNT,
+        AgencyPermission.VIEW_PROFILE_FLAG_COUNT,
     ]),
     AgencyRole.READER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -116,6 +122,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_CANCEL,
 
         AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
+        AgencyPermission.VIEW_PROFILE_OBSERVATION_COUNT,
+        AgencyPermission.VIEW_PROFILE_FLAG_COUNT,
     ]),
     AgencyRole.EDITOR_ADVANCED: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -156,6 +164,10 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
 
         AgencyPermission.VERIFY_CSOS_FOR_OWN_COUNTRY,
+        AgencyPermission.VIEW_PROFILE_OBSERVATION_COUNT,
+        AgencyPermission.VIEW_PROFILE_OBSERVATION_COMMENTS,
+        AgencyPermission.VIEW_PROFILE_FLAG_COUNT,
+        AgencyPermission.VIEW_PROFILE_FLAG_COMMENTS,
     ]),
     AgencyRole.MFT_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -182,6 +194,10 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_CANCEL,
 
         AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
+        AgencyPermission.VIEW_PROFILE_OBSERVATION_COUNT,
+        AgencyPermission.VIEW_PROFILE_OBSERVATION_COMMENTS,
+        AgencyPermission.VIEW_PROFILE_FLAG_COUNT,
+        AgencyPermission.VIEW_PROFILE_FLAG_COMMENTS,
     ]),
     AgencyRole.PAM_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -216,6 +232,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_CANCEL,
 
         AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
+        AgencyPermission.VIEW_PROFILE_OBSERVATION_COUNT,
+        AgencyPermission.VIEW_PROFILE_FLAG_COUNT,
     ]),
 }
 
