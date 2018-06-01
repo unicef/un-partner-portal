@@ -92,3 +92,6 @@ class AgencyPermission(AutoNameEnum):
     RUN_REPORT_CSO_CONTACT = auto()
     RUN_REPORT_CFEI_MANAGEMENT = auto()
     RUN_REPORT_VERIFICATION_AND_FLAGGING = auto()
+
+    # ERP
+    ERP_ENTER_VENDOR_NUMBER = auto()

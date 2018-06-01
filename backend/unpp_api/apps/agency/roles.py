@@ -77,6 +77,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.RUN_REPORT_CSO_CONTACT,
         AgencyPermission.RUN_REPORT_CFEI_MANAGEMENT,
         AgencyPermission.RUN_REPORT_VERIFICATION_AND_FLAGGING,
+        AgencyPermission.ERP_ENTER_VENDOR_NUMBER,
     ]),
     AgencyRole.ADMINISTRATOR: frozenset([
         AgencyPermission.RESET_CSO_USER_PASSWORD,
@@ -91,6 +92,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.RUN_REPORT_CSO_PROFILE,
         AgencyPermission.RUN_REPORT_CSO_MAPPING,
         AgencyPermission.RUN_REPORT_CSO_CONTACT,
+        AgencyPermission.ERP_ENTER_VENDOR_NUMBER,
     ]),
     AgencyRole.READER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -140,6 +142,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.RUN_REPORT_CSO_MAPPING,
         AgencyPermission.RUN_REPORT_CSO_CONTACT,
         AgencyPermission.RUN_REPORT_CFEI_MANAGEMENT,
+        AgencyPermission.ERP_ENTER_VENDOR_NUMBER,
     ]),
     AgencyRole.EDITOR_ADVANCED: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -190,6 +193,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.RUN_REPORT_CSO_CONTACT,
         AgencyPermission.RUN_REPORT_CFEI_MANAGEMENT,
         AgencyPermission.RUN_REPORT_VERIFICATION_AND_FLAGGING,
+        AgencyPermission.ERP_ENTER_VENDOR_NUMBER,
     ]),
     AgencyRole.MFT_USER: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
