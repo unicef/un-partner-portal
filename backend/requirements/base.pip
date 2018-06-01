@@ -36,6 +36,7 @@ pylint==1.7.1
 factory_boy==2.11.1
 mock==2.0.0
 
+# WSGI
 uWSGI==2.0.17
 
 # Sentry
