@@ -25,7 +25,7 @@ from account.models import User
 from agency.permissions import AgencyPermission
 from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE
 from common.pagination import SmallPagination
-from common.permissions import HasUNPPPermission, check_unpp_permission, current_user_has_permission
+from common.permissions import HasUNPPPermission, check_unpp_permission, check_current_user_has_permission
 from common.mixins import PartnerIdsMixin
 from notification.consts import NotificationType
 from notification.helpers import (
@@ -192,8 +192,7 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
             else:
                 required_permissions = [AgencyPermission.CFEI_DRAFT_MANAGE]
 
-        if not current_user_has_permission(self.request, agency_permissions=required_permissions):
-            raise PermissionDenied
+        check_current_user_has_permission(self.request, agency_permissions=required_permissions)
 
         return super(EOIAPIView, self).perform_destroy(cfei)
 
