@@ -14,7 +14,8 @@ class PartnerFlag(TimeStampedModel):
     """
     partner = models.ForeignKey('partner.Partner', related_name="flags")
     flag_type = models.CharField(
-        max_length=3, choices=FLAG_TYPES, default=FLAG_TYPES.yellow)
+        max_length=3, choices=FLAG_TYPES, default=FLAG_TYPES.yellow
+    )
     is_valid = models.BooleanField(default=True)
     submitter = models.ForeignKey('account.User', related_name="given_flags")
     comment = models.TextField(null=True, blank=True)

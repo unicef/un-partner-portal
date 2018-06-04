@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, get_object_or_404
 
+from agency.permissions import AgencyPermission
 from common.pagination import SmallPagination
 from common.permissions import (
     HasUNPPPermission,
+    current_user_has_permission,
 )
+from partner.models import Partner
 from review.serializers import PartnerFlagSerializer, PartnerVerificationSerializer
 from review.models import PartnerFlag, PartnerVerification
 
@@ -40,7 +44,7 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
     permission_classes = (
         IsAuthenticated,
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[]
         ),
     )
     serializer_class = PartnerVerificationSerializer
@@ -50,8 +54,22 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
         return PartnerVerification.objects.filter(partner=self.kwargs['partner_id'])
 
     def perform_create(self, serializer):
-        serializer.save(submitter=self.request.user,
-                        partner_id=self.kwargs['partner_id'])
+        partner = get_object_or_404(Partner, id=self.kwargs['partner_id'])
+        if partner.is_hq:
+            current_user_has_permission(
+                self.request, agency_permissions=[AgencyPermission.VERIFY_INGO_HQ], raise_exception=True
+            )
+        elif current_user_has_permission(
+            self.request, agency_permissions=[AgencyPermission.VERIFY_CSOS_GLOBALLY]
+        ):
+            pass
+        elif current_user_has_permission(
+            self.request, agency_permissions=[AgencyPermission.VERIFY_CSOS_FOR_OWN_COUNTRY]
+        ):
+            if not partner.country_code == self.request.agency_member.office.country.code:
+                raise PermissionDenied
+
+        serializer.save(submitter=self.request.user, partner=partner)
 
 
 class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
