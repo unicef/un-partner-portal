@@ -29,7 +29,7 @@ const NumberOfConceptNotes = (props) => {
         <GridRow>
           <Typography type="headline">{messages.title}</Typography>
           <GridColumn alignItems="flex-end">
-            {[
+            {typeof number !== 'undefined' && (
               <Typography
                 key={0}
                 className={classes.number}
@@ -37,7 +37,7 @@ const NumberOfConceptNotes = (props) => {
               >
                 {number}
               </Typography>
-            ]}
+            )}
           </GridColumn>
         </GridRow>
       </PaddedContent>

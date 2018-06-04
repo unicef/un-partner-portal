@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { compose, pluck, any } from 'ramda';
 import withStyles from 'material-ui/styles/withStyles';
+import { TableCell } from 'material-ui/Table';
 import { browserHistory as history, withRouter } from 'react-router';
 import OpenCfeiApplicationsFilter from '../../filters/openCfeiApplicationsFilter';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
@@ -86,7 +87,7 @@ class ApplicationsListContainer extends Component {
     return true;
   }
 
-  applicationsCells({ row, column, hovered }) {
+  applicationsCells({ row, column, hovered, value }) {
     const { changeDisabled } = this.props;
     if (column.name === 'name') {
       return (<PartnerProfileNameCell
@@ -112,7 +113,7 @@ class ApplicationsListContainer extends Component {
       return <OrganizationTypeCell orgType={row.type_org} />;
     }
 
-    return undefined;
+    return <TableCell>{value}</TableCell>;
   }
 
   render() {

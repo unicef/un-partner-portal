@@ -47,7 +47,7 @@ const menuLink = (props) => {
 };
 
 menuLink.propTypes = {
-  active: PropTypes.bool.isRequired,
+  active: PropTypes.bool,
   onClick: PropTypes.func.isRequired,
   icon: PropTypes.element,
   label: PropTypes.string,

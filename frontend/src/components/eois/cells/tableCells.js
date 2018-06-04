@@ -11,7 +11,7 @@ import CountriesCell from '../../partners/countriesCell';
 import EoiDSPartnersCell from './eoiDSPartnersCell';
 import { formatDateForPrint } from '../../../helpers/dates';
 
-export default type => ({ row, column }) => {
+export default type => ({ row, column, value }) => {
   if (column.name === 'title' || column.name === 'project_title') {
     return <EoiNameCell title={row.title || row.project_title} id={`${row.id}`} />;
   } else if (column.name === 'country_code') {
@@ -77,5 +77,5 @@ export default type => ({ row, column }) => {
       </TableCell>);
   }
 
-  return undefined;
+  return <TableCell>{value}</TableCell>;
 };

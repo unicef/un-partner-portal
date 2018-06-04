@@ -18,7 +18,7 @@ const columns = [
 ];
 
 
-const renderCells = ({ row, column }) => {
+const renderCells = ({ row, column, value }) => {
   if (column.name === 'id') {
     return (
       <TableCell >
@@ -36,7 +36,7 @@ const renderCells = ({ row, column }) => {
         {formatDateForPrint(row.deadline_date)}
       </TableCell>);
   }
-  return undefined;
+  return <TableCell>{value}</TableCell>;
 };
 
 renderCells.propTypes = {

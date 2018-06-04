@@ -245,7 +245,6 @@ export const renderRadioFieldWithChild = ({ input,
         {...other}
       >
         {options.map((value, index) => {
-          console.log(value.child);
           if (value.child) {
             return (
               <div>
