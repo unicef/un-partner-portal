@@ -52,8 +52,8 @@ const CompleteCfeiForm = (props) => {
   };
 
   const commentFormControlStyle = {
-    marginBottom: '12px',
-    padding: '12px',
+    paddingBottom: '12px',
+    // padding: '12px',
   };
 
   completedReasonAccepted.push(completionReasons[1]);
