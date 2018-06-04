@@ -804,7 +804,7 @@ class EOISendToPublishAPIView(RetrieveAPIView):
         ),
     )
     serializer_class = AgencyProjectSerializer
-    queryset = EOI.objects.filter(is_published=False)
+    queryset = EOI.objects.filter(sent_for_publishing=False, is_published=False)
 
     def check_object_permissions(self, request, obj):
         super(EOISendToPublishAPIView, self).check_object_permissions(request, obj)
@@ -817,7 +817,7 @@ class EOISendToPublishAPIView(RetrieveAPIView):
         obj = self.get_object()
         obj.sent_for_publishing = True
         obj.save()
-        return Response(AgencyProjectSerializer(obj).data)
+        return Response(self.serializer_class(obj).data)
 
 
 class PublishEOIAPIView(RetrieveAPIView):

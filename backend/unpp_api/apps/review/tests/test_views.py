@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.urls import reverse
 
-from rest_framework import status as statuses
+from rest_framework import status
 
 from common.consts import FLAG_TYPES
 from common.tests.base import BaseAPITestCase
@@ -13,8 +13,6 @@ from review.models import PartnerFlag, PartnerVerification
 
 
 class TestPartnerFlagAPITestCase(BaseAPITestCase):
-
-    user_type = 'agency'
 
     def setUp(self):
         super(TestPartnerFlagAPITestCase, self).setUp()
@@ -38,7 +36,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         }
 
         response = self.client.post(url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(status.is_success(response.status_code))
         self.assertEquals(response.data['submitter']['name'], self.user.get_fullname())
         self.assertEquals(response.data['flag_type'], FLAG_TYPES.yellow)
         self.assertEquals(response.data['is_valid'], True)
@@ -51,6 +49,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
             'is_valid': False
         }
         response = self.client.patch(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['is_valid'], False)
 
         # Attempt to modify data. Should not change comment

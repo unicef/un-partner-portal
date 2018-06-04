@@ -943,7 +943,7 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
 class TestDirectSelectionTestCase(BaseAPITestCase):
 
     user_type = BaseAPITestCase.USER_AGENCY
-    agency_role = AgencyRole.EDITOR_ADVANCED
+    agency_role = AgencyRole.EDITOR_BASIC
     quantity = 2
     initial_factories = [
         AgencyFactory,
@@ -1026,6 +1026,13 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         direct_selection_payload['applications'].pop()
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertFalse(response.data['eoi']['sent_for_publishing'])
+        self.assertFalse(response.data['eoi']['is_published'])
+
+        # publish_url = reverse('projects:eoi-send-to-publish', kwargs={'pk': response.data['eoi']['id']})
+        # publish_response = self.client.post(publish_url)
+        # self.assertResponseStatusIs(publish_response, status.HTTP_200_OK)
+        # self.assertTrue(EOI.objects.get(pk=response.data['eoi']['id']).sent_for_publishing)
 
         selection_emails = list(filter(
             lambda msg: msg.subject == NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'],

@@ -19,7 +19,9 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
     permission_classes = (
         IsAuthenticated,
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+
+            ]
         ),
     )
     serializer_class = PartnerFlagSerializer
@@ -29,8 +31,7 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
         return PartnerFlag.objects.filter(partner=self.kwargs['partner_id'])
 
     def perform_create(self, serializer):
-        serializer.save(submitter=self.request.user,
-                        partner_id=self.kwargs['partner_id'])
+        serializer.save(submitter=self.request.user, partner_id=self.kwargs['partner_id'])
 
 
 class PartnerVerificationListCreateAPIView(ListCreateAPIView):
