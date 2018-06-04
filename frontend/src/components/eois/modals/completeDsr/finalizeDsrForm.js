@@ -17,16 +17,15 @@ import { selectNormalizedDsrFinalizeOptions,
 } from '../../../../store';
 import { PROJECT_STATUSES, PROJECT_TYPES } from '../../../../helpers/constants';
 
-const styleSheet = theme => ({
-  formControl: {
-    marginLeft: theme.spacing.unit * 2,
-  },
-});
-
-
 const messages = {
-  justification: 'Add justification for completing this CFEI',
-  reason: 'Choose reason of completing this CFEI',
+  cancellationExplanationLabel: 'Explanation for cancellation ',
+  cancellationExplanationPlaceholder: 'Add explanation for cancellation',
+  justificationLabel: 'Add justification for completing this direct selection/retenion:',
+  justificationPlaceholder: 'Enter Comment...',
+  completedReasonLabel: 'Choose reason for finalzing this direct selection/retention:',
+  retentionPlaceholder: 'Select time period',
+  retentionLabel: 'Time period:',
+  
 };
 
 const mapCompletionReasons = (disableNoC, disablePar) => (item) => {
@@ -38,7 +37,7 @@ const mapCompletionReasons = (disableNoC, disablePar) => (item) => {
   return item;
 };
 
-const CompleteCfeiForm = (props) => {
+const FinalizeDsrForm = (props) => {
   const { classes, handleSubmit, completionReasons, timePeriods, completedReason } = props;
   const completedReasonAccepted = [];
   const completedReasonRetention = [];
@@ -53,7 +52,6 @@ const CompleteCfeiForm = (props) => {
 
   const commentFormControlStyle = {
     paddingBottom: '12px',
-    // padding: '12px',
   };
 
   completedReasonAccepted.push(completionReasons[1]);
@@ -63,13 +61,13 @@ const CompleteCfeiForm = (props) => {
   return (
     <form onSubmit={handleSubmit}>
       <TextFieldForm
-        fieldName="Add justification for completing this direct selection/retenion:"
-        placeholder="Enter comment..."
-        label="Explanation for cancellation"
+        fieldName="completion_justification"
+        placeholder={messages.justificationPlaceholder}
+        label={messages.justificationLabel}
         commentFormControlStyle={commentFormControlStyle}
       />
       <RadioForm
-        label="Choose reason for finalzing this direct selection/retention:"
+        label={messages.completedReasonLabel}
         fieldName="completed_reason"
         values={completedReasonAccepted}
         column
@@ -83,11 +81,10 @@ const CompleteCfeiForm = (props) => {
         <Grid>
           <SelectForm
             fieldName="retention"
-            placeholder="Select time period"
-            label="Time period"
+            placeholder={messages.retentionPlaceholder}
+            label={messages.retentionLabel}
             values={timePeriods}
             optional={checkIfNotRetention}
-            // readOnly={completedReason !== 'accepted_retention'}
             selectFieldProps={{
               disabled: checkIfNotRetention,
             }}
@@ -102,22 +99,20 @@ const CompleteCfeiForm = (props) => {
         column
       />
       <TextFieldForm
-        fieldName="cancellation"
-        placeholder="Add explanation for cancellation"
-        label="Explanation for cancellation"
+        fieldName="cancellation_explanation"
+        placeholder={messages.cancellationExplanationPlaceholder}
+        label={messages.cancellationExplanationLabel}
         optional={checkIfNotCancelled}
         textFieldProps={{
           disabled: checkIfNotCancelled,
         }}
         formControlStyle={formControlStyle}
-        // readOnly={completedReason !== 'cancelled'}
-        // style={{ marginLeft: '30px' }}
       />
     </form >
   );
 };
 
-CompleteCfeiForm.propTypes = {
+FinalizeDsrForm.propTypes = {
   classes: PropTypes.object,
   /**
    * callback for form submit
@@ -128,16 +123,16 @@ CompleteCfeiForm.propTypes = {
   disabled: PropTypes.string,
 };
 
-const formEditCfei = reduxForm({
-  form: 'completeCfei',
-})(CompleteCfeiForm);
+const finalizeDsr = reduxForm({
+  form: 'finalizeDsr',
+})(FinalizeDsrForm);
 
 const mapStateToProps = (state, { params: { id, type } }, ownProps) => {
   const completionReasons = selectNormalizedDsrFinalizeOptions(state);
   const status = selectCfeiStatus(state, id);
   const reviewStarted = (status === PROJECT_STATUSES.OPE && type !== PROJECT_TYPES.DIRECT);
   const hasWinners = selectCfeiWinnersStatus(state, id);
-  const selector = formValueSelector('completeCfei');
+  const selector = formValueSelector('finalizeDsr');
   return {
     completionReasons: completionReasons.map(
       mapCompletionReasons(reviewStarted, !hasWinners)),
@@ -147,7 +142,6 @@ const mapStateToProps = (state, { params: { id, type } }, ownProps) => {
 };
 
 export default compose(
-  withStyles(styleSheet, { name: 'CompleteCfeiForm' }),
   withRouter,
   connect(mapStateToProps),
-)(formEditCfei);
+)(finalizeDsr);

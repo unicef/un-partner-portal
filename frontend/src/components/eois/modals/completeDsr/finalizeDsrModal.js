@@ -7,21 +7,21 @@ import { updateCfei } from '../../../../reducers/newCfei';
 import FinalizeDsrForm from './finalizeDsrForm';
 
 const messages = {
-  title: 'Are you sure you want to finalize this CFEI?',
-  header: { title: 'An e-mail notification that this CFEI is now finalized will be sent to all partners who applied for this CFEI.' },
-  save: 'complete',
+  title: 'Are you sure you want to finalize this direct selection/retention?',
+  header: { title: 'Email will be sent to participating Partner.' },
+  save: 'finalize',
 };
 
-class CompleteCfeiModal extends Component {
+class FinalizeDsrModal extends Component {
   constructor(props) {
     super(props);
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
   onFormSubmit(values) {
-    // return this.props.updateCfei(values).then(() => {
-    //   this.props.handleDialogClose();
-    // });
+    return this.props.updateCfei(values).then(() => {
+      this.props.handleDialogClose();
+    });
   }
 
   render() {
@@ -51,7 +51,7 @@ class CompleteCfeiModal extends Component {
   }
 }
 
-CompleteCfeiModal.propTypes = {
+FinalizeDsrModal.propTypes = {
   dialogOpen: PropTypes.bool,
   id: PropTypes.string,
   submit: PropTypes.func,
@@ -65,12 +65,12 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   updateCfei: body => dispatch(updateCfei(body, ownProps.id)),
-  submit: () => dispatch(submit('completeCfei')),
+  submit: () => dispatch(submit('finalize')),
 });
 
-const containerCompleteCfeiModal = connect(
+const containerFinalizeDsrModal = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CompleteCfeiModal);
+)(FinalizeDsrModal);
 
-export default containerCompleteCfeiModal;
+export default containerFinalizeDsrModal;
