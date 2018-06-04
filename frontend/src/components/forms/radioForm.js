@@ -2,7 +2,7 @@ import React from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
-import { renderRadioField, renderText, renderBool } from '../../helpers/formHelper';
+import { renderRadioField, renderText, renderBool, renderRadioFieldWithChild } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
 const RadioForm = (props) => {
@@ -32,7 +32,7 @@ const RadioForm = (props) => {
         />
         : <Field
           name={fieldName}
-          component={renderRadioField}
+          component={renderRadioFieldWithChild}
           options={values}
           label={label}
           infoText={infoText}

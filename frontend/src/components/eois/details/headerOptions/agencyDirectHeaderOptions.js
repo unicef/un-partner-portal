@@ -16,9 +16,9 @@ import SendDsrModal from '../../modals/completeDsr/sendDsrModal';
 import DeleteDsrModal from '../../modals/completeDsr/deleteDsrModal';
 import CancelDsrModal from '../../modals/completeDsr/cancelDsrModal';
 import PublishDsrModal from '../../modals/completeDsr/publishDsrModal';
+import FinalizeDsrModal from '../../modals/completeDsr/finalizeDsrModal'
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
-import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
 import { checkPermission, isRoleOffice, AGENCY_ROLES, AGENCY_PERMISSIONS, COMMON_PERMISSIONS } from '../../../../helpers/permissions';
 import { selectCfeiStatus,
   isCfeiPublished,
@@ -192,7 +192,7 @@ class PartnerOpenHeaderOptions extends Component {
           dialogOpen={dialogOpen[publish]}
           handleDialogClose={handleDialogClose}
         />}
-        {dialogOpen[complete] && <CompleteCfeiModal
+        {dialogOpen[complete] && <FinalizeDsrModal
           id={id}
           dialogOpen={dialogOpen[complete]}
           handleDialogClose={handleDialogClose}
