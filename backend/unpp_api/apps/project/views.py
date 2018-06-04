@@ -138,6 +138,13 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
     def get_serializer_class(self, *args, **kwargs):
         return AgencyProjectSerializer if self.request.user.is_agency_user else PartnerProjectSerializer
 
+    def get_queryset(self):
+        queryset = super(EOIAPIView, self).get_queryset()
+        if not self.request.method == 'GET':
+            queryset = queryset.filter(Q(created_by=self.request.user) | Q(focal_points=self.request.user))
+
+        return queryset
+
     def perform_update(self, serializer):
         eoi = self.get_object()
         currently_invited_partners = list(eoi.invited_partners.all().values_list('id', flat=True))
