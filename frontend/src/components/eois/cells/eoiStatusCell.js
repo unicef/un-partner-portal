@@ -22,6 +22,9 @@ const styleSheet = theme => ({
   Dra: {
     color: theme.palette.eoiStatus.draft,
   },
+  Sen: {
+    color: theme.palette.eoiStatus.draft,
+  },
   text: {
     whiteSpace: 'normal',
     maxWidth: 80,
@@ -31,6 +34,7 @@ const styleSheet = theme => ({
 const EoiStatusCell = (props) => {
   const { classes, status } = props;
   const colorClass = classNames(classes[status]);
+  
   return (
     <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={8}>
       <Grid item >

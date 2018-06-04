@@ -24,11 +24,12 @@ const SingleSelectedPartner = (props) => {
     acceptSelection,
     displayAccept,
     displayWithdraw } = props;
-  return (<GridColumn>
-    <Typography>{partner.partner_name}</Typography>
-    <Typography type="caption">{applicationStatus}</Typography>
-    {displayAccept && <Typography type="caption">{messages.acceptText}</Typography>}
-    {(displayAccept || displayWithdraw) &&
+  return (
+    <div><GridColumn>
+      <Typography>{partner.partner_name}</Typography>
+      <Typography type="caption">{applicationStatus}</Typography>
+      {displayAccept && <Typography type="caption">{messages.acceptText}</Typography>}
+      {(displayAccept || displayWithdraw) &&
       <Grid container justify="flex-end">
         {displayWithdraw && <Grid item>
           <WithdrawApplicationButton
@@ -39,8 +40,9 @@ const SingleSelectedPartner = (props) => {
           <Button color="accent" onClick={() => { acceptSelection().then(loadCfei); }}>{messages.accept}</Button>
         </Grid>}
       </Grid>
-    }
-  </GridColumn>);
+      }
+    </GridColumn>
+    </div>);
 };
 
 SingleSelectedPartner.propTypes = {

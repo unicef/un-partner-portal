@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import { PROJECT_TYPES, ROLES, PROJECT_STATUSES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
@@ -9,6 +10,7 @@ import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
 import AgencyOpenAfterDeadlineHeaderOptions from './agencyOpenAfterDeadlineHeaderOptions';
 import EoiStatusCell from '../../cells/eoiStatusCell';
 import { selectCfeiStatus,
+  isCfeiPublished,
   isCfeiCompleted,
   selectCfeiConverted,
   selectCfeiJustification,
@@ -16,7 +18,6 @@ import { selectCfeiStatus,
   isUserACreator,
 } from '../../../../store';
 import GridColumn from '../../../common/grid/gridColumn';
-import Grid from 'material-ui/Grid';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
 
 const HeaderOptionsContainer = (props) => {
@@ -43,7 +44,7 @@ const HeaderOptionsContainer = (props) => {
       options = <PartnerOpenHeaderOptions />;
     }
   } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
-    options = (allowedToEdit && !cfeiCompleted) ? <AgencyDirectHeaderOptions /> : null;
+    options = !cfeiCompleted ? <AgencyDirectHeaderOptions id={id} /> : null;
   }
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return !cfeiConverted && role === ROLES.AGENCY
@@ -81,6 +82,7 @@ HeaderOptionsContainer.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   cfeiCompleted: isCfeiCompleted(state, ownProps.id),
+  cfeiPublished: isCfeiPublished(state, ownProps.id),
   cfeiStatus: selectCfeiStatus(state, ownProps.id),
   completedJustification: selectCfeiJustification(state, ownProps.id),
   completedReasons: state.partnerProfileConfig['completed-reason'] || {},

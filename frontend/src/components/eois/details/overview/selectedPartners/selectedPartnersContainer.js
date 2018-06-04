@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import Divider from 'material-ui/Divider';
 import Typography from 'material-ui/Typography';
 import HeaderList from '../../../../common/list/headerList';
 import PaddedContent from '../../../../common/paddedContent';
@@ -16,19 +17,24 @@ const title = () => (
 );
 
 const renderRow = (partners, isUserFocalPoint, id) => partners.map((partner, index) => (
-  <PaddedContent key={partner.id}>
-    <SingleSelectedPartner
-      key={`partner_${index}`}
-      isFocalPoint={isUserFocalPoint}
-      partner={partner}
-      id={id}
-    />
-  </PaddedContent>
+  <div>
+    <PaddedContent key={partner.id}>
+      <SingleSelectedPartner
+        key={`partner_${index}`}
+        isFocalPoint={isUserFocalPoint}
+        partner={partner}
+        id={id}
+      />
+    </PaddedContent>
+    {/* TODO show justiciation fields */}
+    <Divider />
+  </div>
 ));
 
 
 const SelectedPartners = (props) => {
   const { partners, isUserFocalPoint, id } = props;
+
   return (
     <HeaderList
       header={title}
