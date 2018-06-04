@@ -4,15 +4,15 @@ import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import ControlledModal from '../../../common/modals/controlledModal';
 import { updateCfei } from '../../../../reducers/newCfei';
-import CompleteCfeiForm from './completeCfeiForm';
+import FinalizeDsrForm from './finalizeDsrForm';
 
 const messages = {
   title: 'Are you sure you want to finalize this direct selection/retention?',
-  header: { title: 'E-mail will be sent to participating partner.' },
+  header: { title: 'Email will be sent to participating Partner.' },
   save: 'finalize',
 };
 
-class CompleteCfeiModal extends Component {
+class FinalizeDsrModal extends Component {
   constructor(props) {
     super(props);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -34,7 +34,7 @@ class CompleteCfeiModal extends Component {
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
           info={messages.header}
-          minWidth={30}
+          minWidth={40}
           buttons={{
             flat: {
               handleClick: handleDialogClose,
@@ -44,14 +44,14 @@ class CompleteCfeiModal extends Component {
               label: messages.save,
             },
           }}
-          content={<CompleteCfeiForm id={id} onSubmit={this.onFormSubmit} />}
+          content={<FinalizeDsrForm id={id} onSubmit={this.onFormSubmit} />}
         />
       </div >
     );
   }
 }
 
-CompleteCfeiModal.propTypes = {
+FinalizeDsrModal.propTypes = {
   dialogOpen: PropTypes.bool,
   id: PropTypes.string,
   submit: PropTypes.func,
@@ -65,12 +65,12 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   updateCfei: body => dispatch(updateCfei(body, ownProps.id)),
-  submit: () => dispatch(submit('completeCfei')),
+  submit: () => dispatch(submit('finalize')),
 });
 
-const containerCompleteCfeiModal = connect(
+const containerFinalizeDsrModal = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CompleteCfeiModal);
+)(FinalizeDsrModal);
 
-export default containerCompleteCfeiModal;
+export default containerFinalizeDsrModal;

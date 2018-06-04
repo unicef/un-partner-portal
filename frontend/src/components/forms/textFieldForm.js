@@ -19,10 +19,12 @@ function TextFieldForm(props) {
     normalize,
     readOnly,
     infoText,
+    formControlStyle,
+    commentFormControlStyle,
   } = props;
 
   return (
-    <Grid item>
+    <Grid item style={commentFormControlStyle}>
       {readOnly
         ? <Field
           name={fieldName}
@@ -41,6 +43,8 @@ function TextFieldForm(props) {
           normalize={normalize}
           infoText={infoText}
           warn={warn ? warning : null}
+          formControlStyle={formControlStyle}
+          commentFormControlStyle={commentFormControlStyle}
           {...textFieldProps}
         />
       }
@@ -90,6 +94,10 @@ TextFieldForm.propTypes = {
    * text for tooltip icon
    */
   infoText: PropTypes.node,
+
+  formControlStyle: PropTypes.object,
+
+  commentFormControlStyle: PropTypes.object,
 };
 
 TextFieldForm.defaultProps = {
