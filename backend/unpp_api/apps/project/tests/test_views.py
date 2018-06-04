@@ -31,7 +31,8 @@ from common.factories import (
     PartnerVerificationFactory,
     UserFactory,
     PartnerFactory,
-    get_new_common_file)
+    get_new_common_file,
+)
 from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
@@ -40,7 +41,7 @@ from common.consts import (
     COMPLETED_REASON,
     CFEI_TYPES,
     CFEI_STATUSES,
-)
+    EXTENDED_APPLICATION_STATUSES)
 from project.views import PinProjectAPIView
 from project.serializers import ConvertUnsolicitedSerializer
 
@@ -1056,7 +1057,7 @@ class TestEOIPublish(BaseAPITestCase):
 
     quantity = 1
     user_type = BaseAPITestCase.USER_AGENCY
-    agency_role = AgencyRole.READER
+    partner_role = AgencyRole.READER
     initial_factories = [
         AgencyFactory,
         AgencyOfficeFactory,
@@ -1082,3 +1083,55 @@ class TestEOIPublish(BaseAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         eoi.refresh_from_db()
         self.assertTrue(eoi.is_published)
+
+
+class TestUCNCreateAndPublish(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_PARTNER
+    agency_role = PartnerRole.EDITOR
+    initial_factories = [
+        AgencyFactory,
+        AgencyOfficeFactory,
+        UserFactory,
+        AgencyMemberFactory,
+        PartnerFactory,
+        PartnerMemberFactory,
+    ]
+
+    def test_ucn_create_and_publish(self):
+        payload = {
+            "locations": [
+                {
+                    "admin_level_1": {
+                        "name": "Île-de-France",
+                        "country_code": "FR"
+                    },
+                    "lat": "48.45289",
+                    "lon": "2.65182"
+                }
+            ],
+            'title': 'Save stuff',
+            'agency': Agency.objects.order_by('?').first().id,
+            "specializations": [
+                s.id for s in Specialization.objects.order_by('?')[:2]
+            ],
+            'cn': get_new_common_file().id
+        }
+
+        url = reverse('projects:applications-unsolicited')
+        response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        ucn = Application.objects.get(id=response.data['id'])
+        self.assertEqual(ucn.application_status, EXTENDED_APPLICATION_STATUSES.draft)
+
+        publish_url = reverse('projects:ucn-publish', kwargs={'pk': ucn.pk})
+
+        self.set_current_user_role(PartnerRole.READER.name)
+        publish_response = self.client.post(publish_url)
+        self.assertResponseStatusIs(publish_response, status.HTTP_403_FORBIDDEN)
+
+        self.set_current_user_role(PartnerRole.EDITOR.name)
+        publish_response = self.client.post(publish_url)
+        self.assertResponseStatusIs(publish_response, status.HTTP_200_OK)
+        ucn.refresh_from_db()
+        self.assertEqual(ucn.application_status, EXTENDED_APPLICATION_STATUSES.review)
