@@ -25,7 +25,7 @@ from account.models import User
 from agency.permissions import AgencyPermission
 from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE
 from common.pagination import SmallPagination
-from common.permissions import HasUNPPPermission, has_unpp_permission
+from common.permissions import HasUNPPPermission, check_unpp_permission, current_user_has_permission
 from common.mixins import PartnerIdsMixin
 from notification.consts import NotificationType
 from notification.helpers import (
@@ -110,7 +110,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
 
         return queryset.filter(deadline_date__gte=date.today(), is_completed=False)
 
-    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_CREATE])
+    @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_CREATE])
     def post(self, request, *args, **kwargs):
         serializer = CreateProjectSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
@@ -137,6 +137,13 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
 
     def get_serializer_class(self, *args, **kwargs):
         return AgencyProjectSerializer if self.request.user.is_agency_user else PartnerProjectSerializer
+
+    def get_queryset(self):
+        queryset = super(EOIAPIView, self).get_queryset()
+        if not self.request.method == 'GET':
+            queryset = queryset.filter(Q(created_by=self.request.user) | Q(focal_points=self.request.user))
+
+        return queryset
 
     def perform_update(self, serializer):
         eoi = self.get_object()
@@ -180,11 +187,21 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
         if instance.is_completed:
             send_notification_cfei_completed(instance)
 
-    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_MANAGE])
-    def perform_destroy(self, instance):
-        if instance.is_published:
-            raise serializers.ValidationError('Published CFEIs cannot be deleted.')
-        return super(EOIAPIView, self).perform_destroy(instance)
+    def perform_destroy(self, cfei):
+        if cfei.is_direct:
+            if cfei.is_published:
+                required_permissions = [AgencyPermission.CFEI_DIRECT_CANCEL]
+            else:
+                required_permissions = [AgencyPermission.CFEI_DIRECT_DELETE_DRAFT]
+        else:
+            if cfei.is_published:
+                required_permissions = [AgencyPermission.CFEI_PUBLISHED_CANCEL]
+            else:
+                required_permissions = [AgencyPermission.CFEI_DRAFT_MANAGE]
+
+        current_user_has_permission(self.request, agency_permissions=required_permissions)
+
+        return super(EOIAPIView, self).perform_destroy(cfei)
 
 
 class DirectProjectAPIView(BaseProjectAPIView):
@@ -201,7 +218,7 @@ class DirectProjectAPIView(BaseProjectAPIView):
     def get_queryset(self):
         return self.queryset.filter(display_type=CFEI_TYPES.direct).distinct()
 
-    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS])
+    @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS])
     def post(self, request, *args, **kwargs):
         data = request.data
         try:
@@ -234,7 +251,7 @@ class PinProjectAPIView(BaseProjectAPIView):
             pins__partner_id=self.request.active_partner.id, deadline_date__gte=date.today()
         ).distinct()
 
-    @has_unpp_permission(partner_permissions=[PartnerPermission.CFEI_PINNING])
+    @check_unpp_permission(partner_permissions=[PartnerPermission.CFEI_PINNING])
     def patch(self, request, *args, **kwargs):
         eoi_ids = request.data.get("eoi_ids", [])
         pin = request.data.get("pin")
@@ -418,7 +435,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
 
         return queryset.none()
 
-    @has_unpp_permission(
+    @check_unpp_permission(
         partner_permissions=[
             PartnerPermission.CFEI_ANSWER_SELECTION,
         ],
@@ -470,7 +487,7 @@ class ReviewersStatusAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+                AgencyPermission.CFEI_VIEW_ALL_REVIEWS,
             ]
         ),
     )
@@ -497,7 +514,7 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+                AgencyPermission.CFEI_VIEW_ALL_REVIEWS,
             ]
         ),
     )
@@ -590,7 +607,7 @@ class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreate
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id__in=self.get_partner_ids())
 
-    @has_unpp_permission(partner_permissions=[PartnerPermission.UCN_DRAFT])
+    @check_unpp_permission(partner_permissions=[PartnerPermission.UCN_DRAFT])
     def perform_create(self, serializer):
         super(PartnerApplicationUnsolicitedListCreateAPIView, self).perform_create(serializer)
         send_notification_application_created(serializer.instance)
@@ -670,7 +687,7 @@ class ReviewSummaryAPIView(RetrieveUpdateAPIView):
             return
         self.permission_denied(request)
 
-    @has_unpp_permission(agency_permissions=[AgencyPermission.CFEI_ADD_REVIEW_SUMMARY])
+    @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_ADD_REVIEW_SUMMARY])
     def perform_update(self, serializer):
         super(ReviewSummaryAPIView, self).perform_update(serializer)
 
@@ -682,7 +699,7 @@ class EOIReviewersAssessmentsListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+                AgencyPermission.CFEI_VIEW_ALL_REVIEWS,
             ]
         ),
     )
@@ -704,7 +721,7 @@ class EOIReviewersAssessmentsNotifyAPIView(APIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+                AgencyPermission.CFEI_VIEW_ALL_REVIEWS,
             ]
         ),
     )
@@ -744,7 +761,7 @@ class CompareSelectedListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW_ALL_ASSESSMENTS,
+                AgencyPermission.CFEI_VIEW_ALL_REVIEWS,
             ]
         ),
     )
@@ -776,6 +793,31 @@ class CompareSelectedListAPIView(ListAPIView):
             queryset.none()
 
         return queryset
+
+
+class EOISendToPublishAPIView(RetrieveAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH,
+            ]
+        ),
+    )
+    serializer_class = AgencyProjectSerializer
+    queryset = EOI.objects.filter(is_published=False)
+
+    def check_object_permissions(self, request, obj):
+        super(EOISendToPublishAPIView, self).check_object_permissions(request, obj)
+        if obj.created_by == request.user:
+            return
+        self.permission_denied(request)
+
+    def post(self, *args, **kwargs):
+        # TODO: Notify focal point
+        obj = self.get_object()
+        obj.sent_for_publishing = True
+        obj.save()
+        return Response(AgencyProjectSerializer(obj).data)
 
 
 class PublishEOIAPIView(RetrieveAPIView):

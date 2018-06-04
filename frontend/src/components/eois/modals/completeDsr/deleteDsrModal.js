@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { browserHistory as history } from 'react-router';
 import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import { Typography } from 'material-ui';
 import PaddedContent from '../../../common/paddedContent';
 import ControlledModal from '../../../common/modals/controlledModal';
-import { publishCfeiRequest } from '../../../../reducers/publishCfei';
+import { deleteCfeiRequest } from '../../../../reducers/deleteCfei';
 
 const messages = {
-  title: 'Are you sure you want to publish this DS/R?',
-  info: 'Please confirm that you want to publish this direct selection/retention. Email with notification will be sent to selected partner.',
-  publish: 'publish',
+  title: 'Are you sure you want to delete this DS/R?',
+  info: 'Please confirm that you want to delete this direct selection/retention?',
+  publish: 'delete',
 };
 
 const styleSheet = theme => ({
@@ -19,15 +20,15 @@ const styleSheet = theme => ({
   },
 });
 
-class PublishDsrModal extends Component {
+class DeleteDsrModal extends Component {
   constructor(props) {
     super(props);
     this.publish = this.publish.bind(this);
   }
 
   publish() {
-    return this.props.publishDsr().then(() => {
-      this.props.handleDialogClose();
+    return this.props.deleteCfei().then(() => {
+      history.push(this.props.previousPath);
     });
   }
 
@@ -60,21 +61,23 @@ class PublishDsrModal extends Component {
   }
 }
 
-PublishDsrModal.propTypes = {
+DeleteDsrModal.propTypes = {
   classes: PropTypes.object.isRequired,
   dialogOpen: PropTypes.bool,
-  publishDsr: PropTypes.func,
+  deleteCfei: PropTypes.func,
+  previousPath: PropTypes.string,
   handleDialogClose: PropTypes.func,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   showLoading: state.publishCfei.status.loading,
+  previousPath: state.routesHistory.previousPath || ownProps.defaultPath,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  publishDsr: () => dispatch(publishCfeiRequest(ownProps.id)),
+  deleteCfei: () => dispatch(deleteCfeiRequest(ownProps.id)),
 });
 
-const connected = connect(mapStateToProps, mapDispatchToProps)(PublishDsrModal);
+const connected = connect(mapStateToProps, mapDispatchToProps)(DeleteDsrModal);
 
-export default withStyles(styleSheet, { name: 'PublishDsrModal' })(connected);
+export default withStyles(styleSheet, { name: 'DeleteDsrModal' })(connected);

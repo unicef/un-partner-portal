@@ -161,6 +161,14 @@ export function publishCfei(id) {
   return authorizedPost({ uri: `/projects/${id}/publish/` });
 }
 
+export function deleteCfei(id) {
+  return authorizedDelete({ uri: `/projects/${id}/` });
+}
+
+export function sendCfei(id) {
+  return authorizedPost({ uri: `/projects/${id}/send-to-publish/` });
+}
+
 export function convertCnToDirectSelection(body, id) {
   return authorizedPost({ uri: `/projects/application/${id}/convert-unsolicited/`, body });
 }

@@ -29,6 +29,7 @@ import {
   handleClear,
 } from '../components/forms//autocompleteHelpers/autocompleteFunctions';
 import { RenderMultipleSelections, RenderPlaceholder } from '../components/forms/selectHelpers/selectRenderers';
+import TextFieldForm from '../components/forms/textFieldForm';
 
 export const fileNameFromUrl = (url) => {
   if (url) {
@@ -213,6 +214,61 @@ export const renderRadioField = ({ input,
             label={value.label}
             disabled={value.disabled}
           />))}</RadioGroupRow>
+    </FormControl>
+    {((touched && error) || warning) &&
+    <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>);
+
+export const renderRadioFieldWithChild = ({ input,
+  label,
+  defaultValue,
+  classes,
+  children,
+  textfield,
+  infoText,
+  meta: { touched, error, warning },
+  options, ...other
+}) => (
+  <div>
+    <FormControl fullWidth>
+      <FieldLabelWithTooltipIcon
+        infoText={infoText}
+        tooltipIconProps={{
+          name: input.name,
+        }}
+      >
+        {label}
+      </FieldLabelWithTooltipIcon>
+      <RadioGroupRow
+        selectedValue={!R.isEmpty(input.value) ? transformBool(input.value) : defaultValue}
+        onChange={(event, value) => { input.onChange(transformBool(value)); }}
+        {...other}
+      >
+        {options.map((value, index) => {
+          console.log(value.child);
+          if (value.child) {
+            return (
+              <div>
+                <FormControlLabel
+                  key={index}
+                  value={`${value.value}`}
+                  control={<RadioHeight />}
+                  label={value.label}
+                  disabled={value.disabled}
+                />
+                <div>
+                  {value.child}
+                </div>
+              </div>);
+          } return (
+            <FormControlLabel
+              key={index}
+              value={`${value.value}`}
+              control={<RadioHeight />}
+              label={value.label}
+              disabled={value.disabled}
+            />);
+        })}</RadioGroupRow>
     </FormControl>
     {((touched && error) || warning) &&
     <FormHelperText error>{error || warning}</FormHelperText>}
