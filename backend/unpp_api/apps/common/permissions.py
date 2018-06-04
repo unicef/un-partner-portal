@@ -41,7 +41,8 @@ def current_user_has_permission(
         if set(partner_permissions).issubset(request.partner_member.user_permissions):
             return True
     if raise_exception:
-        raise PermissionDenied
+        permissions_display = list(map(lambda p: p.name, agency_permissions or partner_permissions))
+        raise PermissionDenied(f'You do not have permission to {permissions_display}')
     else:
         return False
 
