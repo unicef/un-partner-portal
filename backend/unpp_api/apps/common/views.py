@@ -38,6 +38,7 @@ from common.consts import (
     EXTENDED_APPLICATION_STATUSES,
     ALL_DSR_COMPLETED_REASONS,
     DSR_FINALIZE_RETENTION_CHOICES,
+    FLAG_TYPES,
 )
 from partner.roles import PartnerRole
 
@@ -95,6 +96,7 @@ class GeneralConfigAPIView(APIView):
             "extended-application-statuses": EXTENDED_APPLICATION_STATUSES,
             "countries-with-optional-location": LOCATION_OPTIONAL_COUNTRIES,
             "user-role-choices": choices,
+            "flag-type-choices": FLAG_TYPES,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

@@ -219,7 +219,7 @@ BUDGET_CHOICES = Choices(
 )
 
 FLAG_TYPES = Choices(
-    ('Net', 'neutral', 'Neutral'),  # AKA Observation
+    ('Obs', 'observation', 'Observation'),
     ('Yel', 'yellow', 'Yellow Flag'),
     ('Esc', 'escalated', 'Escalated Flag'),
     ('Red', 'red', 'Red Flag'),
