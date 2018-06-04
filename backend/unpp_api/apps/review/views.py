@@ -23,7 +23,9 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
     permission_classes = (
         IsAuthenticated,
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS,
+            ]
         ),
     )
     serializer_class = PartnerFlagSerializer
@@ -33,6 +35,21 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
         return PartnerFlag.objects.filter(partner=self.kwargs['partner_id'])
 
     def perform_create(self, serializer):
+        partner = get_object_or_404(Partner, id=self.kwargs['partner_id'])
+        if current_user_has_permission(
+            self.request,
+            agency_permissions=[AgencyPermission.ADD_FLAG_OBSERVATION_ALL_CSO_PROFILES],
+        ):
+            pass
+        else:
+            current_user_has_permission(
+                self.request,
+                agency_permissions=[AgencyPermission.ADD_FLAG_OBSERVATION_COUNTRY_CSO_PROFILES],
+                raise_exception=True
+            )
+            if partner.is_hq:
+                raise PermissionDenied
+
         serializer.save(submitter=self.request.user, partner_id=self.kwargs['partner_id'])
 
 
