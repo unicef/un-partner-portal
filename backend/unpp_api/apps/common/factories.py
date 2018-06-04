@@ -1,6 +1,7 @@
 import random
 import os
 from datetime import date, timedelta
+from coolname import generate
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
@@ -65,15 +66,31 @@ def get_random_agency():
 
 
 def get_random_agency_office():
-    return AgencyOffice.objects.order_by("?").first() or AgencyOfficeFactory.create_batch(1)[0]
+    return AgencyOffice.objects.order_by("?").first() or AgencyOfficeFactory()
 
 
 def get_agency_member():
-    return User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?").first()
+    member = User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?").first()
+    return member or AgencyMemberFactory().user
 
 
 def get_partner_member():
-    return User.objects.filter(is_superuser=False, partner_members__isnull=False).order_by("?").first()
+    member = User.objects.filter(is_superuser=False, partner_members__isnull=False).order_by("?").first()
+    return member or PartnerMemberFactory().user
+
+
+def get_new_common_file():
+    cfile = CommonFile.objects.create()
+    cfile.file_field.save('test.csv', open(filename))
+    return cfile
+
+
+def get_cfei_title():
+    return f'Help the {generate(2)[-1].title()}'
+
+
+def get_partner_name():
+    return f'Save the {generate(2)[-1].title()}'
 
 
 def get_partner():
@@ -90,9 +107,9 @@ def get_country():
 
 def get_fullname():
     return random.choice([
-        "William Collins",
-        "Elizabeth Bennet",
-        "Jack Sparow"
+        "William Turner",
+        "Elizabeth Swann",
+        "Jack Sparrow"
     ])
 
 
@@ -130,6 +147,7 @@ class GroupFactory(factory.django.DjangoModelFactory):
 class UserProfileFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = UserProfile
+        django_get_or_create = ('user', )
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -183,7 +201,7 @@ class PartnerSimpleFactory(factory.django.DjangoModelFactory):
 
 
 class PartnerFactory(factory.django.DjangoModelFactory):
-    legal_name = factory.Sequence(lambda n: "legal name {}".format(n))
+    legal_name = factory.LazyFunction(get_partner_name)
     display_type = PARTNER_TYPES.cbo
     country_code = fuzzy.FuzzyChoice(COUNTRIES)
 
@@ -544,7 +562,7 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
 
 
 class EOIFactory(factory.django.DjangoModelFactory):
-    title = factory.Sequence(lambda n: "title {}".format(n))
+    title = factory.LazyFunction(get_cfei_title)
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
     agency_office = factory.LazyFunction(get_random_agency_office)

@@ -38,3 +38,9 @@ spec:
           image: unicef/unpp-frontend:{{CF_SHORT_REVISION}}
           command: ["bash"]
           args: ["-c", "yarn run start"]
+          env:
+            - name: GOOGLE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: unpp-{{ENV}}-secrets
+                  key: GOOGLE_KEY

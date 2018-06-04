@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Popover from 'material-ui/Popover';
@@ -12,6 +12,8 @@ import BadgeIcon from './badgeIcon';
 import NotificationsList from '../notifications/notificationsList';
 import Logout from './logout';
 import Options from './options';
+import { checkPermission, COMMON_PERMISSIONS } from '../../helpers/permissions';
+
 
 const styleSheet = theme => ({
   leftHeader: {
@@ -74,7 +76,7 @@ class MainAppBar extends Component {
     this.setState({ profileOpen: false });
   }
   render() {
-    const { classes } = this.props;
+    const { classes, hasPermission } = this.props;
     return (
       <React.Fragment>
         <AppBar
@@ -97,9 +99,9 @@ class MainAppBar extends Component {
             justify="flex-end"
             spacing={0}
           >
-            <Grid item>
+            {hasPermission && <Grid item>
               <BadgeIcon handleClick={this.handleVerificationClick} />
-            </Grid>
+            </Grid>}
             <Grid item>
               <IconButton color="contrast" onClick={this.handleProfileClick}>
                 <AccountIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
@@ -147,6 +149,13 @@ class MainAppBar extends Component {
 
 MainAppBar.propTypes = {
   classes: PropTypes.object.isRequired,
+  hasPermission: PropTypes.bool.isRequired,
 };
 
-export default withStyles(styleSheet, { name: 'MainAppBar' })(MainAppBar);
+const mapStateToProps = state => ({
+  hasPermission: checkPermission(COMMON_PERMISSIONS.RECEIVE_NOTIFICATIONS, state),
+});
+
+const containerMainAppBar = connect(mapStateToProps)(MainAppBar);
+
+export default withStyles(styleSheet, { name: 'MainAppBar' })(containerMainAppBar);

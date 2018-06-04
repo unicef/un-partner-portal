@@ -69,11 +69,11 @@ def preview_uwsgi_log():
     local(cmd)
 
 
-def fakedata(quantity=50, clean_before=True):
+def fakedata(clean_before=True):
     """
     Create mock data for the django backend.
     """
-    cmd = 'docker-compose exec backend python manage.py fakedata %d' % (int(quantity))
+    cmd = 'docker-compose exec backend python manage.py fakedata'
     if clean_before:
         cmd += ' --clean_before'
     local(cmd)

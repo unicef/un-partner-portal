@@ -45,6 +45,10 @@ const styleSheet = theme => ({
 
 export const STATUS_VAL = [
   {
+    value: false,
+    label: 'Unpublished',
+  },
+  {
     value: true,
     label: 'Active',
   },

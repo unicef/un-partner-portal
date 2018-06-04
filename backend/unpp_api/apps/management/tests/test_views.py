@@ -20,7 +20,7 @@ class TestAgencyUserManagement(BaseAPITestCase):
         UserFactory,
     ]
     user_type = BaseAPITestCase.USER_AGENCY
-    agency_role = AgencyRole.ADMINISTRATOR
+    agency_role = AgencyRole.HQ_EDITOR
 
     def test_invite_agency_user(self):
         url = reverse('management:user-add')

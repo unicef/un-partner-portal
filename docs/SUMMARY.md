@@ -15,6 +15,7 @@
 * [User Management](overview/user-management.md)
 * [Direct Selection & Retention \(DSR\)](overview/direct-selection-and-retention-dsr.md)
 * [Reports](overview/reports.md)
+* [ERP Integration](overview/erp-integration.md)
 
 ## Partners
 
@@ -43,7 +44,8 @@
 
 ## Technical Documentation
 
-* [Development Setup](technical-documentation/development-setup.md)
+* [Development Setup](technical-documentation/development-setup/README.md)
+  * [Development Data](technical-documentation/development-setup/development-data.md)
 * [Deployment / DevOps](technical-documentation/deployment-devops.md)
 * [ID System Process](technical-documentation/id-system-process.md)
 * [Sanctions Screening](technical-documentation/sanctions-screening.md)

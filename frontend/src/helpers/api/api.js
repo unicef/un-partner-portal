@@ -30,7 +30,7 @@ function buildHeaders(authorize = false, extraHeaders = {}) {
   };
   if (authorize) headers = { ...headers, Authorization: `token ${token}` };
   if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };
-  if (officeId) headers = { ...headers, AGENCY_OFFICE_ID: officeId };
+  if (officeId) headers = { ...headers, 'Agency-Office-ID': officeId };
   return { ...headers, ...extraHeaders };
 }
 
@@ -155,6 +155,10 @@ export function postDirectCfei(body) {
 
 export function patchCfei(body, id) {
   return authorizedPatch({ uri: `/projects/${id}/`, body });
+}
+
+export function publishDsr(id) {
+  return authorizedPost({ uri: `/projects/${id}/publish/` });
 }
 
 export function convertCnToDirectSelection(body, id) {

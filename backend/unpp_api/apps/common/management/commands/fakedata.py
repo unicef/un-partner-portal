@@ -11,8 +11,6 @@ class Command(BaseCommand):
     help = 'Creates a set of ORM objects for development and staging environment.'
 
     def add_arguments(self, parser):
-        parser.add_argument('quantity', type=int)
-
         parser.add_argument(
             '--clean_before',
             action='store_true',
@@ -34,6 +32,6 @@ class Command(BaseCommand):
             call_command("loaddata", "initial.json")
             self.stdout.write("Agency, Sectors and Specialization initialized!")
 
-        generate_fake_data(options['quantity'])
+        generate_fake_data()
 
         self.stdout.write("Fake data script done.")

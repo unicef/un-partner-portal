@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -19,10 +20,11 @@ import {
 import { loadCfei, loadUnsolicitedCfei } from '../../../reducers/cfeiDetails';
 import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
 import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
-import { ROLES, PROJECT_TYPES, PROJECT_STATUSES } from '../../../helpers/constants';
+import { ROLES, PROJECT_TYPES, PROJECT_STATUSES, DETAILS_ITEMS } from '../../../helpers/constants';
 import PaddedContent from '../../common/paddedContent';
 import MainContentWrapper from '../../common/mainContentWrapper';
 import { isUserAgencyReader, isUserAgencyEditor } from '../../../helpers/authHelpers';
+import { checkPermission, PARTNER_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
   noCfei: 'Sorry but this project doesn\'t exist',
@@ -73,8 +75,14 @@ class CfeiHeader extends Component {
       isOwner,
       isReaderEditor,
       status,
+      hasPermission,
       isReviewer, params: { type } } = this.props;
-    let tabsToRender = tabs;
+
+    let tabsToRender = hasPermission
+      ? tabs
+      : R.filter(item => ((item.path) !== (DETAILS_ITEMS.SUBMISSION)), tabs);
+
+
     if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
       tabsToRender = tabsToRender.filter(({ path }) => {
         if ((['applications', 'preselected'].includes(path) && isReaderEditor && !isReviewer && !isOwner)
@@ -167,6 +175,7 @@ CfeiHeader.propTypes = {
     PropTypes.bool,
   ]),
   type: PropTypes.string,
+  hasPermission: PropTypes.bool.isRequired,
   loadUCN: PropTypes.func,
   isReaderEditor: PropTypes.bool,
   isReviewer: PropTypes.bool,
@@ -181,6 +190,7 @@ const mapStateToProps = (state, ownProps) => ({
   title: selectCfeiTitle(state, ownProps.params.id),
   type: ownProps.params.type,
   loading: state.cfeiDetails.status.loading,
+  hasPermission: checkPermission(PARTNER_PERMISSIONS.CFEI_SUBMIT_CONCEPT_NOTE, state),
   cnFile: state.conceptNote.cnFile,
   error: state.cfeiDetails.status.error,
   isReaderEditor: isUserAgencyReader(state) || isUserAgencyEditor(state),

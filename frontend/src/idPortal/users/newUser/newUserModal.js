@@ -65,7 +65,7 @@ class NewUserModal extends Component {
           maxWidth="md"
           title={messages.title}
           trigger={open}
-          info={{ title: `${messages.status} ${userStatus}` || messages.header }}
+          info={{ title: userStatus ? `${messages.status} ${userStatus}` : messages.header }}
           handleDialogClose={handleDialogClose}
           buttons={{
             flat: {
@@ -84,7 +84,7 @@ class NewUserModal extends Component {
 }
 
 NewUserModal.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
   userStatus: PropTypes.string,
   open: PropTypes.bool,
   handleDialogClose: PropTypes.func,

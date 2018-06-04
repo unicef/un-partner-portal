@@ -11,9 +11,11 @@ from common.consts import (
     CFEI_STATUSES,
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
-    COMPLETED_REASON,
+    ALL_COMPLETED_REASONS,
     EXTENDED_APPLICATION_STATUSES,
+    DSR_FINALIZE_RETENTION_CHOICES,
 )
+from common.fields import FixedTextField
 from common.utils import get_countries_code_from_queryset, get_absolute_frontend_url
 from project.validators import (
     validate_weight_adjustments,
@@ -50,7 +52,9 @@ class EOI(TimeStampedModel):
     invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest", blank=True)
     reviewers = models.ManyToManyField('account.User', related_name="eoi_as_reviewer", blank=True)
     justification = models.TextField(null=True, blank=True)  # closed or completed
-    completed_reason = models.CharField(max_length=3, choices=COMPLETED_REASON, null=True, blank=True)
+    completed_reason = FixedTextField(choices=ALL_COMPLETED_REASONS, null=True, blank=True)
+    completed_retention = models.CharField(max_length=3, choices=DSR_FINALIZE_RETENTION_CHOICES, null=True, blank=True)
+    completed_comment = models.TextField(null=True, blank=True)
     completed_date = models.DateTimeField(null=True, blank=True)
     is_completed = models.BooleanField(default=False)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
@@ -61,6 +65,9 @@ class EOI(TimeStampedModel):
     review_summary_comment = models.TextField(null=True, blank=True)
     review_summary_attachment = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name='review_summary_attachments'
+    )
+    sent_for_publishing = models.BooleanField(
+        default=False, help_text='Whether CFEI has been forwarded to focal point to be published'
     )
     is_published = models.BooleanField(
         default=False, help_text='Whether CFEI is a draft or has been published'
@@ -74,12 +81,13 @@ class EOI(TimeStampedModel):
 
     @property
     def status(self):
-        today = date.today()
-        if not self.is_published:
+        if self.sent_for_publishing:
+            return CFEI_STATUSES.sent
+        elif not self.is_published:
             return CFEI_STATUSES.draft
         elif self.is_completed:
             return CFEI_STATUSES.completed
-        elif self.is_completed is False and self.deadline_date and today > self.deadline_date:
+        elif self.is_completed is False and self.deadline_date and date.today() > self.deadline_date:
             return CFEI_STATUSES.closed
         else:
             return CFEI_STATUSES.open
@@ -118,6 +126,14 @@ class EOI(TimeStampedModel):
 
     def get_absolute_url(self):
         return get_absolute_frontend_url("/cfei/open/{}/overview".format(self.pk))
+
+    @property
+    def completed_reason_display(self):
+        display = self.get_completed_reason_display()
+
+        if self.completed_reason == ALL_COMPLETED_REASONS.accepted_retention:
+            display += f' {self.get_completed_retention_display()}'
+        return display
 
 
 class Pin(TimeStampedModel):
@@ -170,6 +186,7 @@ class Application(TimeStampedModel):
         null=True,
         blank=True,
     )
+    ds_attachment = models.ForeignKey('common.CommonFile', related_name="ds_applications", null=True, blank=True)
     # Applies when application converted to EOI. Only applicable if this is unsolicited
     eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion", null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner

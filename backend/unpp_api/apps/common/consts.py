@@ -37,6 +37,7 @@ APPLICATION_STATUSES = Choices(
 
 CFEI_STATUSES = Choices(
     ('Dra', 'draft', 'Draft'),
+    ('Sen', 'sent', 'Sent'),
     ('Ope', 'open', 'Open'),
     ('Clo', 'closed', 'Closed/Under Review'),
     ('Com', 'completed', 'Completed'),
@@ -190,11 +191,21 @@ DIRECT_SELECTION_SOURCE = Choices(
     ('UNI', 'un', 'UN-Initiated'),
 )
 
-COMPLETED_REASON = Choices(
-    ('Par', 'partners', 'Finalized - Partner accepted'),
-    ('Can', 'canceled', 'Finalized - CFEI canceled'),
-    ('NoC', 'no_candidate', 'Finalized - No successful applicant'),
+COMMON_COMPLETED_REASON = Choices(
+    ('cancelled', 'Finalized - Cancelled'),
 )
+
+COMPLETED_REASON = Choices(
+    ('partners', 'Finalized - Partner accepted'),
+    ('no_candidate', 'Finalized - No successful applicant'),
+) + COMMON_COMPLETED_REASON
+
+DSR_COMPLETED_REASON = Choices(
+    ('accepted', 'Finalized - Partner accepted direct selection'),
+    ('accepted_retention', 'Finalized - Partner accepted retention. Maintain decision for:'),
+)
+
+ALL_COMPLETED_REASONS = COMPLETED_REASON + DSR_COMPLETED_REASON
 
 BUDGET_CHOICES = Choices(
     ('B01', 'less', "Less than $500,000"),
@@ -228,4 +239,11 @@ EXTENDED_APPLICATION_STATUSES = Choices(
     ('Acc', 'accepted', 'Selection Accepted'),
     ('Dec', 'declined', 'Selection Declined'),
     ('Ret', 'retracted', 'Selection Retracted'),
+)
+
+DSR_FINALIZE_RETENTION_CHOICES = Choices(
+    ('1YR', 'one year'),
+    ('2YR', 'second year'),
+    ('3YR', 'a third year'),
+    ('4YR', 'a fourth year'),
 )

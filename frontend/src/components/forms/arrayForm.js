@@ -104,7 +104,7 @@ class RenderArrayMembers extends Component {
                     </div>}
                   </div>
                   {innerField && <Paper elevation={0} classes={{ root: classes.innerPaper }} className={classes.innerPaper}>
-                    {innerField(member, index, fields)}
+                    {innerField && innerField(member, index, fields)}
                   </Paper>}
                 </div>
               </ListItem>
@@ -258,7 +258,7 @@ ArrayForm.propTypes = {
    * if form should not be able to delete items
    */
   disableDeleting: PropTypes.bool,
-  /** 
+  /**
    * validations for the entire array
    */
   validate: PropTypes.array,

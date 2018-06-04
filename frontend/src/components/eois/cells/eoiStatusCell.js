@@ -19,6 +19,9 @@ const styleSheet = theme => ({
   Com: {
     color: theme.palette.eoiStatus.completed,
   },
+  Dra: {
+    color: theme.palette.eoiStatus.draft,
+  },
   text: {
     whiteSpace: 'normal',
     maxWidth: 80,

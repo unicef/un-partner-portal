@@ -1,8 +1,10 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils.functional import SimpleLazyObject
 from django.conf import settings
 
 from partner.models import PartnerMember
+
+
+# TODO: Remove dev fallbacks, fix tests when it's done
 
 
 def get_partner_object(request):
@@ -43,10 +45,7 @@ def get_office_member_object(request):
         office_id = request.META.get('HTTP_AGENCY_OFFICE_ID', None)
 
         if office_id:
-            try:
-                return request.user.agency_members.filter(office_id=office_id)
-            except ObjectDoesNotExist:
-                return None
+            return request.user.agency_members.filter(office_id=office_id).first()
 
         if settings.IS_DEV:
             # TODO: Remove once header is added on the frontend

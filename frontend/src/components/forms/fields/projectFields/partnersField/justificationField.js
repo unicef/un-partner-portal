@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import SelectForm from '../../../selectForm';
 
 const messages = {
-  label: 'Justification for Direct Selection',
+  label: 'Justification for Direct Selection/Retention',
 };
 
 const values = [
