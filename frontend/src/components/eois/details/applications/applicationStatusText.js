@@ -19,6 +19,9 @@ const styleSheet = theme => ({
   Dra: {
     color: theme.palette.eoiStatus.draft,
   },
+  Sen: {
+    color: theme.palette.eoiStatus.draft,
+  },
   Rej: {
     color: theme.palette.eoiStatus.closed,
   },
