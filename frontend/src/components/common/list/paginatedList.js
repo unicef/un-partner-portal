@@ -10,6 +10,7 @@ import {
 } from '@devexpress/dx-react-core';
 import {
   TableRow as TableRowMUI,
+  TableCell,
 } from 'material-ui/Table';
 import ListLoader from './listLoader';
 
@@ -206,5 +207,8 @@ PaginatedList.propTypes = {
   clickableRow: PropTypes.bool,
 };
 
+PaginatedList.defaultProps = {
+  templateCell: ({ value }) => <TableCell>{value}</TableCell>,
+};
 
 export default withStyles(styleSheet, { name: 'PaginatedList' })(PaginatedList);
