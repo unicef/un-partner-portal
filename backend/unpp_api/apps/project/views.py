@@ -25,7 +25,7 @@ from account.models import User
 from agency.permissions import AgencyPermission
 from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE
 from common.pagination import SmallPagination
-from common.permissions import HasUNPPPermission, check_unpp_permission
+from common.permissions import HasUNPPPermission, check_unpp_permission, current_user_has_permission
 from common.mixins import PartnerIdsMixin
 from notification.consts import NotificationType
 from notification.helpers import (
@@ -180,11 +180,22 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
         if instance.is_completed:
             send_notification_cfei_completed(instance)
 
-    @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_MANAGE])
-    def perform_destroy(self, instance):
-        if instance.is_published:
-            raise serializers.ValidationError('Published CFEIs cannot be deleted.')
-        return super(EOIAPIView, self).perform_destroy(instance)
+    def perform_destroy(self, cfei):
+        if cfei.is_direct:
+            if cfei.is_published:
+                required_permissions = [AgencyPermission.CFEI_DIRECT_CANCEL]
+            else:
+                required_permissions = [AgencyPermission.CFEI_DIRECT_DELETE_DRAFT]
+        else:
+            if cfei.is_published:
+                required_permissions = [AgencyPermission.CFEI_PUBLISHED_CANCEL]
+            else:
+                required_permissions = [AgencyPermission.CFEI_DRAFT_MANAGE]
+
+        if not current_user_has_permission(self.request, agency_permissions=required_permissions):
+            raise PermissionDenied
+
+        return super(EOIAPIView, self).perform_destroy(cfei)
 
 
 class DirectProjectAPIView(BaseProjectAPIView):
