@@ -24,17 +24,13 @@ const messages = {
     open: {
       title: 'This CFEI is for open selections.',
     },
-    direct: {
-      title: 'This is a direct selection.',
-      body: 'In order to save this form, you will need to identify the partner(s).',
-    },
   },
   error: {
     open: 'Unable to create new Call for Expressions of Interests',
     direct: 'Unable to create new direct selection/retention',
     unsolicited: 'Unable to create new Unsolicited Concept Note',
   },
-
+  save: 'Save',
 };
 
 const getTitle = (type) => {
@@ -68,7 +64,7 @@ const getInfo = (type) => {
     default:
       return messages.header.open;
     case PROJECT_TYPES.DIRECT:
-      return messages.header.direct;
+      return null;
   }
 };
 
@@ -159,11 +155,13 @@ class NewCfeiModal extends Component {
           trigger={open}
           info={type === PROJECT_TYPES.UNSOLICITED ? null : getInfo(type)}
           handleDialogClose={onDialogClose}
+          topBottomPadding
           buttons={{
             flat: {
               handleClick: onDialogClose,
             },
             raised: {
+              label: messages.save,
               handleClick: this.handleDialogSubmit,
               disabled: this.state.disabled,
             },

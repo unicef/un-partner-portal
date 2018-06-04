@@ -63,7 +63,9 @@ import error, * as errorSelector from './reducers/errorReducer';
 import routesHistory from './reducers/routesHistory';
 import applicationComparisonReport from './reducers/applicationsComparisonReport';
 import openCfeiDashboardList from './reducers/openCfeiDashboardList';
-
+import publishCfei from './reducers/publishCfei';
+import sendCfei from './reducers/sendCfei';
+import deleteCfei from './reducers/deleteCfei';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -78,6 +80,9 @@ const mainReducer = combineReducers({
   cfeiDetails,
   cfeiDetailsNav,
   newCfei,
+  publishCfei,
+  deleteCfei,
+  sendCfei,
   organizationProfileNav,
   partnerApplicationsNav,
   applicationsNotesList,
@@ -285,6 +290,9 @@ export const selectCfeiJustification = (state, id) =>
 
 export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.data, id);
+
+export const isCfeiPublished = (state, id) =>
+  cfeiDetailsSelector.isCfeiPublished(state.cfeiDetails.data, id);
 
 export const isCfeiPinned = (state, id) =>
   cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.data, id);

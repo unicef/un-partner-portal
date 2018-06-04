@@ -12,7 +12,6 @@ const messages = {
   save: 'finalize',
 };
 
-
 class CompleteCfeiModal extends Component {
   constructor(props) {
     super(props);

@@ -95,6 +95,7 @@ export const addDirectCfei = body => (dispatch, getState) => {
       { agency: agencyId, agency_office: officeId },
     ),
   };
+  
   const params = history.getCurrentLocation().query;
   return postDirectCfei(finalBody)
     .then((direct) => {

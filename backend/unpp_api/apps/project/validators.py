@@ -5,9 +5,11 @@ from django.core.exceptions import ValidationError
 
 def validate_weight_adjustments(value):
     """
-    Validator check only sum of weight.
+    Validator checks only sum of weight.
     Has weight is controlled in other place.
     """
+    if not type(value) == list:
+        value = [value]
     if len(value) > 0 and \
             all(map(lambda x: x.get('weight'), value)) and \
             sum(map(lambda x: x.get('weight', 0), value)) != 100:
