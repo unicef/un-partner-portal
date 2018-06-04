@@ -279,7 +279,6 @@ export const renderTextField = ({
   formControlStyle,
   ...other
 }) => {
-  console.log('TEST', formControlStyle);
   return (<FormControl fullWidth style={formControlStyle}>
     <FieldLabelWithTooltipIcon
       infoText={infoText}

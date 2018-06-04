@@ -20,10 +20,11 @@ function TextFieldForm(props) {
     readOnly,
     infoText,
     formControlStyle,
+    commentFormControlStyle,
   } = props;
 
   return (
-    <Grid item>
+    <Grid item style={commentFormControlStyle}>
       {readOnly
         ? <Field
           name={fieldName}
@@ -43,6 +44,7 @@ function TextFieldForm(props) {
           infoText={infoText}
           warn={warn ? warning : null}
           formControlStyle={formControlStyle}
+          commentFormControlStyle={commentFormControlStyle}
           {...textFieldProps}
         />
       }
@@ -94,6 +96,8 @@ TextFieldForm.propTypes = {
   infoText: PropTypes.node,
 
   formControlStyle: PropTypes.object,
+
+  commentFormControlStyle: PropTypes.object,
 };
 
 TextFieldForm.defaultProps = {

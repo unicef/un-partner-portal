@@ -43,21 +43,33 @@ const CompleteCfeiForm = (props) => {
   const completedReasonAccepted = [];
   const completedReasonRetention = [];
   const completedReasonCancelled = [];
-  const checkIfRetention = completedReason !== 'accepted_retention';
-  const checkIfCancelled = completedReason !== 'cancelled';
+  const checkIfNotRetention = completedReason !== 'accepted_retention';
+  const checkIfNotCancelled = completedReason !== 'cancelled';
 
   const formControlStyle = {
     marginLeft: '20px',
     paddingRight: '20px',
   };
+
+  const commentFormControlStyle = {
+    marginBottom: '12px',
+    padding: '12px',
+  };
+
   completedReasonAccepted.push(completionReasons[1]);
   completedReasonRetention.push(completionReasons[2]);
   completedReasonCancelled.push(completionReasons[0]);
+
   return (
     <form onSubmit={handleSubmit}>
-
+      <TextFieldForm
+        fieldName="Add justification for completing this direct selection/retenion:"
+        placeholder="Enter comment..."
+        label="Explanation for cancellation"
+        commentFormControlStyle={commentFormControlStyle}
+      />
       <RadioForm
-        label="lalala"
+        label="Choose reason for finalzing this direct selection/retention:"
         fieldName="completed_reason"
         values={completedReasonAccepted}
         column
@@ -74,9 +86,10 @@ const CompleteCfeiForm = (props) => {
             placeholder="Select time period"
             label="Time period"
             values={timePeriods}
+            optional={checkIfNotRetention}
             // readOnly={completedReason !== 'accepted_retention'}
             selectFieldProps={{
-              disabled: checkIfRetention,
+              disabled: checkIfNotRetention,
             }}
             formControlStyle={formControlStyle}
           />
@@ -92,8 +105,9 @@ const CompleteCfeiForm = (props) => {
         fieldName="cancellation"
         placeholder="Add explanation for cancellation"
         label="Explanation for cancellation"
+        optional={checkIfNotCancelled}
         textFieldProps={{
-          disabled: checkIfCancelled,
+          disabled: checkIfNotCancelled,
         }}
         formControlStyle={formControlStyle}
         // readOnly={completedReason !== 'cancelled'}

@@ -19,9 +19,9 @@ class CompleteCfeiModal extends Component {
   }
 
   onFormSubmit(values) {
-    return this.props.updateCfei(values).then(() => {
-      this.props.handleDialogClose();
-    });
+    // return this.props.updateCfei(values).then(() => {
+    //   this.props.handleDialogClose();
+    // });
   }
 
   render() {
