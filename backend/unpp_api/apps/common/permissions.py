@@ -31,7 +31,7 @@ class HasUNPPPermission(CustomizablePermission):
         return True
 
 
-def check_current_user_has_permission(
+def current_user_has_permission(
         request, agency_permissions=None, partner_permissions=None, raise_exception=False
 ):
     if agency_permissions is not None and request.agency_member:
@@ -51,7 +51,7 @@ def check_unpp_permission(agency_permissions=None, partner_permissions=None):
     def has_unpp_permission_method_decorator(class_method):
 
         def has_unpp_permission_inner(self, *args, **kwargs):
-            check_current_user_has_permission(
+            current_user_has_permission(
                 self.request,
                 agency_permissions=agency_permissions,
                 partner_permissions=partner_permissions,
