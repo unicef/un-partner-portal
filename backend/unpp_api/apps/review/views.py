@@ -33,8 +33,7 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
         return PartnerFlag.objects.filter(partner=self.kwargs['partner_id'])
 
     def perform_create(self, serializer):
-        serializer.save(submitter=self.request.user,
-                        partner_id=self.kwargs['partner_id'])
+        serializer.save(submitter=self.request.user, partner_id=self.kwargs['partner_id'])
 
 
 class PartnerVerificationListCreateAPIView(ListCreateAPIView):
@@ -59,9 +58,7 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
             current_user_has_permission(
                 self.request, agency_permissions=[AgencyPermission.VERIFY_INGO_HQ], raise_exception=True
             )
-        elif current_user_has_permission(
-            self.request, agency_permissions=[AgencyPermission.VERIFY_CSOS_GLOBALLY]
-        ):
+        elif current_user_has_permission(self.request, agency_permissions=[AgencyPermission.VERIFY_CSOS_GLOBALLY]):
             pass
         elif current_user_has_permission(
             self.request, agency_permissions=[AgencyPermission.VERIFY_CSOS_FOR_OWN_COUNTRY]
