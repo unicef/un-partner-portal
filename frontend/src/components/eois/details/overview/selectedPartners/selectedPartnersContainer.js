@@ -26,22 +26,15 @@ const renderRow = (partners, isUserFocalPoint, id) => partners.map((partner, ind
         id={id}
       />
     </PaddedContent>
+    {/* TODO show justiciation fields */}
     <Divider />
-    <PaddedContent key={partner.id}>
-      <SingleSelectedPartner
-        key={`partner_${index}`}
-        isFocalPoint={isUserFocalPoint}
-        partner={partner}
-        id={id}
-      />
-    </PaddedContent>
   </div>
 ));
 
 
 const SelectedPartners = (props) => {
   const { partners, isUserFocalPoint, id } = props;
-  console.log(partners[0]);
+
   return (
     <HeaderList
       header={title}
