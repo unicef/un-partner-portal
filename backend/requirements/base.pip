@@ -18,6 +18,7 @@ django-countries==5.3
 # Other Python packages
 psycopg2==2.7.1
 django-model-utils==2.6.1  # latest 3.0.0 but need to check changes
+dj-static==0.0.6
 python-json-logger==0.1.7
 xmltodict==0.11.0
 requests==2.18.4
@@ -38,6 +39,7 @@ mock==2.0.0
 
 # WSGI
 uWSGI==2.0.17
+gunicorn==19.6.0
 
 # Sentry
 raven==6.4.0
