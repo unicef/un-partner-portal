@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from "moment-timezone";
 import store from '../../store';
 
 const host = '/api';
@@ -27,7 +28,7 @@ function buildHeaders(authorize = false, extraHeaders = {}) {
   let headers = {
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
-    'Client-Timezone-Name': Intl.DateTimeFormat().resolvedOptions().timeZone
+    'Client-Timezone-Name': moment.tz.guess(),
   };
   if (authorize) headers = { ...headers, Authorization: `token ${token}` };
   if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };

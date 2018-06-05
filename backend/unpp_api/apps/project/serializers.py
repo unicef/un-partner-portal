@@ -502,6 +502,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'contains_partner_accepted',
             'applications_count',
             'is_published',
+            'deadline_passed',
         )
         read_only_fields = ('created', 'completed_date', 'is_published')
 

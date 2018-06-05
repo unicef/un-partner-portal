@@ -8,10 +8,7 @@ def ssh(service):
     :param service: ['backend', 'frontend', 'proxy', 'db']
     """
     assert service in ['backend', 'frontend', 'proxy', 'db'], "%s is unrecognized service"
-    if service == 'frontend':
-        local('docker-compose exec frontend ash')
-    else:
-        local('docker-compose exec %s bash' % service)
+    local('docker-compose exec %s bash' % service)
 
 
 def up_recreate():

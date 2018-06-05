@@ -22,7 +22,7 @@ ADD . /code/
 WORKDIR /tmp
 
 
-RUN yarn install
+RUN cat package.json && yarn install
 
 RUN rm -rf /code/node_modules
 RUN cp -a /tmp/node_modules /code/node_modules

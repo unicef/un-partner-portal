@@ -62,3 +62,14 @@ class ActiveAgencyOfficeMiddleware(object):
         request.agency_member = SimpleLazyObject(lambda: get_office_member_object(request))
         response = self.get_response(request)
         return response
+
+
+class ClientTimezoneMiddleware(object):
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        request.timezone_name = request.META.get('HTTP_CLIENT_TIMEZONE_NAME', 'UTC')
+        response = self.get_response(request)
+        return response
