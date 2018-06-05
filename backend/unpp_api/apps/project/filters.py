@@ -105,6 +105,10 @@ class ApplicationsFilter(django_filters.FilterSet):
     def filter_applications_status(self, queryset, name, value):
         # Logic here should match Application.application_status property
         filters = {
+            EXTENDED_APPLICATION_STATUSES.draft: {
+                'is_unsolicited': True,
+                'is_published': False,
+            },
             EXTENDED_APPLICATION_STATUSES.review: {
                 'did_win': False,
                 'eoi__is_completed': False,

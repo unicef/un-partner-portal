@@ -94,6 +94,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'common.middleware.ActivePartnerMiddleware',
     'common.middleware.ActiveAgencyOfficeMiddleware',
+    'common.middleware.ClientTimezoneMiddleware',
 ]
 
 TEMPLATES = [

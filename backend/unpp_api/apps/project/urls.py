@@ -28,6 +28,7 @@ from project.views import (
     EOIReviewersAssessmentsNotifyAPIView,
     PublishEOIAPIView,
     EOISendToPublishAPIView,
+    PublishUCNAPIView,
 )
 
 
@@ -86,5 +87,6 @@ urlpatterns = [
     url(r'^applications/unsolicited/$',
         PartnerApplicationUnsolicitedListCreateAPIView.as_view(),
         name="applications-unsolicited"),
+    url(r'^applications/unsolicited/(?P<pk>\d+)/publish/$', PublishUCNAPIView.as_view(), name="ucn-publish"),
     url(r'^applications/direct/$', PartnerApplicationDirectListCreateAPIView.as_view(), name="applications-direct"),
 ]

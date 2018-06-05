@@ -81,10 +81,11 @@ class EOI(TimeStampedModel):
 
     @property
     def status(self):
-        if self.sent_for_publishing:
-            return CFEI_STATUSES.sent
-        elif not self.is_published:
-            return CFEI_STATUSES.draft
+        if not self.is_published:
+            if not self.sent_for_publishing:
+                return CFEI_STATUSES.draft
+            else:
+                return CFEI_STATUSES.sent
         elif self.is_completed:
             return CFEI_STATUSES.completed
         elif self.is_completed is False and self.deadline_date and date.today() > self.deadline_date:
@@ -101,7 +102,7 @@ class EOI(TimeStampedModel):
         return self.display_type == CFEI_TYPES.direct
 
     @property
-    def is_overdue_deadline(self):
+    def deadline_passed(self):
         return self.deadline_date < date.today()
 
     @property
@@ -238,6 +239,8 @@ class Application(TimeStampedModel):
     @property
     def application_status(self):
         # Any changes made here should be reflected in ApplicationsFilter.filter_applications_status
+        if self.is_unsolicited and self.is_published is False:
+            return EXTENDED_APPLICATION_STATUSES.draft
         if not self.did_win and self.eoi and self.eoi.status == CFEI_STATUSES.completed:
             return EXTENDED_APPLICATION_STATUSES.unsuccessful
         elif self.did_win and self.did_withdraw:
