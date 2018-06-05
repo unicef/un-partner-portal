@@ -36,7 +36,7 @@ const HeaderOptionsContainer = (props) => {
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
       options = (allowedToEdit && !cfeiCompleted)
-        ? cfeiStatus === PROJECT_STATUSES.OPE
+        ? (cfeiStatus === PROJECT_STATUSES.DRA || cfeiStatus === PROJECT_STATUSES.SEN)
           ? <AgencyOpenHeaderOptions />
           : <AgencyOpenAfterDeadlineHeaderOptions />
         : null;

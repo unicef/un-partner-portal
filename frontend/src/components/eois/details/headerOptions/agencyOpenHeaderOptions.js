@@ -15,11 +15,17 @@ import ManageReviewersModal from '../../modals/manageReviewers/manageReviewersMo
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
 import withConditionalDisplay from '../../../common/hoc/withConditionalDisplay';
 import { isUserNotAgencyReader } from '../../../../helpers/authHelpers';
+import SendCfeiButton from '../../buttons/sendCfeiButton';
+import PublishCfeiButton from '../../buttons/publishCfeiButton';
+import SendCfeiModal from '../../modals/completeCfei/sendCfeiModal';
+import PublishCfeiModal from '../../modals/completeCfei/publishCfeiModal';
 
 const edit = 'edit';
 const invite = 'invite';
 const manage = 'manage';
 const complete = 'complete';
+const send = 'send';
+const publish = 'publish';
 
 const PartnerOpenHeaderOptions = (props) => {
   const { params: { id },
@@ -29,6 +35,8 @@ const PartnerOpenHeaderOptions = (props) => {
   return (
     <SpreadContent>
       <Complete handleClick={() => handleDialogOpen(complete)} />
+      <SendCfeiButton handleClick={() => handleDialogOpen(send)} />
+      <PublishCfeiButton handleClick={() => handleDialogOpen(publish)} />
       <DropdownMenu
         options={
           [
@@ -47,6 +55,18 @@ const PartnerOpenHeaderOptions = (props) => {
           ]
         }
       />
+      {dialogOpen[publish] && <PublishCfeiModal
+        id={id}
+        type="open"
+        dialogOpen={dialogOpen[publish]}
+        handleDialogClose={handleDialogClose}
+      />}
+      {dialogOpen[send] && <SendCfeiModal
+        id={id}
+        type="open"
+        dialogOpen={dialogOpen[send]}
+        handleDialogClose={handleDialogClose}
+      />}
       {dialogOpen[edit] && <EditCfeiModal
         id={id}
         type="open"
