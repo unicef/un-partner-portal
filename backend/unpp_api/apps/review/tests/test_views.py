@@ -101,23 +101,3 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
         payload['is_rep_risk'] = True
         response = self.client.post(url, data=payload, format='json')
         self.assertEquals(response.data['is_verified'], False)
-
-    def test_verification_update(self):
-        verification = PartnerVerification.objects.filter(is_valid=True).first()
-
-        # Change Valid Status
-        url = reverse('partner-reviews:verifications-detail',
-                      kwargs={"partner_id": verification.partner.id, "pk": verification.id})
-        payload = {
-            'is_valid': False
-        }
-        response = self.client.patch(url, data=payload, format='json')
-        self.assertEquals(response.data['is_valid'], False)
-
-        # Test Additional data can't be modified
-        has_yellow_flag = verification.is_yellow_flag
-        payload = {
-            'is_yellow_flag': not has_yellow_flag
-        }
-        response = self.client.patch(url, data=payload, format='json')
-        self.assertEquals(response.data['is_yellow_flag'], has_yellow_flag)
