@@ -102,7 +102,7 @@ class EOI(TimeStampedModel):
         return self.display_type == CFEI_TYPES.direct
 
     @property
-    def is_overdue_deadline(self):
+    def deadline_passed(self):
         return self.deadline_date < date.today()
 
     @property
