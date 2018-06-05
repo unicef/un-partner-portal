@@ -601,16 +601,14 @@ class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreate
 
     def get_serializer_class(self, *args, **kwargs):
         if self.request.method == 'POST':
+            current_user_has_permission(
+                self.request, partner_permissions=[PartnerPermission.UCN_DRAFT], raise_exception=True
+            )
             return CreateUnsolicitedProjectSerializer
         return ApplicationPartnerUnsolicitedDirectSerializer
 
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id__in=self.get_partner_ids())
-
-    @check_unpp_permission(partner_permissions=[PartnerPermission.UCN_DRAFT])
-    def perform_create(self, serializer):
-        super(PartnerApplicationUnsolicitedListCreateAPIView, self).perform_create(serializer)
-        send_notification_application_created(serializer.instance)
 
 
 class PartnerApplicationDirectListCreateAPIView(PartnerIdsMixin, ListAPIView):
@@ -813,6 +811,7 @@ class EOISendToPublishAPIView(RetrieveAPIView):
         self.permission_denied(request)
 
     def post(self, *args, **kwargs):
+        # TODO: check that deadline is not passed
         # TODO: Notify focal point
         obj = self.get_object()
         obj.sent_for_publishing = True
@@ -838,7 +837,34 @@ class PublishEOIAPIView(RetrieveAPIView):
         self.permission_denied(request)
 
     def post(self, *args, **kwargs):
+        # TODO: check that deadline is not passed
         obj = self.get_object()
         obj.is_published = True
         obj.save()
         return Response(AgencyProjectSerializer(obj).data)
+
+
+class PublishUCNAPIView(RetrieveAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            partner_permissions=[
+                PartnerPermission.UCN_SUBMIT,
+            ]
+        ),
+    )
+    serializer_class = ApplicationPartnerUnsolicitedDirectSerializer
+    queryset = Application.objects.filter(is_published=False, is_unsolicited=True)
+
+    def get_queryset(self):
+        queryset = super(PublishUCNAPIView, self).get_queryset()
+        query = Q(partner=self.request.partner_member.partner)
+        if self.request.partner_member.partner.is_hq:
+            query |= Q(partner__hq=self.request.partner_member.partner)
+        return queryset.filter(query)
+
+    def post(self, *args, **kwargs):
+        obj = self.get_object()
+        obj.is_published = True
+        obj.save()
+        send_notification_application_created(obj)
+        return Response(self.serializer_class(obj).data)

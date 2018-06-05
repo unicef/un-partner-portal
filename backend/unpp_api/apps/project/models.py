@@ -238,6 +238,8 @@ class Application(TimeStampedModel):
     @property
     def application_status(self):
         # Any changes made here should be reflected in ApplicationsFilter.filter_applications_status
+        if self.is_unsolicited and self.is_published is False:
+            return EXTENDED_APPLICATION_STATUSES.draft
         if not self.did_win and self.eoi and self.eoi.status == CFEI_STATUSES.completed:
             return EXTENDED_APPLICATION_STATUSES.unsuccessful
         elif self.did_win and self.did_withdraw:

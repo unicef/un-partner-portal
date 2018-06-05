@@ -237,6 +237,7 @@ SANCTION_MATCH_TYPES = Choices(
 )
 
 EXTENDED_APPLICATION_STATUSES = Choices(
+    ('Dra', 'draft', 'Draft'),
     ('Rev', 'review', 'Application Under Review'),
     ('Uns', 'unsuccessful', 'Application Unsuccessful'),
     ('Suc', 'successful', 'Application Successful'),
