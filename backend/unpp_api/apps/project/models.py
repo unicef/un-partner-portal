@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from datetime import date
 
+from django.utils import timezone
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from model_utils.models import TimeStampedModel
@@ -72,6 +73,7 @@ class EOI(TimeStampedModel):
     is_published = models.BooleanField(
         default=False, help_text='Whether CFEI is a draft or has been published'
     )
+    published_timestamp = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ['id']
