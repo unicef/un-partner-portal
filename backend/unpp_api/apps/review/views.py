@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, get_object_or_404
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, get_object_or_404, RetrieveAPIView
 
 from agency.permissions import AgencyPermission
 from common.consts import FLAG_TYPES
@@ -118,24 +118,14 @@ class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         return flag
 
 
-class PartnerVerificationRetrieveUpdateAPIView(RetrieveUpdateAPIView):
-    """
-    Endpoint for updating valid status. Only accepts is_valid
-    """
+class PartnerVerificationRetrieveUpdateAPIView(RetrieveAPIView):
     permission_classes = (
         IsAuthenticated,
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[]
         ),
     )
     serializer_class = PartnerVerificationSerializer
-    schema = None  # Because get_object is called in get_serializer
 
     def get_queryset(self):
         return PartnerVerification.objects.filter(partner=self.kwargs['partner_id'])
-
-    def get_serializer(self, *args, **kwargs):
-        verification = self.get_object()
-        return PartnerVerificationSerializer(
-            verification, data={'is_valid': kwargs['data'].get('is_valid', verification.is_valid)}, partial=True
-        )

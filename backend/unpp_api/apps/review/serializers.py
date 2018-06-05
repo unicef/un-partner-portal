@@ -32,5 +32,10 @@ class PartnerVerificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PartnerVerification
-        read_only_fields = ('submitter', 'is_verified', )
-        exclude = ('partner', )
+        read_only_fields = (
+            'submitter',
+            'is_verified',
+        )
+        exclude = (
+            'partner',
+        )
