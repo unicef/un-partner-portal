@@ -37,7 +37,8 @@ from notification.helpers import (
     send_cfei_review_required_notification, user_received_notification_recently,
     send_partner_made_decision_notification)
 from partner.permissions import PartnerPermission
-from project.exports import ApplicationCompareSpreadsheetGenerator
+from project.exports.application_compare import ApplicationCompareSpreadsheetGenerator
+from project.exports.cfei import CFEIPDFExporter
 from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from project.serializers import (
     BaseProjectSerializer,
@@ -134,6 +135,11 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
         ),
     )
     queryset = EOI.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        if request.GET.get('export', '').lower() == 'pdf':
+            return CFEIPDFExporter(self.get_object()).get_as_response()
+        return super(EOIAPIView, self).retrieve(request, *args, **kwargs)
 
     def get_serializer_class(self, *args, **kwargs):
         return AgencyProjectSerializer if self.request.user.is_agency_user else PartnerProjectSerializer

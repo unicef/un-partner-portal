@@ -27,6 +27,7 @@ function buildHeaders(authorize = false, extraHeaders = {}) {
   let headers = {
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
+    'Client-Timezone-Name': Intl.DateTimeFormat().resolvedOptions().timeZone
   };
   if (authorize) headers = { ...headers, Authorization: `token ${token}` };
   if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };

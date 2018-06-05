@@ -17,7 +17,7 @@ django-countries==5.3
 
 # Other Python packages
 psycopg2==2.7.1
-django-model-utils==3.1.2  # latest 3.0.0 but need to check changes
+django-model-utils==3.1.2
 python-json-logger==0.1.7
 xmltodict==0.11.0
 requests==2.18.4
