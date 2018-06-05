@@ -811,9 +811,11 @@ class EOISendToPublishAPIView(RetrieveAPIView):
         self.permission_denied(request)
 
     def post(self, *args, **kwargs):
-        # TODO: check that deadline is not passed
         # TODO: Notify focal point
         obj = self.get_object()
+        if obj.deadline_date < date.today():
+            raise serializers.ValidationError('Deadline date is set in the past, please update it before publishing.')
+
         obj.sent_for_publishing = True
         obj.save()
         return Response(AgencyProjectSerializer(obj).data)
@@ -837,8 +839,10 @@ class PublishEOIAPIView(RetrieveAPIView):
         self.permission_denied(request)
 
     def post(self, *args, **kwargs):
-        # TODO: check that deadline is not passed
         obj = self.get_object()
+        if obj.deadline_date < date.today():
+            raise serializers.ValidationError('Deadline date is set in the past, please update it before publishing.')
+
         obj.is_published = True
         obj.save()
         return Response(AgencyProjectSerializer(obj).data)
