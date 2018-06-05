@@ -840,10 +840,11 @@ class PublishEOIAPIView(RetrieveAPIView):
 
     def post(self, *args, **kwargs):
         obj = self.get_object()
-        if obj.deadline_date < date.today():
+        if obj.deadline_passed:
             raise serializers.ValidationError('Deadline date is set in the past, please update it before publishing.')
 
         obj.is_published = True
+        obj.published_timestamp = timezone.now()
         obj.save()
         return Response(AgencyProjectSerializer(obj).data)
 

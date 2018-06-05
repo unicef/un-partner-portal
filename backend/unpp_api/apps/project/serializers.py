@@ -438,6 +438,8 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'selected_source',
             'is_pinned',
             'application',
+            'published_timestamp',
+            'deadline_passed',
         )
         read_only_fields = fields
 
@@ -503,8 +505,9 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'applications_count',
             'is_published',
             'deadline_passed',
+            'published_timestamp',
         )
-        read_only_fields = ('created', 'completed_date', 'is_published')
+        read_only_fields = ('created', 'completed_date', 'is_published', 'published_timestamp')
 
     def get_direct_selected_partners(self, obj):
         if obj.is_direct:
