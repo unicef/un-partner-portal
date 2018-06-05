@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, get_object_or_404
 
 from agency.permissions import AgencyPermission
+from common.consts import FLAG_TYPES
 from common.pagination import SmallPagination
 from common.permissions import (
     HasUNPPPermission,
@@ -93,24 +94,28 @@ class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     permission_classes = (
         IsAuthenticated,
         HasUNPPPermission(
-            #  TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS,
+            ]
         ),
     )
     serializer_class = PartnerFlagSerializer
-    schema = None  # Because get_object is called in get_serializer
 
     def get_queryset(self):
         return PartnerFlag.objects.filter(partner=self.kwargs.get('partner_id'))
 
-    def get_serializer(self, *args, **kwargs):
-        flag = self.get_object()
-        return PartnerFlagSerializer(
-            flag,
-            data={
-                'is_valid': kwargs['data'].get('is_valid', flag.is_valid)
-            },
-            partial=True
-        )
+    def get_object(self):
+        flag = super(PartnerFlagRetrieveUpdateAPIView, self).get_object()
+        if flag.flag_type == FLAG_TYPES.escalated:
+            current_user_has_permission(
+                self.request,
+                agency_permissions=[AgencyPermission.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES],
+                raise_exception=True
+            )
+        elif not flag.submitter == self.request.user:
+            raise PermissionDenied("This flag can only be edited by it's creator")
+
+        return flag
 
 
 class PartnerVerificationRetrieveUpdateAPIView(RetrieveUpdateAPIView):
@@ -131,6 +136,6 @@ class PartnerVerificationRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 
     def get_serializer(self, *args, **kwargs):
         verification = self.get_object()
-        return PartnerVerificationSerializer(verification,
-                                             data={'is_valid': kwargs['data'].get('is_valid', verification.is_valid)},
-                                             partial=True)
+        return PartnerVerificationSerializer(
+            verification, data={'is_valid': kwargs['data'].get('is_valid', verification.is_valid)}, partial=True
+        )

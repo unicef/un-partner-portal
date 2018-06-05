@@ -15,8 +15,15 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PartnerFlag
-        read_only_fields = ('submitter', )
-        exclude = ('partner', )
+        read_only_fields = (
+            'submitter',
+            'partner',
+            'comment',
+            'attachment',
+        )
+        exclude = (
+            'partner',
+        )
 
 
 class PartnerVerificationSerializer(serializers.ModelSerializer):
