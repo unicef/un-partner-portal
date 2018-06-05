@@ -10,7 +10,7 @@ from common.consts import FLAG_TYPES
 from common.tests.base import BaseAPITestCase
 from common.factories import PartnerSimpleFactory, PartnerFlagFactory, PartnerVerificationFactory, AgencyOfficeFactory
 from partner.models import Partner
-from review.models import PartnerFlag, PartnerVerification
+from review.models import PartnerFlag
 
 
 class TestPartnerFlagAPITestCase(BaseAPITestCase):
