@@ -1083,6 +1083,7 @@ class TestEOIPublish(BaseAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         eoi.refresh_from_db()
         self.assertTrue(eoi.is_published)
+        self.assertEqual(eoi.status, CFEI_STATUSES.open)
 
 
 class TestUCNCreateAndPublish(BaseAPITestCase):

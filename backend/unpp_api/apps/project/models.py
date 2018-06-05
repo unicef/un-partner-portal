@@ -81,10 +81,11 @@ class EOI(TimeStampedModel):
 
     @property
     def status(self):
-        if self.sent_for_publishing:
-            return CFEI_STATUSES.sent
-        elif not self.is_published:
-            return CFEI_STATUSES.draft
+        if not self.is_published:
+            if not self.sent_for_publishing:
+                return CFEI_STATUSES.draft
+            else:
+                return CFEI_STATUSES.sent
         elif self.is_completed:
             return CFEI_STATUSES.completed
         elif self.is_completed is False and self.deadline_date and date.today() > self.deadline_date:
