@@ -3,7 +3,7 @@ import tempfile
 
 import os
 
-from babel.dates import get_timezone, format_datetime
+from babel.dates import get_timezone, format_datetime, format_date
 from django.http import HttpResponse
 from django.utils import timezone
 from reportlab.lib import colors
@@ -17,7 +17,7 @@ class CFEIPDFExporter:
 
     def __init__(self, cfei, timezone_name='UTC'):
         self.cfei = cfei
-        self.timezone_name = timezone_name
+        self.tzinfo = get_timezone(timezone_name)
         filename = hashlib.sha256(str(cfei.id).encode()).hexdigest()
         self.file_path = os.path.join(tempfile.gettempdir(), filename + '.pdf')
         styles = getSampleStyleSheet()
@@ -49,7 +49,7 @@ class CFEIPDFExporter:
         timestamp = timezone.now()
 
         paragraphs.append(Paragraph(
-            format_datetime(timestamp, 'medium', tzinfo=get_timezone(self.timezone_name)), self.style_right
+            format_datetime(timestamp, 'medium', tzinfo=self.tzinfo), self.style_right
         ))
 
         if self.cfei.is_open:
@@ -59,18 +59,30 @@ class CFEIPDFExporter:
 
         paragraphs.append(Paragraph(header, self.style_h3))
         paragraphs.append(Paragraph(self.cfei.title, self.style_h1))
-        paragraphs.append(Spacer(1, 12))
+        paragraphs.append(Spacer(1, self.margin))
 
         table_rows = [
-            ['00', '01', '02', '03', '04'],
-            ['10', '11', '12', '13', '14'],
-            ['20', '21', '22', '23', '24'],
-            ['30', '31', '32', '33', '34']
+            ['Timeline'],
+            ['Posted', 'Application Deadline', 'Notification of Results', 'Estimated Start Date'],
+            [
+                format_date(self.cfei.published_timestamp),
+                format_date(self.cfei.deadline_date),
+                format_date(self.cfei.notif_results_date),
+                format_date(self.cfei.start_date)
+            ],
         ]
-        table = Table(table_rows)
-        # t.setStyle(TableStyle([('BACKGROUND', (1, 1), (-2, -2), colors.green),
-        #                        ('TEXTCOLOR', (0, 0), (1, -1), colors.red)]))
+        table = Table(table_rows, colWidths='*')
+
+        table.setStyle(TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+            ('SPAN', (0, 0), (3, 0)),
+            ('ALIGN', (0, 0), (3, 0), 'CENTER'),
+            ('BACKGROUND', (0, 0), (3, 1), colors.darkgrey),
+            ('TEXTCOLOR', (0, 0), (3, 1), colors.white),
+        ]))
         paragraphs.append(table)
+        paragraphs.append(Spacer(1, self.margin))
 
         document.build(paragraphs)
 
