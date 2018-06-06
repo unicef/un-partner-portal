@@ -274,3 +274,11 @@ VALID_FOCAL_POINT_ROLE_NAMES = frozenset([
     AgencyRole.EDITOR_ADVANCED.name,
     AgencyRole.MFT_USER.name,
 ])
+
+
+VALID_REVIEWER_ROLE_NAMES = frozenset([
+    AgencyRole.EDITOR_ADVANCED.name,
+    AgencyRole.EDITOR_BASIC.name,
+    AgencyRole.MFT_USER.name,
+    AgencyRole.PAM_USER.name,
+])

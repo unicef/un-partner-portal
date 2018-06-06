@@ -7,7 +7,7 @@ from django_filters.widgets import CSVWidget, BooleanWidget
 
 from account.models import User
 from agency.models import Agency
-from agency.roles import AgencyRole, VALID_FOCAL_POINT_ROLE_NAMES
+from agency.roles import AgencyRole, VALID_FOCAL_POINT_ROLE_NAMES, VALID_REVIEWER_ROLE_NAMES
 
 
 class AgencyUserFilter(django_filters.FilterSet):
@@ -22,16 +22,33 @@ class AgencyUserFilter(django_filters.FilterSet):
     focal = BooleanFilter(
         method='filter_focal_points', widget=BooleanWidget(), label='Can be selected as focal point'
     )
+    reviewer = BooleanFilter(
+        method='filter_reviewers', widget=BooleanWidget(), label='Can be selected as reviewer'
+    )
 
     class Meta:
         model = User
-        fields = ['role', 'name', 'office_name']
+        fields = (
+            'role',
+            'name',
+            'office_name',
+            'focal',
+            'reviewer',
+        )
 
     def filter_focal_points(self, queryset, name, value):
         if value is True:
             queryset = queryset.filter(agency_members__role__in=VALID_FOCAL_POINT_ROLE_NAMES)
         elif value is False:
             queryset = queryset.exclude(agency_members__role__in=VALID_FOCAL_POINT_ROLE_NAMES)
+
+        return queryset
+
+    def filter_reviewers(self, queryset, name, value):
+        if value is True:
+            queryset = queryset.filter(agency_members__role__in=VALID_REVIEWER_ROLE_NAMES)
+        elif value is False:
+            queryset = queryset.exclude(agency_members__role__in=VALID_REVIEWER_ROLE_NAMES)
 
         return queryset
 
