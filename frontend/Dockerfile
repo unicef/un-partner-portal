@@ -16,19 +16,13 @@ ADD entrypoint.sh /
 RUN chmod +x entrypoint.sh
 
 ADD package.json yarn.lock /tmp/
+RUN cd /tmp && yarn install
 
 ADD . /code/
-
-WORKDIR /tmp
-
-
-RUN cat package.json && yarn install
-
 RUN rm -rf /code/node_modules
 RUN cp -a /tmp/node_modules /code/node_modules
 
 WORKDIR /code
-
 
 EXPOSE 8080
 CMD ["yarn run start"]
