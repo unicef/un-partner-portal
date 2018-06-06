@@ -62,7 +62,7 @@ filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.
 
 
 def get_random_agency():
-    return Agency.objects.order_by("?").first()
+    return Agency.objects.order_by("?").first() or AgencyFactory()
 
 
 def get_random_agency_office():
