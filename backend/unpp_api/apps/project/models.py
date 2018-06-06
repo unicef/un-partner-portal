@@ -83,6 +83,7 @@ class EOI(TimeStampedModel):
 
     @property
     def status(self):
+        # Any changes made here should be reflected in BaseProjectFilter.filter_status
         if not self.is_published:
             if not self.sent_for_publishing:
                 return CFEI_STATUSES.draft
