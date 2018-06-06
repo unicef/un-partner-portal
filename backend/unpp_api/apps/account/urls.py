@@ -1,9 +1,14 @@
 from django.conf.urls import url
 
-from .views import AccountRegisterAPIView, AccountCurrentUserRetrieveAPIView
+from account.views import (
+    AccountRegisterAPIView,
+    AccountCurrentUserRetrieveAPIView,
+    UserProfileRetrieveUpdateAPIView,
+)
 
 
 urlpatterns = [
     url(r'^registration$', AccountRegisterAPIView.as_view(), name="registration"),
     url(r'^me/$', AccountCurrentUserRetrieveAPIView.as_view(), name="my-account"),
+    url(r'^me/profile/$', UserProfileRetrieveUpdateAPIView.as_view(), name="my-profile"),
 ]

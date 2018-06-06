@@ -11,6 +11,9 @@ from django.utils import timezone
 
 from model_utils.models import TimeStampedModel
 
+from common.consts import NOTIFICATION_FREQUENCY_CHOICES
+from common.fields import FixedTextField
+
 
 class UserManager(BaseUserManager):
 
@@ -150,6 +153,9 @@ class UserProfile(TimeStampedModel):
         account.User (OneToOne): "user"
     """
     user = models.OneToOneField(User, related_name="profile")
+    notification_frequency = FixedTextField(
+        choices=NOTIFICATION_FREQUENCY_CHOICES, null=True, default=NOTIFICATION_FREQUENCY_CHOICES.daily
+    )
 
     def __str__(self):
         return "[{}] {}".format(self.user.email, self.user.get_fullname())
