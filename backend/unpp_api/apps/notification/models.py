@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -29,7 +30,8 @@ class Notification(TimeStampedModel):
 class NotifiedUser(TimeStampedModel):
     notification = models.ForeignKey(Notification, related_name="notified")
     did_read = models.BooleanField(default=False)
-    recipient = models.ForeignKey("account.User", related_name="notified")
+    sent_as_email = models.BooleanField(default=False)
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notified")
 
     class Meta:
         ordering = ['created']
@@ -38,4 +40,4 @@ class NotifiedUser(TimeStampedModel):
         )
 
     def __str__(self):
-        return "Notified User <{}>".format(self.id)
+        return "NotifiedUser <{}>".format(self.id)

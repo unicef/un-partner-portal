@@ -16,6 +16,7 @@ from account.models import User
 from agency.models import AgencyOffice, Agency
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
 from notification.consts import NotificationType, NOTIFICATION_DATA
+from notification.helpers import flush_email_notifications
 from partner.roles import PartnerRole
 from partner.serializers import PartnerShortSerializer
 from project.models import Assessment, Application, EOI, Pin
@@ -483,6 +484,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(status.is_success(response.status_code))
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
+        flush_email_notifications()
         self.assertTrue(len(mail.outbox) > 0)
         mail.outbox = []
 
