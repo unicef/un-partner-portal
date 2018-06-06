@@ -49,7 +49,8 @@ const SingleAward = (props) => {
               type="caption"
             >{withdrawReason}</Typography>
           </div>
-            : true
+            : !cfeiCompleted && <WithdrawApplicationButton
+              applicationId={award.application_id}
             />}
         </SpreadContent>
       </PaddedContent >}

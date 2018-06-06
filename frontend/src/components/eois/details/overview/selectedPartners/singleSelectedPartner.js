@@ -4,16 +4,19 @@ import { connect } from 'react-redux';
 import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
+import Divider from 'material-ui/Divider';
 import GridColumn from '../../../../common/grid/gridColumn';
 import { updateApplication } from '../../../../../reducers/applicationDetails';
 import { loadCfei } from '../../../../../reducers/cfeiDetails';
-import { selectApplicationCurrentStatus, selectExtendedApplicationStatuses, isCfeiCompleted } from '../../../../../store';
+import { selectApplicationCurrentStatus, selectExtendedApplicationStatuses, isCfeiCompleted, selectDirectSelectionJustificationReason } from '../../../../../store';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 
 const messages = {
   accept: 'Accept',
-  acceptText: 'You can accept selection on the partner\'s behalf.',
+  acceptText: 'Selected partner will not be notified before sending (publishing) this waiver of open selection.',
   withdraw: 'Withdraw',
+  justificationWaiver: 'Justification for waiver of open selection',
+  justificationSummary: 'Justification summary',
 };
 
 
@@ -27,20 +30,12 @@ const SingleSelectedPartner = (props) => {
   return (
     <div><GridColumn>
       <Typography>{partner.partner_name}</Typography>
-      <Typography type="caption">{applicationStatus}</Typography>
+      {/* <Typography type="caption">{applicationStatus}</Typography> */}
       {displayAccept && <Typography type="caption">{messages.acceptText}</Typography>}
-      {(displayAccept || displayWithdraw) &&
-      <Grid container justify="flex-end">
-        {displayWithdraw && <Grid item>
-          <WithdrawApplicationButton
-            applicationId={partner.id}
-          />
-        </Grid>}
-        {displayAccept && <Grid item>
-          <Button color="accent" onClick={() => { acceptSelection().then(loadCfei); }}>{messages.accept}</Button>
-        </Grid>}
-      </Grid>
-      }
+      <Divider />
+      <Typography type="caption">{messages.justificationWaiver}</Typography>
+      <Typography>{partner.justification_reason}</Typography>
+      <Typography type="caption">{messages.justificationSummary}</Typography>
     </GridColumn>
     </div>);
 };
