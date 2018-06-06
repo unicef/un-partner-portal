@@ -86,7 +86,7 @@ class PartnerOpenHeaderOptions extends Component {
       isCreator,
       isFocalPoint } = this.props;
 
-    return ((hasActionPermission && isAdvEd && isCreator && isFocalPoint)
+    return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
     || (hasActionPermission && isMFT && isFocalPoint)
     || (hasActionPermission && isBasEd && isCreator)
     || (hasActionPermission && isPAM && isCreator));

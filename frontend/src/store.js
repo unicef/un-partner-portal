@@ -199,9 +199,6 @@ export const selectNormalizedBudgets = state =>
 export const selectNormalizedDirectJustification = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-justifications']);
 
-export const selectDirectSelectionJustificationReason = state =>
-  state.cfeiDetails.
-
 export const selectApplicationStatuses = state => state.partnerProfileConfig['application-statuses'];
 
 export const selectExtendedApplicationStatuses = state =>

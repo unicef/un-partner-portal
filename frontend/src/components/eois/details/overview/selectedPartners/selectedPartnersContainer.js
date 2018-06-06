@@ -7,6 +7,7 @@ import HeaderList from '../../../../common/list/headerList';
 import PaddedContent from '../../../../common/paddedContent';
 import { selectCfeiDetails, isUserAFocalPoint, isUserACreator } from '../../../../../store';
 import SingleSelectedPartner from './singleSelectedPartner';
+import SingleSelectedPartnerInfo from './singleSelectedPartnerInfo';
 
 const messages = {
   title: 'Selected Partner(s)',
@@ -26,8 +27,15 @@ const renderRow = (partners, isUserFocalPoint, id) => partners.map((partner, ind
         id={id}
       />
     </PaddedContent>
-    {/* TODO show justiciation fields */}
     <Divider />
+    <PaddedContent>
+      <SingleSelectedPartnerInfo
+        key={`partner_info_${index}`}
+        isFocalPoint={isUserFocalPoint}
+        partner={partner}
+        id={id}
+      />
+    </PaddedContent>
   </div>
 ));
 

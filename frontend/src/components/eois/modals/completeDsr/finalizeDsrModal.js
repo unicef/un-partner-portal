@@ -65,7 +65,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   updateCfei: body => dispatch(updateCfei(body, ownProps.id)),
-  submit: () => dispatch(submit('finalize')),
+  submit: () => dispatch(submit('finalizeDsr')),
 });
 
 const containerFinalizeDsrModal = connect(

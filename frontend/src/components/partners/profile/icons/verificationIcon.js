@@ -6,6 +6,9 @@ import { withStyles } from 'material-ui/styles';
 
 
 const styleSheet = theme => ({
+  iconSmall: {
+    padding: theme.spacing.unit / 2,
+  },
   iconNotVerified: {
     fill: theme.palette.primary[500],
     margin: 0,
@@ -21,8 +24,9 @@ const styleSheet = theme => ({
 });
 
 const VerificationIcon = (props) => {
-  const { classes, verified } = props;
+  const { classes, verified, small } = props;
   const className = classname({
+    [classes.iconSmall]: small === true,
     [classes.iconVerified]: verified === true,
     [classes.iconUnverified]: verified === false,
     [classes.iconNotVerified]: verified === null || verified === undefined,
@@ -33,6 +37,7 @@ const VerificationIcon = (props) => {
 VerificationIcon.propTypes = {
   verified: PropTypes.bool,
   classes: PropTypes.object,
+  small: PropTypes.bool,
 };
 
 export default withStyles(styleSheet, { name: 'VerificationIcon' })(VerificationIcon);
