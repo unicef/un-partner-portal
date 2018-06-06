@@ -7,7 +7,6 @@ import { PROJECT_TYPES, ROLES, PROJECT_STATUSES } from '../../../../helpers/cons
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
 import AgencyOpenHeaderOptions from './agencyOpenHeaderOptions';
 import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
-import AgencyOpenAfterDeadlineHeaderOptions from './agencyOpenAfterDeadlineHeaderOptions';
 import EoiStatusCell from '../../cells/eoiStatusCell';
 import { selectCfeiStatus,
   isCfeiPublished,
@@ -35,7 +34,7 @@ const HeaderOptionsContainer = (props) => {
   let options;
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
-      options = !cfeiCompleted ? <AgencyOpenHeaderOptions /> : null;
+      options = !cfeiCompleted ? <AgencyOpenHeaderOptions id={id} /> : null;
     } else if (role === ROLES.PARTNER) {
       options = <PartnerOpenHeaderOptions />;
     }

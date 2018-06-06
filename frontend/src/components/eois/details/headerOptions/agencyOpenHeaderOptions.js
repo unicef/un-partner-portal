@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { compose } from 'ramda';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
+import { PROJECT_STATUSES } from '../../../../helpers/constants';
 import DropdownMenu from '../../../common/dropdownMenu';
 import SpreadContent from '../../../common/spreadContent';
 import EditButton from '../../buttons/editCfeiButton';
@@ -14,7 +15,9 @@ import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import AddInformedPartners from '../../modals/callPartners/addInformedPartners';
 import ManageReviewersModal from '../../modals/manageReviewers/manageReviewersModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
+import CancelCfeiModal from '../../modals/completeCfei/cancelCfeiModal';
 import SendCfeiButton from '../../buttons/sendCfeiButton';
+import DeleteButton from '../../buttons/deleteCfeiButton';
 import PublishCfeiButton from '../../buttons/publishCfeiButton';
 import SendCfeiModal from '../../modals/completeCfei/sendCfeiModal';
 import PublishCfeiModal from '../../modals/completeCfei/publishCfeiModal';
@@ -26,8 +29,11 @@ import { selectCfeiStatus,
   isDeadlinePassed,
   isUserACreator,
 } from '../../../../store';
+import CancelCfeiButton from '../../buttons/cancelCfeiButton';
 
+const del = 'del';
 const edit = 'edit';
+const cancel = 'cancel';
 const invite = 'invite';
 const manage = 'manage';
 const complete = 'complete';
@@ -39,63 +45,122 @@ class PartnerOpenHeaderOptions extends Component {
     super(props);
 
     this.sendOptions = this.sendOptions.bind(this);
-    this.isActionAllowed = this.isActionAllowed.bind(this);
+    this.isPuslishPermissionAllowed = this.isPuslishPermissionAllowed.bind(this);
   }
 
-  isActionAllowed(hasActionPermission) {
+  isPuslishPermissionAllowed(hasActionPermission) {
     const {
       isAdvEd,
-      isMFT,
       isPAM,
       isBasEd,
       isCreator,
       isFocalPoint } = this.props;
 
-    return ((hasActionPermission && isAdvEd && isCreator && isFocalPoint)
-    || (hasActionPermission && isMFT && isFocalPoint)
+    return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
     || (hasActionPermission && isBasEd && isCreator)
     || (hasActionPermission && isPAM && isCreator));
   }
-  
+
   sendOptions() {
     const {
       handleDialogOpen,
-      hasEditDraftPermission,
-      hasDeleteDraftPermission,
+      hasManageDraftPermission,
+      hasInviteSentPermission,
+      hasEditSentPermission,
+      hasInvitePublishPermission,
+      hasCancelPublishPermission,
+      status,
+      isPublished,
+      isFocalPoint,
       isCreator } = this.props;
 
-    const options = [
-      {
-        name: edit,
-        content: <EditButton handleClick={() => handleDialogOpen(edit)} />,
-      },
-      {
-        name: invite,
-        content: <InviteButton handleClick={() => handleDialogOpen(invite)} />,
-      },
-      {
-        name: manage,
-        content: <Reviewers handleClick={() => handleDialogOpen(manage)} />,
-      },
-    ];
- 
+    const options = [];
+
+    if ((hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA)
+        || (hasEditSentPermission && isFocalPoint)) {
+      options.push(
+        {
+          name: edit,
+          content: <EditButton handleClick={() => handleDialogOpen(edit)} />,
+        });
+    }
+
+    if ((hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA)
+    || (hasInviteSentPermission && isFocalPoint && status === PROJECT_STATUSES.SEN)
+    || (isPublished && this.isPuslishPermissionAllowed(hasInvitePublishPermission))) {
+      options.push(
+        {
+          name: invite,
+          content: <InviteButton handleClick={() => handleDialogOpen(invite)} />,
+        });
+    }
+
+    console.log(isPublished, this.isPuslishPermissionAllowed(hasCancelPublishPermission));
+    // TODO
+    if (isPublished && isCreator) {
+      options.push(
+        {
+          name: manage,
+          content: <Reviewers handleClick={() => handleDialogOpen(manage)} />,
+        });
+    }
+
+    if (hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA) {
+      options.push(
+        {
+          name: del,
+          content: <DeleteButton handleClick={() => handleDialogOpen(del)} />,
+        });
+    }
+
+    if (isPublished && this.isPuslishPermissionAllowed(hasCancelPublishPermission)) {
+      options.push(
+        {
+          name: cancel,
+          content: <CancelCfeiButton handleClick={() => handleDialogOpen(cancel)} />,
+        });
+    }
+
     return options;
   }
 
-
   render() {
     const { params: { id },
+      isCompleted,
+      isCreator,
+      isFocalPoint,
+      isPublished,
+      status,
+      isAdvEd,
+      isPAM,
+      hasPublishPermission,
+      hasSendPermission,
+      hasFinalizePermission,
       dialogOpen,
       handleDialogClose,
       handleDialogOpen } = this.props;
+
     return (
       <SpreadContent>
-        <Complete handleClick={() => handleDialogOpen(complete)} />
-        <SendCfeiButton handleClick={() => handleDialogOpen(send)} />
-        <PublishCfeiButton handleClick={() => handleDialogOpen(publish)} />
+        {isPublished && this.isPuslishPermissionAllowed(hasFinalizePermission)
+          && <Complete handleClick={() => handleDialogOpen(complete)} />}
+
+        {!isCompleted && status === PROJECT_STATUSES.DRA && isCreator && hasSendPermission &&
+        <SendCfeiButton handleClick={() => handleDialogOpen(send)} />}
+
+        {!isPublished && !isCompleted && hasPublishPermission &&
+            (((isFocalPoint || isCreator) && isAdvEd) || (isCreator && isPAM))
+         && <PublishCfeiButton handleClick={() => handleDialogOpen(publish)} />}
+
         <DropdownMenu
           options={this.sendOptions()}
         />
+
+        {dialogOpen[cancel] && <CancelCfeiModal
+          id={id}
+          dialogOpen={dialogOpen[cancel]}
+          handleDialogClose={handleDialogClose}
+        />}
         {dialogOpen[publish] && <PublishCfeiModal
           id={id}
           type="open"
@@ -141,13 +206,17 @@ PartnerOpenHeaderOptions.propTypes = {
   handleDialogOpen: PropTypes.func,
   isPublished: PropTypes.bool,
   isCreator: PropTypes.bool,
+  hasManageDraftPermission: PropTypes.bool,
   hasSendPermission: PropTypes.bool,
-  hasPublishPermission: PropTypes.bool,
-  hasEditDraftPermission: PropTypes.bool,
-  hasDeleteDraftPermission: PropTypes.bool,
+  hasInviteSentPermission: PropTypes.bool,
   hasEditSentPermission: PropTypes.bool,
+  hasInvitePublishPermission: PropTypes.bool,
+  hasCancelPublishPermission: PropTypes.bool,
+  hasPublishPermission: PropTypes.bool,
+
+
   hasEditPublishedPermission: PropTypes.bool,
-  hasCancelPermission: PropTypes.bool,
+
   hasFinalizePermission: PropTypes.bool,
   isFocalPoint: PropTypes.bool,
   isCompleted: PropTypes.bool,
@@ -165,15 +234,20 @@ const mapStateToProps = (state, ownProps) => ({
   isPublished: isCfeiPublished(state, ownProps.id),
   isDeadlinePassed: isDeadlinePassed(state, ownProps),
   status: selectCfeiStatus(state, ownProps.id),
-  hasSendPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_SEND_DRAFT_TO_FOCAL_POINT,
+  hasManageDraftPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_MANAGE, state),
+  hasSendPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH,
     state),
-  hasPublishPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_PUBLISH, state),
-  hasEditDraftPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_EDIT_DRAFT, state),
-  hasDeleteDraftPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_DELETE_DRAFT, state),
-  hasEditSentPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_EDIT_SENT, state),
+
+  hasInviteSentPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_SENT_INVITE_CSO, state),
+  hasPublishPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISH, state)
+    || checkPermission(AGENCY_PERMISSIONS.CFEI_SENT_PUBLISH, state),
+  hasEditSentPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_SENT_EDIT, state),
+  hasInvitePublishPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_INVITE_CSO, state),
+  hasCancelPublishPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_CANCEL, state),
+  // dsr permission
   hasEditPublishedPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_EDIT_PUBLISHED, state),
-  hasCancelPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_CANCEL, state),
   hasFinalizePermission: checkPermission(COMMON_PERMISSIONS.CFEI_FINALIZE, state),
+
   isAdvEd: isRoleOffice(AGENCY_ROLES.EDITOR_ADVANCED, state),
   isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
   isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),
