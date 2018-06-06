@@ -291,6 +291,9 @@ export const selectCfeiJustification = (state, id) =>
 export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.data, id);
 
+export const isDeadlinePassed = (state, id) =>
+  cfeiDetailsSelector.isDeadlinePassed(state.cfeiDetails.data, id);
+
 export const isCfeiPublished = (state, id) =>
   cfeiDetailsSelector.isCfeiPublished(state.cfeiDetails.data, id);
 
