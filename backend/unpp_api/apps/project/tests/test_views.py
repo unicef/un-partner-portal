@@ -1136,3 +1136,20 @@ class TestUCNCreateAndPublish(BaseAPITestCase):
         self.assertResponseStatusIs(publish_response, status.HTTP_200_OK)
         ucn.refresh_from_db()
         self.assertEqual(ucn.application_status, EXTENDED_APPLICATION_STATUSES.review)
+
+
+class TestEOIPDFExport(BaseAPITestCase):
+
+    quantity = 1
+    user_type = BaseAPITestCase.USER_AGENCY
+    partner_role = AgencyRole.READER
+    initial_factories = [
+        EOIFactory,
+    ]
+
+    def test_download_pdf(self):
+        eoi = EOI.objects.first()
+        url = reverse('projects:eoi-detail', kwargs={'pk': eoi.pk}) + '?export=pdf'
+        response = self.client.get(url)
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertEqual(response.content_type, 'application/pdf')
