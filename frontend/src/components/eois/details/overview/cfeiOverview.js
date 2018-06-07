@@ -37,7 +37,7 @@ const CfeiOverview = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <GridColumn >
+            <GridColumn>
               {(role === ROLES.PARTNER && type === PROJECT_TYPES.OPEN)
                 && <ConceptNote title={messages.cnTemplate} conceptNote={cn_template} />}
               {(type === PROJECT_TYPES.UNSOLICITED)
@@ -46,6 +46,10 @@ const CfeiOverview = (props) => {
                 && <SelectionCriteria id={id} />}
               {role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN
                 && <InformedPartners id={id} />}
+              {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT
+                && <SelectedPartners id={+id} />}
+            </GridColumn>
+            <GridColumn>
               {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT
                 && <SelectedPartners id={+id} />}
             </GridColumn>
