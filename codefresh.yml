@@ -39,7 +39,6 @@ steps:
             test:
                 image: ${{build_backend}}
                 depends_on:
-                    - proxy
                     - backend
                 command: 'bash -c "/usr/local/bin/waitforit -host=backend -port=8000 -timeout=30 -- python /code/manage.py test --parallel"'
         composition_variables:
