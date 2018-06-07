@@ -195,3 +195,5 @@ def send_notification_summary_to_notified_users(notified_users):
         )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
+
+    notified_users.update(sent_as_email=True)
