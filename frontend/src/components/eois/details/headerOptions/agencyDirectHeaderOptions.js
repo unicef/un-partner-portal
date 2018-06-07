@@ -86,7 +86,7 @@ class PartnerOpenHeaderOptions extends Component {
       isCreator,
       isFocalPoint } = this.props;
 
-    return ((hasActionPermission && isAdvEd && isCreator && isFocalPoint)
+    return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
     || (hasActionPermission && isMFT && isFocalPoint)
     || (hasActionPermission && isBasEd && isCreator)
     || (hasActionPermission && isPAM && isCreator));
@@ -156,13 +156,13 @@ class PartnerOpenHeaderOptions extends Component {
         {!isCompleted && status === 'Dra' && isCreator && hasSendPermission
          && <SendDsrButton handleClick={() => handleDialogOpen(send)} />}
 
-        {!isPublished && !isCompleted && status === 'Sen' && hasPublishPermission &&
+        {!isPublished && !isCompleted && hasPublishPermission &&
             (((isFocalPoint || isCreator) && isAdvEd) || (isFocalPoint && isMFT))
          && <PublishDsrButton handleClick={() => handleDialogOpen(publish)} />}
 
-        {(status === 'Dra' || status === 'Sen') && <DropdownMenu
+        <DropdownMenu
           options={status === 'Dra' ? this.sendOptions() : this.publishOptions()}
-        />}
+        />
 
         {dialogOpen[cancel] && <CancelDsrModal
           id={id}

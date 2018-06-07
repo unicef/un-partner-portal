@@ -45,15 +45,15 @@ const styleSheet = theme => ({
 
 export const STATUS_VAL = [
   {
-    value: false,
+    value: 'Dra',
     label: 'Unpublished',
   },
   {
-    value: true,
+    value: 'Ope',
     label: 'Active',
   },
   {
-    value: false,
+    value: 'Com',
     label: 'Finalized',
   },
 ];
@@ -73,13 +73,12 @@ class EoiFilter extends Component {
     const { pathName, query, agencyId } = this.props;
 
     const agency = this.props.query.agency ? this.props.query.agency : agencyId;
-    const active = !!(this.props.query.active === 'true' || (typeof (this.props.query.active) === 'boolean' && this.props.query.active) || !this.props.query.active);
-    const ordering = active ? 'created' : '-completed_date';
+    const ordering = this.props.query.status === 'Dra' ? 'created' : '-completed_date';
 
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { active, ordering, agency },
+        { ordering, agency },
       ),
     });
   }
@@ -88,13 +87,13 @@ class EoiFilter extends Component {
     if (R.isEmpty(nextProps.query)) {
       const { pathname } = nextProps.location;
 
-      const ordering = this.props.query.active ? 'created' : '-completed_date';
+      const ordering = this.props.query.status === 'Dra' ? 'created' : '-completed_date';
       const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
 
       history.push({
         pathname,
         query: R.merge(this.props.query,
-          { active: this.props.query.active, ordering, agency: agencyQ },
+          { status: this.props.query.status, ordering, agency: agencyQ },
         ),
       });
     }
@@ -103,10 +102,10 @@ class EoiFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
     // TODO - move order to paginated list wrapper
-    const { title, agency, active, country_code, specializations, selected_source } = values;
+    const { title, agency, status, country_code, specializations, selected_source } = values;
 
     const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
-    const ordering = active === 'true' ? 'created' : '-completed_date';
+    const ordering = status === 'Dra' ? 'created' : '-completed_date';
 
     history.push({
       pathname: pathName,
@@ -114,7 +113,7 @@ class EoiFilter extends Component {
         page: 1,
         title,
         agency: agencyQ,
-        active,
+        status,
         ordering,
         country_code,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
@@ -131,7 +130,7 @@ class EoiFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { active: true, ordering: 'created', agency: agencyId },
+        { ordering: 'created', agency: agencyId },
       ),
     });
   }
@@ -183,7 +182,7 @@ class EoiFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <RadioForm
-                fieldName="active"
+                fieldName="status"
                 label={messages.labels.status}
                 values={STATUS_VAL}
                 optional
@@ -252,7 +251,7 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { title } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { agency } = {} } = ownProps.location;
-  const { query: { active } = {} } = ownProps.location;
+  const { query: { status } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
   const { query: { selected_source } = {} } = ownProps.location;
 
@@ -273,7 +272,7 @@ const mapStateToProps = (state, ownProps) => {
       title,
       country_code,
       agency: agencyQ,
-      active,
+      status,
       specializations: specializationsQ,
       selected_source,
     },
