@@ -1,9 +1,10 @@
 from __future__ import unicode_literals
 from django.urls import reverse
-from rest_framework import status as statuses
+from rest_framework import status
 from rest_framework.test import APITestCase
 
 from common.consts import PARTNER_TYPES, FUNCTIONAL_RESPONSIBILITY_CHOICES
+from common.tests.base import BaseAPITestCase
 from partner.models import Partner
 from account.models import User
 
@@ -47,14 +48,14 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
         url = reverse('accounts:registration')
         response = self.client.post(url, data=self.data, format='json')
 
-        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertTrue(status.is_client_error(response.status_code))
         self.assertEquals(
             response.data, {'user': {'email': [u'This field must be unique.']}}
         )
 
         self.data['user']['email'] = "new-user@myorg.org"
         response = self.client.post(url, data=self.data, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(status.is_success(response.status_code))
         self.assertEquals(response.data['partner']['legal_name'],
                           self.data['partner']['legal_name'])
         self.assertEquals(response.data['user']['email'],
@@ -73,7 +74,7 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
         # confirm that partner was created by logging in
         url = reverse('rest_login')
         response = self.client.post(url, data=self.data['user'], format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(status.is_success(response.status_code))
 
         partner = Partner.objects.first()
         self.assertEqual(partner.legal_name, self.data['partner']['legal_name'])
@@ -90,13 +91,13 @@ class TestRegisterPartnerAccountAPITestCase(APITestCase):
         # check if logout endpoint works correctly
         url = reverse('rest_logout')
         response = self.client.post(url, data={}, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(status.is_success(response.status_code))
 
         url = reverse('rest_login')
         user_data = self.data['user']
         user_data['password'] = 'fail'
         response = self.client.post(url, data=user_data, format='json')
-        self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class PreventDuplicateRegistrationsAPITestCase(APITestCase):
@@ -134,8 +135,8 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
         url = reverse('accounts:registration')
 
         response = self.client.post(url, data=self.data, format='json')
-        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED, msg=response.content)
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.content)
+        self.assertTrue(status.is_success(response.status_code))
         self.assertEquals(response.data['partner']['legal_name'], self.data['partner']['legal_name'])
         self.assertEquals(response.data['user']['email'], self.data['user']['email'])
 
@@ -147,15 +148,15 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
         }
 
         response = self.client.post(url, data=duplicate_partner_data, format='json')
-        self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(len(response.data['non_field_errors']), 1)
 
     def test_allows_to_register_duplicate_partner_in_different_country(self):
         url = reverse('accounts:registration')
 
         response = self.client.post(url, data=self.data, format='json')
-        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED, msg=response.content)
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.content)
+        self.assertTrue(status.is_success(response.status_code))
         self.assertEquals(response.data['partner']['legal_name'], self.data['partner']['legal_name'])
         self.assertEquals(response.data['user']['email'], self.data['user']['email'])
 
@@ -168,14 +169,14 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
         duplicate_partner_data['partner']['country_code'] = 'GB'
 
         response = self.client.post(url, data=duplicate_partner_data, format='json')
-        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_fails_to_register_different_partner_for_existing_org_head(self):
         url = reverse('accounts:registration')
 
         response = self.client.post(url, data=self.data, format='json')
-        self.assertEqual(response.status_code, statuses.HTTP_201_CREATED, msg=response.content)
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.content)
+        self.assertTrue(status.is_success(response.status_code))
         self.assertEquals(response.data['partner']['legal_name'], self.data['partner']['legal_name'])
         self.assertEquals(response.data['user']['email'], self.data['user']['email'])
 
@@ -188,5 +189,24 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
         duplicate_partner_data['partner']['legal_name'] = 'Other Organization'
 
         response = self.client.post(url, data=duplicate_partner_data, format='json')
-        self.assertEqual(response.status_code, statuses.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(len(response.data['non_field_errors']), 1)
+
+
+class TestUserProfileUpdateAPITestCase(BaseAPITestCase):
+
+    def test_register_partner(self):
+        profile_url = reverse('accounts:my-profile')
+        response = self.client.get(profile_url)
+        self.assertResponseStatusIs(response)
+        self.assertEqual(response.data['notification_frequency_display'], 'Daily')
+
+        options = self.client.get(reverse('common:general-config')).data['notification-frequency-choices']
+
+        for option_code, option_name in options:
+            request_data = {
+                'notification_frequency': option_code
+            }
+            update_response = self.client.patch(profile_url, data=request_data)
+            self.assertResponseStatusIs(update_response)
+            self.assertEqual(update_response.data['notification_frequency_display'], option_name)

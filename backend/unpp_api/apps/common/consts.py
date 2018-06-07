@@ -252,3 +252,10 @@ DSR_FINALIZE_RETENTION_CHOICES = Choices(
     ('3YR', 'a third year'),
     ('4YR', 'a fourth year'),
 )
+
+NOTIFICATION_FREQUENCY_CHOICES = Choices(
+    (None, 'Disabled'),
+    ('daily', 'Daily'),
+    ('weekly', 'Weekly'),
+    ('biweekly', 'Every Two Weeks'),
+)
