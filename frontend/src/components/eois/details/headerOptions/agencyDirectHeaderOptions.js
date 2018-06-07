@@ -112,8 +112,8 @@ class PartnerOpenHeaderOptions extends Component {
       },
     ];
 
-    if (this.isActionAllowed(hasEditPublishedPermission) ||
-      (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
+    if ((isPublished && this.isActionAllowed(hasEditPublishedPermission)) ||
+    (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
             || (hasEditPublishedPermission && isMFT && isFocalPoint)))) {
       options.push(
         {
