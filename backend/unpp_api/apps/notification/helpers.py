@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from collections import defaultdict
+
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
+from django.core.mail import send_mass_mail
 from django.template import loader
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
@@ -155,3 +159,33 @@ def send_notification_to_cfei_focal_points(eoi):
             'eoi_url': eoi.get_absolute_url()
         }
     )
+
+
+def send_notification_summary_to_notified_users(notified_users):
+    aggregated_mail = defaultdict(list)
+    mail_to_fullname = dict()
+
+    for user_email, user_fullname, subject, body in notified_users.values_list(
+            'recipient__email', 'recipient__fullname', 'notification__name', 'notification__description'
+    ):
+        aggregated_mail[user_email].append((subject, body))
+        mail_to_fullname[user_email] = user_fullname
+
+    # See https://docs.djangoproject.com/en/1.11/topics/email/#send-mass-mail
+    bulk_send_list = []
+
+    mail_subject = 'UNPP Notification Summary'
+    for email, messages in aggregated_mail.items():
+        body = loader.get_template('notifications/notification_summary.html').render({
+            'title': mail_subject,
+            'user_fullname': mail_to_fullname[email],
+            'messages': messages,
+        })
+
+        bulk_send_list.append((
+            mail_subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+        ))
+    send_mass_mail(bulk_send_list, fail_silently=False)
