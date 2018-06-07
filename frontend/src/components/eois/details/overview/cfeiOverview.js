@@ -48,9 +48,9 @@ const CfeiOverview = (props) => {
               {role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN
                 && <InformedPartners id={id} />}
               {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT
-                && <SelectedPartners id={+id} />}
+                && <SelectedPartners id={id} />}
               {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT && isComplete
-                    && <SelectedPartnerJustification cfei={cfei} />}
+                    && <SelectedPartnerJustification id={id} />}
             </GridColumn>
           </Grid>
         </Grid>

@@ -45,14 +45,16 @@ SelectedPartnerJustification.propTypes = {
 };
 
 const formSelectedPartnerJustification = reduxForm({
-  form: 'cfeiDetails',
+  form: 'justificationDetails',
   enableReinitialize: true,
 })(SelectedPartnerJustification);
 
 const mapStateToProps = (state, ownProps) => {
+  const cfei = selectCfeiDetails(state, ownProps.id);
+
   return {
     initialValues: {
-      justification: ownProps.cfei ? ownProps.cfei.justification : '',
+      justification: cfei ? cfei.justification : '',
     },
   };
 };
