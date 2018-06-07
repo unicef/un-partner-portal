@@ -13,7 +13,7 @@ import { selectCfeiStatus,
   isCfeiPublished,
   isCfeiCompleted,
   selectCfeiConverted,
-  selectCfeiJustification,
+  selectCfeiCompletedReasonDisplay,
   isUserAFocalPoint,
   isUserACreator,
 } from '../../../../store';
@@ -28,9 +28,8 @@ const HeaderOptionsContainer = (props) => {
     cfeiConverted,
     id,
     partnerId,
-    completedJustification,
+    completedReasonDisplay,
     allowedToEdit,
-    completedReasons,
   } = props;
   let options;
   if (type === PROJECT_TYPES.OPEN) {
@@ -55,7 +54,7 @@ const HeaderOptionsContainer = (props) => {
     return (
       <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
         <EoiStatusCell status={cfeiStatus} />
-        <Typography type="caption">{completedReasons[completedJustification]}</Typography>
+        <Typography type="caption">{completedReasonDisplay}</Typography>
       </GridColumn>);
   }
 
@@ -76,16 +75,14 @@ HeaderOptionsContainer.propTypes = {
   id: PropTypes.string,
   partnerId: PropTypes.string,
   allowedToEdit: PropTypes.bool,
-  completedJustification: PropTypes.string,
-  completedReasons: PropTypes.object,
+  completedReasonDisplay: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   cfeiCompleted: isCfeiCompleted(state, ownProps.id),
   cfeiPublished: isCfeiPublished(state, ownProps.id),
   cfeiStatus: selectCfeiStatus(state, ownProps.id),
-  completedJustification: selectCfeiJustification(state, ownProps.id),
-  completedReasons: state.partnerProfileConfig['completed-reason'] || {},
+  completedReasonDisplay: selectCfeiCompletedReasonDisplay(state, ownProps.id),
   cfeiConverted: selectCfeiConverted(state, ownProps.id),
   allowedToEdit: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
 });
