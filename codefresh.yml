@@ -50,6 +50,7 @@ steps:
             - SECRET_KEY=asdfqwef124rf
             - ENV=dev
             - DJANGO_ALLOWED_HOST="*"
+            - FRONTEND_SERVICE_HOST=frontend
 
     push_backend_to_hub:
         type: push
