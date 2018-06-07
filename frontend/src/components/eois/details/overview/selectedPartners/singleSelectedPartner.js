@@ -12,11 +12,12 @@ import { loadCfei } from '../../../../../reducers/cfeiDetails';
 import { selectApplicationCurrentStatus, selectExtendedApplicationStatuses, isCfeiCompleted, isCfeiPublished, selectCfeiStatus, selectNormalizedDirectJustification } from '../../../../../store';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 import VerificationIcon from '../../../../partners/profile/icons/verificationIcon';
+import ApplicationStatusCell from '../../../../applications/applicationStatusCell';
 
 const messages = {
   accept: 'Accept',
   isDraftText: 'Selected partner will not be notified before sending (publishing) this waiver of open selection.',
-  isPublishedText: 'Selected partner will not be notified before sending (publishing) this waiver of open selection.',
+  isPublishedText: 'Waiting for Partner\'s acceptance. You can accept this offer in Partner\'s behalf.',
   withdraw: 'Withdraw',
   justificationWaiver: 'Justification for direct selection/retention',
   justificationSummary: 'Justification summary',
@@ -29,7 +30,13 @@ const styles = {
 
 const SingleSelectedPartner = (props) => {
   const { partner,
-    isCfeiPublished, isCfeiCompleted, isCfeiDraft, isAccepted, isDeclined } = props;
+    isCfeiPublished,
+    cfeiStatus,
+    isCfeiCompleted,
+    currentStatus,
+    isCfeiDraft,
+    isAccepted,
+    isDeclined } = props;
   return (
     <div>
       <div style={styles}>
@@ -40,15 +47,29 @@ const SingleSelectedPartner = (props) => {
         />
       </div>
       {isCfeiDraft
-          && <Typography type="caption">{messages.isDraftText}</Typography>}
+          && <Typography type="caption">{messages.isDraftText}</Typography>
+      }
       {isCfeiPublished
           && !isAccepted
           && !isDeclined
-          && <Typography type="caption">{messages.isPublishedText}</Typography>}
-      {/* tutaj szara kropka */}
+          && <div>
+            <Typography type="caption">{messages.isPublishedText}</Typography>
+            <ApplicationStatusCell
+              status={cfeiStatus}
+              applicationStatus={currentStatus}
+              id={'appstatcell'}
+            />
+          </div>}
 
-      {(isAccepted || isDeclined) && <Typography type="caption">{messages.isPublishedText}</Typography>}
-    {/* tutaj zielona */}
+      {(isAccepted || isDeclined)
+        && <div>
+          <Typography type="caption">{messages.isPublishedText}</Typography>
+          <ApplicationStatusCell
+            status={cfeiStatus}
+            applicationStatus={currentStatus}
+            id={'appstatcell'}
+          />
+        </div>}
     </div>);
 };
 
@@ -70,15 +91,18 @@ const mapStateToProps = (state, {
   const currentStatus = selectApplicationCurrentStatus(state, id);
   const cfeiCompleted = isCfeiCompleted(state, eoiId);
   const cfeiPublished = isCfeiPublished(state, eoiId);
-  const checkDraft = selectCfeiStatus(state, eoiId);
-  const isCfeiDraft = checkDraft === 'Dra';
+  const cfeiStatus = selectCfeiStatus(state, eoiId);
+  const isCfeiDraft = cfeiStatus === 'Dra';
   const isAccepted = currentStatus === 'Acc';
   const isDeclined = currentStatus === 'Dec';
-  console.log(currentStatus);
+  console.log('application status :: ', currentStatus);
+  console.log('cfei status :: ', cfeiStatus);
   return {
     isCfeiPublished: cfeiPublished,
     isCfeiCompleted: cfeiCompleted,
     isCfeiDraft,
+    currentStatus,
+    cfeiStatus,
     isAccepted,
     isDeclined,
     directJustifications,
