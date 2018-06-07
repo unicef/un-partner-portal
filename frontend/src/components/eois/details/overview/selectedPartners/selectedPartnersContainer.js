@@ -8,6 +8,7 @@ import PaddedContent from '../../../../common/paddedContent';
 import { selectCfeiDetails, isUserAFocalPoint, isUserACreator } from '../../../../../store';
 import SingleSelectedPartner from './singleSelectedPartner';
 import SingleSelectedPartnerInfo from './singleSelectedPartnerInfo';
+import SelectedPartnerJustification from './selectedPartnerJustification';
 
 const messages = {
   title: 'Selected Partner(s)',
@@ -64,6 +65,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     partners: cfei ? cfei.direct_selected_partners : [],
     isUserFocalPoint: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
+    cfeiObject: cfei,
   };
 };
 

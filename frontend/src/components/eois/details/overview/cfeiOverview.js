@@ -10,6 +10,7 @@ import ProjectDetails from './projectDetails';
 import SelectionCriteria from './selectionCriteria';
 import InformedPartners from './informedPartners';
 import SelectedPartners from './selectedPartners/selectedPartnersContainer';
+import SelectedPartnerJustification from './selectedPartners/selectedPartnerJustification';
 import { selectCfeiDetails } from '../../../../store';
 import { ROLES, PROJECT_TYPES } from '../../../../helpers/constants';
 import ConceptNote from './conceptNote';
@@ -20,7 +21,7 @@ const messages = {
 };
 
 const CfeiOverview = (props) => {
-  const { params: { id, type }, role, cn, cn_template, partner, partnerId, displayGoal } = props;
+  const { params: { id, type }, role, cn, cn_template, partner, partnerId, displayGoal, cfei } = props;
 
   return (
     <form >
@@ -49,10 +50,11 @@ const CfeiOverview = (props) => {
               {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT
                 && <SelectedPartners id={+id} />}
             </GridColumn>
-            <GridColumn>
-              {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT
-                && <SelectedPartners id={+id} />}
-            </GridColumn>
+
+            {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT
+                && <GridColumn>
+                  <SelectedPartnerJustification cfei={cfei} />
+                </GridColumn>}
           </Grid>
         </Grid>
       </GridColumn>
@@ -68,6 +70,7 @@ CfeiOverview.propTypes = {
   partner: PropTypes.string,
   partnerId: PropTypes.number,
   displayGoal: PropTypes.bool,
+  cfei: PropTypes.object,
 };
 
 const formCfeiDetails = reduxForm({
@@ -94,6 +97,7 @@ const mapStateToProps = (state, ownProps) => {
     partnerId: partner_id,
     role: state.session.role,
     displayGoal: true,
+    cfei,
   };
 };
 
