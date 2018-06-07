@@ -2,14 +2,14 @@ from django.db import transaction
 from django.http import Http404
 
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.generics import RetrieveAPIView, CreateAPIView
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateAPIView
 
 from partner.models import Partner
 from sanctionslist.scans import sanctions_scan_partner
 from account.serializers import (
     PartnerRegistrationSerializer,
     PartnerUserSerializer,
-)
+    UserProfileSerializer)
 from agency.serializers import AgencyUserSerializer
 
 
@@ -42,3 +42,12 @@ class AccountCurrentUserRetrieveAPIView(RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class UserProfileRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (IsAuthenticated, )
+    serializer_class = UserProfileSerializer
+
+    def get_object(self):
+        return self.request.user.profile

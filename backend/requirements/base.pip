@@ -30,6 +30,7 @@ names==0.3.0
 coolname==1.0.4
 reportlab==3.4.0
 Babel==2.6.0
+python-crontab==2.2.8
 
 # Testing
 astroid==1.5.2

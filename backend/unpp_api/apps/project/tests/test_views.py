@@ -5,6 +5,7 @@ import random
 from datetime import date, timedelta
 import mock
 from dateutil.relativedelta import relativedelta
+from django.core.management import call_command
 from django.test import override_settings
 
 from django.urls import reverse
@@ -191,9 +192,14 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(Partner.objects.first().id in [p['id'] for p in response.data['invited_partners']])
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
 
-        self.assertTrue(len(mail.outbox) >= 1)
-        self.assertIn(NOTIFICATION_DATA[NotificationType.CFEI_INVITE]['subject'], [m.subject for m in mail.outbox])
-        self.assertTrue(any([eoi.get_absolute_url() in m.body for m in mail.outbox]))
+        call_command('send_daily_notifications')
+        notification_emails = list(filter(
+            lambda msg: eoi.get_absolute_url() in msg.body,
+            mail.outbox
+        ))
+
+        self.assertTrue(len(notification_emails) >= 1)
+
         payload = {
             "invited_partners": PartnerShortSerializer([Partner.objects.last()], many=True).data
         }
@@ -483,6 +489,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(status.is_success(response.status_code))
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
+        call_command('send_daily_notifications')
         self.assertTrue(len(mail.outbox) > 0)
         mail.outbox = []
 
@@ -1028,11 +1035,12 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        call_command('send_daily_notifications')
         selection_emails = list(filter(
-            lambda msg: msg.subject == NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'],
+            lambda msg: NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'] in msg.body,
             mail.outbox
         ))
-        self.assertEqual(len(selection_emails), 1)
+        self.assertEqual(len(selection_emails), User.objects.filter(partner_members__partner=partner1).count())
 
         mail.outbox = []
         partner1_application = partner1.applications.first()
@@ -1048,9 +1056,12 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         update_response = self.client.patch(application_url, data=accept_payload, format='json')
         self.assertEqual(update_response.status_code, status.HTTP_200_OK)
 
-        self.assertIn(
-            NOTIFICATION_DATA[NotificationType.CFEI_APPLICATION_WIN]['subject'], [m.subject for m in mail.outbox]
-        )
+        call_command('send_daily_notifications')
+        notification_emails = list(filter(
+            lambda msg: NOTIFICATION_DATA[NotificationType.CFEI_APPLICATION_WIN]['subject'] in msg.body,
+            mail.outbox
+        ))
+        self.assertTrue(len(notification_emails) > 0)
 
 
 class TestEOIPublish(BaseAPITestCase):

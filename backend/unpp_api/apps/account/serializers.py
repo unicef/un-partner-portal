@@ -34,7 +34,7 @@ from partner.serializers import (
     PartnerMemberSerializer,
 )
 from partner.validators import PartnerRegistrationValidator
-from account.models import User
+from account.models import User, UserProfile
 
 
 class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
@@ -194,6 +194,18 @@ class UserFullnameSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'fullname', 'email', )
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    notification_frequency_display = serializers.CharField(source='get_notification_frequency_display')
+
+    class Meta:
+        model = UserProfile
+        fields = (
+            'id',
+            'notification_frequency',
+            'notification_frequency_display',
+        )
 
 
 class PartnerMemberSerializer(serializers.ModelSerializer):
