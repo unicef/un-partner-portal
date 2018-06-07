@@ -819,7 +819,7 @@ class EOISendToPublishAPIView(RetrieveAPIView):
     def post(self, *args, **kwargs):
         # TODO: Notify focal point
         obj = self.get_object()
-        if obj.deadline_date < date.today():
+        if obj.deadline_passed:
             raise serializers.ValidationError('Deadline date is set in the past, please update it before publishing.')
 
         obj.sent_for_publishing = True
