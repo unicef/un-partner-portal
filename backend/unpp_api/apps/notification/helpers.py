@@ -2,8 +2,6 @@
 from __future__ import unicode_literals
 
 from dateutil.relativedelta import relativedelta
-from django.conf import settings
-from django.core.mail import send_mass_mail
 from django.template import loader
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
@@ -157,17 +155,3 @@ def send_notification_to_cfei_focal_points(eoi):
             'eoi_url': eoi.get_absolute_url()
         }
     )
-
-
-def flush_email_notifications():
-    if not settings.DEBUG:
-        raise Exception('Run only during development')
-
-    to_be_sent = NotifiedUser.objects.filter(sent_as_email=False).select_related('notification')
-
-    # See https://docs.djangoproject.com/en/1.11/topics/email/#send-mass-mail
-    messages = [(n[0], n[1], settings.DEFAULT_FROM_EMAIL, [n[2]]) for n in to_be_sent.values_list(
-        'notification__name', 'notification__description', 'recipient__email'
-    )]
-    send_mass_mail(messages, fail_silently=False)
-    to_be_sent.update(sent_as_email=True)

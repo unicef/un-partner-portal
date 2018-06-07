@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from django.conf import settings
 from django.core.mail import send_mass_mail
+from django.template import loader
 from django.core.management.base import BaseCommand
 
 from common.consts import NOTIFICATION_FREQUENCY_CHOICES
@@ -32,13 +33,16 @@ class Command(BaseCommand):
 
         mail_subject = 'UNPP Notification Summary'
         for email, messages in aggregated_mail.items():
-            body =
+            body = loader.get_template('notifications/notification_summary.html').render({
+                'title': mail_subject,
+                'user_fullname': mail_fullnames[email],
+                'messages': messages,
+            })
 
             bulk_send_list.append((
-
+                mail_subject,
+                body,
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
             ))
-
-
-
-
-        pass
+        send_mass_mail(bulk_send_list, fail_silently=False)
