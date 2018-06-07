@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 class Partner(TimeStampedModel):
     legal_name = models.CharField(max_length=255)
-    display_type = models.CharField(max_length=3, choices=PARTNER_TYPES)
+    display_type = models.CharField(max_length=3, choices=PARTNER_TYPES, verbose_name='Organization Type')
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children')
     country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
     is_active = models.BooleanField(default=True)
