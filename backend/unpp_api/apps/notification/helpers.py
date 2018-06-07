@@ -40,11 +40,18 @@ def send_notification(notification_type, obj, users, context=None, send_in_feed=
         content_object=obj,
     )
 
-    NotifiedUser.objects.bulk_create([NotifiedUser(
-        notification=notification,
-        did_read=not send_in_feed,
-        recipient_id=user.id
-    ) for user in users])
+    notified_users = []
+    for user in users:
+        user_has_emails_enabled = bool(user.profile.notification_frequency)
+        if send_in_feed or user_has_emails_enabled:
+            notified_users.append(NotifiedUser(
+                notification=notification,
+                did_read=not send_in_feed,
+                sent_as_email=not user_has_emails_enabled,
+                recipient_id=user.id
+            ))
+
+    NotifiedUser.objects.bulk_create(notified_users)
 
     return notification
 
