@@ -60,8 +60,7 @@ class EOI(TimeStampedModel):
     is_completed = models.BooleanField(default=False)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
     assessments_criteria = JSONField(
-        default=dict([('selection_criteria', ''), ('weight', 0)]),
-        validators=[validate_weight_adjustments]
+        default=list, validators=[validate_weight_adjustments]
     )
     review_summary_comment = models.TextField(null=True, blank=True)
     review_summary_attachment = models.ForeignKey(

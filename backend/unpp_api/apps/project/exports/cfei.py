@@ -132,7 +132,7 @@ class CFEIPDFExporter:
             f'{focal_point.fullname} ({focal_point.email})' for focal_point in self.cfei.focal_points.all()
         ]
 
-        main_content = ListFlowable([
+        main_content = [
             ListItem([
                 Paragraph('Timeline', style=self.style_h4),
                 self.get_timeline_table(),
@@ -168,14 +168,16 @@ class CFEIPDFExporter:
                 Paragraph(self.cfei.other_information or '-', style=self.style_normal),
                 Spacer(1, self.margin / 2)
             ]),
-            ListItem([
+        ]
+
+        if self.cfei.is_open:
+            main_content.append(ListItem([
                 Paragraph('Selection Criteria', style=self.style_h4),
                 self.get_selection_criteria_table(),
                 Spacer(1, self.margin / 2)
-            ]),
-        ])
+            ]))
 
-        paragraphs.append(main_content)
+        paragraphs.append(ListFlowable(main_content))
         document.build(paragraphs)
 
     def get_as_response(self):
