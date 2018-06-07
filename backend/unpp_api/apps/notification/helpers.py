@@ -5,10 +5,11 @@ from collections import defaultdict
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
-from django.core.mail import send_mass_mail
+from django.core.mail import get_connection, EmailMultiAlternatives
 from django.template import loader
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
+from django.utils.html import strip_tags
 
 from account.models import User
 from common.consts import COMPLETED_REASON, CFEI_STATUSES
@@ -178,21 +179,19 @@ def send_notification_summary_to_notified_users(notified_users):
         aggregated_mail[user_email].append((subject, body))
         mail_to_fullname[user_email] = user_fullname
 
-    # See https://docs.djangoproject.com/en/1.11/topics/email/#send-mass-mail
-    bulk_send_list = []
+    connection = get_connection()
 
     mail_subject = 'UNPP Notification Summary'
     for email, messages in aggregated_mail.items():
-        body = loader.get_template('notifications/notification_summary.html').render({
+        html_content = loader.get_template('notifications/notification_summary.html').render({
             'title': mail_subject,
             'user_fullname': mail_to_fullname[email],
             'messages': messages,
         })
+        text_content = strip_tags(html_content)
 
-        bulk_send_list.append((
-            mail_subject,
-            body,
-            settings.DEFAULT_FROM_EMAIL,
-            [email],
-        ))
-    send_mass_mail(bulk_send_list, fail_silently=False)
+        msg = EmailMultiAlternatives(
+            mail_subject, text_content, settings.DEFAULT_FROM_EMAIL, [email], connection=connection
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
