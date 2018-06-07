@@ -9,7 +9,8 @@ from sanctionslist.scans import sanctions_scan_partner
 from account.serializers import (
     PartnerRegistrationSerializer,
     PartnerUserSerializer,
-    UserProfileSerializer)
+    UserProfileSerializer,
+)
 from agency.serializers import AgencyUserSerializer
 
 
