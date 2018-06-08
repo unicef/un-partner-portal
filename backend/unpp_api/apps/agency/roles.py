@@ -126,7 +126,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_REVIEW_APPLICATIONS,
         AgencyPermission.CFEI_RECOMMEND_PARTNER_FOR_SELECTION,
         AgencyPermission.CFEI_FINALIZE,
-        AgencyPermission.CFEI_FINALIZED_VIEW_ALL_REVIEWS, 
+        AgencyPermission.CFEI_FINALIZED_VIEW_ALL_REVIEWS,
 
         AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS,
         AgencyPermission.CFEI_DIRECT_INDICATE_CSO,
@@ -162,7 +162,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_PUBLISHED_CANCEL,
         AgencyPermission.CFEI_SENT_INVITE_CSO,
         AgencyPermission.CFEI_SENT_EDIT,
-        AgencyPermission.CFEI_SENT_PUBLISH, 
+        AgencyPermission.CFEI_SENT_PUBLISH,
         AgencyPermission.CFEI_MANAGE_REVIEWERS,
         AgencyPermission.CFEI_VIEW_APPLICATIONS,
         AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
@@ -172,7 +172,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DESELECT_PARTNER,
         AgencyPermission.CFEI_FINALIZE,
         AgencyPermission.CFEI_FINALIZED_VIEW_ALL_REVIEWS,
-        AgencyPermission.CFEI_FINALIZED_VIEW_ALL_INFO, 
+        AgencyPermission.CFEI_FINALIZED_VIEW_ALL_INFO,
 
         AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS,
         AgencyPermission.CFEI_DIRECT_INDICATE_CSO,
@@ -253,7 +253,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_REVIEW_APPLICATIONS,
         AgencyPermission.CFEI_RECOMMEND_PARTNER_FOR_SELECTION,
         AgencyPermission.CFEI_FINALIZE,
-        AgencyPermission.CFEI_FINALIZED_VIEW_ALL_REVIEWS, 
+        AgencyPermission.CFEI_FINALIZED_VIEW_ALL_REVIEWS,
 
         AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS,
         AgencyPermission.CFEI_DIRECT_INDICATE_CSO,
