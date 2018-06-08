@@ -51,6 +51,7 @@ const HeaderOptionsContainer = (props) => {
     allowedToEdit,
   } = props;
   let options;
+  let status = <EoiStatusCell status={cfeiStatus} />;
 
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
@@ -66,30 +67,23 @@ const HeaderOptionsContainer = (props) => {
       ? <ConvertToDS partnerId={partnerId} id={id} />
       : null;
   }
-  if (cfeiCompleted) {
-    return (
-      <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
+
+  if (cfeiStatus === 'Sen') {
+    status = (<Tooltip
+      title={tooltipInfo(type)}
+      placement="center"
+    >
+      <div>
         <EoiStatusCell status={cfeiStatus} />
         <Typography type="caption">{completedReasonDisplay}</Typography>
-      </GridColumn>);
-  } else if (cfeiStatus === 'Sen') {
-    return (
-      <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
-        <Tooltip
-          title={tooltipInfo(type)}
-          placement="center"
-        >
-          <div>
-            <EoiStatusCell status={cfeiStatus} />
-            <Typography type="caption">{completedReasonDisplay}</Typography>
-          </div>
-        </Tooltip>
-      </GridColumn>);
+      </div>
+    </Tooltip>);
   }
 
   return (
     <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={24}>
-      {cfeiStatus && <Grid item><EoiStatusCell status={cfeiStatus} /></Grid>}
+      <Grid item>{status}</Grid>
+      {completedReasonDisplay && <Typography type="caption">{completedReasonDisplay}</Typography>}
       <Grid item>{options}</Grid>
     </Grid>
   );

@@ -35,7 +35,7 @@ const send = 'send';
 const publish = 'publish';
 const complete = 'complete';
 
-class PartnerOpenHeaderOptions extends Component {
+class AgencyDirectHeaderOptions extends Component {
   constructor(props) {
     super(props);
 
@@ -203,7 +203,7 @@ class PartnerOpenHeaderOptions extends Component {
   }
 }
 
-PartnerOpenHeaderOptions.propTypes = {
+AgencyDirectHeaderOptions.propTypes = {
   params: PropTypes.object,
   dialogOpen: PropTypes.object,
   handleDialogClose: PropTypes.func,
@@ -254,4 +254,4 @@ export default compose(
   withMultipleDialogHandling,
   connect(mapStateToProps, null),
   withRouter,
-)(PartnerOpenHeaderOptions);
+)(AgencyDirectHeaderOptions);

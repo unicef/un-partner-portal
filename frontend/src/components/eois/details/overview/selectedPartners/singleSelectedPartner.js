@@ -105,7 +105,7 @@ const mapStateToProps = (state, {
   const cfeiStatus = selectCfeiStatus(state, eoiId);
   const isCfeiDraft = cfeiStatus === 'Dra';
   const isCfeiSent = cfeiStatus === 'Sen';
-  const isAccepted = currentStatus === 'Acc'; 
+  const isAccepted = currentStatus === 'Acc';
 
   return {
     cfeiPublished,
