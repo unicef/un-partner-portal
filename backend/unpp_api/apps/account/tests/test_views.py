@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from django.urls import reverse
+from django.core import mail
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -210,3 +211,42 @@ class TestUserProfileUpdateAPITestCase(BaseAPITestCase):
             update_response = self.client.patch(profile_url, data=request_data)
             self.assertResponseStatusIs(update_response)
             self.assertEqual(update_response.data['notification_frequency_display'], option_name)
+
+
+class TestPasswordResetTestCase(BaseAPITestCase):
+
+    def test_pw_reset(self):
+        self.client.logout()
+
+        reset_request_url = reverse('rest_password_reset')
+        print(reset_request_url)
+        response = self.client.post(reset_request_url, data={
+            'email': self.user.email
+        })
+        self.assertResponseStatusIs(response)
+        self.assertTrue(len(mail.outbox) >= 1)
+        pw_reset_email = mail.outbox[0]
+        self.assertEqual(pw_reset_email.subject, 'UNPP Password Reset')
+        self.assertIn(self.user.email, pw_reset_email.to)
+
+        reset_url = next(filter(lambda l: 'password-reset' in l, pw_reset_email.body.split()))
+        url_path_parts = reset_url.split('/')
+        token = url_path_parts[-1]
+        uid = url_path_parts[-2]
+
+        reset_payload = {
+            'uid': uid,
+            'token': token,
+            'new_password1': 'password',
+            'new_password2': 'password',
+        }
+
+        api_reset_url = reverse('rest_password_reset_confirm')
+        print(api_reset_url)
+        reset_response = self.client.post(api_reset_url, data=reset_payload)
+        self.assertResponseStatusIs(reset_response)
+
+        self.assertTrue(self.client.login(
+            email=self.user.email,
+            password=reset_payload['new_password1']
+        ))

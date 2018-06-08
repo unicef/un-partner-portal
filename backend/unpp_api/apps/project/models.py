@@ -60,7 +60,7 @@ class EOI(TimeStampedModel):
     is_completed = models.BooleanField(default=False)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
     assessments_criteria = JSONField(
-        default=list, validators=[validate_weight_adjustments]
+        default=list, validators=[validate_weight_adjustments], blank=True
     )
     review_summary_comment = models.TextField(null=True, blank=True)
     review_summary_attachment = models.ForeignKey(
@@ -214,7 +214,7 @@ class Application(TimeStampedModel):
         elif self.eoi.is_open:
             return 'Open Selection'
         elif self.eoi.is_direct:
-            return 'Direct Selection'
+            return 'Direct Selection / Retention'
 
     @property
     def project_title(self):
