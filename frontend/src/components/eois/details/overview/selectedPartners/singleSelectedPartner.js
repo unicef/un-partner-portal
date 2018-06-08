@@ -1,90 +1,101 @@
 import React from 'react';
-import R from 'ramda';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Typography from 'material-ui/Typography';
-import Grid from 'material-ui/Grid';
-import Button from 'material-ui/Button';
-import Divider from 'material-ui/Divider';
-import GridColumn from '../../../../common/grid/gridColumn';
+import { withStyles } from 'material-ui/styles';
+import SvgIcon from 'material-ui/SvgIcon';
 import { updateApplication } from '../../../../../reducers/applicationDetails';
 import { loadCfei } from '../../../../../reducers/cfeiDetails';
-import { selectApplicationCurrentStatus, selectExtendedApplicationStatuses, isCfeiCompleted, isCfeiPublished, selectCfeiStatus, selectNormalizedDirectJustification } from '../../../../../store';
-import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
+import { selectApplicationCurrentStatus, selectExtendedApplicationStatuses, isCfeiCompleted, isCfeiPublished, selectCfeiStatus } from '../../../../../store';
 import VerificationIcon from '../../../../partners/profile/icons/verificationIcon';
-import ApplicationStatusCell from '../../../../applications/applicationStatusCell';
 
 const messages = {
   accept: 'Accept',
-  isDraftText: 'Selected partner will not be notified before sending (publishing) this waiver of open selection.',
+  isDraftText: 'Selected partner will not be notified before sending (publishing) this direct selection/retention.',
   isPublishedText: 'Waiting for Partner\'s acceptance. You can accept this offer in Partner\'s behalf.',
-  withdraw: 'Withdraw',
   justificationWaiver: 'Justification for direct selection/retention',
   justificationSummary: 'Justification summary',
+  accepted: 'Accepted by Partner',
+  declined: 'Declined by Partner',
 };
 
-const styles = {
-  display: 'flex',
-  alignItems: 'center',
+const styleSheet = theme => ({
+  Suc: {
+    color: theme.palette.common.purple,
+  },
+  Acc: {
+    color: theme.palette.common.lightGreen,
+  },
+  Dec: {
+    color: theme.palette.common.orange,
+  },
+  root: {
+    paddingTop: theme.spacing.unit,
+    display: 'flex',
+    alignItems: 'top',
+  },
+  rootCenter: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+});
+const status = (classes, currentStatus, msg, isPublished) => {
+  const colorClass = classNames(classes[currentStatus]);
+
+  return (<div className={classes.root}>
+    {isPublished && <SvgIcon className={colorClass}>
+      <circle cx="10" cy="8" r="4" />
+    </SvgIcon>}
+    <Typography type="caption">
+      {msg}
+    </Typography>
+  </div>);
 };
 
 const SingleSelectedPartner = (props) => {
   const { partner,
-    isCfeiPublished,
-    cfeiStatus,
-    isCfeiCompleted,
+    classes,
+    cfeiPublished,
+    cfeiCompleted,
     currentStatus,
     isCfeiDraft,
-    isAccepted,
-    isDeclined } = props;
+    isCfeiSent,
+    isAccepted } = props;
+
   return (
     <div>
-      <div style={styles}>
+      <div className={classes.rootCenter}>
         <Typography>{partner.partner_name}</Typography>
         <VerificationIcon
           verified
           small
         />
       </div>
-      {isCfeiDraft
-          && <Typography type="caption">{messages.isDraftText}</Typography>
+      {(isCfeiDraft || isCfeiSent)
+          && status(classes, currentStatus, messages.isDraftText, false)
       }
-      {isCfeiPublished
-          && !isAccepted
-          && !isDeclined
-          && <div>
-            <Typography type="caption">{messages.isPublishedText}</Typography>
-            <ApplicationStatusCell
-              status={cfeiStatus}
-              applicationStatus={currentStatus}
-              id={'appstatcell'}
-            />
-          </div>}
+      {!cfeiCompleted && cfeiPublished
+          && status(classes, currentStatus, messages.isPublishedText, cfeiPublished)}
 
-      {(isAccepted || isDeclined)
-        && <div>
-          <Typography type="caption">{messages.isPublishedText}</Typography>
-          <ApplicationStatusCell
-            status={cfeiStatus}
-            applicationStatus={currentStatus}
-            id={'appstatcell'}
-          />
-        </div>}
+      {cfeiCompleted
+        && status(classes, currentStatus,
+          isAccepted ? messages.accepted : messages.declined, cfeiCompleted)}
     </div>);
 };
 
 SingleSelectedPartner.propTypes = {
+  classes: PropTypes.object.isRequired,
   partner: PropTypes.object,
-  applicationStatus: PropTypes.string,
-  loadCfei: PropTypes.func,
-  directJustifications: PropTypes.array,
-  isCfeiCompleted: PropTypes.bool,
-  isCfeiPublished: PropTypes.bool,
+  currentStatus: PropTypes.string,
+  cfeiCompleted: PropTypes.bool,
+  cfeiPublished: PropTypes.bool,
   isCfeiDraft: PropTypes.bool,
+  isCfeiSent: PropTypes.bool,
+  isAccepted: PropTypes.bool,
 };
 
 const mapStateToProps = (state, {
-  isFocalPoint,
   id: eoiId,
   partner: { id } }) => {
   const directJustifications = state.partnerProfileConfig['direct-justifications'];
@@ -93,18 +104,17 @@ const mapStateToProps = (state, {
   const cfeiPublished = isCfeiPublished(state, eoiId);
   const cfeiStatus = selectCfeiStatus(state, eoiId);
   const isCfeiDraft = cfeiStatus === 'Dra';
-  const isAccepted = currentStatus === 'Acc';
-  const isDeclined = currentStatus === 'Dec';
-  console.log('application status :: ', currentStatus);
-  console.log('cfei status :: ', cfeiStatus);
+  const isCfeiSent = cfeiStatus === 'Sen';
+  const isAccepted = currentStatus === 'Acc'; 
+
   return {
-    isCfeiPublished: cfeiPublished,
-    isCfeiCompleted: cfeiCompleted,
+    cfeiPublished,
+    cfeiCompleted,
     isCfeiDraft,
+    isCfeiSent,
     currentStatus,
     cfeiStatus,
     isAccepted,
-    isDeclined,
     directJustifications,
     applicationStatus: selectExtendedApplicationStatuses(state)[currentStatus],
   };
@@ -117,4 +127,5 @@ const mapDispatchToProps = (dispatch, { id, partner = {} }) => ({
   loadCfei: () => dispatch(loadCfei(id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SingleSelectedPartner);
+const connected = connect(mapStateToProps, mapDispatchToProps)(SingleSelectedPartner);
+export default withStyles(styleSheet, { name: 'UserStatusCell' })(connected);

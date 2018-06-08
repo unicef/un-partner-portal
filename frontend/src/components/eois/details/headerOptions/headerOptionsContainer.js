@@ -56,7 +56,7 @@ const HeaderOptionsContainer = (props) => {
     return (
       <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
         <Tooltip
-          title="This WOS was sent to Advanced Editor for acceptance and publication"
+          title="This DS/R was sent to Advanced Editor for acceptance and publication"
           placement="center"
         >
           <div>
