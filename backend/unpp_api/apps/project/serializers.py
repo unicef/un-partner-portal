@@ -377,7 +377,6 @@ class CreateProjectSerializer(CreateEOISerializer):
 class SelectedPartnersSerializer(serializers.ModelSerializer):
     partner_id = serializers.CharField(source="partner.id")
     partner_name = serializers.CharField(source="partner.legal_name")
-    ds_attachment = CommonFileSerializer(read_only=True)
 
     class Meta:
         model = Application
@@ -386,6 +385,14 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
             'partner_id',
             'partner_name',
             'application_status',
+        )
+
+
+class SelectedPartnersJustificationSerializer(SelectedPartnersSerializer):
+    ds_attachment = CommonFileSerializer(read_only=True)
+
+    class Meta(SelectedPartnersSerializer.Meta):
+        fields = SelectedPartnersSerializer.Meta.fields + (
             'ds_justification_select',
             'justification_reason',
             'ds_attachment',
@@ -511,8 +518,13 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
 
     def get_direct_selected_partners(self, obj):
         if obj.is_direct:
-            # this is used by agency
-            return SelectedPartnersSerializer(obj.applications.all(), many=True).data
+            request = self.context.get('request')
+            if obj.is_completed or request and request.agency_member.office.agency == obj.agency:
+                serializer_class = SelectedPartnersJustificationSerializer
+            else:
+                serializer_class = SelectedPartnersSerializer
+
+            return serializer_class(obj.applications.all(), many=True).data
 
     def get_applications_count(self, eoi):
         return eoi.applications.count()
