@@ -149,6 +149,9 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
         if not self.request.method == 'GET':
             queryset = queryset.filter(Q(created_by=self.request.user) | Q(focal_points=self.request.user))
 
+        if self.request.partner_member:
+            queryset = queryset.filter(is_published=True)
+
         return queryset
 
     def perform_update(self, serializer):
@@ -370,7 +373,7 @@ class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
     def get_object(self):
         return get_object_or_404(self.get_queryset(), **{
             'partner_id': self.request.active_partner.id,
-            'eoi_id': self.kwargs.get(self.reviewer_url_kwargs),
+            'eoi_id': self.kwargs.get('pk'),
         })
 
 
@@ -625,7 +628,7 @@ class PartnerApplicationDirectListCreateAPIView(PartnerIdsMixin, ListAPIView):
             ]
         ),
     )
-    queryset = Application.objects.filter(eoi__display_type=CFEI_TYPES.direct).distinct()
+    queryset = Application.objects.filter(eoi__display_type=CFEI_TYPES.direct, eoi__is_published=True).distinct()
     filter_class = ApplicationsUnsolicitedFilter
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
