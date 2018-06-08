@@ -133,8 +133,6 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
         exclude = ("cn", "eoi", "agency", "submitter")
 
     def validate_partner(self, partner):
-        if not partner.is_verified:
-            raise ValidationError('Only verified partners are eligible for Direct Selection / Retention.')
         if partner.is_hq:
             raise ValidationError('HQs of International partners are not eligible for Direct Selections / Retention.')
         return partner
@@ -377,6 +375,7 @@ class CreateProjectSerializer(CreateEOISerializer):
 class SelectedPartnersSerializer(serializers.ModelSerializer):
     partner_id = serializers.CharField(source="partner.id")
     partner_name = serializers.CharField(source="partner.legal_name")
+    partner_is_verified = serializers.CharField(source="partner.is_verified")
 
     class Meta:
         model = Application
@@ -384,6 +383,7 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
             'id',
             'partner_id',
             'partner_name',
+            'partner_is_verified',
             'application_status',
         )
 
