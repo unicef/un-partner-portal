@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from django.urls import reverse
+from django.core import mail
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -210,3 +211,23 @@ class TestUserProfileUpdateAPITestCase(BaseAPITestCase):
             update_response = self.client.patch(profile_url, data=request_data)
             self.assertResponseStatusIs(update_response)
             self.assertEqual(update_response.data['notification_frequency_display'], option_name)
+
+
+class TestPasswordResetTestCase(BaseAPITestCase):
+
+    def test_pw_reset(self):
+        reset_request_url = reverse('rest_password_reset')
+        response = self.client.post(reset_request_url, data={
+            'email': self.user.email
+        })
+        self.assertResponseStatusIs(response)
+        self.assertTrue(len(mail.outbox) >= 1)
+        pw_reset_email = mail.outbox[0]
+        self.assertEqual(pw_reset_email.subject, 'UNPP Password Reset')
+        self.assertIn(self.user.email, pw_reset_email.to)
+
+        reset_url = next(filter(lambda l: 'token=' in l, pw_reset_email.body.split()))
+        token = reset_url.split('token=')[-1]
+
+
+        print(reset_url)
