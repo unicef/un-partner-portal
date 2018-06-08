@@ -127,14 +127,24 @@ export function selectCfeiConverted(state, id) {
   return eoiConverted;
 }
 
-export function selectCfeiJustification(state, id) {
+export function selectCfeiCompletedReason(state, id) {
   const { [id]: { completed_reason = null } = {} } = state;
   return completed_reason;
+}
+
+export function selectCfeiCompletedReasonDisplay(state, id) {
+  const { [id]: { completed_reason_display = null } = {} } = state;
+  return completed_reason_display;
 }
 
 export function isCfeiCompleted(state, id) {
   const { [id]: { completed_reason = null } = {} } = state;
   return !!completed_reason;
+}
+
+export function isDeadlinePassed(state, id) {
+  const { [id]: { deadline_passed = null } = {} } = state;
+  return deadline_passed;
 }
 
 export function isCfeiPublished(state, id) {

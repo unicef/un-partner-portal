@@ -37,7 +37,8 @@ from notification.helpers import (
     send_cfei_review_required_notification, user_received_notification_recently,
     send_partner_made_decision_notification)
 from partner.permissions import PartnerPermission
-from project.exports import ApplicationCompareSpreadsheetGenerator
+from project.exports.application_compare import ApplicationCompareSpreadsheetGenerator
+from project.exports.cfei import CFEIPDFExporter
 from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from project.serializers import (
     BaseProjectSerializer,
@@ -135,6 +136,11 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
     )
     queryset = EOI.objects.all()
 
+    def retrieve(self, request, *args, **kwargs):
+        if request.GET.get('export', '').lower() == 'pdf':
+            return CFEIPDFExporter(self.get_object()).get_as_response()
+        return super(EOIAPIView, self).retrieve(request, *args, **kwargs)
+
     def get_serializer_class(self, *args, **kwargs):
         return AgencyProjectSerializer if self.request.user.is_agency_user else PartnerProjectSerializer
 
@@ -142,6 +148,9 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
         queryset = super(EOIAPIView, self).get_queryset()
         if not self.request.method == 'GET':
             queryset = queryset.filter(Q(created_by=self.request.user) | Q(focal_points=self.request.user))
+
+        if self.request.partner_member:
+            queryset = queryset.filter(is_published=True)
 
         return queryset
 
@@ -364,7 +373,7 @@ class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
     def get_object(self):
         return get_object_or_404(self.get_queryset(), **{
             'partner_id': self.request.active_partner.id,
-            'eoi_id': self.kwargs.get(self.reviewer_url_kwargs),
+            'eoi_id': self.kwargs.get('pk'),
         })
 
 
@@ -601,16 +610,14 @@ class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreate
 
     def get_serializer_class(self, *args, **kwargs):
         if self.request.method == 'POST':
+            current_user_has_permission(
+                self.request, partner_permissions=[PartnerPermission.UCN_DRAFT], raise_exception=True
+            )
             return CreateUnsolicitedProjectSerializer
         return ApplicationPartnerUnsolicitedDirectSerializer
 
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(partner_id__in=self.get_partner_ids())
-
-    @check_unpp_permission(partner_permissions=[PartnerPermission.UCN_DRAFT])
-    def perform_create(self, serializer):
-        super(PartnerApplicationUnsolicitedListCreateAPIView, self).perform_create(serializer)
-        send_notification_application_created(serializer.instance)
 
 
 class PartnerApplicationDirectListCreateAPIView(PartnerIdsMixin, ListAPIView):
@@ -621,7 +628,7 @@ class PartnerApplicationDirectListCreateAPIView(PartnerIdsMixin, ListAPIView):
             ]
         ),
     )
-    queryset = Application.objects.filter(eoi__display_type=CFEI_TYPES.direct).distinct()
+    queryset = Application.objects.filter(eoi__display_type=CFEI_TYPES.direct, eoi__is_published=True).distinct()
     filter_class = ApplicationsUnsolicitedFilter
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
@@ -815,6 +822,9 @@ class EOISendToPublishAPIView(RetrieveAPIView):
     def post(self, *args, **kwargs):
         # TODO: Notify focal point
         obj = self.get_object()
+        if obj.deadline_passed:
+            raise serializers.ValidationError('Deadline date is set in the past, please update it before publishing.')
+
         obj.sent_for_publishing = True
         obj.save()
         return Response(AgencyProjectSerializer(obj).data)
@@ -839,6 +849,36 @@ class PublishEOIAPIView(RetrieveAPIView):
 
     def post(self, *args, **kwargs):
         obj = self.get_object()
+        if obj.deadline_passed:
+            raise serializers.ValidationError('Deadline date is set in the past, please update it before publishing.')
+
         obj.is_published = True
+        obj.published_timestamp = timezone.now()
         obj.save()
         return Response(AgencyProjectSerializer(obj).data)
+
+
+class PublishUCNAPIView(RetrieveAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            partner_permissions=[
+                PartnerPermission.UCN_SUBMIT,
+            ]
+        ),
+    )
+    serializer_class = ApplicationPartnerUnsolicitedDirectSerializer
+    queryset = Application.objects.filter(is_published=False, is_unsolicited=True)
+
+    def get_queryset(self):
+        queryset = super(PublishUCNAPIView, self).get_queryset()
+        query = Q(partner=self.request.partner_member.partner)
+        if self.request.partner_member.partner.is_hq:
+            query |= Q(partner__hq=self.request.partner_member.partner)
+        return queryset.filter(query)
+
+    def post(self, *args, **kwargs):
+        obj = self.get_object()
+        obj.is_published = True
+        obj.save()
+        send_notification_application_created(obj)
+        return Response(self.serializer_class(obj).data)

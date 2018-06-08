@@ -3,9 +3,10 @@ from datetime import date
 from django.db import transaction
 
 from rest_framework import serializers
-from rest_auth.serializers import LoginSerializer
+from rest_auth.serializers import LoginSerializer, PasswordResetSerializer
 from rest_framework.validators import UniqueValidator
 
+from account.forms import CustomPasswordResetForm
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     POLICY_AREA_CHOICES,
@@ -34,7 +35,7 @@ from partner.serializers import (
     PartnerMemberSerializer,
 )
 from partner.validators import PartnerRegistrationValidator
-from account.models import User
+from account.models import User, UserProfile
 
 
 class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
@@ -196,6 +197,18 @@ class UserFullnameSerializer(serializers.ModelSerializer):
         fields = ('id', 'fullname', 'email', )
 
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    notification_frequency_display = serializers.CharField(source='get_notification_frequency_display')
+
+    class Meta:
+        model = UserProfile
+        fields = (
+            'id',
+            'notification_frequency',
+            'notification_frequency_display',
+        )
+
+
 class PartnerMemberSerializer(serializers.ModelSerializer):
 
     user = UserFullnameSerializer()
@@ -214,3 +227,8 @@ class CustomLoginSerializer(LoginSerializer):
             if user.is_account_locked:
                 raise serializers.ValidationError('Account is Currently Locked')
         return sup_attrs
+
+
+class CustomPasswordResetSerializer(PasswordResetSerializer):
+
+    password_reset_form_class = CustomPasswordResetForm

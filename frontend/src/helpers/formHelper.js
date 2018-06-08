@@ -333,33 +333,31 @@ export const renderTextField = ({
   infoText,
   formControlStyle,
   ...other
-}) => {
-  return (<FormControl fullWidth style={formControlStyle}>
-    <FieldLabelWithTooltipIcon
-      infoText={infoText}
-      tooltipIconProps={{
-        name: input.name,
-      }}
-    >
-      {label}
-    </FieldLabelWithTooltipIcon>
-    <TextField
-      className={className}
-      id={input.name}
-      error={(touched && !!error) || !!warning}
-      fullWidth
-      {...input}
-      {...other}
-    />
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
-      {/* {other.InputProps.inputProps && other.InputProps.inputProps.maxLength &&
+}) => (<FormControl fullWidth style={formControlStyle}>
+  <FieldLabelWithTooltipIcon
+    infoText={infoText}
+    tooltipIconProps={{
+      name: input.name,
+    }}
+  >
+    {label}
+  </FieldLabelWithTooltipIcon>
+  <TextField
+    className={className}
+    id={input.name}
+    error={(touched && !!error) || !!warning}
+    fullWidth
+    {...input}
+    {...other}
+  />
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
+    {/* {other.InputProps.inputProps && other.InputProps.inputProps.maxLength &&
       <FormHelperText style={{ marginLeft: 'auto' }}>
       {input.value.length}/{other.InputProps.inputProps.maxLength}
       </FormHelperText>} */}
-    </div>
-  </FormControl>);
-};
+  </div>
+</FormControl>);
 
 export const renderNumberField = ({
   name,

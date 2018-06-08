@@ -24,7 +24,7 @@ const messages = {
     location: 'Location',
     sector: 'Sector & Area of Specialization',
     agency: 'Agency',
-    show: 'Show only those chosen for "direct selection"',
+    show: 'Show only those chosen for "direct selection/retention"',
   },
   clear: 'clear',
   submit: 'submit',

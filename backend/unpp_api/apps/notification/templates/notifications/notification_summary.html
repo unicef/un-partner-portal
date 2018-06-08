@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
+<body>
+<h1>{{ title }}</h1>
+Dear {{ user_fullname }},<br/>
+below you'll find a summary of UNPP notifications.
+
+{% for subject, body in messages %}
+    <h5>{{ forloop.counter }}</h5>
+    <h3>{{ subject }}</h3>
+    <p>{% autoescape off %}{{ body }}{% endautoescape %}</p>
+{% endfor %}
+</body>
+</html>

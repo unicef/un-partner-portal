@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 import os
 from django.conf import settings
+from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
 from agency.roles import AgencyRole, AGENCY_ROLE_PERMISSIONS
@@ -63,5 +64,5 @@ class BaseAPITestCase(APITestCase):
 
         return roles_with_permission, roles_without_permission
 
-    def assertResponseStatusIs(self, response, status_code, msg=None):
-        return self.assertEqual(response.status_code, status_code, msg=msg or response.data)
+    def assertResponseStatusIs(self, response, status_code=status.HTTP_200_OK, msg=None):
+        return self.assertEqual(response.status_code, status_code, msg=msg or getattr(response, 'data', None))

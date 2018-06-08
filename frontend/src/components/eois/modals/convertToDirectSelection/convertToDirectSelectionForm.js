@@ -15,9 +15,9 @@ import { StartDate, EndDate } from '../../../forms/fields/projectFields/commonFi
 const messages = {
   justification: 'Add justification for completing this CFEI',
   reason: 'Choose reason of completing this CFEI',
-  justificationFor: 'Justification for Direct Selection',
+  justificationFor: 'Justification for Direct Selection/Retention',
   pleaseState: 'Justification summary',
-  explain: 'Explain your justification for Direct Selection',
+  explain: 'Explain your justification for Direct Selection/Retention',
   briefBackground: 'Project Background',
   other: 'Other information (optional)',
   focal: 'Project / Programme Focal Point(s)',

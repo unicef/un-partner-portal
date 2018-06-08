@@ -219,7 +219,9 @@ BUDGET_CHOICES = Choices(
 )
 
 FLAG_TYPES = Choices(
+    ('Obs', 'observation', 'Observation'),
     ('Yel', 'yellow', 'Yellow Flag'),
+    ('Esc', 'escalated', 'Escalated Flag'),
     ('Red', 'red', 'Red Flag'),
 )
 
@@ -249,4 +251,11 @@ DSR_FINALIZE_RETENTION_CHOICES = Choices(
     ('2YR', 'second year'),
     ('3YR', 'a third year'),
     ('4YR', 'a fourth year'),
+)
+
+NOTIFICATION_FREQUENCY_CHOICES = Choices(
+    (None, 'Disabled'),
+    ('daily', 'Daily'),
+    ('weekly', 'Weekly'),
+    ('biweekly', 'Every Two Weeks'),
 )

@@ -81,7 +81,7 @@ class Specialization(models.Model):
         ordering = ['id']
 
     def __str__(self):
-        return "Specialization: {} <pk:{}>".format(self.name, self.id)
+        return f'<{self.pk}> {self.category.name}: {self.name}'
 
 
 class CommonFile(TimeStampedModel):

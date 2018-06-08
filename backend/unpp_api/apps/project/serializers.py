@@ -30,7 +30,7 @@ from notification.helpers import user_received_notification_recently, send_notif
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
 from project.models import EOI, Application, Assessment, ApplicationFeedback
-from project.utilities import update_cfei_focal_points
+from project.utilities import update_cfei_focal_points, update_cfei_reviewers
 
 
 class BaseProjectSerializer(serializers.ModelSerializer):
@@ -134,9 +134,9 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
 
     def validate_partner(self, partner):
         if not partner.is_verified:
-            raise ValidationError('Only verified partners are eligible for Direct Selections.')
+            raise ValidationError('Only verified partners are eligible for Direct Selection / Retention.')
         if partner.is_hq:
-            raise ValidationError('HQs of International partners are not eligible for Direct Selections.')
+            raise ValidationError('HQs of International partners are not eligible for Direct Selections / Retention.')
         return partner
 
 
@@ -438,6 +438,8 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'selected_source',
             'is_pinned',
             'application',
+            'published_timestamp',
+            'deadline_passed',
         )
         read_only_fields = fields
 
@@ -502,8 +504,10 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'contains_partner_accepted',
             'applications_count',
             'is_published',
+            'deadline_passed',
+            'published_timestamp',
         )
-        read_only_fields = ('created', 'completed_date', 'is_published')
+        read_only_fields = ('created', 'completed_date', 'is_published', 'published_timestamp')
 
     def get_direct_selected_partners(self, obj):
         if obj.is_direct:
@@ -529,18 +533,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         elif 'invited_partners' in self.initial_data:
             instance.invited_partners.clear()
 
-        reviewers = self.initial_data.get('reviewers', [])
-        if reviewers:
-            Assessment.objects.filter(
-                application__eoi=instance
-            ).exclude(reviewer_id__in=reviewers).update(archived=True)
-            instance.reviewers.through.objects.exclude(user_id__in=reviewers).delete()
-            instance.reviewers.add(*User.objects.filter(id__in=reviewers))
-            Assessment.all_objects.filter(application__eoi=instance, reviewer_id__in=reviewers).update(archived=False)
-        elif 'reviewers' in self.initial_data:
-            Assessment.objects.filter(application__eoi=instance).update(archived=True)
-            instance.reviewers.clear()
-
+        update_cfei_reviewers(instance, self.initial_data.get('reviewers'))
         update_cfei_focal_points(instance, self.initial_data.get('focal_points'))
 
         return instance
