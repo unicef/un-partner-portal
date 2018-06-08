@@ -297,12 +297,6 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         }
 
         response = self.client.post(self.url, data=payload, format='json')
-        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
-
-        for partner in Partner.objects.all():
-            PartnerVerificationFactory(partner=partner, submitter=self.user)
-
-        response = self.client.post(self.url, data=payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
 
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])

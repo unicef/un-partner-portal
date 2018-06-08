@@ -133,8 +133,6 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
         exclude = ("cn", "eoi", "agency", "submitter")
 
     def validate_partner(self, partner):
-        if not partner.is_verified:
-            raise ValidationError('Only verified partners are eligible for Direct Selection / Retention.')
         if partner.is_hq:
             raise ValidationError('HQs of International partners are not eligible for Direct Selections / Retention.')
         return partner
@@ -377,7 +375,7 @@ class CreateProjectSerializer(CreateEOISerializer):
 class SelectedPartnersSerializer(serializers.ModelSerializer):
     partner_id = serializers.CharField(source="partner.id")
     partner_name = serializers.CharField(source="partner.legal_name")
-    ds_attachment = CommonFileSerializer(read_only=True)
+    partner_is_verified = serializers.CharField(source="partner.is_verified")
 
     class Meta:
         model = Application
@@ -385,7 +383,16 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
             'id',
             'partner_id',
             'partner_name',
+            'partner_is_verified',
             'application_status',
+        )
+
+
+class SelectedPartnersJustificationSerializer(SelectedPartnersSerializer):
+    ds_attachment = CommonFileSerializer(read_only=True)
+
+    class Meta(SelectedPartnersSerializer.Meta):
+        fields = SelectedPartnersSerializer.Meta.fields + (
             'ds_justification_select',
             'justification_reason',
             'ds_attachment',
@@ -511,8 +518,13 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
 
     def get_direct_selected_partners(self, obj):
         if obj.is_direct:
-            # this is used by agency
-            return SelectedPartnersSerializer(obj.applications.all(), many=True).data
+            request = self.context.get('request')
+            if obj.is_completed or request and request.agency_member.office.agency == obj.agency:
+                serializer_class = SelectedPartnersJustificationSerializer
+            else:
+                serializer_class = SelectedPartnersSerializer
+
+            return serializer_class(obj.applications.all(), many=True).data
 
     def get_applications_count(self, eoi):
         return eoi.applications.count()

@@ -830,7 +830,7 @@ class EOISendToPublishAPIView(RetrieveAPIView):
         return Response(AgencyProjectSerializer(obj).data)
 
 
-class PublishEOIAPIView(RetrieveAPIView):
+class PublishCFEIAPIView(RetrieveAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
@@ -842,20 +842,26 @@ class PublishEOIAPIView(RetrieveAPIView):
     queryset = EOI.objects.filter(is_published=False)
 
     def check_object_permissions(self, request, obj):
-        super(PublishEOIAPIView, self).check_object_permissions(request, obj)
+        super(PublishCFEIAPIView, self).check_object_permissions(request, obj)
         if obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
             return
         self.permission_denied(request)
 
     def post(self, *args, **kwargs):
-        obj = self.get_object()
-        if obj.deadline_passed:
+        cfei = self.get_object()
+        if cfei.deadline_passed:
             raise serializers.ValidationError('Deadline date is set in the past, please update it before publishing.')
 
-        obj.is_published = True
-        obj.published_timestamp = timezone.now()
-        obj.save()
-        return Response(AgencyProjectSerializer(obj).data)
+        if cfei.is_direct:
+            if not all(map(lambda a: a.partner.is_verified, cfei.applications.all())):
+                raise serializers.ValidationError('All partners need to be verified before publishing.')
+            if not cfei.applications.count() == 1:
+                raise serializers.ValidationError('Only a single partner can be indicated.')
+
+        cfei.is_published = True
+        cfei.published_timestamp = timezone.now()
+        cfei.save()
+        return Response(AgencyProjectSerializer().data)
 
 
 class PublishUCNAPIView(RetrieveAPIView):

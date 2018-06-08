@@ -219,7 +219,6 @@ class TestPasswordResetTestCase(BaseAPITestCase):
         self.client.logout()
 
         reset_request_url = reverse('rest_password_reset')
-        print(reset_request_url)
         response = self.client.post(reset_request_url, data={
             'email': self.user.email
         })
@@ -242,7 +241,6 @@ class TestPasswordResetTestCase(BaseAPITestCase):
         }
 
         api_reset_url = reverse('rest_password_reset_confirm')
-        print(api_reset_url)
         reset_response = self.client.post(api_reset_url, data=reset_payload)
         self.assertResponseStatusIs(reset_response)
 
