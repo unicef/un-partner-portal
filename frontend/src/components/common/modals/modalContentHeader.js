@@ -16,7 +16,7 @@ const styleSheet = theme => ({
 });
 
 function ModalContentHeader(props) {
-  const { classes, titleText, bodyText } = props;
+  const { classes, titleText, bodyText = '' } = props;
   return (
     <Grid item>
       <Paper className={classes.root} elevation={0}>
