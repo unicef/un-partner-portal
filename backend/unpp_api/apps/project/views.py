@@ -852,8 +852,11 @@ class PublishCFEIAPIView(RetrieveAPIView):
         if cfei.deadline_passed:
             raise serializers.ValidationError('Deadline date is set in the past, please update it before publishing.')
 
-        if cfei.is_direct and not all(map(lambda a: a.partner.is_verified, cfei.applications.all())):
-            raise serializers.ValidationError('All partners need to be verified before publishing.')
+        if cfei.is_direct:
+            if not all(map(lambda a: a.partner.is_verified, cfei.applications.all())):
+                raise serializers.ValidationError('All partners need to be verified before publishing.')
+            if not cfei.applications.count() == 1:
+                raise serializers.ValidationError('Only a single partner can be indicated.')
 
         cfei.is_published = True
         cfei.published_timestamp = timezone.now()
