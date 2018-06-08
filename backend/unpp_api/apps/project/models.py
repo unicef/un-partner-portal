@@ -214,7 +214,7 @@ class Application(TimeStampedModel):
         elif self.eoi.is_open:
             return 'Open Selection'
         elif self.eoi.is_direct:
-            return 'Direct Selection'
+            return 'Direct Selection / Retention'
 
     @property
     def project_title(self):

@@ -75,7 +75,7 @@ NOTIFICATION_DATA = {
     },
     NotificationType.DIRECT_SELECTION_INITIATED: {
         'template_name': 'direct_selection_UN_initiated',
-        'subject': 'UN has identified your organization for a partnership opportunity via direct selection'
+        'subject': 'UN has identified your organization for a partnership opportunity via direct selection / retention'
     },
     NotificationType.DIRECT_SELECTION_FROM_NOTE_INITIATED: {
         'template_name': 'direct_selection_via_UCN',

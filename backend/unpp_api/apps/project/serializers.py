@@ -134,9 +134,9 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
 
     def validate_partner(self, partner):
         if not partner.is_verified:
-            raise ValidationError('Only verified partners are eligible for Direct Selections.')
+            raise ValidationError('Only verified partners are eligible for Direct Selection / Retention.')
         if partner.is_hq:
-            raise ValidationError('HQs of International partners are not eligible for Direct Selections.')
+            raise ValidationError('HQs of International partners are not eligible for Direct Selections / Retention.')
         return partner
 
 
