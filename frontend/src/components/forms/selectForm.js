@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import R from 'ramda';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-
 import Grid from 'material-ui/Grid';
 import { renderSelectField, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
-import TooltipIcon from '../common/tooltipIcon';
 import { renderSelectOptions } from './selectHelpers/selectRenderers';
-
 
 class SelectForm extends Component {
   constructor(props) {

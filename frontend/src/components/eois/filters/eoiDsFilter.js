@@ -25,7 +25,7 @@ const messages = {
     status: 'Status',
     sector: 'Sector & Area of Specialization',
     agency: 'Agency',
-    direct: 'Direct Selection Source',
+    direct: 'DS/R Source',
   },
   clear: 'clear',
   submit: 'submit',

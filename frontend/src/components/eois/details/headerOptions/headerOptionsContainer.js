@@ -20,6 +20,25 @@ import { selectCfeiStatus,
 import GridColumn from '../../../common/grid/gridColumn';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
 
+const messages = {
+  infoDsr: 'This DS/R was sent to Advanced Editor for acceptance and publication',
+  infoCfei: 'This CFEI was sent to Advanced Editor for acceptance and publication',
+  infoUcn: 'This UCN was sent to Advanced Editor for acceptance and publication',
+};
+
+const tooltipInfo = (projectType) => {
+  switch (projectType) {
+    case PROJECT_TYPES.OPEN:
+      return messages.infoCfei;
+    case PROJECT_TYPES.DIRECT:
+      return messages.infoDsr;
+    case PROJECT_TYPES.UNSOLICITED:
+      return messages.infoUcn;
+    default:
+      return '';
+  }
+};
+
 const HeaderOptionsContainer = (props) => {
   const { role,
     type,
@@ -32,6 +51,7 @@ const HeaderOptionsContainer = (props) => {
     allowedToEdit,
   } = props;
   let options;
+
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
       options = !cfeiCompleted ? <AgencyOpenHeaderOptions id={id} /> : null;
@@ -56,7 +76,7 @@ const HeaderOptionsContainer = (props) => {
     return (
       <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
         <Tooltip
-          title="This DS/R was sent to Advanced Editor for acceptance and publication"
+          title={tooltipInfo(type)}
           placement="center"
         >
           <div>

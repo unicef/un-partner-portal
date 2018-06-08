@@ -6,7 +6,7 @@ const messages = {
   text: 'Publish',
 };
 
-const PublishDsrButton = (props) => {
+const PublishCfeiButton = (props) => {
   const { handleClick } = props;
   return (
     <Button
@@ -19,8 +19,8 @@ const PublishDsrButton = (props) => {
   );
 };
 
-PublishDsrButton.propTypes = {
+PublishCfeiButton.propTypes = {
   handleClick: PropTypes.func,
 };
 
-export default PublishDsrButton;
+export default PublishCfeiButton;
