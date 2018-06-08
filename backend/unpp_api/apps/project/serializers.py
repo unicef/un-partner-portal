@@ -375,6 +375,7 @@ class CreateProjectSerializer(CreateEOISerializer):
 class SelectedPartnersSerializer(serializers.ModelSerializer):
     partner_id = serializers.CharField(source="partner.id")
     partner_name = serializers.CharField(source="partner.legal_name")
+    partner_is_verified = serializers.CharField(source="partner.is_verified")
 
     class Meta:
         model = Application
@@ -382,6 +383,7 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
             'id',
             'partner_id',
             'partner_name',
+            'partner_is_verified',
             'application_status',
         )
 
