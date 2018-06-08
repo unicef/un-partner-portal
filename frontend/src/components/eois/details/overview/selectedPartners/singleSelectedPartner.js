@@ -68,7 +68,7 @@ const SingleSelectedPartner = (props) => {
       <div className={classes.rootCenter}>
         <Typography>{partner.partner_name}</Typography>
         <VerificationIcon
-          verified
+          verified={partner.partner_is_verified}
           small
         />
       </div>
