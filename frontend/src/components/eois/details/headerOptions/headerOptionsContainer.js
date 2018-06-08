@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
+import Tooltip from 'material-ui/Tooltip';
 import Typography from 'material-ui/Typography';
 import { PROJECT_TYPES, ROLES, PROJECT_STATUSES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
@@ -55,6 +56,19 @@ const HeaderOptionsContainer = (props) => {
       <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
         <EoiStatusCell status={cfeiStatus} />
         <Typography type="caption">{completedReasonDisplay}</Typography>
+      </GridColumn>);
+  } else if (cfeiStatus === 'Sen') {
+    return (
+      <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
+        <Tooltip
+          title="This WOS was sent to Advanced Editor for acceptance and publication"
+          placement="center"
+        >
+          <div>
+            <EoiStatusCell status={cfeiStatus} />
+            <Typography type="caption">{completedReasonDisplay}</Typography>
+          </div>
+        </Tooltip>
       </GridColumn>);
   }
 
