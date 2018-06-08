@@ -429,6 +429,7 @@ export const renderText = ({
   date,
   meta,
   multiline,
+  inputProps,
   InputProps,
   ...other
 }) => {

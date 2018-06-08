@@ -26,7 +26,7 @@ const VerificationItem = (props) => {
           </Grid>
           <Grid item>
             <Typography>
-              {formatDateForPrint(verification.created)}
+              {formatDateForPrint(verification.created) || ''}
             </Typography>
           </Grid>
         </Grid>
