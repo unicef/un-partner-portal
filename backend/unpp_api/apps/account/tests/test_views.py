@@ -227,7 +227,6 @@ class TestPasswordResetTestCase(BaseAPITestCase):
         self.assertIn(self.user.email, pw_reset_email.to)
 
         reset_url = next(filter(lambda l: 'token=' in l, pw_reset_email.body.split()))
+        # url_path_parts =
         token = reset_url.split('token=')[-1]
-
-
-        print(reset_url)
+        print(token)

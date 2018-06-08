@@ -11,7 +11,7 @@ class CustomPasswordResetForm(PasswordResetForm):
         subject = 'UNPP Password Reset'
         context = context or {}
         context['title'] = subject
-        context['frontend_reset_url'] = f'{settings.FRONTEND_HOST}/password-reset/?token={context["token"]}'
+        context['frontend_reset_url'] = f'{settings.FRONTEND_HOST}/password-reset/{context["uid"]}/{context["token"]}'
 
         html_body = loader.render_to_string('account/password_reset.html', context)
         body = strip_tags(html_body).strip()
