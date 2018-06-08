@@ -216,7 +216,10 @@ class TestUserProfileUpdateAPITestCase(BaseAPITestCase):
 class TestPasswordResetTestCase(BaseAPITestCase):
 
     def test_pw_reset(self):
+        self.client.logout()
+
         reset_request_url = reverse('rest_password_reset')
+        print(reset_request_url)
         response = self.client.post(reset_request_url, data={
             'email': self.user.email
         })
@@ -226,7 +229,24 @@ class TestPasswordResetTestCase(BaseAPITestCase):
         self.assertEqual(pw_reset_email.subject, 'UNPP Password Reset')
         self.assertIn(self.user.email, pw_reset_email.to)
 
-        reset_url = next(filter(lambda l: 'token=' in l, pw_reset_email.body.split()))
-        # url_path_parts =
-        token = reset_url.split('token=')[-1]
-        print(token)
+        reset_url = next(filter(lambda l: 'password-reset' in l, pw_reset_email.body.split()))
+        url_path_parts = reset_url.split('/')
+        token = url_path_parts[-1]
+        uid = url_path_parts[-2]
+
+        reset_payload = {
+            'uid': uid,
+            'token': token,
+            'new_password1': 'password',
+            'new_password2': 'password',
+        }
+
+        api_reset_url = reverse('rest_password_reset_confirm')
+        print(api_reset_url)
+        reset_response = self.client.post(api_reset_url, data=reset_payload)
+        self.assertResponseStatusIs(reset_response)
+
+        self.assertTrue(self.client.login(
+            email=self.user.email,
+            password=reset_payload['new_password1']
+        ))
