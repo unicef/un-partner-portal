@@ -9,8 +9,8 @@ import { convertCnToDS } from '../../../../reducers/cnConvertToDS';
 import ConvertToDirectSelectionForm from './convertToDirectSelectionForm';
 
 const messages = {
-  title: 'Convert to Direct Selection',
-  header: 'You are converting into direct selection an unsolicited concept note submitted by partner:',
+  title: 'Convert to Direct Selection/Retention',
+  header: 'You are converting into direct selection/retention an unsolicited concept note submitted by partner:',
   save: 'save',
 };
 

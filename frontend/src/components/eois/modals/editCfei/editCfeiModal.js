@@ -9,11 +9,11 @@ import EditCfeiForm from './editCfeiForm';
 const messages = {
   title: {
     open: 'Edit Call for Expressions of Interest',
-    direct: 'Edit Direct Selection',
+    direct: 'Edit Direct Selection/Retention',
   },
   header: {
     open: 'This is an open selection',
-    direct: 'This is a direct selection',
+    direct: 'This is a direct selection/retention',
   },
   save: 'save',
 };
