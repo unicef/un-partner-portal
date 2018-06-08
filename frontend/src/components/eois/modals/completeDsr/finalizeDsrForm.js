@@ -61,7 +61,7 @@ const FinalizeDsrForm = (props) => {
   return (
     <form onSubmit={handleSubmit}>
       <TextFieldForm
-        fieldName="completion_justification"
+        fieldName="justification"
         placeholder={messages.justificationPlaceholder}
         label={messages.justificationLabel}
         commentFormControlStyle={commentFormControlStyle}
@@ -80,7 +80,7 @@ const FinalizeDsrForm = (props) => {
       <GridRow>
         <Grid>
           <SelectForm
-            fieldName="retention"
+            fieldName="completed_retention"
             placeholder={messages.retentionPlaceholder}
             label={messages.retentionLabel}
             values={timePeriods}

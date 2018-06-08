@@ -16,7 +16,7 @@ import SendDsrModal from '../../modals/completeDsr/sendDsrModal';
 import DeleteDsrModal from '../../modals/completeDsr/deleteDsrModal';
 import CancelDsrModal from '../../modals/completeDsr/cancelDsrModal';
 import PublishDsrModal from '../../modals/completeDsr/publishDsrModal';
-import FinalizeDsrModal from '../../modals/completeDsr/finalizeDsrModal'
+import FinalizeDsrModal from '../../modals/completeDsr/finalizeDsrModal';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import { checkPermission, isRoleOffice, AGENCY_ROLES, AGENCY_PERMISSIONS, COMMON_PERMISSIONS } from '../../../../helpers/permissions';
@@ -46,6 +46,7 @@ class PartnerOpenHeaderOptions extends Component {
 
   sendOptions() {
     const {
+      params: { id },
       handleDialogOpen,
       hasEditDraftPermission,
       hasDeleteDraftPermission,
@@ -54,7 +55,7 @@ class PartnerOpenHeaderOptions extends Component {
     const options = [
       {
         name: download,
-        content: <DownloadButton handleClick={() => {}} />,
+        content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
       },
     ];
 
@@ -86,7 +87,7 @@ class PartnerOpenHeaderOptions extends Component {
       isCreator,
       isFocalPoint } = this.props;
 
-    return ((hasActionPermission && isAdvEd && isCreator && isFocalPoint)
+    return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
     || (hasActionPermission && isMFT && isFocalPoint)
     || (hasActionPermission && isBasEd && isCreator)
     || (hasActionPermission && isPAM && isCreator));
@@ -111,8 +112,8 @@ class PartnerOpenHeaderOptions extends Component {
       },
     ];
 
-    if (this.isActionAllowed(hasEditPublishedPermission) ||
-      (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
+    if ((isPublished && this.isActionAllowed(hasEditPublishedPermission)) ||
+    (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
             || (hasEditPublishedPermission && isMFT && isFocalPoint)))) {
       options.push(
         {
@@ -156,13 +157,13 @@ class PartnerOpenHeaderOptions extends Component {
         {!isCompleted && status === 'Dra' && isCreator && hasSendPermission
          && <SendDsrButton handleClick={() => handleDialogOpen(send)} />}
 
-        {!isPublished && !isCompleted && status === 'Sen' && hasPublishPermission &&
+        {!isPublished && !isCompleted && hasPublishPermission &&
             (((isFocalPoint || isCreator) && isAdvEd) || (isFocalPoint && isMFT))
          && <PublishDsrButton handleClick={() => handleDialogOpen(publish)} />}
 
-        {(status === 'Dra' || status === 'Sen') && <DropdownMenu
+        <DropdownMenu
           options={status === 'Dra' ? this.sendOptions() : this.publishOptions()}
-        />}
+        />
 
         {dialogOpen[cancel] && <CancelDsrModal
           id={id}

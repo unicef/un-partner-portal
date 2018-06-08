@@ -2,23 +2,42 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
+import Tooltip from 'material-ui/Tooltip';
 import Typography from 'material-ui/Typography';
 import { PROJECT_TYPES, ROLES, PROJECT_STATUSES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
 import AgencyOpenHeaderOptions from './agencyOpenHeaderOptions';
 import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
-import AgencyOpenAfterDeadlineHeaderOptions from './agencyOpenAfterDeadlineHeaderOptions';
 import EoiStatusCell from '../../cells/eoiStatusCell';
 import { selectCfeiStatus,
   isCfeiPublished,
   isCfeiCompleted,
   selectCfeiConverted,
-  selectCfeiJustification,
+  selectCfeiCompletedReasonDisplay,
   isUserAFocalPoint,
   isUserACreator,
 } from '../../../../store';
 import GridColumn from '../../../common/grid/gridColumn';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
+
+const messages = {
+  infoDsr: 'This DS/R was sent to Advanced Editor for acceptance and publication',
+  infoCfei: 'This CFEI was sent to Advanced Editor for acceptance and publication',
+  infoUcn: 'This UCN was sent to Advanced Editor for acceptance and publication',
+};
+
+const tooltipInfo = (projectType) => {
+  switch (projectType) {
+    case PROJECT_TYPES.OPEN:
+      return messages.infoCfei;
+    case PROJECT_TYPES.DIRECT:
+      return messages.infoDsr;
+    case PROJECT_TYPES.UNSOLICITED:
+      return messages.infoUcn;
+    default:
+      return '';
+  }
+};
 
 const HeaderOptionsContainer = (props) => {
   const { role,
@@ -28,18 +47,14 @@ const HeaderOptionsContainer = (props) => {
     cfeiConverted,
     id,
     partnerId,
-    completedJustification,
+    completedReasonDisplay,
     allowedToEdit,
-    completedReasons,
   } = props;
   let options;
+
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
-      options = (allowedToEdit && !cfeiCompleted)
-        ? cfeiStatus === PROJECT_STATUSES.OPE
-          ? <AgencyOpenHeaderOptions />
-          : <AgencyOpenAfterDeadlineHeaderOptions />
-        : null;
+      options = !cfeiCompleted ? <AgencyOpenHeaderOptions id={id} /> : null;
     } else if (role === ROLES.PARTNER) {
       options = <PartnerOpenHeaderOptions />;
     }
@@ -55,7 +70,20 @@ const HeaderOptionsContainer = (props) => {
     return (
       <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
         <EoiStatusCell status={cfeiStatus} />
-        <Typography type="caption">{completedReasons[completedJustification]}</Typography>
+        <Typography type="caption">{completedReasonDisplay}</Typography>
+      </GridColumn>);
+  } else if (cfeiStatus === 'Sen') {
+    return (
+      <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
+        <Tooltip
+          title={tooltipInfo(type)}
+          placement="center"
+        >
+          <div>
+            <EoiStatusCell status={cfeiStatus} />
+            <Typography type="caption">{completedReasonDisplay}</Typography>
+          </div>
+        </Tooltip>
       </GridColumn>);
   }
 
@@ -76,16 +104,14 @@ HeaderOptionsContainer.propTypes = {
   id: PropTypes.string,
   partnerId: PropTypes.string,
   allowedToEdit: PropTypes.bool,
-  completedJustification: PropTypes.string,
-  completedReasons: PropTypes.object,
+  completedReasonDisplay: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   cfeiCompleted: isCfeiCompleted(state, ownProps.id),
   cfeiPublished: isCfeiPublished(state, ownProps.id),
   cfeiStatus: selectCfeiStatus(state, ownProps.id),
-  completedJustification: selectCfeiJustification(state, ownProps.id),
-  completedReasons: state.partnerProfileConfig['completed-reason'] || {},
+  completedReasonDisplay: selectCfeiCompletedReasonDisplay(state, ownProps.id),
   cfeiConverted: selectCfeiConverted(state, ownProps.id),
   allowedToEdit: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
 });

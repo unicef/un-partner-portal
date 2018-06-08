@@ -34,7 +34,7 @@ const styleSheet = theme => ({
 
 const messages = {
   title: 'Result',
-  confirm: 'Your organization has been identified for a potential partnership via “direct selection”.',
+  confirm: 'Your organization has been identified for a potential partnership via “direct selection/retention”.',
   confirmQuestion: ' Would you like to accept and move forward?',
   confirmed: 'Selection confirmed',
   declined: 'Selection declined',

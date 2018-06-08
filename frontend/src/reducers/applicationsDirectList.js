@@ -27,7 +27,7 @@ const initialState = {
     { name: 'country', title: 'Country' },
     { name: 'specializations', title: 'Sector' },
     { name: 'submission_date', title: 'Submission Date' },
-    { name: 'selected_source', title: 'Direct Selection Source' },
+    { name: 'selected_source', title: 'DS/R Source' },
     { name: 'status', title: 'Status' },
   ],
   loading: false,

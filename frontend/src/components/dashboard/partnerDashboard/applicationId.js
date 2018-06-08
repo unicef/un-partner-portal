@@ -8,7 +8,7 @@ import { TableCell } from 'material-ui/Table';
 const types = [
   { type: 'Open Selection', path: 'open' },
   { type: 'Unsolicited Concept Note', path: 'unsolicited' },
-  { type: 'Direct Selection', path: 'direct' },
+  { type: 'Direct Selection/Retention', path: 'direct' },
 ];
 
 const pathType = type => R.filter(item => item.type === type, types);
