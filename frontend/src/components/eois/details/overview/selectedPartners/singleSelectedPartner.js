@@ -13,7 +13,7 @@ import VerificationIcon from '../../../../partners/profile/icons/verificationIco
 const messages = {
   accept: 'Accept',
   isDraftText: 'Selected partner will not be notified before sending (publishing) this direct selection/retention.',
-  isPublishedText: 'Waiting for Partner\'s acceptance. You can accept this offer in Partner\'s behalf.',
+  isPublishedText: 'Waiting for Partner\'s acceptance.',
   justificationWaiver: 'Justification for direct selection/retention',
   justificationSummary: 'Justification summary',
   accepted: 'Accepted by Partner',
