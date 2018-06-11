@@ -61,7 +61,7 @@ class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
         url = reverse('projects:pins')
         response = self.client.patch(url, data={"eoi_ids": [1, 2, 3], "pin": True}, format='json')
 
-        self.assertFalse(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status_code=status.HTTP_400_BAD_REQUEST)
         self.assertEquals(response.data['non_field_errors'], PinProjectAPIView.ERROR_MSG_WRONG_EOI_PKS)
         self.assertEquals(Pin.objects.count(), 0)
 
@@ -91,18 +91,18 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
         eoi_ids = EOI.objects.all().values_list('id', flat=True)
         response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": True}, format='json')
 
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         self.assertEquals(Pin.objects.count(), self.quantity)
         self.assertEquals(response.data["eoi_ids"], list(eoi_ids))
 
         # read pins
         response = self.client.get(self.url, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['count'], self.quantity)
 
         # delete pins
         response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": False}, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status_code=status.HTTP_204_NO_CONTENT)
         self.assertEquals(Pin.objects.count(), 0)
 
 
@@ -123,7 +123,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
     def test_open_project(self):
         # read open projects
         response = self.client.get(self.url, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['count'], self.quantity)
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
@@ -225,7 +225,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             ]
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['notif_results_date'], str(date.today() + timedelta(days=15)))
 
         # complete this CFEI
@@ -235,7 +235,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             "completed_reason": COMPLETED_REASON.cancelled,
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.cancelled)
         self.assertTrue(response.data['completed_date'])
         self.assertTrue(response.data['is_completed'])
@@ -437,7 +437,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         PartnerMemberFactory.create_batch(5, partner=app.partner)
         url = reverse('projects:application', kwargs={"pk": app.id})
         response = self.client.get(url, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['id'], Application.objects.first().id)
         self.assertFalse(response.data['did_win'])
         self.assertEquals(response.data['ds_justification_select'], [])
@@ -482,7 +482,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         PartnerVerificationFactory(partner=app.partner, submitter=app.eoi.created_by)
 
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
         call_command('send_daily_notifications')
@@ -497,7 +497,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "did_accept": True,
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_accept'])
         self.assertEquals(response.data['decision_date'], str(date.today()))
         self.client.force_login(app.eoi.created_by)
@@ -519,7 +519,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "did_decline": True,
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertFalse(response.data['did_accept'])
         self.assertTrue(response.data['did_decline'])
 
@@ -538,7 +538,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
         app.assessments.all().delete()
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_win'])
         self.assertTrue(response.data['did_withdraw'])
         self.assertEquals(response.data["withdraw_reason"], reason)
@@ -616,7 +616,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             })
         payload['scores'] = scores
         response = self.client.post(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         self.assertEquals(response.data['date_reviewed'], str(date.today()))
         self.assertEquals(response.data['reviewer'], self.user.id)
         self.assertEquals(len(response.data['scores']), len(payload['scores']))
@@ -740,7 +740,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
 
         # try to convert again
         response = self.client.post(url, data=payload, format='json')
-        self.assertFalse(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status_code=status.HTTP_400_BAD_REQUEST)
         self.assertEquals(response.data['non_field_errors'], [ConvertUnsolicitedSerializer.RESTRICTION_MSG])
 
 
@@ -758,7 +758,7 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
             }
             response = self.client.post(url, data=payload, format='multipart')
 
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         self.assertTrue(response.data['id'] is not None)
         file_id = response.data['id']
 
@@ -777,7 +777,7 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
             'review_summary_attachment': file_id
         }
         response = self.client.patch(url, data=payload)
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['review_summary_comment'], payload['review_summary_comment'])
         self.assertTrue(
             response.data['review_summary_attachment'].find(CommonFile.objects.get(pk=file_id).file_field.url) > 0
