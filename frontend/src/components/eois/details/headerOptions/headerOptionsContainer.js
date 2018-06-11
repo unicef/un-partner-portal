@@ -60,7 +60,7 @@ const HeaderOptionsContainer = (props) => {
       options = <PartnerOpenHeaderOptions />;
     }
   } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
-    options = !cfeiCompleted ? <AgencyDirectHeaderOptions id={id} /> : null;
+    options = <AgencyDirectHeaderOptions id={id} />;
   }
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return !cfeiConverted && role === ROLES.AGENCY
@@ -82,8 +82,11 @@ const HeaderOptionsContainer = (props) => {
 
   return (
     <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={24}>
-      <Grid item>{status}</Grid>
-      {completedReasonDisplay && <Typography type="caption">{completedReasonDisplay}</Typography>}
+      <Grid item>
+        <div>
+          {status}
+          {completedReasonDisplay && <Typography type="caption">{completedReasonDisplay}</Typography>}
+        </div></Grid>
       <Grid item>{options}</Grid>
     </Grid>
   );
