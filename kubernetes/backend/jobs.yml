@@ -20,8 +20,8 @@ spec:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: unpp-{{ENV}}-secrets
-                  key: SECRET_KEY
+                  name: secret-key
+                  key: password
             - name: ENV
               value: {{ENV}}
             - name: POSTGRES_DB
@@ -60,8 +60,8 @@ spec:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: unpp-{{ENV}}-secrets
-                  key: SECRET_KEY
+                  name: secret-key
+                  key: password
             - name: ENV
               value: {{ENV}}
             - name: POSTGRES_DB
@@ -73,8 +73,8 @@ spec:
             - name: DJANGO_ALLOWED_HOST
               value: {{DJANGO_ALLOWED_HOST}}
       volumes:
-      - name: static-volume-{{ENV}}
+      - name: static-volume-{{NAMESPACE}}
         persistentVolumeClaim:
-          claimName: static-volume-claim-{{ENV}}
+          claimName: static-volume-claim-{{NAMESPACE}}
       restartPolicy: Never
   backoffLimit: 4

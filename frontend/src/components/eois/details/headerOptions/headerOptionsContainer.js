@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
 import Tooltip from 'material-ui/Tooltip';
 import Typography from 'material-ui/Typography';
-import { PROJECT_TYPES, ROLES, PROJECT_STATUSES } from '../../../../helpers/constants';
+import { PROJECT_TYPES, ROLES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
 import AgencyOpenHeaderOptions from './agencyOpenHeaderOptions';
 import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
-import EoiStatusCell from '../../cells/eoiStatusCell';
+import EoiStatusHeader from '../../cells/eoiStatusHeader';
 import { selectCfeiStatus,
   isCfeiPublished,
   isCfeiCompleted,
@@ -17,7 +17,6 @@ import { selectCfeiStatus,
   isUserAFocalPoint,
   isUserACreator,
 } from '../../../../store';
-import GridColumn from '../../../common/grid/gridColumn';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
 
 const messages = {
@@ -51,6 +50,7 @@ const HeaderOptionsContainer = (props) => {
     allowedToEdit,
   } = props;
   let options;
+  let status = <EoiStatusHeader status={cfeiStatus} />;
 
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
@@ -59,37 +59,33 @@ const HeaderOptionsContainer = (props) => {
       options = <PartnerOpenHeaderOptions />;
     }
   } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
-    options = !cfeiCompleted ? <AgencyDirectHeaderOptions id={id} /> : null;
+    options = <AgencyDirectHeaderOptions id={id} />;
   }
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return !cfeiConverted && role === ROLES.AGENCY
       ? <ConvertToDS partnerId={partnerId} id={id} />
       : null;
   }
-  if (cfeiCompleted) {
-    return (
-      <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
-        <EoiStatusCell status={cfeiStatus} />
+
+  if (cfeiStatus === 'Sen') {
+    status = (<Tooltip
+      title={tooltipInfo(type)}
+      placement="center"
+    >
+      <div>
+        <EoiStatusHeader status={cfeiStatus} />
         <Typography type="caption">{completedReasonDisplay}</Typography>
-      </GridColumn>);
-  } else if (cfeiStatus === 'Sen') {
-    return (
-      <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
-        <Tooltip
-          title={tooltipInfo(type)}
-          placement="center"
-        >
-          <div>
-            <EoiStatusCell status={cfeiStatus} />
-            <Typography type="caption">{completedReasonDisplay}</Typography>
-          </div>
-        </Tooltip>
-      </GridColumn>);
+      </div>
+    </Tooltip>);
   }
 
   return (
     <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={24}>
-      {cfeiStatus && <Grid item><EoiStatusCell status={cfeiStatus} /></Grid>}
+      <Grid item>
+        <div>
+          {status}
+          {completedReasonDisplay && <Typography type="caption">{completedReasonDisplay}</Typography>}
+        </div></Grid>
       <Grid item>{options}</Grid>
     </Grid>
   );

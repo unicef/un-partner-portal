@@ -7,6 +7,7 @@ import django_filters
 from django_filters.filters import CharFilter, DateFilter, BooleanFilter, ModelMultipleChoiceFilter, ChoiceFilter
 from django_filters.widgets import BooleanWidget, CSVWidget
 
+from account.models import User
 from common.consts import EXTENDED_APPLICATION_STATUSES, CFEI_STATUSES
 from common.models import Specialization
 from .models import EOI, Application
@@ -26,7 +27,9 @@ class BaseProjectFilter(django_filters.FilterSet):
     posted_to_date = DateFilter(name='created', lookup_expr='date__lte')
     selected_source = CharFilter(lookup_expr='iexact')
     status = ChoiceFilter(method='filter_status', choices=CFEI_STATUSES)
-    focal_point = CharFilter(method='filter_focal_point')
+    focal_points = ModelMultipleChoiceFilter(
+        widget=CSVWidget(), queryset=User.objects.all()
+    )
 
     class Meta:
         model = EOI
@@ -40,16 +43,11 @@ class BaseProjectFilter(django_filters.FilterSet):
             'selected_source',
             'is_published',
             'status',
-            'focal_point',
+            'focal_points',
         ]
 
     def filter_title(self, queryset, name, value):
         return queryset.filter(title__icontains=value)
-
-    def filter_focal_point(self, queryset, name, value):
-        return queryset.filter(
-            Q(focal_points__email__icontains=value) | Q(focal_points__fullname__icontains=value)
-        )
 
     def filter_country_code(self, queryset, name, value):
         return queryset.filter(locations__admin_level_1__country_code=(value and value.upper()))

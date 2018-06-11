@@ -15,8 +15,7 @@ const ConvertToDS = (props) => {
     handleDialogClose,
     handleDialogOpen,
     dialogOpen,
-    partnerId,
-    ...other,
+    ...other
   } = props;
 
   return (
