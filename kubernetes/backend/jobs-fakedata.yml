@@ -19,8 +19,8 @@ spec:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: unpp-{{ENV}}-secrets
-                  key: SECRET_KEY
+                  name: secret-key
+                  key: password
             - name: ENV
               value: {{ENV}}
             - name: POSTGRES_DB

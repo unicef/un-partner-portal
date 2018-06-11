@@ -42,5 +42,5 @@ spec:
             - name: GOOGLE_KEY
               valueFrom:
                 secretKeyRef:
-                  name: unpp-{{ENV}}-secrets
-                  key: GOOGLE_KEY
+                  name: google-key
+                  key: password
