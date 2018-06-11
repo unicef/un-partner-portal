@@ -163,16 +163,18 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         }
 
         response = self.client.post(self.url, data=payload, format='json')
-        self.assertTrue(status.is_client_error(response.status_code))
-        self.assertEquals(response.data['assessments_criteria'],
-                          ['The sum of all weight criteria must be equal to 100.'])
+        self.assertResponseStatusIs(response, status_code=status.HTTP_400_BAD_REQUEST)
+        self.assertEquals(
+            response.data['assessments_criteria'],
+            ['The sum of all weight criteria must be equal to 100.']
+        )
 
         payload['assessments_criteria'].extend([
             {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'weight': 20},
             {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 30},
         ])
         response = self.client.post(self.url, data=payload, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
+        self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         eoi = EOI.objects.last()
         self.assertEquals(response.data['title'], payload['title'])
         self.assertEquals(eoi.created_by.id, self.user.id)
