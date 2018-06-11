@@ -32,7 +32,9 @@ const NumberOfAwards = (props) => {
         <GridRow>
           <Typography type="headline">{messages.title}</Typography>
           <GridColumn alignItems="flex-end">
-            <Typography className={classes.number} type="display2">{number}</Typography>
+            {typeof number ==='number' && (
+              <Typography className={classes.number} type="display2">{number}</Typography>
+            )}
             <Button
               component={Link}
               to="/applications/notes/"
