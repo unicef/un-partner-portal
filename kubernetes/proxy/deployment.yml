@@ -52,9 +52,6 @@ spec:
           volumeMounts:
             - name: static-volume-{{NAMESPACE}}
               mountPath: /data
-          ports:
-            - containerPort: 80
-              hostPort: {{HOSTPORT}}
           env:
             - name: DJANGO_APPLICATION_SERVICE_HOST
               value: backend
