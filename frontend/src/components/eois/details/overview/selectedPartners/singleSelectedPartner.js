@@ -68,7 +68,7 @@ const SingleSelectedPartner = (props) => {
       <div className={classes.rootCenter}>
         <Typography>{partner.partner_name}</Typography>
         <VerificationIcon
-          verified
+          verified={partner.partner_is_verified}
           small
         />
       </div>
@@ -105,7 +105,7 @@ const mapStateToProps = (state, {
   const cfeiStatus = selectCfeiStatus(state, eoiId);
   const isCfeiDraft = cfeiStatus === 'Dra';
   const isCfeiSent = cfeiStatus === 'Sen';
-  const isAccepted = currentStatus === 'Acc'; 
+  const isAccepted = currentStatus === 'Acc';
 
   return {
     cfeiPublished,

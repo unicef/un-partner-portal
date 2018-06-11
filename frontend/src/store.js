@@ -368,7 +368,7 @@ export const selectNormalizedDsrFinalizeOptions = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-completed-reason']);
 
 export const selectNormalizedTimePeriods = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-retention']);
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-retention'], 'value');
 
 export const selectPartnerApplicationDetails = (state, cfeiId) =>
   partnerAppDetailsSelector.selectApplication(state.partnerAppDetails, cfeiId);
