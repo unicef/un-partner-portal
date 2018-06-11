@@ -7,9 +7,24 @@ from notification.helpers import send_notification_to_cfei_focal_points
 from project.models import Assessment
 
 
+def _users_valid_for_agency(cfei, user_ids):
+    user_agencies = User.objects.filter(id__in=user_ids).values_list(
+        'agency_members__office__agency', flat=True
+    ).distinct()
+
+    if user_ids and not len(user_agencies) == 1 or not user_agencies[0] == cfei.agency_id:
+        return False
+    return True
+
+
 def update_cfei_focal_points(cfei, user_ids):
     if user_ids is None:
         return
+
+    if not _users_valid_for_agency(cfei, user_ids):
+        raise serializers.ValidationError(
+            'Some of the indicated focal point user(s) belong to another agency'
+        )
 
     user_count = User.objects.filter(agency_members__role__in=VALID_FOCAL_POINT_ROLE_NAMES, id__in=user_ids).count()
     if not user_count == len(set(user_ids)):
@@ -28,6 +43,11 @@ def update_cfei_reviewers(cfei, user_ids):
     if cfei.status not in {CFEI_STATUSES.closed, CFEI_STATUSES.open}:
         raise serializers.ValidationError(
             f'You cannot manage reviewers on a {dict(CFEI_STATUSES)[cfei.status]} CFEI'
+        )
+
+    if not _users_valid_for_agency(cfei, user_ids):
+        raise serializers.ValidationError(
+            'Some of the indicated reviewer user(s) belong to another agency'
         )
 
     user_count = User.objects.filter(agency_members__role__in=VALID_REVIEWER_ROLE_NAMES, id__in=user_ids).count()
