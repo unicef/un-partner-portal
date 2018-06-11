@@ -25,6 +25,7 @@ import { selectCfeiStatus,
   isCfeiCompleted,
   isUserAFocalPoint,
   isUserACreator,
+  selectCfeiDetails,
 } from '../../../../store';
 
 const edit = 'edit';
@@ -134,6 +135,16 @@ class AgencyDirectHeaderOptions extends Component {
     return options;
   }
 
+  isPartnerVerified() {
+    const { cfei } = this.props;
+
+    if (cfei.direct_selected_partners && cfei.direct_selected_partners.length > 0) {
+      return cfei.direct_selected_partners[0].partner_is_verified;
+    }
+
+    return false;
+  }
+
   render() {
     const { params: { id },
       isFocalPoint,
@@ -148,7 +159,7 @@ class AgencyDirectHeaderOptions extends Component {
       isMFT,
       isAdvEd,
       handleDialogClose,
-      handleDialogOpen } = this.props;
+      handleDialogOpen } = this.props; 
 
     return (
       <SpreadContent>
@@ -160,7 +171,7 @@ class AgencyDirectHeaderOptions extends Component {
 
         {!isPublished && !isCompleted && hasPublishPermission &&
             (((isFocalPoint || isCreator) && isAdvEd) || (isFocalPoint && isMFT))
-         && <PublishDsrButton handleClick={() => handleDialogOpen(publish)} />}
+         && <PublishDsrButton disabled={!this.isPartnerVerified()} handleClick={() => handleDialogOpen(publish)} />}
 
         <DropdownMenu
           options={status === 'Dra' ? this.sendOptions() : this.publishOptions()}
@@ -207,6 +218,7 @@ class AgencyDirectHeaderOptions extends Component {
 AgencyDirectHeaderOptions.propTypes = {
   params: PropTypes.object,
   dialogOpen: PropTypes.object,
+  cfei: PropTypes.object,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
   isPublished: PropTypes.bool,
@@ -234,6 +246,7 @@ const mapStateToProps = (state, ownProps) => ({
   isFocalPoint: isUserAFocalPoint(state, ownProps.id),
   isCompleted: isCfeiCompleted(state, ownProps.id),
   isPublished: isCfeiPublished(state, ownProps.id),
+  cfei: selectCfeiDetails(state, ownProps.id),
   status: selectCfeiStatus(state, ownProps.id),
   hasSendPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_SEND_DRAFT_TO_FOCAL_POINT,
     state),

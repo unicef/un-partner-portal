@@ -37,7 +37,7 @@ spec:
         - name: backend
           image: unicef/unpp-backend:{{CF_SHORT_REVISION}}
           volumeMounts:
-            - name: static-volume-{{ENV}}
+            - name: static-volume-{{NAMESPACE}}
               mountPath: /data
           command: ["bash"]
           args: ["-c", "uwsgi --ini /code/unpp_api/uwsgi.ini"]
@@ -47,8 +47,13 @@ spec:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: unpp-{{ENV}}-secrets
-                  key: SECRET_KEY
+                  name: secret-key
+                  key: password
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: email-host-password
+                  key: password
             - name: ENV
               value: {{ENV}}
             - name: POSTGRES_DB
@@ -65,9 +70,8 @@ spec:
               value: "{{EMAIL_PORT}}"
             - name: EMAIL_HOST_USER
               value: "{{EMAIL_HOST_USER}}"
-            - name: EMAIL_HOST_PASSWORD
-              value: "{{EMAIL_HOST_PASSWORD}}"
+
       volumes:
-      - name: static-volume-{{ENV}}
+      - name: static-volume-{{NAMESPACE}}
         persistentVolumeClaim:
-          claimName: static-volume-claim-{{ENV}}
+          claimName: static-volume-claim-{{NAMESPACE}}
