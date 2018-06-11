@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
 import Tooltip from 'material-ui/Tooltip';
 import Typography from 'material-ui/Typography';
-import { PROJECT_TYPES, ROLES, PROJECT_STATUSES } from '../../../../helpers/constants';
+import { PROJECT_TYPES, ROLES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
 import AgencyOpenHeaderOptions from './agencyOpenHeaderOptions';
 import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
-import EoiStatusCell from '../../cells/eoiStatusCell';
+import EoiStatusHeader from '../../cells/eoiStatusHeader';
 import { selectCfeiStatus,
   isCfeiPublished,
   isCfeiCompleted,
@@ -17,7 +17,6 @@ import { selectCfeiStatus,
   isUserAFocalPoint,
   isUserACreator,
 } from '../../../../store';
-import GridColumn from '../../../common/grid/gridColumn';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
 
 const messages = {
@@ -51,7 +50,7 @@ const HeaderOptionsContainer = (props) => {
     allowedToEdit,
   } = props;
   let options;
-  let status = <EoiStatusCell status={cfeiStatus} />;
+  let status = <EoiStatusHeader status={cfeiStatus} />;
 
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
@@ -74,7 +73,7 @@ const HeaderOptionsContainer = (props) => {
       placement="center"
     >
       <div>
-        <EoiStatusCell status={cfeiStatus} />
+        <EoiStatusHeader status={cfeiStatus} />
         <Typography type="caption">{completedReasonDisplay}</Typography>
       </div>
     </Tooltip>);

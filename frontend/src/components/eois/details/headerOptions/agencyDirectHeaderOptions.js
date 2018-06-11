@@ -101,6 +101,7 @@ class AgencyDirectHeaderOptions extends Component {
       hasCancelPermission,
       isPublished,
       status,
+      isCompleted,
       isAdvEd,
       isMFT,
       isFocalPoint } = this.props;
@@ -112,9 +113,9 @@ class AgencyDirectHeaderOptions extends Component {
       },
     ];
 
-    if ((isPublished && this.isActionAllowed(hasEditPublishedPermission)) ||
+    if ((!isCompleted && isPublished && this.isActionAllowed(hasEditPublishedPermission)) ||
     (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
-            || (hasEditPublishedPermission && isMFT && isFocalPoint)))) {
+            || (!isCompleted && hasEditPublishedPermission && isMFT && isFocalPoint)))) {
       options.push(
         {
           name: edit,
@@ -122,7 +123,7 @@ class AgencyDirectHeaderOptions extends Component {
         });
     }
 
-    if (this.isActionAllowed(hasCancelPermission)) {
+    if (!isCompleted && this.isActionAllowed(hasCancelPermission)) {
       options.push(
         {
           name: del,
@@ -151,7 +152,7 @@ class AgencyDirectHeaderOptions extends Component {
 
     return (
       <SpreadContent>
-        {isPublished && this.isActionAllowed(hasFinalizePermission)
+        {!isCompleted && isPublished && this.isActionAllowed(hasFinalizePermission)
           && <Complete handleClick={() => handleDialogOpen(complete)} />}
 
         {!isCompleted && status === 'Dra' && isCreator && hasSendPermission

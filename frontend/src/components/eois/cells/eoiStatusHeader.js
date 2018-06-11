@@ -32,6 +32,7 @@ const styleSheet = theme => ({
   root: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'flex-end',
   },
 });
 
