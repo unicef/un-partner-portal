@@ -79,9 +79,9 @@ class EoiFilter extends Component {
 
     history.push({
       pathname: pathName,
-      query: R.merge(query,
+      query: R.dissoc('focal_points', R.merge(query,
         { ordering, agency },
-      ),
+      )),
     });
   }
 
