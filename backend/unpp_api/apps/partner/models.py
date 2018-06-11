@@ -111,9 +111,10 @@ class Partner(TimeStampedModel):
 
     @property
     def is_verified(self):
-        return bool(
-            self.verifications.exists() and self.verifications.latest("created").is_verified
-        )
+        if not self.verifications.exists():
+            return None
+        else:
+            return self.verifications.latest("created").is_verified
 
     @property
     def has_sanction_match(self):
