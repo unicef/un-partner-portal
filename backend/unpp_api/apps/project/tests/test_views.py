@@ -256,7 +256,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
     # TODO: This test is not deterministic - randomly fails
     def test_create_direct_project(self):
-        ao = AgencyOffice.objects.first()
+        ao = self.user.agency_members.first().office
         payload = {
             'eoi': {
                 'title': "EOI title",
@@ -969,7 +969,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         office = self.user.agency_members.first().office
         partners = Partner.objects.all()[:2]
         partner1, partner2 = partners
-        focal_point = AgencyMemberFactory.create_batch(1, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])[0].user
+        focal_point = AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office).user
         direct_selection_payload = {
             "applications": [
                 {
@@ -1030,7 +1030,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
 
         direct_selection_payload['applications'].pop()
         response = self.client.post(url, data=direct_selection_payload, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
 
         call_command('send_daily_notifications')
         selection_emails = list(filter(
