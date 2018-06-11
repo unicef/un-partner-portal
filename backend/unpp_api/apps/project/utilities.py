@@ -8,11 +8,11 @@ from project.models import Assessment
 
 
 def _users_valid_for_agency(cfei, user_ids):
-    user_agencies = User.objects.filter(id__in=user_ids).values_list(
-        'agency_members__office__agency', flat=True
-    ).distinct()
+    user_agencies = set(User.objects.filter(id__in=user_ids).values_list(
+        'agency_members__office__agency_id', flat=True
+    ))
 
-    if user_ids and not len(user_agencies) == 1 or not user_agencies[0] == cfei.agency_id:
+    if user_ids and not len(user_agencies) == 1 or not user_agencies.pop() == cfei.agency_id:
         return False
     return True
 

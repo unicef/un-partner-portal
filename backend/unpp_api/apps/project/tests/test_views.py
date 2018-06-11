@@ -187,7 +187,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             ], many=True).data
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code), msg=response.content)
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['id'], eoi.id)
         self.assertTrue(Partner.objects.first().id in [p['id'] for p in response.data['invited_partners']])
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
@@ -204,7 +204,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             "invited_partners": PartnerShortSerializer([Partner.objects.last()], many=True).data
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['id'], eoi.id)
         self.assertTrue(Partner.objects.last().id in [p['id'] for p in response.data['invited_partners']])
         self.assertTrue(Partner.objects.count(), 1)
@@ -707,8 +707,11 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         start_date = date.today()
         end_date = date.today() + timedelta(days=30)
         focal_points = [
-            am.user.id for am in AgencyMemberFactory.create_batch(5, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])
+            am.user.id for am in AgencyMemberFactory.create_batch(
+                5, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0]
+            )
         ]
+
         payload = {
             'ds_justification_select': [JUSTIFICATION_FOR_DIRECT_SELECTION.other],
             'justification': 'Explain justification for creating direct selection',
