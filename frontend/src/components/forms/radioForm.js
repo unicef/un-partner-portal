@@ -2,7 +2,7 @@ import React from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
-import { renderRadioField, renderText, renderBool, renderRadioFieldWithChild } from '../../helpers/formHelper';
+import { renderText, renderBool, renderRadioFieldWithChild } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
 const RadioForm = (props) => {
@@ -13,6 +13,7 @@ const RadioForm = (props) => {
     optional,
     validation,
     warn,
+    disabled,
     defaultValue,
     renderTextSelection,
     readOnly,
@@ -39,6 +40,7 @@ const RadioForm = (props) => {
           validate={optional ? [] : [required].concat(validation || [])}
           warn={warn ? [warning] : []}
           defaultValue={defaultValue}
+          disabled={disabled}
           {...other}
         />}
     </Grid>
@@ -76,6 +78,8 @@ RadioForm.propTypes = {
   readOnly: PropTypes.bool,
 
   warn: PropTypes.bool,
+
+  disabled: PropTypes.bool,
 
   renderTextSelection: PropTypes.bool,
 
