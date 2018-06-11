@@ -15,7 +15,8 @@ from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
 
 from agency.serializers import AgencySerializer, AgencyUserListSerializer
-from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE, DSR_COMPLETED_REASON
+from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE, \
+    DSR_COMPLETED_REASON, COMPLETED_REASON
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
@@ -537,6 +538,26 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
                 "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s)."
             )
 
+        completed_reason = validated_data.get('completed_reason')
+
+        if completed_reason:
+            if completed_reason == DSR_COMPLETED_REASON.accepted_retention and not validated_data.get(
+                'completed_retention'
+            ):
+                raise serializers.ValidationError({
+                    'completed_retention': 'This field is required'
+                })
+
+            if completed_reason in {
+                COMPLETED_REASON.partners,
+                COMPLETED_REASON.accepted,
+                COMPLETED_REASON.accepted_retention,
+            } and not instance.contains_partner_accepted:
+                raise serializers.ValidationError({
+                    'completed_reason': f"You've selected '{COMPLETED_REASON[completed_reason]}' as "
+                                        f"finalize resolution but no partners have accepted."
+                })
+
         has_just_been_completed = all([
             instance.completed_reason is None,
             validated_data.get('completed_reason'),
@@ -566,13 +587,6 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
     def validate(self, data):
         assessments_criteria = data.get('assessments_criteria', [])
         has_weighting = data.get('has_weighting', False)
-
-        if data.get('completed_reason') == DSR_COMPLETED_REASON.accepted_retention and not data.get(
-            'completed_retention'
-        ):
-            raise serializers.ValidationError({
-                'completed_retention': 'This field is required'
-            })
 
         if has_weighting is True and all(map(lambda x: 'weight' in x, assessments_criteria)) is False:
             raise serializers.ValidationError(
