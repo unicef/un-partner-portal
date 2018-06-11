@@ -13,7 +13,7 @@ import VerificationIcon from '../../../../partners/profile/icons/verificationIco
 const messages = {
   accept: 'Accept',
   isDraftText: 'Selected partner will not be notified before sending (publishing) this direct selection/retention.',
-  isPublishedText: 'Waiting for Partner\'s acceptance. You can accept this offer in Partner\'s behalf.',
+  isPublishedText: 'Waiting for Partner\'s acceptance.',
   justificationWaiver: 'Justification for direct selection/retention',
   justificationSummary: 'Justification summary',
   accepted: 'Accepted by Partner',
@@ -68,7 +68,7 @@ const SingleSelectedPartner = (props) => {
       <div className={classes.rootCenter}>
         <Typography>{partner.partner_name}</Typography>
         <VerificationIcon
-          verified
+          verified={partner.partner_is_verified}
           small
         />
       </div>
@@ -105,7 +105,7 @@ const mapStateToProps = (state, {
   const cfeiStatus = selectCfeiStatus(state, eoiId);
   const isCfeiDraft = cfeiStatus === 'Dra';
   const isCfeiSent = cfeiStatus === 'Sen';
-  const isAccepted = currentStatus === 'Acc'; 
+  const isAccepted = currentStatus === 'Acc';
 
   return {
     cfeiPublished,
