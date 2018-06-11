@@ -375,7 +375,7 @@ class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
     def get_object(self):
         return get_object_or_404(self.get_queryset(), **{
             'partner_id': self.request.active_partner.id,
-            'eoi_id': self.kwargs.get('pk'),
+            'pk': self.kwargs.get('pk'),
         })
 
 
@@ -572,7 +572,7 @@ class UnsolicitedProjectListAPIView(ListAPIView):
             ]
         ),
     )
-    queryset = Application.objects.filter(is_unsolicited=True).distinct()
+    queryset = Application.objects.filter(is_unsolicited=True, is_published=True).distinct()
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
     filter_class = ApplicationsUnsolicitedFilter

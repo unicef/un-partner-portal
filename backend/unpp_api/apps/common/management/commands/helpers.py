@@ -243,6 +243,6 @@ def generate_fake_data(country_count=3):
                     print(f'Created {user}')
 
                 if random.randint(1, 2) == 2:
-                    UnsolicitedFactory.create_batch(random.randint(1, 3))
+                    UnsolicitedFactory.create_batch(random.randint(1, 3), is_published=True)
 
     # TODO: Make sure partner profiles are complete
