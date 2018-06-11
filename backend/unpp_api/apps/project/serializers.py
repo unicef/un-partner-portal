@@ -553,9 +553,10 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
                 DSR_COMPLETED_REASON.accepted,
                 DSR_COMPLETED_REASON.accepted_retention,
             } and not instance.contains_partner_accepted:
+                all_completed_reasons = COMPLETED_REASON + DSR_COMPLETED_REASON
                 raise serializers.ValidationError({
-                    'completed_reason': f"You've selected '{COMPLETED_REASON[completed_reason]}' as "
-                                        f"finalize resolution but no partners have accepted."
+                    'completed_reason': f"You've selected '{all_completed_reasons[completed_reason]}' as "
+                                        f"finalize resolution, but no partners have accepted."
                 })
 
         has_just_been_completed = all([
