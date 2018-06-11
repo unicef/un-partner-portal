@@ -38,7 +38,7 @@ APPLICATION_STATUSES = Choices(
 CFEI_STATUSES = Choices(
     ('Dra', 'draft', 'Draft'),
     ('Sen', 'sent', 'Sent'),
-    ('Ope', 'open', 'Open'),
+    ('Ope', 'open', 'Published'),
     ('Clo', 'closed', 'Closed/Under Review'),
     ('Com', 'completed', 'Completed'),
 )
@@ -219,7 +219,9 @@ BUDGET_CHOICES = Choices(
 )
 
 FLAG_TYPES = Choices(
+    ('Obs', 'observation', 'Observation'),
     ('Yel', 'yellow', 'Yellow Flag'),
+    ('Esc', 'escalated', 'Escalated Flag'),
     ('Red', 'red', 'Red Flag'),
 )
 
@@ -235,6 +237,7 @@ SANCTION_MATCH_TYPES = Choices(
 )
 
 EXTENDED_APPLICATION_STATUSES = Choices(
+    ('Dra', 'draft', 'Draft'),
     ('Rev', 'review', 'Application Under Review'),
     ('Uns', 'unsuccessful', 'Application Unsuccessful'),
     ('Suc', 'successful', 'Application Successful'),
@@ -248,4 +251,11 @@ DSR_FINALIZE_RETENTION_CHOICES = Choices(
     ('2YR', 'second year'),
     ('3YR', 'a third year'),
     ('4YR', 'a fourth year'),
+)
+
+NOTIFICATION_FREQUENCY_CHOICES = Choices(
+    (None, 'Disabled'),
+    ('daily', 'Daily'),
+    ('weekly', 'Weekly'),
+    ('biweekly', 'Every Two Weeks'),
 )

@@ -94,6 +94,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'common.middleware.ActivePartnerMiddleware',
     'common.middleware.ActiveAgencyOfficeMiddleware',
+    'common.middleware.ClientTimezoneMiddleware',
 ]
 
 TEMPLATES = [
@@ -169,6 +170,7 @@ REST_FRAMEWORK = {
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'account.serializers.CustomLoginSerializer',
     'USER_DETAILS_SERIALIZER': 'account.serializers.RegisterSimpleAccountSerializer',
+    'PASSWORD_RESET_SERIALIZER': 'account.serializers.CustomPasswordResetSerializer',
 }
 
 

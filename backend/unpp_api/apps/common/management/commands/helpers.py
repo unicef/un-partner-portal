@@ -24,7 +24,9 @@ from common.factories import (
     UnsolicitedFactory,
     PartnerVerificationFactory,
     PartnerFlagFactory,
-    UserFactory)
+    UserFactory,
+    get_partner_name,
+)
 from common.models import (
     AdminLevel1,
     Point,
@@ -193,14 +195,25 @@ def generate_fake_data(country_count=3):
         for index in range(partner_count):
             for partner_type, display_type in PARTNER_TYPES:
                 if partner_type == PARTNER_TYPES.international:
+                    name_parts = ingo_hqs[index].legal_name.split(' ') + [country_code]
                     partner_kwargs = {
-                        'legal_name': f'{ingo_hqs[index].legal_name} - {country_name}',
+                        'legal_name': f'{"-".join(name_parts)}.{partner_type}'.lower(),
                         'hq': ingo_hqs[index]
                     }
                     ingo_partners_created += 1
                 else:
+                    def get_legal_name():
+                        name_parts = get_partner_name().split(" ")
+                        return f'{"-".join(name_parts)}.{partner_type}'.lower()
+
+                    # Soft unqiue check
+                    legal_name = get_legal_name()
+                    while Partner.objects.filter(legal_name=legal_name).exists():
+                        legal_name = get_legal_name()
+
                     partner_kwargs = {
-                        'hq': None
+                        'hq': None,
+                        'legal_name': legal_name,
                     }
                     standard_partners_created += 1
 
@@ -212,15 +225,24 @@ def generate_fake_data(country_count=3):
                     PartnerFlagFactory(partner=partner)
                 else:
                     PartnerVerificationFactory(partner=partner)
+                print(f'Created {partner}')
 
                 for role_code, display_name in PartnerRole.get_choices():
                     postfix = f'ingo-{ingo_partners_created}' if partner.hq else standard_partners_created
+
                     user = UserFactory(email=f'partner-{postfix}-{role_code.lower()}@partner.org')
                     PartnerMemberFactory(user=user, role=role_code, partner=partner)
                     if partner.hq:
                         PartnerMemberFactory(user=user, role=role_code, partner=partner.hq)
                     print(f'Created {user}')
+
+                    user = UserFactory(email=f'{role_code.lower()}@{partner.legal_name}')
+                    PartnerMemberFactory(user=user, role=role_code, partner=partner)
+                    if partner.hq:
+                        PartnerMemberFactory(user=user, role=role_code, partner=partner.hq)
+                    print(f'Created {user}')
+
                 if random.randint(1, 2) == 2:
-                    UnsolicitedFactory.create_batch(random.randint(1, 3))
+                    UnsolicitedFactory.create_batch(random.randint(1, 3), is_published=True)
 
     # TODO: Make sure partner profiles are complete

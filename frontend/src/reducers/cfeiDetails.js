@@ -142,6 +142,11 @@ export function isCfeiCompleted(state, id) {
   return !!completed_reason;
 }
 
+export function isDeadlinePassed(state, id) {
+  const { [id]: { deadline_passed = null } = {} } = state;
+  return deadline_passed;
+}
+
 export function isCfeiPublished(state, id) {
   const { [id]: { is_published = null } = {} } = state;
   return is_published;

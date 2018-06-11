@@ -29,25 +29,26 @@ const styleSheet = theme => ({
     whiteSpace: 'normal',
     maxWidth: 80,
   },
+  root: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
 });
 
 const EoiStatusCell = (props) => {
   const { classes, status } = props;
   const colorClass = classNames(classes[status]);
-  
+
   return (
-    <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={8}>
-      <Grid item >
-        <SvgIcon className={colorClass}>
-          <circle cx="12" cy="12" r="8" />
-        </SvgIcon>
-      </Grid>
-      <Grid item className={classes.text}>
-        <Typography type="body1" color="inherit">
-          {projectStatuses[status]}
-        </Typography>
-      </Grid>
-    </Grid>
+    <div className={classes.root}>
+      <SvgIcon className={colorClass}>
+        <circle cx="12" cy="12" r="8" />
+      </SvgIcon>
+      <Typography className={classes.text} type="body1" color="inherit">
+        {projectStatuses[status]}
+      </Typography>
+    </div>
   );
 };
 

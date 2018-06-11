@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from datetime import date
 
+from django.utils import timezone
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from model_utils.models import TimeStampedModel
@@ -59,8 +60,7 @@ class EOI(TimeStampedModel):
     is_completed = models.BooleanField(default=False)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
     assessments_criteria = JSONField(
-        default=dict([('selection_criteria', ''), ('weight', 0)]),
-        validators=[validate_weight_adjustments]
+        default=list, validators=[validate_weight_adjustments], blank=True
     )
     review_summary_comment = models.TextField(null=True, blank=True)
     review_summary_attachment = models.ForeignKey(
@@ -72,6 +72,7 @@ class EOI(TimeStampedModel):
     is_published = models.BooleanField(
         default=False, help_text='Whether CFEI is a draft or has been published'
     )
+    published_timestamp = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ['id']
@@ -81,10 +82,12 @@ class EOI(TimeStampedModel):
 
     @property
     def status(self):
-        if self.sent_for_publishing:
-            return CFEI_STATUSES.sent
-        elif not self.is_published:
-            return CFEI_STATUSES.draft
+        # Any changes made here should be reflected in BaseProjectFilter.filter_status
+        if not self.is_published:
+            if not self.sent_for_publishing:
+                return CFEI_STATUSES.draft
+            else:
+                return CFEI_STATUSES.sent
         elif self.is_completed:
             return CFEI_STATUSES.completed
         elif self.is_completed is False and self.deadline_date and date.today() > self.deadline_date:
@@ -101,8 +104,8 @@ class EOI(TimeStampedModel):
         return self.display_type == CFEI_TYPES.direct
 
     @property
-    def is_overdue_deadline(self):
-        return self.deadline_date < date.today()
+    def deadline_passed(self):
+        return self.deadline_date and self.deadline_date < date.today()
 
     @property
     def contains_the_winners(self):
@@ -211,7 +214,7 @@ class Application(TimeStampedModel):
         elif self.eoi.is_open:
             return 'Open Selection'
         elif self.eoi.is_direct:
-            return 'Direct Selection'
+            return 'Direct Selection / Retention'
 
     @property
     def project_title(self):
@@ -238,6 +241,8 @@ class Application(TimeStampedModel):
     @property
     def application_status(self):
         # Any changes made here should be reflected in ApplicationsFilter.filter_applications_status
+        if self.is_unsolicited and self.is_published is False:
+            return EXTENDED_APPLICATION_STATUSES.draft
         if not self.did_win and self.eoi and self.eoi.status == CFEI_STATUSES.completed:
             return EXTENDED_APPLICATION_STATUSES.unsuccessful
         elif self.did_win and self.did_withdraw:

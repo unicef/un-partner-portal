@@ -5,6 +5,7 @@ import random
 from datetime import date, timedelta
 import mock
 from dateutil.relativedelta import relativedelta
+from django.core.management import call_command
 from django.test import override_settings
 
 from django.urls import reverse
@@ -31,7 +32,8 @@ from common.factories import (
     PartnerVerificationFactory,
     UserFactory,
     PartnerFactory,
-    get_new_common_file)
+    get_new_common_file,
+)
 from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
@@ -40,7 +42,7 @@ from common.consts import (
     COMPLETED_REASON,
     CFEI_TYPES,
     CFEI_STATUSES,
-)
+    EXTENDED_APPLICATION_STATUSES)
 from project.views import PinProjectAPIView
 from project.serializers import ConvertUnsolicitedSerializer
 
@@ -190,9 +192,14 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(Partner.objects.first().id in [p['id'] for p in response.data['invited_partners']])
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
 
-        self.assertTrue(len(mail.outbox) >= 1)
-        self.assertIn(NOTIFICATION_DATA[NotificationType.CFEI_INVITE]['subject'], [m.subject for m in mail.outbox])
-        self.assertTrue(any([eoi.get_absolute_url() in m.body for m in mail.outbox]))
+        call_command('send_daily_notifications')
+        notification_emails = list(filter(
+            lambda msg: eoi.get_absolute_url() in msg.body,
+            mail.outbox
+        ))
+
+        self.assertTrue(len(notification_emails) >= 1)
+
         payload = {
             "invited_partners": PartnerShortSerializer([Partner.objects.last()], many=True).data
         }
@@ -288,12 +295,6 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
                 },
             ]
         }
-
-        response = self.client.post(self.url, data=payload, format='json')
-        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
-
-        for partner in Partner.objects.all():
-            PartnerVerificationFactory(partner=partner, submitter=self.user)
 
         response = self.client.post(self.url, data=payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
@@ -482,6 +483,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(status.is_success(response.status_code))
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
+        call_command('send_daily_notifications')
         self.assertTrue(len(mail.outbox) > 0)
         mail.outbox = []
 
@@ -1027,11 +1029,12 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        call_command('send_daily_notifications')
         selection_emails = list(filter(
-            lambda msg: msg.subject == NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'],
+            lambda msg: NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'] in msg.body,
             mail.outbox
         ))
-        self.assertEqual(len(selection_emails), 1)
+        self.assertEqual(len(selection_emails), User.objects.filter(partner_members__partner=partner1).count())
 
         mail.outbox = []
         partner1_application = partner1.applications.first()
@@ -1047,16 +1050,19 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         update_response = self.client.patch(application_url, data=accept_payload, format='json')
         self.assertEqual(update_response.status_code, status.HTTP_200_OK)
 
-        self.assertIn(
-            NOTIFICATION_DATA[NotificationType.CFEI_APPLICATION_WIN]['subject'], [m.subject for m in mail.outbox]
-        )
+        call_command('send_daily_notifications')
+        notification_emails = list(filter(
+            lambda msg: NOTIFICATION_DATA[NotificationType.CFEI_APPLICATION_WIN]['subject'] in msg.body,
+            mail.outbox
+        ))
+        self.assertTrue(len(notification_emails) > 0)
 
 
 class TestEOIPublish(BaseAPITestCase):
 
     quantity = 1
     user_type = BaseAPITestCase.USER_AGENCY
-    agency_role = AgencyRole.READER
+    partner_role = AgencyRole.READER
     initial_factories = [
         AgencyFactory,
         AgencyOfficeFactory,
@@ -1082,3 +1088,73 @@ class TestEOIPublish(BaseAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         eoi.refresh_from_db()
         self.assertTrue(eoi.is_published)
+        self.assertEqual(eoi.status, CFEI_STATUSES.open)
+
+
+class TestUCNCreateAndPublish(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_PARTNER
+    agency_role = PartnerRole.EDITOR
+    initial_factories = [
+        AgencyFactory,
+        AgencyOfficeFactory,
+        UserFactory,
+        AgencyMemberFactory,
+        PartnerFactory,
+        PartnerMemberFactory,
+    ]
+
+    def test_ucn_create_and_publish(self):
+        payload = {
+            "locations": [
+                {
+                    "admin_level_1": {
+                        "name": "Île-de-France",
+                        "country_code": "FR"
+                    },
+                    "lat": "48.45289",
+                    "lon": "2.65182"
+                }
+            ],
+            'title': 'Save stuff',
+            'agency': Agency.objects.order_by('?').first().id,
+            "specializations": [
+                s.id for s in Specialization.objects.order_by('?')[:2]
+            ],
+            'cn': get_new_common_file().id
+        }
+
+        url = reverse('projects:applications-unsolicited')
+        response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        ucn = Application.objects.get(id=response.data['id'])
+        self.assertEqual(ucn.application_status, EXTENDED_APPLICATION_STATUSES.draft)
+
+        publish_url = reverse('projects:ucn-publish', kwargs={'pk': ucn.pk})
+
+        self.set_current_user_role(PartnerRole.READER.name)
+        publish_response = self.client.post(publish_url)
+        self.assertResponseStatusIs(publish_response, status.HTTP_403_FORBIDDEN)
+
+        self.set_current_user_role(PartnerRole.EDITOR.name)
+        publish_response = self.client.post(publish_url)
+        self.assertResponseStatusIs(publish_response, status.HTTP_200_OK)
+        ucn.refresh_from_db()
+        self.assertEqual(ucn.application_status, EXTENDED_APPLICATION_STATUSES.review)
+
+
+class TestEOIPDFExport(BaseAPITestCase):
+
+    quantity = 1
+    user_type = BaseAPITestCase.USER_AGENCY
+    partner_role = AgencyRole.READER
+    initial_factories = [
+        EOIFactory,
+    ]
+
+    def test_download_pdf(self):
+        eoi = EOI.objects.first()
+        url = reverse('projects:eoi-detail', kwargs={'pk': eoi.pk}) + '?export=pdf'
+        response = self.client.get(url)
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertEqual(response.content_type, 'application/pdf')

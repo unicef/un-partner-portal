@@ -3,18 +3,20 @@ from __future__ import unicode_literals
 
 from django.urls import reverse
 
-from rest_framework import status as statuses
+from rest_framework import status
 
+from agency.roles import AgencyRole
 from common.consts import FLAG_TYPES
 from common.tests.base import BaseAPITestCase
 from common.factories import PartnerSimpleFactory, PartnerFlagFactory, PartnerVerificationFactory, AgencyOfficeFactory
 from partner.models import Partner
-from review.models import PartnerFlag, PartnerVerification
+from review.models import PartnerFlag
 
 
 class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
-    user_type = 'agency'
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.HQ_EDITOR
 
     def setUp(self):
         super(TestPartnerFlagAPITestCase, self).setUp()
@@ -38,7 +40,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         }
 
         response = self.client.post(url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         self.assertEquals(response.data['submitter']['name'], self.user.get_fullname())
         self.assertEquals(response.data['flag_type'], FLAG_TYPES.yellow)
         self.assertEquals(response.data['is_valid'], True)
@@ -51,6 +53,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
             'is_valid': False
         }
         response = self.client.patch(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['is_valid'], False)
 
         # Attempt to modify data. Should not change comment
@@ -60,12 +63,11 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
             'comment': "%s - Appended" % flag_comment
         }
         response = self.client.patch(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['comment'], flag_comment)
 
 
 class TestPartnerVerificationAPITestCase(BaseAPITestCase):
-
-    user_type = 'agency'
 
     def setUp(self):
         super(TestPartnerVerificationAPITestCase, self).setUp()
@@ -99,23 +101,3 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
         payload['is_rep_risk'] = True
         response = self.client.post(url, data=payload, format='json')
         self.assertEquals(response.data['is_verified'], False)
-
-    def test_verification_update(self):
-        verification = PartnerVerification.objects.filter(is_valid=True).first()
-
-        # Change Valid Status
-        url = reverse('partner-reviews:verifications-detail',
-                      kwargs={"partner_id": verification.partner.id, "pk": verification.id})
-        payload = {
-            'is_valid': False
-        }
-        response = self.client.patch(url, data=payload, format='json')
-        self.assertEquals(response.data['is_valid'], False)
-
-        # Test Additional data can't be modified
-        has_yellow_flag = verification.is_yellow_flag
-        payload = {
-            'is_yellow_flag': not has_yellow_flag
-        }
-        response = self.client.patch(url, data=payload, format='json')
-        self.assertEquals(response.data['is_yellow_flag'], has_yellow_flag)

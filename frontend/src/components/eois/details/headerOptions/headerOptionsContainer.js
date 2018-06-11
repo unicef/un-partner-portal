@@ -8,7 +8,6 @@ import { PROJECT_TYPES, ROLES, PROJECT_STATUSES } from '../../../../helpers/cons
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
 import AgencyOpenHeaderOptions from './agencyOpenHeaderOptions';
 import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
-import AgencyOpenAfterDeadlineHeaderOptions from './agencyOpenAfterDeadlineHeaderOptions';
 import EoiStatusCell from '../../cells/eoiStatusCell';
 import { selectCfeiStatus,
   isCfeiPublished,
@@ -20,6 +19,25 @@ import { selectCfeiStatus,
 } from '../../../../store';
 import GridColumn from '../../../common/grid/gridColumn';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
+
+const messages = {
+  infoDsr: 'This DS/R was sent to Advanced Editor for acceptance and publication',
+  infoCfei: 'This CFEI was sent to Advanced Editor for acceptance and publication',
+  infoUcn: 'This UCN was sent to Advanced Editor for acceptance and publication',
+};
+
+const tooltipInfo = (projectType) => {
+  switch (projectType) {
+    case PROJECT_TYPES.OPEN:
+      return messages.infoCfei;
+    case PROJECT_TYPES.DIRECT:
+      return messages.infoDsr;
+    case PROJECT_TYPES.UNSOLICITED:
+      return messages.infoUcn;
+    default:
+      return '';
+  }
+};
 
 const HeaderOptionsContainer = (props) => {
   const { role,
@@ -33,48 +51,42 @@ const HeaderOptionsContainer = (props) => {
     allowedToEdit,
   } = props;
   let options;
+  let status = <EoiStatusCell status={cfeiStatus} />;
+
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
-      options = (allowedToEdit && !cfeiCompleted)
-        ? cfeiStatus === PROJECT_STATUSES.OPE
-          ? <AgencyOpenHeaderOptions />
-          : <AgencyOpenAfterDeadlineHeaderOptions />
-        : null;
+      options = !cfeiCompleted ? <AgencyOpenHeaderOptions id={id} /> : null;
     } else if (role === ROLES.PARTNER) {
       options = <PartnerOpenHeaderOptions />;
     }
   } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
-    options = !cfeiCompleted ? <AgencyDirectHeaderOptions id={id} /> : null;
+    options = <AgencyDirectHeaderOptions id={id} />;
   }
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return !cfeiConverted && role === ROLES.AGENCY
       ? <ConvertToDS partnerId={partnerId} id={id} />
       : null;
   }
-  if (cfeiCompleted) {
-    return (
-      <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
+
+  if (cfeiStatus === 'Sen') {
+    status = (<Tooltip
+      title={tooltipInfo(type)}
+      placement="center"
+    >
+      <div>
         <EoiStatusCell status={cfeiStatus} />
         <Typography type="caption">{completedReasonDisplay}</Typography>
-      </GridColumn>);
-  } else if (cfeiStatus === 'Sen') {
-    return (
-      <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
-        <Tooltip
-          title="This WOS was sent to Advanced Editor for acceptance and publication"
-          placement="center"
-        >
-          <div>
-            <EoiStatusCell status={cfeiStatus} />
-            <Typography type="caption">{completedReasonDisplay}</Typography>
-          </div>
-        </Tooltip>
-      </GridColumn>);
+      </div>
+    </Tooltip>);
   }
 
   return (
     <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={24}>
-      {cfeiStatus && <Grid item><EoiStatusCell status={cfeiStatus} /></Grid>}
+      <Grid item>
+        <div>
+          {status}
+          {completedReasonDisplay && <Typography type="caption">{completedReasonDisplay}</Typography>}
+        </div></Grid>
       <Grid item>{options}</Grid>
     </Grid>
   );

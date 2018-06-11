@@ -70,6 +70,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COUNT,
         AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS,
         AgencyPermission.ADD_FLAG_OBSERVATION_ALL_CSO_PROFILES,
+        AgencyPermission.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES,
         AgencyPermission.RUN_REPORT_CSO_PROFILE,
         AgencyPermission.RUN_REPORT_CSO_MAPPING,
         AgencyPermission.RUN_REPORT_CSO_CONTACT,
@@ -159,6 +160,9 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_PUBLISHED_EDIT_DATES,
         AgencyPermission.CFEI_PUBLISHED_INVITE_CSO,
         AgencyPermission.CFEI_PUBLISHED_CANCEL,
+        AgencyPermission.CFEI_SENT_INVITE_CSO,
+        AgencyPermission.CFEI_SENT_EDIT,
+        AgencyPermission.CFEI_SENT_PUBLISH,
         AgencyPermission.CFEI_MANAGE_REVIEWERS,
         AgencyPermission.CFEI_VIEW_APPLICATIONS,
         AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
@@ -199,7 +203,6 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
         AgencyPermission.CFEI_VIEW,
         AgencyPermission.CFEI_FINALIZED_VIEW_WINNER_AND_CN,
-        AgencyPermission.CFEI_PUBLISH,
         AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
         AgencyPermission.CFEI_VIEW_ALL_REVIEWS,
         AgencyPermission.CFEI_ADD_REVIEW_SUMMARY,
@@ -242,6 +245,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_PUBLISHED_EDIT_DATES,
         AgencyPermission.CFEI_PUBLISHED_INVITE_CSO,
         AgencyPermission.CFEI_PUBLISHED_CANCEL,
+        AgencyPermission.CFEI_PUBLISH,
         AgencyPermission.CFEI_MANAGE_REVIEWERS,
         AgencyPermission.CFEI_VIEW_APPLICATIONS,
         AgencyPermission.CFEI_DIRECT_EDIT_SENT,
@@ -272,4 +276,12 @@ AGENCY_ROLE_PERMISSIONS = {
 VALID_FOCAL_POINT_ROLE_NAMES = frozenset([
     AgencyRole.EDITOR_ADVANCED.name,
     AgencyRole.MFT_USER.name,
+])
+
+
+VALID_REVIEWER_ROLE_NAMES = frozenset([
+    AgencyRole.EDITOR_ADVANCED.name,
+    AgencyRole.EDITOR_BASIC.name,
+    AgencyRole.MFT_USER.name,
+    AgencyRole.PAM_USER.name,
 ])

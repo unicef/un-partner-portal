@@ -22,8 +22,8 @@ export const directAgencyColumns = [
   { name: 'agency', title: 'UN Agency' },
   { name: 'selected_partners', title: 'Partner' },
   { name: 'country_code', title: 'Country' },
-  { name: 'specializations', title: 'Sector & Area of Specialization' },
-  { name: 'selected_source', title: 'Direct Selection Source' },
+  { name: 'specializations', title: 'Sector & Area of Specialization', width: 250 },
+  { name: 'selected_source', title: 'DS/R Source' },
   { name: 'status', title: 'Status' },
 ];
 
@@ -32,8 +32,8 @@ export const unsolicitedAgencyColumns = [
   { name: 'agency_name', title: 'UN Agency' },
   { name: 'partner_name', title: 'Partner' },
   { name: 'country', title: 'Country' },
-  { name: 'specializations', title: 'Sector & Area of Specialization' },
+  { name: 'specializations', title: 'Sector & Area of Specialization', width: 250 },
   { name: 'submission_date', title: 'Submission date' },
-  { name: 'is_direct', title: 'Chosen for direct selection' },
+  { name: 'is_direct', title: 'Chosen for DS/R' },
 ];
 
