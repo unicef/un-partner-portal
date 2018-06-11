@@ -530,8 +530,21 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         return eoi.applications.count()
 
     def update(self, instance, validated_data):
-        if instance.completed_reason is None and validated_data.get('completed_reason') is not None and \
-                instance.completed_date is None and instance.is_completed is False:
+        if instance.status == CFEI_STATUSES.closed and not set(validated_data.keys()).issubset(
+            {'reviewers', 'focal_points'}
+        ):
+            raise serializers.ValidationError(
+                "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s)."
+            )
+
+        has_just_been_completed = all([
+            instance.completed_reason is None,
+            validated_data.get('completed_reason'),
+            instance.completed_date is None,
+            instance.is_completed is False
+        ])
+
+        if has_just_been_completed:
             instance.completed_date = datetime.now()
             instance.is_completed = True
 
@@ -563,26 +576,12 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
 
         if has_weighting is True and all(map(lambda x: 'weight' in x, assessments_criteria)) is False:
             raise serializers.ValidationError(
-                "Weight criteria must be provided since `has_weighting` is selected.")
+                "Weight criteria must be provided since `has_weighting` is selected."
+            )
         elif has_weighting is False and any(map(lambda x: 'weight' in x, assessments_criteria)) is True:
             raise serializers.ValidationError(
-                "Weight criteria should not be provided since `has_weighting` is unselected.")
-
-        if self.context['request'].method in ['PATCH', 'PUT']:
-            allowed_to_modify = \
-                list(self.instance.focal_points.values_list('id', flat=True)) + [self.instance.created_by_id]
-            if self.context['request'].user.id in allowed_to_modify:
-                pass
-            else:
-                if self.instance.status == CFEI_STATUSES.closed and \
-                        not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
-                    raise serializers.ValidationError(
-                        "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s).")
-                elif self.instance.is_completed:
-                    raise serializers.ValidationError("CFEI is completed. Modify is forbidden.")
-
-                if self.context['request'].user.id not in allowed_to_modify:
-                    raise serializers.ValidationError("Only Focal Point/Creator is allowed to modify a CFEI.")
+                "Weight criteria should not be provided since `has_weighting` is unselected."
+            )
 
         return super(AgencyProjectSerializer, self).validate(data)
 
