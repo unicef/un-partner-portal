@@ -15,7 +15,7 @@ export const applicationStatuses = {
 export const projectStatuses = {
   Sen: 'Sent',
   Dra: 'Draft',
-  Ope: 'Open',
+  Ope: 'Published',
   Clo: 'Closed/Under Review',
   Com: 'Completed',
 };
