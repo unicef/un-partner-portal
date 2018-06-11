@@ -14,7 +14,7 @@ spec:
       - name: backend-fakedata
         image: unicef/unpp-backend:{{CF_SHORT_REVISION}}
         command: ["bash"]
-        args: ["-c", "python /code/manage.py migrate && python /code/manage.py loaddata --app common initial.json && python /code/manage.py fakedata 50 --clean_before"]
+        args: ["-c", "python /code/manage.py migrate && python /code/manage.py loaddata --app common initial.json && python /code/manage.py fakedata --clean_before"]
         env:
             - name: SECRET_KEY
               valueFrom:
