@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 from common.serializers import CommonFileSerializer
 from agency.serializers import AgencyUserListSerializer
-from .models import PartnerFlag, PartnerVerification
+from review.models import PartnerFlag, PartnerVerification
 
 
 class PartnerFlagSerializer(serializers.ModelSerializer):

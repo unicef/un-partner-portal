@@ -190,7 +190,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             'authorised_officers': authorised_officers,
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['working_languages_other'], working_languages_other)
         self.assertEquals(response.data['connectivity_excuse'], connectivity_excuse)
         # org head can't be changed

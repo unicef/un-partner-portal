@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import mock
 from django.urls import reverse
 
 from rest_framework import status
@@ -78,8 +79,7 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
     def test_verification_create(self):
         partner = Partner.objects.first()
 
-        url = reverse('partner-reviews:verifications',
-                      kwargs={"partner_id": partner.id})
+        url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
 
         payload = {
             "is_mm_consistent": True,
@@ -95,9 +95,14 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
         }
         # Test Verified Status
         response = self.client.post(url, data=payload, format='json')
-        self.assertEquals(response.data['is_verified'], True)
+        self.assertResponseStatusIs(response, status_code=status.HTTP_400_BAD_REQUEST)
 
-        # Test Unverified status
-        payload['is_rep_risk'] = True
-        response = self.client.post(url, data=payload, format='json')
-        self.assertEquals(response.data['is_verified'], False)
+        with mock.patch('partner.models.Partner.profile_is_complete', lambda: True):
+            response = self.client.post(url, data=payload, format='json')
+            self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
+            self.assertEquals(response.data['is_verified'], True)
+
+            # Test Unverified status
+            payload['is_rep_risk'] = True
+            response = self.client.post(url, data=payload, format='json')
+            self.assertEquals(response.data['is_verified'], False)

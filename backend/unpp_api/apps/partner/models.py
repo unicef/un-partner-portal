@@ -11,6 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator
+from django.db.models.signals import post_save
 from model_utils.models import TimeStampedModel
 
 from account.models import User
@@ -139,6 +140,8 @@ class Partner(TimeStampedModel):
             self.profile.project_implementation_is_complete,
             self.profile.other_info_is_complete,
         ])
+
+    profile_is_complete = has_finished
 
     @property
     def last_update_timestamp(self):
@@ -982,3 +985,17 @@ class PartnerReview(TimeStampedModel):
 
     def __str__(self):
         return "PartnerReview <pk:{}>".format(self.id)
+
+
+def create_partner_additional_models(sender, instance, created, **kwargs):
+    if created:
+        PartnerProfile.objects.create(partner=instance)
+        PartnerMailingAddress.objects.create(partner=instance)
+        PartnerAuditAssessment.objects.create(partner=instance)
+        PartnerReporting.objects.create(partner=instance)
+        PartnerMandateMission.objects.create(partner=instance)
+        PartnerFunding.objects.create(partner=instance)
+        PartnerOtherInfo.objects.create(partner=instance)
+
+
+post_save.connect(create_partner_additional_models, sender=Partner)

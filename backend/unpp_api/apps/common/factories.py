@@ -13,7 +13,6 @@ from agency.roles import AgencyRole
 from common.models import Specialization, Point, AdminLevel1, CommonFile
 from partner.models import (
     Partner,
-    PartnerProfile,
     PartnerMailingAddress,
     PartnerDirector,
     PartnerAuthorisedOfficer,
@@ -31,7 +30,8 @@ from partner.models import (
     PartnerAuditReport,
     PartnerReporting,
     PartnerMember,
-    PartnerCapacityAssessment)
+    PartnerCapacityAssessment,
+)
 from partner.roles import PartnerRole
 from project.models import EOI, Application, Assessment
 from review.models import PartnerFlag, PartnerVerification
@@ -210,12 +210,11 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     staff_globally = STAFF_GLOBALLY_CHOICES.to200
     # country profile information
     staff_in_country = STAFF_GLOBALLY_CHOICES.to100
-    engagement_operate_desc = factory.Sequence(lambda n: "engagement with the communitie {}".format(n))
+    engagement_operate_desc = factory.Sequence(lambda n: "engagement with the communities {}".format(n))
 
     @factory.post_generation
     def mailing_address(self, create, extracted, **kwargs):
-        PartnerMailingAddress.objects.create(
-            partner=self,
+        PartnerMailingAddress.objects.filter(partner=self).update(
             street='fake street',
             city='fake city',
             country=get_country_list(1)[0],
@@ -366,51 +365,48 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def profile(self, create, extracted, **kwargs):
-        profile = PartnerProfile.objects.create(
-            partner=self,
-            alias_name="aliast name {}".format(self.id),
-            registration_number="reg-number {}".format(self.id),
-        )
+        self.profile.alias_name = "alias name {}".format(self.id)
+        self.profile.registration_number = "reg-number {}".format(self.id)
+
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
-        profile.working_languages = get_country_list()
+        self.profile.working_languages = get_country_list()
 
-        profile.acronym = "acronym {}".format(self.id)
-        profile.former_legal_name = "former legal name {}".format(self.id)
-        profile.connectivity_excuse = "connectivity excuse {}".format(self.id)
-        profile.year_establishment = date.today().year - random.randint(1, 30)
-        profile.have_gov_doc = True
-        profile.gov_doc = cfile
-        profile.registration_doc = cfile
-        profile.registration_date = date.today() - timedelta(days=random.randint(365, 3650))
-        profile.registration_comment = "registration comment {}".format(self.id)
-        profile.registration_number = "registration number {}".format(self.id)
-        profile.explain = "explain {}".format(self.id)
-        profile.experienced_staff_desc = "experienced staff desc {}".format(self.id)
+        self.profile.acronym = "acronym {}".format(self.id)
+        self.profile.former_legal_name = "former legal name {}".format(self.id)
+        self.profile.connectivity_excuse = "connectivity excuse {}".format(self.id)
+        self.profile.year_establishment = date.today().year - random.randint(1, 30)
+        self.profile.have_gov_doc = True
+        self.profile.gov_doc = cfile
+        self.profile.registration_doc = cfile
+        self.profile.registration_date = date.today() - timedelta(days=random.randint(365, 3650))
+        self.profile.registration_comment = "registration comment {}".format(self.id)
+        self.profile.registration_number = "registration number {}".format(self.id)
+        self.profile.explain = "explain {}".format(self.id)
+        self.profile.experienced_staff_desc = "experienced staff desc {}".format(self.id)
         # programme management
-        profile.have_management_approach = True
-        profile.management_approach_desc = "management approach desc {}".format(self.id)
-        profile.have_system_monitoring = True
-        profile.system_monitoring_desc = "system monitoring desc {}".format(self.id)
-        profile.have_feedback_mechanism = True
-        profile.feedback_mechanism_desc = "feedback mechanism desc {}".format(self.id)
-        profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
-        profile.partnership_collaborate_institution_desc = "collaborate institution {}".format(self.id)
-        profile.explain = "explain {}".format(self.id)
+        self.profile.have_management_approach = True
+        self.profile.management_approach_desc = "management approach desc {}".format(self.id)
+        self.profile.have_system_monitoring = True
+        self.profile.system_monitoring_desc = "system monitoring desc {}".format(self.id)
+        self.profile.have_feedback_mechanism = True
+        self.profile.feedback_mechanism_desc = "feedback mechanism desc {}".format(self.id)
+        self.profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
+        self.profile.partnership_collaborate_institution_desc = "collaborate institution {}".format(self.id)
+        self.profile.explain = "explain {}".format(self.id)
         # financial controls
-        profile.org_acc_system = FINANCIAL_CONTROL_SYSTEM_CHOICES.computerized
-        profile.have_system_track = True
-        profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
+        self.profile.org_acc_system = FINANCIAL_CONTROL_SYSTEM_CHOICES.computerized
+        self.profile.have_system_track = True
+        self.profile.financial_control_system_desc = "financial control system desc {}".format(self.id)
 
-        profile.save()
+        self.profile.save()
 
     @factory.post_generation
     def mandate_mission(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
 
-        PartnerMandateMission.objects.create(
-            partner=self,
+        PartnerMandateMission.objects.filter(partner=self).update(
             background_and_rationale="background and rationale {}".format(self.id),
             mandate_and_mission="mandate and mission {}".format(self.id),
             governance_structure="governance structure {}".format(self.id),
@@ -427,8 +423,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def fund(self, create, extracted, **kwargs):
-        PartnerFunding.objects.create(
-            partner=self,
+        PartnerFunding.objects.filter(partner=self).update(
             source_core_funding="source(s) of core funding {}".format(self.id),
             major_donors=get_donors(),
             main_donors_list="main donors {}".format(self.id),
@@ -438,8 +433,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     def audit(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
-        PartnerAuditAssessment.objects.create(
-            partner=self,
+        PartnerAuditAssessment.objects.filter(partner=self).update(
             regular_audited_comment="fake regular audited comment {}".format(self.id),
             major_accountability_issues_highlighted=True,
             comment="fake comment {}".format(self.id),
@@ -487,8 +481,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     def report(self, create, extracted, **kwargs):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename, 'rb'))
-        PartnerReporting.objects.create(
-            partner=self,
+        PartnerReporting.objects.filter(partner=self).update(
             key_result="fake key result {}".format(self.id),
             last_report=date.today(),
             link_report="Http://fake.unicef.org/fake_uri{}".format(self.id),
@@ -502,8 +495,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         logo_filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
         logo_file = CommonFile.objects.create()
         logo_file.file_field.save('logo.png', open(logo_filename, 'rb'))
-        PartnerOtherInfo.objects.create(
-            partner=self,
+        PartnerOtherInfo.objects.filter(partner=self).update(
             info_to_share="fake info to share {}".format(self.id),
             confirm_data_updated=True,
             org_logo=logo_file,

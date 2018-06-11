@@ -14,7 +14,7 @@ from django.core import mail
 from rest_framework import status
 
 from account.models import User
-from agency.models import AgencyOffice, Agency
+from agency.models import Agency
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
 from notification.consts import NotificationType, NOTIFICATION_DATA
 from partner.roles import PartnerRole
@@ -128,12 +128,12 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_create_patch_project(self):
-        ao = AgencyOffice.objects.first()
+        ao = self.user.agency_members.first().office
         payload = {
             'title': "EOI title",
             'agency': ao.agency.id,
             'focal_points': [
-                AgencyMemberFactory.create_batch(1, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])[0].user.id
+                AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=ao).user.id
             ],
             'locations': [
                 {

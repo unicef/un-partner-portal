@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, get_object_or_404, RetrieveAPIView
@@ -72,6 +73,9 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         partner = get_object_or_404(Partner, id=self.kwargs['partner_id'])
+        if not partner.profile_is_complete:
+            raise serializers.ValidationError('You cannot verify partners before they complete their profile.')
+
         if partner.is_hq:
             current_user_has_permission(
                 self.request, agency_permissions=[AgencyPermission.VERIFY_INGO_HQ], raise_exception=True
