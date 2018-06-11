@@ -550,8 +550,8 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
 
             if completed_reason in {
                 COMPLETED_REASON.partners,
-                COMPLETED_REASON.accepted,
-                COMPLETED_REASON.accepted_retention,
+                DSR_COMPLETED_REASON.accepted,
+                DSR_COMPLETED_REASON.accepted_retention,
             } and not instance.contains_partner_accepted:
                 raise serializers.ValidationError({
                     'completed_reason': f"You've selected '{COMPLETED_REASON[completed_reason]}' as "
