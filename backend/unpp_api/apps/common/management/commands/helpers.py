@@ -180,7 +180,7 @@ def generate_fake_data(country_count=3):
                 EOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user)
                 print(f'Created {user}')
 
-    OtherAgencyFactory.create_batch(1)
+    OtherAgencyFactory()
 
     partner_count = 2
     ingo_hqs = [
@@ -206,7 +206,7 @@ def generate_fake_data(country_count=3):
                         name_parts = get_partner_name().split(" ")
                         return f'{"-".join(name_parts)}.{partner_type}'.lower()
 
-                    # Soft unqiue check
+                    # Soft unique check
                     legal_name = get_legal_name()
                     while Partner.objects.filter(legal_name=legal_name).exists():
                         legal_name = get_legal_name()
@@ -244,5 +244,3 @@ def generate_fake_data(country_count=3):
 
                 if random.randint(1, 2) == 2:
                     UnsolicitedFactory.create_batch(random.randint(1, 3), is_published=True)
-
-    # TODO: Make sure partner profiles are complete

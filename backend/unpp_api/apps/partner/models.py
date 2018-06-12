@@ -189,9 +189,11 @@ class PartnerProfile(TimeStampedModel):
     working_languages_other = models.CharField(max_length=100, null=True, blank=True)
     # authorised_officials
     have_board_directors = models.NullBooleanField(
-        verbose_name="Does your organization have a board of directors?")
+        verbose_name="Does your organization have a board of directors?"
+    )
     have_authorised_officers = models.NullBooleanField(
-        verbose_name="Does your organization have a authorised officers?")
+        verbose_name="Does your organization have a authorised officers?"
+    )
 
     # Registration of organization
     year_establishment = models.PositiveSmallIntegerField(
@@ -293,14 +295,14 @@ class PartnerProfile(TimeStampedModel):
     @property
     def contact_is_complete(self):
         required_fields = {
-            'sreet_or_pobox': self.partner.mailing_address.street or self.partner.mailing_address.po_box,
+            'address': self.partner.mailing_address.street or self.partner.mailing_address.po_box,
             'city': self.partner.mailing_address.city,
             'country': self.partner.mailing_address.country,
             'telephone': self.partner.mailing_address.telephone,
             'have_board_directors': self.have_board_directors is not None,
             'have_authorised_officers': self.have_authorised_officers is not None,
             'connectivity': self.connectivity is not None,
-            'connectivity_exuse': self.connectivity_excuse if self.connectivity is False else True,
+            'connectivity_excuse': self.connectivity_excuse if self.connectivity is False else True,
             'working_languages': len(self.working_languages) > 0,
         }
 
@@ -327,7 +329,7 @@ class PartnerProfile(TimeStampedModel):
         population_of_concern = self.partner.mandate_mission.population_of_concern
         required_fields = {
             'proj_background_rationale': self.partner.mandate_mission.background_and_rationale,
-            'managate_and_mission': self.partner.mandate_mission.mandate_and_mission,
+            'mandate_and_mission': self.partner.mandate_mission.mandate_and_mission,
             'governance_structure': self.partner.mandate_mission.governance_structure,
             'governance_hq': self.partner.mandate_mission.governance_hq,
             'ethic_safeguard': ethic_safeguard is not None,
@@ -347,7 +349,6 @@ class PartnerProfile(TimeStampedModel):
             'experiences': all(
                 [exp.is_complete for exp in self.partner.experiences.all()]
             ) if self.partner.experiences.exists() else False,
-            # TODO - country presence for hq + country
         }
 
         if not self.partner.is_hq:
@@ -462,6 +463,9 @@ class PartnerProfile(TimeStampedModel):
                 [report.is_complete for report in self.partner.capacity_assessments.all()]
             ) if self.partner.capacity_assessments.exists() else False
 
+        for field, val in required_fields.items():
+            if not bool(val):
+                print(field, bool(val))
         return all(required_fields.values())
 
     @property
@@ -721,10 +725,10 @@ class PartnerMandateMission(TimeStampedModel):
     )
 
     # Collaboration
-    partnership_with_insitutions = models.NullBooleanField(
+    partnership_with_institutions = models.NullBooleanField(
         verbose_name=(
             'Has the organization collaborated with or a member of a cluster,'
-            ' professional netwok, consortium or any similar insitutions?')
+            ' professional network, consortium or any similar institutions?')
     )
     description = models.TextField(
         max_length=5000,
