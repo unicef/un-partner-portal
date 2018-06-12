@@ -312,22 +312,6 @@ class AgencyApplicationListAPIView(ListAPIView):
         )
 
 
-class PartnerEOIApplicationDestroyAPIView(DestroyAPIView):
-    """
-    Destroy Application (concept note) created by partner.
-    """
-    permission_classes = (
-        HasUNPPPermission(
-            partner_permissions=[
-                PartnerPermission.CFEI_SUBMIT_CONCEPT_NOTE
-            ]
-        ),
-    )
-
-    def get_queryset(self):
-        return Application.objects.filter(partner=self.request.active_partner)
-
-
 class PartnerEOIApplicationCreateAPIView(CreateAPIView):
     """
     Create Application for open EOI by partner.
@@ -869,27 +853,30 @@ class PublishCFEIAPIView(RetrieveAPIView):
         return Response(AgencyProjectSerializer().data)
 
 
-class PublishUCNAPIView(RetrieveAPIView):
+class PublishOrDestroyUCNAPIView(RetrieveAPIView, DestroyAPIView):
     permission_classes = (
         HasUNPPPermission(
-            partner_permissions=[
-                PartnerPermission.UCN_SUBMIT,
-            ]
+            partner_permissions=[]
         ),
     )
     serializer_class = ApplicationPartnerUnsolicitedDirectSerializer
     queryset = Application.objects.filter(is_published=False, is_unsolicited=True)
 
     def get_queryset(self):
-        queryset = super(PublishUCNAPIView, self).get_queryset()
+        queryset = super(PublishOrDestroyUCNAPIView, self).get_queryset()
         query = Q(partner=self.request.partner_member.partner)
         if self.request.partner_member.partner.is_hq:
             query |= Q(partner__hq=self.request.partner_member.partner)
         return queryset.filter(query)
 
+    @check_unpp_permission(partner_permissions=[PartnerPermission.UCN_SUBMIT])
     def post(self, *args, **kwargs):
         obj = self.get_object()
         obj.is_published = True
         obj.save()
         send_notification_application_created(obj)
         return Response(self.serializer_class(obj).data)
+
+    @check_unpp_permission(partner_permissions=[PartnerPermission.UCN_DELETE])
+    def perform_destroy(self, instance):
+        return super(PublishOrDestroyUCNAPIView, self).perform_destroy(instance)

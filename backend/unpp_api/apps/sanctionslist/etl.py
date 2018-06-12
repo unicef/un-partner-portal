@@ -7,7 +7,7 @@ from dateutil import parser
 from django.conf import settings
 
 from common.consts import SANCTION_LIST_TYPES
-from .models import SanctionedItem, SanctionedName
+from sanctionslist.models import SanctionedItem, SanctionedName
 
 
 ACCEPTED_QUALITIES = ['Good', 'a.k.a.']
@@ -51,10 +51,11 @@ def normalize_person_names(person):
 
 
 def normalize_entity_names(entity):
-    normalized_names = []
-    normalized_names.append(entity['FIRST_NAME'])
+    normalized_names = [
+        entity['FIRST_NAME']
+    ]
 
-    entity_alias = entity['ENTITY_ALIAS']
+    entity_alias = entity.get('ENTITY_ALIAS')
 
     if isinstance(entity_alias, list):
         for alias in entity_alias:
@@ -66,8 +67,8 @@ def normalize_entity_names(entity):
     return [x.lower() for x in normalized_names if x]
 
 
-def parse_unsc_individuals(indivs):
-    for person in indivs:
+def parse_unsc_individuals(individuals):
+    for person in individuals:
         listed_on = parser.parse(person['LISTED_ON']).date()
         last_updated = parse_last_updated(person['LAST_DAY_UPDATED']['VALUE'])
 

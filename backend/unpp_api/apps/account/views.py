@@ -24,10 +24,6 @@ class AccountRegisterAPIView(CreateAPIView):
         response = super(AccountRegisterAPIView, self).create(request, *args, **kwargs)
         partner = Partner.objects.get(id=response.data['partner']['id'])
         sanctions_scan_partner(partner)
-
-        if partner.has_sanction_match:
-            partner.is_locked = True
-            partner.save()
         return response
 
 

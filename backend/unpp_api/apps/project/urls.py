@@ -7,7 +7,6 @@ from project.views import (
     UnsolicitedProjectListAPIView,
     EOIAPIView,
     PartnerEOIApplicationCreateAPIView,
-    PartnerEOIApplicationDestroyAPIView,
     PartnerEOIApplicationRetrieveAPIView,
     AgencyEOIApplicationCreateAPIView,
     AgencyEOIApplicationDestroyAPIView,
@@ -28,7 +27,7 @@ from project.views import (
     EOIReviewersAssessmentsNotifyAPIView,
     PublishCFEIAPIView,
     EOISendToPublishAPIView,
-    PublishUCNAPIView,
+    PublishOrDestroyUCNAPIView,
 )
 
 
@@ -40,9 +39,6 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/partner-applications/$',
         PartnerEOIApplicationCreateAPIView.as_view(),
         name="partner-applications"),
-    url(r'^(?P<pk>\d+)/partner-applications-delete/$',
-        PartnerEOIApplicationDestroyAPIView.as_view(),
-        name="partner-application-delete"),
     url(r'^(?P<pk>\d+)/partner-application/$',
         PartnerEOIApplicationRetrieveAPIView.as_view(),
         name="partner-application"),
@@ -87,6 +83,6 @@ urlpatterns = [
     url(r'^applications/unsolicited/$',
         PartnerApplicationUnsolicitedListCreateAPIView.as_view(),
         name="applications-unsolicited"),
-    url(r'^applications/unsolicited/(?P<pk>\d+)/publish/$', PublishUCNAPIView.as_view(), name="ucn-publish"),
+    url(r'^applications/unsolicited/(?P<pk>\d+)/manage/$', PublishOrDestroyUCNAPIView.as_view(), name="ucn-manage"),
     url(r'^applications/direct/$', PartnerApplicationDirectListCreateAPIView.as_view(), name="applications-direct"),
 ]
