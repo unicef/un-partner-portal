@@ -1,5 +1,4 @@
 
-
 class NotificationType(object):
     # TODO: Investigate usage and replace references + improve naming
     ACTIVE_ACCOUNT_PROFILE_CREATE = 'account_active_profile_create'
@@ -21,6 +20,12 @@ class NotificationType(object):
     CFEI_REVIEW_REQUIRED = 'cfei_review_required'
     PARTNER_DECISION_MADE = 'agency_application_decision_make'
     ADDED_AS_CFEI_FOCAL_POINT = 'added_as_cfei_local_point'
+
+    @classmethod
+    def get_choices(cls):
+        return [
+            (getattr(cls, name), name) for name in dir(cls) if name.isupper()
+        ]
 
 
 NOTIFICATION_DATA = {
@@ -70,7 +75,7 @@ NOTIFICATION_DATA = {
     },
     NotificationType.DIRECT_SELECTION_INITIATED: {
         'template_name': 'direct_selection_UN_initiated',
-        'subject': 'UN has identified your organization for a partnership opportunity via direct selection'
+        'subject': 'UN has identified your organization for a partnership opportunity via direct selection / retention'
     },
     NotificationType.DIRECT_SELECTION_FROM_NOTE_INITIATED: {
         'template_name': 'direct_selection_via_UCN',

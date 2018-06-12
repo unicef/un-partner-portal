@@ -15,7 +15,8 @@ from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
 
 from agency.serializers import AgencySerializer, AgencyUserListSerializer
-from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE, DSR_COMPLETED_REASON
+from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE, \
+    DSR_COMPLETED_REASON, COMPLETED_REASON
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
@@ -25,12 +26,11 @@ from common.serializers import (
 )
 from common.models import Point, Specialization
 from notification.consts import NotificationType
-from notification.helpers import user_received_notification_recently, send_notification_application_created, \
-    send_notification_to_cfei_focal_points
+from notification.helpers import user_received_notification_recently, send_notification_to_cfei_focal_points
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
 from project.models import EOI, Application, Assessment, ApplicationFeedback
-from project.utilities import update_cfei_focal_points
+from project.utilities import update_cfei_focal_points, update_cfei_reviewers
 
 
 class BaseProjectSerializer(serializers.ModelSerializer):
@@ -133,10 +133,8 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
         exclude = ("cn", "eoi", "agency", "submitter")
 
     def validate_partner(self, partner):
-        if not partner.is_verified:
-            raise ValidationError('Only verified partners are eligible for Direct Selections.')
         if partner.is_hq:
-            raise ValidationError('HQs of International partners are not eligible for Direct Selections.')
+            raise ValidationError('HQs of International partners are not eligible for Direct Selections / Retention.')
         return partner
 
 
@@ -177,6 +175,7 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
     is_direct = serializers.SerializerMethodField()
     cfei_type = serializers.CharField(read_only=True)
     application_status = serializers.CharField(read_only=True)
+    application_status_display = serializers.CharField(read_only=True)
     assessments_is_completed = serializers.NullBooleanField(read_only=True)
 
     class Meta:
@@ -336,7 +335,6 @@ class CreateDirectProjectSerializer(serializers.Serializer):
                 ds_attachment=application_data.get('ds_attachment'),
             )
             applications.append(application)
-            send_notification_application_created(application)
 
         update_cfei_focal_points(eoi, [f.id for f in focal_points])
         return {
@@ -377,7 +375,7 @@ class CreateProjectSerializer(CreateEOISerializer):
 class SelectedPartnersSerializer(serializers.ModelSerializer):
     partner_id = serializers.CharField(source="partner.id")
     partner_name = serializers.CharField(source="partner.legal_name")
-    ds_attachment = CommonFileSerializer(read_only=True)
+    partner_is_verified = serializers.NullBooleanField(source="partner.is_verified")
 
     class Meta:
         model = Application
@@ -385,7 +383,16 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
             'id',
             'partner_id',
             'partner_name',
+            'partner_is_verified',
             'application_status',
+        )
+
+
+class SelectedPartnersJustificationSerializer(SelectedPartnersSerializer):
+    ds_attachment = CommonFileSerializer(read_only=True)
+
+    class Meta(SelectedPartnersSerializer.Meta):
+        fields = SelectedPartnersSerializer.Meta.fields + (
             'ds_justification_select',
             'justification_reason',
             'ds_attachment',
@@ -438,6 +445,8 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'selected_source',
             'is_pinned',
             'application',
+            'published_timestamp',
+            'deadline_passed',
         )
         read_only_fields = fields
 
@@ -502,20 +511,61 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'contains_partner_accepted',
             'applications_count',
             'is_published',
+            'deadline_passed',
+            'published_timestamp',
         )
-        read_only_fields = ('created', 'completed_date', 'is_published')
+        read_only_fields = ('created', 'completed_date', 'is_published', 'published_timestamp')
 
     def get_direct_selected_partners(self, obj):
         if obj.is_direct:
-            # this is used by agency
-            return SelectedPartnersSerializer(obj.applications.all(), many=True).data
+            request = self.context.get('request')
+            if obj.is_completed or request and request.agency_member.office.agency == obj.agency:
+                serializer_class = SelectedPartnersJustificationSerializer
+            else:
+                serializer_class = SelectedPartnersSerializer
+
+            return serializer_class(obj.applications.all(), many=True).data
 
     def get_applications_count(self, eoi):
         return eoi.applications.count()
 
     def update(self, instance, validated_data):
-        if instance.completed_reason is None and validated_data.get('completed_reason') is not None and \
-                instance.completed_date is None and instance.is_completed is False:
+        if instance.status == CFEI_STATUSES.closed and not set(validated_data.keys()).issubset(
+            {'reviewers', 'focal_points'}
+        ):
+            raise serializers.ValidationError(
+                "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s)."
+            )
+
+        completed_reason = validated_data.get('completed_reason')
+
+        if completed_reason:
+            if completed_reason == DSR_COMPLETED_REASON.accepted_retention and not validated_data.get(
+                'completed_retention'
+            ):
+                raise serializers.ValidationError({
+                    'completed_retention': 'This field is required'
+                })
+
+            if completed_reason in {
+                COMPLETED_REASON.partners,
+                DSR_COMPLETED_REASON.accepted,
+                DSR_COMPLETED_REASON.accepted_retention,
+            } and not instance.contains_partner_accepted:
+                all_completed_reasons = COMPLETED_REASON + DSR_COMPLETED_REASON
+                raise serializers.ValidationError({
+                    'completed_reason': f"You've selected '{all_completed_reasons[completed_reason]}' as "
+                                        f"finalize resolution, but no partners have accepted."
+                })
+
+        has_just_been_completed = all([
+            instance.completed_reason is None,
+            validated_data.get('completed_reason'),
+            instance.completed_date is None,
+            instance.is_completed is False
+        ])
+
+        if has_just_been_completed:
             instance.completed_date = datetime.now()
             instance.is_completed = True
 
@@ -529,18 +579,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         elif 'invited_partners' in self.initial_data:
             instance.invited_partners.clear()
 
-        reviewers = self.initial_data.get('reviewers', [])
-        if reviewers:
-            Assessment.objects.filter(
-                application__eoi=instance
-            ).exclude(reviewer_id__in=reviewers).update(archived=True)
-            instance.reviewers.through.objects.exclude(user_id__in=reviewers).delete()
-            instance.reviewers.add(*User.objects.filter(id__in=reviewers))
-            Assessment.all_objects.filter(application__eoi=instance, reviewer_id__in=reviewers).update(archived=False)
-        elif 'reviewers' in self.initial_data:
-            Assessment.objects.filter(application__eoi=instance).update(archived=True)
-            instance.reviewers.clear()
-
+        update_cfei_reviewers(instance, self.initial_data.get('reviewers'))
         update_cfei_focal_points(instance, self.initial_data.get('focal_points'))
 
         return instance
@@ -549,35 +588,14 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         assessments_criteria = data.get('assessments_criteria', [])
         has_weighting = data.get('has_weighting', False)
 
-        if data.get('completed_reason') == DSR_COMPLETED_REASON.accepted_retention and not data.get(
-            'completed_retention'
-        ):
-            raise serializers.ValidationError({
-                'completed_retention': 'This field is required'
-            })
-
         if has_weighting is True and all(map(lambda x: 'weight' in x, assessments_criteria)) is False:
             raise serializers.ValidationError(
-                "Weight criteria must be provided since `has_weighting` is selected.")
+                "Weight criteria must be provided since `has_weighting` is selected."
+            )
         elif has_weighting is False and any(map(lambda x: 'weight' in x, assessments_criteria)) is True:
             raise serializers.ValidationError(
-                "Weight criteria should not be provided since `has_weighting` is unselected.")
-
-        if self.context['request'].method in ['PATCH', 'PUT']:
-            allowed_to_modify = \
-                list(self.instance.focal_points.values_list('id', flat=True)) + [self.instance.created_by_id]
-            if self.context['request'].user.id in allowed_to_modify:
-                pass
-            else:
-                if self.instance.status == CFEI_STATUSES.closed and \
-                        not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
-                    raise serializers.ValidationError(
-                        "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s).")
-                elif self.instance.is_completed:
-                    raise serializers.ValidationError("CFEI is completed. Modify is forbidden.")
-
-                if self.context['request'].user.id not in allowed_to_modify:
-                    raise serializers.ValidationError("Only Focal Point/Creator is allowed to modify a CFEI.")
+                "Weight criteria should not be provided since `has_weighting` is unselected."
+            )
 
         return super(AgencyProjectSerializer, self).validate(data)
 

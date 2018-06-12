@@ -1101,14 +1101,6 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
                 country_code=country_code,
                 display_type=PARTNER_TYPES.international,
             )
-            # TODO - move this and partner create in account registration into one location
-            PartnerProfile.objects.create(partner=partner)
-            PartnerMailingAddress.objects.create(partner=partner)
-            PartnerAuditAssessment.objects.create(partner=partner)
-            PartnerReporting.objects.create(partner=partner)
-            PartnerMandateMission.objects.create(partner=partner)
-            PartnerFunding.objects.create(partner=partner)
-            PartnerOtherInfo.objects.create(partner=partner)
 
             responsibilities = []
             for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):

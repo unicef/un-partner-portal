@@ -285,11 +285,17 @@ export const selectCfeiStatus = (state, id) =>
 export const selectCfeiConverted = (state, id) =>
   cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.data, id);
 
-export const selectCfeiJustification = (state, id) =>
-  cfeiDetailsSelector.selectCfeiJustification(state.cfeiDetails.data, id);
+export const selectCfeiCompletedReason = (state, id) =>
+  cfeiDetailsSelector.selectCfeiCompletedReason(state.cfeiDetails.data, id);
+
+export const selectCfeiCompletedReasonDisplay = (state, id) =>
+  cfeiDetailsSelector.selectCfeiCompletedReasonDisplay(state.cfeiDetails.data, id);
 
 export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.data, id);
+
+export const isDeadlinePassed = (state, id) =>
+  cfeiDetailsSelector.isDeadlinePassed(state.cfeiDetails.data, id);
 
 export const isCfeiPublished = (state, id) =>
   cfeiDetailsSelector.isCfeiPublished(state.cfeiDetails.data, id);
@@ -362,7 +368,7 @@ export const selectNormalizedDsrFinalizeOptions = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-completed-reason']);
 
 export const selectNormalizedTimePeriods = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-retention']);
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-retention'], 'value');
 
 export const selectPartnerApplicationDetails = (state, cfeiId) =>
   partnerAppDetailsSelector.selectApplication(state.partnerAppDetails, cfeiId);

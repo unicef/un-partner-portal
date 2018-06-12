@@ -15,6 +15,7 @@ import CountryField from '../../forms/fields/projectFields/locationField/country
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
 import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
 import resetChanges from './eoiHelper';
+import FocalPoints from '../../forms/fields/projectFields/agencyMembersFields/focalPoints';
 
 const messages = {
   choose: 'Choose',
@@ -25,7 +26,8 @@ const messages = {
     status: 'Status',
     sector: 'Sector & Area of Specialization',
     agency: 'Agency',
-    direct: 'Direct Selection Source',
+    direct: 'DS/R Source',
+    focalPoint: 'Project/Programme Focal Point',
   },
   clear: 'clear',
   submit: 'submit',
@@ -45,15 +47,15 @@ const styleSheet = theme => ({
 
 export const STATUS_VAL = [
   {
-    value: false,
+    value: 'Dra',
     label: 'Unpublished',
   },
   {
-    value: true,
+    value: 'Ope',
     label: 'Active',
   },
   {
-    value: false,
+    value: 'Com',
     label: 'Finalized',
   },
 ];
@@ -73,14 +75,13 @@ class EoiFilter extends Component {
     const { pathName, query, agencyId } = this.props;
 
     const agency = this.props.query.agency ? this.props.query.agency : agencyId;
-    const active = !!(this.props.query.active === 'true' || (typeof (this.props.query.active) === 'boolean' && this.props.query.active) || !this.props.query.active);
-    const ordering = active ? 'created' : '-completed_date';
+    const ordering = this.props.query.status === 'Dra' ? 'created' : '-completed_date';
 
     history.push({
       pathname: pathName,
-      query: R.merge(query,
-        { active, ordering, agency },
-      ),
+      query: R.dissoc('focal_points', R.merge(query,
+        { ordering, agency },
+      )),
     });
   }
 
@@ -88,13 +89,13 @@ class EoiFilter extends Component {
     if (R.isEmpty(nextProps.query)) {
       const { pathname } = nextProps.location;
 
-      const ordering = this.props.query.active ? 'created' : '-completed_date';
+      const ordering = this.props.query.status === 'Dra' ? 'created' : '-completed_date';
       const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
 
       history.push({
         pathname,
         query: R.merge(this.props.query,
-          { active: this.props.query.active, ordering, agency: agencyQ },
+          { status: this.props.query.status, ordering, agency: agencyQ },
         ),
       });
     }
@@ -103,10 +104,10 @@ class EoiFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
     // TODO - move order to paginated list wrapper
-    const { title, agency, active, country_code, specializations, selected_source } = values;
+    const { title, agency, status, country_code, specializations, selected_source, focal_points } = values;
 
     const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
-    const ordering = active === 'true' ? 'created' : '-completed_date';
+    const ordering = status === 'Dra' ? 'created' : '-completed_date';
 
     history.push({
       pathname: pathName,
@@ -114,11 +115,12 @@ class EoiFilter extends Component {
         page: 1,
         title,
         agency: agencyQ,
-        active,
+        status,
         ordering,
         country_code,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         selected_source,
+        focal_points,
       }),
     });
   }
@@ -131,7 +133,7 @@ class EoiFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { active: true, ordering: 'created', agency: agencyId },
+        { ordering: 'created', agency: agencyId },
       ),
     });
   }
@@ -183,7 +185,7 @@ class EoiFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <RadioForm
-                fieldName="active"
+                fieldName="status"
                 label={messages.labels.status}
                 values={STATUS_VAL}
                 optional
@@ -203,6 +205,15 @@ class EoiFilter extends Component {
                 label={messages.labels.direct}
                 placeholder={messages.choose}
                 values={directSources}
+                optional
+              />
+            </Grid>
+          </Grid>
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12} >
+              <FocalPoints
+                label={messages.labels.focalPoint}
+                fieldName="focal_points"
                 optional
               />
             </Grid>
@@ -252,9 +263,10 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { title } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { agency } = {} } = ownProps.location;
-  const { query: { active } = {} } = ownProps.location;
+  const { query: { status } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
   const { query: { selected_source } = {} } = ownProps.location;
+  const { query: { focal_points } = {} } = ownProps.location;
 
   const agencyQ = Number(agency);
 
@@ -273,7 +285,8 @@ const mapStateToProps = (state, ownProps) => {
       title,
       country_code,
       agency: agencyQ,
-      active,
+      status,
+      focal_points,
       specializations: specializationsQ,
       selected_source,
     },

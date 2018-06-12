@@ -17,7 +17,7 @@ import { PROJECT_TYPES } from '../../../helpers/constants';
 import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
 import CountriesCell from '../../partners/countriesCell';
 
-const applicationCell = ({ row, column }) => {
+const applicationCell = ({ row, column, value }) => {
   if (column.name === 'submission_date') {
     return <WrappedCell content={formatDateForPrint(row.submission_date)} />;
   } else if (column.name === 'id') {
@@ -40,7 +40,7 @@ const applicationCell = ({ row, column }) => {
       />);
   }
 
-  return undefined;
+  return <TableCell>{value}</TableCell>;
 };
 
 class PartnerApplicationsDirect extends Component {

@@ -7,7 +7,6 @@ from project.views import (
     UnsolicitedProjectListAPIView,
     EOIAPIView,
     PartnerEOIApplicationCreateAPIView,
-    PartnerEOIApplicationDestroyAPIView,
     PartnerEOIApplicationRetrieveAPIView,
     AgencyEOIApplicationCreateAPIView,
     AgencyEOIApplicationDestroyAPIView,
@@ -26,23 +25,20 @@ from project.views import (
     AwardedPartnersListAPIView,
     CompareSelectedListAPIView,
     EOIReviewersAssessmentsNotifyAPIView,
-    PublishEOIAPIView,
+    PublishCFEIAPIView,
     EOISendToPublishAPIView,
-    PublishUCNAPIView,
+    PublishOrDestroyUCNAPIView,
 )
 
 
 urlpatterns = [
     url(r'^(?P<pk>\d+)/$', EOIAPIView.as_view(), name="eoi-detail"),
-    url(r'^(?P<pk>\d+)/publish/$', PublishEOIAPIView.as_view(), name="eoi-publish"),
+    url(r'^(?P<pk>\d+)/publish/$', PublishCFEIAPIView.as_view(), name="eoi-publish"),
     url(r'^(?P<pk>\d+)/send-to-publish/$', EOISendToPublishAPIView.as_view(), name="eoi-send-to-publish"),
     url(r'^applications/$', AgencyApplicationListAPIView.as_view(), name="agency-applications-list"),
     url(r'^(?P<pk>\d+)/partner-applications/$',
         PartnerEOIApplicationCreateAPIView.as_view(),
         name="partner-applications"),
-    url(r'^(?P<pk>\d+)/partner-applications-delete/$',
-        PartnerEOIApplicationDestroyAPIView.as_view(),
-        name="partner-application-delete"),
     url(r'^(?P<pk>\d+)/partner-application/$',
         PartnerEOIApplicationRetrieveAPIView.as_view(),
         name="partner-application"),
@@ -87,6 +83,6 @@ urlpatterns = [
     url(r'^applications/unsolicited/$',
         PartnerApplicationUnsolicitedListCreateAPIView.as_view(),
         name="applications-unsolicited"),
-    url(r'^applications/unsolicited/(?P<pk>\d+)/publish/$', PublishUCNAPIView.as_view(), name="ucn-publish"),
+    url(r'^applications/unsolicited/(?P<pk>\d+)/manage/$', PublishOrDestroyUCNAPIView.as_view(), name="ucn-manage"),
     url(r'^applications/direct/$', PartnerApplicationDirectListCreateAPIView.as_view(), name="applications-direct"),
 ]

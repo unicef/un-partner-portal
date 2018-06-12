@@ -44,7 +44,6 @@ function TextFieldForm(props) {
           infoText={infoText}
           warn={warn ? warning : null}
           formControlStyle={formControlStyle}
-          commentFormControlStyle={commentFormControlStyle}
           {...textFieldProps}
         />
       }

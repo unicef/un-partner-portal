@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import { Grid, TableView, TableHeaderRow, TableRowDetail, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
+import { Grid, Table, TableHeaderRow, TableRowDetail, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import { withStyles } from 'material-ui/styles';
 import { PagingState, SortingState, RowDetailState } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
+import { Paper } from 'material-ui';
 import Typography from 'material-ui/Typography';
 import {
   Template, TemplateConnector, TemplateRenderer,
 } from '@devexpress/dx-react-core';
 import {
   TableRow as TableRowMUI,
+  TableCell,
 } from 'material-ui/Table';
 import ListLoader from './listLoader';
 
@@ -111,70 +113,75 @@ class PaginatedList extends Component {
       changePageNumber } = this.props;
 
     const { hoveredRow } = this.state;
+
     return (
       <ListLoader
         loading={loading}
       >
-        <Grid
-          rows={items}
-          columns={columns}
-          headerPlaceholderTemplate={() => this.navigationHeader()}
-        >
-          {allowSorting && <SortingState
-            sorting={sorting}
-            onSortingChange={changeSorting}
-          /> }
-          <PagingState
-            currentPage={pageNumber - 1}
-            pageSize={pageSize}
-            onPageSizeChange={changePageSize}
-            onCurrentPageChange={changePageNumber}
-            totalCount={itemsCount || 0}
-          />
-
-          {expandable &&
-          <RowDetailState onExpandedRowsChange={this.changeExpandedDetails} />}
-
-          <TableView
-            table
-            tableRowTemplate={this.tableRowTemplate}
-            tableCellTemplate={({ row, column, tableRow: { rowId } }) =>
-              templateCell({ row, column, hovered: hoveredRow === rowId })}
-          />
-          <Template
-            name="tableViewRow"
-            // use custom template only for table data rows
-            predicate={({ tableRow }) => tableRow.type === 'data'}
+        <Paper>
+          <Grid
+            rows={items}
+            columns={columns}
+            headerPlaceholderTemplate={() => this.navigationHeader()}
           >
-            {params => (
-              <TemplateConnector>
-                {(getters, actions) => (
-                  <TemplateRenderer
-                  // custom template
-                    template={this.tableRowTemplate}
-                    // custom template params
-                    params={
-                      getSelectTableRowTemplateArgs({
-                        selectByRowClick: true,
-                        highlightSelected: true,
-                        hovered: hoveredRow,
-                        ...params,
-                      }, getters, actions)
-                    }
-                  />
-                )}
-              </TemplateConnector>
-            )}
-          </Template>
-          <TableHeaderRow allowSorting={allowSorting} />
+            {allowSorting && <SortingState
+              sorting={sorting}
+              onSortingChange={changeSorting}
+            /> }
 
-          {expandable &&
-          <TableRowDetail template={({ row }) => expandedCell(row)} />}
+            <PagingState
+              currentPage={pageNumber - 1}
+              pageSize={pageSize}
+              onPageSizeChange={changePageSize}
+              onCurrentPageChange={changePageNumber}
+              totalCount={itemsCount || 0}
+            />
 
-          <PagingPanel
-            allowedPageSizes={table.allowedPageSizes}
-          />
-        </Grid>
+            {expandable &&
+            <RowDetailState onExpandedRowsChange={this.changeExpandedDetails} />}
+
+            <Table
+              table
+              rowComponent={this.tableRowTemplate}
+              cellComponent={({ row, column, value, tableRow: { rowId } }) =>
+                templateCell({ row, column, value, hovered: hoveredRow === rowId })}
+            />
+
+            <Template
+              name="tableViewRow"
+              // use custom template only for table data rows
+              predicate={({ tableRow }) => tableRow.type === 'data'}
+            >
+              {params => (
+                <TemplateConnector>
+                  {(getters, actions) => (
+                    <TemplateRenderer
+                    // custom template
+                      template={this.tableRowTemplate}
+                      // custom template params
+                      params={
+                        getSelectTableRowTemplateArgs({
+                          selectByRowClick: true,
+                          highlightSelected: true,
+                          hovered: hoveredRow,
+                          ...params,
+                        }, getters, actions)
+                      }
+                    />
+                  )}
+                </TemplateConnector>
+              )}
+            </Template>
+            <TableHeaderRow allowSorting={allowSorting} />
+
+            {expandable &&
+            <TableRowDetail template={({ row }) => expandedCell(row)} />}
+
+            <PagingPanel
+              allowedPageSizes={table.allowedPageSizes}
+            />
+          </Grid>
+        </Paper>
       </ListLoader>
     );
   }
@@ -200,5 +207,8 @@ PaginatedList.propTypes = {
   clickableRow: PropTypes.bool,
 };
 
+PaginatedList.defaultProps = {
+  templateCell: ({ value }) => <TableCell>{value}</TableCell>,
+};
 
 export default withStyles(styleSheet, { name: 'PaginatedList' })(PaginatedList);

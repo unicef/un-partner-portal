@@ -112,7 +112,7 @@ class CollapsableItem extends Component {
         <Collapse
           className={classes.noPrint}
           in={this.state.expanded}
-          transitionDuration="auto"
+          timeout="auto"
           unmountOnExit
         >
           <div className={classes.paddingContent}>{component}</div>

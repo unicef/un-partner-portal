@@ -38,7 +38,7 @@ const mapCompletionReasons = (disableNoC, disablePar) => (item) => {
 };
 
 const FinalizeDsrForm = (props) => {
-  const { classes, handleSubmit, completionReasons, timePeriods, completedReason } = props;
+  const { classes, handleSubmit, completionReasons, timePeriods, completedReason, hasWinners } = props;
   const completedReasonAccepted = [];
   const completedReasonRetention = [];
   const completedReasonCancelled = [];
@@ -61,7 +61,7 @@ const FinalizeDsrForm = (props) => {
   return (
     <form onSubmit={handleSubmit}>
       <TextFieldForm
-        fieldName="completion_justification"
+        fieldName="justification"
         placeholder={messages.justificationPlaceholder}
         label={messages.justificationLabel}
         commentFormControlStyle={commentFormControlStyle}
@@ -70,17 +70,19 @@ const FinalizeDsrForm = (props) => {
         label={messages.completedReasonLabel}
         fieldName="completed_reason"
         values={completedReasonAccepted}
+        disabled={!hasWinners}
         column
       />
       <RadioForm
         fieldName="completed_reason"
         values={completedReasonRetention}
+        disabled={!hasWinners}
         column
       />
       <GridRow>
         <Grid>
           <SelectForm
-            fieldName="retention"
+            fieldName="completed_retention"
             placeholder={messages.retentionPlaceholder}
             label={messages.retentionLabel}
             values={timePeriods}
@@ -121,6 +123,7 @@ FinalizeDsrForm.propTypes = {
   completionReasons: PropTypes.array,
   timePeriods: PropTypes.array,
   disabled: PropTypes.string,
+  hasWinners: PropTypes.bool,
 };
 
 const finalizeDsr = reduxForm({
@@ -134,6 +137,7 @@ const mapStateToProps = (state, { params: { id, type } }, ownProps) => {
   const hasWinners = selectCfeiWinnersStatus(state, id);
   const selector = formValueSelector('finalizeDsr');
   return {
+    hasWinners,
     completionReasons: completionReasons.map(
       mapCompletionReasons(reviewStarted, !hasWinners)),
     timePeriods: selectNormalizedTimePeriods(state),

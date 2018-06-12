@@ -16,7 +16,7 @@ import SendDsrModal from '../../modals/completeDsr/sendDsrModal';
 import DeleteDsrModal from '../../modals/completeDsr/deleteDsrModal';
 import CancelDsrModal from '../../modals/completeDsr/cancelDsrModal';
 import PublishDsrModal from '../../modals/completeDsr/publishDsrModal';
-import FinalizeDsrModal from '../../modals/completeDsr/finalizeDsrModal'
+import FinalizeDsrModal from '../../modals/completeDsr/finalizeDsrModal';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import { checkPermission, isRoleOffice, AGENCY_ROLES, AGENCY_PERMISSIONS, COMMON_PERMISSIONS } from '../../../../helpers/permissions';
@@ -25,6 +25,7 @@ import { selectCfeiStatus,
   isCfeiCompleted,
   isUserAFocalPoint,
   isUserACreator,
+  selectCfeiDetails,
 } from '../../../../store';
 
 const edit = 'edit';
@@ -35,7 +36,7 @@ const send = 'send';
 const publish = 'publish';
 const complete = 'complete';
 
-class PartnerOpenHeaderOptions extends Component {
+class AgencyDirectHeaderOptions extends Component {
   constructor(props) {
     super(props);
 
@@ -46,6 +47,7 @@ class PartnerOpenHeaderOptions extends Component {
 
   sendOptions() {
     const {
+      params: { id },
       handleDialogOpen,
       hasEditDraftPermission,
       hasDeleteDraftPermission,
@@ -54,7 +56,7 @@ class PartnerOpenHeaderOptions extends Component {
     const options = [
       {
         name: download,
-        content: <DownloadButton handleClick={() => {}} />,
+        content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
       },
     ];
 
@@ -86,7 +88,7 @@ class PartnerOpenHeaderOptions extends Component {
       isCreator,
       isFocalPoint } = this.props;
 
-    return ((hasActionPermission && isAdvEd && isCreator && isFocalPoint)
+    return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
     || (hasActionPermission && isMFT && isFocalPoint)
     || (hasActionPermission && isBasEd && isCreator)
     || (hasActionPermission && isPAM && isCreator));
@@ -100,6 +102,7 @@ class PartnerOpenHeaderOptions extends Component {
       hasCancelPermission,
       isPublished,
       status,
+      isCompleted,
       isAdvEd,
       isMFT,
       isFocalPoint } = this.props;
@@ -111,9 +114,9 @@ class PartnerOpenHeaderOptions extends Component {
       },
     ];
 
-    if (this.isActionAllowed(hasEditPublishedPermission) ||
-      (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
-            || (hasEditPublishedPermission && isMFT && isFocalPoint)))) {
+    if ((!isCompleted && isPublished && this.isActionAllowed(hasEditPublishedPermission)) ||
+    (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
+            || (!isCompleted && hasEditPublishedPermission && isMFT && isFocalPoint)))) {
       options.push(
         {
           name: edit,
@@ -121,7 +124,7 @@ class PartnerOpenHeaderOptions extends Component {
         });
     }
 
-    if (this.isActionAllowed(hasCancelPermission)) {
+    if (!isCompleted && this.isActionAllowed(hasCancelPermission)) {
       options.push(
         {
           name: del,
@@ -130,6 +133,16 @@ class PartnerOpenHeaderOptions extends Component {
     }
 
     return options;
+  }
+
+  isPartnerVerified() {
+    const { cfei } = this.props;
+
+    if (cfei.direct_selected_partners && cfei.direct_selected_partners.length > 0) {
+      return cfei.direct_selected_partners[0].partner_is_verified;
+    }
+
+    return false;
   }
 
   render() {
@@ -146,23 +159,23 @@ class PartnerOpenHeaderOptions extends Component {
       isMFT,
       isAdvEd,
       handleDialogClose,
-      handleDialogOpen } = this.props;
+      handleDialogOpen } = this.props; 
 
     return (
       <SpreadContent>
-        {isPublished && this.isActionAllowed(hasFinalizePermission)
+        {!isCompleted && isPublished && this.isActionAllowed(hasFinalizePermission)
           && <Complete handleClick={() => handleDialogOpen(complete)} />}
 
         {!isCompleted && status === 'Dra' && isCreator && hasSendPermission
          && <SendDsrButton handleClick={() => handleDialogOpen(send)} />}
 
-        {!isPublished && !isCompleted && status === 'Sen' && hasPublishPermission &&
+        {!isPublished && !isCompleted && hasPublishPermission &&
             (((isFocalPoint || isCreator) && isAdvEd) || (isFocalPoint && isMFT))
-         && <PublishDsrButton handleClick={() => handleDialogOpen(publish)} />}
+         && <PublishDsrButton disabled={!this.isPartnerVerified()} handleClick={() => handleDialogOpen(publish)} />}
 
-        {(status === 'Dra' || status === 'Sen') && <DropdownMenu
+        <DropdownMenu
           options={status === 'Dra' ? this.sendOptions() : this.publishOptions()}
-        />}
+        />
 
         {dialogOpen[cancel] && <CancelDsrModal
           id={id}
@@ -202,9 +215,10 @@ class PartnerOpenHeaderOptions extends Component {
   }
 }
 
-PartnerOpenHeaderOptions.propTypes = {
+AgencyDirectHeaderOptions.propTypes = {
   params: PropTypes.object,
   dialogOpen: PropTypes.object,
+  cfei: PropTypes.object,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
   isPublished: PropTypes.bool,
@@ -232,6 +246,7 @@ const mapStateToProps = (state, ownProps) => ({
   isFocalPoint: isUserAFocalPoint(state, ownProps.id),
   isCompleted: isCfeiCompleted(state, ownProps.id),
   isPublished: isCfeiPublished(state, ownProps.id),
+  cfei: selectCfeiDetails(state, ownProps.id),
   status: selectCfeiStatus(state, ownProps.id),
   hasSendPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_SEND_DRAFT_TO_FOCAL_POINT,
     state),
@@ -253,4 +268,4 @@ export default compose(
   withMultipleDialogHandling,
   connect(mapStateToProps, null),
   withRouter,
-)(PartnerOpenHeaderOptions);
+)(AgencyDirectHeaderOptions);

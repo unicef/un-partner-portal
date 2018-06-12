@@ -96,7 +96,7 @@ const DatePoint = (props) => {
           align={align}
           className={classes.text}
         >
-          {formatDateForPrint(date)}
+          {formatDateForPrint(date) || ''}
         </Typography>
         <SvgIcon className={classes.firstIcon} viewBox={viewBox}>
           <circle cx="4" cy="4" r="4" />

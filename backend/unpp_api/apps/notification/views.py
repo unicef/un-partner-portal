@@ -7,9 +7,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from common.pagination import MediumPagination
-from .serializers import NotifiedUserSerializer, NotificationSerializer, NotifiedSerializer
-from .models import NotifiedUser, Notification
-from .permissions import IsNotifiedOwner
+from notification.serializers import NotifiedUserSerializer, NotificationSerializer, NotifiedSerializer
+from notification.models import NotifiedUser, Notification
+from notification.permissions import IsNotifiedOwner
 
 
 class NotificationsAPIView(ListAPIView):

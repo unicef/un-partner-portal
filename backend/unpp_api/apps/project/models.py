@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 from datetime import date
 
+from django.conf import settings
+from django.utils import timezone
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from model_utils.models import TimeStampedModel
@@ -29,9 +31,9 @@ class EOI(TimeStampedModel):
     display_type = models.CharField(max_length=3, choices=CFEI_TYPES, default=CFEI_TYPES.open)
     title = models.CharField(max_length=255)
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
-    created_by = models.ForeignKey('account.User', related_name="expressions_of_interest")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="expressions_of_interest")
     # focal_point - limited to users under agency
-    focal_points = models.ManyToManyField('account.User', related_name="eoi_focal_points")
+    focal_points = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="eoi_focal_points")
     locations = models.ManyToManyField('common.Point', related_name="expressions_of_interest")
     agency_office = models.ForeignKey('agency.AgencyOffice', related_name="expressions_of_interest")
     # always be taken from the agency; we always keep their base template of the one they used.
@@ -50,7 +52,7 @@ class EOI(TimeStampedModel):
     notif_results_date = models.DateField(verbose_name='Notification of Results Date', null=True, blank=True)
     has_weighting = models.BooleanField(default=True, verbose_name='Has weighting?')
     invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest", blank=True)
-    reviewers = models.ManyToManyField('account.User', related_name="eoi_as_reviewer", blank=True)
+    reviewers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="eoi_as_reviewer", blank=True)
     justification = models.TextField(null=True, blank=True)  # closed or completed
     completed_reason = FixedTextField(choices=ALL_COMPLETED_REASONS, null=True, blank=True)
     completed_retention = models.CharField(max_length=3, choices=DSR_FINALIZE_RETENTION_CHOICES, null=True, blank=True)
@@ -59,8 +61,7 @@ class EOI(TimeStampedModel):
     is_completed = models.BooleanField(default=False)
     selected_source = models.CharField(max_length=3, choices=DIRECT_SELECTION_SOURCE, null=True, blank=True)
     assessments_criteria = JSONField(
-        default=dict([('selection_criteria', ''), ('weight', 0)]),
-        validators=[validate_weight_adjustments]
+        default=list, validators=[validate_weight_adjustments], blank=True
     )
     review_summary_comment = models.TextField(null=True, blank=True)
     review_summary_attachment = models.ForeignKey(
@@ -72,6 +73,7 @@ class EOI(TimeStampedModel):
     is_published = models.BooleanField(
         default=False, help_text='Whether CFEI is a draft or has been published'
     )
+    published_timestamp = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ['id']
@@ -81,10 +83,12 @@ class EOI(TimeStampedModel):
 
     @property
     def status(self):
-        if self.sent_for_publishing:
-            return CFEI_STATUSES.sent
-        elif not self.is_published:
-            return CFEI_STATUSES.draft
+        # Any changes made here should be reflected in BaseProjectFilter.filter_status
+        if not self.is_published:
+            if not self.sent_for_publishing:
+                return CFEI_STATUSES.draft
+            else:
+                return CFEI_STATUSES.sent
         elif self.is_completed:
             return CFEI_STATUSES.completed
         elif self.is_completed is False and self.deadline_date and date.today() > self.deadline_date:
@@ -101,8 +105,8 @@ class EOI(TimeStampedModel):
         return self.display_type == CFEI_TYPES.direct
 
     @property
-    def is_overdue_deadline(self):
-        return self.deadline_date < date.today()
+    def deadline_passed(self):
+        return self.deadline_date and self.deadline_date < date.today()
 
     @property
     def contains_the_winners(self):
@@ -139,7 +143,7 @@ class EOI(TimeStampedModel):
 class Pin(TimeStampedModel):
     eoi = models.ForeignKey(EOI, related_name="pins")
     partner = models.ForeignKey('partner.Partner', related_name="pins")
-    pinned_by = models.ForeignKey('account.User', related_name="pins")
+    pinned_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="pins")
 
     class Meta:
         ordering = ['id']
@@ -165,7 +169,7 @@ class Application(TimeStampedModel):
     partner = models.ForeignKey('partner.Partner', related_name="applications")
     eoi = models.ForeignKey(EOI, related_name="applications", null=True, blank=True)
     agency = models.ForeignKey('agency.Agency', related_name="applications")
-    submitter = models.ForeignKey('account.User', related_name="applications")
+    submitter = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="applications")
     cn = models.ForeignKey('common.CommonFile', related_name="concept_notes", null=True, blank=True)
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
@@ -211,7 +215,7 @@ class Application(TimeStampedModel):
         elif self.eoi.is_open:
             return 'Open Selection'
         elif self.eoi.is_direct:
-            return 'Direct Selection'
+            return 'Direct Selection / Retention'
 
     @property
     def project_title(self):
@@ -252,6 +256,10 @@ class Application(TimeStampedModel):
             return EXTENDED_APPLICATION_STATUSES.declined
         return EXTENDED_APPLICATION_STATUSES.review
 
+    @property
+    def application_status_display(self):
+        return EXTENDED_APPLICATION_STATUSES[self.application_status]
+
     # RETURNS [{u'Cos': {u'scores': [23, 13], u'weight': 30}, u'avg': 23..]
     def get_scores_by_selection_criteria(self):
         assessments_criteria = self.eoi.get_assessment_criteria_as_dict()
@@ -286,7 +294,7 @@ class Application(TimeStampedModel):
 
 class ApplicationFeedback(TimeStampedModel):
     application = models.ForeignKey(Application, related_name="application_feedbacks")
-    provider = models.ForeignKey('account.User', related_name="application_feedbacks")
+    provider = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="application_feedbacks")
     feedback = models.TextField()
 
     class Meta:
@@ -303,9 +311,9 @@ class AssessmentManager(models.Manager):
 
 
 class Assessment(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', related_name="assessments_creator")
-    modified_by = models.ForeignKey('account.User', related_name="assessments_editor", null=True, blank=True)
-    reviewer = models.ForeignKey('account.User', related_name="assessments")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="assessments_creator")
+    modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="assessments_editor", null=True, blank=True)
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="assessments")
     application = models.ForeignKey(Application, related_name="assessments")
     scores = JSONField(default=[dict((('selection_criteria', None), ('score', 0)))])
     date_reviewed = models.DateField(auto_now=True, verbose_name='Date reviewed')
