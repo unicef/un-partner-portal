@@ -7,6 +7,7 @@ from datetime import date
 import os
 import logging
 
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
@@ -516,7 +517,7 @@ class PartnerHeadOrganization(TimeStampedModel):
 
 
 class PartnerDirector(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="directors")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="directors")
     partner = models.ForeignKey(Partner, related_name="directors")
     fullname = models.CharField(max_length=512, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
@@ -544,7 +545,7 @@ class PartnerDirector(TimeStampedModel):
 
 
 class PartnerAuthorisedOfficer(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="authorised_officers")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="authorised_officers")
     partner = models.ForeignKey(Partner, related_name="authorised_officers")
     fullname = models.CharField(max_length=512, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
@@ -570,7 +571,7 @@ class PartnerAuthorisedOfficer(TimeStampedModel):
 
 
 class PartnerPolicyArea(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="area_policies")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="area_policies")
     partner = models.ForeignKey(Partner, related_name="area_policies")
     area = models.CharField(max_length=3, choices=POLICY_AREA_CHOICES)
     document_policies = models.NullBooleanField()
@@ -600,7 +601,7 @@ class PartnerAuditAssessment(TimeStampedModel):
 
 
 class PartnerAuditReport(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name='audit_reports')
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='audit_reports')
     partner = models.ForeignKey(Partner, related_name='audit_reports')
     org_audit = models.CharField(
         max_length=3, choices=ORG_AUDIT_CHOICES, null=True, blank=True
@@ -629,7 +630,7 @@ class PartnerAuditReport(TimeStampedModel):
 
 
 class PartnerCapacityAssessment(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name='capacity_assessments')
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='capacity_assessments')
     partner = models.ForeignKey(Partner, related_name='capacity_assessments')
     assessment_type = models.TextField(choices=AUDIT_ASSESSMENT_CHOICES, null=True, blank=True)
     report_file = models.ForeignKey(
@@ -744,7 +745,7 @@ class PartnerMandateMission(TimeStampedModel):
 
 
 class PartnerExperience(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="experiences")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="experiences")
     partner = models.ForeignKey(Partner, related_name="experiences")
     specialization = models.ForeignKey(
         'common.Specialization', null=True, blank=True, related_name="partner_experiences"
@@ -796,7 +797,7 @@ class PartnerInternalControl(TimeStampedModel):
 
 
 class PartnerBudget(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="budgets")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="budgets")
     partner = models.ForeignKey(Partner, related_name="budgets")
     year = models.PositiveSmallIntegerField(
         help_text="Enter valid year.",
@@ -831,7 +832,7 @@ class PartnerFunding(TimeStampedModel):
 
 
 class PartnerCollaborationPartnership(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', related_name="collaborations_partnership")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="collaborations_partnership")
     partner = models.ForeignKey(Partner, related_name="collaborations_partnership")
     agency = models.ForeignKey(
         'agency.Agency', related_name="collaborations_partnership", blank=True, null=True
@@ -860,7 +861,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
     """
     Accreditation & References
     """
-    created_by = models.ForeignKey('account.User', related_name="collaboration_evidences")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="collaboration_evidences")
     partner = models.ForeignKey(Partner, related_name="collaboration_evidences")
     mode = models.CharField(max_length=3, choices=COLLABORATION_EVIDENCE_MODES, blank=True, null=True)
     organization_name = models.CharField(max_length=200, blank=True, null=True)
@@ -886,7 +887,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
 
 
 class PartnerOtherInfo(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="other_info")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="other_info")
     partner = models.OneToOneField(Partner, related_name="other_info")
     info_to_share = models.TextField(max_length=5000, null=True, blank=True)
     org_logo = models.ForeignKey(
@@ -941,7 +942,7 @@ class PartnerOtherInfo(TimeStampedModel):
 
 
 class PartnerMember(TimeStampedModel):
-    user = models.ForeignKey('account.User', related_name="partner_members")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="partner_members")
     partner = models.ForeignKey(Partner, related_name="partner_members")
     title = models.CharField(max_length=255)
     role = FixedTextField(choices=PartnerRole.get_choices(), default=PartnerRole.READER.name)
@@ -971,7 +972,7 @@ class PartnerReview(TimeStampedModel):
     # We should keep in mind that this class can totally change!
     partner = models.ForeignKey(Partner, related_name="reviews")
     agency = models.ForeignKey('agency.Agency', related_name="partner_reviews")
-    reviewer = models.ForeignKey('account.User', related_name="partner_reviews")
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="partner_reviews")
     display_type = models.CharField(max_length=3, choices=PARTNER_REVIEW_TYPES)
     eoi = models.ForeignKey('project.EOI', related_name="partner_reviews")
     performance_pm = models.CharField(max_length=3, choices=SATISFACTION_SCALES)

@@ -4,8 +4,9 @@ from __future__ import unicode_literals
 from django.core.mail import send_mail
 from django.conf import settings
 
-from common.consts import SANCTION_LIST_TYPES, SANCTION_MATCH_TYPES
+from common.consts import SANCTION_LIST_TYPES, SANCTION_MATCH_TYPES, INTERNAL_FLAG_TYPES
 from partner.models import Partner
+from review.models import PartnerFlag
 from sanctionslist.models import SanctionedName, SanctionedNameMatch
 
 
@@ -22,6 +23,11 @@ def create_sanctions_match(name_matches_qs, partner, match_type, match_text):
             partner=partner,
             match_type=match_type,
             match_text=match_text
+        )
+        PartnerFlag.objects.create(
+            partner=partner,
+            flag_type=INTERNAL_FLAG_TYPES.sanction_match,
+            comment=match_text,  # TODO: generate more descriptive description
         )
 
         subject = 'Sanctioned List Scan Match Found on UNPP'
