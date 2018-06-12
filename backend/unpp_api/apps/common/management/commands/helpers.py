@@ -180,6 +180,13 @@ def generate_fake_data(country_count=3):
                 EOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user)
                 print(f'Created {user}')
 
+            # Make sure each office has a couple of potential focal points
+            if agency.name == 'UNHCR':
+                focal_point_role = AgencyRole.MFT_USER
+            else:
+                focal_point_role = AgencyRole.EDITOR_ADVANCED
+            AgencyMemberFactory.create_batch(random.randint(5, 10), office=office, role=focal_point_role.name)
+
     OtherAgencyFactory()
 
     partner_count = 2
