@@ -26,8 +26,7 @@ from common.serializers import (
 )
 from common.models import Point, Specialization
 from notification.consts import NotificationType
-from notification.helpers import user_received_notification_recently, send_notification_application_created, \
-    send_notification_to_cfei_focal_points
+from notification.helpers import user_received_notification_recently, send_notification_to_cfei_focal_points
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
 from project.models import EOI, Application, Assessment, ApplicationFeedback
@@ -335,7 +334,6 @@ class CreateDirectProjectSerializer(serializers.Serializer):
                 ds_attachment=application_data.get('ds_attachment'),
             )
             applications.append(application)
-            send_notification_application_created(application)
 
         update_cfei_focal_points(eoi, [f.id for f in focal_points])
         return {

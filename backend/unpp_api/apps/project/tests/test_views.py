@@ -1039,14 +1039,21 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
             lambda msg: NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'] in msg.body,
             mail.outbox
         ))
+        self.assertEqual(len(selection_emails), 0)
+        mail.outbox = []
+
+        partner1_application = partner1.applications.first()
+        publish_url = reverse('projects:eoi-publish', kwargs={'pk': partner1_application.eoi_id})
+        self.assertResponseStatusIs(self.client.post(publish_url))
+
+        call_command('send_daily_notifications')
+        selection_emails = list(filter(
+            lambda msg: NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'] in msg.body,
+            mail.outbox
+        ))
         self.assertEqual(len(selection_emails), User.objects.filter(partner_members__partner=partner1).count())
 
-        mail.outbox = []
-        partner1_application = partner1.applications.first()
-        partner1_application.eoi.is_published = True
-        partner1_application.eoi.save()
         application_url = reverse('projects:application', kwargs={'pk': partner1_application.pk})
-
         accept_payload = {
             "did_accept": True,
             "did_decline": False

@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from datetime import date
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -849,6 +850,7 @@ class PublishCFEIAPIView(RetrieveAPIView):
             return
         self.permission_denied(request)
 
+    @transaction.atomic
     def post(self, *args, **kwargs):
         cfei = self.get_object()
         if cfei.deadline_passed:
@@ -859,6 +861,7 @@ class PublishCFEIAPIView(RetrieveAPIView):
                 raise serializers.ValidationError('All partners need to be verified before publishing.')
             if not cfei.applications.count() == 1:
                 raise serializers.ValidationError('Only a single partner can be indicated.')
+            list(map(send_notification_application_created, cfei.applications.all()))
 
         cfei.is_published = True
         cfei.published_timestamp = timezone.now()
