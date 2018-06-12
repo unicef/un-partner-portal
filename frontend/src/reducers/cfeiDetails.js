@@ -103,6 +103,7 @@ const saveUCN = (state, action) => {
     agency: R.path(['agency', 'name'], ucn),
     cn: ucn.cn,
     eoiConverted: ucn.eoi_converted,
+    status: ucn.application_status,
   };
   return R.assoc(ucn.id, normalizeSingleCfei(newUCN), state);
 };
