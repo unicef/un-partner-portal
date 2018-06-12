@@ -66,6 +66,7 @@ import openCfeiDashboardList from './reducers/openCfeiDashboardList';
 import publishCfei from './reducers/publishCfei';
 import sendCfei from './reducers/sendCfei';
 import deleteCfei from './reducers/deleteCfei';
+import deleteUcn from './reducers/deleteUcn';
 import submitUcn from './reducers/submitUcn';
 // ID portal
 
@@ -84,6 +85,7 @@ const mainReducer = combineReducers({
   publishCfei,
   deleteCfei,
   sendCfei,
+  deleteUcn,
   submitUcn,
   organizationProfileNav,
   partnerApplicationsNav,

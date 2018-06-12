@@ -6,7 +6,7 @@ import { withStyles } from 'material-ui/styles';
 import { Typography } from 'material-ui';
 import PaddedContent from '../../../common/paddedContent';
 import ControlledModal from '../../../common/modals/controlledModal';
-import { deleteCfeiRequest } from '../../../../reducers/deleteCfei';
+import { deleteUcnRequest } from '../../../../reducers/deleteUcn';
 
 const messages = {
   title: 'Are you sure you want to delete this UCN?',
@@ -27,7 +27,7 @@ class DeleteUcnModal extends Component {
   }
 
   delete() {
-    return this.props.deleteCfei().then(() => {
+    return this.props.deleteUcn().then(() => {
       history.push(this.props.previousPath);
     });
   }
@@ -64,18 +64,18 @@ class DeleteUcnModal extends Component {
 DeleteUcnModal.propTypes = {
   classes: PropTypes.object.isRequired,
   dialogOpen: PropTypes.bool,
-  deleteCfei: PropTypes.func,
+  deleteUcn: PropTypes.func,
   previousPath: PropTypes.string,
   handleDialogClose: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  showLoading: state.publishCfei.status.loading,
+  showLoading: state.deleteUcn.status.loading,
   previousPath: state.routesHistory.previousPath || ownProps.defaultPath,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  deleteCfei: () => dispatch(deleteCfeiRequest(ownProps.id)),
+  deleteUcn: () => dispatch(deleteUcnRequest(ownProps.id)),
 });
 
 const connected = connect(mapStateToProps, mapDispatchToProps)(DeleteUcnModal);
