@@ -42,7 +42,8 @@ from common.consts import (
     COMPLETED_REASON,
     CFEI_TYPES,
     CFEI_STATUSES,
-    EXTENDED_APPLICATION_STATUSES)
+    EXTENDED_APPLICATION_STATUSES,
+)
 from project.views import PinProjectAPIView
 from project.serializers import ConvertUnsolicitedSerializer
 

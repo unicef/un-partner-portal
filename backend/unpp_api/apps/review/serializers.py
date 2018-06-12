@@ -16,6 +16,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
     submitter = AgencyUserBasicSerializer(read_only=True)
     attachment = CommonFileSerializer(required=False)
     is_valid = serializers.BooleanField(required=False)
+    flag_type_display = serializers.CharField(source='get_flag_type_display')
 
     class Meta:
         model = PartnerFlag
