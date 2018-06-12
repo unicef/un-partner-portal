@@ -38,7 +38,7 @@ const ItemRowCellDivider = (props) => {
         <div className={classes.alignRight}>
           { Array.isArray(content)
             ? content.map((item, index) => (<Typography key={index} type="body1">{item}</Typography>))
-            : <Typography type="body1" >{content}</Typography>
+            : (content != undefined && <Typography type="body1" >{content}</Typography>)
           }
         </div>
       </SpreadContent>
@@ -57,6 +57,7 @@ ItemRowCellDivider.propTypes = {
   labelSecondary: PropTypes.bool,
   content: PropTypes.oneOfType([
     PropTypes.string,
+    PropTypes.number,
     PropTypes.array,
   ]),
   divider: PropTypes.bool,

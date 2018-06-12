@@ -20,7 +20,7 @@ import FlaggingStatus from '../profile/common/flaggingStatus';
 const PartnerTitle = (props) => {
   const {
     partner: {
-      name,
+      name = '',
       partnerStatus: { is_verified, flagging_status: flags = {},
       } = {},
     } = {},
