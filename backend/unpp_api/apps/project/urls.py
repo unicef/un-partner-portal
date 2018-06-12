@@ -83,6 +83,6 @@ urlpatterns = [
     url(r'^applications/unsolicited/$',
         PartnerApplicationUnsolicitedListCreateAPIView.as_view(),
         name="applications-unsolicited"),
-    url(r'^applications/unsolicited/(?P<pk>\d+)/publish/$', PublishOrDestroyUCNAPIView.as_view(), name="ucn-publish"),
+    url(r'^applications/unsolicited/(?P<pk>\d+)/manage/$', PublishOrDestroyUCNAPIView.as_view(), name="ucn-manage"),
     url(r'^applications/direct/$', PartnerApplicationDirectListCreateAPIView.as_view(), name="applications-direct"),
 ]
