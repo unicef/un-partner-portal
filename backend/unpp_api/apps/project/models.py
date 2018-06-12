@@ -255,6 +255,10 @@ class Application(TimeStampedModel):
             return EXTENDED_APPLICATION_STATUSES.declined
         return EXTENDED_APPLICATION_STATUSES.review
 
+    @property
+    def application_status_display(self):
+        return EXTENDED_APPLICATION_STATUSES[self.application_status]
+
     # RETURNS [{u'Cos': {u'scores': [23, 13], u'weight': 30}, u'avg': 23..]
     def get_scores_by_selection_criteria(self):
         assessments_criteria = self.eoi.get_assessment_criteria_as_dict()
