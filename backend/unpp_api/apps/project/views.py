@@ -376,7 +376,7 @@ class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
     def get_object(self):
         return get_object_or_404(self.get_queryset(), **{
             'partner_id': self.request.active_partner.id,
-            'pk': self.kwargs.get('pk'),
+            'eoi_id': self.kwargs.get('pk'),
         })
 
 
