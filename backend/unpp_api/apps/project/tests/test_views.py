@@ -221,7 +221,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             "deadline_date": date.today() + timedelta(days=10),
             "notif_results_date": date.today() + timedelta(days=15),
             "focal_points": [
-                AgencyMemberFactory.create_batch(1, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])[0].user.id,
+                AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=ao).user.id,
             ]
         }
         response = self.client.patch(url, data=payload, format='json')
