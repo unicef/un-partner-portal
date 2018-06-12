@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 
 from agency.permissions import AgencyPermission
+from common.consts import USER_CREATED_FLAG_TYPES
 from common.permissions import current_user_has_permission
 from common.serializers import CommonFileSerializer
 from agency.serializers import AgencyUserBasicSerializer
@@ -14,6 +15,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
 
     submitter = AgencyUserBasicSerializer(read_only=True)
     attachment = CommonFileSerializer(required=False)
+    is_valid = serializers.BooleanField(required=False)
 
     class Meta:
         model = PartnerFlag
@@ -26,6 +28,11 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         exclude = (
             'partner',
         )
+        extra_kwargs = {
+            'flag_type': {
+                'choices': USER_CREATED_FLAG_TYPES
+            }
+        }
 
     def get_fields(self):
         fields = super(PartnerFlagSerializer, self).get_fields()

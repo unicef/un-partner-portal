@@ -7,7 +7,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from agency.roles import AgencyRole
-from common.consts import FLAG_TYPES
+from common.consts import FLAG_TYPES, INTERNAL_FLAG_TYPES
 from common.tests.base import BaseAPITestCase
 from common.factories import PartnerSimpleFactory, PartnerFlagFactory, PartnerVerificationFactory, AgencyOfficeFactory
 from partner.models import Partner
@@ -66,6 +66,38 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['comment'], flag_comment)
+
+    def test_create_invalid_flag(self):
+        partner = Partner.objects.first()
+
+        url = reverse(
+            'partner-reviews:flags', kwargs={"partner_id": partner.id}
+        )
+
+        payload = {
+            "comment": "This is a comment on a flag",
+            "flag_type": 'INVASDASDAD',
+            "contact_email": "test@test.com",
+            "contact_person": "Nancy",
+            "contact_phone": "Smith"
+        }
+
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('flag_type', response.data)
+
+        payload['flag_type'] = INTERNAL_FLAG_TYPES.sanction_match
+
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('flag_type', response.data)
+
+        payload['flag_type'] = FLAG_TYPES.yellow
+        payload['is_valid'] = None
+
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('is_valid', response.data)
 
 
 class TestPartnerVerificationAPITestCase(BaseAPITestCase):

@@ -218,12 +218,18 @@ BUDGET_CHOICES = Choices(
     ('B06', 'more', "More than $1,000,000,000"),
 )
 
-FLAG_TYPES = Choices(
+USER_CREATED_FLAG_TYPES = Choices(
     ('Obs', 'observation', 'Observation'),
     ('Yel', 'yellow', 'Yellow Flag'),
     ('Esc', 'escalated', 'Escalated Flag'),
     ('Red', 'red', 'Red Flag'),
 )
+
+INTERNAL_FLAG_TYPES = Choices(
+    ('San', 'sanction_match', 'Sanction List Match'),
+)
+
+FLAG_TYPES = USER_CREATED_FLAG_TYPES + INTERNAL_FLAG_TYPES
 
 SANCTION_LIST_TYPES = Choices(
     ('Ent', 'entity', 'Sanctioned Entity'),

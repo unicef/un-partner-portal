@@ -63,9 +63,7 @@ class AgencyMemberFullSerializer(AgencyMemberSerializer):
         )
 
     def get_permissions(self, agency_member):
-        return [
-            p.name for p in agency_member.user_permissions
-        ]
+        return [p.name for p in agency_member.user_permissions]
 
 
 class AgencyUserBasicSerializer(serializers.ModelSerializer):
