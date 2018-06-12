@@ -2,33 +2,33 @@
 # yarn lockfile v1
 
 
-"@devexpress/dx-core@1.0.0-beta.1":
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@devexpress/dx-core/-/dx-core-1.0.0-beta.1.tgz#63383ec2bd3903d9a163c1316706cde32227d6b4"
+"@devexpress/dx-core@1.0.0-beta.2":
+  version "1.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@devexpress/dx-core/-/dx-core-1.0.0-beta.2.tgz#cda08172e60a043e42b6dbda79811059f3c2447e"
 
-"@devexpress/dx-grid-core@1.0.0-beta.1":
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@devexpress/dx-grid-core/-/dx-grid-core-1.0.0-beta.1.tgz#48f76255c7192e7727f2c9b97efb2bf70774471d"
+"@devexpress/dx-grid-core@1.0.0-beta.2":
+  version "1.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@devexpress/dx-grid-core/-/dx-grid-core-1.0.0-beta.2.tgz#768083483c1c1005112ff012367d1e81f190ee94"
 
-"@devexpress/dx-react-core@1.0.0-beta.1":
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@devexpress/dx-react-core/-/dx-react-core-1.0.0-beta.1.tgz#7f44d4162d429aa55fca9c18407561841dac92a4"
+"@devexpress/dx-react-core@1.0.0-beta.2":
+  version "1.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@devexpress/dx-react-core/-/dx-react-core-1.0.0-beta.2.tgz#fb06dcd9d72228ff3ca73915e486c5d8140e6243"
   dependencies:
-    "@devexpress/dx-core" "1.0.0-beta.1"
+    "@devexpress/dx-core" "1.0.0-beta.2"
     prop-types "^15.6.0"
 
-"@devexpress/dx-react-grid-material-ui@1.0.0-beta.1":
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@devexpress/dx-react-grid-material-ui/-/dx-react-grid-material-ui-1.0.0-beta.1.tgz#437b63a3ccd1ab5cb3f4fa82d0608d754afbef8a"
+"@devexpress/dx-react-grid-material-ui@1.0.0-beta.2":
+  version "1.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@devexpress/dx-react-grid-material-ui/-/dx-react-grid-material-ui-1.0.0-beta.2.tgz#6ddcdefd2bfa24edf002fa45e770bf4db407efbc"
   dependencies:
     classnames "^2.2.5"
     prop-types "^15.6.0"
 
-"@devexpress/dx-react-grid@1.0.0-beta.1":
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@devexpress/dx-react-grid/-/dx-react-grid-1.0.0-beta.1.tgz#8e249e5cd7ad2c0ed9a2d0782c70f9d26e1ca44f"
+"@devexpress/dx-react-grid@1.0.0-beta.2":
+  version "1.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@devexpress/dx-react-grid/-/dx-react-grid-1.0.0-beta.2.tgz#68698853f9ebda39d3aa167ee730a3906ecebff9"
   dependencies:
-    "@devexpress/dx-grid-core" "1.0.0-beta.1"
+    "@devexpress/dx-grid-core" "1.0.0-beta.2"
     prop-types "^15.6.0"
 
 abab@^1.0.3:

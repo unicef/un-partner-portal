@@ -18,7 +18,7 @@ import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
 import CountriesCell from '../../partners/countriesCell';
 
 /* eslint-disable react/prop-types */
-const applicationCell = ({ row, column }) => {
+const applicationCell = ({ row, column, value }) => {
   if (column.name === 'id') {
     return (<ConceptNoteIDCell
       cfeiId={row.eoi_id}
@@ -39,7 +39,7 @@ const applicationCell = ({ row, column }) => {
       />);
   }
 
-  return undefined;
+  return <TableCell>{value}</TableCell>;
 };
 
 /* eslint-disable react/prefer-stateless-function */

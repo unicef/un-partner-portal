@@ -12,7 +12,7 @@ import {
 import {
   TableRow as TableRowMUI,
 } from 'material-ui/Table';
-import { Grid, TableView, TableHeaderRow, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
+import { Grid, Table, TableHeaderRow, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import SelectedHeader from './selectedHeader';
 import ListLoader from './listLoader';
 import { calculatePaginatedPage, updatePageNumberSize, updatePageNumber } from '../../../helpers/apiHelper';
@@ -157,7 +157,7 @@ class SelectableList extends Component {
             selection={selected}
             onSelectionChange={this.handleSelect}
           />
-          <TableView
+          <Table
             tableRowTemplate={this.tableRowTemplate}
             table
             tableCellTemplate={({ row, column, tableRow: { rowId } }) =>

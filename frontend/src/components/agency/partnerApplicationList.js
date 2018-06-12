@@ -19,7 +19,7 @@ import { isQueryChanged } from '../../helpers/apiHelper';
 import CountriesCell from '../partners/countriesCell';
 import CustomGridColumn from '../common/grid/customGridColumn';
 
-const applicationCell = ({ row, column }) => {
+const applicationCell = ({ row, column, value }) => {
   if (column.name === 'specializations') {
     return <SectorsCell specializations={row.specializations} />;
   } else if (column.name === 'did_win') {
@@ -36,7 +36,7 @@ const applicationCell = ({ row, column }) => {
     return <CountriesCell countries={row.country_code} />;
   }
 
-  return undefined;
+  return <TableCell>{value}</TableCell>;
 };
 
 class AgencyMembersContainer extends Component {

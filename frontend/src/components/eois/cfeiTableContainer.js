@@ -34,6 +34,7 @@ class CfeiTableContainer extends Component {
 
   render() {
     const { cfei, loading, role, type, count = 0 } = this.props;
+
     return (
       <Grid item>
         <TableWithStateInUrl
