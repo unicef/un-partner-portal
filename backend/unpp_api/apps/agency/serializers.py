@@ -73,6 +73,7 @@ class AgencyUserListSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='fullname', read_only=True)
     first_name = serializers.CharField(write_only=True)
     last_name = serializers.CharField(write_only=True)
+    agency_name = serializers.CharField(source='agency.name', read_only=True)
     office_memberships = AgencyMemberSerializer(many=True, source='agency_members', allow_empty=False)
 
     class Meta:
@@ -87,6 +88,7 @@ class AgencyUserListSerializer(serializers.ModelSerializer):
             'email',
             'status',
             'office_memberships',
+            'agency_name',
         )
 
 
