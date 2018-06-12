@@ -70,6 +70,17 @@ spec:
               value: "{{EMAIL_PORT}}"
             - name: EMAIL_HOST_USER
               value: "{{EMAIL_HOST_USER}}"
+            - name: ELASTIC_APM_DEBUG
+              value: "{{ELASTIC_APM_DEBUG}}"
+            - name: ELASTIC_APM_SERVER_URL
+              value: "{{ELASTIC_APM_SERVER_URL}}"
+            - name: ELASTIC_APM_SERVICE_NAME
+              value: "{{ELASTIC_APM_SERVICE_NAME}}"
+            - name: ELASTIC_APM_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: elastic-apm-secret-token
+                  key: password
 
       volumes:
       - name: static-volume-{{NAMESPACE}}
