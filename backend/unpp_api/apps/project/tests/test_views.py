@@ -1142,7 +1142,7 @@ class TestUCNCreateAndPublish(BaseAPITestCase):
         ucn = Application.objects.get(id=response.data['id'])
         self.assertEqual(ucn.application_status, EXTENDED_APPLICATION_STATUSES.draft)
 
-        publish_url = reverse('projects:ucn-publish', kwargs={'pk': ucn.pk})
+        publish_url = reverse('projects:ucn-manage', kwargs={'pk': ucn.pk})
 
         self.set_current_user_role(PartnerRole.READER.name)
         publish_response = self.client.post(publish_url)
