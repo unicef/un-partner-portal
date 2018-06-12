@@ -11,6 +11,7 @@ import * as fields from '../../../forms/fields/projectFields/commonFields';
 import GridColumn from '../../../common/grid/gridColumn';
 import GridRow from '../../../common/grid/gridRow';
 import LocationForm from '../../../forms/fields/projectFields/locationField/locationFieldArray';
+import cfei from '../../../../reducers/cfei';
 
 const messages = {
   projectDetails: 'Project Details',
@@ -25,8 +26,8 @@ const ProjectDetails = (props) => {
       </Typography>
       <GridColumn>
         <fields.TitleField />
-        {/* <LocationForm formName={formName} /> */}
-        <fields.FocalPoints overlap={false} initialMultiValues={focalPoints} />
+        <LocationForm formName="countries" />
+        <fields.FocalPoint overlap={false} initialMultiValues={focalPoints} />
         <SectorForm />
         {displayPopulation && <SelectPopulationOfConcern />}
         <fields.Background />
@@ -42,10 +43,6 @@ const ProjectDetails = (props) => {
 };
 
 ProjectDetails.propTypes = {
-  /**
-   * array of date pickers
-   */
-  formName: PropTypes.string,
   displayPopulation: PropTypes.bool,
 };
 
@@ -57,19 +54,23 @@ const formProjectDetail = reduxForm({
 const mapStateToProps = (state, ownProps) => {
   const cfeidetails = ownProps.cfeiDetails;
   const displayPopulation = state.session.agencyName === 'UNHCR';
-  console.log(cfeidetails.focal_points_detail);
   const focalPoints = pluck('name', cfeidetails.focal_points_detail);
-  console.log(focalPoints);
-
+  const cfeiCountries = cfeidetails.locations[0];
+  console.log('CFEI countries :: ', cfeiCountries);
   return {
     cfeidetails,
     displayPopulation,
     focalPoints,
     initialValues: {
       title: cfeidetails.title,
-      countries: cfeidetails.locations,
+      countries: cfeiCountries,
       specializations: cfeidetails.specializations,
-      focal_points: focalPoints },
+      focal_points: focalPoints,
+      description: cfeidetails.description,
+      goal: cfeidetails.goal,
+      start_date: cfeidetails.start_date,
+      end_date: cfeidetails.end_date,
+      other_information: cfeidetails.other_information },
   };
 };
 

@@ -70,7 +70,7 @@ export default connect(
   null,
   dispatch => ({
     getPartners: params => dispatch(
-      loadPartnerNamesForAutoComplete({ is_verified: 'verified', ...params }))
+      loadPartnerNamesForAutoComplete({ ...params }))
       .then(results => mapValuesForSelectionField(results)),
   }),
 )(PartnersFieldArray);

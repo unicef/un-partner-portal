@@ -23,6 +23,7 @@ const Locations = (formName, loaded) => (name, index) => loaded &&
 
 const LocationFieldArray = (props) => {
   const { formName, readOnly, loaded, ...other } = props;
+
   return (<ArrayForm
     limit={230}
     label="Project Location"

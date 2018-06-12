@@ -10,7 +10,7 @@ import * as fields from '../../../forms/fields/projectFields/commonFields';
 import GridColumn from '../../../common/grid/gridColumn';
 
 import ProjectDetails from '../newCfei/ProjectDetails';
-import PartnersForm from '../../../forms/fields/projectFields/partnersField/partnersFieldArray';
+import PartnersForm from '../../../forms/fields/projectFields/partnersField/partnersFieldArrayEdit';
 import { selectCfeiDetails } from '../../../../store';
 
 const messages = {
@@ -23,12 +23,13 @@ const EditDirectForm = (props) => {
   const {
     handleSubmit,
     start_date,
-    cfeiDetails } = props;
+    cfeiDetails,
+    partner } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <ProjectDetails
-          formName="cfeiDetails"
+          // formName="cfeiDetails"
           cfeiDetails={cfeiDetails}
         >
           <fields.StartDate />
@@ -37,7 +38,7 @@ const EditDirectForm = (props) => {
         <Typography type="headline">
           {messages.selectPartners}
         </Typography>
-        <PartnersForm />
+        <PartnersForm partner={partner} />
       </GridColumn>
     </form >
   );
@@ -49,8 +50,9 @@ EditDirectForm.propTypes = {
    */
   handleSubmit: PropTypes.func.isRequired,
   start_date: PropTypes.string,
-
+  partners: PropTypes.array,
 };
+
 const selector = formValueSelector('newDirectCfei');
 
 const mapStateToProps = (state, ownProps) => {
@@ -60,8 +62,10 @@ const mapStateToProps = (state, ownProps) => {
   return {
     start_date: startDate,
     cfeiDetails: cfei,
+    partner: cfei.direct_selected_partners,
     initialValues: {
       cfeiDetails: cfei,
+      start_date: cfei.start_date,
     },
   };
 };
