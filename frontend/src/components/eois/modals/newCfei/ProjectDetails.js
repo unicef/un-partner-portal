@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { reduxForm } from 'redux-form';
+import { pluck } from 'ramda';
 
 import Typography from 'material-ui/Typography';
 import SectorForm from '../../../forms/fields/projectFields/sectorField/sectorFieldArray';
@@ -15,7 +17,7 @@ const messages = {
 };
 
 const ProjectDetails = (props) => {
-  const { children, formName, displayPopulation } = props;
+  const { children, formName, displayPopulation, cfeiDetails, focalPoints } = props;
   return (
     <GridColumn>
       <Typography type="headline">
@@ -23,8 +25,8 @@ const ProjectDetails = (props) => {
       </Typography>
       <GridColumn>
         <fields.TitleField />
-        <LocationForm formName={formName} />
-        <fields.FocalPoint />
+        {/* <LocationForm formName={formName} /> */}
+        <fields.FocalPoints overlap={false} initialMultiValues={focalPoints} />
         <SectorForm />
         {displayPopulation && <SelectPopulationOfConcern />}
         <fields.Background />
@@ -45,11 +47,31 @@ ProjectDetails.propTypes = {
    */
   formName: PropTypes.string,
   displayPopulation: PropTypes.bool,
-
 };
-const mapStateToProps = state => ({
-  displayPopulation: state.session.agencyName === 'UNHCR',
-});
+
+const formProjectDetail = reduxForm({
+  form: 'formProjectDetail',
+  enableReinitialize: true,
+})(ProjectDetails);
+
+const mapStateToProps = (state, ownProps) => {
+  const cfeidetails = ownProps.cfeiDetails;
+  const displayPopulation = state.session.agencyName === 'UNHCR';
+  console.log(cfeidetails.focal_points_detail);
+  const focalPoints = pluck('name', cfeidetails.focal_points_detail);
+  console.log(focalPoints);
+
+  return {
+    cfeidetails,
+    displayPopulation,
+    focalPoints,
+    initialValues: {
+      title: cfeidetails.title,
+      countries: cfeidetails.locations,
+      specializations: cfeidetails.specializations,
+      focal_points: focalPoints },
+  };
+};
 
 
-export default connect(mapStateToProps)(ProjectDetails);
+export default connect(mapStateToProps)(formProjectDetail);

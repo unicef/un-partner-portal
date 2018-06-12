@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import DropdownMenu from '../../../common/dropdownMenu';
 import SpreadContent from '../../../common/spreadContent';
 import EditButton from '../../buttons/editCfeiButton';
+import NewCfeiModalButton from '../../modals/newCfei/newCfeiModalButton';
+
 import DeleteButton from '../../buttons/deleteCfeiButton';
 import CancelButton from '../../buttons/cancelCfeiButton';
 import DownloadButton from '../../buttons/downloadCfeiButton';
@@ -15,10 +17,11 @@ import PublishDsrButton from '../../buttons/publishDsrButton';
 import SendDsrModal from '../../modals/completeDsr/sendDsrModal';
 import DeleteDsrModal from '../../modals/completeDsr/deleteDsrModal';
 import CancelDsrModal from '../../modals/completeDsr/cancelDsrModal';
+import EditDsrModal from '../../modals/editDsr/editDsrModal';
+// import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import PublishDsrModal from '../../modals/completeDsr/publishDsrModal';
 import FinalizeDsrModal from '../../modals/completeDsr/finalizeDsrModal';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
-import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import { checkPermission, isRoleOffice, AGENCY_ROLES, AGENCY_PERMISSIONS, COMMON_PERMISSIONS } from '../../../../helpers/permissions';
 import { selectCfeiStatus,
   isCfeiPublished,
@@ -63,7 +66,9 @@ class PartnerOpenHeaderOptions extends Component {
       options.push(
         {
           name: edit,
-          content: <EditButton handleClick={() => handleDialogOpen(edit)} />,
+          content: <EditButton
+            handleClick={() => handleDialogOpen(edit)}
+          />,
         });
     }
 
@@ -175,10 +180,10 @@ class PartnerOpenHeaderOptions extends Component {
           dialogOpen={dialogOpen[del]}
           handleDialogClose={handleDialogClose}
         />}
-        {dialogOpen[edit] && <EditCfeiModal
+        {dialogOpen[edit] && <EditDsrModal
           id={id}
           type="direct"
-          dialogOpen={dialogOpen[edit]}
+          open={dialogOpen[edit]}
           handleDialogClose={handleDialogClose}
         />}
         {dialogOpen[send] && <SendDsrModal

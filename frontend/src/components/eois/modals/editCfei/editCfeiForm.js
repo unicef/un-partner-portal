@@ -70,7 +70,6 @@ const mapStateToProps = (state, ownProps) => {
   const { focal_points,
     focal_points_detail,
     status,
-
     start_date,
     end_date,
     deadline_date,

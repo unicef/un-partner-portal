@@ -17,12 +17,9 @@ const messages = {
   unsolicited: 'New Unsolicited Concept Note',
 };
 
-
 const NewCfeiModalButton = (props) => {
   const { type, handleDialogClose, handleDialogOpen, dialogOpen, hasDsPermission, hasOpenPermission } = props;
-  
   return (
-
     <Grid item>
       {((hasDsPermission && type === 'direct')
       || (hasOpenPermission && type === 'open')) && <Button
