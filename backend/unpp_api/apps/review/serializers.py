@@ -32,7 +32,10 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'flag_type': {
                 'choices': USER_CREATED_FLAG_TYPES
-            }
+            },
+            'comment': {
+                'required': True
+            },
         }
 
     def get_fields(self):

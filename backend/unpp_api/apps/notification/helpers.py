@@ -17,19 +17,14 @@ from notification.models import Notification, NotifiedUser
 from notification.consts import NOTIFICATION_DATA, NotificationType
 
 
-def send_notification(notification_type, obj, users, context=None, send_in_feed=True, check_sent_for_source=True):
+def send_notification(notification_type, obj, users, context=None, send_in_feed=True):
     """
     notification_type - check NotificationType class in const.py
     obj - object directly associated w/ notification. generic fk to it
     users - users who are receiving notification
     context - context to provide to template for email or body of notification
     send_in_feed - create notification feed element
-    check_sent_for_source - checks to confirm no duplicates are sent for source + object. false bypasses
     """
-
-    if check_sent_for_source and notification_already_sent(obj, notification_type):
-        return
-
     notification_payload = NOTIFICATION_DATA.get(notification_type)
 
     body = render_notification_template_to_str(notification_payload.get('template_name'), context)
@@ -67,14 +62,6 @@ def get_notify_partner_users_for_application(application):
 
 def get_partner_users_for_application_queryset(application_qs):
     return User.objects.filter(partner_members__partner__applications__in=application_qs).distinct()
-
-
-# We don't want to send 2x of the same notification
-def notification_already_sent(obj, notification_type):
-    content_type = ContentType.objects.get_for_model(obj)
-    return Notification.objects.filter(
-        object_id=obj.id, source=notification_type, content_type=content_type
-    ).exists()
 
 
 def user_received_notification_recently(user, obj, notification_type, time_ago=relativedelta(days=1)):
@@ -143,7 +130,7 @@ def send_notification_application_created(application):
 
 def send_cfei_review_required_notification(eoi, users):
     send_notification(
-        NotificationType.CFEI_REVIEW_REQUIRED, eoi, users, send_in_feed=True, check_sent_for_source=False, context={
+        NotificationType.CFEI_REVIEW_REQUIRED, eoi, users, send_in_feed=True, context={
             'eoi_name': eoi.title,
             'eoi_url': eoi.get_absolute_url()
         }
@@ -161,7 +148,6 @@ def send_notification_to_cfei_focal_points(eoi):
     send_notification(
         NotificationType.ADDED_AS_CFEI_FOCAL_POINT, eoi, users,
         send_in_feed=True,
-        check_sent_for_source=False,
         context={
             'eoi_name': eoi.title,
             'eoi_url': eoi.get_absolute_url()

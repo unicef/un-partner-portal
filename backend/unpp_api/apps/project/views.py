@@ -170,9 +170,7 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
             context = {
                 'eoi_url': eoi.get_absolute_url()
             }
-            send_notification(
-                NotificationType.CFEI_INVITE, eoi, partner.get_users(), check_sent_for_source=False, context=context
-            )
+            send_notification(NotificationType.CFEI_INVITE, eoi, partner.get_users(), context=context)
 
         # Deadline Changed
         if current_deadline != instance.deadline_date:

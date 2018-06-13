@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django_countries.fields import CountryField
@@ -75,7 +76,7 @@ class AgencyOffice(TimeStampedModel):
 
 
 class AgencyMember(TimeStampedModel):
-    user = models.ForeignKey('account.User', related_name="agency_members")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="agency_members")
     role = FixedTextField(choices=AgencyRole.get_choices(), default=AgencyRole.READER.name)
     office = models.ForeignKey(AgencyOffice, related_name="agency_members")
     telephone = models.CharField(max_length=255, null=True, blank=True)
