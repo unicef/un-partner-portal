@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { compose } from 'ramda';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
+import EditCfeiButton from '../../buttons/editCfeiButton';
 import SubmitUcnButton from '../../buttons/submitUcnButton';
 import DeleteUcnModal from '../../modals/submitUcn/deleteUcnModal';
 import DeleteButton from '../../buttons/deleteCfeiButton';
@@ -16,6 +17,7 @@ import { PROJECT_STATUSES } from '../../../../helpers/constants';
 
 const submit = 'submit';
 const del = 'delete';
+const edit = 'edit';
 
 class PartnerUcnHeaderOptions extends Component {
   constructor(props) {
@@ -27,7 +29,8 @@ class PartnerUcnHeaderOptions extends Component {
   extraOptions() {
     const {
       handleDialogOpen,
-      hasDeletePermission } = this.props;
+      hasDeletePermission,
+      hasEditPermission } = this.props;
 
     const options = [];
 
@@ -36,6 +39,14 @@ class PartnerUcnHeaderOptions extends Component {
         {
           name: del,
           content: <DeleteButton handleClick={() => handleDialogOpen(del)} />,
+        });
+    }
+
+    if (hasEditPermission) {
+      options.push(
+        {
+          name: edit,
+          content: <EditCfeiButton handleClick={() => handleDialogOpen(edit)} />,
         });
     }
 
@@ -82,6 +93,7 @@ PartnerUcnHeaderOptions.propTypes = {
   handleDialogOpen: PropTypes.func,
   hasSubmitPermission: PropTypes.bool,
   hasDeletePermission: PropTypes.bool,
+  hasEditPermission: PropTypes.bool,
   status: PropTypes.string,
 };
 
@@ -91,6 +103,7 @@ const mapStateToProps = (state, ownProps) => ({
   hasSubmitPermission: checkPermission(PARTNER_PERMISSIONS.UCN_SUBMIT, state),
   hasDeletePermission: checkPermission(PARTNER_PERMISSIONS.UCN_DELETE, state),
   hasFinalizePermission: checkPermission(COMMON_PERMISSIONS.CFEI_FINALIZE, state),
+  hasEditPermission: checkPermission(PARTNER_PERMISSIONS.UCN_EDIT, state),
 });
 
 

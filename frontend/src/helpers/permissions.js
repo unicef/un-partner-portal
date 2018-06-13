@@ -35,13 +35,13 @@ export const PARTNER_PERMISSIONS = {
   // Unsolicited Concept Notes
   /* DONE */ UCN_VIEW: 'UCN_VIEW', // ALL USERS HAVE ACCESS
   /* DONE */ UCN_DRAFT: 'UCN_DRAFT',
-  UCN_EDIT: 'UCN_EDIT',
-  UCN_SUBMIT: 'UCN_SUBMIT',
-  UCN_DELETE: 'UCN_DELETE',
+  /* DONE */ UCN_EDIT: 'UCN_EDIT',
+  /* DONE */ UCN_SUBMIT: 'UCN_SUBMIT',
+  /* DONE */ UCN_DELETE: 'UCN_DELETE',
 
   // Direct Selection and Retention
-  DSR_VIEW: 'DSR_VIEW',
-  DSR_ANSWER: 'DSR_ANSWER', 
+  /* DONE */ DSR_VIEW: 'DSR_VIEW', // ALL USERS HAVE ACCESS
+  DSR_ANSWER: 'DSR_ANSWER',
 };
 
 export const AGENCY_PERMISSIONS = {

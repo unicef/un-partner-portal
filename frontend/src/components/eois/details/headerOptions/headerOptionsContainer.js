@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
 import Tooltip from 'material-ui/Tooltip';
 import Typography from 'material-ui/Typography';
-import { PROJECT_TYPES, ROLES, PROJECT_STATUSES } from '../../../../helpers/constants';
+import { PROJECT_TYPES, ROLES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
 import AgencyOpenHeaderOptions from './agencyOpenHeaderOptions';
 import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
@@ -14,8 +14,6 @@ import { selectCfeiStatus,
   isCfeiCompleted,
   selectCfeiConverted,
   selectCfeiCompletedReasonDisplay,
-  isUserAFocalPoint,
-  isUserACreator,
 } from '../../../../store';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
 import PartnerUcnHeaderOptions from './partnerUcnHeaderOptions';
@@ -61,10 +59,6 @@ const HeaderOptionsContainer = (props) => {
   } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
     options = <AgencyDirectHeaderOptions id={id} />;
   } else if (type === PROJECT_TYPES.UNSOLICITED && role === ROLES.PARTNER) {
-    if (cfeiStatus !== PROJECT_STATUSES.DRA) {
-      status = null;
-    }
-    
     options = <PartnerUcnHeaderOptions id={id} />;
   }
   if (type === PROJECT_TYPES.UNSOLICITED && role === ROLES.AGENCY) {

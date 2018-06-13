@@ -104,6 +104,7 @@ const saveUCN = (state, action) => {
     cn: ucn.cn,
     eoiConverted: ucn.eoi_converted,
     status: ucn.application_status,
+    displayStatus: ucn.application_status_display,
   };
   return R.assoc(ucn.id, normalizeSingleCfei(newUCN), state);
 };
@@ -121,6 +122,11 @@ export function selectCfeiTitle(state, id) {
 export function selectCfeiStatus(state, id) {
   const { [id]: { status = null } = {} } = state;
   return status;
+}
+
+export function selectCfeiDisplayStatus(state, id) {
+  const { [id]: { displayStatus = null } = {} } = state;
+  return displayStatus;
 }
 
 export function selectCfeiConverted(state, id) {

@@ -286,6 +286,9 @@ export const selectCfeiCriteria = (state, id) =>
 export const selectCfeiStatus = (state, id) =>
   cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.data, id);
 
+export const selectCfeiDisplayStatus = (state, id) =>
+  cfeiDetailsSelector.selectCfeiDisplayStatus(state.cfeiDetails.data, id);
+
 export const selectCfeiConverted = (state, id) =>
   cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.data, id);
 
