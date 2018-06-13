@@ -34,6 +34,7 @@ class LocationsMapBase extends Component {
     super();
     this.state = {
       pos: null,
+      previousCountry: null,
       activeMarker: null,
       showingInfoWindow: false,
       hoverMarker: null,
@@ -89,7 +90,11 @@ class LocationsMapBase extends Component {
   initMap(country) {
     const { removeAllLocations } = this.props;
 
-    removeAllLocations();
+    // if (this.state.previousCountry && this.state.previousCountry !== country) {
+    //   removeAllLocations();
+    // }
+
+    // this.setState({ previousCountry: country });
     this.geocoder.geocode({ address: country }, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK) {
         this.setState({

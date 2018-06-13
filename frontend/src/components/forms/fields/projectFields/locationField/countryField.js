@@ -24,7 +24,7 @@ const CountryField = (props) => {
   if (!fieldName) {
     return null;
   }
-
+  console.log('fieldname ::', fieldName, 'initialValue :: ', initial)
   return readOnly ? (
     <SelectForm
       fieldName={fieldName}

@@ -35,7 +35,7 @@ const PartnersFieldArrayEdit = (props) => {
       <AutocompleteForm
         fieldName="partner_name"
         label="Partner"
-        placeholder="yyy"
+        placeholder="Partner name"
         initialMultiValues={partnername}
         multiple
         {...props}
@@ -44,6 +44,7 @@ const PartnersFieldArrayEdit = (props) => {
         fieldName="ds_justification_select"
         label={messages.justification}
         values={justificationValues}
+        placeholder="Justification select"
         multiple
         initialMultiValues={dsjust}
         // selectFieldProps={{
@@ -54,7 +55,7 @@ const PartnersFieldArrayEdit = (props) => {
       <TextFieldForm
         fieldName="justification_reason"
         label={messages.label}
-        placeholder="lala"
+        placeholder="Justification reason"
         textFieldProps={{
           multiline: true,
           InputProps: {

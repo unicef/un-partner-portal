@@ -75,15 +75,33 @@ const mapLocations = R.map(location =>
   }),
 );
 
+const editMapLocations = R.map(location =>
+  ({
+    country: location.admin_level_1.country_code,
+    locations: [location],
+  }),
+);
+
+const mergeLocations = (k, l, r) =>
+  (k === 'locations' ? R.concat(l, r) : r);
+
+
 const normalizeLocations = R.compose(
   R.map(R.reduce(R.mergeDeepWithKey(mergeCountries), {})),
   R.groupWith(R.eqProps('country')),
   mapLocations,
 );
 
+const normalizeEditLocations = R.compose(
+  R.map(R.reduce(R.mergeDeepWithKey(mergeLocations), {})),
+  R.groupWith(R.eqProps('country')),
+  editMapLocations,
+);
+
 const saveCfei = (state, action) => {
   let cfei = normalizeSingleCfei(action.cfei);
-  cfei = R.assoc('locations', normalizeLocations(cfei.locations), cfei);
+  const cfeiLocations = R.assoc('cfei_locations', normalizeEditLocations(cfei.locations), cfei);
+  cfei = R.assoc('locations', normalizeLocations(cfei.locations), cfeiLocations);
   return R.assoc(cfei.id, cfei, state);
 };
 

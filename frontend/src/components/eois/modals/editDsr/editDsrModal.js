@@ -146,19 +146,20 @@ class EditDsrModal extends Component {
   }
 
   render() {
-    const { open, type, onDialogClose, optionalLocations, params: { id } } = this.props;
+    const { open, type, handleDialogClose, optionalLocations, params: { id } } = this.props;
     return (
       <Grid item>
         <ControlledModal
-          // minWidth="md"
+          fullWidth
+          minWidth={40}
           title={getTitle(type)}
           trigger={open}
           info={type === PROJECT_TYPES.UNSOLICITED ? null : getInfo(type)}
-          handleDialogClose={onDialogClose}
+          handleDialogClose={handleDialogClose}
           topBottomPadding
           buttons={{
             flat: {
-              handleClick: onDialogClose,
+              handleClick: handleDialogClose,
             },
             raised: {
               label: messages.save,
@@ -181,6 +182,7 @@ EditDsrModal.propTypes = {
   submit: PropTypes.func,
   postError: PropTypes.func,
   optionalLocations: PropTypes.array,
+  handleDialogClose: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
