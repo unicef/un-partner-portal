@@ -89,7 +89,8 @@ def parse_unsc_entities(entities):
         item_inst, created = SanctionedItem.objects.update_or_create(
             sanctioned_type=SANCTION_LIST_TYPES.entity,
             data_id=int(entity['DATAID']),
-            defaults={'listed_on': listed_on, 'last_updated': last_updated})
+            defaults={'listed_on': listed_on, 'last_updated': last_updated}
+        )
 
         # TODO - keep list of present names and deactivate those not present
         # Holding off on now so everything isn't deactivated should some structure change
