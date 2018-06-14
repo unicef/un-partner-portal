@@ -94,7 +94,7 @@ class BaseProjectAPIView(ListCreateAPIView):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = BaseProjectFilter
     ordering_fields = (
-        'deadline_date', 'created', 'start_date', 'status', 'completed_date'
+        'deadline_date', 'created', 'start_date', 'completed_date'
     )
 
 
