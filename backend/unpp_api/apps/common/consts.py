@@ -178,6 +178,7 @@ JUSTIFICATION_FOR_DIRECT_SELECTION = Choices(
     ('Inn', 'innovative', 'Innovative approach'),
     ('TCC', 'time', 'Time constraints/criticality of response'),
     ('Imp', 'importance', 'Importance of strengthening national civil society engagement'),
+    ('Ret', 'retention', 'Partner retention'),
     ('Oth', 'other', 'Other'),
 )
 
