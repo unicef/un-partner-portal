@@ -178,6 +178,7 @@ JUSTIFICATION_FOR_DIRECT_SELECTION = Choices(
     ('Inn', 'innovative', 'Innovative approach'),
     ('TCC', 'time', 'Time constraints/criticality of response'),
     ('Imp', 'importance', 'Importance of strengthening national civil society engagement'),
+    ('Ret', 'retention', 'Partner retention'),
     ('Oth', 'other', 'Other'),
 )
 
@@ -226,7 +227,7 @@ USER_CREATED_FLAG_TYPES = Choices(
 )
 
 INTERNAL_FLAG_TYPES = Choices(
-    ('San', 'sanction_match', 'Sanction List Match'),
+    ('San', 'sanctions_match', 'Sanctions List Match'),
 )
 
 FLAG_TYPES = USER_CREATED_FLAG_TYPES + INTERNAL_FLAG_TYPES

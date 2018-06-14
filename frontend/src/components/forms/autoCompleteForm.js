@@ -137,6 +137,12 @@ class AutocompleteField extends React.Component {
     return suggestion.value;
   }
 
+  reset() {
+    const { multiple } = this.props;
+
+    this.setState(multiple ? { multiValues: [] } : { value: '' });
+  }
+
   render() {
     const { classes,
       fieldName,

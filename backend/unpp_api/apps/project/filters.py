@@ -8,7 +8,7 @@ from django_filters.filters import CharFilter, DateFilter, BooleanFilter, ModelM
 from django_filters.widgets import BooleanWidget, CSVWidget
 
 from account.models import User
-from common.consts import EXTENDED_APPLICATION_STATUSES, CFEI_STATUSES
+from common.consts import EXTENDED_APPLICATION_STATUSES, CFEI_STATUSES, CFEI_TYPES
 from common.models import Specialization
 from .models import EOI, Application
 
@@ -70,28 +70,33 @@ class BaseProjectFilter(django_filters.FilterSet):
     def filter_status(self, queryset, name, value):
         # Logic here should match EOI.status property
         filters = {
-            CFEI_STATUSES.draft: {
-                'is_published': False,
-                'sent_for_publishing': False,
-            },
-            CFEI_STATUSES.sent: {
-                'is_published': False,
-                'sent_for_publishing': True,
-            },
-            CFEI_STATUSES.completed: {
-                'is_completed': True,
-            },
-            CFEI_STATUSES.closed: {
-                'is_completed': False,
-                'deadline_date__lt': date.today(),
-            },
-            CFEI_STATUSES.open: {
-                'is_completed': False,
-                'deadline_date__gte': date.today(),
-            },
+            CFEI_STATUSES.draft: Q(
+                is_published=False,
+                sent_for_publishing=False,
+            ),
+            CFEI_STATUSES.sent: Q(
+                is_published=False,
+                sent_for_publishing=True,
+            ),
+            CFEI_STATUSES.completed: Q(
+                is_completed=True,
+                is_published=True,
+            ),
+            CFEI_STATUSES.closed: Q(
+                is_completed=False,
+                is_published=True,
+                deadline_date__lt=date.today(),
+            ),
+            CFEI_STATUSES.open: Q(
+                is_completed=False,
+                is_published=True,
+            ) & (
+                Q(display_type=CFEI_TYPES.open, deadline_date__gte=date.today()) |
+                Q(display_type=CFEI_TYPES.direct, completed_date=None)
+            ),
         }
 
-        return queryset.filter(**filters.get(value, {}))
+        return queryset.filter(filters.get(value, Q()))
 
 
 class ApplicationsFilter(django_filters.FilterSet):

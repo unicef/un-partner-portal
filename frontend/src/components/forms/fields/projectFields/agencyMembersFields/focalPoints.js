@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import AutocompleteForm from '../../../autoCompleteForm';
@@ -6,19 +6,27 @@ import { mapValuesForSelectionField } from '../../../../../store';
 import { loadAgencyMembersForAutoComplete } from '../../../../../reducers/agencyMembers';
 
 // TODO: new version that supports autocomplete but can't be used right now
-const AgencyMembersField = (props) => {
-  const { members, fieldName, label, getMembers, ...other } = props;
-  return (
-    <AutocompleteForm
-      fieldName={fieldName}
-      label={label}
-      async
-      asyncFunction={getMembers}
-      multiple
-      search={'name'}
-      {...other}
-    />
-  );
+class AgencyMembersField extends Component {
+  render() {
+    const { members, fieldName, label, getMembers, ...other } = this.props;
+
+    return (
+      <AutocompleteForm
+        fieldName={fieldName}
+        label={label}
+        innerRef={(field) => this._field = field}
+        async
+        asyncFunction={getMembers}
+        multiple
+        search={'name'}
+        {...other}
+      />
+    );
+  }
+
+  reset() {
+    this._field.reset();
+  }
 };
 
 AgencyMembersField.propTypes = {
@@ -41,5 +49,7 @@ export default connect(
     getMembers: params => dispatch(loadAgencyMembersForAutoComplete(params)).then(results =>
       mapValuesForSelectionField(results)),
   }),
+  null,
+  { withRef: true }
 )(AgencyMembersField);
 

@@ -13,6 +13,8 @@ def get_partner_and_member_objects(request):
     partner_member = None
 
     if request.user.is_authenticated():
+        # HQ profiles ability to log in as any country office complicates code a bit here
+        # since they won't have a corresponding PartnerMember object
         partner_member = request.user.partner_members.filter(
             partner_id=partner_id
         ).first() or request.user.partner_members.filter(

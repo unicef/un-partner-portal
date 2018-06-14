@@ -7,6 +7,7 @@ from datetime import date
 import os
 import logging
 
+from cached_property import threaded_cached_property
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
@@ -102,11 +103,11 @@ class Partner(TimeStampedModel):
 
     @property
     def has_yellow_flag(self):
-        return self.flags.filter(flag_type=FLAG_TYPES.yellow).exists()
+        return self.flags.filter(flag_type=FLAG_TYPES.yellow, is_valid=True).exists()
 
     @property
     def has_red_flag(self):
-        return self.flags.filter(flag_type=FLAG_TYPES.red).exists()
+        return self.flags.filter(flag_type=FLAG_TYPES.red, is_valid=True).exists()
 
     def get_users(self):
         return User.objects.filter(partner_members__partner=self)
@@ -962,7 +963,7 @@ class PartnerMember(TimeStampedModel):
         prefix = 'HQ ' if self.partner.is_hq else ''
         return prefix + self._get_FIELD_display(field_object)
 
-    @property
+    @threaded_cached_property
     def user_permissions(self):
         return PARTNER_ROLE_PERMISSIONS[self.partner.is_hq][PartnerRole[self.role]]
 

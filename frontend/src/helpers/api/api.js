@@ -163,6 +163,14 @@ export function publishCfei(id) {
   return authorizedPost({ uri: `/projects/${id}/publish/` });
 }
 
+export function submitUcn(id) {
+  return authorizedPost({ uri: `/projects/applications/unsolicited/${id}/manage/` });
+}
+
+export function deleteUcn(id) {
+  return authorizedDelete({ uri: `/projects/applications/unsolicited/${id}/manage/` });
+}
+
 export function deleteCfei(id) {
   return authorizedDelete({ uri: `/projects/${id}/` });
 }

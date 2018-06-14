@@ -1,5 +1,5 @@
 
-// roles 
+// roles
 export const ROLES = {
   AGENCY: 'agency',
   PARTNER: 'partner',
@@ -55,6 +55,7 @@ export const PROJECT_STATUSES = {
   COM: 'Com',
   DRA: 'Dra',
   SEN: 'Sen',
+  REV: 'Rev',
 };
 
 export const FLAGS = {

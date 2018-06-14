@@ -27,7 +27,7 @@ const styleSheet = theme => ({
   },
   text: {
     whiteSpace: 'normal',
-    maxWidth: 80,
+    maxWidth: 200,
   },
   root: {
     display: 'flex',
