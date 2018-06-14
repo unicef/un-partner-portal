@@ -94,6 +94,14 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
                 'This needs to be resolved before verifying.'
             )
 
+        if partner.hq:
+            if not partner.hq.is_verified:
+                raise serializers.ValidationError('INGO HQ profile needs to be verified before country office.')
+            if partner.hq.has_red_flag:
+                raise serializers.ValidationError(
+                    "HQ of this INGO has red flags against it's profile. This needs to be resolved before verifying."
+                )
+
         serializer.save(submitter=self.request.user, partner=partner)
 
 

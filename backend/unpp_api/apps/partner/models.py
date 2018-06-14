@@ -103,11 +103,11 @@ class Partner(TimeStampedModel):
 
     @property
     def has_yellow_flag(self):
-        return self.flags.filter(flag_type=FLAG_TYPES.yellow).exists()
+        return self.flags.filter(flag_type=FLAG_TYPES.yellow, is_valid=True).exists()
 
     @property
     def has_red_flag(self):
-        return self.flags.filter(flag_type=FLAG_TYPES.red).exists()
+        return self.flags.filter(flag_type=FLAG_TYPES.red, is_valid=True).exists()
 
     def get_users(self):
         return User.objects.filter(partner_members__partner=self)
