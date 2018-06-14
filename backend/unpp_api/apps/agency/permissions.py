@@ -75,6 +75,7 @@ class AgencyPermission(AutoNameEnum):
     VERIFY_INGO_HQ = auto()
     VERIFY_CSOS_GLOBALLY = auto()
     VERIFY_CSOS_FOR_OWN_COUNTRY = auto()
+    VERIFY_SEE_COMMENTS = auto()
 
     # View Observation & risk flags
     VIEW_PROFILE_OBSERVATION_FLAG_COUNT = auto()
