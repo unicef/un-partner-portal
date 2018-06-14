@@ -84,3 +84,15 @@ class PartnerVerificationSerializer(serializers.ModelSerializer):
         exclude = (
             'partner',
         )
+
+    def get_fields(self):
+        fields = super(PartnerVerificationSerializer, self).get_fields()
+        request = self.context.get('request')
+        if not request or not current_user_has_permission(request, agency_permissions=[
+            AgencyPermission.VERIFY_SEE_COMMENTS
+        ]):
+            comment_fields = filter(lambda fn: fn.endswith('comment'), fields.keys())
+            for field_name in list(comment_fields):
+                fields.pop(field_name)
+
+        return fields
