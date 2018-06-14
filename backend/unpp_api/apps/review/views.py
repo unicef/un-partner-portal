@@ -73,9 +73,6 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         partner = get_object_or_404(Partner, id=self.kwargs['partner_id'])
-        if not partner.profile_is_complete:
-            raise serializers.ValidationError('You cannot verify partners before they complete their profile.')
-
         if partner.is_hq:
             current_user_has_permission(
                 self.request, agency_permissions=[AgencyPermission.VERIFY_INGO_HQ], raise_exception=True
@@ -87,6 +84,15 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
         ):
             if not partner.country_code == self.request.agency_member.office.country.code:
                 raise PermissionDenied
+
+        if not partner.profile_is_complete:
+            raise serializers.ValidationError('You cannot verify partners before they complete their profile.')
+
+        if partner.has_sanction_match:
+            raise serializers.ValidationError(
+                'Partner has a potential UN Security Council Sanctions List match. '
+                'This needs to be resolved before verifying.'
+            )
 
         serializer.save(submitter=self.request.user, partner=partner)
 

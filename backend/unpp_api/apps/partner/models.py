@@ -7,6 +7,7 @@ from datetime import date
 import os
 import logging
 
+from cached_property import threaded_cached_property
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
@@ -962,7 +963,7 @@ class PartnerMember(TimeStampedModel):
         prefix = 'HQ ' if self.partner.is_hq else ''
         return prefix + self._get_FIELD_display(field_object)
 
-    @property
+    @threaded_cached_property
     def user_permissions(self):
         return PARTNER_ROLE_PERMISSIONS[self.partner.is_hq][PartnerRole[self.role]]
 

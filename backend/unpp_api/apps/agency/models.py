@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from cached_property import threaded_cached_property
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
@@ -90,7 +91,7 @@ class AgencyMember(TimeStampedModel):
     def __str__(self):
         return "AgencyMember <pk:{}>".format(self.id)
 
-    @property
+    @threaded_cached_property
     def user_permissions(self):
         return AGENCY_ROLE_PERMISSIONS[AgencyRole[self.role]]
 
