@@ -27,7 +27,6 @@ from agency.permissions import AgencyPermission
 from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE
 from common.pagination import SmallPagination
 from common.permissions import HasUNPPPermission, check_unpp_permission, current_user_has_permission
-from common.mixins import PartnerIdsMixin
 from notification.consts import NotificationType
 from notification.helpers import (
     get_partner_users_for_application_queryset,
@@ -152,7 +151,7 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
                 Q(created_by=self.request.user) | Q(focal_points=self.request.user)
             ).filter(is_completed=False)
 
-        if self.request.partner_member:
+        if self.request.active_partner:
             queryset = queryset.filter(is_published=True)
 
         return queryset
@@ -324,7 +323,7 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
     serializer_class = ApplicationFullSerializer
 
     def perform_create(self, serializer):
-        if self.request.partner_member.partner.is_hq:
+        if self.request.active_partner.is_hq:
             raise serializers.ValidationError(
                 "You don't have the ability to submit an application if "
                 "you are currently toggled under the HQ profile."
@@ -562,7 +561,7 @@ class UnsolicitedProjectListAPIView(ListAPIView):
     serializer_class = AgencyUnsolicitedApplicationSerializer
 
 
-class PartnerApplicationOpenListAPIView(PartnerIdsMixin, ListAPIView):
+class PartnerApplicationOpenListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             partner_permissions=[
@@ -576,11 +575,14 @@ class PartnerApplicationOpenListAPIView(PartnerIdsMixin, ListAPIView):
     filter_backends = (DjangoFilterBackend, )
     filter_class = ApplicationsFilter
 
-    def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(partner_id__in=self.get_partner_ids())
+    def get_queryset(self):
+        query = Q(partner=self.request.active_partner)
+        if self.request.active_partner.is_hq:
+            query |= Q(partner__hq=self.request.active_partner)
+        return super(PartnerApplicationOpenListAPIView, self).get_queryset().filter(query)
 
 
-class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreateAPIView):
+class PartnerApplicationUnsolicitedListCreateAPIView(ListCreateAPIView):
     permission_classes = (
         HasUNPPPermission(
             partner_permissions=[
@@ -602,10 +604,13 @@ class PartnerApplicationUnsolicitedListCreateAPIView(PartnerIdsMixin, ListCreate
         return ApplicationPartnerUnsolicitedDirectSerializer
 
     def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(partner_id__in=self.get_partner_ids())
+        query = Q(partner=self.request.active_partner)
+        if self.request.active_partner.is_hq:
+            query |= Q(partner__hq=self.request.active_partner)
+        return super(PartnerApplicationUnsolicitedListCreateAPIView, self).get_queryset().filter(query)
 
 
-class PartnerApplicationDirectListCreateAPIView(PartnerIdsMixin, ListAPIView):
+class PartnerApplicationDirectListCreateAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             partner_permissions=[
@@ -620,7 +625,10 @@ class PartnerApplicationDirectListCreateAPIView(PartnerIdsMixin, ListAPIView):
     serializer_class = ApplicationPartnerDirectSerializer
 
     def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(partner_id__in=self.get_partner_ids())
+        query = Q(partner=self.request.active_partner)
+        if self.request.active_partner.is_hq:
+            query |= Q(partner__hq=self.request.active_partner)
+        return super(PartnerApplicationDirectListCreateAPIView, self).get_queryset().filter(query)
 
 
 class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
@@ -862,9 +870,9 @@ class PublishOrDestroyUCNAPIView(RetrieveAPIView, DestroyAPIView):
 
     def get_queryset(self):
         queryset = super(PublishOrDestroyUCNAPIView, self).get_queryset()
-        query = Q(partner=self.request.partner_member.partner)
-        if self.request.partner_member.partner.is_hq:
-            query |= Q(partner__hq=self.request.partner_member.partner)
+        query = Q(partner=self.request.active_partner)
+        if self.request.active_partner.is_hq:
+            query |= Q(partner__hq=self.request.active_partner)
         return queryset.filter(query)
 
     @check_unpp_permission(partner_permissions=[PartnerPermission.UCN_SUBMIT])

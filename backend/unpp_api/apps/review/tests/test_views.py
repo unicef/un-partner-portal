@@ -7,11 +7,12 @@ from django.urls import reverse
 from rest_framework import status
 
 from agency.roles import AgencyRole
-from common.consts import FLAG_TYPES, INTERNAL_FLAG_TYPES
+from common.consts import FLAG_TYPES, INTERNAL_FLAG_TYPES, PARTNER_TYPES, SANCTION_LIST_TYPES
 from common.tests.base import BaseAPITestCase
 from common.factories import PartnerSimpleFactory, PartnerFlagFactory, PartnerVerificationFactory, AgencyOfficeFactory
 from partner.models import Partner
 from review.models import PartnerFlag
+from sanctionslist.models import SanctionedItem, SanctionedName
 
 
 class TestPartnerFlagAPITestCase(BaseAPITestCase):
@@ -138,3 +139,49 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
             payload['is_rep_risk'] = True
             response = self.client.post(url, data=payload, format='json')
             self.assertEquals(response.data['is_verified'], False)
+
+
+class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
+
+    def setUp(self):
+        super(TestRegisterSanctionedPartnerTestCase, self).setUp()
+        self.client.logout()
+        self.email = "test@myorg.org"
+        self.data = {
+            "partner": {
+                "legal_name": "My org legal name",
+                "country_code": "PL",
+                "display_type": PARTNER_TYPES.international,
+            },
+            "user": {
+                "email": self.email,
+                "password": "Test123!",
+                "fullname": "Leszek Orzeszek",
+            },
+            "partner_profile": {
+                "alias_name": "Name Inc.",
+                "acronym": "N1",
+                "legal_name_change": True,
+                "former_legal_name": "Former Legal Name Inc.",
+            },
+            "partner_head_organization": {
+                "fullname": "Jack Orzeszek",
+                "email": "captain@blackpearl.org",
+            },
+            "partner_member": {
+                "title": "Project Manager",
+            },
+        }
+
+    def test_register_sanctioned_partner(self):
+        item_inst, _ = SanctionedItem.objects.update_or_create(
+            sanctioned_type=SANCTION_LIST_TYPES.entity,
+            data_id=123456,
+        )
+        SanctionedName.objects.get_or_create(item=item_inst, name=self.data['partner']['legal_name'])
+        url = reverse('accounts:registration')
+        response = self.client.post(url, data=self.data, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        partner = Partner.objects.get(id=response.data['partner']['id'])
+        self.assertTrue(partner.has_sanction_match)
+        self.assertTrue(partner.flags.filter(flag_type=INTERNAL_FLAG_TYPES.sanction_match).exists())

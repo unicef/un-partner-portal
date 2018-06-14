@@ -65,7 +65,7 @@ class ConfigAdminLevel1ListAPIView(ListAPIView):
 class GeneralConfigAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
-        if self.request.partner_member:
+        if self.request.active_partner:
             choices = dict(PartnerRole.get_choices())
         elif self.request.agency_member:
             choices = dict(AgencyRole.get_choices(self.request.user.agency))
