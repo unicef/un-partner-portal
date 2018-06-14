@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 
 from agency.permissions import AgencyPermission
-from common.consts import USER_CREATED_FLAG_TYPES
+from common.consts import USER_CREATED_FLAG_TYPES, INTERNAL_FLAG_TYPES
 from common.permissions import current_user_has_permission
 from common.serializers import CommonFileSerializer
 from agency.serializers import AgencyUserBasicSerializer
@@ -41,6 +41,12 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
             },
         }
 
+    def get_extra_kwargs(self):
+        extra_kwargs = super(PartnerFlagSerializer, self).get_extra_kwargs()
+        if self.instance and self.instance.flag_type not in USER_CREATED_FLAG_TYPES:
+            extra_kwargs['flag_type']['read_only'] = True
+        return extra_kwargs
+
     def get_fields(self):
         fields = super(PartnerFlagSerializer, self).get_fields()
         request = self.context.get('request')
@@ -48,10 +54,21 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
             AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS
         ]):
             fields.pop('comment')
-        if not request and not request.METHOD == 'GET':
+        if not request and not request.method == 'GET':
             fields.pop('sanctions_match')
 
         return fields
+
+    def update(self, instance, validated_data):
+        instance = super(PartnerFlagSerializer, self).update(instance, validated_data)
+        if instance.flag_type == INTERNAL_FLAG_TYPES.sanction_match and instance.sanctions_match:
+            if instance.is_valid is not None:
+                instance.sanctions_match.can_ignore = not instance.is_valid
+                instance.sanctions_match.save()
+                instance.sanctions_match.partner.is_locked = instance.is_valid
+                instance.sanctions_match.partner.save()
+
+        return instance
 
 
 class PartnerVerificationSerializer(serializers.ModelSerializer):

@@ -50,7 +50,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
     def test_patch_flag(self):
         flag = PartnerFlag.objects.filter(is_valid=True).first()
         # Change valid status
-        url = reverse('partner-reviews:flags-detail', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
+        url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
         payload = {
             'is_valid': False
         }
@@ -60,7 +60,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
         # Attempt to modify data. Should not change comment
         flag_comment = flag.comment
-        url = reverse('partner-reviews:flags-detail', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
+        url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
         payload = {
             'comment': "%s - Appended" % flag_comment
         }
@@ -184,4 +184,37 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         partner = Partner.objects.get(id=response.data['partner']['id'])
         self.assertTrue(partner.has_sanction_match)
-        self.assertTrue(partner.flags.filter(flag_type=INTERNAL_FLAG_TYPES.sanction_match).exists())
+        flag = partner.flags.filter(flag_type=INTERNAL_FLAG_TYPES.sanction_match).first()
+        self.assertIsNotNone(flag)
+
+        self.client.force_login(self.user)
+        flag_url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
+        flag_response = self.client.get(flag_url)
+        self.assertResponseStatusIs(flag_response)
+
+        payload = {
+            'flag_type': FLAG_TYPES.yellow
+        }
+        response = self.client.patch(flag_url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertNotEqual(response.data['flag_type'], FLAG_TYPES.yellow)
+
+        payload = {
+            'is_valid': False
+        }
+        response = self.client.patch(flag_url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertFalse(response.data['is_valid'])
+        partner.refresh_from_db()
+        self.assertFalse(partner.is_locked)
+        self.assertFalse(partner.has_sanction_match)
+
+        payload = {
+            'is_valid': True
+        }
+        response = self.client.patch(flag_url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertTrue(response.data['is_valid'])
+        partner.refresh_from_db()
+        self.assertTrue(partner.is_locked)
+        self.assertTrue(partner.has_sanction_match)

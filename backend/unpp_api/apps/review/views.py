@@ -110,14 +110,15 @@ class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 
     def get_object(self):
         flag = super(PartnerFlagRetrieveUpdateAPIView, self).get_object()
-        if flag.flag_type == FLAG_TYPES.escalated:
-            current_user_has_permission(
-                self.request,
-                agency_permissions=[AgencyPermission.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES],
-                raise_exception=True
-            )
-        elif not flag.submitter == self.request.user:
-            raise PermissionDenied("This flag can only be edited by it's creator")
+        if not self.request.method == 'GET':
+            if flag.flag_type == FLAG_TYPES.escalated:
+                current_user_has_permission(
+                    self.request,
+                    agency_permissions=[AgencyPermission.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES],
+                    raise_exception=True
+                )
+            elif flag.submitter and not flag.submitter == self.request.user:
+                raise PermissionDenied("This flag can only be edited by it's creator")
 
         return flag
 
