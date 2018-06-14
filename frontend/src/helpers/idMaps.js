@@ -18,4 +18,5 @@ export const projectStatuses = {
   Ope: 'Published',
   Clo: 'Closed/Under Review',
   Com: 'Completed',
+  Rev: 'Application Under Review',
 };

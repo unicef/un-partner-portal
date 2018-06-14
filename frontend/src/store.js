@@ -66,6 +66,8 @@ import openCfeiDashboardList from './reducers/openCfeiDashboardList';
 import publishCfei from './reducers/publishCfei';
 import sendCfei from './reducers/sendCfei';
 import deleteCfei from './reducers/deleteCfei';
+import deleteUcn from './reducers/deleteUcn';
+import submitUcn from './reducers/submitUcn';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -83,6 +85,8 @@ const mainReducer = combineReducers({
   publishCfei,
   deleteCfei,
   sendCfei,
+  deleteUcn,
+  submitUcn,
   organizationProfileNav,
   partnerApplicationsNav,
   applicationsNotesList,
@@ -281,6 +285,9 @@ export const selectCfeiCriteria = (state, id) =>
 
 export const selectCfeiStatus = (state, id) =>
   cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.data, id);
+
+export const selectCfeiDisplayStatus = (state, id) =>
+  cfeiDetailsSelector.selectCfeiDisplayStatus(state.cfeiDetails.data, id);
 
 export const selectCfeiConverted = (state, id) =>
   cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.data, id);

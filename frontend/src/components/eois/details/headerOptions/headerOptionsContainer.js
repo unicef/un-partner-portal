@@ -14,10 +14,9 @@ import { selectCfeiStatus,
   isCfeiCompleted,
   selectCfeiConverted,
   selectCfeiCompletedReasonDisplay,
-  isUserAFocalPoint,
-  isUserACreator,
 } from '../../../../store';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
+import PartnerUcnHeaderOptions from './partnerUcnHeaderOptions';
 
 const messages = {
   infoDsr: 'This DS/R was sent to Advanced Editor for acceptance and publication',
@@ -47,7 +46,6 @@ const HeaderOptionsContainer = (props) => {
     id,
     partnerId,
     completedReasonDisplay,
-    allowedToEdit,
   } = props;
   let options;
   let status = <EoiStatusHeader status={cfeiStatus} />;
@@ -60,11 +58,11 @@ const HeaderOptionsContainer = (props) => {
     }
   } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
     options = <AgencyDirectHeaderOptions id={id} />;
+  } else if (type === PROJECT_TYPES.UNSOLICITED && role === ROLES.PARTNER) {
+    options = <PartnerUcnHeaderOptions id={id} />;
   }
-  if (type === PROJECT_TYPES.UNSOLICITED) {
-    return !cfeiConverted && role === ROLES.AGENCY
-      ? <ConvertToDS partnerId={partnerId} id={id} />
-      : null;
+  if (type === PROJECT_TYPES.UNSOLICITED && role === ROLES.AGENCY) {
+    return !cfeiConverted ? <ConvertToDS partnerId={partnerId} id={id} /> : null;
   }
 
   if (cfeiStatus === 'Sen') {
@@ -99,7 +97,6 @@ HeaderOptionsContainer.propTypes = {
   cfeiStatus: PropTypes.string,
   id: PropTypes.string,
   partnerId: PropTypes.string,
-  allowedToEdit: PropTypes.bool,
   completedReasonDisplay: PropTypes.string,
 };
 
@@ -109,7 +106,6 @@ const mapStateToProps = (state, ownProps) => ({
   cfeiStatus: selectCfeiStatus(state, ownProps.id),
   completedReasonDisplay: selectCfeiCompletedReasonDisplay(state, ownProps.id),
   cfeiConverted: selectCfeiConverted(state, ownProps.id),
-  allowedToEdit: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
 });
 
 export default connect(
