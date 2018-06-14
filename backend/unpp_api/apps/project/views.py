@@ -35,7 +35,8 @@ from notification.helpers import (
     send_notification_application_created,
     send_notification,
     send_cfei_review_required_notification, user_received_notification_recently,
-    send_partner_made_decision_notification)
+    send_partner_made_decision_notification,
+)
 from partner.permissions import PartnerPermission
 from project.exports.application_compare import ApplicationCompareSpreadsheetGenerator
 from project.exports.cfei import CFEIPDFExporter
@@ -94,7 +95,7 @@ class BaseProjectAPIView(ListCreateAPIView):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = BaseProjectFilter
     ordering_fields = (
-        'deadline_date', 'created', 'start_date', 'completed_date'
+        'title', 'agency', 'specializations__name', 'deadline_date', 'created', 'start_date', 'completed_date'
     )
 
 
