@@ -35,6 +35,9 @@ const PartnersFieldArrayEdit = (props) => {
       <AutocompleteForm
         fieldName="partner_name"
         label="Partner"
+        // async
+        // asyncFunction={getPartners}
+        // search={'legal_name'}
         placeholder="Partner name"
         initialMultiValues={partnername}
         multiple
@@ -46,10 +49,6 @@ const PartnersFieldArrayEdit = (props) => {
         values={justificationValues}
         placeholder="Justification select"
         multiple
-        initialMultiValues={dsjust}
-        // selectFieldProps={{
-        //   disabled,
-        // }}
         {...other}
       />
       <TextFieldForm
@@ -81,7 +80,7 @@ PartnersFieldArrayEdit.propTypes = {
 };
 
 const partnerArrayForm = reduxForm({
-  form: 'partnerArray',
+  form: 'editDsrForm',
 })(PartnersFieldArrayEdit);
 
 const mapStateToProps = (state, ownProps) => {
@@ -110,9 +109,9 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-  // dispatch => ({
-  //   getPartners: params => dispatch(
-  //     loadPartnerNamesForAutoComplete({ is_verified: 'verified', ...params }))
-  //     .then(results => mapValuesForSelectionField(results)),
-  // }),
+  dispatch => ({
+    getPartners: params => dispatch(
+      loadPartnerNamesForAutoComplete({ is_verified: 'verified', ...params }))
+      .then(results => mapValuesForSelectionField(results)),
+  }),
 )(partnerArrayForm);

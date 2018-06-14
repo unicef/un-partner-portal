@@ -14,7 +14,7 @@ const messages = {
   attachment: 'Attachment (Optional)',
 };
 
-const Partner = (getPartners, readOnly, ...props) => (member, index, fields) => (
+const Partner = (getPartners, readOnly, partnername, ...props) => (member, index, fields) => (
   <GridColumn>
     <AutocompleteForm
       fieldName={`${member}.partner`}
@@ -22,6 +22,7 @@ const Partner = (getPartners, readOnly, ...props) => (member, index, fields) => 
       async
       asyncFunction={getPartners}
       readOnly={readOnly}
+      initial={partnername}
       search={'legal_name'}
       {...props}
     />
@@ -46,7 +47,8 @@ const Partner = (getPartners, readOnly, ...props) => (member, index, fields) => 
   </GridColumn>);
 
 const PartnersFieldArray = (props) => {
-  const { getPartners, readOnly, ...other } = props;
+  const { getPartners, readOnly, partnername, ...other } = props;
+  console.log('PARTNERNAME IS', partnername);
   return (
     <ArrayForm
       label=""
@@ -55,7 +57,7 @@ const PartnersFieldArray = (props) => {
       initial
       readOnly={readOnly}
       {...other}
-      outerField={Partner(getPartners, readOnly, ...other)}
+      outerField={Partner(getPartners, readOnly, partnername, ...other)}
     />
   );
 };
@@ -63,6 +65,7 @@ const PartnersFieldArray = (props) => {
 PartnersFieldArray.propTypes = {
   getPartners: PropTypes.func,
   readOnly: PropTypes.bool,
+  partnername: PropTypes.number,
 };
 
 
@@ -74,3 +77,9 @@ export default connect(
       .then(results => mapValuesForSelectionField(results)),
   }),
 )(PartnersFieldArray);
+
+// dodac number id do focal pointa
+
+    //  selectorem musze wybrac wszystkie aktualne wartosci z redux forma z formularza
+    //  i sprawdzic czy jest number czy string - jesli string, to wywal z payloadu,
+    //  jak number, to leci dalej w payloadzie

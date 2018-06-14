@@ -14,13 +14,12 @@ const Country = formName => sector => (
   />
 );
 
-const Locations = (formName, loaded) => (name, index) => {
-  return  loaded &&
+const Locations = (formName, loaded) => (name, index) => loaded &&
 <LocationsMap
   formName={formName}
   name={name}
   index={index}
-/>};
+/>;
 
 const LocationFieldArray = (props) => {
   const { formName, readOnly, loaded, ...other } = props;

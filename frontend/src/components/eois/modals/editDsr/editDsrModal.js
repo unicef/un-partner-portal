@@ -120,23 +120,27 @@ class EditDsrModal extends Component {
   }
 
   handleSubmit(values) {
-    return this.props.postCfei(values).then(
-      (cfei) => {
-        this.setState({ id: cfei && cfei.id });
-        this.props.onDialogClose();
+    // return this.props.postCfei(values).then(
+    //   (cfei) => {
+    //     this.setState({ id: cfei && cfei.id });
+    //     this.props.onDialogClose();
 
-        if (this.props.type !== PROJECT_TYPES.OPEN) {
-          history.push(`/cfei/${this.props.type}/${cfei.id}/overview`);
-        }
-      }).catch((error) => {
-      this.props.postError(error, getErrorMessage(this.props.type));
-      throw new SubmissionError({
-        ...error.response.data,
-        _error: getErrorMessage(this.props.type),
-      });
-    });
+    //     if (this.props.type !== PROJECT_TYPES.OPEN) {
+    //       history.push(`/cfei/${this.props.type}/${cfei.id}/overview`);
+    //     }
+    //   }).catch((error) => {
+    //   this.props.postError(error, getErrorMessage(this.props.type));
+    //   throw new SubmissionError({
+    //     ...error.response.data,
+    //     _error: getErrorMessage(this.props.type),
+    //   });
+    // });
+    
+    //  selectorem musze wybrac wszystkie aktualne wartosci z redux forma z formularza
+    //  i sprawdzic czy jest number czy string - jesli string, to wywal z payloadu,
+    //  jak number, to leci dalej w payloadzie
   }
-
+  
   handleDialogSubmit() {
     this.props.submit();
   }

@@ -10,7 +10,7 @@ import * as fields from '../../../forms/fields/projectFields/commonFields';
 import GridColumn from '../../../common/grid/gridColumn';
 
 import ProjectDetails from '../editDsr/ProjectDetails';
-import PartnersForm from '../../../forms/fields/projectFields/partnersField/partnersFieldArrayEdit';
+import PartnersForm from '../../../forms/fields/projectFields/partnersField/partnersFieldArray';
 import { selectCfeiDetails } from '../../../../store';
 
 const messages = {
@@ -24,13 +24,15 @@ const EditDirectForm = (props) => {
     handleSubmit,
     start_date,
     cfeiDetails,
-    partner } = props;
+    partner,
+    focalPointName, } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <ProjectDetails
           cfeiDetails={cfeiDetails}
           formName="editDsr"
+          focalPoints={focalPointName}
         >
           <fields.StartDate />
           <fields.EndDate minDate={start_date} />
@@ -38,7 +40,7 @@ const EditDirectForm = (props) => {
         <Typography type="headline">
           {messages.selectPartners}
         </Typography>
-        <PartnersForm partner={partner} />
+        <PartnersForm partnername={partner} />
       </GridColumn>
     </form >
   );
@@ -51,23 +53,34 @@ EditDirectForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   start_date: PropTypes.string,
   partners: PropTypes.array,
+  focalPointName: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
   const startDate = cfei.start_date;
-  const displayPopulation = state.session.agencyName === 'UNHCR';
-  const focalPoints = pluck('name', cfei.focal_points_detail);
-  const cfeiLocations = cfei.cfei_locations;
+  const cfeifocaldetail = cfei.focal_points_detail[0];
+  const focalPoints = Number(cfeifocaldetail.id);
+  const focalPointName = cfeifocaldetail.name;
+  console.log('FOCAL POINT NAME IN DSR FORM', focalPointName);
+  const partner = cfei.direct_selected_partners[0].partner_name;
+  const applications = [];
+  applications.push({
+    partner: Number(cfei.direct_selected_partners[0].partner_id),
+    ds_justification_select: cfei.direct_selected_partners[0].ds_justification_select,
+    justification_reason: cfei.direct_selected_partners[0].justification_reason,
+    ds_attachment: cfei.direct_selected_partners[0].ds_attachmnt,
+  });
   console.log(cfei);
   return {
     start_date: startDate,
     cfeiDetails: cfei,
-    partner: cfei.direct_selected_partners,
+    partner,
+    focalPointName,
     initialValues: {
       // cfeiDetails: cfei,
       title: cfei.title,
-
+      applications,
       specializations: cfei.specializations,
       focal_points: focalPoints,
       description: cfei.description,

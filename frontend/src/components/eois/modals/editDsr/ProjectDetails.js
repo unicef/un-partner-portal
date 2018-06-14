@@ -19,6 +19,7 @@ const messages = {
 
 const ProjectDetails = (props) => {
   const { children, formName, displayPopulation, cfeiDetails, focalPoints } = props;
+  console.log('FOCAL POINTS IN PROJECT DETAILS', focalPoints);
   return (
     <GridColumn>
       <Typography type="headline">
@@ -27,7 +28,7 @@ const ProjectDetails = (props) => {
       <GridColumn>
         <fields.TitleField />
         <LocationForm formName={formName} />
-        <fields.FocalPoint overlap={false} initialMultiValues={focalPoints} />
+        <fields.FocalPointEdit overlap={false} initial={focalPoints} />
         <SectorForm />
         {displayPopulation && <SelectPopulationOfConcern />}
         <fields.Background />
@@ -44,15 +45,17 @@ const ProjectDetails = (props) => {
 
 ProjectDetails.propTypes = {
   displayPopulation: PropTypes.bool,
+  formName: PropTypes.string,
+  focalPoints: PropTypes.number,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const cfeidetails = ownProps.cfeiDetails;
-  const focalpoints = pluck('name', cfeidetails.focal_points_detail);
   return {
-    focalPoints: focalpoints,
+    cfeiDetails: cfeidetails,
   };
 };
+
 
 export default connect(mapStateToProps)(ProjectDetails);
 
