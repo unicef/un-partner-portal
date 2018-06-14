@@ -61,7 +61,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance = super(PartnerFlagSerializer, self).update(instance, validated_data)
-        if instance.flag_type == INTERNAL_FLAG_TYPES.sanction_match and instance.sanctions_match:
+        if instance.flag_type == INTERNAL_FLAG_TYPES.sanctions_match and instance.sanctions_match:
             if instance.is_valid is not None:
                 instance.sanctions_match.can_ignore = not instance.is_valid
                 instance.sanctions_match.save()

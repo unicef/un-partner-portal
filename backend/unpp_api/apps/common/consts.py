@@ -226,7 +226,7 @@ USER_CREATED_FLAG_TYPES = Choices(
 )
 
 INTERNAL_FLAG_TYPES = Choices(
-    ('San', 'sanction_match', 'Sanction List Match'),
+    ('San', 'sanctions_match', 'Sanctions List Match'),
 )
 
 FLAG_TYPES = USER_CREATED_FLAG_TYPES + INTERNAL_FLAG_TYPES

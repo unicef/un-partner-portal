@@ -87,7 +87,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('flag_type', response.data)
 
-        payload['flag_type'] = INTERNAL_FLAG_TYPES.sanction_match
+        payload['flag_type'] = INTERNAL_FLAG_TYPES.sanctions_match
 
         response = self.client.post(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
@@ -184,7 +184,7 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         partner = Partner.objects.get(id=response.data['partner']['id'])
         self.assertTrue(partner.has_sanction_match)
-        flag = partner.flags.filter(flag_type=INTERNAL_FLAG_TYPES.sanction_match).first()
+        flag = partner.flags.filter(flag_type=INTERNAL_FLAG_TYPES.sanctions_match).first()
         self.assertIsNotNone(flag)
 
         self.client.force_login(self.user)

@@ -26,8 +26,8 @@ def create_sanctions_match(name_matches_qs, partner, match_type, match_text):
         )
         PartnerFlag.objects.create(
             partner=partner,
-            flag_type=INTERNAL_FLAG_TYPES.sanction_match,
-            comment=match_text,  # TODO: generate more descriptive description
+            flag_type=INTERNAL_FLAG_TYPES.sanctions_match,
+            comment=match_text,  # TODO: generate more descriptive text
             sanctions_match=match
         )
 
