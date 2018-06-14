@@ -130,6 +130,8 @@ class EoiFilter extends Component {
 
     const { pathName, agencyId } = this.props;
 
+    this._focalPoints.getWrappedInstance().reset();
+
     history.push({
       pathname: pathName,
       query: R.merge(query,
@@ -213,6 +215,7 @@ class EoiFilter extends Component {
             <Grid item sm={4} xs={12} >
               <FocalPoints
                 label={messages.labels.focalPoint}
+                ref={(field) => this._focalPoints = field}
                 fieldName="focal_points"
                 optional
               />
