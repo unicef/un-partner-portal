@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import mock
+from django.core.management import call_command
 from django.urls import reverse
 
 from rest_framework import status
@@ -218,3 +219,22 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         partner.refresh_from_db()
         self.assertTrue(partner.is_locked)
         self.assertTrue(partner.has_sanction_match)
+
+    def test_matches_dont_duplicate(self):
+        item_inst, _ = SanctionedItem.objects.update_or_create(
+            sanctioned_type=SANCTION_LIST_TYPES.entity,
+            data_id=123456,
+        )
+        SanctionedName.objects.get_or_create(item=item_inst, name=self.data['partner']['legal_name'])
+        url = reverse('accounts:registration')
+        response = self.client.post(url, data=self.data, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        partner = Partner.objects.get(id=response.data['partner']['id'])
+        self.assertTrue(partner.has_sanction_match)
+        partner_sanction_flags = partner.flags.filter(flag_type=INTERNAL_FLAG_TYPES.sanctions_match)
+        flag = partner_sanction_flags.first()
+        self.assertIsNotNone(flag)
+
+        flag_count_before = partner_sanction_flags.count()
+        call_command('sanctions_list_match_scan')
+        self.assertEqual(partner_sanction_flags.count(), flag_count_before)

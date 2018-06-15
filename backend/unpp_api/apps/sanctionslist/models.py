@@ -43,5 +43,10 @@ class SanctionedNameMatch(TimeStampedModel):
     match_text = models.TextField(null=True, blank=True)
     can_ignore_text = models.TextField(null=True, blank=True)
 
+    class Meta:
+        unique_together = (
+            ('name', 'partner'),
+        )
+
     def __unicode__(self):
         return "Partner:{} Name:{}".format(self.partner, self.name)
