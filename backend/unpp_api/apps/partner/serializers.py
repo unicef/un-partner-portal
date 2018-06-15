@@ -471,6 +471,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'mandate_and_mission',
             'partner_additional',
             'last_profile_update',
+            'has_potential_sanction_match',
         )
 
     def get_country_presence_display(self, partner):
