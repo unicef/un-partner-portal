@@ -1,21 +1,26 @@
 import React, { Component } from 'react';
+import { browserHistory as history } from 'react-router';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import {
   isPristine,
   isSubmitting,
+  SubmissionError,
   submit,
 } from 'redux-form';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
+import R from 'ramda';
 
 import Card from '../common/cardLogin';
 import PasswordResetForm, { FORM_NAME } from './passwordResetForm';
+import { changePassword } from '../../reducers/session';
 
 const messages = {
   title: 'UN Partner Portal',
   subtitle: 'Change password',
+  failed: 'Couldn\'t change password',
 };
 
 const styleSheet = (theme) => ({
@@ -65,8 +70,22 @@ class PasswordReset extends Component {
     );
   }
 
-  onSubmit = () => {
-    console.log('submitted!');
+  onSubmit = (values) => {
+    const { changePassword, params } = this.props;
+
+    return changePassword({
+      ...values,
+      ...R.pick(['token', 'uid'], params),
+    })
+        .then(() => history.push('/login'))
+        .catch(({ response }) => {
+          const errorMsg = response.data.non_field_errors || messages.failed;
+
+          throw new SubmissionError({
+            ...response.data,
+            _error: errorMsg,
+          });
+        });
   }
 }
 
@@ -77,6 +96,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   submit: () => submit(FORM_NAME),
+  changePassword,
 };
 
 export default compose(

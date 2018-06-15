@@ -1,6 +1,8 @@
 import React from 'react';
-import { reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
+import { reduxForm, clearSubmitErrors } from 'redux-form';
 import { compose } from 'redux';
+import Snackbar from 'material-ui/Snackbar';
 import { withStyles } from 'material-ui/styles';
 
 import PasswordFieldForm from '../forms/passwordFieldForm';
@@ -21,6 +23,9 @@ const styleSheet = (theme) => ({
 const PasswordResetForm = ({
   handleSubmit,
   classes,
+  clearSubmitErrors,
+  error,
+  form,
 }) => (
   <form
     onSubmit={handleSubmit}
@@ -43,6 +48,17 @@ const PasswordResetForm = ({
       />
     </div>
 
+    <Snackbar
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'left',
+      }}
+      open={!!error}
+      message={error}
+      autoHideDuration={4000}
+      onClose={() => clearSubmitErrors(form)}
+    />
+
     <button type="submit" hidden aria-hidden={true} />
   </form>
 );
@@ -53,5 +69,9 @@ export default compose(
   reduxForm({
     form: FORM_NAME,
   }),
+  connect(
+    null,
+    { clearSubmitErrors },
+  ),
   withStyles(styleSheet, { name: 'PasswordResetForm' }),
 )(PasswordResetForm);

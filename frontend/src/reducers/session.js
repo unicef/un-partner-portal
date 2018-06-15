@@ -1,6 +1,12 @@
 import { browserHistory as history } from 'react-router';
 import R from 'ramda';
-import { postRegistration, login, logout, getUserData } from '../helpers/api/api';
+import {
+  getUserData,
+  login,
+  logout,
+  postRegistration,
+  passwordResetConfirm,
+} from '../helpers/api/api';
 import { ROLES, SESSION_STATUS } from '../helpers/constants';
 
 export const SESSION_CHANGE = 'SESSION_CHANGE';
@@ -167,6 +173,8 @@ export const registerUser = json => dispatch => postRegistration(json)
     dispatch(sessionChange({ newlyRegistered: true }));
     dispatch(loginUser({ email, password: R.path(['user', 'password'], json) }));
   });
+
+export const changePassword = payload => () => passwordResetConfirm(payload);
 
 const setSession = (state, session) => R.mergeDeepRight(state, session);
 
