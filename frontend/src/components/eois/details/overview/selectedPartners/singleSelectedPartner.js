@@ -57,7 +57,6 @@ const SingleSelectedPartner = (props) => {
   const { partner,
     classes,
     cfeiPublished,
-    cfeiCompleted,
     currentStatus,
     isCfeiDraft,
     isCfeiSent,
@@ -75,12 +74,11 @@ const SingleSelectedPartner = (props) => {
       {(isCfeiDraft || isCfeiSent)
           && status(classes, currentStatus, messages.isDraftText, false)
       }
-      {!cfeiCompleted && cfeiPublished
-          && status(classes, currentStatus, messages.isPublishedText, cfeiPublished)}
 
-      {cfeiCompleted
+      {cfeiPublished
         && status(classes, currentStatus,
-          isAccepted ? messages.accepted : messages.declined, cfeiCompleted)}
+          currentStatus === 'Suc' ? messages.isPublishedText
+            : (isAccepted ? messages.accepted : messages.declined), cfeiPublished)}
     </div>);
 };
 

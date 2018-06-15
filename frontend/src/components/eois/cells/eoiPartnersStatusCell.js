@@ -7,6 +7,7 @@ import Typography from 'material-ui/Typography';
 import Tooltip from '../../common/portalTooltip';
 import EoiStatusCell from './eoiStatusCell';
 import { selectExtendedApplicationStatuses } from '../../../store';
+import { PROJECT_STATUSES } from '../../../helpers/constants';
 
 
 const styleSheet = theme => ({
@@ -46,15 +47,17 @@ ${applicationStatuses[partnerStatus.application_status] || ''}`}
 const EoiPartnerStatusCell = (props) => {
   const { status, classes, id, partners, applicationStatuses } = props;
   return (
-    <Tooltip
-      id={`${id}-partner-status-tooltip`}
-      title={renderExpandedCell(partners, classes, applicationStatuses)}
-      disabled={!partners}
-    >
-      <div>
-        <EoiStatusCell status={status} />
-      </div>
-    </Tooltip>
+    status !== PROJECT_STATUSES.DRA
+      ? <Tooltip
+        id={`${id}-partner-status-tooltip`}
+        title={renderExpandedCell(partners, classes, applicationStatuses)}
+        disabled={!partners}
+      >
+        <div>
+          <EoiStatusCell status={status} />
+        </div>
+      </Tooltip>
+      : <EoiStatusCell status={status} />
   );
 };
 
