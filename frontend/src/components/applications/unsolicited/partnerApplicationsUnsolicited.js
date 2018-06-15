@@ -15,6 +15,7 @@ import WrappedCell from '../../common/cell/wrappedCell';
 import EoiSectorCell from '../../eois/cells/eoiSectorCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
 import CountriesCell from '../../partners/countriesCell';
+import ApplicationStatusCell from '../../eois/cells/applicationStatusCell';
 
 /* eslint-disable react/prop-types */
 const applicationCell = ({ row, column, value }) => {
@@ -34,6 +35,11 @@ const applicationCell = ({ row, column, value }) => {
     return <TableCell><EoiSectorCell data={row.specializations} id={row.id} /></TableCell>;
   } else if (column.name === 'country') {
     return <CountriesCell countries={row.country} />;
+  } else if (column.name === 'application_status') {
+    return (<ApplicationStatusCell
+      applicationStatus={row.application_status}
+      id={row.id}
+    />);
   }
 
   return <TableCell>{value}</TableCell>;
