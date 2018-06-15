@@ -85,7 +85,7 @@ const Login = (props) => {
             onClose={() => dispatch(clearSubmitErrors(form))}
           />
         </GridColumn>
-      </form >
+      </form>
     </div>
   );
 };
