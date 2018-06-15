@@ -879,6 +879,7 @@ class PublishOrDestroyUCNAPIView(RetrieveAPIView, DestroyAPIView):
     @check_unpp_permission(partner_permissions=[PartnerPermission.UCN_SUBMIT])
     def post(self, *args, **kwargs):
         obj = self.get_object()
+        obj.published_timestamp = timezone.now()
         obj.is_published = True
         obj.save()
         send_notification_application_created(obj)

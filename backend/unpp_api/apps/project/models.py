@@ -198,6 +198,7 @@ class Application(TimeStampedModel):
     is_published = models.NullBooleanField(
         help_text='Whether application is a draft or has been published (applicable to UCN)'
     )
+    published_timestamp = models.DateTimeField(null=True, blank=True)
 
     objects = ApplicationQuerySet.as_manager()
 

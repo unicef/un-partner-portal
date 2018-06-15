@@ -2,6 +2,7 @@ import random
 import os
 from datetime import date, timedelta
 from coolname import generate
+from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
@@ -728,9 +729,11 @@ class PartnerVerificationFactory(factory.django.DjangoModelFactory):
 
 class UnsolicitedFactory(factory.django.DjangoModelFactory):
     is_unsolicited = True
+    is_published = True
     partner = factory.LazyFunction(get_partner)
     submitter = factory.LazyFunction(get_partner_member)
     agency = factory.LazyFunction(get_random_agency)
+    published_timestamp = factory.LazyFunction(timezone.now)
 
     class Meta:
         model = Application
