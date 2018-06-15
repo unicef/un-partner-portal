@@ -33,7 +33,7 @@ class Agency(models.Model):
         ordering = ['id']
 
     def __str__(self):
-        return "Agency: {} <pk:{}>".format(self.name, self.id)
+        return f"<{self.pk}>{self.name}"
 
 
 class AgencyProfile(TimeStampedModel):
@@ -69,7 +69,7 @@ class AgencyOffice(TimeStampedModel):
         )
 
     def __str__(self):
-        return "AgencyOffice: {} <pk:{}>".format(self.name, self.id)
+        return f'<{self.pk}>{self.agency} office in {self.country.name}'
 
     @property
     def name(self):
@@ -89,7 +89,7 @@ class AgencyMember(TimeStampedModel):
         )
 
     def __str__(self):
-        return "AgencyMember <pk:{}>".format(self.id)
+        return f"<{self.pk}>[{self.user}] `{self.get_role_display()}` in `{self.office}`"
 
     @threaded_cached_property
     def user_permissions(self):

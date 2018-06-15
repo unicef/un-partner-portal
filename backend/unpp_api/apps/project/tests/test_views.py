@@ -1019,7 +1019,6 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
                 "agency": office.agency.id,
                 "agency_office": office.id
             }}
-
         url = reverse('projects:direct')
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -1061,7 +1060,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         }
 
         update_response = self.client.patch(application_url, data=accept_payload, format='json')
-        self.assertEqual(update_response.status_code, status.HTTP_200_OK)
+        self.assertResponseStatusIs(update_response)
 
         call_command('send_daily_notifications')
         notification_emails = list(filter(
