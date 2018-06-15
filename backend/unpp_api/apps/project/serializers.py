@@ -331,7 +331,6 @@ class CreateDirectProjectSerializer(serializers.Serializer):
                 submitter=validated_data['eoi']['created_by'],
                 status=APPLICATION_STATUSES.pending,
                 did_win=True,
-                did_accept=False,
                 ds_justification_select=application_data['ds_justification_select'],
                 justification_reason=application_data['justification_reason'],
                 ds_attachment=application_data.get('ds_attachment'),

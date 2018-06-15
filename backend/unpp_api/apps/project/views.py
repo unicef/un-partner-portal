@@ -415,17 +415,19 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
             ]
         ),
     )
-    queryset = Application.objects.filter(
-        is_published=True
-    ).select_related("partner", "eoi", "cn").prefetch_related("eoi__reviewers").all()
+    queryset = Application.objects.select_related("partner", "eoi", "cn").prefetch_related("eoi__reviewers").all()
     serializer_class = ApplicationFullSerializer
 
     def get_queryset(self):
         queryset = super(ApplicationAPIView, self).get_queryset()
-        if self.request.agency_member:
-            return queryset.filter(agency=self.request.user.agency)
-        elif self.request.active_partner:
+        if self.request.active_partner:
             return queryset.filter(partner=self.request.active_partner)
+        elif self.request.agency_member:
+            queryset = queryset.filter(Q(is_unsolicited=True, is_published=True) | Q(is_unsolicited=False))
+            if not self.request.method == 'GET':
+                queryset = queryset.filter(agency=self.request.agency_member.office.agency)
+
+            return queryset
 
         return queryset.none()
 

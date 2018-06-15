@@ -87,7 +87,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.fullname
 
     def __str__(self):
-        return "[{}] {}".format(self.email, self.get_fullname())
+        return "{} ({})".format(self.get_fullname(), self.email)
 
     @property
     def is_agency_user(self):

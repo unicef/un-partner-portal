@@ -124,6 +124,10 @@ class Partner(TimeStampedModel):
         return self.sanction_matches.filter(can_ignore=False).exists()
 
     @property
+    def has_potential_sanction_match(self):
+        return self.flags.filter(flag_type=FLAG_TYPES.sanctions_match, is_valid=None).count()
+
+    @property
     def flagging_status(self):
         return {
             'yellow': self.flags.filter(flag_type=FLAG_TYPES.yellow, is_valid=True).count(),
