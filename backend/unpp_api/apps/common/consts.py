@@ -173,13 +173,13 @@ SELECTION_CRITERIA_CHOICES = Choices(
 )
 
 JUSTIFICATION_FOR_DIRECT_SELECTION = Choices(
-    ('Kno', 'known', 'Known expertise'),
-    ('Loc', 'local', 'Local presence'),
-    ('Inn', 'innovative', 'Innovative approach'),
-    ('TCC', 'time', 'Time constraints/criticality of response'),
-    ('Imp', 'importance', 'Importance of strengthening national civil society engagement'),
-    ('Ret', 'retention', 'Partner retention'),
-    ('Oth', 'other', 'Other'),
+    ('D01', 'known', 'Known expertise'),
+    ('D02', 'local', 'Local presence'),
+    ('D03', 'innovative', 'Innovative approach'),
+    ('D04', 'time', 'Time constraints/criticality of response'),
+    ('D05', 'importance', 'Importance of strengthening national civil society engagement'),
+    ('D06', 'retention', 'Partner retention'),
+    ('D07', 'other', 'Other'),
 )
 
 ACCEPTED_DECLINED = Choices(

@@ -112,7 +112,7 @@ class AutocompleteField extends React.Component {
   handleChange(event, { newValue }) {
     this.setState({
       value: typeof newValue.label !== 'undefined' ?
-          newValue.label : newValue,
+        newValue.label : newValue,
     });
   }
 
@@ -259,8 +259,8 @@ AutocompleteField.propTypes = { /**
    * query param name for getting async suggestions
    */
   search: PropTypes.string,
-  /** 
-   * whether suggestions should overlap content below 
+  /**
+   * whether suggestions should overlap content below
    */
   overlap: PropTypes.bool,
   /**

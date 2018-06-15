@@ -201,7 +201,7 @@ export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices'], 'value');
 
 export const selectNormalizedDirectJustification = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['direct-justifications']);
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-justifications'], 'value');
 
 export const selectApplicationStatuses = state => state.partnerProfileConfig['application-statuses'];
 
