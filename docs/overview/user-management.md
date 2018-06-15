@@ -56,7 +56,7 @@ Participating agency users have access to the portal
 
 **Key Functionality & Controls:** 
 
-| Ability for Ability for all participating agency users to have reader permissions as a default. |
+| Ability for all participating agency users to have reader permissions as a default. |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Ability for participating agencies to assign additional roles & permissions to the agency’s users. |
 | Ability for participating agencies to assign users to multiple countries \(locations\) with the same or different roles & permissions in each country location. |
@@ -99,8 +99,8 @@ Partner HQ Administrator is a CSO user with ability to perform the following fea
 * Provision country profiles.
 * Deactivate CSO’s account.
 * Submit and delete concept notes.
-* Accept or decline partnership offers from the UN. 
-* The Partner HQ Administrator has the same permissions at both HQ and Country levels. 
+* Accept or decline partnership offers from the UN.
+* The Partner HQ Administrator has the same permissions at both HQ and Country levels.
 * The Partner HQ Administrator is only applicable to those CSOs that are international NGOs.
 
 **HQ Editor**
@@ -109,13 +109,13 @@ Partner HQ Editor is a CSO user with the ability to perform the following featur
 
 * Edit their organization’s profiles.
 * Submit and delete concept notes.
-* Accept or decline partnership offers from the UN. 
-* This user has the same permission at both HQ and Country levels. 
+* Accept or decline partnership offers from the UN.
+* This user has the same permission at both HQ and Country levels.
 * The Partner HQ Editor is only applicable to those CSOs that are international NGOs.
 
-**HQ Reader**
+**Reader**
 
-Partner Reader is a CSO user with view permissions at the country profile level. If a member of an INGO, this user also has view permissions of the HQ profile.
+Partner Reader is a CSO user with view permissions at the country profile level. If a member of an INGO, this user also has view permissions of the HQ profile \(e.g. An Oxfam Kenya reader can view both the Oxfam Kenya and Oxfam HQ profiles\). A partner reader situated in INGO HQ has view permissions across all country profiles within the organization, as well as of the HQ profile \(e.g. An Oxfam UK reader can view the Oxfam Kenya, Oxfam Ethiopia, Oxfam Bangladesh profiles, as well as the Oxfam HQ profile\).
 
 **Country Admin**
 
@@ -123,11 +123,11 @@ Partner Country Administrator is a CSO user with specific permissions for a coun
 
 This user can perform the following actions:
 
-* Ability to view permissions of the HQ profile if a member of an international NGO. 
-* View and edit profiles.
-* add/deactivate users. 
-* submit and delete concept notes. 
-* accept or decline partnership offers from the UN. 
+* view the HQ profile if a member of an international NGO.
+* View and edit profile.
+* add/deactivate users.
+* submit and delete concept notes.
+* accept or decline partnership offers from the UN.
 * For national CSOs, this role can also deactivate partner account.
 
 **Country Editor**
@@ -136,13 +136,9 @@ Partner Country Editor is a CSO user with specific permissions for a country pro
 
 This user can perform the following actions:
 
-* Edit profiles
+* Edit profile
 * Submit and delete concept notes.
 * Accept or decline partnership offers from the UN.
-
-**Country Reader**
-
-Partner Reader is a CSO user with view permissions at the country profile level.
 
 ### Agency User Roles
 
@@ -154,51 +150,55 @@ Super Administrator is an agency user with full administrative permissions throu
 
 HQ Editor is an agency user with permissions to verify profiles of all CSOs on the portal, including the HQ profiles of INGOs.
 
-The HQ editor can review observations that have been marked with a risk flag and escalated, and either mark these with a red risk flag or defer them back to country offices.
+The HQ editor can view all observations. The HQ editor can review those observations  that have been marked with a risk flag and escalated, and either mark these with a red risk flag or defer them back to country offices.
 
 Additionally, this user can assign roles and permissions to users in their organization and manage the content on the knowledge library.
 
 **Administrator**
 
-Administrator is an agency user with permissions to assign roles and permissions to their agency users on the portal.
+Administrator is an agency user with permissions to assign users of their agency  with a role within the administrator’s country.
 
 **Advanced Editor**
 
-Advanced Editor is an agency user with ability to create CFEIs and DSRs including from Unsolicited Concept Notes for their agency.
-
-This user can select a CSO for a partnership opportunity. An advanced editor can also verify and add observations to a CSO’s profile.
-
-An advanced editor may be assigned by the CFEI focal point to be a member of the CFEI review team.
+A UNICEF and WFP user with ability to create and/or publish CFEIs and DSRs including from Unsolicited Concept Notes for their agency. This user can select a CSO for a partnership opportunity. An advanced editor can also verify and add observations to a CSO’s profile within their country of operation. An advanced editor may be assigned by the focal point to be a member of the CFEI review **team**
 
 **Basic Editor**
 
-Basic Editor is an agency user with ability to create CFEIs and DSRs including from Unsolicited Concept Notes for their agency.
+A UNICEF and WFP user with ability to create, but not publish, CFEIs and DSRs including from Unsolicited Concept Notes for their agency. A basic editor may be assigned by the focal point to be a member of the CFEI review team
 
-A basic editor may be assigned by the CFEI focal point to be a member of the CFEI review team
+**MFT User**
 
-**CFEI Focal Point**
+MFT User is a UNHCR user with ability to select a CSO for a partnership opportunity either through the CFEI or DSR process. An MFT user can also add observations to a CSO’s profile. An MFT may be assigned by the CFEI creator to be a member of the CFEI review team.
 
-CFEI Focal Point is an **advanced** or **basic** **editor** with ability to manage the assessment process of a specific CFEI, including the ability to:
+**PAM User**
+
+PAM User is a UNHCR user with ability to create and publish CFEIs for UNHCR. This user can also create, but not publish, a DSR from Unsolicited Concept Notes for UNHCR. A PAM user may be assigned by the CFEI creator to be a member of the CFEI review team
+
+**Focal Point**
+
+In all UN agencies, a focal point for a CFEI or DSR is selected at the time of CFEI/DSR creation. For UNICEF and WFP, this focal point must be an advanced editor \(not a basic editor or reader\). The focal point on a UNICEF or WFP CFEI can manage the entire review process of that CFEI, including the ability to pre-select applications, compose the review team, and view all review scores. The focal point on a UNICEF or WFP DSR has the ability to edit and publish the DSR.
+
+For UNHCR, the focal point must be a MFT user \(not a PAM user or reader\). The focal point on a UNHCR CFEI can view all review scores. The focal point on a UNHCR DSR has the ability to publish the DSR.
+
+Focal Point is an Advanced Editor or MFT user with ability to manage the assessment process of a specific CFEI, including the ability to:
 
 * Pre-select concept notes
-* Nominate the members of the review team
-* View all review scores. 
-
-A creator of a CFEI and anyone indicated as a focal point in the CFEI form has this privilege.
-
-If the CFEI Focal point is an advanced editor, then the user can issue a partnership offer to a CSO.
+* View all review scores.
+* Issue a partnership offer to a CSO.
+* Additionally, advanced editor \(but not MFT user\) has the ability to nominate members of the review panel.
 
 **CFEI Reviewer**
 
-CFEI Reviewer is an Agency user assigned by the **CFEI focal point** to review and score preselected concept notes in a CFEI.
+CFEI Reviewer is an Agency user assigned by the focal point or CFEI creator to review and score preselected concept notes in a CFEI.
 
-This user is restricted from viewing other reviewers’ scores during the time that the assessment of concept notes is in progress.
+The Reviewer is restricted from viewing other reviewers’ scores during the time that the assessment of concept notes is in progress. \(The exception to this restriction is IF the Reviewer is also the Focal Point or the creator, THEN they have the ability to view all scores.\)
 
-This permission is only limited to the CFEIs assigned to the user.
+The permissions are limited to only the CFEIs assigned to the user.
 
 **Reader**
 
-Reader is an agency user with view only permissions on UNPP. This user also has view rights on other agency’s CFEIs and awarded Concept Notes.
+Reader is an agency user with view only permissions on UNPP. This user has view rights on CFEIs from his agency as well as other agencies, but only upon CFEI finalization. At that time, the reader can only see the application “selected” by the UN for that CFEI.  
+
 
 ## Resources
 
