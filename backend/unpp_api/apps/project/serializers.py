@@ -67,6 +67,7 @@ class ApplicationsPartnerStatusSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
+    application_status_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Application
@@ -74,6 +75,7 @@ class ApplicationsPartnerStatusSerializer(serializers.ModelSerializer):
             'legal_name',
             'partner_additional',
             'application_status',
+            'application_status_display',
         )
 
 
@@ -376,6 +378,7 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
     partner_id = serializers.CharField(source="partner.id")
     partner_name = serializers.CharField(source="partner.legal_name")
     partner_is_verified = serializers.NullBooleanField(source="partner.is_verified")
+    application_status_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Application
@@ -385,6 +388,7 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
             'partner_name',
             'partner_is_verified',
             'application_status',
+            'application_status_display',
         )
 
 
@@ -609,6 +613,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
     your_score = serializers.SerializerMethodField()
     your_score_breakdown = serializers.SerializerMethodField()
     review_progress = serializers.SerializerMethodField()
+    application_status_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Application
@@ -623,7 +628,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'your_score',
             'your_score_breakdown',
             'review_progress',
-            'application_status',
+            'application_status_display',
         )
 
     def _get_my_assessment(self, obj):
@@ -738,6 +743,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
     application_date = serializers.CharField(source="created")
+    application_status_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Application
@@ -750,6 +756,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
             'specializations',
             'application_date',
             'application_status',
+            'application_status_display',
         )
 
     def get_country(self, obj):
@@ -770,6 +777,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     partner_name = serializers.CharField(source="partner.legal_name")
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
     selected_source = serializers.CharField(source="eoi.selected_source", allow_null=True)
+    application_status_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Application
@@ -787,6 +795,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             'partner_name',
             'partner_additional',
             'application_status',
+            'application_status_display',
         )
 
     def get_project_title(self, obj):
@@ -1066,6 +1075,7 @@ class SubmittedCNSerializer(serializers.ModelSerializer):
     cn_id = serializers.IntegerField(source='id')
     agency_name = serializers.CharField(source="agency.name")
     specializations = serializers.SerializerMethodField()
+    application_status_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Application
@@ -1077,6 +1087,7 @@ class SubmittedCNSerializer(serializers.ModelSerializer):
             'countries',
             'specializations',
             'application_status',
+            'application_status_display',
             'eoi_id'
         )
 
