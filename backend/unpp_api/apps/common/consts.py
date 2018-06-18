@@ -232,6 +232,14 @@ INTERNAL_FLAG_TYPES = Choices(
 
 FLAG_TYPES = USER_CREATED_FLAG_TYPES + INTERNAL_FLAG_TYPES
 
+FLAG_CATEGORIES = Choices(
+    ('fraud_and_corruption', 'Fraud and corruption'),
+    ('safeguards_violation', 'Violation of protection safeguards'),
+    ('sex_abuse', 'Sexual exploitation and abuse'),
+    ('terrorism_support', 'Terrorism support'),
+    ('other', 'Other'),
+)
+
 SANCTION_LIST_TYPES = Choices(
     ('Ent', 'entity', 'Sanctioned Entity'),
     ('Ind', 'individual', 'Sanctioned Individual'),

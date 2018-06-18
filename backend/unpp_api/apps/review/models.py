@@ -6,7 +6,8 @@ from django.db import models
 
 from model_utils.models import TimeStampedModel
 
-from common.consts import FLAG_TYPES
+from common.consts import FLAG_TYPES, FLAG_CATEGORIES
+from common.fields import FixedTextField
 
 
 class PartnerFlag(TimeStampedModel):
@@ -14,9 +15,8 @@ class PartnerFlag(TimeStampedModel):
     Flags on a Partner
     """
     partner = models.ForeignKey('partner.Partner', related_name="flags")
-    flag_type = models.CharField(
-        max_length=3, choices=FLAG_TYPES, default=FLAG_TYPES.yellow
-    )
+    flag_type = models.CharField(max_length=3, choices=FLAG_TYPES, default=FLAG_TYPES.yellow)
+    category = FixedTextField(choices=FLAG_CATEGORIES, null=True, blank=True)
     is_valid = models.NullBooleanField(default=True)
     submitter = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="given_flags", null=True)
     comment = models.TextField(null=True, blank=True, max_length=5120)
