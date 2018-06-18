@@ -14,6 +14,7 @@ from account.serializers import PartnerMemberSerializer
 from common.permissions import HasUNPPPermission
 from common.pagination import SmallPagination, TinyResultSetPagination
 from common.mixins import PatchOneFieldErrorMixin
+from partner.permissions import PartnerPermission
 from partner.serializers import (
     OrganizationProfileSerializer,
     OrganizationProfileDetailsSerializer,
@@ -169,7 +170,9 @@ class PartnerOtherInfoAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
 class PartnerCountryProfileAPIView(CreateAPIView, RetrieveAPIView):
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CREATE_COUNTRY_OFFICE,
+            ]
         ),
     )
     serializer_class = PartnerCountryProfileSerializer

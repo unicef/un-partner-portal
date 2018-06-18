@@ -10,6 +10,7 @@ from django.conf import settings
 from rest_framework import status
 
 from agency.models import Agency
+from common.headers import CustomHeader
 from partner.models import (
     Partner,
     PartnerProfile,
@@ -22,7 +23,8 @@ from partner.models import (
     PartnerOtherInfo,
     PartnerInternalControl,
     PartnerExperience,
-    PartnerPolicyArea)
+    PartnerPolicyArea,
+)
 from common.models import Point, CommonFile
 from common.tests.base import BaseAPITestCase
 from common.factories import (
@@ -31,31 +33,32 @@ from common.factories import (
     PartnerFactory,
     OtherAgencyFactory,
     PointFactory,
+    PartnerMemberFactory,
 )
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     YEARS_OF_EXP_CHOICES,
     PARTNER_TYPES,
     ORG_AUDIT_CHOICES,
-    AUDIT_ASSESSMENT_CHOICES)
+    AUDIT_ASSESSMENT_CHOICES,
+)
 
 
 class TestPartnerCountryProfileAPIView(BaseAPITestCase):
 
-    quantity = 1
-    initial_factories = [
-        OtherAgencyFactory,
-        AgencyFactory,
-        UserFactory,
-        PartnerFactory,
-    ]
+    user_type = BaseAPITestCase.USER_PARTNER
 
     def test_create_country_profile(self):
-        partner = Partner.objects.first()
+        partner = PartnerFactory(display_type=PARTNER_TYPES.international)
+        PartnerMemberFactory(partner=partner, user=self.user)
+        self.client.set_headers({
+            CustomHeader.PARTNER_ID.value: partner.id
+        })
+
         PartnerPolicyArea.objects.filter(partner=partner).update(document_policies=None)
         url = reverse('partners:country-profile', kwargs={"pk": partner.id})
         response = self.client.get(url, format='json')
-        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertResponseStatusIs(response)
         chosen_country_to_create = list(map(
             lambda x: x['country_code'],
             filter(lambda x: x['exist'] is False, response.data['countries_profile'])

@@ -14,10 +14,11 @@ from common.consts import CFEI_TYPES
 from common.permissions import HasUNPPPermission
 from common.mixins import PartnerIdsMixin
 from common.pagination import MediumPagination, SmallPagination
+from partner.permissions import PartnerPermission
 from project.serializers import ApplicationFullEOISerializer, SubmittedCNSerializer, PendingOffersSerializer, \
     AgencyProjectSerializer
 from project.models import Application, EOI
-from .serializers import AgencyDashboardSerializer, PartnerDashboardSerializer
+from dashboard.serializers import AgencyDashboardSerializer, PartnerDashboardSerializer
 
 
 class DashboardAPIView(RetrieveAPIView):
@@ -29,7 +30,10 @@ class DashboardAPIView(RetrieveAPIView):
         HasUNPPPermission(
             agency_permissions=[
                 AgencyPermission.VIEW_DASHBOARD,
-            ]
+            ],
+            partner_permissions=[
+                PartnerPermission.VIEW_DASHBOARD,
+            ],
         ),
     )
 

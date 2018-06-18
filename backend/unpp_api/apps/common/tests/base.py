@@ -11,16 +11,32 @@ from common.factories import (
 from partner.roles import PartnerRole
 
 
+class CustomTestAPIClient(APIClient):
+
+    headers = {}
+
+    def generic(self, *args, **kwargs):
+        kwargs.update(self.headers)
+        return super(CustomTestAPIClient, self).generic(*args, **kwargs)
+
+    def set_headers(self, kwargs):
+        self.headers.update(kwargs)
+
+    def clean_headers(self):
+        self.headers.clear()
+
+
 class BaseAPITestCase(APITestCase):
     """
     Base class for all api test case with generated fake data.
     """
 
+    client_class = CustomTestAPIClient
+
     USER_AGENCY = 'agency'
     USER_PARTNER = 'partner'
 
     fixtures = [os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'fixtures', 'initial.json'), ]
-    client_class = APIClient
     with_session_login = True
     user_type = USER_PARTNER
 
@@ -66,3 +82,6 @@ class BaseAPITestCase(APITestCase):
 
     def assertResponseStatusIs(self, response, status_code=status.HTTP_200_OK, msg=None):
         return self.assertEqual(response.status_code, status_code, msg=msg or getattr(response, 'data', None))
+
+    def tearDown(self):
+        self.client.clean_headers()
