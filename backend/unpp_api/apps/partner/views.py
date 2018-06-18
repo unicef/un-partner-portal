@@ -108,10 +108,15 @@ class PartnerIdentificationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIVie
     queryset = PartnerProfile.objects.all()
 
 
-class PartnerContactInformationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
+class PartnerContactInformationAPIView(
+    FilterUsersPartnersMixin,
+    VerifyPartnerProfileUpdatePermissionsMixin,
+    PatchOneFieldErrorMixin,
+    RetrieveUpdateAPIView
+):
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[]
         ),
     )
     serializer_class = PartnerContactInformationSerializer
