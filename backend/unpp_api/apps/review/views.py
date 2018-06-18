@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, get_object_or_404, RetrieveAPIView
@@ -84,6 +85,23 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
             if not partner.country_code == self.request.agency_member.office.country.code:
                 raise PermissionDenied
 
+        if not partner.profile_is_complete:
+            raise serializers.ValidationError('You cannot verify partners before they complete their profile.')
+
+        if partner.has_sanction_match:
+            raise serializers.ValidationError(
+                'Partner has a potential UN Security Council Sanctions List match. '
+                'This needs to be resolved before verifying.'
+            )
+
+        if partner.hq:
+            if not partner.hq.is_verified:
+                raise serializers.ValidationError('INGO HQ profile needs to be verified before country office.')
+            if partner.hq.has_red_flag:
+                raise serializers.ValidationError(
+                    "HQ of this INGO has red flags against it's profile. This needs to be resolved before verifying."
+                )
+
         serializer.save(submitter=self.request.user, partner=partner)
 
 
@@ -106,14 +124,15 @@ class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 
     def get_object(self):
         flag = super(PartnerFlagRetrieveUpdateAPIView, self).get_object()
-        if flag.flag_type == FLAG_TYPES.escalated:
-            current_user_has_permission(
-                self.request,
-                agency_permissions=[AgencyPermission.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES],
-                raise_exception=True
-            )
-        elif not flag.submitter == self.request.user:
-            raise PermissionDenied("This flag can only be edited by it's creator")
+        if not self.request.method == 'GET':
+            if flag.flag_type == FLAG_TYPES.escalated:
+                current_user_has_permission(
+                    self.request,
+                    agency_permissions=[AgencyPermission.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES],
+                    raise_exception=True
+                )
+            elif flag.submitter and not flag.submitter == self.request.user:
+                raise PermissionDenied("This flag can only be edited by it's creator")
 
         return flag
 

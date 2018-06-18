@@ -1,26 +1,34 @@
 from django.utils.functional import SimpleLazyObject
 from django.conf import settings
 
-from partner.models import PartnerMember
+from partner.models import Partner
 
 
 # TODO: Remove dev fallbacks, fix tests when it's done
 
 
-def get_partner_object(request):
+def get_partner_and_member_objects(request):
     partner_id = request.META.get('HTTP_PARTNER_ID', None)
     partner = None
     partner_member = None
 
     if request.user.is_authenticated():
-        if partner_id:
-            partner_member = PartnerMember.objects.filter(user=request.user, partner_id=partner_id).first()
+        # HQ profiles ability to log in as any country office complicates code a bit here
+        # since they won't have a corresponding PartnerMember object
+        partner_member = request.user.partner_members.filter(
+            partner_id=partner_id
+        ).first() or request.user.partner_members.filter(
+            partner__children__id=partner_id
+        ).first()
 
-        # TODO: remove when we finish whole logic for http headers (like: HTTP_ACTIVE_PARTNER)
+        if partner_member:
+            partner = Partner.objects.filter(id=partner_id).first()
+
+        # TODO: remove when we finish whole logic for http headers (like: HTTP_PARTNER_ID)
         if not partner_member and settings.IS_DEV:
             partner_member = request.user.partner_members.first()
 
-    if partner_member:
+    if not partner and partner_member:
         partner = partner_member.partner
 
     return partner, partner_member
@@ -31,7 +39,9 @@ class ActivePartnerMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        request.active_partner, request.partner_member = SimpleLazyObject(lambda: get_partner_object(request))
+        request.active_partner, request.partner_member = SimpleLazyObject(lambda: get_partner_and_member_objects(
+            request
+        ))
         response = self.get_response(request)
         return response
 

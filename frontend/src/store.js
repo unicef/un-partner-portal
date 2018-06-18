@@ -66,6 +66,8 @@ import openCfeiDashboardList from './reducers/openCfeiDashboardList';
 import publishCfei from './reducers/publishCfei';
 import sendCfei from './reducers/sendCfei';
 import deleteCfei from './reducers/deleteCfei';
+import deleteUcn from './reducers/deleteUcn';
+import submitUcn from './reducers/submitUcn';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -83,6 +85,8 @@ const mainReducer = combineReducers({
   publishCfei,
   deleteCfei,
   sendCfei,
+  deleteUcn,
+  submitUcn,
   organizationProfileNav,
   partnerApplicationsNav,
   applicationsNotesList,
@@ -197,7 +201,7 @@ export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices'], 'value');
 
 export const selectNormalizedDirectJustification = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['direct-justifications']);
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-justifications'], 'value');
 
 export const selectApplicationStatuses = state => state.partnerProfileConfig['application-statuses'];
 
@@ -281,6 +285,9 @@ export const selectCfeiCriteria = (state, id) =>
 
 export const selectCfeiStatus = (state, id) =>
   cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.data, id);
+
+export const selectCfeiDisplayStatus = (state, id) =>
+  cfeiDetailsSelector.selectCfeiDisplayStatus(state.cfeiDetails.data, id);
 
 export const selectCfeiConverted = (state, id) =>
   cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.data, id);
@@ -368,7 +375,7 @@ export const selectNormalizedDsrFinalizeOptions = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-completed-reason']);
 
 export const selectNormalizedTimePeriods = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-retention']);
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-retention'], 'value');
 
 export const selectPartnerApplicationDetails = (state, cfeiId) =>
   partnerAppDetailsSelector.selectApplication(state.partnerAppDetails, cfeiId);

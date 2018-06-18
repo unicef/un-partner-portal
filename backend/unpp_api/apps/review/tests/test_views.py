@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import mock
+from django.core.management import call_command
 from django.urls import reverse
 
 from rest_framework import status
 
 from agency.roles import AgencyRole
-from common.consts import FLAG_TYPES
+from common.consts import FLAG_TYPES, INTERNAL_FLAG_TYPES, PARTNER_TYPES, SANCTION_LIST_TYPES
 from common.tests.base import BaseAPITestCase
 from common.factories import PartnerSimpleFactory, PartnerFlagFactory, PartnerVerificationFactory, AgencyOfficeFactory
 from partner.models import Partner
 from review.models import PartnerFlag
+from sanctionslist.models import SanctionedItem, SanctionedName
 
 
 class TestPartnerFlagAPITestCase(BaseAPITestCase):
@@ -48,7 +51,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
     def test_patch_flag(self):
         flag = PartnerFlag.objects.filter(is_valid=True).first()
         # Change valid status
-        url = reverse('partner-reviews:flags-detail', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
+        url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
         payload = {
             'is_valid': False
         }
@@ -58,13 +61,45 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
         # Attempt to modify data. Should not change comment
         flag_comment = flag.comment
-        url = reverse('partner-reviews:flags-detail', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
+        url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
         payload = {
             'comment': "%s - Appended" % flag_comment
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['comment'], flag_comment)
+
+    def test_create_invalid_flag(self):
+        partner = Partner.objects.first()
+
+        url = reverse(
+            'partner-reviews:flags', kwargs={"partner_id": partner.id}
+        )
+
+        payload = {
+            "comment": "This is a comment on a flag",
+            "flag_type": 'INVASDASDAD',
+            "contact_email": "test@test.com",
+            "contact_person": "Nancy",
+            "contact_phone": "Smith"
+        }
+
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('flag_type', response.data)
+
+        payload['flag_type'] = INTERNAL_FLAG_TYPES.sanctions_match
+
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('flag_type', response.data)
+
+        payload['flag_type'] = FLAG_TYPES.yellow
+        payload['is_valid'] = None
+
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('is_valid', response.data)
 
 
 class TestPartnerVerificationAPITestCase(BaseAPITestCase):
@@ -78,8 +113,7 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
     def test_verification_create(self):
         partner = Partner.objects.first()
 
-        url = reverse('partner-reviews:verifications',
-                      kwargs={"partner_id": partner.id})
+        url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
 
         payload = {
             "is_mm_consistent": True,
@@ -95,9 +129,112 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
         }
         # Test Verified Status
         response = self.client.post(url, data=payload, format='json')
-        self.assertEquals(response.data['is_verified'], True)
+        self.assertResponseStatusIs(response, status_code=status.HTTP_400_BAD_REQUEST)
 
-        # Test Unverified status
-        payload['is_rep_risk'] = True
-        response = self.client.post(url, data=payload, format='json')
-        self.assertEquals(response.data['is_verified'], False)
+        with mock.patch('partner.models.Partner.profile_is_complete', lambda: True):
+            response = self.client.post(url, data=payload, format='json')
+            self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
+            self.assertEquals(response.data['is_verified'], True)
+
+            # Test Unverified status
+            payload['is_rep_risk'] = True
+            response = self.client.post(url, data=payload, format='json')
+            self.assertEquals(response.data['is_verified'], False)
+
+
+class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
+
+    def setUp(self):
+        super(TestRegisterSanctionedPartnerTestCase, self).setUp()
+        self.client.logout()
+        self.email = "test@myorg.org"
+        self.data = {
+            "partner": {
+                "legal_name": "My org legal name",
+                "country_code": "PL",
+                "display_type": PARTNER_TYPES.international,
+            },
+            "user": {
+                "email": self.email,
+                "password": "Test123!",
+                "fullname": "Leszek Orzeszek",
+            },
+            "partner_profile": {
+                "alias_name": "Name Inc.",
+                "acronym": "N1",
+                "legal_name_change": True,
+                "former_legal_name": "Former Legal Name Inc.",
+            },
+            "partner_head_organization": {
+                "fullname": "Jack Orzeszek",
+                "email": "captain@blackpearl.org",
+            },
+            "partner_member": {
+                "title": "Project Manager",
+            },
+        }
+
+    def test_register_sanctioned_partner(self):
+        item_inst, _ = SanctionedItem.objects.update_or_create(
+            sanctioned_type=SANCTION_LIST_TYPES.entity,
+            data_id=123456,
+        )
+        SanctionedName.objects.get_or_create(item=item_inst, name=self.data['partner']['legal_name'])
+        url = reverse('accounts:registration')
+        response = self.client.post(url, data=self.data, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        partner = Partner.objects.get(id=response.data['partner']['id'])
+        self.assertTrue(partner.has_sanction_match)
+        flag = partner.flags.filter(flag_type=INTERNAL_FLAG_TYPES.sanctions_match).first()
+        self.assertIsNotNone(flag)
+
+        self.client.force_login(self.user)
+        flag_url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
+        flag_response = self.client.get(flag_url)
+        self.assertResponseStatusIs(flag_response)
+
+        payload = {
+            'flag_type': FLAG_TYPES.yellow
+        }
+        response = self.client.patch(flag_url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertNotEqual(response.data['flag_type'], FLAG_TYPES.yellow)
+
+        payload = {
+            'is_valid': False
+        }
+        response = self.client.patch(flag_url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertFalse(response.data['is_valid'])
+        partner.refresh_from_db()
+        self.assertFalse(partner.is_locked)
+        self.assertFalse(partner.has_sanction_match)
+
+        payload = {
+            'is_valid': True
+        }
+        response = self.client.patch(flag_url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertTrue(response.data['is_valid'])
+        partner.refresh_from_db()
+        self.assertTrue(partner.is_locked)
+        self.assertTrue(partner.has_sanction_match)
+
+    def test_matches_dont_duplicate(self):
+        item_inst, _ = SanctionedItem.objects.update_or_create(
+            sanctioned_type=SANCTION_LIST_TYPES.entity,
+            data_id=123456,
+        )
+        SanctionedName.objects.get_or_create(item=item_inst, name=self.data['partner']['legal_name'])
+        url = reverse('accounts:registration')
+        response = self.client.post(url, data=self.data, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        partner = Partner.objects.get(id=response.data['partner']['id'])
+        self.assertTrue(partner.has_sanction_match)
+        partner_sanction_flags = partner.flags.filter(flag_type=INTERNAL_FLAG_TYPES.sanctions_match)
+        flag = partner_sanction_flags.first()
+        self.assertIsNotNone(flag)
+
+        flag_count_before = partner_sanction_flags.count()
+        call_command('sanctions_list_match_scan')
+        self.assertEqual(partner_sanction_flags.count(), flag_count_before)

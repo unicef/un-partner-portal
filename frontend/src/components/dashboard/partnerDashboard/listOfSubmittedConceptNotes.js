@@ -26,7 +26,7 @@ const columns = [
   { name: 'application_status', title: 'Status' },
 ];
 
-const renderCells = ({ row, column }) => {
+const renderCells = ({ row, column, value }) => {
   if (column.name === 'cn_id') {
     return (<ApplicationIDCell type={row.cfei_type} eoiId={`${row.eoi_id}`} cnId={`${row.cn_id}`} />);
   } else if (column.name === 'countries') {
@@ -52,7 +52,7 @@ const renderCells = ({ row, column }) => {
         id={row.id}
       />);
   }
-  return undefined;
+  return <TableCell>{value}</TableCell>;
 };
 
 renderCells.propTypes = {

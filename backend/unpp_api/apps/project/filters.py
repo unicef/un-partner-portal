@@ -7,7 +7,8 @@ import django_filters
 from django_filters.filters import CharFilter, DateFilter, BooleanFilter, ModelMultipleChoiceFilter, ChoiceFilter
 from django_filters.widgets import BooleanWidget, CSVWidget
 
-from common.consts import EXTENDED_APPLICATION_STATUSES, CFEI_STATUSES
+from account.models import User
+from common.consts import EXTENDED_APPLICATION_STATUSES, CFEI_STATUSES, CFEI_TYPES
 from common.models import Specialization
 from .models import EOI, Application
 
@@ -26,7 +27,9 @@ class BaseProjectFilter(django_filters.FilterSet):
     posted_to_date = DateFilter(name='created', lookup_expr='date__lte')
     selected_source = CharFilter(lookup_expr='iexact')
     status = ChoiceFilter(method='filter_status', choices=CFEI_STATUSES)
-    focal_point = CharFilter(method='filter_focal_point')
+    focal_points = ModelMultipleChoiceFilter(
+        widget=CSVWidget(), queryset=User.objects.all()
+    )
 
     class Meta:
         model = EOI
@@ -40,16 +43,11 @@ class BaseProjectFilter(django_filters.FilterSet):
             'selected_source',
             'is_published',
             'status',
-            'focal_point',
+            'focal_points',
         ]
 
     def filter_title(self, queryset, name, value):
         return queryset.filter(title__icontains=value)
-
-    def filter_focal_point(self, queryset, name, value):
-        return queryset.filter(
-            Q(focal_points__email__icontains=value) | Q(focal_points__fullname__icontains=value)
-        )
 
     def filter_country_code(self, queryset, name, value):
         return queryset.filter(locations__admin_level_1__country_code=(value and value.upper()))
@@ -72,28 +70,33 @@ class BaseProjectFilter(django_filters.FilterSet):
     def filter_status(self, queryset, name, value):
         # Logic here should match EOI.status property
         filters = {
-            CFEI_STATUSES.draft: {
-                'is_published': False,
-                'sent_for_publishing': False,
-            },
-            CFEI_STATUSES.sent: {
-                'is_published': False,
-                'sent_for_publishing': True,
-            },
-            CFEI_STATUSES.completed: {
-                'is_completed': True,
-            },
-            CFEI_STATUSES.closed: {
-                'is_completed': False,
-                'deadline_date__lt': date.today(),
-            },
-            CFEI_STATUSES.open: {
-                'is_completed': False,
-                'deadline_date__gte': date.today(),
-            },
+            CFEI_STATUSES.draft: Q(
+                is_published=False,
+                sent_for_publishing=False,
+            ),
+            CFEI_STATUSES.sent: Q(
+                is_published=False,
+                sent_for_publishing=True,
+            ),
+            CFEI_STATUSES.completed: Q(
+                is_completed=True,
+                is_published=True,
+            ),
+            CFEI_STATUSES.closed: Q(
+                is_completed=False,
+                is_published=True,
+                deadline_date__lt=date.today(),
+            ),
+            CFEI_STATUSES.open: Q(
+                is_completed=False,
+                is_published=True,
+            ) & (
+                Q(display_type=CFEI_TYPES.open, deadline_date__gte=date.today()) |
+                Q(display_type=CFEI_TYPES.direct, completed_date=None)
+            ),
         }
 
-        return queryset.filter(**filters.get(value, {}))
+        return queryset.filter(filters.get(value, Q()))
 
 
 class ApplicationsFilter(django_filters.FilterSet):

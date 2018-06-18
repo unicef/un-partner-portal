@@ -11,7 +11,7 @@ import { deleteCfeiRequest } from '../../../../reducers/deleteCfei';
 const messages = {
   title: 'Are you sure you want to cancel this CFEI?',
   info: 'Please confirm that you want to cancel this CFEI?',
-  publish: 'cancel',
+  confrim: 'confirm',
 };
 
 const styleSheet = theme => ({
@@ -23,10 +23,10 @@ const styleSheet = theme => ({
 class CancelCfeiModal extends Component {
   constructor(props) {
     super(props);
-    this.publish = this.publish.bind(this);
+    this.confrim = this.confrim.bind(this);
   }
 
-  publish() {
+  confrim() {
     return this.props.deleteCfei().then(() => {
       history.push(this.props.previousPath);
     });
@@ -46,8 +46,8 @@ class CancelCfeiModal extends Component {
               handleClick: handleDialogClose,
             },
             raised: {
-              handleClick: this.publish,
-              label: messages.publish,
+              handleClick: this.confrim,
+              label: messages.confrim,
             },
           }}
           content={

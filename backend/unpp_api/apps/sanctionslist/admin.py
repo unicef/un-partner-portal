@@ -8,6 +8,7 @@ from .models import SanctionedItem, SanctionedName, SanctionedNameMatch
 
 class SanctionedNameInline(admin.TabularInline):
     model = SanctionedName
+    extra = 1
 
 
 class SanctionedItemAdmin(admin.ModelAdmin):

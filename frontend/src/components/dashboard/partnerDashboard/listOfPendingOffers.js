@@ -24,7 +24,7 @@ const columns = [
   { name: 'specializations', title: 'Sector & Area of Specialization' },
 ];
 
-const renderCells = ({ row, column }) => {
+const renderCells = ({ row, column, value }) => {
   if (column.name === 'cn_id') {
     return (<ApplicationIDCell type={row.cfei_type} eoiId={row.eoi_id} cnId={row.cn_id} />);
   } else if (column.name === 'countries') {
@@ -43,7 +43,7 @@ const renderCells = ({ row, column }) => {
         <EoiSectorCell data={row.specializations} id={row.id} />
       </TableCell>);
   }
-  return undefined;
+  return <TableCell>{value}</TableCell>;
 };
 
 renderCells.propTypes = {

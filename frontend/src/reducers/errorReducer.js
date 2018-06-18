@@ -32,7 +32,7 @@ const initialState = {
 };
 
 export const errorToBeAdded = (error, id, userMessage) => {
-  if (error.response.status === 403) {
+  if (error.response && error.response.status === 403) {
     return ({ type: NEW_ERROR, error, id, userMessage: userMessage + permissionDenied });
   }
 

@@ -14,13 +14,7 @@ from common.consts import (
 from partner.models import (
     Partner,
     PartnerProfile,
-    PartnerMailingAddress,
     PartnerHeadOrganization,
-    PartnerAuditAssessment,
-    PartnerReporting,
-    PartnerMandateMission,
-    PartnerFunding,
-    PartnerOtherInfo,
     PartnerInternalControl,
     PartnerMember,
     PartnerBudget,
@@ -86,20 +80,11 @@ class PartnerRegistrationSerializer(serializers.Serializer):
 
         self.partner = Partner.objects.create(**validated_data['partner'])
 
-        partner_profile = validated_data['partner_profile']
-        partner_profile['partner_id'] = self.partner.id
-        self.partner_profile = PartnerProfile.objects.create(**partner_profile)
+        PartnerProfile.objects.filter(partner=self.partner).update(**validated_data['partner_profile'])
 
         partner_head_org = validated_data['partner_head_organization']
-        partner_head_org['partner_id'] = self.partner.id
-        self.partner_head_organization = PartnerHeadOrganization.objects.create(**partner_head_org)
-
-        PartnerMailingAddress.objects.create(partner=self.partner)
-        PartnerAuditAssessment.objects.create(partner=self.partner)
-        PartnerReporting.objects.create(partner=self.partner)
-        PartnerMandateMission.objects.create(partner=self.partner)
-        PartnerFunding.objects.create(partner=self.partner)
-        PartnerOtherInfo.objects.create(partner=self.partner)
+        partner_head_org['partner_id'] = self.partner.pk
+        PartnerHeadOrganization.objects.create(**partner_head_org)
 
         responsibilities = []
         for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
@@ -125,11 +110,12 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         partner_member['role'] = PartnerRole.ADMIN.name
         self.partner_member = PartnerMember.objects.create(**validated_data['partner_member'])
 
+        self.partner = Partner.objects.get(pk=self.partner.pk)
         return {
             "partner": PartnerSerializer(instance=self.partner).data,
             "user": user_serializer.data,
-            "partner_profile": PartnerProfileSerializer(instance=self.partner_profile).data,
-            "partner_head_organization": PartnerHeadOrganizationRegisterSerializer(self.partner_head_organization).data,
+            "partner_profile": PartnerProfileSerializer(instance=self.partner.profile).data,
+            "partner_head_organization": PartnerHeadOrganizationRegisterSerializer(instance=self.partner.org_head).data,
             "partner_member": PartnerMemberSerializer(instance=self.partner_member).data,
         }
 

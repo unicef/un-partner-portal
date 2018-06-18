@@ -25,10 +25,10 @@ class CurrentPartnerFilteredPKField(serializers.PrimaryKeyRelatedField):
     def get_queryset(self):
         queryset = super(CurrentPartnerFilteredPKField, self).get_queryset()
         request = self.context.get('request')
-        if queryset and request and request.partner_member:
-            query = Q(id=request.partner_member.partner_id)
-            if request.partner_member.partner.is_hq:
-                query |= Q(hq=request.partner_member.partner)
+        if queryset and request and request.active_partner:
+            query = Q(id=request.active_partner.id)
+            if request.active_partner.is_hq:
+                query |= Q(hq=request.active_partner)
             return queryset.filter(query)
 
         return queryset.none()

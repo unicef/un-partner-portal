@@ -11,7 +11,7 @@ import { deleteCfeiRequest } from '../../../../reducers/deleteCfei';
 const messages = {
   title: 'Are you sure you want to cancel this DS/R?',
   info: 'Please confirm that you want to cancel this direct selection/retention?',
-  publish: 'cancel',
+  confirm: 'confirm',
 };
 
 const styleSheet = theme => ({
@@ -23,10 +23,10 @@ const styleSheet = theme => ({
 class CancelDsrModal extends Component {
   constructor(props) {
     super(props);
-    this.publish = this.publish.bind(this);
+    this.confirm = this.confirm.bind(this);
   }
 
-  publish() {
+  confirm() {
     return this.props.deleteCfei().then(() => {
       history.push(this.props.previousPath);
     });
@@ -46,8 +46,8 @@ class CancelDsrModal extends Component {
               handleClick: handleDialogClose,
             },
             raised: {
-              handleClick: this.publish,
-              label: messages.publish,
+              handleClick: this.confirm,
+              label: messages.confirm,
             },
           }}
           content={

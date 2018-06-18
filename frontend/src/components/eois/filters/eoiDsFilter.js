@@ -15,6 +15,7 @@ import CountryField from '../../forms/fields/projectFields/locationField/country
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
 import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedDirectSelectionSource } from '../../../store';
 import resetChanges from './eoiHelper';
+import FocalPoints from '../../forms/fields/projectFields/agencyMembersFields/focalPoints';
 
 const messages = {
   choose: 'Choose',
@@ -26,6 +27,7 @@ const messages = {
     sector: 'Sector & Area of Specialization',
     agency: 'Agency',
     direct: 'DS/R Source',
+    focalPoint: 'Project/Programme Focal Point',
   },
   clear: 'clear',
   submit: 'submit',
@@ -77,9 +79,9 @@ class EoiFilter extends Component {
 
     history.push({
       pathname: pathName,
-      query: R.merge(query,
+      query: R.dissoc('focal_points', R.merge(query,
         { ordering, agency },
-      ),
+      )),
     });
   }
 
@@ -102,7 +104,7 @@ class EoiFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
     // TODO - move order to paginated list wrapper
-    const { title, agency, status, country_code, specializations, selected_source } = values;
+    const { title, agency, status, country_code, specializations, selected_source, focal_points } = values;
 
     const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
     const ordering = status === 'Dra' ? 'created' : '-completed_date';
@@ -118,6 +120,7 @@ class EoiFilter extends Component {
         country_code,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         selected_source,
+        focal_points,
       }),
     });
   }
@@ -126,6 +129,8 @@ class EoiFilter extends Component {
     const query = resetChanges(this.props.pathName, this.props.query);
 
     const { pathName, agencyId } = this.props;
+
+    this._focalPoints.getWrappedInstance().reset();
 
     history.push({
       pathname: pathName,
@@ -206,6 +211,16 @@ class EoiFilter extends Component {
               />
             </Grid>
           </Grid>
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12} >
+              <FocalPoints
+                label={messages.labels.focalPoint}
+                ref={(field) => this._focalPoints = field}
+                fieldName="focal_points"
+                optional
+              />
+            </Grid>
+          </Grid>
           <Grid item className={classes.button}>
             <Button
               color="accent"
@@ -254,6 +269,7 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { status } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
   const { query: { selected_source } = {} } = ownProps.location;
+  const { query: { focal_points } = {} } = ownProps.location;
 
   const agencyQ = Number(agency);
 
@@ -273,6 +289,7 @@ const mapStateToProps = (state, ownProps) => {
       country_code,
       agency: agencyQ,
       status,
+      focal_points,
       specializations: specializationsQ,
       selected_source,
     },

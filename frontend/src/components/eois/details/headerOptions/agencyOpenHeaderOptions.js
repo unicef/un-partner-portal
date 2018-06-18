@@ -95,7 +95,6 @@ class PartnerOpenHeaderOptions extends Component {
         });
     }
 
-    console.log(isPublished, this.isPuslishPermissionAllowed(hasCancelPublishPermission));
     // TODO
     if (isPublished && isCreator) {
       options.push(

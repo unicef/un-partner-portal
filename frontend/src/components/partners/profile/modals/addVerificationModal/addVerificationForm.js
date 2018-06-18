@@ -146,7 +146,7 @@ AddVerification.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   readOnly: PropTypes.bool,
   isYellowFlag: PropTypes.bool,
-  notCertUploaded: PropTypes.array,
+  notCertUploaded: PropTypes.bool,
 };
 
 const selector = formValueSelector('addVerification');

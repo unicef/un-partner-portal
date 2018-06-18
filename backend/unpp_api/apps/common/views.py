@@ -40,6 +40,7 @@ from common.consts import (
     DSR_FINALIZE_RETENTION_CHOICES,
     FLAG_TYPES,
     NOTIFICATION_FREQUENCY_CHOICES,
+    FLAG_CATEGORIES,
 )
 from partner.roles import PartnerRole
 
@@ -65,7 +66,7 @@ class ConfigAdminLevel1ListAPIView(ListAPIView):
 class GeneralConfigAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
-        if self.request.partner_member:
+        if self.request.active_partner:
             choices = dict(PartnerRole.get_choices())
         elif self.request.agency_member:
             choices = dict(AgencyRole.get_choices(self.request.user.agency))
@@ -98,6 +99,7 @@ class GeneralConfigAPIView(APIView):
             "countries-with-optional-location": LOCATION_OPTIONAL_COUNTRIES,
             "user-role-choices": choices,
             "flag-type-choices": FLAG_TYPES,
+            "flag-category-choices": FLAG_CATEGORIES,
             "notification-frequency-choices": NOTIFICATION_FREQUENCY_CHOICES,
         }
         return Response(data, status=statuses.HTTP_200_OK)

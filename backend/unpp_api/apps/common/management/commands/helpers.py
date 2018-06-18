@@ -172,7 +172,9 @@ def generate_fake_data(country_count=3):
             office = AgencyOfficeFactory(country=country_code, agency=agency)
             for role_name, display_name in AgencyRole.get_choices(agency=agency):
                 user = UserFactory(
-                    email=f'agency-{index}-{USERNAME_AGENCY_ROLE_POSTFIXES[role_name]}@{agency.name.lower()}.org'
+                    email=f'agency-{index}-{USERNAME_AGENCY_ROLE_POSTFIXES[role_name]}@{agency.name.lower()}.org',
+                    is_superuser=True,
+                    is_staff=True,
                 )
                 AgencyMemberFactory(user=user, office=office, role=role_name)
 
@@ -180,7 +182,14 @@ def generate_fake_data(country_count=3):
                 EOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user)
                 print(f'Created {user}')
 
-    OtherAgencyFactory.create_batch(1)
+            # Make sure each office has a couple of potential focal points
+            if agency.name == 'UNHCR':
+                focal_point_role = AgencyRole.MFT_USER
+            else:
+                focal_point_role = AgencyRole.EDITOR_ADVANCED
+            AgencyMemberFactory.create_batch(random.randint(5, 10), office=office, role=focal_point_role.name)
+
+    OtherAgencyFactory()
 
     partner_count = 2
     ingo_hqs = [
@@ -206,7 +215,7 @@ def generate_fake_data(country_count=3):
                         name_parts = get_partner_name().split(" ")
                         return f'{"-".join(name_parts)}.{partner_type}'.lower()
 
-                    # Soft unqiue check
+                    # Soft unique check
                     legal_name = get_legal_name()
                     while Partner.objects.filter(legal_name=legal_name).exists():
                         legal_name = get_legal_name()
@@ -243,6 +252,4 @@ def generate_fake_data(country_count=3):
                     print(f'Created {user}')
 
                 if random.randint(1, 2) == 2:
-                    UnsolicitedFactory.create_batch(random.randint(1, 3))
-
-    # TODO: Make sure partner profiles are complete
+                    UnsolicitedFactory.create_batch(random.randint(1, 3), is_published=True)

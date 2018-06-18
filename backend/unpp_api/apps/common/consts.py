@@ -38,7 +38,7 @@ APPLICATION_STATUSES = Choices(
 CFEI_STATUSES = Choices(
     ('Dra', 'draft', 'Draft'),
     ('Sen', 'sent', 'Sent'),
-    ('Ope', 'open', 'Open'),
+    ('Ope', 'open', 'Published'),
     ('Clo', 'closed', 'Closed/Under Review'),
     ('Com', 'completed', 'Completed'),
 )
@@ -178,6 +178,7 @@ JUSTIFICATION_FOR_DIRECT_SELECTION = Choices(
     ('Inn', 'innovative', 'Innovative approach'),
     ('TCC', 'time', 'Time constraints/criticality of response'),
     ('Imp', 'importance', 'Importance of strengthening national civil society engagement'),
+    ('Ret', 'retention', 'Partner retention'),
     ('Oth', 'other', 'Other'),
 )
 
@@ -218,11 +219,25 @@ BUDGET_CHOICES = Choices(
     ('B06', 'more', "More than $1,000,000,000"),
 )
 
-FLAG_TYPES = Choices(
+USER_CREATED_FLAG_TYPES = Choices(
     ('Obs', 'observation', 'Observation'),
     ('Yel', 'yellow', 'Yellow Flag'),
     ('Esc', 'escalated', 'Escalated Flag'),
     ('Red', 'red', 'Red Flag'),
+)
+
+INTERNAL_FLAG_TYPES = Choices(
+    ('San', 'sanctions_match', 'Sanctions List Match'),
+)
+
+FLAG_TYPES = USER_CREATED_FLAG_TYPES + INTERNAL_FLAG_TYPES
+
+FLAG_CATEGORIES = Choices(
+    ('fraud_and_corruption', 'Fraud and corruption'),
+    ('safeguards_violation', 'Violation of protection safeguards'),
+    ('sex_abuse', 'Sexual exploitation and abuse'),
+    ('terrorism_support', 'Terrorism support'),
+    ('other', 'Other'),
 )
 
 SANCTION_LIST_TYPES = Choices(

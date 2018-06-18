@@ -3,9 +3,10 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: static-volume-{{ENV}}
+  name: static-volume-{{NAMESPACE}}
   labels:
     type: local
+  namespace: {{NAMESPACE}}
 spec:
   capacity:
     storage: 4Gi
@@ -13,14 +14,15 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: /data-{{ENV}}
+    path: /data-{{NAMESPACE}}
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: static-volume-claim-{{ENV}}
+  name: static-volume-claim-{{NAMESPACE}}
   labels:
     type: local
+  namespace: {{NAMESPACE}}
 spec:
   storageClassName: standard
   accessModes:
@@ -34,9 +36,10 @@ spec:
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: db-volume-{{ENV}}
+  name: db-volume-{{NAMESPACE}}
   labels:
     type: local
+  namespace: {{NAMESPACE}}
 spec:
   capacity:
     storage: 10Gi
@@ -44,14 +47,15 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: /db-{{ENV}}
+    path: /db-{{NAMESPACE}}
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: db-volume-claim-{{ENV}}
+  name: db-volume-claim-{{NAMESPACE}}
   labels:
     type: local
+  namespace: {{NAMESPACE}}
 spec:
   storageClassName: standard
   accessModes:

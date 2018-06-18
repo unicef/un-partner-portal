@@ -40,7 +40,7 @@ const StepContent = (props) => {
     <div className={className}>
       <Collapse
         in={active}
-        transitionDuration="auto"
+        timeout="auto"
         unmountOnExit
       >
         {children}

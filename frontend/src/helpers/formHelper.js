@@ -223,6 +223,7 @@ export const renderRadioFieldWithChild = ({ input,
   label,
   defaultValue,
   classes,
+  disabled,
   children,
   textfield,
   infoText,
@@ -245,7 +246,6 @@ export const renderRadioFieldWithChild = ({ input,
         {...other}
       >
         {options.map((value, index) => {
-          console.log(value.child);
           if (value.child) {
             return (
               <div>
@@ -254,7 +254,7 @@ export const renderRadioFieldWithChild = ({ input,
                   value={`${value.value}`}
                   control={<RadioHeight />}
                   label={value.label}
-                  disabled={value.disabled}
+                  disabled={value.disabled || disabled}
                 />
                 <div>
                   {value.child}
@@ -266,11 +266,11 @@ export const renderRadioFieldWithChild = ({ input,
               value={`${value.value}`}
               control={<RadioHeight />}
               label={value.label}
-              disabled={value.disabled}
+              disabled={value.disabled || disabled}
             />);
         })}</RadioGroupRow>
     </FormControl>
-    {((touched && error) || warning) &&
+    {(((touched && error) || warning) && !disabled) &&
     <FormHelperText error>{error || warning}</FormHelperText>}
   </div>);
 
@@ -430,6 +430,7 @@ export const renderText = ({
   date,
   meta,
   multiline,
+  inputProps,
   InputProps,
   ...other
 }) => {

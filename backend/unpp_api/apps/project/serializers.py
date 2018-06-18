@@ -15,7 +15,8 @@ from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
 
 from agency.serializers import AgencySerializer, AgencyUserListSerializer
-from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE, DSR_COMPLETED_REASON
+from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE, \
+    DSR_COMPLETED_REASON, COMPLETED_REASON
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
@@ -25,8 +26,7 @@ from common.serializers import (
 )
 from common.models import Point, Specialization
 from notification.consts import NotificationType
-from notification.helpers import user_received_notification_recently, send_notification_application_created, \
-    send_notification_to_cfei_focal_points
+from notification.helpers import user_received_notification_recently, send_notification_to_cfei_focal_points
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
 from project.models import EOI, Application, Assessment, ApplicationFeedback
@@ -67,6 +67,7 @@ class ApplicationsPartnerStatusSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
+    application_status_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Application
@@ -74,6 +75,7 @@ class ApplicationsPartnerStatusSerializer(serializers.ModelSerializer):
             'legal_name',
             'partner_additional',
             'application_status',
+            'application_status_display',
         )
 
 
@@ -133,8 +135,6 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
         exclude = ("cn", "eoi", "agency", "submitter")
 
     def validate_partner(self, partner):
-        if not partner.is_verified:
-            raise ValidationError('Only verified partners are eligible for Direct Selection / Retention.')
         if partner.is_hq:
             raise ValidationError('HQs of International partners are not eligible for Direct Selections / Retention.')
         return partner
@@ -177,6 +177,7 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
     is_direct = serializers.SerializerMethodField()
     cfei_type = serializers.CharField(read_only=True)
     application_status = serializers.CharField(read_only=True)
+    application_status_display = serializers.CharField(read_only=True)
     assessments_is_completed = serializers.NullBooleanField(read_only=True)
 
     class Meta:
@@ -330,13 +331,11 @@ class CreateDirectProjectSerializer(serializers.Serializer):
                 submitter=validated_data['eoi']['created_by'],
                 status=APPLICATION_STATUSES.pending,
                 did_win=True,
-                did_accept=False,
                 ds_justification_select=application_data['ds_justification_select'],
                 justification_reason=application_data['justification_reason'],
                 ds_attachment=application_data.get('ds_attachment'),
             )
             applications.append(application)
-            send_notification_application_created(application)
 
         update_cfei_focal_points(eoi, [f.id for f in focal_points])
         return {
@@ -377,6 +376,8 @@ class CreateProjectSerializer(CreateEOISerializer):
 class SelectedPartnersSerializer(serializers.ModelSerializer):
     partner_id = serializers.CharField(source="partner.id")
     partner_name = serializers.CharField(source="partner.legal_name")
+    partner_is_verified = serializers.NullBooleanField(source="partner.is_verified")
+    application_status_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Application
@@ -384,7 +385,9 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
             'id',
             'partner_id',
             'partner_name',
+            'partner_is_verified',
             'application_status',
+            'application_status_display',
         )
 
 
@@ -530,8 +533,42 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         return eoi.applications.count()
 
     def update(self, instance, validated_data):
-        if instance.completed_reason is None and validated_data.get('completed_reason') is not None and \
-                instance.completed_date is None and instance.is_completed is False:
+        if instance.status == CFEI_STATUSES.closed and not set(validated_data.keys()).issubset(
+            {'reviewers', 'focal_points'}
+        ):
+            raise serializers.ValidationError(
+                "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s)."
+            )
+
+        completed_reason = validated_data.get('completed_reason')
+
+        if completed_reason:
+            if completed_reason == DSR_COMPLETED_REASON.accepted_retention and not validated_data.get(
+                'completed_retention'
+            ):
+                raise serializers.ValidationError({
+                    'completed_retention': 'This field is required'
+                })
+
+            if completed_reason in {
+                COMPLETED_REASON.partners,
+                DSR_COMPLETED_REASON.accepted,
+                DSR_COMPLETED_REASON.accepted_retention,
+            } and not instance.contains_partner_accepted:
+                all_completed_reasons = COMPLETED_REASON + DSR_COMPLETED_REASON
+                raise serializers.ValidationError({
+                    'completed_reason': f"You've selected '{all_completed_reasons[completed_reason]}' as "
+                                        f"finalize resolution, but no partners have accepted."
+                })
+
+        has_just_been_completed = all([
+            instance.completed_reason is None,
+            validated_data.get('completed_reason'),
+            instance.completed_date is None,
+            instance.is_completed is False
+        ])
+
+        if has_just_been_completed:
             instance.completed_date = datetime.now()
             instance.is_completed = True
 
@@ -554,35 +591,14 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         assessments_criteria = data.get('assessments_criteria', [])
         has_weighting = data.get('has_weighting', False)
 
-        if data.get('completed_reason') == DSR_COMPLETED_REASON.accepted_retention and not data.get(
-            'completed_retention'
-        ):
-            raise serializers.ValidationError({
-                'completed_retention': 'This field is required'
-            })
-
         if has_weighting is True and all(map(lambda x: 'weight' in x, assessments_criteria)) is False:
             raise serializers.ValidationError(
-                "Weight criteria must be provided since `has_weighting` is selected.")
+                "Weight criteria must be provided since `has_weighting` is selected."
+            )
         elif has_weighting is False and any(map(lambda x: 'weight' in x, assessments_criteria)) is True:
             raise serializers.ValidationError(
-                "Weight criteria should not be provided since `has_weighting` is unselected.")
-
-        if self.context['request'].method in ['PATCH', 'PUT']:
-            allowed_to_modify = \
-                list(self.instance.focal_points.values_list('id', flat=True)) + [self.instance.created_by_id]
-            if self.context['request'].user.id in allowed_to_modify:
-                pass
-            else:
-                if self.instance.status == CFEI_STATUSES.closed and \
-                        not all(map(lambda x: True if x in ['reviewers', 'focal_points'] else False, data.keys())):
-                    raise serializers.ValidationError(
-                        "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s).")
-                elif self.instance.is_completed:
-                    raise serializers.ValidationError("CFEI is completed. Modify is forbidden.")
-
-                if self.context['request'].user.id not in allowed_to_modify:
-                    raise serializers.ValidationError("Only Focal Point/Creator is allowed to modify a CFEI.")
+                "Weight criteria should not be provided since `has_weighting` is unselected."
+            )
 
         return super(AgencyProjectSerializer, self).validate(data)
 
@@ -596,6 +612,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
     your_score = serializers.SerializerMethodField()
     your_score_breakdown = serializers.SerializerMethodField()
     review_progress = serializers.SerializerMethodField()
+    application_status_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Application
@@ -610,7 +627,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'your_score',
             'your_score_breakdown',
             'review_progress',
-            'application_status',
+            'application_status_display',
         )
 
     def _get_my_assessment(self, obj):
@@ -725,6 +742,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
     application_date = serializers.CharField(source="created")
+    application_status_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Application
@@ -737,6 +755,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
             'specializations',
             'application_date',
             'application_status',
+            'application_status_display',
         )
 
     def get_country(self, obj):
@@ -752,11 +771,12 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
     agency_name = serializers.CharField(source="agency.name")
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
-    submission_date = serializers.CharField(source="created")
+    submission_date = serializers.DateTimeField(source="published_timestamp")
     is_direct = serializers.SerializerMethodField()
     partner_name = serializers.CharField(source="partner.legal_name")
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
     selected_source = serializers.CharField(source="eoi.selected_source", allow_null=True)
+    application_status_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Application
@@ -774,6 +794,7 @@ class ApplicationPartnerUnsolicitedDirectSerializer(serializers.ModelSerializer)
             'partner_name',
             'partner_additional',
             'application_status',
+            'application_status_display',
         )
 
     def get_project_title(self, obj):
@@ -1053,6 +1074,7 @@ class SubmittedCNSerializer(serializers.ModelSerializer):
     cn_id = serializers.IntegerField(source='id')
     agency_name = serializers.CharField(source="agency.name")
     specializations = serializers.SerializerMethodField()
+    application_status_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Application
@@ -1064,6 +1086,7 @@ class SubmittedCNSerializer(serializers.ModelSerializer):
             'countries',
             'specializations',
             'application_status',
+            'application_status_display',
             'eoi_id'
         )
 

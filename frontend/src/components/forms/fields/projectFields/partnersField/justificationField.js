@@ -1,28 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { connect } from 'react-redux';
 import SelectForm from '../../../selectForm';
+import { selectNormalizedDirectJustification } from '../../../../../store';
 
 const messages = {
   label: 'Justification for Direct Selection/Retention',
 };
 
-const values = [
-  { value: 'Kno', label: 'Known expertise' },
-  { value: 'Loc', label: 'Local presence' },
-  { value: 'Inn', label: 'Innovative approach' },
-  { value: 'TCC', label: 'Time constraints/criticality of response' },
-  { value: 'Imp', label: 'Importance of strengthening national civil society engagement' },
-  { value: 'Oth', label: 'Other' },
-];
-
 const JustificationField = (props) => {
-  const { name, disabled, ...other } = props;
+  const { name, disabled, justifications, ...other } = props;
   return (
     <SelectForm
       fieldName={`${name}.ds_justification_select`}
       label={messages.label}
-      values={values}
+      values={justifications}
       multiple
       selectFieldProps={{
         disabled,
@@ -35,6 +27,11 @@ const JustificationField = (props) => {
 JustificationField.propTypes = {
   name: PropTypes.string,
   disabled: PropTypes.bool,
+  justifications: PropTypes.array,
 };
 
-export default JustificationField;
+const mapStateToProps = state => ({
+  justifications: selectNormalizedDirectJustification(state),
+});
+
+export default connect(mapStateToProps)(JustificationField);

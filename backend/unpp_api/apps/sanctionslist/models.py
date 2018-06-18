@@ -10,8 +10,7 @@ from common.consts import SANCTION_LIST_TYPES, SANCTION_MATCH_TYPES
 
 
 class SanctionedItem(TimeStampedModel):
-    sanctioned_type = models.CharField(
-        max_length=3, choices=SANCTION_LIST_TYPES)
+    sanctioned_type = models.CharField(max_length=3, choices=SANCTION_LIST_TYPES)
     is_active = models.BooleanField(default=True)
     data_id = models.IntegerField(db_index=True, unique=True)
     listed_on = models.DateField(null=True, blank=True)
@@ -24,11 +23,13 @@ class SanctionedItem(TimeStampedModel):
 
 class SanctionedName(TimeStampedModel):
     item = models.ForeignKey(SanctionedItem, related_name='check_names')
-    name = models.CharField(max_length=255)
+    name = models.TextField()
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = (('item', 'name'),)
+        unique_together = (
+            ('item', 'name'),
+        )
 
     def __unicode__(self):
         return "Name: {}".format(self.name)
@@ -41,6 +42,11 @@ class SanctionedNameMatch(TimeStampedModel):
     match_type = models.CharField(max_length=3, choices=SANCTION_MATCH_TYPES)
     match_text = models.TextField(null=True, blank=True)
     can_ignore_text = models.TextField(null=True, blank=True)
+
+    class Meta:
+        unique_together = (
+            ('name', 'partner'),
+        )
 
     def __unicode__(self):
         return "Partner:{} Name:{}".format(self.partner, self.name)

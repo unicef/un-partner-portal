@@ -14,7 +14,7 @@ from django.core import mail
 from rest_framework import status
 
 from account.models import User
-from agency.models import AgencyOffice, Agency
+from agency.models import Agency
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
 from notification.consts import NotificationType, NOTIFICATION_DATA
 from partner.roles import PartnerRole
@@ -42,7 +42,8 @@ from common.consts import (
     COMPLETED_REASON,
     CFEI_TYPES,
     CFEI_STATUSES,
-    EXTENDED_APPLICATION_STATUSES)
+    EXTENDED_APPLICATION_STATUSES,
+)
 from project.views import PinProjectAPIView
 from project.serializers import ConvertUnsolicitedSerializer
 
@@ -61,7 +62,7 @@ class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
         url = reverse('projects:pins')
         response = self.client.patch(url, data={"eoi_ids": [1, 2, 3], "pin": True}, format='json')
 
-        self.assertFalse(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status_code=status.HTTP_400_BAD_REQUEST)
         self.assertEquals(response.data['non_field_errors'], PinProjectAPIView.ERROR_MSG_WRONG_EOI_PKS)
         self.assertEquals(Pin.objects.count(), 0)
 
@@ -91,18 +92,18 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
         eoi_ids = EOI.objects.all().values_list('id', flat=True)
         response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": True}, format='json')
 
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         self.assertEquals(Pin.objects.count(), self.quantity)
         self.assertEquals(response.data["eoi_ids"], list(eoi_ids))
 
         # read pins
         response = self.client.get(self.url, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['count'], self.quantity)
 
         # delete pins
         response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": False}, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status_code=status.HTTP_204_NO_CONTENT)
         self.assertEquals(Pin.objects.count(), 0)
 
 
@@ -123,17 +124,17 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
     def test_open_project(self):
         # read open projects
         response = self.client.get(self.url, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['count'], self.quantity)
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_create_patch_project(self):
-        ao = AgencyOffice.objects.first()
+        ao = self.user.agency_members.first().office
         payload = {
             'title': "EOI title",
             'agency': ao.agency.id,
             'focal_points': [
-                AgencyMemberFactory.create_batch(1, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])[0].user.id
+                AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=ao).user.id
             ],
             'locations': [
                 {
@@ -163,16 +164,18 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         }
 
         response = self.client.post(self.url, data=payload, format='json')
-        self.assertTrue(status.is_client_error(response.status_code))
-        self.assertEquals(response.data['assessments_criteria'],
-                          ['The sum of all weight criteria must be equal to 100.'])
+        self.assertResponseStatusIs(response, status_code=status.HTTP_400_BAD_REQUEST)
+        self.assertEquals(
+            response.data['assessments_criteria'],
+            ['The sum of all weight criteria must be equal to 100.']
+        )
 
         payload['assessments_criteria'].extend([
             {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'weight': 20},
             {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 30},
         ])
         response = self.client.post(self.url, data=payload, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
+        self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         eoi = EOI.objects.last()
         self.assertEquals(response.data['title'], payload['title'])
         self.assertEquals(eoi.created_by.id, self.user.id)
@@ -187,7 +190,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             ], many=True).data
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code), msg=response.content)
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['id'], eoi.id)
         self.assertTrue(Partner.objects.first().id in [p['id'] for p in response.data['invited_partners']])
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
@@ -204,7 +207,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             "invited_partners": PartnerShortSerializer([Partner.objects.last()], many=True).data
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['id'], eoi.id)
         self.assertTrue(Partner.objects.last().id in [p['id'] for p in response.data['invited_partners']])
         self.assertTrue(Partner.objects.count(), 1)
@@ -219,11 +222,11 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             "deadline_date": date.today() + timedelta(days=10),
             "notif_results_date": date.today() + timedelta(days=15),
             "focal_points": [
-                AgencyMemberFactory.create_batch(1, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])[0].user.id,
+                AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=ao).user.id,
             ]
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['notif_results_date'], str(date.today() + timedelta(days=15)))
 
         # complete this CFEI
@@ -233,7 +236,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             "completed_reason": COMPLETED_REASON.cancelled,
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.cancelled)
         self.assertTrue(response.data['completed_date'])
         self.assertTrue(response.data['is_completed'])
@@ -256,7 +259,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
     # TODO: This test is not deterministic - randomly fails
     def test_create_direct_project(self):
-        ao = AgencyOffice.objects.first()
+        ao = self.user.agency_members.first().office
         payload = {
             'eoi': {
                 'title': "EOI title",
@@ -295,12 +298,6 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
                 },
             ]
         }
-
-        response = self.client.post(self.url, data=payload, format='json')
-        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
-
-        for partner in Partner.objects.all():
-            PartnerVerificationFactory(partner=partner, submitter=self.user)
 
         response = self.client.post(self.url, data=payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
@@ -441,7 +438,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         PartnerMemberFactory.create_batch(5, partner=app.partner)
         url = reverse('projects:application', kwargs={"pk": app.id})
         response = self.client.get(url, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['id'], Application.objects.first().id)
         self.assertFalse(response.data['did_win'])
         self.assertEquals(response.data['ds_justification_select'], [])
@@ -486,7 +483,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         PartnerVerificationFactory(partner=app.partner, submitter=app.eoi.created_by)
 
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
         call_command('send_daily_notifications')
@@ -501,7 +498,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "did_accept": True,
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_accept'])
         self.assertEquals(response.data['decision_date'], str(date.today()))
         self.client.force_login(app.eoi.created_by)
@@ -523,7 +520,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "did_decline": True,
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertFalse(response.data['did_accept'])
         self.assertTrue(response.data['did_decline'])
 
@@ -542,7 +539,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
         app.assessments.all().delete()
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_win'])
         self.assertTrue(response.data['did_withdraw'])
         self.assertEquals(response.data["withdraw_reason"], reason)
@@ -620,7 +617,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             })
         payload['scores'] = scores
         response = self.client.post(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         self.assertEquals(response.data['date_reviewed'], str(date.today()))
         self.assertEquals(response.data['reviewer'], self.user.id)
         self.assertEquals(len(response.data['scores']), len(payload['scores']))
@@ -713,8 +710,11 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         start_date = date.today()
         end_date = date.today() + timedelta(days=30)
         focal_points = [
-            am.user.id for am in AgencyMemberFactory.create_batch(5, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])
+            am.user.id for am in AgencyMemberFactory.create_batch(
+                5, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0]
+            )
         ]
+
         payload = {
             'ds_justification_select': [JUSTIFICATION_FOR_DIRECT_SELECTION.other],
             'justification': 'Explain justification for creating direct selection',
@@ -741,7 +741,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
 
         # try to convert again
         response = self.client.post(url, data=payload, format='json')
-        self.assertFalse(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status_code=status.HTTP_400_BAD_REQUEST)
         self.assertEquals(response.data['non_field_errors'], [ConvertUnsolicitedSerializer.RESTRICTION_MSG])
 
 
@@ -759,7 +759,7 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
             }
             response = self.client.post(url, data=payload, format='multipart')
 
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         self.assertTrue(response.data['id'] is not None)
         file_id = response.data['id']
 
@@ -778,7 +778,7 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
             'review_summary_attachment': file_id
         }
         response = self.client.patch(url, data=payload)
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['review_summary_comment'], payload['review_summary_comment'])
         self.assertTrue(
             response.data['review_summary_attachment'].find(CommonFile.objects.get(pk=file_id).file_field.url) > 0
@@ -972,7 +972,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         office = self.user.agency_members.first().office
         partners = Partner.objects.all()[:2]
         partner1, partner2 = partners
-        focal_point = AgencyMemberFactory.create_batch(1, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])[0].user
+        focal_point = AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office).user
         direct_selection_payload = {
             "applications": [
                 {
@@ -1019,7 +1019,6 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
                 "agency": office.agency.id,
                 "agency_office": office.id
             }}
-
         url = reverse('projects:direct')
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -1033,7 +1032,19 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
 
         direct_selection_payload['applications'].pop()
         response = self.client.post(url, data=direct_selection_payload, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
+
+        call_command('send_daily_notifications')
+        selection_emails = list(filter(
+            lambda msg: NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'] in msg.body,
+            mail.outbox
+        ))
+        self.assertEqual(len(selection_emails), 0)
+        mail.outbox = []
+
+        partner1_application = partner1.applications.first()
+        publish_url = reverse('projects:eoi-publish', kwargs={'pk': partner1_application.eoi_id})
+        self.assertResponseStatusIs(self.client.post(publish_url))
 
         call_command('send_daily_notifications')
         selection_emails = list(filter(
@@ -1042,19 +1053,14 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         ))
         self.assertEqual(len(selection_emails), User.objects.filter(partner_members__partner=partner1).count())
 
-        mail.outbox = []
-        partner1_application = partner1.applications.first()
-        partner1_application.eoi.is_published = True
-        partner1_application.eoi.save()
         application_url = reverse('projects:application', kwargs={'pk': partner1_application.pk})
-
         accept_payload = {
             "did_accept": True,
             "did_decline": False
         }
 
         update_response = self.client.patch(application_url, data=accept_payload, format='json')
-        self.assertEqual(update_response.status_code, status.HTTP_200_OK)
+        self.assertResponseStatusIs(update_response)
 
         call_command('send_daily_notifications')
         notification_emails = list(filter(
@@ -1136,7 +1142,7 @@ class TestUCNCreateAndPublish(BaseAPITestCase):
         ucn = Application.objects.get(id=response.data['id'])
         self.assertEqual(ucn.application_status, EXTENDED_APPLICATION_STATUSES.draft)
 
-        publish_url = reverse('projects:ucn-publish', kwargs={'pk': ucn.pk})
+        publish_url = reverse('projects:ucn-manage', kwargs={'pk': ucn.pk})
 
         self.set_current_user_role(PartnerRole.READER.name)
         publish_response = self.client.post(publish_url)
