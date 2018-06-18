@@ -56,19 +56,17 @@ EditDirectForm.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
   const cfeiStartDate = cfei.start_date;
-  const cfeifocaldetail = cfei.focal_points_detail[0];
-  const focalPoints = [];
-  focalPoints.push(cfeifocaldetail.id);
-  const focalPointNameArray = [];
-  focalPointNameArray.push(cfeifocaldetail.name);
-  const partner = cfei.direct_selected_partners[0].partner_name;
-  const applications = [];
-  applications.push({
-    partner: Number(cfei.direct_selected_partners[0].partner_id),
-    ds_justification_select: cfei.direct_selected_partners[0].ds_justification_select,
-    justification_reason: cfei.direct_selected_partners[0].justification_reason,
-    ds_attachment: cfei.direct_selected_partners[0].ds_attachmnt,
-  });
+  const focalPoints = cfei.focal_points_detail.map(item => item.id);
+  const focalPointNameArray = cfei.focal_points_detail.map(item => item.name);
+  const partner = String(cfei.direct_selected_partners.map(item => item.partner_name));
+  const applications = cfei.direct_selected_partners.map(item => ({
+    partner: Number(item.partner_id),
+    ds_justification_select: item.ds_justification_select,
+    justification_reason: item.justification_reason,
+    ds_attachment: item.ds_attachment,
+  }));
+  console.log(focalPoints, focalPointNameArray, partner, applications);
+  
   return {
     startDate: cfeiStartDate,
     cfeiDetails: cfei,
