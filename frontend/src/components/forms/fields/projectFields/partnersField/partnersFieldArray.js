@@ -48,7 +48,6 @@ const Partner = (getPartners, readOnly, partnername, ...props) => (member, index
 
 const PartnersFieldArray = (props) => {
   const { getPartners, readOnly, partnername, ...other } = props;
-  console.log('PARTNERNAME IS', partnername);
   return (
     <ArrayForm
       label=""
@@ -77,8 +76,6 @@ export default connect(
       .then(results => mapValuesForSelectionField(results)),
   }),
 )(PartnersFieldArray);
-
-// dodac number id do focal pointa
 
     //  selectorem musze wybrac wszystkie aktualne wartosci z redux forma z formularza
     //  i sprawdzic czy jest number czy string - jesli string, to wywal z payloadu,

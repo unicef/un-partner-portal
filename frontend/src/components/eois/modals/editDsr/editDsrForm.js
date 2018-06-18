@@ -47,12 +47,10 @@ const EditDirectForm = (props) => {
 };
 
 EditDirectForm.propTypes = {
-  /**
-   * callback for form submit
-   */
   handleSubmit: PropTypes.func.isRequired,
   start_date: PropTypes.string,
-  partners: PropTypes.array,
+  partner: PropTypes.string,
+  start_date: PropTypes.string,
   focalPointName: PropTypes.string,
 };
 
@@ -60,9 +58,10 @@ const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
   const startDate = cfei.start_date;
   const cfeifocaldetail = cfei.focal_points_detail[0];
-  const focalPoints = Number(cfeifocaldetail.id);
+  const focalPoints = [];
+  focalPoints.push(cfeifocaldetail.id);
+  console.log('focal points are :: ', focalPoints)
   const focalPointName = cfeifocaldetail.name;
-  console.log('FOCAL POINT NAME IN DSR FORM', focalPointName);
   const partner = cfei.direct_selected_partners[0].partner_name;
   const applications = [];
   applications.push({
@@ -71,14 +70,12 @@ const mapStateToProps = (state, ownProps) => {
     justification_reason: cfei.direct_selected_partners[0].justification_reason,
     ds_attachment: cfei.direct_selected_partners[0].ds_attachmnt,
   });
-  console.log(cfei);
   return {
     start_date: startDate,
     cfeiDetails: cfei,
     partner,
     focalPointName,
     initialValues: {
-      // cfeiDetails: cfei,
       title: cfei.title,
       applications,
       specializations: cfei.specializations,

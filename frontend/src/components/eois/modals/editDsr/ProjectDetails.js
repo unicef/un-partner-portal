@@ -18,8 +18,7 @@ const messages = {
 };
 
 const ProjectDetails = (props) => {
-  const { children, formName, displayPopulation, cfeiDetails, focalPoints } = props;
-  console.log('FOCAL POINTS IN PROJECT DETAILS', focalPoints);
+  const { children, formName, displayPopulation, focalPoints } = props;
   return (
     <GridColumn>
       <Typography type="headline">
@@ -49,13 +48,9 @@ ProjectDetails.propTypes = {
   focalPoints: PropTypes.number,
 };
 
-const mapStateToProps = (state, ownProps) => {
-  const cfeidetails = ownProps.cfeiDetails;
-  return {
-    cfeiDetails: cfeidetails,
-  };
-};
+const mapStateToProps = state => {
 
+};
 
 export default connect(mapStateToProps)(ProjectDetails);
 

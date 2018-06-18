@@ -14,7 +14,7 @@ const AgencyMembersField = (props) => {
       label={label}
       async
       asyncFunction={getMembers}
-      multiple
+      initial
       search={'name'}
       {...other}
     />

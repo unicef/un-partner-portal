@@ -124,7 +124,6 @@ export const FocalPointEdit = props => (<AgencyMembersFieldEdit
 />
 );
 
-
 export const Reviewers = props => (<AgencyMembersField
   label="Select users"
   fieldName="reviewers"

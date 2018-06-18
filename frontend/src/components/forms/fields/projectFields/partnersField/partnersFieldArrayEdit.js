@@ -85,11 +85,8 @@ const partnerArrayForm = reduxForm({
 
 const mapStateToProps = (state, ownProps) => {
   const partner = ownProps.partner;
-  console.log('DS Partner is :: ', partner);
   const partnername = pluck('partner_name', partner);
   const partnerr = partner[0].partner_name;
-  console.log('partnername', partnername);
-  console.log('partner name not in array IS :: ', partnerr);
   const dsJustificationSelect = partner[0].ds_justification_select;
   const justificationReason = partner[0].justification_reason;
   const dsAttachment = partner[0].ds_attachment;

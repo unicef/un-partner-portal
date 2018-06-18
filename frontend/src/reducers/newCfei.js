@@ -95,9 +95,31 @@ export const addDirectCfei = body => (dispatch, getState) => {
       { agency: agencyId, agency_office: officeId },
     ),
   };
-  
+
   const params = history.getCurrentLocation().query;
   return postDirectCfei(finalBody)
+    .then((direct) => {
+      dispatch(loadCfei(PROJECT_TYPES.DIRECT, params));
+      return direct.eoi;
+    });
+};
+
+export const patchDirectCfei = (body, id) => (dispatch, getState) => {
+  dispatch(newCfeiSubmitting());
+  const { agencyId, officeId } = getState().session;
+  const preparedBody = prepareBody(body, getState);
+  const { applications, ...other } = preparedBody;
+  const finalBody = {
+    applications,
+    eoi: R.mergeWith(
+      R.merge,
+      { ...other },
+      { agency: agencyId, agency_office: officeId },
+    ),
+  };
+
+  const params = history.getCurrentLocation().query;
+  return patchCfei(finalBody, id)
     .then((direct) => {
       dispatch(loadCfei(PROJECT_TYPES.DIRECT, params));
       return direct.eoi;

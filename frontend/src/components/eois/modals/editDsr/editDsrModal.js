@@ -8,7 +8,7 @@ import ControlledModal from '../../../common/modals/controlledModal';
 import OpenForm from '../newCfei/openForm';
 import EditDsrForm from './editDsrForm';
 import UnsolicitedForm from '../newCfei/unsolicitedForm';
-import { addDirectCfei, addOpenCfei, addUnsolicitedCN } from '../../../../reducers/newCfei';
+import { addDirectCfei, addOpenCfei, addUnsolicitedCN, patchDirectCfei } from '../../../../reducers/newCfei';
 import CallPartnersModal from '../callPartners/callPartnersModal';
 import { PROJECT_TYPES } from '../../../../helpers/constants';
 import { errorToBeAdded } from '../../../../reducers/errorReducer';
@@ -120,27 +120,29 @@ class EditDsrModal extends Component {
   }
 
   handleSubmit(values) {
-    // return this.props.postCfei(values).then(
-    //   (cfei) => {
-    //     this.setState({ id: cfei && cfei.id });
-    //     this.props.onDialogClose();
+    return this.props.postCfei(values).then(
+      (cfei) => {
+        this.setState({ id: cfei && cfei.id });
+        this.props.onDialogClose();
 
-    //     if (this.props.type !== PROJECT_TYPES.OPEN) {
-    //       history.push(`/cfei/${this.props.type}/${cfei.id}/overview`);
-    //     }
-    //   }).catch((error) => {
-    //   this.props.postError(error, getErrorMessage(this.props.type));
-    //   throw new SubmissionError({
-    //     ...error.response.data,
-    //     _error: getErrorMessage(this.props.type),
-    //   });
-    // });
+        if (this.props.type !== PROJECT_TYPES.OPEN) {
+          history.push(`/cfei/${this.props.type}/${cfei.id}/overview`);
+        }
+      }).catch((error) => {
+      this.props.postError(error, getErrorMessage(this.props.type));
+      throw new SubmissionError({
+        ...error.response.data,
+        _error: getErrorMessage(this.props.type),
+      });
+    });
+
+    // console.log('VALUES ::', values);
     
     //  selectorem musze wybrac wszystkie aktualne wartosci z redux forma z formularza
     //  i sprawdzic czy jest number czy string - jesli string, to wywal z payloadu,
     //  jak number, to leci dalej w payloadzie
   }
-  
+
   handleDialogSubmit() {
     this.props.submit();
   }
@@ -171,7 +173,7 @@ class EditDsrModal extends Component {
               disabled: this.state.disabled,
             },
           }}
-          content={<EditDsrForm id={id} />}
+          content={<EditDsrForm id={id} onSubmit={this.handleSubmit} />}
         />
       </Grid>
     );
@@ -194,8 +196,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  postCfei: values => dispatch(getPostMethod(ownProps.type)(values)),
-  submit: () => dispatch(submit(getFormName(ownProps.type))),
+  postCfei: values => dispatch(patchDirectCfei(values, ownProps.id)),
+  submit: () => dispatch(submit('editDsr')),
   postError: (error, message) => dispatch(errorToBeAdded(error, `newProject${ownProps.type}`, message)),
 });
 

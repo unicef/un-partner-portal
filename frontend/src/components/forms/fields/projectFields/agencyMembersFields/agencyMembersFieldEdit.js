@@ -8,7 +8,7 @@ import { loadAgencyMembersForAutoComplete } from '../../../../../reducers/agency
 // TODO: new version that supports autocomplete but can't be used right now
 const AgencyMembersFieldEdit = (props) => {
   const { members, fieldName, label, getMembers, initial, ...other } = props;
-  console.log('THE SHIP HAS ARRIVED', initial);
+
   return (
     <AutocompleteForm
       fieldName={fieldName}
