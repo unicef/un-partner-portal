@@ -70,7 +70,10 @@ export const loginSuccess = session => ({ type: LOGIN_SUCCESS, session });
 export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
 
 export const loadUserData = () => (dispatch, getState) => {
-  const token = getState().session.token;
+  const { session } = getState();
+  const token = session.token;
+  const partnerId = session.partnerId;
+
   if (!token) {
     history.push('/login');
     return Promise.resolve();
@@ -107,7 +110,10 @@ export const loadUserData = () => (dispatch, getState) => {
       }
       // partner specific fields
       if (role === ROLES.PARTNER) {
-        const mainPartner = R.head(response.partners);
+        const mainPartner = R.defaultTo(
+          R.head(response.partners),
+          R.find(R.propEq('id', partnerId), response.partners),
+        );
 
         const partnerObject = {
           partners: response.partners,
