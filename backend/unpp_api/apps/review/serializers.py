@@ -18,6 +18,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
     attachment = CommonFileSerializer(required=False)
     is_valid = serializers.BooleanField(required=False)
     flag_type_display = serializers.CharField(source='get_flag_type_display', read_only=True)
+    category_display = serializers.CharField(source='get_category_display', read_only=True)
     sanctions_match = SanctionedNameMatchSerializer(read_only=True)
 
     class Meta:
