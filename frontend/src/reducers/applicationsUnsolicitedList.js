@@ -27,7 +27,7 @@ const initialState = {
     { name: 'country', title: 'Country' },
     { name: 'specializations', title: 'Sector' },
     { name: 'submission_date', title: 'Submission Date' },
-    { name: 'is_direct', title: 'Chosen for direct selection' },
+    { name: 'is_direct', title: 'Chosen for direct selection/retention' },
   ],
   loading: false,
   items: [],

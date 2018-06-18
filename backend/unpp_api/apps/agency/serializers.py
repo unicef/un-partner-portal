@@ -63,17 +63,13 @@ class AgencyMemberFullSerializer(AgencyMemberSerializer):
         )
 
     def get_permissions(self, agency_member):
-        return [
-            p.name for p in agency_member.user_permissions
-        ]
+        return [p.name for p in agency_member.user_permissions]
 
 
-class AgencyUserListSerializer(serializers.ModelSerializer):
+class AgencyUserBasicSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(source='fullname', read_only=True)
-    first_name = serializers.CharField(write_only=True)
-    last_name = serializers.CharField(write_only=True)
-    office_memberships = AgencyMemberSerializer(many=True, source='agency_members', allow_empty=False)
+    agency_name = serializers.CharField(source='agency.name', read_only=True)
 
     class Meta:
         model = User
@@ -81,11 +77,19 @@ class AgencyUserListSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'is_active',
-            'first_name',
-            'last_name',
             'name',
             'email',
             'status',
+            'agency_name',
+        )
+
+
+class AgencyUserListSerializer(AgencyUserBasicSerializer):
+
+    office_memberships = AgencyMemberSerializer(many=True, source='agency_members', allow_empty=False)
+
+    class Meta(AgencyUserBasicSerializer.Meta):
+        fields = AgencyUserBasicSerializer.Meta.fields + (
             'office_memberships',
         )
 

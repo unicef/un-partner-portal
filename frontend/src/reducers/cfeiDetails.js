@@ -103,6 +103,8 @@ const saveUCN = (state, action) => {
     agency: R.path(['agency', 'name'], ucn),
     cn: ucn.cn,
     eoiConverted: ucn.eoi_converted,
+    status: ucn.application_status,
+    displayStatus: ucn.application_status_display,
   };
   return R.assoc(ucn.id, normalizeSingleCfei(newUCN), state);
 };
@@ -122,19 +124,39 @@ export function selectCfeiStatus(state, id) {
   return status;
 }
 
+export function selectCfeiDisplayStatus(state, id) {
+  const { [id]: { displayStatus = null } = {} } = state;
+  return displayStatus;
+}
+
 export function selectCfeiConverted(state, id) {
   const { [id]: { eoiConverted = null } = {} } = state;
   return eoiConverted;
 }
 
-export function selectCfeiJustification(state, id) {
+export function selectCfeiCompletedReason(state, id) {
   const { [id]: { completed_reason = null } = {} } = state;
   return completed_reason;
+}
+
+export function selectCfeiCompletedReasonDisplay(state, id) {
+  const { [id]: { completed_reason_display = null } = {} } = state;
+  return completed_reason_display;
 }
 
 export function isCfeiCompleted(state, id) {
   const { [id]: { completed_reason = null } = {} } = state;
   return !!completed_reason;
+}
+
+export function isDeadlinePassed(state, id) {
+  const { [id]: { deadline_passed = null } = {} } = state;
+  return deadline_passed;
+}
+
+export function isCfeiPublished(state, id) {
+  const { [id]: { is_published = null } = {} } = state;
+  return is_published;
 }
 
 export function isCfeiPinned(state, id) {

@@ -37,7 +37,7 @@ const LastProfileUpdate = (props) => {
               className={classes.date}
               type="headline"
             >
-              {formatDateForPrint(date)}
+              {formatDateForPrint(date) || ''}
             </Typography>
             <Button component={Link} to="/profile/" color="accent">{messages.button}</Button>
           </GridColumn>

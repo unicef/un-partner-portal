@@ -34,23 +34,23 @@ class UserViewSet(CreateAPIView, ListAPIView, UpdateAPIView):
     def filter_class(self):
         if self.request.agency_member:
             return AgencyUserFilter
-        elif self.request.partner_member:
+        elif self.request.active_partner:
             return PartnerUserFilter
 
     def get_serializer_class(self):
         if self.request.agency_member:
             return AgencyUserManagementSerializer
-        elif self.request.partner_member:
+        elif self.request.active_partner:
             return PartnerUserManagementSerializer
 
     def get_queryset(self):
         queryset = User.objects.none()
         if self.request.agency_member:
             queryset = User.objects.filter(agency_members__office__agency=self.request.user.agency).distinct('id')
-        elif self.request.partner_member:
-            query = Q(partner_members__partner=self.request.partner_member.partner)
-            if self.request.partner_member.partner.is_hq:
-                query |= Q(partner_members__partner__hq=self.request.partner_member.partner)
+        elif self.request.active_partner:
+            query = Q(partner_members__partner=self.request.active_partner)
+            if self.request.active_partner.is_hq:
+                query |= Q(partner_members__partner__hq=self.request.active_partner)
 
             queryset = User.objects.filter(query).distinct('id')
 
@@ -78,10 +78,10 @@ class OfficeListView(ListAPIView):
                 # Only HQ_EDITOR users can assign users freely between all offices
                 queryset = queryset.filter(agency_members__user=self.request.user)
             return queryset
-        elif self.request.partner_member:
-            query = Q(id=self.request.partner_member.partner_id)
-            if self.request.partner_member.partner.is_hq:
-                query |= Q(hq=self.request.partner_member.partner)
+        elif self.request.active_partner:
+            query = Q(id=self.request.active_partner.id)
+            if self.request.active_partner.is_hq:
+                query |= Q(hq=self.request.active_partner)
 
             return Partner.objects.filter(query)
         return Partner.objects.none()

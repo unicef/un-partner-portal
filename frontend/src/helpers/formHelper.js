@@ -29,6 +29,7 @@ import {
   handleClear,
 } from '../components/forms//autocompleteHelpers/autocompleteFunctions';
 import { RenderMultipleSelections, RenderPlaceholder } from '../components/forms/selectHelpers/selectRenderers';
+import TextFieldForm from '../components/forms/textFieldForm';
 
 export const fileNameFromUrl = (url) => {
   if (url) {
@@ -126,6 +127,7 @@ export const renderSelectField = ({
   label,
   values,
   placeholder,
+  formControlStyle,
   infoText,
   ...other
 }) => {
@@ -135,7 +137,7 @@ export const renderSelectField = ({
   } else {
     valueForSelect = input.value || defaultValue || 'placeholder_none';
   }
-  return (<FormControl fullWidth error={(touched && error) || warning}>
+  return (<FormControl fullWidth style={formControlStyle} error={(touched && error) || warning}>
     <FieldLabelWithTooltipIcon
       infoText={infoText}
       tooltipIconProps={{
@@ -217,6 +219,61 @@ export const renderRadioField = ({ input,
     <FormHelperText error>{error || warning}</FormHelperText>}
   </div>);
 
+export const renderRadioFieldWithChild = ({ input,
+  label,
+  defaultValue,
+  classes,
+  disabled,
+  children,
+  textfield,
+  infoText,
+  meta: { touched, error, warning },
+  options, ...other
+}) => (
+  <div>
+    <FormControl fullWidth>
+      <FieldLabelWithTooltipIcon
+        infoText={infoText}
+        tooltipIconProps={{
+          name: input.name,
+        }}
+      >
+        {label}
+      </FieldLabelWithTooltipIcon>
+      <RadioGroupRow
+        selectedValue={!R.isEmpty(input.value) ? transformBool(input.value) : defaultValue}
+        onChange={(event, value) => { input.onChange(transformBool(value)); }}
+        {...other}
+      >
+        {options.map((value, index) => {
+          if (value.child) {
+            return (
+              <div>
+                <FormControlLabel
+                  key={index}
+                  value={`${value.value}`}
+                  control={<RadioHeight />}
+                  label={value.label}
+                  disabled={value.disabled || disabled}
+                />
+                <div>
+                  {value.child}
+                </div>
+              </div>);
+          } return (
+            <FormControlLabel
+              key={index}
+              value={`${value.value}`}
+              control={<RadioHeight />}
+              label={value.label}
+              disabled={value.disabled || disabled}
+            />);
+        })}</RadioGroupRow>
+    </FormControl>
+    {(((touched && error) || warning) && !disabled) &&
+    <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>);
+
 export const renderCheckbox = ({
   name,
   disabled,
@@ -275,8 +332,9 @@ export const renderTextField = ({
   input,
   label,
   infoText,
+  formControlStyle,
   ...other
-}) => (<FormControl fullWidth>
+}) => (<FormControl fullWidth style={formControlStyle}>
   <FieldLabelWithTooltipIcon
     infoText={infoText}
     tooltipIconProps={{
@@ -295,7 +353,7 @@ export const renderTextField = ({
   />
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
     {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
-      {/* {other.InputProps.inputProps && other.InputProps.inputProps.maxLength &&
+    {/* {other.InputProps.inputProps && other.InputProps.inputProps.maxLength &&
       <FormHelperText style={{ marginLeft: 'auto' }}>
       {input.value.length}/{other.InputProps.inputProps.maxLength}
       </FormHelperText>} */}
@@ -372,6 +430,7 @@ export const renderText = ({
   date,
   meta,
   multiline,
+  inputProps,
   InputProps,
   ...other
 }) => {

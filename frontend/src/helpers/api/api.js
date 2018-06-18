@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment-timezone';
 import store from '../../store';
 
 const host = '/api';
@@ -27,6 +28,7 @@ function buildHeaders(authorize = false, extraHeaders = {}) {
   let headers = {
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
+    'Client-Timezone-Name': moment.tz.guess(),
   };
   if (authorize) headers = { ...headers, Authorization: `token ${token}` };
   if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };
@@ -157,8 +159,24 @@ export function patchCfei(body, id) {
   return authorizedPatch({ uri: `/projects/${id}/`, body });
 }
 
-export function publishDsr(id) {
+export function publishCfei(id) {
   return authorizedPost({ uri: `/projects/${id}/publish/` });
+}
+
+export function submitUcn(id) {
+  return authorizedPost({ uri: `/projects/applications/unsolicited/${id}/manage/` });
+}
+
+export function deleteUcn(id) {
+  return authorizedDelete({ uri: `/projects/applications/unsolicited/${id}/manage/` });
+}
+
+export function deleteCfei(id) {
+  return authorizedDelete({ uri: `/projects/${id}/` });
+}
+
+export function sendCfei(id) {
+  return authorizedPost({ uri: `/projects/${id}/send-to-publish/` });
 }
 
 export function convertCnToDirectSelection(body, id) {

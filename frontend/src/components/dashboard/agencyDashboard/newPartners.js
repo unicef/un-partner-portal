@@ -56,7 +56,9 @@ const NewPartners = (props) => {
           </div>
           <Grid container justify="flex-end">
             <Grid item>
-              <Typography className={classes.number} type="display2">{number}</Typography>
+              {typeof number !== 'undefined' && (
+                <Typography className={classes.number} type="display2">{number}</Typography>
+              )}
             </Grid>
           </Grid>
         </GridRow>

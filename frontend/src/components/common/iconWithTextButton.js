@@ -12,7 +12,7 @@ const styleSheet = () => ({
     height: '100%',
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'baseline',
+    justifyContent: 'flex-start',
     backgroundColor: 'transparent',
     color: 'inherit',
   },

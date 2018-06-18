@@ -30,14 +30,20 @@ class HasUNPPPermission(CustomizablePermission):
         return False
 
 
-def check_current_user_has_permission(request, agency_permissions=None, partner_permissions=None):
+def current_user_has_permission(
+        request, agency_permissions=None, partner_permissions=None, raise_exception=False
+):
     if agency_permissions is not None and request.agency_member:
         if set(agency_permissions).issubset(request.agency_member.user_permissions):
-            return
+            return True
     elif partner_permissions is not None and request.partner_member:
         if set(partner_permissions).issubset(request.partner_member.user_permissions):
-            return
-    raise PermissionDenied()
+            return True
+    if raise_exception:
+        permissions_display = list(map(lambda p: p.name, agency_permissions or partner_permissions))
+        raise PermissionDenied(f'You do not have permission to {permissions_display}')
+    else:
+        return False
 
 
 # class method decorator
@@ -45,8 +51,11 @@ def check_unpp_permission(agency_permissions=None, partner_permissions=None):
     def has_unpp_permission_method_decorator(class_method):
 
         def has_unpp_permission_inner(self, *args, **kwargs):
-            check_current_user_has_permission(
-                self.request, agency_permissions=agency_permissions, partner_permissions=partner_permissions
+            current_user_has_permission(
+                self.request,
+                agency_permissions=agency_permissions,
+                partner_permissions=partner_permissions,
+                raise_exception=True,
             )
             return class_method(self, *args, **kwargs)
 

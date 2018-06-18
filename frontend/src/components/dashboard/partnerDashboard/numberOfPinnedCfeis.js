@@ -28,6 +28,7 @@ const styleSheet = theme => ({
 
 const NumberOfPinnedCfeis = (props) => {
   const { number, classes } = props;
+
   return (
     <Paper className={classes.paper}>
       <PaddedContent>
@@ -37,7 +38,9 @@ const NumberOfPinnedCfeis = (props) => {
             <CaptionTypography>{messages.caption}</CaptionTypography>
           </div>
           <GridColumn alignItems="flex-end">
-            <Typography className={classes.number} type="display2">{number}</Typography>
+            {typeof number === 'number' && (
+              <Typography className={classes.number} type="display2">{number}</Typography>
+            )}
             <Button component={Link} to="/cfei/pinned/" color="accent">{messages.button}</Button>
           </GridColumn>
         </GridRow>

@@ -32,6 +32,7 @@ const messages = {
   title: 'Project Details',
   labels: {
     id: 'CFEI ID:',
+    dsrId: 'DSR ID:',
     issued: 'Issued by',
     goal: 'Expected Results',
     agency: 'Agency',
@@ -118,7 +119,7 @@ const title = type => () => (
     <Typography type="headline" >{messages.title}</Typography>
     {type !== PROJECT_TYPES.UNSOLICITED && <TextField
       fieldName="id"
-      label={messages.labels.id}
+      label={(type === PROJECT_TYPES.OPEN || type === PROJECT_TYPES.PINNED) ? messages.labels.id : messages.labels.dsrId}
       readOnly
     />}
   </SpreadContent>

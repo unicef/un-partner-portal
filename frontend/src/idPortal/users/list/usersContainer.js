@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
+import { TableCell } from 'material-ui/Table';
 import { withRouter } from 'react-router';
 import MainContentWrapper from '../../../components/common/mainContentWrapper';
 import HeaderNavigation from '../../../components/common/headerNavigation';
@@ -14,7 +15,7 @@ import NewUserModalButton from './../newUser/newUserModalButton';
 import UserDetailsExpand from './userDetailsExpand';
 import UserStatusCell from './userStatusCell';
 
-const tableCells = ({ row, column, hovered }) => {
+const tableCells = ({ row, column, hovered, value }) => {
   if (column.name === 'status') {
     return (<UserStatusCell
       id={row.id}
@@ -24,7 +25,7 @@ const tableCells = ({ row, column, hovered }) => {
     />);
   }
 
-  return undefined;
+  return <TableCell>{value}</TableCell>;
 };
 
 class UsersContainer extends Component {

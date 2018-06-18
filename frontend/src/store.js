@@ -63,7 +63,11 @@ import error, * as errorSelector from './reducers/errorReducer';
 import routesHistory from './reducers/routesHistory';
 import applicationComparisonReport from './reducers/applicationsComparisonReport';
 import openCfeiDashboardList from './reducers/openCfeiDashboardList';
-
+import publishCfei from './reducers/publishCfei';
+import sendCfei from './reducers/sendCfei';
+import deleteCfei from './reducers/deleteCfei';
+import deleteUcn from './reducers/deleteUcn';
+import submitUcn from './reducers/submitUcn';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -78,6 +82,11 @@ const mainReducer = combineReducers({
   cfeiDetails,
   cfeiDetailsNav,
   newCfei,
+  publishCfei,
+  deleteCfei,
+  sendCfei,
+  deleteUcn,
+  submitUcn,
   organizationProfileNav,
   partnerApplicationsNav,
   applicationsNotesList,
@@ -192,7 +201,7 @@ export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices'], 'value');
 
 export const selectNormalizedDirectJustification = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['direct-justifications']);
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-justifications'], 'value');
 
 export const selectApplicationStatuses = state => state.partnerProfileConfig['application-statuses'];
 
@@ -277,14 +286,26 @@ export const selectCfeiCriteria = (state, id) =>
 export const selectCfeiStatus = (state, id) =>
   cfeiDetailsSelector.selectCfeiStatus(state.cfeiDetails.data, id);
 
+export const selectCfeiDisplayStatus = (state, id) =>
+  cfeiDetailsSelector.selectCfeiDisplayStatus(state.cfeiDetails.data, id);
+
 export const selectCfeiConverted = (state, id) =>
   cfeiDetailsSelector.selectCfeiConverted(state.cfeiDetails.data, id);
 
-export const selectCfeiJustification = (state, id) =>
-  cfeiDetailsSelector.selectCfeiJustification(state.cfeiDetails.data, id);
+export const selectCfeiCompletedReason = (state, id) =>
+  cfeiDetailsSelector.selectCfeiCompletedReason(state.cfeiDetails.data, id);
+
+export const selectCfeiCompletedReasonDisplay = (state, id) =>
+  cfeiDetailsSelector.selectCfeiCompletedReasonDisplay(state.cfeiDetails.data, id);
 
 export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.data, id);
+
+export const isDeadlinePassed = (state, id) =>
+  cfeiDetailsSelector.isDeadlinePassed(state.cfeiDetails.data, id);
+
+export const isCfeiPublished = (state, id) =>
+  cfeiDetailsSelector.isCfeiPublished(state.cfeiDetails.data, id);
 
 export const isCfeiPinned = (state, id) =>
   cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.data, id);
@@ -349,6 +370,12 @@ export const isUserAFocalPoint = (state, cfeiId) => cfeiDetailsSelector.isUserAF
 
 export const selectNormalizedCompletionReasons = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['completed-reason']);
+
+export const selectNormalizedDsrFinalizeOptions = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-completed-reason']);
+
+export const selectNormalizedTimePeriods = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-retention'], 'value');
 
 export const selectPartnerApplicationDetails = (state, cfeiId) =>
   partnerAppDetailsSelector.selectApplication(state.partnerAppDetails, cfeiId);

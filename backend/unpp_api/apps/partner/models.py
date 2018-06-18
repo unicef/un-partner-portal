@@ -7,10 +7,13 @@ from datetime import date
 import os
 import logging
 
+from cached_property import threaded_cached_property
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator
+from django.db.models.signals import post_save
 from model_utils.models import TimeStampedModel
 
 from account.models import User
@@ -45,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 class Partner(TimeStampedModel):
     legal_name = models.CharField(max_length=255)
-    display_type = models.CharField(max_length=3, choices=PARTNER_TYPES)
+    display_type = models.CharField(max_length=3, choices=PARTNER_TYPES, verbose_name='Organization Type')
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children')
     country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
     is_active = models.BooleanField(default=True)
@@ -100,11 +103,11 @@ class Partner(TimeStampedModel):
 
     @property
     def has_yellow_flag(self):
-        return self.flags.filter(flag_type=FLAG_TYPES.yellow).exists()
+        return self.flags.filter(flag_type=FLAG_TYPES.yellow, is_valid=True).exists()
 
     @property
     def has_red_flag(self):
-        return self.flags.filter(flag_type=FLAG_TYPES.red).exists()
+        return self.flags.filter(flag_type=FLAG_TYPES.red, is_valid=True).exists()
 
     def get_users(self):
         return User.objects.filter(partner_members__partner=self)
@@ -119,6 +122,10 @@ class Partner(TimeStampedModel):
     @property
     def has_sanction_match(self):
         return self.sanction_matches.filter(can_ignore=False).exists()
+
+    @property
+    def has_potential_sanction_match(self):
+        return self.flags.filter(flag_type=FLAG_TYPES.sanctions_match, is_valid=None).count()
 
     @property
     def flagging_status(self):
@@ -139,6 +146,8 @@ class Partner(TimeStampedModel):
             self.profile.project_implementation_is_complete,
             self.profile.other_info_is_complete,
         ])
+
+    profile_is_complete = has_finished
 
     @property
     def last_update_timestamp(self):
@@ -186,9 +195,11 @@ class PartnerProfile(TimeStampedModel):
     working_languages_other = models.CharField(max_length=100, null=True, blank=True)
     # authorised_officials
     have_board_directors = models.NullBooleanField(
-        verbose_name="Does your organization have a board of directors?")
+        verbose_name="Does your organization have a board of directors?"
+    )
     have_authorised_officers = models.NullBooleanField(
-        verbose_name="Does your organization have a authorised officers?")
+        verbose_name="Does your organization have a authorised officers?"
+    )
 
     # Registration of organization
     year_establishment = models.PositiveSmallIntegerField(
@@ -290,14 +301,14 @@ class PartnerProfile(TimeStampedModel):
     @property
     def contact_is_complete(self):
         required_fields = {
-            'sreet_or_pobox': self.partner.mailing_address.street or self.partner.mailing_address.po_box,
+            'address': self.partner.mailing_address.street or self.partner.mailing_address.po_box,
             'city': self.partner.mailing_address.city,
             'country': self.partner.mailing_address.country,
             'telephone': self.partner.mailing_address.telephone,
             'have_board_directors': self.have_board_directors is not None,
             'have_authorised_officers': self.have_authorised_officers is not None,
             'connectivity': self.connectivity is not None,
-            'connectivity_exuse': self.connectivity_excuse if self.connectivity is False else True,
+            'connectivity_excuse': self.connectivity_excuse if self.connectivity is False else True,
             'working_languages': len(self.working_languages) > 0,
         }
 
@@ -324,7 +335,7 @@ class PartnerProfile(TimeStampedModel):
         population_of_concern = self.partner.mandate_mission.population_of_concern
         required_fields = {
             'proj_background_rationale': self.partner.mandate_mission.background_and_rationale,
-            'managate_and_mission': self.partner.mandate_mission.mandate_and_mission,
+            'mandate_and_mission': self.partner.mandate_mission.mandate_and_mission,
             'governance_structure': self.partner.mandate_mission.governance_structure,
             'governance_hq': self.partner.mandate_mission.governance_hq,
             'ethic_safeguard': ethic_safeguard is not None,
@@ -344,7 +355,6 @@ class PartnerProfile(TimeStampedModel):
             'experiences': all(
                 [exp.is_complete for exp in self.partner.experiences.all()]
             ) if self.partner.experiences.exists() else False,
-            # TODO - country presence for hq + country
         }
 
         if not self.partner.is_hq:
@@ -512,7 +522,7 @@ class PartnerHeadOrganization(TimeStampedModel):
 
 
 class PartnerDirector(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="directors")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="directors")
     partner = models.ForeignKey(Partner, related_name="directors")
     fullname = models.CharField(max_length=512, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
@@ -540,7 +550,7 @@ class PartnerDirector(TimeStampedModel):
 
 
 class PartnerAuthorisedOfficer(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="authorised_officers")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="authorised_officers")
     partner = models.ForeignKey(Partner, related_name="authorised_officers")
     fullname = models.CharField(max_length=512, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
@@ -566,7 +576,7 @@ class PartnerAuthorisedOfficer(TimeStampedModel):
 
 
 class PartnerPolicyArea(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="area_policies")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="area_policies")
     partner = models.ForeignKey(Partner, related_name="area_policies")
     area = models.CharField(max_length=3, choices=POLICY_AREA_CHOICES)
     document_policies = models.NullBooleanField()
@@ -596,7 +606,7 @@ class PartnerAuditAssessment(TimeStampedModel):
 
 
 class PartnerAuditReport(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name='audit_reports')
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='audit_reports')
     partner = models.ForeignKey(Partner, related_name='audit_reports')
     org_audit = models.CharField(
         max_length=3, choices=ORG_AUDIT_CHOICES, null=True, blank=True
@@ -625,7 +635,7 @@ class PartnerAuditReport(TimeStampedModel):
 
 
 class PartnerCapacityAssessment(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name='capacity_assessments')
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='capacity_assessments')
     partner = models.ForeignKey(Partner, related_name='capacity_assessments')
     assessment_type = models.TextField(choices=AUDIT_ASSESSMENT_CHOICES, null=True, blank=True)
     report_file = models.ForeignKey(
@@ -718,10 +728,10 @@ class PartnerMandateMission(TimeStampedModel):
     )
 
     # Collaboration
-    partnership_with_insitutions = models.NullBooleanField(
+    partnership_with_institutions = models.NullBooleanField(
         verbose_name=(
             'Has the organization collaborated with or a member of a cluster,'
-            ' professional netwok, consortium or any similar insitutions?')
+            ' professional network, consortium or any similar institutions?')
     )
     description = models.TextField(
         max_length=5000,
@@ -740,7 +750,7 @@ class PartnerMandateMission(TimeStampedModel):
 
 
 class PartnerExperience(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="experiences")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="experiences")
     partner = models.ForeignKey(Partner, related_name="experiences")
     specialization = models.ForeignKey(
         'common.Specialization', null=True, blank=True, related_name="partner_experiences"
@@ -792,7 +802,7 @@ class PartnerInternalControl(TimeStampedModel):
 
 
 class PartnerBudget(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="budgets")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="budgets")
     partner = models.ForeignKey(Partner, related_name="budgets")
     year = models.PositiveSmallIntegerField(
         help_text="Enter valid year.",
@@ -827,7 +837,7 @@ class PartnerFunding(TimeStampedModel):
 
 
 class PartnerCollaborationPartnership(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', related_name="collaborations_partnership")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="collaborations_partnership")
     partner = models.ForeignKey(Partner, related_name="collaborations_partnership")
     agency = models.ForeignKey(
         'agency.Agency', related_name="collaborations_partnership", blank=True, null=True
@@ -856,7 +866,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
     """
     Accreditation & References
     """
-    created_by = models.ForeignKey('account.User', related_name="collaboration_evidences")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="collaboration_evidences")
     partner = models.ForeignKey(Partner, related_name="collaboration_evidences")
     mode = models.CharField(max_length=3, choices=COLLABORATION_EVIDENCE_MODES, blank=True, null=True)
     organization_name = models.CharField(max_length=200, blank=True, null=True)
@@ -882,7 +892,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
 
 
 class PartnerOtherInfo(TimeStampedModel):
-    created_by = models.ForeignKey('account.User', null=True, blank=True, related_name="other_info")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="other_info")
     partner = models.OneToOneField(Partner, related_name="other_info")
     info_to_share = models.TextField(max_length=5000, null=True, blank=True)
     org_logo = models.ForeignKey(
@@ -937,7 +947,7 @@ class PartnerOtherInfo(TimeStampedModel):
 
 
 class PartnerMember(TimeStampedModel):
-    user = models.ForeignKey('account.User', related_name="partner_members")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="partner_members")
     partner = models.ForeignKey(Partner, related_name="partner_members")
     title = models.CharField(max_length=255)
     role = FixedTextField(choices=PartnerRole.get_choices(), default=PartnerRole.READER.name)
@@ -957,7 +967,7 @@ class PartnerMember(TimeStampedModel):
         prefix = 'HQ ' if self.partner.is_hq else ''
         return prefix + self._get_FIELD_display(field_object)
 
-    @property
+    @threaded_cached_property
     def user_permissions(self):
         return PARTNER_ROLE_PERMISSIONS[self.partner.is_hq][PartnerRole[self.role]]
 
@@ -967,7 +977,7 @@ class PartnerReview(TimeStampedModel):
     # We should keep in mind that this class can totally change!
     partner = models.ForeignKey(Partner, related_name="reviews")
     agency = models.ForeignKey('agency.Agency', related_name="partner_reviews")
-    reviewer = models.ForeignKey('account.User', related_name="partner_reviews")
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="partner_reviews")
     display_type = models.CharField(max_length=3, choices=PARTNER_REVIEW_TYPES)
     eoi = models.ForeignKey('project.EOI', related_name="partner_reviews")
     performance_pm = models.CharField(max_length=3, choices=SATISFACTION_SCALES)
@@ -982,3 +992,17 @@ class PartnerReview(TimeStampedModel):
 
     def __str__(self):
         return "PartnerReview <pk:{}>".format(self.id)
+
+
+def create_partner_additional_models(sender, instance, created, **kwargs):
+    if created:
+        PartnerProfile.objects.create(partner=instance)
+        PartnerMailingAddress.objects.create(partner=instance)
+        PartnerAuditAssessment.objects.create(partner=instance)
+        PartnerReporting.objects.create(partner=instance)
+        PartnerMandateMission.objects.create(partner=instance)
+        PartnerFunding.objects.create(partner=instance)
+        PartnerOtherInfo.objects.create(partner=instance)
+
+
+post_save.connect(create_partner_additional_models, sender=Partner)

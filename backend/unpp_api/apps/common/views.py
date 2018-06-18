@@ -36,8 +36,11 @@ from common.consts import (
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     EXTENDED_APPLICATION_STATUSES,
-    DSR_COMPLETED_REASON,
+    ALL_DSR_COMPLETED_REASONS,
     DSR_FINALIZE_RETENTION_CHOICES,
+    FLAG_TYPES,
+    NOTIFICATION_FREQUENCY_CHOICES,
+    FLAG_CATEGORIES,
 )
 from partner.roles import PartnerRole
 
@@ -63,7 +66,7 @@ class ConfigAdminLevel1ListAPIView(ListAPIView):
 class GeneralConfigAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
-        if self.request.partner_member:
+        if self.request.active_partner:
             choices = dict(PartnerRole.get_choices())
         elif self.request.agency_member:
             choices = dict(AgencyRole.get_choices(self.request.user.agency))
@@ -88,13 +91,16 @@ class GeneralConfigAPIView(APIView):
             "policy-area-choices": POLICY_AREA_CHOICES,
             "application-statuses": APPLICATION_STATUSES,
             "completed-reason": COMPLETED_REASON,
-            "direct-selection-completed-reason": DSR_COMPLETED_REASON,
+            "direct-selection-completed-reason": ALL_DSR_COMPLETED_REASONS,
             "direct-selection-source": DIRECT_SELECTION_SOURCE,
             "direct-selection-retention": DSR_FINALIZE_RETENTION_CHOICES,
             "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,
             "extended-application-statuses": EXTENDED_APPLICATION_STATUSES,
             "countries-with-optional-location": LOCATION_OPTIONAL_COUNTRIES,
             "user-role-choices": choices,
+            "flag-type-choices": FLAG_TYPES,
+            "flag-category-choices": FLAG_CATEGORIES,
+            "notification-frequency-choices": NOTIFICATION_FREQUENCY_CHOICES,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

@@ -25,6 +25,12 @@ class PartnerAdmin(admin.ModelAdmin):
     list_filter = ('display_type', 'is_active', 'is_locked')
 
 
+class PartnerMemberAdmin(admin.ModelAdmin):
+    list_display = ('user', 'role', 'partner')
+    list_filter = ('role', 'partner__display_type')
+    search_fields = ('user__fullname', 'user__email', 'partner__legal_name')
+
+
 admin.site.register(Partner, PartnerAdmin)
 admin.site.register(PartnerProfile)
 admin.site.register(PartnerHeadOrganization)
@@ -37,5 +43,5 @@ admin.site.register(PartnerFunding)
 admin.site.register(PartnerCollaborationPartnership)
 admin.site.register(PartnerCollaborationEvidence)
 admin.site.register(PartnerOtherInfo)
-admin.site.register(PartnerMember)
+admin.site.register(PartnerMember, PartnerMemberAdmin)
 admin.site.register(PartnerReview)

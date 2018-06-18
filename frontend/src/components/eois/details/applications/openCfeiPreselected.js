@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { reject } from 'ramda';
 import { browserHistory as history } from 'react-router';
+import { TableCell } from 'material-ui/Table';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
 import ApplicationCnIdCell from '../../cells/applicationCnIdCell';
 import SelectableList from '../../../common/list/selectableList';
@@ -59,7 +60,7 @@ class OpenCfeiPreselections extends Component {
     return true;
   }
 
-  applicationsCells({ row, column, hovered }) {
+  applicationsCells({ row, column, hovered, value }) {
     if (column.name === 'name') {
       return (<PartnerProfileNameCell
         info={row.partner_additional}
@@ -89,7 +90,7 @@ class OpenCfeiPreselections extends Component {
         reviews={row.review_progress}
       />);
     }
-    return undefined;
+    return <TableCell>{value}</TableCell>;
   }
 
   render() {

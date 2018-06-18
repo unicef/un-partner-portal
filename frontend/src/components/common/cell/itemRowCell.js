@@ -26,9 +26,9 @@ const ItemRowCell = (props) => {
         {label}
       </Typography>
       <div className={classes.padding}>
-        <Typography type="body1" color="inherit">
+        {!!content && <Typography type="body1" color="inherit">
           {content}
-        </Typography>
+        </Typography>}
       </div>
     </div>
   );

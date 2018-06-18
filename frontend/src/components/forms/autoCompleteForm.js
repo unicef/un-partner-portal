@@ -112,7 +112,7 @@ class AutocompleteField extends React.Component {
   handleChange(event, { newValue }) {
     this.setState({
       value: typeof newValue.label !== 'undefined' ?
-          newValue.label : newValue,
+        newValue.label : newValue,
     });
   }
 
@@ -135,6 +135,12 @@ class AutocompleteField extends React.Component {
     if (!R.prop('value', suggestion)) return null;
     if (this.props.multiple) return [suggestion.value];
     return suggestion.value;
+  }
+
+  reset() {
+    const { multiple } = this.props;
+
+    this.setState(multiple ? { multiValues: [] } : { value: '' });
   }
 
   render() {
@@ -253,8 +259,8 @@ AutocompleteField.propTypes = { /**
    * query param name for getting async suggestions
    */
   search: PropTypes.string,
-  /** 
-   * whether suggestions should overlap content below 
+  /**
+   * whether suggestions should overlap content below
    */
   overlap: PropTypes.bool,
   /**

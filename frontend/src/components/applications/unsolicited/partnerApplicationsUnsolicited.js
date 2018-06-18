@@ -17,7 +17,7 @@ import { PROJECT_TYPES } from '../../../helpers/constants';
 import CountriesCell from '../../partners/countriesCell';
 
 /* eslint-disable react/prop-types */
-const applicationCell = ({ row, column }) => {
+const applicationCell = ({ row, column, value }) => {
   if (column.name === 'is_direct') {
     return (<DirectSelectionCell
       directSelection={row.is_direct}
@@ -36,7 +36,7 @@ const applicationCell = ({ row, column }) => {
     return <CountriesCell countries={row.country} />;
   }
 
-  return undefined;
+  return <TableCell>{value}</TableCell>;
 };
 
 class PartnerApplicationsUnsolicited extends Component {

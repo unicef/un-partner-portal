@@ -22,7 +22,7 @@ from partner.models import (
     PartnerOtherInfo,
     PartnerInternalControl,
     PartnerExperience,
-)
+    PartnerPolicyArea)
 from common.models import Point, CommonFile
 from common.tests.base import BaseAPITestCase
 from common.factories import (
@@ -52,6 +52,7 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
 
     def test_create_country_profile(self):
         partner = Partner.objects.first()
+        PartnerPolicyArea.objects.filter(partner=partner).update(document_policies=None)
         url = reverse('partners:country-profile', kwargs={"pk": partner.id})
         response = self.client.get(url, format='json')
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
@@ -72,10 +73,12 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
         with mock.patch('partner.models.Partner.has_finished', lambda: True):
             response = self.client.post(url, data=payload, format='json')
 
+        self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         expected_count = len(chosen_country_to_create)
-        self.assertTrue(status.is_success(response.status_code))
-        self.assertEquals(Partner.objects.filter(hq_id=partner.id, display_type=PARTNER_TYPES.international).count(),
-                          expected_count)
+        self.assertEquals(
+            Partner.objects.filter(hq_id=partner.id, display_type=PARTNER_TYPES.international).count(),
+            expected_count
+        )
         self.assertEquals(PartnerProfile.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerMailingAddress.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerHeadOrganization.objects.filter(partner__hq=partner).count(), 0)
@@ -84,8 +87,10 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
         self.assertEquals(PartnerMandateMission.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerFunding.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerOtherInfo.objects.filter(partner__hq=partner).count(), expected_count)
-        self.assertEquals(PartnerInternalControl.objects.filter(partner__hq=partner).count(),
-                          expected_count*len(list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values)))
+        self.assertEquals(
+            PartnerInternalControl.objects.filter(partner__hq=partner).count(),
+            expected_count*len(list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values))
+        )
 
 
 class TestPartnerDetailAPITestCase(BaseAPITestCase):
@@ -191,7 +196,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             'authorised_officers': authorised_officers,
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['working_languages_other'], working_languages_other)
         self.assertEquals(response.data['connectivity_excuse'], connectivity_excuse)
         # org head can't be changed

@@ -7,11 +7,10 @@ import { updateCfei } from '../../../../reducers/newCfei';
 import CompleteCfeiForm from './completeCfeiForm';
 
 const messages = {
-  title: 'Are you sure you want to finalize this CFEI?',
-  header: { title: 'An e-mail notification that this CFEI is now finalized will be sent to all partners who applied for this CFEI.' },
-  save: 'complete',
+  title: 'Are you sure you want to finalize this direct selection/retention?',
+  header: { title: 'E-mail will be sent to participating partner.' },
+  save: 'finalize',
 };
-
 
 class CompleteCfeiModal extends Component {
   constructor(props) {
@@ -30,13 +29,12 @@ class CompleteCfeiModal extends Component {
     return (
       <div>
         <ControlledModal
-          maxWidth="md"
           fullWidth
           title={messages.title}
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
           info={messages.header}
-          minWidth={40}
+          minWidth={30}
           buttons={{
             flat: {
               handleClick: handleDialogClose,

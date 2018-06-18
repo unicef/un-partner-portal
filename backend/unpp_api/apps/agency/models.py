@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from cached_property import threaded_cached_property
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django_countries.fields import CountryField
@@ -25,13 +27,13 @@ class OtherAgency(TimeStampedModel):
 
 
 class Agency(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     class Meta:
         ordering = ['id']
 
     def __str__(self):
-        return "Agency: {} <pk:{}>".format(self.name, self.id)
+        return f"<{self.pk}>{self.name}"
 
 
 class AgencyProfile(TimeStampedModel):
@@ -67,7 +69,7 @@ class AgencyOffice(TimeStampedModel):
         )
 
     def __str__(self):
-        return "AgencyOffice: {} <pk:{}>".format(self.name, self.id)
+        return f'<{self.pk}>{self.agency} office in {self.country.name}'
 
     @property
     def name(self):
@@ -75,7 +77,7 @@ class AgencyOffice(TimeStampedModel):
 
 
 class AgencyMember(TimeStampedModel):
-    user = models.ForeignKey('account.User', related_name="agency_members")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="agency_members")
     role = FixedTextField(choices=AgencyRole.get_choices(), default=AgencyRole.READER.name)
     office = models.ForeignKey(AgencyOffice, related_name="agency_members")
     telephone = models.CharField(max_length=255, null=True, blank=True)
@@ -87,9 +89,9 @@ class AgencyMember(TimeStampedModel):
         )
 
     def __str__(self):
-        return "AgencyMember <pk:{}>".format(self.id)
+        return f"<{self.pk}>[{self.user}] `{self.get_role_display()}` in `{self.office}`"
 
-    @property
+    @threaded_cached_property
     def user_permissions(self):
         return AGENCY_ROLE_PERMISSIONS[AgencyRole[self.role]]
 

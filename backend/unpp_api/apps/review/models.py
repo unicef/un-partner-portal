@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from model_utils.models import TimeStampedModel
 
-from common.consts import FLAG_TYPES
+from common.consts import FLAG_TYPES, FLAG_CATEGORIES
+from common.fields import FixedTextField
 
 
 class PartnerFlag(TimeStampedModel):
@@ -13,15 +16,17 @@ class PartnerFlag(TimeStampedModel):
     Flags on a Partner
     """
     partner = models.ForeignKey('partner.Partner', related_name="flags")
-    flag_type = models.CharField(
-        max_length=3, choices=FLAG_TYPES, default=FLAG_TYPES.yellow)
-    is_valid = models.BooleanField(default=True)
-    submitter = models.ForeignKey('account.User', related_name="given_flags")
-    comment = models.TextField(null=True, blank=True)
+    flag_type = models.CharField(max_length=3, choices=FLAG_TYPES, default=FLAG_TYPES.yellow)
+    type_history = ArrayField(flag_type, default=list)
+    category = FixedTextField(choices=FLAG_CATEGORIES, null=True, blank=True)
+    is_valid = models.NullBooleanField(default=True)
+    submitter = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="given_flags", null=True)
+    comment = models.TextField(null=True, blank=True, max_length=5120)
     contact_person = models.CharField(max_length=255, null=True, blank=True)
     contact_phone = models.CharField(max_length=16, null=True, blank=True)
     contact_email = models.EmailField(null=True, blank=True)
     attachment = models.ForeignKey('common.CommonFile', related_name="flag_attachments", null=True, blank=True)
+    sanctions_match = models.ForeignKey('sanctionslist.SanctionedNameMatch', null=True, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -34,7 +39,7 @@ class PartnerVerification(TimeStampedModel):
     partner = models.ForeignKey('partner.Partner', related_name="verifications")
     is_valid = models.BooleanField(default=True)
     is_verified = models.BooleanField()
-    submitter = models.ForeignKey('account.User', related_name="given_verifications")
+    submitter = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="given_verifications")
     is_cert_uploaded = models.BooleanField()
     cert_uploaded_comment = models.TextField(null=True, blank=True)
     is_reason_acceptable = models.NullBooleanField()
@@ -54,7 +59,7 @@ class PartnerVerification(TimeStampedModel):
         ordering = ['-created']
 
     def __str__(self):
-        return "Partner: {} Verified:{}>".format(self.partner, self.is_verified)
+        return "Partner: {} Verified: {}>".format(self.partner, self.is_verified)
 
     def _passed_verify(self):
         return all([
