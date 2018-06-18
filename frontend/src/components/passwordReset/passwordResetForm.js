@@ -25,7 +25,6 @@ const PasswordResetForm = ({
   classes,
   clearSubmitErrors,
   error,
-  form,
 }) => (
   <form
     onSubmit={handleSubmit}
@@ -56,12 +55,18 @@ const PasswordResetForm = ({
       open={!!error}
       message={error}
       autoHideDuration={4000}
-      onClose={() => clearSubmitErrors(form)}
+      onClose={clearSubmitErrors}
     />
 
     <button type="submit" hidden aria-hidden={true} />
   </form>
 );
+
+const mapDispatchToProps = (dispatch, { form }) => ({
+  clearSubmitErrors() {
+    return dispatch(clearSubmitErrors(form));
+  },
+});
 
 export const FORM_NAME = 'passwordReset';
 
@@ -69,9 +74,6 @@ export default compose(
   reduxForm({
     form: FORM_NAME,
   }),
-  connect(
-    null,
-    { clearSubmitErrors },
-  ),
+  connect(null, mapDispatchToProps),
   withStyles(styleSheet, { name: 'PasswordResetForm' }),
 )(PasswordResetForm);
