@@ -36,7 +36,7 @@ from partner.models import (
     PartnerProfile,
     PartnerMember,
 )
-from partner.utilities import FilterUsersPartnersMixin
+from partner.mixins import FilterUsersPartnersMixin, VerifyPartnerProfileUpdatePermissionsMixin
 
 
 class OrganizationProfileAPIView(RetrieveAPIView):
@@ -138,17 +138,27 @@ class PartnerFundingAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
     queryset = Partner.objects.all()
 
 
-class PartnerCollaborationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
+class PartnerCollaborationAPIView(
+    FilterUsersPartnersMixin,
+    VerifyPartnerProfileUpdatePermissionsMixin,
+    PatchOneFieldErrorMixin,
+    RetrieveUpdateAPIView
+):
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[]
         ),
     )
     serializer_class = PartnerProfileCollaborationSerializer
     queryset = Partner.objects.all()
 
 
-class PartnerProjectImplementationAPIView(FilterUsersPartnersMixin, PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
+class PartnerProjectImplementationAPIView(
+    FilterUsersPartnersMixin,
+    VerifyPartnerProfileUpdatePermissionsMixin,
+    PatchOneFieldErrorMixin,
+    RetrieveUpdateAPIView
+):
     permission_classes = (
         HasUNPPPermission(
             partner_permissions=[]
@@ -156,17 +166,6 @@ class PartnerProjectImplementationAPIView(FilterUsersPartnersMixin, PatchOneFiel
     )
     serializer_class = PartnerProfileProjectImplementationSerializer
     queryset = Partner.objects.all()
-
-    def perform_update(self, serializer):
-        current_user_has_permission(
-            self.request,
-            partner_permissions=[
-                PartnerPermission.EDIT_HQ_PROFILE if serializer.instance.is_hq else PartnerPermission.EDIT_PROFILE
-            ],
-            raise_exception=True
-        )
-
-        return super(PartnerProjectImplementationAPIView, self).perform_update(serializer)
 
 
 class PartnerOtherInfoAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
