@@ -12,13 +12,11 @@ import GridColumn from '../../../common/grid/gridColumn';
 import ProjectDetails from '../editDsr/ProjectDetails';
 import PartnersForm from '../../../forms/fields/projectFields/partnersField/partnersFieldArray';
 import { selectCfeiDetails } from '../../../../store';
-import { log } from 'util';
 
 const messages = {
   selectPartners: 'Select Partner',
   selectionCriteria: 'Selection Criteria',
 };
-
 
 const EditDirectForm = (props) => {
   const {
@@ -97,4 +95,3 @@ const formEditDsr = reduxForm({
 export default connect(
   mapStateToProps,
 )(formEditDsr);
-
