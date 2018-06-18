@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import R from 'ramda';
 import { connect } from 'react-redux';
 import { browserHistory as history, withRouter } from 'react-router';
 import { submit, SubmissionError } from 'redux-form';
@@ -29,7 +30,11 @@ class EditDsrModal extends Component {
   }
 
   handleSubmit(values) {
-    return this.props.postCfei(values).then(() => {
+    const normalizedValues = values;
+    normalizedValues.locations = [];
+    const i = values.countries;
+    R.map(loc => normalizedValues.locations.push(loc.locations[0]), i);
+    return this.props.postCfei(normalizedValues).then(() => {
       this.props.handleDialogClose();
     });
   }
@@ -51,7 +56,7 @@ class EditDsrModal extends Component {
           minWidth={40}
           title={messages.title}
           trigger={open}
-          info={ null }
+          info={null}
           handleDialogClose={handleDialogClose}
           topBottomPadding
           buttons={{
