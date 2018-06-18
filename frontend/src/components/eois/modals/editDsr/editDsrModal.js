@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import R from 'ramda';
 import { connect } from 'react-redux';
 import { browserHistory as history, withRouter } from 'react-router';
-import { submit, SubmissionError } from 'redux-form';
+import { submit } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
 import EditDsrForm from './editDsrForm';
 import { updateCfei } from '../../../../reducers/newCfei';
-import { PROJECT_TYPES } from '../../../../helpers/constants';
 import { errorToBeAdded } from '../../../../reducers/errorReducer';
 import { selectCountriesWithOptionalLocations } from '../../../../store';
 

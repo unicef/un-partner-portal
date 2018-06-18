@@ -27,7 +27,7 @@ const ProjectDetails = (props) => {
       <GridColumn>
         <fields.TitleField />
         <LocationForm formName={formName} />
-        <fields.FocalPointEdit overlap={false} initial={focalPoints} />
+        <fields.FocalPoint overlap={false} initialMultiValues={focalPoints} />
         <SectorForm />
         {displayPopulation && <SelectPopulationOfConcern />}
         <fields.Background />
@@ -45,7 +45,7 @@ const ProjectDetails = (props) => {
 ProjectDetails.propTypes = {
   displayPopulation: PropTypes.bool,
   formName: PropTypes.string,
-  focalPoints: PropTypes.number,
+  focalPoints: PropTypes.array,
 };
 
 const mapStateToProps = state => {

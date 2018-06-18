@@ -24,14 +24,14 @@ const EditDirectForm = (props) => {
     startDate,
     cfeiDetails,
     partner,
-    focalPointName } = props;
+    focalPointNameArray } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <ProjectDetails
           cfeiDetails={cfeiDetails}
           formName="editDsr"
-          focalPoints={focalPointName}
+          focalPoints={focalPointNameArray}
         >
           <fields.StartDate />
           <fields.EndDate minDate={startDate} />
@@ -49,7 +49,7 @@ EditDirectForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   startDate: PropTypes.string,
   partner: PropTypes.string,
-  focalPointName: PropTypes.string,
+  focalPointName: PropTypes.array,
   cfeiDetails: PropTypes.object,
 };
 
@@ -59,7 +59,8 @@ const mapStateToProps = (state, ownProps) => {
   const cfeifocaldetail = cfei.focal_points_detail[0];
   const focalPoints = [];
   focalPoints.push(cfeifocaldetail.id);
-  const focalPointName = cfeifocaldetail.name;
+  const focalPointNameArray = [];
+  focalPointNameArray.push(cfeifocaldetail.name);
   const partner = cfei.direct_selected_partners[0].partner_name;
   const applications = [];
   applications.push({
@@ -72,7 +73,7 @@ const mapStateToProps = (state, ownProps) => {
     startDate: cfeiStartDate,
     cfeiDetails: cfei,
     partner,
-    focalPointName,
+    focalPointNameArray,
     initialValues: {
       title: cfei.title,
       applications,
