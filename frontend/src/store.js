@@ -318,6 +318,9 @@ export const isDeadlinePassed = (state, id) =>
 export const isCfeiPublished = (state, id) =>
   cfeiDetailsSelector.isCfeiPublished(state.cfeiDetails.data, id);
 
+export const isCfeiDeadlinePassed = (state, id) =>
+  cfeiDetailsSelector.isCfeiDeadlinePassed(state.cfeiDetails.data, id);
+
 export const isCfeiPinned = (state, id) =>
   cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.data, id);
 

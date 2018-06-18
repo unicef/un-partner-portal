@@ -44,7 +44,7 @@ const saveApplicationsUcn = (state, action) => {
       country: item.country,
       title: R.path(['eoi', 'title'], item),
       specializations: R.path(['specializations'], item) ? normalizeSingleCfei(item).specializations : [],
-      submission_date: item.submission_date,
+      submission_date: item.submission_date ? item.submission_date : '-',
       is_direct: item.is_direct,
       application_status: item.application_status,
     }), action.response.results);
