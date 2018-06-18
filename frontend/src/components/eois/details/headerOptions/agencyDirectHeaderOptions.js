@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import DropdownMenu from '../../../common/dropdownMenu';
 import SpreadContent from '../../../common/spreadContent';
 import EditButton from '../../buttons/editCfeiButton';
-import NewCfeiModalButton from '../../modals/newCfei/newCfeiModalButton';
 import DeleteButton from '../../buttons/deleteCfeiButton';
 import CancelButton from '../../buttons/cancelCfeiButton';
 import DownloadButton from '../../buttons/downloadCfeiButton';
@@ -16,6 +15,7 @@ import PublishDsrButton from '../../buttons/publishDsrButton';
 import SendDsrModal from '../../modals/completeDsr/sendDsrModal';
 import DeleteDsrModal from '../../modals/completeDsr/deleteDsrModal';
 import CancelDsrModal from '../../modals/completeDsr/cancelDsrModal';
+import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import EditDsrModal from '../../modals/editDsr/editDsrModal';
 import PublishDsrModal from '../../modals/completeDsr/publishDsrModal';
 import FinalizeDsrModal from '../../modals/completeDsr/finalizeDsrModal';
@@ -36,6 +36,7 @@ const download = 'download';
 const send = 'send';
 const publish = 'publish';
 const complete = 'complete';
+const editPublished = 'editPublished';
 
 class AgencyDirectHeaderOptions extends Component {
   constructor(props) {
@@ -117,13 +118,14 @@ class AgencyDirectHeaderOptions extends Component {
       },
     ];
 
+    console.log(isCompleted, isPublished, hasEditPublishedPermission);
     if ((!isCompleted && isPublished && this.isActionAllowed(hasEditPublishedPermission))
     || (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
     || (!isCompleted && hasEditPublishedPermission && isMFT && isFocalPoint)))) {
       options.push(
         {
           name: edit,
-          content: <EditButton handleClick={() => handleDialogOpen(edit)} />,
+          content: <EditButton handleClick={() => handleDialogOpen(editPublished)} />,
         });
     }
 
@@ -194,6 +196,12 @@ class AgencyDirectHeaderOptions extends Component {
           id={id}
           type="direct"
           open={dialogOpen[edit]}
+          handleDialogClose={handleDialogClose}
+        />}
+        {dialogOpen[editPublished] && <EditCfeiModal
+          id={id}
+          type="direct"
+          dialogOpen={dialogOpen[editPublished]}
           handleDialogClose={handleDialogClose}
         />}
         {dialogOpen[send] && <SendDsrModal
