@@ -212,10 +212,7 @@ PartnerOpenHeaderOptions.propTypes = {
   hasInvitePublishPermission: PropTypes.bool,
   hasCancelPublishPermission: PropTypes.bool,
   hasPublishPermission: PropTypes.bool,
-
-
   hasEditPublishedPermission: PropTypes.bool,
-
   hasFinalizePermission: PropTypes.bool,
   isFocalPoint: PropTypes.bool,
   isCompleted: PropTypes.bool,
@@ -236,7 +233,6 @@ const mapStateToProps = (state, ownProps) => ({
   hasManageDraftPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_MANAGE, state),
   hasSendPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH,
     state),
-
   hasInviteSentPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_SENT_INVITE_CSO, state),
   hasPublishPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISH, state)
     || checkPermission(AGENCY_PERMISSIONS.CFEI_SENT_PUBLISH, state),

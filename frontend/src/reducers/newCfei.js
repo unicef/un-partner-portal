@@ -45,7 +45,6 @@ const mergeLocations = countries => (acc, next) => {
       }], next);
     return R.mergeDeepWith(R.concat, acc, newNext);
   }
-
   return R.mergeDeepWith(R.concat, acc, next);
 };
 
@@ -104,28 +103,6 @@ export const addDirectCfei = body => (dispatch, getState) => {
     });
 };
 
-export const patchDirectCfei = (body, id) => (dispatch, getState) => {
-  dispatch(newCfeiSubmitting());
-  const { agencyId, officeId } = getState().session;
-  const preparedBody = prepareBody(body, getState);
-  const { applications, ...other } = preparedBody;
-  const finalBody = {
-    applications,
-    eoi: R.mergeWith(
-      R.merge,
-      { ...other },
-      { agency: agencyId, agency_office: officeId },
-    ),
-  };
-
-  const params = history.getCurrentLocation().query;
-  return patchCfei(finalBody, id)
-    .then((direct) => {
-      dispatch(loadCfei(PROJECT_TYPES.DIRECT, params));
-      return direct.eoi;
-    });
-};
-
 export const addUnsolicitedCN = body => (dispatch, getState) => {
   dispatch(newCfeiSubmitting());
   const preparedBody = prepareBody(body, getState);
@@ -169,7 +146,6 @@ export const changePinStatusCfei = (id, isPinned) => dispatch =>
     }).catch((error) => {
       dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
     });
-
 
 const startSubmitting = state => R.assoc('error', {}, R.assoc('openCfeiSubmitting', true, state));
 const stopSubmitting = state => R.assoc('openCfeiSubmitting', false, state);

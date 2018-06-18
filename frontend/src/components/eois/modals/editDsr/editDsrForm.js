@@ -12,6 +12,7 @@ import GridColumn from '../../../common/grid/gridColumn';
 import ProjectDetails from '../editDsr/ProjectDetails';
 import PartnersForm from '../../../forms/fields/projectFields/partnersField/partnersFieldArray';
 import { selectCfeiDetails } from '../../../../store';
+import { log } from 'util';
 
 const messages = {
   selectPartners: 'Select Partner',
@@ -22,10 +23,10 @@ const messages = {
 const EditDirectForm = (props) => {
   const {
     handleSubmit,
-    start_date,
+    startDate,
     cfeiDetails,
     partner,
-    focalPointName, } = props;
+    focalPointName } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
@@ -35,7 +36,7 @@ const EditDirectForm = (props) => {
           focalPoints={focalPointName}
         >
           <fields.StartDate />
-          <fields.EndDate minDate={start_date} />
+          <fields.EndDate minDate={startDate} />
         </ProjectDetails>
         <Typography type="headline">
           {messages.selectPartners}
@@ -48,19 +49,18 @@ const EditDirectForm = (props) => {
 
 EditDirectForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
-  start_date: PropTypes.string,
+  startDate: PropTypes.string,
   partner: PropTypes.string,
-  start_date: PropTypes.string,
   focalPointName: PropTypes.string,
+  cfeiDetails: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
-  const startDate = cfei.start_date;
+  const cfeiStartDate = cfei.start_date;
   const cfeifocaldetail = cfei.focal_points_detail[0];
   const focalPoints = [];
   focalPoints.push(cfeifocaldetail.id);
-  console.log('focal points are :: ', focalPoints)
   const focalPointName = cfeifocaldetail.name;
   const partner = cfei.direct_selected_partners[0].partner_name;
   const applications = [];
@@ -71,7 +71,7 @@ const mapStateToProps = (state, ownProps) => {
     ds_attachment: cfei.direct_selected_partners[0].ds_attachmnt,
   });
   return {
-    start_date: startDate,
+    startDate: cfeiStartDate,
     cfeiDetails: cfei,
     partner,
     focalPointName,

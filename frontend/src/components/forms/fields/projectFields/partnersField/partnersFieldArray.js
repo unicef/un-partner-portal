@@ -76,7 +76,3 @@ export default connect(
       .then(results => mapValuesForSelectionField(results)),
   }),
 )(PartnersFieldArray);
-
-    //  selectorem musze wybrac wszystkie aktualne wartosci z redux forma z formularza
-    //  i sprawdzic czy jest number czy string - jesli string, to wywal z payloadu,
-    //  jak number, to leci dalej w payloadzie
