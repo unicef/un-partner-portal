@@ -32,6 +32,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         )
         exclude = (
             'partner',
+            'type_history',
         )
         extra_kwargs = {
             'flag_type': {
@@ -61,7 +62,14 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         return fields
 
     def update(self, instance, validated_data):
+        new_flag_type = validated_data.get('flag_type')
+        old_flag_type = instance.flag_type
+
         instance = super(PartnerFlagSerializer, self).update(instance, validated_data)
+        if new_flag_type and not old_flag_type == new_flag_type:
+            instance.type_history.append(old_flag_type)
+            instance.save()
+
         if instance.flag_type == INTERNAL_FLAG_TYPES.sanctions_match and instance.sanctions_match:
             if instance.is_valid is not None:
                 instance.sanctions_match.can_ignore = not instance.is_valid

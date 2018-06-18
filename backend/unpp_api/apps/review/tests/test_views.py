@@ -101,6 +101,18 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('is_valid', response.data)
 
+    def test_flag_type_history_is_saved(self):
+        flag = PartnerFlag.objects.filter(is_valid=True).first()
+        original_type = flag.flag_type
+        url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
+        payload = {
+            'flag_type': FLAG_TYPES.red
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertResponseStatusIs(response)
+        flag.refresh_from_db()
+        self.assertIn(original_type, flag.type_history)
+
 
 class TestPartnerVerificationAPITestCase(BaseAPITestCase):
 

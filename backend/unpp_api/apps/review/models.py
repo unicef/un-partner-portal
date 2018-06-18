@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from model_utils.models import TimeStampedModel
@@ -16,6 +17,7 @@ class PartnerFlag(TimeStampedModel):
     """
     partner = models.ForeignKey('partner.Partner', related_name="flags")
     flag_type = models.CharField(max_length=3, choices=FLAG_TYPES, default=FLAG_TYPES.yellow)
+    type_history = ArrayField(flag_type, default=list)
     category = FixedTextField(choices=FLAG_CATEGORIES, null=True, blank=True)
     is_valid = models.NullBooleanField(default=True)
     submitter = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="given_flags", null=True)
@@ -57,7 +59,7 @@ class PartnerVerification(TimeStampedModel):
         ordering = ['-created']
 
     def __str__(self):
-        return "Partner: {} Verified:{}>".format(self.partner, self.is_verified)
+        return "Partner: {} Verified: {}>".format(self.partner, self.is_verified)
 
     def _passed_verify(self):
         return all([
