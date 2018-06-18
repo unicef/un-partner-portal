@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.serializers import PartnerMemberSerializer
-from common.permissions import HasUNPPPermission
+from common.permissions import HasUNPPPermission, check_unpp_permission, current_user_has_permission
 from common.pagination import SmallPagination, TinyResultSetPagination
 from common.mixins import PatchOneFieldErrorMixin
 from partner.permissions import PartnerPermission
@@ -36,6 +36,7 @@ from partner.models import (
     PartnerProfile,
     PartnerMember,
 )
+from partner.utilities import FilterUsersPartnersMixin
 
 
 class OrganizationProfileAPIView(RetrieveAPIView):
@@ -147,14 +148,25 @@ class PartnerCollaborationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView
     queryset = Partner.objects.all()
 
 
-class PartnerProjectImplementationAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
+class PartnerProjectImplementationAPIView(FilterUsersPartnersMixin, PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[]
         ),
     )
     serializer_class = PartnerProfileProjectImplementationSerializer
     queryset = Partner.objects.all()
+
+    def perform_update(self, serializer):
+        current_user_has_permission(
+            self.request,
+            partner_permissions=[
+                PartnerPermission.EDIT_HQ_PROFILE if serializer.instance.is_hq else PartnerPermission.EDIT_PROFILE
+            ],
+            raise_exception=True
+        )
+
+        return super(PartnerProjectImplementationAPIView, self).perform_update(serializer)
 
 
 class PartnerOtherInfoAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
@@ -167,7 +179,7 @@ class PartnerOtherInfoAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
     queryset = Partner.objects.all()
 
 
-class PartnerCountryProfileAPIView(CreateAPIView, RetrieveAPIView):
+class PartnerCountryProfileAPIView(FilterUsersPartnersMixin, CreateAPIView, RetrieveAPIView):
     permission_classes = (
         HasUNPPPermission(
             partner_permissions=[

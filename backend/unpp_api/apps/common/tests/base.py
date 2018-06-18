@@ -53,11 +53,10 @@ class BaseAPITestCase(APITestCase):
             factory.create_batch(self.quantity)
 
         if self.user_type == self.USER_PARTNER:
-            self.user = PartnerMemberFactory.create_batch(1, role=self.partner_role.name)[0].user
+            self.user = PartnerMemberFactory(role=self.partner_role.name).user
         elif self.user_type == self.USER_AGENCY:
-            self.user = AgencyMemberFactory.create_batch(1, role=self.agency_role.name)[0].user
+            self.user = AgencyMemberFactory(role=self.agency_role.name).user
 
-        # creating a session (login already created user in generate_fake_data)
         if self.with_session_login:
             self.client = self.client_class()
             self.client.login(email=self.user.email, password='test')
