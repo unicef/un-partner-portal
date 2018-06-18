@@ -3,7 +3,7 @@
 * [UNPP Documentation](README.md)
 * [About](about.md)
 * [Glossary / Terminology](glossary-terminology.md)
-* FAQ
+* [FAQ](faq.md)
 * [Releases/Change Log](releases-change-log.md)
 * [Report an Issue / Contact Us](report-an-issue-contact-us.md)
 

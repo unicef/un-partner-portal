@@ -40,7 +40,6 @@ def create_sanctions_match(name_matches_qs, partner, match_type, match_text):
 
 
 def sanctions_scan_partner(partner):
-
     # Partner Org Legal Name
     matched_names = filter_sanctions_names(partner.legal_name, SANCTION_LIST_TYPES.entity, partner)
 
@@ -50,7 +49,7 @@ def sanctions_scan_partner(partner):
     )
 
     # Partner Heads
-    if partner.org_head:
+    if hasattr(partner, 'org_head'):
         matched_names = filter_sanctions_names(
             partner.org_head.fullname, SANCTION_LIST_TYPES.individual, partner
         )
