@@ -133,10 +133,15 @@ class PartnerMandateMissionAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIVie
     queryset = Partner.objects.all()
 
 
-class PartnerFundingAPIView(PatchOneFieldErrorMixin, RetrieveUpdateAPIView):
+class PartnerFundingAPIView(
+    FilterUsersPartnersMixin,
+    VerifyPartnerProfileUpdatePermissionsMixin,
+    PatchOneFieldErrorMixin,
+    RetrieveUpdateAPIView
+):
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[]
         ),
     )
     serializer_class = PartnerProfileFundingSerializer
