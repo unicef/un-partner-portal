@@ -379,8 +379,8 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
 class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
-    quantity = 1
-    user_type = BaseAPITestCase.USER_PARTNER
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     def setUp(self):
         super(TestAgencyApplicationsAPITestCase, self).setUp()
@@ -951,7 +951,7 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
 class TestDirectSelectionTestCase(BaseAPITestCase):
 
     user_type = BaseAPITestCase.USER_AGENCY
-    agency_role = AgencyRole.EDITOR_BASIC
+    agency_role = AgencyRole.EDITOR_ADVANCED
     quantity = 2
     initial_factories = [
         AgencyFactory,
