@@ -242,6 +242,58 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(response.data['is_completed'])
         self.assertEquals(response.data['justification'], justification)
 
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    def test_patch_locations_for_project(self):
+        cfei = EOIFactory(created_by=self.user)
+        details_url = reverse('projects:eoi-detail', kwargs={'pk': cfei.id})
+        details_response = self.client.get(details_url)
+        self.assertResponseStatusIs(details_response)
+        initial_locations = details_response.data['locations']
+        new_locations_payload = {
+            'locations': [
+                {
+                    "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
+                    "lat": random.randint(-180, 180),
+                    "lon": random.randint(-180, 180),
+                },
+                {
+                    "admin_level_1": {"name": "Paris", "country_code": "FR"},
+                    "lat": random.randint(-180, 180),
+                    "lon": random.randint(-180, 180),
+                },
+            ],
+        }
+        update_response = self.client.patch(details_url, data=new_locations_payload)
+        self.assertResponseStatusIs(update_response)
+        self.assertEqual(
+            len(new_locations_payload['locations']),
+            len(update_response.data['locations'])
+        )
+
+        second_update_payload = {
+            'locations': [
+                {
+                    "admin_level_1": {"name": "Poland", "country_code": 'PL'},
+                    "lat": random.randint(-180, 180),
+                    "lon": random.randint(-180, 180),
+                },
+            ] + initial_locations,
+        }
+
+        second_update_response = self.client.patch(details_url, data=second_update_payload)
+        self.assertResponseStatusIs(second_update_response)
+
+        self.assertEqual(
+            len(second_update_payload['locations']),
+            len(second_update_response.data['locations'])
+        )
+
+        self.assertTrue(
+            {l['id'] for l in initial_locations}.issubset(
+                {l['id'] for l in second_update_response.data['locations']}
+            )
+        )
+
 
 class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
