@@ -26,7 +26,6 @@ class DashboardAPIView(RetrieveAPIView):
     Generic Dashboard view for partner or agency user
     """
     permission_classes = (
-        IsAuthenticated,
         HasUNPPPermission(
             agency_permissions=[
                 AgencyPermission.VIEW_DASHBOARD,
@@ -60,7 +59,9 @@ class ApplicationsToScoreListAPIView(ListAPIView):
     serializer_class = ApplicationFullEOISerializer
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_REVIEW_APPLICATIONS,
+            ],
         ),
     )
     pagination_class = MediumPagination
@@ -73,7 +74,7 @@ class ApplicationsToScoreListAPIView(ListAPIView):
         ).exclude(assessments__reviewer=user).order_by('eoi__modified').distinct('eoi__modified', 'eoi')
 
 
-class CurrentUsersActiveProjectsAPIView(ListAPIView):
+class CurrentUsersOpenProjectsAPIView(ListAPIView):
     """
     Returns list of projects where deadline hasn't been reached yet, for which user is creator or focal point
     """
@@ -82,7 +83,9 @@ class CurrentUsersActiveProjectsAPIView(ListAPIView):
     serializer_class = AgencyProjectSerializer
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW
+            ]
         ),
     )
     pagination_class = SmallPagination
@@ -107,20 +110,27 @@ class ApplicationsPartnerDecisionsListAPIView(ListAPIView):
     serializer_class = ApplicationFullEOISerializer
     permission_classes = (
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW
+            ]
         ),
     )
     pagination_class = MediumPagination
 
     def get_queryset(self):
-        date_N_days_ago = datetime.now() - timedelta(days=self.DAYS_AGO)
         user = self.request.user
         agency = user.agency
-        won_applications = Application.objects.filter(eoi__agency=agency,
-                                                      decision_date__gte=date_N_days_ago,
-                                                      did_win=True).exclude(is_unsolicited=True)
+        won_applications = Application.objects.filter(
+            eoi__agency=agency,
+            decision_date__gte=datetime.now() - timedelta(days=self.DAYS_AGO),
+            did_win=True
+        ).filter(
+            Q(did_accept=True) | Q(did_decline=True)
+        ).exclude(
+            is_unsolicited=True
+        )
 
-        return won_applications.filter(did_accept=True) | won_applications.filter(did_decline=True)
+        return won_applications
 
 
 class SubmittedCNListAPIView(PartnerIdsMixin, ListAPIView):
