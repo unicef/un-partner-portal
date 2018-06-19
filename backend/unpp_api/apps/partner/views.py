@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.serializers import PartnerMemberSerializer
+from agency.permissions import AgencyPermission
 from common.permissions import HasUNPPPermission
 from common.pagination import SmallPagination, TinyResultSetPagination
 from common.mixins import PatchOneFieldErrorMixin
@@ -69,7 +70,9 @@ class PartnersListAPIView(ListAPIView):
     permission_classes = (
         IsAuthenticated,
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+            ]
         ),
     )
     queryset = Partner.objects.all()
@@ -84,7 +87,9 @@ class PartnerShortListAPIView(ListAPIView):
     permission_classes = (
         IsAuthenticated,
         HasUNPPPermission(
-            # TODO: Permissions
+            agency_permissions=[
+                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+            ]
         ),
     )
     queryset = Partner.objects.all()
