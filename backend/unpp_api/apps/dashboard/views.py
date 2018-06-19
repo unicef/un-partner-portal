@@ -139,7 +139,9 @@ class SubmittedCNListAPIView(PartnerIdsMixin, ListAPIView):
     serializer_class = SubmittedCNSerializer
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW,
+            ]
         ),
     )
     pagination_class = SmallPagination
@@ -155,7 +157,9 @@ class PendingOffersListAPIView(PartnerIdsMixin, ListAPIView):
     serializer_class = PendingOffersSerializer
     permission_classes = (
         HasUNPPPermission(
-            #  TODO: Permissions
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW,
+            ]
         ),
     )
     pagination_class = SmallPagination
