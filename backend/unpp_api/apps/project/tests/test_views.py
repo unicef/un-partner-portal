@@ -431,8 +431,8 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
 class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
-    quantity = 1
-    user_type = BaseAPITestCase.USER_PARTNER
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     def setUp(self):
         super(TestAgencyApplicationsAPITestCase, self).setUp()
@@ -1085,6 +1085,13 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         direct_selection_payload['applications'].pop()
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
+        self.assertFalse(response.data['eoi']['sent_for_publishing'])
+        self.assertFalse(response.data['eoi']['is_published'])
+
+        # publish_url = reverse('projects:eoi-send-to-publish', kwargs={'pk': response.data['eoi']['id']})
+        # publish_response = self.client.post(publish_url)
+        # self.assertResponseStatusIs(publish_response, status.HTTP_200_OK)
+        # self.assertTrue(EOI.objects.get(pk=response.data['eoi']['id']).sent_for_publishing)
 
         call_command('send_daily_notifications')
         selection_emails = list(filter(

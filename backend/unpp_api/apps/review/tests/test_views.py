@@ -116,6 +116,9 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
 class TestPartnerVerificationAPITestCase(BaseAPITestCase):
 
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.HQ_EDITOR
+
     def setUp(self):
         super(TestPartnerVerificationAPITestCase, self).setUp()
         AgencyOfficeFactory.create_batch(self.quantity)
@@ -155,6 +158,9 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
 
 
 class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.HQ_EDITOR
 
     def setUp(self):
         super(TestRegisterSanctionedPartnerTestCase, self).setUp()
