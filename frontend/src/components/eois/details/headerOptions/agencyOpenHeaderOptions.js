@@ -24,6 +24,7 @@ import PublishCfeiModal from '../../modals/completeCfei/publishCfeiModal';
 import { checkPermission, isRoleOffice, AGENCY_ROLES, AGENCY_PERMISSIONS, COMMON_PERMISSIONS } from '../../../../helpers/permissions';
 import { selectCfeiStatus,
   isCfeiPublished,
+  isCfeiDeadlinePassed,
   isCfeiCompleted,
   isUserAFocalPoint,
   isDeadlinePassed,
@@ -130,6 +131,7 @@ class PartnerOpenHeaderOptions extends Component {
       isFocalPoint,
       isPublished,
       status,
+      isDeadlinePassed,
       isAdvEd,
       isPAM,
       hasPublishPermission,
@@ -138,7 +140,7 @@ class PartnerOpenHeaderOptions extends Component {
       dialogOpen,
       handleDialogClose,
       handleDialogOpen } = this.props;
-
+console.log(isDeadlinePassed)
     return (
       <SpreadContent>
         {isPublished && this.isPuslishPermissionAllowed(hasFinalizePermission)
@@ -149,7 +151,7 @@ class PartnerOpenHeaderOptions extends Component {
 
         {!isPublished && !isCompleted && hasPublishPermission &&
             (((isFocalPoint || isCreator) && isAdvEd) || (isCreator && isPAM))
-         && <PublishCfeiButton handleClick={() => handleDialogOpen(publish)} />}
+         && <PublishCfeiButton disabled={isDeadlinePassed} handleClick={() => handleDialogOpen(publish)} />}
 
         <DropdownMenu
           options={this.sendOptions()}
@@ -212,11 +214,9 @@ PartnerOpenHeaderOptions.propTypes = {
   hasInvitePublishPermission: PropTypes.bool,
   hasCancelPublishPermission: PropTypes.bool,
   hasPublishPermission: PropTypes.bool,
-
-
   hasEditPublishedPermission: PropTypes.bool,
-
   hasFinalizePermission: PropTypes.bool,
+  isDeadlinePassed: PropTypes.bool,
   isFocalPoint: PropTypes.bool,
   isCompleted: PropTypes.bool,
   isAdvEd: PropTypes.bool,
@@ -232,6 +232,8 @@ const mapStateToProps = (state, ownProps) => ({
   isCompleted: isCfeiCompleted(state, ownProps.id),
   isPublished: isCfeiPublished(state, ownProps.id),
   isDeadlinePassed: isDeadlinePassed(state, ownProps),
+  isPublished: isCfeiPublished(state, ownProps.id),
+  isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.id),
   status: selectCfeiStatus(state, ownProps.id),
   hasManageDraftPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_MANAGE, state),
   hasSendPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH,

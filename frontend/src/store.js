@@ -2,6 +2,7 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import { reducer as formReducer } from 'redux-form';
 import thunk from 'redux-thunk';
+import persistState from 'redux-localstorage';
 import R from 'ramda';
 import { routerReducer, routerMiddleware } from 'react-router-redux';
 
@@ -156,10 +157,20 @@ if (process.env.NODE_ENV !== 'production') {
   composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || composeEnhancers;
 }
 
+const slicer = (paths) => (state) => paths.reduce((acc, curr) => {
+  const path = R.split('.', curr);
+
+  return R.assocPath(path, R.path(path, state), acc);
+}, {});
+
 export default createStore(
   mainReducer,
   composeEnhancers(
     applyMiddleware(...middelware),
+    persistState([
+      'session.partnerId',
+      'session.newlyRegistered',
+    ], { slicer }),
   ),
 );
 
@@ -306,6 +317,9 @@ export const isDeadlinePassed = (state, id) =>
 
 export const isCfeiPublished = (state, id) =>
   cfeiDetailsSelector.isCfeiPublished(state.cfeiDetails.data, id);
+
+export const isCfeiDeadlinePassed = (state, id) =>
+  cfeiDetailsSelector.isCfeiDeadlinePassed(state.cfeiDetails.data, id);
 
 export const isCfeiPinned = (state, id) =>
   cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.data, id);

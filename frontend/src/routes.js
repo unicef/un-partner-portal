@@ -34,6 +34,7 @@ import organizationProfileOverviewPaper from './components/organizationProfile/p
 import agencyMembersContainer from './components/settings/agencyMembersContainer';
 import registration from './components/registration/registration';
 import login from './components/login/login';
+import passwordReset from './components/passwordReset/passwordReset';
 import mainContent from './components/common/mainContentWrapper';
 import dev from './components/dev';
 import cfeiOpenResults from './components/eois/details/overview/results/results';
@@ -142,8 +143,9 @@ const allRoutes = () => (
     </Route>
     <Route component={nonAuth}>
       <Route path="/login" component={login} />
+      <Route path="/password-reset/:uid/:token" component={passwordReset} />
       <Route path="/registration" component={registration} />
     </Route>
-  </Router >
+  </Router>
 );
 export default allRoutes;
