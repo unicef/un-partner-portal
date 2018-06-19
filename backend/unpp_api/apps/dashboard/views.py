@@ -7,7 +7,6 @@ from django.db.models import Q
 from django.http import Http404
 
 from rest_framework.generics import RetrieveAPIView, ListAPIView
-from rest_framework.permissions import IsAuthenticated
 
 from agency.permissions import AgencyPermission
 from common.consts import CFEI_TYPES
