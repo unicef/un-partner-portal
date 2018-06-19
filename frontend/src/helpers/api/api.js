@@ -125,6 +125,10 @@ export function getUserData() {
   return authorizedGet({ uri: '/accounts/me/' });
 }
 
+export const passwordReset = post.bind(null, '/rest-auth/password/reset/');
+
+export const passwordResetConfirm = post.bind(null, '/rest-auth/password/reset/confirm/');
+
 // Config
 export function getCountries() {
   return get('/config/countries');

@@ -27,7 +27,8 @@ const initialState = {
     { name: 'country', title: 'Country' },
     { name: 'specializations', title: 'Sector' },
     { name: 'submission_date', title: 'Submission Date' },
-    { name: 'is_direct', title: 'Chosen for direct selection/retention' },
+    { name: 'is_direct', title: 'Chosen for DS/R' },
+    { name: 'application_status', title: 'Application status' },
   ],
   loading: false,
   items: [],
@@ -43,8 +44,9 @@ const saveApplicationsUcn = (state, action) => {
       country: item.country,
       title: R.path(['eoi', 'title'], item),
       specializations: R.path(['specializations'], item) ? normalizeSingleCfei(item).specializations : [],
-      submission_date: item.submission_date,
+      submission_date: item.submission_date ? item.submission_date : '-',
       is_direct: item.is_direct,
+      application_status: item.application_status,
     }), action.response.results);
 
   return R.assoc('items', applications, R.assoc('totalCount', action.response.count, state));

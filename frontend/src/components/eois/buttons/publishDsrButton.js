@@ -29,7 +29,6 @@ const PublishDsrButton = (props) => {
 
 PublishDsrButton.propTypes = {
   handleClick: PropTypes.func,
-  tooltipInfo: PropTypes.string,
   disabled: PropTypes.string,
 };
 
