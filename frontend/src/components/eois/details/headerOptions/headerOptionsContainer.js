@@ -8,6 +8,7 @@ import { PROJECT_TYPES, ROLES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
 import AgencyOpenHeaderOptions from './agencyOpenHeaderOptions';
 import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
+import PartnerDirectHeaderOptions from './partnerDirectHeaderOptions';
 import EoiStatusHeader from '../../cells/eoiStatusHeader';
 import { selectCfeiStatus,
   isCfeiPublished,
@@ -56,8 +57,12 @@ const HeaderOptionsContainer = (props) => {
     } else if (role === ROLES.PARTNER) {
       options = <PartnerOpenHeaderOptions />;
     }
-  } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
-    options = <AgencyDirectHeaderOptions id={id} />;
+  } else if (type === PROJECT_TYPES.DIRECT) {
+    if (role === ROLES.AGENCY) {
+      options = <AgencyDirectHeaderOptions id={id} />;
+    } else if (role === ROLES.PARTNER) {
+      options = <PartnerDirectHeaderOptions id={id} />;
+    }
   } else if (type === PROJECT_TYPES.UNSOLICITED && role === ROLES.PARTNER) {
     options = <PartnerUcnHeaderOptions id={id} />;
   }
