@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import numbers
+
 from django.db.models.base import Model
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
@@ -167,6 +169,12 @@ class AdminLevel1Serializer(serializers.ModelSerializer):
             })
         return super(AdminLevel1Serializer, self).validate(data)
 
+    def create(self, validated_data):
+        if 'id' in self.initial_data:
+            return self.update(self.Meta.model.objects.get(id=self.initial_data['id']), validated_data)
+        else:
+            return super(AdminLevel1Serializer, self).create(validated_data)
+
 
 class AdminLevel1CountrySerializer(serializers.ModelSerializer):
 
@@ -187,13 +195,24 @@ class PointSerializer(serializers.ModelSerializer):
         if 'admin_level_1' in data and data['admin_level_1']['country_code'] not in LOCATION_OPTIONAL_COUNTRIES:
             errors = {}
             for field in ('lat', 'lon'):
-                if not data.get(field):
+                if not isinstance(data.get(field), numbers.Number):
                     errors[field] = [
                         'this field is required for {}'.format(data['admin_level_1']['country_code'])
                     ]
             if errors:
                 raise ValidationError(errors)
+
         return super(PointSerializer, self).validate(data)
+
+    def create(self, validated_data):
+        validated_data.pop('admin_level_1', None)
+        admin_level_serializer = AdminLevel1Serializer(data=self.initial_data.get('admin_level_1'))
+        admin_level_serializer.is_valid(raise_exception=True)
+        validated_data['admin_level_1'] = admin_level_serializer.save()
+        if 'id' in self.initial_data:
+            return self.update(self.Meta.model.objects.get(id=self.initial_data['id']), validated_data)
+        else:
+            return super(PointSerializer, self).create(validated_data)
 
 
 class CommonFileSerializer(serializers.ModelSerializer):

@@ -1,6 +1,7 @@
 from django.utils.functional import SimpleLazyObject
 from django.conf import settings
 
+from common.headers import CustomHeader
 from partner.models import Partner
 
 
@@ -8,7 +9,7 @@ from partner.models import Partner
 
 
 def get_partner_and_member_objects(request):
-    partner_id = request.META.get('HTTP_PARTNER_ID', None)
+    partner_id = request.META.get(CustomHeader.PARTNER_ID.value, None)
     partner = None
     partner_member = None
 
@@ -52,7 +53,7 @@ def get_office_member_object(request):
         if not agency_members:
             return None
 
-        office_id = request.META.get('HTTP_AGENCY_OFFICE_ID', None)
+        office_id = request.META.get(CustomHeader.AGENCY_OFFICE_ID.value, None)
 
         if office_id:
             return request.user.agency_members.filter(office_id=office_id).first()

@@ -233,11 +233,13 @@ class TestPasswordResetTestCase(BaseAPITestCase):
         token = url_path_parts[-1]
         uid = url_path_parts[-2]
 
+        new_password = '124jn534n234oi124'
+
         reset_payload = {
             'uid': uid,
             'token': token,
-            'new_password1': 'password',
-            'new_password2': 'password',
+            'new_password1': new_password,
+            'new_password2': new_password,
         }
 
         api_reset_url = reverse('rest_password_reset_confirm')

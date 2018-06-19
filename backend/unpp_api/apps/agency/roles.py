@@ -283,8 +283,6 @@ VALID_FOCAL_POINT_ROLE_NAMES = frozenset([
 
 
 VALID_REVIEWER_ROLE_NAMES = frozenset([
-    AgencyRole.EDITOR_ADVANCED.name,
-    AgencyRole.EDITOR_BASIC.name,
-    AgencyRole.MFT_USER.name,
-    AgencyRole.PAM_USER.name,
+    role.name for role, permissions in AGENCY_ROLE_PERMISSIONS.items() if
+    AgencyPermission.CFEI_REVIEW_APPLICATIONS in permissions
 ])

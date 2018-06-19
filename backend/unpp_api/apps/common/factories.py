@@ -685,7 +685,7 @@ class EOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def locations(self, create, extracted, **kwargs):
-        count = random.randint(0, 3)
+        count = random.randint(2, 3)
         while count:
             count -= 1
             point = Point.objects.get_point(**{

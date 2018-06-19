@@ -137,7 +137,7 @@ class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         return flag
 
 
-class PartnerVerificationRetrieveUpdateAPIView(RetrieveAPIView):
+class PartnerVerificationRetrieveAPIView(RetrieveAPIView):
     permission_classes = (
         IsAuthenticated,
         HasUNPPPermission(

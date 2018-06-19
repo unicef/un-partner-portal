@@ -33,47 +33,47 @@ class PartnerSwitch extends Component {
       anchorEl: null,
       open: false,
     };
-    this.handleClick = this.handleClick.bind(this);
-    this.handleRequestClose = this.handleRequestClose.bind(this);
   }
 
-  handleClick(event) {
+  handleClick = (event) => {
     this.setState({ open: true, anchorEl: event.currentTarget });
   }
 
-  handleRequestClose(partner) {
-    const { startRefresh, stopRefresh, isCurrentHq, currentHqId, partnerId } = this.props;
-    if (partner.id) {
-      this.props.saveNewCurrentPartner({
-        partnerId: partner.id,
-        partnerCountry: partner.country_code,
-        partnerName: partner.legal_name,
-        isHq: partner.is_hq,
-        hqId: currentHqId || isCurrentHq ? partnerId : null,
-        logo: partner.logo,
-        logoThumbnail: partner.logoThumbnail,
-        isProfileComplete: partner.partner_additional.has_finished,
-        lastUpdate: partner.last_profile_update,
-      });
-
-      this.setState({ open: false });
-      const loc = history.getCurrentLocation();
-      startRefresh();
-      history.push('/');
-      setTimeout(() => {
-        history.push(loc);
-        stopRefresh();
-      }, 100);
-    }
-
+  onClose = () => {
     this.setState({ open: false });
+  }
+
+  handleRequest = (partner) => {
+    const { startRefresh, stopRefresh, isCurrentHq, currentHqId, partnerId } = this.props;
+
+    this.props.saveNewCurrentPartner({
+      partnerId: partner.id,
+      partnerCountry: partner.country_code,
+      partnerName: partner.legal_name,
+      isHq: partner.is_hq,
+      hqId: currentHqId || isCurrentHq ? partnerId : null,
+      logo: partner.logo,
+      logoThumbnail: partner.logoThumbnail,
+      isProfileComplete: partner.partner_additional.has_finished,
+      lastUpdate: partner.last_profile_update,
+    });
+
+    this.onClose();
+
+    const loc = history.getCurrentLocation();
+    startRefresh();
+    history.push('/');
+    setTimeout(() => {
+      history.push(loc);
+      stopRefresh();
+    }, 100);
   }
 
   renderMenuItems(partners = [], countries = {}) {
     return partners.map(partner => (
       <MenuItem
         key={partner.id}
-        onClick={() => this.handleRequestClose(partner)}
+        onClick={() => this.handleRequest(partner)}
         selected={partner.id === this.props.partnerId}
       >
         <Typography type="body2">
@@ -109,7 +109,7 @@ class PartnerSwitch extends Component {
           id="switch-partner"
           anchorEl={this.state.anchorEl}
           open={this.state.open}
-          onClose={this.handleRequestClose}
+          onClose={this.onClose}
         >
           {this.renderMenuItems(partners, countries)}
         </Menu>
