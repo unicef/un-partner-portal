@@ -304,7 +304,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestDirectProjectsAPITestCase, self).setUp()
-        PartnerSimpleFactory.create_batch(1)
+        PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
