@@ -242,6 +242,58 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(response.data['is_completed'])
         self.assertEquals(response.data['justification'], justification)
 
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    def test_patch_locations_for_project(self):
+        cfei = EOIFactory(created_by=self.user)
+        details_url = reverse('projects:eoi-detail', kwargs={'pk': cfei.id})
+        details_response = self.client.get(details_url)
+        self.assertResponseStatusIs(details_response)
+        initial_locations = details_response.data['locations']
+        new_locations_payload = {
+            'locations': [
+                {
+                    "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
+                    "lat": random.randint(-180, 180),
+                    "lon": random.randint(-180, 180),
+                },
+                {
+                    "admin_level_1": {"name": "Paris", "country_code": "FR"},
+                    "lat": random.randint(-180, 180),
+                    "lon": random.randint(-180, 180),
+                },
+            ],
+        }
+        update_response = self.client.patch(details_url, data=new_locations_payload)
+        self.assertResponseStatusIs(update_response)
+        self.assertEqual(
+            len(new_locations_payload['locations']),
+            len(update_response.data['locations'])
+        )
+
+        second_update_payload = {
+            'locations': [
+                {
+                    "admin_level_1": {"name": "Poland", "country_code": 'PL'},
+                    "lat": random.randint(-180, 180),
+                    "lon": random.randint(-180, 180),
+                },
+            ] + initial_locations,
+        }
+
+        second_update_response = self.client.patch(details_url, data=second_update_payload)
+        self.assertResponseStatusIs(second_update_response)
+
+        self.assertEqual(
+            len(second_update_payload['locations']),
+            len(second_update_response.data['locations'])
+        )
+
+        self.assertTrue(
+            {l['id'] for l in initial_locations}.issubset(
+                {l['id'] for l in second_update_response.data['locations']}
+            )
+        )
+
 
 class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
@@ -252,7 +304,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestDirectProjectsAPITestCase, self).setUp()
-        PartnerSimpleFactory.create_batch(1)
+        PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
@@ -379,8 +431,8 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
 class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
-    quantity = 1
-    user_type = BaseAPITestCase.USER_PARTNER
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     def setUp(self):
         super(TestAgencyApplicationsAPITestCase, self).setUp()
@@ -1033,6 +1085,13 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         direct_selection_payload['applications'].pop()
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
+        self.assertFalse(response.data['eoi']['sent_for_publishing'])
+        self.assertFalse(response.data['eoi']['is_published'])
+
+        # publish_url = reverse('projects:eoi-send-to-publish', kwargs={'pk': response.data['eoi']['id']})
+        # publish_response = self.client.post(publish_url)
+        # self.assertResponseStatusIs(publish_response, status.HTTP_200_OK)
+        # self.assertTrue(EOI.objects.get(pk=response.data['eoi']['id']).sent_for_publishing)
 
         call_command('send_daily_notifications')
         selection_emails = list(filter(

@@ -532,6 +532,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
     def get_applications_count(self, eoi):
         return eoi.applications.count()
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         if instance.status == CFEI_STATUSES.closed and not set(validated_data.keys()).issubset(
             {'reviewers', 'focal_points'}
@@ -581,6 +582,14 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             instance.invited_partners.add(*Partner.objects.filter(id__in=invited_partner_ids))
         elif 'invited_partners' in self.initial_data:
             instance.invited_partners.clear()
+
+        locations_data = self.initial_data.get('locations', [])
+        if locations_data:
+            instance.locations.clear()
+            for location_data in locations_data:
+                location_serializer = PointSerializer(data=location_data)
+                location_serializer.is_valid(raise_exception=True)
+                instance.locations.add(location_serializer.save())
 
         update_cfei_reviewers(instance, self.initial_data.get('reviewers'))
         update_cfei_focal_points(instance, self.initial_data.get('focal_points'))

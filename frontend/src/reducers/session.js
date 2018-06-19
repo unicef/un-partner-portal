@@ -1,6 +1,12 @@
 import { browserHistory as history } from 'react-router';
 import R from 'ramda';
-import { postRegistration, login, logout, getUserData } from '../helpers/api/api';
+import {
+  getUserData,
+  login,
+  logout,
+  postRegistration,
+  passwordResetConfirm,
+} from '../helpers/api/api';
 import { ROLES, SESSION_STATUS } from '../helpers/constants';
 
 export const SESSION_CHANGE = 'SESSION_CHANGE';
@@ -70,7 +76,10 @@ export const loginSuccess = session => ({ type: LOGIN_SUCCESS, session });
 export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
 
 export const loadUserData = () => (dispatch, getState) => {
-  const token = getState().session.token;
+  const { session } = getState();
+  const token = session.token;
+  const partnerId = session.partnerId;
+
   if (!token) {
     history.push('/login');
     return Promise.resolve();
@@ -107,7 +116,10 @@ export const loadUserData = () => (dispatch, getState) => {
       }
       // partner specific fields
       if (role === ROLES.PARTNER) {
-        const mainPartner = R.head(response.partners);
+        const mainPartner = R.defaultTo(
+          R.head(response.partners),
+          R.find(R.propEq('id', partnerId), response.partners),
+        );
 
         const partnerObject = {
           partners: response.partners,
@@ -167,6 +179,8 @@ export const registerUser = json => dispatch => postRegistration(json)
     dispatch(sessionChange({ newlyRegistered: true }));
     dispatch(loginUser({ email, password: R.path(['user', 'password'], json) }));
   });
+
+export const changePassword = payload => () => passwordResetConfirm(payload);
 
 const setSession = (state, session) => R.mergeDeepRight(state, session);
 

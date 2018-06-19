@@ -150,6 +150,24 @@ INSTALLED_APPS = [
 # auth / django-registration params
 AUTH_USER_MODEL = 'account.User'
 
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 12,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
 PASSWORD_RESET_TIMEOUT_DAYS = 31
 
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
