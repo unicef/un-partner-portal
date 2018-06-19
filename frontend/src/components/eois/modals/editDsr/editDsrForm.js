@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { reduxForm, formValueSelector } from 'redux-form';
-import { pluck } from 'ramda';
+import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 
@@ -22,14 +21,12 @@ const EditDirectForm = (props) => {
   const {
     handleSubmit,
     startDate,
-    cfeiDetails,
     partner,
     focalPointNameArray } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <ProjectDetails
-          cfeiDetails={cfeiDetails}
           formName="editDsr"
           focalPoints={focalPointNameArray}
         >
@@ -39,7 +36,7 @@ const EditDirectForm = (props) => {
         <Typography type="headline">
           {messages.selectPartners}
         </Typography>
-        <PartnersForm partnername={partner} />
+        <PartnersForm partnerName={partner} />
       </GridColumn>
     </form >
   );
@@ -49,27 +46,27 @@ EditDirectForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   startDate: PropTypes.string,
   partner: PropTypes.string,
-  focalPointName: PropTypes.array,
-  cfeiDetails: PropTypes.object,
+  focalPointNameArray: PropTypes.array,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
   const cfeiStartDate = cfei.start_date;
-  const focalPoints = cfei.focal_points_detail.map(item => item.id);
-  const focalPointNameArray = cfei.focal_points_detail.map(item => item.name);
-  const partner = String(cfei.direct_selected_partners.map(item => item.partner_name));
-  const applications = cfei.direct_selected_partners.map(item => ({
-    partner: Number(item.partner_id),
-    ds_justification_select: item.ds_justification_select,
-    justification_reason: item.justification_reason,
-    ds_attachment: item.ds_attachment,
-  }));
-  console.log(focalPoints, focalPointNameArray, partner, applications);
-  
+  const focalPoints = cfei.focal_points_detail.map(
+    item => item.id);
+  const focalPointNameArray = cfei.focal_points_detail.map(
+    item => item.name);
+  const partner = String(cfei.direct_selected_partners.map(
+    item => item.partner_name));
+  const applications = cfei.direct_selected_partners.map(
+    item => ({
+      partner: Number(item.partner_id),
+      ds_justification_select: item.ds_justification_select,
+      justification_reason: item.justification_reason,
+      ds_attachment: item.ds_attachment,
+    }));
   return {
     startDate: cfeiStartDate,
-    cfeiDetails: cfei,
     partner,
     focalPointNameArray,
     initialValues: {

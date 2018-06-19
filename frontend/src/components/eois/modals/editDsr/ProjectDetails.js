@@ -33,7 +33,6 @@ const ProjectDetails = (props) => {
         </GridRow>
       </GridColumn>
     </GridColumn>
-
   );
 };
 

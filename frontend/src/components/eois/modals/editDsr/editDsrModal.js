@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import R from 'ramda';
 import { connect } from 'react-redux';
-import { browserHistory as history, withRouter } from 'react-router';
+import { withRouter } from 'react-router';
 import { submit } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
@@ -12,9 +12,9 @@ import { errorToBeAdded } from '../../../../reducers/errorReducer';
 import { selectCountriesWithOptionalLocations } from '../../../../store';
 
 const messages = {
-  title: 'Create new direct selection/retention',
+  title: 'Edit direct selection/retention',
   save: 'Save',
-  error: 'Unable to create new direct selection/retention',
+  error: 'Unable to update direct selection/retention',
 };
 
 class EditDsrModal extends Component {
@@ -29,11 +29,11 @@ class EditDsrModal extends Component {
   }
 
   handleSubmit(values) {
+    const i = values.countries;
     const normalizedValues = values;
     normalizedValues.locations = [];
-    const i = values.countries;
     R.map(loc => normalizedValues.locations.push(loc.locations[0]), i);
-    return this.props.postCfei(normalizedValues).then(() => {
+    return this.props.patchDsr(normalizedValues).then(() => {
       this.props.handleDialogClose();
     });
   }
@@ -77,9 +77,8 @@ class EditDsrModal extends Component {
 
 EditDsrModal.propTypes = {
   open: PropTypes.bool,
-  type: PropTypes.string,
   onDialogClose: PropTypes.func,
-  postCfei: PropTypes.func,
+  patchDsr: PropTypes.func,
   submit: PropTypes.func,
   postError: PropTypes.func,
   handleDialogClose: PropTypes.func,
@@ -91,7 +90,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  postCfei: body => dispatch(updateCfei(body, ownProps.id)),
+  patchDsr: body => dispatch(updateCfei(body, ownProps.id)),
   submit: () => dispatch(submit('editDsr')),
   postError: (error, message) => dispatch(errorToBeAdded(error, `newProject${ownProps.type}`, message)),
 });

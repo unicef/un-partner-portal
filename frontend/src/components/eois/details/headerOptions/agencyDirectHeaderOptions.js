@@ -118,7 +118,6 @@ class AgencyDirectHeaderOptions extends Component {
       },
     ];
 
-    console.log(isCompleted, isPublished, hasEditPublishedPermission);
     if ((!isCompleted && isPublished && this.isActionAllowed(hasEditPublishedPermission))
     || (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
     || (!isCompleted && hasEditPublishedPermission && isMFT && isFocalPoint)))) {
