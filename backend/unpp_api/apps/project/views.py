@@ -148,9 +148,10 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
     def get_queryset(self):
         queryset = super(EOIAPIView, self).get_queryset()
         if not self.request.method == 'GET':
-            queryset = queryset.filter(
+            valid_ids = EOI.objects.filter(
                 Q(created_by=self.request.user) | Q(focal_points=self.request.user)
-            ).filter(is_completed=False).order_by().distinct('id')
+            ).values_list('id', flat=True).distinct()
+            queryset = queryset.filter(is_completed=False, id__in=valid_ids)
 
         if self.request.active_partner:
             queryset = queryset.filter(is_published=True)
