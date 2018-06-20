@@ -1015,9 +1015,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
     def setUp(self):
         super(TestDirectSelectionTestCase, self).setUp()
         for partner in Partner.objects.all():
-            factory = PartnerMemberFactory
-            factory.partner = partner
-            factory.create_batch(5)
+            PartnerMemberFactory.create_batch(5, partner=partner)
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_create_direct(self):
