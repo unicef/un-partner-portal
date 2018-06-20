@@ -40,6 +40,9 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
             'comment': {
                 'required': True
             },
+            'contact_email': {
+                'required': True
+            },
         }
 
     def get_extra_kwargs(self):
