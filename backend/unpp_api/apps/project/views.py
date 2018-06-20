@@ -334,11 +334,12 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
                 "You don't have the ability to submit an application if Your profile is not completed."
             )
 
+        eoi = get_object_or_404(EOI, id=self.kwargs.get('pk'))
         instance = serializer.save(
-            eoi=get_object_or_404(EOI, id=self.kwargs.get('pk')),
+            eoi=eoi,
             submitter_id=self.request.user.id,
             partner_id=self.request.active_partner.id,
-            agency=self.eoi.agency
+            agency=eoi.agency
         )
         send_notification_application_created(instance)
 

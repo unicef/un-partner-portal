@@ -188,12 +188,6 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
         read_only_fields = (
             'eoi', 'review_summary_comment', 'review_summary_attachment'
         )
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Application.objects.all(),
-                fields=('eoi', 'partner')
-            )
-        ]
 
     prevent_keys = ["cn"]
 
