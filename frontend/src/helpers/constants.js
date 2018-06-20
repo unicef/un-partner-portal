@@ -42,13 +42,6 @@ export const AGENCY_MEMBERS_POSITIONS = {
   READER: 'Reader',
 };
 
-// duplicates of above, but incoming role changes will not be symmetrical
-export const PARTNER_MEMBERS_POSITIONS = {
-  ADMIN: 'HQ Administrator',
-  EDITOR: 'Editor',
-  READER: 'Reader',
-};
-
 export const PROJECT_STATUSES = {
   OPE: 'Ope',
   CLO: 'Clo',

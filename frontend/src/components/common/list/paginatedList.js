@@ -82,7 +82,7 @@ class PaginatedList extends Component {
     this.setState({ hoveredRow: null });
   }
 
-  tableRowTemplate({ row, children, rowId }) {
+  tableRowTemplate({ row, children, tableRow: { rowId } }) {
     return (
       <TableRowMUI
         hover
@@ -115,14 +115,12 @@ class PaginatedList extends Component {
     const { hoveredRow } = this.state;
 
     return (
-      <ListLoader
-        loading={loading}
-      >
+      <ListLoader loading={loading}>
         <Paper>
           <Grid
             rows={items}
             columns={columns}
-            headerPlaceholderTemplate={() => this.navigationHeader()}
+            headerPlaceholderComponent={() => this.navigationHeader()}
           >
             {allowSorting && <SortingState
               sorting={sorting}

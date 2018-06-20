@@ -20,7 +20,6 @@ import CnFileSection from './cnFileSection';
 import PaddedContent from '../../../common/paddedContent';
 import FileForm from '../../../forms/fileForm';
 import ProfileConfirmation from '../../../organizationProfile/common/profileConfirmation';
-import { isUserNotPartnerReader } from '../../../../helpers/authHelpers';
 
 const messages = {
   confirm: 'I confirm that my profile is up to date',
@@ -92,7 +91,6 @@ class ConceptNoteSubmission extends Component {
       errorUpload,
       cnUploaded,
       handleSubmit,
-      displaySubmission,
       cn } = this.props;
     const { alert, errorMsg, checked } = this.state;
     return (
@@ -110,28 +108,26 @@ class ConceptNoteSubmission extends Component {
           <Typography className={classes.alignRight} type="caption">
             {`${messages.deadline} ${formatDateForPrint(deadlineDate)}`}
           </Typography>
-          {displaySubmission
-            ? <React.Fragment>
-              <ProfileConfirmation
-                checked={cnUploaded || this.state.checked}
-                disabled={cnUploaded}
-                onChange={(event, check) => this.handleCheck(event, check)}
-              />
-              <div className={classes.alignRight}>
-                {cnUploaded
-                  ? <Typography type="body1">
-                    {`${messages.submitted} ${formatDateForPrint(submitDate)}`}
-                  </Typography>
-                  : <Button
-                    onClick={handleSubmit(this.handleSubmit)}
-                    color="accent"
-                    disabled={!checked}
-                  >
-                    {messages.submit}
-                  </Button>}
-              </div>
-            </React.Fragment>
-            : null }
+          <React.Fragment>
+            <ProfileConfirmation
+              checked={cnUploaded || this.state.checked}
+              disabled={cnUploaded}
+              onChange={(event, check) => this.handleCheck(event, check)}
+            />
+            <div className={classes.alignRight}>
+              {cnUploaded
+                ? <Typography type="body1">
+                  {`${messages.submitted} ${formatDateForPrint(submitDate)}`}
+                </Typography>
+                : <Button
+                  onClick={handleSubmit(this.handleSubmit)}
+                  color="accent"
+                  disabled={!checked}
+                >
+                  {messages.submit}
+                </Button>}
+            </div>
+          </React.Fragment>
         </PaddedContent>
         <Snackbar
           anchorOrigin={{
@@ -180,11 +176,9 @@ const selector = formValueSelector('CNSubmission');
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.params.id);
-  const application = selectPartnerApplicationDetails(state, ownProps.params.id);
-  const displaySubmission = isUserNotPartnerReader(state);
+  const application = selectPartnerApplicationDetails(state, ownProps.params.id); 
   const { cn, created } = application;
   let props = {
-    displaySubmission,
     loader: state.conceptNote.loading,
     cnUploaded: !!state.conceptNote.cnFile,
     errorUpload: state.conceptNote.error,
