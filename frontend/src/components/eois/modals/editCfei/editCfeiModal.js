@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import ControlledModal from '../../../common/modals/controlledModal';
 import { updateCfei } from '../../../../reducers/newCfei';
-import EditCfeiForm from './editAllCfeiForm';
+import EditCfeiForm from './editCfeiForm';
 
 const messages = {
   title: {
