@@ -7,7 +7,7 @@ import { submit } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
 import EditUcnForm from './editUcnForm';
-import { updateCfei } from '../../../../reducers/newCfei';
+import { updateUcn } from '../../../../reducers/newCfei';
 import { errorToBeAdded } from '../../../../reducers/errorReducer';
 import { selectCountriesWithOptionalLocations } from '../../../../store';
 
@@ -90,7 +90,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  patchUcn: body => dispatch(updateCfei(body, ownProps.id)),
+  patchUcn: body => dispatch(updateUcn(body, ownProps.id)),
   submit: () => dispatch(submit('editUcn')),
   postError: (error, message) => dispatch(errorToBeAdded(error, `newProject${ownProps.type}`, message)),
 });

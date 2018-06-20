@@ -1,7 +1,7 @@
 import R from 'ramda';
 import { browserHistory as history } from 'react-router';
 import { SubmissionError } from 'redux-form';
-import { postOpenCfei, postDirectCfei, patchCfei, postUnsolicitedCN, patchPinnedCfei } from '../helpers/api/api';
+import { postOpenCfei, postDirectCfei, patchCfei, postUnsolicitedCN, patchPinnedCfei, patchUcn } from '../helpers/api/api';
 import { mergeListsFromObjectArray } from './normalizationHelpers';
 import { loadCfei } from './cfei';
 import { loadCfeiDetailSuccess } from './cfeiDetailsStatus';
@@ -116,6 +116,27 @@ export const addUnsolicitedCN = body => (dispatch, getState) => {
 };
 
 export const updateCfei = (body, id) => (dispatch, getState) => patchCfei(body, id)
+  .then((cfei) => {
+    dispatch(loadCfeiDetailSuccess(cfei));
+    if (cfei.direct_selected_partners) {
+      cfei.direct_selected_partners.forEach((selectedPartner) => {
+        dispatch(loadSuccess(APPLICATION_DETAILS, { results: {
+          id: selectedPartner.id,
+          application_status: selectedPartner.application_status,
+        },
+        selectedPartner,
+        getState }));
+      });
+    }
+  }).catch((error) => {
+    dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
+    throw new SubmissionError({
+      ...error.response.data,
+      _error: errorMsg,
+    });
+  });
+
+export const updateUcn = (body, id) => (dispatch, getState) => patchUcn(body, id)
   .then((cfei) => {
     dispatch(loadCfeiDetailSuccess(cfei));
     if (cfei.direct_selected_partners) {
