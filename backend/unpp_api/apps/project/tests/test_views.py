@@ -479,9 +479,9 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         AgencyMemberFactory.create_batch(self.quantity)
 
         # make sure that creating user is not the current one
-        user = UserFactory.create_batch(1)[0]
-        AgencyMemberFactory.create_batch(1, user=user)
-        eoi = EOIFactory.create_batch(1, is_published=True, created_by=user)[0]
+        user = UserFactory()
+        AgencyMemberFactory(user=user)
+        eoi = EOIFactory(is_published=True, created_by=user)
         eoi.focal_points.clear()
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
@@ -542,8 +542,8 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(len(mail.outbox) > 0)
         mail.outbox = []
 
-        partner_user = UserFactory.create_batch(1)[0]
-        PartnerMemberFactory.create_batch(1, user=partner_user, partner=app.partner, role=PartnerRole.ADMIN.name)
+        partner_user = UserFactory()
+        PartnerMemberFactory(user=partner_user, partner=app.partner, role=PartnerRole.ADMIN.name)
         self.client.force_login(partner_user)
         # accept offer
         payload = {
@@ -816,7 +816,7 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
         file_id = response.data['id']
 
         PartnerMemberFactory()  # eoi is creating applications that need partner member
-        eoi = EOIFactory.create_batch(1, created_by=self.user)[0]
+        eoi = EOIFactory(created_by=self.user)
         url = reverse('projects:review-summary', kwargs={"pk": eoi.id})
         payload = {
             'review_summary_comment': "comment",
@@ -844,7 +844,7 @@ class TestInvitedPartnersListAPIView(BaseAPITestCase):
 
     def setUp(self):
         super(TestInvitedPartnersListAPIView, self).setUp()
-        PartnerSimpleFactory.create_batch(1)
+        PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
@@ -871,7 +871,7 @@ class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
 
     def setUp(self):
         super(TestEOIReviewersAssessmentsNotifyAPIView, self).setUp()
-        PartnerSimpleFactory.create_batch(1)
+        PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db.models import Q
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
@@ -94,13 +95,13 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
                 'This needs to be resolved before verifying.'
             )
 
-        if partner.hq:
-            if not partner.hq.is_verified:
-                raise serializers.ValidationError('INGO HQ profile needs to be verified before country office.')
-            if partner.hq.has_red_flag:
-                raise serializers.ValidationError(
-                    "HQ of this INGO has red flags against it's profile. This needs to be resolved before verifying."
-                )
+        if partner.hq and not partner.hq.is_verified:
+            raise serializers.ValidationError('INGO HQ profile needs to be verified before country office.')
+
+        if partner.has_red_flag:
+            raise serializers.ValidationError(
+                "This partner has red flags against it's profile. This needs to be resolved before verifying."
+            )
 
         serializer.save(submitter=self.request.user, partner=partner)
 
@@ -120,7 +121,9 @@ class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     serializer_class = PartnerFlagSerializer
 
     def get_queryset(self):
-        return PartnerFlag.objects.filter(partner=self.kwargs.get('partner_id'))
+        partner = get_object_or_404(Partner, id=self.kwargs.get('partner_id'))
+
+        return PartnerFlag.objects.filter(Q(partner=partner) | Q(partner=partner.hq))
 
     def get_object(self):
         flag = super(PartnerFlagRetrieveUpdateAPIView, self).get_object()

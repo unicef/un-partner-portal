@@ -77,7 +77,7 @@ class TestAgencyUserManagement(BaseAPITestCase):
         self.assertEqual(response.data['status'], 'Deactivated')
 
     def test_list_users(self):
-        office = AgencyOfficeFactory.create_batch(1, agency=self.user.agency)[0]
+        office = AgencyOfficeFactory(agency=self.user.agency)
         AgencyMemberFactory.create_batch(5, office=office)
         url = reverse('management:user-list')
         response = self.client.get(url)
@@ -164,7 +164,7 @@ class TestPartnerUserManagement(BaseAPITestCase):
         self.assertEqual(list_response.data['count'], initial_count)
 
     def test_list_users(self):
-        partner = PartnerFactory.create_batch(1)[0]
+        partner = PartnerFactory()
         PartnerMemberFactory.create_batch(5, partner=partner)
         url = reverse('management:user-list')
         response = self.client.get(url)
