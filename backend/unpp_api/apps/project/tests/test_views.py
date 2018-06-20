@@ -1015,9 +1015,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
     def setUp(self):
         super(TestDirectSelectionTestCase, self).setUp()
         for partner in Partner.objects.all():
-            factory = PartnerMemberFactory
-            factory.partner = partner
-            factory.create_batch(5)
+            PartnerMemberFactory.create_batch(5, partner=partner)
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_create_direct(self):
@@ -1088,11 +1086,6 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         self.assertFalse(response.data['eoi']['sent_for_publishing'])
         self.assertFalse(response.data['eoi']['is_published'])
 
-        # publish_url = reverse('projects:eoi-send-to-publish', kwargs={'pk': response.data['eoi']['id']})
-        # publish_response = self.client.post(publish_url)
-        # self.assertResponseStatusIs(publish_response, status.HTTP_200_OK)
-        # self.assertTrue(EOI.objects.get(pk=response.data['eoi']['id']).sent_for_publishing)
-
         call_command('send_daily_notifications')
         selection_emails = list(filter(
             lambda msg: NOTIFICATION_DATA[NotificationType.DIRECT_SELECTION_INITIATED]['subject'] in msg.body,
@@ -1127,6 +1120,80 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
             mail.outbox
         ))
         self.assertTrue(len(notification_emails) > 0)
+
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    def test_patch_direct(self):
+        office = self.user.agency_members.first().office
+        partner = Partner.objects.first()
+        focal_point = AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office).user
+        direct_selection_payload = {
+            "applications": [
+                {
+                    "partner": partner.id,
+                    "ds_justification_select": ["Loc"],
+                    "justification_reason": "123123"
+                }
+            ],
+            "eoi": {
+                "countries": [
+                    {
+                        "country": "FR",
+                        "locations": [{
+                            "admin_level_1": {
+                                "name": "Île-de-France",
+                                "country_code": "FR"
+                            },
+                            "lat": "48.45289",
+                            "lon": "2.65182"
+                        }]
+                    }
+                ],
+                "specializations": [28, 27],
+                "title": "1213123",
+                "focal_points": [focal_point.id],
+                "description": "123123123",
+                "goal": "123123123",
+                "start_date": "2018-01-20",
+                "end_date": "2018-01-27",
+                "country_code": ["FR"],
+                "locations": [
+                    {
+                        "admin_level_1": {
+                            "name": "Île-de-France",
+                            "country_code": "FR"
+                        },
+                        "lat": "48.45289",
+                        "lon": "2.65182"
+                    }
+                ],
+                "agency": office.agency.id,
+                "agency_office": office.id
+            }
+        }
+        url = reverse('projects:direct')
+        PartnerVerificationFactory(partner=partner, submitter=self.user)
+        response = self.client.post(url, data=direct_selection_payload, format='json')
+        self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
+        project_id = partner.applications.first().eoi_id
+
+        publish_url = reverse('projects:eoi-publish', kwargs={'pk': project_id})
+        self.assertResponseStatusIs(self.client.post(publish_url))
+
+        project_url = reverse('projects:eoi-detail', kwargs={'pk': project_id})
+        patch_payload = {
+            'title': 'new title ASD'
+        }
+        patch_response = self.client.patch(project_url, patch_payload)
+        self.assertResponseStatusIs(patch_response)
+        self.assertEqual(patch_payload['title'], patch_response.data['title'])
+
+        patch_payload = {
+            'title': 'new title ASD',
+            'goal': 'new goal ASD',
+        }
+        patch_response = self.client.patch(project_url, patch_payload)
+        self.assertResponseStatusIs(patch_response)
+        self.assertEqual(patch_payload['title'], patch_response.data['title'])
 
 
 class TestEOIPublish(BaseAPITestCase):

@@ -8,6 +8,7 @@ from common.consts import USER_CREATED_FLAG_TYPES, INTERNAL_FLAG_TYPES
 from common.permissions import current_user_has_permission
 from common.serializers import CommonFileSerializer
 from agency.serializers import AgencyUserBasicSerializer
+from notification.helpers import send_partner_marked_for_deletion_email
 from review.models import PartnerFlag, PartnerVerification
 from sanctionslist.serializers import SanctionedNameMatchSerializer
 
@@ -38,6 +39,9 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                 'choices': USER_CREATED_FLAG_TYPES
             },
             'comment': {
+                'required': True
+            },
+            'contact_email': {
                 'required': True
             },
         }
@@ -74,7 +78,10 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                 instance.sanctions_match.can_ignore = not instance.is_valid
                 instance.sanctions_match.save()
                 instance.sanctions_match.partner.is_locked = instance.is_valid
+                instance.sanctions_match.partner.children.update(is_locked=instance.is_valid)
                 instance.sanctions_match.partner.save()
+                if instance.sanctions_match.partner.is_locked:
+                    send_partner_marked_for_deletion_email(instance.sanctions_match.partner)
 
         return instance
 
