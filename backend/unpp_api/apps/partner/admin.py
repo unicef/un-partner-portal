@@ -27,7 +27,7 @@ class PartnerAdmin(admin.ModelAdmin):
 
 class PartnerMemberAdmin(admin.ModelAdmin):
     list_display = ('user', 'role', 'partner')
-    list_filter = ('role', 'partner__display_type')
+    list_filter = ('role', 'partner__display_type', 'is_locked')
     search_fields = ('user__fullname', 'user__email', 'partner__legal_name')
 
 

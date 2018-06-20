@@ -54,7 +54,7 @@ class Partner(TimeStampedModel):
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children')
     country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
     is_active = models.BooleanField(default=True)
-    is_locked = models.BooleanField(default=False)
+    is_locked = models.BooleanField(default=False, verbose_name='Locked and Marked for Deletion')
     # hq information
     country_presence = ArrayField(
         models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE),
