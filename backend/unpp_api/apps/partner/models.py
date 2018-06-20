@@ -13,6 +13,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator
+from django.db.models import Q
 from django.db.models.signals import post_save
 from model_utils.models import TimeStampedModel
 
@@ -42,6 +43,7 @@ from common.consts import (
     FLAG_TYPES,
 )
 from partner.roles import PartnerRole, PARTNER_ROLE_PERMISSIONS
+from review.models import PartnerFlag
 
 logger = logging.getLogger(__name__)
 
@@ -101,13 +103,25 @@ class Partner(TimeStampedModel):
     def country_profiles(self):
         return self.__class__.objects.filter(hq=self)
 
-    @property
-    def has_yellow_flag(self):
-        return self.flags.filter(flag_type=FLAG_TYPES.yellow, is_valid=True).exists()
+    @threaded_cached_property
+    def yellow_flag_count(self):
+        PartnerFlag.objects.filter(
+            Q(partner=self) | Q(partner=self.hq)
+        ).filter(flag_type=FLAG_TYPES.yellow, is_valid=True).exists()
 
-    @property
+    @threaded_cached_property
+    def has_yellow_flag(self):
+        return bool(self.yellow_flag_count)
+
+    @threaded_cached_property
+    def red_flag_count(self):
+        PartnerFlag.objects.filter(
+            Q(partner=self) | Q(partner=self.hq)
+        ).filter(flag_type=FLAG_TYPES.red, is_valid=True).exists()
+
+    @threaded_cached_property
     def has_red_flag(self):
-        return self.flags.filter(flag_type=FLAG_TYPES.red, is_valid=True).exists()
+        return bool(self.red_flag_count)
 
     def get_users(self):
         return User.objects.filter(partner_members__partner=self)
@@ -130,8 +144,8 @@ class Partner(TimeStampedModel):
     @property
     def flagging_status(self):
         return {
-            'yellow': self.flags.filter(flag_type=FLAG_TYPES.yellow, is_valid=True).count(),
-            'red': self.flags.filter(flag_type=FLAG_TYPES.red, is_valid=True).count(),
+            'yellow': self.yellow_flag_count,
+            'red': self.red_flag_count,
             'invalid': self.flags.filter(is_valid=False).count(),
         }
 

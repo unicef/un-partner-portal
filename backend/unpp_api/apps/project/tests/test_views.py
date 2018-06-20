@@ -304,7 +304,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestDirectProjectsAPITestCase, self).setUp()
-        PartnerSimpleFactory.create_batch(1)
+        PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
@@ -431,8 +431,8 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
 class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
 
-    quantity = 1
-    user_type = BaseAPITestCase.USER_PARTNER
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     def setUp(self):
         super(TestAgencyApplicationsAPITestCase, self).setUp()
@@ -479,9 +479,9 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         AgencyMemberFactory.create_batch(self.quantity)
 
         # make sure that creating user is not the current one
-        user = UserFactory.create_batch(1)[0]
-        AgencyMemberFactory.create_batch(1, user=user)
-        eoi = EOIFactory.create_batch(1, is_published=True, created_by=user)[0]
+        user = UserFactory()
+        AgencyMemberFactory(user=user)
+        eoi = EOIFactory(is_published=True, created_by=user)
         eoi.focal_points.clear()
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
@@ -542,8 +542,8 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertTrue(len(mail.outbox) > 0)
         mail.outbox = []
 
-        partner_user = UserFactory.create_batch(1)[0]
-        PartnerMemberFactory.create_batch(1, user=partner_user, partner=app.partner, role=PartnerRole.ADMIN.name)
+        partner_user = UserFactory()
+        PartnerMemberFactory(user=partner_user, partner=app.partner, role=PartnerRole.ADMIN.name)
         self.client.force_login(partner_user)
         # accept offer
         payload = {
@@ -816,7 +816,7 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
         file_id = response.data['id']
 
         PartnerMemberFactory()  # eoi is creating applications that need partner member
-        eoi = EOIFactory.create_batch(1, created_by=self.user)[0]
+        eoi = EOIFactory(created_by=self.user)
         url = reverse('projects:review-summary', kwargs={"pk": eoi.id})
         payload = {
             'review_summary_comment': "comment",
@@ -844,7 +844,7 @@ class TestInvitedPartnersListAPIView(BaseAPITestCase):
 
     def setUp(self):
         super(TestInvitedPartnersListAPIView, self).setUp()
-        PartnerSimpleFactory.create_batch(1)
+        PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
@@ -871,7 +871,7 @@ class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
 
     def setUp(self):
         super(TestEOIReviewersAssessmentsNotifyAPIView, self).setUp()
-        PartnerSimpleFactory.create_batch(1)
+        PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         EOIFactory.create_batch(self.quantity)
@@ -1085,6 +1085,13 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         direct_selection_payload['applications'].pop()
         response = self.client.post(url, data=direct_selection_payload, format='json')
         self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
+        self.assertFalse(response.data['eoi']['sent_for_publishing'])
+        self.assertFalse(response.data['eoi']['is_published'])
+
+        # publish_url = reverse('projects:eoi-send-to-publish', kwargs={'pk': response.data['eoi']['id']})
+        # publish_response = self.client.post(publish_url)
+        # self.assertResponseStatusIs(publish_response, status.HTTP_200_OK)
+        # self.assertTrue(EOI.objects.get(pk=response.data['eoi']['id']).sent_for_publishing)
 
         call_command('send_daily_notifications')
         selection_emails = list(filter(

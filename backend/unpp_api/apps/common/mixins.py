@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db.models import Q
+from django.db.models.constants import LOOKUP_SEP
 from rest_framework import status as statuses
 from rest_framework.response import Response
 from rest_framework.validators import UniqueTogetherValidator
@@ -82,7 +83,7 @@ class FilterByCFEIRoleMixin(object):
     def get_queryset(self, *args, **kwargs):
         queryset = super(FilterByCFEIRoleMixin, self).get_queryset(*args, **kwargs)
         if self.cfei_lookup:
-            prefix = self.cfei_lookup + '__'
+            prefix = self.cfei_lookup + LOOKUP_SEP
         else:
             prefix = ''
 
