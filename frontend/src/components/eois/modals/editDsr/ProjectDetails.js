@@ -1,9 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
-import { pluck } from 'ramda';
-
 import Typography from 'material-ui/Typography';
 import SectorForm from '../../../forms/fields/projectFields/sectorField/sectorFieldArray';
 import SelectPopulationOfConcern from '../../../forms/fields/newCfeiFields/selectPopulationOfConcern';
@@ -11,7 +7,6 @@ import * as fields from '../../../forms/fields/projectFields/commonFields';
 import GridColumn from '../../../common/grid/gridColumn';
 import GridRow from '../../../common/grid/gridRow';
 import LocationForm from '../../../forms/fields/projectFields/locationField/locationFieldArray';
-import cfei from '../../../../reducers/cfei';
 
 const messages = {
   projectDetails: 'Project Details',
@@ -27,7 +22,7 @@ const ProjectDetails = (props) => {
       <GridColumn>
         <fields.TitleField />
         <LocationForm formName={formName} />
-        <fields.FocalPointEdit overlap={false} initial={focalPoints} />
+        <fields.FocalPoint overlap={false} initialMultiValues={focalPoints} />
         <SectorForm />
         {displayPopulation && <SelectPopulationOfConcern />}
         <fields.Background />
@@ -38,19 +33,14 @@ const ProjectDetails = (props) => {
         </GridRow>
       </GridColumn>
     </GridColumn>
-
   );
 };
 
 ProjectDetails.propTypes = {
   displayPopulation: PropTypes.bool,
   formName: PropTypes.string,
-  focalPoints: PropTypes.number,
+  focalPoints: PropTypes.array,
 };
 
-const mapStateToProps = state => {
-
-};
-
-export default connect(mapStateToProps)(ProjectDetails);
+export default ProjectDetails;
 

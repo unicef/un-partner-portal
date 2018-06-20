@@ -19,12 +19,8 @@ const messages = {
 };
 
 const NewCfeiModalButton = (props) => {
-<<<<<<< HEAD
-  const { type, handleDialogClose, handleDialogOpen, dialogOpen, hasDsPermission, hasOpenPermission } = props;
-=======
   const { type, handleDialogClose, handleDialogOpen, dialogOpen, hasDsPermission, hasOpenPermission, hasUcnPermission } = props;
 
->>>>>>> 8250425762e57cd61802c8b21aef8e6d274223a4
   return (
     <Grid item>
       {((hasDsPermission && type === PROJECT_TYPES.DIRECT)

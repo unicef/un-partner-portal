@@ -7,13 +7,14 @@ import { loadAgencyMembersForAutoComplete } from '../../../../../reducers/agency
 
 // TODO: new version that supports autocomplete but can't be used right now
 const AgencyMembersField = (props) => {
-  const { members, fieldName, label, getMembers, ...other } = props;
+  const { members, fieldName, label, getMembers, initialMultiValues, ...other } = props;
   return (
     <AutocompleteForm
       fieldName={fieldName}
       label={label}
       async
       asyncFunction={getMembers}
+      initialMultiValues={initialMultiValues}
       multiple
       search={'name'}
       {...other}
@@ -24,6 +25,7 @@ const AgencyMembersField = (props) => {
 AgencyMembersField.propTypes = {
   fieldName: PropTypes.string,
   label: PropTypes.string,
+  initialMultiValues: PropTypes.array,
   members: PropTypes.arrayOf(
     PropTypes.objectOf(
       {

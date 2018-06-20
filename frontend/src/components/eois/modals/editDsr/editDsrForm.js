@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { reduxForm, formValueSelector } from 'redux-form';
-import { pluck } from 'ramda';
+import { reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 
@@ -18,29 +17,26 @@ const messages = {
   selectionCriteria: 'Selection Criteria',
 };
 
-
 const EditDirectForm = (props) => {
   const {
     handleSubmit,
-    start_date,
-    cfeiDetails,
+    startDate,
     partner,
-    focalPointName, } = props;
+    focalPointNameArray } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <ProjectDetails
-          cfeiDetails={cfeiDetails}
           formName="editDsr"
-          focalPoints={focalPointName}
+          focalPoints={focalPointNameArray}
         >
           <fields.StartDate />
-          <fields.EndDate minDate={start_date} />
+          <fields.EndDate minDate={startDate} />
         </ProjectDetails>
         <Typography type="headline">
           {messages.selectPartners}
         </Typography>
-        <PartnersForm partnername={partner} />
+        <PartnersForm partnerName={partner} />
       </GridColumn>
     </form >
   );
@@ -48,33 +44,31 @@ const EditDirectForm = (props) => {
 
 EditDirectForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
-  start_date: PropTypes.string,
+  startDate: PropTypes.string,
   partner: PropTypes.string,
-  start_date: PropTypes.string,
-  focalPointName: PropTypes.string,
+  focalPointNameArray: PropTypes.array,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
-  const startDate = cfei.start_date;
-  const cfeifocaldetail = cfei.focal_points_detail[0];
-  const focalPoints = [];
-  focalPoints.push(cfeifocaldetail.id);
-  console.log('focal points are :: ', focalPoints)
-  const focalPointName = cfeifocaldetail.name;
-  const partner = cfei.direct_selected_partners[0].partner_name;
-  const applications = [];
-  applications.push({
-    partner: Number(cfei.direct_selected_partners[0].partner_id),
-    ds_justification_select: cfei.direct_selected_partners[0].ds_justification_select,
-    justification_reason: cfei.direct_selected_partners[0].justification_reason,
-    ds_attachment: cfei.direct_selected_partners[0].ds_attachmnt,
-  });
+  const cfeiStartDate = cfei.start_date;
+  const focalPoints = cfei.focal_points_detail.map(
+    item => item.id);
+  const focalPointNameArray = cfei.focal_points_detail.map(
+    item => item.name);
+  const partner = String(cfei.direct_selected_partners.map(
+    item => item.partner_name));
+  const applications = cfei.direct_selected_partners.map(
+    item => ({
+      partner: Number(item.partner_id),
+      ds_justification_select: item.ds_justification_select,
+      justification_reason: item.justification_reason,
+      ds_attachment: item.ds_attachment,
+    }));
   return {
-    start_date: startDate,
-    cfeiDetails: cfei,
+    startDate: cfeiStartDate,
     partner,
-    focalPointName,
+    focalPointNameArray,
     initialValues: {
       title: cfei.title,
       applications,
@@ -97,4 +91,3 @@ const formEditDsr = reduxForm({
 export default connect(
   mapStateToProps,
 )(formEditDsr);
-

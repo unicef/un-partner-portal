@@ -41,9 +41,6 @@ export function handleClear(handleFormChange, handleMultiFieldClear, indexToClea
 export function normalizeSuggestion(suggestion, previousSuggestion) {
   if (!suggestion) return previousSuggestion;
 
-  // fallback for injected multivalues
-  // if (isNaN(previousSuggestion)) { return null; }
-
   if (has('clear', suggestion)) {
     return previousSuggestion.filter((_, index) => index !== suggestion.index);
   }

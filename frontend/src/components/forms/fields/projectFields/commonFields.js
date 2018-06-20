@@ -1,10 +1,8 @@
 import React from 'react';
-
 import TextFieldForm from '../../textFieldForm';
 import DatePickerForm from '../../datePickerForm';
 import PolarRadio from '../../fields/PolarRadio';
 import AgencyMembersField from './agencyMembersFields/agencyMembersField';
-import AgencyMembersFieldEdit from './agencyMembersFields/agencyMembersFieldEdit';
 import { endDate, startDate, notifResultsDate } from '../../../../helpers/validation';
 import { formatDateForDatePicker } from '../../../../helpers/dates';
 
@@ -115,14 +113,6 @@ export const FocalPoint = props => (<AgencyMembersField
   placeholder="Select the name of the Focal Point"
   {...props}
 />);
-
-export const FocalPointEdit = props => (<AgencyMembersFieldEdit
-  label="Project/Programme Focal Point(s)"
-  fieldName="focal_points"
-  placeholder="Select the name of the Focal Point"
-  {...props}
-/>
-);
 
 export const Reviewers = props => (<AgencyMembersField
   label="Select users"

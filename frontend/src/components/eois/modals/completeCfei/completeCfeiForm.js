@@ -50,9 +50,6 @@ const CompleteCfeiForm = (props) => {
 };
 
 CompleteCfeiForm.propTypes = {
-  /**
-   * callback for form submit
-   */
   handleSubmit: PropTypes.func.isRequired,
   completionReasons: PropTypes.array,
 };
