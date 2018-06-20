@@ -378,7 +378,6 @@ export function patchPartnerFlags(id, body, flagId) {
   return authorizedPatch({ uri: `/partners/${id}/flags/${flagId}/`, body });
 }
 
-
 // Agencies
 export function getAgencyMembers(id, params = { page_size: 100 }, options) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params, options },
@@ -420,7 +419,6 @@ export function getAdminOneLocations(countryCode, options) {
 }
 
 // ID portal
-
 export function postNewUser(body) {
   return authorizedPost({ uri: '/manage/user/', body });
 }

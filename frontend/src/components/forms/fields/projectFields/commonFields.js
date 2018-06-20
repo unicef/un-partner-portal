@@ -1,5 +1,4 @@
 import React from 'react';
-
 import TextFieldForm from '../../textFieldForm';
 import DatePickerForm from '../../datePickerForm';
 import PolarRadio from '../../fields/PolarRadio';

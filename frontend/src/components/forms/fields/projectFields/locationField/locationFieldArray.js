@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { GoogleApiWrapper } from 'google-maps-react';
@@ -15,15 +14,15 @@ const Country = formName => sector => (
 );
 
 const Locations = (formName, loaded) => (name, index) => loaded &&
-<LocationsMap
-  formName={formName}
-  name={name}
-  index={index}
-/>;
+  <LocationsMap
+    formName={formName}
+    name={name}
+    index={index}
+  />
+;
 
 const LocationFieldArray = (props) => {
   const { formName, readOnly, loaded, ...other } = props;
-
   return (<ArrayForm
     limit={230}
     label="Project Location"

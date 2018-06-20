@@ -40,6 +40,7 @@ export function handleClear(handleFormChange, handleMultiFieldClear, indexToClea
 
 export function normalizeSuggestion(suggestion, previousSuggestion) {
   if (!suggestion) return previousSuggestion;
+
   if (has('clear', suggestion)) {
     return previousSuggestion.filter((_, index) => index !== suggestion.index);
   }
