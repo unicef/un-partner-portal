@@ -77,6 +77,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                 instance.sanctions_match.can_ignore = not instance.is_valid
                 instance.sanctions_match.save()
                 instance.sanctions_match.partner.is_locked = instance.is_valid
+                instance.sanctions_match.partner.children.update(is_locked=instance.is_valid)
                 instance.sanctions_match.partner.save()
 
         return instance
