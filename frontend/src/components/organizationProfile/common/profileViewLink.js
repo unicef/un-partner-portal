@@ -61,8 +61,8 @@ let ProfileViewLink = (props) => {
 
 const mapStateToProps = state => ({
   partnerId: state.session.partnerId,
-  hasPermission: checkPermission(PARTNER_PERMISSIONS.EDIT_HQ_PROFILE)
-  || checkPermission(PARTNER_PERMISSIONS.EDIT_PROFILE),
+  hasPermission: checkPermission(PARTNER_PERMISSIONS.EDIT_HQ_PROFILE, state)
+  || checkPermission(PARTNER_PERMISSIONS.EDIT_PROFILE, state),
 });
 
 ProfileViewLink = connect(
