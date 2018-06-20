@@ -11,7 +11,7 @@ import CnFileSection from '../../details/submission/cnFileSection';
 import FileForm from '../../../forms/fileForm';
 import Agencies from '../../../forms/fields/projectFields/agencies';
 import ProfileConfirmation from '../../../organizationProfile/common/profileConfirmation';
-import { selectCfeiDetails, mapAgenciesNamesToSelection } from '../../../../store';
+import { selectCfeiDetails } from '../../../../store';
 
 const messages = {
   cn: 'Concept Note',

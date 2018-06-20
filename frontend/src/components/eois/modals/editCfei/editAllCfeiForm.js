@@ -20,26 +20,23 @@ const EditCfeiForm = (props) => {
   const {
     handleSubmit,
     isOpen,
-    formDates: {
-      start_date: formStartDate,
-      deadline_date: formDeadline,
-      notif_results_date: formNotifDate,
-    },
-    focalPoints,
-    changeDates,
+    start_date,
+    deadline_date,
+    notif_results_date, 
     form,
+    focalPointNameArray,
   } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <ProjectDetails
-          formName="newOpenCfei"
-          focalPoints={focalPoints}
+          formName="editCfei"
+          focalPoints={focalPointNameArray}
         >
           <fields.DeadlineDate />
-          <fields.NotifyDate minDate={formNotifDate} />
-          <fields.StartDate minDate={formStartDate} />
-          <fields.EndDate minDate={formDeadline} />
+          <fields.NotifyDate minDate={notif_results_date} />
+          <fields.StartDate minDate={start_date} />
+          <fields.EndDate minDate={deadline_date} />
         </ProjectDetails>
         <Typography type="headline">
           {messages.selectionCriteria}
@@ -61,40 +58,44 @@ EditCfeiForm.propTypes = {
    */
   focalPoints: PropTypes.array,
   isOpen: PropTypes.bool,
-  formDates: PropTypes.object,
   changeDates: PropTypes.bool,
+  focalPointNameArray: PropTypes.array,
+};
+
+const mapStateToProps = (state, ownProps) => {
+  const isOpen = ownProps.type === PROJECT_TYPES.OPEN;
+  const cfei = selectCfeiDetails(state, ownProps.id);
+  const focalPoints = cfei.focal_points_detail.map(
+    item => item.id);
+  const focalPointNameArray = cfei.focal_points_detail.map(
+    item => item.name);
+
+  return {
+    initialValues: {
+      title: cfei.title,
+      specializations: cfei.specializations,
+      focal_points: focalPoints,
+      focal_points_detail: cfei.focal_points_detail,
+      status: cfei.status,
+      start_date: cfei.start_date,
+      end_date: cfei.end_date,
+      deadline_date: cfei.deadline_date,
+      notif_results_date: cfei.notif_results_date,
+      countries: cfei.cfei_locations,
+      description: cfei.description,
+      goal: cfei.goal,
+      has_weighting: cfei.has_weighting,
+      assessments_criteria: cfei.assessments_criteria,
+    },
+    // focalPoints: pluck('name', focal_points_detail),
+    isOpen,
+    focalPointNameArray,
+  };
 };
 
 const formEditCfei = reduxForm({
   form: 'editCfei',
 })(EditCfeiForm);
-
-const selector = formValueSelector('editCfei');
-
-
-const mapStateToProps = (state, ownProps) => {
-  const isOpen = ownProps.type === PROJECT_TYPES.OPEN;
-
-  const { focal_points,
-    focal_points_detail,
-    status,
-    start_date,
-    end_date,
-    deadline_date,
-    notif_results_date } = selectCfeiDetails(state, ownProps.id);
-  const changeDates = status === PROJECT_STATUSES.OPE;
-  let initialValues = { focal_points };
-  if (changeDates) initialValues = { ...initialValues, start_date, end_date };
-  if (isOpen && changeDates) initialValues = { ...initialValues, deadline_date, notif_results_date };
-  const formDates = selector(state, 'start_date', 'deadline_date', 'notif_results_date');
-  return {
-    focalPoints: pluck('name', focal_points_detail),
-    isOpen,
-    formDates,
-    initialValues,
-    changeDates,
-  };
-};
 
 export default connect(
   mapStateToProps,
