@@ -5,6 +5,7 @@ from collections import defaultdict
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.mail import get_connection, EmailMultiAlternatives
 from django.template import loader
 from django.contrib.contenttypes.models import ContentType
@@ -184,3 +185,22 @@ def send_notification_summary_to_notified_users(notified_users):
         msg.send()
 
     notified_users.update(sent_as_email=True)
+
+
+def send_partner_marked_for_deletion_email(partner):
+    notification_payload = NOTIFICATION_DATA.get(NotificationType.DJANGO_ADMIN_NEW_PARTNER_FOR_DELETION)
+
+    body = render_notification_template_to_str(notification_payload.get('template_name'), {
+        'partner_name': partner.legal_name,
+        'partner_id': partner.id,
+    })
+
+    msg = EmailMultiAlternatives(
+        notification_payload['subject'],
+        body,
+        settings.DEFAULT_FROM_EMAIL,
+        get_user_model().objects.filter(
+            is_staff=True, is_superuser=True
+        ).values_list('email', flat=True).order_by().distinct('email')
+    )
+    msg.send()

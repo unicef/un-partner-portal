@@ -9,7 +9,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CurrentUserDefault
-from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
@@ -188,12 +187,6 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
         read_only_fields = (
             'eoi', 'review_summary_comment', 'review_summary_attachment'
         )
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Application.objects.all(),
-                fields=('eoi', 'partner')
-            )
-        ]
 
     prevent_keys = ["cn"]
 
