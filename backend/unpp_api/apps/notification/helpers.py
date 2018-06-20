@@ -143,6 +143,7 @@ def send_notification_to_cfei_focal_points(eoi):
         notified__notification__source=NotificationType.ADDED_AS_CFEI_FOCAL_POINT,
         notified__notification__object_id=eoi.id,
         notified__notification__content_type=content_type,
+        id=eoi.created_by_id
     )
 
     send_notification(

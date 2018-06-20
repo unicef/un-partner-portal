@@ -79,7 +79,7 @@ class TestDSRCFEI(BaseAPITestCase):
         partner1, partner2 = PartnerFactory.create_batch(2)
         PartnerVerificationFactory(partner=partner1, submitter=self.user)
         PartnerVerificationFactory(partner=partner2, submitter=self.user)
-        focal_point = AgencyMemberFactory.create_batch(1, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0])[0].user
+        focal_point = AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0]).user
         self.payload = {
             "applications": [
                 {

@@ -101,6 +101,7 @@ class AgencyDirectHeaderOptions extends Component {
 
   publishOptions() {
     const {
+      params: { id },
       handleDialogOpen,
       hasEditSentPermission,
       hasEditPublishedPermission,
@@ -115,7 +116,7 @@ class AgencyDirectHeaderOptions extends Component {
     const options = [
       {
         name: download,
-        content: <DownloadButton handleClick={() => {}} />,
+        content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
       },
     ];
 
