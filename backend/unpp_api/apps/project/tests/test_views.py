@@ -1125,7 +1125,6 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
     def test_patch_direct(self):
         office = self.user.agency_members.first().office
         partner = Partner.objects.first()
-        focal_point = AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office).user
         direct_selection_payload = {
             "applications": [
                 {
@@ -1150,7 +1149,13 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
                 ],
                 "specializations": [28, 27],
                 "title": "1213123",
-                "focal_points": [focal_point.id],
+                "focal_points": [
+                    AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office).user.id,
+                    AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office).user.id,
+                    AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office).user.id,
+                    AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office).user.id,
+                    AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office).user.id,
+                ],
                 "description": "123123123",
                 "goal": "123123123",
                 "start_date": "2018-01-20",
