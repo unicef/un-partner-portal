@@ -999,6 +999,18 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
         create_response = self.client.post(url, data=payload, format='json')
         self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
 
+    def test_create_application(self):
+        eoi = EOIFactory(agency=self.user.agency)
+        apply_url = reverse('projects:partner-applications', kwargs={'pk': eoi.pk})
+
+        partner = PartnerFactory()
+        user = PartnerMemberFactory(partner=partner).user
+        self.client.force_login(user)
+        apply_response = self.client.post(apply_url, data={
+            'cn': get_new_common_file().id
+        })
+        self.assertResponseStatusIs(apply_response, status.HTTP_201_CREATED)
+
 
 class TestDirectSelectionTestCase(BaseAPITestCase):
 
