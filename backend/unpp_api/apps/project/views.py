@@ -150,7 +150,7 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
         if not self.request.method == 'GET':
             queryset = queryset.filter(
                 Q(created_by=self.request.user) | Q(focal_points=self.request.user)
-            ).filter(is_completed=False)
+            ).filter(is_completed=False).order_by().distinct('id')
 
         if self.request.active_partner:
             queryset = queryset.filter(is_published=True)
@@ -334,11 +334,12 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
                 "You don't have the ability to submit an application if Your profile is not completed."
             )
 
+        eoi = get_object_or_404(EOI, id=self.kwargs.get('pk'))
         instance = serializer.save(
-            eoi=get_object_or_404(EOI, id=self.kwargs.get('pk')),
+            eoi=eoi,
             submitter_id=self.request.user.id,
             partner_id=self.request.active_partner.id,
-            agency=self.eoi.agency
+            agency=eoi.agency
         )
         send_notification_application_created(instance)
 

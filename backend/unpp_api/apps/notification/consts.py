@@ -20,6 +20,7 @@ class NotificationType(object):
     CFEI_REVIEW_REQUIRED = 'cfei_review_required'
     PARTNER_DECISION_MADE = 'agency_application_decision_make'
     ADDED_AS_CFEI_FOCAL_POINT = 'added_as_cfei_local_point'
+    DJANGO_ADMIN_NEW_PARTNER_FOR_DELETION = 'superadmin_new_cso_for_deletion'
 
     @classmethod
     def get_choices(cls):
@@ -105,5 +106,9 @@ NOTIFICATION_DATA = {
     NotificationType.ADDED_AS_CFEI_FOCAL_POINT: {
         'template_name': 'added_as_cfei_local_point',
         'subject': 'You have been added as a CFEI focal point'
+    },
+    NotificationType.DJANGO_ADMIN_NEW_PARTNER_FOR_DELETION: {
+        'template_name': 'superadmin_new_csos_for_deletion',
+        'subject': 'CSO Profile Marked for deletion'
     },
 }
