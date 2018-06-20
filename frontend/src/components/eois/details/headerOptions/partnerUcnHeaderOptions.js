@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import EditCfeiButton from '../../buttons/editCfeiButton';
 import SubmitUcnButton from '../../buttons/submitUcnButton';
 import DeleteUcnModal from '../../modals/submitUcn/deleteUcnModal';
+import EditUcnModal from '../../modals/editUcn/editUcnModal';
 import DeleteButton from '../../buttons/deleteCfeiButton';
 import SpreadContent from '../../../common/spreadContent';
 import DropdownMenu from '../../../common/dropdownMenu';
@@ -79,6 +80,11 @@ class PartnerUcnHeaderOptions extends Component {
         {dialogOpen[del] && <DeleteUcnModal
           id={id}
           dialogOpen={dialogOpen[del]}
+          handleDialogClose={handleDialogClose}
+        />}
+        {dialogOpen[edit] && <EditUcnModal
+          id={id}
+          open={dialogOpen[edit]}
           handleDialogClose={handleDialogClose}
         />}
       </SpreadContent>
