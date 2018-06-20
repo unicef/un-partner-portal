@@ -306,9 +306,11 @@ class AgencyApplicationListAPIView(ListAPIView):
     pagination_class = SmallPagination
 
     def get_queryset(self):
-        return Application.objects.filter(
-            Q(eoi__created_by=self.request.user) | Q(eoi__focal_points=self.request.user)
-        )
+        valid_eoi_ids = EOI.objects.filter(
+            Q(created_by=self.request.user) | Q(focal_points=self.request.user)
+        ).values_list('id', flat=True).distinct()
+
+        return Application.objects.filter(eoi_id__in=valid_eoi_ids)
 
 
 class PartnerEOIApplicationCreateAPIView(CreateAPIView):
@@ -476,9 +478,13 @@ class EOIApplicationsListAPIView(ListAPIView):
     lookup_field = lookup_url_kwarg = 'pk'
 
     def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(eoi_id=self.kwargs.get(self.lookup_field)).filter(
-            Q(eoi__created_by=self.request.user) | Q(eoi__focal_points=self.request.user)
-        )
+        valid_eoi_ids = EOI.objects.filter(
+            Q(created_by=self.request.user) | Q(focal_points=self.request.user)
+        ).values_list('id', flat=True).distinct()
+
+        queryset = super(EOIApplicationsListAPIView, self).get_queryset().filter(eoi_id__in=valid_eoi_ids)
+
+        return queryset.filter(eoi_id=self.kwargs.get(self.lookup_field))
 
 
 class ReviewersStatusAPIView(ListAPIView):
