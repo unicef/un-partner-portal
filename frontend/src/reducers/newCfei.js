@@ -45,7 +45,6 @@ const mergeLocations = countries => (acc, next) => {
       }], next);
     return R.mergeDeepWith(R.concat, acc, newNext);
   }
-
   return R.mergeDeepWith(R.concat, acc, next);
 };
 
@@ -95,7 +94,7 @@ export const addDirectCfei = body => (dispatch, getState) => {
       { agency: agencyId, agency_office: officeId },
     ),
   };
-  
+
   const params = history.getCurrentLocation().query;
   return postDirectCfei(finalBody)
     .then((direct) => {
@@ -147,7 +146,6 @@ export const changePinStatusCfei = (id, isPinned) => dispatch =>
     }).catch((error) => {
       dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
     });
-
 
 const startSubmitting = state => R.assoc('error', {}, R.assoc('openCfeiSubmitting', true, state));
 const stopSubmitting = state => R.assoc('openCfeiSubmitting', false, state);
