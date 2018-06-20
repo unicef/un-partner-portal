@@ -31,7 +31,6 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
             'sanctions_match',
         )
         exclude = (
-            'partner',
             'type_history',
         )
         extra_kwargs = {
