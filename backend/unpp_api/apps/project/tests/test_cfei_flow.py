@@ -4,7 +4,7 @@ from rest_framework import status
 from agency.permissions import AgencyPermission
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES
 from common.consts import ALL_COMPLETED_REASONS
-from common.factories import AgencyMemberFactory, PartnerFactory, PartnerVerificationFactory, EOIFactory
+from common.factories import AgencyMemberFactory, PartnerFactory, PartnerVerificationFactory, OpenEOIFactory
 from common.tests.base import BaseAPITestCase
 
 
@@ -78,7 +78,7 @@ class TestOpenCFEI(BaseAPITestCase):
         }
 
         for completed_reason, expected_response_code in status_expected_response.items():
-            eoi = EOIFactory(created_by=self.user)
+            eoi = OpenEOIFactory(created_by=self.user)
             update_response = self.client.patch(
                 reverse('projects:eoi-detail', kwargs={'pk': eoi.id}),
                 {
@@ -96,7 +96,7 @@ class TestOpenCFEI(BaseAPITestCase):
         }
 
         for completed_reason, expected_response_code in status_expected_response.items():
-            eoi = EOIFactory(created_by=self.user)
+            eoi = OpenEOIFactory(created_by=self.user)
             eoi.applications.update(did_win=True, did_accept=True)
 
             update_response = self.client.patch(

@@ -527,7 +527,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         extra_kwargs = super(AgencyProjectSerializer, self).get_extra_kwargs()
         if self.instance:
             extra_kwargs['completed_reason'] = {
-                'choices': ALL_DSR_COMPLETED_REASONS if self.instance.is_direct else COMPLETED_REASON
+                'choices': ALL_DSR_COMPLETED_REASONS if getattr(self.instance, 'is_direct', False) else COMPLETED_REASON
             }
         return extra_kwargs
 

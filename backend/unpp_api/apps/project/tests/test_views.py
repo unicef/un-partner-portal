@@ -24,7 +24,7 @@ from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
 from common.tests.base import BaseAPITestCase
 from common.factories import (
-    EOIFactory,
+    OpenEOIFactory,
     AgencyMemberFactory,
     PartnerSimpleFactory,
     PartnerMemberFactory,
@@ -78,7 +78,7 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
         super(TestPinUnpinEOIAPITestCase, self).setUp()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity)
 
     def test_pin_unpin_project_wrong_params(self):
         eoi_ids = EOI.objects.all().values_list('id', flat=True)
@@ -120,7 +120,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         PartnerMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity)
 
     def test_open_project(self):
         # read open projects
@@ -245,7 +245,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_patch_locations_for_project(self):
-        cfei = EOIFactory(created_by=self.user)
+        cfei = OpenEOIFactory(created_by=self.user)
         details_url = reverse('projects:eoi-detail', kwargs={'pk': cfei.id})
         details_response = self.client.get(details_url)
         self.assertResponseStatusIs(details_response)
@@ -308,7 +308,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity)
 
     # TODO: This test is not deterministic - randomly fails
     def test_create_direct_project(self):
@@ -382,7 +382,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         super(TestPartnerApplicationsAPITestCase, self).setUp()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity, display_type='NoN')
+        OpenEOIFactory.create_batch(self.quantity, display_type='NoN')
         PartnerSimpleFactory.create_batch(self.quantity)
 
     @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
@@ -436,7 +436,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         AgencyMemberFactory.create_batch(self.quantity)
         PartnerSimpleFactory.create_batch(self.quantity)
         # status='NoN' - will not create applications
-        EOIFactory.create_batch(self.quantity, display_type='NoN')
+        OpenEOIFactory.create_batch(self.quantity, display_type='NoN')
 
     @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
     def test_create(self):
@@ -478,7 +478,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         # make sure that creating user is not the current one
         user = UserFactory()
         AgencyMemberFactory(user=user)
-        eoi = EOIFactory(is_published=True, created_by=user)
+        eoi = OpenEOIFactory(is_published=True, created_by=user)
         eoi.focal_points.clear()
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
@@ -605,7 +605,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         AgencyFactory,
         AgencyOfficeFactory,
         AgencyMemberFactory,
-        EOIFactory,
+        OpenEOIFactory,
     ]
 
     def test_add_review(self):
@@ -813,7 +813,7 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
         file_id = response.data['id']
 
         PartnerMemberFactory()  # eoi is creating applications that need partner member
-        eoi = EOIFactory(created_by=self.user)
+        eoi = OpenEOIFactory(created_by=self.user)
         url = reverse('projects:review-summary', kwargs={"pk": eoi.id})
         payload = {
             'review_summary_comment': "comment",
@@ -844,7 +844,7 @@ class TestInvitedPartnersListAPIView(BaseAPITestCase):
         PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity)
 
     def test_serializes_same_fields_on_get_and_patch(self):
         eoi = EOI.objects.first()
@@ -871,7 +871,7 @@ class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
         PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity)
 
     def test_send_notification(self):
         eoi = EOI.objects.first()
@@ -997,7 +997,7 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
         self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
 
     def test_create_application(self):
-        eoi = EOIFactory(agency=self.user.agency)
+        eoi = OpenEOIFactory(agency=self.user.agency)
         apply_url = reverse('projects:partner-applications', kwargs={'pk': eoi.pk})
 
         partner = PartnerFactory()
@@ -1213,7 +1213,7 @@ class TestEOIPublish(BaseAPITestCase):
         UserFactory,
         AgencyMemberFactory,
         PartnerFactory,
-        EOIFactory,
+        OpenEOIFactory,
     ]
 
     def test_publish_permission(self):
@@ -1293,7 +1293,7 @@ class TestEOIPDFExport(BaseAPITestCase):
     user_type = BaseAPITestCase.USER_AGENCY
     partner_role = AgencyRole.READER
     initial_factories = [
-        EOIFactory,
+        OpenEOIFactory,
     ]
 
     def test_download_pdf(self):
