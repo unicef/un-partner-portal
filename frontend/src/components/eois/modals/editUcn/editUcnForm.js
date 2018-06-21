@@ -61,7 +61,7 @@ const mapStateToProps = (state, ownProps) => {
   const ucn = selectCfeiDetails(state, ownProps.id);
   const title = ucn.title;
   const agency = ucn.agency_id;
-  const countries = ucn.locations;
+  const countries = ucn.locations_edit;
   const specializations = ucn.specializations;
   const cn = ucn.cn;
   return {

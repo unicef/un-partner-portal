@@ -3,18 +3,18 @@ import { pluck } from 'ramda';
 import { connect } from 'react-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
 import PropTypes from 'prop-types';
-import Typography from 'material-ui/Typography';
-import * as fields from '../../../forms/fields/projectFields/commonFields';
-import SelectionField from '../../../forms/fields/projectFields/selectionCriteria/selectionFieldArray';
+import {
+  FocalPoint,
+  StartDate,
+  EndDate,
+  DeadlineDate,
+  NotifyDate,
+} from '../../../forms/fields/projectFields/commonFields';
 import GridColumn from '../../../common/grid/gridColumn';
 import GridRow from '../../../common/grid/gridRow';
-import ProjectDetails from '../editDsr/ProjectDetails';
 import { selectCfeiDetails } from '../../../../store';
 import { PROJECT_TYPES, PROJECT_STATUSES } from '../../../../helpers/constants';
 
-const messages = {
-  selectionCriteria: 'Selection Criteria',
-};
 
 const EditCfeiForm = (props) => {
   const {
@@ -27,25 +27,17 @@ const EditCfeiForm = (props) => {
     },
     focalPoints,
     changeDates,
-    form,
   } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
-        <ProjectDetails
-          formName="newOpenCfei"
-          focalPoints={focalPoints}
-        >
-          <fields.DeadlineDate />
-          <fields.NotifyDate minDate={formNotifDate} />
-          <fields.StartDate minDate={formStartDate} />
-          <fields.EndDate minDate={formDeadline} />
-        </ProjectDetails>
-        <Typography type="headline">
-          {messages.selectionCriteria}
-        </Typography>
-        <fields.Weighting />
-        <SelectionField form={form} />
+        {changeDates && <GridRow columns={4} >
+          <StartDate minDate={formNotifDate} />
+          <EndDate minDate={formStartDate} />
+          {isOpen && <DeadlineDate />}
+          {isOpen && <NotifyDate minDate={formDeadline} />}
+        </GridRow>}
+        <FocalPoint overlap={false} initialMultiValues={focalPoints} />
       </GridColumn>
     </form >
   );

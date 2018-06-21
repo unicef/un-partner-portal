@@ -116,7 +116,8 @@ const saveUCN = (state, action) => {
     partner_name: ucn.partner.legal_name,
     display_type: ucn.partner.display_type,
     title: R.path(['proposal_of_eoi_details', 'title'], ucn),
-    locations: normalizeEditLocations(ucn.locations_proposal_of_eoi),
+    locations: normalizeLocations(ucn.locations_proposal_of_eoi),
+    locations_edit: normalizeEditLocations(ucn.locations_proposal_of_eoi),
     specializations: R.path(['proposal_of_eoi_details', 'specializations'], ucn),
     agency: R.path(['agency', 'name'], ucn),
     agency_id: R.path(['agency', 'id'], ucn),
@@ -129,11 +130,6 @@ const saveUCN = (state, action) => {
 };
 
 export function selectCfeiDetail(state, id) {
-  const { [id]: cfei = null } = state;
-  return cfei;
-}
-
-export function selectUcnDetail(state, id) {
   const { [id]: cfei = null } = state;
   return cfei;
 }

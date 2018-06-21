@@ -12,9 +12,9 @@ import { errorToBeAdded } from '../../../../reducers/errorReducer';
 import { selectCountriesWithOptionalLocations } from '../../../../store';
 
 const messages = {
-  title: 'Edit direct selection/retention',
+  title: 'Edit Unsolicited Concept Note',
   save: 'Save',
-  error: 'Unable to update direct selection/retention',
+  error: 'Unable to update Unsolicited Concept Note',
 };
 
 class EditUcnModal extends Component {
