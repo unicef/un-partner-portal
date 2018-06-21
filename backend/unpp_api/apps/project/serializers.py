@@ -16,7 +16,7 @@ from account.serializers import IDUserSerializer, UserSerializer
 
 from agency.serializers import AgencySerializer, AgencyUserListSerializer
 from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE, \
-    DSR_COMPLETED_REASON, COMPLETED_REASON
+    DSR_COMPLETED_REASON, COMPLETED_REASON, ALL_COMPLETED_REASONS, ALL_DSR_COMPLETED_REASONS
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
@@ -523,6 +523,14 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('created', 'completed_date', 'is_published', 'published_timestamp')
 
+    def get_extra_kwargs(self):
+        extra_kwargs = super(AgencyProjectSerializer, self).get_extra_kwargs()
+        if self.instance:
+            extra_kwargs['completed_reason'] = {
+                'choices': ALL_DSR_COMPLETED_REASONS if self.instance.is_direct else COMPLETED_REASON
+            }
+        return extra_kwargs
+
     def get_direct_selected_partners(self, obj):
         if obj.is_direct:
             request = self.context.get('request')
@@ -548,6 +556,11 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         completed_reason = validated_data.get('completed_reason')
 
         if completed_reason:
+            if not validated_data.get('justification'):
+                raise serializers.ValidationError({
+                    'justification': 'This field is required'
+                })
+
             if completed_reason == DSR_COMPLETED_REASON.accepted_retention and not validated_data.get(
                 'completed_retention'
             ):
@@ -560,9 +573,8 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
                 DSR_COMPLETED_REASON.accepted,
                 DSR_COMPLETED_REASON.accepted_retention,
             } and not instance.contains_partner_accepted:
-                all_completed_reasons = COMPLETED_REASON + DSR_COMPLETED_REASON
                 raise serializers.ValidationError({
-                    'completed_reason': f"You've selected '{all_completed_reasons[completed_reason]}' as "
+                    'completed_reason': f"You've selected '{ALL_COMPLETED_REASONS[completed_reason]}' as "
                                         f"finalize resolution, but no partners have accepted."
                 })
 
