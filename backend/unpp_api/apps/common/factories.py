@@ -580,7 +580,7 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
         model = AgencyMember
 
 
-class EOIFactory(factory.django.DjangoModelFactory):
+class OpenEOIFactory(factory.django.DjangoModelFactory):
     title = factory.LazyFunction(get_cfei_title)
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
@@ -694,6 +694,10 @@ class EOIFactory(factory.django.DjangoModelFactory):
                 "admin_level_1": {"country_code": get_country_list(1)[0], "name": "name {}".format(self.pk)},
             })
             self.locations.add(point)
+
+
+class DirectEOIFactory(OpenEOIFactory):
+    display_type = CFEI_TYPES.direct
 
 
 class PartnerFlagFactory(factory.django.DjangoModelFactory):

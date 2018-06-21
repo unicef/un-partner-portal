@@ -90,14 +90,13 @@ class CurrentUsersOpenProjectsAPIView(ListAPIView):
     pagination_class = SmallPagination
 
     def get_queryset(self):
-        user = self.request.user
-        today = date.today()
-        queryset = self.queryset.filter(display_type=CFEI_TYPES.open, deadline_date__gte=today, is_completed=False)
-        queryset = queryset.filter(
-            Q(created_by=user) | Q(focal_points=user)
-        )
+        valid_ids = EOI.objects.filter(
+            Q(created_by=self.request.user) | Q(focal_points=self.request.user)
+        ).values_list('id', flat=True).distinct()
 
-        return queryset
+        return super(CurrentUsersOpenProjectsAPIView, self).get_queryset().filter(
+            id__in=valid_ids, display_type=CFEI_TYPES.open, deadline_date__gte=date.today(), is_completed=False
+        )
 
 
 class ApplicationsPartnerDecisionsListAPIView(ListAPIView):

@@ -20,13 +20,13 @@ from common.factories import (
     AgencyOfficeFactory,
     OtherAgencyFactory,
     AgencyMemberFactory,
-    EOIFactory,
+    OpenEOIFactory,
     UnsolicitedFactory,
     PartnerVerificationFactory,
     PartnerFlagFactory,
     UserFactory,
     get_partner_name,
-)
+    DirectEOIFactory)
 from common.models import (
     AdminLevel1,
     Point,
@@ -178,8 +178,11 @@ def generate_fake_data(country_count=3):
                 )
                 AgencyMemberFactory(user=user, office=office, role=role_name)
 
-                EOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user, is_published=True)
-                EOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user)
+                OpenEOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user, is_published=True)
+                OpenEOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user)
+                DirectEOIFactory.create_batch(random.randint(3, 5), agency=agency, created_by=user, is_published=True)
+                DirectEOIFactory.create_batch(random.randint(3, 5), agency=agency, created_by=user)
+
                 print(f'Created {user}')
 
             # Make sure each office has a couple of potential focal points

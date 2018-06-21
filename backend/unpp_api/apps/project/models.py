@@ -55,7 +55,7 @@ class EOI(TimeStampedModel):
     reviewers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="eoi_as_reviewer", blank=True)
     justification = models.TextField(null=True, blank=True)  # closed or completed
     completed_reason = FixedTextField(choices=ALL_COMPLETED_REASONS, null=True, blank=True)
-    completed_retention = models.CharField(max_length=3, choices=DSR_FINALIZE_RETENTION_CHOICES, null=True, blank=True)
+    completed_retention = FixedTextField(choices=DSR_FINALIZE_RETENTION_CHOICES, null=True, blank=True)
     completed_comment = models.TextField(null=True, blank=True)
     completed_date = models.DateTimeField(null=True, blank=True)
     is_completed = models.BooleanField(default=False)
