@@ -80,6 +80,7 @@ class TestOpenCFEI(BaseAPITestCase):
 
         for completed_reason, expected_response_code in status_expected_response.items():
             eoi = OpenEOIFactory(created_by=self.user)
+            eoi.applications.update(did_win=False, did_accept=False)
             update_response = self.client.patch(
                 reverse('projects:eoi-detail', kwargs={'pk': eoi.id}),
                 {
@@ -194,6 +195,7 @@ class TestDSRCFEI(BaseAPITestCase):
 
         for completed_reason, expected_response_code in status_expected_response.items():
             eoi = DirectEOIFactory(created_by=self.user)
+            eoi.applications.update(did_win=False, did_accept=False)
             update_response = self.client.patch(
                 reverse('projects:eoi-detail', kwargs={'pk': eoi.id}),
                 {
