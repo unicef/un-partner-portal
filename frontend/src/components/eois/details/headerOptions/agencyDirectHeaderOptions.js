@@ -15,7 +15,7 @@ import PublishDsrButton from '../../buttons/publishDsrButton';
 import SendDsrModal from '../../modals/completeDsr/sendDsrModal';
 import DeleteDsrModal from '../../modals/completeDsr/deleteDsrModal';
 import CancelDsrModal from '../../modals/completeDsr/cancelDsrModal';
-import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
+import EditDateDsrModal from '../../modals/editDsr/editDateDsrModal';
 import EditDsrModal from '../../modals/editDsr/editDsrModal';
 import PublishDsrModal from '../../modals/completeDsr/publishDsrModal';
 import FinalizeDsrModal from '../../modals/completeDsr/finalizeDsrModal';
@@ -198,7 +198,7 @@ class AgencyDirectHeaderOptions extends Component {
           open={dialogOpen[edit]}
           handleDialogClose={handleDialogClose}
         />}
-        {dialogOpen[editPublished] && <EditCfeiModal
+        {dialogOpen[editPublished] && <EditDateDsrModal
           id={id}
           type="direct"
           dialogOpen={dialogOpen[editPublished]}

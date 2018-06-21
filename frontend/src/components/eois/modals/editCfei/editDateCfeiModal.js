@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import ControlledModal from '../../../common/modals/controlledModal';
 import { updateCfei } from '../../../../reducers/newCfei';
-import EditDateDsrForm from './editDateDsrForm';
+import EditDateCfeiForm from './editDateCfeiForm';
 
 const messages = {
   title: {
@@ -19,7 +19,7 @@ const messages = {
 };
 
 
-class EditCfeiModal extends Component {
+class EditDateCfeiModal extends Component {
   constructor(props) {
     super(props);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -53,14 +53,14 @@ class EditCfeiModal extends Component {
               label: messages.save,
             },
           }}
-          content={<EditDateDsrForm id={id} onSubmit={this.onFormSubmit} type={type} />}
+          content={<EditDateCfeiForm id={id} onSubmit={this.onFormSubmit} type={type} />}
         />
       </div >
     );
   }
 }
 
-EditCfeiModal.propTypes = {
+EditDateCfeiModal.propTypes = {
   dialogOpen: PropTypes.bool,
   id: PropTypes.string,
   submit: PropTypes.func,
@@ -78,9 +78,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   submit: () => dispatch(submit('editCfei')),
 });
 
-const containerEditCfeiModal = connect(
+const containerEditDateCfeiModal = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(EditCfeiModal);
+)(EditDateCfeiModal);
 
-export default containerEditCfeiModal;
+export default containerEditDateCfeiModal;
