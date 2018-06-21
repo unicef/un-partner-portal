@@ -262,10 +262,10 @@ EXTENDED_APPLICATION_STATUSES = Choices(
 )
 
 DSR_FINALIZE_RETENTION_CHOICES = Choices(
-    ('1YR', 'one year'),
-    ('2YR', 'second year'),
-    ('3YR', 'a third year'),
-    ('4YR', 'a fourth year'),
+    ('R_1YR', 'one year'),
+    ('R_2YR', 'second year'),
+    ('R_3YR', 'a third year'),
+    ('R_4YR', 'a fourth year'),
 )
 
 NOTIFICATION_FREQUENCY_CHOICES = Choices(
