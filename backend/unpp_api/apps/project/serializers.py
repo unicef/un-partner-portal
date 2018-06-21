@@ -550,7 +550,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             {'reviewers', 'focal_points'}
         ):
             raise serializers.ValidationError(
-                "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s)."
+                "Since CFEI deadline is passed, You can only modify reviewer(s) and/or focal point(s)."
             )
 
         completed_reason = validated_data.get('completed_reason')
@@ -609,6 +609,16 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
 
         update_cfei_reviewers(instance, self.initial_data.get('reviewers'))
         update_cfei_focal_points(instance, self.initial_data.get('focal_points'))
+
+        if instance.is_direct and self.initial_data.get('applications'):
+            for application_data in self.initial_data.get('applications'):
+                serializer = CreateDirectApplicationNoCNSerializer(
+                    instance=get_object_or_404(instance.applications, partner=application_data.pop('partner')),
+                    data=application_data,
+                    partial=True
+                )
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
 
         return instance
 
