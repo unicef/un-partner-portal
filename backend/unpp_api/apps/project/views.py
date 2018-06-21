@@ -326,7 +326,8 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
     )
     serializer_class = ApplicationFullSerializer
 
-    def perform_create(self, serializer):
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
         if self.request.active_partner.is_hq:
             raise serializers.ValidationError(
                 "You don't have the ability to submit an application if "
@@ -338,13 +339,15 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
             )
 
         eoi = get_object_or_404(EOI, id=self.kwargs.get('pk'))
-        instance = serializer.save(
-            eoi=eoi,
-            submitter_id=self.request.user.id,
-            partner_id=self.request.active_partner.id,
-            agency=eoi.agency
-        )
-        send_notification_application_created(instance)
+        request.data['eoi_id'] = eoi.pk
+        request.data['agency_id'] = eoi.agency.pk
+        request.data['partner_id'] = self.request.active_partner.id
+
+        return super(PartnerEOIApplicationCreateAPIView, self).create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        super(PartnerEOIApplicationCreateAPIView, self).perform_create(serializer)
+        send_notification_application_created(serializer.instance)
 
 
 class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
@@ -366,7 +369,7 @@ class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
         })
 
 
-class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
+class AgencyEOIApplicationCreateAPIView(CreateAPIView):
     """
     Create Application for direct EOI by agency.
     """

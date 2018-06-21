@@ -16,6 +16,7 @@ from rest_framework import status
 from account.models import User
 from agency.models import Agency
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
+from common.headers import CustomHeader
 from notification.consts import NotificationType, NOTIFICATION_DATA
 from partner.roles import PartnerRole
 from partner.serializers import PartnerShortSerializer
@@ -373,60 +374,56 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         self.assertIsNotNone(response.data['applications'][-1]['ds_attachment'])
 
 
-# TODO: Enable once direct selection is reworked
-# class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
-#
-#     quantity = 1
-#
-#     def setUp(self):
-#         super(TestPartnerApplicationsAPITestCase, self).setUp()
-#         AgencyOfficeFactory.create_batch(self.quantity)
-#         AgencyMemberFactory.create_batch(self.quantity)
-#         EOIFactory.create_batch(self.quantity, display_type='NoN')
-#         PartnerSimpleFactory.create_batch(self.quantity)
-#
-#     @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
-#     def test_create(self):
-#         eoi_id = EOI.objects.first().id
-#         common_file = CommonFile.objects.create()
-#         common_file.file_field.save('test.csv', open(filename))
-#         url = reverse('projects:partner-applications', kwargs={"pk": eoi_id})
-#         payload = {
-#             "cn": common_file.id,
-#         }
-#         response = self.client.post(url, data=payload, headers={'Partner-ID': Partner.objects.last()}, format='json')
-#         self.assertTrue(statuses.is_success(response.status_code))
-#         app_id = Application.objects.last().id
-#         self.assertEquals(response.data['id'], app_id)
-#         self.assertEquals(response.data['eoi'], eoi_id)
-#         self.assertEquals(response.data['submitter']['id'], self.user.id)
-#         common_file = CommonFile.objects.create()
-#         common_file.file_field.save('test.csv', open(filename))
-#
-#         payload = {
-#             "cn": common_file.id,
-#         }
-#         response = self.client.post(url, data=payload, format='json')
-#         self.assertFalse(statuses.is_success(response.status_code))
-#         expected_msgs = ['The fields eoi, partner must make a unique set.']
-#         self.assertEquals(response.data['non_field_errors'], expected_msgs)
-#
-#         url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
-#         payload = {
-#             "partner": Partner.objects.exclude(applications__eoi_id=eoi_id).order_by('?').last().id,
-#             "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.known],
-#             "justification_reason": "a good reason",
-#         }
-#         response = self.client.post(url, data=payload, format='json')
-#
-#         expected_msgs = 'You do not have permission to perform this action.'
-#         print(response.data)
-#         self.assertEquals(response.data['detail'], expected_msgs)
-#
-#         url = reverse('projects:partner-application-delete', kwargs={"pk": app_id})
-#         response = self.client.delete(url, format='json')
-#         self.assertTrue(statuses.is_success(response.status_code))
-#         Application.objects.filter(pk=app_id)
+class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_PARTNER
+
+    def setUp(self):
+        super(TestPartnerApplicationsAPITestCase, self).setUp()
+        AgencyOfficeFactory.create_batch(self.quantity)
+        AgencyMemberFactory.create_batch(self.quantity)
+        EOIFactory.create_batch(self.quantity, display_type='NoN')
+        PartnerSimpleFactory.create_batch(self.quantity)
+
+    @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
+    def test_create(self):
+        self.client.set_headers({
+            CustomHeader.PARTNER_ID.value: self.user.partner_members.first().partner.id
+        })
+
+        eoi_id = EOI.objects.first().id
+        url = reverse('projects:partner-applications', kwargs={"pk": eoi_id})
+        payload = {
+            "cn": get_new_common_file().id,
+        }
+
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        app_id = Application.objects.last().id
+        self.assertEquals(response.data['id'], app_id)
+        self.assertEquals(response.data['eoi'], eoi_id)
+        self.assertEquals(response.data['submitter']['id'], self.user.id)
+        common_file = CommonFile.objects.create()
+        common_file.file_field.save('test.csv', open(filename))
+
+        payload = {
+            "cn": common_file.id,
+        }
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        expected_msgs = ['Project application already exists for this partner.']
+        self.assertEquals(response.data['non_field_errors'], expected_msgs)
+
+        url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
+        payload = {
+            "partner": Partner.objects.exclude(applications__eoi_id=eoi_id).order_by('?').last().id,
+            "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.known],
+            "justification_reason": "a good reason",
+        }
+        response = self.client.post(url, data=payload, format='json')
+
+        expected_msgs = 'You do not have permission to perform this action.'
+        self.assertEquals(response.data['detail'], expected_msgs)
 
 
 class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
@@ -1199,14 +1196,6 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         project_url = reverse('projects:eoi-detail', kwargs={'pk': project_id})
         patch_payload = {
             'title': 'new title ASD'
-        }
-        patch_response = self.client.patch(project_url, patch_payload)
-        self.assertResponseStatusIs(patch_response)
-        self.assertEqual(patch_payload['title'], patch_response.data['title'])
-
-        patch_payload = {
-            'title': 'new title ASD',
-            'goal': 'new goal ASD',
         }
         patch_response = self.client.patch(project_url, patch_payload)
         self.assertResponseStatusIs(patch_response)
