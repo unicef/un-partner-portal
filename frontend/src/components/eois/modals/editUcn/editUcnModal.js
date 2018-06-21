@@ -51,8 +51,7 @@ class EditUcnModal extends Component {
     return (
       <Grid item>
         <ControlledModal
-          fullWidth
-          minWidth={40}
+          maxWidth="md"
           title={messages.title}
           trigger={open}
           info={null}
