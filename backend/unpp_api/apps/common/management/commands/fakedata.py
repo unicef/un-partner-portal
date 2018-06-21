@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
-from common.management.commands.helpers import clean_up_data_in_db, generate_fake_data
+from common.fakedata_utilities import clean_up_data_in_db, generate_fake_data
 from common.utils import confirm
 
 

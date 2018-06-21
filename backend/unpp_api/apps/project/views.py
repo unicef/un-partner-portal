@@ -148,9 +148,10 @@ class EOIAPIView(RetrieveUpdateAPIView, DestroyAPIView):
     def get_queryset(self):
         queryset = super(EOIAPIView, self).get_queryset()
         if not self.request.method == 'GET':
-            queryset = queryset.filter(
+            valid_ids = EOI.objects.filter(
                 Q(created_by=self.request.user) | Q(focal_points=self.request.user)
-            ).filter(is_completed=False).order_by().distinct('id')
+            ).values_list('id', flat=True).distinct()
+            queryset = queryset.filter(is_completed=False, id__in=valid_ids)
 
         if self.request.active_partner:
             queryset = queryset.filter(is_published=True)
@@ -305,9 +306,11 @@ class AgencyApplicationListAPIView(ListAPIView):
     pagination_class = SmallPagination
 
     def get_queryset(self):
-        return Application.objects.filter(
-            Q(eoi__created_by=self.request.user) | Q(eoi__focal_points=self.request.user)
-        )
+        valid_eoi_ids = EOI.objects.filter(
+            Q(created_by=self.request.user) | Q(focal_points=self.request.user)
+        ).values_list('id', flat=True).distinct()
+
+        return Application.objects.filter(eoi_id__in=valid_eoi_ids)
 
 
 class PartnerEOIApplicationCreateAPIView(CreateAPIView):
@@ -323,7 +326,8 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
     )
     serializer_class = ApplicationFullSerializer
 
-    def perform_create(self, serializer):
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
         if self.request.active_partner.is_hq:
             raise serializers.ValidationError(
                 "You don't have the ability to submit an application if "
@@ -335,13 +339,15 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
             )
 
         eoi = get_object_or_404(EOI, id=self.kwargs.get('pk'))
-        instance = serializer.save(
-            eoi=eoi,
-            submitter_id=self.request.user.id,
-            partner_id=self.request.active_partner.id,
-            agency=eoi.agency
-        )
-        send_notification_application_created(instance)
+        request.data['eoi_id'] = eoi.pk
+        request.data['agency_id'] = eoi.agency.pk
+        request.data['partner_id'] = self.request.active_partner.id
+
+        return super(PartnerEOIApplicationCreateAPIView, self).create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        super(PartnerEOIApplicationCreateAPIView, self).perform_create(serializer)
+        send_notification_application_created(serializer.instance)
 
 
 class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
@@ -363,7 +369,7 @@ class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
         })
 
 
-class AgencyEOIApplicationCreateAPIView(PartnerEOIApplicationCreateAPIView):
+class AgencyEOIApplicationCreateAPIView(CreateAPIView):
     """
     Create Application for direct EOI by agency.
     """
@@ -475,9 +481,13 @@ class EOIApplicationsListAPIView(ListAPIView):
     lookup_field = lookup_url_kwarg = 'pk'
 
     def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(eoi_id=self.kwargs.get(self.lookup_field)).filter(
-            Q(eoi__created_by=self.request.user) | Q(eoi__focal_points=self.request.user)
-        )
+        valid_eoi_ids = EOI.objects.filter(
+            Q(created_by=self.request.user) | Q(focal_points=self.request.user)
+        ).values_list('id', flat=True).distinct()
+
+        queryset = super(EOIApplicationsListAPIView, self).get_queryset().filter(eoi_id__in=valid_eoi_ids)
+
+        return queryset.filter(eoi_id=self.kwargs.get(self.lookup_field))
 
 
 class ReviewersStatusAPIView(ListAPIView):
