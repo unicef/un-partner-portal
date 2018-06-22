@@ -504,15 +504,12 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         )
 
         self.client.logout()
-        self.client.force_login(application.eoi.created_by)
+        creator = application.eoi.created_by
+        self.client.force_login(creator)
 
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_403_FORBIDDEN)
-        application.eoi.created_by.member.role = AgencyRole.EDITOR_ADVANCED.name
-        application.eoi.created_by.agency_members.update(
-            role=AgencyRole.EDITOR_ADVANCED.name,
-        )
-        application.eoi.created_by.member.save()
+        creator.agency_members.update(role=AgencyRole.EDITOR_ADVANCED.name)
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
