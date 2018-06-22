@@ -9,6 +9,12 @@ events {
 }
 
 http {
+    {% if MAX_UPLOAD_SIZE_MB is defined %}
+        client_max_body_size {{ MAX_UPLOAD_SIZE_MB }}M;
+    {% else %}
+        client_max_body_size 25M;
+    {% endif %}
+
     include       /etc/nginx/mime.types;
     default_type  application/octet-stream;
     server_tokens off;
@@ -21,11 +27,11 @@ http {
     error_log   /dev/stdout info;
 
     sendfile        on;
-    #tcp_nopush     on;
+    tcp_nopush     on;
 
     keepalive_timeout  65;
 
-    #gzip  on;
+    gzip  on;
 
     include /etc/nginx/conf.d/*.conf;
 }
