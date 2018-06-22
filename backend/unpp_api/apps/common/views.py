@@ -41,6 +41,8 @@ from common.consts import (
     FLAG_TYPES,
     NOTIFICATION_FREQUENCY_CHOICES,
     FLAG_CATEGORIES,
+    UNHCR_DSR_COMPLETED_REASONS,
+    OTHER_AGENCIES_DSR_COMPLETED_REASONS,
 )
 from partner.roles import PartnerRole
 
@@ -92,6 +94,8 @@ class GeneralConfigAPIView(APIView):
             "application-statuses": APPLICATION_STATUSES,
             "completed-reason": COMPLETED_REASON,
             "direct-selection-completed-reason": ALL_DSR_COMPLETED_REASONS,
+            "unhcr-direct-selection-completed-reason": UNHCR_DSR_COMPLETED_REASONS,
+            "other-agencies-direct-selection-completed-reason": OTHER_AGENCIES_DSR_COMPLETED_REASONS,
             "direct-selection-source": DIRECT_SELECTION_SOURCE,
             "direct-selection-retention": DSR_FINALIZE_RETENTION_CHOICES,
             "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,

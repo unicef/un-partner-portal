@@ -432,7 +432,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
         elif self.request.agency_member:
             queryset = queryset.filter(Q(is_unsolicited=True, is_published=True) | Q(is_unsolicited=False))
             if not self.request.method == 'GET':
-                queryset = queryset.filter(agency=self.request.agency_member.office.agency)
+                queryset = queryset.filter(agency=self.request.user.agency)
 
             return queryset
 

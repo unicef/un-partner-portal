@@ -13,10 +13,19 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
+from agency.agencies import UNHCR
 
 from agency.serializers import AgencySerializer, AgencyUserListSerializer
-from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE, \
-    DSR_COMPLETED_REASON, COMPLETED_REASON, ALL_COMPLETED_REASONS, ALL_DSR_COMPLETED_REASONS
+from common.consts import (
+    APPLICATION_STATUSES,
+    CFEI_TYPES,
+    CFEI_STATUSES,
+    DIRECT_SELECTION_SOURCE,
+    COMPLETED_REASON,
+    ALL_COMPLETED_REASONS,
+    OTHER_AGENCIES_DSR_COMPLETED_REASONS,
+    UNHCR_DSR_COMPLETED_REASONS,
+)
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
@@ -525,9 +534,16 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
 
     def get_extra_kwargs(self):
         extra_kwargs = super(AgencyProjectSerializer, self).get_extra_kwargs()
-        if self.instance:
+        if self.instance and isinstance(self.instance, EOI):
+            if not self.instance.is_direct:
+                completed_reason_choices = COMPLETED_REASON
+            elif self.instance.agency.name == UNHCR.name:
+                completed_reason_choices = UNHCR_DSR_COMPLETED_REASONS
+            else:
+                completed_reason_choices = OTHER_AGENCIES_DSR_COMPLETED_REASONS
+
             extra_kwargs['completed_reason'] = {
-                'choices': ALL_DSR_COMPLETED_REASONS if getattr(self.instance, 'is_direct', False) else COMPLETED_REASON
+                'choices': completed_reason_choices
             }
         return extra_kwargs
 
@@ -561,7 +577,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
                     'justification': 'This field is required'
                 })
 
-            if completed_reason == DSR_COMPLETED_REASON.accepted_retention and not validated_data.get(
+            if completed_reason == ALL_COMPLETED_REASONS.accepted_retention and not validated_data.get(
                 'completed_retention'
             ):
                 raise serializers.ValidationError({
@@ -570,8 +586,8 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
 
             if completed_reason in {
                 COMPLETED_REASON.partners,
-                DSR_COMPLETED_REASON.accepted,
-                DSR_COMPLETED_REASON.accepted_retention,
+                ALL_COMPLETED_REASONS.accepted,
+                ALL_COMPLETED_REASONS.accepted_retention,
             } and not instance.contains_partner_accepted:
                 raise serializers.ValidationError({
                     'completed_reason': f"You've selected '{ALL_COMPLETED_REASONS[completed_reason]}' as "

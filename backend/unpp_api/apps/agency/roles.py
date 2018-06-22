@@ -1,5 +1,6 @@
 from enum import unique, auto
 
+from agency.agencies import UNHCR
 from agency.permissions import AgencyPermission
 from common.authentication_utilities import AutoNameEnum
 
@@ -24,7 +25,7 @@ class AgencyRole(AutoNameEnum):
 
     @classmethod
     def get_choices(cls, agency=None):
-        if agency and agency.name == 'UNHCR':
+        if agency and agency.name == UNHCR.name:
             def filter_function(role_name):
                 return role_name not in {
                     AgencyRole.EDITOR_BASIC,

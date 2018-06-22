@@ -478,17 +478,17 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         # make sure that creating user is not the current one
         user = UserFactory()
         AgencyMemberFactory(user=user)
-        eoi = OpenEOIFactory(is_published=True, created_by=user)
-        eoi.focal_points.clear()
+        self.eoi = OpenEOIFactory(is_published=True, created_by=user)
+        self.eoi.applications.update(agency=self.user.agency)
+        self.eoi.focal_points.clear()
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_read_update(self):
-        app = Application.objects.first()
-        PartnerMemberFactory.create_batch(5, partner=app.partner)
-        url = reverse('projects:application', kwargs={"pk": app.id})
+        application = self.eoi.applications.first()
+        PartnerMemberFactory.create_batch(5, partner=application.partner)
+        url = reverse('projects:application', kwargs={"pk": application.id})
         response = self.client.get(url, format='json')
         self.assertResponseStatusIs(response)
-        self.assertEquals(response.data['id'], Application.objects.first().id)
         self.assertFalse(response.data['did_win'])
         self.assertEquals(response.data['ds_justification_select'], [])
 
@@ -504,15 +504,15 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         )
 
         self.client.logout()
-        self.client.force_login(app.eoi.created_by)
+        self.client.force_login(application.eoi.created_by)
 
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_403_FORBIDDEN)
-        app.eoi.created_by.member.role = AgencyRole.EDITOR_ADVANCED.name
-        app.eoi.created_by.agency_members.update(
-            role=AgencyRole.EDITOR_ADVANCED.name
+        application.eoi.created_by.member.role = AgencyRole.EDITOR_ADVANCED.name
+        application.eoi.created_by.agency_members.update(
+            role=AgencyRole.EDITOR_ADVANCED.name,
         )
-        app.eoi.created_by.member.save()
+        application.eoi.created_by.member.save()
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
@@ -529,7 +529,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             ['You cannot award an application if the profile has not been verified yet.']
         )
 
-        PartnerVerificationFactory(partner=app.partner, submitter=app.eoi.created_by)
+        PartnerVerificationFactory(partner=application.partner, submitter=application.eoi.created_by)
 
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response)
@@ -540,7 +540,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         mail.outbox = []
 
         partner_user = UserFactory()
-        PartnerMemberFactory(user=partner_user, partner=app.partner, role=PartnerRole.ADMIN.name)
+        PartnerMemberFactory(user=partner_user, partner=application.partner, role=PartnerRole.ADMIN.name)
         self.client.force_login(partner_user)
         # accept offer
         payload = {
@@ -550,10 +550,10 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_accept'])
         self.assertEquals(response.data['decision_date'], str(date.today()))
-        self.client.force_login(app.eoi.created_by)
+        self.client.force_login(application.eoi.created_by)
 
         awarded_partners_response = self.client.get(
-            reverse('projects:applications-awarded-partners', kwargs={"eoi_id": app.id}), format='json'
+            reverse('projects:applications-awarded-partners', kwargs={"eoi_id": application.id}), format='json'
         )
         self.assertEqual(
             awarded_partners_response.status_code, status.HTTP_200_OK, msg=awarded_partners_response.content
@@ -573,7 +573,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertFalse(response.data['did_accept'])
         self.assertTrue(response.data['did_decline'])
 
-        self.client.force_login(app.eoi.created_by)
+        self.client.force_login(application.eoi.created_by)
         reason = "They are better then You."
         payload = {
             "did_withdraw": True,
@@ -586,7 +586,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             response.data["non_field_errors"], ["Since assessment has begun, application can't be rejected."]
         )
 
-        app.assessments.all().delete()
+        application.assessments.all().delete()
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_win'])
@@ -748,7 +748,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         self.client.logout()
 
         # create agency members for focal_points and agency member to convert
-        AgencyMemberFactory.create_batch(4)
+        AgencyMemberFactory()
 
         self.user = User.objects.filter(agency_members__isnull=False).first()
         self.client.force_login(self.user)
@@ -758,9 +758,10 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         url = reverse('projects:convert-unsolicited', kwargs={'pk': response.data['id']})
         start_date = date.today()
         end_date = date.today() + timedelta(days=30)
+        office = AgencyOfficeFactory(agency=app.agency)
         focal_points = [
             am.user.id for am in AgencyMemberFactory.create_batch(
-                5, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0]
+                5, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office
             )
         ]
 
