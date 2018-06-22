@@ -456,13 +456,11 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         app_id = Application.objects.last().id
         self.assertEquals(response.data['id'], app_id)
 
-        # TODO: fix
-        # agent member should delete only direct application
-        # eoi.display_type = CFEI_TYPES.direct
-        # eoi.save()
-        # url = reverse('projects:agency-applications-delete', kwargs={"pk": app_id, "eoi_id": eoi.id})
-        # response = self.client.delete(url, format='json')
-        # self.assertTrue(statuses.is_success(response.status_code), response.data)
+        eoi.display_type = CFEI_TYPES.direct
+        eoi.save()
+        url = reverse('projects:agency-applications-delete', kwargs={"pk": app_id, "eoi_id": eoi.id})
+        response = self.client.delete(url, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_204_NO_CONTENT)
 
 
 class TestApplicationsAPITestCase(BaseAPITestCase):
