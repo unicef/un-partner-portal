@@ -10,8 +10,14 @@ from rest_framework import status
 from agency.roles import AgencyRole
 from common.consts import FLAG_TYPES, PARTNER_TYPES, SANCTION_LIST_TYPES, INTERNAL_FLAG_CATEGORIES
 from common.tests.base import BaseAPITestCase
-from common.factories import PartnerSimpleFactory, PartnerFlagFactory, PartnerVerificationFactory, AgencyOfficeFactory, \
-    AgencyMemberFactory, PartnerFactory
+from common.factories import (
+    PartnerSimpleFactory,
+    PartnerFlagFactory,
+    PartnerVerificationFactory,
+    AgencyOfficeFactory,
+    AgencyMemberFactory,
+    PartnerFactory,
+)
 from partner.models import Partner
 from review.models import PartnerFlag
 from sanctionslist.models import SanctionedItem, SanctionedName
