@@ -26,7 +26,7 @@ from common.consts import (
     OTHER_AGENCIES_DSR_COMPLETED_REASONS,
     UNHCR_DSR_COMPLETED_REASONS,
 )
-from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
+from common.utils import get_countries_code_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
     PointSerializer,
@@ -112,7 +112,7 @@ class DirectProjectSerializer(BaseProjectSerializer):
         )
 
     def get_invited_partners(self, obj):
-        return get_partners_name_from_queryset(obj.invited_partners)
+        return obj.invited_partners.values_list('legal_name', flat=True)
 
     def get_partner_offer_status(self, obj):
         queryset = Application.objects.filter(eoi=obj)
