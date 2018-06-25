@@ -60,7 +60,8 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         # Change valid status
         url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
         payload = {
-            'is_valid': False
+            'is_valid': False,
+            'invalidation_comment': 'comment',
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
@@ -150,7 +151,8 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
             self.assertEqual(patch_response.data['flag_type'], FLAG_TYPES.escalated)
 
             patch_response = self.client.patch(flag_url, data={
-                'is_valid': is_valid
+                'is_valid': is_valid,
+                'invalidation_comment': 'comment',
             })
             self.assertResponseStatusIs(patch_response, status.HTTP_403_FORBIDDEN)
 
@@ -158,7 +160,8 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
             self.client.force_login(hq_editor.user)
 
             patch_response = self.client.patch(flag_url, data={
-                'is_valid': is_valid
+                'is_valid': is_valid,
+                'invalidation_comment': 'comment',
             })
             self.assertResponseStatusIs(patch_response, status.HTTP_200_OK)
             self.assertEqual(patch_response.data['flag_type'], FLAG_TYPES.red if is_valid else FLAG_TYPES.yellow)
@@ -267,7 +270,8 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         self.assertResponseStatusIs(flag_response)
 
         payload = {
-            'is_valid': False
+            'is_valid': False,
+            'invalidation_comment': 'comment',
         }
         response = self.client.patch(flag_url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_200_OK)

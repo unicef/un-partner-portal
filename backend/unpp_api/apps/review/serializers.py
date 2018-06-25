@@ -77,6 +77,11 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         new_flag_type = validated_data.get('flag_type')
         old_flag_type = instance.flag_type
 
+        if validated_data.get('is_valid') is False and not validated_data.get('invalidation_comment'):
+            raise serializers.ValidationError({
+                'invalidation_comment': 'This field is required.'
+            })
+
         if new_flag_type and not old_flag_type == new_flag_type:
             instance.type_history.append(old_flag_type)
             instance.save()
