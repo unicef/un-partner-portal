@@ -40,7 +40,7 @@ from common.consts import (
     DSR_FINALIZE_RETENTION_CHOICES,
     FLAG_TYPES,
     NOTIFICATION_FREQUENCY_CHOICES,
-    FLAG_CATEGORIES,
+    USER_CREATED_FLAG_CATEGORIES,
     UNHCR_DSR_COMPLETED_REASONS,
     OTHER_AGENCIES_DSR_COMPLETED_REASONS,
 )
@@ -106,7 +106,7 @@ class GeneralConfigAPIView(APIView):
             "countries-with-optional-location": LOCATION_OPTIONAL_COUNTRIES,
             "user-role-choices": choices,
             "flag-type-choices": FLAG_TYPES,
-            "flag-category-choices": FLAG_CATEGORIES,
+            "flag-category-choices": USER_CREATED_FLAG_CATEGORIES,
             "notification-frequency-choices": NOTIFICATION_FREQUENCY_CHOICES,
         }
         return Response(data, status=statuses.HTTP_200_OK)

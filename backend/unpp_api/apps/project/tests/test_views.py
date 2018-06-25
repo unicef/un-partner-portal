@@ -435,12 +435,10 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         super(TestAgencyApplicationsAPITestCase, self).setUp()
         AgencyMemberFactory.create_batch(self.quantity)
         PartnerSimpleFactory.create_batch(self.quantity)
-        # status='NoN' - will not create applications
-        OpenEOIFactory.create_batch(self.quantity, display_type='NoN')
 
     @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
     def test_create(self):
-        eoi = EOI.objects.first()
+        eoi = OpenEOIFactory(display_type='NoN', agency=self.user.agency)
         eoi.focal_points.add(self.user)
         url = reverse('projects:agency-applications', kwargs={"pk": eoi.id})
 
@@ -454,7 +452,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         response = self.client.post(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         app_id = Application.objects.last().id
-        self.assertEquals(response.data['id'], app_id)
+        self.assertEqual(response.data['id'], app_id)
 
         eoi.display_type = CFEI_TYPES.direct
         eoi.save()

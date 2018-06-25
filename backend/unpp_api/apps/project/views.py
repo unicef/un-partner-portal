@@ -384,9 +384,9 @@ class AgencyEOIApplicationCreateAPIView(CreateAPIView):
     serializer_class = CreateDirectApplicationNoCNSerializer
 
     def perform_create(self, serializer):
-        eoi = get_object_or_404(EOI, id=self.kwargs['pk'])
+        eoi = get_object_or_404(EOI, id=self.kwargs['pk'], agency=self.request.user.agency)
         instance = serializer.save(
-            did_win=True, eoi=eoi, submitter_id=self.request.user.id, agency=eoi.agency
+            did_win=True, eoi=eoi, submitter=self.request.user, agency=eoi.agency
         )
 
         send_notification_application_created(instance)
