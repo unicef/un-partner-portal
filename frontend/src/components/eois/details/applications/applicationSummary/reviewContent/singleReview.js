@@ -62,12 +62,12 @@ const SingleReview = (props) => {
               <Typography type="body2">
                 {`${messages.score}: ${calcTotalScore(assessmentInfo)}`}
               </Typography>
-              <EditReviewModalButton
+              {/* <EditReviewModalButton
                 icon
                 assessmentId={assessment}
                 scores={assessmentInfo}
                 reviewer={reviewer}
-              />
+              /> */}
             </SpreadContent>
           </SpreadContent>
         </PaddedContent >}
@@ -80,7 +80,7 @@ const SingleReview = (props) => {
         </Typography>
         <SpreadContent notFullWidth className={classes.smallItem} >
           <TextWithColor color="red" text={messages.notDone} />
-          <AddReviewModalButton reviewer={reviewer} />
+          {/* <AddReviewModalButton reviewer={reviewer} /> */}
         </SpreadContent>
       </SpreadContent>
     </PaddedContent >);

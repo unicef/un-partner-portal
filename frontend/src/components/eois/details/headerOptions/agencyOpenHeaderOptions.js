@@ -48,6 +48,21 @@ class PartnerOpenHeaderOptions extends Component {
     this.isPuslishPermissionAllowed = this.isPuslishPermissionAllowed.bind(this);
   }
 
+  isFinalizeAllowed(hasActionPermission) {
+    const {
+      isAdvEd,
+      isPAM,
+      isBasEd,
+      isMFT,
+      isCreator,
+      isFocalPoint } = this.props;
+
+    return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
+    || (hasActionPermission && isBasEd && isCreator)
+    || (hasActionPermission && isMFT && isFocalPoint)
+    || (hasActionPermission && isPAM && isCreator));
+  }
+
   isPuslishPermissionAllowed(hasActionPermission) {
     const {
       isAdvEd,
@@ -142,7 +157,7 @@ class PartnerOpenHeaderOptions extends Component {
 
     return (
       <SpreadContent>
-        {isPublished && this.isPuslishPermissionAllowed(hasFinalizePermission)
+        {isPublished && this.isFinalizeAllowed(hasFinalizePermission)
           && <Complete handleClick={() => handleDialogOpen(complete)} />}
 
         {!isCompleted && status === PROJECT_STATUSES.DRA && isCreator && hasSendPermission &&
@@ -243,9 +258,10 @@ const mapStateToProps = (state, ownProps) => ({
   hasInvitePublishPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_INVITE_CSO, state),
   hasCancelPublishPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_CANCEL, state),
   hasManageReviewersPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_MANAGE_REVIEWERS, state),
+  hasFinalizePermission: checkPermission(COMMON_PERMISSIONS.CFEI_FINALIZE, state),
   // dsr permission
   hasEditPublishedPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_EDIT_PUBLISHED, state),
-  hasFinalizePermission: checkPermission(COMMON_PERMISSIONS.CFEI_FINALIZE, state),
+  
 
   isAdvEd: isRoleOffice(AGENCY_ROLES.EDITOR_ADVANCED, state),
   isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),

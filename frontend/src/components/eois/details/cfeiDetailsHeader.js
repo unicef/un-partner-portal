@@ -20,11 +20,11 @@ import {
 import { loadCfei, loadUnsolicitedCfei } from '../../../reducers/cfeiDetails';
 import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
 import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
-import { ROLES, PROJECT_TYPES, PROJECT_STATUSES, DETAILS_ITEMS } from '../../../helpers/constants';
+import { ROLES, PROJECT_TYPES, DETAILS_ITEMS } from '../../../helpers/constants';
 import PaddedContent from '../../common/paddedContent';
 import MainContentWrapper from '../../common/mainContentWrapper';
 import { isUserAgencyReader, isUserAgencyEditor } from '../../../helpers/authHelpers';
-import { checkPermission, PARTNER_PERMISSIONS } from '../../../helpers/permissions';
+import { checkPermission, isRoleOffice, AGENCY_ROLES, PARTNER_PERMISSIONS, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
   noCfei: 'Sorry but this project doesn\'t exist',
@@ -39,6 +39,7 @@ class CfeiHeader extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.cfeiTabs = this.cfeiTabs.bind(this);
     this.filterTaba = this.filterTabs.bind(this);
+    this.hasPermissionToViewApplications = this.hasPermissionToViewApplications.bind(this);
   }
 
   componentWillMount() {
@@ -50,6 +51,14 @@ class CfeiHeader extends Component {
 
   componentWillUnmount() {
     this.props.uploadCnClearState();
+  }
+  hasPermissionToViewApplications(hasActionPermission) {
+    const { isAdvEd, isPAM, isBasEd, isMFT, isCreator, isFocalPoint } = this.props;
+
+    return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
+    || (hasActionPermission && isBasEd && isCreator)
+    || (hasActionPermission && isMFT && isFocalPoint)
+    || (hasActionPermission && isPAM && isCreator));
   }
 
   updatePath() {
@@ -72,25 +81,21 @@ class CfeiHeader extends Component {
   filterTabs() {
     const { tabs,
       role,
-      isOwner,
-      isReaderEditor,
-      status,
-      hasPermission,
-      isReviewer, params: { type } } = this.props;
+      hasUploadCnPermission,
+      hasViewApplicationsPermission,
+      params: { type } } = this.props;
 
-    let tabsToRender = hasPermission
-      ? tabs
-      : R.filter(item => ((item.path) !== (DETAILS_ITEMS.SUBMISSION)), tabs);
+    let tabsToRender = [];
 
-
-    if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
-      tabsToRender = tabsToRender.filter(({ path }) => {
-        if ((['applications', 'preselected'].includes(path) && isReaderEditor && !isReviewer && !isOwner)
-        || (path === 'results' && isReaderEditor && status !== PROJECT_STATUSES.COM && !isReviewer && !isOwner)) {
-          return false;
-        }
-        return true;
-      });
+    if (role === ROLES.PARTNER) {
+      tabsToRender = hasUploadCnPermission
+        ? tabs
+        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.SUBMISSION)), tabs);
+    } else if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
+      tabsToRender = this.hasPermissionToViewApplications(hasViewApplicationsPermission)
+        ? tabs
+        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.APPLICATIONS)
+         && (item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabs);
     }
     return tabsToRender;
   }
@@ -175,12 +180,15 @@ CfeiHeader.propTypes = {
     PropTypes.bool,
   ]),
   type: PropTypes.string,
-  hasPermission: PropTypes.bool.isRequired,
+  hasUploadCnPermission: PropTypes.bool.isRequired,
+  hasViewApplicationsPermission: PropTypes.bool.isRequired,
   loadUCN: PropTypes.func,
-  isReaderEditor: PropTypes.bool,
-  isReviewer: PropTypes.bool,
-  status: PropTypes.string,
-  isOwner: PropTypes.bool,
+  isFocalPoint: PropTypes.bool,
+  isCreator: PropTypes.bool,
+  isAdvEd: PropTypes.bool,
+  isMFT: PropTypes.bool,
+  isPAM: PropTypes.bool,
+  isBasEd: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -190,14 +198,19 @@ const mapStateToProps = (state, ownProps) => ({
   title: selectCfeiTitle(state, ownProps.params.id),
   type: ownProps.params.type,
   loading: state.cfeiDetails.status.loading,
-  hasPermission: checkPermission(PARTNER_PERMISSIONS.CFEI_SUBMIT_CONCEPT_NOTE, state),
+  hasUploadCnPermission: checkPermission(PARTNER_PERMISSIONS.CFEI_SUBMIT_CONCEPT_NOTE, state),
+  hasViewApplicationsPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_VIEW_APPLICATIONS, state),
   cnFile: state.conceptNote.cnFile,
   error: state.cfeiDetails.status.error,
   isReaderEditor: isUserAgencyReader(state) || isUserAgencyEditor(state),
   status: selectCfeiStatus(state, ownProps.params.id),
   isReviewer: isUserAReviewer(state, ownProps.params.id),
-  isOwner: isUserACreator(state, ownProps.params.id)
-    || isUserAFocalPoint(state, ownProps.params.id),
+  isCreator: isUserACreator(state, ownProps.params.id),
+  isFocalPoint: isUserAFocalPoint(state, ownProps.params.id),
+  isAdvEd: isRoleOffice(AGENCY_ROLES.EDITOR_ADVANCED, state),
+  isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
+  isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),
+  isBasEd: isRoleOffice(AGENCY_ROLES.EDITOR_BASIC, state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

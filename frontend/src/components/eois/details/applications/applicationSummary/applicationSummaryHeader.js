@@ -26,7 +26,7 @@ import AddReviewModalButton from './reviewContent/addReviewModalButton';
 import AwardApplicationButtonContainer from '../../../buttons/awardApplicationButtonContainer';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 import { APPLICATION_STATUSES, PROJECT_STATUSES } from '../../../../../helpers/constants';
-import { checkPermission, AGENCY_PERMISSIONS } from '../../../../../helpers/permissions';
+import { checkPermission, AGENCY_PERMISSIONS, isRoleOffice, AGENCY_ROLES } from '../../../../../helpers/permissions';
 
 const messages = {
   header: 'Application from :',
@@ -35,11 +35,42 @@ const messages = {
 };
 
 class ApplicationSummaryHeader extends Component {
+  constructor(props) {
+    super(props);
+
+    this.isAssessActionAllowed = this.isAssessActionAllowed.bind(this);
+    this.isReatractAllowed = this.isReatractAllowed.bind(this);
+  }
+
+  isReatractAllowed() {
+    const {
+      hasRetractPermission,
+      isAdvEd,
+      isMFT,
+      isCreator,
+      isFocalPoint } = this.props;
+
+    return ((hasRetractPermission && isAdvEd && (isCreator || isFocalPoint))
+    || (hasRetractPermission && isMFT && isFocalPoint));
+  }
+
+  isAssessActionAllowed(hasActionPermission) {
+    const {
+      isAdvEd,
+      isPAM,
+      isBasEd,
+      isMFT,
+      isReviewer,
+      isCreator,
+      isFocalPoint } = this.props;
+
+    return ((hasActionPermission && isAdvEd && isReviewer)
+    || (hasActionPermission && isBasEd && isReviewer)
+    || (hasActionPermission && isMFT && isFocalPoint)
+    || (hasActionPermission && isPAM && isCreator));
+  }
   renderActionButton() {
     const { loading,
-      isUserFocalPoint,
-      isUserReviewer,
-      isUserCreator,
       reviews,
       user,
       status,
@@ -50,24 +81,22 @@ class ApplicationSummaryHeader extends Component {
       isVerified,
       redFlags,
       completedReview,
-      isCfeiCompleted,
       hasAssessPermission,
+      isCompleted,
       cfeiStatus,
     } = this.props;
     const disabled = loading
     || status !== APPLICATION_STATUSES.PRE
     || cfeiStatus !== PROJECT_STATUSES.CLO;
-
-    console.log(isCfeiCompleted, isUserFocalPoint, isUserCreator, didWin, didWithdraw, hasAssessPermission);
     
-    if (isCfeiCompleted) return <div />;
-    if (isUserFocalPoint || isUserCreator) {
+    if (loading || isCompleted || status !== APPLICATION_STATUSES.PRE) return <div />;
+
+    if (completedReview) {
       if (didWin) {
         if (didWithdraw) {
           return <Button disabled>{messages.retracted}</Button>;
         }
-        return (<WithdrawApplicationButton
-          disabled={disabled || !completedReview}
+        return (this.isReatractAllowed() && <WithdrawApplicationButton
           raised
           applicationId={applicationId}
         />);
@@ -82,19 +111,19 @@ class ApplicationSummaryHeader extends Component {
           applicationId={applicationId}
         />);
     } else if (hasAssessPermission) {
-      if (R.prop(user, reviews)) {
+      if (R.prop(user, reviews) && this.isAssessActionAllowed(hasAssessPermission)) {
         return (<EditReviewModalButton
           assessmentId={reviews[user]}
           scores={getAssessment(reviews[user])}
           reviewer={`${user}`}
           disabled={disabled}
         />);
+      } else if (this.isAssessActionAllowed(hasAssessPermission)) {
+        return (<AddReviewModalButton
+          raised
+          reviewer={`${user}`}
+        />);
       }
-      return (<AddReviewModalButton
-        raised
-        reviewer={`${user}`}
-        disabled={disabled}
-      />);
     }
     return <div />;
   }
@@ -145,12 +174,13 @@ ApplicationSummaryHeader.propTypes = {
   error: PropTypes.object,
   loading: PropTypes.bool,
   user: PropTypes.number,
-  isUserFocalPoint: PropTypes.bool,
-  isUserReviewer: PropTypes.bool,
-  isUserCreator: PropTypes.bool,
+  isFocalPoint: PropTypes.bool,
+  isReviewer: PropTypes.bool,
+  isCreator: PropTypes.bool,
   reviews: PropTypes.object,
   getAssessment: PropTypes.func,
   hasAssessPermission: PropTypes.bool,
+  hasRetractPermission: PropTypes.bool,
   didWin: PropTypes.bool,
   didWithdraw: PropTypes.bool,
   isVerified: PropTypes.bool,
@@ -159,6 +189,11 @@ ApplicationSummaryHeader.propTypes = {
   isCfeiCompleted: PropTypes.bool,
   cfeiStatus: PropTypes.string,
   applicationStatus: PropTypes.string,
+  isAdvEd: PropTypes.bool,
+  isMFT: PropTypes.bool,
+  isPAM: PropTypes.bool,
+  isBasEd: PropTypes.bool,
+  isCompleted: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -180,17 +215,22 @@ const mapStateToProps = (state, ownProps) => {
     } = {},
   } = application;
   return {
+    isAdvEd: isRoleOffice(AGENCY_ROLES.EDITOR_ADVANCED, state),
+    isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
+    isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),
+    isBasEd: isRoleOffice(AGENCY_ROLES.EDITOR_BASIC, state),
     status: selectApplicationStatus(state, ownProps.params.applicationId),
     applicationStatus: application_status,
     partner: legal_name,
     getAssessment: id => selectAssessment(state, id),
     loading: state.applicationDetails.status.loading,
     error: state.applicationDetails.status.error,
-    isUserFocalPoint: isUserAFocalPoint(state, eoi),
-    isUserCreator: isUserACreator(state, eoi),
+    isFocalPoint: isUserAFocalPoint(state, eoi),
+    isCreator: isUserACreator(state, eoi),
     cfeiStatus: selectCfeiStatus(state, eoi),
-    isUserReviewer: isUserAReviewer(state, eoi),
-    hasAssessPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_ASSES_PRESELECTED_APPLICATIONS, state),
+    isReviewer: isUserAReviewer(state, eoi),
+    hasAssessPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_REVIEW_APPLICATIONS, state),
+    hasRetractPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DESELECT_PARTNER, state),
     reviews,
     user: state.session.userId,
     didWin: did_win,
@@ -198,7 +238,7 @@ const mapStateToProps = (state, ownProps) => {
     isVerified,
     redFlags,
     completedReview: assessments_is_completed,
-    isCfeiCompleted: isCfeiCompleted(state, eoi),
+    isCompleted: isCfeiCompleted(state, eoi),
   };
 };
 

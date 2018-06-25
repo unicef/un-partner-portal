@@ -63,23 +63,31 @@ export const AGENCY_PERMISSIONS = {
   /* DONE */ CFEI_PUBLISH: 'CFEI_PUBLISH', // If creator
 
   // Modify Published CFEI for Own Agency
-  CFEI_PUBLISHED_SEE_CLARIFICATION_QUESTIONS: 'CFEI_PUBLISHED_SEE_CLARIFICATION_QUESTIONS', // If creator / focal point
-  CFEI_PUBLISHED_ANSWER_CLARIFICATION_QUESTIONS: 'CFEI_PUBLISHED_ANSWER_CLARIFICATION_QUESTIONS', // If creator / focal point
+  CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS: 'CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS', // If creator / focal point
   CFEI_PUBLISHED_EDIT_DATES: 'CFEI_PUBLISHED_EDIT_DATES', // If creator / focal point
   /* DONE */ CFEI_PUBLISHED_INVITE_CSO: 'CFEI_PUBLISHED_INVITE_CSO', // If creator / focal point
   /* DONE */ CFEI_PUBLISHED_CANCEL: 'CFEI_PUBLISHED_CANCEL', // If creator / focal point
+
 
   // Assess Applications Submitted for CFEI Published by Own Agency
   /* DONE */ CFEI_MANAGE_REVIEWERS: 'CFEI_MANAGE_REVIEWERS', // If creator / focal point
   /* DONE */ CFEI_VIEW_APPLICATIONS: 'CFEI_VIEW_APPLICATIONS', // If creator / focal point
   /* DONE */ CFEI_PRESELECT_APPLICATIONS: 'CFEI_PRESELECT_APPLICATIONS', // If creator / focal point
-  /* DONE */ CFEI_ASSES_PRESELECTED_APPLICATIONS: 'CFEI_ASSES_PRESELECTED_APPLICATIONS', // If creator / focal point
-  CFEI_VIEW_MY_ASSESSMENT: 'CFEI_VIEW_MY_ASSESSMENT', // If creator / focal point
-  CFEI_EDIT_MY_ASSESSMENT: 'CFEI_EDIT_MY_ASSESSMENT', // If creator / focal point
-  CFEI_VIEW_ALL_ASSESSMENTS: 'CFEI_VIEW_ALL_ASSESSMENTS', // If creator / focal point
-  CFEI_EDIT_ALL_ASSESSMENTS: 'CFEI_EDIT_ALL_ASSESSMENTS', // If creator / focal point
-  CFEI_ADD_REVIEW_SUMMARY: 'CFEI_ADD_REVIEW_SUMMARY', // If creator / focal point
+  /* DONE */ CFEI_REVIEW_APPLICATIONS: 'CFEI_REVIEW_APPLICATIONS', // If creator / focal point
+  /* DONE */ CFEI_VIEW_ALL_REVIEWS: 'CFEI_VIEW_ALL_REVIEWS', // If creator / focal point
+  /* DONE */ CFEI_ADD_REVIEW_SUMMARY: 'CFEI_ADD_REVIEW_SUMMARY', // If creator / focal point
   CFEI_RECOMMEND_PARTNER_FOR_SELECTION: 'CFEI_RECOMMEND_PARTNER_FOR_SELECTION', // If creator / focal point
+
+  // Approve Partner Selection for CFEI Published by Own Agency
+  CFEI_SELECT_RECOMMENDED_PARTNER: 'CFEI_SELECT_RECOMMENDED_PARTNER', // If focal point
+  CFEI_SELECT_PARTNER: 'CFEI_SELECT_PARTNER',  // If creator
+  /* DONE */ CFEI_DESELECT_PARTNER: 'CFEI_DESELECT_PARTNER',  // If creator / focal point
+
+  // Finalize CFEI Published by Own agency
+  CFEI_FINALIZE: 'CFEI_FINALIZE',  // If creator / focal point
+  CFEI_FINALIZED_VIEW_ALL_REVIEWS: 'CFEI_FINALIZED_VIEW_ALL_REVIEWS',  // If creator / focal point / reviewer
+  CFEI_FINALIZED_VIEW_WINNER_AND_CN: 'CFEI_FINALIZED_VIEW_WINNER_AND_CN', // View results tab of finalized CFEI for all agencies: Selected CSO & CN
+  CFEI_FINALIZED_VIEW_ALL_INFO: 'CFEI_FINALIZED_VIEW_ALL_INFO',
 
   // Direct Selection/Retention
 
