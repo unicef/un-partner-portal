@@ -201,14 +201,25 @@ COMPLETED_REASON = Choices(
     ('no_candidate', 'Finalized - No successful applicant'),
 ) + COMMON_COMPLETED_REASON
 
-DSR_COMPLETED_REASON = Choices(
-    ('accepted', 'Finalized - Partner accepted direct selection'),
+UNHCR_EXCLUSIVE_DSR_COMPLETION_OPTIONS = Choices(
     ('accepted_retention', 'Finalized - Partner accepted retention. Maintain decision for:'),
 )
 
-ALL_COMPLETED_REASONS = COMPLETED_REASON + DSR_COMPLETED_REASON
+OTHER_AGENCIES_DSR_COMPLETION_OPTIONS = Choices(
+    ('accepted', 'Finalized - Partner accepted direct selection'),
+)
 
-ALL_DSR_COMPLETED_REASONS = DSR_COMPLETED_REASON + COMMON_COMPLETED_REASON
+ALL_COMPLETED_REASONS = (
+    COMPLETED_REASON + UNHCR_EXCLUSIVE_DSR_COMPLETION_OPTIONS + OTHER_AGENCIES_DSR_COMPLETION_OPTIONS
+)
+
+ALL_DSR_COMPLETED_REASONS = (
+    UNHCR_EXCLUSIVE_DSR_COMPLETION_OPTIONS + OTHER_AGENCIES_DSR_COMPLETION_OPTIONS + COMMON_COMPLETED_REASON
+)
+
+UNHCR_DSR_COMPLETED_REASONS = UNHCR_EXCLUSIVE_DSR_COMPLETION_OPTIONS + COMMON_COMPLETED_REASON
+
+OTHER_AGENCIES_DSR_COMPLETED_REASONS = OTHER_AGENCIES_DSR_COMPLETION_OPTIONS + COMMON_COMPLETED_REASON
 
 BUDGET_CHOICES = Choices(
     ('B01', 'less', "Less than $500,000"),
@@ -219,26 +230,26 @@ BUDGET_CHOICES = Choices(
     ('B06', 'more', "More than $1,000,000,000"),
 )
 
-USER_CREATED_FLAG_TYPES = Choices(
+FLAG_TYPES = Choices(
     ('Obs', 'observation', 'Observation'),
     ('Yel', 'yellow', 'Yellow Flag'),
     ('Esc', 'escalated', 'Escalated Flag'),
     ('Red', 'red', 'Red Flag'),
 )
 
-INTERNAL_FLAG_TYPES = Choices(
-    ('San', 'sanctions_match', 'Sanctions List Match'),
-)
-
-FLAG_TYPES = USER_CREATED_FLAG_TYPES + INTERNAL_FLAG_TYPES
-
-FLAG_CATEGORIES = Choices(
+USER_CREATED_FLAG_CATEGORIES = Choices(
     ('fraud_and_corruption', 'Fraud and corruption'),
     ('safeguards_violation', 'Violation of protection safeguards'),
     ('sex_abuse', 'Sexual exploitation and abuse'),
     ('terrorism_support', 'Terrorism support'),
     ('other', 'Other'),
 )
+
+INTERNAL_FLAG_CATEGORIES = Choices(
+    ('sanctions_match', 'Sanctions List Match'),
+)
+
+FLAG_CATEGORIES = USER_CREATED_FLAG_CATEGORIES + INTERNAL_FLAG_CATEGORIES
 
 SANCTION_LIST_TYPES = Choices(
     ('Ent', 'entity', 'Sanctioned Entity'),

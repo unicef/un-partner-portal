@@ -182,7 +182,7 @@ class Application(TimeStampedModel):
     # did_withdraw is only applicable if did_win is True
     did_withdraw = models.BooleanField(default=False, verbose_name='Did withdraw?')
     withdraw_reason = models.TextField(null=True, blank=True)  # reason why partner withdraw
-    # These two (ds_justification_*) will be used as direct selection will create applications for DS EOIs.
+    # These two (ds_*) will be used as direct selection will create applications for DS EOIs.
     # hq information
     ds_justification_select = ArrayField(
         models.CharField(max_length=3, choices=JUSTIFICATION_FOR_DIRECT_SELECTION),

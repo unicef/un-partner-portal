@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
+from agency.agencies import UNHCR
 from agency.roles import AgencyRole
 from common.serializers import (
     ConfigSectorSerializer,
@@ -36,11 +37,12 @@ from common.consts import (
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
     EXTENDED_APPLICATION_STATUSES,
-    ALL_DSR_COMPLETED_REASONS,
     DSR_FINALIZE_RETENTION_CHOICES,
     FLAG_TYPES,
     NOTIFICATION_FREQUENCY_CHOICES,
-    FLAG_CATEGORIES,
+    USER_CREATED_FLAG_CATEGORIES,
+    UNHCR_DSR_COMPLETED_REASONS,
+    OTHER_AGENCIES_DSR_COMPLETED_REASONS,
 )
 from partner.roles import PartnerRole
 
@@ -73,6 +75,11 @@ class GeneralConfigAPIView(APIView):
         else:
             choices = {}
 
+        if self.request.agency_member and self.request.user.agency.name == UNHCR.name:
+            dsr_completed_reason_choices = UNHCR_DSR_COMPLETED_REASONS
+        else:
+            dsr_completed_reason_choices = OTHER_AGENCIES_DSR_COMPLETED_REASONS
+
         data = {
             "financial-control-system": FINANCIAL_CONTROL_SYSTEM_CHOICES,
             "functional-responsibilities": FUNCTIONAL_RESPONSIBILITY_CHOICES,
@@ -91,7 +98,7 @@ class GeneralConfigAPIView(APIView):
             "policy-area-choices": POLICY_AREA_CHOICES,
             "application-statuses": APPLICATION_STATUSES,
             "completed-reason": COMPLETED_REASON,
-            "direct-selection-completed-reason": ALL_DSR_COMPLETED_REASONS,
+            "direct-selection-completed-reason": dsr_completed_reason_choices,
             "direct-selection-source": DIRECT_SELECTION_SOURCE,
             "direct-selection-retention": DSR_FINALIZE_RETENTION_CHOICES,
             "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,
@@ -99,7 +106,7 @@ class GeneralConfigAPIView(APIView):
             "countries-with-optional-location": LOCATION_OPTIONAL_COUNTRIES,
             "user-role-choices": choices,
             "flag-type-choices": FLAG_TYPES,
-            "flag-category-choices": FLAG_CATEGORIES,
+            "flag-category-choices": USER_CREATED_FLAG_CATEGORIES,
             "notification-frequency-choices": NOTIFICATION_FREQUENCY_CHOICES,
         }
         return Response(data, status=statuses.HTTP_200_OK)

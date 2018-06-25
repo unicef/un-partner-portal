@@ -9,6 +9,7 @@ from django.db.models.signals import post_save
 import factory
 from factory import fuzzy
 from account.models import User, UserProfile
+from agency.agencies import AGENCIES
 from agency.models import OtherAgency, Agency, AgencyOffice, AgencyMember
 from agency.roles import AgencyRole
 from common.models import Specialization, Point, AdminLevel1, CommonFile
@@ -63,7 +64,7 @@ filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.
 
 
 def get_random_agency():
-    return Agency.objects.order_by("?").first() or AgencyFactory()
+    return random.choice(AGENCIES).model_instance
 
 
 def get_random_agency_office():

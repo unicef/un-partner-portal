@@ -14,8 +14,6 @@ server {
         ssl_certificate_key {{ SSL_CERTIFICATE }}/privkey.pem;
     {% endif %}
 
-    client_max_body_size 100m;
-
     location /.well-known/acme-challenge {
         allow all;
         root /usr/share/nginx/html;

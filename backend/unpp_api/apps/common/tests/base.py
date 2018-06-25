@@ -36,7 +36,9 @@ class BaseAPITestCase(APITestCase):
     USER_AGENCY = 'agency'
     USER_PARTNER = 'partner'
 
-    fixtures = [os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'fixtures', 'initial.json'), ]
+    fixtures = [
+        os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'fixtures', 'initial.json'),
+    ]
     with_session_login = True
     user_type = USER_PARTNER
 
@@ -47,6 +49,7 @@ class BaseAPITestCase(APITestCase):
     quantity = 1
 
     def setUp(self):
+        super(BaseAPITestCase, self).setUp()
         assert self.user_type in [self.USER_AGENCY, self.USER_PARTNER], "User type can be only agency or partner."
 
         for factory in self.initial_factories:
