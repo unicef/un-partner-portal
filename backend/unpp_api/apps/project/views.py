@@ -34,7 +34,8 @@ from notification.helpers import (
     send_agency_updated_application_notification,
     send_notification_application_created,
     send_notification,
-    send_cfei_review_required_notification, user_received_notification_recently,
+    send_cfei_review_required_notification,
+    user_received_notification_recently,
     send_partner_made_decision_notification,
 )
 from partner.permissions import PartnerPermission
