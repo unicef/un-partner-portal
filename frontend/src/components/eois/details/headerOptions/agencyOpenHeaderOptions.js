@@ -12,6 +12,7 @@ import Reviewers from '../../buttons/manageReviewers';
 import Complete from '../../buttons/completeCfeiButton';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
+import EditDateCfeiModal from '../../modals/editCfei/editDateCfeiModal';
 import AddInformedPartners from '../../modals/callPartners/addInformedPartners';
 import ManageReviewersModal from '../../modals/manageReviewers/manageReviewersModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
@@ -40,6 +41,7 @@ const manage = 'manage';
 const complete = 'complete';
 const send = 'send';
 const publish = 'publish';
+const editDate = 'editDate';
 
 class PartnerOpenHeaderOptions extends Component {
   constructor(props) {
@@ -68,6 +70,7 @@ class PartnerOpenHeaderOptions extends Component {
       hasManageDraftPermission,
       hasInviteSentPermission,
       hasEditSentPermission,
+      hasEditPublishedDatesPermission,
       hasInvitePublishPermission,
       hasCancelPublishPermission,
       status,
@@ -86,6 +89,15 @@ class PartnerOpenHeaderOptions extends Component {
         });
     }
 
+    if (this.isPuslishPermissionAllowed(hasEditPublishedDatesPermission)
+    && isPublished) {
+      options.push(
+        {
+          name: editDate,
+          content: <EditButton handleClick={() => handleDialogOpen(editDate)} />,
+        });
+    }
+
     if ((hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA)
     || (hasInviteSentPermission && isFocalPoint && status === PROJECT_STATUSES.SEN)
     || (isPublished && this.isPuslishPermissionAllowed(hasInvitePublishPermission))) {
@@ -96,7 +108,6 @@ class PartnerOpenHeaderOptions extends Component {
         });
     }
 
-    // TODO
     if (isPublished && isCreator) {
       options.push(
         {
@@ -140,14 +151,14 @@ class PartnerOpenHeaderOptions extends Component {
       dialogOpen,
       handleDialogClose,
       handleDialogOpen } = this.props;
-console.log(isDeadlinePassed)
+
     return (
       <SpreadContent>
         {isPublished && this.isPuslishPermissionAllowed(hasFinalizePermission)
           && <Complete handleClick={() => handleDialogOpen(complete)} />}
 
         {!isCompleted && status === PROJECT_STATUSES.DRA && isCreator && hasSendPermission &&
-        <SendCfeiButton handleClick={() => handleDialogOpen(send)} />}
+          <SendCfeiButton handleClick={() => handleDialogOpen(send)} />}
 
         {!isPublished && !isCompleted && hasPublishPermission &&
             (((isFocalPoint || isCreator) && isAdvEd) || (isCreator && isPAM))
@@ -178,6 +189,12 @@ console.log(isDeadlinePassed)
           id={id}
           type="open"
           dialogOpen={dialogOpen[edit]}
+          handleDialogClose={handleDialogClose}
+        />}
+        {dialogOpen[editDate] && <EditDateCfeiModal
+          id={id}
+          type="open"
+          dialogOpen={dialogOpen[editDate]}
           handleDialogClose={handleDialogClose}
         />}
         {dialogOpen[invite] && <AddInformedPartners
@@ -214,7 +231,7 @@ PartnerOpenHeaderOptions.propTypes = {
   hasInvitePublishPermission: PropTypes.bool,
   hasCancelPublishPermission: PropTypes.bool,
   hasPublishPermission: PropTypes.bool,
-  hasEditPublishedPermission: PropTypes.bool,
+  hasEditPublishedDatesPermission: PropTypes.bool,
   hasFinalizePermission: PropTypes.bool,
   isDeadlinePassed: PropTypes.bool,
   isFocalPoint: PropTypes.bool,
@@ -232,8 +249,6 @@ const mapStateToProps = (state, ownProps) => ({
   isCompleted: isCfeiCompleted(state, ownProps.id),
   isPublished: isCfeiPublished(state, ownProps.id),
   isDeadlinePassed: isDeadlinePassed(state, ownProps),
-  isPublished: isCfeiPublished(state, ownProps.id),
-  isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.id),
   status: selectCfeiStatus(state, ownProps.id),
   hasManageDraftPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_MANAGE, state),
   hasSendPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH,
@@ -244,10 +259,8 @@ const mapStateToProps = (state, ownProps) => ({
   hasEditSentPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_SENT_EDIT, state),
   hasInvitePublishPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_INVITE_CSO, state),
   hasCancelPublishPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_CANCEL, state),
-  // dsr permission
-  hasEditPublishedPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_EDIT_PUBLISHED, state),
+  hasEditPublishedDatesPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_EDIT_DATES, state),
   hasFinalizePermission: checkPermission(COMMON_PERMISSIONS.CFEI_FINALIZE, state),
-
   isAdvEd: isRoleOffice(AGENCY_ROLES.EDITOR_ADVANCED, state),
   isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
   isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),

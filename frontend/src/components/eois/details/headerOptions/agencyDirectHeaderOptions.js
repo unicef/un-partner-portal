@@ -129,14 +129,6 @@ class AgencyDirectHeaderOptions extends Component {
         });
     }
 
-    if (!isCompleted && this.isActionAllowed(hasCancelPermission)) {
-      options.push(
-        {
-          name: del,
-          content: <CancelButton handleClick={() => handleDialogOpen(cancel)} />,
-        });
-    }
-
     return options;
   }
 
