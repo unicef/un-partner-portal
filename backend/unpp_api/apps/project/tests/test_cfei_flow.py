@@ -1,9 +1,12 @@
 from django.urls import reverse
 from rest_framework import status
 
+from agency.agencies import UNHCR, UNICEF
 from agency.permissions import AgencyPermission
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES
-from common.factories import AgencyMemberFactory, PartnerFactory, PartnerVerificationFactory
+from common.consts import ALL_COMPLETED_REASONS, DSR_FINALIZE_RETENTION_CHOICES
+from common.factories import AgencyMemberFactory, PartnerFactory, PartnerVerificationFactory, OpenEOIFactory, \
+    DirectEOIFactory
 from common.tests.base import BaseAPITestCase
 
 
@@ -67,6 +70,46 @@ class TestOpenCFEI(BaseAPITestCase):
             self.set_current_user_role(role.name)
             create_response = self.client.post(url, data=payload, format='json')
             self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
+
+    def test_finalize(self):
+        status_expected_response = {
+           ALL_COMPLETED_REASONS.cancelled: status.HTTP_200_OK,
+           ALL_COMPLETED_REASONS.no_candidate: status.HTTP_200_OK,
+           ALL_COMPLETED_REASONS.partners: status.HTTP_400_BAD_REQUEST,
+           ALL_COMPLETED_REASONS.accepted_retention: status.HTTP_400_BAD_REQUEST,
+        }
+
+        for completed_reason, expected_response_code in status_expected_response.items():
+            eoi = OpenEOIFactory(created_by=self.user)
+            eoi.applications.update(did_win=False, did_accept=False)
+            update_response = self.client.patch(
+                reverse('projects:eoi-detail', kwargs={'pk': eoi.id}),
+                {
+                    'completed_reason': completed_reason,
+                    'justification': '!@#!@#!@#!%#%GDF',
+                }
+            )
+            self.assertResponseStatusIs(update_response, expected_response_code)
+
+        status_expected_response = {
+           ALL_COMPLETED_REASONS.cancelled: status.HTTP_200_OK,
+           ALL_COMPLETED_REASONS.no_candidate: status.HTTP_200_OK,
+           ALL_COMPLETED_REASONS.partners: status.HTTP_200_OK,
+           ALL_COMPLETED_REASONS.accepted_retention: status.HTTP_400_BAD_REQUEST,
+        }
+
+        for completed_reason, expected_response_code in status_expected_response.items():
+            eoi = OpenEOIFactory(created_by=self.user)
+            eoi.applications.update(did_win=True, did_accept=True)
+
+            update_response = self.client.patch(
+                reverse('projects:eoi-detail', kwargs={'pk': eoi.id}),
+                {
+                    'completed_reason': completed_reason,
+                    'justification': '!@#!@#!@#!%#%GDF',
+                }
+            )
+            self.assertResponseStatusIs(update_response, expected_response_code)
 
 
 class TestDSRCFEI(BaseAPITestCase):
@@ -141,3 +184,66 @@ class TestDSRCFEI(BaseAPITestCase):
             self.set_current_user_role(role.name)
             create_response = self.client.post(url, data=payload, format='json')
             self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
+
+    def test_finalize(self):
+        status_expected_response = {
+           ALL_COMPLETED_REASONS.cancelled: status.HTTP_200_OK,
+           ALL_COMPLETED_REASONS.no_candidate: status.HTTP_400_BAD_REQUEST,
+           ALL_COMPLETED_REASONS.partners: status.HTTP_400_BAD_REQUEST,
+           ALL_COMPLETED_REASONS.accepted: status.HTTP_400_BAD_REQUEST,
+           ALL_COMPLETED_REASONS.accepted_retention: status.HTTP_400_BAD_REQUEST,
+        }
+
+        for completed_reason, expected_response_code in status_expected_response.items():
+            eoi = DirectEOIFactory(created_by=self.user, agency=UNICEF.model_instance)
+            eoi.applications.update(did_win=False, did_accept=False)
+            update_response = self.client.patch(
+                reverse('projects:eoi-detail', kwargs={'pk': eoi.id}),
+                {
+                    'completed_reason': completed_reason,
+                    'justification': '!@#!@#!@#!%#%GDF',
+                }
+            )
+            self.assertResponseStatusIs(update_response, expected_response_code)
+
+        status_expected_response = {
+           ALL_COMPLETED_REASONS.cancelled: status.HTTP_200_OK,
+           ALL_COMPLETED_REASONS.no_candidate: status.HTTP_400_BAD_REQUEST,
+           ALL_COMPLETED_REASONS.accepted: status.HTTP_200_OK,
+           ALL_COMPLETED_REASONS.accepted_retention: status.HTTP_400_BAD_REQUEST,
+        }
+
+        for completed_reason, expected_response_code in status_expected_response.items():
+            eoi = DirectEOIFactory(created_by=self.user, agency=UNICEF.model_instance)
+            eoi.applications.update(did_win=True, did_accept=True)
+
+            update_response = self.client.patch(
+                reverse('projects:eoi-detail', kwargs={'pk': eoi.id}),
+                {
+                    'completed_reason': completed_reason,
+                    'justification': '!@#!@#!@#!%#%GDF',
+                }
+            )
+            self.assertResponseStatusIs(update_response, expected_response_code)
+
+        retention_expected_response = {
+            DSR_FINALIZE_RETENTION_CHOICES.R_1YR: status.HTTP_200_OK,
+            DSR_FINALIZE_RETENTION_CHOICES.R_2YR: status.HTTP_200_OK,
+            DSR_FINALIZE_RETENTION_CHOICES.R_3YR: status.HTTP_200_OK,
+            DSR_FINALIZE_RETENTION_CHOICES.R_4YR: status.HTTP_200_OK,
+            'ASD': status.HTTP_400_BAD_REQUEST,
+        }
+
+        for retention, expected_response_code in retention_expected_response.items():
+            eoi = DirectEOIFactory(created_by=self.user, agency=UNHCR.model_instance)
+            eoi.applications.update(did_win=True, did_accept=True)
+
+            update_response = self.client.patch(
+                reverse('projects:eoi-detail', kwargs={'pk': eoi.id}),
+                {
+                    'completed_reason': ALL_COMPLETED_REASONS.accepted_retention,
+                    'justification': '!@#!@#!@#!%#%GDF',
+                    'completed_retention': retention,
+                }
+            )
+            self.assertResponseStatusIs(update_response, expected_response_code)

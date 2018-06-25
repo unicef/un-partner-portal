@@ -9,13 +9,23 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CurrentUserDefault
+from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
 from account.serializers import IDUserSerializer, UserSerializer
+from agency.agencies import UNHCR
 
 from agency.serializers import AgencySerializer, AgencyUserListSerializer
-from common.consts import APPLICATION_STATUSES, CFEI_TYPES, CFEI_STATUSES, DIRECT_SELECTION_SOURCE, \
-    DSR_COMPLETED_REASON, COMPLETED_REASON
+from common.consts import (
+    APPLICATION_STATUSES,
+    CFEI_TYPES,
+    CFEI_STATUSES,
+    DIRECT_SELECTION_SOURCE,
+    COMPLETED_REASON,
+    ALL_COMPLETED_REASONS,
+    OTHER_AGENCIES_DSR_COMPLETED_REASONS,
+    UNHCR_DSR_COMPLETED_REASONS,
+)
 from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
@@ -168,11 +178,14 @@ class ProposalEOIDetailsSerializer(serializers.Serializer):
 class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
 
     cn = CommonFileSerializer()
+    eoi_id = serializers.IntegerField(write_only=True)
     partner = PartnerSerializer(read_only=True)
+    partner_id = serializers.IntegerField(write_only=True)
     agency = AgencySerializer(read_only=True)
+    agency_id = serializers.IntegerField(write_only=True)
     proposal_of_eoi_details = ProposalEOIDetailsSerializer(read_only=True)
     locations_proposal_of_eoi = PointSerializer(many=True, read_only=True)
-    submitter = UserSerializer(read_only=True)
+    submitter = UserSerializer(read_only=True, default=serializers.CurrentUserDefault())
     is_direct = serializers.SerializerMethodField()
     cfei_type = serializers.CharField(read_only=True)
     application_status = serializers.CharField(read_only=True)
@@ -187,6 +200,13 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
         read_only_fields = (
             'eoi', 'review_summary_comment', 'review_summary_attachment'
         )
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Application.objects.all(),
+                fields=('eoi_id', 'partner_id'),
+                message='Project application already exists for this partner.'
+            )
+        ]
 
     prevent_keys = ["cn"]
 
@@ -512,6 +532,21 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('created', 'completed_date', 'is_published', 'published_timestamp')
 
+    def get_extra_kwargs(self):
+        extra_kwargs = super(AgencyProjectSerializer, self).get_extra_kwargs()
+        if self.instance and isinstance(self.instance, EOI):
+            if not self.instance.is_direct:
+                completed_reason_choices = COMPLETED_REASON
+            elif self.instance.agency.name == UNHCR.name:
+                completed_reason_choices = UNHCR_DSR_COMPLETED_REASONS
+            else:
+                completed_reason_choices = OTHER_AGENCIES_DSR_COMPLETED_REASONS
+
+            extra_kwargs['completed_reason'] = {
+                'choices': completed_reason_choices
+            }
+        return extra_kwargs
+
     def get_direct_selected_partners(self, obj):
         if obj.is_direct:
             request = self.context.get('request')
@@ -531,13 +566,18 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             {'reviewers', 'focal_points'}
         ):
             raise serializers.ValidationError(
-                "Since CFEI deadline is passed, You can modify only reviewer(s) and/or focal point(s)."
+                "Since CFEI deadline is passed, You can only modify reviewer(s) and/or focal point(s)."
             )
 
         completed_reason = validated_data.get('completed_reason')
 
         if completed_reason:
-            if completed_reason == DSR_COMPLETED_REASON.accepted_retention and not validated_data.get(
+            if not validated_data.get('justification'):
+                raise serializers.ValidationError({
+                    'justification': 'This field is required'
+                })
+
+            if completed_reason == ALL_COMPLETED_REASONS.accepted_retention and not validated_data.get(
                 'completed_retention'
             ):
                 raise serializers.ValidationError({
@@ -546,12 +586,11 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
 
             if completed_reason in {
                 COMPLETED_REASON.partners,
-                DSR_COMPLETED_REASON.accepted,
-                DSR_COMPLETED_REASON.accepted_retention,
+                ALL_COMPLETED_REASONS.accepted,
+                ALL_COMPLETED_REASONS.accepted_retention,
             } and not instance.contains_partner_accepted:
-                all_completed_reasons = COMPLETED_REASON + DSR_COMPLETED_REASON
                 raise serializers.ValidationError({
-                    'completed_reason': f"You've selected '{all_completed_reasons[completed_reason]}' as "
+                    'completed_reason': f"You've selected '{ALL_COMPLETED_REASONS[completed_reason]}' as "
                                         f"finalize resolution, but no partners have accepted."
                 })
 
@@ -586,6 +625,16 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
 
         update_cfei_reviewers(instance, self.initial_data.get('reviewers'))
         update_cfei_focal_points(instance, self.initial_data.get('focal_points'))
+
+        if instance.is_direct and self.initial_data.get('applications'):
+            for application_data in self.initial_data.get('applications'):
+                serializer = CreateDirectApplicationNoCNSerializer(
+                    instance=get_object_or_404(instance.applications, partner=application_data.pop('partner')),
+                    data=application_data,
+                    partial=True
+                )
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
 
         return instance
 

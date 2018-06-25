@@ -14,7 +14,7 @@ const messages = {
   attachment: 'Attachment (Optional)',
 };
 
-const Partner = (getPartners, readOnly, ...props) => (member, index, fields) => (
+const Partner = (getPartners, readOnly, partnerName, ...props) => (member, index, fields) => (
   <GridColumn>
     <AutocompleteForm
       fieldName={`${member}.partner`}
@@ -22,6 +22,7 @@ const Partner = (getPartners, readOnly, ...props) => (member, index, fields) => 
       async
       asyncFunction={getPartners}
       readOnly={readOnly}
+      initial={partnerName}
       search={'legal_name'}
       {...props}
     />
@@ -46,7 +47,7 @@ const Partner = (getPartners, readOnly, ...props) => (member, index, fields) => 
   </GridColumn>);
 
 const PartnersFieldArray = (props) => {
-  const { getPartners, readOnly, ...other } = props;
+  const { getPartners, readOnly, partnerName, ...other } = props;
   return (
     <ArrayForm
       label=""
@@ -55,7 +56,7 @@ const PartnersFieldArray = (props) => {
       initial
       readOnly={readOnly}
       {...other}
-      outerField={Partner(getPartners, readOnly, ...other)}
+      outerField={Partner(getPartners, readOnly, partnerName, ...other)}
     />
   );
 };
@@ -63,6 +64,7 @@ const PartnersFieldArray = (props) => {
 PartnersFieldArray.propTypes = {
   getPartners: PropTypes.func,
   readOnly: PropTypes.bool,
+  partnerName: PropTypes.number,
 };
 
 

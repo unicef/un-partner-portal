@@ -8,7 +8,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from agency.roles import AgencyRole
-from common.consts import FLAG_TYPES, INTERNAL_FLAG_TYPES, PARTNER_TYPES, SANCTION_LIST_TYPES
+from common.consts import FLAG_TYPES, PARTNER_TYPES, SANCTION_LIST_TYPES, INTERNAL_FLAG_CATEGORIES
 from common.tests.base import BaseAPITestCase
 from common.factories import PartnerSimpleFactory, PartnerFlagFactory, PartnerVerificationFactory, AgencyOfficeFactory
 from partner.models import Partner
@@ -78,7 +78,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
         payload = {
             "comment": "This is a comment on a flag",
-            "flag_type": 'INVASDASDAD',
+            "category": 'INVASDASDAD',
             "contact_email": "test@test.com",
             "contact_person": "Nancy",
             "contact_phone": "Smith"
@@ -86,13 +86,13 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
         response = self.client.post(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('flag_type', response.data)
+        self.assertIn('category', response.data)
 
-        payload['flag_type'] = INTERNAL_FLAG_TYPES.sanctions_match
+        payload['category'] = INTERNAL_FLAG_CATEGORIES.sanctions_match
 
         response = self.client.post(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('flag_type', response.data)
+        self.assertIn('category', response.data)
 
         payload['flag_type'] = FLAG_TYPES.yellow
         payload['is_valid'] = None
@@ -203,20 +203,13 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         partner = Partner.objects.get(id=response.data['partner']['id'])
         self.assertTrue(partner.has_sanction_match)
-        flag = partner.flags.filter(flag_type=INTERNAL_FLAG_TYPES.sanctions_match).first()
+        flag = partner.flags.filter(category=INTERNAL_FLAG_CATEGORIES.sanctions_match).first()
         self.assertIsNotNone(flag)
 
         self.client.force_login(self.user)
         flag_url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
         flag_response = self.client.get(flag_url)
         self.assertResponseStatusIs(flag_response)
-
-        payload = {
-            'flag_type': FLAG_TYPES.yellow
-        }
-        response = self.client.patch(flag_url, data=payload, format='json')
-        self.assertResponseStatusIs(response, status.HTTP_200_OK)
-        self.assertNotEqual(response.data['flag_type'], FLAG_TYPES.yellow)
 
         payload = {
             'is_valid': False
@@ -249,7 +242,7 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         partner = Partner.objects.get(id=response.data['partner']['id'])
         self.assertTrue(partner.has_sanction_match)
-        partner_sanction_flags = partner.flags.filter(flag_type=INTERNAL_FLAG_TYPES.sanctions_match)
+        partner_sanction_flags = partner.flags.filter(category=INTERNAL_FLAG_CATEGORIES.sanctions_match)
         flag = partner_sanction_flags.first()
         self.assertIsNotNone(flag)
 

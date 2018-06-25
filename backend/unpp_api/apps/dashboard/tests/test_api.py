@@ -6,7 +6,7 @@ from rest_framework import status as statuses
 
 from common.tests.base import BaseAPITestCase
 from common.factories import (
-    EOIFactory,
+    OpenEOIFactory,
     AgencyMemberFactory,
     PartnerSimpleFactory,
     AgencyOfficeFactory,
@@ -23,7 +23,7 @@ class TestAgencyDashboardAPIView(BaseAPITestCase):
         PartnerSimpleFactory.create_batch(self.quantity)
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity)
 
     def test_get(self):
         url = reverse('dashboard:main')
@@ -41,7 +41,7 @@ class TestPartnerDashboardAPIView(BaseAPITestCase):
         PartnerSimpleFactory.create_batch(self.quantity)
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity)
 
     def test_get(self):
         url = reverse('dashboard:main')

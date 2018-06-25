@@ -15,10 +15,11 @@ import PublishDsrButton from '../../buttons/publishDsrButton';
 import SendDsrModal from '../../modals/completeDsr/sendDsrModal';
 import DeleteDsrModal from '../../modals/completeDsr/deleteDsrModal';
 import CancelDsrModal from '../../modals/completeDsr/cancelDsrModal';
+import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
+import EditDsrModal from '../../modals/editDsr/editDsrModal';
 import PublishDsrModal from '../../modals/completeDsr/publishDsrModal';
 import FinalizeDsrModal from '../../modals/completeDsr/finalizeDsrModal';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
-import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import { checkPermission, isRoleOffice, AGENCY_ROLES, AGENCY_PERMISSIONS, COMMON_PERMISSIONS } from '../../../../helpers/permissions';
 import { selectCfeiStatus,
   isCfeiPublished,
@@ -35,6 +36,7 @@ const download = 'download';
 const send = 'send';
 const publish = 'publish';
 const complete = 'complete';
+const editPublished = 'editPublished';
 
 class AgencyDirectHeaderOptions extends Component {
   constructor(props) {
@@ -64,7 +66,9 @@ class AgencyDirectHeaderOptions extends Component {
       options.push(
         {
           name: edit,
-          content: <EditButton handleClick={() => handleDialogOpen(edit)} />,
+          content: <EditButton
+            handleClick={() => handleDialogOpen(edit)}
+          />,
         });
     }
 
@@ -115,13 +119,13 @@ class AgencyDirectHeaderOptions extends Component {
       },
     ];
 
-    if ((!isCompleted && isPublished && this.isActionAllowed(hasEditPublishedPermission)) ||
-    (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
-            || (!isCompleted && hasEditPublishedPermission && isMFT && isFocalPoint)))) {
+    if ((!isCompleted && isPublished && this.isActionAllowed(hasEditPublishedPermission))
+    || (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
+    || (!isCompleted && hasEditPublishedPermission && isMFT && isFocalPoint)))) {
       options.push(
         {
           name: edit,
-          content: <EditButton handleClick={() => handleDialogOpen(edit)} />,
+          content: <EditButton handleClick={() => handleDialogOpen(editPublished)} />,
         });
     }
 
@@ -160,7 +164,7 @@ class AgencyDirectHeaderOptions extends Component {
       isMFT,
       isAdvEd,
       handleDialogClose,
-      handleDialogOpen } = this.props; 
+      handleDialogOpen } = this.props;
 
     return (
       <SpreadContent>
@@ -188,10 +192,16 @@ class AgencyDirectHeaderOptions extends Component {
           dialogOpen={dialogOpen[del]}
           handleDialogClose={handleDialogClose}
         />}
-        {dialogOpen[edit] && <EditCfeiModal
+        {dialogOpen[edit] && <EditDsrModal
           id={id}
           type="direct"
-          dialogOpen={dialogOpen[edit]}
+          open={dialogOpen[edit]}
+          handleDialogClose={handleDialogClose}
+        />}
+        {dialogOpen[editPublished] && <EditCfeiModal
+          id={id}
+          type="direct"
+          dialogOpen={dialogOpen[editPublished]}
           handleDialogClose={handleDialogClose}
         />}
         {dialogOpen[send] && <SendDsrModal

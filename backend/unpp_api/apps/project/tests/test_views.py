@@ -16,6 +16,7 @@ from rest_framework import status
 from account.models import User
 from agency.models import Agency
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
+from common.headers import CustomHeader
 from notification.consts import NotificationType, NOTIFICATION_DATA
 from partner.roles import PartnerRole
 from partner.serializers import PartnerShortSerializer
@@ -23,7 +24,7 @@ from project.models import Assessment, Application, EOI, Pin
 from partner.models import Partner
 from common.tests.base import BaseAPITestCase
 from common.factories import (
-    EOIFactory,
+    OpenEOIFactory,
     AgencyMemberFactory,
     PartnerSimpleFactory,
     PartnerMemberFactory,
@@ -77,7 +78,7 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
         super(TestPinUnpinEOIAPITestCase, self).setUp()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity)
 
     def test_pin_unpin_project_wrong_params(self):
         eoi_ids = EOI.objects.all().values_list('id', flat=True)
@@ -119,7 +120,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         PartnerMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity)
 
     def test_open_project(self):
         # read open projects
@@ -244,7 +245,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_patch_locations_for_project(self):
-        cfei = EOIFactory(created_by=self.user)
+        cfei = OpenEOIFactory(created_by=self.user)
         details_url = reverse('projects:eoi-detail', kwargs={'pk': cfei.id})
         details_response = self.client.get(details_url)
         self.assertResponseStatusIs(details_response)
@@ -307,7 +308,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity)
 
     # TODO: This test is not deterministic - randomly fails
     def test_create_direct_project(self):
@@ -373,60 +374,56 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         self.assertIsNotNone(response.data['applications'][-1]['ds_attachment'])
 
 
-# TODO: Enable once direct selection is reworked
-# class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
-#
-#     quantity = 1
-#
-#     def setUp(self):
-#         super(TestPartnerApplicationsAPITestCase, self).setUp()
-#         AgencyOfficeFactory.create_batch(self.quantity)
-#         AgencyMemberFactory.create_batch(self.quantity)
-#         EOIFactory.create_batch(self.quantity, display_type='NoN')
-#         PartnerSimpleFactory.create_batch(self.quantity)
-#
-#     @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
-#     def test_create(self):
-#         eoi_id = EOI.objects.first().id
-#         common_file = CommonFile.objects.create()
-#         common_file.file_field.save('test.csv', open(filename))
-#         url = reverse('projects:partner-applications', kwargs={"pk": eoi_id})
-#         payload = {
-#             "cn": common_file.id,
-#         }
-#         response = self.client.post(url, data=payload, headers={'Partner-ID': Partner.objects.last()}, format='json')
-#         self.assertTrue(statuses.is_success(response.status_code))
-#         app_id = Application.objects.last().id
-#         self.assertEquals(response.data['id'], app_id)
-#         self.assertEquals(response.data['eoi'], eoi_id)
-#         self.assertEquals(response.data['submitter']['id'], self.user.id)
-#         common_file = CommonFile.objects.create()
-#         common_file.file_field.save('test.csv', open(filename))
-#
-#         payload = {
-#             "cn": common_file.id,
-#         }
-#         response = self.client.post(url, data=payload, format='json')
-#         self.assertFalse(statuses.is_success(response.status_code))
-#         expected_msgs = ['The fields eoi, partner must make a unique set.']
-#         self.assertEquals(response.data['non_field_errors'], expected_msgs)
-#
-#         url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
-#         payload = {
-#             "partner": Partner.objects.exclude(applications__eoi_id=eoi_id).order_by('?').last().id,
-#             "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.known],
-#             "justification_reason": "a good reason",
-#         }
-#         response = self.client.post(url, data=payload, format='json')
-#
-#         expected_msgs = 'You do not have permission to perform this action.'
-#         print(response.data)
-#         self.assertEquals(response.data['detail'], expected_msgs)
-#
-#         url = reverse('projects:partner-application-delete', kwargs={"pk": app_id})
-#         response = self.client.delete(url, format='json')
-#         self.assertTrue(statuses.is_success(response.status_code))
-#         Application.objects.filter(pk=app_id)
+class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_PARTNER
+
+    def setUp(self):
+        super(TestPartnerApplicationsAPITestCase, self).setUp()
+        AgencyOfficeFactory.create_batch(self.quantity)
+        AgencyMemberFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity, display_type='NoN')
+        PartnerSimpleFactory.create_batch(self.quantity)
+
+    @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
+    def test_create(self):
+        self.client.set_headers({
+            CustomHeader.PARTNER_ID.value: self.user.partner_members.first().partner.id
+        })
+
+        eoi_id = EOI.objects.first().id
+        url = reverse('projects:partner-applications', kwargs={"pk": eoi_id})
+        payload = {
+            "cn": get_new_common_file().id,
+        }
+
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        app_id = Application.objects.last().id
+        self.assertEquals(response.data['id'], app_id)
+        self.assertEquals(response.data['eoi'], eoi_id)
+        self.assertEquals(response.data['submitter']['id'], self.user.id)
+        common_file = CommonFile.objects.create()
+        common_file.file_field.save('test.csv', open(filename))
+
+        payload = {
+            "cn": common_file.id,
+        }
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        expected_msgs = ['Project application already exists for this partner.']
+        self.assertEquals(response.data['non_field_errors'], expected_msgs)
+
+        url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
+        payload = {
+            "partner": Partner.objects.exclude(applications__eoi_id=eoi_id).order_by('?').last().id,
+            "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.known],
+            "justification_reason": "a good reason",
+        }
+        response = self.client.post(url, data=payload, format='json')
+
+        expected_msgs = 'You do not have permission to perform this action.'
+        self.assertEquals(response.data['detail'], expected_msgs)
 
 
 class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
@@ -438,12 +435,10 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         super(TestAgencyApplicationsAPITestCase, self).setUp()
         AgencyMemberFactory.create_batch(self.quantity)
         PartnerSimpleFactory.create_batch(self.quantity)
-        # status='NoN' - will not create applications
-        EOIFactory.create_batch(self.quantity, display_type='NoN')
 
     @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
     def test_create(self):
-        eoi = EOI.objects.first()
+        eoi = OpenEOIFactory(display_type='NoN', agency=self.user.agency)
         eoi.focal_points.add(self.user)
         url = reverse('projects:agency-applications', kwargs={"pk": eoi.id})
 
@@ -457,15 +452,13 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         response = self.client.post(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         app_id = Application.objects.last().id
-        self.assertEquals(response.data['id'], app_id)
+        self.assertEqual(response.data['id'], app_id)
 
-        # TODO: fix
-        # agent member should delete only direct application
-        # eoi.display_type = CFEI_TYPES.direct
-        # eoi.save()
-        # url = reverse('projects:agency-applications-delete', kwargs={"pk": app_id, "eoi_id": eoi.id})
-        # response = self.client.delete(url, format='json')
-        # self.assertTrue(statuses.is_success(response.status_code), response.data)
+        eoi.display_type = CFEI_TYPES.direct
+        eoi.save()
+        url = reverse('projects:agency-applications-delete', kwargs={"pk": app_id, "eoi_id": eoi.id})
+        response = self.client.delete(url, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_204_NO_CONTENT)
 
 
 class TestApplicationsAPITestCase(BaseAPITestCase):
@@ -481,17 +474,17 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         # make sure that creating user is not the current one
         user = UserFactory()
         AgencyMemberFactory(user=user)
-        eoi = EOIFactory(is_published=True, created_by=user)
-        eoi.focal_points.clear()
+        self.eoi = OpenEOIFactory(is_published=True, created_by=user)
+        self.eoi.applications.update(agency=self.user.agency)
+        self.eoi.focal_points.clear()
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_read_update(self):
-        app = Application.objects.first()
-        PartnerMemberFactory.create_batch(5, partner=app.partner)
-        url = reverse('projects:application', kwargs={"pk": app.id})
+        application = self.eoi.applications.first()
+        PartnerMemberFactory.create_batch(5, partner=application.partner)
+        url = reverse('projects:application', kwargs={"pk": application.id})
         response = self.client.get(url, format='json')
         self.assertResponseStatusIs(response)
-        self.assertEquals(response.data['id'], Application.objects.first().id)
         self.assertFalse(response.data['did_win'])
         self.assertEquals(response.data['ds_justification_select'], [])
 
@@ -507,15 +500,12 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         )
 
         self.client.logout()
-        self.client.force_login(app.eoi.created_by)
+        creator = application.eoi.created_by
+        self.client.force_login(creator)
 
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_403_FORBIDDEN)
-        app.eoi.created_by.member.role = AgencyRole.EDITOR_ADVANCED.name
-        app.eoi.created_by.agency_members.update(
-            role=AgencyRole.EDITOR_ADVANCED.name
-        )
-        app.eoi.created_by.member.save()
+        creator.agency_members.update(role=AgencyRole.EDITOR_ADVANCED.name)
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
@@ -532,7 +522,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             ['You cannot award an application if the profile has not been verified yet.']
         )
 
-        PartnerVerificationFactory(partner=app.partner, submitter=app.eoi.created_by)
+        PartnerVerificationFactory(partner=application.partner, submitter=application.eoi.created_by)
 
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response)
@@ -543,7 +533,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         mail.outbox = []
 
         partner_user = UserFactory()
-        PartnerMemberFactory(user=partner_user, partner=app.partner, role=PartnerRole.ADMIN.name)
+        PartnerMemberFactory(user=partner_user, partner=application.partner, role=PartnerRole.ADMIN.name)
         self.client.force_login(partner_user)
         # accept offer
         payload = {
@@ -553,10 +543,10 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_accept'])
         self.assertEquals(response.data['decision_date'], str(date.today()))
-        self.client.force_login(app.eoi.created_by)
+        self.client.force_login(application.eoi.created_by)
 
         awarded_partners_response = self.client.get(
-            reverse('projects:applications-awarded-partners', kwargs={"eoi_id": app.id}), format='json'
+            reverse('projects:applications-awarded-partners', kwargs={"eoi_id": application.id}), format='json'
         )
         self.assertEqual(
             awarded_partners_response.status_code, status.HTTP_200_OK, msg=awarded_partners_response.content
@@ -576,7 +566,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.assertFalse(response.data['did_accept'])
         self.assertTrue(response.data['did_decline'])
 
-        self.client.force_login(app.eoi.created_by)
+        self.client.force_login(application.eoi.created_by)
         reason = "They are better then You."
         payload = {
             "did_withdraw": True,
@@ -589,7 +579,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             response.data["non_field_errors"], ["Since assessment has begun, application can't be rejected."]
         )
 
-        app.assessments.all().delete()
+        application.assessments.all().delete()
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_win'])
@@ -608,7 +598,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         AgencyFactory,
         AgencyOfficeFactory,
         AgencyMemberFactory,
-        EOIFactory,
+        OpenEOIFactory,
     ]
 
     def test_add_review(self):
@@ -751,7 +741,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         self.client.logout()
 
         # create agency members for focal_points and agency member to convert
-        AgencyMemberFactory.create_batch(4)
+        AgencyMemberFactory()
 
         self.user = User.objects.filter(agency_members__isnull=False).first()
         self.client.force_login(self.user)
@@ -761,9 +751,10 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         url = reverse('projects:convert-unsolicited', kwargs={'pk': response.data['id']})
         start_date = date.today()
         end_date = date.today() + timedelta(days=30)
+        office = AgencyOfficeFactory(agency=app.agency)
         focal_points = [
             am.user.id for am in AgencyMemberFactory.create_batch(
-                5, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0]
+                5, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office
             )
         ]
 
@@ -816,7 +807,7 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
         file_id = response.data['id']
 
         PartnerMemberFactory()  # eoi is creating applications that need partner member
-        eoi = EOIFactory(created_by=self.user)
+        eoi = OpenEOIFactory(created_by=self.user)
         url = reverse('projects:review-summary', kwargs={"pk": eoi.id})
         payload = {
             'review_summary_comment': "comment",
@@ -847,7 +838,7 @@ class TestInvitedPartnersListAPIView(BaseAPITestCase):
         PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity)
 
     def test_serializes_same_fields_on_get_and_patch(self):
         eoi = EOI.objects.first()
@@ -874,7 +865,7 @@ class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
         PartnerSimpleFactory()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        EOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity)
 
     def test_send_notification(self):
         eoi = EOI.objects.first()
@@ -998,6 +989,18 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
         ]
         create_response = self.client.post(url, data=payload, format='json')
         self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_application(self):
+        eoi = OpenEOIFactory(agency=self.user.agency)
+        apply_url = reverse('projects:partner-applications', kwargs={'pk': eoi.pk})
+
+        partner = PartnerFactory()
+        user = PartnerMemberFactory(partner=partner).user
+        self.client.force_login(user)
+        apply_response = self.client.post(apply_url, data={
+            'cn': get_new_common_file().id
+        })
+        self.assertResponseStatusIs(apply_response, status.HTTP_201_CREATED)
 
 
 class TestDirectSelectionTestCase(BaseAPITestCase):
@@ -1192,14 +1195,6 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         self.assertResponseStatusIs(patch_response)
         self.assertEqual(patch_payload['title'], patch_response.data['title'])
 
-        patch_payload = {
-            'title': 'new title ASD',
-            'goal': 'new goal ASD',
-        }
-        patch_response = self.client.patch(project_url, patch_payload)
-        self.assertResponseStatusIs(patch_response)
-        self.assertEqual(patch_payload['title'], patch_response.data['title'])
-
 
 class TestEOIPublish(BaseAPITestCase):
 
@@ -1212,7 +1207,7 @@ class TestEOIPublish(BaseAPITestCase):
         UserFactory,
         AgencyMemberFactory,
         PartnerFactory,
-        EOIFactory,
+        OpenEOIFactory,
     ]
 
     def test_publish_permission(self):
@@ -1292,7 +1287,7 @@ class TestEOIPDFExport(BaseAPITestCase):
     user_type = BaseAPITestCase.USER_AGENCY
     partner_role = AgencyRole.READER
     initial_factories = [
-        EOIFactory,
+        OpenEOIFactory,
     ]
 
     def test_download_pdf(self):
