@@ -403,11 +403,11 @@ class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
     )
     queryset = Application.objects.all()
     serializer_class = CreateDirectApplicationNoCNSerializer
-    lookup_url_kwarg = 'eoi_id'
+    lookup_url_kwarg = 'pk'
 
     def get_queryset(self):
         return super(AgencyEOIApplicationDestroyAPIView, self).get_queryset().filter(
-            eoi__agency=self.request.user.agency
+            eoi__agency=self.request.user.agency, eoi_id=self.kwargs['eoi_id']
         )
 
 
@@ -432,7 +432,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
         elif self.request.agency_member:
             queryset = queryset.filter(Q(is_unsolicited=True, is_published=True) | Q(is_unsolicited=False))
             if not self.request.method == 'GET':
-                queryset = queryset.filter(agency=self.request.user.agency)
+                queryset = queryset.filter(eoi__agency=self.request.user.agency)
 
             return queryset
 
