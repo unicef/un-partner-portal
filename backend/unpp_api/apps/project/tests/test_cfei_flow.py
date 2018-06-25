@@ -1,6 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 
+from agency.agencies import UNHCR, UNICEF
 from agency.permissions import AgencyPermission
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES
 from common.consts import ALL_COMPLETED_REASONS, DSR_FINALIZE_RETENTION_CHOICES
@@ -194,7 +195,7 @@ class TestDSRCFEI(BaseAPITestCase):
         }
 
         for completed_reason, expected_response_code in status_expected_response.items():
-            eoi = DirectEOIFactory(created_by=self.user)
+            eoi = DirectEOIFactory(created_by=self.user, agency=UNICEF.model_instance)
             eoi.applications.update(did_win=False, did_accept=False)
             update_response = self.client.patch(
                 reverse('projects:eoi-detail', kwargs={'pk': eoi.id}),
@@ -213,7 +214,7 @@ class TestDSRCFEI(BaseAPITestCase):
         }
 
         for completed_reason, expected_response_code in status_expected_response.items():
-            eoi = DirectEOIFactory(created_by=self.user)
+            eoi = DirectEOIFactory(created_by=self.user, agency=UNICEF.model_instance)
             eoi.applications.update(did_win=True, did_accept=True)
 
             update_response = self.client.patch(
@@ -234,7 +235,7 @@ class TestDSRCFEI(BaseAPITestCase):
         }
 
         for retention, expected_response_code in retention_expected_response.items():
-            eoi = DirectEOIFactory(created_by=self.user)
+            eoi = DirectEOIFactory(created_by=self.user, agency=UNHCR.model_instance)
             eoi.applications.update(did_win=True, did_accept=True)
 
             update_response = self.client.patch(
