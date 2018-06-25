@@ -26,6 +26,7 @@ import AddReviewModalButton from './reviewContent/addReviewModalButton';
 import AwardApplicationButtonContainer from '../../../buttons/awardApplicationButtonContainer';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 import { APPLICATION_STATUSES, PROJECT_STATUSES } from '../../../../../helpers/constants';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../../../helpers/permissions';
 
 const messages = {
   header: 'Application from :',
@@ -50,11 +51,15 @@ class ApplicationSummaryHeader extends Component {
       redFlags,
       completedReview,
       isCfeiCompleted,
+      hasAssessPermission,
       cfeiStatus,
     } = this.props;
     const disabled = loading
     || status !== APPLICATION_STATUSES.PRE
     || cfeiStatus !== PROJECT_STATUSES.CLO;
+
+    console.log(isCfeiCompleted, isUserFocalPoint, isUserCreator, didWin, didWithdraw, hasAssessPermission);
+    
     if (isCfeiCompleted) return <div />;
     if (isUserFocalPoint || isUserCreator) {
       if (didWin) {
@@ -76,7 +81,7 @@ class ApplicationSummaryHeader extends Component {
           completedReview={completedReview}
           applicationId={applicationId}
         />);
-    } else if (isUserReviewer) {
+    } else if (hasAssessPermission) {
       if (R.prop(user, reviews)) {
         return (<EditReviewModalButton
           assessmentId={reviews[user]}
@@ -145,6 +150,7 @@ ApplicationSummaryHeader.propTypes = {
   isUserCreator: PropTypes.bool,
   reviews: PropTypes.object,
   getAssessment: PropTypes.func,
+  hasAssessPermission: PropTypes.bool,
   didWin: PropTypes.bool,
   didWithdraw: PropTypes.bool,
   isVerified: PropTypes.bool,
@@ -184,6 +190,7 @@ const mapStateToProps = (state, ownProps) => {
     isUserCreator: isUserACreator(state, eoi),
     cfeiStatus: selectCfeiStatus(state, eoi),
     isUserReviewer: isUserAReviewer(state, eoi),
+    hasAssessPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_ASSES_PRESELECTED_APPLICATIONS, state),
     reviews,
     user: state.session.userId,
     didWin: did_win,

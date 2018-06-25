@@ -71,9 +71,9 @@ export const AGENCY_PERMISSIONS = {
 
   // Assess Applications Submitted for CFEI Published by Own Agency
   /* DONE */ CFEI_MANAGE_REVIEWERS: 'CFEI_MANAGE_REVIEWERS', // If creator / focal point
-  CFEI_VIEW_APPLICATIONS: 'CFEI_VIEW_APPLICATIONS', // If creator / focal point
-  CFEI_PRESELECT_APPLICATIONS: 'CFEI_PRESELECT_APPLICATIONS', // If creator / focal point
-  CFEI_ASSES_PRESELECTED_APPLICATIONS: 'CFEI_ASSES_PRESELECTED_APPLICATIONS', // If creator / focal point
+  /* DONE */ CFEI_VIEW_APPLICATIONS: 'CFEI_VIEW_APPLICATIONS', // If creator / focal point
+  /* DONE */ CFEI_PRESELECT_APPLICATIONS: 'CFEI_PRESELECT_APPLICATIONS', // If creator / focal point
+  /* DONE */ CFEI_ASSES_PRESELECTED_APPLICATIONS: 'CFEI_ASSES_PRESELECTED_APPLICATIONS', // If creator / focal point
   CFEI_VIEW_MY_ASSESSMENT: 'CFEI_VIEW_MY_ASSESSMENT', // If creator / focal point
   CFEI_EDIT_MY_ASSESSMENT: 'CFEI_EDIT_MY_ASSESSMENT', // If creator / focal point
   CFEI_VIEW_ALL_ASSESSMENTS: 'CFEI_VIEW_ALL_ASSESSMENTS', // If creator / focal point
