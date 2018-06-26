@@ -7,7 +7,7 @@ import { submit } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
 import EditDsrForm from './editDsrForm';
-import { updateCfei } from '../../../../reducers/newCfei';
+import { updateDsr } from '../../../../reducers/newCfei';
 import { errorToBeAdded } from '../../../../reducers/errorReducer';
 import { selectCountriesWithOptionalLocations } from '../../../../store';
 
@@ -89,7 +89,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  patchDsr: body => dispatch(updateCfei(body, ownProps.id)),
+  patchDsr: body => dispatch(updateDsr(body, ownProps.id)),
   submit: () => dispatch(submit('editDsr')),
   postError: (error, message) => dispatch(errorToBeAdded(error, `newProject${ownProps.type}`, message)),
 });

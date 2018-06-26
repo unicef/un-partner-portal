@@ -26,10 +26,10 @@ const EditCfeiForm = (props) => {
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <GridRow columns={4} >
-          <StartDate minDate={cfeiStartDate} />
-          <EndDate minDate={cfeiEndDate} />
           <DeadlineDate minDate={cfeiDeadlineDate} />
           <NotifyDate minDate={cfeiNotifyResultsDate} />
+          <StartDate minDate={cfeiStartDate} />
+          <EndDate minDate={cfeiEndDate} />
         </GridRow>
         <FocalPoint overlap={false} initialMultiValues={focalPointNameArray} />
       </GridColumn>

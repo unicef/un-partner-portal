@@ -172,7 +172,7 @@ export function submitUcn(id) {
 }
 
 export function patchUcn(body, id) {
-  return authorizedPost({ uri: `/projects/applications/unsolicited/${id}/`, body });
+  return authorizedPatch({ uri: `/projects/applications/unsolicited/${id}/manage/`, body });
 }
 
 export function deleteUcn(id) {

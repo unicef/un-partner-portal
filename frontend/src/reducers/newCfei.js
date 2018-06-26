@@ -115,47 +115,55 @@ export const addUnsolicitedCN = body => (dispatch, getState) => {
     });
 };
 
-export const updateCfei = (body, id) => (dispatch, getState) => patchCfei(body, id)
-  .then((cfei) => {
-    dispatch(loadCfeiDetailSuccess(cfei));
-    if (cfei.direct_selected_partners) {
-      cfei.direct_selected_partners.forEach((selectedPartner) => {
-        dispatch(loadSuccess(APPLICATION_DETAILS, { results: {
-          id: selectedPartner.id,
-          application_status: selectedPartner.application_status,
-        },
-        selectedPartner,
-        getState }));
+export const updateCfei = (body, id) => (dispatch, getState) =>
+  patchCfei(body, id)
+    .then((cfei) => {
+      dispatch(loadCfeiDetailSuccess(cfei));
+      if (cfei.direct_selected_partners) {
+        cfei.direct_selected_partners.forEach((selectedPartner) => {
+          dispatch(loadSuccess(APPLICATION_DETAILS, { results: {
+            id: selectedPartner.id,
+            application_status: selectedPartner.application_status,
+          },
+          selectedPartner,
+          getState }));
+        });
+      }
+    }).catch((error) => {
+      dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
+      throw new SubmissionError({
+        ...error.response.data,
+        _error: errorMsg,
       });
-    }
-  }).catch((error) => {
-    dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
-    throw new SubmissionError({
-      ...error.response.data,
-      _error: errorMsg,
     });
-  });
 
-export const updateUcn = (body, id) => (dispatch, getState) => patchUcn(body, id)
-  .then((cfei) => {
-    dispatch(loadCfeiDetailSuccess(cfei));
-    if (cfei.direct_selected_partners) {
-      cfei.direct_selected_partners.forEach((selectedPartner) => {
-        dispatch(loadSuccess(APPLICATION_DETAILS, { results: {
-          id: selectedPartner.id,
-          application_status: selectedPartner.application_status,
-        },
-        selectedPartner,
-        getState }));
+
+export const updateDsr = (body, id) => (dispatch, getState) => {
+  const newBody = body;
+  if (typeof newBody.applications[0].ds_attachment === 'string') {
+    delete newBody.applications[0].ds_attachment;
+  }
+  return patchCfei(newBody, id)
+    .then((cfei) => {
+      dispatch(loadCfeiDetailSuccess(cfei));
+      if (cfei.direct_selected_partners) {
+        cfei.direct_selected_partners.forEach((selectedPartner) => {
+          dispatch(loadSuccess(APPLICATION_DETAILS, { results: {
+            id: selectedPartner.id,
+            application_status: selectedPartner.application_status,
+          },
+          selectedPartner,
+          getState }));
+        });
+      }
+    }).catch((error) => {
+      dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
+      throw new SubmissionError({
+        ...error.response.data,
+        _error: errorMsg,
       });
-    }
-  }).catch((error) => {
-    dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
-    throw new SubmissionError({
-      ...error.response.data,
-      _error: errorMsg,
     });
-  });
+};
 
 export const changePinStatusCfei = (id, isPinned) => dispatch =>
   patchPinnedCfei({

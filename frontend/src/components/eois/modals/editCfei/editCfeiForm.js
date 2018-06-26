@@ -58,7 +58,7 @@ const mapStateToProps = (state, ownProps) => {
     item => item.id);
   const focalPointNameArray = cfei.focal_points_detail.map(
     item => item.name);
-
+  console.log(focalPointNameArray);
   return {
     initialValues: {
       title: cfei.title,
@@ -73,6 +73,7 @@ const mapStateToProps = (state, ownProps) => {
       countries: cfei.cfei_locations,
       description: cfei.description,
       goal: cfei.goal,
+      other_information: cfei.other_information,
       has_weighting: cfei.has_weighting,
       assessments_criteria: cfei.assessments_criteria,
     },
