@@ -451,7 +451,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         }
         response = self.client.post(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
-        app_id = Application.objects.last().id
+        app_id = eoi.applications.last().id
         self.assertEqual(response.data['id'], app_id)
 
         eoi.display_type = CFEI_TYPES.direct
@@ -474,8 +474,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         # make sure that creating user is not the current one
         user = UserFactory()
         AgencyMemberFactory(user=user)
-        self.eoi = OpenEOIFactory(is_published=True, created_by=user)
-        self.eoi.applications.update(agency=self.user.agency)
+        self.eoi = OpenEOIFactory(is_published=True, created_by=user, agency=self.user.agency)
         self.eoi.focal_points.clear()
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')

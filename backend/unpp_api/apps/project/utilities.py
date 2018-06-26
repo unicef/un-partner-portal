@@ -57,7 +57,6 @@ def update_cfei_reviewers(cfei, user_ids):
         )
     cfei.reviewers.through.objects.exclude(user_id__in=user_ids).delete()
     cfei.reviewers.add(*User.objects.filter(id__in=user_ids))
-    send_notification_to_cfei_focal_points(cfei)
 
     cfei_assessments = Assessment.objects.filter(application__eoi=cfei)
     cfei_assessments.exclude(reviewer_id__in=user_ids).update(archived=True)

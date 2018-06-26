@@ -10,7 +10,14 @@ from rest_framework import status
 from agency.roles import AgencyRole
 from common.consts import FLAG_TYPES, PARTNER_TYPES, SANCTION_LIST_TYPES, INTERNAL_FLAG_CATEGORIES
 from common.tests.base import BaseAPITestCase
-from common.factories import PartnerSimpleFactory, PartnerFlagFactory, PartnerVerificationFactory, AgencyOfficeFactory
+from common.factories import (
+    PartnerSimpleFactory,
+    PartnerFlagFactory,
+    PartnerVerificationFactory,
+    AgencyOfficeFactory,
+    AgencyMemberFactory,
+    PartnerFactory,
+)
 from partner.models import Partner
 from review.models import PartnerFlag
 from sanctionslist.models import SanctionedItem, SanctionedName
@@ -19,7 +26,7 @@ from sanctionslist.models import SanctionedItem, SanctionedName
 class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
     user_type = BaseAPITestCase.USER_AGENCY
-    agency_role = AgencyRole.HQ_EDITOR
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     def setUp(self):
         super(TestPartnerFlagAPITestCase, self).setUp()
@@ -53,7 +60,8 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         # Change valid status
         url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
         payload = {
-            'is_valid': False
+            'is_valid': False,
+            'invalidation_comment': 'comment',
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
@@ -112,6 +120,56 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         self.assertResponseStatusIs(response)
         flag.refresh_from_db()
         self.assertIn(original_type, flag.type_history)
+
+    def test_escalation_flow(self):
+        payload = {
+            "comment": "This is a comment on a flag",
+            "flag_type": FLAG_TYPES.yellow,
+            "contact_email": "test@test.com",
+            "contact_person": "Nancy",
+            "contact_phone": "Smith"
+        }
+
+        hq_editor = AgencyMemberFactory(
+            office=self.user.agency_members.first().office,
+            role=AgencyRole.HQ_EDITOR.name
+        )
+
+        for is_valid in (True, False):
+            partner = PartnerFactory()
+
+            create_url = reverse('partner-reviews:flags', kwargs={"partner_id": partner.id})
+            response = self.client.post(create_url, data=payload)
+            self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+            flag_url = reverse(
+                'partner-reviews:flag-details', kwargs={"partner_id": partner.id, 'pk': response.data['id']}
+            )
+            patch_response = self.client.patch(flag_url, data={
+                'flag_type': FLAG_TYPES.escalated
+            })
+            self.assertResponseStatusIs(patch_response)
+            self.assertEqual(patch_response.data['flag_type'], FLAG_TYPES.escalated)
+
+            patch_response = self.client.patch(flag_url, data={
+                'is_valid': is_valid,
+                'invalidation_comment': 'comment',
+            })
+            self.assertResponseStatusIs(patch_response, status.HTTP_403_FORBIDDEN)
+
+            self.client.logout()
+            self.client.force_login(hq_editor.user)
+
+            patch_response = self.client.patch(flag_url, data={
+                'is_valid': is_valid,
+                'invalidation_comment': 'comment',
+            })
+            self.assertResponseStatusIs(patch_response, status.HTTP_200_OK)
+            self.assertEqual(patch_response.data['flag_type'], FLAG_TYPES.red if is_valid else FLAG_TYPES.yellow)
+
+            self.client.logout()
+            self.client.force_login(self.user)
+            partner.refresh_from_db()
+            self.assertEqual(partner.is_locked, is_valid)
 
 
 class TestPartnerVerificationAPITestCase(BaseAPITestCase):
@@ -212,7 +270,8 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         self.assertResponseStatusIs(flag_response)
 
         payload = {
-            'is_valid': False
+            'is_valid': False,
+            'invalidation_comment': 'comment',
         }
         response = self.client.patch(flag_url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_200_OK)

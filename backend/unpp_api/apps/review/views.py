@@ -63,7 +63,7 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
     permission_classes = (
         IsAuthenticated,
         HasUNPPPermission(
-            agency_permissions=[]
+            agency_permissions=[]  # Permissions verified below
         ),
     )
     serializer_class = PartnerVerificationSerializer
@@ -135,7 +135,7 @@ class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
                     raise_exception=True
                 )
             elif flag.submitter and not flag.submitter == self.request.user:
-                raise PermissionDenied("This flag can only be edited by it's creator")
+                raise PermissionDenied("This flag can only be edited by it's creator.")
 
         return flag
 

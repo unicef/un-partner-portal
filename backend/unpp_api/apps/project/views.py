@@ -34,7 +34,8 @@ from notification.helpers import (
     send_agency_updated_application_notification,
     send_notification_application_created,
     send_notification,
-    send_cfei_review_required_notification, user_received_notification_recently,
+    send_cfei_review_required_notification,
+    user_received_notification_recently,
     send_partner_made_decision_notification,
 )
 from partner.permissions import PartnerPermission
@@ -403,11 +404,11 @@ class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
     )
     queryset = Application.objects.all()
     serializer_class = CreateDirectApplicationNoCNSerializer
-    lookup_url_kwarg = 'eoi_id'
+    lookup_url_kwarg = 'pk'
 
     def get_queryset(self):
         return super(AgencyEOIApplicationDestroyAPIView, self).get_queryset().filter(
-            eoi__agency=self.request.user.agency
+            eoi__agency=self.request.user.agency, eoi_id=self.kwargs['eoi_id']
         )
 
 
@@ -432,7 +433,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
         elif self.request.agency_member:
             queryset = queryset.filter(Q(is_unsolicited=True, is_published=True) | Q(is_unsolicited=False))
             if not self.request.method == 'GET':
-                queryset = queryset.filter(agency=self.request.user.agency)
+                queryset = queryset.filter(eoi__agency=self.request.user.agency)
 
             return queryset
 
