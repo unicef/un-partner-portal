@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db import transaction
 from rest_framework import serializers
 
 from agency.permissions import AgencyPermission
-from common.consts import USER_CREATED_FLAG_CATEGORIES, INTERNAL_FLAG_CATEGORIES
+from common.consts import USER_CREATED_FLAG_CATEGORIES, INTERNAL_FLAG_CATEGORIES, FLAG_TYPES
 from common.permissions import current_user_has_permission
 from common.serializers import CommonFileSerializer
 from agency.serializers import AgencyUserBasicSerializer
@@ -50,6 +51,13 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         extra_kwargs = super(PartnerFlagSerializer, self).get_extra_kwargs()
         if self.instance and self.instance.category not in USER_CREATED_FLAG_CATEGORIES:
             extra_kwargs['category']['read_only'] = True
+
+        if self.instance and self.instance.flag_type == FLAG_TYPES.escalated:
+            # Escalated flags can only be changed through validating / invalidating
+            extra_kwargs['flag_type'] = {
+                'read_only': True
+            }
+
         return extra_kwargs
 
     def get_fields(self):
@@ -64,16 +72,35 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
 
         return fields
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         new_flag_type = validated_data.get('flag_type')
         old_flag_type = instance.flag_type
 
-        instance = super(PartnerFlagSerializer, self).update(instance, validated_data)
+        if validated_data.get('is_valid') is False and not validated_data.get('invalidation_comment'):
+            raise serializers.ValidationError({
+                'invalidation_comment': 'This field is required.'
+            })
+
         if new_flag_type and not old_flag_type == new_flag_type:
             instance.type_history.append(old_flag_type)
             instance.save()
 
-        if instance.category == INTERNAL_FLAG_CATEGORIES.sanctions_match and instance.sanctions_match:
+            if new_flag_type == FLAG_TYPES.escalated:
+                instance.is_valid = None
+                if FLAG_TYPES.escalated in instance.type_history:
+                    raise serializers.ValidationError({
+                        'flag_type': 'This risk flag has already been escalated in the past.'
+                    })
+                # TODO: notify HQ editors
+
+        instance = super(PartnerFlagSerializer, self).update(instance, validated_data)
+
+        if instance.flag_type == FLAG_TYPES.red and instance.is_valid:
+            instance.partner.is_locked = True
+            instance.partner.save()
+            send_partner_marked_for_deletion_email(instance.partner)
+        elif instance.category == INTERNAL_FLAG_CATEGORIES.sanctions_match and instance.sanctions_match:
             if instance.is_valid is not None:
                 instance.sanctions_match.can_ignore = not instance.is_valid
                 instance.sanctions_match.save()
@@ -82,6 +109,11 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                 instance.sanctions_match.partner.save()
                 if instance.sanctions_match.partner.is_locked:
                     send_partner_marked_for_deletion_email(instance.sanctions_match.partner)
+
+        if instance.flag_type == FLAG_TYPES.escalated and instance.is_valid is not None:
+            instance = self.update(instance, {
+                'flag_type': FLAG_TYPES.red if instance.is_valid else FLAG_TYPES.yellow
+            })
 
         return instance
 
