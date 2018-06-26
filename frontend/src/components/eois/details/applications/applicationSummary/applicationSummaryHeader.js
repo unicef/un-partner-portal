@@ -40,6 +40,8 @@ class ApplicationSummaryHeader extends Component {
 
     this.isAssessActionAllowed = this.isAssessActionAllowed.bind(this);
     this.isReatractAllowed = this.isReatractAllowed.bind(this);
+    this.isSelectActionAllowed = this.isSelectActionAllowed.bind(this);
+    this.isSelectRecommendedActionAllowed = this.isSelectRecommendedActionAllowed.bind(this);
   }
 
   isReatractAllowed() {
@@ -52,6 +54,26 @@ class ApplicationSummaryHeader extends Component {
 
     return ((hasRetractPermission && isAdvEd && (isCreator || isFocalPoint))
     || (hasRetractPermission && isMFT && isFocalPoint));
+  }
+
+  isSelectRecommendedActionAllowed() {
+    const {
+      isAdvEd,
+      isMFT,
+      isFocalPoint,
+      hasSelectRecommendedPermission } = this.props;
+
+    return ((hasSelectRecommendedPermission && isAdvEd && isFocalPoint)
+    || (hasSelectRecommendedPermission && isMFT && isFocalPoint));
+  }
+
+  isSelectActionAllowed() {
+    const {
+      isAdvEd,
+      isCreator,
+      hasSelectPermission } = this.props;
+
+    return (hasSelectPermission && isAdvEd && isCreator);
   }
 
   isAssessActionAllowed(hasActionPermission) {
@@ -88,7 +110,7 @@ class ApplicationSummaryHeader extends Component {
     const disabled = loading
     || status !== APPLICATION_STATUSES.PRE
     || cfeiStatus !== PROJECT_STATUSES.CLO;
-    
+
     if (loading || isCompleted || status !== APPLICATION_STATUSES.PRE) return <div />;
 
     if (completedReview) {
@@ -101,15 +123,15 @@ class ApplicationSummaryHeader extends Component {
           applicationId={applicationId}
         />);
       }
-      return (
-        <AwardApplicationButtonContainer
+      return (this.isSelectActionAllowed() || this.isSelectRecommendedActionAllowed())
+        && <AwardApplicationButtonContainer
           loading={loading}
           status={status}
           isVerified={isVerified}
           redFlags={redFlags}
           completedReview={completedReview}
           applicationId={applicationId}
-        />);
+        />;
     } else if (hasAssessPermission) {
       if (R.prop(user, reviews) && this.isAssessActionAllowed(hasAssessPermission)) {
         return (<EditReviewModalButton
@@ -181,12 +203,13 @@ ApplicationSummaryHeader.propTypes = {
   getAssessment: PropTypes.func,
   hasAssessPermission: PropTypes.bool,
   hasRetractPermission: PropTypes.bool,
+  hasSelectRecommendedPermission: PropTypes.bool,
+  hasSelectPermission: PropTypes.bool,
   didWin: PropTypes.bool,
   didWithdraw: PropTypes.bool,
   isVerified: PropTypes.bool,
   redFlags: PropTypes.number,
   completedReview: PropTypes.bool,
-  isCfeiCompleted: PropTypes.bool,
   cfeiStatus: PropTypes.string,
   applicationStatus: PropTypes.string,
   isAdvEd: PropTypes.bool,
@@ -231,6 +254,9 @@ const mapStateToProps = (state, ownProps) => {
     isReviewer: isUserAReviewer(state, eoi),
     hasAssessPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_REVIEW_APPLICATIONS, state),
     hasRetractPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DESELECT_PARTNER, state),
+    hasSelectPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_SELECT_PARTNER, state),
+    hasSelectRecommendedPermission:
+      checkPermission(AGENCY_PERMISSIONS.CFEI_SELECT_RECOMMENDED_PARTNER, state),
     reviews,
     user: state.session.userId,
     didWin: did_win,

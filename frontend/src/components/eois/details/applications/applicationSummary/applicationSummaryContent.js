@@ -36,6 +36,11 @@ const styleSheet = () => ({
   },
 });
 
+const isViewFeedbackAllowed = (hasActionPermission, isAdvEd, isPAM, isBasEd, isCreator, isFocalPoint) =>
+  ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
+    || (hasActionPermission && isBasEd && isCreator)
+    || (hasActionPermission && isPAM && isCreator));
+
 const isViewAssessmentsAllowed = (hasActionPermission, isAdvEd, isPAM, isBasEd,
   isMFT, isReviewer, isCreator, isFocalPoint) =>
   ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint || isReviewer))
@@ -95,7 +100,8 @@ const ApplicationSummaryContent = (props) => {
         : null
       }
       <Grid item className={classes.gridItem}>
-        <Feedback allowedToAdd={isFocalPoint || isCreator} applicationId={applicationId} />
+        {isViewFeedbackAllowed(hasViewAssessmentsPermission, isAdvEd, isPAM, isBasEd, isCreator, isFocalPoint)
+          && <Feedback allowedToAdd applicationId={applicationId} />}
       </Grid>
     </div>
 
@@ -137,6 +143,7 @@ const mapStateToProps = (state, ownProps) => {
     cfeiStatus: selectCfeiStatus(state, eoi),
     isReviewer: isUserAReviewer(state, eoi),
     hasViewAssessmentsPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_VIEW_ALL_REVIEWS, state),
+    hasFeedbackPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS, state),
     application,
     partner,
     partnerDetails,

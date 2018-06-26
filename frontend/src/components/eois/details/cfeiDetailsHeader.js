@@ -17,7 +17,7 @@ import {
   isUserACreator,
   isUserAFocalPoint,
 } from '../../../store';
-import { loadCfei, loadUnsolicitedCfei } from '../../../reducers/cfeiDetails';
+import { loadCfei, loadUnsolicitedCfei, isCfeiCompleted } from '../../../reducers/cfeiDetails';
 import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
 import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
 import { ROLES, PROJECT_TYPES, DETAILS_ITEMS } from '../../../helpers/constants';
@@ -25,6 +25,7 @@ import PaddedContent from '../../common/paddedContent';
 import MainContentWrapper from '../../common/mainContentWrapper';
 import { isUserAgencyReader, isUserAgencyEditor } from '../../../helpers/authHelpers';
 import { checkPermission, isRoleOffice, AGENCY_ROLES, PARTNER_PERMISSIONS, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
+import { Agent } from 'https';
 
 const messages = {
   noCfei: 'Sorry but this project doesn\'t exist',
@@ -81,7 +82,10 @@ class CfeiHeader extends Component {
   filterTabs() {
     const { tabs,
       role,
+      isCompleted,
       hasUploadCnPermission,
+      hasViewAllPermission,
+      hasViewWinnerPermission,
       hasViewApplicationsPermission,
       params: { type } } = this.props;
 
@@ -91,12 +95,23 @@ class CfeiHeader extends Component {
       tabsToRender = hasUploadCnPermission
         ? tabs
         : R.filter(item => ((item.path) !== (DETAILS_ITEMS.SUBMISSION)), tabs);
-    } else if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
+    } else if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && !isCompleted) {
       tabsToRender = this.hasPermissionToViewApplications(hasViewApplicationsPermission)
         ? tabs
         : R.filter(item => ((item.path) !== (DETAILS_ITEMS.APPLICATIONS)
          && (item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabs);
+    } else if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && isCompleted) {
+      tabsToRender = this.hasPermissionToViewApplications(hasViewApplicationsPermission)
+        ? tabs
+        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.APPLICATIONS)
+         && (item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabs);
+
+      tabsToRender = (hasViewAllPermission || hasViewWinnerPermission)
+        ? tabsToRender
+        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.RESULTS)
+         && (item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabsToRender);
     }
+
     return tabsToRender;
   }
 
@@ -182,6 +197,7 @@ CfeiHeader.propTypes = {
   type: PropTypes.string,
   hasUploadCnPermission: PropTypes.bool.isRequired,
   hasViewApplicationsPermission: PropTypes.bool.isRequired,
+  hasViewAllPermission: PropTypes.bool.isRequired,
   loadUCN: PropTypes.func,
   isFocalPoint: PropTypes.bool,
   isCreator: PropTypes.bool,
@@ -189,6 +205,7 @@ CfeiHeader.propTypes = {
   isMFT: PropTypes.bool,
   isPAM: PropTypes.bool,
   isBasEd: PropTypes.bool,
+  isCompleted: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -200,6 +217,8 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.cfeiDetails.status.loading,
   hasUploadCnPermission: checkPermission(PARTNER_PERMISSIONS.CFEI_SUBMIT_CONCEPT_NOTE, state),
   hasViewApplicationsPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_VIEW_APPLICATIONS, state),
+  hasViewAllPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_FINALIZED_VIEW_ALL_INFO, state),
+  hasViewWinnerPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_FINALIZED_VIEW_WINNER_AND_CN, state),
   cnFile: state.conceptNote.cnFile,
   error: state.cfeiDetails.status.error,
   isReaderEditor: isUserAgencyReader(state) || isUserAgencyEditor(state),
@@ -211,6 +230,7 @@ const mapStateToProps = (state, ownProps) => ({
   isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
   isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),
   isBasEd: isRoleOffice(AGENCY_ROLES.EDITOR_BASIC, state),
+  isCompleted: isCfeiCompleted(state, ownProps.params.id),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
