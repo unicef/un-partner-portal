@@ -46,7 +46,7 @@ const getSelectTableRowTemplateArgs = (
 class PaginatedList extends Component {
   constructor(props) {
     super(props);
-    this.changeExpandedDetails = expandedRows => this.setState({ expandedRows });
+    this.changeExpandedDetails = expandedRowIds => this.setState({ expandedRowIds });
     this.tableRowTemplate = this.tableRowTemplate.bind(this);
 
 
@@ -82,7 +82,7 @@ class PaginatedList extends Component {
     this.setState({ hoveredRow: null });
   }
 
-  tableRowTemplate({ row, children, rowId }) {
+  tableRowTemplate({ row, children, tableRow: { rowId } }) {
     return (
       <TableRowMUI
         hover
@@ -115,14 +115,12 @@ class PaginatedList extends Component {
     const { hoveredRow } = this.state;
 
     return (
-      <ListLoader
-        loading={loading}
-      >
+      <ListLoader loading={loading}>
         <Paper>
           <Grid
             rows={items}
             columns={columns}
-            headerPlaceholderTemplate={() => this.navigationHeader()}
+            headerPlaceholderComponent={() => this.navigationHeader()}
           >
             {allowSorting && <SortingState
               sorting={sorting}
@@ -138,7 +136,7 @@ class PaginatedList extends Component {
             />
 
             {expandable &&
-            <RowDetailState onExpandedRowsChange={this.changeExpandedDetails} />}
+            <RowDetailState onExpandedRowIdsChange={this.changeExpandedDetails} />}
 
             <Table
               table
@@ -162,7 +160,7 @@ class PaginatedList extends Component {
                       params={
                         getSelectTableRowTemplateArgs({
                           selectByRowClick: true,
-                          highlightSelected: true,
+                          highlightRow: true,
                           hovered: hoveredRow,
                           ...params,
                         }, getters, actions)
@@ -175,7 +173,7 @@ class PaginatedList extends Component {
             <TableHeaderRow allowSorting={allowSorting} />
 
             {expandable &&
-            <TableRowDetail template={({ row }) => expandedCell(row)} />}
+            <TableRowDetail contentComponent={({ row }) => expandedCell(row)} />}
 
             <PagingPanel
               allowedPageSizes={table.allowedPageSizes}

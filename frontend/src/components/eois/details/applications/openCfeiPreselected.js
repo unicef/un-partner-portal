@@ -11,6 +11,7 @@ import PaginatedList from '../../../common/list/paginatedList';
 import TableWithStateInUrl from '../../../common/hoc/tableWithStateInUrl';
 import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
 import Compare from '../../buttons/compareButton';
+import OrganizationTypeCell from '../../../applications/organizationTypeCell';
 import PreselectedTotalScore from '../../cells/preselectedTotalScore';
 import PreselectedYourScore from '../../cells/preselectedYourScore';
 import PreselectedReviewsCell from '../../cells/preselectedReviewsCell';
@@ -61,7 +62,7 @@ class OpenCfeiPreselections extends Component {
   }
 
   applicationsCells({ row, column, hovered, value }) {
-    if (column.name === 'name') {
+    if (column.name === 'legal_name') {
       return (<PartnerProfileNameCell
         info={row.partner_additional}
       />);
@@ -89,7 +90,10 @@ class OpenCfeiPreselections extends Component {
         id={row.id}
         reviews={row.review_progress}
       />);
+    } else if (column.name === 'type_org') {
+      return <OrganizationTypeCell orgType={row.type_org} />;
     }
+
     return <TableCell>{value}</TableCell>;
   }
 

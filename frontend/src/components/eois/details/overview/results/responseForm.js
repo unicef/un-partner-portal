@@ -11,8 +11,7 @@ import { updateApplication } from '../../../../../reducers/partnerApplicationDet
 import ResultRadio from './resultRadio';
 import ProfileConfirmation from '../../../../organizationProfile/common/profileConfirmation';
 import { PROJECT_STATUSES } from '../../../../../helpers/constants';
-import { formatDateForPrint } from '../../../../../helpers/dates';
-import { isUserNotPartnerReader } from '../../../../../helpers/authHelpers';
+import { formatDateForPrint } from '../../../../../helpers/dates'; 
 
 const styleSheet = theme => ({
   container: {
@@ -99,9 +98,9 @@ class ResultForm extends Component {
   }
 
   showForm() {
-    const { accepted, declined, status, decisionDate, displayEdit } = this.props;
+    const { accepted, declined, status, decisionDate } = this.props;
     const { change } = this.state;
-    if (!displayEdit) return null;
+
     if (accepted) {
       return (<div>
         <Typography>{messages.confirmed}</Typography>
@@ -152,7 +151,6 @@ ResultForm.propTypes = {
   submitConfirmation: PropTypes.func,
   status: PropTypes.string,
   decisionDate: PropTypes.string,
-  displayEdit: PropTypes.string,
 };
 
 const formResult = reduxForm({
@@ -163,7 +161,6 @@ const mapStateToProps = (state, ownProps) => ({
   accepted: ownProps.application.did_accept,
   declined: ownProps.application.did_decline,
   decisionDate: formatDateForPrint(ownProps.application.decision_date),
-  displayEdit: isUserNotPartnerReader(state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
