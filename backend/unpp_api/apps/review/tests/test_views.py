@@ -16,10 +16,8 @@ from common.factories import (
     PartnerVerificationFactory,
     AgencyOfficeFactory,
     AgencyMemberFactory,
-    PartnerFactory,
 )
 from partner.models import Partner
-from review.models import PartnerFlag
 from sanctionslist.models import SanctionedItem, SanctionedName
 
 
