@@ -26,7 +26,7 @@ from common.consts import (
     OTHER_AGENCIES_DSR_COMPLETED_REASONS,
     UNHCR_DSR_COMPLETED_REASONS,
 )
-from common.utils import get_countries_code_from_queryset, get_partners_name_from_queryset
+from common.utils import get_countries_code_from_queryset
 from common.serializers import (
     SimpleSpecializationSerializer,
     PointSerializer,
@@ -112,7 +112,7 @@ class DirectProjectSerializer(BaseProjectSerializer):
         )
 
     def get_invited_partners(self, obj):
-        return get_partners_name_from_queryset(obj.invited_partners)
+        return obj.invited_partners.values_list('legal_name', flat=True)
 
     def get_partner_offer_status(self, obj):
         queryset = Application.objects.filter(eoi=obj)
@@ -615,6 +615,11 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         elif 'invited_partners' in self.initial_data:
             instance.invited_partners.clear()
 
+        specialization_ids = self.initial_data.get('specializations', [])
+        if specialization_ids:
+            instance.specializations.through.objects.exclude(specialization_id__in=specialization_ids).delete()
+            instance.specializations.add(*Specialization.objects.filter(id__in=specialization_ids))
+
         locations_data = self.initial_data.get('locations', [])
         if locations_data:
             instance.locations.clear()
@@ -627,14 +632,15 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         update_cfei_focal_points(instance, self.initial_data.get('focal_points'))
 
         if instance.is_direct and self.initial_data.get('applications'):
-            for application_data in self.initial_data.get('applications'):
-                serializer = CreateDirectApplicationNoCNSerializer(
-                    instance=get_object_or_404(instance.applications, partner=application_data.pop('partner')),
-                    data=application_data,
-                    partial=True
-                )
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
+            # DSRs should only have 1 application
+            application_data = self.initial_data.get('applications')[0]
+            serializer = CreateDirectApplicationNoCNSerializer(
+                instance=instance.applications.first(),
+                data=application_data,
+                partial=True
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
         return instance
 
