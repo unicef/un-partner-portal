@@ -49,7 +49,7 @@ const ItemPartnerAdditionalInfoCell = (props) => {
 
   return (
     <div role="button" className={classes.alignCenter}>
-      <Typography type="body1" color="accent">
+      <Typography type="body1" color="accent" onClick={onClick}>
         {info.legal_name}
       </Typography>
 
