@@ -50,15 +50,17 @@ const mergeLocations = countries => (acc, next) => {
 
 const prepareBody = (body, getState) => {
   let newBody = R.clone(body);
-  const flatSectors = mergeListsFromObjectArray(newBody.specializations, 'areas');
-  newBody = R.assoc('specializations', flatSectors, body);
-  newBody = R.assoc('country_code', body.countries.map(country => country.country), newBody);
-  newBody = R.assoc('locations',
-    R.reduce(
-      mergeLocations(getState().countries),
-      0,
-      body.countries,
-    ).locations, newBody);
+  if (newBody.specializations) {
+    const flatSectors = mergeListsFromObjectArray(newBody.specializations, 'areas');
+    newBody = R.assoc('specializations', flatSectors, body);
+    newBody = R.assoc('country_code', body.countries.map(country => country.country), newBody);
+    newBody = R.assoc('locations',
+      R.reduce(
+        mergeLocations(getState().countries),
+        0,
+        body.countries,
+      ).locations, newBody);
+  }
   return newBody;
 };
 
@@ -105,6 +107,7 @@ export const addDirectCfei = body => (dispatch, getState) => {
 
 export const addUnsolicitedCN = body => (dispatch, getState) => {
   dispatch(newCfeiSubmitting());
+
   const preparedBody = prepareBody(body, getState);
   const params = history.getCurrentLocation().query;
   return postUnsolicitedCN(preparedBody)
