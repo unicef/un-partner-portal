@@ -11,7 +11,7 @@ import apiMeta, {
 const errorMessage = type => `Couldn't load ${type}, please refresh page and try again`;
 
 const messages = {
-  loadingCN: errorMessage('Calls for Expression of Interests'),
+  loadingCN: errorMessage('Calls for Expressions of Interests'),
   loadingDS: errorMessage('Direct Selection/Retention'),
   loadingUCN: errorMessage('Unsolicited Concept Notes'),
 };
