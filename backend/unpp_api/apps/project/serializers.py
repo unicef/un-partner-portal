@@ -615,6 +615,11 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         elif 'invited_partners' in self.initial_data:
             instance.invited_partners.clear()
 
+        specialization_ids = self.initial_data.get('specializations', [])
+        if specialization_ids:
+            instance.specializations.through.objects.exclude(specialization_id__in=specialization_ids).delete()
+            instance.specializations.add(*Specialization.objects.filter(id__in=specialization_ids))
+
         locations_data = self.initial_data.get('locations', [])
         if locations_data:
             instance.locations.clear()
@@ -627,6 +632,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         update_cfei_focal_points(instance, self.initial_data.get('focal_points'))
 
         if instance.is_direct and self.initial_data.get('applications'):
+            # DSRs should only have 1 application
             application_data = self.initial_data.get('applications')[0]
             serializer = CreateDirectApplicationNoCNSerializer(
                 instance=instance.applications.first(),
