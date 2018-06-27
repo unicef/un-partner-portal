@@ -55,7 +55,7 @@ from project.serializers import (
     ApplicationsListSerializer,
     ReviewersApplicationSerializer,
     ReviewerAssessmentsSerializer,
-    CreateUnsolicitedProjectSerializer,
+    ManageUCNSerializer,
     ApplicationPartnerOpenSerializer,
     ApplicationPartnerUnsolicitedDirectSerializer,
     ApplicationPartnerDirectSerializer,
@@ -597,7 +597,7 @@ class PartnerApplicationOpenListAPIView(ListAPIView):
         return super(PartnerApplicationOpenListAPIView, self).get_queryset().filter(query)
 
 
-class PartnerApplicationUnsolicitedListCreateAPIView(ListCreateAPIView):
+class UCNListCreateAPIView(ListCreateAPIView):
     permission_classes = (
         HasUNPPPermission(
             partner_permissions=[
@@ -615,14 +615,14 @@ class PartnerApplicationUnsolicitedListCreateAPIView(ListCreateAPIView):
             current_user_has_permission(
                 self.request, partner_permissions=[PartnerPermission.UCN_DRAFT], raise_exception=True
             )
-            return CreateUnsolicitedProjectSerializer
+            return ManageUCNSerializer
         return ApplicationPartnerUnsolicitedDirectSerializer
 
     def get_queryset(self, *args, **kwargs):
         query = Q(partner=self.request.active_partner)
         if self.request.active_partner.is_hq:
             query |= Q(partner__hq=self.request.active_partner)
-        return super(PartnerApplicationUnsolicitedListCreateAPIView, self).get_queryset().filter(query)
+        return super(UCNListCreateAPIView, self).get_queryset().filter(query)
 
 
 class PartnerApplicationDirectListCreateAPIView(ListAPIView):
@@ -874,7 +874,7 @@ class PublishCFEIAPIView(RetrieveAPIView):
         return Response(AgencyProjectSerializer().data)
 
 
-class PublishOrDestroyUCNAPIView(RetrieveAPIView, DestroyAPIView):
+class UCNManageAPIView(RetrieveUpdateAPIView, DestroyAPIView):
     permission_classes = (
         HasUNPPPermission(
             partner_permissions=[]
@@ -883,8 +883,13 @@ class PublishOrDestroyUCNAPIView(RetrieveAPIView, DestroyAPIView):
     serializer_class = ApplicationPartnerUnsolicitedDirectSerializer
     queryset = Application.objects.filter(is_published=False, is_unsolicited=True)
 
+    def get_serializer_class(self):
+        if self.request.method == 'PATCH':
+            return ManageUCNSerializer
+        return self.serializer_class
+
     def get_queryset(self):
-        queryset = super(PublishOrDestroyUCNAPIView, self).get_queryset()
+        queryset = super(UCNManageAPIView, self).get_queryset()
         query = Q(partner=self.request.active_partner)
         if self.request.active_partner.is_hq:
             query |= Q(partner__hq=self.request.active_partner)
@@ -901,4 +906,4 @@ class PublishOrDestroyUCNAPIView(RetrieveAPIView, DestroyAPIView):
 
     @check_unpp_permission(partner_permissions=[PartnerPermission.UCN_DELETE])
     def perform_destroy(self, instance):
-        return super(PublishOrDestroyUCNAPIView, self).perform_destroy(instance)
+        return super(UCNManageAPIView, self).perform_destroy(instance)

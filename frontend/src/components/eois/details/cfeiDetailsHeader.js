@@ -25,7 +25,6 @@ import PaddedContent from '../../common/paddedContent';
 import MainContentWrapper from '../../common/mainContentWrapper';
 import { isUserAgencyReader, isUserAgencyEditor } from '../../../helpers/authHelpers';
 import { checkPermission, isRoleOffice, AGENCY_ROLES, PARTNER_PERMISSIONS, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
-import { Agent } from 'https';
 
 const messages = {
   noCfei: 'Sorry but this project doesn\'t exist',
@@ -66,6 +65,7 @@ class CfeiHeader extends Component {
     const { params: { type, id }, location } = this.props;
     const tabsToRender = this.filterTabs();
     const tabIndex = tabsToRender.findIndex(tab => location.match(`^/cfei/${type}/${id}/${tab.path}`));
+    
     if (tabIndex === -1) {
       // TODO: do real 404
       history.push('/');
@@ -89,22 +89,20 @@ class CfeiHeader extends Component {
       hasViewApplicationsPermission,
       params: { type } } = this.props;
 
-    let tabsToRender = [];
+    let tabsToRender = hasUploadCnPermission
+      ? tabs
+      : R.filter(item => ((item.path) !== (DETAILS_ITEMS.SUBMISSION)), tabs);
 
-    if (role === ROLES.PARTNER) {
-      tabsToRender = hasUploadCnPermission
-        ? tabs
-        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.SUBMISSION)), tabs);
-    } else if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && !isCompleted) {
+    if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && !isCompleted) {
       tabsToRender = this.hasPermissionToViewApplications(hasViewApplicationsPermission)
-        ? tabs
+        ? tabsToRender
         : R.filter(item => ((item.path) !== (DETAILS_ITEMS.APPLICATIONS)
-         && (item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabs);
+         && (item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabsToRender);
     } else if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && isCompleted) {
       tabsToRender = this.hasPermissionToViewApplications(hasViewApplicationsPermission)
-        ? tabs
+        ? tabsToRender
         : R.filter(item => ((item.path) !== (DETAILS_ITEMS.APPLICATIONS)
-         && (item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabs);
+         && (item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabsToRender);
 
       tabsToRender = (hasViewAllPermission || hasViewWinnerPermission)
         ? tabsToRender
@@ -198,6 +196,7 @@ CfeiHeader.propTypes = {
   hasUploadCnPermission: PropTypes.bool.isRequired,
   hasViewApplicationsPermission: PropTypes.bool.isRequired,
   hasViewAllPermission: PropTypes.bool.isRequired,
+  hasViewWinnerPermission: PropTypes.bool.isRequired,
   loadUCN: PropTypes.func,
   isFocalPoint: PropTypes.bool,
   isCreator: PropTypes.bool,
