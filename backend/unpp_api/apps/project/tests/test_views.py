@@ -34,7 +34,7 @@ from common.factories import (
     UserFactory,
     PartnerFactory,
     get_new_common_file,
-)
+    DirectEOIFactory)
 from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
@@ -1209,6 +1209,47 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         patch_response = self.client.patch(project_url, patch_payload)
         self.assertResponseStatusIs(patch_response)
         self.assertEqual(patch_payload['title'], patch_response.data['title'])
+
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    def test_patch_locations_issue_direct(self):
+        project = DirectEOIFactory(created_by=self.user)
+        project_url = reverse('projects:eoi-detail', kwargs={'pk': project.pk})
+
+        patch_payload = {
+            "locations": [
+                {
+                    "admin_level_1": {
+                        "name": "Elbasan County",
+                        "country_code": "AL"
+                    },
+                    "lat": "41.18271",
+                    "lon": "20.29838"
+                },
+                {
+                    "admin_level_1": {
+                        "name": "Gjirokastër County",
+                        "country_code": "AL"
+                    },
+                    "lat": "40.38413",
+                    "lon": "20.38627"
+                },
+                {
+                    "admin_level_1": {
+                        "name": "Fier County",
+                        "country_code": "AL"
+                    },
+                    "lat": "40.58468",
+                    "lon": "19.77104"
+                }
+            ],
+        }
+        patch_response = self.client.patch(project_url, patch_payload)
+        self.assertResponseStatusIs(patch_response)
+
+        patch_response = self.client.patch(project_url, data={
+            'locations': patch_response.data['locations']
+        })
+        self.assertResponseStatusIs(patch_response)
 
 
 class TestEOIPublish(BaseAPITestCase):
