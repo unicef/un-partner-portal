@@ -36,7 +36,7 @@ const styleSheet = (theme) => {
 };
 
 const getSelectTableRowTemplateArgs = (
-  { selectByRowClick, highlightSelected, hovered, ...restParams },
+  { selectByRowClick, highlightRow, hovered, ...restParams },
   { selection }, // current selection
 // action that changes row selection
 ) => {
@@ -45,7 +45,7 @@ const getSelectTableRowTemplateArgs = (
     ...restParams,
     row,
     selectByRowClick,
-    selected: highlightSelected && selection.indexOf(rowId) > -1,
+    selected: highlightRow && selection.indexOf(rowId) > -1,
     rowId,
     hovered: hovered === rowId,
   });
@@ -92,6 +92,7 @@ class SelectableList extends Component {
   handleRowMouseLeave() {
     this.setState({ hoveredRow: null });
   }
+  
   navigationHeader(selected, rows, HeaderAction) {
     const { classes, itemsCount = 0, pageSize, pageNumber } = this.props;
 
@@ -111,7 +112,7 @@ class SelectableList extends Component {
     </div>);
   }
 
-  tableRowTemplate({ row, children, selected, rowId }) {
+  tableRowTemplate({ row, children, selected, tableRow: { rowId }}) {
     return (<TableRowMUI
       selected={selected}
       hover
@@ -143,7 +144,7 @@ class SelectableList extends Component {
           <Grid
             rows={items}
             columns={columns}
-            headerPlaceholderTemplate={() => this.navigationHeader(
+            headerPlaceholderComponent={() => this.navigationHeader(
               selected,
               items,
               headerAction)}
@@ -160,9 +161,9 @@ class SelectableList extends Component {
               onSelectionChange={this.handleSelect}
             />
             <Table
-              tableRowTemplate={this.tableRowTemplate}
               table
-              tableCellTemplate={({ row, column, tableRow: { rowId } }) =>
+              rowComponent={this.tableRowTemplate}
+              cellComponent={({ row, column, tableRow: { rowId } }) =>
                 templateCell({ row, column, hovered: hoveredRow === rowId })}
             />
             <Template
@@ -180,7 +181,7 @@ class SelectableList extends Component {
                       params={
                         getSelectTableRowTemplateArgs({
                           selectByRowClick: true,
-                          highlightSelected: true,
+                          highlightRow: true,
                           hovered: hoveredRow,
                           ...params,
                         }, getters, actions)

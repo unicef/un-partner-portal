@@ -12,7 +12,7 @@ import PaddedContent from '../../../../common/paddedContent';
 import TextFieldForm from '../../../../forms/textFieldForm';
 import { updateApplication } from '../../../../../reducers/partnerApplicationDetails';
 import ResultRadio from './resultRadio';
-import { isUserNotPartnerReader } from '../../../../../helpers/authHelpers';
+import { checkPermission, PARTNER_PERMISSIONS } from '../../../../../helpers/permissions';
 
 const styleSheet = theme => ({
   container: {
@@ -53,8 +53,7 @@ const handleConfirmationSubmit = (values, dispatch, props) => {
   props.submitConfirmation(body);
 };
 
-const showForm = (accepted, declined, classes, handleSubmit, displayActions) => {
-  if (!displayActions) return null;
+const showForm = (accepted, declined, classes, handleSubmit) => {
   if (accepted) {
     return (
       <div className={classes.iconWithText}>
@@ -89,7 +88,7 @@ const showForm = (accepted, declined, classes, handleSubmit, displayActions) => 
 };
 
 const ResultForm = (props) => {
-  const { classes, handleSubmit, accepted, declined, displayActions } = props;
+  const { classes, handleSubmit, accepted, declined, displayActions, hasPermission } = props;
   return (
     <form onSubmit={handleSubmit}>
       <PaddedContent>
@@ -99,12 +98,12 @@ const ResultForm = (props) => {
           readOnly
         />
       </PaddedContent>
-      <div className={classes.container}>
+      {(hasPermission || accepted || declined) && <div className={classes.container}>
         <PaddedContent>
           <Typography>{messages.labels.chosen}</Typography>
           {showForm(accepted, declined, classes, handleSubmit, displayActions)}
         </PaddedContent>
-      </div>
+      </div>}
     </form>);
 };
 
@@ -113,7 +112,7 @@ ResultForm.propTypes = {
   handleSubmit: PropTypes.func,
   accepted: PropTypes.bool,
   declined: PropTypes.bool,
-  displayActions: PropTypes.bool,
+  hasPermission: PropTypes.bool,
 };
 
 const formResult = reduxForm({
@@ -124,7 +123,7 @@ const mapStateToProps = (state, ownProps) => ({
   initialValues: {
     notifDate: ownProps.notifDate,
   },
-  displayActions: isUserNotPartnerReader(state),
+  hasPermission: checkPermission(PARTNER_PERMISSIONS.CFEI_ANSWER_SELECTION, state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

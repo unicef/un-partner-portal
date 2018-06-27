@@ -27,7 +27,6 @@ import { selectCfeiStatus,
   isCfeiDeadlinePassed,
   isCfeiCompleted,
   isUserAFocalPoint,
-  isDeadlinePassed,
   isUserACreator,
 } from '../../../../store';
 import CancelCfeiButton from '../../buttons/cancelCfeiButton';
@@ -47,6 +46,21 @@ class PartnerOpenHeaderOptions extends Component {
 
     this.sendOptions = this.sendOptions.bind(this);
     this.isPuslishPermissionAllowed = this.isPuslishPermissionAllowed.bind(this);
+  }
+
+  isFinalizeAllowed(hasActionPermission) {
+    const {
+      isAdvEd,
+      isPAM,
+      isBasEd,
+      isMFT,
+      isCreator,
+      isFocalPoint } = this.props;
+
+    return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
+    || (hasActionPermission && isBasEd && isCreator)
+    || (hasActionPermission && isMFT && isFocalPoint)
+    || (hasActionPermission && isPAM && isCreator));
   }
 
   isPuslishPermissionAllowed(hasActionPermission) {
@@ -70,6 +84,7 @@ class PartnerOpenHeaderOptions extends Component {
       hasEditSentPermission,
       hasInvitePublishPermission,
       hasCancelPublishPermission,
+      hasManageReviewersPermission,
       status,
       isPublished,
       isFocalPoint,
@@ -96,8 +111,7 @@ class PartnerOpenHeaderOptions extends Component {
         });
     }
 
-    // TODO
-    if (isPublished && isCreator) {
+    if (isPublished && this.isPuslishPermissionAllowed(hasManageReviewersPermission)) {
       options.push(
         {
           name: manage,
@@ -140,10 +154,10 @@ class PartnerOpenHeaderOptions extends Component {
       dialogOpen,
       handleDialogClose,
       handleDialogOpen } = this.props;
-console.log(isDeadlinePassed)
+
     return (
       <SpreadContent>
-        {isPublished && this.isPuslishPermissionAllowed(hasFinalizePermission)
+        {isPublished && this.isFinalizeAllowed(hasFinalizePermission)
           && <Complete handleClick={() => handleDialogOpen(complete)} />}
 
         {!isCompleted && status === PROJECT_STATUSES.DRA && isCreator && hasSendPermission &&
@@ -215,6 +229,7 @@ PartnerOpenHeaderOptions.propTypes = {
   hasCancelPublishPermission: PropTypes.bool,
   hasPublishPermission: PropTypes.bool,
   hasEditPublishedPermission: PropTypes.bool,
+  hasManageReviewersPermission: PropTypes.bool,
   hasFinalizePermission: PropTypes.bool,
   isDeadlinePassed: PropTypes.bool,
   isFocalPoint: PropTypes.bool,
@@ -231,9 +246,7 @@ const mapStateToProps = (state, ownProps) => ({
   isFocalPoint: isUserAFocalPoint(state, ownProps.id),
   isCompleted: isCfeiCompleted(state, ownProps.id),
   isPublished: isCfeiPublished(state, ownProps.id),
-  isDeadlinePassed: isDeadlinePassed(state, ownProps),
-  isPublished: isCfeiPublished(state, ownProps.id),
-  isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.id),
+  isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps),
   status: selectCfeiStatus(state, ownProps.id),
   hasManageDraftPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_MANAGE, state),
   hasSendPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH,
@@ -244,9 +257,11 @@ const mapStateToProps = (state, ownProps) => ({
   hasEditSentPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_SENT_EDIT, state),
   hasInvitePublishPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_INVITE_CSO, state),
   hasCancelPublishPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_CANCEL, state),
+  hasManageReviewersPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_MANAGE_REVIEWERS, state),
+  hasFinalizePermission: checkPermission(COMMON_PERMISSIONS.CFEI_FINALIZE, state),
   // dsr permission
   hasEditPublishedPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_EDIT_PUBLISHED, state),
-  hasFinalizePermission: checkPermission(COMMON_PERMISSIONS.CFEI_FINALIZE, state),
+  
 
   isAdvEd: isRoleOffice(AGENCY_ROLES.EDITOR_ADVANCED, state),
   isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
