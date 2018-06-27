@@ -173,7 +173,11 @@ class AdminLevel1Serializer(serializers.ModelSerializer):
         if 'id' in self.initial_data:
             return self.update(self.Meta.model.objects.get(id=self.initial_data['id']), validated_data)
         else:
-            return super(AdminLevel1Serializer, self).create(validated_data)
+            admin_level_1, _ = AdminLevel1.objects.get_or_create(
+                name=validated_data.get('name'),
+                country_code=validated_data['country_code'],
+            )
+            return admin_level_1
 
 
 class AdminLevel1CountrySerializer(serializers.ModelSerializer):
