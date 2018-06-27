@@ -7,7 +7,7 @@ import Typography from 'material-ui/Typography';
 import ControlledModal from '../../common/modals/controlledModal';
 import OrganizationProfileContent from '../../eois/details/submission/modal/organizationProfileContent';
 import withDialogHandling from '../../common/hoc/withDialogHandling';
-import { isUserNotPartnerReader } from '../../../helpers/authHelpers';
+import { checkPermission, PARTNER_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
   viewProfile: 'View your profile.',
@@ -25,7 +25,7 @@ const styleSheet = theme => ({
 });
 
 let ProfileViewLink = (props) => {
-  const { classes, handleDialogClose, handleDialogOpen, dialogOpen, partnerId, displayEdit } = props;
+  const { classes, handleDialogClose, handleDialogOpen, dialogOpen, partnerId, hasPermission } = props;
   return (
     <div>
       <Typography
@@ -45,7 +45,7 @@ let ProfileViewLink = (props) => {
             handleClick: handleDialogClose,
             label: messages.close,
           },
-          raised: displayEdit
+          raised: hasPermission
             ? {
               handleClick: () => history.push(`/profile/${partnerId}/edit`),
               label: messages.editProfile,
@@ -53,7 +53,7 @@ let ProfileViewLink = (props) => {
             : null,
         }}
         removeContentPadding
-        content={<OrganizationProfileContent partnerId={partnerId}/>}
+        content={<OrganizationProfileContent partnerId={partnerId} />}
       />
     </div >
   );
@@ -61,7 +61,8 @@ let ProfileViewLink = (props) => {
 
 const mapStateToProps = state => ({
   partnerId: state.session.partnerId,
-  displayEdit: isUserNotPartnerReader(state),
+  hasPermission: checkPermission(PARTNER_PERMISSIONS.EDIT_HQ_PROFILE, state)
+  || checkPermission(PARTNER_PERMISSIONS.EDIT_PROFILE, state),
 });
 
 ProfileViewLink = connect(

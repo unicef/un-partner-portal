@@ -12,6 +12,7 @@ import ChangeSummaryButton from '../../../../buttons/changeSummaryButton';
 import ReviewSummaryForm from '../../../../modals/changeSummary/changeSummaryForm';
 import withConditionalDisplay from '../../../../../common/hoc/withConditionalDisplay';
 import { isUserNotAgencyReader } from '../../../../../../helpers/authHelpers';
+import { checkPermission, AGENCY_PERMISSIONS, AGENCY_ROLES, isRoleOffice } from '../../../../../../helpers/permissions';
 
 const messages = {
   title: 'Review Summary',
@@ -19,12 +20,33 @@ const messages = {
 };
 
 class ReviewSummary extends Component {
+  constructor(props) {
+    super(props);
+
+    this.isActionAllowed = this.isActionAllowed.bind(this);
+  }
+
   componentWillMount() {
     this.props.getReviewSummary();
   }
 
+  isActionAllowed(hasActionPermission) {
+    const {
+      isAdvEd,
+      isPAM,
+      isMFT,
+      isBasEd,
+      isCreator,
+      isFocalPoint } = this.props;
+
+    return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
+    || (hasActionPermission && isBasEd && isCreator)
+    || (hasActionPermission && isMFT && isFocalPoint)
+    || (hasActionPermission && isPAM && isCreator));
+  }
+
   content() {
-    const { id, loading, focalPoint, summary } = this.props;
+    const { id, loading, summary, hasAddSummaryPermission } = this.props;
     if (loading) {
       return <EmptyContent />;
     } else if (!summary || isEmpty(summary)) {
@@ -32,7 +54,7 @@ class ReviewSummary extends Component {
         <Typography>
           {messages.empty}
         </Typography>
-        {focalPoint && <ChangeSummaryButton
+        {this.isActionAllowed(hasAddSummaryPermission) && <ChangeSummaryButton
           cfeiId={id}
           edit={!!summary.review_summary_comment}
         />}
@@ -41,7 +63,7 @@ class ReviewSummary extends Component {
     return (
       <PaddedContent>
         <ReviewSummaryForm form="changeSummaryReadOnly" readOnly cfeiId={id} />
-        {focalPoint && <ChangeSummaryButton
+        {this.isActionAllowed(hasAddSummaryPermission) && <ChangeSummaryButton
           cfeiId={id}
           edit={!!summary.review_summary_comment}
         />}
@@ -65,15 +87,27 @@ class ReviewSummary extends Component {
 ReviewSummary.propTypes = {
   id: PropTypes.string,
   summary: PropTypes.object,
-  focalPoint: PropTypes.bool,
+  isFocalPoint: PropTypes.bool,
+  isCreator: PropTypes.bool,
+  isAdvEd: PropTypes.bool,
+  isBasEd: PropTypes.bool,
+  isMFT: PropTypes.bool,
+  isPAM: PropTypes.bool,
+  hasAddSummaryPermission: PropTypes.bool,
   loading: PropTypes.bool,
   getReviewSummary: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  focalPoint: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
   loading: state.cfeiReviewSummary.status.loading,
   summary: selectCfeiReviewSummary(state, ownProps.id),
+  hasAddSummaryPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_ADD_REVIEW_SUMMARY, state),
+  isCreator: isUserACreator(state, ownProps.id),
+  isFocalPoint: isUserAFocalPoint(state, ownProps.id),
+  isAdvEd: isRoleOffice(AGENCY_ROLES.EDITOR_ADVANCED, state),
+  isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
+  isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),
+  isBasEd: isRoleOffice(AGENCY_ROLES.EDITOR_BASIC, state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
