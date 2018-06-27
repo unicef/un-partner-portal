@@ -4,8 +4,6 @@ import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import OrganizationProfileHeaderOptions from './organizationProfileHeaderOptions';
-import withConditionalDisplay from '../../common/hoc/withConditionalDisplay';
-import { isUserNotPartnerReader } from '../../../helpers/authHelpers';
 import { isUserHq, selectUserHqId } from '../../../store';
 
 const messages = {
@@ -41,11 +39,10 @@ const showEdit = partnerId => state => !(!isUserHq(state) && selectUserHqId(stat
 
 const OrganizationProfileOverviewHeader = (props) => {
   const { classes, update, partnerId, handleEditClick } = props;
-  const EditProfileButton = withConditionalDisplay([isUserNotPartnerReader, showEdit(partnerId)])(() => (
-    <Button className={classes.noPrint} onClick={handleEditClick} raised color="accent">
+  const EditProfileButton = showEdit(partnerId) ?
+    (<Button className={classes.noPrint} onClick={handleEditClick} raised color="accent">
       {messages.edit}
-    </Button>
-  ));
+    </Button>) : null;
   return (
     <div className={classes.root}>
       <div className={classes.text}>
@@ -61,7 +58,7 @@ OrganizationProfileOverviewHeader.propTypes = {
   classes: PropTypes.object.isRequired,
   handleEditClick: PropTypes.func.isRequired,
   update: PropTypes.string.isRequired,
-  partnerId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  partnerId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default withStyles(styleSheet, { name: 'OrganizationProfileOverviewHeader' })(OrganizationProfileOverviewHeader);

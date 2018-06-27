@@ -37,6 +37,7 @@ const styleSheetHeader = () => ({
 
 const HeaderActionsBase = (props) => {
   const { classes, rows, changeDisabled } = props;
+  
   const ids = rows.map(row => row.id);
   const anyReviewStarted = any(({ review_progress: progress }) => !progress.startsWith('0'), rows);
   const Preselect = WithGreyColor(changeDisabled)(PreselectButton);
@@ -50,7 +51,8 @@ const HeaderActionsBase = (props) => {
 };
 
 const mapStateToPropsForHeaderActions = (state, ownProps) => ({
-  changeDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
+  changeDisabled: selectCfeiStatus(state, ownProps.params.id) !== PROJECT_STATUSES.OPE,
+  status: selectCfeiStatus(state, ownProps.params.id),
 });
 
 const HeaderActions = compose(
@@ -89,7 +91,8 @@ class ApplicationsListContainer extends Component {
 
   applicationsCells({ row, column, hovered, value }) {
     const { changeDisabled } = this.props;
-    if (column.name === 'name') {
+
+    if (column.name === 'legal_name') {
       return (<PartnerProfileNameCell
         info={row.partner_additional}
       />);
@@ -118,6 +121,7 @@ class ApplicationsListContainer extends Component {
 
   render() {
     const { applications, columns, loading, itemsCount, allowedToEdit } = this.props;
+
     return (
       <div>
         <GridColumn spacing={24}>
@@ -168,7 +172,7 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.partnersApplicationsList.status.loading,
   query: ownProps.location.query,
   id: ownProps.params.id,
-  changeDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
+  changeDisabled: selectCfeiStatus(state, ownProps.params.id) !== PROJECT_STATUSES.OPE,
   allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
     && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
 });

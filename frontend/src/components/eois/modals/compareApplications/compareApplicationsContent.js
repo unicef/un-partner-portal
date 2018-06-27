@@ -12,7 +12,9 @@ import VerificationText from '../../../partners/profile/common/verificationText'
 import FlaggingStatus from '../../../partners/profile/common/flaggingStatus';
 import AwardApplicationButtonContainer from '../../buttons/awardApplicationButtonContainer';
 import { APPLICATION_STATUSES } from '../../../../helpers/constants';
-
+import { checkPermission, AGENCY_PERMISSIONS, isRoleOffice, AGENCY_ROLES } from '../../../../helpers/permissions';
+import { isUserAFocalPoint, isUserACreator, selectApplication } from '../../../../store';
+import { selectCfeiDetail } from '../../../../reducers/cfeiDetails';
 
 const messages = {
   labelAward: 'Choose successful applicant(s)',
@@ -58,10 +60,37 @@ const styleSheet = theme => ({
 });
 
 class CompareApplicationContent extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.isSelectActionAllowed = this.isSelectActionAllowed.bind(this);
+    this.isSelectRecommendedActionAllowed = this.isSelectRecommendedActionAllowed.bind(this);
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.report !== this.props.report) {
       download(nextProps.report, 'UNPP_comparison_report.xlsx');
     }
+  }
+
+  isSelectRecommendedActionAllowed() {
+    const {
+      isAdvEd,
+      isMFT,
+      isFocalPoint,
+      hasSelectRecommendedPermission } = this.props;
+
+    return ((hasSelectRecommendedPermission && isAdvEd && isFocalPoint)
+    || (hasSelectRecommendedPermission && isMFT && isFocalPoint));
+  }
+
+  isSelectActionAllowed() {
+    const {
+      isAdvEd,
+      isCreator,
+      hasSelectPermission } = this.props;
+
+    return (hasSelectPermission && isAdvEd && isCreator);
   }
 
   render() {
@@ -97,9 +126,9 @@ class CompareApplicationContent extends React.Component {
             className={`${classes.subGrid} ${classes.lightGrey}`}
           >
             {names.map((name, index) => (
-              <Typography 
-                style={{msGridColumn: index+1}}
-                key={ids[index]} 
+              <Typography
+                style={{ msGridColumn: index + 1 }}
+                key={ids[index]}
                 type="body2"
               >
                 {name}
@@ -117,11 +146,14 @@ class CompareApplicationContent extends React.Component {
             className={classes.subGrid}
           >
             {ids.map((appId, index) => {
-              if (index === 0) return (<Typography
-                style={{msGridColumn: index+1}}
-                key={appId}>{appId}</Typography>);
+              if (index === 0) {
+                return (<Typography
+                  style={{ msGridColumn: index + 1 }}
+                  key={appId}
+                >{appId}</Typography>);
+              }
               return (<Typography
-                style={{msGridColumn: index+1}}
+                style={{ msGridColumn: index + 1 }}
                 key={appId}
                 color="accent"
                 component={Link}
@@ -142,12 +174,12 @@ class CompareApplicationContent extends React.Component {
           >
             {avgTotalScores.map((score, index) => (
               <Typography
-                style={{msGridColumn: index+1}}
+                style={{ msGridColumn: index + 1 }}
                 key={ids[index]}
               >
                 {score}
               </Typography>
-              ))}
+            ))}
           </div>
           <Divider />
 
@@ -160,17 +192,22 @@ class CompareApplicationContent extends React.Component {
             className={classes.subGrid}
           >
             {verification.map((singleVerification, index) => {
-              if (index === 0) return (<Typography
-                style={{msGridColumn: index+1}}
-                key={ids[index]}>{singleVerification}</Typography>);
-              return (<div style={{msGridColumn: index+1}}><VerificationText
-                key={ids[index]} verified={singleVerification} /></div>);
+              if (index === 0) {
+                return (<Typography
+                  style={{ msGridColumn: index + 1 }}
+                  key={ids[index]}
+                >{singleVerification}</Typography>);
+              }
+              return (<div style={{ msGridColumn: index + 1 }}><VerificationText
+                key={ids[index]}
+                verified={singleVerification}
+              /></div>);
             })}
           </div>
           <Divider />
 
           <div
-             style={{
+            style={{
               grid: `none / repeat(${columns}, 1fr)`,
               msGridColumns: '1fr '.repeat(columns),
               msGridRow: 5,
@@ -178,8 +215,8 @@ class CompareApplicationContent extends React.Component {
             className={classes.subGrid}
           >
             {flagging.map((flag, index) => {
-              if (index === 0) return (<Typography style={{msGridColumn: index+1}} key={ids[index]}>{flag}</Typography>);
-              return (<div style={{msGridColumn: index+1}}><FlaggingStatus key={ids[index]} flags={flag} noFlagText /></div>);
+              if (index === 0) return (<Typography style={{ msGridColumn: index + 1 }} key={ids[index]}>{flag}</Typography>);
+              return (<div style={{ msGridColumn: index + 1 }}><FlaggingStatus key={ids[index]} flags={flag} noFlagText /></div>);
             })}
           </div>
           <Divider />
@@ -192,7 +229,7 @@ class CompareApplicationContent extends React.Component {
             }}
             className={classes.subGrid}
           >
-            {establishment.map((year, index) => (<Typography style={{msGridColumn: index+1}} key={ids[index]}>
+            {establishment.map((year, index) => (<Typography style={{ msGridColumn: index + 1 }} key={ids[index]}>
               {year}
             </Typography>))}
           </div>
@@ -207,9 +244,10 @@ class CompareApplicationContent extends React.Component {
             }}
             className={classes.subGrid}
           >
-            {unExp.map((exp, index) => (<Typography style={{msGridColumn: index+1}} key={ids[index]}>
-              {exp}
-            </Typography>))}
+            {unExp.map((exp, index) => (
+              <Typography style={{ msGridColumn: index + 1 }} key={ids[index]}>
+                {exp}
+              </Typography>))}
           </div>
           <Divider />
 
@@ -222,8 +260,8 @@ class CompareApplicationContent extends React.Component {
             className={classes.subGrid}
           >
             {budgets.map((budget, index) => {
-              if (index === 0) return (<Typography style={{msGridColumn: index+1}} key={ids[index]}>{budget}</Typography>);
-              return (<Typography style={{msGridColumn: index+1}} className={classes.wrappedText} key={ids[index]}>
+              if (index === 0) return (<Typography style={{ msGridColumn: index + 1 }} key={ids[index]}>{budget}</Typography>);
+              return (<Typography style={{ msGridColumn: index + 1 }} className={classes.wrappedText} key={ids[index]}>
                 {budgetOptions[budget]}
               </Typography>);
             })}
@@ -241,20 +279,22 @@ class CompareApplicationContent extends React.Component {
           >
             <Typography type="body2">{messages.labelAward}</Typography>
             {applications.map((application, index) => (
-              <div style={{msGridColumn: index+2}}>
-              <AwardApplicationButtonContainer
-                key={ids[index]}
-                loading={loading}
-                status={APPLICATION_STATUSES.PRE}
-                isVerified={verification[index + 1]}
-                redFlags={flagging[index + 1].red}
-                completedReview={applicationsMeta[index].assessments_is_completed}
-                applicationId={application}
-                eoiId={id}
-                didWin={applicationsMeta[index].did_win}
-                didWithdraw={applicationsMeta[index].did_withdraw}
-                linkedButton
-              /></div>))}
+              <div style={{ msGridColumn: index + 2 }}>
+                {(this.isSelectActionAllowed() || this.isSelectRecommendedActionAllowed)
+                  && <AwardApplicationButtonContainer
+                    key={ids[index]}
+                    loading={loading}
+                    status={APPLICATION_STATUSES.PRE}
+                    isVerified={verification[index + 1]}
+                    redFlags={flagging[index + 1].red}
+                    completedReview={applicationsMeta[index].assessments_is_completed}
+                    applicationId={application}
+                    eoiId={id}
+                    didWin={applicationsMeta[index].did_win}
+                    didWithdraw={applicationsMeta[index].did_withdraw}
+                    linkedButton
+                  />}
+              </div>))}
           </div>
           <Divider />
         </div>
@@ -280,12 +320,30 @@ CompareApplicationContent.propTypes = {
   applicationsMeta: PropTypes.array,
   onPrint: PropTypes.func,
   report: PropTypes.string,
+  isAdvEd: PropTypes.bool,
+  isMFT: PropTypes.bool,
+  isFocalPoint: PropTypes.bool,
+  isCreator: PropTypes.bool,
+  hasSelectRecommendedPermission: PropTypes.bool,
+  hasSelectPermission: PropTypes.bool,
 };
 
-const mapStateToProps = state => ({
-  budgetOptions: state.partnerProfileConfig['budget-choices'],
-});
+const mapStateToProps = (state, ownProps) => {
+  const cfeiDetails = selectCfeiDetail(state, ownProps.id) || {};
 
+  return {
+    isAdvEd: isRoleOffice(AGENCY_ROLES.EDITOR_ADVANCED, state),
+    isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
+    isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),
+    isBasEd: isRoleOffice(AGENCY_ROLES.EDITOR_BASIC, state),
+    isCreator: isUserACreator(state, cfeiDetails),
+    isFocalPoint: isUserAFocalPoint(state, cfeiDetails),
+    budgetOptions: state.partnerProfileConfig['budget-choices'],
+    hasSelectPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_SELECT_PARTNER, state),
+    hasSelectRecommendedPermission:
+    checkPermission(AGENCY_PERMISSIONS.CFEI_SELECT_RECOMMENDED_PARTNER, state),
+  };
+};
 
 export default connect(
   mapStateToProps,
