@@ -28,14 +28,8 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
     user_type = BaseAPITestCase.USER_AGENCY
     agency_role = AgencyRole.EDITOR_ADVANCED
 
-    def setUp(self):
-        super(TestPartnerFlagAPITestCase, self).setUp()
-        AgencyOfficeFactory.create_batch(self.quantity)
-        PartnerSimpleFactory.create_batch(self.quantity)
-        PartnerFlagFactory.create_batch(self.quantity)
-
     def test_create_flag(self):
-        partner = Partner.objects.first()
+        partner = PartnerSimpleFactory(country_code=self.user.agency_members.first().office.country.code)
 
         url = reverse(
             'partner-reviews:flags', kwargs={"partner_id": partner.id}
@@ -56,7 +50,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['is_valid'], True)
 
     def test_patch_flag(self):
-        flag = PartnerFlag.objects.filter(is_valid=True).first()
+        flag = PartnerFlagFactory(is_valid=True)
         # Change valid status
         url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
         payload = {
@@ -78,7 +72,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['comment'], flag_comment)
 
     def test_create_invalid_flag(self):
-        partner = Partner.objects.first()
+        partner = PartnerSimpleFactory(country_code=self.user.agency_members.first().office.country.code)
 
         url = reverse(
             'partner-reviews:flags', kwargs={"partner_id": partner.id}
@@ -110,7 +104,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         self.assertIn('is_valid', response.data)
 
     def test_flag_type_history_is_saved(self):
-        flag = PartnerFlag.objects.filter(is_valid=True).first()
+        flag = PartnerFlagFactory(is_valid=True)
         original_type = flag.flag_type
         url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
         payload = {
@@ -136,7 +130,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         )
 
         for is_valid in (True, False):
-            partner = PartnerFactory()
+            partner = PartnerSimpleFactory(country_code=self.user.agency_members.first().office.country.code)
 
             create_url = reverse('partner-reviews:flags', kwargs={"partner_id": partner.id})
             response = self.client.post(create_url, data=payload)
