@@ -61,7 +61,7 @@ class PartnerAdditionalSerializer(serializers.ModelSerializer):
         )
 
     def get_hq(self, partner):
-        if partner.hq:
+        if getattr(partner, 'hq', None):
             return PartnerAdditionalSerializer(instance=partner.hq).data
 
 
