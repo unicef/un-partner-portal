@@ -145,7 +145,8 @@ export const updateDsr = (body, id) => (dispatch, getState) => {
   if (typeof newBody.applications[0].ds_attachment === 'string') {
     delete newBody.applications[0].ds_attachment;
   }
-  return patchCfei(newBody, id)
+  const preparedBody = prepareBody(newBody, getState);
+  return patchCfei(preparedBody, id)
     .then((cfei) => {
       dispatch(loadCfeiDetailSuccess(cfei));
       if (cfei.direct_selected_partners) {
