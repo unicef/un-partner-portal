@@ -115,8 +115,9 @@ export const addUnsolicitedCN = body => (dispatch, getState) => {
     });
 };
 
-export const updateCfei = (body, id) => (dispatch, getState) =>
-  patchCfei(body, id)
+export const updateCfei = (body, id) => (dispatch, getState) => {
+  const preparedBody = prepareBody(body, getState);
+  return patchCfei(preparedBody, id)
     .then((cfei) => {
       dispatch(loadCfeiDetailSuccess(cfei));
       if (cfei.direct_selected_partners) {
@@ -136,6 +137,7 @@ export const updateCfei = (body, id) => (dispatch, getState) =>
         _error: errorMsg,
       });
     });
+};
 
 
 export const updateDsr = (body, id) => (dispatch, getState) => {
