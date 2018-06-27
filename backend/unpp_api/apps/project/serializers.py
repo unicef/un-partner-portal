@@ -627,14 +627,14 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         update_cfei_focal_points(instance, self.initial_data.get('focal_points'))
 
         if instance.is_direct and self.initial_data.get('applications'):
-            for application_data in self.initial_data.get('applications'):
-                serializer = CreateDirectApplicationNoCNSerializer(
-                    instance=get_object_or_404(instance.applications, partner=application_data.pop('partner')),
-                    data=application_data,
-                    partial=True
-                )
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
+            application_data = self.initial_data.get('applications')[0]
+            serializer = CreateDirectApplicationNoCNSerializer(
+                instance=instance.applications.first(),
+                data=application_data,
+                partial=True
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
         return instance
 
