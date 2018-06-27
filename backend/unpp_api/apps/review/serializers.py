@@ -49,14 +49,15 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
 
     def get_extra_kwargs(self):
         extra_kwargs = super(PartnerFlagSerializer, self).get_extra_kwargs()
-        if self.instance and self.instance.category not in USER_CREATED_FLAG_CATEGORIES:
-            extra_kwargs['category']['read_only'] = True
+        if isinstance(self.instance, PartnerFlag):
+            if self.instance.category not in USER_CREATED_FLAG_CATEGORIES:
+                extra_kwargs['category']['read_only'] = True
 
-        if self.instance and self.instance.flag_type == FLAG_TYPES.escalated:
-            # Escalated flags can only be changed through validating / invalidating
-            extra_kwargs['flag_type'] = {
-                'read_only': True
-            }
+            if self.instance.flag_type == FLAG_TYPES.escalated:
+                # Escalated flags can only be changed through validating / invalidating
+                extra_kwargs['flag_type'] = {
+                    'read_only': True
+                }
 
         return extra_kwargs
 

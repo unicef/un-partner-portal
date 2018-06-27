@@ -47,6 +47,8 @@ from partner.models import (
 
 class PartnerAdditionalSerializer(serializers.ModelSerializer):
 
+    hq = serializers.SerializerMethodField()
+
     class Meta:
         model = Partner
         fields = (
@@ -55,14 +57,18 @@ class PartnerAdditionalSerializer(serializers.ModelSerializer):
             'flagging_status',
             'is_verified',
             'has_finished',
+            'hq',
         )
+
+    def get_hq(self, partner):
+        if getattr(partner, 'hq', None):
+            return PartnerAdditionalSerializer(instance=partner.hq).data
 
 
 class PartnerSerializer(serializers.ModelSerializer):
 
     is_hq = serializers.BooleanField(read_only=True)
-    logo = CommonFileSerializer(source='other_info.org_logo',
-                                read_only=True)
+    logo = CommonFileSerializer(source='other_info.org_logo', read_only=True)
     org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
     last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)

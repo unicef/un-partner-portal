@@ -51,9 +51,11 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
                 raise_exception=True
             )
             if partner.is_hq:
-                raise PermissionDenied
+                raise PermissionDenied("You don't have permission to flag HQ profile")
+            if not partner.country_code == self.request.agency_member.office.country.code:
+                raise PermissionDenied('You do not have permission to flag partner outside your country office.')
 
-        serializer.save(submitter=self.request.user, partner_id=self.kwargs['partner_id'])
+        serializer.save(submitter=self.request.user, partner=partner)
 
 
 class PartnerVerificationListCreateAPIView(ListCreateAPIView):
@@ -84,7 +86,7 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
             self.request, agency_permissions=[AgencyPermission.VERIFY_CSOS_FOR_OWN_COUNTRY]
         ):
             if not partner.country_code == self.request.agency_member.office.country.code:
-                raise PermissionDenied
+                raise PermissionDenied('You do not have permission to verify partner outside your country office.')
 
         if not partner.profile_is_complete:
             raise serializers.ValidationError('You cannot verify partners before they complete their profile.')
