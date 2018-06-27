@@ -1257,8 +1257,9 @@ class TestUCNCreateAndPublish(BaseAPITestCase):
         PartnerMemberFactory,
     ]
 
-    def test_ucn_create_and_publish(self):
-        payload = {
+    def setUp(self):
+        super(TestUCNCreateAndPublish, self).setUp()
+        self.base_payload = {
             "locations": [
                 {
                     "admin_level_1": {
@@ -1277,6 +1278,9 @@ class TestUCNCreateAndPublish(BaseAPITestCase):
             'cn': get_new_common_file().id
         }
 
+    def test_ucn_create_and_publish(self):
+        payload = self.base_payload.copy()
+
         url = reverse('projects:applications-unsolicited')
         response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
@@ -1294,6 +1298,42 @@ class TestUCNCreateAndPublish(BaseAPITestCase):
         self.assertResponseStatusIs(publish_response, status.HTTP_200_OK)
         ucn.refresh_from_db()
         self.assertEqual(ucn.application_status, EXTENDED_APPLICATION_STATUSES.review)
+
+    def test_ucn_create_and_update(self):
+        payload = self.base_payload.copy()
+
+        url = reverse('projects:applications-unsolicited')
+        response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        ucn = Application.objects.get(id=response.data['id'])
+        self.assertEqual(ucn.application_status, EXTENDED_APPLICATION_STATUSES.draft)
+
+        manage_url = reverse('projects:ucn-manage', kwargs={'pk': ucn.pk})
+
+        new_cn = get_new_common_file()
+        update_response = self.client.patch(manage_url, data={
+            'cn': new_cn.id
+        })
+        self.assertResponseStatusIs(update_response)
+
+        new_locations_payload = {
+            'locations': [
+                {
+                    "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
+                    "lat": random.randint(-180, 180),
+                    "lon": random.randint(-180, 180),
+                },
+                {
+                    "admin_level_1": {"name": "Paris", "country_code": "FR"},
+                    "lat": random.randint(-180, 180),
+                    "lon": random.randint(-180, 180),
+                },
+            ],
+        }
+
+        update_response = self.client.patch(manage_url, data=new_locations_payload)
+        self.assertResponseStatusIs(update_response)
+        self.assertEqual(len(update_response.data['locations']), 2)
 
 
 class TestEOIPDFExport(BaseAPITestCase):
