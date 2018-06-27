@@ -472,9 +472,9 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         AgencyMemberFactory.create_batch(self.quantity)
 
         # make sure that creating user is not the current one
-        user = UserFactory()
-        AgencyMemberFactory(user=user)
-        self.eoi = OpenEOIFactory(is_published=True, created_by=user, agency=self.user.agency)
+        creator = UserFactory()
+        AgencyMemberFactory(user=creator, office=self.user.agency_members.first().office)
+        self.eoi = OpenEOIFactory(is_published=True, created_by=creator, agency=self.user.agency)
         self.eoi.focal_points.clear()
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
