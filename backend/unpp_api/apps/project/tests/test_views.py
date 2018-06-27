@@ -295,6 +295,22 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             )
         )
 
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    def test_patch_specializations_for_project(self):
+        cfei = OpenEOIFactory(created_by=self.user)
+        details_url = reverse('projects:eoi-detail', kwargs={'pk': cfei.id})
+        details_response = self.client.get(details_url)
+        self.assertResponseStatusIs(details_response)
+
+        for _ in range(10):
+            spec_count = random.randint(2, 7)
+            update_payload = {
+                'specializations': Specialization.objects.order_by('?').values_list('id', flat=True)[:spec_count],
+            }
+            update_response = self.client.patch(details_url, data=update_payload)
+            self.assertResponseStatusIs(update_response)
+            self.assertEqual(len(update_response.data['specializations']), spec_count)
+
 
 class TestDirectProjectsAPITestCase(BaseAPITestCase):
 
@@ -472,9 +488,9 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         AgencyMemberFactory.create_batch(self.quantity)
 
         # make sure that creating user is not the current one
-        user = UserFactory()
-        AgencyMemberFactory(user=user)
-        self.eoi = OpenEOIFactory(is_published=True, created_by=user, agency=self.user.agency)
+        creator = UserFactory()
+        AgencyMemberFactory(user=creator, office=self.user.agency_members.first().office)
+        self.eoi = OpenEOIFactory(is_published=True, created_by=creator, agency=self.user.agency)
         self.eoi.focal_points.clear()
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
