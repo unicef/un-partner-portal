@@ -269,7 +269,7 @@ class ApplicationFullEOISerializer(ApplicationFullSerializer):
         return application.eoi and application.eoi.applications.count()
 
 
-class CreateUnsolicitedProjectSerializer(MixinPreventManyCommonFile, serializers.Serializer):
+class ManageUCNSerializer(MixinPreventManyCommonFile, serializers.Serializer):
 
     id = serializers.CharField(source="pk", read_only=True)
     locations = PointSerializer(many=True, source='locations_proposal_of_eoi')
@@ -305,6 +305,26 @@ class CreateUnsolicitedProjectSerializer(MixinPreventManyCommonFile, serializers
             app.locations_proposal_of_eoi.add(point)
 
         return app
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        self.prevent_many_common_file_validator(validated_data)
+
+        instance.agency_id = validated_data.get('agency') or instance.agency_id
+        instance.proposal_of_eoi_details = validated_data.get(
+            'proposal_of_eoi_details'
+        ) or instance.proposal_of_eoi_details
+
+        instance.cn = validated_data.get('cn') or instance.cn
+
+        locations = validated_data.get('locations_proposal_of_eoi')
+        if locations:
+            instance.locations_proposal_of_eoi.clear()
+            for location in locations:
+                instance.locations_proposal_of_eoi.add(Point.objects.get_point(**location))
+
+        instance.save()
+        return instance
 
 
 class CreateDirectProjectSerializer(serializers.Serializer):

@@ -14,7 +14,7 @@ from project.views import (
     ApplicationAPIView,
     EOIApplicationsListAPIView,
     PartnerApplicationOpenListAPIView,
-    PartnerApplicationUnsolicitedListCreateAPIView,
+    UCNListCreateAPIView,
     PartnerApplicationDirectListCreateAPIView,
     ReviewersStatusAPIView,
     ReviewerAssessmentsAPIView,
@@ -27,7 +27,7 @@ from project.views import (
     EOIReviewersAssessmentsNotifyAPIView,
     PublishCFEIAPIView,
     EOISendToPublishAPIView,
-    PublishOrDestroyUCNAPIView,
+    UCNManageAPIView,
 )
 
 
@@ -81,8 +81,8 @@ urlpatterns = [
         name="convert-unsolicited"),
     url(r'^applications/open/$', PartnerApplicationOpenListAPIView.as_view(), name="applications-open"),
     url(r'^applications/unsolicited/$',
-        PartnerApplicationUnsolicitedListCreateAPIView.as_view(),
+        UCNListCreateAPIView.as_view(),
         name="applications-unsolicited"),
-    url(r'^applications/unsolicited/(?P<pk>\d+)/manage/$', PublishOrDestroyUCNAPIView.as_view(), name="ucn-manage"),
+    url(r'^applications/unsolicited/(?P<pk>\d+)/manage/$', UCNManageAPIView.as_view(), name="ucn-manage"),
     url(r'^applications/direct/$', PartnerApplicationDirectListCreateAPIView.as_view(), name="applications-direct"),
 ]
