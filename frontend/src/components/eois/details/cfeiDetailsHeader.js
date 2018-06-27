@@ -25,7 +25,6 @@ import PaddedContent from '../../common/paddedContent';
 import MainContentWrapper from '../../common/mainContentWrapper';
 import { isUserAgencyReader, isUserAgencyEditor } from '../../../helpers/authHelpers';
 import { checkPermission, isRoleOffice, AGENCY_ROLES, PARTNER_PERMISSIONS, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
-import { Agent } from 'https';
 
 const messages = {
   noCfei: 'Sorry but this project doesn\'t exist',
