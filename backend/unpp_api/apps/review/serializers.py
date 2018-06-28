@@ -9,7 +9,8 @@ from common.consts import USER_CREATED_FLAG_CATEGORIES, INTERNAL_FLAG_CATEGORIES
 from common.permissions import current_user_has_permission
 from common.serializers import CommonFileSerializer
 from agency.serializers import AgencyUserBasicSerializer
-from notification.helpers import send_partner_marked_for_deletion_email, send_new_escalated_flag_email
+from notification.helpers import send_new_escalated_flag_email
+from partner.utilities import lock_partner_for_deactivation
 from review.models import PartnerFlag, PartnerVerification
 from sanctionslist.serializers import SanctionedNameMatchSerializer
 
@@ -112,9 +113,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         instance = super(PartnerFlagSerializer, self).update(instance, validated_data)
 
         if instance.flag_type == FLAG_TYPES.red and instance.is_valid:
-            instance.partner.is_locked = True
-            instance.partner.save()
-            send_partner_marked_for_deletion_email(instance.partner)
+            lock_partner_for_deactivation(instance.partner)
         elif instance.category == INTERNAL_FLAG_CATEGORIES.sanctions_match and instance.sanctions_match:
             if instance.is_valid is not None:
                 instance.sanctions_match.can_ignore = not instance.is_valid
@@ -122,8 +121,9 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                 instance.sanctions_match.partner.is_locked = instance.is_valid
                 instance.sanctions_match.partner.children.update(is_locked=instance.is_valid)
                 instance.sanctions_match.partner.save()
-                if instance.sanctions_match.partner.is_locked:
-                    send_partner_marked_for_deletion_email(instance.sanctions_match.partner)
+
+                if instance.is_valid:
+                    lock_partner_for_deactivation(instance.partner)
 
         if instance.flag_type == FLAG_TYPES.escalated and instance.is_valid is not None:
             instance = self.update(instance, {
