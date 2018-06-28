@@ -82,6 +82,16 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         new_flag_type = validated_data.get('flag_type')
         old_flag_type = instance.flag_type
 
+        if new_flag_type == FLAG_TYPES.red:
+            request = self.context.get('request')
+            current_user_has_permission(
+                request,
+                agency_permissions=[
+                    AgencyPermission.ADD_RED_FLAG_ALL_CSO_PROFILES,
+                ],
+                raise_exception=True
+            )
+
         if validated_data.get('is_valid') is False and not validated_data.get('invalidation_comment'):
             raise serializers.ValidationError({
                 'invalidation_comment': 'This field is required.'

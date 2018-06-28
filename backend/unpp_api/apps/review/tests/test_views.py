@@ -106,12 +106,21 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         original_type = flag.flag_type
         url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
         payload = {
-            'flag_type': FLAG_TYPES.red
+            'flag_type': FLAG_TYPES.escalated
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response)
         flag.refresh_from_db()
         self.assertIn(original_type, flag.type_history)
+
+    def test_cant_add_red_flag(self):
+        flag = PartnerFlagFactory()
+        url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
+        payload = {
+            'flag_type': FLAG_TYPES.red
+        }
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_403_FORBIDDEN)
 
     def test_escalation_flow(self):
         payload = {
