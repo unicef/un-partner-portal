@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from collections import defaultdict
 from operator import attrgetter
 
 from datetime import date
@@ -13,7 +14,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.db.models.signals import post_save
 from model_utils.models import TimeStampedModel
 
@@ -153,11 +154,19 @@ class Partner(TimeStampedModel):
 
     @property
     def flagging_status(self):
+        mapping = defaultdict(lambda: defaultdict(int))
+
+        for flag_type, is_valid, flag_count in PartnerFlag.objects.filter(
+            Q(partner=self) | Q(partner=self.hq)
+        ).values_list('flag_type', 'is_valid').annotate(Count('id')):
+            mapping[is_valid][flag_type] += flag_count
+
         return {
-            'yellow': self.yellow_flag_count,
-            'red': self.red_flag_count,
-            'escalated': self.escalated_flag_count,
-            'invalid': self.flags.filter(is_valid=False).count(),
+            'observation': mapping[True][FLAG_TYPES.observation],
+            'yellow': mapping[True][FLAG_TYPES.yellow],
+            'escalated': mapping[True][FLAG_TYPES.escalated],
+            'red': mapping[True][FLAG_TYPES.red],
+            'invalid': sum(mapping[False].values()),
         }
 
     @property

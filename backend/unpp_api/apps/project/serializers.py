@@ -310,18 +310,20 @@ class ManageUCNSerializer(MixinPreventManyCommonFile, serializers.Serializer):
     def update(self, instance, validated_data):
         self.prevent_many_common_file_validator(validated_data)
 
-        instance.agency_id = validated_data.get('agency') or instance.agency_id
+        instance.agency_id = validated_data.get('agency', {}).get('id') or instance.agency_id
         instance.proposal_of_eoi_details = validated_data.get(
             'proposal_of_eoi_details'
         ) or instance.proposal_of_eoi_details
 
         instance.cn = validated_data.get('cn') or instance.cn
 
-        locations = validated_data.get('locations_proposal_of_eoi')
-        if locations:
+        locations_data = self.initial_data.get('locations', [])
+        if locations_data:
             instance.locations_proposal_of_eoi.clear()
-            for location in locations:
-                instance.locations_proposal_of_eoi.add(Point.objects.get_point(**location))
+            for location_data in locations_data:
+                location_serializer = PointSerializer(data=location_data)
+                location_serializer.is_valid(raise_exception=True)
+                instance.locations_proposal_of_eoi.add(location_serializer.save())
 
         instance.save()
         return instance
