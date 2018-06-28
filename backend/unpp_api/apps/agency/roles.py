@@ -287,3 +287,9 @@ VALID_REVIEWER_ROLE_NAMES = frozenset([
     role.name for role, permissions in AGENCY_ROLE_PERMISSIONS.items() if
     AgencyPermission.CFEI_REVIEW_APPLICATIONS in permissions
 ])
+
+
+ESCALATED_FLAG_RESOLVER_ROLE_NAMES = frozenset([
+    role.name for role, permissions in AGENCY_ROLE_PERMISSIONS.items() if
+    AgencyPermission.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES in permissions
+])

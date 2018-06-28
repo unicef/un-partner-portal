@@ -123,6 +123,16 @@ class Partner(TimeStampedModel):
     def has_red_flag(self):
         return bool(self.red_flag_count)
 
+    @threaded_cached_property
+    def escalated_flag_count(self):
+        return PartnerFlag.objects.filter(
+            Q(partner=self) | Q(partner=self.hq)
+        ).filter(flag_type=FLAG_TYPES.escalated, is_valid=True).count()
+
+    @threaded_cached_property
+    def has_escalated_flag(self):
+        return bool(self.red_flag_count)
+
     def get_users(self):
         return User.objects.filter(partner_members__partner=self)
 
@@ -146,6 +156,7 @@ class Partner(TimeStampedModel):
         return {
             'yellow': self.yellow_flag_count,
             'red': self.red_flag_count,
+            'escalated': self.escalated_flag_count,
             'invalid': self.flags.filter(is_valid=False).count(),
         }
 

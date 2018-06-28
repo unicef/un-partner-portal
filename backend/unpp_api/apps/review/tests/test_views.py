@@ -141,6 +141,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
             })
             self.assertResponseStatusIs(patch_response)
             self.assertEqual(patch_response.data['flag_type'], FLAG_TYPES.escalated)
+            self.assertEqual(patch_response.data['is_valid'], None)
 
             patch_response = self.client.patch(flag_url, data={
                 'is_valid': is_valid,
