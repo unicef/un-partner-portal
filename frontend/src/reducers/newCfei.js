@@ -107,7 +107,6 @@ export const addDirectCfei = body => (dispatch, getState) => {
 
 export const addUnsolicitedCN = body => (dispatch, getState) => {
   dispatch(newCfeiSubmitting());
-
   const preparedBody = prepareBody(body, getState);
   const params = history.getCurrentLocation().query;
   return postUnsolicitedCN(preparedBody)
