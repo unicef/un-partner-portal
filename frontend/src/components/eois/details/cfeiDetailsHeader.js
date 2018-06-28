@@ -42,7 +42,7 @@ class CfeiHeader extends Component {
     this.hasPermissionToViewApplications = this.hasPermissionToViewApplications.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { role, type, loadCfeiDetails, loadProjectApplication, loadUCN } = this.props;
     if (role === ROLES.PARTNER) loadProjectApplication();
     if (type === PROJECT_TYPES.UNSOLICITED) loadUCN();
@@ -52,6 +52,7 @@ class CfeiHeader extends Component {
   componentWillUnmount() {
     this.props.uploadCnClearState();
   }
+
   hasPermissionToViewApplications(hasActionPermission) {
     const { isAdvEd, isPAM, isBasEd, isMFT, isCreator, isFocalPoint } = this.props;
 
@@ -65,7 +66,6 @@ class CfeiHeader extends Component {
     const { params: { type, id }, location } = this.props;
     const tabsToRender = this.filterTabs();
     const tabIndex = tabsToRender.findIndex(tab => location.match(`^/cfei/${type}/${id}/${tab.path}`));
-    
     if (tabIndex === -1) {
       // TODO: do real 404
       history.push('/');
