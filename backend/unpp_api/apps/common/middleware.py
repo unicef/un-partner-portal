@@ -25,10 +25,6 @@ def get_partner_and_member_objects(request):
         if partner_member:
             partner = Partner.objects.filter(id=partner_id).first()
 
-        # TODO: remove when we finish whole logic for http headers (like: HTTP_PARTNER_ID)
-        if not partner_member and settings.IS_DEV:
-            partner_member = request.user.partner_members.first()
-
     if not partner and partner_member:
         partner = partner_member.partner
 
