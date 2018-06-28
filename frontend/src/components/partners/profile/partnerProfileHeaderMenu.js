@@ -9,6 +9,7 @@ import SpreadContent from '../../common/spreadContent';
 import AddNewVerificationButton from './buttons/addNewVerificationButton';
 import AddNewObservationButton from './buttons/addNewObservationButton';
 import AddVerificationModal from './modals/addVerificationModal/addVerificationModal';
+import AddFlagModal from './modals/addFlagModal/addFlagModal';
 import withMultipleDialogHandling from '../../common/hoc/withMultipleDialogHandling';
 import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
@@ -73,8 +74,12 @@ class PartnerProfileHeaderMenu extends Component {
           id={id}
           dialogOpen={dialogOpen[addVerification]}
           handleDialogClose={handleDialogClose}
-        />
-        }
+        />}
+        {dialogOpen[addObservation] && <AddFlagModal
+          id={id}
+          dialogOpen={dialogOpen[addObservation]}
+          handleDialogClose={handleDialogClose}
+        />}
       </SpreadContent>
     );
   }
