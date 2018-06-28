@@ -21,6 +21,7 @@ class NotificationType(object):
     PARTNER_DECISION_MADE = 'agency_application_decision_make'
     ADDED_AS_CFEI_FOCAL_POINT = 'added_as_cfei_local_point'
     DJANGO_ADMIN_NEW_PARTNER_FOR_DELETION = 'superadmin_new_cso_for_deletion'
+    NEW_ESCALATED_FLAG = 'new_escalated_flag'
 
     @classmethod
     def get_choices(cls):
@@ -110,5 +111,9 @@ NOTIFICATION_DATA = {
     NotificationType.DJANGO_ADMIN_NEW_PARTNER_FOR_DELETION: {
         'template_name': 'superadmin_new_csos_for_deletion',
         'subject': 'CSO Profile Marked for deletion'
+    },
+    NotificationType.NEW_ESCALATED_FLAG: {
+        'template_name': 'new_escalated_flag',
+        'subject': 'CSO Profile Flagged'
     },
 }

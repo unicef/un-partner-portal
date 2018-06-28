@@ -141,6 +141,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
             })
             self.assertResponseStatusIs(patch_response)
             self.assertEqual(patch_response.data['flag_type'], FLAG_TYPES.escalated)
+            self.assertEqual(patch_response.data['is_valid'], None)
 
             patch_response = self.client.patch(flag_url, data={
                 'is_valid': is_valid,
@@ -157,10 +158,12 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
             })
             self.assertResponseStatusIs(patch_response, status.HTTP_200_OK)
             self.assertEqual(patch_response.data['flag_type'], FLAG_TYPES.red if is_valid else FLAG_TYPES.yellow)
+            self.assertFalse(patch_response.data['can_be_escalated'])
 
             self.client.logout()
             self.client.force_login(self.user)
             partner.refresh_from_db()
+            self.assertTrue(sum(partner.flagging_status.values()) > 0)
             self.assertEqual(partner.is_locked, is_valid)
 
 

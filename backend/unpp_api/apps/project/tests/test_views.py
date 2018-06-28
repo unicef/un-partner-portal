@@ -636,7 +636,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             'note': note,
         }
         response = self.client.post(url, data=payload, format='json')
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertResponseStatusIs(response, status.HTTP_403_FORBIDDEN)
 
         # add logged agency member to eoi/application reviewers
         app.eoi.reviewers.add(self.user)
@@ -663,9 +663,11 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             })
         payload['scores'] = scores
         response = self.client.post(url, data=payload, format='json')
-        self.assertTrue(status.is_client_error(response.status_code))
-        self.assertEquals(response.data['non_field_errors'],
-                          ["The maximum score is equal to the value entered for the weight."])
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEquals(
+            response.data['non_field_errors'],
+            ["The maximum score is equal to the value entered for the weight."]
+        )
 
         scores = []
         for criterion in app.eoi.assessments_criteria:

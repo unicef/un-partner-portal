@@ -13,9 +13,12 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 
 from account.models import User
+from agency.roles import ESCALATED_FLAG_RESOLVER_ROLE_NAMES
 from common.consts import COMPLETED_REASON, CFEI_STATUSES
+from common.utils import get_absolute_frontend_url
 from notification.models import Notification, NotifiedUser
 from notification.consts import NOTIFICATION_DATA, NotificationType
+from review.models import PartnerFlag
 
 
 def send_notification(notification_type, obj, users, context=None, send_in_feed=True):
@@ -202,5 +205,33 @@ def send_partner_marked_for_deletion_email(partner):
         get_user_model().objects.filter(
             is_staff=True, is_superuser=True
         ).values_list('email', flat=True).order_by().distinct('email')
+    )
+    msg.send()
+
+
+def send_new_escalated_flag_email(partner_flag: PartnerFlag):
+    base_users_queryset = get_user_model().objects.filter(
+        agency_members__role__in=ESCALATED_FLAG_RESOLVER_ROLE_NAMES,
+        agency_members__office__agency=partner_flag.submitter.agency,
+    )
+
+    target_users = base_users_queryset.filter(agency_members__office__country=partner_flag.partner.country_code)
+    if not target_users:
+        # If no applicable users in partners country send notification to all
+        target_users = base_users_queryset
+
+    notification_payload = NOTIFICATION_DATA.get(NotificationType.NEW_ESCALATED_FLAG)
+
+    body = render_notification_template_to_str(notification_payload.get('template_name'), {
+        'partner_name': partner_flag.partner.legal_name,
+        # TODO: replace with verification tab url once it's done on the frontend
+        'partner_url': get_absolute_frontend_url(f'/partner/{partner_flag.partner.id}/overview')
+    })
+
+    msg = EmailMultiAlternatives(
+        notification_payload['subject'],
+        body,
+        settings.DEFAULT_FROM_EMAIL,
+        target_users.values_list('email', flat=True).order_by().distinct('email')
     )
     msg.send()
