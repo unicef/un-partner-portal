@@ -103,33 +103,33 @@ class Partner(TimeStampedModel):
     def country_profiles(self):
         return self.__class__.objects.filter(hq=self)
 
-    @threaded_cached_property
+    @property
     def yellow_flag_count(self):
         return PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
         ).filter(flag_type=FLAG_TYPES.yellow, is_valid=True).count()
 
-    @threaded_cached_property
+    @property
     def has_yellow_flag(self):
         return bool(self.yellow_flag_count)
 
-    @threaded_cached_property
+    @property
     def red_flag_count(self):
         return PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
         ).filter(flag_type=FLAG_TYPES.red, is_valid=True).count()
 
-    @threaded_cached_property
+    @property
     def has_red_flag(self):
         return bool(self.red_flag_count)
 
-    @threaded_cached_property
+    @property
     def escalated_flag_count(self):
         return PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
         ).filter(flag_type=FLAG_TYPES.escalated, is_valid=True).count()
 
-    @threaded_cached_property
+    @property
     def has_escalated_flag(self):
         return bool(self.red_flag_count)
 
