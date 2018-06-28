@@ -171,16 +171,20 @@ export const updateDsr = (body, id) => (dispatch, getState) => {
 };
 
 export const updateUcn = (body, id) => (dispatch, getState) => {
+  dispatch(newCfeiSubmitting());
   const newBody = body;
   if (typeof newBody.cn === 'string') {
     delete newBody.cn;
   }
+  const params = history.getCurrentLocation().query;
   const preparedBody = prepareBody(newBody, getState);
   return patchUcn(preparedBody, id)
-    .then((cfei) => {
-      dispatch(loadCfeiDetailSuccess(cfei));
+    .then((unsolicited) => {
+      dispatch(newCfeiSubmitted());
+      dispatch(loadApplicationsUcn(params));
+      return unsolicited;
     }).catch((error) => {
-      dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
+      dispatch(errorToBeAdded(error, 'ucnUpdate', errorMsg));
       throw new SubmissionError({
         ...error.response.data,
         _error: errorMsg,
