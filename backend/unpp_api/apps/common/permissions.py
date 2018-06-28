@@ -33,12 +33,14 @@ class HasUNPPPermission(CustomizablePermission):
 def current_user_has_permission(
         request, agency_permissions=None, partner_permissions=None, raise_exception=False
 ):
-    if agency_permissions is not None and request.agency_member:
-        if set(agency_permissions).issubset(request.agency_member.user_permissions):
-            return True
-    elif partner_permissions is not None and request.partner_member:
-        if set(partner_permissions).issubset(request.partner_member.user_permissions):
-            return True
+    if request.user.is_authenticated():
+        if agency_permissions is not None and request.agency_member:
+            if set(agency_permissions).issubset(request.agency_member.user_permissions):
+                return True
+        elif partner_permissions is not None and request.partner_member:
+            if set(partner_permissions).issubset(request.partner_member.user_permissions):
+                return True
+
     if raise_exception:
         permissions_display = list(map(lambda p: p.name, agency_permissions or partner_permissions))
         raise PermissionDenied(f'You do not have permission to {permissions_display}')

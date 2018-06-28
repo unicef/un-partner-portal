@@ -18,6 +18,7 @@ from common.consts import COMPLETED_REASON, CFEI_STATUSES
 from common.utils import get_absolute_frontend_url
 from notification.models import Notification, NotifiedUser
 from notification.consts import NOTIFICATION_DATA, NotificationType
+from partner.models import Partner
 from review.models import PartnerFlag
 
 
@@ -190,7 +191,7 @@ def send_notification_summary_to_notified_users(notified_users):
     notified_users.update(sent_as_email=True)
 
 
-def send_partner_marked_for_deletion_email(partner):
+def send_partner_marked_for_deletion_email(partner: Partner):
     notification_payload = NOTIFICATION_DATA.get(NotificationType.DJANGO_ADMIN_NEW_PARTNER_FOR_DELETION)
 
     body = render_notification_template_to_str(notification_payload.get('template_name'), {

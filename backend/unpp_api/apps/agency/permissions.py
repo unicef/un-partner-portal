@@ -83,7 +83,8 @@ class AgencyPermission(AutoNameEnum):
 
     # Add Observation & risk flags all
     RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES = auto()
-    ADD_FLAG_OBSERVATION_ALL_CSO_PROFILES = auto()
+    ADD_RED_FLAG_ALL_CSO_PROFILES = auto()  # All flags except Red
+    ADD_FLAG_OBSERVATION_ALL_CSO_PROFILES = auto()  # All flags except Red
     ADD_FLAG_OBSERVATION_COUNTRY_CSO_PROFILES = auto()  # Users country must match CSOs country
 
     # Reports
