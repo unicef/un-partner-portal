@@ -167,8 +167,10 @@ const getTheme = () => (
         blue: '#0099FF',
       },
       flags: {
+        observation: '#A1A1A1',
         red: '#D50000',
         yellow: '#FFC400',
+        escalated: '#FFA000',
       },
     },
     typography: {

@@ -14,7 +14,6 @@ import PartnerProfileProjectImplementation from '../edit/projectImplementation/p
 import PartnerProfileOtherInfo from '../edit/otherInfo/partnerProfileOtherInfo';
 import { loadPartnerDetails } from '../../../reducers/partnerProfileDetails';
 import { changeTab } from '../../../reducers/partnerProfileEdit';
-import { isUserAgencyReader } from '../../../helpers/authHelpers';
 import { isUserHq, selectUserHqId } from '../../../store';
 
 const FIRST_INDEX = 0;
@@ -111,10 +110,9 @@ const mapDispatch = dispatch => ({
 });
 
 const mapStateToProps = (state, ownProps) => ({
-    completion: state.partnerProfileDetails.partnerProfileDetails.completion,
-    hideEdit: (!isUserHq(state) && selectUserHqId(state) === +ownProps.params.id)
-      || isUserAgencyReader(state),
-  });
+  completion: state.partnerProfileDetails.partnerProfileDetails.completion,
+  hideEdit: (!isUserHq(state) && selectUserHqId(state) === +ownProps.params.id),
+});
 
 const connectedOrganizationProfileOverview = connect(
   mapStateToProps, mapDispatch)(OrganizationProfileOverview);

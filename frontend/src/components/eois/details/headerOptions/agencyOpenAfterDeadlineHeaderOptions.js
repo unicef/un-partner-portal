@@ -12,7 +12,6 @@ import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import ManageReviewersModal from '../../modals/manageReviewers/manageReviewersModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
 import withConditionalDisplay from '../../../common/hoc/withConditionalDisplay';
-import { isUserNotAgencyReader } from '../../../../helpers/authHelpers';
 
 const edit = 'edit';
 const manage = 'manage';
@@ -70,5 +69,4 @@ PartnerOpenAfterDeadlineHeaderOptions.propTypes = {
 export default compose(
   withMultipleDialogHandling,
   withRouter,
-  withConditionalDisplay([isUserNotAgencyReader]),
 )(PartnerOpenAfterDeadlineHeaderOptions);
