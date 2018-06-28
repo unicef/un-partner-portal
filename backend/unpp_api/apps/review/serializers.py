@@ -9,7 +9,7 @@ from common.consts import USER_CREATED_FLAG_CATEGORIES, INTERNAL_FLAG_CATEGORIES
 from common.permissions import current_user_has_permission
 from common.serializers import CommonFileSerializer
 from agency.serializers import AgencyUserBasicSerializer
-from notification.helpers import send_partner_marked_for_deletion_email
+from notification.helpers import send_partner_marked_for_deletion_email, send_new_escalated_flag_email
 from review.models import PartnerFlag, PartnerVerification
 from sanctionslist.serializers import SanctionedNameMatchSerializer
 
@@ -22,6 +22,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
     flag_type_display = serializers.CharField(source='get_flag_type_display', read_only=True)
     category_display = serializers.CharField(source='get_category_display', read_only=True)
     sanctions_match = SanctionedNameMatchSerializer(read_only=True)
+    can_be_escalated = serializers.SerializerMethodField()
 
     class Meta:
         model = PartnerFlag
@@ -46,6 +47,9 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                 'required': True
             },
         }
+
+    def get_can_be_escalated(self, flag):
+        return flag.flag_type == FLAG_TYPES.yellow and FLAG_TYPES.escalated not in flag.type_history
 
     def get_extra_kwargs(self):
         extra_kwargs = super(PartnerFlagSerializer, self).get_extra_kwargs()
@@ -74,7 +78,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         return fields
 
     @transaction.atomic
-    def update(self, instance, validated_data):
+    def update(self, instance: PartnerFlag, validated_data):
         new_flag_type = validated_data.get('flag_type')
         old_flag_type = instance.flag_type
 
@@ -88,12 +92,12 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
             instance.save()
 
             if new_flag_type == FLAG_TYPES.escalated:
-                instance.is_valid = None
                 if FLAG_TYPES.escalated in instance.type_history:
                     raise serializers.ValidationError({
                         'flag_type': 'This risk flag has already been escalated in the past.'
                     })
-                # TODO: notify HQ editors
+                validated_data['is_valid'] = None
+                send_new_escalated_flag_email(instance)
 
         instance = super(PartnerFlagSerializer, self).update(instance, validated_data)
 
