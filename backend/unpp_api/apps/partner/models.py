@@ -105,9 +105,9 @@ class Partner(TimeStampedModel):
 
     @threaded_cached_property
     def yellow_flag_count(self):
-        PartnerFlag.objects.filter(
+        return PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
-        ).filter(flag_type=FLAG_TYPES.yellow, is_valid=True).exists()
+        ).filter(flag_type=FLAG_TYPES.yellow, is_valid=True).count()
 
     @threaded_cached_property
     def has_yellow_flag(self):
@@ -115,9 +115,9 @@ class Partner(TimeStampedModel):
 
     @threaded_cached_property
     def red_flag_count(self):
-        PartnerFlag.objects.filter(
+        return PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
-        ).filter(flag_type=FLAG_TYPES.red, is_valid=True).exists()
+        ).filter(flag_type=FLAG_TYPES.red, is_valid=True).count()
 
     @threaded_cached_property
     def has_red_flag(self):

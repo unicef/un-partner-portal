@@ -10,14 +10,13 @@ from common.countries import COUNTRIES_ALPHA2_CODE
 class PointQuerySet(models.QuerySet):
 
     def get_point(self, lat=None, lon=None, admin_level_1=None):
-        return self.get_or_create(
-            lat=lat,
-            lon=lon,
-            admin_level_1=AdminLevel1.objects.get_or_create(
-                name=admin_level_1.get('name'),
-                country_code=admin_level_1['country_code'],
-            )[0]
-        )[0]
+        admin_level_1, _ = AdminLevel1.objects.get_or_create(
+            name=admin_level_1.get('name'),
+            country_code=admin_level_1['country_code'],
+        )
+        point, _ = self.get_or_create(lat=lat, lon=lon, admin_level_1=admin_level_1)
+
+        return point
 
 
 class AdminLevel1(models.Model):
@@ -29,7 +28,7 @@ class AdminLevel1(models.Model):
 
     class Meta:
         ordering = ['id']
-        unique_together = (('name', 'country_code'), )
+        unique_together = ('name', 'country_code')
 
     def __str__(self):
         return "AdminLevel1 <pk:{}>".format(self.id)

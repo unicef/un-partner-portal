@@ -22,6 +22,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
     flag_type_display = serializers.CharField(source='get_flag_type_display', read_only=True)
     category_display = serializers.CharField(source='get_category_display', read_only=True)
     sanctions_match = SanctionedNameMatchSerializer(read_only=True)
+    can_be_escalated = serializers.SerializerMethodField()
 
     class Meta:
         model = PartnerFlag
@@ -46,6 +47,9 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                 'required': True
             },
         }
+
+    def get_can_be_escalated(self, flag):
+        return flag.flag_type == FLAG_TYPES.yellow and FLAG_TYPES.escalated not in flag.type_history
 
     def get_extra_kwargs(self):
         extra_kwargs = super(PartnerFlagSerializer, self).get_extra_kwargs()

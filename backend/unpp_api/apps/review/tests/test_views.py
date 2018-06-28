@@ -157,6 +157,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
             })
             self.assertResponseStatusIs(patch_response, status.HTTP_200_OK)
             self.assertEqual(patch_response.data['flag_type'], FLAG_TYPES.red if is_valid else FLAG_TYPES.yellow)
+            self.assertFalse(patch_response.data['can_be_escalated'])
 
             self.client.logout()
             self.client.force_login(self.user)
