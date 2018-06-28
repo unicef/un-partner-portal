@@ -8,6 +8,7 @@ from agency.roles import AgencyRole, AGENCY_ROLE_PERMISSIONS
 from common.factories import (
     PartnerSimpleFactory, PartnerMemberFactory, AgencyFactory, AgencyOfficeFactory, AgencyMemberFactory
 )
+from common.headers import CustomHeader
 from partner.roles import PartnerRole
 
 
@@ -63,6 +64,14 @@ class BaseAPITestCase(APITestCase):
         if self.with_session_login:
             self.client = self.client_class()
             self.client.login(email=self.user.email, password='test')
+            if self.user_type == self.USER_PARTNER:
+                self.client.set_headers({
+                    CustomHeader.PARTNER_ID.value: self.user.partner_members.first().partner_id
+                })
+            elif self.user_type == self.USER_AGENCY:
+                self.client.set_headers({
+                    CustomHeader.AGENCY_OFFICE_ID.value: self.user.agency_members.first().office_id
+                })
 
     def set_current_user_role(self, role):
         if self.user_type == self.USER_PARTNER:

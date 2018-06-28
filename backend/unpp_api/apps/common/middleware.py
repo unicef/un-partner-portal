@@ -1,11 +1,7 @@
 from django.utils.functional import SimpleLazyObject
-from django.conf import settings
 
 from common.headers import CustomHeader
 from partner.models import Partner
-
-
-# TODO: Remove dev fallbacks, fix tests when it's done
 
 
 def get_partner_and_member_objects(request):
@@ -54,9 +50,6 @@ def get_office_member_object(request):
         if office_id:
             return request.user.agency_members.filter(office_id=office_id).first()
 
-        if settings.IS_DEV:
-            # TODO: Remove once header is added on the frontend
-            return request.user.agency_members.first()
     return None
 
 

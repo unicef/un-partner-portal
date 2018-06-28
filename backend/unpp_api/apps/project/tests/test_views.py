@@ -764,6 +764,9 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         self.client.force_login(self.user)
         self.user_type = BaseAPITestCase.USER_AGENCY
         self.set_current_user_role(AgencyRole.EDITOR_ADVANCED.name)
+        self.client.set_headers({
+            CustomHeader.AGENCY_OFFICE_ID.value: self.user.agency_members.first().office_id
+        })
 
         url = reverse('projects:convert-unsolicited', kwargs={'pk': response.data['id']})
         start_date = date.today()
@@ -771,7 +774,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         office = AgencyOfficeFactory(agency=app.agency)
         focal_points = [
             am.user.id for am in AgencyMemberFactory.create_batch(
-                5, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office
+                3, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office
             )
         ]
 
@@ -786,7 +789,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         }
         response = self.client.post(url, data=payload, format='json')
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         eoi = EOI.objects.last()
         self.assertEquals(EOI.objects.count(), 1)
         self.assertEquals(eoi.other_information, payload['other_information'])
@@ -847,27 +850,18 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
 
 class TestInvitedPartnersListAPIView(BaseAPITestCase):
 
-    user_type = 'agency'
-    quantity = 1
-
-    def setUp(self):
-        super(TestInvitedPartnersListAPIView, self).setUp()
-        PartnerSimpleFactory()
-        AgencyOfficeFactory.create_batch(self.quantity)
-        AgencyMemberFactory.create_batch(self.quantity)
-        OpenEOIFactory.create_batch(self.quantity)
+    user_type = BaseAPITestCase.USER_AGENCY
 
     def test_serializes_same_fields_on_get_and_patch(self):
-        eoi = EOI.objects.first()
-        self.client.force_login(eoi.created_by)
+        eoi = OpenEOIFactory(created_by=self.user)
         url = reverse('projects:eoi-detail', kwargs={"pk": eoi.id})
         read_response = self.client.get(url, format='json')
-        self.assertEqual(read_response.status_code, status.HTTP_200_OK)
+        self.assertResponseStatusIs(read_response)
 
         update_response = self.client.patch(url, {
             'title': 'Another title'
         })
-        self.assertEqual(update_response.status_code, status.HTTP_200_OK)
+        self.assertResponseStatusIs(update_response)
         self.assertEqual(set(read_response.data.keys()), set(update_response.data.keys()))
 
 
