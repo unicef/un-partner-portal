@@ -1389,6 +1389,59 @@ class TestUCNCreateAndPublish(BaseAPITestCase):
         self.assertResponseStatusIs(update_response)
         self.assertEqual(len(update_response.data['locations']), 3)
 
+    def test_locations_issue(self):
+        payload = {
+            "specializations": [
+                35
+            ],
+            "agency": Agency.objects.order_by('?').first().id,
+            "title": "testucn",
+            "cn": get_new_common_file().id,
+            "country_code": [
+                "AF"
+            ],
+            "locations": [
+                {
+                    "admin_level_1": {
+                        "name": "Samangan",
+                        "country_code": "AF"
+                    },
+                    "lat": "35.88378",
+                    "lon": "68.12125"
+                },
+                {
+                    "admin_level_1": {
+                        "name": "Ghor",
+                        "country_code": "AF"
+                    },
+                    "lat": "33.46268",
+                    "lon": "65.00114"
+                }
+            ]
+        }
+
+        url = reverse('projects:applications-unsolicited')
+        response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        ucn = Application.objects.get(id=response.data['id'])
+
+        manage_url = reverse('projects:ucn-manage', kwargs={'pk': ucn.pk})
+
+        update_payload = {
+            "title": "testucnsdsd",
+            "agency": Agency.objects.order_by('?').first().id,
+            "specializations": [
+                35
+            ],
+            "country_code": [
+                "AF"
+            ],
+            "locations": response.data['locations']
+        }
+
+        update_response = self.client.patch(manage_url, data=update_payload)
+        self.assertResponseStatusIs(update_response)
+
 
 class TestEOIPDFExport(BaseAPITestCase):
 
