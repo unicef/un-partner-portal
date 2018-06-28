@@ -171,6 +171,24 @@ export const updateDsr = (body, id) => (dispatch, getState) => {
     });
 };
 
+export const updateUcn = (body, id) => (dispatch, getState) => {
+  const newBody = body;
+  if (typeof newBody.cn === 'string') {
+    delete newBody.cn;
+  }
+  const preparedBody = prepareBody(newBody, getState);
+  return patchUcn(preparedBody, id)
+    .then((cfei) => {
+      dispatch(loadCfeiDetailSuccess(cfei));
+    }).catch((error) => {
+      dispatch(errorToBeAdded(error, 'cfeiUpdate', errorMsg));
+      throw new SubmissionError({
+        ...error.response.data,
+        _error: errorMsg,
+      });
+    });
+};
+
 export const changePinStatusCfei = (id, isPinned) => dispatch =>
   patchPinnedCfei({
     eoi_ids: [id],

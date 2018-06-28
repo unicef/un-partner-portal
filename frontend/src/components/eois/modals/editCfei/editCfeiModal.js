@@ -84,3 +84,10 @@ const containerEditCfeiModal = connect(
 )(EditCfeiModal);
 
 export default containerEditCfeiModal;
+
+
+//guide
+
+//get the free paper
+
+//hereo - same as in thumbnail

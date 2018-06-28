@@ -29,11 +29,7 @@ class EditUcnModal extends Component {
   }
 
   handleSubmit(values) {
-    const i = values.countries;
-    const normalizedValues = values;
-    normalizedValues.locations = [];
-    R.map(loc => normalizedValues.locations.push(loc.locations[0]), i);
-    return this.props.patchUcn(normalizedValues).then(() => {
+    return this.props.patchUcn(values).then(() => {
       this.props.handleDialogClose();
     });
   }
