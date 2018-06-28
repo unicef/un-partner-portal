@@ -72,6 +72,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS,
         AgencyPermission.VERIFY_SEE_COMMENTS,
         AgencyPermission.ADD_FLAG_OBSERVATION_ALL_CSO_PROFILES,
+        AgencyPermission.ADD_RED_FLAG_ALL_CSO_PROFILES,
         AgencyPermission.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES,
         AgencyPermission.RUN_REPORT_CSO_PROFILE,
         AgencyPermission.RUN_REPORT_CSO_MAPPING,

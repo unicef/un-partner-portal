@@ -1378,6 +1378,17 @@ class TestUCNCreateAndPublish(BaseAPITestCase):
         self.assertResponseStatusIs(update_response)
         self.assertEqual(len(update_response.data['locations']), 2)
 
+        partial_update_payload = {
+            'locations': update_response.data['locations'] + [{
+                "admin_level_1": {"name": "Paris", "country_code": "FR"},
+                "lat": random.randint(-180, 180),
+                "lon": random.randint(-180, 180),
+            }]
+        }
+        update_response = self.client.patch(manage_url, data=partial_update_payload)
+        self.assertResponseStatusIs(update_response)
+        self.assertEqual(len(update_response.data['locations']), 3)
+
 
 class TestEOIPDFExport(BaseAPITestCase):
 

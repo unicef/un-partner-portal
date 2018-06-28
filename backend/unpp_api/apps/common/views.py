@@ -9,7 +9,9 @@ from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 from agency.agencies import UNHCR
+from agency.permissions import AgencyPermission
 from agency.roles import AgencyRole
+from common.permissions import current_user_has_permission
 from common.serializers import (
     ConfigSectorSerializer,
     CommonFileUploadSerializer,
@@ -80,6 +82,12 @@ class GeneralConfigAPIView(APIView):
         else:
             dsr_completed_reason_choices = OTHER_AGENCIES_DSR_COMPLETED_REASONS
 
+        flag_type_choices = dict(FLAG_TYPES).copy()
+        if not current_user_has_permission(request, agency_permissions=[
+            AgencyPermission.ADD_RED_FLAG_ALL_CSO_PROFILES,
+        ]):
+            flag_type_choices.pop(FLAG_TYPES.red)
+
         data = {
             "financial-control-system": FINANCIAL_CONTROL_SYSTEM_CHOICES,
             "functional-responsibilities": FUNCTIONAL_RESPONSIBILITY_CHOICES,
@@ -105,7 +113,7 @@ class GeneralConfigAPIView(APIView):
             "extended-application-statuses": EXTENDED_APPLICATION_STATUSES,
             "countries-with-optional-location": LOCATION_OPTIONAL_COUNTRIES,
             "user-role-choices": choices,
-            "flag-type-choices": FLAG_TYPES,
+            "flag-type-choices": flag_type_choices,
             "flag-category-choices": USER_CREATED_FLAG_CATEGORIES,
             "notification-frequency-choices": NOTIFICATION_FREQUENCY_CHOICES,
         }
