@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
-import Loader from '../../../common/loader';
 import ControlledModal from '../../../common/modals/controlledModal';
+import Loader from '../../../common/loader';
 import { updateCfei } from '../../../../reducers/newCfei';
-import EditCfeiForm from './editCfeiForm';
+import EditDateCfeiForm from './editDateCfeiForm';
 
 const messages = {
   title: {
@@ -20,7 +20,7 @@ const messages = {
 };
 
 
-class EditCfeiModal extends Component {
+class EditDateCfeiModal extends Component {
   constructor(props) {
     super(props);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -33,7 +33,7 @@ class EditCfeiModal extends Component {
   }
 
   render() {
-    const { id, submit, dialogOpen, handleDialogClose, showLoading, type } = this.props;
+    const { id, submit, showLoading, dialogOpen, handleDialogClose, type } = this.props;
 
     return (
       <React.Fragment>
@@ -54,7 +54,7 @@ class EditCfeiModal extends Component {
               label: messages.save,
             },
           }}
-          content={<EditCfeiForm id={id} onSubmit={this.onFormSubmit} type={type} />}
+          content={<EditDateCfeiForm id={id} onSubmit={this.onFormSubmit} type={type} />}
         />
         <Loader loading={showLoading} fullscreen />
       </React.Fragment>
@@ -62,7 +62,7 @@ class EditCfeiModal extends Component {
   }
 }
 
-EditCfeiModal.propTypes = {
+EditDateCfeiModal.propTypes = {
   dialogOpen: PropTypes.bool,
   id: PropTypes.string,
   submit: PropTypes.func,
@@ -73,7 +73,7 @@ EditCfeiModal.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  showLoading: state.newCfei.editCfeiSubmitting,
+  showLoading: state.newCfei.openCfeiSubmitting,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -81,9 +81,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   submit: () => dispatch(submit('editCfei')),
 });
 
-const containerEditCfeiModal = connect(
+const containerEditDateCfeiModal = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(EditCfeiModal);
+)(EditDateCfeiModal);
 
-export default containerEditCfeiModal;
+export default containerEditDateCfeiModal;

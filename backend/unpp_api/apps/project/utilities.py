@@ -20,6 +20,10 @@ def _users_valid_for_agency(cfei, user_ids):
 def update_cfei_focal_points(cfei, user_ids):
     if user_ids is None:
         return
+    elif not user_ids:
+        raise serializers.ValidationError({
+            'focal_points': 'At least one focal point is needed.'
+        })
 
     if not _users_valid_for_agency(cfei, user_ids):
         raise serializers.ValidationError(
@@ -39,6 +43,10 @@ def update_cfei_focal_points(cfei, user_ids):
 def update_cfei_reviewers(cfei, user_ids):
     if user_ids is None:
         return
+    elif not user_ids:
+        raise serializers.ValidationError({
+            'reviewers': 'At least one reviewer is needed.'
+        })
 
     if cfei.status not in {CFEI_STATUSES.closed, CFEI_STATUSES.open}:
         raise serializers.ValidationError(

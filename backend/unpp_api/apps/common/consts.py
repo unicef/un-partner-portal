@@ -231,10 +231,10 @@ BUDGET_CHOICES = Choices(
 )
 
 FLAG_TYPES = Choices(
-    ('Obs', 'observation', 'Observation'),
-    ('Yel', 'yellow', 'Yellow Flag'),
-    ('Esc', 'escalated', 'Escalated Flag'),
-    ('Red', 'red', 'Red Flag'),
+    ('FL1_Obs', 'observation', 'Observation'),
+    ('FL2_Yel', 'yellow', 'Yellow Flag'),
+    ('FL3_Esc', 'escalated', 'Escalated Flag'),
+    ('FL4_Red', 'red', 'Red Flag'),
 )
 
 USER_CREATED_FLAG_CATEGORIES = Choices(
@@ -242,7 +242,7 @@ USER_CREATED_FLAG_CATEGORIES = Choices(
     ('safeguards_violation', 'Violation of protection safeguards'),
     ('sex_abuse', 'Sexual exploitation and abuse'),
     ('terrorism_support', 'Terrorism support'),
-    ('other', 'Other'),
+    ('ZZ_other', 'Other'),  # So it's sorted as last
 )
 
 INTERNAL_FLAG_CATEGORIES = Choices(

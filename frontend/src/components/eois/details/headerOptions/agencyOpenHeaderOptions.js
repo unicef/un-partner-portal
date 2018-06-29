@@ -12,6 +12,7 @@ import Reviewers from '../../buttons/manageReviewers';
 import Complete from '../../buttons/completeCfeiButton';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
+import EditDateCfeiModal from '../../modals/editCfei/editDateCfeiModal';
 import AddInformedPartners from '../../modals/callPartners/addInformedPartners';
 import ManageReviewersModal from '../../modals/manageReviewers/manageReviewersModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
@@ -39,6 +40,7 @@ const manage = 'manage';
 const complete = 'complete';
 const send = 'send';
 const publish = 'publish';
+const editDate = 'editDate';
 
 class PartnerOpenHeaderOptions extends Component {
   constructor(props) {
@@ -82,6 +84,7 @@ class PartnerOpenHeaderOptions extends Component {
       hasManageDraftPermission,
       hasInviteSentPermission,
       hasEditSentPermission,
+      hasEditPublishedDatesPermission,
       hasInvitePublishPermission,
       hasCancelPublishPermission,
       hasManageReviewersPermission,
@@ -92,12 +95,21 @@ class PartnerOpenHeaderOptions extends Component {
 
     const options = [];
 
-    if ((hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA)
-        || (hasEditSentPermission && isFocalPoint)) {
+    if (((hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA)
+        || (hasEditSentPermission && isFocalPoint)) && !isPublished) {
       options.push(
         {
           name: edit,
           content: <EditButton handleClick={() => handleDialogOpen(edit)} />,
+        });
+    }
+
+    if (this.isPuslishPermissionAllowed(hasEditPublishedDatesPermission)
+    && isPublished) {
+      options.push(
+        {
+          name: editDate,
+          content: <EditButton handleClick={() => handleDialogOpen(editDate)} />,
         });
     }
 
@@ -161,7 +173,7 @@ class PartnerOpenHeaderOptions extends Component {
           && <Complete handleClick={() => handleDialogOpen(complete)} />}
 
         {!isCompleted && status === PROJECT_STATUSES.DRA && isCreator && hasSendPermission &&
-        <SendCfeiButton handleClick={() => handleDialogOpen(send)} />}
+          <SendCfeiButton handleClick={() => handleDialogOpen(send)} />}
 
         {!isPublished && !isCompleted && hasPublishPermission &&
             (((isFocalPoint || isCreator) && isAdvEd) || (isCreator && isPAM))
@@ -192,6 +204,12 @@ class PartnerOpenHeaderOptions extends Component {
           id={id}
           type="open"
           dialogOpen={dialogOpen[edit]}
+          handleDialogClose={handleDialogClose}
+        />}
+        {dialogOpen[editDate] && <EditDateCfeiModal
+          id={id}
+          type="open"
+          dialogOpen={dialogOpen[editDate]}
           handleDialogClose={handleDialogClose}
         />}
         {dialogOpen[invite] && <AddInformedPartners
@@ -228,7 +246,7 @@ PartnerOpenHeaderOptions.propTypes = {
   hasInvitePublishPermission: PropTypes.bool,
   hasCancelPublishPermission: PropTypes.bool,
   hasPublishPermission: PropTypes.bool,
-  hasEditPublishedPermission: PropTypes.bool,
+  hasEditPublishedDatesPermission: PropTypes.bool,
   hasManageReviewersPermission: PropTypes.bool,
   hasFinalizePermission: PropTypes.bool,
   isDeadlinePassed: PropTypes.bool,
@@ -259,10 +277,7 @@ const mapStateToProps = (state, ownProps) => ({
   hasCancelPublishPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_CANCEL, state),
   hasManageReviewersPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_MANAGE_REVIEWERS, state),
   hasFinalizePermission: checkPermission(COMMON_PERMISSIONS.CFEI_FINALIZE, state),
-  // dsr permission
-  hasEditPublishedPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_EDIT_PUBLISHED, state),
-  
-
+  hasEditPublishedDatesPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_EDIT_DATES, state),
   isAdvEd: isRoleOffice(AGENCY_ROLES.EDITOR_ADVANCED, state),
   isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
   isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),

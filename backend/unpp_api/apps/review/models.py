@@ -16,7 +16,7 @@ class PartnerFlag(TimeStampedModel):
     Flags on a Partner
     """
     partner = models.ForeignKey('partner.Partner', related_name="flags")
-    flag_type = models.CharField(max_length=3, choices=FLAG_TYPES, default=FLAG_TYPES.yellow)
+    flag_type = FixedTextField(choices=FLAG_TYPES, default=FLAG_TYPES.yellow)
     type_history = ArrayField(flag_type, default=list)
     category = FixedTextField(choices=FLAG_CATEGORIES, null=True, blank=True)
     is_valid = models.NullBooleanField(default=True)

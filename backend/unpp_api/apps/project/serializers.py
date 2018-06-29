@@ -310,7 +310,7 @@ class ManageUCNSerializer(MixinPreventManyCommonFile, serializers.Serializer):
     def update(self, instance, validated_data):
         self.prevent_many_common_file_validator(validated_data)
 
-        instance.agency_id = validated_data.get('agency') or instance.agency_id
+        instance.agency_id = validated_data.get('agency', {}).get('id') or instance.agency_id
         instance.proposal_of_eoi_details = validated_data.get(
             'proposal_of_eoi_details'
         ) or instance.proposal_of_eoi_details
