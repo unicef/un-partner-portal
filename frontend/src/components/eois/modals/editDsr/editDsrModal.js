@@ -4,7 +4,7 @@ import R from 'ramda';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { submit } from 'redux-form';
-import Grid from 'material-ui/Grid';
+import Loader from '../../../common/loader';
 import ControlledModal from '../../../common/modals/controlledModal';
 import EditDsrForm from './editDsrForm';
 import { updateDsr } from '../../../../reducers/newCfei';
@@ -47,9 +47,9 @@ class EditDsrModal extends Component {
   }
 
   render() {
-    const { open, handleDialogClose, params: { id } } = this.props;
+    const { open, handleDialogClose, showLoading, params: { id } } = this.props;
     return (
-      <Grid item>
+      <React.Fragment>
         <ControlledModal
           maxWidth="md"
           title={messages.title}
@@ -69,7 +69,8 @@ class EditDsrModal extends Component {
           }}
           content={<EditDsrForm id={id} onSubmit={this.handleSubmit} />}
         />
-      </Grid>
+        <Loader loading={showLoading} fullscreen />
+      </React.Fragment>
     );
   }
 }
@@ -82,10 +83,12 @@ EditDsrModal.propTypes = {
   postError: PropTypes.func,
   handleDialogClose: PropTypes.func,
   params: PropTypes.object,
+  showLoading: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
   optionalLocations: selectCountriesWithOptionalLocations(state),
+  showLoading: state.newCfei.editCfeiSubmitting,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

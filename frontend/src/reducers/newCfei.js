@@ -23,9 +23,16 @@ export const NEW_CFEI_SUBMITTED = 'NEW_CFEI_SUBMITTED';
 export const NEW_CFEI_PROCESSED = 'NEW_CFEI_PROCESSED';
 export const NEW_CFEI_PROCESSING = 'NEW_CFEI_PROCESSING';
 
+export const EDIT_CFEI_SUBMITTING = 'EDIT_CFEI_SUBMITTING';
+export const EDIT_CFEI_SUBMITTED = 'EDIT_CFEI_SUBMITTED';
+export const EDIT_CFEI_PROCESSED = 'EDIT_CFEI_PROCESSED';
+export const EDIT_CFEI_PROCESSING = 'EDIT_CFEI_PROCESSING';
+
 const initialState = {
   openCfeiSubmitting: false,
   openCfeiProcessing: false,
+  editCfeiSubmitting: false,
+  editCfeiProcessing: false,
   error: {},
 };
 
@@ -33,6 +40,11 @@ export const newCfeiSubmitting = () => ({ type: NEW_CFEI_SUBMITTING });
 export const newCfeiSubmitted = () => ({ type: NEW_CFEI_SUBMITTED });
 export const newCfeiProcessing = () => ({ type: NEW_CFEI_PROCESSING });
 export const newCfeiProcessed = () => ({ type: NEW_CFEI_PROCESSED });
+
+export const editCfeiSubmitting = () => ({ type: EDIT_CFEI_SUBMITTING });
+export const editCfeiSubmitted = () => ({ type: EDIT_CFEI_SUBMITTED });
+export const editCfeiProcessing = () => ({ type: EDIT_CFEI_PROCESSING });
+export const editCfeiProcessed = () => ({ type: EDIT_CFEI_PROCESSED });
 
 const mergeLocations = countries => (acc, next) => {
   if (!R.has('locations', next)) {
@@ -119,8 +131,10 @@ export const addUnsolicitedCN = body => (dispatch, getState) => {
 
 export const updateCfei = (body, id) => (dispatch, getState) => {
   const preparedBody = prepareBody(body, getState);
+  dispatch(editCfeiSubmitting());
   return patchCfei(preparedBody, id)
     .then((cfei) => {
+      dispatch(editCfeiSubmitted());
       dispatch(loadCfeiDetailSuccess(cfei));
       if (cfei.direct_selected_partners) {
         cfei.direct_selected_partners.forEach((selectedPartner) => {
@@ -147,9 +161,11 @@ export const updateDsr = (body, id) => (dispatch, getState) => {
   if (typeof newBody.applications[0].ds_attachment === 'string') {
     delete newBody.applications[0].ds_attachment;
   }
+  dispatch(editCfeiSubmitting());
   const preparedBody = prepareBody(newBody, getState);
   return patchCfei(preparedBody, id)
     .then((cfei) => {
+      dispatch(editCfeiSubmitted());
       dispatch(loadCfeiDetailSuccess(cfei));
       if (cfei.direct_selected_partners) {
         cfei.direct_selected_partners.forEach((selectedPartner) => {
@@ -171,18 +187,16 @@ export const updateDsr = (body, id) => (dispatch, getState) => {
 };
 
 export const updateUcn = (body, id) => (dispatch, getState) => {
-  dispatch(newCfeiSubmitting());
   const newBody = body;
   if (typeof newBody.cn === 'string') {
     delete newBody.cn;
   }
-  const params = history.getCurrentLocation().query;
+  dispatch(editCfeiSubmitting());
   const preparedBody = prepareBody(newBody, getState);
   return patchUcn(preparedBody, id)
-    .then((unsolicited) => {
-      dispatch(newCfeiSubmitted());
-      dispatch(loadApplicationsUcn(params));
-      return unsolicited;
+    .then(() => {
+      dispatch(editCfeiSubmitted());
+      dispatch(cfeiDetails.loadUnsolicitedCfei(id));
     }).catch((error) => {
       dispatch(errorToBeAdded(error, 'ucnUpdate', errorMsg));
       throw new SubmissionError({
@@ -208,6 +222,11 @@ const stopSubmitting = state => R.assoc('openCfeiSubmitting', false, state);
 const startProcessing = state => R.assoc('openCfeiProcessing', true, state);
 const stopProcessing = state => R.assoc('openCfeiProcessing', false, state);
 
+const startEditSubmitting = state => R.assoc('error', {}, R.assoc('editCfeiSubmitting', true, state));
+const stopEditSubmitting = state => R.assoc('editCfeiSubmitting', false, state);
+const startEditProcessing = state => R.assoc('editCfeiProcessing', true, state);
+const stopEditProcessing = state => R.assoc('editCfeiProcessing', false, state);
+
 export default function CfeiReducer(state = initialState, action) {
   switch (action.type) {
     case NEW_CFEI_SUBMITTING: {
@@ -221,6 +240,18 @@ export default function CfeiReducer(state = initialState, action) {
     }
     case NEW_CFEI_PROCESSED: {
       return stopProcessing(state);
+    }
+    case EDIT_CFEI_SUBMITTING: {
+      return startEditSubmitting(state);
+    }
+    case EDIT_CFEI_SUBMITTED: {
+      return stopEditSubmitting(state);
+    }
+    case EDIT_CFEI_PROCESSING: {
+      return startEditProcessing(state);
+    }
+    case EDIT_CFEI_PROCESSED: {
+      return stopEditProcessing(state);
     }
     default:
       return state;

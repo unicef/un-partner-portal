@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import R from 'ramda';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { submit } from 'redux-form';
-import Grid from 'material-ui/Grid';
 import ControlledModal from '../../../common/modals/controlledModal';
+import Loader from '../../../common/loader';
 import EditUcnForm from './editUcnForm';
 import { updateUcn } from '../../../../reducers/newCfei';
 import { errorToBeAdded } from '../../../../reducers/errorReducer';
@@ -43,9 +42,9 @@ class EditUcnModal extends Component {
   }
 
   render() {
-    const { open, handleDialogClose, params: { id } } = this.props;
+    const { open, handleDialogClose, showLoading, params: { id } } = this.props;
     return (
-      <Grid item>
+      <React.Fragment>
         <ControlledModal
           maxWidth="md"
           title={messages.title}
@@ -65,7 +64,8 @@ class EditUcnModal extends Component {
           }}
           content={<EditUcnForm id={id} onSubmit={this.handleSubmit} />}
         />
-      </Grid>
+        <Loader loading={showLoading} fullscreen />
+      </React.Fragment>
     );
   }
 }
@@ -78,10 +78,12 @@ EditUcnModal.propTypes = {
   postError: PropTypes.func,
   handleDialogClose: PropTypes.func,
   params: PropTypes.object,
+  showLoading: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
   optionalLocations: selectCountriesWithOptionalLocations(state),
+  showLoading: state.newCfei.editCfeiSubmitting,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
