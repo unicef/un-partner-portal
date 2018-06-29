@@ -489,25 +489,29 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         elif 'invited_partners' in self.initial_data:
             instance.invited_partners.clear()
 
-        reviewers = self.initial_data.get('reviewers', [])
-        if reviewers:
+        reviewers = self.initial_data.get('reviewers')
+        if reviewers is not None:
+            if not reviewers:
+                raise serializers.ValidationError({
+                    'reviewers': 'At least one reviewer is needed.'
+                })
             Assessment.objects.filter(
                 application__eoi=instance
             ).exclude(reviewer_id__in=reviewers).update(archived=True)
             instance.reviewers.through.objects.exclude(user_id__in=reviewers).delete()
             instance.reviewers.add(*User.objects.filter(id__in=reviewers))
             Assessment.all_objects.filter(application__eoi=instance, reviewer_id__in=reviewers).update(archived=False)
-        elif 'reviewers' in self.initial_data:
-            Assessment.objects.filter(application__eoi=instance).update(archived=True)
-            instance.reviewers.clear()
 
-        focal_points = self.initial_data.get('focal_points', [])
-        if focal_points:
+        focal_points = self.initial_data.get('focal_points')
+        if focal_points is not None:
+            if not focal_points:
+                raise serializers.ValidationError({
+                    'focal_points': 'At least one focal point is needed.'
+                })
+
             instance.focal_points.through.objects.exclude(user_id__in=focal_points).delete()
             instance.focal_points.add(*User.objects.filter(id__in=focal_points))
             send_notification_to_cfei_focal_points(instance)
-        elif 'focal_points' in self.initial_data:
-            instance.focal_points.clear()
 
         return instance
 
