@@ -29,7 +29,7 @@ const PublishDsrButton = (props) => {
 
 PublishDsrButton.propTypes = {
   handleClick: PropTypes.func,
-  disabled: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 export default PublishDsrButton;

@@ -1,23 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import R from 'ramda';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { submit } from 'redux-form';
-import Loader from '../../../common/loader';
 import ControlledModal from '../../../common/modals/controlledModal';
-import EditDsrForm from './editDsrForm';
-import { updateDsr } from '../../../../reducers/newCfei';
+import Loader from '../../../common/loader';
+import EditUcnForm from './editUcnForm';
+import { updateUcn } from '../../../../reducers/newCfei';
 import { errorToBeAdded } from '../../../../reducers/errorReducer';
 import { selectCountriesWithOptionalLocations } from '../../../../store';
 
 const messages = {
-  title: 'Edit direct selection/retention',
+  title: 'Edit Unsolicited Concept Note',
   save: 'Save',
-  error: 'Unable to update direct selection/retention',
+  error: 'Unable to update Unsolicited Concept Note',
 };
 
-class EditDsrModal extends Component {
+class EditUcnModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,11 +28,7 @@ class EditDsrModal extends Component {
   }
 
   handleSubmit(values) {
-    const i = values.countries;
-    const normalizedValues = values;
-    normalizedValues.locations = [];
-    R.map(loc => normalizedValues.locations.push(loc.locations[0]), i);
-    return this.props.patchDsr(normalizedValues).then(() => {
+    return this.props.patchUcn(values).then(() => {
       this.props.handleDialogClose();
     });
   }
@@ -67,7 +62,7 @@ class EditDsrModal extends Component {
               disabled: this.state.disabled,
             },
           }}
-          content={<EditDsrForm id={id} onSubmit={this.handleSubmit} />}
+          content={<EditUcnForm id={id} onSubmit={this.handleSubmit} />}
         />
         <Loader loading={showLoading} fullscreen />
       </React.Fragment>
@@ -75,10 +70,10 @@ class EditDsrModal extends Component {
   }
 }
 
-EditDsrModal.propTypes = {
+EditUcnModal.propTypes = {
   open: PropTypes.bool,
   onDialogClose: PropTypes.func,
-  patchDsr: PropTypes.func,
+  patchUcn: PropTypes.func,
   submit: PropTypes.func,
   postError: PropTypes.func,
   handleDialogClose: PropTypes.func,
@@ -92,15 +87,15 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  patchDsr: body => dispatch(updateDsr(body, ownProps.id)),
-  submit: () => dispatch(submit('editDsr')),
+  patchUcn: body => dispatch(updateUcn(body, ownProps.id)),
+  submit: () => dispatch(submit('editUcn')),
   postError: (error, message) => dispatch(errorToBeAdded(error, `newProject${ownProps.type}`, message)),
 });
 
 const connected = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(EditDsrModal);
+)(EditUcnModal);
 
 export default withRouter(connected);
 

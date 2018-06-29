@@ -85,17 +85,21 @@ const editMapLocations = R.map(location =>
 const mergeLocations = (k, l, r) =>
   (k === 'locations' ? R.concat(l, r) : r);
 
+const sortLocations = locations => R.sortBy(R.path(['admin_level_1', 'country_code']), locations);
+
 
 const normalizeLocations = R.compose(
   R.map(R.reduce(R.mergeDeepWithKey(mergeCountries), {})),
   R.groupWith(R.eqProps('country')),
   mapLocations,
+  sortLocations,
 );
 
 const normalizeEditLocations = R.compose(
   R.map(R.reduce(R.mergeDeepWithKey(mergeLocations), {})),
   R.groupWith(R.eqProps('country')),
   editMapLocations,
+  sortLocations,
 );
 
 const saveCfei = (state, action) => {
@@ -117,8 +121,10 @@ const saveUCN = (state, action) => {
     display_type: ucn.partner.display_type,
     title: R.path(['proposal_of_eoi_details', 'title'], ucn),
     locations: normalizeLocations(ucn.locations_proposal_of_eoi),
+    locations_edit: normalizeEditLocations(ucn.locations_proposal_of_eoi),
     specializations: R.path(['proposal_of_eoi_details', 'specializations'], ucn),
     agency: R.path(['agency', 'name'], ucn),
+    agency_id: R.path(['agency', 'id'], ucn),
     cn: ucn.cn,
     eoiConverted: ucn.eoi_converted,
     status: ucn.application_status,
