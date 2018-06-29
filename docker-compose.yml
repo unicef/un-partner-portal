@@ -41,6 +41,8 @@ services:
     build:
       context: ./db
       dockerfile: ./Dockerfile
+    ports:
+      - "8081:5432"
 
   frontend:
     image: unicef/unpp-frontend
