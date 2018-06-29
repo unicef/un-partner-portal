@@ -30,7 +30,11 @@ services:
     volumes:
       - './backend:/code/'
       - '/data'
+<<<<<<< HEAD
     command: bash -c "/usr/local/bin/waitforit -host=db -port=5432 --timeout 30 && python /code/manage.py collectstatic --noinput && python /code/manage.py migrate --noinput && python /code/manage.py sanctions_list_sync && uwsgi --ini /code/unpp_api/uwsgi.ini"
+=======
+    command: bash -c "/usr/local/bin/waitforit -host=db -port=5432 --timeout 30 && python /code/manage.py collectstatic --noinput && python /code/manage.py migrate --noinput && uwsgi --ini /code/unpp_api/uwsgi.ini"
+>>>>>>> master-fixes
     depends_on:
       - db
 
