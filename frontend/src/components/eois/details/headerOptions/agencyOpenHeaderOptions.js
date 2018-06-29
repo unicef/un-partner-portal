@@ -95,8 +95,8 @@ class PartnerOpenHeaderOptions extends Component {
 
     const options = [];
 
-    if ((hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA)
-        || (hasEditSentPermission && isFocalPoint)) {
+    if (((hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA)
+        || (hasEditSentPermission && isFocalPoint)) && !isPublished) {
       options.push(
         {
           name: edit,

@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
-import ControlledModal from '../../../common/modals/controlledModal';
-import { updateCfei } from '../../../../reducers/newCfei';
+import Loader from '../../../common/loader';
 import EditDateDsrForm from './editDateDsrForm';
+import { updateCfei } from '../../../../reducers/newCfei';
+import ControlledModal from '../../../common/modals/controlledModal';
 
 const messages = {
   title: {
@@ -32,10 +33,10 @@ class EditCfeiModal extends Component {
   }
 
   render() {
-    const { id, submit, dialogOpen, handleDialogClose, type } = this.props;
+    const { id, submit, showLoading, dialogOpen, handleDialogClose, type } = this.props;
 
     return (
-      <div>
+      <React.Fragment>
         <ControlledModal
           maxWidth="md"
           title={messages.title[type]}
@@ -55,7 +56,8 @@ class EditCfeiModal extends Component {
           }}
           content={<EditDateDsrForm id={id} onSubmit={this.onFormSubmit} type={type} />}
         />
-      </div >
+        <Loader loading={showLoading} fullscreen />
+      </React.Fragment>
     );
   }
 }
@@ -67,6 +69,7 @@ EditCfeiModal.propTypes = {
   updateCfei: PropTypes.func,
   handleDialogClose: PropTypes.func,
   type: PropTypes.string,
+  showLoading: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
