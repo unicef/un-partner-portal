@@ -15,8 +15,6 @@ import {
 } from '../../../../../../store';
 import { loadReviewers } from '../../../../../../reducers/cfeiReviewers';
 import SingleReviewer from './singleReviewer';
-import withConditionalDisplay from '../../../../../common/hoc/withConditionalDisplay';
-import { isUserNotAgencyReader } from '../../../../../../helpers/authHelpers';
 
 const messages = {
   title: 'Reviewers',
@@ -95,6 +93,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   getReviewers: () => dispatch(loadReviewers(ownProps.id)),
 });
 
-export default withConditionalDisplay([isUserNotAgencyReader])(
-  connect(mapStateToProps, mapDispatchToProps)(ReviewersSummary),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(ReviewersSummary);

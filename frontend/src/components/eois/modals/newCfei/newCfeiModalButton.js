@@ -7,8 +7,6 @@ import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import NewCfeiModal from './newCfeiModal';
 import withDialogHandling from '../../../common/hoc/withDialogHandling';
-import withConditionalDisplay from '../../../common/hoc/withConditionalDisplay';
-import { isUserNotAgencyReader } from '../../../../helpers/authHelpers';
 import { checkPermission, AGENCY_PERMISSIONS, PARTNER_PERMISSIONS } from '../../../../helpers/permissions';
 import { PROJECT_TYPES } from '../../../../helpers/constants';
 
@@ -57,7 +55,6 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-  withConditionalDisplay([isUserNotAgencyReader]),
   withDialogHandling,
   connect(mapStateToProps),
   withRouter)(NewCfeiModalButton);

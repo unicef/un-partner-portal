@@ -11,7 +11,6 @@ import { loadReviewSummary } from '../../../../../../reducers/cfeiReviewSummary'
 import ChangeSummaryButton from '../../../../buttons/changeSummaryButton';
 import ReviewSummaryForm from '../../../../modals/changeSummary/changeSummaryForm';
 import withConditionalDisplay from '../../../../../common/hoc/withConditionalDisplay';
-import { isUserNotAgencyReader } from '../../../../../../helpers/authHelpers';
 import { checkPermission, AGENCY_PERMISSIONS, AGENCY_ROLES, isRoleOffice } from '../../../../../../helpers/permissions';
 
 const messages = {
@@ -114,6 +113,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   getReviewSummary: () => dispatch(loadReviewSummary(ownProps.id)),
 });
 
-export default withConditionalDisplay([isUserNotAgencyReader])(
-  connect(mapStateToProps, mapDispatchToProps)(ReviewSummary),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(ReviewSummary);

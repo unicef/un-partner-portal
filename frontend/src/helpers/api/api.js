@@ -171,6 +171,10 @@ export function submitUcn(id) {
   return authorizedPost({ uri: `/projects/applications/unsolicited/${id}/manage/` });
 }
 
+export function patchUcn(body, id) {
+  return authorizedPatch({ uri: `/projects/applications/unsolicited/${id}/manage/`, body });
+}
+
 export function deleteUcn(id) {
   return authorizedDelete({ uri: `/projects/applications/unsolicited/${id}/manage/` });
 }

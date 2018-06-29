@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import Loader from '../../../common/loader';
-import ControlledModal from '../../../common/modals/controlledModal';
+import EditDateDsrForm from './editDateDsrForm';
 import { updateCfei } from '../../../../reducers/newCfei';
-import EditCfeiForm from './editCfeiForm';
+import ControlledModal from '../../../common/modals/controlledModal';
 
 const messages = {
   title: {
@@ -33,7 +33,7 @@ class EditCfeiModal extends Component {
   }
 
   render() {
-    const { id, submit, dialogOpen, handleDialogClose, showLoading, type } = this.props;
+    const { id, submit, showLoading, dialogOpen, handleDialogClose, type } = this.props;
 
     return (
       <React.Fragment>
@@ -54,7 +54,7 @@ class EditCfeiModal extends Component {
               label: messages.save,
             },
           }}
-          content={<EditCfeiForm id={id} onSubmit={this.onFormSubmit} type={type} />}
+          content={<EditDateDsrForm id={id} onSubmit={this.onFormSubmit} type={type} />}
         />
         <Loader loading={showLoading} fullscreen />
       </React.Fragment>
@@ -73,7 +73,7 @@ EditCfeiModal.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  showLoading: state.newCfei.editCfeiSubmitting,
+  showLoading: state.newCfei.openCfeiSubmitting,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

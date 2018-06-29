@@ -42,11 +42,6 @@ const messages = {
   },
 };
 
-const dsrIdStyle = {
-  position: 'absolute',
-  transform: 'translate(-36px, -20px)',
-};
-
 const Fields = ({ type, role, partnerId, displayGoal }) => {
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return (<PaddedContent>
@@ -122,16 +117,12 @@ Fields.propTypes = {
 const title = type => () => (
   <SpreadContent>
     <Typography type="headline" >{messages.title}</Typography>
-    <div>
-      {type !== PROJECT_TYPES.UNSOLICITED &&
-      <div style={dsrIdStyle}>
-        <TextField
-          fieldName="id"
-          label={(type === PROJECT_TYPES.OPEN || type === PROJECT_TYPES.PINNED) ? messages.labels.id : messages.labels.dsrId}
-          readOnly
-        />
-      </div>}
-    </div>
+    {type !== PROJECT_TYPES.UNSOLICITED &&
+    <TextField
+      fieldName="id"
+      label={(type === PROJECT_TYPES.OPEN || type === PROJECT_TYPES.PINNED) ? messages.labels.id : messages.labels.dsrId}
+      readOnly
+    />}
   </SpreadContent>
 );
 
