@@ -52,7 +52,7 @@ class PartnerProfileHeader extends Component {
 
   componentWillMount() {
     this.props.loadPartnerSummary();
-    // this.props.loadPartnerVerifications();
+    this.props.loadPartnerVerifications();
   }
 
   updatePath() {

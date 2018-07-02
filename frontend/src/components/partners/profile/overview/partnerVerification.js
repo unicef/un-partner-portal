@@ -74,7 +74,7 @@ class VerificationsContainer extends Component {
                 loading={loading}
                 expandable
                 templateCell={tableCells}
-                expandedCell={row => <VerificationDetailsExpand user={row} />}
+                expandedCell={row => <VerificationDetailsExpand user={row} readOnly />}
               />
             </Grid>
           </Grid>
