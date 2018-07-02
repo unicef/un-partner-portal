@@ -78,7 +78,7 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
         super(TestPinUnpinEOIAPITestCase, self).setUp()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        OpenEOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity, is_published=True)
 
     def test_pin_unpin_project_wrong_params(self):
         eoi_ids = EOI.objects.all().values_list('id', flat=True)
