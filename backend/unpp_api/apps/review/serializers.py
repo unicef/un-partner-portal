@@ -30,7 +30,6 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         read_only_fields = (
             'submitter',
             'partner',
-            'comment',
             'attachment',
             'sanctions_match',
         )
@@ -42,7 +41,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                 'choices': USER_CREATED_FLAG_CATEGORIES
             },
             'comment': {
-                'required': True
+                'required': True,
             },
             'contact_email': {
                 'required': True
@@ -55,6 +54,9 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
     def get_extra_kwargs(self):
         extra_kwargs = super(PartnerFlagSerializer, self).get_extra_kwargs()
         if isinstance(self.instance, PartnerFlag):
+            extra_kwargs['comment'] = {
+                'read_only': True
+            }
             if self.instance.category not in USER_CREATED_FLAG_CATEGORIES:
                 extra_kwargs['category']['read_only'] = True
 

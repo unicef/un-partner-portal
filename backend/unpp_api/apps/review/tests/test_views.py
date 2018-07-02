@@ -47,6 +47,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['submitter']['name'], self.user.get_fullname())
         self.assertEquals(response.data['flag_type'], FLAG_TYPES.yellow)
         self.assertEquals(response.data['is_valid'], True)
+        self.assertEquals(response.data['comment'], payload['comment'])
 
     def test_patch_flag(self):
         flag = PartnerFlagFactory(is_valid=True)
