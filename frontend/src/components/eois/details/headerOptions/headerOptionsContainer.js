@@ -20,7 +20,7 @@ import ConvertToDS from '../../buttons/convertToDirectSelection';
 import PartnerUcnHeaderOptions from './partnerUcnHeaderOptions';
 
 const messages = {
-  infoDsr: 'This DS/R was sent to Advanced Editor for acceptance and publication',
+  infoDsr: 'This direct selection/retention was sent to the focal point for review and issuance to the selected partner.',
   infoCfei: 'This CFEI was sent to Advanced Editor for acceptance and publication',
   infoUcn: 'This UCN was sent to Advanced Editor for acceptance and publication',
 };

@@ -99,6 +99,13 @@ class BaseProjectAPIView(ListCreateAPIView):
         'title', 'agency', 'specializations__name', 'deadline_date', 'created', 'start_date', 'completed_date'
     )
 
+    def get_queryset(self):
+        queryset = super(BaseProjectAPIView, self).get_queryset()
+        if self.request.user.is_partner_user:
+            queryset = queryset.filter(is_published=True)
+
+        return queryset
+
 
 class OpenProjectAPIView(BaseProjectAPIView):
     """
@@ -106,7 +113,7 @@ class OpenProjectAPIView(BaseProjectAPIView):
     """
 
     def get_queryset(self):
-        queryset = self.queryset.filter(display_type=CFEI_TYPES.open)
+        queryset = super(OpenProjectAPIView, self).get_queryset().filter(display_type=CFEI_TYPES.open)
 
         if self.request.user.is_agency_user:
             return queryset
@@ -228,7 +235,7 @@ class DirectProjectAPIView(BaseProjectAPIView):
         return CreateDirectProjectSerializer
 
     def get_queryset(self):
-        return self.queryset.filter(display_type=CFEI_TYPES.direct).distinct()
+        return super(DirectProjectAPIView, self).get_queryset().filter(display_type=CFEI_TYPES.direct).distinct()
 
     @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS])
     def post(self, request, *args, **kwargs):
@@ -259,7 +266,7 @@ class PinProjectAPIView(BaseProjectAPIView):
     ERROR_MSG_WRONG_PARAMS = "Couldn't properly identify input parameters like 'eoi_ids' and 'pin'."
 
     def get_queryset(self):
-        return self.queryset.filter(
+        return super(PinProjectAPIView, self).get_queryset().filter(
             pins__partner_id=self.request.active_partner.id, deadline_date__gte=date.today()
         ).distinct()
 

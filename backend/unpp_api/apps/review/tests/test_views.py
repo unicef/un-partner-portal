@@ -7,6 +7,7 @@ from django.urls import reverse
 
 from rest_framework import status
 
+from account.models import User
 from agency.roles import AgencyRole
 from common.consts import FLAG_TYPES, PARTNER_TYPES, SANCTION_LIST_TYPES, INTERNAL_FLAG_CATEGORIES
 from common.tests.base import BaseAPITestCase
@@ -16,7 +17,7 @@ from common.factories import (
     PartnerVerificationFactory,
     AgencyOfficeFactory,
     AgencyMemberFactory,
-)
+    PartnerMemberFactory)
 from partner.models import Partner
 from sanctionslist.models import SanctionedItem, SanctionedName
 
@@ -261,7 +262,7 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         )
         SanctionedName.objects.get_or_create(item=item_inst, name=self.data['partner']['legal_name'])
         url = reverse('accounts:registration')
-        response = self.client.post(url, data=self.data, format='json')
+        response = self.client.post(url, data=self.data)
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         partner = Partner.objects.get(id=response.data['partner']['id'])
         self.assertTrue(partner.has_sanction_match)
@@ -277,7 +278,7 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
             'is_valid': False,
             'invalidation_comment': 'comment',
         }
-        response = self.client.patch(flag_url, data=payload, format='json')
+        response = self.client.patch(flag_url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertFalse(response.data['is_valid'])
         partner.refresh_from_db()
@@ -287,12 +288,26 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         payload = {
             'is_valid': True
         }
-        response = self.client.patch(flag_url, data=payload, format='json')
+        response = self.client.patch(flag_url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertTrue(response.data['is_valid'])
         partner.refresh_from_db()
         self.assertTrue(partner.is_locked)
         self.assertTrue(partner.has_sanction_match)
+
+        self.client.logout()
+        partner_member = PartnerMemberFactory(partner=partner)
+        user: User = partner_member.user
+        password = 'testing1235'
+        user.set_password(password)
+        user.save()
+
+        login_url = reverse('rest_login')
+        response = self.client.post(login_url, data={
+            'email': user.email,
+            'password': password,
+        })
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
 
     def test_matches_dont_duplicate(self):
         item_inst, _ = SanctionedItem.objects.update_or_create(
