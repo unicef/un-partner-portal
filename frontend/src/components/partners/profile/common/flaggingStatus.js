@@ -26,7 +26,7 @@ const FlaggingStatus = (props) => {
     {yellow >= 0 && ([
       <Grid item key={0}>
         <Typography>
-          {observation}
+          {yellow}
         </Typography>
       </Grid>,
       <Grid item key={1}>

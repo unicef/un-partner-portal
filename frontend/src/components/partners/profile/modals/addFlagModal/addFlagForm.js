@@ -22,7 +22,7 @@ const messages = {
   contactHolder: 'Full name...',
   telephone: 'Telephone (optional)',
   telephoneHolder: 'Enter telephone...',
-  email: 'E-mail (optional)',
+  email: 'E-mail',
   emailHolder: 'Enter e-mail...',
   attachment: 'Attachment (optional)',
   categoryOfRisk: 'Category of risk',

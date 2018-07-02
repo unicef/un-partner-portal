@@ -69,6 +69,7 @@ import sendCfei from './reducers/sendCfei';
 import deleteCfei from './reducers/deleteCfei';
 import deleteUcn from './reducers/deleteUcn';
 import submitUcn from './reducers/submitUcn';
+import partnerObservationsList from './reducers/agencyPartnerObservationsList';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -95,6 +96,7 @@ const mainReducer = combineReducers({
   applicationsDirectList,
   openCfeiDashboardList,
   adminOneLocation,
+  partnerObservationsList,
   nav,
   offices,
   session,
