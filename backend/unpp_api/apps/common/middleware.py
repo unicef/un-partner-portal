@@ -12,9 +12,11 @@ def get_partner_and_member_objects(request):
     if request.user.is_authenticated():
         # HQ profiles ability to log in as any country office complicates code a bit here
         # since they won't have a corresponding PartnerMember object
-        partner_member = request.user.partner_members.filter(
+        active_partner_members = request.user.partner_members.exclude(partner__is_locked=True)
+
+        partner_member = active_partner_members.filter(
             partner_id=partner_id
-        ).first() or request.user.partner_members.filter(
+        ).first() or active_partner_members.filter(
             partner__children__id=partner_id
         ).first()
 
