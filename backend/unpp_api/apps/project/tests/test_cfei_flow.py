@@ -265,7 +265,12 @@ class TestDSRCFEI(BaseAPITestCase):
         self.assertEqual(cfei.status, CFEI_STATUSES.draft)
         self.assertTrue(cfei.is_direct)
 
-        with self.client_for_user(partner_user) as client:
-            list_response = client.get(reverse('projects:direct'))
+        with self.login_as_user(partner_user):
+            list_response = self.client.get(reverse('projects:direct'))
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], 0)
+
+        publish_url = reverse('projects:eoi-publish', kwargs={'pk': cfei.id})
+        self.assertResponseStatusIs(self.client.post(publish_url))
+        cfei.refresh_from_db()
+        self.assertEqual(cfei.status, CFEI_STATUSES.open)
