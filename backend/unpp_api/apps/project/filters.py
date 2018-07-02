@@ -10,7 +10,7 @@ from django_filters.widgets import BooleanWidget, CSVWidget
 from account.models import User
 from common.consts import EXTENDED_APPLICATION_STATUSES, CFEI_STATUSES, CFEI_TYPES
 from common.models import Specialization
-from .models import EOI, Application
+from project.models import EOI, Application
 
 
 class BaseProjectFilter(django_filters.FilterSet):
