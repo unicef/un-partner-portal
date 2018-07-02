@@ -134,6 +134,7 @@ INSTALLED_APPS = [
     'imagekit',
     'django_countries',
     'mail_templated',
+    'social_django',
 
     'common',
     'account',
@@ -175,6 +176,24 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+# Django-social-auth settings
+KEY = os.getenv('AZURE_B2C_CLIENT_ID', None)
+SECRET = os.getenv('AZURE_B2C_CLIENT_SECRET', None)
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_SANITIZE_REDIRECTS = False
+POLICY = os.getenv('AZURE_B2C_POLICY_NAME', "b2c_1A_UNICEF_PARTNERS_signup_signin")
+
+TENANT_ID = os.getenv('AZURE_B2C_TENANT', 'unicefpartners.onmicrosoft.com')
+SCOPE = ['openid', 'email']
+IGNORE_DEFAULT_SCOPE = True
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/app"
+
+# TODO: Re-enable this back once we figure out all email domain names to whitelist from partners
+# SOCIAL_AUTH_WHITELISTED_DOMAINS = ['unicef.org', 'google.com']
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
