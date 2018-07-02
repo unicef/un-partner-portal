@@ -18,8 +18,8 @@ const PartnerOverview = (props) => {
       </Grid>
       <Grid item xs={12} sm={4}>
         <GridColumn>
-          <PartnerOverviewVerification partnerId={id} />
-          <PartnerOverviewFlag partnerId={id} partner={partner} />
+          {/* <PartnerOverviewVerification partnerId={id} /> */}
+          {/* <PartnerOverviewFlag partnerId={id} partner={partner} /> */}
         </GridColumn>
       </Grid>
     </Grid>);

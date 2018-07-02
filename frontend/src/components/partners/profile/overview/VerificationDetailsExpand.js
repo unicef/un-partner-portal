@@ -48,7 +48,7 @@ const styleSheet = (theme) => {
   };
 };
 
-const UserDetailsExpand = (props) => {
+const VerificationDetailsExpand = (props) => {
   const { classes, user } = props;
   if (user) {
     return (
@@ -67,9 +67,9 @@ const UserDetailsExpand = (props) => {
   </PaddedContent>);
 };
 
-UserDetailsExpand.propTypes = {
+VerificationDetailsExpand.propTypes = {
   classes: PropTypes.object.isRequired,
   user: PropTypes.object,
 };
 
-export default withStyles(styleSheet, { name: 'UserDetailsExpand' })(UserDetailsExpand);
+export default withStyles(styleSheet, { name: 'VerificationDetailsExpand' })(VerificationDetailsExpand);
