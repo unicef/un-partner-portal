@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 import os
+from contextlib import contextmanager
+
 from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
@@ -101,6 +103,13 @@ class BaseAPITestCase(APITestCase):
 
     def assertResponseStatusIs(self, response, status_code=status.HTTP_200_OK, msg=None):
         return self.assertEqual(response.status_code, status_code, msg=msg or getattr(response, 'data', None))
+
+    @contextmanager
+    def client_for_user(self, user: User):
+        client = self.client_class()
+        client.force_login(user)
+        yield client
+        client.logout()
 
     def tearDown(self):
         self.client.clean_headers()

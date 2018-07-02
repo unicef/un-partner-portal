@@ -1,13 +1,16 @@
 from django.urls import reverse
 from rest_framework import status
 
+from account.models import User
 from agency.agencies import UNHCR, UNICEF
 from agency.permissions import AgencyPermission
-from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES
-from common.consts import ALL_COMPLETED_REASONS, DSR_FINALIZE_RETENTION_CHOICES
+from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
+from common.consts import ALL_COMPLETED_REASONS, DSR_FINALIZE_RETENTION_CHOICES, CFEI_STATUSES
 from common.factories import AgencyMemberFactory, PartnerFactory, PartnerVerificationFactory, OpenEOIFactory, \
-    DirectEOIFactory
+    DirectEOIFactory, PartnerMemberFactory
 from common.tests.base import BaseAPITestCase
+from partner.models import PartnerMember
+from project.models import EOI
 
 
 class TestOpenCFEI(BaseAPITestCase):
@@ -119,14 +122,13 @@ class TestDSRCFEI(BaseAPITestCase):
     def setUp(self):
         super(TestDSRCFEI, self).setUp()
         office = self.user.agency_members.first().office
-        partner1, partner2 = PartnerFactory.create_batch(2)
-        PartnerVerificationFactory(partner=partner1, submitter=self.user)
-        PartnerVerificationFactory(partner=partner2, submitter=self.user)
+        self.partner = PartnerFactory()
+        PartnerVerificationFactory(partner=self.partner, submitter=self.user)
         focal_point = AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0]).user
         self.payload = {
             "applications": [
                 {
-                    "partner": partner1.id,
+                    "partner": self.partner.id,
                     "ds_justification_select": ["Loc"],
                     "justification_reason": "123123"
                 },
@@ -165,7 +167,8 @@ class TestDSRCFEI(BaseAPITestCase):
                 ],
                 "agency": office.agency.id,
                 "agency_office": office.id
-            }}
+            }
+        }
 
     def test_create_direct(self):
         payload = self.payload.copy()
@@ -247,3 +250,22 @@ class TestDSRCFEI(BaseAPITestCase):
                 }
             )
             self.assertResponseStatusIs(update_response, expected_response_code)
+
+    def test_dsr_flow(self):
+        self.set_current_user_role(AgencyRole.EDITOR_ADVANCED.name)
+        partner_member: PartnerMember = PartnerMemberFactory(partner=self.partner)
+        partner_user: User = partner_member.user
+
+        payload = self.payload.copy()
+        url = reverse('projects:direct')
+
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+        cfei: EOI = EOI.objects.get(id=create_response.data['eoi']['id'])
+        self.assertEqual(cfei.status, CFEI_STATUSES.draft)
+        self.assertTrue(cfei.is_direct)
+
+        with self.client_for_user(partner_user) as client:
+            list_response = client.get(reverse('projects:direct'))
+            self.assertResponseStatusIs(list_response)
+            self.assertEqual(list_response.data['count'], 0)
