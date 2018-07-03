@@ -2,15 +2,16 @@
 from __future__ import unicode_literals
 
 from django.urls import reverse
-from rest_framework import status as statuses
 
+from agency.roles import AgencyRole
 from common.tests.base import BaseAPITestCase
 from common.factories import (
     OpenEOIFactory,
     AgencyMemberFactory,
     PartnerSimpleFactory,
     AgencyOfficeFactory,
-)
+    PartnerFactory)
+from project.models import Assessment
 
 
 class TestAgencyDashboardAPIView(BaseAPITestCase):
@@ -28,7 +29,7 @@ class TestAgencyDashboardAPIView(BaseAPITestCase):
     def test_get(self):
         url = reverse('dashboard:main')
         read_response = self.client.get(url, format='json')
-        self.assertEqual(read_response.status_code, statuses.HTTP_200_OK)
+        self.assertResponseStatusIs(read_response)
 
 
 class TestPartnerDashboardAPIView(BaseAPITestCase):
@@ -46,4 +47,26 @@ class TestPartnerDashboardAPIView(BaseAPITestCase):
     def test_get(self):
         url = reverse('dashboard:main')
         read_response = self.client.get(url, format='json')
-        self.assertEqual(read_response.status_code, statuses.HTTP_200_OK)
+        self.assertResponseStatusIs(read_response)
+
+
+class TestApplicationsToScoreListAPIView(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
+
+    def test_get(self):
+        url = reverse('dashboard:applications-to-score')
+        read_response = self.client.get(url, format='json')
+        self.assertResponseStatusIs(read_response)
+        self.assertEqual(read_response.data['count'], 0)
+
+        PartnerFactory()
+        cfeis = OpenEOIFactory.create_batch(10)
+        Assessment.objects.filter(reviewer=self.user).delete()
+        for cfei in cfeis:
+            cfei.reviewers.add(self.user)
+
+        read_response = self.client.get(url, format='json')
+        self.assertResponseStatusIs(read_response)
+        self.assertEqual(read_response.data['count'], 10)
