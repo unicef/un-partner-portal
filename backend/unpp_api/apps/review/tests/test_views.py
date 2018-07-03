@@ -51,6 +51,27 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['is_valid'], True)
         self.assertEquals(response.data['comment'], payload['comment'])
 
+    def test_create_observation(self):
+        partner = PartnerSimpleFactory(country_code=self.user.agency_members.first().office.country.code)
+
+        url = reverse(
+            'partner-reviews:flags', kwargs={"partner_id": partner.id}
+        )
+
+        payload = {
+            "comment": "This is an observation",
+            "flag_type": FLAG_TYPES.observation,
+            "contact_email": "test@test.com",
+            "contact_person": "Nancy",
+            "contact_phone": "Smith"
+        }
+
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        self.assertEquals(response.data['submitter']['name'], self.user.get_fullname())
+        self.assertEquals(response.data['flag_type'], FLAG_TYPES.observation)
+        self.assertEquals(response.data['comment'], payload['comment'])
+
     def test_patch_flag(self):
         flag = PartnerFlagFactory(is_valid=True)
         # Change valid status

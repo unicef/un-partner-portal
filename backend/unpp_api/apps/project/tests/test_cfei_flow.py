@@ -1,3 +1,4 @@
+from datetime import date
 from django.urls import reverse
 from rest_framework import status
 
@@ -10,7 +11,7 @@ from common.factories import AgencyMemberFactory, PartnerFactory, PartnerVerific
     DirectEOIFactory, PartnerMemberFactory
 from common.tests.base import BaseAPITestCase
 from partner.models import PartnerMember
-from project.models import EOI
+from project.models import EOI, Application
 
 
 class TestOpenCFEI(BaseAPITestCase):
@@ -122,6 +123,8 @@ class TestDSRCFEI(BaseAPITestCase):
     def setUp(self):
         super(TestDSRCFEI, self).setUp()
         office = self.user.agency_members.first().office
+        office.agency = UNICEF.model_instance
+        office.save()
         self.partner = PartnerFactory()
         PartnerVerificationFactory(partner=self.partner, submitter=self.user)
         focal_point = AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0]).user
@@ -262,6 +265,9 @@ class TestDSRCFEI(BaseAPITestCase):
         create_response = self.client.post(url, data=payload, format='json')
         self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
         cfei: EOI = EOI.objects.get(id=create_response.data['eoi']['id'])
+        application: Application = cfei.applications.first()
+        application_url = reverse('projects:application', kwargs={"pk": application.pk})
+
         self.assertEqual(cfei.status, CFEI_STATUSES.draft)
         self.assertTrue(cfei.is_direct)
 
@@ -279,3 +285,21 @@ class TestDSRCFEI(BaseAPITestCase):
             list_response = self.client.get(reverse('projects:direct'))
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], 1)
+
+            accept_payload = {
+                "did_accept": True,
+            }
+            response = self.client.patch(application_url, data=accept_payload, format='json')
+            self.assertResponseStatusIs(response)
+            self.assertTrue(response.data['did_accept'])
+            self.assertTrue(response.data['did_win'])
+            self.assertEquals(response.data['decision_date'], str(date.today()))
+
+        update_response = self.client.patch(
+            reverse('projects:eoi-detail', kwargs={'pk': cfei.pk}),
+            {
+                'completed_reason': ALL_COMPLETED_REASONS.accepted,
+                'justification': '!@#!@#!@#!%#%GDF',
+            }
+        )
+        self.assertResponseStatusIs(update_response)
