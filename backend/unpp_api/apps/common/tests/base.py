@@ -18,6 +18,7 @@ from partner.roles import PartnerRole
 class CustomTestAPIClient(APIClient):
 
     headers = {}
+    user = None
 
     def generic(self, *args, **kwargs):
         kwargs.update(self.headers)
@@ -30,6 +31,7 @@ class CustomTestAPIClient(APIClient):
         self.headers.clear()
 
     def _login(self, user: User, backend=None):
+        self.user = user
         if user.is_partner_user:
             self.set_headers({
                 CustomHeader.PARTNER_ID.value: user.partner_members.first().partner_id
@@ -41,6 +43,7 @@ class CustomTestAPIClient(APIClient):
         super(CustomTestAPIClient, self)._login(user, backend=backend)
 
     def logout(self):
+        self.user = None
         self.clean_headers()
         super(CustomTestAPIClient, self).logout()
 
@@ -105,11 +108,14 @@ class BaseAPITestCase(APITestCase):
         return self.assertEqual(response.status_code, status_code, msg=msg or getattr(response, 'data', None))
 
     @contextmanager
-    def client_for_user(self, user: User):
-        client = self.client_class()
-        client.force_login(user)
-        yield client
-        client.logout()
+    def login_as_user(self, user: User):
+        original_user = self.client.user
+        original_headers = self.client.headers.copy()
+        self.client.force_login(user)
+        yield
+        self.client.logout()
+        self.client.force_login(original_user)
+        self.client.headers.update(original_headers)
 
     def tearDown(self):
         self.client.clean_headers()

@@ -138,7 +138,6 @@ PartnerObservationsList.propTypes = {
   totalCount: PropTypes.number.isRequired,
   getFlags: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
-  partner: PropTypes.string,
   query: PropTypes.object,
   userId: PropTypes.number,
 };
@@ -153,12 +152,12 @@ const mapStateToProps = (state, ownProps) => ({
   userId: state.session.userId,
 });
 
-const mapDispatch = (dispatch, ownProps) => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   getFlags: params => dispatch(loadPartnerFlags(ownProps.params.id, params)),
 });
 
 const connectedPartnerObservationsList =
-  connect(mapStateToProps, mapDispatch)(PartnerObservationsList);
+  connect(mapStateToProps, mapDispatchToProps)(PartnerObservationsList);
 
 const withRouterPartner = withRouter(connectedPartnerObservationsList);
 

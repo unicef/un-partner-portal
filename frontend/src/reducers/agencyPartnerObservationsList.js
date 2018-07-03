@@ -13,7 +13,8 @@ export const OBSERVATIONS_LOAD_FAILURE = 'OBSERVATIONS_LOAD_FAILURE';
 export const OBSERVATIONS_LOAD_ENDED = 'APA_LOAD_ENDED';
 
 export const agencyPartnerObsLoadStarted = () => ({ type: OBSERVATIONS_LOAD_STARTED });
-export const agencyPartnerObsLoadSuccess = response => ({ type: OBSERVATIONS_LOAD_SUCCESS, response });
+export const agencyPartnerObsLoadSuccess = response =>
+  ({ type: OBSERVATIONS_LOAD_SUCCESS, response });
 export const agencyPartnerObsLoadFailure = error => ({ type: OBSERVATIONS_LOAD_FAILURE, error });
 export const agencyPartnerObsLoadEnded = () => ({ type: OBSERVATIONS_LOAD_ENDED });
 
@@ -30,6 +31,7 @@ const saveFlags = (state, action) => {
       contactPhone: item.contact_phone,
       attachment: item.attachment,
       category: item.category,
+      comment: item.comment,
     }), action.response.results);
 
   return R.assoc('items', flags, R.assoc('totalCount', action.response.count, state));

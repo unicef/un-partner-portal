@@ -1,3 +1,6 @@
+from datetime import date
+
+from dateutil.relativedelta import relativedelta
 from django.urls import reverse
 from rest_framework import status
 
@@ -10,7 +13,7 @@ from common.factories import AgencyMemberFactory, PartnerFactory, PartnerVerific
     DirectEOIFactory, PartnerMemberFactory
 from common.tests.base import BaseAPITestCase
 from partner.models import PartnerMember
-from project.models import EOI
+from project.models import EOI, Application
 
 
 class TestOpenCFEI(BaseAPITestCase):
@@ -36,10 +39,10 @@ class TestOpenCFEI(BaseAPITestCase):
             ],
             "description": "asdasdas",
             "goal": "asdasdsa",
-            "deadline_date": "2018-01-24",
-            "notif_results_date": "2018-01-25",
-            "start_date": "2018-01-25",
-            "end_date": "2018-01-28",
+            "deadline_date": date.today() + relativedelta(days=1),
+            "notif_results_date": date.today() + relativedelta(days=2),
+            "start_date": date.today() + relativedelta(days=10),
+            "end_date": date.today() + relativedelta(days=20),
             "has_weighting": False,
             "locations": [
                 {
@@ -66,13 +69,23 @@ class TestOpenCFEI(BaseAPITestCase):
 
         for role in roles_allowed:
             self.set_current_user_role(role.name)
-            create_response = self.client.post(url, data=payload, format='json')
+            create_response = self.client.post(url, data=payload)
             self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
 
         for role in roles_disallowed:
             self.set_current_user_role(role.name)
-            create_response = self.client.post(url, data=payload, format='json')
+            create_response = self.client.post(url, data=payload)
             self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
+
+    def test_create_dates_out_of_order(self):
+        payload = self.base_payload.copy()
+        payload['end_date'], payload['start_date'] = payload['start_date'], payload['end_date']
+
+        self.set_current_user_role(AgencyRole.EDITOR_ADVANCED.name)
+        url = reverse('projects:open')
+
+        create_response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(create_response, status.HTTP_400_BAD_REQUEST)
 
     def test_finalize(self):
         status_expected_response = {
@@ -122,6 +135,8 @@ class TestDSRCFEI(BaseAPITestCase):
     def setUp(self):
         super(TestDSRCFEI, self).setUp()
         office = self.user.agency_members.first().office
+        office.agency = UNICEF.model_instance
+        office.save()
         self.partner = PartnerFactory()
         PartnerVerificationFactory(partner=self.partner, submitter=self.user)
         focal_point = AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0]).user
@@ -152,8 +167,8 @@ class TestDSRCFEI(BaseAPITestCase):
                 "focal_points": [focal_point.id],
                 "description": "123123123",
                 "goal": "123123123",
-                "start_date": "2018-01-20",
-                "end_date": "2018-01-27",
+                "start_date": date.today() + relativedelta(days=1),
+                "end_date": date.today() + relativedelta(days=15),
                 "country_code": ["FR"],
                 "locations": [
                     {
@@ -262,10 +277,41 @@ class TestDSRCFEI(BaseAPITestCase):
         create_response = self.client.post(url, data=payload, format='json')
         self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
         cfei: EOI = EOI.objects.get(id=create_response.data['eoi']['id'])
+        application: Application = cfei.applications.first()
+        application_url = reverse('projects:application', kwargs={"pk": application.pk})
+
         self.assertEqual(cfei.status, CFEI_STATUSES.draft)
         self.assertTrue(cfei.is_direct)
 
-        with self.client_for_user(partner_user) as client:
-            list_response = client.get(reverse('projects:direct'))
+        with self.login_as_user(partner_user):
+            list_response = self.client.get(reverse('projects:direct'))
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], 0)
+
+        publish_url = reverse('projects:eoi-publish', kwargs={'pk': cfei.id})
+        self.assertResponseStatusIs(self.client.post(publish_url))
+        cfei.refresh_from_db()
+        self.assertEqual(cfei.status, CFEI_STATUSES.open)
+
+        with self.login_as_user(partner_user):
+            list_response = self.client.get(reverse('projects:direct'))
+            self.assertResponseStatusIs(list_response)
+            self.assertEqual(list_response.data['count'], 1)
+
+            accept_payload = {
+                "did_accept": True,
+            }
+            response = self.client.patch(application_url, data=accept_payload, format='json')
+            self.assertResponseStatusIs(response)
+            self.assertTrue(response.data['did_accept'])
+            self.assertTrue(response.data['did_win'])
+            self.assertEquals(response.data['decision_date'], str(date.today()))
+
+        update_response = self.client.patch(
+            reverse('projects:eoi-detail', kwargs={'pk': cfei.pk}),
+            {
+                'completed_reason': ALL_COMPLETED_REASONS.accepted,
+                'justification': '!@#!@#!@#!%#%GDF',
+            }
+        )
+        self.assertResponseStatusIs(update_response)
