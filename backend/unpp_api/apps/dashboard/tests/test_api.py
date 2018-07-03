@@ -10,7 +10,7 @@ from common.factories import (
     AgencyMemberFactory,
     PartnerSimpleFactory,
     AgencyOfficeFactory,
-    PartnerFactory)
+    PartnerFactory, UserFactory)
 from project.models import Assessment
 
 
@@ -66,6 +66,35 @@ class TestApplicationsToScoreListAPIView(BaseAPITestCase):
         Assessment.objects.filter(reviewer=self.user).delete()
         for cfei in cfeis:
             cfei.reviewers.add(self.user)
+
+        read_response = self.client.get(url, format='json')
+        self.assertResponseStatusIs(read_response)
+        self.assertEqual(read_response.data['count'], 10)
+
+
+class TestCurrentUsersOpenProjectsAPIView(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
+
+    def test_get(self):
+        url = reverse('dashboard:open-projects')
+        read_response = self.client.get(url, format='json')
+        self.assertResponseStatusIs(read_response)
+        self.assertEqual(read_response.data['count'], 0)
+
+        OpenEOIFactory.create_batch(5, created_by=self.user)
+        not_created_by_user_cfeis = OpenEOIFactory.create_batch(5, created_by=UserFactory())
+
+        for cfei in not_created_by_user_cfeis:
+            cfei.focal_points.clear()
+
+        read_response = self.client.get(url, format='json')
+        self.assertResponseStatusIs(read_response)
+        self.assertEqual(read_response.data['count'], 5)
+
+        for cfei in not_created_by_user_cfeis:
+            cfei.focal_points.add(self.user)
 
         read_response = self.client.get(url, format='json')
         self.assertResponseStatusIs(read_response)

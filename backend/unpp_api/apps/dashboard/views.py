@@ -74,9 +74,6 @@ class ApplicationsToScoreListAPIView(ListAPIView):
 
 
 class CurrentUsersOpenProjectsAPIView(ListAPIView):
-    """
-    Returns list of projects where deadline hasn't been reached yet, for which user is creator or focal point
-    """
 
     queryset = EOI.objects.select_related("agency").prefetch_related("specializations").distinct()
     serializer_class = AgencyProjectSerializer
