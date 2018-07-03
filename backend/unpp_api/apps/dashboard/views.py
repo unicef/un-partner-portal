@@ -74,9 +74,6 @@ class ApplicationsToScoreListAPIView(ListAPIView):
 
 
 class CurrentUsersOpenProjectsAPIView(ListAPIView):
-    """
-    Returns list of projects where deadline hasn't been reached yet, for which user is creator or focal point
-    """
 
     queryset = EOI.objects.select_related("agency").prefetch_related("specializations").distinct()
     serializer_class = AgencyProjectSerializer
@@ -116,10 +113,8 @@ class ApplicationsPartnerDecisionsListAPIView(ListAPIView):
     pagination_class = MediumPagination
 
     def get_queryset(self):
-        user = self.request.user
-        agency = user.agency
         won_applications = Application.objects.filter(
-            eoi__agency=agency,
+            eoi__agency=self.request.user.agency,
             decision_date__gte=datetime.now() - timedelta(days=self.DAYS_AGO),
             did_win=True
         ).filter(

@@ -78,7 +78,7 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
         super(TestPinUnpinEOIAPITestCase, self).setUp()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        OpenEOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity, is_published=True)
 
     def test_pin_unpin_project_wrong_params(self):
         eoi_ids = EOI.objects.all().values_list('id', flat=True)
@@ -932,10 +932,10 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
             ],
             "description": "asdasdas",
             "goal": "asdasdsa",
-            "deadline_date": "2018-01-24",
-            "notif_results_date": "2018-01-25",
-            "start_date": "2018-01-25",
-            "end_date": "2018-01-28",
+            "deadline_date": date.today() + relativedelta(days=1),
+            "notif_results_date": date.today() + relativedelta(days=2),
+            "start_date": date.today() + relativedelta(days=10),
+            "end_date": date.today() + relativedelta(days=20),
             "has_weighting": False,
             "locations": [
                 {
@@ -1067,8 +1067,8 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
                 "focal_points": [focal_point.id],
                 "description": "123123123",
                 "goal": "123123123",
-                "start_date": "2018-01-20",
-                "end_date": "2018-01-27",
+                "start_date": date.today() + relativedelta(days=1),
+                "end_date": date.today() + relativedelta(days=15),
                 "country_code": ["FR"],
                 "locations": [
                     {
@@ -1172,8 +1172,8 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
                 ],
                 "description": "123123123",
                 "goal": "123123123",
-                "start_date": "2018-01-20",
-                "end_date": "2018-01-27",
+                "start_date": date.today() + relativedelta(days=10),
+                "end_date": date.today() + relativedelta(days=20),
                 "country_code": ["FR"],
                 "locations": [
                     {

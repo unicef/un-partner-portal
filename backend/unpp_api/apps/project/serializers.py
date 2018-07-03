@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import datetime
+from datetime import datetime, date
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -123,14 +123,31 @@ class CreateEOISerializer(serializers.ModelSerializer):
 
     locations = PointSerializer(many=True)
 
+    def validate(self, attrs):
+        validated_data = super(CreateEOISerializer, self).validate(attrs)
+        date_field_names_that_should_be_in_this_order = [
+            'deadline_date', 'notif_results_date', 'start_date', 'end_date'
+        ]
+        dates = []
+        for field_name in date_field_names_that_should_be_in_this_order:
+            dates.append(validated_data.get(field_name))
+
+        dates = list(filter(None, dates))
+        if not dates == sorted(dates):
+            raise serializers.ValidationError('Dates for the project are invalid.')
+
+        today = date.today()
+        if not all([d >= today for d in dates]):
+            raise serializers.ValidationError('Dates for the project cannot be set in the past.')
+
+        return validated_data
+
     class Meta:
         model = EOI
         exclude = ('cn_template', )
 
 
-class CreateDirectEOISerializer(serializers.ModelSerializer):
-
-    locations = PointSerializer(many=True)
+class CreateDirectEOISerializer(CreateEOISerializer):
 
     class Meta:
         model = EOI

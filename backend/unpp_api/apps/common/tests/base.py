@@ -1,9 +1,12 @@
 from __future__ import unicode_literals
 import os
+from contextlib import contextmanager
+
 from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
+from account.models import User
 from agency.roles import AgencyRole, AGENCY_ROLE_PERMISSIONS
 from common.factories import (
     PartnerSimpleFactory, PartnerMemberFactory, AgencyFactory, AgencyOfficeFactory, AgencyMemberFactory
@@ -15,6 +18,7 @@ from partner.roles import PartnerRole
 class CustomTestAPIClient(APIClient):
 
     headers = {}
+    user = None
 
     def generic(self, *args, **kwargs):
         kwargs.update(self.headers)
@@ -25,6 +29,23 @@ class CustomTestAPIClient(APIClient):
 
     def clean_headers(self):
         self.headers.clear()
+
+    def _login(self, user: User, backend=None):
+        self.user = user
+        if user.is_partner_user:
+            self.set_headers({
+                CustomHeader.PARTNER_ID.value: user.partner_members.first().partner_id
+            })
+        elif user.is_agency_user:
+            self.set_headers({
+                CustomHeader.AGENCY_OFFICE_ID.value: user.agency_members.first().office_id
+            })
+        super(CustomTestAPIClient, self)._login(user, backend=backend)
+
+    def logout(self):
+        self.user = None
+        self.clean_headers()
+        super(CustomTestAPIClient, self).logout()
 
 
 class BaseAPITestCase(APITestCase):
@@ -64,14 +85,6 @@ class BaseAPITestCase(APITestCase):
         if self.with_session_login:
             self.client = self.client_class()
             self.client.login(email=self.user.email, password='test')
-            if self.user_type == self.USER_PARTNER:
-                self.client.set_headers({
-                    CustomHeader.PARTNER_ID.value: self.user.partner_members.first().partner_id
-                })
-            elif self.user_type == self.USER_AGENCY:
-                self.client.set_headers({
-                    CustomHeader.AGENCY_OFFICE_ID.value: self.user.agency_members.first().office_id
-                })
 
     def set_current_user_role(self, role):
         if self.user_type == self.USER_PARTNER:
@@ -93,6 +106,16 @@ class BaseAPITestCase(APITestCase):
 
     def assertResponseStatusIs(self, response, status_code=status.HTTP_200_OK, msg=None):
         return self.assertEqual(response.status_code, status_code, msg=msg or getattr(response, 'data', None))
+
+    @contextmanager
+    def login_as_user(self, user: User):
+        original_user = self.client.user
+        original_headers = self.client.headers.copy()
+        self.client.force_login(user)
+        yield
+        self.client.logout()
+        self.client.force_login(original_user)
+        self.client.headers.update(original_headers)
 
     def tearDown(self):
         self.client.clean_headers()
