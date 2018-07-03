@@ -11,7 +11,7 @@ from common.factories import (
     AgencyMemberFactory,
     PartnerSimpleFactory,
     AgencyOfficeFactory,
-    PartnerFactory, UserFactory)
+    PartnerFactory, UserFactory, UnsolicitedFactory)
 from project.models import Assessment, Application
 
 
@@ -124,3 +124,20 @@ class TestApplicationsPartnerDecisionsListAPIView(BaseAPITestCase):
         read_response = self.client.get(url, format='json')
         self.assertResponseStatusIs(read_response)
         self.assertEqual(read_response.data['count'], applications.count())
+
+
+class TestSubmittedCNListAPIView(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_PARTNER
+
+    def test_get(self):
+        url = reverse('dashboard:submitted-cn')
+        read_response = self.client.get(url, format='json')
+        self.assertResponseStatusIs(read_response)
+        self.assertEqual(read_response.data['count'], 0)
+
+        UnsolicitedFactory.create_batch(10, partner=self.user.partner_members.first().partner)
+
+        read_response = self.client.get(url, format='json')
+        self.assertResponseStatusIs(read_response)
+        self.assertEqual(read_response.data['count'], 10)
