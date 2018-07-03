@@ -11,7 +11,11 @@ from common.factories import (
     AgencyMemberFactory,
     PartnerSimpleFactory,
     AgencyOfficeFactory,
-    PartnerFactory, UserFactory, UnsolicitedFactory)
+    PartnerFactory,
+    UserFactory,
+    UnsolicitedFactory,
+    DirectEOIFactory,
+)
 from project.models import Assessment, Application
 
 
@@ -137,6 +141,31 @@ class TestSubmittedCNListAPIView(BaseAPITestCase):
         self.assertEqual(read_response.data['count'], 0)
 
         UnsolicitedFactory.create_batch(10, partner=self.user.partner_members.first().partner)
+
+        read_response = self.client.get(url, format='json')
+        self.assertResponseStatusIs(read_response)
+        self.assertEqual(read_response.data['count'], 10)
+
+
+class TestPendingOffersListAPIView(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_PARTNER
+
+    def test_get(self):
+        url = reverse('dashboard:pending-offers')
+        read_response = self.client.get(url, format='json')
+        self.assertResponseStatusIs(read_response)
+        self.assertEqual(read_response.data['count'], 0)
+
+        DirectEOIFactory.create_batch(10)
+        Application.objects.update(
+            partner=self.user.partner_members.first().partner,
+            did_win=True,
+            did_accept=False,
+            did_withdraw=False,
+            decision_date=None,
+            did_decline=False,
+        )
 
         read_response = self.client.get(url, format='json')
         self.assertResponseStatusIs(read_response)
