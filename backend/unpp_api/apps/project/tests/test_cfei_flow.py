@@ -1,4 +1,6 @@
 from datetime import date
+
+from dateutil.relativedelta import relativedelta
 from django.urls import reverse
 from rest_framework import status
 
@@ -37,10 +39,10 @@ class TestOpenCFEI(BaseAPITestCase):
             ],
             "description": "asdasdas",
             "goal": "asdasdsa",
-            "deadline_date": "2018-01-24",
-            "notif_results_date": "2018-01-25",
-            "start_date": "2018-01-25",
-            "end_date": "2018-01-28",
+            "deadline_date": date.today() + relativedelta(days=1),
+            "notif_results_date": date.today() + relativedelta(days=2),
+            "start_date": date.today() + relativedelta(days=10),
+            "end_date": date.today() + relativedelta(days=20),
             "has_weighting": False,
             "locations": [
                 {
@@ -67,13 +69,23 @@ class TestOpenCFEI(BaseAPITestCase):
 
         for role in roles_allowed:
             self.set_current_user_role(role.name)
-            create_response = self.client.post(url, data=payload, format='json')
+            create_response = self.client.post(url, data=payload)
             self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
 
         for role in roles_disallowed:
             self.set_current_user_role(role.name)
-            create_response = self.client.post(url, data=payload, format='json')
+            create_response = self.client.post(url, data=payload)
             self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
+
+    def test_create_dates_out_of_order(self):
+        payload = self.base_payload.copy()
+        payload['end_date'], payload['start_date'] = payload['start_date'], payload['end_date']
+
+        self.set_current_user_role(AgencyRole.EDITOR_ADVANCED.name)
+        url = reverse('projects:open')
+
+        create_response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(create_response, status.HTTP_400_BAD_REQUEST)
 
     def test_finalize(self):
         status_expected_response = {
@@ -155,8 +167,8 @@ class TestDSRCFEI(BaseAPITestCase):
                 "focal_points": [focal_point.id],
                 "description": "123123123",
                 "goal": "123123123",
-                "start_date": "2018-01-20",
-                "end_date": "2018-01-27",
+                "start_date": date.today() + relativedelta(days=1),
+                "end_date": date.today() + relativedelta(days=15),
                 "country_code": ["FR"],
                 "locations": [
                     {
