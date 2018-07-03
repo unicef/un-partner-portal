@@ -37,8 +37,7 @@ class PartnerProfileHeaderMenu extends Component {
     const options = [];
 
     if (hasVerifyHqPermission || hasVerifyAllCSOPermission
-      || (hasVerifyAssignedCSOPermission && !partnerProfile.isHq
-        && agencyCountryCode === partnerProfile.countryCode)) {
+      || (hasVerifyAssignedCSOPermission && agencyCountryCode === partnerProfile.countryCode)) {
       options.push(
         {
           name: addVerification,
@@ -71,12 +70,12 @@ class PartnerProfileHeaderMenu extends Component {
         />}
 
         {dialogOpen[addVerification] && <AddVerificationModal
-          id={id}
+          partnerId={id}
           dialogOpen={dialogOpen[addVerification]}
           handleDialogClose={handleDialogClose}
         />}
         {dialogOpen[addObservation] && <AddFlagModal
-          id={id}
+          partnerId={id}
           dialogOpen={dialogOpen[addObservation]}
           handleDialogClose={handleDialogClose}
         />}

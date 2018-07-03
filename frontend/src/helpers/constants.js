@@ -52,8 +52,10 @@ export const PROJECT_STATUSES = {
 };
 
 export const FLAGS = {
-  YELLOW: 'Yel',
-  RED: 'Red',
+  OBSERVATION: 'FL1_Obs',
+  YELLOW: 'FL2_Yel',
+  ESCALATED: 'FL3_Esc',
+  RED: 'FL4_Red',
 };
 
 export const PLACEHOLDERS = {
