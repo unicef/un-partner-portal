@@ -71,9 +71,20 @@ def get_random_agency_office():
     return AgencyOffice.objects.order_by("?").first() or AgencyOfficeFactory()
 
 
-def get_agency_member():
-    member = User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?").first()
-    return member or AgencyMemberFactory().user
+def get_agency_member(agency=None):
+    users_queryset = User.objects.filter(agency_members__isnull=False)
+    if agency:
+        users_queryset = users_queryset.filter(agency_members__office__agency=agency)
+
+    member = users_queryset.order_by("?").first()
+    if member:
+        return member
+    if agency:
+        return AgencyMemberFactory(
+            office=AgencyOfficeFactory(agency=agency)
+        ).user
+    else:
+        return AgencyMemberFactory().user
 
 
 def get_partner_member():
@@ -588,9 +599,9 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
     agency_office = factory.LazyFunction(get_random_agency_office)
     description = factory.Sequence(lambda n: "Brief background of the project {}".format(n))
     start_date = date.today()
-    end_date = date.today()+timedelta(days=random.randint(90, 100))
-    deadline_date = date.today()+timedelta(days=random.randint(75, 85))
-    notif_results_date = date.today()+timedelta(days=random.randint(100, 111))
+    end_date = date.today() + timedelta(days=random.randint(90, 100))
+    deadline_date = date.today() + timedelta(days=random.randint(75, 85))
+    notif_results_date = date.today() + timedelta(days=random.randint(100, 111))
 
     class Meta:
         model = EOI
@@ -624,7 +635,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def focal_points(self, create, extracted, **kwargs):
-        focal_point = get_agency_member()
+        focal_point = get_agency_member(agency=self.agency)
         if focal_point:
             self.focal_points.add(focal_point)
 

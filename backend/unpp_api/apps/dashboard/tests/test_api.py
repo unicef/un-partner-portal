@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from datetime import date
 from django.urls import reverse
 
 from agency.roles import AgencyRole
@@ -11,7 +12,7 @@ from common.factories import (
     PartnerSimpleFactory,
     AgencyOfficeFactory,
     PartnerFactory, UserFactory)
-from project.models import Assessment
+from project.models import Assessment, Application
 
 
 class TestAgencyDashboardAPIView(BaseAPITestCase):
@@ -99,3 +100,27 @@ class TestCurrentUsersOpenProjectsAPIView(BaseAPITestCase):
         read_response = self.client.get(url, format='json')
         self.assertResponseStatusIs(read_response)
         self.assertEqual(read_response.data['count'], 10)
+
+
+class TestApplicationsPartnerDecisionsListAPIView(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
+
+    def test_get(self):
+        url = reverse('dashboard:applications-decisions')
+        read_response = self.client.get(url, format='json')
+        self.assertResponseStatusIs(read_response)
+        self.assertEqual(read_response.data['count'], 0)
+
+        cfeis = OpenEOIFactory.create_batch(5, created_by=self.user, agency=self.user.agency)
+        applications = Application.objects.filter(eoi__in=cfeis)
+        applications.update(
+            did_win=True,
+            did_accept=True,
+            decision_date=date.today()
+        )
+
+        read_response = self.client.get(url, format='json')
+        self.assertResponseStatusIs(read_response)
+        self.assertEqual(read_response.data['count'], applications.count())
