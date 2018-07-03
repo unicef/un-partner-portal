@@ -58,11 +58,6 @@ AddFlagModal.propTypes = {
   handleDialogClose: PropTypes.func,
 };
 
-
-const mapStateToProps = (state, ownProps) => {
-
-};
-
 const mapDispatchToProps = (dispatch, ownProps) => {
   const { partnerId } = ownProps;
   return {
@@ -72,7 +67,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 
 const containerAddFlagModal = connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps,
 )(AddFlagModal);
 

@@ -108,10 +108,10 @@ const mapStateToProps = (state, ownProps) => ({
   userId: state.session.userId,
 });
 
-const mapDispatch = (dispatch, ownProps) => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   getFlags: params => dispatch(loadPartnerFlags(ownProps.params.id, params)),
 });
 
 const connectedPartnerObservationsList =
-  connect(mapStateToProps, mapDispatch)(PartnerObservationsList);
+  connect(mapStateToProps, mapDispatchToProps)(PartnerObservationsList);
 export default withRouter(connectedPartnerObservationsList);

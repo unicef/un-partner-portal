@@ -122,7 +122,4 @@ const mapStateToProps = state => ({
   flagTypes: selectNormalizedFlagTypeChoices(state),
 });
 
-export default connect(
-  mapStateToProps,
-  null,
-)(formAddVerification);
+export default connect(mapStateToProps)(formAddVerification);

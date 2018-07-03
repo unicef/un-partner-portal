@@ -212,7 +212,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const connected = connect(mapStateToProps, null)(formFilter);
+const connected = connect(mapStateToProps)(formFilter);
 const withRouterEoiFilter = withRouter(connected);
 
 export default (withStyles(styleSheet, { name: 'PartnerObservationsListFilter' })(withRouterEoiFilter));
