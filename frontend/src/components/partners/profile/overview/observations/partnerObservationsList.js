@@ -3,7 +3,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
+import Grid from 'material-ui/Grid';
 import { TableCell } from 'material-ui/Table';
+import { Typography } from 'material-ui/';
+import { withStyles } from 'material-ui/styles';
 import PaginatedList from '../../../../common/list/paginatedList';
 import TableWithStateInUrl from '../../../../common/hoc/tableWithStateInUrl';
 import { formatDateForPrint } from '../../../../../helpers/dates';
@@ -13,6 +16,29 @@ import CustomGridColumn from '../../../../common/grid/customGridColumn';
 import ObservationTypeIcon from '../../icons/observationTypeIcon';
 import ObservationExpand from './observationExpand';
 import PartnerObservationsListFilter from './partnerObservationsListFilter';
+import UpdateObservationButton from '../../modals/updateObservation/updateObservationButton';
+
+const styleSheet = theme => ({
+  Active: {
+    color: theme.palette.userStatus.active,
+  },
+  Invited: {
+    color: theme.palette.userStatus.invited,
+  },
+  Deactivated: {
+    color: theme.palette.userStatus.deactivated,
+  },
+  options: {
+    display: 'flex',
+    float: 'right',
+    alignItems: 'center',
+  },
+  center: {
+    display: 'flex',
+    alignItems: 'center',
+    height: 58,
+  },
+});
 
 const messages = {
   me: ' (me)',
@@ -43,24 +69,42 @@ class PartnerObservationsList extends Component {
   }
 
   /* eslint-disable class-methods-use-this */
-  submitterCell(submitter) {
-    const { userId } = this.props;
+  submitterCell(hovered, id, submitter) {
+    const { classes, userId } = this.props;
 
-    return <TableCell>{submitter.name} {userId === submitter.id ? messages.me : null}, {submitter.agency_name}</TableCell>;
+    return (<TableCell>
+      {submitter ? <Grid container direction="row" alignItems="center" >
+        <Grid item sm={10} xs={12} >
+          <div className={classes.center}>
+            <Typography type="body1" color="inherit">
+              <div className={classes.center}>
+                <div>{submitter.name}</div>
+                <div>{userId === submitter.id ? messages.me : null},</div>
+                <div>{submitter.agency_name}</div>
+              </div>
+            </Typography>
+          </div>
+        </Grid>
+        <Grid item sm={2} xs={12} >
+          <div className={classes.options}>
+            {(hovered && userId === submitter.id) && <UpdateObservationButton id={id} />}
+          </div>
+        </Grid>
+      </Grid>
+        : null}
+    </TableCell>);
   }
 
   /* eslint-disable class-methods-use-this */
-  applicationCell({ row, column, value }) {
+  applicationCell({ row, column, value, hovered }) {
     if (column.name === 'submitter') {
-      return this.submitterCell(row.submitter);
+      return this.submitterCell(hovered, row.id, row.submitter);
     } else if (column.name === 'modified') {
       return (<TableCell>
         {formatDateForPrint(row.modified)}
       </TableCell>);
     } else if (column.name === 'flag_type') {
       return <TableCell>{ObservationTypeIcon(row.flag_type)}</TableCell>;
-    } else if (column.name === ' submitter') {
-      return this.submitterCell(row.submitter);
     }
 
     return <TableCell>{value}</TableCell>;
@@ -88,6 +132,7 @@ class PartnerObservationsList extends Component {
 }
 
 PartnerObservationsList.propTypes = {
+  classes: PropTypes.object.isRequired,
   applications: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   totalCount: PropTypes.number.isRequired,
@@ -114,4 +159,7 @@ const mapDispatch = (dispatch, ownProps) => ({
 
 const connectedPartnerObservationsList =
   connect(mapStateToProps, mapDispatch)(PartnerObservationsList);
-export default withRouter(connectedPartnerObservationsList);
+
+const withRouterPartner = withRouter(connectedPartnerObservationsList);
+
+export default withStyles(styleSheet, { name: 'PartnerObservationsList' })(withRouterPartner);

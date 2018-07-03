@@ -20,6 +20,7 @@ export const agencyPartnerObsLoadEnded = () => ({ type: OBSERVATIONS_LOAD_ENDED 
 const saveFlags = (state, action) => {
   const flags = R.map(item =>
     ({
+      id: item.id,
       flag_type: item.flag_type,
       category_display: item.category_display,
       modified: item.modified,
@@ -28,6 +29,7 @@ const saveFlags = (state, action) => {
       contactEmail: item.contact_email,
       contactPhone: item.contact_phone,
       attachment: item.attachment,
+      category: item.category,
     }), action.response.results);
 
   return R.assoc('items', flags, R.assoc('totalCount', action.response.count, state));
@@ -39,7 +41,7 @@ const messages = {
 
 const initialState = {
   columns: [
-    { name: 'flag_type', title: 'Type of observation', width: 400 },
+    { name: 'flag_type', title: 'Type of observation', width: 350 },
     { name: 'category_display', title: 'Category of risk' },
     { name: 'modified', title: 'Date' },
     { name: 'submitter', title: 'Added by' },
