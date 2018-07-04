@@ -75,13 +75,14 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
             AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS
         ]):
             fields.pop('comment')
+            fields.pop('validation_comment')
         if not request and not request.method == 'GET':
             fields.pop('sanctions_match')
 
         return fields
 
     @transaction.atomic
-    def update(self, instance: PartnerFlag, validated_data):
+    def update(self, instance: PartnerFlag, validated_data: dict):
         new_flag_type = validated_data.get('flag_type')
         old_flag_type = instance.flag_type
 
@@ -95,9 +96,9 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                 raise_exception=True
             )
 
-        if validated_data.get('is_valid') is False and not validated_data.get('invalidation_comment'):
+        if validated_data.get('is_valid') is not None and not validated_data.get('validation_comment'):
             raise serializers.ValidationError({
-                'invalidation_comment': 'This field is required.'
+                'validation_comment': 'This field is required.'
             })
 
         if new_flag_type and not old_flag_type == new_flag_type:

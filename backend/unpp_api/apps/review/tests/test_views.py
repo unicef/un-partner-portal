@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import random
 from typing import List
 import mock
 from django.core.management import call_command
@@ -9,6 +10,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from account.models import User
+from agency.permissions import AgencyPermission
 from agency.roles import AgencyRole
 from common.consts import FLAG_TYPES, PARTNER_TYPES, SANCTION_LIST_TYPES, INTERNAL_FLAG_CATEGORIES, FLAG_CATEGORIES
 from common.tests.base import BaseAPITestCase
@@ -18,10 +20,10 @@ from common.factories import (
     PartnerVerificationFactory,
     AgencyOfficeFactory,
     AgencyMemberFactory,
-    PartnerMemberFactory, PartnerFactory)
+    PartnerMemberFactory, PartnerFactory, COUNTRIES, SanctionedNameMatchFactory)
 from partner.models import Partner
 from review.models import PartnerFlag
-from sanctionslist.models import SanctionedItem, SanctionedName
+from sanctionslist.models import SanctionedItem, SanctionedName, SanctionedNameMatch
 
 
 class TestPartnerFlagAPITestCase(BaseAPITestCase):
@@ -78,7 +80,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
         payload = {
             'is_valid': False,
-            'invalidation_comment': 'comment',
+            'validation_comment': 'comment',
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
@@ -179,7 +181,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
             patch_response = self.client.patch(flag_url, data={
                 'is_valid': is_valid,
-                'invalidation_comment': 'comment',
+                'validation_comment': 'comment',
             })
             self.assertResponseStatusIs(patch_response, status.HTTP_403_FORBIDDEN)
 
@@ -188,7 +190,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
             patch_response = self.client.patch(flag_url, data={
                 'is_valid': is_valid,
-                'invalidation_comment': 'comment',
+                'validation_comment': 'comment',
             })
             self.assertResponseStatusIs(patch_response, status.HTTP_200_OK)
             self.assertEqual(patch_response.data['flag_type'], FLAG_TYPES.red if is_valid else FLAG_TYPES.yellow)
@@ -262,29 +264,28 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
     user_type = BaseAPITestCase.USER_AGENCY
     agency_role = AgencyRole.HQ_EDITOR
 
-    def setUp(self):
-        super(TestPartnerVerificationAPITestCase, self).setUp()
+    base_payload = {
+        "is_mm_consistent": True,
+        "is_indicate_results": True,
+        "cert_uploaded_comment": "Comment",
+        "indicate_results_comment": "Comment",
+        "yellow_flag_comment": "Comment",
+        "mm_consistent_comment": "Comment",
+        "is_cert_uploaded": True,
+        "rep_risk_comment": "Comment",
+        "is_yellow_flag": False,
+        "is_rep_risk": False
+    }
+
+    def test_verification_create(self):
         AgencyOfficeFactory.create_batch(self.quantity)
         PartnerSimpleFactory.create_batch(self.quantity)
         PartnerVerificationFactory.create_batch(self.quantity)
-
-    def test_verification_create(self):
         partner = Partner.objects.first()
 
         url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
+        payload = self.base_payload.copy()
 
-        payload = {
-            "is_mm_consistent": True,
-            "is_indicate_results": True,
-            "cert_uploaded_comment": "Comment",
-            "indicate_results_comment": "Comment",
-            "yellow_flag_comment": "Comment",
-            "mm_consistent_comment": "Comment",
-            "is_cert_uploaded": True,
-            "rep_risk_comment": "Comment",
-            "is_yellow_flag": False,
-            "is_rep_risk": False
-        }
         # Test Verified Status
         response = self.client.post(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status_code=status.HTTP_400_BAD_REQUEST)
@@ -298,6 +299,119 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
             payload['is_rep_risk'] = True
             response = self.client.post(url, data=payload, format='json')
             self.assertEquals(response.data['is_verified'], False)
+
+    def test_ingo_verification_permissions(self):
+        partner = PartnerFactory(display_type=PARTNER_TYPES.international)
+        self.assertTrue(partner.is_hq)
+
+        url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
+
+        payload = self.base_payload.copy()
+
+        roles_allowed, roles_disallowed = self.get_agency_with_and_without_permissions(
+            AgencyPermission.VERIFY_INGO_HQ
+        )
+
+        for role in roles_allowed:
+            self.set_current_user_role(role.name)
+            create_response = self.client.post(url, data=payload)
+            self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+
+        for role in roles_disallowed:
+            self.set_current_user_role(role.name)
+            create_response = self.client.post(url, data=payload)
+            self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
+
+    def test_other_country_verification_permissions(self):
+        other_countries = [x for x in COUNTRIES if not x == self.user.agency_members.first().office.country.code]
+        partner = PartnerFactory(country_code=random.choice(other_countries))
+
+        self.assertNotEqual(partner.country_code, self.user.agency_members.first().office.country.code)
+
+        url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
+
+        payload = self.base_payload.copy()
+
+        roles_allowed, roles_disallowed = self.get_agency_with_and_without_permissions(
+            AgencyPermission.VERIFY_CSOS_GLOBALLY
+        )
+
+        for role in roles_allowed:
+            self.set_current_user_role(role.name)
+            create_response = self.client.post(url, data=payload)
+            self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+
+        for role in roles_disallowed:
+            self.set_current_user_role(role.name)
+            create_response = self.client.post(url, data=payload)
+            self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
+
+    def test_own_country_verification_permissions(self):
+        partner = PartnerFactory(country_code=self.user.agency_members.first().office.country.code)
+        self.assertEqual(partner.country_code, self.user.agency_members.first().office.country.code)
+
+        url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
+
+        payload = self.base_payload.copy()
+
+        roles_allowed, roles_disallowed = self.get_agency_with_and_without_permissions(
+            AgencyPermission.VERIFY_CSOS_FOR_OWN_COUNTRY
+        )
+
+        for role in roles_allowed:
+            self.set_current_user_role(role.name)
+            create_response = self.client.post(url, data=payload)
+            self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+
+        for role in roles_disallowed:
+            self.set_current_user_role(role.name)
+            create_response = self.client.post(url, data=payload)
+            self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
+
+    def test_verify_sanctioned_partner(self):
+        partner = PartnerFactory()
+        sanction_match: SanctionedNameMatch = SanctionedNameMatchFactory(partner=partner)
+        url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
+        payload = self.base_payload.copy()
+
+        create_response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(create_response, status.HTTP_400_BAD_REQUEST)
+
+        sanction_match.can_ignore = True
+        sanction_match.save()
+        create_response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+
+    def test_verify_ingo_child_before_hq(self):
+        hq = PartnerFactory(display_type=PARTNER_TYPES.international)
+        self.assertTrue(hq.is_hq)
+        self.assertFalse(hq.is_verified)
+        partner = PartnerFactory(display_type=PARTNER_TYPES.international, hq=hq)
+
+        url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
+        payload = self.base_payload.copy()
+
+        create_response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(create_response, status.HTTP_400_BAD_REQUEST)
+
+        PartnerVerificationFactory(partner=hq)
+        create_response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+
+    def test_verify_flagged_partner(self):
+        partner = PartnerFactory()
+        flag = PartnerFlagFactory(partner=partner, flag_type=FLAG_TYPES.red)
+
+        url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
+        payload = self.base_payload.copy()
+
+        create_response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(create_response, status.HTTP_400_BAD_REQUEST)
+
+        flag.is_valid = False
+        flag.save()
+        create_response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
 
 
 class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
@@ -356,7 +470,7 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
 
         payload = {
             'is_valid': False,
-            'invalidation_comment': 'comment',
+            'validation_comment': 'comment',
         }
         response = self.client.patch(flag_url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
@@ -366,7 +480,8 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         self.assertFalse(partner.has_sanction_match)
 
         payload = {
-            'is_valid': True
+            'is_valid': True,
+            'validation_comment': 'comment'
         }
         response = self.client.patch(flag_url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)

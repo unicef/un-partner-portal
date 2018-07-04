@@ -12,7 +12,7 @@ from common.consts import ALL_COMPLETED_REASONS, DSR_FINALIZE_RETENTION_CHOICES,
 from common.factories import AgencyMemberFactory, PartnerFactory, PartnerVerificationFactory, OpenEOIFactory, \
     DirectEOIFactory, PartnerMemberFactory
 from common.tests.base import BaseAPITestCase
-from partner.models import PartnerMember
+from partner.models import PartnerMember, Partner
 from project.models import EOI, Application
 
 
@@ -131,13 +131,14 @@ class TestOpenCFEI(BaseAPITestCase):
 class TestDSRCFEI(BaseAPITestCase):
 
     user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     def setUp(self):
         super(TestDSRCFEI, self).setUp()
         office = self.user.agency_members.first().office
         office.agency = UNICEF.model_instance
         office.save()
-        self.partner = PartnerFactory()
+        self.partner: Partner = PartnerFactory()
         PartnerVerificationFactory(partner=self.partner, submitter=self.user)
         focal_point = AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0]).user
         self.payload = {
@@ -202,6 +203,16 @@ class TestDSRCFEI(BaseAPITestCase):
             self.set_current_user_role(role.name)
             create_response = self.client.post(url, data=payload, format='json')
             self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
+
+    def test_create_with_locked_partner(self):
+        payload = self.payload.copy()
+        url = reverse('projects:direct')
+
+        self.partner.is_locked = True
+        self.partner.save()
+
+        create_response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(create_response, status.HTTP_400_BAD_REQUEST)
 
     def test_finalize(self):
         status_expected_response = {
