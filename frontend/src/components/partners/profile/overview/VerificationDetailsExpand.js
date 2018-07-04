@@ -9,6 +9,7 @@ import { visibleIfYes } from '../../../../helpers/formHelper';
 import GridColumn from '../../../../components/common/grid/gridColumn';
 import GridRow from '../../../../components/common/grid/gridRow';
 import PaddedContent from '../../../../components/common/paddedContent';
+import VerificationQuestion from './verificationQuestion';
 
 const messages = {
   certUpload: 'Has CSO uploaded its valid, non-expired registration certificate issued by the ' +

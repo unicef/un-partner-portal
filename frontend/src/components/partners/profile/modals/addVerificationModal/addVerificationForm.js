@@ -75,7 +75,6 @@ const AddVerification = (props) => {
           commentFieldName={verificationQuestions[0].commentFieldName}
           readOnly={readOnly}
         />
-        <Divider />
         {visibleIfYes(notCertUploaded)
           ? <GridColumn>
             <VerificationQuestion
@@ -95,7 +94,6 @@ const AddVerification = (props) => {
           commentFieldName={verificationQuestions[1].commentFieldName}
           readOnly={readOnly}
         />
-        <Divider />
       </GridColumn>
       <GridColumn>
         <VerificationQuestion
@@ -104,7 +102,6 @@ const AddVerification = (props) => {
           commentFieldName={verificationQuestions[2].commentFieldName}
           readOnly={readOnly}
         />
-        <Divider />
       </GridColumn>
       <GridColumn>
         <VerificationQuestion
@@ -113,7 +110,6 @@ const AddVerification = (props) => {
           commentFieldName={verificationQuestions[3].commentFieldName}
           readOnly={readOnly}
         />
-        <Divider />
       </GridColumn>
       <GridColumn>
         <VerificationQuestion
@@ -122,7 +118,6 @@ const AddVerification = (props) => {
           commentFieldName={verificationQuestions[4].commentFieldName}
           readOnly={readOnly}
         />
-        <Divider />
       </GridColumn>
       {visibleIfYes(isYellowFlag)
         ? <GridColumn>
@@ -132,7 +127,6 @@ const AddVerification = (props) => {
             commentFieldName={verificationQuestions[5].commentFieldName}
             readOnly={readOnly}
           />
-          <Divider />
         </GridColumn>
         : null}
     </form >
@@ -152,7 +146,7 @@ AddVerification.propTypes = {
 const selector = formValueSelector('addVerification');
 
 const formAddVerification = reduxForm({
-  form: 'addVerification',
+  destroyOnUnmount: false,
 })(AddVerification);
 
 

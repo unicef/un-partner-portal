@@ -10,9 +10,10 @@ import HeaderNavigation from '../../../../components/common/headerNavigation';
 import PaginatedList from '../../../../components/common/list/paginatedList';
 import TableWithStateInUrl from '../../../../components/common/hoc/tableWithStateInUrl';
 import { isQueryChanged } from '../../../../helpers/apiHelper';
-import VerificationDetailsExpand from './VerificationDetailsExpand';
+// import VerificationDetailsExpand from './VerificationDetailsExpand';
 import VerificationIcon from '../../profile/icons/verificationIcon';
 import { loadVerificationsList } from '../../../../reducers/partnerVerificationsTab';
+import AddVerificationForm from '../modals/addVerificationModal/addVerificationForm'
 
 const textStyles = {
   position: 'inline',
@@ -74,7 +75,7 @@ class VerificationsContainer extends Component {
                 loading={loading}
                 expandable
                 templateCell={tableCells}
-                expandedCell={row => <VerificationDetailsExpand user={row} readOnly />}
+                expandedCell={row => <AddVerificationForm initialValues={row} form={`verificationDetailsExpanded_${row.id}`} readOnly />}
               />
             </Grid>
           </Grid>
