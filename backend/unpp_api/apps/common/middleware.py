@@ -1,11 +1,7 @@
 from django.utils.functional import SimpleLazyObject
-from django.conf import settings
 
 from common.headers import CustomHeader
 from partner.models import Partner
-
-
-# TODO: Remove dev fallbacks, fix tests when it's done
 
 
 def get_partner_and_member_objects(request):
@@ -16,18 +12,16 @@ def get_partner_and_member_objects(request):
     if request.user.is_authenticated():
         # HQ profiles ability to log in as any country office complicates code a bit here
         # since they won't have a corresponding PartnerMember object
-        partner_member = request.user.partner_members.filter(
+        active_partner_members = request.user.partner_members.exclude(partner__is_locked=True)
+
+        partner_member = active_partner_members.filter(
             partner_id=partner_id
-        ).first() or request.user.partner_members.filter(
+        ).first() or active_partner_members.filter(
             partner__children__id=partner_id
         ).first()
 
         if partner_member:
             partner = Partner.objects.filter(id=partner_id).first()
-
-        # TODO: remove when we finish whole logic for http headers (like: HTTP_PARTNER_ID)
-        if not partner_member and settings.IS_DEV:
-            partner_member = request.user.partner_members.first()
 
     if not partner and partner_member:
         partner = partner_member.partner
@@ -58,9 +52,6 @@ def get_office_member_object(request):
         if office_id:
             return request.user.agency_members.filter(office_id=office_id).first()
 
-        if settings.IS_DEV:
-            # TODO: Remove once header is added on the frontend
-            return request.user.agency_members.first()
     return None
 
 

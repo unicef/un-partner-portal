@@ -17,7 +17,7 @@ const labels = {
   updated: 'Last updated: ',
   partnerName: 'Partner name',
   partnerId: 'Partner ID',
-  type: 'Type of organisation',
+  type: 'Type of organization',
   country: 'Country',
   location: 'Location of office',
   headOfOrganization: 'Head of organization',

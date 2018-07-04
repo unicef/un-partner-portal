@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classname from 'classnames';
-
 import { withStyles } from 'material-ui/styles';
 import Flag from 'material-ui-icons/Flag';
 import { FLAGS } from '../../../../helpers/constants';

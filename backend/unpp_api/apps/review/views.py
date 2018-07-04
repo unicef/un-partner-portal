@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
@@ -15,6 +16,7 @@ from common.permissions import (
     current_user_has_permission,
 )
 from partner.models import Partner
+from review.filters import PartnerFlagFilter
 from review.serializers import PartnerFlagSerializer, PartnerVerificationSerializer
 from review.models import PartnerFlag, PartnerVerification
 
@@ -33,6 +35,10 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
     )
     serializer_class = PartnerFlagSerializer
     pagination_class = SmallPagination
+    filter_backends = (
+        DjangoFilterBackend,
+    )
+    filter_class = PartnerFlagFilter
 
     def get_queryset(self):
         return PartnerFlag.objects.filter(partner=self.kwargs['partner_id'])

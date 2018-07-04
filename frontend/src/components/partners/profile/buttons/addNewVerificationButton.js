@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Add from 'material-ui-icons/Add';
+import VerifiedUser from 'material-ui-icons/VerifiedUser';
 import IconWithTextButton from '../../../common/iconWithTextButton';
 
 const messages = {
-  text: 'Add new verification',
+  text: 'Verify Profile',
 };
 
 const AddNewVerificationButton = (props) => {
   const { handleClick } = props;
   return (
     <IconWithTextButton
-      icon={<Add />}
+      icon={<VerifiedUser />}
       text={messages.text}
       onClick={handleClick}
     />

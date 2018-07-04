@@ -26,9 +26,9 @@ export const loadPartnerFlags = (partnerId, params) => sendRequest({
   apiParams: [partnerId, params],
 });
 
-export const updatePartnerFlags = (partnerId, body, edit, flagId) => (dispatch) => {
+export const updatePartnerFlags = (partnerId, body, edit) => (dispatch) => {
   const method = edit ? patchPartnerFlags : postPartnerFlags;
-  return method(partnerId, body, flagId)
+  return method(partnerId, body, body.flag_type)
     .then((flag) => {
       dispatch(loadPartnerFlags(partnerId));
       dispatch(loadPartnerProfileSummary(partnerId));

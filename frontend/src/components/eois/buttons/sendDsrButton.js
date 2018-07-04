@@ -4,7 +4,7 @@ import ButtonWithTooltip from '../../common/buttonWithTooltip';
 
 const messages = {
   text: 'Send',
-  tooltip: 'In order to publish this DS/R, you need to send it to Advanced Editor for acceptance.',
+  tooltip: 'In order for this direct selection/retention to become active, it must be sent to the focal point for publication.',
 };
 
 const EditCfeiButton = (props) => {

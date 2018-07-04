@@ -25,7 +25,7 @@ const messages = {
   completedReasonLabel: 'Choose reason for finalzing this direct selection/retention:',
   retentionPlaceholder: 'Select time period',
   retentionLabel: 'Time period:',
-  
+
 };
 
 const mapCompletionReasons = (disableNoC, disablePar) => (item) => {
@@ -39,11 +39,13 @@ const mapCompletionReasons = (disableNoC, disablePar) => (item) => {
 
 const FinalizeDsrForm = (props) => {
   const { classes, handleSubmit, completionReasons, timePeriods, completedReason, hasWinners } = props;
-  const completedReasonAccepted = [];
-  const completedReasonRetention = [];
-  const completedReasonCancelled = [];
-  const checkIfNotRetention = completedReason !== 'accepted_retention';
   const checkIfNotCancelled = completedReason !== 'cancelled';
+  const completedReasonAccepted = [];
+  const completedReasonCancelled = [];
+  completedReasonCancelled.push(completionReasons[0]);
+  completedReasonAccepted.push(completionReasons[1]);
+  const acceptedWithRetention = completedReasonAccepted[0].value === 'accepted_retention';
+  const acceptedRegular = completedReasonAccepted[0].value === 'accepted';
 
   const formControlStyle = {
     marginLeft: '20px',
@@ -54,10 +56,6 @@ const FinalizeDsrForm = (props) => {
     paddingBottom: '12px',
   };
 
-  completedReasonAccepted.push(completionReasons[1]);
-  completedReasonRetention.push(completionReasons[2]);
-  completedReasonCancelled.push(completionReasons[0]);
-
   return (
     <form onSubmit={handleSubmit}>
       <TextFieldForm
@@ -66,35 +64,31 @@ const FinalizeDsrForm = (props) => {
         label={messages.justificationLabel}
         commentFormControlStyle={commentFormControlStyle}
       />
-      <RadioForm
+      {acceptedRegular && <RadioForm
         label={messages.completedReasonLabel}
         fieldName="completed_reason"
         values={completedReasonAccepted}
         disabled={!hasWinners}
         column
-      />
-      <RadioForm
-        fieldName="completed_reason"
-        values={completedReasonRetention}
-        disabled={!hasWinners}
-        column
-      />
-      <GridRow>
+      />}
+      {acceptedWithRetention && <GridRow>
+        <RadioForm
+          fieldName="completed_reason"
+          values={completedReasonRetention}
+          disabled={!hasWinners}
+          column
+        />
+
         <Grid>
           <SelectForm
             fieldName="completed_retention"
             placeholder={messages.retentionPlaceholder}
             label={messages.retentionLabel}
             values={timePeriods}
-            optional={checkIfNotRetention}
-            selectFieldProps={{
-              disabled: checkIfNotRetention,
-            }}
             formControlStyle={formControlStyle}
           />
         </Grid>
-        <Grid />
-      </GridRow>
+      </GridRow>}
       <RadioForm
         fieldName="completed_reason"
         values={completedReasonCancelled}

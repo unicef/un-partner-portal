@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'ramda';
 import { connect } from 'react-redux';
-import Typography from 'material-ui/Typography';
 import {
   selectMostRecentVerification,
   selectPreviousVerificationCount,
@@ -12,8 +11,6 @@ import VerificationItem from './verificationItem';
 
 import Loader from '../../../../common/loader';
 import EmptyContent from '../../../../common/emptyContent';
-import SimpleCollapsableItem from '../../../../common/simpleCollapsableItem';
-import PreviousVerificationsList from './previousVerificationsList';
 import PaddedContent from '../../../../common/paddedContent';
 
 const messages = {
@@ -45,16 +42,6 @@ class VerificationContent extends Component {
           <PaddedContent>
             <VerificationItem verification={mostRecentVerification} />
           </PaddedContent>
-          {previousCount > 0 && <SimpleCollapsableItem
-            handleChange={this.handleChange}
-            expanded={this.state.expanded}
-            title={<Typography type="caption">{`${messages.previous}: ${previousCount}`}</Typography>}
-            component={<PreviousVerificationsList
-              partnerId={partnerId}
-              count={previousCount}
-              verifications={verifications}
-            />}
-          />}
         </div>
       </Loader>
     );

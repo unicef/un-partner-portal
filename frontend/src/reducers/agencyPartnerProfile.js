@@ -41,6 +41,8 @@ const savePartnerProfileOverview = (state, action) => {
     lastUpdate: R.prop('last_profile_update', partnerDetails),
     name: R.prop('legal_name', partnerDetails),
     verified: R.path(['partner_additional', 'is_verified'], partnerDetails),
+    isHq: R.path(['is_hq'], partnerDetails),
+    countryCode: R.path(['country_code'], partnerDetails),
     partnerId: R.prop('id', partnerDetails),
     organisationType: R.path(['partnerProfileConfig', 'partner-type', R.prop(
       'display_type', partnerDetails)], wholeState),

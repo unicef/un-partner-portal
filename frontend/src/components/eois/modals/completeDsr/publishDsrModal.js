@@ -8,8 +8,8 @@ import ControlledModal from '../../../common/modals/controlledModal';
 import { publishCfeiRequest } from '../../../../reducers/publishCfei';
 
 const messages = {
-  title: 'Are you sure you want to publish this DS/R?',
-  info: 'Please confirm that you want to publish this direct selection/retention. Email with notification will be sent to selected partner.',
+  title: 'Are you sure you want to publish this Direct selection / retention?',
+  info: 'Please confirm that this direct selection/retention should be published. An e-mail notification will be sent to the selected partner.',
   publish: 'publish',
 };
 

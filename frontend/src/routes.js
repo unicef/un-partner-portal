@@ -42,6 +42,7 @@ import cfeiOpenResults from './components/eois/details/overview/results/results'
 import cfeiDirectResponse from './components/eois/details/overview/results/response';
 import cfeiFeedback from './components/eois/details/overview/feedback';
 import partnerApplicationList from './components/agency/partnerApplicationList';
+import partnerObservationsList from './components/partners/profile/overview/observations/partnerObservationsList';
 
 // ID portal
 import mainLayoutIdPortal from './idPortal/mainLayout';
@@ -107,6 +108,7 @@ const allRoutes = () => (
               <Route path="details" component={organizationProfileOverviewPaper} />
               <Route path="users" component={null} />
               <Route path="verification" component={partnerVerification} />
+              <Route path="observations" component={partnerObservationsList} />
               <Route path="applications" component={partnerApplicationList} />
             </Route>
           </Route>

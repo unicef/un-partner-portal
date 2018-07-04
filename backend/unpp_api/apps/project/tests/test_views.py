@@ -78,7 +78,7 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
         super(TestPinUnpinEOIAPITestCase, self).setUp()
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
-        OpenEOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity, is_published=True)
 
     def test_pin_unpin_project_wrong_params(self):
         eoi_ids = EOI.objects.all().values_list('id', flat=True)
@@ -764,6 +764,9 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         self.client.force_login(self.user)
         self.user_type = BaseAPITestCase.USER_AGENCY
         self.set_current_user_role(AgencyRole.EDITOR_ADVANCED.name)
+        self.client.set_headers({
+            CustomHeader.AGENCY_OFFICE_ID.value: self.user.agency_members.first().office_id
+        })
 
         url = reverse('projects:convert-unsolicited', kwargs={'pk': response.data['id']})
         start_date = date.today()
@@ -771,7 +774,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         office = AgencyOfficeFactory(agency=app.agency)
         focal_points = [
             am.user.id for am in AgencyMemberFactory.create_batch(
-                5, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office
+                3, role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=office
             )
         ]
 
@@ -786,7 +789,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         }
         response = self.client.post(url, data=payload, format='json')
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         eoi = EOI.objects.last()
         self.assertEquals(EOI.objects.count(), 1)
         self.assertEquals(eoi.other_information, payload['other_information'])
@@ -847,27 +850,18 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
 
 class TestInvitedPartnersListAPIView(BaseAPITestCase):
 
-    user_type = 'agency'
-    quantity = 1
-
-    def setUp(self):
-        super(TestInvitedPartnersListAPIView, self).setUp()
-        PartnerSimpleFactory()
-        AgencyOfficeFactory.create_batch(self.quantity)
-        AgencyMemberFactory.create_batch(self.quantity)
-        OpenEOIFactory.create_batch(self.quantity)
+    user_type = BaseAPITestCase.USER_AGENCY
 
     def test_serializes_same_fields_on_get_and_patch(self):
-        eoi = EOI.objects.first()
-        self.client.force_login(eoi.created_by)
+        eoi = OpenEOIFactory(created_by=self.user)
         url = reverse('projects:eoi-detail', kwargs={"pk": eoi.id})
         read_response = self.client.get(url, format='json')
-        self.assertEqual(read_response.status_code, status.HTTP_200_OK)
+        self.assertResponseStatusIs(read_response)
 
         update_response = self.client.patch(url, {
             'title': 'Another title'
         })
-        self.assertEqual(update_response.status_code, status.HTTP_200_OK)
+        self.assertResponseStatusIs(update_response)
         self.assertEqual(set(read_response.data.keys()), set(update_response.data.keys()))
 
 
@@ -938,10 +932,10 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
             ],
             "description": "asdasdas",
             "goal": "asdasdsa",
-            "deadline_date": "2018-01-24",
-            "notif_results_date": "2018-01-25",
-            "start_date": "2018-01-25",
-            "end_date": "2018-01-28",
+            "deadline_date": date.today() + relativedelta(days=1),
+            "notif_results_date": date.today() + relativedelta(days=2),
+            "start_date": date.today() + relativedelta(days=10),
+            "end_date": date.today() + relativedelta(days=20),
             "has_weighting": False,
             "locations": [
                 {
@@ -1073,8 +1067,8 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
                 "focal_points": [focal_point.id],
                 "description": "123123123",
                 "goal": "123123123",
-                "start_date": "2018-01-20",
-                "end_date": "2018-01-27",
+                "start_date": date.today() + relativedelta(days=1),
+                "end_date": date.today() + relativedelta(days=15),
                 "country_code": ["FR"],
                 "locations": [
                     {
@@ -1178,8 +1172,8 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
                 ],
                 "description": "123123123",
                 "goal": "123123123",
-                "start_date": "2018-01-20",
-                "end_date": "2018-01-27",
+                "start_date": date.today() + relativedelta(days=10),
+                "end_date": date.today() + relativedelta(days=20),
                 "country_code": ["FR"],
                 "locations": [
                     {
@@ -1377,6 +1371,70 @@ class TestUCNCreateAndPublish(BaseAPITestCase):
         update_response = self.client.patch(manage_url, data=new_locations_payload)
         self.assertResponseStatusIs(update_response)
         self.assertEqual(len(update_response.data['locations']), 2)
+
+        partial_update_payload = {
+            'locations': update_response.data['locations'] + [{
+                "admin_level_1": {"name": "Paris", "country_code": "FR"},
+                "lat": random.randint(-180, 180),
+                "lon": random.randint(-180, 180),
+            }]
+        }
+        update_response = self.client.patch(manage_url, data=partial_update_payload)
+        self.assertResponseStatusIs(update_response)
+        self.assertEqual(len(update_response.data['locations']), 3)
+
+    def test_locations_issue(self):
+        payload = {
+            "specializations": [
+                35
+            ],
+            "agency": Agency.objects.order_by('?').first().id,
+            "title": "testucn",
+            "cn": get_new_common_file().id,
+            "country_code": [
+                "AF"
+            ],
+            "locations": [
+                {
+                    "admin_level_1": {
+                        "name": "Samangan",
+                        "country_code": "AF"
+                    },
+                    "lat": "35.88378",
+                    "lon": "68.12125"
+                },
+                {
+                    "admin_level_1": {
+                        "name": "Ghor",
+                        "country_code": "AF"
+                    },
+                    "lat": "33.46268",
+                    "lon": "65.00114"
+                }
+            ]
+        }
+
+        url = reverse('projects:applications-unsolicited')
+        response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        ucn = Application.objects.get(id=response.data['id'])
+
+        manage_url = reverse('projects:ucn-manage', kwargs={'pk': ucn.pk})
+
+        update_payload = {
+            "title": "testucnsdsd",
+            "agency": Agency.objects.order_by('?').first().id,
+            "specializations": [
+                35
+            ],
+            "country_code": [
+                "AF"
+            ],
+            "locations": response.data['locations']
+        }
+
+        update_response = self.client.patch(manage_url, data=update_payload)
+        self.assertResponseStatusIs(update_response)
 
 
 class TestEOIPDFExport(BaseAPITestCase):

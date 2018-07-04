@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from typing import List
 import mock
 from django.core.management import call_command
 from django.urls import reverse
 
 from rest_framework import status
 
+from account.models import User
 from agency.roles import AgencyRole
-from common.consts import FLAG_TYPES, PARTNER_TYPES, SANCTION_LIST_TYPES, INTERNAL_FLAG_CATEGORIES
+from common.consts import FLAG_TYPES, PARTNER_TYPES, SANCTION_LIST_TYPES, INTERNAL_FLAG_CATEGORIES, FLAG_CATEGORIES
 from common.tests.base import BaseAPITestCase
 from common.factories import (
     PartnerSimpleFactory,
@@ -16,8 +18,9 @@ from common.factories import (
     PartnerVerificationFactory,
     AgencyOfficeFactory,
     AgencyMemberFactory,
-)
+    PartnerMemberFactory, PartnerFactory)
 from partner.models import Partner
+from review.models import PartnerFlag
 from sanctionslist.models import SanctionedItem, SanctionedName
 
 
@@ -46,6 +49,28 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['submitter']['name'], self.user.get_fullname())
         self.assertEquals(response.data['flag_type'], FLAG_TYPES.yellow)
         self.assertEquals(response.data['is_valid'], True)
+        self.assertEquals(response.data['comment'], payload['comment'])
+
+    def test_create_observation(self):
+        partner = PartnerSimpleFactory(country_code=self.user.agency_members.first().office.country.code)
+
+        url = reverse(
+            'partner-reviews:flags', kwargs={"partner_id": partner.id}
+        )
+
+        payload = {
+            "comment": "This is an observation",
+            "flag_type": FLAG_TYPES.observation,
+            "contact_email": "test@test.com",
+            "contact_person": "Nancy",
+            "contact_phone": "Smith"
+        }
+
+        response = self.client.post(url, data=payload, format='json')
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        self.assertEquals(response.data['submitter']['name'], self.user.get_fullname())
+        self.assertEquals(response.data['flag_type'], FLAG_TYPES.observation)
+        self.assertEquals(response.data['comment'], payload['comment'])
 
     def test_patch_flag(self):
         flag = PartnerFlagFactory(is_valid=True)
@@ -175,6 +200,62 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
             self.assertTrue(sum(partner.flagging_status.values()) > 0)
             self.assertEqual(partner.is_locked, is_valid)
 
+    def test_listing_flags(self):
+        partner: Partner = PartnerFactory()
+
+        # My observations filter
+        my_flags: List[PartnerFlag] = PartnerFlagFactory.create_batch(3, partner=partner, submitter=self.user)
+        other_user = PartnerMemberFactory().user
+        other_ppl_flags: List[PartnerFlag] = PartnerFlagFactory.create_batch(3, partner=partner, submitter=other_user)
+        all_flags = my_flags + other_ppl_flags
+
+        list_url = reverse('partner-reviews:flags', kwargs={"partner_id": partner.pk})
+        list_response = self.client.get(list_url)
+        self.assertResponseStatusIs(list_response)
+        self.assertEqual(list_response.data['count'], len(all_flags))
+
+        my_flags_response = self.client.get(list_url + '?only_mine=True')
+        self.assertResponseStatusIs(my_flags_response)
+        self.assertEqual(my_flags_response.data['count'], len(my_flags))
+
+        partner.flags.all().delete()
+
+        # Type filter
+        observation_flags: List[PartnerFlag] = PartnerFlagFactory.create_batch(
+            5, partner=partner, flag_type=FLAG_TYPES.observation
+        )
+        yellow_flags: List[PartnerFlag] = PartnerFlagFactory.create_batch(
+            7, partner=partner, flag_type=FLAG_TYPES.yellow
+        )
+
+        observation_flags_response = self.client.get(list_url + f'?flag_type={FLAG_TYPES.observation}')
+        self.assertResponseStatusIs(observation_flags_response)
+        self.assertEqual(observation_flags_response.data['count'], len(observation_flags))
+
+        yellow_flags_response = self.client.get(list_url + f'?flag_type={FLAG_TYPES.yellow}')
+        self.assertResponseStatusIs(yellow_flags_response)
+        self.assertEqual(yellow_flags_response.data['count'], len(yellow_flags))
+
+        partner.flags.all().delete()
+
+        # Category filter
+        fraud_and_corruption_flags: List[PartnerFlag] = PartnerFlagFactory.create_batch(
+            5, partner=partner, category=FLAG_CATEGORIES.fraud_and_corruption
+        )
+        sex_abuse_flags: List[PartnerFlag] = PartnerFlagFactory.create_batch(
+            7, partner=partner, category=FLAG_CATEGORIES.sex_abuse
+        )
+
+        fraud_and_corruption_flags_response = self.client.get(
+            list_url + f'?category={FLAG_CATEGORIES.fraud_and_corruption}'
+        )
+        self.assertResponseStatusIs(fraud_and_corruption_flags_response)
+        self.assertEqual(fraud_and_corruption_flags_response.data['count'], len(fraud_and_corruption_flags))
+
+        sex_abuse_flags_response = self.client.get(list_url + f'?category={FLAG_CATEGORIES.sex_abuse}')
+        self.assertResponseStatusIs(sex_abuse_flags_response)
+        self.assertEqual(sex_abuse_flags_response.data['count'], len(sex_abuse_flags))
+
 
 class TestPartnerVerificationAPITestCase(BaseAPITestCase):
 
@@ -261,7 +342,7 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         )
         SanctionedName.objects.get_or_create(item=item_inst, name=self.data['partner']['legal_name'])
         url = reverse('accounts:registration')
-        response = self.client.post(url, data=self.data, format='json')
+        response = self.client.post(url, data=self.data)
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         partner = Partner.objects.get(id=response.data['partner']['id'])
         self.assertTrue(partner.has_sanction_match)
@@ -277,7 +358,7 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
             'is_valid': False,
             'invalidation_comment': 'comment',
         }
-        response = self.client.patch(flag_url, data=payload, format='json')
+        response = self.client.patch(flag_url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertFalse(response.data['is_valid'])
         partner.refresh_from_db()
@@ -287,12 +368,26 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         payload = {
             'is_valid': True
         }
-        response = self.client.patch(flag_url, data=payload, format='json')
+        response = self.client.patch(flag_url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertTrue(response.data['is_valid'])
         partner.refresh_from_db()
         self.assertTrue(partner.is_locked)
         self.assertTrue(partner.has_sanction_match)
+
+        self.client.logout()
+        partner_member = PartnerMemberFactory(partner=partner)
+        user: User = partner_member.user
+        password = 'testing1235'
+        user.set_password(password)
+        user.save()
+
+        login_url = reverse('rest_login')
+        response = self.client.post(login_url, data={
+            'email': user.email,
+            'password': password,
+        })
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
 
     def test_matches_dont_duplicate(self):
         item_inst, _ = SanctionedItem.objects.update_or_create(

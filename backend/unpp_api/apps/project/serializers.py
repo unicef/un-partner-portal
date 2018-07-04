@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import datetime
+from datetime import datetime, date
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -123,14 +123,31 @@ class CreateEOISerializer(serializers.ModelSerializer):
 
     locations = PointSerializer(many=True)
 
+    def validate(self, attrs):
+        validated_data = super(CreateEOISerializer, self).validate(attrs)
+        date_field_names_that_should_be_in_this_order = [
+            'deadline_date', 'notif_results_date', 'start_date', 'end_date'
+        ]
+        dates = []
+        for field_name in date_field_names_that_should_be_in_this_order:
+            dates.append(validated_data.get(field_name))
+
+        dates = list(filter(None, dates))
+        if not dates == sorted(dates):
+            raise serializers.ValidationError('Dates for the project are invalid.')
+
+        today = date.today()
+        if not all([d >= today for d in dates]):
+            raise serializers.ValidationError('Dates for the project cannot be set in the past.')
+
+        return validated_data
+
     class Meta:
         model = EOI
         exclude = ('cn_template', )
 
 
-class CreateDirectEOISerializer(serializers.ModelSerializer):
-
-    locations = PointSerializer(many=True)
+class CreateDirectEOISerializer(CreateEOISerializer):
 
     class Meta:
         model = EOI
@@ -310,18 +327,20 @@ class ManageUCNSerializer(MixinPreventManyCommonFile, serializers.Serializer):
     def update(self, instance, validated_data):
         self.prevent_many_common_file_validator(validated_data)
 
-        instance.agency_id = validated_data.get('agency') or instance.agency_id
+        instance.agency_id = validated_data.get('agency', {}).get('id') or instance.agency_id
         instance.proposal_of_eoi_details = validated_data.get(
             'proposal_of_eoi_details'
         ) or instance.proposal_of_eoi_details
 
         instance.cn = validated_data.get('cn') or instance.cn
 
-        locations = validated_data.get('locations_proposal_of_eoi')
-        if locations:
+        locations_data = self.initial_data.get('locations', [])
+        if locations_data:
             instance.locations_proposal_of_eoi.clear()
-            for location in locations:
-                instance.locations_proposal_of_eoi.add(Point.objects.get_point(**location))
+            for location_data in locations_data:
+                location_serializer = PointSerializer(data=location_data)
+                location_serializer.is_valid(raise_exception=True)
+                instance.locations_proposal_of_eoi.add(location_serializer.save())
 
         instance.save()
         return instance

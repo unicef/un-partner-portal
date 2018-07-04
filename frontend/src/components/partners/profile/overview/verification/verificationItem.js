@@ -35,14 +35,6 @@ const VerificationItem = (props) => {
             ? `${messages.by} ${R.path(['submitter', 'name'], verification)} ${R.path(['submitter', 'agency_name'], verification)}`
             : messages.neverVerified}
         </Typography>
-        {verification.is_verified === false && <Typography type="caption">
-          {`${messages.questions} ${countGoodAnswers(verification)}/5`}
-        </Typography>}
-        {!R.isEmpty(verification) && <Grid container justify="flex-end">
-          <Grid item>
-            <VerificationDetails verification={verification} />
-          </Grid>
-        </Grid> }
       </GridColumn>
     </Grid>
   );

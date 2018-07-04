@@ -23,7 +23,6 @@ import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
 import { ROLES, PROJECT_TYPES, DETAILS_ITEMS } from '../../../helpers/constants';
 import PaddedContent from '../../common/paddedContent';
 import MainContentWrapper from '../../common/mainContentWrapper';
-import { isUserAgencyReader, isUserAgencyEditor } from '../../../helpers/authHelpers';
 import { checkPermission, isRoleOffice, AGENCY_ROLES, PARTNER_PERMISSIONS, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
@@ -220,7 +219,6 @@ const mapStateToProps = (state, ownProps) => ({
   hasViewWinnerPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_FINALIZED_VIEW_WINNER_AND_CN, state),
   cnFile: state.conceptNote.cnFile,
   error: state.cfeiDetails.status.error,
-  isReaderEditor: isUserAgencyReader(state) || isUserAgencyEditor(state),
   status: selectCfeiStatus(state, ownProps.params.id),
   isReviewer: isUserAReviewer(state, ownProps.params.id),
   isCreator: isUserACreator(state, ownProps.params.id),

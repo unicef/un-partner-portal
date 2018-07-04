@@ -70,6 +70,7 @@ import sendCfei from './reducers/sendCfei';
 import deleteCfei from './reducers/deleteCfei';
 import deleteUcn from './reducers/deleteUcn';
 import submitUcn from './reducers/submitUcn';
+import partnerObservationsList from './reducers/agencyPartnerObservationsList';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -96,6 +97,7 @@ const mainReducer = combineReducers({
   applicationsDirectList,
   openCfeiDashboardList,
   adminOneLocation,
+  partnerObservationsList,
   nav,
   offices,
   session,
@@ -159,7 +161,7 @@ if (process.env.NODE_ENV !== 'production') {
   composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || composeEnhancers;
 }
 
-const slicer = (paths) => (state) => paths.reduce((acc, curr) => {
+const slicer = paths => state => paths.reduce((acc, curr) => {
   const path = R.split('.', curr);
 
   return R.assocPath(path, R.path(path, state), acc);
@@ -383,6 +385,12 @@ export const isUserAFocalPoint = (state, cfeiId) => cfeiDetailsSelector.isUserAF
 
 export const selectNormalizedCompletionReasons = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['completed-reason']);
+
+export const selectNormalizedFlagCategoryChoices = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['flag-category-choices'], 'value');
+
+export const selectNormalizedFlagTypeChoices = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['flag-type-choices'], 'value');
 
 export const selectNormalizedDsrFinalizeOptions = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-completed-reason']);

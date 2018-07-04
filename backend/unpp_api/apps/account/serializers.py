@@ -162,7 +162,6 @@ class PartnerUserSerializer(UserSerializer):
         fields = UserSerializer.Meta.fields + (
             'partners',
             'role',
-            'is_account_locked',
             'permissions',
         )
 
@@ -207,12 +206,12 @@ class PartnerMemberSerializer(serializers.ModelSerializer):
 class CustomLoginSerializer(LoginSerializer):
 
     def validate(self, attrs):
-        sup_attrs = super(CustomLoginSerializer, self).validate(attrs)
-        user = sup_attrs['user']
+        attrs = super(CustomLoginSerializer, self).validate(attrs)
+        user = attrs['user']
         if user.is_partner_user:
-            if user.is_account_locked:
+            if not user.partner_members.filter(partner__is_locked=False).exists():
                 raise serializers.ValidationError('Account is Currently Locked')
-        return sup_attrs
+        return attrs
 
 
 class CustomPasswordResetSerializer(PasswordResetSerializer):
