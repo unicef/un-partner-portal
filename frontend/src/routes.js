@@ -134,7 +134,11 @@ const allRoutes = () => (
               <Route path="users" component={null} />
             </Route>
           </Route>
-          <Route path="settings" component={agencyMembersContainer} />
+          <Route path="reports" component={agencyMembersContainer}>
+            <Route path="information" component={null} />
+            <Route path="management" component={null} />
+            <Route path="verification" component={null} />
+          </Route>
         </Route>
       </Route>
       <Route component={mainIdPortal}>

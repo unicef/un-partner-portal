@@ -79,6 +79,10 @@ import idPortalNewUser from './idPortal/reducers/newUser';
 import idPortalEditUser from './idPortal/reducers/editUser';
 import idPortalDeactivateUser from './idPortal/reducers/deactivateUser';
 
+// REPORTS
+
+import reportsNav from './reducers/reportsNav';
+
 const mainReducer = combineReducers({
   cfei,
   cfeiNav,
@@ -145,6 +149,7 @@ const mainReducer = combineReducers({
   cache,
   routesHistory,
   applicationComparisonReport,
+  reportsNav,
 
   // ID portal
   idPortalNav,
