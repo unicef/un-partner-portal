@@ -88,7 +88,7 @@ class PartnerObservationsList extends Component {
         </Grid>
         <Grid item sm={2} xs={12} >
           <div className={classes.options}>
-            {(userId === submitter.id) && flagType === FLAGS.YELLOW && !isValid && <UpdateObservationButton id={id} />}
+            {(userId === submitter.id) && flagType === FLAGS.YELLOW && isValid && <UpdateObservationButton id={id} />}
           </div>
           <div className={classes.options}>
             {hovered && hasResolveEscalatePermission && flagType === FLAGS.ESCALATED && <UpdateEscalatedObservationButton id={id} />}
@@ -102,13 +102,13 @@ class PartnerObservationsList extends Component {
   /* eslint-disable class-methods-use-this */
   applicationCell({ row, column, value, hovered }) {
     if (column.name === 'submitter') {
-      return this.actionFlagCell(hovered, row.id, row.submitter, row.flag_type, row.is_valid);
+      return this.actionFlagCell(hovered, row.id, row.submitter, row.flag_type, row.isValid);
     } else if (column.name === 'modified') {
       return (<TableCell>
         {formatDateForPrint(row.modified)}
       </TableCell>);
     } else if (column.name === 'flag_type') {
-      return <TableCell>{ObservationTypeIcon(row.flag_type)}</TableCell>;
+      return <TableCell>{ObservationTypeIcon(row.flag_type, row.isValid)}</TableCell>;
     }
 
     return <TableCell>{value}</TableCell>;

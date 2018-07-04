@@ -16,9 +16,9 @@ const ObservationTypeIcon = (flagType, isValid) => {
   if (flagType === FLAGS.OBSERVATION) {
     return <div style={{ display: 'flex', alignItems: 'center' }}><ObservationIcon /> {messages.flagObs}</div>;
   } else if (flagType === FLAGS.YELLOW && isValid === false) {
-    return <div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.YELLOW} /> {messages.flagYel}</div>;
-  } else if (flagType === FLAGS.YELLOW) {
     return <div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.YELLOW} /> {messages.flagYelNv}</div>;
+  } else if (flagType === FLAGS.YELLOW) {
+    return <div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.YELLOW} /> {messages.flagYel}</div>;
   } else if (flagType === FLAGS.RED) {
     return <div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.RED} /> {messages.flagRed}</div>;
   } else if (flagType === FLAGS.ESCALATED) {
