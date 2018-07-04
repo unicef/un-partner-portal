@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import random
 from typing import List
 import mock
 from django.core.management import call_command
@@ -19,7 +20,7 @@ from common.factories import (
     PartnerVerificationFactory,
     AgencyOfficeFactory,
     AgencyMemberFactory,
-    PartnerMemberFactory, PartnerFactory)
+    PartnerMemberFactory, PartnerFactory, COUNTRIES)
 from partner.models import Partner
 from review.models import PartnerFlag
 from sanctionslist.models import SanctionedItem, SanctionedName
@@ -276,13 +277,10 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
         "is_rep_risk": False
     }
 
-    def setUp(self):
-        super(TestPartnerVerificationAPITestCase, self).setUp()
+    def test_verification_create(self):
         AgencyOfficeFactory.create_batch(self.quantity)
         PartnerSimpleFactory.create_batch(self.quantity)
         PartnerVerificationFactory.create_batch(self.quantity)
-
-    def test_verification_create(self):
         partner = Partner.objects.first()
 
         url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
@@ -312,6 +310,30 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
 
         roles_allowed, roles_disallowed = self.get_agency_with_and_without_permissions(
             AgencyPermission.VERIFY_INGO_HQ
+        )
+
+        for role in roles_allowed:
+            self.set_current_user_role(role.name)
+            create_response = self.client.post(url, data=payload)
+            self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+
+        for role in roles_disallowed:
+            self.set_current_user_role(role.name)
+            create_response = self.client.post(url, data=payload)
+            self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
+
+    def test_other_country_verification_permissions(self):
+        other_countries = [x for x in COUNTRIES if not x == self.user.agency_members.first().office.country.code]
+        partner = PartnerFactory(country_code=random.choice(other_countries))
+
+        self.assertNotEqual(partner.country_code, self.user.agency_members.first().office.country.code)
+
+        url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
+
+        payload = self.base_payload.copy()
+
+        roles_allowed, roles_disallowed = self.get_agency_with_and_without_permissions(
+            AgencyPermission.VERIFY_CSOS_GLOBALLY
         )
 
         for role in roles_allowed:

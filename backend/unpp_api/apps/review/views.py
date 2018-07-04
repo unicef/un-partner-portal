@@ -93,6 +93,8 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
         ):
             if not partner.country_code == self.request.agency_member.office.country.code:
                 raise PermissionDenied('You do not have permission to verify partner outside your country office.')
+        else:
+            raise PermissionDenied
 
         if not partner.profile_is_complete:
             raise serializers.ValidationError('You cannot verify partners before they complete their profile.')
