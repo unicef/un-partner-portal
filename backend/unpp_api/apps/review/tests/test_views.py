@@ -382,6 +382,21 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
         create_response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
 
+    def test_verify_ingo_child_before_hq(self):
+        hq = PartnerFactory(display_type=PARTNER_TYPES.international)
+        self.assertTrue(hq.is_hq)
+        partner = PartnerFactory(display_type=PARTNER_TYPES.international, hq=hq)
+
+        url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
+        payload = self.base_payload.copy()
+
+        create_response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(create_response, status.HTTP_400_BAD_REQUEST)
+
+        PartnerVerificationFactory(partner=hq)
+        create_response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+
 
 class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
 
