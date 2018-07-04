@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^api/rest-auth/', include('rest_auth.urls')),
     url(r'^api/test-raise-exception/', test_raise_exception_view),
 
-    url(r'^social/', include('social_django.urls', namespace='social')),
+    url(r'^api/social/', include('social_django.urls', namespace='social')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.IS_DEV or settings.IS_STAGING:
