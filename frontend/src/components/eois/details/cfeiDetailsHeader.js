@@ -37,7 +37,7 @@ class CfeiHeader extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.cfeiTabs = this.cfeiTabs.bind(this);
-    this.filterTaba = this.filterTabs.bind(this);
+    this.filterTabs = this.filterTabs.bind(this);
     this.hasPermissionToViewApplications = this.hasPermissionToViewApplications.bind(this);
   }
 
@@ -51,6 +51,7 @@ class CfeiHeader extends Component {
   componentWillUnmount() {
     this.props.uploadCnClearState();
   }
+  
   hasPermissionToViewApplications(hasActionPermission) {
     const { isAdvEd, isPAM, isBasEd, isMFT, isCreator, isFocalPoint } = this.props;
 

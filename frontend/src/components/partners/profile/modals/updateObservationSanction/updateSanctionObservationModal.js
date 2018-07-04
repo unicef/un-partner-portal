@@ -2,18 +2,20 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
+import { withRouter } from 'react-router';
 import ControlledModal from '../../../../common/modals/controlledModal';
 import { updatePartnerFlags } from '../../../../../reducers/partnerFlags';
-import AddFlagForm from './addFlagForm';
+import UpdateSanctionObservationForm from './updateSanctionObservationForm';
+import { FLAGS } from '../../../../../helpers/constants';
+import FlagIcon from '../../icons/flagIcon';
 
 const messages = {
-  title: 'Are you sure you want to add an observation to this Profile?',
-  info: 'An observation can be added to record brief UN notes collaboration history, partner performance or other key issues.',
+  title: 'Update observation',
+  info: 'Risk flag',
   save: 'save',
 };
 
-
-class AddFlagModal extends Component {
+class UpdateSanctionObservationModal extends Component {
   constructor(props) {
     super(props);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -26,15 +28,17 @@ class AddFlagModal extends Component {
   }
 
   render() {
-    const { submitForm, dialogOpen, handleDialogClose } = this.props;
+    const { id, dialogOpen, submitForm, handleDialogClose } = this.props;
+    const labelInfo = (<div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.YELLOW} /> {messages.info}</div>);
+
     return (
       <div>
         <ControlledModal
-          maxWidth="md"
+          fullWidth
           title={messages.title}
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
-          info={{ title: messages.info }}
+          info={{ title: labelInfo }}
           buttons={{
             flat: {
               handleClick: handleDialogClose,
@@ -44,17 +48,18 @@ class AddFlagModal extends Component {
               label: messages.save,
             },
           }}
-          content={<AddFlagForm onSubmit={this.onFormSubmit} />}
+          content={<UpdateSanctionObservationForm id={id} onSubmit={this.onFormSubmit} />}
         />
       </div >
     );
   }
 }
 
-AddFlagModal.propTypes = {
+UpdateSanctionObservationModal.propTypes = {
+  id: PropTypes.number,
   dialogOpen: PropTypes.bool,
-  submitForm: PropTypes.func,
   addFlag: PropTypes.func,
+  submitForm: PropTypes.func,
   handleDialogClose: PropTypes.func,
 };
 
@@ -62,13 +67,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const { partnerId } = ownProps;
   return {
     addFlag: body => dispatch(updatePartnerFlags(partnerId, body, false)),
-    submitForm: () => dispatch(submit('addFlag')),
+    submitForm: () => dispatch(submit('updateSanctionObservationForm')),
   };
 };
 
-const containerAddFlagModal = connect(
+const connectedUpdateSanctionObservationModal = connect(
   null,
   mapDispatchToProps,
-)(AddFlagModal);
+)(UpdateSanctionObservationModal);
 
-export default containerAddFlagModal;
+export default withRouter(connectedUpdateSanctionObservationModal);

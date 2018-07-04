@@ -6,7 +6,7 @@ import { withStyles } from 'material-ui/styles';
 import Create from 'material-ui-icons/Create';
 import IconWithTextButton from '../../../../../components/common/iconWithTextButton';
 import withMultipleDialogHandling from '../../../../../components/common/hoc/withMultipleDialogHandling';
-import UpdateObservationModal from './updateObservationModal';
+import UpdateSanctionObservationModal from './updateSanctionObservationModal';
 
 const styleSheet = theme => ({
   grey: {
@@ -19,7 +19,7 @@ const styleSheet = theme => ({
 
 const update = 'update';
 
-const UpdateObservationButton = (props) => {
+const UpdateSanctionObservationButton = (props) => {
   const { id,
     classes,
     dialogOpen,
@@ -36,8 +36,7 @@ const UpdateObservationButton = (props) => {
           e.stopPropagation();
           handleDialogOpen(update);
         }}
-      />
-      {dialogOpen[update] && <UpdateObservationModal
+      /> {dialogOpen[update] && <UpdateSanctionObservationModal
         id={id}
         dialogOpen={dialogOpen[update]}
         handleDialogClose={handleDialogClose}
@@ -46,7 +45,7 @@ const UpdateObservationButton = (props) => {
   );
 };
 
-UpdateObservationButton.propTypes = {
+UpdateSanctionObservationButton.propTypes = {
   id: PropTypes.number,
   classes: PropTypes.object.isRequired,
   dialogOpen: PropTypes.object,
@@ -58,5 +57,5 @@ UpdateObservationButton.propTypes = {
 export default compose(
   withMultipleDialogHandling,
   withRouter,
-  withStyles(styleSheet, { name: 'updateObservationButton' }),
-)(UpdateObservationButton);
+  withStyles(styleSheet, { name: 'updateSanctionObservationButton' }),
+)(UpdateSanctionObservationButton);

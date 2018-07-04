@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import R from 'ramda';
 import { selectIndexWithDefaultEmptyObject } from './normalizationHelpers';
 import { getPartnerFlags, postPartnerFlags, patchPartnerFlags } from '../helpers/api/api';
+import { loadPartnerFlags } from './agencyPartnerObservationsList';
 import { loadPartnerProfileSummary } from './agencyPartnerProfile';
 import { sendRequest } from '../helpers/apiHelper';
 import apiMeta, { success } from './apiMeta';
@@ -14,7 +15,7 @@ const errorMsg = 'Couldn\'t load flag details, ' +
 const PARTNER_FLAGS = 'PARTNER_FLAGS';
 const tag = 'partnerFlags';
 
-export const loadPartnerFlags = (partnerId, params) => sendRequest({
+export const loadPartnerFlag = (partnerId, params) => sendRequest({
   loadFunction: getPartnerFlags,
   meta: {
     reducerTag: tag,
@@ -26,9 +27,10 @@ export const loadPartnerFlags = (partnerId, params) => sendRequest({
   apiParams: [partnerId, params],
 });
 
-export const updatePartnerFlags = (partnerId, body, edit) => (dispatch) => {
+export const updatePartnerFlags = (partnerId, body, edit, flagId) => (dispatch) => {
+  debugger;
   const method = edit ? patchPartnerFlags : postPartnerFlags;
-  return method(partnerId, body, body.flag_type)
+  return method(partnerId, body, flagId)
     .then((flag) => {
       dispatch(loadPartnerFlags(partnerId));
       dispatch(loadPartnerProfileSummary(partnerId));

@@ -6,17 +6,17 @@ import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import ControlledModal from '../../../../common/modals/controlledModal';
 import { updatePartnerFlags } from '../../../../../reducers/partnerFlags';
-import UpdateObservationForm, { OBSERVATION_DECISION } from './updateObservationForm';
+import UpdateEscalatedObservationForm, { ESCALATION_DECISION } from './updateEscalatedObservationForm';
 import { FLAGS } from '../../../../../helpers/constants';
 import FlagIcon from '../../icons/flagIcon';
 
 const messages = {
   title: 'Update observation',
-  info: 'Risk flag',
+  info: 'Risk flag escalated to UN Headquarters Editor',
   save: 'save',
 };
 
-class UpdateObservationModal extends Component {
+class UpdateEscalatedObservationModal extends Component {
   constructor(props) {
     super(props);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -27,10 +27,10 @@ class UpdateObservationModal extends Component {
 
     let payload = R.clone(values);
 
-    if (values.reason_radio === OBSERVATION_DECISION.NO_VALID) {
+    if (values.reason_radio === ESCALATION_DECISION.DEFFERED) {
       payload = R.assoc('is_valid', false, payload);
     } else {
-      payload = R.assoc('flag_type', FLAGS.ESCALATED, payload);
+      payload = R.assoc('is_valid', true, payload);
     }
 
     updateFlag(R.dissoc('attachment', payload), id);
@@ -58,14 +58,14 @@ class UpdateObservationModal extends Component {
               label: messages.save,
             },
           }}
-          content={<UpdateObservationForm id={id} onSubmit={this.onFormSubmit} />}
+          content={<UpdateEscalatedObservationForm id={id} onSubmit={this.onFormSubmit} />}
         />
       </div >
     );
   }
 }
 
-UpdateObservationModal.propTypes = {
+UpdateEscalatedObservationModal.propTypes = {
   id: PropTypes.number,
   dialogOpen: PropTypes.bool,
   updateFlag: PropTypes.func,
@@ -74,14 +74,13 @@ UpdateObservationModal.propTypes = {
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  updateFlag: (body, flagId) => dispatch(updatePartnerFlags(ownProps.params.id, body, true, flagId)),
-  submitForm: () => dispatch(submit('updateObservationForm')),
+  updateFlag: (body, id) => dispatch(updatePartnerFlags(ownProps.params.id, body, true, id)),
+  submitForm: () => dispatch(submit('updateEscalatedObservationForm')),
 });
 
-const connectedUpdateObservationModal = connect(
+const connectedUpdateEscalatedObservationModal = connect(
   null,
   mapDispatchToProps,
-)(UpdateObservationModal);
+)(UpdateEscalatedObservationModal);
 
-
-export default withRouter(connectedUpdateObservationModal);
+export default withRouter(connectedUpdateEscalatedObservationModal);

@@ -6,7 +6,7 @@ import { withStyles } from 'material-ui/styles';
 import Create from 'material-ui-icons/Create';
 import IconWithTextButton from '../../../../../components/common/iconWithTextButton';
 import withMultipleDialogHandling from '../../../../../components/common/hoc/withMultipleDialogHandling';
-import UpdateObservationModal from './updateObservationModal';
+import UpdateEscalatedObservationModal from './updateEscalatedObservationModal';
 
 const styleSheet = theme => ({
   grey: {
@@ -36,8 +36,7 @@ const UpdateObservationButton = (props) => {
           e.stopPropagation();
           handleDialogOpen(update);
         }}
-      />
-      {dialogOpen[update] && <UpdateObservationModal
+      /> {dialogOpen[update] && <UpdateEscalatedObservationModal
         id={id}
         dialogOpen={dialogOpen[update]}
         handleDialogClose={handleDialogClose}

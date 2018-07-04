@@ -1,4 +1,3 @@
-import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -17,6 +16,9 @@ import ObservationTypeIcon from '../../icons/observationTypeIcon';
 import ObservationExpand from './observationExpand';
 import PartnerObservationsListFilter from './partnerObservationsListFilter';
 import UpdateObservationButton from '../../modals/updateObservation/updateObservationButton';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../../../helpers/permissions';
+import UpdateEscalatedObservationButton from '../../modals/updateObservationEscalated/updateEscalatedObservationButton';
+import { FLAGS } from '../../../../../helpers/constants';
 
 const styleSheet = theme => ({
   Active: {
@@ -49,7 +51,7 @@ class PartnerObservationsList extends Component {
     super(props);
 
     this.applicationCell = this.applicationCell.bind(this);
-    this.submitterCell = this.submitterCell.bind(this);
+    this.actionFlagCell = this.actionFlagCell.bind(this);
   }
   componentWillMount() {
     const { query } = this.props;
@@ -68,9 +70,8 @@ class PartnerObservationsList extends Component {
     return true;
   }
 
-  /* eslint-disable class-methods-use-this */
-  submitterCell(hovered, id, submitter) {
-    const { classes, userId } = this.props;
+  actionFlagCell(hovered, id, submitter, flagType) {
+    const { classes, userId, hasResolveEscalatePermission } = this.props;
 
     return (<TableCell>
       {submitter ? <Grid container direction="row" alignItems="center" >
@@ -87,7 +88,10 @@ class PartnerObservationsList extends Component {
         </Grid>
         <Grid item sm={2} xs={12} >
           <div className={classes.options}>
-            {(hovered && userId === submitter.id) && <UpdateObservationButton id={id} />}
+            {(userId === submitter.id) && flagType === FLAGS.YELLOW && <UpdateObservationButton id={id} />}
+          </div>
+          <div className={classes.options}>
+            {hovered && hasResolveEscalatePermission && flagType === FLAGS.ESCALATED && <UpdateEscalatedObservationButton id={id} />}
           </div>
         </Grid>
       </Grid>
@@ -98,7 +102,7 @@ class PartnerObservationsList extends Component {
   /* eslint-disable class-methods-use-this */
   applicationCell({ row, column, value, hovered }) {
     if (column.name === 'submitter') {
-      return this.submitterCell(hovered, row.id, row.submitter);
+      return this.actionFlagCell(hovered, row.id, row.submitter, row.flag_type);
     } else if (column.name === 'modified') {
       return (<TableCell>
         {formatDateForPrint(row.modified)}
@@ -140,6 +144,7 @@ PartnerObservationsList.propTypes = {
   loading: PropTypes.bool.isRequired,
   query: PropTypes.object,
   userId: PropTypes.number,
+  hasResolveEscalatePermission: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -150,6 +155,8 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.location.query,
   partner: ownProps.params.id,
   userId: state.session.userId,
+  hasResolveEscalatePermission:
+    checkPermission(AGENCY_PERMISSIONS.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES, state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

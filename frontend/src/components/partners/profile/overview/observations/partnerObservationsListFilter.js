@@ -76,7 +76,7 @@ class PartnerObservationsListFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { category, type, did_win } = values;
+    const { category, type, only_mine } = values;
 
     history.push({
       pathname: pathName,
@@ -84,7 +84,7 @@ class PartnerObservationsListFilter extends Component {
         page: 1,
         category,
         type,
-        did_win,
+        only_mine,
       }),
     });
   }
@@ -148,7 +148,7 @@ class PartnerObservationsListFilter extends Component {
             <Grid item sm={4} xs={12}>
               <CheckboxForm
                 label={messages.labels.show}
-                fieldName="did_win"
+                fieldName="only_mine"
                 optional
               />
             </Grid>
@@ -197,7 +197,7 @@ const formFilter = reduxForm({
 const mapStateToProps = (state, ownProps) => {
   const { query: { category } = {} } = ownProps.location;
   const { query: { type } = {} } = ownProps.location;
-  const { query: { did_win } = {} } = ownProps.location;
+  const { query: { only_mine } = {} } = ownProps.location;
 
   return {
     observationsType: selectNormalizedFlagTypeChoices(state),
@@ -207,7 +207,7 @@ const mapStateToProps = (state, ownProps) => {
     initialValues: {
       category,
       type,
-      did_win,
+      only_mine,
     },
   };
 };
