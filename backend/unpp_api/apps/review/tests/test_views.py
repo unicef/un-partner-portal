@@ -80,7 +80,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
         url = reverse('partner-reviews:flag-details', kwargs={"partner_id": flag.partner.id, 'pk': flag.id})
         payload = {
             'is_valid': False,
-            'invalidation_comment': 'comment',
+            'validation_comment': 'comment',
         }
         response = self.client.patch(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
@@ -181,7 +181,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
             patch_response = self.client.patch(flag_url, data={
                 'is_valid': is_valid,
-                'invalidation_comment': 'comment',
+                'validation_comment': 'comment',
             })
             self.assertResponseStatusIs(patch_response, status.HTTP_403_FORBIDDEN)
 
@@ -190,7 +190,7 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
             patch_response = self.client.patch(flag_url, data={
                 'is_valid': is_valid,
-                'invalidation_comment': 'comment',
+                'validation_comment': 'comment',
             })
             self.assertResponseStatusIs(patch_response, status.HTTP_200_OK)
             self.assertEqual(patch_response.data['flag_type'], FLAG_TYPES.red if is_valid else FLAG_TYPES.yellow)
@@ -470,7 +470,7 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
 
         payload = {
             'is_valid': False,
-            'invalidation_comment': 'comment',
+            'validation_comment': 'comment',
         }
         response = self.client.patch(flag_url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
@@ -480,7 +480,8 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
         self.assertFalse(partner.has_sanction_match)
 
         payload = {
-            'is_valid': True
+            'is_valid': True,
+            'validation_comment': 'comment'
         }
         response = self.client.patch(flag_url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
