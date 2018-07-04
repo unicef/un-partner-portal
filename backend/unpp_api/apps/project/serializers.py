@@ -163,6 +163,8 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
     def validate_partner(self, partner):
         if partner.is_hq:
             raise ValidationError('HQs of International partners are not eligible for Direct Selections / Retention.')
+        if partner.is_locked:
+            raise ValidationError('Partner account has been locked and is no longer eligible for selection.')
         return partner
 
 

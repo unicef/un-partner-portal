@@ -22,7 +22,7 @@ class PartnerFlag(TimeStampedModel):
     is_valid = models.NullBooleanField(default=True)
     submitter = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="given_flags", null=True)
     comment = models.TextField(null=True, blank=True, max_length=5120)
-    invalidation_comment = models.TextField(null=True, blank=True, max_length=5120)
+    validation_comment = models.TextField(null=True, blank=True, max_length=5120)
     contact_person = models.CharField(max_length=255, null=True, blank=True)
     contact_phone = models.CharField(max_length=16, null=True, blank=True)
     contact_email = models.EmailField(null=True, blank=True)
