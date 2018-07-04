@@ -92,6 +92,7 @@ AddVerificationModal.propTypes = {
   handleDialogClose: PropTypes.func,
   partnerName: PropTypes.string,
   getVerifications: PropTypes.func,
+  query: PropTypes.object,
 };
 
 
@@ -99,6 +100,7 @@ const mapStateToProps = (state, ownProps) => {
   const partnerName = state.agencyPartnerProfile.data[ownProps.params.id] ? state.agencyPartnerProfile.data[ownProps.params.id].name : '';
   return {
     partnerName,
+    query: ownProps.location.query,
   };
 };
 
