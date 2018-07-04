@@ -56,7 +56,7 @@ from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
 )
 from common.countries import COUNTRIES_ALPHA2_CODE
-
+from sanctionslist.models import SanctionedNameMatch, SanctionedItem, SanctionedName
 
 COUNTRIES = [x[0] for x in COUNTRIES_ALPHA2_CODE]
 
@@ -763,3 +763,28 @@ class UnsolicitedFactory(factory.django.DjangoModelFactory):
             'title': 'fake title'
         }
         self.save()
+
+
+class SanctionedItemFactory(factory.django.DjangoModelFactory):
+    data_id = factory.Sequence(lambda n: n)
+
+    class Meta:
+        model = SanctionedItem
+        django_get_or_create = ('data_id', )
+
+
+class SanctionedNameFactory(factory.django.DjangoModelFactory):
+    item = factory.SubFactory(SanctionedItemFactory)
+
+    class Meta:
+        model = SanctionedName
+
+
+class SanctionedNameMatchFactory(factory.django.DjangoModelFactory):
+
+    name = factory.SubFactory(SanctionedNameFactory)
+    partner = factory.LazyFunction(get_partner)
+
+    class Meta:
+        model = SanctionedNameMatch
+        django_get_or_create = ('name', 'partner')

@@ -20,10 +20,10 @@ from common.factories import (
     PartnerVerificationFactory,
     AgencyOfficeFactory,
     AgencyMemberFactory,
-    PartnerMemberFactory, PartnerFactory, COUNTRIES)
+    PartnerMemberFactory, PartnerFactory, COUNTRIES, SanctionedNameMatchFactory)
 from partner.models import Partner
 from review.models import PartnerFlag
-from sanctionslist.models import SanctionedItem, SanctionedName
+from sanctionslist.models import SanctionedItem, SanctionedName, SanctionedNameMatch
 
 
 class TestPartnerFlagAPITestCase(BaseAPITestCase):
@@ -367,6 +367,20 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
             self.set_current_user_role(role.name)
             create_response = self.client.post(url, data=payload)
             self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
+
+    def test_verify_sanctioned_partner(self):
+        partner = PartnerFactory()
+        sanction_match: SanctionedNameMatch = SanctionedNameMatchFactory(partner=partner)
+        url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
+        payload = self.base_payload.copy()
+
+        create_response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(create_response, status.HTTP_400_BAD_REQUEST)
+
+        sanction_match.can_ignore = True
+        sanction_match.save()
+        create_response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
 
 
 class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
