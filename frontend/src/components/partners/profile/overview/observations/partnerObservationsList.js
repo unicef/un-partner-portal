@@ -70,7 +70,7 @@ class PartnerObservationsList extends Component {
     return true;
   }
 
-  actionFlagCell(hovered, id, submitter, flagType) {
+  actionFlagCell(hovered, id, submitter, flagType, isValid) {
     const { classes, userId, hasResolveEscalatePermission } = this.props;
 
     return (<TableCell>
@@ -88,7 +88,7 @@ class PartnerObservationsList extends Component {
         </Grid>
         <Grid item sm={2} xs={12} >
           <div className={classes.options}>
-            {(userId === submitter.id) && flagType === FLAGS.YELLOW && <UpdateObservationButton id={id} />}
+            {(userId === submitter.id) && flagType === FLAGS.YELLOW && !isValid && <UpdateObservationButton id={id} />}
           </div>
           <div className={classes.options}>
             {hovered && hasResolveEscalatePermission && flagType === FLAGS.ESCALATED && <UpdateEscalatedObservationButton id={id} />}
@@ -102,7 +102,7 @@ class PartnerObservationsList extends Component {
   /* eslint-disable class-methods-use-this */
   applicationCell({ row, column, value, hovered }) {
     if (column.name === 'submitter') {
-      return this.actionFlagCell(hovered, row.id, row.submitter, row.flag_type);
+      return this.actionFlagCell(hovered, row.id, row.submitter, row.flag_type, row.is_valid);
     } else if (column.name === 'modified') {
       return (<TableCell>
         {formatDateForPrint(row.modified)}

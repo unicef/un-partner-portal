@@ -32,6 +32,7 @@ const saveFlags = (state, action) => {
       attachment: item.attachment,
       category: item.category,
       comment: item.comment,
+      isValid: item.is_valid,
     }), action.response.results);
 
   return R.assoc('items', flags, R.assoc('totalCount', action.response.count, state));
