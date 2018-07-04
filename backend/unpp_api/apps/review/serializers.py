@@ -87,9 +87,8 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         old_flag_type = instance.flag_type
 
         if new_flag_type == FLAG_TYPES.red:
-            request = self.context.get('request')
             current_user_has_permission(
-                request,
+                self.context.get('request'),
                 agency_permissions=[
                     AgencyPermission.ADD_RED_FLAG_ALL_CSO_PROFILES,
                 ],
