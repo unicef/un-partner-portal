@@ -66,7 +66,7 @@ const Decision = () => () => (
         commentFormControlStyle={commentFormControlStyle}
         label={messages.reason}
         placeholder={messages.enterDetails}
-        fieldName="invalidation_comment"
+        fieldName="validation_comment"
       />
     </Grid>
   </Grid>
