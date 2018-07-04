@@ -49,7 +49,7 @@ const styleSheet = (theme) => {
 
 const UserDetailsExpand = (props) => {
   const { classes, user } = props;
-  
+
   if (user) {
     return (
       <div className={classes.container}>
