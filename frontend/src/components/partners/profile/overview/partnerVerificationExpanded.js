@@ -3,10 +3,9 @@ import { connect } from 'react-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
 import PropTypes from 'prop-types';
 import Divider from 'material-ui/Divider';
-import { visibleIfYes } from '../../../../../helpers/formHelper';
-import GridColumn from '../../../../common/grid/gridColumn';
-import VerificationQuestion from './verificationQuestion';
-
+import { visibleIfYes } from '../../../../helpers/formHelper';
+import GridColumn from '../../../common/grid/gridColumn';
+import VerificationQuestion from '../../../../components/partners/profile/modals/addVerificationModal/verificationQuestion';
 
 const messages = {
   certUpload: 'Has partner uploaded its valid, non-expired registration certificate issued by the ' +
@@ -63,7 +62,7 @@ const verificationQuestions = [
   },
 ];
 
-const AddVerification = (props) => {
+const partnerVerificationExpanded = (props) => {
   const { handleSubmit, readOnly, isYellowFlag, notCertUploaded } = props;
 
   return (
@@ -133,7 +132,7 @@ const AddVerification = (props) => {
   );
 };
 
-AddVerification.propTypes = {
+partnerVerificationExpanded.propTypes = {
   /**
      * callback for form submit
      */
@@ -143,16 +142,18 @@ AddVerification.propTypes = {
   notCertUploaded: PropTypes.bool,
 };
 
-const selector = formValueSelector('addVerification');
 
-const formAddVerification = reduxForm({
-  form: 'addVerification',
-})(AddVerification);
+const formPartnerVerificationExpanded = reduxForm({
+  destroyOnUnmount: false,
+})(partnerVerificationExpanded);
 
 
-const mapStateToProps = state => ({
-  isYellowFlag: selector(state, 'is_yellow_flag'),
-  notCertUploaded: selector(state, 'is_cert_uploaded') === false,
-});
+const mapStateToProps = (state, ownProps) => {
+  const selector = formValueSelector(ownProps.form);
+  return {
+    isYellowFlag: selector(state, 'is_yellow_flag'),
+    notCertUploaded: selector(state, 'is_cert_uploaded') === false,
+  };
+};
 
-export default connect(mapStateToProps, null)(formAddVerification);
+export default connect(mapStateToProps, null)(formPartnerVerificationExpanded);

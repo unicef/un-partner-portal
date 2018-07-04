@@ -11,8 +11,8 @@ import PaginatedList from '../../../../components/common/list/paginatedList';
 import TableWithStateInUrl from '../../../../components/common/hoc/tableWithStateInUrl';
 import { isQueryChanged } from '../../../../helpers/apiHelper';
 import VerificationIcon from '../../profile/icons/verificationIcon';
-import { loadVerificationsList } from '../../../../reducers/partnerVerificationsTab';
-import AddVerificationForm from '../modals/addVerificationModal/addVerificationForm';
+import { loadVerificationsList } from '../../../../reducers/partnerVerificationsList';
+import PartnerVerificationExpanded from './partnerVerificationExpanded';
 
 const textStyles = {
   position: 'inline',
@@ -41,7 +41,7 @@ const tableCells = ({ row, column, hovered, value }) => {
   return <TableCell>{value}</TableCell>;
 };
 
-class VerificationsContainer extends Component {
+class PartnerVerificationsList extends Component {
   componentWillMount() {
     const { query } = this.props;
     this.props.getVerifications(query);
@@ -75,7 +75,7 @@ class VerificationsContainer extends Component {
                 expandable
                 templateCell={tableCells}
                 expandedCell={row =>
-                  (<AddVerificationForm
+                  (<PartnerVerificationExpanded
                     initialValues={row}
                     form={`verificationDetailsExpanded_${row.id}`}
                     readOnly
@@ -89,7 +89,7 @@ class VerificationsContainer extends Component {
   }
 }
 
-VerificationsContainer.propTypes = {
+PartnerVerificationsList.propTypes = {
   verifications: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   totalCount: PropTypes.number.isRequired,
@@ -99,10 +99,10 @@ VerificationsContainer.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  verifications: state.partnerVerificationsTab.items,
-  totalCount: state.partnerVerificationsTab.totalCount,
-  columns: state.partnerVerificationsTab.columns,
-  loading: state.partnerVerificationsTab.loading,
+  verifications: state.partnerVerificationsList.items,
+  totalCount: state.partnerVerificationsList.totalCount,
+  columns: state.partnerVerificationsList.columns,
+  loading: state.partnerVerificationsList.loading,
   query: ownProps.location.query,
 });
 
@@ -110,7 +110,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   getVerifications: params => dispatch(loadVerificationsList(ownProps.params.id, params)),
 });
 
-const connectedVerificationsContainer = connect(
+const connectedPartnerVerificationsList = connect(
   mapStateToProps,
-  mapDispatchToProps)(VerificationsContainer);
-export default withRouter(connectedVerificationsContainer);
+  mapDispatchToProps)(PartnerVerificationsList);
+export default withRouter(connectedPartnerVerificationsList);
