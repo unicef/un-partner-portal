@@ -72,7 +72,6 @@ from review.models import (
     PartnerVerification,
 )
 from sanctionslist.models import (
-    SanctionedItem,
     SanctionedName,
     SanctionedNameMatch,
 )
