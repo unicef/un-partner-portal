@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, get_object_or_404, RetrieveAPIView
 
 from agency.permissions import AgencyPermission
-from common.consts import FLAG_TYPES
+from common.consts import FLAG_TYPES, FLAG_CATEGORIES
 from common.pagination import SmallPagination
 from common.permissions import (
     HasUNPPPermission,
@@ -136,12 +136,18 @@ class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         return PartnerFlag.objects.filter(Q(partner=partner) | Q(partner=partner.hq))
 
     def get_object(self):
-        flag = super(PartnerFlagRetrieveUpdateAPIView, self).get_object()
+        flag: PartnerFlag = super(PartnerFlagRetrieveUpdateAPIView, self).get_object()
         if not self.request.method == 'GET':
             if flag.flag_type == FLAG_TYPES.escalated:
                 current_user_has_permission(
                     self.request,
                     agency_permissions=[AgencyPermission.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES],
+                    raise_exception=True
+                )
+            elif flag.category == FLAG_CATEGORIES.sanctions_match:
+                current_user_has_permission(
+                    self.request,
+                    agency_permissions=[AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES],
                     raise_exception=True
                 )
             elif flag.submitter and not flag.submitter == self.request.user:

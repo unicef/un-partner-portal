@@ -82,7 +82,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         return fields
 
     @transaction.atomic
-    def update(self, instance: PartnerFlag, validated_data):
+    def update(self, instance: PartnerFlag, validated_data: dict):
         new_flag_type = validated_data.get('flag_type')
         old_flag_type = instance.flag_type
 
