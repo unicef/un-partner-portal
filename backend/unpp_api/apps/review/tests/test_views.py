@@ -346,6 +346,28 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
             create_response = self.client.post(url, data=payload)
             self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
 
+    def test_own_country_verification_permissions(self):
+        partner = PartnerFactory(country_code=self.user.agency_members.first().office.country.code)
+        self.assertEqual(partner.country_code, self.user.agency_members.first().office.country.code)
+
+        url = reverse('partner-reviews:verifications', kwargs={"partner_id": partner.id})
+
+        payload = self.base_payload.copy()
+
+        roles_allowed, roles_disallowed = self.get_agency_with_and_without_permissions(
+            AgencyPermission.VERIFY_CSOS_FOR_OWN_COUNTRY
+        )
+
+        for role in roles_allowed:
+            self.set_current_user_role(role.name)
+            create_response = self.client.post(url, data=payload)
+            self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+
+        for role in roles_disallowed:
+            self.set_current_user_role(role.name)
+            create_response = self.client.post(url, data=payload)
+            self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
+
 
 class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
 
