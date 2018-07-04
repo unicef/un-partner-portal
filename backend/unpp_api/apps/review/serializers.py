@@ -131,7 +131,8 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
 
         if instance.flag_type == FLAG_TYPES.escalated and instance.is_valid is not None:
             instance = self.update(instance, {
-                'flag_type': FLAG_TYPES.red if instance.is_valid else FLAG_TYPES.yellow
+                'flag_type': FLAG_TYPES.red if instance.is_valid else FLAG_TYPES.yellow,
+                'is_valid': instance.is_valid or None,
             })
 
         return instance

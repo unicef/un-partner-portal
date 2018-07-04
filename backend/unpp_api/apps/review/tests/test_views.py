@@ -197,7 +197,8 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
             self.client.logout()
             self.client.force_login(self.user)
             partner.refresh_from_db()
-            self.assertTrue(sum(partner.flagging_status.values()) > 0)
+            if is_valid:
+                self.assertTrue(sum(partner.flagging_status.values()) > 0)
             self.assertEqual(partner.is_locked, is_valid)
 
     def test_listing_flags(self):
