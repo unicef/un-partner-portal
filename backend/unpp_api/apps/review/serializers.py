@@ -96,7 +96,9 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                 raise_exception=True
             )
 
-        if validated_data.get('is_valid') is not None and not validated_data.get('validation_comment'):
+        if not instance.flag_type == FLAG_TYPES.escalated and \
+                validated_data.get('is_valid') is not None and \
+                not validated_data.get('validation_comment'):
             raise serializers.ValidationError({
                 'validation_comment': 'This field is required.'
             })
