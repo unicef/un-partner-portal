@@ -225,6 +225,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     # country profile information
     staff_in_country = STAFF_GLOBALLY_CHOICES.to100
     engagement_operate_desc = factory.Sequence(lambda n: "engagement with the communities {}".format(n))
+    location_of_office = factory.SubFactory(PointFactory)
 
     @factory.post_generation
     def mailing_address(self, create, extracted, **kwargs):
@@ -262,11 +263,11 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def experiences(self, create, extracted, **kwargs):
-        for x in range(0, 2):
+        for x in range(1, random.randint(2, 3)):
             PartnerExperience.objects.create(
                 partner=self,
                 specialization=Specialization.objects.all().order_by("?").first(),
-                years=get_year_of_exp()
+                years=get_year_of_exp(),
             )
 
     @factory.post_generation
@@ -394,7 +395,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         self.profile.year_establishment = date.today().year - random.randint(1, 30)
         self.profile.have_gov_doc = True
         self.profile.gov_doc = get_new_common_file()
-        self.profile.registration_to_operate_in_country = False
+        self.profile.registration_to_operate_in_country = random.randint(0, 1) == 0
         self.profile.registration_doc = get_new_common_file()
         self.profile.registration_date = date.today() - timedelta(days=random.randint(365, 3650))
         self.profile.registration_comment = "registration comment {}".format(self.id)
@@ -542,6 +543,15 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             other_doc_2=cfile,
             other_doc_3=cfile,
         )
+
+    @factory.post_generation
+    def location_field_offices(self, create, extracted, **kwargs):
+        field_offices_count = random.randint(0, 1) * random.randint(1, 4)
+        if field_offices_count:
+            self.more_office_in_country = True
+            self.location_field_offices.add(*PointFactory.create_batch(field_offices_count))
+
+            self.save()
 
     class Meta:
         model = Partner
