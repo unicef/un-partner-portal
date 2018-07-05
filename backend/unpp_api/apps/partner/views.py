@@ -68,7 +68,6 @@ class PartnerProfileSummaryAPIView(RetrieveAPIView):
 class PartnersListAPIView(ListAPIView):
 
     permission_classes = (
-        IsAuthenticated,
         HasUNPPPermission(
             agency_permissions=[
                 AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
@@ -85,7 +84,6 @@ class PartnersListAPIView(ListAPIView):
 class PartnerShortListAPIView(ListAPIView):
 
     permission_classes = (
-        IsAuthenticated,
         HasUNPPPermission(
             agency_permissions=[
                 AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,

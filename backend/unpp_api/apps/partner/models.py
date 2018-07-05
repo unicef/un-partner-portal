@@ -105,6 +105,10 @@ class Partner(TimeStampedModel):
         return self.__class__.objects.filter(hq=self)
 
     @property
+    def office_count(self):
+        return 1 if not self.more_office_in_country else 1 + self.location_field_offices.count()
+
+    @property
     def yellow_flag_count(self):
         return PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
@@ -128,11 +132,11 @@ class Partner(TimeStampedModel):
     def escalated_flag_count(self):
         return PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
-        ).filter(flag_type=FLAG_TYPES.escalated, is_valid=True).count()
+        ).filter(flag_type=FLAG_TYPES.escalated).count()
 
     @property
     def has_escalated_flag(self):
-        return bool(self.red_flag_count)
+        return bool(self.escalated_flag_count)
 
     def get_users(self):
         return User.objects.filter(partner_members__partner=self)
@@ -171,15 +175,21 @@ class Partner(TimeStampedModel):
 
     @property
     def has_finished(self):
-        return all([
-            self.profile.identification_is_complete,
-            self.profile.contact_is_complete,
-            self.profile.mandatemission_complete,
-            self.profile.funding_complete,
-            self.profile.collaboration_complete,
-            self.profile.project_implementation_is_complete,
-            self.profile.other_info_is_complete,
-        ])
+        if not self.profile.identification_is_complete:
+            return False
+        if not self.profile.contact_is_complete:
+            return False
+        if not self.profile.mandatemission_complete:
+            return False
+        if not self.profile.funding_complete:
+            return False
+        if not self.profile.collaboration_complete:
+            return False
+        if not self.profile.project_implementation_is_complete:
+            return False
+        if not self.profile.other_info_is_complete:
+            return False
+        return True
 
     profile_is_complete = has_finished
 
@@ -386,9 +396,9 @@ class PartnerProfile(TimeStampedModel):
             'staff_in_country': self.partner.staff_in_country,
             'staff_globally': self.partner.staff_globally,
             'country_presence': len(self.partner.country_presence) > 0 if self.partner.is_hq else True,
-            'experiences': all(
-                [exp.is_complete for exp in self.partner.experiences.all()]
-            ) if self.partner.experiences.exists() else False,
+            'experiences': all([
+                exp.is_complete for exp in self.partner.experiences.all()
+            ]) if self.partner.experiences.exists() else False,
         }
 
         if not self.partner.is_hq:
@@ -396,7 +406,6 @@ class PartnerProfile(TimeStampedModel):
             required_fields.pop('staff_globally')
         else:
             required_fields.pop('staff_in_country')
-
         return all(required_fields.values())
 
     @property
