@@ -4,7 +4,6 @@ from django.urls import reverse
 from agency.models import Agency
 from agency.roles import AgencyRole
 from common.factories import PartnerFactory
-from common.models import Specialization
 from common.tests.base import BaseAPITestCase
 from partner.models import Partner
 
