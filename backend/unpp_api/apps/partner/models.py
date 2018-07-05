@@ -132,11 +132,11 @@ class Partner(TimeStampedModel):
     def escalated_flag_count(self):
         return PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
-        ).filter(flag_type=FLAG_TYPES.escalated, is_valid=True).count()
+        ).filter(flag_type=FLAG_TYPES.escalated).count()
 
     @property
     def has_escalated_flag(self):
-        return bool(self.red_flag_count)
+        return bool(self.escalated_flag_count)
 
     def get_users(self):
         return User.objects.filter(partner_members__partner=self)
