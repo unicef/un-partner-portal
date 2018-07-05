@@ -46,16 +46,16 @@ const radioFlag = [
   },
 ];
 
-const Decision = () => () => (
-  <Grid container>
+const Decision = () => () => {
+  return (<Grid container>
     <Grid item sm={12} xs={12}>
       <RadioForm
         fieldName="reason_radio"
         values={radioFlag}
       />
     </Grid>
-  </Grid>
-);
+  </Grid>);
+};
 
 const UpdateEscalatedObservationForm = (props) => {
   const { categoryChoices, handleSubmit } = props;
@@ -139,6 +139,7 @@ const mapStateToProps = (state, ownProps) => {
       attachment: observation.attachment,
       category: observation.category,
       comment: observation.comment,
+      isEscalated: observation.isEscalated,
     },
   };
 };

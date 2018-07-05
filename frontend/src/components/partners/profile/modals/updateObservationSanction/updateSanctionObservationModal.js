@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -5,7 +6,7 @@ import { submit } from 'redux-form';
 import { withRouter } from 'react-router';
 import ControlledModal from '../../../../common/modals/controlledModal';
 import { updatePartnerFlags } from '../../../../../reducers/partnerFlags';
-import UpdateSanctionObservationForm from './updateSanctionObservationForm';
+import UpdateSanctionObservationForm, { SANCATION_DECISION } from './updateSanctionObservationForm';
 import { FLAGS } from '../../../../../helpers/constants';
 import FlagIcon from '../../icons/flagIcon';
 
@@ -22,8 +23,17 @@ class UpdateSanctionObservationModal extends Component {
   }
 
   onFormSubmit(values) {
-    const { addFlag, handleDialogClose } = this.props;
-    addFlag(values);
+    const { updateFlag, handleDialogClose, id } = this.props;
+
+    let payload = R.clone(values);
+
+    if (values.reason_radio === SANCATION_DECISION.NOTMATCH) {
+      payload = R.assoc('is_valid', false, payload);
+    } else {
+      payload = R.assoc('is_valid', true, payload);
+    }
+
+    updateFlag(R.dissoc('category', R.dissoc('attachment', payload)), id);
     handleDialogClose();
   }
 
@@ -58,18 +68,15 @@ class UpdateSanctionObservationModal extends Component {
 UpdateSanctionObservationModal.propTypes = {
   id: PropTypes.number,
   dialogOpen: PropTypes.bool,
-  addFlag: PropTypes.func,
+  updateFlag: PropTypes.func,
   submitForm: PropTypes.func,
   handleDialogClose: PropTypes.func,
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-  const { partnerId } = ownProps;
-  return {
-    addFlag: body => dispatch(updatePartnerFlags(partnerId, body, false)),
-    submitForm: () => dispatch(submit('updateSanctionObservationForm')),
-  };
-};
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  updateFlag: (body, id) => dispatch(updatePartnerFlags(ownProps.params.id, body, true, id)),
+  submitForm: () => dispatch(submit('updateSanctionObservationForm')),
+});
 
 const connectedUpdateSanctionObservationModal = connect(
   null,

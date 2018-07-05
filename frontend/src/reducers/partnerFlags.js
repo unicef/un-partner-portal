@@ -28,7 +28,6 @@ export const loadPartnerFlag = (partnerId, params) => sendRequest({
 });
 
 export const updatePartnerFlags = (partnerId, body, edit, flagId) => (dispatch) => {
-  debugger;
   const method = edit ? patchPartnerFlags : postPartnerFlags;
   return method(partnerId, body, flagId)
     .then((flag) => {

@@ -39,7 +39,7 @@ export const OBSERVATION_DECISION = {
   ESCALATE: 'EF',
 };
 
-const radioFlag = [
+const DECISIONS = [
   {
     value: OBSERVATION_DECISION.NO_VALID,
     label: 'This flag is no longer valid',
@@ -55,12 +55,16 @@ const commentFormControlStyle = {
   paddingTop: '12px',
 };
 
-const Decision = () => () => (
-  <Grid container>
+const Decision = isEscalated => () => {
+  const decisionsChoices = !isEscalated
+    ? R.filter(item => item.value !== OBSERVATION_DECISION.ESCALATE, DECISIONS)
+    : DECISIONS;
+
+  return (<Grid container>
     <Grid item sm={12} xs={12}>
       <RadioForm
         fieldName="reason_radio"
-        values={radioFlag}
+        values={decisionsChoices}
       />
       <TextFieldForm
         commentFormControlStyle={commentFormControlStyle}
@@ -69,11 +73,11 @@ const Decision = () => () => (
         fieldName="validation_comment"
       />
     </Grid>
-  </Grid>
-);
+  </Grid>);
+};
 
 const UpdateObservationForm = (props) => {
-  const { categoryChoices, flagTypes, handleSubmit } = props;
+  const { categoryChoices, flagTypes, handleSubmit, isEscalated } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
@@ -124,7 +128,7 @@ const UpdateObservationForm = (props) => {
           fieldName="flag_decision"
           disableDeleting
           initial
-          outerField={Decision()}
+          outerField={Decision(isEscalated)}
         />
       </GridColumn>
     </form >
@@ -151,6 +155,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     categoryChoices: selectNormalizedFlagCategoryChoices(state),
     flagTypes: selectNormalizedFlagTypeChoices(state),
+    isEscalated: observation.isEscalated,
 
     initialValues: {
       contact_person: observation.contactPerson,

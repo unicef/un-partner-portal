@@ -16,8 +16,9 @@ import ObservationTypeIcon from '../../icons/observationTypeIcon';
 import ObservationExpand from './observationExpand';
 import PartnerObservationsListFilter from './partnerObservationsListFilter';
 import UpdateObservationButton from '../../modals/updateObservation/updateObservationButton';
-import { checkPermission, AGENCY_PERMISSIONS } from '../../../../../helpers/permissions';
 import UpdateEscalatedObservationButton from '../../modals/updateObservationEscalated/updateEscalatedObservationButton';
+import UpdateSanctionObservationButton from '../../modals/updateObservationSanction/updateSanctionObservationButton';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../../../helpers/permissions';
 import { FLAGS } from '../../../../../helpers/constants';
 
 const styleSheet = theme => ({
@@ -70,45 +71,68 @@ class PartnerObservationsList extends Component {
     return true;
   }
 
-  actionFlagCell(hovered, id, submitter, flagType, isValid) {
-    const { classes, userId, hasResolveEscalatePermission } = this.props;
+  actionFlagCell(hovered, id, submitter, flagType, isValid, category) {
+    const { classes, userId, hasResolveEscalatePermission, hasReviewSanctionMatchPermission } = this.props;
 
     return (<TableCell>
-      {submitter ? <Grid container direction="row" alignItems="center" >
+      <Grid container direction="row" alignItems="center" >
         <Grid item sm={10} xs={12} >
           <div className={classes.center}>
-            <Typography type="body1" color="inherit">
-              <div className={classes.center}>
-                <div>{submitter.name}</div>
-                <div>{userId === submitter.id ? messages.me : null},</div>
-                <div>{submitter.agency_name}</div>
-              </div>
-            </Typography>
+            {submitter
+              ? <Typography type="body1" color="inherit">
+                <div className={classes.center}>
+                  <div>{submitter.name}</div>
+                  <div>{userId === submitter.id ? messages.me : null},</div>
+                  <div>{submitter.agency_name}</div>
+                </div>
+              </Typography>
+              : '-'}
           </div>
         </Grid>
         <Grid item sm={2} xs={12} >
           <div className={classes.options}>
-            {(userId === submitter.id) && flagType === FLAGS.YELLOW && isValid && <UpdateObservationButton id={id} />}
+            {hovered
+              && submitter
+              && userId === submitter.id
+              && flagType === FLAGS.YELLOW
+              && isValid !== false
+              && <UpdateObservationButton id={id} />}
           </div>
           <div className={classes.options}>
-            {hovered && hasResolveEscalatePermission && flagType === FLAGS.ESCALATED && <UpdateEscalatedObservationButton id={id} />}
+            {hovered
+              && hasResolveEscalatePermission
+              && flagType === FLAGS.ESCALATED
+              && <UpdateEscalatedObservationButton id={id} />}
+          </div>
+          <div className={classes.options}>
+            {hovered
+               && hasReviewSanctionMatchPermission
+               && category === FLAGS.SANCTION
+               && isValid === null
+               && <UpdateSanctionObservationButton id={id} />}
           </div>
         </Grid>
       </Grid>
-        : null}
     </TableCell>);
   }
 
   /* eslint-disable class-methods-use-this */
   applicationCell({ row, column, value, hovered }) {
     if (column.name === 'submitter') {
-      return this.actionFlagCell(hovered, row.id, row.submitter, row.flag_type, row.isValid);
+      return this.actionFlagCell(hovered, row.id, row.submitter, row.flag_type, row.isValid, row.category);
     } else if (column.name === 'modified') {
       return (<TableCell>
         {formatDateForPrint(row.modified)}
       </TableCell>);
     } else if (column.name === 'flag_type') {
-      return <TableCell>{ObservationTypeIcon(row.flag_type, row.isValid)}</TableCell>;
+      return (<TableCell>
+        <ObservationTypeIcon
+          flagType={row.flag_type}
+          isValid={row.isValid}
+          isEscalated={row.isEscalated}
+          category={row.category}
+        />
+      </TableCell>);
     }
 
     return <TableCell>{value}</TableCell>;
@@ -145,6 +169,7 @@ PartnerObservationsList.propTypes = {
   query: PropTypes.object,
   userId: PropTypes.number,
   hasResolveEscalatePermission: PropTypes.bool,
+  hasReviewSanctionMatchPermission: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -157,6 +182,8 @@ const mapStateToProps = (state, ownProps) => ({
   userId: state.session.userId,
   hasResolveEscalatePermission:
     checkPermission(AGENCY_PERMISSIONS.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES, state),
+  hasReviewSanctionMatchPermission:
+    checkPermission(AGENCY_PERMISSIONS.REVIEW_AND_MARK_SANCTIONS_MATCHES, state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

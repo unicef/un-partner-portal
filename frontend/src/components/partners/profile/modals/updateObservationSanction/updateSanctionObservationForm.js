@@ -18,13 +18,19 @@ const messages = {
   enterDetails: 'Enter additional details...',
 };
 
+export const SANCATION_DECISION = {
+  NOTMATCH: 'NM',
+  CONFIRMED: 'CM',
+};
+
+
 const radioFlag = [
   {
-    value: 'NM',
+    value: SANCATION_DECISION.NOTMATCH,
     label: 'Not a true Match',
   },
   {
-    value: 'CM',
+    value: SANCATION_DECISION.CONFIRMED,
     label: 'Confirmed Match',
   },
 ];
@@ -38,14 +44,14 @@ const Decision = () => () => (
   <Grid container>
     <Grid item sm={12} xs={12}>
       <RadioForm
-        fieldName="completed_reason"
+        fieldName="reason_radio"
         values={radioFlag}
       />
       <TextFieldForm
         commentFormControlStyle={commentFormControlStyle}
         label={messages.decision}
         placeholder={messages.enterDetails}
-        fieldName="reason"
+        fieldName="validation_comment"
       />
     </Grid>
   </Grid>
