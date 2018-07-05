@@ -32,7 +32,6 @@ import partnerProfileHeader from './components/partners/profile/partnerProfileHe
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
 import partnerVerification from './components/partners/profile/overview/partnerVerification';
 import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
-import agencyMembersContainer from './components/settings/agencyMembersContainer';
 import registration from './components/registration/registration';
 import login from './components/login/login';
 import passwordReset from './components/passwordReset/passwordReset';
@@ -49,6 +48,8 @@ import mainLayoutIdPortal from './idPortal/mainLayout';
 import mainIdPortal from './idPortal/main';
 import dashboardIdPortal from './idPortal/dashboard/dashboard';
 import usersIdPortal from './idPortal/users/list/usersContainer';
+import partnerInfoContainer from './components/reports/partnerInfoContainer';
+import reportsHeader from './components/reports/reportsHeader';
 
 
 const history = syncHistoryWithStore(browserHistory, store);
@@ -134,7 +135,7 @@ const allRoutes = () => (
               <Route path="users" component={null} />
             </Route>
           </Route>
-          <Route path="reports" component={agencyMembersContainer}>
+          <Route path="reports" component={partnerInfoContainer}>
             <Route path="information" component={null} />
             <Route path="management" component={null} />
             <Route path="verification" component={null} />

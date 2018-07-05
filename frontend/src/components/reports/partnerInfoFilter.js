@@ -8,14 +8,26 @@ import { browserHistory as history, withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import TextFieldForm from '../forms/textFieldForm';
+import SectorForm from '../forms/fields/projectFields/sectorField/sectorFieldArray';
+import RadioForm from '../forms/radioForm';
 import CountryField from '../forms/fields/projectFields/locationField/countryField';
+import AdminOneLocation from '../forms/fields/projectFields/adminOneLocations';
+import SelectForm from '../forms/selectForm';
 import resetChanges from '../eois/filters/eoiHelper';
+import { selectNormalizedOrganizationTypes } from '../../store';
 
 const messages = {
-  choose: 'Choose',
+  choose: 'Select applicable filter to generate a report of Partner profiles, ' +
+  'a list of Partner contact information and to map Partners in the target Country Office',
   labels: {
-    search: 'Search',
-    office: 'Office',
+    search: 'submit',
+    country: 'Country',
+    location: 'Location',
+    registration: 'Registration status',
+    typeLabel: 'Type of organization',
+    typePlaceholder: 'Select type',
+    sector: 'Sector and area of specialization',
+    experience: 'UN Experience',
   },
   clear: 'clear',
 };
@@ -30,6 +42,21 @@ const styleSheet = theme => ({
     justifyContent: 'flex-end',
   },
 });
+
+export const STATUS_VAL = [
+  {
+    value: true,
+    label: 'Yes',
+  },
+  {
+    value: false,
+    label: 'No',
+  },
+  {
+    value: 'all',
+    label: 'All',
+  },
+];
 
 class AgencyMembersFilter extends Component {
   constructor(props) {
@@ -79,25 +106,60 @@ class AgencyMembersFilter extends Component {
   }
 
   render() {
-    const { classes, handleSubmit, reset } = this.props;
+    const { classes, handleSubmit, reset, organizationTypes } = this.props;
 
     return (
       <form onSubmit={handleSubmit}>
         <Grid item xs={12} className={classes.filterContainer} >
           <Grid container direction="row" >
-            <Grid item sm={8} xs={12} >
-              <TextFieldForm
-                label={messages.labels.search}
-                placeholder={messages.labels.search}
-                fieldName="name"
+            <Grid item sm={4} xs={12}>
+              <CountryField
+                fieldName="country_code"
+                label={messages.labels.country}
                 optional
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <TextFieldForm
-                label={messages.labels.office}
-                placeholder={messages.labels.office}
-                fieldName="office_name"
+              <AdminOneLocation
+                fieldName="locations"
+                formName="tableFilter"
+                observeFieldName="country_code"
+                label={messages.labels.location}
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <RadioForm
+                fieldName="registration_status"
+                label={messages.labels.registration}
+                values={STATUS_VAL}
+                optional
+              />
+            </Grid>
+          </Grid>
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12}>
+              <SelectForm
+                fieldName="organization_type"
+                label={messages.labels.typeLabel}
+                placeholder={messages.labels.typePlaceholder}
+                values={organizationTypes}
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <SectorForm
+                fieldName="Sector and area of specialization"
+                formName="tableFilter"
+                label={messages.labels.location}
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <RadioForm
+                fieldName="un_experience"
+                label={messages.labels.experience}
+                values={STATUS_VAL}
                 optional
               />
             </Grid>
@@ -130,6 +192,7 @@ AgencyMembersFilter.propTypes = {
   classes: PropTypes.object.isRequired,
   pathName: PropTypes.string,
   query: PropTypes.object,
+  organizationTypes: PropTypes.array.isRequired,
 };
 
 const formAgencyMembersFilter = reduxForm({
@@ -148,7 +211,9 @@ const mapStateToProps = (state, ownProps) => {
     query: ownProps.location.query,
     initialValues: {
       name,
-      office_name },
+      office_name,
+    },
+    organizationTypes: selectNormalizedOrganizationTypes(state),
   };
 };
 

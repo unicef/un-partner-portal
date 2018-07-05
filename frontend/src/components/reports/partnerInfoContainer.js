@@ -5,13 +5,13 @@ import Grid from 'material-ui/Grid';
 import { browserHistory as history, withRouter } from 'react-router';
 import MainContentWrapper from '../../components/common/mainContentWrapper';
 import HeaderNavigation from '../../components/common/headerNavigation';
-import AgencyMembersFilter from './agencyMembersFilter';
+import PartnerInfoFilter from './partnerInfoFilter';
 import PaginatedList from '../common/list/paginatedList';
 import TableWithStateInUrl from '../common/hoc/tableWithStateInUrl';
 import { loadMembersList } from '../../reducers/agencyMembersList';
 import { isQueryChanged } from '../../helpers/apiHelper';
 
-class AgencyMembersContainer extends Component {
+class PartnerInfoContainer extends Component {
   componentWillMount() {
     const { query, agencyId } = this.props;
     this.props.loadMembers(agencyId, query);
@@ -39,7 +39,7 @@ class AgencyMembersContainer extends Component {
         <MainContentWrapper>
           <Grid container direction="column" spacing={24}>
             <Grid item>
-              <AgencyMembersFilter />
+              <PartnerInfoFilter />
             </Grid>
             <Grid item>
               <TableWithStateInUrl
@@ -57,7 +57,7 @@ class AgencyMembersContainer extends Component {
   }
 }
 
-AgencyMembersContainer.propTypes = {
+PartnerInfoContainer.propTypes = {
   members: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   totalCount: PropTypes.number.isRequired,
@@ -82,5 +82,5 @@ const mapDispatch = dispatch => ({
   loadMembers: (agencyId, params) => dispatch(loadMembersList(agencyId, params)),
 });
 
-const connectedAgencyMembersContainer = connect(mapStateToProps, mapDispatch)(AgencyMembersContainer);
-export default withRouter(connectedAgencyMembersContainer);
+const connectedPartnerInfoContainer = connect(mapStateToProps, mapDispatch)(PartnerInfoContainer);
+export default withRouter(connectedPartnerInfoContainer);
