@@ -51,8 +51,7 @@ const DECISIONS = [
 ];
 
 const commentFormControlStyle = {
-  paddingBottom: '12px',
-  paddingTop: '12px',
+  padding: '12px 0',
 };
 
 const Decision = isEscalated => () => {

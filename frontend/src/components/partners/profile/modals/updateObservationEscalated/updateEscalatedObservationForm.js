@@ -24,6 +24,8 @@ const messages = {
   attachment: 'Attachment (optional)',
   categoryOfRisk: 'Category of risk',
   defer: 'Having reviewed the escalated risk observation, HQ has decided that the risk observation is:',
+  defferedInfo: 'Deffered back to field or local decision making',
+  confirmedInfo: 'Confirmed/deemed to be so serious that no partnership should take place with the flagged entity',
 };
 
 export const ESCALATION_DECISION = {
@@ -35,27 +37,27 @@ const radioFlag = [
   {
     value: ESCALATION_DECISION.DEFFERED,
     label: <div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.YELLOW} />
-      {'Deffered back to field or local decision making'}
+      {messages.defferedInfo}
     </div>,
   },
   {
     value: ESCALATION_DECISION.CONFIRMED,
     label: <div style={{ display: 'flex', alignItems: 'center' }}>
-      <FlagIcon color={FLAGS.RED} />{'Confirmed/deemed to be so serious that no partnership should take place with the flagged entity'}
+      <FlagIcon color={FLAGS.RED} />
+      {messages.confirmedInfo}
+      {}
     </div>,
   },
 ];
 
-const Decision = () => () => {
-  return (<Grid container>
-    <Grid item sm={12} xs={12}>
-      <RadioForm
-        fieldName="reason_radio"
-        values={radioFlag}
-      />
-    </Grid>
-  </Grid>);
-};
+const Decision = () => () => (<Grid container>
+  <Grid item sm={12} xs={12}>
+    <RadioForm
+      fieldName="reason_radio"
+      values={radioFlag}
+    />
+  </Grid>
+</Grid>);
 
 const UpdateEscalatedObservationForm = (props) => {
   const { categoryChoices, handleSubmit } = props;

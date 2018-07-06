@@ -41,6 +41,10 @@ const styleSheet = theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
+  center: {
+    display: 'flex', 
+    alignItems: 'center',
+  }
 });
 
 class PartnerObservationsListFilter extends Component {
@@ -101,20 +105,20 @@ class PartnerObservationsListFilter extends Component {
   }
 
   styleFlags() {
-    const { observationsType } = this.props;
+    const { classes, observationsType } = this.props;
 
     return observationsType.map((item) => {
       if (item.value === FLAGS.OBSERVATION) {
-        const label = (<div style={{ display: 'flex', alignItems: 'center' }}><ObservationIcon /> {messages.flagObs}</div>);
+        const label = (<div className={classes.center}><ObservationIcon /> {messages.flagObs}</div>);
         return { value: item.value, label };
       } else if (item.value === FLAGS.YELLOW) {
-        const label = (<div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.YELLOW} /> {messages.flagYel}</div>);
+        const label = (<div className={classes.center}><FlagIcon color={FLAGS.YELLOW} /> {messages.flagYel}</div>);
         return { value: item.value, label };
       } else if (item.value === FLAGS.RED) {
-        const label = (<div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.RED} /> {messages.flagRed}</div>);
+        const label = (<div className={classes.center}><FlagIcon color={FLAGS.RED} /> {messages.flagRed}</div>);
         return { value: item.value, label };
       } else if (item.value === FLAGS.ESCALATED) {
-        const label = (<div style={{ display: 'flex', alignItems: 'center' }}><EscalatedIcon /> {messages.flagEsc}</div>);
+        const label = (<div className={classes.center}><EscalatedIcon /> {messages.flagEsc}</div>);
         return { value: item.value, label };
       } return { value: '', label: '' };
     });

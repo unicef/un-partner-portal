@@ -11,8 +11,7 @@ import ProjectPartners from '../../../forms/fields/projectFields/partnersField/P
 const styleSheet = theme => ({
   flagBg: {
     marginLeft: '5px',
-    paddingLeft: '2px',
-    paddingRight: '2px',
+    padding: '0 2px',
     background: theme.palette.flags.background,
   },
   center: {
