@@ -1,27 +1,87 @@
 import React from 'react';
+import Typography from 'material-ui/Typography';
+import { withStyles } from 'material-ui/styles';
+import PropTypes from 'prop-types';
 import { FLAGS } from '../../../../helpers/constants';
 import ObservationIcon from './observationIcon';
 import FlagIcon from './flagIcon';
 import EscalatedIcon from './escalatedIcon';
+import ProjectPartners from '../../../forms/fields/projectFields/partnersField/ProjectPartners';
+
+const styleSheet = theme => ({
+  flagBg: {
+    marginLeft: '5px',
+    padding: '0 2px',
+    background: theme.palette.flags.background,
+  },
+  center: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+});
+
 
 const messages = {
   flagObs: 'Not risk-related',
   flagYel: 'Risk flag',
+  noValid: 'NO LONGER VALID',
+  deffered: 'DEFFERED',
+  notMatch: 'NOT A TRUE MATCH',
   flagRed: 'Red flag',
   flagEsc: 'Risk flag escalated to UN Headquarters Editor',
 };
 
-const ObservationTypeIcon = (flagType) => {
+const ObservationTypeIcon = (props) => {
+  const { classes, flagType, isValid, isEscalated, category } = props;
+
   if (flagType === FLAGS.OBSERVATION) {
-    return <div style={{ display: 'flex', alignItems: 'center' }}><ObservationIcon /> {messages.flagObs}</div>;
+    return (<div className={classes.center}>
+      <ObservationIcon />
+      <Typography type="body1">{messages.flagObs}</Typography>
+    </div>);
+  } else if (flagType === FLAGS.YELLOW && isEscalated === false && isValid === null) {
+    return (<div className={classes.center}>
+      <FlagIcon color={FLAGS.YELLOW} />
+      <Typography type="body1">{messages.flagYel}</Typography>
+      <Typography className={classes.flagBg} type="caption">{messages.deffered}</Typography>
+    </div>);
+  } else if (flagType === FLAGS.YELLOW && isValid === false && category !== FLAGS.SANCTION) {
+    return (<div className={classes.center}>
+      <FlagIcon color={FLAGS.YELLOW} />
+      <Typography type="body1">{messages.flagYel}</Typography>
+      <Typography className={classes.flagBg} type="caption">{messages.noValid}</Typography>
+    </div>);
+  } else if (flagType === FLAGS.YELLOW && isValid === false && category === FLAGS.SANCTION) {
+    return (<div className={classes.center}>
+      <FlagIcon color={FLAGS.YELLOW} />
+      <Typography type="body1">{messages.flagYel}</Typography>
+      <Typography className={classes.flagBg} type="caption">{messages.notMatch}</Typography>
+    </div>);
   } else if (flagType === FLAGS.YELLOW) {
-    return <div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.YELLOW} /> {messages.flagYel}</div>;
+    return (<div className={classes.center}>
+      <FlagIcon color={FLAGS.YELLOW} />
+      <Typography type="body1">{messages.flagYel}</Typography>
+    </div>);
   } else if (flagType === FLAGS.RED) {
-    return <div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.RED} /> {messages.flagRed}</div>;
+    return (<div className={classes.center}>
+      <FlagIcon color={FLAGS.RED} />
+      <Typography type="body1">{messages.flagRed}</Typography>
+    </div>);
   } else if (flagType === FLAGS.ESCALATED) {
-    return <div style={{ display: 'flex', alignItems: 'center' }}><EscalatedIcon /> {messages.flagEsc}</div>;
+    return (<div className={classes.center}>
+      <EscalatedIcon />
+      <Typography type="body1">{messages.flagEsc}</Typography>
+    </div>);
   } return null;
 };
 
-export default ObservationTypeIcon;
+ObservationTypeIcon.propTypes = {
+  classes: PropTypes.object.isRequired,
+  flagType: PropTypes.string.isRequired,
+  isValid: PropTypes.bool.isRequired,
+  isEscalated: PropTypes.bool.isRequired,
+  category: PropTypes.string.isRequired,
+};
+
+export default withStyles(styleSheet, { name: 'ObservationTypeIcon' })(ObservationTypeIcon);
 

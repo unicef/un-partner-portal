@@ -108,7 +108,7 @@ class RenderArrayMembers extends Component {
                   </Paper>}
                 </div>
               </ListItem>
-              <Divider />
+              {limit > 1 && <Divider />}
             </div>
           ))}
 

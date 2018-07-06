@@ -171,6 +171,7 @@ const getTheme = () => (
         red: '#D50000',
         yellow: '#FFC400',
         escalated: '#FFA000',
+        background: '#E5E5E5',
       },
     },
     typography: {
