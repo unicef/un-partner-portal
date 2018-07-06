@@ -22,13 +22,13 @@ class ReportsHeader extends Component {
   }
 
   updatePath() {
-    const { tabs, params: { type } } = this.props;
-    const index = tabs.findIndex(itab => itab.path === type);
-    if (index === -1) {
-      // TODO: do real 404
+    const { tabs, location } = this.props;
+
+    if (tabs.findIndex(tab => location.match(`^/reports/${tab.path}`)) === -1) {
       history.push('/');
     }
-    return index;
+
+    return tabs.findIndex(tab => location.match(`^/reports/${tab.path}`));
   }
 
   handleChange(event, index) {
@@ -44,7 +44,6 @@ class ReportsHeader extends Component {
       hasPermission,
       tabs,
       children,
-      role,
       params: { type, id },
     } = this.props;
     const index = this.updatePath();
@@ -52,7 +51,7 @@ class ReportsHeader extends Component {
       return (
         <HeaderNavigation
           index={index}
-          title={messages[role]}
+          title={messages.agency}
           tabs={tabs}
         
           handleChange={this.handleChange}
@@ -69,14 +68,13 @@ class ReportsHeader extends Component {
 ReportsHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
-  role: PropTypes.string,
   params: PropTypes.object,
   location: PropTypes.object,
   hasPermission: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  location: ownProps.location,
+  location: ownProps.location.pathname,
   tabs: state.reportsNav,
   role: state.session.role,
   hasPermission: checkPermission(COMMON_PERMISSIONS.CFEI_VIEW, state),

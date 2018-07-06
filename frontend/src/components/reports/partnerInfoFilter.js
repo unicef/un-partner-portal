@@ -14,11 +14,13 @@ import CountryField from '../forms/fields/projectFields/locationField/countryFie
 import AdminOneLocation from '../forms/fields/projectFields/adminOneLocations';
 import SelectForm from '../forms/selectForm';
 import resetChanges from '../eois/filters/eoiHelper';
-import { selectNormalizedOrganizationTypes } from '../../store';
+import { selectNormalizedOrganizationTypes, selectMappedSpecializations } from '../../store';
 
 const messages = {
-  choose: 'Select applicable filter to generate a report of Partner profiles, ' +
+  select: 'Select applicable filter to generate a report of Partner profiles, ' +
   'a list of Partner contact information and to map Partners in the target Country Office',
+  clear: 'clear',
+  choose: 'Choose',
   labels: {
     search: 'submit',
     country: 'Country',
@@ -26,10 +28,9 @@ const messages = {
     registration: 'Registration status',
     typeLabel: 'Type of organization',
     typePlaceholder: 'Select type',
-    sector: 'Sector and area of specialization',
+    sector: 'Sector & Area of Specialization',
     experience: 'UN Experience',
   },
-  clear: 'clear',
 };
 
 const styleSheet = theme => ({
@@ -58,7 +59,7 @@ export const STATUS_VAL = [
   },
 ];
 
-class AgencyMembersFilter extends Component {
+class PartnerInfoFilter extends Component {
   constructor(props) {
     super(props);
 
@@ -106,8 +107,8 @@ class AgencyMembersFilter extends Component {
   }
 
   render() {
-    const { classes, handleSubmit, reset, organizationTypes } = this.props;
-
+    const { classes, handleSubmit, reset, organizationTypes, specs } = this.props;
+    console.log(specs);
     return (
       <form onSubmit={handleSubmit}>
         <Grid item xs={12} className={classes.filterContainer} >
@@ -147,11 +148,14 @@ class AgencyMembersFilter extends Component {
                 optional
               />
             </Grid>
-            <Grid item sm={4} xs={12}>
-              <SectorForm
-                fieldName="Sector and area of specialization"
-                formName="tableFilter"
-                label={messages.labels.location}
+            <Grid item sm={4} xs={12} >
+              <SelectForm
+                label={messages.labels.sector}
+                placeholder={messages.labels.choose}
+                fieldName="specializations"
+                multiple
+                values={specs}
+                sections
                 optional
               />
             </Grid>
@@ -184,40 +188,53 @@ class AgencyMembersFilter extends Component {
   }
 }
 
-AgencyMembersFilter.propTypes = {
+PartnerInfoFilter.propTypes = {
   /**
    *  reset function
    */
   reset: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
+  specs: PropTypes.array.isRequired,
   pathName: PropTypes.string,
   query: PropTypes.object,
   organizationTypes: PropTypes.array.isRequired,
 };
 
-const formAgencyMembersFilter = reduxForm({
-  form: 'tableFilter',
+const formPartnerInfoFilter = reduxForm({
+  form: 'reportsFilter',
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
   enableReinitialize: true,
-})(AgencyMembersFilter);
+})(PartnerInfoFilter);
 
 const mapStateToProps = (state, ownProps) => {
   const { query: { name } = {} } = ownProps.location;
   const { query: { office_name } = {} } = ownProps.location;
+  const { query: { agency } = {} } = ownProps.location;
+  const { query: { active } = {} } = ownProps.location;
+  const { query: { locations } = {} } = ownProps.location;
+  const { query: { specializations } = {} } = ownProps.location;
+  const { query: { posted_from_date } = {} } = ownProps.location;
+  const { query: { posted_to_date } = {} } = ownProps.location;
+  const agencyQ = Number(agency);
+
+  const specializationsQ = specializations &&
+  R.map(Number, specializations.split(','));
 
   return {
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
+    specs: selectMappedSpecializations(state),
+    organizationTypes: selectNormalizedOrganizationTypes(state),
     initialValues: {
       name,
       office_name,
+      specializations: specializationsQ,
     },
-    organizationTypes: selectNormalizedOrganizationTypes(state),
   };
 };
 
-const connected = connect(mapStateToProps, null)(formAgencyMembersFilter);
+const connected = connect(mapStateToProps, null)(formPartnerInfoFilter);
 const withRouterFilter = withRouter(connected);
 
-export default (withStyles(styleSheet, { name: 'AgencyMembersFilter' })(withRouterFilter));
+export default (withStyles(styleSheet, { name: 'PartnerInfoFilter' })(withRouterFilter));

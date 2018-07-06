@@ -135,10 +135,13 @@ const allRoutes = () => (
               <Route path="users" component={null} />
             </Route>
           </Route>
-          <Route path="reports" component={partnerInfoContainer}>
-            <Route path="information" component={null} />
-            <Route path="management" component={null} />
-            <Route path="verification" component={null} />
+          <Route path="reports" component={reportsHeader}>
+            <IndexRedirect to="information" />
+            <Route component={mainContent}>
+              <Route path="information" component={partnerInfoContainer} />
+              <Route path="management" component={null} />
+              <Route path="verification" component={null} />
+            </Route>
           </Route>
         </Route>
       </Route>
