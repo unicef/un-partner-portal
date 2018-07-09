@@ -18,7 +18,7 @@ import { selectNormalizedOrganizationTypes, selectMappedSpecializations } from '
 
 const messages = {
   select: 'Select applicable filter to generate a report of Partner profiles, ' +
-  'a list of Partner contact information and to map Partners in the target Country Office',
+  'a list of Partner contact information and to map Partners in the target Country Office.',
   clear: 'clear',
   choose: 'Choose',
   labels: {
@@ -41,6 +41,11 @@ const styleSheet = theme => ({
   button: {
     display: 'flex',
     justifyContent: 'flex-end',
+  },
+  headerStyles: {
+    color: 'gray',
+    fontWeight: '350',
+    padding: '4px 0',
   },
 });
 
@@ -111,6 +116,7 @@ class PartnerInfoFilter extends Component {
     console.log(specs);
     return (
       <form onSubmit={handleSubmit}>
+        <div className={classes.headerStyles}> {messages.select} </div>
         <Grid item xs={12} className={classes.filterContainer} >
           <Grid container direction="row" >
             <Grid item sm={4} xs={12}>

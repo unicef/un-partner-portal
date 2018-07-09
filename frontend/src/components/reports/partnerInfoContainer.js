@@ -33,9 +33,9 @@ class PartnerInfoContainer extends Component {
 
     return (
       <React.Fragment>
-        <Grid item>
+        {/* <Grid item>
           <HeaderNavigation title={agencyName} />
-        </Grid>
+        </Grid> */}
         <MainContentWrapper>
           <Grid container direction="column" spacing={24}>
             <Grid item>
