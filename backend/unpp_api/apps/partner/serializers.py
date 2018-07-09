@@ -443,6 +443,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
 class PartnerProfileSummarySerializer(serializers.ModelSerializer):
 
     location_of_office = PointSerializer()
+    location_field_offices = PointSerializer(many=True)
     country_presence_display = serializers.SerializerMethodField()
     org_head = serializers.SerializerMethodField()
     mailing_address = PartnerMailingAddressSerializer()
@@ -465,6 +466,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'is_hq',
             'country_code',
             'location_of_office',
+            'location_field_offices',
             'country_presence_display',
             'org_head',
             'mailing_address',
