@@ -81,9 +81,8 @@ class PartnerObservationsList extends Component {
             {submitter
               ? <Typography type="body1" color="inherit">
                 <div className={classes.center}>
-                  <div>{submitter.name}</div>
-                  <div>{userId === submitter.id ? messages.me : null},</div>
-                  <div>{submitter.agency_name}</div>
+                  <div>{submitter.name + (userId === submitter.id ? messages.me : '')}</div>
+                  <div>,&nbsp;{submitter.agency_name}</div>
                 </div>
               </Typography>
               : '-'}
