@@ -130,9 +130,9 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                     lock_partner_for_deactivation(instance.partner)
 
         if instance.flag_type == FLAG_TYPES.escalated and instance.is_valid is not None:
-            instance.is_valid = instance.is_valid or None
             instance = self.update(instance, {
                 'flag_type': FLAG_TYPES.red if instance.is_valid else FLAG_TYPES.yellow,
+                'is_valid': True,
             })
 
         return instance
