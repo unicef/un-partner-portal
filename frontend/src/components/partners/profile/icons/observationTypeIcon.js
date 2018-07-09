@@ -6,7 +6,6 @@ import { FLAGS } from '../../../../helpers/constants';
 import ObservationIcon from './observationIcon';
 import FlagIcon from './flagIcon';
 import EscalatedIcon from './escalatedIcon';
-import ProjectPartners from '../../../forms/fields/projectFields/partnersField/ProjectPartners';
 
 const styleSheet = theme => ({
   flagBg: {

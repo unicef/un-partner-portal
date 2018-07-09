@@ -47,7 +47,7 @@ const savePartnerProfileOverview = (state, action) => {
     organisationType: R.path(['partnerProfileConfig', 'partner-type', R.prop(
       'display_type', partnerDetails)], wholeState),
     operationCountry: wholeState.countries[R.prop('country_code', partnerDetails)],
-    location: R.prop('location_of_office', partnerDetails) || R.prop('country_presence_display', partnerDetails),
+    location: R.prop('location_of_offices', partnerDetails) || R.prop('country_presence_display', partnerDetails),
     head: {
       fullname: R.path(['org_head', 'fullname'], partnerDetails),
       title: R.path(['org_head', 'job_title'], partnerDetails),
