@@ -13,5 +13,5 @@ class CommaSeparatedListFilter(CharFilter):
 
     def filter(self, qs, value):
         value = parse.unquote(value).split(self.separator)
-        value = list(filter(None, value))
+        value = list(filter(lambda x: x.isdigit(), value))
         return super(CommaSeparatedListFilter, self).filter(qs, value).distinct()

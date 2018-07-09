@@ -56,3 +56,15 @@ class TestPartnerProfileReportAPIView(BaseAPITestCase):
             self.assertEqual(list_response.data['count'], partners.filter(
                 experiences__specialization__in=ids
             ).distinct().count())
+
+        for has_experience in (True, False, None):
+            list_response = self.client.get(list_url + f'?has_experience={str(has_experience)}')
+            self.assertResponseStatusIs(list_response)
+
+            partners = Partner.objects.all()
+            if has_experience:
+                partners = partners.exclude(collaborations_partnership=None)
+            elif has_experience is False:
+                partners = partners.filter(collaborations_partnership=None)
+
+            self.assertEqual(list_response.data['count'], partners.count())
