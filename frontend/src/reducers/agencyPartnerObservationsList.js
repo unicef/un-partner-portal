@@ -23,8 +23,9 @@ const saveFlags = (state, action) => {
     ({
       id: item.id,
       flag_type: item.flag_type,
-      category_display: item.category_display,
+      category_display: item.category_display || '-',
       modified: item.modified,
+      created: item.created,
       submitter: item.submitter,
       contactPerson: item.contact_person,
       contactEmail: item.contact_email,
