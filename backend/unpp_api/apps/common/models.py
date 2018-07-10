@@ -4,7 +4,7 @@ from decimal import Decimal
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from model_utils.models import TimeStampedModel
-from common.countries import COUNTRIES_ALPHA2_CODE
+from common.countries import COUNTRIES_ALPHA2_CODE, COUNTRIES_ALPHA2_CODE_DICT
 
 
 class PointQuerySet(models.QuerySet):
@@ -31,7 +31,11 @@ class AdminLevel1(models.Model):
         unique_together = ('name', 'country_code')
 
     def __str__(self):
-        return "AdminLevel1 <pk:{}>".format(self.id)
+        return f"[{self.country_name}] {self.name}"
+
+    @property
+    def country_name(self):
+        return COUNTRIES_ALPHA2_CODE_DICT[self.country_code]
 
 
 class Point(models.Model):

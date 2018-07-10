@@ -1,8 +1,10 @@
 import django_filters
 from django_filters.widgets import BooleanWidget
 
+from common.consts import PARTNER_TYPES
 from common.filter_fields import CommaSeparatedListFilter
 from partner.models import Partner
+from project.filters import BaseProjectFilter
 
 
 class PartnerProfileReportFilter(django_filters.FilterSet):
@@ -28,3 +30,16 @@ class PartnerProfileReportFilter(django_filters.FilterSet):
         if value is False:
             return queryset.filter(collaborations_partnership=None)
         return queryset
+
+
+class ProjectReportFilter(BaseProjectFilter):
+
+    year = django_filters.NumberFilter(name='published_timestamp__year', label='Year Posted')
+    org_type = django_filters.ChoiceFilter(choices=PARTNER_TYPES, name='applications__partner__display_type')
+
+    class Meta(BaseProjectFilter.Meta):
+        fields = BaseProjectFilter.Meta.fields + (
+            'display_type',
+            'year',
+            'org_type',
+        )
