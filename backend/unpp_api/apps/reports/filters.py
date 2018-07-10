@@ -34,12 +34,12 @@ class PartnerProfileReportFilter(django_filters.FilterSet):
 
 class ProjectReportFilter(BaseProjectFilter):
 
-    year = django_filters.NumberFilter(name='published_timestamp__year', label='Year Posted')
+    posted_year = django_filters.NumberFilter(name='published_timestamp__year', label='Year Posted')
     org_type = django_filters.ChoiceFilter(choices=PARTNER_TYPES, name='applications__partner__display_type')
 
     class Meta(BaseProjectFilter.Meta):
         fields = BaseProjectFilter.Meta.fields + (
             'display_type',
-            'year',
+            'posted_year',
             'org_type',
         )
