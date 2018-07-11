@@ -99,13 +99,14 @@ class PartnerInfoFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { office_name, name } = values;
+    const { office_name, country_code, name } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         page: 1,
         office_name,
+        country_code,
         name,
       }),
     });
@@ -113,7 +114,7 @@ class PartnerInfoFilter extends Component {
 
   render() {
     const { classes, handleSubmit, reset, organizationTypes, specs } = this.props;
-    console.log(specs);
+
     return (
       <form onSubmit={handleSubmit}>
         <div className={classes.headerStyles}> {messages.select} </div>
