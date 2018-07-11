@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from common.serializers import PointSerializer
 from partner.models import Partner
+from project.models import EOI
 
 
 class PartnerProfileReportSerializer(serializers.ModelSerializer):
@@ -14,6 +15,7 @@ class PartnerProfileReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partner
         fields = (
+            'id',
             'legal_name',
             'organization_type',
             'country',
@@ -32,3 +34,36 @@ class PartnerProfileReportSerializer(serializers.ModelSerializer):
         points.extend(partner.location_field_offices.all())
 
         return PointSerializer(points, many=True).data
+
+
+class ProjectReportSerializer(serializers.ModelSerializer):
+
+    locations = PointSerializer(many=True)
+    agency = serializers.CharField(source='agency.name')
+
+    class Meta:
+        model = EOI
+        fields = (
+            'id',
+            'title',
+            'agency',
+            'locations',
+        )
+
+
+class VerificationsAndObservationsReportSerializer(serializers.ModelSerializer):
+
+    acronym = serializers.CharField(source='profile.acronym')
+    organization_type = serializers.CharField(source='get_display_type_display')
+    country = serializers.CharField(source='get_country_code_display')
+
+    class Meta:
+        model = Partner
+        fields = (
+            'legal_name',
+            'acronym',
+            'organization_type',
+            'country',
+            'flagging_status',
+            'is_verified',
+        )

@@ -9,31 +9,36 @@ from django_filters.widgets import BooleanWidget, CSVWidget
 
 from account.models import User
 from common.consts import EXTENDED_APPLICATION_STATUSES, CFEI_STATUSES, CFEI_TYPES
-from common.models import Specialization
+from common.countries import COUNTRIES_ALPHA2_CODE
+from common.models import Specialization, AdminLevel1
 from project.models import EOI, Application
 
 
 class BaseProjectFilter(django_filters.FilterSet):
 
     title = CharFilter(method='filter_title')
-    country_code = CharFilter(method='filter_country_code')
-    locations = CharFilter(method='filter_locations')
+    country_code = django_filters.ChoiceFilter(
+        choices=COUNTRIES_ALPHA2_CODE, name='locations__admin_level_1__country_code', lookup_expr='iexact'
+    )
+    locations = django_filters.ModelChoiceFilter(
+        queryset=AdminLevel1.objects.all(), name='locations__admin_level_1'
+    )
     specializations = ModelMultipleChoiceFilter(
         widget=CSVWidget(), queryset=Specialization.objects.all()
     )
-    active = BooleanFilter(method='filter_active', widget=BooleanWidget())
+    active = BooleanFilter(method='filter_active', widget=BooleanWidget(), label='Is completed')
     is_published = BooleanFilter(method='filter_is_published', widget=BooleanWidget())
     posted_from_date = DateFilter(name='created', lookup_expr='date__gte')
     posted_to_date = DateFilter(name='created', lookup_expr='date__lte')
     selected_source = CharFilter(lookup_expr='iexact')
-    status = ChoiceFilter(method='filter_status', choices=CFEI_STATUSES)
+    status = ChoiceFilter(method='filter_status', choices=CFEI_STATUSES, label='Status')
     focal_points = ModelMultipleChoiceFilter(
         widget=CSVWidget(), queryset=User.objects.all()
     )
 
     class Meta:
         model = EOI
-        fields = [
+        fields = (
             'title',
             'country_code',
             'locations',
@@ -44,16 +49,10 @@ class BaseProjectFilter(django_filters.FilterSet):
             'is_published',
             'status',
             'focal_points',
-        ]
+        )
 
     def filter_title(self, queryset, name, value):
         return queryset.filter(title__icontains=value)
-
-    def filter_country_code(self, queryset, name, value):
-        return queryset.filter(locations__admin_level_1__country_code=(value and value.upper()))
-
-    def filter_locations(self, queryset, name, value):
-        return queryset.filter(locations__admin_level_1=value)
 
     def filter_active(self, queryset, name, value):
         if value:

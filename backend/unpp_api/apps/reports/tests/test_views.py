@@ -1,11 +1,15 @@
 import itertools
+
+from datetime import date
 from django.urls import reverse
 
 from agency.models import Agency
 from agency.roles import AgencyRole
-from common.factories import PartnerFactory
+from common.consts import CFEI_STATUSES
+from common.factories import PartnerFactory, OpenEOIFactory, DirectEOIFactory
 from common.tests.base import BaseAPITestCase
 from partner.models import Partner
+from project.models import EOI
 
 
 class TestPartnerProfileReportAPIView(BaseAPITestCase):
@@ -68,3 +72,71 @@ class TestPartnerProfileReportAPIView(BaseAPITestCase):
                 partners = partners.filter(collaborations_partnership=None)
 
             self.assertEqual(list_response.data['count'], partners.count())
+
+
+class TestProjectReportAPIView(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
+    initial_factories = []
+
+    def test_list(self):
+        PartnerFactory.create_batch(50)
+        OpenEOIFactory.create_batch(20, is_published=True)
+        DirectEOIFactory.create_batch(20, is_published=True)
+
+        projects = EOI.objects.all()
+        list_url = reverse('reports:projects')
+        list_response = self.client.get(list_url)
+        self.assertResponseStatusIs(list_response)
+        self.assertEqual(list_response.data['count'], projects.count())
+
+        for country_code in set(projects.values_list('locations__admin_level_1__country_code', flat=True)):
+            list_response = self.client.get(list_url + f'?country_code={country_code}')
+            self.assertResponseStatusIs(list_response)
+            self.assertEqual(list_response.data['count'], projects.filter(
+                locations__admin_level_1__country_code=country_code
+            ).count())
+
+        for location in set(projects.values_list('locations__admin_level_1', flat=True)):
+            list_response = self.client.get(list_url + f'?locations={location}')
+            self.assertResponseStatusIs(list_response)
+            self.assertEqual(list_response.data['count'], projects.filter(
+                locations__admin_level_1=location
+            ).count())
+
+        for agency in set(projects.values_list('agency', flat=True)):
+            list_response = self.client.get(list_url + f'?agency={agency}')
+            self.assertResponseStatusIs(list_response)
+            self.assertEqual(list_response.data['count'], projects.filter(agency=agency).count())
+
+        for display_type in set(projects.values_list('display_type', flat=True)):
+            list_response = self.client.get(list_url + f'?display_type={display_type}')
+            self.assertResponseStatusIs(list_response)
+            self.assertEqual(list_response.data['count'], projects.filter(display_type=display_type).count())
+
+        list_response = self.client.get(list_url + f'?status={CFEI_STATUSES.open}')
+        self.assertResponseStatusIs(list_response)
+        self.assertEqual(list_response.data['count'], 40)
+
+        for org_type in set(projects.values_list('applications__partner__display_type', flat=True)):
+            list_response = self.client.get(list_url + f'?org_type={org_type}')
+            self.assertResponseStatusIs(list_response)
+            self.assertEqual(
+                list_response.data['count'], projects.filter(applications__partner__display_type=org_type).count()
+            )
+
+        spec_options = set(map(
+            frozenset, itertools.permutations(projects.values_list('specializations__id', flat=True), 2)
+        ))
+
+        for ids in spec_options:
+            list_response = self.client.get(list_url + f'?specializations={",".join(map(str, ids))}')
+            self.assertResponseStatusIs(list_response)
+            self.assertEqual(list_response.data['count'], projects.filter(
+                specializations__in=ids
+            ).distinct().count())
+
+        list_response = self.client.get(list_url + f'?posted_year={date.today().year}')
+        self.assertResponseStatusIs(list_response)
+        self.assertEqual(list_response.data['count'], 40)
