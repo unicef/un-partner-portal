@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 
 import HeaderNavigation from '../common/headerNavigation';
-import { checkPermission, COMMON_PERMISSIONS } from '../../helpers/permissions';
-import PermissionNotification from '../common/permissionNotification';
 
 const messages = {
   partner: 'Calls for Expressions of Interest',
@@ -41,43 +39,35 @@ class ReportsHeader extends Component {
 
   render() {
     const {
-      hasPermission,
       tabs,
       children,
-      params: { type, id },
     } = this.props;
     const index = this.updatePath();
-    if (hasPermission) {
-      return (
-        <HeaderNavigation
-          index={index}
-          title={messages.agency}
-          tabs={tabs}
-        
-          handleChange={this.handleChange}
-        >
-          {(index !== -1) && children}
-        </HeaderNavigation>
-      );
-    }
 
-    return <PermissionNotification />;
+    return (
+      <HeaderNavigation
+        index={index}
+        title={messages.agency}
+        tabs={tabs}
+
+        handleChange={this.handleChange}
+      >
+        {(index !== -1) && children}
+      </HeaderNavigation>
+    );
   }
 }
 
 ReportsHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
-  params: PropTypes.object,
   location: PropTypes.object,
-  hasPermission: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   location: ownProps.location.pathname,
   tabs: state.reportsNav,
   role: state.session.role,
-  hasPermission: checkPermission(COMMON_PERMISSIONS.CFEI_VIEW, state),
 });
 
 const containerCfeiHeader = connect(

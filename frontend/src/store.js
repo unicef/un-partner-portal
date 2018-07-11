@@ -71,17 +71,16 @@ import deleteCfei from './reducers/deleteCfei';
 import deleteUcn from './reducers/deleteUcn';
 import submitUcn from './reducers/submitUcn';
 import partnerObservationsList from './reducers/agencyPartnerObservationsList';
+import reportsNav from './reducers/reportsNav';
+import reportsPartnerList from './reducers/reportsPartnerInformationList';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
 import idPortalUsersList from './idPortal/reducers/usersList';
 import idPortalNewUser from './idPortal/reducers/newUser';
 import idPortalEditUser from './idPortal/reducers/editUser';
-import idPortalDeactivateUser from './idPortal/reducers/deactivateUser';
+import idPortalDeactivateUser from './idPortal/reducers/deactivateUser'; 
 
-// REPORTS
-
-import reportsNav from './reducers/reportsNav';
 
 const mainReducer = combineReducers({
   cfei,
@@ -94,6 +93,7 @@ const mainReducer = combineReducers({
   sendCfei,
   deleteUcn,
   submitUcn,
+  reportsPartnerList,
   organizationProfileNav,
   partnerApplicationsNav,
   applicationsNotesList,

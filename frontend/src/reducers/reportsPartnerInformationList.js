@@ -7,23 +7,23 @@ import {
   saveErrorMsg,
 } from './apiStatus';
 
-export const REPORTS_LOAD_STARTED = 'REPORTS_LOAD_STARTED';
-export const REPORTS_LOAD_SUCCESS = 'REPORTS_LOAD_SUCCESS';
-export const REPORTS_LOAD_FAILURE = 'REPORTS_LOAD_FAILURE';
-export const REPORTS_LOAD_ENDED = 'REPORTS_LOAD_ENDED';
+export const REPORTS_PARTNER_LOAD_STARTED = 'REPORTS_PARTNER_LOAD_STARTED';
+export const REPORTS_PARTNER_LOAD_SUCCESS = 'REPORTS_PARTNER_LOAD_SUCCESS';
+export const REPORTS_PARTNER_LOAD_FAILURE = 'REPORTS_PARTNER_LOAD_FAILURE';
+export const REPORTS_PARTNER_LOAD_ENDED = 'REPORTS_PARTNER_LOAD_ENDED';
 
-export const verificationsLoadStarted = () => ({ type: REPORTS_LOAD_STARTED });
-export const verificationsLoadSuccess = response => ({ type: REPORTS_LOAD_SUCCESS, response });
-export const verificationsLoadFailure = error => ({ type: REPORTS_LOAD_FAILURE, error });
-export const verificationsLoadEnded = () => ({ type: REPORTS_LOAD_ENDED });
+export const reportsPartnerLoadStarted = () => ({ type: REPORTS_PARTNER_LOAD_STARTED });
+export const reportsPartnerLoadSuccess = response => ({ type: REPORTS_PARTNER_LOAD_SUCCESS, response });
+export const reportsPartnerLoadFailure = error => ({ type: REPORTS_PARTNER_LOAD_FAILURE, error });
+export const reportsPartnerLoadEnded = () => ({ type: REPORTS_PARTNER_LOAD_ENDED });
 
-const saveVerifications = (state, action) => {
-  const verifications = R.assoc('items', action.response.results, state);
-  return R.assoc('totalCount', action.response.count, verifications);
+const savePartnerReports = (state, action) => {
+  const reports = R.assoc('items', action.response.results, state);
+  return R.assoc('totalCount', action.response.count, reports);
 };
 
 const messages = {
-  loadFailed: 'Loading verifications failed.',
+  loadFailed: 'Loading partner reports failed.',
 };
 
 const initialState = {
@@ -31,8 +31,8 @@ const initialState = {
     { name: 'legal_name', title: 'Organization\'s Legal Name' },
     { name: 'orgnization_type', title: 'Type of Organization' },
     { name: 'country', title: 'Country' },
-    // unsure about fieldname here
     { name: 'no_of_offices', title: '# of Offices' },
+    { name: 'experience', title: 'UN experience' },
   ],
   loading: false,
   totalCount: 0,
@@ -40,32 +40,33 @@ const initialState = {
 };
 
 
-export const loadVerificationsList = (id, params) => (dispatch) => {
-  dispatch(verificationsLoadStarted());
-  return getPartnerVerifications(id, params)
-    .then((verifications) => {
-      dispatch(verificationsLoadEnded());
-      dispatch(verificationsLoadSuccess(verifications));
+export const loadPartnerReportsList = params => (dispatch) => {
+  dispatch(reportsPartnerLoadStarted());
+  //TODO add API call
+  return getPartnerVerifications(1, params)
+    .then((reports) => {
+      dispatch(reportsPartnerLoadEnded());
+      dispatch(reportsPartnerLoadSuccess(reports));
     })
     .catch((error) => {
-      dispatch(verificationsLoadEnded());
-      dispatch(verificationsLoadFailure(error));
+      dispatch(reportsPartnerLoadEnded());
+      dispatch(reportsPartnerLoadFailure(error));
     });
 };
 
-export default function agencyVerificationsListReducer(state = initialState, action) {
+export default function loadPartnerReportsListReducer(state = initialState, action) {
   switch (action.type) {
-    case REPORTS_LOAD_FAILURE: {
+    case REPORTS_PARTNER_LOAD_FAILURE: {
       return saveErrorMsg(state, action, messages.loadFailed);
     }
-    case REPORTS_LOAD_ENDED: {
+    case REPORTS_PARTNER_LOAD_ENDED: {
       return stopLoading(state);
     }
-    case REPORTS_LOAD_STARTED: {
+    case REPORTS_PARTNER_LOAD_STARTED: {
       return startLoading(clearError(state));
     }
-    case REPORTS_LOAD_SUCCESS: {
-      return saveVerifications(state, action);
+    case REPORTS_PARTNER_LOAD_SUCCESS: {
+      return savePartnerReports(state, action);
     }
     default:
       return state;

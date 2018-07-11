@@ -2,26 +2,24 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
-import { browserHistory as history, withRouter } from 'react-router';
-import MainContentWrapper from '../../components/common/mainContentWrapper';
-import HeaderNavigation from '../../components/common/headerNavigation';
+import { withRouter } from 'react-router';
 import PartnerInfoFilter from './partnerInfoFilter';
 import PaginatedList from '../common/list/paginatedList';
 import TableWithStateInUrl from '../common/hoc/tableWithStateInUrl';
-import { loadMembersList } from '../../reducers/agencyMembersList';
+import { loadPartnerReportsList } from '../../reducers/reportsPartnerInformationList';
 import { isQueryChanged } from '../../helpers/apiHelper';
 
 class PartnerInfoContainer extends Component {
   componentWillMount() {
-    const { query, agencyId } = this.props;
-    this.props.loadMembers(agencyId, query);
+    const { query } = this.props;
+    this.props.loadReports(query);
   }
 
   shouldComponentUpdate(nextProps) {
-    const { query, agencyId } = this.props;
+    const { query } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
-      this.props.loadMembers(agencyId, nextProps.location.query);
+      this.props.loadReports(nextProps.location.query);
       return false;
     }
 
@@ -29,57 +27,48 @@ class PartnerInfoContainer extends Component {
   }
 
   render() {
-    const { members, agencyName, columns, totalCount, loading } = this.props;
+    const { items, columns, totalCount, loading } = this.props;
 
     return (
       <React.Fragment>
-        {/* <Grid item>
-          <HeaderNavigation title={agencyName} />
-        </Grid> */}
-        <MainContentWrapper>
-          <Grid container direction="column" spacing={24}>
-            <Grid item>
-              <PartnerInfoFilter />
-            </Grid>
-            <Grid item>
-              <TableWithStateInUrl
-                component={PaginatedList}
-                items={members}
-                columns={columns}
-                itemsCount={totalCount}
-                loading={loading}
-              />
-            </Grid>
+        <Grid container direction="column" spacing={24}>
+          <Grid item>
+            <PartnerInfoFilter />
           </Grid>
-        </MainContentWrapper>
+          <Grid item>
+            <TableWithStateInUrl
+              component={PaginatedList}
+              items={items}
+              columns={columns}
+              itemsCount={totalCount}
+              loading={loading}
+            />
+          </Grid>
+        </Grid>
       </React.Fragment>
     );
   }
 }
 
 PartnerInfoContainer.propTypes = {
-  members: PropTypes.array.isRequired,
+  items: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   totalCount: PropTypes.number.isRequired,
-  loadMembers: PropTypes.func.isRequired,
+  loadReports: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
-  agencyId: PropTypes.number,
-  agencyName: PropTypes.string,
   query: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  members: state.agencyMembersList.members,
-  totalCount: state.agencyMembersList.totalCount,
-  columns: state.agencyMembersList.columns,
-  loading: state.agencyMembersList.loading,
+  items: state.reportsPartnerList.items,
+  totalCount: state.reportsPartnerList.totalCount,
+  columns: state.reportsPartnerList.columns,
+  loading: state.reportsPartnerList.loading,
   query: ownProps.location.query,
-  agencyId: state.session.agencyId,
-  agencyName: state.session.agencyName,
 });
 
 const mapDispatch = dispatch => ({
-  loadMembers: (agencyId, params) => dispatch(loadMembersList(agencyId, params)),
+  loadReports: params => dispatch(loadPartnerReportsList(params)),
 });
 
 const connectedPartnerInfoContainer = connect(mapStateToProps, mapDispatch)(PartnerInfoContainer);

@@ -15,6 +15,7 @@ import AdminOneLocation from '../forms/fields/projectFields/adminOneLocations';
 import SelectForm from '../forms/selectForm';
 import resetChanges from '../eois/filters/eoiHelper';
 import { selectNormalizedOrganizationTypes, selectMappedSpecializations } from '../../store';
+import { Typography } from '../../../node_modules/material-ui';
 
 const messages = {
   select: 'Select applicable filter to generate a report of Partner profiles, ' +
@@ -42,7 +43,7 @@ const styleSheet = theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
-  headerStyles: {
+  info: {
     color: 'gray',
     fontWeight: '350',
     padding: '4px 0',
@@ -117,7 +118,7 @@ class PartnerInfoFilter extends Component {
 
     return (
       <form onSubmit={handleSubmit}>
-        <div className={classes.headerStyles}> {messages.select} </div>
+        <Typography className={classes.info}> {messages.select} </Typography>
         <Grid item xs={12} className={classes.filterContainer} >
           <Grid container direction="row" >
             <Grid item sm={4} xs={12}>
@@ -216,14 +217,7 @@ const formPartnerInfoFilter = reduxForm({
 
 const mapStateToProps = (state, ownProps) => {
   const { query: { name } = {} } = ownProps.location;
-  const { query: { office_name } = {} } = ownProps.location;
-  const { query: { agency } = {} } = ownProps.location;
-  const { query: { active } = {} } = ownProps.location;
-  const { query: { locations } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
-  const { query: { posted_from_date } = {} } = ownProps.location;
-  const { query: { posted_to_date } = {} } = ownProps.location;
-  const agencyQ = Number(agency);
 
   const specializationsQ = specializations &&
   R.map(Number, specializations.split(','));
@@ -235,7 +229,6 @@ const mapStateToProps = (state, ownProps) => {
     organizationTypes: selectNormalizedOrganizationTypes(state),
     initialValues: {
       name,
-      office_name,
       specializations: specializationsQ,
     },
   };
