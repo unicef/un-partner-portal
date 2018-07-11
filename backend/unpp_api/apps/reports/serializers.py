@@ -49,3 +49,21 @@ class ProjectReportSerializer(serializers.ModelSerializer):
             'agency',
             'locations',
         )
+
+
+class VerificationsAndObservationsReportSerializer(serializers.ModelSerializer):
+
+    acronym = serializers.CharField(source='profile.acronym')
+    organization_type = serializers.CharField(source='get_display_type_display')
+    country = serializers.CharField(source='get_country_code_display')
+
+    class Meta:
+        model = Partner
+        fields = (
+            'legal_name',
+            'acronym',
+            'organization_type',
+            'country',
+            'flagging_status',
+            'is_verified',
+        )
