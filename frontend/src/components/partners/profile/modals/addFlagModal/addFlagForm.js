@@ -51,7 +51,7 @@ const styleFlags = flags => flags.map((item) => {
 
 const AddVerification = (props) => {
   const { categoryChoices, flagTypes, flagSelected, handleSubmit } = props;
-  console.log(flagSelected);
+
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
@@ -111,6 +111,7 @@ AddVerification.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   categoryChoices: PropTypes.array,
   flagTypes: PropTypes.array,
+  flagSelected: PropTypes.string,
 };
 
 const formAddVerification = reduxForm({
