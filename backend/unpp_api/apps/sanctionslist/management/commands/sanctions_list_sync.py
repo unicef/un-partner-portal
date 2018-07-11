@@ -23,5 +23,8 @@ class Command(BaseCommand):
             return
 
         self.stdout.write('Start sanctions list sync.')
-        parse_unsc_list()
+        try:
+            parse_unsc_list()
+        except Exception as e:
+            self.stderr.write(f'Error syncing sanctions list {e}')
         self.stdout.write('Sanctions list sync complete.')
