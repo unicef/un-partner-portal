@@ -7,10 +7,12 @@ import GridColumn from '../../../../../components/common/grid/gridColumn';
 import GridRow from '../../../../../components/common/grid/gridRow';
 import ItemColumnCell from '../../../../common/cell/itemColumnCell';
 import { fileNameFromUrl } from '../../../../../helpers/formHelper';
+import { formatDateForPrint } from '../../../../../helpers/dates';
 import { FLAGS } from '../../../../../helpers/constants';
 
 const messages = {
   role: 'Role per Office',
+  created: 'Created',
   comment: 'Comment',
   contact: 'Contact person (optional)',
   telephone: 'Telephone (optional)',
@@ -75,7 +77,8 @@ const ObservationExpand = (props) => {
 
   return (
     <GridColumn className={classes.container}>
-      <GridRow columns={1} spacing={24}>
+      <GridRow columns={2} spacing={12}>
+        <ItemColumnCell label={messages.created} content={formatDateForPrint(R.path(['created'], observation))} />
         <ItemColumnCell label={messages.comment} content={R.path(['comment'], observation)} />
       </GridRow>
       {observation.category !== FLAGS.SANCTION && <GridRow columns={4} spacing={12}>

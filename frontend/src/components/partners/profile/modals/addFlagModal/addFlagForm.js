@@ -1,5 +1,5 @@
 import React from 'react';
-import { reduxForm } from 'redux-form';
+import { reduxForm, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import GridColumn from '../../../../common/grid/gridColumn';
@@ -50,7 +50,8 @@ const styleFlags = flags => flags.map((item) => {
 });
 
 const AddVerification = (props) => {
-  const { categoryChoices, flagTypes, handleSubmit } = props;
+  const { categoryChoices, flagTypes, flagSelected, handleSubmit } = props;
+
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
@@ -60,13 +61,13 @@ const AddVerification = (props) => {
           label={messages.flagType}
           column
         />
-        <GridRow>
+        {flagSelected && flagSelected !== FLAGS.OBSERVATION && <GridRow>
           <SelectForm
             label={messages.categoryOfRisk}
             fieldName="category"
             values={categoryChoices}
           />
-        </GridRow>
+        </GridRow>}
         <TextFieldForm
           label={messages.comments}
           placeholder={messages.commentsHolder}
@@ -110,6 +111,7 @@ AddVerification.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   categoryChoices: PropTypes.array,
   flagTypes: PropTypes.array,
+  flagSelected: PropTypes.string,
 };
 
 const formAddVerification = reduxForm({
@@ -117,9 +119,18 @@ const formAddVerification = reduxForm({
 })(AddVerification);
 
 
-const mapStateToProps = state => ({
-  categoryChoices: selectNormalizedFlagCategoryChoices(state),
-  flagTypes: selectNormalizedFlagTypeChoices(state),
-});
+const mapStateToProps = (state) => {
+  const selector = formValueSelector('addFlag');
+  return {
+    categoryChoices: selectNormalizedFlagCategoryChoices(state),
+    flagTypes: selectNormalizedFlagTypeChoices(state),
+    flagSelected: selector(state, 'flag_type'),
+
+    initialValues: {
+      contact_person: state.session.name,
+      contact_email: state.session.email,
+    },
+  };
+};
 
 export default connect(mapStateToProps)(formAddVerification);
