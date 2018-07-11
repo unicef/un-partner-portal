@@ -87,6 +87,8 @@ class GeneralConfigAPIView(APIView):
             AgencyPermission.ADD_RED_FLAG_ALL_CSO_PROFILES,
         ]):
             flag_type_choices.pop(FLAG_TYPES.red)
+        else:
+            flag_type_choices.pop(FLAG_TYPES.escalated)
 
         data = {
             "financial-control-system": FINANCIAL_CONTROL_SYSTEM_CHOICES,

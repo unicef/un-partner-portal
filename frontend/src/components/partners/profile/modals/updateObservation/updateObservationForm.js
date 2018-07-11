@@ -1,19 +1,18 @@
 import React from 'react';
-import { reduxForm, formValueSelector } from 'redux-form';
+import R from 'ramda';
+import { reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
+import { Grid } from 'material-ui';
 import PropTypes from 'prop-types';
 import GridColumn from '../../../../common/grid/gridColumn';
 import GridRow from '../../../../common/grid/gridRow';
 import { email } from '../../../../../helpers/validation';
 import TextFieldForm from '../../../../forms/textFieldForm';
 import SelectForm from '../../../../forms/selectForm';
-import RadioForm from '../../../../forms/radioForm';
-import { FLAGS } from '../../../../../helpers/constants';
 import FileForm from '../../../../forms/fileForm';
 import { selectNormalizedFlagCategoryChoices, selectNormalizedFlagTypeChoices } from '../../../../../store';
-import ObservationIcon from '../../icons/observationIcon';
-import FlagIcon from '../../icons/flagIcon';
-import EscalatedIcon from '../../icons/escalatedIcon';
+import ArrayForm from '../../../../forms/arrayForm';
+import RadioForm from '../../../../forms/radioForm';
 
 const messages = {
   comments: 'Comments',
@@ -31,45 +30,65 @@ const messages = {
   flagYel: 'Yes, add risk flag',
   flagRed: 'Yes, add red flag',
   flagEsc: 'Yes, add risk flag and escalate to UN Headquarters Editor',
+  reason: 'Reason for decision',
+  enterDetails: 'Enter additional details...',
 };
 
-const styleFlags = flags => flags.map((item) => {
-  if (item.value === FLAGS.OBSERVATION) {
-    const label = (<div style={{ display: 'flex', alignItems: 'center' }}><ObservationIcon /> {messages.flagObs}</div>);
-    return { value: item.value, label };
-  } else if (item.value === FLAGS.YELLOW) {
-    const label = (<div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.YELLOW} /> {messages.flagYel}</div>);
-    return { value: item.value, label };
-  } else if (item.value === FLAGS.RED) {
-    const label = (<div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.RED} /> {messages.flagRed}</div>);
-    return { value: item.value, label };
-  } else if (item.value === FLAGS.ESCALATED) {
-    const label = (<div style={{ display: 'flex', alignItems: 'center' }}><EscalatedIcon /> {messages.flagEsc}</div>);
-    return { value: item.value, label };
-  } return { value: '', label: '' };
-});
+export const OBSERVATION_DECISION = {
+  NO_VALID: 'NV',
+  ESCALATE: 'EF',
+};
 
-const AddVerification = (props) => {
-  const { categoryChoices, flagTypes, flagSelected, handleSubmit } = props;
+const DECISIONS = [
+  {
+    value: OBSERVATION_DECISION.NO_VALID,
+    label: 'This flag is no longer valid',
+  },
+  {
+    value: OBSERVATION_DECISION.ESCALATE,
+    label: 'Escalate to UN Headquarters Editor',
+  },
+];
 
+const commentFormControlStyle = {
+  padding: '12px 0',
+};
+
+const Decision = isEscalated => () => {
+  const decisionsChoices = !isEscalated
+    ? R.filter(item => item.value !== OBSERVATION_DECISION.ESCALATE, DECISIONS)
+    : DECISIONS;
+
+  return (<Grid container>
+    <Grid item sm={12} xs={12}>
+      <RadioForm
+        fieldName="reason_radio"
+        values={decisionsChoices}
+      />
+      <TextFieldForm
+        commentFormControlStyle={commentFormControlStyle}
+        label={messages.reason}
+        placeholder={messages.enterDetails}
+        fieldName="validation_comment"
+      />
+    </Grid>
+  </Grid>);
+};
+
+const UpdateObservationForm = (props) => {
+  const { categoryChoices, flagTypes, handleSubmit, isEscalated } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
-        <RadioForm
-          fieldName="flag_type"
-          values={styleFlags(flagTypes)}
-          label={messages.flagType}
-          column
+        <SelectForm
+          label={messages.categoryOfRisk}
+          fieldName="category"
+          readOnly
+          values={categoryChoices}
         />
-        {flagSelected && flagSelected !== FLAGS.OBSERVATION && <GridRow>
-          <SelectForm
-            label={messages.categoryOfRisk}
-            fieldName="category"
-            values={categoryChoices}
-          />
-        </GridRow>}
         <TextFieldForm
           label={messages.comments}
+          readOnly
           placeholder={messages.commentsHolder}
           fieldName="comment"
         />
@@ -78,6 +97,7 @@ const AddVerification = (props) => {
           placeholder={messages.contactHolder}
           fieldName="contact_person"
           optional
+          readOnly
         />
         <GridRow>
           <TextFieldForm
@@ -85,6 +105,7 @@ const AddVerification = (props) => {
             placeholder={messages.telephoneHolder}
             fieldName="contact_phone"
             optional
+            readOnly
           />
           <TextFieldForm
             label={messages.email}
@@ -92,45 +113,61 @@ const AddVerification = (props) => {
             fieldName="contact_email"
             validation={[email]}
             required
+            readOnly
           />
         </GridRow>
         <FileForm
           label={messages.attachment}
           fieldName="attachment"
           optional
+          readOnly
+        />
+        <ArrayForm
+          limit={1}
+          fieldName="flag_decision"
+          disableDeleting
+          initial
+          outerField={Decision(isEscalated)}
         />
       </GridColumn>
     </form >
   );
 };
 
-AddVerification.propTypes = {
+UpdateObservationForm.propTypes = {
   /**
   * callback for form submit
   */
   handleSubmit: PropTypes.func.isRequired,
   categoryChoices: PropTypes.array,
   flagTypes: PropTypes.array,
-  flagSelected: PropTypes.string,
 };
 
-const formAddVerification = reduxForm({
-  form: 'addFlag',
-})(AddVerification);
+const formUpdateObservation = reduxForm({
+  form: 'updateObservationForm',
+})(UpdateObservationForm);
 
 
-const mapStateToProps = (state) => {
-  const selector = formValueSelector('addFlag');
+const mapStateToProps = (state, ownProps) => {
+  const observation = R.find(R.propEq('id', ownProps.id), state.partnerObservationsList.items);
+
   return {
     categoryChoices: selectNormalizedFlagCategoryChoices(state),
     flagTypes: selectNormalizedFlagTypeChoices(state),
-    flagSelected: selector(state, 'flag_type'),
+    isEscalated: observation.isEscalated,
 
     initialValues: {
-      contact_person: state.session.name,
-      contact_email: state.session.email,
+      contact_person: observation.contactPerson,
+      contact_phone: observation.contactPhone,
+      contact_email: observation.contactEmail,
+      attachment: observation.attachment,
+      category: observation.category,
+      comment: observation.comment,
     },
   };
 };
 
-export default connect(mapStateToProps)(formAddVerification);
+export default connect(
+  mapStateToProps,
+  null,
+)(formUpdateObservation);

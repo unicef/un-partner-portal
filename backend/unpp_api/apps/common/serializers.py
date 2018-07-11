@@ -157,7 +157,12 @@ class AdminLevel1Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = AdminLevel1
-        fields = "__all__"
+        fields = (
+            'id',
+            'name',
+            'country_code',
+            'country_name',
+        )
         validators = []  # Validation handled in custom get or create on point
 
     def validate(self, data):

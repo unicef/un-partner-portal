@@ -72,7 +72,6 @@ from review.models import (
     PartnerVerification,
 )
 from sanctionslist.models import (
-    SanctionedItem,
     SanctionedName,
     SanctionedNameMatch,
 )
@@ -129,7 +128,6 @@ def clean_up_data_in_db():
         PartnerFlag.objects.all().delete()
         PartnerVerification.objects.all().delete()
 
-        SanctionedItem.objects.all().delete()
         SanctionedName.objects.all().delete()
         SanctionedNameMatch.objects.all().delete()
 

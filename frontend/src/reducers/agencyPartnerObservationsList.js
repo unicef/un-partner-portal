@@ -13,21 +13,29 @@ export const OBSERVATIONS_LOAD_FAILURE = 'OBSERVATIONS_LOAD_FAILURE';
 export const OBSERVATIONS_LOAD_ENDED = 'APA_LOAD_ENDED';
 
 export const agencyPartnerObsLoadStarted = () => ({ type: OBSERVATIONS_LOAD_STARTED });
-export const agencyPartnerObsLoadSuccess = response => ({ type: OBSERVATIONS_LOAD_SUCCESS, response });
+export const agencyPartnerObsLoadSuccess = response =>
+  ({ type: OBSERVATIONS_LOAD_SUCCESS, response });
 export const agencyPartnerObsLoadFailure = error => ({ type: OBSERVATIONS_LOAD_FAILURE, error });
 export const agencyPartnerObsLoadEnded = () => ({ type: OBSERVATIONS_LOAD_ENDED });
 
 const saveFlags = (state, action) => {
   const flags = R.map(item =>
     ({
+      id: item.id,
       flag_type: item.flag_type,
-      category_display: item.category_display,
+      category_display: item.category_display || '-',
       modified: item.modified,
+      created: item.created,
       submitter: item.submitter,
       contactPerson: item.contact_person,
       contactEmail: item.contact_email,
       contactPhone: item.contact_phone,
       attachment: item.attachment,
+      category: item.category,
+      comment: item.comment,
+      isValid: item.is_valid,
+      isEscalated: item.can_be_escalated,
+      validationComment: item.validation_comment,
     }), action.response.results);
 
   return R.assoc('items', flags, R.assoc('totalCount', action.response.count, state));
@@ -39,7 +47,7 @@ const messages = {
 
 const initialState = {
   columns: [
-    { name: 'flag_type', title: 'Type of observation', width: 400 },
+    { name: 'flag_type', title: 'Type of observation', width: 350 },
     { name: 'category_display', title: 'Category of risk' },
     { name: 'modified', title: 'Date' },
     { name: 'submitter', title: 'Added by' },

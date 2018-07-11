@@ -181,7 +181,6 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
             patch_response = self.client.patch(flag_url, data={
                 'is_valid': is_valid,
-                'validation_comment': 'comment',
             })
             self.assertResponseStatusIs(patch_response, status.HTTP_403_FORBIDDEN)
 
@@ -190,7 +189,6 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
             patch_response = self.client.patch(flag_url, data={
                 'is_valid': is_valid,
-                'validation_comment': 'comment',
             })
             self.assertResponseStatusIs(patch_response, status.HTTP_200_OK)
             self.assertEqual(patch_response.data['flag_type'], FLAG_TYPES.red if is_valid else FLAG_TYPES.yellow)
@@ -199,7 +197,8 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
             self.client.logout()
             self.client.force_login(self.user)
             partner.refresh_from_db()
-            self.assertTrue(sum(partner.flagging_status.values()) > 0)
+            if is_valid:
+                self.assertTrue(sum(partner.flagging_status.values()) > 0)
             self.assertEqual(partner.is_locked, is_valid)
 
     def test_listing_flags(self):

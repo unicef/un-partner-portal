@@ -48,34 +48,33 @@ class OrganizationProfileAPIView(RetrieveAPIView):
         HasUNPPPermission(),
     )
     serializer_class = OrganizationProfileSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerProfileAPIView(RetrieveAPIView):
 
     permission_classes = (IsAuthenticated, )
     serializer_class = OrganizationProfileDetailsSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerProfileSummaryAPIView(RetrieveAPIView):
 
     permission_classes = (IsAuthenticated, )
     serializer_class = PartnerProfileSummarySerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnersListAPIView(ListAPIView):
 
     permission_classes = (
-        IsAuthenticated,
         HasUNPPPermission(
             agency_permissions=[
                 AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
             ]
         ),
     )
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
     serializer_class = PartnersListSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
@@ -85,7 +84,6 @@ class PartnersListAPIView(ListAPIView):
 class PartnerShortListAPIView(ListAPIView):
 
     permission_classes = (
-        IsAuthenticated,
         HasUNPPPermission(
             agency_permissions=[
                 AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
@@ -111,7 +109,7 @@ class PartnerIdentificationAPIView(
         ),
     )
     serializer_class = PartnerIdentificationSerializer
-    queryset = PartnerProfile.objects.filter(partner__is_locked=False)
+    queryset = PartnerProfile.objects.all()
 
 
 class PartnerContactInformationAPIView(
@@ -126,7 +124,7 @@ class PartnerContactInformationAPIView(
         ),
     )
     serializer_class = PartnerContactInformationSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerMandateMissionAPIView(
@@ -141,7 +139,7 @@ class PartnerMandateMissionAPIView(
         ),
     )
     serializer_class = PartnerProfileMandateMissionSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerFundingAPIView(
@@ -156,7 +154,7 @@ class PartnerFundingAPIView(
         ),
     )
     serializer_class = PartnerProfileFundingSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerCollaborationAPIView(
@@ -171,7 +169,7 @@ class PartnerCollaborationAPIView(
         ),
     )
     serializer_class = PartnerProfileCollaborationSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerProjectImplementationAPIView(
@@ -186,7 +184,7 @@ class PartnerProjectImplementationAPIView(
         ),
     )
     serializer_class = PartnerProfileProjectImplementationSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerOtherInfoAPIView(
@@ -201,7 +199,7 @@ class PartnerOtherInfoAPIView(
         ),
     )
     serializer_class = PartnerProfileOtherInfoSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerCountryProfileAPIView(FilterUsersPartnersMixin, CreateAPIView, RetrieveAPIView):
@@ -213,7 +211,7 @@ class PartnerCountryProfileAPIView(FilterUsersPartnersMixin, CreateAPIView, Retr
         ),
     )
     serializer_class = PartnerCountryProfileSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnersMemberListAPIView(ListAPIView):

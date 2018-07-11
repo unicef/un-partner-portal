@@ -26,7 +26,7 @@ class AddFlagModal extends Component {
   }
 
   render() {
-    const { submit, dialogOpen, handleDialogClose, flag } = this.props;
+    const { submitForm, dialogOpen, handleDialogClose } = this.props;
     return (
       <div>
         <ControlledModal
@@ -40,7 +40,7 @@ class AddFlagModal extends Component {
               handleClick: handleDialogClose,
             },
             raised: {
-              handleClick: submit,
+              handleClick: submitForm,
               label: messages.save,
             },
           }}
@@ -53,7 +53,7 @@ class AddFlagModal extends Component {
 
 AddFlagModal.propTypes = {
   dialogOpen: PropTypes.bool,
-  submit: PropTypes.func,
+  submitForm: PropTypes.func,
   addFlag: PropTypes.func,
   handleDialogClose: PropTypes.func,
 };
@@ -62,7 +62,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const { partnerId } = ownProps;
   return {
     addFlag: body => dispatch(updatePartnerFlags(partnerId, body, false)),
-    submit: () => dispatch(submit('addFlag')),
+    submitForm: () => dispatch(submit('addFlag')),
   };
 };
 

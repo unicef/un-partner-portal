@@ -9,6 +9,7 @@ const styleSheet = theme => ({
   root: {
     display: 'flex',
     alignItems: 'center',
+    paddingBottom: '4px',
   },
   label: {
     fontSize: '0.75rem',
@@ -62,7 +63,7 @@ FieldLabelWithTooltip.propTypes = {
    * whether tooltip should be displayed at all
    */
   displayTooltip: PropTypes.bool,
-  /** 
+  /**
    * props passed to tooltip icon
    */
   tooltipIconProps: PropTypes.object,

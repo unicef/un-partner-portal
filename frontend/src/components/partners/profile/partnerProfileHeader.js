@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
@@ -16,6 +17,11 @@ import {
 } from '../../../reducers/partnerVerifications';
 import VerificationIcon from '../profile/icons/verificationIcon';
 import FlaggingStatus from '../profile/common/flaggingStatus';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
+
+const messages = {
+  observationTab: 'observations',
+};
 
 const PartnerTitle = (props) => {
   const {
@@ -56,31 +62,46 @@ class PartnerProfileHeader extends Component {
   }
 
   updatePath() {
-    const { tabs, location, partnerId } = this.props;
-    if (tabs.findIndex(tab => location.match(`^/partner/${partnerId}/${tab.path}`)) === -1) {
+    const { tabs, location, partnerId, hasViewObservationPermission } = this.props;
+
+    const filterTabs = hasViewObservationPermission
+      ? tabs
+      : R.filter(item => item.path !== messages.observationTab, tabs);
+
+    if (filterTabs.findIndex(tab => location.match(`^/partner/${partnerId}/${tab.path}`)) === -1) {
       history.push('/');
     }
 
-    return tabs.findIndex(tab => location.match(`^/partner/${partnerId}/${tab.path}`));
+    return filterTabs.findIndex(tab => location.match(`^/partner/${partnerId}/${tab.path}`));
   }
 
   handleChange(event, index) {
-    const { tabs, partnerId } = this.props;
-    history.push(`/partner/${partnerId}/${tabs[index].path}`);
+    const { tabs, partnerId, hasViewObservationPermission } = this.props;
+
+    const filterTabs = hasViewObservationPermission
+      ? tabs
+      : R.filter(item => item.path !== messages.observationTab, tabs);
+
+    history.push(`/partner/${partnerId}/${filterTabs[index].path}`);
   }
 
   render() {
     const {
       tabs,
       children,
+      hasViewObservationPermission,
     } = this.props;
+
+    const filterTabs = hasViewObservationPermission
+      ? tabs
+      : R.filter(item => item.path !== messages.observationTab, tabs);
 
     const index = this.updatePath();
     return (
       <div>
         <HeaderNavigation
           backButton
-          tabs={tabs}
+          tabs={filterTabs}
           index={index}
           defaultReturn="/partner"
           header={<PartnerProfileHeaderMenu handleMoreClick={() => { }} />}
@@ -97,6 +118,7 @@ class PartnerProfileHeader extends Component {
 PartnerProfileHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
+  hasViewObservationPermission: PropTypes.bool,
   location: PropTypes.string.isRequired,
   partnerId: PropTypes.string.isRequired,
   loadPartnerSummary: PropTypes.func,
@@ -112,6 +134,7 @@ const mapStateToProps = (state, ownProps) => ({
   partner: state.agencyPartnerProfile.data[ownProps.params.id] || {},
   partnerId: ownProps.params.id,
   location: ownProps.location.pathname,
+  hasViewObservationPermission: checkPermission(AGENCY_PERMISSIONS.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS, state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

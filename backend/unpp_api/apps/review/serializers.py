@@ -87,16 +87,17 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         old_flag_type = instance.flag_type
 
         if new_flag_type == FLAG_TYPES.red:
-            request = self.context.get('request')
             current_user_has_permission(
-                request,
+                self.context.get('request'),
                 agency_permissions=[
                     AgencyPermission.ADD_RED_FLAG_ALL_CSO_PROFILES,
                 ],
                 raise_exception=True
             )
 
-        if validated_data.get('is_valid') is not None and not validated_data.get('validation_comment'):
+        if not instance.flag_type == FLAG_TYPES.escalated and \
+                validated_data.get('is_valid') is not None and \
+                not validated_data.get('validation_comment'):
             raise serializers.ValidationError({
                 'validation_comment': 'This field is required.'
             })
@@ -130,7 +131,8 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
 
         if instance.flag_type == FLAG_TYPES.escalated and instance.is_valid is not None:
             instance = self.update(instance, {
-                'flag_type': FLAG_TYPES.red if instance.is_valid else FLAG_TYPES.yellow
+                'flag_type': FLAG_TYPES.red if instance.is_valid else FLAG_TYPES.yellow,
+                'is_valid': True,
             })
 
         return instance

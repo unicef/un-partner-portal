@@ -232,14 +232,14 @@ export const renderRadioFieldWithChild = ({ input,
 }) => (
   <div>
     <FormControl fullWidth>
-      <FieldLabelWithTooltipIcon
+      {label && <FieldLabelWithTooltipIcon
         infoText={infoText}
         tooltipIconProps={{
           name: input.name,
         }}
       >
         {label}
-      </FieldLabelWithTooltipIcon>
+      </FieldLabelWithTooltipIcon>}
       <RadioGroupRow
         selectedValue={!R.isEmpty(input.value) ? transformBool(input.value) : defaultValue}
         onChange={(event, value) => { input.onChange(transformBool(value)); }}
