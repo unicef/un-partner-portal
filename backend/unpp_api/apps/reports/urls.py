@@ -8,7 +8,7 @@ from reports.views import (
 
 
 urlpatterns = [
-    url(r'^partner-information/$', PartnerProfileReportAPIView.as_view(), name="partner-information"),
+    url(r'^partners/$', PartnerProfileReportAPIView.as_view(), name="partner-information"),
     url(r'^projects/$', ProjectReportAPIView.as_view(), name="projects"),
     url(
         r'^verifications-observations/$',
