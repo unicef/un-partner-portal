@@ -4,21 +4,19 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
 import { withStyles } from 'material-ui/styles';
-import { browserHistory as history, withRouter } from 'react-router';
+import { Typography } from 'material-ui';
+import { browserHistory as history, withRouter } from 'react-router/lib';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
-import TextFieldForm from '../forms/textFieldForm';
-import SectorForm from '../forms/fields/projectFields/sectorField/sectorFieldArray';
-import RadioForm from '../forms/radioForm';
-import CountryField from '../forms/fields/projectFields/locationField/countryField';
-import AdminOneLocation from '../forms/fields/projectFields/adminOneLocations';
-import SelectForm from '../forms/selectForm';
-import resetChanges from '../eois/filters/eoiHelper';
-import { selectNormalizedOrganizationTypes, selectMappedSpecializations } from '../../store';
-import { Typography } from '../../../node_modules/material-ui';
+import RadioForm from '../../forms/radioForm';
+import CountryField from '../../forms/fields/projectFields/locationField/countryField';
+import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import SelectForm from '../../forms/selectForm';
+import resetChanges from '../../eois/filters/eoiHelper';
+import { selectNormalizedOrganizationTypes, selectMappedSpecializations } from '../../../store';
 
 const messages = {
-  select: 'Select applicable filter to generate a report of Partner profiles, ' +
+  select: 'Select applicable filters to generate a report of Partner profiles, ' +
   'a list of Partner contact information and to map Partners in the target Country Office.',
   clear: 'clear',
   choose: 'Choose',

@@ -42,14 +42,15 @@ import cfeiDirectResponse from './components/eois/details/overview/results/respo
 import cfeiFeedback from './components/eois/details/overview/feedback';
 import partnerApplicationList from './components/agency/partnerApplicationList';
 import partnerObservationsList from './components/partners/profile/overview/observations/partnerObservationsList';
+import partnerInfoContainer from './components/reports/partnerInformation/partnerInfoContainer';
+import cfeiManagementContainer from './components/reports/cfeiManagement/cfeiManagementContainer';
+import reportsHeader from './components/reports/reportsHeader';
 
 // ID portal
 import mainLayoutIdPortal from './idPortal/mainLayout';
 import mainIdPortal from './idPortal/main';
 import dashboardIdPortal from './idPortal/dashboard/dashboard';
 import usersIdPortal from './idPortal/users/list/usersContainer';
-import partnerInfoContainer from './components/reports/partnerInfoContainer';
-import reportsHeader from './components/reports/reportsHeader';
 
 
 const history = syncHistoryWithStore(browserHistory, store);
@@ -139,7 +140,7 @@ const allRoutes = () => (
             <IndexRedirect to="information" />
             <Route component={mainContent}>
               <Route path="information" component={partnerInfoContainer} />
-              <Route path="management" component={null} />
+              <Route path="management" component={cfeiManagementContainer} />
               <Route path="verification" component={null} />
             </Route>
           </Route>
