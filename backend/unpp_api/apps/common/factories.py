@@ -106,7 +106,7 @@ def get_partner_name():
     return f'Save the {generate(2)[-1].title()}'
 
 
-def get_partner():
+def get_random_partner():
     return Partner.objects.all().order_by("?").first()
 
 
@@ -559,7 +559,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
 class PartnerMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
-    partner = factory.LazyFunction(get_partner)
+    partner = factory.LazyFunction(get_random_partner)
     title = factory.LazyFunction(get_job_title)
     role = PartnerRole.ADMIN.name
 
@@ -651,7 +651,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def invited_partners(self, create, extracted, **kwargs):
-        partner = get_partner()
+        partner = get_random_partner()
         if partner:
             self.invited_partners.add(partner)
 
@@ -724,7 +724,7 @@ class DirectEOIFactory(OpenEOIFactory):
 
 class PartnerFlagFactory(factory.django.DjangoModelFactory):
     submitter = factory.LazyFunction(get_agency_member)
-    partner = factory.LazyFunction(get_partner)
+    partner = factory.LazyFunction(get_random_partner)
     contact_phone = factory.Sequence(lambda n: "+48 22 568030{}".format(n))
     contact_email = factory.Sequence(lambda n: "fake-contact-{}@unicef.org".format(n))
     comment = factory.Sequence(lambda n: "fake comment {}".format(n))
@@ -735,7 +735,7 @@ class PartnerFlagFactory(factory.django.DjangoModelFactory):
 
 
 class PartnerVerificationFactory(factory.django.DjangoModelFactory):
-    partner = factory.LazyFunction(get_partner)
+    partner = factory.LazyFunction(get_random_partner)
     submitter = factory.LazyFunction(get_agency_member)
     is_mm_consistent = True
     is_indicate_results = True
@@ -756,7 +756,7 @@ class PartnerVerificationFactory(factory.django.DjangoModelFactory):
 class UnsolicitedFactory(factory.django.DjangoModelFactory):
     is_unsolicited = True
     is_published = True
-    partner = factory.LazyFunction(get_partner)
+    partner = factory.LazyFunction(get_random_partner)
     submitter = factory.LazyFunction(get_partner_member)
     agency = factory.LazyFunction(get_random_agency)
     published_timestamp = factory.LazyFunction(timezone.now)
@@ -793,7 +793,7 @@ class SanctionedNameFactory(factory.django.DjangoModelFactory):
 class SanctionedNameMatchFactory(factory.django.DjangoModelFactory):
 
     name = factory.SubFactory(SanctionedNameFactory)
-    partner = factory.LazyFunction(get_partner)
+    partner = factory.LazyFunction(get_random_partner)
 
     class Meta:
         model = SanctionedNameMatch

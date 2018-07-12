@@ -27,9 +27,7 @@ class PartnerReportFilter(django_filters.FilterSet):
     has_experience = django_filters.BooleanFilter(
         method='filter_has_experience', widget=BooleanWidget, label='Has UN Experience'
     )
-    is_verified = django_filters.ChoiceFilter(
-        choices=VerificationChoices.CHOICES, method='filter_is_verified', label='Verification Status'
-    )
+    is_verified = django_filters.CharFilter(method='filter_is_verified', label='Verification Status')
     verification_year = django_filters.NumberFilter(method='filter_verification_year', label='Verification Year')
     flag = django_filters.ChoiceFilter(
         choices=FLAG_TYPES, name='flags__flag_type', label='Has Flag Type'

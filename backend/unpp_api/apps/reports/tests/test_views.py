@@ -140,3 +140,28 @@ class TestProjectReportAPIView(BaseAPITestCase):
         list_response = self.client.get(list_url + f'?posted_year={date.today().year}')
         self.assertResponseStatusIs(list_response)
         self.assertEqual(list_response.data['count'], 40)
+
+
+class TestVerificationsAndObservationsReportAPIView(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
+    initial_factories = []
+
+    def test_list(self):
+        PartnerFactory.create_batch(40)
+        partners = Partner.objects.all()
+        list_url = reverse('reports:verifications-observations')
+        list_response = self.client.get(list_url)
+        self.assertResponseStatusIs(list_response)
+        self.assertEqual(list_response.data['count'], partners.count())
+
+        for country_code in partners.values_list('country_code').distinct():
+            list_response = self.client.get(list_url + f'?country_code={country_code}')
+            self.assertResponseStatusIs(list_response)
+            self.assertEqual(list_response.data['count'], partners.filter(country_code=country_code).count())
+
+        for display_type in partners.values_list('display_type').distinct():
+            list_response = self.client.get(list_url + f'?display_type={display_type}')
+            self.assertResponseStatusIs(list_response)
+            self.assertEqual(list_response.data['count'], partners.filter(display_type=display_type).count())
