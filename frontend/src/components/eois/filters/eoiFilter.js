@@ -86,7 +86,6 @@ class EoiFilter extends Component {
   componentWillReceiveProps(nextProps) {
     if (R.isEmpty(nextProps.query)) {
       const { pathname } = nextProps.location;
-
       const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
       const ordering = this.props.query.active === 'true' ? 'deadline_date' : '-completed_date';
       const active = this.props.query.active ? this.props.query.active : true;
