@@ -84,8 +84,8 @@ class TestProjectReportAPIView(BaseAPITestCase):
 
     def test_list(self):
         PartnerFactory.create_batch(50)
-        OpenEOIFactory.create_batch(20, is_published=True)
-        DirectEOIFactory.create_batch(20, is_published=True)
+        OpenEOIFactory.create_batch(20, is_published=True, agency=self.user.agency)
+        DirectEOIFactory.create_batch(20, is_published=True, agency=self.user.agency)
 
         projects = EOI.objects.all()
         list_url = reverse('reports:projects')

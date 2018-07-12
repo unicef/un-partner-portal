@@ -47,6 +47,9 @@ class ProjectReportAPIView(ListAPIView):
     serializer_class = ProjectReportSerializer
     pagination_class = SmallPagination
 
+    def get_queryset(self):
+        return super(ProjectReportAPIView, self).get_queryset().filter(agency=self.request.user.agency)
+
 
 class VerificationsAndObservationsReportAPIView(ListAPIView):
 
