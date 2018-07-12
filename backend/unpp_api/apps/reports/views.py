@@ -19,7 +19,9 @@ class PartnerProfileReportAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+                AgencyPermission.RUN_REPORT_CSO_PROFILE,
+                AgencyPermission.RUN_REPORT_CSO_MAPPING,
+                AgencyPermission.RUN_REPORT_CSO_CONTACT,
             ]
         ),
     )
@@ -36,7 +38,7 @@ class ProjectReportAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+                AgencyPermission.RUN_REPORT_CFEI_MANAGEMENT,
             ]
         ),
     )
@@ -56,7 +58,7 @@ class VerificationsAndObservationsReportAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+                AgencyPermission.RUN_REPORT_VERIFICATION_AND_FLAGGING,
             ]
         ),
     )
