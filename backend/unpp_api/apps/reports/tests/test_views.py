@@ -195,3 +195,17 @@ class TestVerificationsAndObservationsReportAPIView(BaseAPITestCase):
             list_response = self.client.get(list_url + f'?flag={flag_type}')
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], partners.filter(flags__flag_type=flag_type).count())
+
+
+class TestBasicExportAPIViews(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
+    initial_factories = []
+
+    def test_profile_report(self):
+        PartnerFactory.create_batch(40)
+        url = reverse('reports:partner-profile-export-xlsx')
+        response = self.client.get(url)
+        self.assertResponseStatusIs(response)
+        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')

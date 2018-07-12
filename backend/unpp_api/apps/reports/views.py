@@ -6,6 +6,7 @@ from common.pagination import SmallPagination
 from common.permissions import HasUNPPPermission
 from partner.models import Partner
 from project.models import EOI
+from reports.exports.excel.partner_profile_report import PartnerProfileReportXLSLExport
 from reports.filters import PartnerReportFilter, ProjectReportFilter
 from reports.serializers import (
     PartnerProfileReportSerializer,
@@ -31,6 +32,12 @@ class PartnerProfileReportAPIView(ListAPIView):
     queryset = Partner.objects.filter(is_locked=False)
     serializer_class = PartnerProfileReportSerializer
     pagination_class = SmallPagination
+
+
+class PartnerProfileReportXLSXReportAPIView(PartnerProfileReportAPIView):
+
+    def get(self, request, *args, **kwargs):
+        return PartnerProfileReportXLSLExport(self.filter_queryset(self.get_queryset())).get_as_response()
 
 
 class ProjectReportAPIView(ListAPIView):

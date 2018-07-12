@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db.models import Q
-from django.db.models.constants import LOOKUP_SEP
 from rest_framework import status as statuses
 from rest_framework.response import Response
 from rest_framework.validators import UniqueTogetherValidator
 
-from agency.roles import AgencyRole
 from partner.models import Partner
 
 
@@ -73,33 +70,3 @@ class SkipUniqueTogetherValidationOnPatchMixin(object):
             )
 
         return validators
-
-
-class FilterByCFEIRoleMixin(object):
-
-    role_to_field_mappings = None
-    cfei_lookup = None
-
-    def get_queryset(self, *args, **kwargs):
-        queryset = super(FilterByCFEIRoleMixin, self).get_queryset(*args, **kwargs)
-        if self.cfei_lookup:
-            prefix = self.cfei_lookup + LOOKUP_SEP
-        else:
-            prefix = ''
-
-        if self.request.agency_member:
-            if not self.role_to_field_mappings:
-                queryset = queryset.filter(**{
-                    prefix + 'created_by': self.request.user
-                })
-            else:
-                queryset_filter = Q()
-                fields_to_check = self.role_to_field_mappings.get(
-                    AgencyRole[self.request.agency_member.role], ['created_by']
-                )
-                for field_name in fields_to_check:
-                    queryset_filter |= Q(**{
-                        prefix + field_name: self.request.user
-                    })
-                queryset = queryset.filter(queryset_filter)
-        return queryset
