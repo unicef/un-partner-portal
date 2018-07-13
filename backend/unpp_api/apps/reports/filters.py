@@ -21,6 +21,7 @@ class VerificationChoices:
 
 class PartnerReportFilter(django_filters.FilterSet):
 
+    ids = CommaSeparatedListFilter(name='id', label='IDs')
     specializations = CommaSeparatedListFilter(name='experiences__specialization')
     registered = django_filters.BooleanFilter(name='profile__registration_to_operate_in_country', widget=BooleanWidget)
     collabs = CommaSeparatedListFilter(name='collaborations_partnership__agency')
@@ -36,6 +37,7 @@ class PartnerReportFilter(django_filters.FilterSet):
     class Meta:
         model = Partner
         fields = (
+            'ids',
             'country_code',
             'display_type',
             'specializations',
@@ -73,11 +75,13 @@ class PartnerReportFilter(django_filters.FilterSet):
 
 class ProjectReportFilter(BaseProjectFilter):
 
+    ids = CommaSeparatedListFilter(name='id', label='IDs')
     posted_year = django_filters.NumberFilter(name='published_timestamp__year', label='Year Posted')
     org_type = django_filters.ChoiceFilter(choices=PARTNER_TYPES, name='applications__partner__display_type')
 
     class Meta(BaseProjectFilter.Meta):
         fields = BaseProjectFilter.Meta.fields + (
+            'ids',
             'display_type',
             'posted_year',
             'org_type',

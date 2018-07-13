@@ -61,6 +61,7 @@ class VerificationsAndObservationsReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partner
         fields = (
+            'id',
             'legal_name',
             'acronym',
             'organization_type',
