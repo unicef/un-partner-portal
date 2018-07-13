@@ -74,6 +74,7 @@ import partnerObservationsList from './reducers/agencyPartnerObservationsList';
 import reportsNav from './reducers/reportsNav';
 import reportsPartnerList from './reducers/reportsPartnerInformationList';
 import reportsCfeiManagementList from './reducers/reportsCfeiManagementList';
+import reportVerificationList from './reducers/reportsVerificationList';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -96,6 +97,7 @@ const mainReducer = combineReducers({
   submitUcn,
   reportsPartnerList,
   reportsCfeiManagementList,
+  reportVerificationList,
   organizationProfileNav,
   partnerApplicationsNav,
   applicationsNotesList,

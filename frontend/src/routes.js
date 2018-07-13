@@ -44,6 +44,7 @@ import partnerApplicationList from './components/agency/partnerApplicationList';
 import partnerObservationsList from './components/partners/profile/overview/observations/partnerObservationsList';
 import partnerInfoContainer from './components/reports/partnerInformation/partnerInfoContainer';
 import cfeiManagementContainer from './components/reports/cfeiManagement/cfeiManagementContainer';
+import verificationContainer from './components/reports/verifcation/verificationContainer';
 import reportsHeader from './components/reports/reportsHeader';
 
 // ID portal
@@ -141,7 +142,7 @@ const allRoutes = () => (
             <Route component={mainContent}>
               <Route path="information" component={partnerInfoContainer} />
               <Route path="management" component={cfeiManagementContainer} />
-              <Route path="verification" component={null} />
+              <Route path="verification" component={verificationContainer} />
             </Route>
           </Route>
         </Route>
