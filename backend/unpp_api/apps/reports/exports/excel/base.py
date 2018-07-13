@@ -5,7 +5,8 @@ import tempfile
 
 from django.http import HttpResponse
 from django.utils import timezone
-from xlsxwriter import Workbook
+
+from common.excel import AutoWidthWorkBook
 
 
 class BaseXLSXExporter:
@@ -17,7 +18,7 @@ class BaseXLSXExporter:
         self.response = HttpResponse(
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
-        self.workbook = Workbook(self.response, {'in_memory': True})
+        self.workbook = AutoWidthWorkBook(self.response, {'in_memory': True})
 
     def get_display_name(self):
         return '{} Objects UNPP Export'.format(self.queryset.count())
