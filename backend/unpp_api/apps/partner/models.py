@@ -75,7 +75,7 @@ class Partner(TimeStampedModel):
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "Partner: {} <pk:{}>".format(self.legal_name, self.id)
@@ -289,8 +289,15 @@ class PartnerProfile(TimeStampedModel):
     experienced_staff_desc = models.TextField(max_length=5000, null=True, blank=True)
 
     # collaborate
-    partnership_collaborate_institution = models.NullBooleanField()
-    partnership_collaborate_institution_desc = models.CharField(max_length=5000, null=True, blank=True)
+    partnership_collaborate_institution = models.NullBooleanField(
+        verbose_name='Has the organization collaborated with or a member of a cluster, professional network, '
+                     'consortium or any similar institutions?'
+    )
+    partnership_collaborate_institution_desc = models.CharField(
+        max_length=5000, null=True, blank=True,
+        verbose_name='Please state which cluster, network or consortium and briefly explain the collaboration '
+                     'professional network, consortium or any similar institutions?'
+    )
 
     any_partnered_with_un = models.NullBooleanField()
     any_accreditation = models.NullBooleanField()
@@ -305,7 +312,7 @@ class PartnerProfile(TimeStampedModel):
     explain = models.TextField(max_length=5000, null=True, blank=True, verbose_name="Please explain")
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerProfile <pk:{}>".format(self.id)
@@ -539,7 +546,7 @@ class PartnerMailingAddress(TimeStampedModel):
     org_email = models.EmailField(null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerMailingAddress <pk:{}>".format(self.id)
@@ -555,7 +562,7 @@ class PartnerHeadOrganization(TimeStampedModel):
     mobile = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerHeadOrganization <pk:{}>".format(self.id)
@@ -572,7 +579,7 @@ class PartnerDirector(TimeStampedModel):
     email = models.EmailField(max_length=255, null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerDirector <pk:{}>".format(self.id)
@@ -599,7 +606,7 @@ class PartnerAuthorisedOfficer(TimeStampedModel):
     email = models.EmailField(max_length=255, null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerAuthorisedOfficer <pk:{}>".format(self.id)
@@ -622,7 +629,7 @@ class PartnerPolicyArea(TimeStampedModel):
     document_policies = models.NullBooleanField()
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerPolicyArea <pk:{}>".format(self.id)
@@ -639,7 +646,7 @@ class PartnerAuditAssessment(TimeStampedModel):
     regular_capacity_assessments = models.NullBooleanField()
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerAuditAssessment <pk:{}>".format(self.id)
@@ -660,7 +667,7 @@ class PartnerAuditReport(TimeStampedModel):
     link_report = models.URLField(null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerAuditReport <pk:{}>".format(self.id)
@@ -687,7 +694,7 @@ class PartnerCapacityAssessment(TimeStampedModel):
     report_url = models.URLField(null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerCapacityAssessment <pk:{}>".format(self.id)
@@ -709,7 +716,7 @@ class PartnerReporting(TimeStampedModel):
     link_report = models.URLField(null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerReporting <pk:{}>".format(self.id)
@@ -769,22 +776,8 @@ class PartnerMandateMission(TimeStampedModel):
                      "other situations requiring rapid response."
     )
 
-    # TODO: these 2 actually seem unused
-    # Collaboration
-    partnership_with_institutions = models.NullBooleanField(
-        verbose_name='Has the organization collaborated with or a member of a cluster, professional network, '
-                     'consortium or any similar institutions?'
-    )
-    description = models.TextField(
-        max_length=5000,
-        blank=True,
-        null=True,
-        verbose_name='Please state which cluster, network or consortium and briefly explain the collaboration '
-                     'professional network, consortium or any similar institutions?'
-    )
-
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerMandateMission <pk:{}>".format(self.id)
@@ -804,7 +797,7 @@ class PartnerExperience(TimeStampedModel):
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerExperience <pk:{}>".format(self.id)
@@ -828,7 +821,7 @@ class PartnerInternalControl(TimeStampedModel):
     comment = models.TextField(max_length=5000, null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerInternalControl <pk:{}>".format(self.id)
@@ -872,7 +865,7 @@ class PartnerFunding(TimeStampedModel):
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerFunding <pk:{}>".format(self.id)
@@ -888,7 +881,7 @@ class PartnerCollaborationPartnership(TimeStampedModel):
     partner_number = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
         unique_together = (
             ('partner', 'agency'),
         )
@@ -917,7 +910,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
         'common.CommonFile', null=True, blank=True, related_name="collaboration_evidences")
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerCollaborationEvidence <pk:{}>".format(self.id)
@@ -954,7 +947,7 @@ class PartnerOtherInfo(TimeStampedModel):
     confirm_data_updated = models.NullBooleanField(default=False)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerOtherInfo <pk:{}>".format(self.id)
@@ -995,7 +988,7 @@ class PartnerMember(TimeStampedModel):
     role = FixedTextField(choices=PartnerRole.get_choices(), default=PartnerRole.READER.name)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
         unique_together = (
             'user', 'partner'
         )
@@ -1030,7 +1023,7 @@ class PartnerReview(TimeStampedModel):
     comment = models.TextField()
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerReview <pk:{}>".format(self.id)
