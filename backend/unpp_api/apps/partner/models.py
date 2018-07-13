@@ -226,7 +226,8 @@ class PartnerProfile(TimeStampedModel):
     legal_name_change = models.NullBooleanField()
     former_legal_name = models.CharField(max_length=255, null=True, blank=True)
     connectivity = models.NullBooleanField(
-        verbose_name='Does the organization have reliable access to internet in all of its operations?')
+        verbose_name='Does the organization have reliable access to internet in all of its operations?'
+    )
     connectivity_excuse = models.CharField(max_length=5000, null=True, blank=True)
     working_languages = ArrayField(
         models.CharField(max_length=3, choices=WORKING_LANGUAGES_CHOICES),
@@ -296,11 +297,11 @@ class PartnerProfile(TimeStampedModel):
     any_reference = models.NullBooleanField()
 
     # Banking Information
-    have_bank_account = models.NullBooleanField(
-        verbose_name="Does the organization have a bank account?")
+    have_bank_account = models.NullBooleanField(verbose_name="Does the organization have a bank account?")
     have_separate_bank_account = models.NullBooleanField(
         verbose_name="Does the organization currently maintain, or has it previously maintained, a separate, "
-                     "interest-bearing account for UN funded projects that require a separate account?")
+                     "interest-bearing account for UN funded projects that require a separate account?"
+    )
     explain = models.TextField(max_length=5000, null=True, blank=True, verbose_name="Please explain")
 
     class Meta:
@@ -754,10 +755,12 @@ class PartnerMandateMission(TimeStampedModel):
 
     # security
     security_high_risk_locations = models.NullBooleanField(
-        verbose_name="Does the organization have the ability to work in high-risk security locations?")
+        verbose_name="Does the organization have the ability to work in high-risk security locations?"
+    )
     security_high_risk_policy = models.NullBooleanField(
         verbose_name="Does the organization have policies, procedures and practices related "
-                     "to security risk management?")
+                     "to security risk management?"
+    )
     security_desc = models.TextField(
         max_length=5000,
         null=True,
@@ -766,19 +769,18 @@ class PartnerMandateMission(TimeStampedModel):
                      "other situations requiring rapid response."
     )
 
+    # TODO: these 2 actually seem unused
     # Collaboration
     partnership_with_institutions = models.NullBooleanField(
-        verbose_name=(
-            'Has the organization collaborated with or a member of a cluster,'
-            ' professional network, consortium or any similar institutions?')
+        verbose_name='Has the organization collaborated with or a member of a cluster, professional network, '
+                     'consortium or any similar institutions?'
     )
     description = models.TextField(
         max_length=5000,
         blank=True,
         null=True,
-        verbose_name=(
-            'Please state which cluster, network or consortium and briefly explain the collaboration'
-            ' professional netwok, consortium or any similar insitutions?')
+        verbose_name='Please state which cluster, network or consortium and briefly explain the collaboration '
+                     'professional network, consortium or any similar institutions?'
     )
 
     class Meta:
@@ -866,7 +868,8 @@ class PartnerFunding(TimeStampedModel):
         null=True
     )
     main_donors_list = models.CharField(
-        max_length=5000, blank=True, null=True, verbose_name="Please list your main donors")
+        max_length=5000, blank=True, null=True, verbose_name="Please list your main donors"
+    )
 
     class Meta:
         ordering = ['id']

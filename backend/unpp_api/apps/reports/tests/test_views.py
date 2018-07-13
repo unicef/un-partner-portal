@@ -216,3 +216,10 @@ class TestBasicExportAPIViews(BaseAPITestCase):
         response = self.client.get(url)
         self.assertResponseStatusIs(response)
         self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+    def test_project_report(self):
+        PartnerFactory.create_batch(40)
+        url = reverse('reports:projects-details-export-xlsx')
+        response = self.client.get(url)
+        self.assertResponseStatusIs(response)
+        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')

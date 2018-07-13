@@ -6,8 +6,9 @@ from common.pagination import SmallPagination
 from common.permissions import HasUNPPPermission
 from partner.models import Partner
 from project.models import EOI
-from reports.exports.excel.partner_contact_info import PartnerContactInformationXLSLExport
-from reports.exports.excel.partner_profile_report import PartnerProfileReportXLSLExport
+from reports.exports.excel.partner_contact_info import PartnerContactInformationXLSLExporter
+from reports.exports.excel.partner_profile_report import PartnerProfileReportXLSLExporter
+from reports.exports.excel.project_details import ProjectDetailsXLSLExporter
 from reports.filters import PartnerReportFilter, ProjectReportFilter
 from reports.serializers import (
     PartnerProfileReportSerializer,
@@ -38,13 +39,13 @@ class PartnerProfileReportAPIView(ListAPIView):
 class PartnerProfileReportXLSXReportAPIView(PartnerProfileReportAPIView):
 
     def get(self, request, *args, **kwargs):
-        return PartnerProfileReportXLSLExport(self.filter_queryset(self.get_queryset())).get_as_response()
+        return PartnerProfileReportXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response()
 
 
 class PartnerContactInformationReportXLSXReportAPIView(PartnerProfileReportAPIView):
 
     def get(self, request, *args, **kwargs):
-        return PartnerContactInformationXLSLExport(self.filter_queryset(self.get_queryset())).get_as_response()
+        return PartnerContactInformationXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response()
 
 
 class ProjectReportAPIView(ListAPIView):
@@ -65,6 +66,12 @@ class ProjectReportAPIView(ListAPIView):
 
     def get_queryset(self):
         return super(ProjectReportAPIView, self).get_queryset().filter(agency=self.request.user.agency)
+
+
+class ProjectDetailsXLSXReportAPIView(ProjectReportAPIView):
+
+    def get(self, request, *args, **kwargs):
+        return ProjectDetailsXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response()
 
 
 class VerificationsAndObservationsReportAPIView(ListAPIView):

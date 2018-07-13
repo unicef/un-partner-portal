@@ -2,7 +2,7 @@ from partner.models import Partner
 from reports.exports.excel.base import BaseXLSXExporter
 
 
-class PartnerContactInformationXLSLExport(BaseXLSXExporter):
+class PartnerContactInformationXLSLExporter(BaseXLSXExporter):
 
     def get_display_name(self):
         return f'{self.queryset.count()} Partners(s) Contact Information Report'
