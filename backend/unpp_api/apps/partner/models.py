@@ -549,7 +549,6 @@ class PartnerHeadOrganization(TimeStampedModel):
     fullname = models.CharField(max_length=512, null=True, blank=True)
     email = models.EmailField(max_length=255, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
-    # TODO: shall we provide PhoneNumberField ???
     telephone = models.CharField(max_length=255, null=True, blank=True)
     fax = models.CharField(max_length=255, null=True, blank=True)
     mobile = models.CharField(max_length=255, null=True, blank=True)

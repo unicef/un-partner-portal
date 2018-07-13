@@ -8,6 +8,8 @@ from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 import factory
 from factory import fuzzy
+from faker import Faker
+
 from account.models import User, UserProfile
 from agency.agencies import AGENCIES
 from agency.models import OtherAgency, Agency, AgencyOffice, AgencyMember
@@ -61,6 +63,9 @@ from sanctionslist.models import SanctionedNameMatch, SanctionedItem, Sanctioned
 COUNTRIES = [x[0] for x in COUNTRIES_ALPHA2_CODE]
 
 filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+
+
+fake = Faker()
 
 
 def get_random_agency():
@@ -230,14 +235,14 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     @factory.post_generation
     def mailing_address(self, create, extracted, **kwargs):
         PartnerMailingAddress.objects.filter(partner=self).update(
-            street='fake street',
-            city='fake city',
-            country=get_country_list(1)[0],
-            zip_code='90210',
-            telephone='(123) 234 569',
-            fax='(123) 234 566',
-            website='partner.website.org',
-            org_email="office@partner.website.org",
+            street=fake.street_name(),
+            city=fake.city(),
+            country=random.choice(COUNTRIES),
+            zip_code=fake.postalcode(),
+            telephone=fake.phone_number(),
+            fax=fake.phone_number(),
+            website=fake.url(),
+            org_email=fake.company_email(),
         )
 
     @factory.post_generation

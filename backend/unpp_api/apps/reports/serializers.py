@@ -17,6 +17,7 @@ class PartnerProfileReportSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'legal_name',
+            'flagging_status',
             'organization_type',
             'country',
             'office_count',

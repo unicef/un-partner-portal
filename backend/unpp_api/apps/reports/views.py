@@ -6,6 +6,8 @@ from common.pagination import SmallPagination
 from common.permissions import HasUNPPPermission
 from partner.models import Partner
 from project.models import EOI
+from reports.exports.excel.partner_contact_info import PartnerContactInformationXLSLExport
+from reports.exports.excel.partner_profile_report import PartnerProfileReportXLSLExport
 from reports.filters import PartnerReportFilter, ProjectReportFilter
 from reports.serializers import (
     PartnerProfileReportSerializer,
@@ -19,7 +21,9 @@ class PartnerProfileReportAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+                AgencyPermission.RUN_REPORT_CSO_PROFILE,
+                AgencyPermission.RUN_REPORT_CSO_MAPPING,
+                AgencyPermission.RUN_REPORT_CSO_CONTACT,
             ]
         ),
     )
@@ -31,12 +35,24 @@ class PartnerProfileReportAPIView(ListAPIView):
     pagination_class = SmallPagination
 
 
+class PartnerProfileReportXLSXReportAPIView(PartnerProfileReportAPIView):
+
+    def get(self, request, *args, **kwargs):
+        return PartnerProfileReportXLSLExport(self.filter_queryset(self.get_queryset())).get_as_response()
+
+
+class PartnerContactInformationReportXLSXReportAPIView(PartnerProfileReportAPIView):
+
+    def get(self, request, *args, **kwargs):
+        return PartnerContactInformationXLSLExport(self.filter_queryset(self.get_queryset())).get_as_response()
+
+
 class ProjectReportAPIView(ListAPIView):
 
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+                AgencyPermission.RUN_REPORT_CFEI_MANAGEMENT,
             ]
         ),
     )
@@ -47,13 +63,16 @@ class ProjectReportAPIView(ListAPIView):
     serializer_class = ProjectReportSerializer
     pagination_class = SmallPagination
 
+    def get_queryset(self):
+        return super(ProjectReportAPIView, self).get_queryset().filter(agency=self.request.user.agency)
+
 
 class VerificationsAndObservationsReportAPIView(ListAPIView):
 
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+                AgencyPermission.RUN_REPORT_VERIFICATION_AND_FLAGGING,
             ]
         ),
     )

@@ -5,11 +5,13 @@ from django.urls import reverse
 
 from agency.models import Agency
 from agency.roles import AgencyRole
-from common.consts import CFEI_STATUSES
-from common.factories import PartnerFactory, OpenEOIFactory, DirectEOIFactory
+from common.consts import CFEI_STATUSES, FLAG_TYPES
+from common.factories import PartnerFactory, OpenEOIFactory, DirectEOIFactory, PartnerVerificationFactory
 from common.tests.base import BaseAPITestCase
 from partner.models import Partner
 from project.models import EOI
+from reports.filters import VerificationChoices
+from review.models import PartnerVerification
 
 
 class TestPartnerProfileReportAPIView(BaseAPITestCase):
@@ -82,8 +84,8 @@ class TestProjectReportAPIView(BaseAPITestCase):
 
     def test_list(self):
         PartnerFactory.create_batch(50)
-        OpenEOIFactory.create_batch(20, is_published=True)
-        DirectEOIFactory.create_batch(20, is_published=True)
+        OpenEOIFactory.create_batch(20, is_published=True, agency=self.user.agency)
+        DirectEOIFactory.create_batch(20, is_published=True, agency=self.user.agency)
 
         projects = EOI.objects.all()
         list_url = reverse('reports:projects')
@@ -165,3 +167,52 @@ class TestVerificationsAndObservationsReportAPIView(BaseAPITestCase):
             list_response = self.client.get(list_url + f'?display_type={display_type}')
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], partners.filter(display_type=display_type).count())
+
+        list_response = self.client.get(list_url + f'?is_verified={VerificationChoices.PENDING}')
+        self.assertResponseStatusIs(list_response)
+        self.assertEqual(list_response.data['count'], partners.count())
+
+        for partner in partners:
+            PartnerVerificationFactory(partner=partner, is_verified=True)
+        list_response = self.client.get(list_url + f'?is_verified={VerificationChoices.VERIFIED}')
+        self.assertResponseStatusIs(list_response)
+        self.assertEqual(list_response.data['count'], partners.count())
+
+        PartnerVerification.objects.all().update(is_verified=False)
+        list_response = self.client.get(list_url + f'?is_verified={VerificationChoices.UNVERIFIED}')
+        self.assertResponseStatusIs(list_response)
+        self.assertEqual(list_response.data['count'], partners.count())
+
+        list_response = self.client.get(list_url + f'?verification_year={2010}')
+        self.assertResponseStatusIs(list_response)
+        self.assertEqual(list_response.data['count'], 0)
+
+        list_response = self.client.get(list_url + f'?verification_year={date.today().year}')
+        self.assertResponseStatusIs(list_response)
+        self.assertEqual(list_response.data['count'], partners.count())
+
+        for flag_type in FLAG_TYPES._db_values:
+            list_response = self.client.get(list_url + f'?flag={flag_type}')
+            self.assertResponseStatusIs(list_response)
+            self.assertEqual(list_response.data['count'], partners.filter(flags__flag_type=flag_type).count())
+
+
+class TestBasicExportAPIViews(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
+    initial_factories = []
+
+    def test_profile_report(self):
+        PartnerFactory.create_batch(40)
+        url = reverse('reports:partner-profile-export-xlsx')
+        response = self.client.get(url)
+        self.assertResponseStatusIs(response)
+        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+    def test_contact_report(self):
+        PartnerFactory.create_batch(40)
+        url = reverse('reports:partner-contact-export-xlsx')
+        response = self.client.get(url)
+        self.assertResponseStatusIs(response)
+        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
