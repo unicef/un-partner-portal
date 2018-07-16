@@ -77,7 +77,6 @@ class VerificationFilter extends Component {
 
   componentWillMount() {
     const { pathName, query } = this.props;
-    resetChanges(pathName, query);
 
     history.push({
       pathname: pathName,

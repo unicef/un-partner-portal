@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
 
 import HeaderNavigation from '../common/headerNavigation';
+import resetChanges from '../eois/filters/eoiHelper';
 
 const messages = {
-  partner: 'Calls for Expressions of Interest',
-  agency: 'Expressions of Interest',
+  reports: 'Reports',
 };
 
 class ReportsHeader extends Component {
@@ -22,18 +22,19 @@ class ReportsHeader extends Component {
   updatePath() {
     const { tabs, location } = this.props;
 
-    if (tabs.findIndex(tab => location.match(`^/reports/${tab.path}`)) === -1) {
+    if (tabs.findIndex(tab => location.pathname.match(`^/reports/${tab.path}`)) === -1) {
       history.push('/');
     }
 
-    return tabs.findIndex(tab => location.match(`^/reports/${tab.path}`));
+    return tabs.findIndex(tab => location.pathname.match(`^/reports/${tab.path}`));
   }
 
   handleChange(event, index) {
-    const { tabs, location } = this.props;
+    const { tabs, query } = this.props;
+    
     history.push({
       pathname: `/reports/${tabs[index].path}`,
-      query: location.query,
+      query: resetChanges(`/reports/${tabs[index].path}`, query),
     });
   }
 
@@ -47,9 +48,8 @@ class ReportsHeader extends Component {
     return (
       <HeaderNavigation
         index={index}
-        title={messages.agency}
+        title={messages.reports}
         tabs={tabs}
-
         handleChange={this.handleChange}
       >
         {(index !== -1) && children}
@@ -62,12 +62,13 @@ ReportsHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
   location: PropTypes.object,
+  query: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  location: ownProps.location.pathname,
+  location: ownProps.location,
   tabs: state.reportsNav,
-  role: state.session.role,
+  query: ownProps.location.query,
 });
 
 const containerCfeiHeader = connect(

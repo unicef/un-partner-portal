@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
 import { Typography } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
-import { browserHistory as history, withRouter } from 'react-router/lib';
+import { browserHistory as history, withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import { selectNormalizedOrganizationTypes, selectMappedSpecializations } from '../../../store';

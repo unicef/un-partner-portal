@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
-import { withRouter } from 'react-router/lib';
+import { withRouter } from 'react-router';
 import CfeiManagementFilter from './cfeiManagementFilter';
 import PaginatedList from '../../common/list/paginatedList';
 import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';

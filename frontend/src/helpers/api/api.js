@@ -422,6 +422,12 @@ export function getAdminOneLocations(countryCode, options) {
   return authorizedGet({ uri: '/common/admin-levels', params: countryCode, options });
 }
 
+// Reports
+
+export function getPartnerReports(params, options) {
+  return authorizedGet({ uri: '/reports/partners', params, options });
+}
+
 // ID portal
 export function postNewUser(body) {
   return authorizedPost({ uri: '/manage/user/', body });

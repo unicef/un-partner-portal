@@ -1,18 +1,27 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import Grid from 'material-ui/Grid';
-import { withRouter } from 'react-router/lib';
+import { TableCell } from 'material-ui/Table';
+import { withRouter } from 'react-router';
 import PartnerInfoFilter from './partnerInfoFilter';
-import PaginatedList from '../../common/list/paginatedList';
-import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
+import CustomGridColumn from '../../common/grid/customGridColumn';
+import SelectableList from '../../common/list/selectableList';
 import { loadPartnerReportsList } from '../../../reducers/reportsPartnerInformationList';
 import { isQueryChanged } from '../../../helpers/apiHelper';
+
 
 class PartnerInfoContainer extends Component {
   componentWillMount() {
     const { query } = this.props;
     this.props.loadReports(query);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { query } = this.props;
+
+    if (isQueryChanged(nextProps, query)) {
+      this.props.loadReports(nextProps.location.query);
+    }
   }
 
   shouldComponentUpdate(nextProps) {
@@ -26,26 +35,30 @@ class PartnerInfoContainer extends Component {
     return true;
   }
 
+  /* eslint-disable class-methods-use-this */
+  tableCell({ row, column, value }) {
+    if (column.name === 'no_of_offices') {
+      return <TableCell>{row.offices.length}</TableCell>;
+    }
+
+    return <TableCell>{value}</TableCell>;
+  }
+
   render() {
     const { items, columns, totalCount, loading } = this.props;
 
     return (
-      <React.Fragment>
-        <Grid container direction="column" spacing={24}>
-          <Grid item>
-            <PartnerInfoFilter />
-          </Grid>
-          <Grid item>
-            <TableWithStateInUrl
-              component={PaginatedList}
-              items={items}
-              columns={columns}
-              itemsCount={totalCount}
-              loading={loading}
-            />
-          </Grid>
-        </Grid>
-      </React.Fragment>
+      <CustomGridColumn>
+        <PartnerInfoFilter />
+        <SelectableList
+          innerRef={(field) => { this.listRef = field; }}
+          items={items}
+          columns={columns}
+          loading={loading}
+          itemsCount={totalCount}
+          templateCell={this.tableCell}
+        />
+      </CustomGridColumn>
     );
   }
 }
@@ -71,5 +84,10 @@ const mapDispatch = dispatch => ({
   loadReports: params => dispatch(loadPartnerReportsList(params)),
 });
 
-const connectedPartnerInfoContainer = connect(mapStateToProps, mapDispatch)(PartnerInfoContainer);
+const connectedPartnerInfoContainer =
+connect(
+  mapStateToProps,
+  mapDispatch,
+)(PartnerInfoContainer);
+
 export default withRouter(connectedPartnerInfoContainer);

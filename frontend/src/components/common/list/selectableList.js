@@ -74,6 +74,16 @@ class SelectableList extends Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { pathName, query = {} } = nextProps;
+    if (!query.page || !query.page_size) {
+      history.push({
+        pathname: pathName,
+        query: R.merge(query, { page: this.state.page, page_size: this.state.page_size }),
+      });
+    }
+  }
+
   onPageSize(pageSize) {
     const { pageNumber, itemsCount, pathName, query } = this.props;
 
@@ -92,7 +102,7 @@ class SelectableList extends Component {
   handleRowMouseLeave() {
     this.setState({ hoveredRow: null });
   }
-  
+
   navigationHeader(selected, rows, HeaderAction) {
     const { classes, itemsCount = 0, pageSize, pageNumber } = this.props;
 
@@ -103,7 +113,7 @@ class SelectableList extends Component {
     return (<div>
       {selected.length > 0
         ? <SelectedHeader numSelected={selected.length} >
-          <HeaderAction rows={R.values(R.pick(selected, rows))} />
+          {HeaderAction && <HeaderAction rows={R.values(R.pick(selected, rows))} />}
         </SelectedHeader>
         : <div className={classes.container}><Typography type="title">
           {`${isNaN(firstRange) ? 0 : firstRange}-${isNaN(secondRange) ? 0 : secondRange} of ${itemsCount} results`}
@@ -112,7 +122,7 @@ class SelectableList extends Component {
     </div>);
   }
 
-  tableRowTemplate({ row, children, selected, tableRow: { rowId }}) {
+  tableRowTemplate({ row, children, selected, tableRow: { rowId } }) {
     return (<TableRowMUI
       selected={selected}
       hover
@@ -122,6 +132,12 @@ class SelectableList extends Component {
       onMouseLeave={() => this.handleRowMouseLeave()}
     > {children}
     </TableRowMUI>);
+  }
+
+  clearSelection() {
+    this.setState({
+      selected: [],
+    });
   }
 
   render() {
@@ -163,8 +179,8 @@ class SelectableList extends Component {
             <Table
               table
               rowComponent={this.tableRowTemplate}
-              cellComponent={({ row, column, tableRow: { rowId } }) =>
-                templateCell({ row, column, hovered: hoveredRow === rowId })}
+              cellComponent={({ row, column, value, tableRow: { rowId } }) =>
+                templateCell({ row, column, value, hovered: hoveredRow === rowId })}
             />
             <Template
               name="tableViewRow"
@@ -233,7 +249,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const connectedSelectableList = connect(mapStateToProps, null)(SelectableList);
-const withRouterSelectableList = withRouter(connectedSelectableList);
+const withRouterSelectableList = withRouter(connectedSelectableList, { withRef: true });
 
 export default withStyles(styleSheet, { name: 'SelectableList' })(withRouterSelectableList);
 

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
 import { withStyles } from 'material-ui/styles';
 import { Typography } from 'material-ui';
-import { browserHistory as history, withRouter } from 'react-router/lib';
+import { browserHistory as history, withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import RadioForm from '../../forms/radioForm';
@@ -24,7 +24,7 @@ const messages = {
     search: 'submit',
     country: 'Country',
     location: 'Location',
-    registration: 'Registration status',
+    registration: 'Registration in country',
     typeLabel: 'Type of organization',
     typePlaceholder: 'Select type',
     sector: 'Sector & Area of Specialization',
@@ -58,7 +58,7 @@ export const STATUS_VAL = [
     label: 'No',
   },
   {
-    value: 'all',
+    value: undefined,
     label: 'All',
   },
 ];
@@ -76,6 +76,7 @@ class PartnerInfoFilter extends Component {
 
   componentWillMount() {
     const { pathName, query } = this.props;
+    
     resetChanges(pathName, query);
 
     history.push({
@@ -98,22 +99,30 @@ class PartnerInfoFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { office_name, country_code, name } = values;
-
+    const { country_code, specializations, organization_type, display_type,
+      has_experience, registered } = values;
+ 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         page: 1,
-        office_name,
         country_code,
-        name,
+        organization_type,
+        display_type,
+        registered,
+        has_experience,
+        specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
       }),
     });
   }
 
-  render() {
-    const { classes, handleSubmit, reset, organizationTypes, specs } = this.props;
+  resetForm() {
+    resetChanges(this.props.pathName, this.props.query);
+  }
 
+  render() {
+    const { classes, handleSubmit, countryCode, reset, organizationTypes, specs } = this.props;
+    
     return (
       <form onSubmit={handleSubmit}>
         <Typography className={classes.info}> {messages.select} </Typography>
@@ -121,6 +130,7 @@ class PartnerInfoFilter extends Component {
           <Grid container direction="row" >
             <Grid item sm={4} xs={12}>
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
@@ -137,7 +147,7 @@ class PartnerInfoFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <RadioForm
-                fieldName="registration_status"
+                fieldName="registered"
                 label={messages.labels.registration}
                 values={STATUS_VAL}
                 optional
@@ -147,7 +157,7 @@ class PartnerInfoFilter extends Component {
           <Grid container direction="row" >
             <Grid item sm={4} xs={12}>
               <SelectForm
-                fieldName="organization_type"
+                fieldName="display_type"
                 label={messages.labels.typeLabel}
                 placeholder={messages.labels.typePlaceholder}
                 values={organizationTypes}
@@ -167,7 +177,7 @@ class PartnerInfoFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <RadioForm
-                fieldName="un_experience"
+                fieldName="has_experience"
                 label={messages.labels.experience}
                 values={STATUS_VAL}
                 optional
@@ -177,7 +187,7 @@ class PartnerInfoFilter extends Component {
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>
@@ -207,15 +217,18 @@ PartnerInfoFilter.propTypes = {
 };
 
 const formPartnerInfoFilter = reduxForm({
-  form: 'reportsFilter',
+  form: 'formPartnerFilter',
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
   enableReinitialize: true,
 })(PartnerInfoFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { name } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
+  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { display_type } = {} } = ownProps.location;
+  const { query: { registered } = {} } = ownProps.location;
+  const { query: { has_experience } = {} } = ownProps.location;
 
   const specializationsQ = specializations &&
   R.map(Number, specializations.split(','));
@@ -225,9 +238,14 @@ const mapStateToProps = (state, ownProps) => {
     query: ownProps.location.query,
     specs: selectMappedSpecializations(state),
     organizationTypes: selectNormalizedOrganizationTypes(state),
+    countryCode: country_code,
+    displayType: display_type,
     initialValues: {
-      name,
+      country_code,
       specializations: specializationsQ,
+      display_type,
+      registered,
+      has_experience,
     },
   };
 };
