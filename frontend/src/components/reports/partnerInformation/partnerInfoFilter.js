@@ -100,7 +100,7 @@ class PartnerInfoFilter extends Component {
     const { pathName, query } = this.props;
 
     const { country_code, specializations, organization_type, display_type,
-      has_experience, registered } = values;
+      has_experience, registered, locations } = values;
  
     history.push({
       pathname: pathName,
@@ -112,6 +112,7 @@ class PartnerInfoFilter extends Component {
         registered,
         has_experience,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
+        locations,
       }),
     });
   }
@@ -139,7 +140,7 @@ class PartnerInfoFilter extends Component {
             <Grid item sm={4} xs={12}>
               <AdminOneLocation
                 fieldName="locations"
-                formName="tableFilter"
+                formName="formPartnerFilter"
                 observeFieldName="country_code"
                 label={messages.labels.location}
                 optional
@@ -229,6 +230,7 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { display_type } = {} } = ownProps.location;
   const { query: { registered } = {} } = ownProps.location;
   const { query: { has_experience } = {} } = ownProps.location;
+  const { query: { locations } = {} } = ownProps.location;
 
   const specializationsQ = specializations &&
   R.map(Number, specializations.split(','));
@@ -246,6 +248,7 @@ const mapStateToProps = (state, ownProps) => {
       display_type,
       registered,
       has_experience,
+      locations,
     },
   };
 };

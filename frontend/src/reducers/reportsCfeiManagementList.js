@@ -1,5 +1,5 @@
 import R from 'ramda';
-import { getPartnerVerifications } from '../helpers/api/api';
+import { getProjectReports } from '../helpers/api/api';
 import {
   clearError,
   startLoading,
@@ -29,8 +29,8 @@ const messages = {
 const initialState = {
   columns: [
     { name: 'title', title: 'Project Title' },
-    { name: 'country', title: 'Country' },
-    { name: 'location', title: 'Project Location' },
+    { name: 'locations', title: 'Country' },
+    { name: 'project_locations', title: 'Project Location' },
     { name: 'type', title: 'Type of expresssion of interest' },
   ],
   loading: false,
@@ -41,8 +41,8 @@ const initialState = {
 
 export const loadCfeiReportsList = params => (dispatch) => {
   dispatch(reportsCfeiLoadStarted());
-  //TODO add API call
-  return getPartnerVerifications(1, params)
+
+  return getProjectReports(params)
     .then((reports) => {
       dispatch(reportsCfeiLoadEnded());
       dispatch(reportsCfeiLoadSuccess(reports));

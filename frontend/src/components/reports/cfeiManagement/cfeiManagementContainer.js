@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import Grid from 'material-ui/Grid';
+import { TableCell } from 'material-ui/Table';
 import { withRouter } from 'react-router';
 import CfeiManagementFilter from './cfeiManagementFilter';
-import PaginatedList from '../../common/list/paginatedList';
-import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
+import CustomGridColumn from '../../common/grid/customGridColumn';
+import SelectableList from '../../common/list/selectableList';
 import { loadCfeiReportsList } from '../../../reducers/reportsCfeiManagementList';
 import { isQueryChanged } from '../../../helpers/apiHelper';
+import CountriesCell from './countriesCell';
+import LocationsCell from './locationsCell';
 
 class CfeiManagementContainer extends Component {
   componentWillMount() {
@@ -26,25 +28,32 @@ class CfeiManagementContainer extends Component {
     return true;
   }
 
+  /* eslint-disable class-methods-use-this */
+  tableCell({ row, column, value }) {
+    if (column.name === 'locations') {
+      return <CountriesCell locations={value} />;
+    } else if (column.name === 'project_locations') {
+      return <LocationsCell locations={row.locations} />;
+    }
+    return <TableCell>{value}</TableCell>;
+  }
+
   render() {
     const { items, columns, totalCount, loading } = this.props;
 
     return (
       <React.Fragment>
-        <Grid container direction="column" spacing={24}>
-          <Grid item>
-            <CfeiManagementFilter />
-          </Grid>
-          <Grid item>
-            <TableWithStateInUrl
-              component={PaginatedList}
-              items={items}
-              columns={columns}
-              itemsCount={totalCount}
-              loading={loading}
-            />
-          </Grid>
-        </Grid>
+        <CustomGridColumn>
+          <CfeiManagementFilter />
+          <SelectableList
+            innerRef={(field) => { this.listRef = field; }}
+            items={items}
+            columns={columns}
+            loading={loading}
+            itemsCount={totalCount}
+            templateCell={this.tableCell}
+          />
+        </CustomGridColumn>
       </React.Fragment>
     );
   }
@@ -73,4 +82,5 @@ const mapDispatch = dispatch => ({
 
 const connectedCfeiManagementContainer =
     connect(mapStateToProps, mapDispatch)(CfeiManagementContainer);
+
 export default withRouter(connectedCfeiManagementContainer);

@@ -263,6 +263,12 @@ export const selectNormalizedPolicyArea = state =>
 
 export const selectNormalizedDirectSelectionSource = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-source']);
+  
+export const selectNormalizedCfeiTypes = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['cfei-types']);
+
+  export const selectNormalizedCfeiStatuses = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['cfei-statuses']);
 
 export const selectCountriesWithOptionalLocations = state =>
   state.partnerProfileConfig['countries-with-optional-location'];

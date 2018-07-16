@@ -8,9 +8,8 @@ import { withStyles } from 'material-ui/styles';
 import { browserHistory as history, withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
-import { selectNormalizedOrganizationTypes, selectMappedSpecializations } from '../../../store';
+import { selectNormalizedOrganizationTypes, selectNormalizedCfeiStatuses, selectMappedSpecializations, selectNormalizedCfeiTypes } from '../../../store';
 import SelectForm from '../../forms/selectForm';
-import RadioForm from '../../forms/radioForm';
 import resetChanges from '../../eois/filters/eoiHelper';
 import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
@@ -26,8 +25,10 @@ const messages = {
     typeLabel: 'Type of organization',
     typePlaceholder: 'Select type',
     sector: 'Sector & Area of Specialization',
+    cfeiType: 'Type of expression of interest',
     typeOfExp: 'Type of expression of interests',
     year: 'Year',
+    yearPlaceholder: 'Select year',
     status: 'Status',
     typoOfOrg: 'Type of organization',
   },
@@ -49,18 +50,18 @@ const styleSheet = theme => ({
   },
 });
 
-export const STATUS_VAL = [
+export const YEARS_VAL = [
   {
-    value: true,
-    label: 'Yes',
+    value: '2018',
+    label: '2018',
   },
   {
-    value: false,
-    label: 'No',
+    value: '2017',
+    label: '2017',
   },
   {
-    value: 'all',
-    label: 'All',
+    value: '2016',
+    label: '2016',
   },
 ];
 
@@ -99,21 +100,25 @@ class CfeiManagementFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { office_name, country_code, name } = values;
+    const { country_code, locations, specializations, status, org_type, posted_year, display_type } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         page: 1,
-        office_name,
+        org_type,
+        posted_year,
+        display_type,
         country_code,
-        name,
+        status,
+        locations,
+        specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
       }),
     });
   }
 
   render() {
-    const { classes, handleSubmit, reset, organizationTypes, specs } = this.props;
+    const { classes, handleSubmit, countryCode, reset, cfeiTypes, specs, applicationStatuses, organizationTypes } = this.props;
 
     return (
       <form onSubmit={handleSubmit}>
@@ -122,6 +127,7 @@ class CfeiManagementFilter extends Component {
           <Grid container direction="row" >
             <Grid item sm={4} xs={12}>
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
@@ -130,32 +136,13 @@ class CfeiManagementFilter extends Component {
             <Grid item sm={4} xs={12}>
               <AdminOneLocation
                 fieldName="locations"
-                formName="tableFilter"
+                formName="cfeiManagementFilter"
                 observeFieldName="country_code"
                 label={messages.labels.location}
                 optional
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <RadioForm
-                fieldName="registration_status"
-                label={messages.labels.registration}
-                values={STATUS_VAL}
-                optional
-              />
-            </Grid>
-          </Grid>
-          <Grid container direction="row" >
-            <Grid item sm={4} xs={12}>
-              <SelectForm
-                fieldName="organization_type"
-                label={messages.labels.typeLabel}
-                placeholder={messages.labels.typePlaceholder}
-                values={organizationTypes}
-                optional
-              />
-            </Grid>
-            <Grid item sm={4} xs={12} >
               <SelectForm
                 label={messages.labels.sector}
                 placeholder={messages.labels.choose}
@@ -166,14 +153,46 @@ class CfeiManagementFilter extends Component {
                 optional
               />
             </Grid>
+          </Grid>
+          <Grid container direction="row" >
             <Grid item sm={4} xs={12}>
-              <RadioForm
-                fieldName="un_experience"
-                label={messages.labels.experience}
-                values={STATUS_VAL}
+              <SelectForm
+                fieldName="posted_year"
+                label={messages.labels.year}
+                placeholder={messages.labels.yearPlaceholder}
+                values={YEARS_VAL}
                 optional
               />
             </Grid>
+            <Grid item sm={4} xs={12} >
+              <SelectForm
+                label={messages.labels.cfeiType}
+                placeholder={messages.labels.choose}
+                fieldName="display_type"
+                values={cfeiTypes}
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <SelectForm
+                label={messages.labels.status}
+                placeholder={messages.labels.choose}
+                fieldName="status"
+                values={applicationStatuses}
+                optional
+              />
+            </Grid>
+          </Grid>
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12}>
+              <SelectForm
+                fieldName="org_type"
+                label={messages.labels.typeLabel}
+                placeholder={messages.labels.typePlaceholder}
+                values={organizationTypes}
+                optional
+              />
+            </Grid> 
           </Grid>
           <Grid item className={classes.button}>
             <Button
@@ -203,8 +222,12 @@ CfeiManagementFilter.propTypes = {
   classes: PropTypes.object.isRequired,
   specs: PropTypes.array.isRequired,
   pathName: PropTypes.string,
+  countryCode: PropTypes.string,
+  handleSubmit: PropTypes.func,
   query: PropTypes.object,
   organizationTypes: PropTypes.array.isRequired,
+  cfeiTypes: PropTypes.array.isRequired,
+  applicationStatuses: PropTypes.array.isRequired,
 };
 
 const formCfeiManagementFilter = reduxForm({
@@ -215,8 +238,13 @@ const formCfeiManagementFilter = reduxForm({
 })(CfeiManagementFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { name } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
+  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { locations } = {} } = ownProps.location;
+  const { query: { posted_year } = {} } = ownProps.location;
+  const { query: { org_type } = {} } = ownProps.location;
+  const { query: { status } = {} } = ownProps.location;
+  const { query: { display_type } = {} } = ownProps.location;
 
   const specializationsQ = specializations &&
   R.map(Number, specializations.split(','));
@@ -224,10 +252,18 @@ const mapStateToProps = (state, ownProps) => {
   return {
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
+    countryCode: country_code,
     specs: selectMappedSpecializations(state),
+    cfeiTypes: selectNormalizedCfeiTypes(state),
     organizationTypes: selectNormalizedOrganizationTypes(state),
+    applicationStatuses: selectNormalizedCfeiStatuses(state),
     initialValues: {
-      name,
+      country_code,
+      status,
+      locations,
+      posted_year,
+      org_type,
+      display_type,
       specializations: specializationsQ,
     },
   };
