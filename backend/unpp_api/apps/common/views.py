@@ -118,6 +118,7 @@ class GeneralConfigAPIView(APIView):
             "countries-with-optional-location": LOCATION_OPTIONAL_COUNTRIES,
             "user-role-choices": choices,
             "flag-type-choices": flag_type_choices,
+            "flag-types": FLAG_TYPES,
             "flag-category-choices": USER_CREATED_FLAG_CATEGORIES,
             "notification-frequency-choices": NOTIFICATION_FREQUENCY_CHOICES,
             "cfei-types": CFEI_TYPES,

@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { TableCell } from 'material-ui/Table';
 import Grid from 'material-ui/Grid';
 import { withRouter } from 'react-router';
 import VerificationFilter from './verificationFilter';
@@ -9,6 +10,7 @@ import PaginatedList from '../../common/list/paginatedList';
 import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
 import { loadVerificationReportsList } from '../../../reducers/reportsVerificationList';
 import { isQueryChanged } from '../../../helpers/apiHelper';
+import PartnerNameCell from './partnerNameCell';
 
 class VerificationContainer extends Component {
   componentWillMount() {
@@ -27,6 +29,19 @@ class VerificationContainer extends Component {
     return true;
   }
 
+  /* eslint-disable class-methods-use-this */
+  tableCell({ row, column, value }) {
+    if (column.name === 'legal_name') {
+      return (<PartnerNameCell
+        isVerified={row.is_verified}
+        flagInfo={row.flagging_status}
+        legalName={row.legal_name}
+      />);
+    }
+
+    return <TableCell>{value}</TableCell>;
+  }
+
   render() {
     const { items, columns, totalCount, loading } = this.props;
 
@@ -43,6 +58,7 @@ class VerificationContainer extends Component {
               columns={columns}
               itemsCount={totalCount}
               loading={loading}
+              templateCell={this.tableCell}
             />
           </Grid>
         </Grid>

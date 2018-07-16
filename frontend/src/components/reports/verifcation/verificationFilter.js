@@ -8,12 +8,11 @@ import { withStyles } from 'material-ui/styles';
 import { browserHistory as history, withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
-import { selectNormalizedOrganizationTypes, selectMappedSpecializations } from '../../../store';
+import { selectNormalizedOrganizationTypes, selectNormalizedFlagTypes, selectNormalizedFlagCategoryChoices } from '../../../store';
 import SelectForm from '../../forms/selectForm';
-import RadioForm from '../../forms/radioForm';
+import CheckboxForm from '../../forms/checkboxForm';
 import resetChanges from '../../eois/filters/eoiHelper';
 import CountryField from '../../forms/fields/projectFields/locationField/countryField';
-import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
 
 const messages = {
   select: 'Select applicable filters to generate a report on the Verification and Observation of Partners in the target Country Office.',
@@ -22,16 +21,32 @@ const messages = {
   labels: {
     search: 'submit',
     country: 'Country',
-    location: 'Project Location',
     typeLabel: 'Type of organization',
-    typePlaceholder: 'Select type',
-    sector: 'Sector & Area of Specialization',
-    typeOfExp: 'Type of expression of interests',
+    verificationStatus: 'Verification Status',
+    verificationYear: 'Verification Year',
+    observationType: 'Observation Type',
+    categoryOfRisk: 'Category of risk',
     year: 'Year',
+    show: 'Show INGO HQ only',
     status: 'Status',
     typoOfOrg: 'Type of organization',
   },
 };
+
+const VERIFICATION_MENU = [
+  {
+    value: 'pending',
+    label: 'Pending verification',
+  },
+  {
+    value: 'verified',
+    label: 'Verified',
+  },
+  {
+    value: 'unverified',
+    label: 'Unverified',
+  },
+];
 
 const styleSheet = theme => ({
   filterContainer: {
@@ -61,6 +76,21 @@ export const STATUS_VAL = [
   {
     value: 'all',
     label: 'All',
+  },
+];
+
+export const YEARS_VAL = [
+  {
+    value: '2018',
+    label: '2018',
+  },
+  {
+    value: '2017',
+    label: '2017',
+  },
+  {
+    value: '2016',
+    label: '2016',
   },
 ];
 
@@ -98,21 +128,25 @@ class VerificationFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { office_name, country_code, name } = values;
+    const { display_type, country_code, is_verified, verification_year, flag, category_of_risk, is_hq } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         page: 1,
-        office_name,
+        is_verified,
         country_code,
-        name,
+        display_type,
+        flag,
+        is_hq,
+        verification_year,
+        category_of_risk,
       }),
     });
   }
 
   render() {
-    const { classes, handleSubmit, reset, organizationTypes, specs } = this.props;
+    const { classes, handleSubmit, countryCode, reset, organizationTypes, flagTypes, categoryRisks } = this.props;
 
     return (
       <form onSubmit={handleSubmit}>
@@ -121,25 +155,25 @@ class VerificationFilter extends Component {
           <Grid container direction="row" >
             <Grid item sm={4} xs={12}>
               <CountryField
+                initialValue={countryCode}
                 fieldName="country_code"
                 label={messages.labels.country}
                 optional
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <AdminOneLocation
-                fieldName="locations"
-                formName="tableFilter"
-                observeFieldName="country_code"
-                label={messages.labels.location}
+              <SelectForm
+                fieldName="display_type"
+                label={messages.labels.typeLabel}
+                values={organizationTypes}
                 optional
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <RadioForm
-                fieldName="registration_status"
-                label={messages.labels.registration}
-                values={STATUS_VAL}
+              <SelectForm
+                fieldName="is_verified"
+                label={messages.labels.verificationStatus}
+                values={VERIFICATION_MENU}
                 optional
               />
             </Grid>
@@ -147,29 +181,34 @@ class VerificationFilter extends Component {
           <Grid container direction="row" >
             <Grid item sm={4} xs={12}>
               <SelectForm
-                fieldName="organization_type"
-                label={messages.labels.typeLabel}
-                placeholder={messages.labels.typePlaceholder}
-                values={organizationTypes}
-                optional
-              />
-            </Grid>
-            <Grid item sm={4} xs={12} >
-              <SelectForm
-                label={messages.labels.sector}
-                placeholder={messages.labels.choose}
-                fieldName="specializations"
-                multiple
-                values={specs}
-                sections
+                fieldName="verification_year"
+                label={messages.labels.verificationYear}
+                values={YEARS_VAL}
                 optional
               />
             </Grid>
             <Grid item sm={4} xs={12}>
-              <RadioForm
-                fieldName="un_experience"
-                label={messages.labels.experience}
-                values={STATUS_VAL}
+              <SelectForm
+                fieldName="flag"
+                label={messages.labels.observationType}
+                values={flagTypes}
+                optional
+              />
+            </Grid>
+            <Grid item sm={4} xs={12}>
+              <SelectForm
+                fieldName="category_of_risk"
+                label={messages.labels.categoryOfRisk}
+                values={categoryRisks}
+                optional
+              />
+            </Grid>
+          </Grid>
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12}>
+              <CheckboxForm
+                label={messages.labels.show}
+                fieldName="is_hq"
                 optional
               />
             </Grid>
@@ -200,8 +239,11 @@ VerificationFilter.propTypes = {
    */
   reset: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
-  specs: PropTypes.array.isRequired,
+  categoryRisks: PropTypes.array.isRequired,
+  flagTypes: PropTypes.array.isRequired,
   pathName: PropTypes.string,
+  countryCode: PropTypes.string,
+  handleSubmit: PropTypes.func,
   query: PropTypes.object,
   organizationTypes: PropTypes.array.isRequired,
 };
@@ -214,20 +256,29 @@ const formVerificationFilter = reduxForm({
 })(VerificationFilter);
 
 const mapStateToProps = (state, ownProps) => {
-  const { query: { name } = {} } = ownProps.location;
-  const { query: { specializations } = {} } = ownProps.location;
-
-  const specializationsQ = specializations &&
-  R.map(Number, specializations.split(','));
+  const { query: { country_code } = {} } = ownProps.location;
+  const { query: { display_type } = {} } = ownProps.location;
+  const { query: { is_verified } = {} } = ownProps.location;
+  const { query: { verification_year } = {} } = ownProps.location;
+  const { query: { flag } = {} } = ownProps.location;
+  const { query: { category_of_risk } = {} } = ownProps.location;
+  const { query: { is_hq } = {} } = ownProps.location;
 
   return {
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
-    specs: selectMappedSpecializations(state),
     organizationTypes: selectNormalizedOrganizationTypes(state),
+    flagTypes: selectNormalizedFlagTypes(state),
+    categoryRisks: selectNormalizedFlagCategoryChoices(state),
+    countryCode: country_code,
     initialValues: {
-      name,
-      specializations: specializationsQ,
+      is_verified,
+      verification_year,
+      category_of_risk,
+      country_code,
+      flag,
+      is_hq,
+      display_type,
     },
   };
 };

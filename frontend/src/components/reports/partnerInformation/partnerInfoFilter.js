@@ -76,7 +76,7 @@ class PartnerInfoFilter extends Component {
 
   componentWillMount() {
     const { pathName, query } = this.props;
-    
+
     resetChanges(pathName, query);
 
     history.push({
@@ -101,7 +101,7 @@ class PartnerInfoFilter extends Component {
 
     const { country_code, specializations, organization_type, display_type,
       has_experience, registered, locations } = values;
- 
+
     history.push({
       pathname: pathName,
       query: R.merge(query, {
@@ -123,7 +123,7 @@ class PartnerInfoFilter extends Component {
 
   render() {
     const { classes, handleSubmit, countryCode, reset, organizationTypes, specs } = this.props;
-    
+
     return (
       <form onSubmit={handleSubmit}>
         <Typography className={classes.info}> {messages.select} </Typography>
@@ -213,6 +213,8 @@ PartnerInfoFilter.propTypes = {
   classes: PropTypes.object.isRequired,
   specs: PropTypes.array.isRequired,
   pathName: PropTypes.string,
+  countryCode: PropTypes.string,
+  handleSubmit: PropTypes.func,
   query: PropTypes.object,
   organizationTypes: PropTypes.array.isRequired,
 };

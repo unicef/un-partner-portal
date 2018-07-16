@@ -432,6 +432,10 @@ export function getProjectReports(params, options) {
   return authorizedGet({ uri: '/reports/projects', params, options });
 }
 
+export function getVerificationsReports(params, options) {
+  return authorizedGet({ uri: '/reports/verifications-observations', params, options });
+}
+
 // ID portal
 export function postNewUser(body) {
   return authorizedPost({ uri: '/manage/user/', body });
