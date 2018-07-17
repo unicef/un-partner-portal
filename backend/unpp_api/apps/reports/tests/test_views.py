@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from agency.models import Agency
 from agency.roles import AgencyRole
-from common.consts import CFEI_STATUSES, FLAG_TYPES, FLAG_CATEGORIES
+from common.consts import CFEI_STATUSES, FLAG_TYPES, FLAG_CATEGORIES, PARTNER_TYPES
 from common.factories import PartnerFactory, OpenEOIFactory, DirectEOIFactory, PartnerVerificationFactory
 from common.tests.base import BaseAPITestCase
 from partner.models import Partner
@@ -121,7 +121,7 @@ class TestProjectReportAPIView(BaseAPITestCase):
         self.assertResponseStatusIs(list_response)
         self.assertEqual(list_response.data['count'], 40)
 
-        for org_type in set(projects.values_list('applications__partner__display_type', flat=True)):
+        for org_type in PARTNER_TYPES._db_values:
             list_response = self.client.get(list_url + f'?org_type={org_type}')
             self.assertResponseStatusIs(list_response)
             self.assertEqual(

@@ -57,6 +57,7 @@ class VerificationsAndObservationsReportSerializer(serializers.ModelSerializer):
     acronym = serializers.CharField(source='profile.acronym')
     organization_type = serializers.CharField(source='get_display_type_display')
     country = serializers.CharField(source='get_country_code_display')
+    verification_year = serializers.SerializerMethodField()
 
     class Meta:
         model = Partner
@@ -68,4 +69,10 @@ class VerificationsAndObservationsReportSerializer(serializers.ModelSerializer):
             'country',
             'flagging_status',
             'is_verified',
+            'verification_year',
+        )
+
+    def get_verification_year(self, partner: Partner):
+        return getattr(
+            getattr(partner.verifications.order_by('-created').last(), 'created', None), 'year', None
         )
