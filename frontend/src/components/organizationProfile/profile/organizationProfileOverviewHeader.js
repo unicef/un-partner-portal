@@ -35,20 +35,20 @@ const styleSheet = (theme) => {
   };
 };
 
-const showEdit = partnerId => state => !(!isUserHq(state) && selectUserHqId(state) === +partnerId);
+const showEdit = partnerId => state => !(!isUserHq(state) && selectUserHqId(state) === partnerId);
 
 const OrganizationProfileOverviewHeader = (props) => {
   const { classes, update, partnerId, handleEditClick } = props;
-  const EditProfileButton = showEdit(partnerId) ?
-    (<Button className={classes.noPrint} onClick={handleEditClick} raised color="accent">
-      {messages.edit}
-    </Button>) : null;
+
   return (
     <div className={classes.root}>
       <div className={classes.text}>
         <Typography type="body1" color="inherit"> {messages.lastUpdate} {update}</Typography>
       </div>
-      <EditProfileButton />
+      {showEdit(partnerId) ?
+        (<Button className={classes.noPrint} onClick={handleEditClick} raised color="accent">
+          {messages.edit}
+        </Button>) : null}
       <OrganizationProfileHeaderOptions className={classes.noPrint} />
     </div>
   );
