@@ -216,7 +216,14 @@ class PartnerCountryProfileAPIView(FilterUsersPartnersMixin, CreateAPIView, Retr
 
 class PartnersMemberListAPIView(ListAPIView):
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (
+        HasUNPPPermission(
+            partner_permissions=[],
+            agency_permissions=[
+                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+            ]
+        ),
+    )
     serializer_class = PartnerMemberSerializer
     queryset = PartnerMember.objects.all()
     pagination_class = SmallPagination
