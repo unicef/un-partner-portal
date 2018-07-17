@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from agency.models import Agency
 from agency.roles import AgencyRole
-from common.consts import CFEI_STATUSES, FLAG_TYPES
+from common.consts import CFEI_STATUSES, FLAG_TYPES, FLAG_CATEGORIES
 from common.factories import PartnerFactory, OpenEOIFactory, DirectEOIFactory, PartnerVerificationFactory
 from common.tests.base import BaseAPITestCase
 from partner.models import Partner
@@ -196,6 +196,11 @@ class TestVerificationsAndObservationsReportAPIView(BaseAPITestCase):
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], partners.filter(flags__flag_type=flag_type).count())
 
+        for flag_category in FLAG_CATEGORIES._db_values:
+            list_response = self.client.get(list_url + f'?flag_category={flag_category}')
+            self.assertResponseStatusIs(list_response)
+            self.assertEqual(list_response.data['count'], partners.filter(flags__category=flag_category).count())
+
 
 class TestBasicExportAPIViews(BaseAPITestCase):
 
@@ -213,6 +218,13 @@ class TestBasicExportAPIViews(BaseAPITestCase):
     def test_contact_report(self):
         PartnerFactory.create_batch(40)
         url = reverse('reports:partner-contact-export-xlsx')
+        response = self.client.get(url)
+        self.assertResponseStatusIs(response)
+        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+    def test_project_report(self):
+        PartnerFactory.create_batch(40)
+        url = reverse('reports:projects-details-export-xlsx')
         response = self.client.get(url)
         self.assertResponseStatusIs(response)
         self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')

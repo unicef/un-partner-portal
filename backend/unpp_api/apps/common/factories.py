@@ -452,7 +452,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             governance_hq="reporting requirements of the country office to HQ {}".format(self.id),
             concern_groups=get_concerns(),
             security_desc="rapid response {}".format(self.id),
-            description="collaboration professional netwok {}".format(self.id),
             population_of_concern=False,
             ethic_safeguard_comment="fake comment {}".format(self.id),
             governance_organigram=cfile,

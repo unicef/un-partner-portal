@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from collections import defaultdict
 from operator import attrgetter
 
 from datetime import date
@@ -75,7 +74,7 @@ class Partner(TimeStampedModel):
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "Partner: {} <pk:{}>".format(self.legal_name, self.id)
@@ -112,7 +111,7 @@ class Partner(TimeStampedModel):
     def yellow_flag_count(self):
         return PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
-        ).filter(flag_type=FLAG_TYPES.yellow, is_valid=True).count()
+        ).filter(flag_type=FLAG_TYPES.yellow).exclude(is_valid=False).count()
 
     @property
     def has_yellow_flag(self):
@@ -122,7 +121,7 @@ class Partner(TimeStampedModel):
     def red_flag_count(self):
         return PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
-        ).filter(flag_type=FLAG_TYPES.red, is_valid=True).count()
+        ).filter(flag_type=FLAG_TYPES.red).exclude(is_valid=False).count()
 
     @property
     def has_red_flag(self):
@@ -155,19 +154,16 @@ class Partner(TimeStampedModel):
 
     @property
     def flagging_status(self):
-        mapping = defaultdict(lambda: defaultdict(int))
-
-        for flag_type, is_valid, flag_count in PartnerFlag.objects.filter(
+        mapping = dict(PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
-        ).values_list('flag_type', 'is_valid').annotate(Count('id')):
-            mapping[is_valid][flag_type] += flag_count
+        ).exclude(is_valid=False).values_list('flag_type').annotate(Count('id')))
 
         return {
-            'observation': mapping[True][FLAG_TYPES.observation],
-            'yellow': mapping[True][FLAG_TYPES.yellow],
-            'escalated': mapping[True][FLAG_TYPES.escalated],
-            'red': mapping[True][FLAG_TYPES.red],
-            'invalid': sum(mapping[False].values()),
+            'observation': mapping.get(FLAG_TYPES.observation, 0),
+            'yellow': mapping.get(FLAG_TYPES.yellow, 0),
+            'escalated': mapping.get(FLAG_TYPES.escalated, 0),
+            'red': mapping.get(FLAG_TYPES.red, 0),
+            'invalid': sum(mapping.values()),
         }
 
     @property
@@ -226,7 +222,8 @@ class PartnerProfile(TimeStampedModel):
     legal_name_change = models.NullBooleanField()
     former_legal_name = models.CharField(max_length=255, null=True, blank=True)
     connectivity = models.NullBooleanField(
-        verbose_name='Does the organization have reliable access to internet in all of its operations?')
+        verbose_name='Does the organization have reliable access to internet in all of its operations?'
+    )
     connectivity_excuse = models.CharField(max_length=5000, null=True, blank=True)
     working_languages = ArrayField(
         models.CharField(max_length=3, choices=WORKING_LANGUAGES_CHOICES),
@@ -288,23 +285,30 @@ class PartnerProfile(TimeStampedModel):
     experienced_staff_desc = models.TextField(max_length=5000, null=True, blank=True)
 
     # collaborate
-    partnership_collaborate_institution = models.NullBooleanField()
-    partnership_collaborate_institution_desc = models.CharField(max_length=5000, null=True, blank=True)
+    partnership_collaborate_institution = models.NullBooleanField(
+        verbose_name='Has the organization collaborated with or a member of a cluster, professional network, '
+                     'consortium or any similar institutions?'
+    )
+    partnership_collaborate_institution_desc = models.CharField(
+        max_length=5000, null=True, blank=True,
+        verbose_name='Please state which cluster, network or consortium and briefly explain the collaboration '
+                     'professional network, consortium or any similar institutions?'
+    )
 
     any_partnered_with_un = models.NullBooleanField()
     any_accreditation = models.NullBooleanField()
     any_reference = models.NullBooleanField()
 
     # Banking Information
-    have_bank_account = models.NullBooleanField(
-        verbose_name="Does the organization have a bank account?")
+    have_bank_account = models.NullBooleanField(verbose_name="Does the organization have a bank account?")
     have_separate_bank_account = models.NullBooleanField(
         verbose_name="Does the organization currently maintain, or has it previously maintained, a separate, "
-                     "interest-bearing account for UN funded projects that require a separate account?")
+                     "interest-bearing account for UN funded projects that require a separate account?"
+    )
     explain = models.TextField(max_length=5000, null=True, blank=True, verbose_name="Please explain")
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerProfile <pk:{}>".format(self.id)
@@ -538,7 +542,7 @@ class PartnerMailingAddress(TimeStampedModel):
     org_email = models.EmailField(null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerMailingAddress <pk:{}>".format(self.id)
@@ -554,7 +558,7 @@ class PartnerHeadOrganization(TimeStampedModel):
     mobile = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerHeadOrganization <pk:{}>".format(self.id)
@@ -571,7 +575,7 @@ class PartnerDirector(TimeStampedModel):
     email = models.EmailField(max_length=255, null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerDirector <pk:{}>".format(self.id)
@@ -598,7 +602,7 @@ class PartnerAuthorisedOfficer(TimeStampedModel):
     email = models.EmailField(max_length=255, null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerAuthorisedOfficer <pk:{}>".format(self.id)
@@ -621,7 +625,7 @@ class PartnerPolicyArea(TimeStampedModel):
     document_policies = models.NullBooleanField()
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerPolicyArea <pk:{}>".format(self.id)
@@ -638,7 +642,7 @@ class PartnerAuditAssessment(TimeStampedModel):
     regular_capacity_assessments = models.NullBooleanField()
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerAuditAssessment <pk:{}>".format(self.id)
@@ -659,7 +663,7 @@ class PartnerAuditReport(TimeStampedModel):
     link_report = models.URLField(null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerAuditReport <pk:{}>".format(self.id)
@@ -686,7 +690,7 @@ class PartnerCapacityAssessment(TimeStampedModel):
     report_url = models.URLField(null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerCapacityAssessment <pk:{}>".format(self.id)
@@ -708,7 +712,7 @@ class PartnerReporting(TimeStampedModel):
     link_report = models.URLField(null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerReporting <pk:{}>".format(self.id)
@@ -754,10 +758,12 @@ class PartnerMandateMission(TimeStampedModel):
 
     # security
     security_high_risk_locations = models.NullBooleanField(
-        verbose_name="Does the organization have the ability to work in high-risk security locations?")
+        verbose_name="Does the organization have the ability to work in high-risk security locations?"
+    )
     security_high_risk_policy = models.NullBooleanField(
         verbose_name="Does the organization have policies, procedures and practices related "
-                     "to security risk management?")
+                     "to security risk management?"
+    )
     security_desc = models.TextField(
         max_length=5000,
         null=True,
@@ -766,23 +772,8 @@ class PartnerMandateMission(TimeStampedModel):
                      "other situations requiring rapid response."
     )
 
-    # Collaboration
-    partnership_with_institutions = models.NullBooleanField(
-        verbose_name=(
-            'Has the organization collaborated with or a member of a cluster,'
-            ' professional network, consortium or any similar institutions?')
-    )
-    description = models.TextField(
-        max_length=5000,
-        blank=True,
-        null=True,
-        verbose_name=(
-            'Please state which cluster, network or consortium and briefly explain the collaboration'
-            ' professional netwok, consortium or any similar insitutions?')
-    )
-
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerMandateMission <pk:{}>".format(self.id)
@@ -802,7 +793,7 @@ class PartnerExperience(TimeStampedModel):
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerExperience <pk:{}>".format(self.id)
@@ -826,7 +817,7 @@ class PartnerInternalControl(TimeStampedModel):
     comment = models.TextField(max_length=5000, null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerInternalControl <pk:{}>".format(self.id)
@@ -866,10 +857,11 @@ class PartnerFunding(TimeStampedModel):
         null=True
     )
     main_donors_list = models.CharField(
-        max_length=5000, blank=True, null=True, verbose_name="Please list your main donors")
+        max_length=5000, blank=True, null=True, verbose_name="Please list your main donors"
+    )
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerFunding <pk:{}>".format(self.id)
@@ -885,7 +877,7 @@ class PartnerCollaborationPartnership(TimeStampedModel):
     partner_number = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
         unique_together = (
             ('partner', 'agency'),
         )
@@ -914,7 +906,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
         'common.CommonFile', null=True, blank=True, related_name="collaboration_evidences")
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerCollaborationEvidence <pk:{}>".format(self.id)
@@ -951,7 +943,7 @@ class PartnerOtherInfo(TimeStampedModel):
     confirm_data_updated = models.NullBooleanField(default=False)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerOtherInfo <pk:{}>".format(self.id)
@@ -992,7 +984,7 @@ class PartnerMember(TimeStampedModel):
     role = FixedTextField(choices=PartnerRole.get_choices(), default=PartnerRole.READER.name)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
         unique_together = (
             'user', 'partner'
         )
@@ -1027,7 +1019,7 @@ class PartnerReview(TimeStampedModel):
     comment = models.TextField()
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id', )
 
     def __str__(self):
         return "PartnerReview <pk:{}>".format(self.id)
