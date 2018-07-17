@@ -252,7 +252,7 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
     def validate(self, data):
         self.prevent_many_common_file_validator(data)
 
-        if self.instance:
+        if isinstance(self.instance, Application):
             app = self.instance
             allowed_to_modify_status = list(app.eoi.focal_points.values_list('id', flat=True)) + [app.eoi.created_by_id]
             if data.get("status") and self.context['request'].user.id not in allowed_to_modify_status:

@@ -235,6 +235,8 @@ class CommonFileSerializer(serializers.ModelSerializer):
             return CommonFile.objects.get(id=int(data))
         except CommonFile.DoesNotExist:
             raise ValidationError('No File Exists with this ID')
+        except Exception:
+            raise ValidationError(f'Invalid file ID specified {data}')
 
     class Meta:
         model = CommonFile
