@@ -426,6 +426,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "proj_impl_is_complete",
             "other_info_is_complete",
             "country_of_origin",
+            "has_sanction_match",
         )
 
     def get_hq_budgets(self, partner):
