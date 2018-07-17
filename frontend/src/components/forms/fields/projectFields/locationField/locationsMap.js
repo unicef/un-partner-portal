@@ -147,12 +147,15 @@ class LocationsMapBase extends Component {
   }
 
   removeMarker(markerProps) {
-    const { removeLocation } = this.props;
+    const { removeLocation, readOnly } = this.props;
     const { index } = markerProps;
     this.setState({
       showingInfoWindow: false,
     });
-    removeLocation(index);
+
+    if (!readOnly) {
+      removeLocation(index);
+    }
   }
 
   renderMarkers() {
@@ -160,7 +163,7 @@ class LocationsMapBase extends Component {
 
     return locations.map(({ lat, lon, admin_level_1 }, index) => (
       <Marker
-        key={`${lat}_${lon}`}
+        key={`${lat}_${lon}_${index}`}
         label=""
         index={index}
         location={admin_level_1.name}
@@ -173,7 +176,7 @@ class LocationsMapBase extends Component {
   }
 
   render() {
-    const { showMap } = this.props;
+    const { showMap, locations } = this.props;
     const {
       pos,
       bounds,
@@ -182,7 +185,8 @@ class LocationsMapBase extends Component {
       showingInfoWindow,
       activeLocation,
     } = this.state;
-    return (pos && showMap && <MapContainer
+
+    return ((pos) && showMap && <MapContainer
       initialCenter={pos}
       center={pos}
       streetViewControl={false}

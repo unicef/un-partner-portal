@@ -215,7 +215,7 @@ class EoiFilter extends Component {
             <Grid item sm={4} xs={12} >
               <FocalPoints
                 label={messages.labels.focalPoint}
-                ref={(field) => this._focalPoints = field}
+                ref={field => this._focalPoints = field}
                 fieldName="focal_points"
                 optional
               />

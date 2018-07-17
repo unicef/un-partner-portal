@@ -46,7 +46,7 @@ class CfeiManagementContainer extends Component {
         <CustomGridColumn>
           <CfeiManagementFilter />
           <SelectableList
-            innerRef={(field) => { this.listRef = field; }}
+            ref={(field) => { this.listRef = field; }}
             items={items}
             columns={columns}
             loading={loading}

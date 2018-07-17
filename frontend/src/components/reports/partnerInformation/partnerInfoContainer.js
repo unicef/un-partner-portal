@@ -8,6 +8,7 @@ import CustomGridColumn from '../../common/grid/customGridColumn';
 import SelectableList from '../../common/list/selectableList';
 import { loadPartnerReportsList } from '../../../reducers/reportsPartnerInformationList';
 import { isQueryChanged } from '../../../helpers/apiHelper';
+import PartnerMapping from '../partnerMapping';
 
 
 class PartnerInfoContainer extends Component {
@@ -28,6 +29,7 @@ class PartnerInfoContainer extends Component {
     const { query } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
+      this._list.getWrappedInstance().getWrappedInstance().clearSelections()
       this.props.loadReports(nextProps.location.query);
       return false;
     }
@@ -50,8 +52,9 @@ class PartnerInfoContainer extends Component {
     return (
       <CustomGridColumn>
         <PartnerInfoFilter />
+        <PartnerMapping />
         <SelectableList
-          innerRef={(field) => { this.listRef = field; }}
+          innerRef={field => this._list = field}
           items={items}
           columns={columns}
           loading={loading}

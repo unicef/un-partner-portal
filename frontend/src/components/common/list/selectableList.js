@@ -17,6 +17,7 @@ import { Grid, Table, TableHeaderRow, TableSelection, PagingPanel } from '@devex
 import SelectedHeader from './selectedHeader';
 import ListLoader from './listLoader';
 import { calculatePaginatedPage, updatePageNumberSize, updatePageNumber } from '../../../helpers/apiHelper';
+import { saveSelections } from '../../../reducers/selectableListItems';
 
 
 const table = {
@@ -58,11 +59,13 @@ class SelectableList extends Component {
       selected: [],
       hovered: null,
     };
+
     this.handleSelect = this.handleSelect.bind(this);
     this.handleRowMouseEnter = this.handleRowMouseEnter.bind(this);
     this.handleRowMouseLeave = this.handleRowMouseLeave.bind(this);
     this.onPageSize = this.onPageSize.bind(this);
     this.tableRowTemplate = this.tableRowTemplate.bind(this);
+    this.clearSelections = this.clearSelections.bind(this);
   }
 
   componentWillMount() {
@@ -92,6 +95,9 @@ class SelectableList extends Component {
   }
 
   handleSelect(newSelected) {
+    const { saveSelectedItems } = this.props;
+    saveSelectedItems(newSelected);
+
     return this.setState({ selected: newSelected });
   }
 
@@ -134,10 +140,14 @@ class SelectableList extends Component {
     </TableRowMUI>);
   }
 
-  clearSelection() {
+  clearSelections() {
+    const { saveSelectedItems } = this.props;
+
     this.setState({
       selected: [],
     });
+
+    saveSelectedItems([]);
   }
 
   render() {
@@ -155,7 +165,9 @@ class SelectableList extends Component {
     } = this.props;
     const { selected, hoveredRow } = this.state;
     return (
-      <ListLoader loading={loading}>
+      <ListLoader
+        loading={loading}
+      >
         <Paper>
           <Grid
             rows={items}
@@ -239,6 +251,7 @@ SelectableList.propTypes = {
   query: PropTypes.object,
   onTableRowClick: PropTypes.func,
   clickableRow: PropTypes.bool,
+  saveSelectedItems: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -248,7 +261,16 @@ const mapStateToProps = (state, ownProps) => ({
   pageNumber: ownProps.location.query.page || 0,
 });
 
-const connectedSelectableList = connect(mapStateToProps, null)(SelectableList);
+const mapDispatch = dispatch => ({
+  saveSelectedItems: items => dispatch(saveSelections(items)),
+});
+
+const connectedSelectableList = connect(
+  mapStateToProps,
+  mapDispatch,
+  null,
+  { withRef: true })(SelectableList);
+
 const withRouterSelectableList = withRouter(connectedSelectableList, { withRef: true });
 
 export default withStyles(styleSheet, { name: 'SelectableList' })(withRouterSelectableList);

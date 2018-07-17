@@ -75,6 +75,7 @@ import reportsNav from './reducers/reportsNav';
 import reportsPartnerList from './reducers/reportsPartnerInformationList';
 import reportsCfeiManagementList from './reducers/reportsCfeiManagementList';
 import reportVerificationList from './reducers/reportsVerificationList';
+import selectableList from './reducers/selectableListItems';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -95,6 +96,7 @@ const mainReducer = combineReducers({
   sendCfei,
   deleteUcn,
   submitUcn,
+  selectableList,
   reportsPartnerList,
   reportsCfeiManagementList,
   reportVerificationList,
