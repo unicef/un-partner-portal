@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from collections import defaultdict
 from operator import attrgetter
 
 from datetime import date
@@ -112,7 +111,7 @@ class Partner(TimeStampedModel):
     def yellow_flag_count(self):
         return PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
-        ).filter(flag_type=FLAG_TYPES.yellow, is_valid=True).count()
+        ).filter(flag_type=FLAG_TYPES.yellow).exclude(is_valid=False).count()
 
     @property
     def has_yellow_flag(self):
@@ -122,7 +121,7 @@ class Partner(TimeStampedModel):
     def red_flag_count(self):
         return PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
-        ).filter(flag_type=FLAG_TYPES.red, is_valid=True).count()
+        ).filter(flag_type=FLAG_TYPES.red).exclude(is_valid=False).count()
 
     @property
     def has_red_flag(self):
@@ -155,19 +154,16 @@ class Partner(TimeStampedModel):
 
     @property
     def flagging_status(self):
-        mapping = defaultdict(lambda: defaultdict(int))
-
-        for flag_type, is_valid, flag_count in PartnerFlag.objects.filter(
+        mapping = dict(PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
-        ).values_list('flag_type', 'is_valid').annotate(Count('id')):
-            mapping[is_valid][flag_type] += flag_count
+        ).exclude(is_valid=False).values_list('flag_type').annotate(Count('id')))
 
         return {
-            'observation': mapping[True][FLAG_TYPES.observation],
-            'yellow': mapping[True][FLAG_TYPES.yellow],
-            'escalated': mapping[True][FLAG_TYPES.escalated],
-            'red': mapping[True][FLAG_TYPES.red],
-            'invalid': sum(mapping[False].values()),
+            'observation': mapping.get(FLAG_TYPES.observation, 0),
+            'yellow': mapping.get(FLAG_TYPES.yellow, 0),
+            'escalated': mapping.get(FLAG_TYPES.escalated, 0),
+            'red': mapping.get(FLAG_TYPES.red, 0),
+            'invalid': sum(mapping.values()),
         }
 
     @property
