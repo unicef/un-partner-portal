@@ -40,15 +40,15 @@ class PartnerProfileReportSerializer(serializers.ModelSerializer):
 class ProjectReportSerializer(serializers.ModelSerializer):
 
     locations = PointSerializer(many=True)
-    agency = serializers.CharField(source='agency.name')
+    type_display = serializers.CharField(source='get_display_type_display')
 
     class Meta:
         model = EOI
         fields = (
             'id',
             'title',
-            'agency',
             'locations',
+            'type_display',
         )
 
 

@@ -1,7 +1,7 @@
 import django_filters
 from django_filters.widgets import BooleanWidget
 
-from common.consts import PARTNER_TYPES, FLAG_TYPES
+from common.consts import PARTNER_TYPES, FLAG_TYPES, FLAG_CATEGORIES
 from common.filter_fields import CommaSeparatedListFilter
 from partner.models import Partner
 from project.filters import BaseProjectFilter
@@ -33,6 +33,12 @@ class PartnerReportFilter(django_filters.FilterSet):
     flag = django_filters.ChoiceFilter(
         choices=FLAG_TYPES, name='flags__flag_type', label='Has Flag Type'
     )
+    flag_category = django_filters.ChoiceFilter(
+        choices=FLAG_CATEGORIES, name='flags__category', label='Has Flag Category'
+    )
+    is_hq = django_filters.BooleanFilter(
+        method='filter_is_hq', widget=BooleanWidget, label='Is INGO HQ'
+    )
 
     class Meta:
         model = Partner
@@ -47,6 +53,8 @@ class PartnerReportFilter(django_filters.FilterSet):
             'is_verified',
             'verification_year',
             'flag',
+            'flag_category',
+            'is_hq',
         )
 
     def filter_has_experience(self, queryset, name, value):
@@ -54,6 +62,11 @@ class PartnerReportFilter(django_filters.FilterSet):
             return queryset.exclude(collaborations_partnership=None)
         if value is False:
             return queryset.filter(collaborations_partnership=None)
+        return queryset
+
+    def filter_is_hq(self, queryset, name, value):
+        if value is True:
+            return queryset.filter(display_type=PARTNER_TYPES.international, hq=None)
         return queryset
 
     def filter_verification_year(self, queryset, name, value):
