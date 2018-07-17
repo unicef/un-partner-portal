@@ -671,7 +671,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
         if self.display_type == CFEI_TYPES.direct:
-            for partner in Partner.objects.all().order_by("?")[:settings.DEFAULT_FAKE_DATA_DIRECT_APPLICATIONS_COUNT]:
+            for partner in Partner.objects.all().order_by("?")[:6]:
                 Application.objects.create(
                     partner=partner,
                     eoi=self,
@@ -686,7 +686,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
             self.save()
 
         elif self.display_type == CFEI_TYPES.open:
-            for partner in Partner.objects.all().order_by("?")[:settings.DEFAULT_FAKE_DATA_OPEN_APPLICATIONS_COUNT]:
+            for partner in Partner.objects.all().order_by("?")[:20]:
                 app = Application.objects.create(
                     partner=partner,
                     eoi=self,

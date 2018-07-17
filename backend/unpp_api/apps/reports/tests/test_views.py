@@ -125,7 +125,9 @@ class TestProjectReportAPIView(BaseAPITestCase):
             list_response = self.client.get(list_url + f'?org_type={org_type}')
             self.assertResponseStatusIs(list_response)
             self.assertEqual(
-                list_response.data['count'], projects.filter(applications__partner__display_type=org_type).count()
+                list_response.data['count'], projects.filter(
+                    applications__partner__display_type=org_type
+                ).distinct().count()
             )
 
         spec_options = set(map(

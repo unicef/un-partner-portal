@@ -15,10 +15,8 @@ class CommaSeparatedListFilter(CharFilter):
     def filter(self, qs, value):
         value = parse.unquote(value).split(self.separator)
         value = list(filter(lambda x: x.isdigit(), value))
-        qs = super(CommaSeparatedListFilter, self).filter(qs, value)
-
         # __in filtering over relationships can results in duplicate entries
         if LOOKUP_SEP in self.name:
-            qs = qs.distinct()
+            self.distinct = True
 
-        return qs
+        return super(CommaSeparatedListFilter, self).filter(qs, value)

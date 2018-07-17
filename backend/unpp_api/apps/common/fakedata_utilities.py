@@ -163,32 +163,6 @@ def generate_fake_data(country_count=3):
     ]
 
     chosen_countries = random.choices(countries, k=country_count)
-    for agency in agencies:
-        for index, (country_code, country_name) in enumerate(chosen_countries):
-            print(f'Creating {agency.name} in {country_name}')
-            index += 1
-            office = AgencyOfficeFactory(country=country_code, agency=agency)
-            for role_name, display_name in AgencyRole.get_choices(agency=agency):
-                user = UserFactory(
-                    email=f'agency-{index}-{USERNAME_AGENCY_ROLE_POSTFIXES[role_name]}@{agency.name.lower()}.org',
-                    is_superuser=True,
-                    is_staff=True,
-                )
-                AgencyMemberFactory(user=user, office=office, role=role_name)
-
-                OpenEOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user, is_published=True)
-                OpenEOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user)
-                DirectEOIFactory.create_batch(random.randint(3, 5), agency=agency, created_by=user, is_published=True)
-                DirectEOIFactory.create_batch(random.randint(3, 5), agency=agency, created_by=user)
-
-                print(f'Created {user}')
-
-            # Make sure each office has a couple of potential focal points
-            if agency.name == 'UNHCR':
-                focal_point_role = AgencyRole.MFT_USER
-            else:
-                focal_point_role = AgencyRole.EDITOR_ADVANCED
-            AgencyMemberFactory.create_batch(random.randint(5, 10), office=office, role=focal_point_role.name)
 
     OtherAgencyFactory()
 
@@ -254,3 +228,30 @@ def generate_fake_data(country_count=3):
 
                 if random.randint(1, 2) == 2:
                     UnsolicitedFactory.create_batch(random.randint(1, 3), is_published=True)
+
+    for agency in agencies:
+        for index, (country_code, country_name) in enumerate(chosen_countries):
+            print(f'Creating {agency.name} in {country_name}')
+            index += 1
+            office = AgencyOfficeFactory(country=country_code, agency=agency)
+            for role_name, display_name in AgencyRole.get_choices(agency=agency):
+                user = UserFactory(
+                    email=f'agency-{index}-{USERNAME_AGENCY_ROLE_POSTFIXES[role_name]}@{agency.name.lower()}.org',
+                    is_superuser=True,
+                    is_staff=True,
+                )
+                AgencyMemberFactory(user=user, office=office, role=role_name)
+
+                OpenEOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user, is_published=True)
+                OpenEOIFactory.create_batch(random.randint(3, 8), agency=agency, created_by=user)
+                DirectEOIFactory.create_batch(random.randint(3, 5), agency=agency, created_by=user, is_published=True)
+                DirectEOIFactory.create_batch(random.randint(3, 5), agency=agency, created_by=user)
+
+                print(f'Created {user}')
+
+            # Make sure each office has a couple of potential focal points
+            if agency.name == 'UNHCR':
+                focal_point_role = AgencyRole.MFT_USER
+            else:
+                focal_point_role = AgencyRole.EDITOR_ADVANCED
+            AgencyMemberFactory.create_batch(random.randint(5, 10), office=office, role=focal_point_role.name)

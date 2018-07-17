@@ -264,9 +264,6 @@ LOGGING = {
     }
 }
 
-DEFAULT_FAKE_DATA_OPEN_APPLICATIONS_COUNT = 21
-DEFAULT_FAKE_DATA_DIRECT_APPLICATIONS_COUNT = 6
-
 # apm related - it's enough to set those as env variables, here just for documentation
 # by default logging and apm is off, so below envs needs to be set per environment
 
