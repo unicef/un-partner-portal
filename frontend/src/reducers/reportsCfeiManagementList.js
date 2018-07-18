@@ -31,7 +31,7 @@ const initialState = {
     { name: 'title', title: 'Project Title' },
     { name: 'locations', title: 'Country' },
     { name: 'project_locations', title: 'Project Location' },
-    { name: 'type', title: 'Type of expresssion of interest' },
+    { name: 'type_display', title: 'Type of expresssion of interest' },
   ],
   loading: false,
   totalCount: 0,

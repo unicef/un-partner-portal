@@ -10,6 +10,7 @@ import { loadCfeiReportsList } from '../../../reducers/reportsCfeiManagementList
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import CountriesCell from './countriesCell';
 import LocationsCell from './locationsCell';
+import PartnerMapping from '../partnerMapping';
 
 class CfeiManagementContainer extends Component {
   componentWillMount() {
@@ -21,6 +22,7 @@ class CfeiManagementContainer extends Component {
     const { query } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
+      this.listRef.getWrappedInstance().getWrappedInstance().clearSelections();
       this.props.loadReports(nextProps.location.query);
       return false;
     }
@@ -45,8 +47,12 @@ class CfeiManagementContainer extends Component {
       <React.Fragment>
         <CustomGridColumn>
           <CfeiManagementFilter />
+          <PartnerMapping
+            items={items}
+            fieldName={'locations'}
+          />
           <SelectableList
-            ref={(field) => { this.listRef = field; }}
+            innerRef={field => this.listRef = field}
             items={items}
             columns={columns}
             loading={loading}

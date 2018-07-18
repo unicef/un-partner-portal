@@ -29,7 +29,7 @@ class PartnerInfoContainer extends Component {
     const { query } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
-      this._list.getWrappedInstance().getWrappedInstance().clearSelections()
+      this.listRef.getWrappedInstance().getWrappedInstance().clearSelections();
       this.props.loadReports(nextProps.location.query);
       return false;
     }
@@ -48,13 +48,16 @@ class PartnerInfoContainer extends Component {
 
   render() {
     const { items, columns, totalCount, loading } = this.props;
-
+    
     return (
       <CustomGridColumn>
         <PartnerInfoFilter />
-        <PartnerMapping />
+        <PartnerMapping
+          items={items}
+          fieldName={'offices'}
+        />
         <SelectableList
-          innerRef={field => this._list = field}
+          innerRef={field => this.listRef = field}
           items={items}
           columns={columns}
           loading={loading}
