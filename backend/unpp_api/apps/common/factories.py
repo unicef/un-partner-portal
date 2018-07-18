@@ -155,6 +155,16 @@ def get_budget_choice():
     return random.choice(list(BUDGET_CHOICES._db_values))
 
 
+def get_random_lat():
+    result = random.randint(-90, 90)
+    return result
+
+
+def get_random_lon():
+    result = random.randint(-180, 180)
+    return result
+
+
 class GroupFactory(factory.django.DjangoModelFactory):
     name = "UNICEF User"
 
@@ -201,8 +211,8 @@ class AdminLevel1Factory(factory.django.DjangoModelFactory):
 
 
 class PointFactory(factory.django.DjangoModelFactory):
-    lat = random.randint(-180, 180)
-    lon = random.randint(-180, 180)
+    lat = factory.LazyFunction(get_random_lat)
+    lon = factory.LazyFunction(get_random_lon)
     admin_level_1 = factory.SubFactory(AdminLevel1Factory)
 
     class Meta:
@@ -671,7 +681,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
         if self.display_type == CFEI_TYPES.direct:
-            for partner in Partner.objects.all().order_by("?")[:settings.DEFAULT_FAKE_DATA_DIRECT_APPLICATIONS_COUNT]:
+            for partner in Partner.objects.all().order_by("?")[:6]:
                 Application.objects.create(
                     partner=partner,
                     eoi=self,
@@ -686,7 +696,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
             self.save()
 
         elif self.display_type == CFEI_TYPES.open:
-            for partner in Partner.objects.all().order_by("?")[:settings.DEFAULT_FAKE_DATA_OPEN_APPLICATIONS_COUNT]:
+            for partner in Partner.objects.all().order_by("?")[:20]:
                 app = Application.objects.create(
                     partner=partner,
                     eoi=self,
@@ -711,15 +721,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def locations(self, create, extracted, **kwargs):
-        count = random.randint(2, 3)
-        while count:
-            count -= 1
-            point = Point.objects.get_point(**{
-                "lat": random.randint(-180, 180),
-                "lon": random.randint(-180, 180),
-                "admin_level_1": {"country_code": get_country_list(1)[0], "name": "name {}".format(self.pk)},
-            })
-            self.locations.add(point)
+        self.locations.add(*PointFactory.create_batch(random.randint(2, 3)))
 
 
 class DirectEOIFactory(OpenEOIFactory):

@@ -40,12 +40,17 @@ from partner.models import (
 from partner.mixins import FilterUsersPartnersMixin, VerifyPartnerProfileUpdatePermissionsMixin
 
 
+# TODO: filters for partner users
+
+
 class OrganizationProfileAPIView(RetrieveAPIView):
     """
     Endpoint for getting Organization Profile.
     """
     permission_classes = (
-        HasUNPPPermission(),
+        HasUNPPPermission(
+            partner_permissions=[],
+        ),
     )
     serializer_class = OrganizationProfileSerializer
     queryset = Partner.objects.all()
