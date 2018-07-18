@@ -5,7 +5,7 @@ import { TableCell } from 'material-ui/Table';
 import { withRouter } from 'react-router';
 import CfeiManagementFilter from './cfeiManagementFilter';
 import CustomGridColumn from '../../common/grid/customGridColumn';
-import SelectableList from '../../common/list/selectableList';
+import SelectableList from '../selectableList';
 import { loadCfeiReportsList } from '../../../reducers/reportsCfeiManagementList';
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import CountriesCell from './countriesCell';
@@ -22,7 +22,6 @@ class CfeiManagementContainer extends Component {
     const { query } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
-      this.listRef.getWrappedInstance().getWrappedInstance().clearSelections();
       this.props.loadReports(nextProps.location.query);
       return false;
     }
@@ -46,7 +45,9 @@ class CfeiManagementContainer extends Component {
     return (
       <React.Fragment>
         <CustomGridColumn>
-          <CfeiManagementFilter />
+          <CfeiManagementFilter
+            clearSelections={() => this.listRef.getWrappedInstance().getWrappedInstance().clearSelections()}
+          />
           <PartnerMapping
             items={items}
             fieldName={'locations'}

@@ -1,8 +1,9 @@
-import R from 'ramda';
 import React, { Component } from 'react';
+import R from 'ramda';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import Typography from 'material-ui/Typography';
 import { GoogleApiWrapper } from 'google-maps-react';
 import HeaderList from '../common/list/headerList';
@@ -72,13 +73,17 @@ const wrappedPartnerMappin = GoogleApiWrapper({
 })(PartnerMapping);
 
 const mapStateToProps = (state, ownProps) => {
-  const selectionIndexes = state.selectableList.items;
+  const selectionIds = state.selectableList.items;
 
   let locations = [];
 
-  if (selectionIndexes) {
-    selectionIndexes.forEach((index) => {
-      locations = locations.concat(ownProps.items[index][ownProps.fieldName]);
+  if (selectionIds && ownProps.items) {
+    selectionIds.forEach((id) => {
+      const item = R.filter(filterItem => filterItem.id === id, ownProps.items);
+
+      if (item.length > 0) {
+        locations = locations.concat(item[0][ownProps.fieldName]);
+      }
     });
   }
 
@@ -88,5 +93,6 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const connected = connect(mapStateToProps, null)(wrappedPartnerMappin);
+const withRouterMapping = withRouter(connected);
 
-export default (withStyles(styleSheet, { name: 'PartnerMapping' })(connected));
+export default (withStyles(styleSheet, { name: 'PartnerMapping' })(withRouterMapping));

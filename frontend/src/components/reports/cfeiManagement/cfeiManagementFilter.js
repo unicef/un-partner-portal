@@ -13,6 +13,7 @@ import SelectForm from '../../forms/selectForm';
 import resetChanges from '../../eois/filters/eoiHelper';
 import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
+import { saveSelections } from '../../../reducers/selectableListItems';
 
 const messages = {
   select: 'Select applicable filters to generate a report on CFEI or a map of CFEI in the target Country Office.',
@@ -101,6 +102,8 @@ class CfeiManagementFilter extends Component {
     const { pathName, query } = this.props;
 
     const { country_code, locations, specializations, status, org_type, posted_year, display_type } = values;
+    this.props.saveSelectedItems([]);
+    this.props.clearSelections();
 
     history.push({
       pathname: pathName,
@@ -117,8 +120,16 @@ class CfeiManagementFilter extends Component {
     });
   }
 
+  resetForm() {
+    this.props.saveSelectedItems([]);
+    this.props.clearSelections();
+
+    resetChanges(this.props.pathName, this.props.query);
+  }
+
   render() {
-    const { classes, handleSubmit, countryCode, reset, cfeiTypes, specs, applicationStatuses, organizationTypes } = this.props;
+    const { classes, handleSubmit, countryCode, reset, cfeiTypes, specs,
+      applicationStatuses, organizationTypes } = this.props;
 
     return (
       <form onSubmit={handleSubmit}>
@@ -192,12 +203,12 @@ class CfeiManagementFilter extends Component {
                 values={organizationTypes}
                 optional
               />
-            </Grid> 
+            </Grid>
           </Grid>
           <Grid item className={classes.button}>
             <Button
               color="accent"
-              onTouchTap={() => { reset(); resetChanges(this.props.pathName, this.props.query); }}
+              onTouchTap={() => { reset(); this.resetForm(); }}
             >
               {messages.clear}
             </Button>
@@ -227,6 +238,8 @@ CfeiManagementFilter.propTypes = {
   query: PropTypes.object,
   organizationTypes: PropTypes.array.isRequired,
   cfeiTypes: PropTypes.array.isRequired,
+  saveSelectedItems: PropTypes.func.isRequired,
+  clearSelections: PropTypes.func.isRequired,
   applicationStatuses: PropTypes.array.isRequired,
 };
 
@@ -269,7 +282,11 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const connected = connect(mapStateToProps, null)(formCfeiManagementFilter);
+const mapDispatch = dispatch => ({
+  saveSelectedItems: items => dispatch(saveSelections(items)),
+});
+
+const connected = connect(mapStateToProps, mapDispatch)(formCfeiManagementFilter);
 const withRouterFilter = withRouter(connected);
 
 export default (withStyles(styleSheet, { name: 'CfeiManagementFilter' })(withRouterFilter));

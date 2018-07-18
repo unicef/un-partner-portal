@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
-
+import { saveSelections } from '../../reducers/selectableListItems';
 import HeaderNavigation from '../common/headerNavigation';
 import resetChanges from '../eois/filters/eoiHelper';
 
@@ -31,7 +31,7 @@ class ReportsHeader extends Component {
 
   handleChange(event, index) {
     const { tabs, query } = this.props;
-    
+    this.props.saveSelectedItems([]);
     history.push({
       pathname: `/reports/${tabs[index].path}`,
       query: resetChanges(`/reports/${tabs[index].path}`, query),
@@ -63,6 +63,7 @@ ReportsHeader.propTypes = {
   children: PropTypes.node,
   location: PropTypes.object,
   query: PropTypes.object,
+  saveSelectedItems: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -71,8 +72,13 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.location.query,
 });
 
+const mapDispatch = dispatch => ({
+  saveSelectedItems: items => dispatch(saveSelections(items)),
+});
+
 const containerCfeiHeader = connect(
   mapStateToProps,
+  mapDispatch,
 )(ReportsHeader);
 
 export default containerCfeiHeader;

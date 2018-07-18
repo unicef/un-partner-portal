@@ -16,11 +16,10 @@ import {
   TableCell,
 } from 'material-ui/Table';
 import { Grid, Table, TableHeaderRow, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
-import SelectedHeader from './selectedHeader';
-import ListLoader from './listLoader';
-import { calculatePaginatedPage, updatePageNumberSize, updatePageNumber } from '../../../helpers/apiHelper';
-import { saveSelections } from '../../../reducers/selectableListItems';
-
+import { calculatePaginatedPage, updatePageNumberSize, updatePageNumber } from '../../helpers/apiHelper';
+import { saveSelections } from '../../reducers/selectableListItems';
+import SelectedHeader from '../common/list/selectedHeader';
+import ListLoader from '../common/list/listLoader';
 
 const table = {
   allowedPageSizes: [5, 10, 15],

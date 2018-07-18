@@ -5,7 +5,7 @@ import { TableCell } from 'material-ui/Table';
 import { withRouter } from 'react-router';
 import PartnerInfoFilter from './partnerInfoFilter';
 import CustomGridColumn from '../../common/grid/customGridColumn';
-import SelectableList from '../../common/list/selectableList';
+import SelectableList from '../selectableList';
 import { loadPartnerReportsList } from '../../../reducers/reportsPartnerInformationList';
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import PartnerMapping from '../partnerMapping';
@@ -29,7 +29,6 @@ class PartnerInfoContainer extends Component {
     const { query } = this.props;
 
     if (isQueryChanged(nextProps, query)) {
-      this.listRef.getWrappedInstance().getWrappedInstance().clearSelections();
       this.props.loadReports(nextProps.location.query);
       return false;
     }
@@ -48,10 +47,12 @@ class PartnerInfoContainer extends Component {
 
   render() {
     const { items, columns, totalCount, loading } = this.props;
-    
+
     return (
       <CustomGridColumn>
-        <PartnerInfoFilter />
+        <PartnerInfoFilter
+          clearSelections={() => this.listRef.getWrappedInstance().getWrappedInstance().clearSelections()}
+        />
         <PartnerMapping
           items={items}
           fieldName={'offices'}
