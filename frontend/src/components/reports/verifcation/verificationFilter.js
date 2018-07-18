@@ -128,7 +128,7 @@ class VerificationFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { display_type, country_code, is_verified, verification_year, flag, category_of_risk, is_hq } = values;
+    const { display_type, country_code, is_verified, verification_year, flag, flag_category, is_hq } = values;
 
     history.push({
       pathname: pathName,
@@ -140,7 +140,7 @@ class VerificationFilter extends Component {
         flag,
         is_hq,
         verification_year,
-        category_of_risk,
+        flag_category,
       }),
     });
   }
@@ -197,7 +197,7 @@ class VerificationFilter extends Component {
             </Grid>
             <Grid item sm={4} xs={12}>
               <SelectForm
-                fieldName="category_of_risk"
+                fieldName="flag_category"
                 label={messages.labels.categoryOfRisk}
                 values={categoryRisks}
                 optional
@@ -261,7 +261,7 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { is_verified } = {} } = ownProps.location;
   const { query: { verification_year } = {} } = ownProps.location;
   const { query: { flag } = {} } = ownProps.location;
-  const { query: { category_of_risk } = {} } = ownProps.location;
+  const { query: { flag_category } = {} } = ownProps.location;
   const { query: { is_hq } = {} } = ownProps.location;
 
   return {
@@ -274,7 +274,7 @@ const mapStateToProps = (state, ownProps) => {
     initialValues: {
       is_verified,
       verification_year,
-      category_of_risk,
+      flag_category,
       country_code,
       flag,
       is_hq,

@@ -28,11 +28,11 @@ const messages = {
 
 const initialState = {
   columns: [
-    { name: 'legal_name', title: 'Organization\'s Legal Name' },
+    { name: 'legal_name', title: 'Organization\'s Legal Name', width: 300 },
     { name: 'acronym', title: 'Acronym' },
     { name: 'organization_type', title: 'Type of Organization' },
     { name: 'country', title: 'Country' },
-    { name: 'year', title: 'Verification Year' },
+    { name: 'verification_year', title: 'Verification Year' },
   ],
   loading: false,
   totalCount: 0,
@@ -42,7 +42,7 @@ const initialState = {
 
 export const loadVerificationReportsList = params => (dispatch) => {
   dispatch(reportsVerificationLoadStarted());
-  
+
   return getVerificationsReports(params)
     .then((reports) => {
       dispatch(reportsVerificationLoadEnded());
