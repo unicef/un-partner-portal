@@ -28,7 +28,6 @@ class Command(BaseCommand):
 
         if options['clean_before']:
             clean_up_data_in_db()
-            self.stdout.write("Data cleaned!")
             call_command("loaddata", "initial.json")
             self.stdout.write("Agency, Sectors and Specialization initialized!")
 

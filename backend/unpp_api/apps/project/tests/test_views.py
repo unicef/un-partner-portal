@@ -140,12 +140,12 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             'locations': [
                 {
                     "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
-                    "lat": random.randint(-180, 180),
+                    "lat": random.randint(-90, 90),
                     "lon": random.randint(-180, 180),
                 },
                 {
                     "admin_level_1": {"name": "Paris", "country_code": "FR"},
-                    "lat": random.randint(-180, 180),
+                    "lat": random.randint(-90, 90),
                     "lon": random.randint(-180, 180),
                 },
             ],
@@ -254,12 +254,12 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             'locations': [
                 {
                     "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
-                    "lat": random.randint(-180, 180),
+                    "lat": random.randint(-90, 90),
                     "lon": random.randint(-180, 180),
                 },
                 {
                     "admin_level_1": {"name": "Paris", "country_code": "FR"},
-                    "lat": random.randint(-180, 180),
+                    "lat": random.randint(-90, 90),
                     "lon": random.randint(-180, 180),
                 },
             ],
@@ -275,7 +275,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             'locations': [
                 {
                     "admin_level_1": {"name": "Poland", "country_code": 'PL'},
-                    "lat": random.randint(-180, 180),
+                    "lat": random.randint(-90, 90),
                     "lon": random.randint(-180, 180),
                 },
             ] + initial_locations,
@@ -337,12 +337,12 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
                 'locations': [
                     {
                         "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
-                        "lat": random.randint(-180, 180),
+                        "lat": random.randint(-90, 90),
                         "lon": random.randint(-180, 180),
                     },
                     {
                         "admin_level_1": {"name": "Paris", "country_code": "FR"},
-                        "lat": random.randint(-180, 180),
+                        "lat": random.randint(-90, 90),
                         "lon": random.randint(-180, 180),
                     },
                 ],
@@ -729,12 +729,12 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
             "locations": [
                 {
                     "admin_level_1": {"country_code": 'IQ', "name": "Baghdad"},
-                    "lat": random.randint(-180, 180),
+                    "lat": random.randint(-90, 90),
                     "lon": random.randint(-180, 180),
                 },
                 {
                     "admin_level_1": {"country_code": "FR", "name": "Paris"},
-                    "lat": random.randint(-180, 180),
+                    "lat": random.randint(-90, 90),
                     "lon": random.randint(-180, 180),
                 },
             ],
@@ -1357,12 +1357,12 @@ class TestUCNCreateAndPublish(BaseAPITestCase):
             'locations': [
                 {
                     "admin_level_1": {"name": "Baghdad", "country_code": 'IQ'},
-                    "lat": random.randint(-180, 180),
+                    "lat": random.randint(-90, 90),
                     "lon": random.randint(-180, 180),
                 },
                 {
                     "admin_level_1": {"name": "Paris", "country_code": "FR"},
-                    "lat": random.randint(-180, 180),
+                    "lat": random.randint(-90, 90),
                     "lon": random.randint(-180, 180),
                 },
             ],
@@ -1375,7 +1375,7 @@ class TestUCNCreateAndPublish(BaseAPITestCase):
         partial_update_payload = {
             'locations': update_response.data['locations'] + [{
                 "admin_level_1": {"name": "Paris", "country_code": "FR"},
-                "lat": random.randint(-180, 180),
+                "lat": random.randint(-90, 90),
                 "lon": random.randint(-180, 180),
             }]
         }

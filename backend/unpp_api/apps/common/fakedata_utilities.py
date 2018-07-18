@@ -78,60 +78,66 @@ from sanctionslist.models import (
 
 
 def clean_up_data_in_db():
+    models_to_wipe = [
+        User,
+        UserProfile,
+
+        OtherAgency,
+        Agency,
+        AgencyProfile,
+        AgencyOffice,
+        AgencyMember,
+
+        AdminLevel1,
+        Point,
+        Sector,
+        Specialization,
+        CommonFile,
+
+        Notification,
+        NotifiedUser,
+
+        Partner,
+        PartnerProfile,
+        PartnerMailingAddress,
+        PartnerHeadOrganization,
+        PartnerDirector,
+        PartnerAuthorisedOfficer,
+        PartnerPolicyArea,
+        PartnerAuditAssessment,
+        PartnerReporting,
+        PartnerMandateMission,
+        PartnerExperience,
+        PartnerInternalControl,
+        PartnerBudget,
+        PartnerFunding,
+        PartnerCollaborationPartnership,
+        PartnerCollaborationEvidence,
+        PartnerOtherInfo,
+        PartnerMember,
+        PartnerReview,
+
+        EOI,
+        Pin,
+        Application,
+        ApplicationFeedback,
+        Assessment,
+
+        PartnerFlag,
+        PartnerVerification,
+
+        SanctionedName,
+        SanctionedNameMatch,
+    ]
+
     if not settings.IS_PROD:
-        print("Deleting all ORM objects")
+        print("Start DB Wipe")
 
-        User.objects.all().delete()
-        UserProfile.objects.all().delete()
+        for model in models_to_wipe:
+            print(f'Deleting {model.objects.all().count()} {model} instances')
+            model.objects.all().delete()
 
-        OtherAgency.objects.all().delete()
-        Agency.objects.all().delete()
-        AgencyProfile.objects.all().delete()
-        AgencyOffice.objects.all().delete()
-        AgencyMember.objects.all().delete()
-
-        AdminLevel1.objects.all().delete()
-        Point.objects.all().delete()
-        Sector.objects.all().delete()
-        Specialization.objects.all().delete()
-        CommonFile.objects.all().delete()
-
-        Notification.objects.all().delete()
-        NotifiedUser.objects.all().delete()
-
-        Partner.objects.all().delete()
-        PartnerProfile.objects.all().delete()
-        PartnerMailingAddress.objects.all().delete()
-        PartnerHeadOrganization.objects.all().delete()
-        PartnerDirector.objects.all().delete()
-        PartnerAuthorisedOfficer.objects.all().delete()
-        PartnerPolicyArea.objects.all().delete()
-        PartnerAuditAssessment.objects.all().delete()
-        PartnerReporting.objects.all().delete()
-        PartnerMandateMission.objects.all().delete()
-        PartnerExperience.objects.all().delete()
-        PartnerInternalControl.objects.all().delete()
-        PartnerBudget.objects.all().delete()
-        PartnerFunding.objects.all().delete()
-        PartnerCollaborationPartnership.objects.all().delete()
-        PartnerCollaborationEvidence.objects.all().delete()
-        PartnerOtherInfo.objects.all().delete()
-        PartnerMember.objects.all().delete()
-        PartnerReview.objects.all().delete()
-
-        EOI.objects.all().delete()
-        Pin.objects.all().delete()
-        Application.objects.all().delete()
-        ApplicationFeedback.objects.all().delete()
-        Assessment.objects.all().delete()
-
-        PartnerFlag.objects.all().delete()
-        PartnerVerification.objects.all().delete()
-
-        SanctionedName.objects.all().delete()
-        SanctionedNameMatch.objects.all().delete()
-
-        print("All ORM objects deleted")
+        print("End DB wipe")
 
 
 USERNAME_AGENCY_ROLE_POSTFIXES = {

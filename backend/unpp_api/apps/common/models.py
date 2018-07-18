@@ -45,7 +45,7 @@ class Point(models.Model):
         blank=True,
         max_digits=8,
         decimal_places=5,
-        validators=[MinValueValidator(Decimal(-180)), MaxValueValidator(Decimal(180))]
+        validators=[MinValueValidator(Decimal(-90)), MaxValueValidator(Decimal(90))]
     )
     lon = models.DecimalField(
         verbose_name='Longitude',
