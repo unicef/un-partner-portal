@@ -3,7 +3,6 @@ import { withStyles } from 'material-ui/styles';
 import { connect } from 'react-redux';
 import { browserHistory as history, withRouter } from 'react-router';
 import { PagingState, SelectionState } from '@devexpress/dx-react-grid';
-import Checkbox from 'material-ui/Checkbox';
 import { Paper } from 'material-ui';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
@@ -13,13 +12,11 @@ import {
 } from '@devexpress/dx-react-core';
 import {
   TableRow as TableRowMUI,
-  TableCell,
 } from 'material-ui/Table';
 import { Grid, Table, TableHeaderRow, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import SelectedHeader from './selectedHeader';
 import ListLoader from './listLoader';
 import { calculatePaginatedPage, updatePageNumberSize, updatePageNumber } from '../../../helpers/apiHelper';
-import { saveSelections } from '../../../reducers/selectableListItems';
 
 
 const table = {
@@ -61,13 +58,11 @@ class SelectableList extends Component {
       selected: [],
       hovered: null,
     };
-
     this.handleSelect = this.handleSelect.bind(this);
     this.handleRowMouseEnter = this.handleRowMouseEnter.bind(this);
     this.handleRowMouseLeave = this.handleRowMouseLeave.bind(this);
     this.onPageSize = this.onPageSize.bind(this);
     this.tableRowTemplate = this.tableRowTemplate.bind(this);
-    this.clearSelections = this.clearSelections.bind(this);
   }
 
   componentWillMount() {
@@ -79,16 +74,6 @@ class SelectableList extends Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { pathName, query = {} } = nextProps;
-    if (!query.page || !query.page_size) {
-      history.push({
-        pathname: pathName,
-        query: R.merge(query, { page: this.state.page, page_size: this.state.page_size }),
-      });
-    }
-  }
-
   onPageSize(pageSize) {
     const { pageNumber, itemsCount, pathName, query } = this.props;
 
@@ -96,19 +81,8 @@ class SelectableList extends Component {
       pageSize, pathName, query);
   }
 
-  handleSelect(newSelected, isSelected) {
-    const { saveSelectedItems } = this.props;
-    let appendSelection = [];
-
-    if (isSelected) {
-      appendSelection = this.state.selected.concat(newSelected);
-    } else {
-      appendSelection = R.filter(item => item !== newSelected, this.state.selected);
-    }
-
-    saveSelectedItems(appendSelection);
-
-    return this.setState({ selected: appendSelection });
+  handleSelect(newSelected) {
+    return this.setState({ selected: newSelected });
   }
 
   handleRowMouseEnter(newHovered) {
@@ -118,7 +92,7 @@ class SelectableList extends Component {
   handleRowMouseLeave() {
     this.setState({ hoveredRow: null });
   }
-
+  
   navigationHeader(selected, rows, HeaderAction) {
     const { classes, itemsCount = 0, pageSize, pageNumber } = this.props;
 
@@ -129,7 +103,7 @@ class SelectableList extends Component {
     return (<div>
       {selected.length > 0
         ? <SelectedHeader numSelected={selected.length} >
-          {HeaderAction && <HeaderAction rows={R.values(R.pick(selected, rows))} />}
+          <HeaderAction rows={R.values(R.pick(selected, rows))} />
         </SelectedHeader>
         : <div className={classes.container}><Typography type="title">
           {`${isNaN(firstRange) ? 0 : firstRange}-${isNaN(secondRange) ? 0 : secondRange} of ${itemsCount} results`}
@@ -138,7 +112,7 @@ class SelectableList extends Component {
     </div>);
   }
 
-  tableRowTemplate({ row, children, selected, tableRow: { rowId } }) {
+  tableRowTemplate({ row, children, selected, tableRow: { rowId }}) {
     return (<TableRowMUI
       selected={selected}
       hover
@@ -148,25 +122,6 @@ class SelectableList extends Component {
       onMouseLeave={() => this.handleRowMouseLeave()}
     > {children}
     </TableRowMUI>);
-  }
-
-  clearSelections() {
-    const { saveSelectedItems } = this.props;
-
-    this.setState({
-      selected: [],
-    });
-
-    saveSelectedItems([]);
-  }
-
-  selectionCell(rowIndex) {
-    return (<TableCell padding="checkbox">
-      <Checkbox
-        checked={R.contains(rowIndex, this.state.selected)}
-        onChange={(event, selected) => this.handleSelect(rowIndex, selected)}
-      />
-    </TableCell>);
   }
 
   render() {
@@ -184,9 +139,7 @@ class SelectableList extends Component {
     } = this.props;
     const { selected, hoveredRow } = this.state;
     return (
-      <ListLoader
-        loading={loading}
-      >
+      <ListLoader loading={loading}>
         <Paper>
           <Grid
             rows={items}
@@ -198,17 +151,20 @@ class SelectableList extends Component {
           >
             <PagingState
               currentPage={pageNumber - 1}
-              pageSize={pageSize}
+              pageSize={+pageSize}
               onPageSizeChange={(size) => { this.onPageSize(size); }}
               onCurrentPageChange={(page) => { updatePageNumber(page, pathName, query); }}
               totalCount={itemsCount}
             />
-            <SelectionState />
+            <SelectionState
+              selection={selected}
+              onSelectionChange={this.handleSelect}
+            />
             <Table
               table
               rowComponent={this.tableRowTemplate}
-              cellComponent={({ row, column, value, tableRow: { rowId } }) =>
-                templateCell({ row, column, value, hovered: hoveredRow === rowId })}
+              cellComponent={({ row, column, tableRow: { rowId } }) =>
+                templateCell({ row, column, hovered: hoveredRow === rowId })}
             />
             <Template
               name="tableViewRow"
@@ -236,7 +192,6 @@ class SelectableList extends Component {
               )}
             </Template>
             <TableSelection
-              cellComponent={({ row: { id } }) => this.selectionCell(id)}
               selectionColumnWidth={50}
             />
             <TableHeaderRow />
@@ -268,7 +223,6 @@ SelectableList.propTypes = {
   query: PropTypes.object,
   onTableRowClick: PropTypes.func,
   clickableRow: PropTypes.bool,
-  saveSelectedItems: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -278,17 +232,8 @@ const mapStateToProps = (state, ownProps) => ({
   pageNumber: ownProps.location.query.page || 0,
 });
 
-const mapDispatch = dispatch => ({
-  saveSelectedItems: items => dispatch(saveSelections(items)),
-});
-
-const connectedSelectableList = connect(
-  mapStateToProps,
-  mapDispatch,
-  null,
-  { withRef: true })(SelectableList);
-
-const withRouterSelectableList = withRouter(connectedSelectableList, { withRef: true });
+const connectedSelectableList = connect(mapStateToProps, null)(SelectableList);
+const withRouterSelectableList = withRouter(connectedSelectableList);
 
 export default withStyles(styleSheet, { name: 'SelectableList' })(withRouterSelectableList);
 
