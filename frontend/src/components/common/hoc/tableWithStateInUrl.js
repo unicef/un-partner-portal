@@ -24,6 +24,7 @@ class TableWithStateInUrl extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { pathName, query = {} } = nextProps;
+    
     if (!query.page || !query.page_size) {
       history.push({
         pathname: pathName,
@@ -82,7 +83,7 @@ TableWithStateInUrl.propTypes = {
 
 
 const mapStateToProps = (state, {
-  location: { pathname: pathName, query } = {}
+  location: { pathname: pathName, query } = {},
 }) => ({
   pathName,
   query,

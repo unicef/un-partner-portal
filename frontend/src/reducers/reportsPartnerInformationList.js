@@ -1,5 +1,5 @@
 import R from 'ramda';
-import { getPartnerVerifications } from '../helpers/api/api';
+import { getPartnerReports } from '../helpers/api/api';
 import {
   clearError,
   startLoading,
@@ -29,10 +29,10 @@ const messages = {
 const initialState = {
   columns: [
     { name: 'legal_name', title: 'Organization\'s Legal Name' },
-    { name: 'orgnization_type', title: 'Type of Organization' },
+    { name: 'organization_type', title: 'Type of Organization' },
     { name: 'country', title: 'Country' },
     { name: 'no_of_offices', title: '# of Offices' },
-    { name: 'experience', title: 'UN experience' },
+    { name: 'agency_experiences', title: 'UN experience' },
   ],
   loading: false,
   totalCount: 0,
@@ -42,8 +42,8 @@ const initialState = {
 
 export const loadPartnerReportsList = params => (dispatch) => {
   dispatch(reportsPartnerLoadStarted());
-  //TODO add API call
-  return getPartnerVerifications(1, params)
+  
+  return getPartnerReports(params)
     .then((reports) => {
       dispatch(reportsPartnerLoadEnded());
       dispatch(reportsPartnerLoadSuccess(reports));

@@ -14,7 +14,7 @@ class AgencyMembersField extends Component {
       <AutocompleteForm
         fieldName={fieldName}
         label={label}
-        innerRef={(field) => this._field = field}
+        innerRef={field => this._field = field}
         async
         asyncFunction={getMembers}
         multiple
@@ -27,7 +27,7 @@ class AgencyMembersField extends Component {
   reset() {
     this._field.reset();
   }
-};
+}
 
 AgencyMembersField.propTypes = {
   fieldName: PropTypes.string,
@@ -50,6 +50,6 @@ export default connect(
       mapValuesForSelectionField(results)),
   }),
   null,
-  { withRef: true }
+  { withRef: true },
 )(AgencyMembersField);
 

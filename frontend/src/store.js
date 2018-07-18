@@ -73,13 +73,16 @@ import submitUcn from './reducers/submitUcn';
 import partnerObservationsList from './reducers/agencyPartnerObservationsList';
 import reportsNav from './reducers/reportsNav';
 import reportsPartnerList from './reducers/reportsPartnerInformationList';
+import reportsCfeiManagementList from './reducers/reportsCfeiManagementList';
+import reportVerificationList from './reducers/reportsVerificationList';
+import selectableList from './reducers/selectableListItems';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
 import idPortalUsersList from './idPortal/reducers/usersList';
 import idPortalNewUser from './idPortal/reducers/newUser';
 import idPortalEditUser from './idPortal/reducers/editUser';
-import idPortalDeactivateUser from './idPortal/reducers/deactivateUser'; 
+import idPortalDeactivateUser from './idPortal/reducers/deactivateUser';
 
 
 const mainReducer = combineReducers({
@@ -93,7 +96,10 @@ const mainReducer = combineReducers({
   sendCfei,
   deleteUcn,
   submitUcn,
+  selectableList,
   reportsPartnerList,
+  reportsCfeiManagementList,
+  reportVerificationList,
   organizationProfileNav,
   partnerApplicationsNav,
   applicationsNotesList,
@@ -259,6 +265,15 @@ export const selectNormalizedPolicyArea = state =>
 
 export const selectNormalizedDirectSelectionSource = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-source']);
+
+export const selectNormalizedCfeiTypes = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['cfei-types']);
+
+export const selectNormalizedCfeiStatuses = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['cfei-statuses']);
+
+export const selectNormalizedFlagTypes = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['flag-types']);
 
 export const selectCountriesWithOptionalLocations = state =>
   state.partnerProfileConfig['countries-with-optional-location'];

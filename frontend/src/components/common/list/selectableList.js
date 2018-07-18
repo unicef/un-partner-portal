@@ -17,6 +17,7 @@ import { Grid, Table, TableHeaderRow, TableSelection, PagingPanel } from '@devex
 import SelectedHeader from './selectedHeader';
 import ListLoader from './listLoader';
 import { calculatePaginatedPage, updatePageNumberSize, updatePageNumber } from '../../../helpers/apiHelper';
+import { saveSelections } from '../../../reducers/selectableListItems';
 
 
 const table = {
@@ -58,11 +59,13 @@ class SelectableList extends Component {
       selected: [],
       hovered: null,
     };
+
     this.handleSelect = this.handleSelect.bind(this);
     this.handleRowMouseEnter = this.handleRowMouseEnter.bind(this);
     this.handleRowMouseLeave = this.handleRowMouseLeave.bind(this);
     this.onPageSize = this.onPageSize.bind(this);
     this.tableRowTemplate = this.tableRowTemplate.bind(this);
+    this.clearSelections = this.clearSelections.bind(this);
   }
 
   componentWillMount() {
@@ -74,6 +77,16 @@ class SelectableList extends Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { pathName, query = {} } = nextProps;
+    if (!query.page || !query.page_size) {
+      history.push({
+        pathname: pathName,
+        query: R.merge(query, { page: this.state.page, page_size: this.state.page_size }),
+      });
+    }
+  }
+
   onPageSize(pageSize) {
     const { pageNumber, itemsCount, pathName, query } = this.props;
 
@@ -82,6 +95,9 @@ class SelectableList extends Component {
   }
 
   handleSelect(newSelected) {
+    const { saveSelectedItems } = this.props;
+    saveSelectedItems(newSelected);
+
     return this.setState({ selected: newSelected });
   }
 
@@ -92,7 +108,7 @@ class SelectableList extends Component {
   handleRowMouseLeave() {
     this.setState({ hoveredRow: null });
   }
-  
+
   navigationHeader(selected, rows, HeaderAction) {
     const { classes, itemsCount = 0, pageSize, pageNumber } = this.props;
 
@@ -103,7 +119,7 @@ class SelectableList extends Component {
     return (<div>
       {selected.length > 0
         ? <SelectedHeader numSelected={selected.length} >
-          <HeaderAction rows={R.values(R.pick(selected, rows))} />
+          {HeaderAction && <HeaderAction rows={R.values(R.pick(selected, rows))} />}
         </SelectedHeader>
         : <div className={classes.container}><Typography type="title">
           {`${isNaN(firstRange) ? 0 : firstRange}-${isNaN(secondRange) ? 0 : secondRange} of ${itemsCount} results`}
@@ -112,7 +128,7 @@ class SelectableList extends Component {
     </div>);
   }
 
-  tableRowTemplate({ row, children, selected, tableRow: { rowId }}) {
+  tableRowTemplate({ row, children, selected, tableRow: { rowId } }) {
     return (<TableRowMUI
       selected={selected}
       hover
@@ -122,6 +138,16 @@ class SelectableList extends Component {
       onMouseLeave={() => this.handleRowMouseLeave()}
     > {children}
     </TableRowMUI>);
+  }
+
+  clearSelections() {
+    const { saveSelectedItems } = this.props;
+
+    this.setState({
+      selected: [],
+    });
+
+    saveSelectedItems([]);
   }
 
   render() {
@@ -139,7 +165,9 @@ class SelectableList extends Component {
     } = this.props;
     const { selected, hoveredRow } = this.state;
     return (
-      <ListLoader loading={loading}>
+      <ListLoader
+        loading={loading}
+      >
         <Paper>
           <Grid
             rows={items}
@@ -163,8 +191,8 @@ class SelectableList extends Component {
             <Table
               table
               rowComponent={this.tableRowTemplate}
-              cellComponent={({ row, column, tableRow: { rowId } }) =>
-                templateCell({ row, column, hovered: hoveredRow === rowId })}
+              cellComponent={({ row, column, value, tableRow: { rowId } }) =>
+                templateCell({ row, column, value, hovered: hoveredRow === rowId })}
             />
             <Template
               name="tableViewRow"
@@ -223,6 +251,7 @@ SelectableList.propTypes = {
   query: PropTypes.object,
   onTableRowClick: PropTypes.func,
   clickableRow: PropTypes.bool,
+  saveSelectedItems: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -232,8 +261,17 @@ const mapStateToProps = (state, ownProps) => ({
   pageNumber: ownProps.location.query.page || 0,
 });
 
-const connectedSelectableList = connect(mapStateToProps, null)(SelectableList);
-const withRouterSelectableList = withRouter(connectedSelectableList);
+const mapDispatch = dispatch => ({
+  saveSelectedItems: items => dispatch(saveSelections(items)),
+});
+
+const connectedSelectableList = connect(
+  mapStateToProps,
+  mapDispatch,
+  null,
+  { withRef: true })(SelectableList);
+
+const withRouterSelectableList = withRouter(connectedSelectableList, { withRef: true });
 
 export default withStyles(styleSheet, { name: 'SelectableList' })(withRouterSelectableList);
 
