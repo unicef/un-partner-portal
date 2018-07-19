@@ -7,6 +7,7 @@ from reports.views import (
     PartnerProfileReportXLSXReportAPIView,
     PartnerContactInformationReportXLSXReportAPIView,
     ProjectDetailsXLSXReportAPIView,
+    PartnerVerificationsObservationsXLSXReportAPIView,
 )
 
 
@@ -32,5 +33,10 @@ urlpatterns = [
         r'^verifications-observations/$',
         VerificationsAndObservationsReportAPIView.as_view(),
         name="verifications-observations"
+    ),
+    url(
+        r'^verifications-observations/export/xlsx/$',
+        PartnerVerificationsObservationsXLSXReportAPIView.as_view(),
+        name="verifications-observations-export-xlsx"
     ),
 ]

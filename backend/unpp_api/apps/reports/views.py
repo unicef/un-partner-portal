@@ -8,6 +8,7 @@ from partner.models import Partner
 from project.models import EOI
 from reports.exports.excel.partner_contact_info import PartnerContactInformationXLSLExporter
 from reports.exports.excel.partner_profile_report import PartnerProfileReportXLSLExporter
+from reports.exports.excel.partner_verifications_observations import PartnerVerificationsObservationsReportXLSLExporter
 from reports.exports.excel.project_details import ProjectDetailsXLSLExporter
 from reports.filters import PartnerReportFilter, ProjectReportFilter
 from reports.serializers import (
@@ -89,3 +90,11 @@ class VerificationsAndObservationsReportAPIView(ListAPIView):
     queryset = Partner.objects.filter(is_locked=False)
     serializer_class = VerificationsAndObservationsReportSerializer
     pagination_class = SmallPagination
+
+
+class PartnerVerificationsObservationsXLSXReportAPIView(ProjectReportAPIView):
+
+    def get(self, request, *args, **kwargs):
+        return PartnerVerificationsObservationsReportXLSLExporter(
+            self.filter_queryset(self.get_queryset())
+        ).get_as_response()
