@@ -903,7 +903,8 @@ class PartnerCollaborationEvidence(TimeStampedModel):
     organization_name = models.CharField(max_length=200, blank=True, null=True)
     date_received = models.DateField(verbose_name='Date Received', null=True)
     evidence_file = models.ForeignKey(
-        'common.CommonFile', null=True, blank=True, related_name="collaboration_evidences")
+        'common.CommonFile', null=True, blank=True, related_name="collaboration_evidences"
+    )
 
     class Meta:
         ordering = ('id', )
