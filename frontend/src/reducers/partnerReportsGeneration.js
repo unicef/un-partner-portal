@@ -1,4 +1,4 @@
-import { getPartnerProfileReports, getPartnerContactReports, getProjectDetailsReports } from '../helpers/api/api';
+import { getPartnerProfileReports, getPartnerContactReports, getProjectDetailsReports, getPartnerVerificationReports } from '../helpers/api/api';
 import download from 'downloadjs';
 import {
   clearError,
@@ -69,10 +69,10 @@ export const getProjectReport = params => (dispatch) => {
 
 export const getVerificationReport = params => (dispatch) => {
   dispatch(reportsGenerateLoadStarted());
-  // TODO change url to verification reports
-  return getProjectDetailsReports(params, { responseType: 'blob' })
+
+  return getPartnerVerificationReports(params, { responseType: 'blob' })
     .then((data) => {
-      download(data, `Project Report - ${formatDateForPrint(new Date())}.xlsx`);
+      download(data, `Observation Report - ${formatDateForPrint(new Date())}.xlsx`);
       dispatch(reportsGenerateLoadEnded());
     })
     .catch((error) => {

@@ -79,7 +79,7 @@ ObservationTypeIcon.propTypes = {
   flagType: PropTypes.string.isRequired,
   isValid: PropTypes.bool.isRequired,
   isEscalated: PropTypes.bool.isRequired,
-  category: PropTypes.string.isRequired,
+  category: PropTypes.string,
 };
 
 export default withStyles(styleSheet, { name: 'ObservationTypeIcon' })(ObservationTypeIcon);

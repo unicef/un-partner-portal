@@ -11,15 +11,17 @@ const styleSheet = theme => ({
 });
 
 const ItemColumnCell = (props) => {
-  const { label, content, classes } = props;
+  const { label, content, object, classes } = props;
   return (
     <div>
       <Typography type="caption" className={classes.label}>
         {label}
       </Typography>
-      <Typography type="body1" color="inherit">
-        {content || '-'}
-      </Typography>
+      {content && !object ?
+        <Typography type="body1" color="inherit">
+          {content || '-'}
+        </Typography>
+        : object}
     </div>
   );
 };
@@ -28,6 +30,7 @@ ItemColumnCell.propTypes = {
   classes: PropTypes.object,
   label: PropTypes.string.isRequired,
   content: PropTypes.string,
+  object: PropTypes.node,
 };
 
 export default withStyles(styleSheet, { name: 'ItemColumnCell' })(ItemColumnCell);

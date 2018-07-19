@@ -11,7 +11,6 @@ import SpreadContent from '../common/spreadContent';
 import LocationsMap from '../forms/fields/projectFields/locationField/locationsMap';
 
 const messages = {
-  partnerMapping: 'Partner Mapping',
   defaultCountryCode: 'RUS',
   defaultCountryName: 'Russia',
 };
@@ -37,10 +36,15 @@ const styleSheet = theme => ({
 
 /* eslint-disable react/prefer-stateless-function */
 class PartnerMapping extends Component {
+  constructor(props) {
+    super(props);
+
+    this.header = this.header.bind(this);
+  }
   /* eslint-disable class-methods-use-this */
   header() {
     return (<SpreadContent>
-      <Typography type="headline" >{messages.partnerMapping}</Typography>
+      <Typography type="headline">{this.props.title}</Typography>
     </SpreadContent>);
   }
 
@@ -65,6 +69,7 @@ class PartnerMapping extends Component {
 
 PartnerMapping.propTypes = {
   locations: PropTypes.array,
+  title: PropTypes.string,
 };
 
 const wrappedPartnerMappin = GoogleApiWrapper({

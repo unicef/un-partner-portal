@@ -79,11 +79,10 @@ class PartnerObservationsList extends Component {
         <Grid item sm={10} xs={12} >
           <div className={classes.center}>
             {submitter
-              ? <Typography type="body1" color="inherit">
-                <div className={classes.center}>
-                  <div>{submitter.name + (userId === submitter.id ? messages.me : '')}</div>
-                  <div>,&nbsp;{submitter.agency_name}</div>
-                </div>
+              ? <Typography className={classes.center} type="body1" color="inherit">
+
+                {`${submitter.name} ${userId === submitter.id ? messages.me : ''}, ${submitter.agency_name}`}
+
               </Typography>
               : '-'}
           </div>

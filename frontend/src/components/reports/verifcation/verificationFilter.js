@@ -15,7 +15,7 @@ import resetChanges from '../../eois/filters/eoiHelper';
 import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 
 const messages = {
-  select: 'Select applicable filters to generate a report on the Verification and Observation of Partners in the target Country Office.',
+  select: 'Select filters to generate a report on partner verification and observations.',
   clear: 'clear',
   choose: 'Choose',
   labels: {
@@ -83,14 +83,6 @@ export const YEARS_VAL = [
   {
     value: '2018',
     label: '2018',
-  },
-  {
-    value: '2017',
-    label: '2017',
-  },
-  {
-    value: '2016',
-    label: '2016',
   },
 ];
 
