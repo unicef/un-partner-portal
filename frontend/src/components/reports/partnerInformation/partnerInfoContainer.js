@@ -17,6 +17,7 @@ import Loader from '../../common/loader';
 const messages = {
   partnerProfile: 'Export partner profile report',
   partnerContact: 'Export contact information report',
+  partnerMapping: 'Map of CSOs',
 };
 
 class PartnerInfoContainer extends Component {
@@ -108,6 +109,7 @@ class PartnerInfoContainer extends Component {
             </Button>
           </div>
           <PartnerMapping
+            title={messages.partnerMapping}
             items={items}
             fieldName={'offices'}
           />

@@ -18,6 +18,7 @@ import Loader from '../../common/loader';
 
 const messages = {
   exportReport: 'Export report',
+  projectMapping: 'Map of CSOs',
 };
 
 class CfeiManagementContainer extends Component {
@@ -81,6 +82,7 @@ class CfeiManagementContainer extends Component {
             </Button>
           </div>
           <PartnerMapping
+            title={messages.projectMapping}
             items={items}
             fieldName={'locations'}
           />

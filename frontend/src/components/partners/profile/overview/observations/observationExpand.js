@@ -77,17 +77,17 @@ const ObservationExpand = (props) => {
 
   return (
     <GridColumn className={classes.container}>
-      <GridRow columns={2} spacing={12}>
+      <GridRow columns={2} spacing={8}>
         <ItemColumnCell label={messages.created} content={formatDateForPrint(R.path(['created'], observation))} />
         <ItemColumnCell label={messages.comment} content={R.path(['comment'], observation)} />
       </GridRow>
-      {observation.category !== FLAGS.SANCTION && <GridRow columns={4} spacing={12}>
+      {observation.category !== FLAGS.SANCTION && <GridRow columns={4} spacing={8}>
         <ItemColumnCell label={messages.contact} content={R.path(['contactPerson'], observation)} />
         <ItemColumnCell label={messages.telephone} content={R.path(['contactPhone'], observation)} />
         <ItemColumnCell label={messages.email} content={R.path(['contactEmail'], observation)} />
-        <ItemColumnCell label={messages.attachment} content={displayAttachment(R.path(['attachment'], observation))} />
+        <ItemColumnCell label={messages.attachment} object={displayAttachment(R.path(['attachment'], observation))} />
       </GridRow>}
-      {observation.validationComment && <GridRow columns={1} spacing={12}>
+      {observation.validationComment && <GridRow columns={1} spacing={8}>
         <ItemColumnCell label={messages.reason} content={R.path(['validationComment'], observation)} />
       </GridRow>}
     </GridColumn>

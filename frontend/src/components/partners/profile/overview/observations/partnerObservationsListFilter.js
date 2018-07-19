@@ -80,14 +80,14 @@ class PartnerObservationsListFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { category, type, only_mine } = values;
+    const { flag_type, category, only_mine } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         page: 1,
+        flag_type,
         category,
-        type,
         only_mine,
       }),
     });
@@ -135,16 +135,15 @@ class PartnerObservationsListFilter extends Component {
               <SelectForm
                 label={messages.labels.typeObservation}
                 placeholder={messages.labels.choose}
-                fieldName="category"
+                fieldName="flag_type"
                 values={this.styleFlags()}
                 optional
               />
             </Grid>
             <Grid item sm={4} xs={12}>
               <SelectForm
-                label={messages.labels.sector}
-                placeholder={messages.labels.category}
-                fieldName="type"
+                label={messages.labels.category}
+                fieldName="category"
                 values={riskCategory}
                 optional
               />
@@ -199,8 +198,8 @@ const formFilter = reduxForm({
 })(PartnerObservationsListFilter);
 
 const mapStateToProps = (state, ownProps) => {
+  const { query: { flag_type } = {} } = ownProps.location;
   const { query: { category } = {} } = ownProps.location;
-  const { query: { type } = {} } = ownProps.location;
   const { query: { only_mine } = {} } = ownProps.location;
 
   return {
@@ -209,8 +208,8 @@ const mapStateToProps = (state, ownProps) => {
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {
+      flag_type,
       category,
-      type,
       only_mine,
     },
   };
