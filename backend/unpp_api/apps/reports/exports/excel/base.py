@@ -18,7 +18,13 @@ class BaseXLSXExporter:
         self.response = HttpResponse(
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
-        self.workbook = AutoWidthWorkBook(self.response, {'in_memory': True})
+        self.workbook = AutoWidthWorkBook(
+            self.response,
+            {
+                'in_memory': True,
+                'default_date_format': 'dd/mm/yy'
+            }
+        )
 
     def get_display_name(self):
         return '{} Objects UNPP Export'.format(self.queryset.count())
