@@ -39,7 +39,6 @@ const initialState = {
   items: [],
 };
 
-
 export const loadPartnerReportsList = params => (dispatch) => {
   dispatch(reportsPartnerLoadStarted());
   

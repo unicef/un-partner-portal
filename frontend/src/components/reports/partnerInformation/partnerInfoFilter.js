@@ -13,6 +13,7 @@ import CountryField from '../../forms/fields/projectFields/locationField/country
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
 import SelectForm from '../../forms/selectForm';
 import resetChanges from '../../eois/filters/eoiHelper';
+import { saveSelections } from '../../../reducers/selectableListItems';
 import { selectNormalizedOrganizationTypes, selectMappedSpecializations } from '../../../store';
 
 const messages = {
@@ -102,6 +103,9 @@ class PartnerInfoFilter extends Component {
     const { country_code, specializations, organization_type, display_type,
       has_experience, registered, locations } = values;
 
+    this.props.saveSelectedItems([]);
+    this.props.clearSelections();
+
     history.push({
       pathname: pathName,
       query: R.merge(query, {
@@ -118,6 +122,8 @@ class PartnerInfoFilter extends Component {
   }
 
   resetForm() {
+    this.props.saveSelectedItems([]);
+    this.props.clearSelections();
     resetChanges(this.props.pathName, this.props.query);
   }
 
@@ -215,6 +221,8 @@ PartnerInfoFilter.propTypes = {
   pathName: PropTypes.string,
   countryCode: PropTypes.string,
   handleSubmit: PropTypes.func,
+  saveSelectedItems: PropTypes.func.isRequired,
+  clearSelections: PropTypes.func.isRequired,
   query: PropTypes.object,
   organizationTypes: PropTypes.array.isRequired,
 };
@@ -255,7 +263,11 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const connected = connect(mapStateToProps, null)(formPartnerInfoFilter);
+const mapDispatch = dispatch => ({
+  saveSelectedItems: items => dispatch(saveSelections(items)),
+});
+
+const connected = connect(mapStateToProps, mapDispatch)(formPartnerInfoFilter);
 const withRouterFilter = withRouter(connected);
 
 export default (withStyles(styleSheet, { name: 'PartnerInfoFilter' })(withRouterFilter));

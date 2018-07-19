@@ -1,16 +1,24 @@
 
+import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import Button from 'material-ui/Button';
 import { TableCell } from 'material-ui/Table';
-import Grid from 'material-ui/Grid';
 import { withRouter } from 'react-router';
+import CustomGridColumn from '../../common/grid/customGridColumn';
 import VerificationFilter from './verificationFilter';
 import PaginatedList from '../../common/list/paginatedList';
 import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
+import { getVerificationReport } from '../../../reducers/partnerReportsGeneration';
 import { loadVerificationReportsList } from '../../../reducers/reportsVerificationList';
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import PartnerNameCell from './partnerNameCell';
+import Loader from '../../common/loader';
+
+const messages = {
+  exportReport: 'Export report',
+};
 
 class VerificationContainer extends Component {
   componentWillMount() {
@@ -42,26 +50,42 @@ class VerificationContainer extends Component {
     return <TableCell>{value}</TableCell>;
   }
 
+  verificationReport() {
+    const { query, getVerificationReports } = this.props;
+
+    const queryPage = R.dissoc('page', query);
+    const queryPageSize = R.dissoc('page_size', queryPage);
+
+    getVerificationReports(queryPageSize);
+  }
+
   render() {
-    const { items, columns, totalCount, loading } = this.props;
+    const { items, columns, totalCount, loading, reportsLoading } = this.props;
 
     return (
       <React.Fragment>
-        <Grid container direction="column" spacing={24}>
-          <Grid item>
-            <VerificationFilter />
-          </Grid>
-          <Grid item>
-            <TableWithStateInUrl
-              component={PaginatedList}
-              items={items}
-              columns={columns}
-              itemsCount={totalCount}
-              loading={loading}
-              templateCell={this.tableCell}
-            />
-          </Grid>
-        </Grid>
+        <Loader fullScreen loading={reportsLoading} />
+        <CustomGridColumn>
+          <VerificationFilter />
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button
+              style={{ marginRight: '15px' }}
+              raised
+              color="accent"
+              onTouchTap={() => this.verificationReport()}
+            >
+              {messages.exportReport}
+            </Button>
+          </div>
+          <TableWithStateInUrl
+            component={PaginatedList}
+            items={items}
+            columns={columns}
+            itemsCount={totalCount}
+            loading={loading}
+            templateCell={this.tableCell}
+          />
+        </CustomGridColumn>
       </React.Fragment>
     );
   }
@@ -73,7 +97,9 @@ VerificationContainer.propTypes = {
   totalCount: PropTypes.number.isRequired,
   loadReports: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
+  getVerificationReports: PropTypes.func,
   query: PropTypes.object,
+  reportsLoading: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -82,10 +108,12 @@ const mapStateToProps = (state, ownProps) => ({
   columns: state.reportVerificationList.columns,
   loading: state.reportVerificationList.loading,
   query: ownProps.location.query,
+  reportsLoading: state.generatePartnerReports.loading,
 });
 
 const mapDispatch = dispatch => ({
   loadReports: params => dispatch(loadVerificationReportsList(params)),
+  getVerificationReports: params => dispatch(getVerificationReport(params)),
 });
 
 const connectedVerificationContainer =

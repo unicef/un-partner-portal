@@ -176,7 +176,7 @@ class LocationsMapBase extends Component {
   }
 
   render() {
-    const { showMap, locations } = this.props;
+    const { showMap } = this.props;
     const {
       pos,
       bounds,
@@ -204,7 +204,7 @@ class LocationsMapBase extends Component {
         <Typography>{activeLocation}</Typography>
       </InfoWindow>
       <SearchBox />
-    </MapContainer >
+    </MapContainer>
     );
   }
 }

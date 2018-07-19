@@ -436,6 +436,18 @@ export function getVerificationsReports(params, options) {
   return authorizedGet({ uri: '/reports/verifications-observations', params, options });
 }
 
+export function getPartnerProfileReports(params, options) {
+  return authorizedGet({ uri: '/reports/partners/profile/export/xlsx', params, options });
+}
+
+export function getPartnerContactReports(params, options) {
+  return authorizedGet({ uri: '/reports/partners/contact/export/xlsx', params, options });
+}
+
+export function getProjectDetailsReports(params, options) {
+  return authorizedGet({ uri: '/reports/projects/details/export/xlsx', params, options });
+}
+
 // ID portal
 export function postNewUser(body) {
   return authorizedPost({ uri: '/manage/user/', body });
