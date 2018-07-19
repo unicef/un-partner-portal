@@ -92,7 +92,7 @@ class VerificationsAndObservationsReportAPIView(ListAPIView):
     pagination_class = SmallPagination
 
 
-class PartnerVerificationsObservationsXLSXReportAPIView(ProjectReportAPIView):
+class PartnerVerificationsObservationsXLSXReportAPIView(VerificationsAndObservationsReportAPIView):
 
     def get(self, request, *args, **kwargs):
         return PartnerVerificationsObservationsReportXLSLExporter(

@@ -5,7 +5,7 @@ from reports.exports.excel.base import BaseXLSXExporter
 class PartnerVerificationsObservationsReportXLSLExporter(BaseXLSXExporter):
 
     def get_display_name(self):
-        return f'{self.queryset.count()} Partners(s) Profile Report'
+        return f'{self.queryset.count()} Partners(s) Verifications and Observations Report'
 
     def fill_worksheet(self):
         verified_display = {
@@ -29,14 +29,14 @@ class PartnerVerificationsObservationsReportXLSLExporter(BaseXLSXExporter):
             'Acronym',
             'Type of Organization',
             'Country',
-            'Experience working with UN',
             'Verified',
+            'Verified Year',
             'Observations',
             'Yellow Flags',
             'Escalated Flags',
             'Red Flags',
         ]
-        worksheet = self.workbook.add_worksheet('Partner Profile Report')
+        worksheet = self.workbook.add_worksheet('Verifications and Observations')
 
         current_row = 0
 
@@ -49,14 +49,15 @@ class PartnerVerificationsObservationsReportXLSLExporter(BaseXLSXExporter):
         partner: Partner
         for partner in self.queryset:
             flagging_status = partner.flagging_status
+            latest_verification = partner.verifications.order_by('-created').last()
 
             worksheet.write_row(current_row, 0, (
                 partner.legal_name,
                 partner.profile.acronym,
                 partner.get_display_type_display(),
                 partner.get_country_code_display(),
-                ", ".join(partner.collaborations_partnership.values_list('agency__name', flat=True).distinct()),
-                verified_display[partner.is_verified],
+                verified_display[getattr(latest_verification, 'is_verified', None)],
+                getattr(getattr(latest_verification, 'created', None), 'year', None),
                 flagging_status['observation'],
                 flagging_status['yellow'],
                 flagging_status['escalated'],
