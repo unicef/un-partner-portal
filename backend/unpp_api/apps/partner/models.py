@@ -41,7 +41,7 @@ from common.consts import (
     AUDIT_ASSESSMENT_CHOICES,
     BUDGET_CHOICES,
     FLAG_TYPES,
-)
+    FLAG_CATEGORIES)
 from partner.roles import PartnerRole, PARTNER_ROLE_PERMISSIONS
 from review.models import PartnerFlag
 
@@ -150,7 +150,9 @@ class Partner(TimeStampedModel):
 
     @property
     def has_potential_sanction_match(self):
-        return self.flags.filter(flag_type=FLAG_TYPES.sanctions_match, is_valid=None).count()
+        return self.flags.filter(
+            flag_type=FLAG_TYPES.yellow, category=FLAG_CATEGORIES.sanctions_match, is_valid=None
+        ).exists()
 
     @property
     def flagging_status(self):
