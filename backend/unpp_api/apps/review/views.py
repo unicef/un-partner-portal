@@ -5,7 +5,6 @@ from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, get_object_or_404, RetrieveAPIView
 
 from agency.permissions import AgencyPermission
@@ -26,11 +25,8 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
     Endpoint for getting and creating flags
     """
     permission_classes = (
-        IsAuthenticated,
         HasUNPPPermission(
-            agency_permissions=[
-                AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS,
-            ]
+            agency_permissions=[]  # Permissions verified below
         ),
     )
     serializer_class = PartnerFlagSerializer
@@ -41,7 +37,17 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
     filter_class = PartnerFlagFilter
 
     def get_queryset(self):
-        return PartnerFlag.objects.filter(partner=self.kwargs['partner_id'])
+        queryset = PartnerFlag.objects.filter(partner=self.kwargs['partner_id'])
+        if current_user_has_permission(
+            self.request, agency_permissions=[AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS]
+        ):
+            return queryset
+        elif current_user_has_permission(
+            self.request, agency_permissions=[AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES]
+        ):
+            return queryset.filter(category=FLAG_CATEGORIES.sanctions_match)
+
+        raise PermissionDenied
 
     def perform_create(self, serializer):
         partner = get_object_or_404(Partner, id=self.kwargs['partner_id'])
@@ -69,7 +75,6 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
     Endpoint for getting and creating partner verifications
     """
     permission_classes = (
-        IsAuthenticated,
         HasUNPPPermission(
             agency_permissions=[]  # Permissions verified below
         ),
@@ -117,23 +122,27 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
 
 
 class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
-    """
-    Endpoint for updating valid status. Only accepts is_valid
-    """
+
     permission_classes = (
-        IsAuthenticated,
         HasUNPPPermission(
-            agency_permissions=[
-                AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS,
-            ]
+            agency_permissions=[]  # Permissions verified below
         ),
     )
     serializer_class = PartnerFlagSerializer
 
     def get_queryset(self):
         partner = get_object_or_404(Partner, id=self.kwargs.get('partner_id'))
+        queryset = PartnerFlag.objects.filter(Q(partner=partner) | Q(partner=partner.hq))
+        if current_user_has_permission(
+            self.request, agency_permissions=[AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS]
+        ):
+            return queryset
+        elif current_user_has_permission(
+            self.request, agency_permissions=[AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES]
+        ):
+            return queryset.filter(category=FLAG_CATEGORIES.sanctions_match)
 
-        return PartnerFlag.objects.filter(Q(partner=partner) | Q(partner=partner.hq))
+        raise PermissionDenied
 
     def get_object(self):
         flag: PartnerFlag = super(PartnerFlagRetrieveUpdateAPIView, self).get_object()
@@ -157,10 +166,10 @@ class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 
 
 class PartnerVerificationRetrieveAPIView(RetrieveAPIView):
+
     permission_classes = (
-        IsAuthenticated,
         HasUNPPPermission(
-            agency_permissions=[]
+            agency_permissions=[]  # Permissions verified below
         ),
     )
     serializer_class = PartnerVerificationSerializer
