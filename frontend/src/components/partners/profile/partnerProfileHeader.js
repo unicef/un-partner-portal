@@ -76,9 +76,9 @@ class PartnerProfileHeader extends Component {
   }
 
   handleChange(event, index) {
-    const { tabs, partnerId, hasViewObservationPermission } = this.props;
+    const { tabs, partnerId, hasViewObservationPermission, hasViewSanctionsPermission } = this.props;
 
-    const filterTabs = hasViewObservationPermission
+    const filterTabs = (hasViewObservationPermission || hasViewSanctionsPermission)
       ? tabs
       : R.filter(item => item.path !== messages.observationTab, tabs);
 
@@ -90,9 +90,10 @@ class PartnerProfileHeader extends Component {
       tabs,
       children,
       hasViewObservationPermission,
+      hasViewSanctionsPermission,
     } = this.props;
 
-    const filterTabs = hasViewObservationPermission
+    const filterTabs = (hasViewObservationPermission || hasViewSanctionsPermission)
       ? tabs
       : R.filter(item => item.path !== messages.observationTab, tabs);
 
