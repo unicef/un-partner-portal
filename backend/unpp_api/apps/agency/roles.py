@@ -2,7 +2,7 @@ from enum import unique, auto
 
 from agency.agencies import UNHCR
 from agency.permissions import AgencyPermission
-from common.authentication_utilities import AutoNameEnum
+from common.enums import AutoNameEnum
 
 
 @unique

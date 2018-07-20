@@ -1,7 +1,7 @@
 from enum import unique, auto
 
 from partner.permissions import PartnerPermission
-from common.authentication_utilities import AutoNameEnum
+from common.enums import AutoNameEnum
 
 
 @unique
