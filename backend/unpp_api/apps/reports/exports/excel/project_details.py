@@ -31,9 +31,6 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
             'Estimated end date',
             'Focal Point(s)',
             'Specialization(s)',
-            'Project Background',
-            'Expected Results',
-            'Other information (optional)',
         ]
         worksheet = self.workbook.add_worksheet('Project Details Report')
 
@@ -70,8 +67,5 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
                 eoi.end_date,
                 focal_points,
                 specializations,
-                eoi.description,
-                eoi.goal,
-                eoi.other_information,
             ))
             current_row += 1

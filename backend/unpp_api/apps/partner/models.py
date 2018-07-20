@@ -41,7 +41,8 @@ from common.consts import (
     AUDIT_ASSESSMENT_CHOICES,
     BUDGET_CHOICES,
     FLAG_TYPES,
-    FLAG_CATEGORIES)
+    FLAG_CATEGORIES,
+)
 from partner.roles import PartnerRole, PARTNER_ROLE_PERMISSIONS
 from review.models import PartnerFlag
 

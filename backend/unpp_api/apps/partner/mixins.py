@@ -11,15 +11,13 @@ class FilterUsersPartnersMixin(object):
 
     def get_queryset(self):
         queryset = super(FilterUsersPartnersMixin, self).get_queryset()
-        query = Q(**{
-            LOOKUP_SEP.join(filter(None, [self.partner_field, 'id'])): self.request.active_partner.id
-        })
-        if self.request.active_partner.is_hq:
-            query |= Q(**{
-                LOOKUP_SEP.join(filter(None, [self.partner_field, 'hq_id'])): self.request.active_partner.id
+        if self.request.active_partner:
+            query = Q(**{
+                LOOKUP_SEP.join(filter(None, [self.partner_field, 'id__in'])): self.request.user.partner_ids
             })
+            queryset = queryset.filter(query)
 
-        return queryset.filter(query)
+        return queryset
 
 
 class VerifyPartnerProfileUpdatePermissionsMixin(object):
