@@ -1,3 +1,4 @@
+from django.conf import settings
 from social_core.backends.azuread_b2c import AzureADB2COAuth2
 
 
