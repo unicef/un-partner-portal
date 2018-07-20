@@ -176,6 +176,7 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+    'common.authentication.CustomAzureADBBCOAuth2',
 ]
 
 # Django-social-auth settings
