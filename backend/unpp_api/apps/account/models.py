@@ -110,8 +110,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return agencies[0] if agencies else None
 
     @threaded_cached_property
-    def partner_ids_i_can_access(self):
-        partner_members = self.partner_members.all()
+    def partner_ids(self):
+        partner_members = self.partner_members.exclude(partner__is_locked=True)
         partner_ids = []
         for partner_member in partner_members:
             partner_ids.append(partner_member.partner.id)
@@ -121,7 +121,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return partner_ids
 
     def get_partner_ids_i_can_access(self):
-        return self.partner_ids_i_can_access
+        return self.partner_ids
 
     @threaded_cached_property
     def status(self):

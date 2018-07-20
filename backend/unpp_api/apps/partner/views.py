@@ -7,7 +7,6 @@ from rest_framework.generics import (
     RetrieveAPIView,
     RetrieveUpdateAPIView,
 )
-from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.serializers import PartnerMemberSerializer
@@ -40,10 +39,7 @@ from partner.models import (
 from partner.mixins import FilterUsersPartnersMixin, VerifyPartnerProfileUpdatePermissionsMixin
 
 
-# TODO: filters for partner users
-
-
-class OrganizationProfileAPIView(RetrieveAPIView):
+class OrganizationProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
     """
     Endpoint for getting Organization Profile.
     """
@@ -56,16 +52,30 @@ class OrganizationProfileAPIView(RetrieveAPIView):
     queryset = Partner.objects.all()
 
 
-class PartnerProfileAPIView(RetrieveAPIView):
+class PartnerProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+            ],
+            partner_permissions=[],
+        ),
+    )
     serializer_class = OrganizationProfileDetailsSerializer
     queryset = Partner.objects.all()
 
 
-class PartnerProfileSummaryAPIView(RetrieveAPIView):
+class PartnerProfileSummaryAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+            ],
+            partner_permissions=[],
+        ),
+    )
     serializer_class = PartnerProfileSummarySerializer
     queryset = Partner.objects.all()
 
@@ -219,7 +229,7 @@ class PartnerCountryProfileAPIView(FilterUsersPartnersMixin, CreateAPIView, Retr
     queryset = Partner.objects.all()
 
 
-class PartnersMemberListAPIView(ListAPIView):
+class PartnersMemberListAPIView(FilterUsersPartnersMixin, ListAPIView):
 
     permission_classes = (
         HasUNPPPermission(
@@ -233,7 +243,4 @@ class PartnersMemberListAPIView(ListAPIView):
     queryset = PartnerMember.objects.all()
     pagination_class = SmallPagination
     lookup_field = 'pk'
-
-    def get_queryset(self, *args, **kwargs):
-        partner_id = self.kwargs.get(self.lookup_field)
-        return self.queryset.filter(partner_id=partner_id)
+    partner_field = 'partner'
