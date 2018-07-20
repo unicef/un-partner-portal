@@ -62,9 +62,9 @@ class PartnerProfileHeader extends Component {
   }
 
   updatePath() {
-    const { tabs, location, partnerId, hasViewObservationPermission } = this.props;
+    const { tabs, location, partnerId, hasViewObservationPermission, hasViewSanctionsPermission } = this.props;
 
-    const filterTabs = hasViewObservationPermission
+    const filterTabs = (hasViewObservationPermission || hasViewSanctionsPermission)
       ? tabs
       : R.filter(item => item.path !== messages.observationTab, tabs);
 
@@ -119,6 +119,7 @@ PartnerProfileHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
   hasViewObservationPermission: PropTypes.bool,
+  hasViewSanctionsPermission: PropTypes.bool,
   location: PropTypes.string.isRequired,
   partnerId: PropTypes.string.isRequired,
   loadPartnerSummary: PropTypes.func,
@@ -135,6 +136,7 @@ const mapStateToProps = (state, ownProps) => ({
   partnerId: ownProps.params.id,
   location: ownProps.location.pathname,
   hasViewObservationPermission: checkPermission(AGENCY_PERMISSIONS.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS, state),
+  hasViewSanctionsPermission: checkPermission(AGENCY_PERMISSIONS.REVIEW_AND_MARK_SANCTIONS_MATCHES, state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
