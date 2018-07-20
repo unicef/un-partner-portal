@@ -58,6 +58,7 @@ class PartnerAdditionalSerializer(serializers.ModelSerializer):
             'is_verified',
             'has_finished',
             'hq',
+            'has_potential_sanction_match',
         )
 
     def get_hq(self, partner):
@@ -426,6 +427,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "proj_impl_is_complete",
             "other_info_is_complete",
             "country_of_origin",
+            "has_sanction_match",
         )
 
     def get_hq_budgets(self, partner):
@@ -443,6 +445,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
 class PartnerProfileSummarySerializer(serializers.ModelSerializer):
 
     location_of_office = PointSerializer()
+    location_field_offices = PointSerializer(many=True)
     country_presence_display = serializers.SerializerMethodField()
     org_head = serializers.SerializerMethodField()
     mailing_address = PartnerMailingAddressSerializer()
@@ -465,6 +468,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'is_hq',
             'country_code',
             'location_of_office',
+            'location_field_offices',
             'country_presence_display',
             'org_head',
             'mailing_address',

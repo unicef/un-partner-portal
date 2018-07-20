@@ -30,8 +30,8 @@ import partnerProfileEdit from './components/organizationProfile/edit/partnerPro
 import TabsContainer from './components/organizationProfile/edit/tabsContainer';
 import partnerProfileHeader from './components/partners/profile/partnerProfileHeader';
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
+import partnerVerification from './components/partners/profile/overview/partnerVerification';
 import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
-import agencyMembersContainer from './components/settings/agencyMembersContainer';
 import registration from './components/registration/registration';
 import login from './components/login/login';
 import passwordReset from './components/passwordReset/passwordReset';
@@ -42,6 +42,11 @@ import cfeiDirectResponse from './components/eois/details/overview/results/respo
 import cfeiFeedback from './components/eois/details/overview/feedback';
 import partnerApplicationList from './components/agency/partnerApplicationList';
 import partnerObservationsList from './components/partners/profile/overview/observations/partnerObservationsList';
+import partnerInfoContainer from './components/reports/partnerInformation/partnerInfoContainer';
+import cfeiManagementContainer from './components/reports/cfeiManagement/cfeiManagementContainer';
+import verificationContainer from './components/reports/verifcation/verificationContainer';
+import reportsHeader from './components/reports/reportsHeader';
+import partnerUsersContainer from './components/partners/members/partnerUsersContainer';
 
 // ID portal
 import mainLayoutIdPortal from './idPortal/mainLayout';
@@ -105,7 +110,8 @@ const allRoutes = () => (
             <Route component={mainContent} >
               <Route path="overview" component={partnerOverview} />
               <Route path="details" component={organizationProfileOverviewPaper} />
-              <Route path="users" component={null} />
+              <Route path="users" component={partnerUsersContainer} />
+              <Route path="verification" component={partnerVerification} />
               <Route path="observations" component={partnerObservationsList} />
               <Route path="applications" component={partnerApplicationList} />
             </Route>
@@ -132,7 +138,14 @@ const allRoutes = () => (
               <Route path="users" component={null} />
             </Route>
           </Route>
-          <Route path="settings" component={agencyMembersContainer} />
+          <Route path="reports" component={reportsHeader}>
+            <IndexRedirect to="information" />
+            <Route component={mainContent}>
+              <Route path="information" component={partnerInfoContainer} />
+              <Route path="management" component={cfeiManagementContainer} />
+              <Route path="verification" component={verificationContainer} />
+            </Route>
+          </Route>
         </Route>
       </Route>
       <Route component={mainIdPortal}>

@@ -16,13 +16,17 @@ const pathType = type => R.filter(item => item.type === type, types);
 const path = (type, eoiId) => {
   const source = pathType(type)[0];
 
-  if (source.path === 'open') {
-    return `/cfei/open/${eoiId}/overview`;
-  } else if (source.path === 'direct') {
-    return `/cfei/direct/${eoiId}/overview`;
-  } else if (source.path === 'unsolicited') {
-    return `/cfei/unsolicited/${eoiId}/overview`;
+  if (source) {
+    if (source.path === 'open') {
+      return `/cfei/open/${eoiId}/overview`;
+    } else if (source.path === 'direct') {
+      return `/cfei/direct/${eoiId}/overview`;
+    } else if (source.path === 'unsolicited') {
+      return `/cfei/unsolicited/${eoiId}/overview`;
+    }
   }
+
+  return '-';
 };
 
 const TitleCell = (props) => {

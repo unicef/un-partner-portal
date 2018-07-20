@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { compose, pluck, any } from 'ramda';
+import { compose, any } from 'ramda';
 import withStyles from 'material-ui/styles/withStyles';
 import { TableCell } from 'material-ui/Table';
 import { browserHistory as history, withRouter } from 'react-router';

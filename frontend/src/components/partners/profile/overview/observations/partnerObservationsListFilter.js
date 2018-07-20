@@ -41,6 +41,10 @@ const styleSheet = theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
+  center: {
+    display: 'flex', 
+    alignItems: 'center',
+  }
 });
 
 class PartnerObservationsListFilter extends Component {
@@ -76,15 +80,15 @@ class PartnerObservationsListFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { category, type, did_win } = values;
+    const { flag_type, category, only_mine } = values;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         page: 1,
+        flag_type,
         category,
-        type,
-        did_win,
+        only_mine,
       }),
     });
   }
@@ -101,20 +105,20 @@ class PartnerObservationsListFilter extends Component {
   }
 
   styleFlags() {
-    const { observationsType } = this.props;
+    const { classes, observationsType } = this.props;
 
     return observationsType.map((item) => {
       if (item.value === FLAGS.OBSERVATION) {
-        const label = (<div style={{ display: 'flex', alignItems: 'center' }}><ObservationIcon /> {messages.flagObs}</div>);
+        const label = (<div className={classes.center}><ObservationIcon /> {messages.flagObs}</div>);
         return { value: item.value, label };
       } else if (item.value === FLAGS.YELLOW) {
-        const label = (<div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.YELLOW} /> {messages.flagYel}</div>);
+        const label = (<div className={classes.center}><FlagIcon color={FLAGS.YELLOW} /> {messages.flagYel}</div>);
         return { value: item.value, label };
       } else if (item.value === FLAGS.RED) {
-        const label = (<div style={{ display: 'flex', alignItems: 'center' }}><FlagIcon color={FLAGS.RED} /> {messages.flagRed}</div>);
+        const label = (<div className={classes.center}><FlagIcon color={FLAGS.RED} /> {messages.flagRed}</div>);
         return { value: item.value, label };
       } else if (item.value === FLAGS.ESCALATED) {
-        const label = (<div style={{ display: 'flex', alignItems: 'center' }}><EscalatedIcon /> {messages.flagEsc}</div>);
+        const label = (<div className={classes.center}><EscalatedIcon /> {messages.flagEsc}</div>);
         return { value: item.value, label };
       } return { value: '', label: '' };
     });
@@ -131,16 +135,15 @@ class PartnerObservationsListFilter extends Component {
               <SelectForm
                 label={messages.labels.typeObservation}
                 placeholder={messages.labels.choose}
-                fieldName="category"
+                fieldName="flag_type"
                 values={this.styleFlags()}
                 optional
               />
             </Grid>
             <Grid item sm={4} xs={12}>
               <SelectForm
-                label={messages.labels.sector}
-                placeholder={messages.labels.category}
-                fieldName="type"
+                label={messages.labels.category}
+                fieldName="category"
                 values={riskCategory}
                 optional
               />
@@ -148,7 +151,7 @@ class PartnerObservationsListFilter extends Component {
             <Grid item sm={4} xs={12}>
               <CheckboxForm
                 label={messages.labels.show}
-                fieldName="did_win"
+                fieldName="only_mine"
                 optional
               />
             </Grid>
@@ -195,9 +198,9 @@ const formFilter = reduxForm({
 })(PartnerObservationsListFilter);
 
 const mapStateToProps = (state, ownProps) => {
+  const { query: { flag_type } = {} } = ownProps.location;
   const { query: { category } = {} } = ownProps.location;
-  const { query: { type } = {} } = ownProps.location;
-  const { query: { did_win } = {} } = ownProps.location;
+  const { query: { only_mine } = {} } = ownProps.location;
 
   return {
     observationsType: selectNormalizedFlagTypeChoices(state),
@@ -205,9 +208,9 @@ const mapStateToProps = (state, ownProps) => {
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {
+      flag_type,
       category,
-      type,
-      did_win,
+      only_mine,
     },
   };
 };

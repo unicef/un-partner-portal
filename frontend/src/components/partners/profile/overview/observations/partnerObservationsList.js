@@ -1,9 +1,11 @@
-import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
+import Grid from 'material-ui/Grid';
 import { TableCell } from 'material-ui/Table';
+import { Typography } from 'material-ui/';
+import { withStyles } from 'material-ui/styles';
 import PaginatedList from '../../../../common/list/paginatedList';
 import TableWithStateInUrl from '../../../../common/hoc/tableWithStateInUrl';
 import { formatDateForPrint } from '../../../../../helpers/dates';
@@ -13,6 +15,33 @@ import CustomGridColumn from '../../../../common/grid/customGridColumn';
 import ObservationTypeIcon from '../../icons/observationTypeIcon';
 import ObservationExpand from './observationExpand';
 import PartnerObservationsListFilter from './partnerObservationsListFilter';
+import UpdateObservationButton from '../../modals/updateObservation/updateObservationButton';
+import UpdateEscalatedObservationButton from '../../modals/updateObservationEscalated/updateEscalatedObservationButton';
+import UpdateSanctionObservationButton from '../../modals/updateObservationSanction/updateSanctionObservationButton';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../../../helpers/permissions';
+import { FLAGS } from '../../../../../helpers/constants';
+
+const styleSheet = theme => ({
+  Active: {
+    color: theme.palette.userStatus.active,
+  },
+  Invited: {
+    color: theme.palette.userStatus.invited,
+  },
+  Deactivated: {
+    color: theme.palette.userStatus.deactivated,
+  },
+  options: {
+    display: 'flex',
+    float: 'right',
+    alignItems: 'center',
+  },
+  center: {
+    display: 'flex',
+    alignItems: 'center',
+    height: 58,
+  },
+});
 
 const messages = {
   me: ' (me)',
@@ -23,7 +52,7 @@ class PartnerObservationsList extends Component {
     super(props);
 
     this.applicationCell = this.applicationCell.bind(this);
-    this.submitterCell = this.submitterCell.bind(this);
+    this.actionFlagCell = this.actionFlagCell.bind(this);
   }
   componentWillMount() {
     const { query } = this.props;
@@ -42,25 +71,66 @@ class PartnerObservationsList extends Component {
     return true;
   }
 
-  /* eslint-disable class-methods-use-this */
-  submitterCell(submitter) {
-    const { userId } = this.props;
+  actionFlagCell(hovered, id, submitter, flagType, isValid, category) {
+    const { classes, userId, hasResolveEscalatePermission, hasReviewSanctionMatchPermission } = this.props;
 
-    return <TableCell>{submitter.name} {userId === submitter.id ? messages.me : null}, {submitter.agency_name}</TableCell>;
+    return (<TableCell>
+      <Grid container direction="row" alignItems="center" >
+        <Grid item sm={10} xs={12} >
+          <div className={classes.center}>
+            {submitter
+              ? <Typography className={classes.center} type="body1" color="inherit">
+
+                {`${submitter.name} ${userId === submitter.id ? messages.me : ''}, ${submitter.agency_name}`}
+
+              </Typography>
+              : '-'}
+          </div>
+        </Grid>
+        <Grid item sm={2} xs={12} >
+          <div className={classes.options}>
+            {hovered
+              && submitter
+              && userId === submitter.id
+              && flagType === FLAGS.YELLOW
+              && isValid !== false
+              && <UpdateObservationButton id={id} />}
+          </div>
+          <div className={classes.options}>
+            {hovered
+              && hasResolveEscalatePermission
+              && flagType === FLAGS.ESCALATED
+              && <UpdateEscalatedObservationButton id={id} />}
+          </div>
+          <div className={classes.options}>
+            {hovered
+               && hasReviewSanctionMatchPermission
+               && category === FLAGS.SANCTION
+               && isValid === null
+               && <UpdateSanctionObservationButton id={id} />}
+          </div>
+        </Grid>
+      </Grid>
+    </TableCell>);
   }
 
   /* eslint-disable class-methods-use-this */
-  applicationCell({ row, column, value }) {
+  applicationCell({ row, column, value, hovered }) {
     if (column.name === 'submitter') {
-      return this.submitterCell(row.submitter);
+      return this.actionFlagCell(hovered, row.id, row.submitter, row.flag_type, row.isValid, row.category);
     } else if (column.name === 'modified') {
       return (<TableCell>
         {formatDateForPrint(row.modified)}
       </TableCell>);
     } else if (column.name === 'flag_type') {
-      return <TableCell>{ObservationTypeIcon(row.flag_type)}</TableCell>;
-    } else if (column.name === ' submitter') {
-      return this.submitterCell(row.submitter);
+      return (<TableCell>
+        <ObservationTypeIcon
+          flagType={row.flag_type}
+          isValid={row.isValid}
+          isEscalated={row.isEscalated}
+          category={row.category}
+        />
+      </TableCell>);
     }
 
     return <TableCell>{value}</TableCell>;
@@ -88,14 +158,16 @@ class PartnerObservationsList extends Component {
 }
 
 PartnerObservationsList.propTypes = {
+  classes: PropTypes.object.isRequired,
   applications: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   totalCount: PropTypes.number.isRequired,
   getFlags: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
-  partner: PropTypes.string,
   query: PropTypes.object,
   userId: PropTypes.number,
+  hasResolveEscalatePermission: PropTypes.bool,
+  hasReviewSanctionMatchPermission: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -106,6 +178,10 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.location.query,
   partner: ownProps.params.id,
   userId: state.session.userId,
+  hasResolveEscalatePermission:
+    checkPermission(AGENCY_PERMISSIONS.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES, state),
+  hasReviewSanctionMatchPermission:
+    checkPermission(AGENCY_PERMISSIONS.REVIEW_AND_MARK_SANCTIONS_MATCHES, state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -114,4 +190,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 const connectedPartnerObservationsList =
   connect(mapStateToProps, mapDispatchToProps)(PartnerObservationsList);
-export default withRouter(connectedPartnerObservationsList);
+
+const withRouterPartner = withRouter(connectedPartnerObservationsList);
+
+export default withStyles(styleSheet, { name: 'PartnerObservationsList' })(withRouterPartner);

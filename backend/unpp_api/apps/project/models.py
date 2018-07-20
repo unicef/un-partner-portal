@@ -28,7 +28,9 @@ class EOI(TimeStampedModel):
     """
     Call of Expression of Interest
     """
-    display_type = models.CharField(max_length=3, choices=CFEI_TYPES, default=CFEI_TYPES.open)
+    display_type = models.CharField(
+        max_length=3, choices=CFEI_TYPES, default=CFEI_TYPES.open, verbose_name='Type of Call'
+    )
     title = models.CharField(max_length=255)
     agency = models.ForeignKey('agency.Agency', related_name="expressions_of_interest")
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="expressions_of_interest")

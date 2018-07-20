@@ -7,7 +7,6 @@ from rest_framework.generics import (
     RetrieveAPIView,
     RetrieveUpdateAPIView,
 )
-from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.serializers import PartnerMemberSerializer
@@ -40,42 +39,57 @@ from partner.models import (
 from partner.mixins import FilterUsersPartnersMixin, VerifyPartnerProfileUpdatePermissionsMixin
 
 
-class OrganizationProfileAPIView(RetrieveAPIView):
+class OrganizationProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
     """
     Endpoint for getting Organization Profile.
     """
     permission_classes = (
-        HasUNPPPermission(),
+        HasUNPPPermission(
+            partner_permissions=[],
+        ),
     )
     serializer_class = OrganizationProfileSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
-class PartnerProfileAPIView(RetrieveAPIView):
+class PartnerProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+            ],
+            partner_permissions=[],
+        ),
+    )
     serializer_class = OrganizationProfileDetailsSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
-class PartnerProfileSummaryAPIView(RetrieveAPIView):
+class PartnerProfileSummaryAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+            ],
+            partner_permissions=[],
+        ),
+    )
     serializer_class = PartnerProfileSummarySerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnersListAPIView(ListAPIView):
 
     permission_classes = (
-        IsAuthenticated,
         HasUNPPPermission(
             agency_permissions=[
                 AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
             ]
         ),
     )
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
     serializer_class = PartnersListSerializer
     pagination_class = SmallPagination
     filter_backends = (DjangoFilterBackend, )
@@ -85,7 +99,6 @@ class PartnersListAPIView(ListAPIView):
 class PartnerShortListAPIView(ListAPIView):
 
     permission_classes = (
-        IsAuthenticated,
         HasUNPPPermission(
             agency_permissions=[
                 AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
@@ -111,7 +124,7 @@ class PartnerIdentificationAPIView(
         ),
     )
     serializer_class = PartnerIdentificationSerializer
-    queryset = PartnerProfile.objects.filter(partner__is_locked=False)
+    queryset = PartnerProfile.objects.all()
 
 
 class PartnerContactInformationAPIView(
@@ -126,7 +139,7 @@ class PartnerContactInformationAPIView(
         ),
     )
     serializer_class = PartnerContactInformationSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerMandateMissionAPIView(
@@ -141,7 +154,7 @@ class PartnerMandateMissionAPIView(
         ),
     )
     serializer_class = PartnerProfileMandateMissionSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerFundingAPIView(
@@ -156,7 +169,7 @@ class PartnerFundingAPIView(
         ),
     )
     serializer_class = PartnerProfileFundingSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerCollaborationAPIView(
@@ -171,7 +184,7 @@ class PartnerCollaborationAPIView(
         ),
     )
     serializer_class = PartnerProfileCollaborationSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerProjectImplementationAPIView(
@@ -186,7 +199,7 @@ class PartnerProjectImplementationAPIView(
         ),
     )
     serializer_class = PartnerProfileProjectImplementationSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerOtherInfoAPIView(
@@ -201,7 +214,7 @@ class PartnerOtherInfoAPIView(
         ),
     )
     serializer_class = PartnerProfileOtherInfoSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
 class PartnerCountryProfileAPIView(FilterUsersPartnersMixin, CreateAPIView, RetrieveAPIView):
@@ -213,17 +226,21 @@ class PartnerCountryProfileAPIView(FilterUsersPartnersMixin, CreateAPIView, Retr
         ),
     )
     serializer_class = PartnerCountryProfileSerializer
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.all()
 
 
-class PartnersMemberListAPIView(ListAPIView):
+class PartnersMemberListAPIView(FilterUsersPartnersMixin, ListAPIView):
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (
+        HasUNPPPermission(
+            partner_permissions=[],
+            agency_permissions=[
+                AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
+            ]
+        ),
+    )
     serializer_class = PartnerMemberSerializer
     queryset = PartnerMember.objects.all()
     pagination_class = SmallPagination
     lookup_field = 'pk'
-
-    def get_queryset(self, *args, **kwargs):
-        partner_id = self.kwargs.get(self.lookup_field)
-        return self.queryset.filter(partner_id=partner_id)
+    partner_field = 'partner'

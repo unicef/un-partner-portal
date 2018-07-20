@@ -56,6 +56,7 @@ export const FLAGS = {
   YELLOW: 'FL2_Yel',
   ESCALATED: 'FL3_Esc',
   RED: 'FL4_Red',
+  SANCTION: 'sanctions_match',
 };
 
 export const PLACEHOLDERS = {

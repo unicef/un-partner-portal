@@ -64,6 +64,7 @@ function authorizedPost({ uri, params, body = {} }) {
     params,
     headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
   };
+
   return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
@@ -330,6 +331,10 @@ export function getMembersList(id, params, options) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params, options });
 }
 
+export function getPartnerMembersList(id, params, options) {
+  return authorizedGet({ uri: `/partners/${id}/members`, params, options });
+}
+
 export function getNotifications(params, options) {
   return authorizedGet({ uri: '/notifications', params, options });
 }
@@ -420,6 +425,36 @@ export function getPendingOffers(params, options) {
 
 export function getAdminOneLocations(countryCode, options) {
   return authorizedGet({ uri: '/common/admin-levels', params: countryCode, options });
+}
+
+// Reports
+
+export function getPartnerReports(params, options) {
+  return authorizedGet({ uri: '/reports/partners', params, options });
+}
+
+export function getProjectReports(params, options) {
+  return authorizedGet({ uri: '/reports/projects', params, options });
+}
+
+export function getVerificationsReports(params, options) {
+  return authorizedGet({ uri: '/reports/verifications-observations', params, options });
+}
+
+export function getPartnerProfileReports(params, options) {
+  return authorizedGet({ uri: '/reports/partners/profile/export/xlsx', params, options });
+}
+
+export function getPartnerContactReports(params, options) {
+  return authorizedGet({ uri: '/reports/partners/contact/export/xlsx', params, options });
+}
+
+export function getProjectDetailsReports(params, options) {
+  return authorizedGet({ uri: '/reports/projects/details/export/xlsx', params, options });
+}
+
+export function getPartnerVerificationReports(params, options) {
+  return authorizedGet({ uri: '/reports/verifications-observations/export/xlsx', params, options });
 }
 
 // ID portal

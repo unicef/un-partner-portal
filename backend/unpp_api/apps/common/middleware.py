@@ -1,7 +1,11 @@
+from django.conf import settings
 from django.utils.functional import SimpleLazyObject
 
 from common.headers import CustomHeader
 from partner.models import Partner
+
+
+# settings.IS_DEV workarounds included for browseable API to work properly locally
 
 
 def get_partner_and_member_objects(request):
@@ -20,6 +24,9 @@ def get_partner_and_member_objects(request):
             partner__children__id=partner_id
         ).first()
 
+        if not partner_member and settings.IS_DEV:
+            partner_member = active_partner_members.first()
+
         if partner_member:
             partner = Partner.objects.filter(id=partner_id).first()
 
@@ -30,6 +37,7 @@ def get_partner_and_member_objects(request):
 
 
 class ActivePartnerMiddleware(object):
+
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -51,6 +59,8 @@ def get_office_member_object(request):
 
         if office_id:
             return request.user.agency_members.filter(office_id=office_id).first()
+        elif settings.IS_DEV:
+            return request.user.agency_members.first()
 
     return None
 

@@ -16,7 +16,7 @@ const initialState = [
   { path: '/partner', label: 'Partners', roles: [AGENCY], icon: partnersIcon },
   { path: '/applications', label: 'Your Applications', roles: [PARTNER], icon: applicationsIcon },
   { path: '/profile', label: 'Profile', roles: [PARTNER], icon: settingsIcon },
-  { path: '/settings', label: 'Agency Settings', roles: [AGENCY], icon: settingsIcon },
+  { path: '/reports', label: 'Reports', roles: [AGENCY], icon: applicationsIcon },
 ];
 
 export const filterItems = (state, role) => state.filter(

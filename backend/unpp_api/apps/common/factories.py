@@ -8,6 +8,8 @@ from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 import factory
 from factory import fuzzy
+from faker import Faker
+
 from account.models import User, UserProfile
 from agency.agencies import AGENCIES
 from agency.models import OtherAgency, Agency, AgencyOffice, AgencyMember
@@ -63,6 +65,9 @@ COUNTRIES = [x[0] for x in COUNTRIES_ALPHA2_CODE]
 filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
 
 
+fake = Faker()
+
+
 def get_random_agency():
     return random.choice(AGENCIES).model_instance
 
@@ -106,7 +111,7 @@ def get_partner_name():
     return f'Save the {generate(2)[-1].title()}'
 
 
-def get_partner():
+def get_random_partner():
     return Partner.objects.all().order_by("?").first()
 
 
@@ -148,6 +153,16 @@ def get_donors(quantity=2):
 
 def get_budget_choice():
     return random.choice(list(BUDGET_CHOICES._db_values))
+
+
+def get_random_lat():
+    result = random.randint(-90, 90)
+    return result
+
+
+def get_random_lon():
+    result = random.randint(-180, 180)
+    return result
 
 
 class GroupFactory(factory.django.DjangoModelFactory):
@@ -196,8 +211,8 @@ class AdminLevel1Factory(factory.django.DjangoModelFactory):
 
 
 class PointFactory(factory.django.DjangoModelFactory):
-    lat = random.randint(-180, 180)
-    lon = random.randint(-180, 180)
+    lat = factory.LazyFunction(get_random_lat)
+    lon = factory.LazyFunction(get_random_lon)
     admin_level_1 = factory.SubFactory(AdminLevel1Factory)
 
     class Meta:
@@ -225,18 +240,19 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     # country profile information
     staff_in_country = STAFF_GLOBALLY_CHOICES.to100
     engagement_operate_desc = factory.Sequence(lambda n: "engagement with the communities {}".format(n))
+    location_of_office = factory.SubFactory(PointFactory)
 
     @factory.post_generation
     def mailing_address(self, create, extracted, **kwargs):
         PartnerMailingAddress.objects.filter(partner=self).update(
-            street='fake street',
-            city='fake city',
-            country=get_country_list(1)[0],
-            zip_code='90210',
-            telephone='(123) 234 569',
-            fax='(123) 234 566',
-            website='partner.website.org',
-            org_email="office@partner.website.org",
+            street=fake.street_name(),
+            city=fake.city(),
+            country=random.choice(COUNTRIES),
+            zip_code=fake.postalcode(),
+            telephone=fake.phone_number(),
+            fax=fake.phone_number(),
+            website=fake.url(),
+            org_email=fake.company_email(),
         )
 
     @factory.post_generation
@@ -262,11 +278,11 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def experiences(self, create, extracted, **kwargs):
-        for x in range(0, 2):
+        for x in range(1, random.randint(2, 3)):
             PartnerExperience.objects.create(
                 partner=self,
                 specialization=Specialization.objects.all().order_by("?").first(),
-                years=get_year_of_exp()
+                years=get_year_of_exp(),
             )
 
     @factory.post_generation
@@ -394,7 +410,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         self.profile.year_establishment = date.today().year - random.randint(1, 30)
         self.profile.have_gov_doc = True
         self.profile.gov_doc = get_new_common_file()
-        self.profile.registration_to_operate_in_country = False
+        self.profile.registration_to_operate_in_country = random.randint(0, 1) == 0
         self.profile.registration_doc = get_new_common_file()
         self.profile.registration_date = date.today() - timedelta(days=random.randint(365, 3650))
         self.profile.registration_comment = "registration comment {}".format(self.id)
@@ -446,7 +462,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             governance_hq="reporting requirements of the country office to HQ {}".format(self.id),
             concern_groups=get_concerns(),
             security_desc="rapid response {}".format(self.id),
-            description="collaboration professional netwok {}".format(self.id),
             population_of_concern=False,
             ethic_safeguard_comment="fake comment {}".format(self.id),
             governance_organigram=cfile,
@@ -543,13 +558,22 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             other_doc_3=cfile,
         )
 
+    @factory.post_generation
+    def location_field_offices(self, create, extracted, **kwargs):
+        field_offices_count = random.randint(0, 1) * random.randint(1, 4)
+        if field_offices_count:
+            self.more_office_in_country = True
+            self.location_field_offices.add(*PointFactory.create_batch(field_offices_count))
+
+            self.save()
+
     class Meta:
         model = Partner
 
 
 class PartnerMemberFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
-    partner = factory.LazyFunction(get_partner)
+    partner = factory.LazyFunction(get_random_partner)
     title = factory.LazyFunction(get_job_title)
     role = PartnerRole.ADMIN.name
 
@@ -641,7 +665,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def invited_partners(self, create, extracted, **kwargs):
-        partner = get_partner()
+        partner = get_random_partner()
         if partner:
             self.invited_partners.add(partner)
 
@@ -657,7 +681,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
         if self.display_type == CFEI_TYPES.direct:
-            for partner in Partner.objects.all().order_by("?")[:settings.DEFAULT_FAKE_DATA_DIRECT_APPLICATIONS_COUNT]:
+            for partner in Partner.objects.all().order_by("?")[:6]:
                 Application.objects.create(
                     partner=partner,
                     eoi=self,
@@ -672,7 +696,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
             self.save()
 
         elif self.display_type == CFEI_TYPES.open:
-            for partner in Partner.objects.all().order_by("?")[:settings.DEFAULT_FAKE_DATA_OPEN_APPLICATIONS_COUNT]:
+            for partner in Partner.objects.all().order_by("?")[:20]:
                 app = Application.objects.create(
                     partner=partner,
                     eoi=self,
@@ -697,15 +721,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def locations(self, create, extracted, **kwargs):
-        count = random.randint(2, 3)
-        while count:
-            count -= 1
-            point = Point.objects.get_point(**{
-                "lat": random.randint(-180, 180),
-                "lon": random.randint(-180, 180),
-                "admin_level_1": {"country_code": get_country_list(1)[0], "name": "name {}".format(self.pk)},
-            })
-            self.locations.add(point)
+        self.locations.add(*PointFactory.create_batch(random.randint(2, 3)))
 
 
 class DirectEOIFactory(OpenEOIFactory):
@@ -714,7 +730,7 @@ class DirectEOIFactory(OpenEOIFactory):
 
 class PartnerFlagFactory(factory.django.DjangoModelFactory):
     submitter = factory.LazyFunction(get_agency_member)
-    partner = factory.LazyFunction(get_partner)
+    partner = factory.LazyFunction(get_random_partner)
     contact_phone = factory.Sequence(lambda n: "+48 22 568030{}".format(n))
     contact_email = factory.Sequence(lambda n: "fake-contact-{}@unicef.org".format(n))
     comment = factory.Sequence(lambda n: "fake comment {}".format(n))
@@ -725,7 +741,7 @@ class PartnerFlagFactory(factory.django.DjangoModelFactory):
 
 
 class PartnerVerificationFactory(factory.django.DjangoModelFactory):
-    partner = factory.LazyFunction(get_partner)
+    partner = factory.LazyFunction(get_random_partner)
     submitter = factory.LazyFunction(get_agency_member)
     is_mm_consistent = True
     is_indicate_results = True
@@ -746,7 +762,7 @@ class PartnerVerificationFactory(factory.django.DjangoModelFactory):
 class UnsolicitedFactory(factory.django.DjangoModelFactory):
     is_unsolicited = True
     is_published = True
-    partner = factory.LazyFunction(get_partner)
+    partner = factory.LazyFunction(get_random_partner)
     submitter = factory.LazyFunction(get_partner_member)
     agency = factory.LazyFunction(get_random_agency)
     published_timestamp = factory.LazyFunction(timezone.now)
@@ -783,7 +799,7 @@ class SanctionedNameFactory(factory.django.DjangoModelFactory):
 class SanctionedNameMatchFactory(factory.django.DjangoModelFactory):
 
     name = factory.SubFactory(SanctionedNameFactory)
-    partner = factory.LazyFunction(get_partner)
+    partner = factory.LazyFunction(get_random_partner)
 
     class Meta:
         model = SanctionedNameMatch

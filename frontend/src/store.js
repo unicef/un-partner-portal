@@ -47,6 +47,7 @@ import partnerAppDetails, * as partnerAppDetailsSelector from './reducers/partne
 import agencies from './reducers/agencies';
 import applicationFeedback, * as applicationFeedbackSelector from './reducers/applicationFeedback';
 import partnerVerifications, * as partnerVerificationsSelector from './reducers/partnerVerifications';
+import partnerVerificationsList from './reducers/partnerVerificationsList';
 import cfeiReviewSummary, { selectReviewSummary } from './reducers/cfeiReviewSummary';
 import cfeiAwardedPartners, { selectAwardedPartners } from './reducers/cfeiAwardedPartners';
 import cfeiReviewers, { selectReviewers } from './reducers/cfeiReviewers';
@@ -70,6 +71,13 @@ import deleteCfei from './reducers/deleteCfei';
 import deleteUcn from './reducers/deleteUcn';
 import submitUcn from './reducers/submitUcn';
 import partnerObservationsList from './reducers/agencyPartnerObservationsList';
+import reportsNav from './reducers/reportsNav';
+import reportsPartnerList from './reducers/reportsPartnerInformationList';
+import reportsCfeiManagementList from './reducers/reportsCfeiManagementList';
+import reportVerificationList from './reducers/reportsVerificationList';
+import selectableList from './reducers/selectableListItems';
+import generatePartnerReports from './reducers/partnerReportsGeneration';
+import partnerMembersList from './reducers/partnerMembersList';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -77,6 +85,7 @@ import idPortalUsersList from './idPortal/reducers/usersList';
 import idPortalNewUser from './idPortal/reducers/newUser';
 import idPortalEditUser from './idPortal/reducers/editUser';
 import idPortalDeactivateUser from './idPortal/reducers/deactivateUser';
+
 
 const mainReducer = combineReducers({
   cfei,
@@ -86,9 +95,15 @@ const mainReducer = combineReducers({
   newCfei,
   publishCfei,
   deleteCfei,
+  partnerMembersList,
   sendCfei,
   deleteUcn,
   submitUcn,
+  selectableList,
+  reportsPartnerList,
+  reportsCfeiManagementList,
+  reportVerificationList,
+  generatePartnerReports,
   organizationProfileNav,
   partnerApplicationsNav,
   applicationsNotesList,
@@ -129,6 +144,7 @@ const mainReducer = combineReducers({
   agencies,
   agencyPartnerApplicationList,
   partnerVerifications,
+  partnerVerificationsList,
   cfeiReviewSummary,
   cfeiAwardedPartners,
   cfeiReviewers,
@@ -143,6 +159,7 @@ const mainReducer = combineReducers({
   cache,
   routesHistory,
   applicationComparisonReport,
+  reportsNav,
 
   // ID portal
   idPortalNav,
@@ -252,6 +269,15 @@ export const selectNormalizedPolicyArea = state =>
 
 export const selectNormalizedDirectSelectionSource = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-selection-source']);
+
+export const selectNormalizedCfeiTypes = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['cfei-types']);
+
+export const selectNormalizedCfeiStatuses = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['cfei-statuses']);
+
+export const selectNormalizedFlagTypes = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['flag-types']);
 
 export const selectCountriesWithOptionalLocations = state =>
   state.partnerProfileConfig['countries-with-optional-location'];
