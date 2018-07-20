@@ -77,6 +77,7 @@ import reportsCfeiManagementList from './reducers/reportsCfeiManagementList';
 import reportVerificationList from './reducers/reportsVerificationList';
 import selectableList from './reducers/selectableListItems';
 import generatePartnerReports from './reducers/partnerReportsGeneration';
+import partnerMembersList from './reducers/partnerMembersList';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -94,6 +95,7 @@ const mainReducer = combineReducers({
   newCfei,
   publishCfei,
   deleteCfei,
+  partnerMembersList,
   sendCfei,
   deleteUcn,
   submitUcn,

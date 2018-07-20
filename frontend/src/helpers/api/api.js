@@ -64,6 +64,7 @@ function authorizedPost({ uri, params, body = {} }) {
     params,
     headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
   };
+
   return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
@@ -330,6 +331,10 @@ export function getMembersList(id, params, options) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params, options });
 }
 
+export function getPartnerMembersList(id, params, options) {
+  return authorizedGet({ uri: `/partners/${id}/members`, params, options });
+}
+
 export function getNotifications(params, options) {
   return authorizedGet({ uri: '/notifications', params, options });
 }
@@ -446,6 +451,10 @@ export function getPartnerContactReports(params, options) {
 
 export function getProjectDetailsReports(params, options) {
   return authorizedGet({ uri: '/reports/projects/details/export/xlsx', params, options });
+}
+
+export function getPartnerVerificationReports(params, options) {
+  return authorizedGet({ uri: '/reports/verifications-observations/export/xlsx', params, options });
 }
 
 // ID portal

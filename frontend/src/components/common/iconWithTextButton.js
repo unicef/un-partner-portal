@@ -31,7 +31,7 @@ const IconWithTextButton = (props) => {
       disableRipple
     >
       {icon}
-      <Typography className={classes.text} color="inherit" {...textProps}>{text}</Typography>
+      <Typography className={classes.text} color="inherit" {...textProps}>{text || ''}</Typography>
     </BaseButton>
   );
 };

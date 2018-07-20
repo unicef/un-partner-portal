@@ -16,7 +16,7 @@ import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations
 import { saveSelections } from '../../../reducers/selectableListItems';
 
 const messages = {
-  select: 'Select applicable filters to generate a report on CFEI or a map of CFEI in the target Country Office.',
+  select: 'Select filters to generate a report or map of CFEIs and direct selection/retention.',
   clear: 'clear',
   choose: 'Choose',
   labels: {
@@ -55,14 +55,6 @@ export const YEARS_VAL = [
   {
     value: '2018',
     label: '2018',
-  },
-  {
-    value: '2017',
-    label: '2017',
-  },
-  {
-    value: '2016',
-    label: '2016',
   },
 ];
 

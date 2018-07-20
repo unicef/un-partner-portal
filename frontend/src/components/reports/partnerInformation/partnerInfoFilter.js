@@ -17,15 +17,14 @@ import { saveSelections } from '../../../reducers/selectableListItems';
 import { selectNormalizedOrganizationTypes, selectMappedSpecializations } from '../../../store';
 
 const messages = {
-  select: 'Select applicable filters to generate a report of Partner profiles, ' +
-  'a list of Partner contact information and to map Partners in the target Country Office.',
+  select: 'Select filters to generate reports on partners and partner contact information, or a map of partner presence',
   clear: 'clear',
   choose: 'Choose',
   labels: {
     search: 'submit',
     country: 'Country',
     location: 'Location',
-    registration: 'Registration in country',
+    registration: 'Registered in country',
     typeLabel: 'Type of organization',
     typePlaceholder: 'Select type',
     sector: 'Sector & Area of Specialization',

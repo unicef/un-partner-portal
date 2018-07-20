@@ -46,6 +46,7 @@ import partnerInfoContainer from './components/reports/partnerInformation/partne
 import cfeiManagementContainer from './components/reports/cfeiManagement/cfeiManagementContainer';
 import verificationContainer from './components/reports/verifcation/verificationContainer';
 import reportsHeader from './components/reports/reportsHeader';
+import partnerUsersContainer from './components/partners/members/partnerUsersContainer';
 
 // ID portal
 import mainLayoutIdPortal from './idPortal/mainLayout';
@@ -109,7 +110,7 @@ const allRoutes = () => (
             <Route component={mainContent} >
               <Route path="overview" component={partnerOverview} />
               <Route path="details" component={organizationProfileOverviewPaper} />
-              <Route path="users" component={null} />
+              <Route path="users" component={partnerUsersContainer} />
               <Route path="verification" component={partnerVerification} />
               <Route path="observations" component={partnerObservationsList} />
               <Route path="applications" component={partnerApplicationList} />

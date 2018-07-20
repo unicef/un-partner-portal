@@ -12,13 +12,20 @@ import { checkPermission, AGENCY_PERMISSIONS } from '../../../../../helpers/perm
 
 const messages = {
   flagStatus: 'Observations',
+  potentialMatch: 'Potential Match',
+  onSecurityList: 'on the UN Security Council Sanctions List',
 };
 
-const flags = (flagItems = {}) => (
+const flags = (flagItems = {}, hasSanctionMatch) => (
   <PaddedContent>
     <SpreadContent>
       <FlaggingStatus flags={flagItems} noFlagText />
     </SpreadContent>
+
+    {hasSanctionMatch && <div style={{ paddingTop: '10px' }}>
+      <Typography type="body2">{messages.potentialMatch}</Typography>
+      <Typography type="caption">{messages.onSecurityList}</Typography>
+    </div>}
   </PaddedContent>
 );
 
@@ -32,9 +39,10 @@ const flagHeader = () => (
 const PartnerOverviewFlag = (props) => {
   const { partner, hasPermissionViewFlagCount } = props;
   const flagItems = R.path(['partnerStatus', 'flagging_status'], partner);
+  const hasSanctionMatch = R.path(['partnerStatus', 'has_potential_sanction_match'], partner);
 
   return (hasPermissionViewFlagCount && <HeaderList header={flagHeader(flagItems)}>
-    {flags(flagItems)}
+    {flags(flagItems, hasSanctionMatch)}
   </HeaderList>);
 };
 

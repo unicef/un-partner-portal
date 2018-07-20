@@ -95,7 +95,7 @@ PartnerProfileHeaderMenu.propTypes = {
   hasVerifyHqPermission: PropTypes.bool,
   hasVerifyAllCSOPermission: PropTypes.bool,
   hasVerifyAssignedCSOPermission: PropTypes.bool,
-  agencyCountryCode: PropTypes.bool,
+  agencyCountryCode: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({
