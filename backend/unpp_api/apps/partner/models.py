@@ -323,6 +323,12 @@ class PartnerProfile(TimeStampedModel):
             return budget.budget
 
     @property
+    def annual_budget_display(self):
+        budget = self.partner.budgets.filter(year=date.today().year).first()
+        if budget is not None:
+            return budget.get_budget_display()
+
+    @property
     def identification_is_complete(self):
         required_fields = {
             'have_gov_doc': self.have_gov_doc is not None,
