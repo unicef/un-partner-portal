@@ -146,6 +146,16 @@ class Partner(TimeStampedModel):
         return getattr(self.verifications.order_by('-created').last(), 'is_verified', None)
 
     @property
+    def can_be_verified(self):
+        return all((
+            not self.hq or self.hq.is_verified,
+            not self.hq or not self.hq.has_red_flag,
+            not self.hq or not self.hq.has_sanction_match,
+            not self.has_red_flag,
+            not self.has_sanction_match,
+        ))
+
+    @property
     def has_sanction_match(self):
         return self.sanction_matches.filter(can_ignore=False).exists()
 
