@@ -54,6 +54,7 @@ class DatePickerForm extends Component {
                 width: '100%',
                 lineHeight: null,
                 height: 40,
+                marginTop: 3,
               }}
               {...datePickerProps}
             />

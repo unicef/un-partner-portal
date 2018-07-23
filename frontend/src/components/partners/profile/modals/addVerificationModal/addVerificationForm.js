@@ -13,8 +13,7 @@ const messages = {
   'correct goverment body?',
   missingReason: 'Is CSO\'s reason for missing registration certificate acceptable?',
   mmConsistent: 'Are the partner\'s mandate and mission consistent with that of the UN?',
-  indicateResults: 'Do the partner\'s key results achieved indicate ability to deliver programme ' +
-  'results?',
+  indicateResults: 'Does the partner have mechanisms to combat fraud and corruption, prevent sexual exploitation and abuse, and protect and safeguard beneficiaries?',
   repRisk: 'Has a potential reputational risk issue been identified from public or other sources?',
   yellowFlag: 'Does the partner have a "yellow" flag in its profile, indicating reputational risk?',
   canVerify: 'Can partner be verified in spite of reputional risk?',

@@ -169,7 +169,7 @@ const mainReducer = combineReducers({
   idPortalDeactivateUser,
 });
 
-const middelware = [thunk, routerMiddleware(browserHistory)];
+const middleware = [thunk, routerMiddleware(browserHistory)];
 // TODO(marcindo: disable devtools in prod
 let composeEnhancers = compose;
 if (process.env.NODE_ENV !== 'production') {
@@ -185,7 +185,7 @@ const slicer = paths => state => paths.reduce((acc, curr) => {
 export default createStore(
   mainReducer,
   composeEnhancers(
-    applyMiddleware(...middelware),
+    applyMiddleware(...middleware),
     persistState([
       'session.partnerId',
       'session.newlyRegistered',
