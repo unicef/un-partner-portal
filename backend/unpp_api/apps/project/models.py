@@ -99,6 +99,10 @@ class EOI(TimeStampedModel):
             return CFEI_STATUSES.open
 
     @property
+    def status_display(self):
+        return CFEI_STATUSES[self.status]
+
+    @property
     def is_open(self):
         return self.display_type == CFEI_TYPES.open
 
@@ -140,6 +144,15 @@ class EOI(TimeStampedModel):
         if self.completed_reason == ALL_COMPLETED_REASONS.accepted_retention:
             display += f' {self.get_completed_retention_display()}'
         return display
+
+    @property
+    def selection_mode(self):
+        if self.display_type == CFEI_TYPES.open:
+            return 'Open Selection'
+        elif self.selected_source == DIRECT_SELECTION_SOURCE.ucn:
+            return 'Direct Selection converted from Unsolicited Concept Note'
+        else:
+            return 'Direct Selection / Retention'
 
 
 class Pin(TimeStampedModel):

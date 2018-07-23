@@ -1,3 +1,6 @@
+from django.db.models import Count
+
+from common.consts import PARTNER_TYPES
 from project.models import EOI
 from reports.exports.excel.base import BaseXLSXExporter
 
@@ -8,6 +11,12 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
         return f'{self.queryset.count()} Project(s) Information Report'
 
     def fill_worksheet(self):
+        boolean_display = {
+            True: 'Yes',
+            False: 'No',
+            None: 'Pending',
+        }
+
         header_format = self.workbook.add_format({
             'bold': True,
             'text_wrap': True,
@@ -21,16 +30,24 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
         header = [
             'ID',
             'Project Name',
-            'Type',
-            'Agency',
+            'Date of Publication',
+            'Partnership Selection Modality',
             'Location(s)',
-            'Posted',
-            'Application Deadline',
-            'Notification of results',
-            'Estimated start date',
-            'Estimated end date',
-            'Focal Point(s)',
-            'Specialization(s)',
+            'Sector(s)',
+            'Area(s) of Specialization',
+            'Status',
+            'Date of Finalization',
+            'Total # of Applicants',
+            '# of INGO\nApplicants',
+            '# of NNGO\nApplicants',
+            '# of CBO\nApplicants',
+            '# of Academic\nApplicants',
+            '# of Red Cross/Red\nCrescent Applicants',
+            '# of Applicants\nwithout UN Experience',
+            'Name of Selected Partner(s)',
+            'Selected Partner\'s\nVendor Number/Partner Code',
+            'Selected Partner(s) Type',
+            'Selected Partner\nhas UN experience',
         ]
         worksheet = self.workbook.add_worksheet('Project Details Report')
 
@@ -47,25 +64,43 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
             location_names = "\n".join(set([
                 f"{l.admin_level_1.name} ({l.admin_level_1.country_name})" for l in eoi.locations.all()
             ]))
-            focal_points = "\n".join(set([
-                f"{fp.fullname} ({fp.email})" for fp in eoi.focal_points.all()
-            ]))
-            specializations = "\n".join(set([
-                f"{s.name} ({s.category.name})" for s in eoi.specializations.all()
-            ]))
+
+            sectors_specializations = eoi.specializations.values('name', 'category__name').distinct()
+            sectors = "\n".join(set([s['category__name'] for s in sectors_specializations]))
+            specializations = "\n".join(set([s['name'] for s in sectors_specializations]))
+
+            partner_type_application = dict(
+                eoi.applications.values_list('partner__display_type').annotate(Count('id')).order_by()
+            )
+
+            winners = []
+            winner_types = []
+            winner_experiences = []
+            for application in eoi.applications.winners():
+                winners.append(application.partner.legal_name)
+                winner_types.append(application.partner.get_display_type_display())
+                winner_experiences.append(boolean_display[application.partner.experiences.exists()])
 
             worksheet.write_row(current_row, 0, (
                 eoi.pk,
                 eoi.title,
-                eoi.get_display_type_display(),
-                eoi.agency.name,
-                location_names,
                 eoi.published_timestamp,
-                eoi.deadline_date,
-                eoi.notif_results_date,
-                eoi.start_date,
-                eoi.end_date,
-                focal_points,
+                eoi.selection_mode,
+                location_names,
+                sectors,
                 specializations,
+                eoi.status_display,
+                eoi.completed_date,
+                sum(partner_type_application.values()),
+                partner_type_application.get(PARTNER_TYPES.international, 0),
+                partner_type_application.get(PARTNER_TYPES.national, 0),
+                partner_type_application.get(PARTNER_TYPES.cbo, 0),
+                partner_type_application.get(PARTNER_TYPES.academic, 0),
+                partner_type_application.get(PARTNER_TYPES.red_cross, 0),
+                eoi.applications.filter(partner__experiences=None).count(),
+                '\n'.join(winners),
+                'N/A',  # TODO: vendor number
+                '\n'.join(winner_types),
+                '\n'.join(winner_experiences),
             ))
             current_row += 1

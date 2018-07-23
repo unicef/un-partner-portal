@@ -159,7 +159,7 @@ class Partner(TimeStampedModel):
     def flagging_status(self):
         mapping = dict(PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
-        ).exclude(is_valid=False).values_list('flag_type').annotate(Count('id')))
+        ).exclude(is_valid=False).values_list('flag_type').annotate(Count('id')).order_by())
 
         return {
             'observation': mapping.get(FLAG_TYPES.observation, 0),

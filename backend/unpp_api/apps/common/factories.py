@@ -112,7 +112,7 @@ def get_partner_name():
 
 
 def get_random_partner():
-    return Partner.objects.all().order_by("?").first()
+    return Partner.objects.all().order_by("?").first() or PartnerFactory()
 
 
 def get_country_list(quantity=3):
@@ -681,22 +681,21 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
         if self.display_type == CFEI_TYPES.direct:
-            for partner in Partner.objects.all().order_by("?")[:6]:
-                Application.objects.create(
-                    partner=partner,
-                    eoi=self,
-                    agency=self.agency,
-                    submitter=self.focal_points.first(),
-                    did_win=True,
-                    did_accept=True,
-                    ds_justification_select=[random.choice(list(JUSTIFICATION_FOR_DIRECT_SELECTION._db_values))],
-                    justification_reason="good reason",
-                )
+            partner = get_random_partner()
+            Application.objects.create(
+                partner=partner,
+                eoi=self,
+                agency=self.agency,
+                submitter=self.focal_points.first(),
+                did_win=True,
+                did_accept=True,
+                ds_justification_select=[random.choice(list(JUSTIFICATION_FOR_DIRECT_SELECTION._db_values))],
+                justification_reason="good reason",
+            )
             self.selected_source = DIRECT_SELECTION_SOURCE.un
             self.save()
-
         elif self.display_type == CFEI_TYPES.open:
-            for partner in Partner.objects.all().order_by("?")[:20]:
+            for partner in Partner.objects.all().order_by("?")[:random.randint(16, 24)]:
                 app = Application.objects.create(
                     partner=partner,
                     eoi=self,
