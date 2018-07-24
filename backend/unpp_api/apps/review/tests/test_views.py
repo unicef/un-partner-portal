@@ -241,19 +241,19 @@ class TestPartnerFlagAPITestCase(BaseAPITestCase):
 
         # Category filter
         fraud_and_corruption_flags: List[PartnerFlag] = PartnerFlagFactory.create_batch(
-            5, partner=partner, category=FLAG_CATEGORIES.fraud_and_corruption
+            5, partner=partner, category=FLAG_CATEGORIES.C02_financial
         )
         sex_abuse_flags: List[PartnerFlag] = PartnerFlagFactory.create_batch(
-            7, partner=partner, category=FLAG_CATEGORIES.sex_abuse
+            7, partner=partner, category=FLAG_CATEGORIES.C05_sex_abuse
         )
 
         fraud_and_corruption_flags_response = self.client.get(
-            list_url + f'?category={FLAG_CATEGORIES.fraud_and_corruption}'
+            list_url + f'?category={FLAG_CATEGORIES.C02_financial}'
         )
         self.assertResponseStatusIs(fraud_and_corruption_flags_response)
         self.assertEqual(fraud_and_corruption_flags_response.data['count'], len(fraud_and_corruption_flags))
 
-        sex_abuse_flags_response = self.client.get(list_url + f'?category={FLAG_CATEGORIES.sex_abuse}')
+        sex_abuse_flags_response = self.client.get(list_url + f'?category={FLAG_CATEGORIES.C05_sex_abuse}')
         self.assertResponseStatusIs(sex_abuse_flags_response)
         self.assertEqual(sex_abuse_flags_response.data['count'], len(sex_abuse_flags))
 
