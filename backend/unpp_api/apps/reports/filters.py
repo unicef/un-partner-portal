@@ -93,18 +93,10 @@ class ProjectReportFilter(BaseProjectFilter):
 
     ids = CommaSeparatedListFilter(name='id', label='IDs')
     posted_year = django_filters.NumberFilter(name='published_timestamp__year', label='Year Posted')
-    org_type = django_filters.ChoiceFilter(
-        choices=PARTNER_TYPES, name='applications__partner__display_type', distinct=True
-    )
-    org_types = CommaSeparatedListFilter(
-        choices=PARTNER_TYPES, name='applications__partner__display_type', label='Partner Types'
-    )
 
     class Meta(BaseProjectFilter.Meta):
         fields = BaseProjectFilter.Meta.fields + (
             'ids',
             'display_type',
             'posted_year',
-            'org_type',
-            'org_types',
         )

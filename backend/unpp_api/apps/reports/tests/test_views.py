@@ -129,15 +129,6 @@ class TestProjectReportAPIView(BaseAPITestCase):
         self.assertResponseStatusIs(list_response)
         self.assertEqual(list_response.data['count'], 40)
 
-        for org_type in PARTNER_TYPES._db_values:
-            list_response = self.client.get(list_url + f'?org_type={org_type}')
-            self.assertResponseStatusIs(list_response)
-            self.assertEqual(
-                list_response.data['count'], projects.filter(
-                    applications__partner__display_type=org_type
-                ).distinct().count()
-            )
-
         spec_options = set(map(
             frozenset, itertools.permutations(projects.values_list('specializations__id', flat=True), 2)
         ))
@@ -152,15 +143,6 @@ class TestProjectReportAPIView(BaseAPITestCase):
         list_response = self.client.get(list_url + f'?posted_year={date.today().year}')
         self.assertResponseStatusIs(list_response)
         self.assertEqual(list_response.data['count'], 40)
-
-        for org_types in itertools.permutations(PARTNER_TYPES._db_values, 2):
-            list_response = self.client.get(list_url + f'?org_types={",".join(org_types)}')
-            self.assertResponseStatusIs(list_response)
-            self.assertEqual(
-                list_response.data['count'], projects.filter(
-                    applications__partner__display_type__in=org_types
-                ).distinct().count()
-            )
 
 
 class TestVerificationsAndObservationsReportAPIView(BaseAPITestCase):
