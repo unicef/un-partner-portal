@@ -113,15 +113,15 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         year_establishment = 2015
         registration_date = '2016-01-01'
         url = reverse('common:file')
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.doc')
         with open(filename) as doc:
             payload = {
                 "file_field": doc
             }
             response = self.client.post(url, data=payload, format='multipart')
 
-        self.assertTrue(status.is_success(response.status_code))
-        self.assertTrue(response.data['id'] is not None)
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        self.assertIsNotNone(response.data['id'])
         gov_doc_id = response.data['id']
 
         with open(filename) as doc:
@@ -230,15 +230,15 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
     def test_mandate_mission(self):
         url = reverse('common:file')
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.doc')
         with open(filename) as doc:
             payload = {
                 "file_field": doc
             }
             response = self.client.post(url, data=payload, format='multipart')
 
-        self.assertTrue(status.is_success(response.status_code))
-        self.assertTrue(response.data['id'] is not None)
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        self.assertIsNotNone(response.data['id'])
         file_id = response.data['id']
 
         partner = Partner.objects.first()

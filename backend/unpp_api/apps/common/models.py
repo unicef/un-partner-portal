@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from decimal import Decimal
+
+from django.conf import settings
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, FileExtensionValidator
 from model_utils.models import TimeStampedModel
 from common.countries import COUNTRIES_ALPHA2_CODE, COUNTRIES_ALPHA2_CODE_DICT
 
@@ -88,7 +90,9 @@ class Specialization(models.Model):
 
 
 class CommonFile(TimeStampedModel):
-    file_field = models.FileField()
+    file_field = models.FileField(validators=(
+        FileExtensionValidator(settings.ALLOWED_EXTENSIONS),
+    ))
 
     class Meta:
         ordering = ['id']

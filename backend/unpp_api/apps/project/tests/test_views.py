@@ -48,7 +48,7 @@ from common.consts import (
 from project.views import PinProjectAPIView
 from project.serializers import ConvertUnsolicitedSerializer
 
-filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.doc')
 
 
 def partner_has_finished(*args, **kwargs):
@@ -720,7 +720,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
 
     def test_create_convert(self):
         url = reverse('projects:applications-unsolicited')
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.doc')
 
         cfile = CommonFile.objects.create()
         cfile.file_field.save('test.csv', open(filename))
@@ -815,15 +815,15 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
 
     def test_add_review(self):
         url = reverse('common:file')
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.doc')
         with open(filename) as doc:
             payload = {
                 "file_field": doc
             }
             response = self.client.post(url, data=payload, format='multipart')
 
-        self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
-        self.assertTrue(response.data['id'] is not None)
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        self.assertIsNotNone(response.data['id'])
         file_id = response.data['id']
 
         PartnerMemberFactory()  # eoi is creating applications that need partner member

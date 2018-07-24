@@ -62,7 +62,7 @@ from sanctionslist.models import SanctionedNameMatch, SanctionedItem, Sanctioned
 
 COUNTRIES = [x[0] for x in COUNTRIES_ALPHA2_CODE]
 
-filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.doc')
 
 
 fake = Faker()
