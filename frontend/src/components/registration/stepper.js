@@ -143,7 +143,7 @@ class RegistrationStepper extends React.Component {
             </StepContent>
           </Step>
           <Step>
-            <StepLabel>Complete the process</StepLabel>
+            <StepLabel>Terms of Use and Privacy Policy</StepLabel>
             <StepContent>
               <RegistrationStep onSubmit={this.handleSubmit} handlePrev={this.handlePrev} last />
             </StepContent>
