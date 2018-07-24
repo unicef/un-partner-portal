@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { compose } from 'ramda';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
+import AlertDialog from '../../common/alertDialog';
 import DropdownMenu from '../../common/dropdownMenu';
 import SpreadContent from '../../common/spreadContent';
 import AddNewVerificationButton from './buttons/addNewVerificationButton';
@@ -16,10 +17,19 @@ import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permission
 const addVerification = 'addVerification';
 const addObservation = 'addObservation';
 
+
+const messages = {
+  warning: 'Warning',
+  verifyPartner: 'Partner profile is not verified. Please verify partner before adding an observation.',
+};
+
 class PartnerProfileHeaderMenu extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      verifyPartner: false,
+    };
     this.profileOptions = this.profileOptions.bind(this);
   }
 
@@ -51,7 +61,15 @@ class PartnerProfileHeaderMenu extends Component {
       options.push(
         {
           name: addObservation,
-          content: <AddNewObservationButton handleClick={() => handleDialogOpen(addObservation)} />,
+          content: <AddNewObservationButton
+            handleClick={() => {
+              if (partnerProfile.verified) {
+                handleDialogOpen(addObservation);
+              } else {
+                this.setState({ verifyPartner: true });
+              }
+            }}
+          />,
         });
     }
 
@@ -79,6 +97,12 @@ class PartnerProfileHeaderMenu extends Component {
           dialogOpen={dialogOpen[addObservation]}
           handleDialogClose={handleDialogClose}
         />}
+        <AlertDialog
+          trigger={!!this.state.verifyPartner}
+          title={messages.warning}
+          text={messages.verifyPartner}
+          handleDialogClose={() => this.setState({ verifyPartner: false })}
+        />
       </SpreadContent>
     );
   }
