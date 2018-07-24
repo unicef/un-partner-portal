@@ -35,6 +35,10 @@ class PartnerFlag(TimeStampedModel):
     def __str__(self):
         return "Partner: {} Flag Type::{}>".format(self.partner, self.flag_type)
 
+    @property
+    def has_been_escalated(self):
+        return FLAG_TYPES.escalated in self.type_history
+
 
 class PartnerVerification(TimeStampedModel):
     partner = models.ForeignKey('partner.Partner', related_name="verifications")
