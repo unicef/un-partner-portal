@@ -8,7 +8,7 @@ class PartnerProfileReportXLSLExporter(BaseXLSXExporter):
         return f'{self.queryset.count()} Partners(s) Profile Report'
 
     def fill_worksheet(self):
-        verified_display = {
+        boolean_display = {
             True: 'Yes',
             False: 'No',
             None: 'Pending',
@@ -25,16 +25,30 @@ class PartnerProfileReportXLSLExporter(BaseXLSXExporter):
         })
 
         header = [
-            'Organization\'s Legal Name',
-            'Acronym',
-            'Type of Organization',
-            'Country',
+            'CSO Type',
+            'Profile Type',
+            'Country of Origin / Operation',
+            'CSO Name',
+            'Acronym / Alias',
+            'UNHCR Partner Code',
+            'UNHCR Cash Transfers in\nLast Calendar Year',
+            'UNICEF Partner Code',
+            'UNICEF Cash Transfers in\nLast Calendar Year',
+            'WFP Partner Code',
+            'WFP Cash Transfers in\nLast Calendar Year',
+            'Registered in Country',
+            'Registration Certificate Issuance Date',
+            'Registration Certificate Expiration Date',
+            'Location(s) of field office',
+            'Sectors',
+            'Areas of Specialization',
+            'Number of Staff',
+            'Most recent annual budget',
+            'Date of Account Registration',
             'Experience working with UN',
-            'Verified',
-            'Observations',
-            'Yellow Flags',
-            'Escalated Flags',
-            'Red Flags',
+            'Profile Completed?',
+            'Last Profile Update',
+            'Is Verified',
         ]
         worksheet = self.workbook.add_worksheet('Partner Profile Report')
 
@@ -48,18 +62,40 @@ class PartnerProfileReportXLSLExporter(BaseXLSXExporter):
 
         partner: Partner
         for partner in self.queryset:
-            flagging_status = partner.flagging_status
+            field_offices = "\n".join(set([
+                l.admin_level_1.country_name for l in partner.location_field_offices.all()
+            ]))
+            sectors = "\n".join(set([
+                e.specialization.category.name for e in partner.experiences.all()
+            ]))
+            specializations = "\n".join(set([
+                e.specialization.name for e in partner.experiences.all()
+            ]))
 
             worksheet.write_row(current_row, 0, (
+                partner.get_display_type_display(),
+                'HQ' if partner.is_hq else 'Country',
+                partner.get_country_code_display(),
                 partner.legal_name,
                 partner.profile.acronym,
-                partner.get_display_type_display(),
-                partner.get_country_code_display(),
+                'N/A',  # TODO: UNHCR Partner Code
+                'N/A',  # TODO: UNHCR Cash Transfers in Last Calendar Year
+                'N/A',  # TODO: UNICEF Partner Code
+                'N/A',  # TODO: UNICEF Cash Transfers in Last Calendar Year
+                'N/A',  # TODO: WFP Partner Code
+                'N/A',  # TODO: WFP Cash Transfers in Last Calendar Year
+                boolean_display[partner.profile.registration_to_operate_in_country],
+                partner.profile.registration_date,
+                'N/A',  # TODO: Registration Certificate Expiration Date
+                field_offices,
+                sectors,
+                specializations,
+                partner.get_staff_globally_display(),
+                partner.profile.annual_budget_display,
+                partner.created,
                 ", ".join(partner.collaborations_partnership.values_list('agency__name', flat=True).distinct()),
-                verified_display[partner.is_verified],
-                flagging_status['observation'],
-                flagging_status['yellow'],
-                flagging_status['escalated'],
-                flagging_status['red'],
+                boolean_display[partner.profile_is_complete],
+                partner.last_update_timestamp,
+                boolean_display[partner.is_verified],
             ))
             current_row += 1

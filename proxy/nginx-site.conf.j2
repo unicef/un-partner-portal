@@ -20,8 +20,13 @@ server {
     }
 
     location /api/ {
-      uwsgi_pass backend;
-      include /etc/nginx/conf.d/uwsgi_params;
+        uwsgi_pass backend;
+        include /etc/nginx/conf.d/uwsgi_params;
+    }
+
+    location /social/ {
+        uwsgi_pass backend;
+        include /etc/nginx/conf.d/uwsgi_params;
     }
 
     location /api/uploads  {
@@ -35,17 +40,17 @@ server {
     }
 
     location / {
-      try_files $uri $uri/ @frontend;
+        try_files $uri $uri/ @frontend;
     }
 
     location @frontend {
-      proxy_pass http://frontend;
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header Host $host;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      # Following is necessary for Websocket support
-      proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
-      }
+        proxy_pass http://frontend;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        # Following is necessary for Websocket support
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
 }

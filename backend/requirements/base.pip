@@ -1,7 +1,7 @@
 # Django packages
 Django==1.11.14
 
-#apm
+# APM
 elastic-apm==2.0.0
 Fabric==1.13.1
 Pillow==5.0.0
@@ -32,6 +32,7 @@ coolname==1.0.4
 reportlab==3.4.0
 Babel==2.6.0
 python-crontab==2.2.8
+social-auth-app-django==2.1.0
 
 # Testing
 astroid==1.5.2

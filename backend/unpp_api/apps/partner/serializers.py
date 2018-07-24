@@ -59,6 +59,7 @@ class PartnerAdditionalSerializer(serializers.ModelSerializer):
             'has_finished',
             'hq',
             'has_potential_sanction_match',
+            'can_be_verified',
         )
 
     def get_hq(self, partner):

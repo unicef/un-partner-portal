@@ -146,6 +146,16 @@ class Partner(TimeStampedModel):
         return getattr(self.verifications.order_by('-created').last(), 'is_verified', None)
 
     @property
+    def can_be_verified(self):
+        return all((
+            not self.hq or self.hq.is_verified,
+            not self.hq or not self.hq.has_red_flag,
+            not self.hq or not self.hq.has_sanction_match,
+            not self.has_red_flag,
+            not self.has_sanction_match,
+        ))
+
+    @property
     def has_sanction_match(self):
         return self.sanction_matches.filter(can_ignore=False).exists()
 
@@ -159,7 +169,7 @@ class Partner(TimeStampedModel):
     def flagging_status(self):
         mapping = dict(PartnerFlag.objects.filter(
             Q(partner=self) | Q(partner=self.hq)
-        ).exclude(is_valid=False).values_list('flag_type').annotate(Count('id')))
+        ).exclude(is_valid=False).values_list('flag_type').annotate(Count('id')).order_by())
 
         return {
             'observation': mapping.get(FLAG_TYPES.observation, 0),
@@ -321,6 +331,12 @@ class PartnerProfile(TimeStampedModel):
         budget = self.partner.budgets.filter(year=date.today().year).first()
         if budget is not None:
             return budget.budget
+
+    @property
+    def annual_budget_display(self):
+        budget = self.partner.budgets.filter(year=date.today().year).first()
+        if budget is not None:
+            return budget.get_budget_display()
 
     @property
     def identification_is_complete(self):

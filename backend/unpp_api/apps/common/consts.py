@@ -17,7 +17,7 @@ PARTNER_REVIEW_TYPES = Choices(
 )
 
 PARTNER_TYPES = Choices(
-    ('CBO', 'cbo', 'Community Based Organization (CBO) '),
+    ('CBO', 'cbo', 'Community Based Organization (CBO)'),
     ('NGO', 'national', 'National NGO'),
     ('Int', 'international', 'International NGO (INGO)'),
     ('Aca', 'academic', 'Academic Institution'),
