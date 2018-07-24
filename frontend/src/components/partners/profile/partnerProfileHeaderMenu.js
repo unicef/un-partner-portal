@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { compose } from 'ramda';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
+import AlertDialog from '../../common/alertDialog';
 import DropdownMenu from '../../common/dropdownMenu';
 import SpreadContent from '../../common/spreadContent';
 import AddNewVerificationButton from './buttons/addNewVerificationButton';
@@ -16,10 +17,25 @@ import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permission
 const addVerification = 'addVerification';
 const addObservation = 'addObservation';
 
+
+const messages = {
+  warning: 'Warning',
+  verifyPartner: 'Partner profile is not verified. Please verify partner before adding an observation.',
+  addVerification: 'Partner profile can not be verified until HQ profile will be verified.',
+  hasFinished: 'Partner profile has not filled all required informations.',
+  hasSanctionMatch: 'Partner has sanction match observation and can not be verified.',
+};
+
 class PartnerProfileHeaderMenu extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      verifyPartner: false,
+      addVerification: false,
+      hasFinished: false,
+      hasSanctionMatch: false,
+    };
     this.profileOptions = this.profileOptions.bind(this);
   }
 
@@ -41,7 +57,20 @@ class PartnerProfileHeaderMenu extends Component {
       options.push(
         {
           name: addVerification,
-          content: <AddNewVerificationButton handleClick={() => handleDialogOpen(addVerification)} />,
+          content: <AddNewVerificationButton handleClick={() => {
+            if (!partnerProfile.partnerStatus.has_potential_sanction_match) {
+              if (partnerProfile.partnerStatus.can_be_verified && partnerProfile.partnerStatus.has_finished) {
+                handleDialogOpen(addVerification);
+              } else if (!partnerProfile.isHq && partnerProfile.partnerStatus.has_finished) {
+                this.setState({ addVerification: true });
+              } else if (!partnerProfile.partnerStatus.has_finished) {
+                this.setState({ hasFinished: true });
+              }
+            } else {
+              this.setState({ hasSanctionMatch: true });
+            }
+          }}
+          />,
         });
     }
 
@@ -51,7 +80,15 @@ class PartnerProfileHeaderMenu extends Component {
       options.push(
         {
           name: addObservation,
-          content: <AddNewObservationButton handleClick={() => handleDialogOpen(addObservation)} />,
+          content: <AddNewObservationButton
+            handleClick={() => {
+              if (partnerProfile.verified) {
+                handleDialogOpen(addObservation);
+              } else {
+                this.setState({ verifyPartner: true });
+              }
+            }}
+          />,
         });
     }
 
@@ -79,6 +116,30 @@ class PartnerProfileHeaderMenu extends Component {
           dialogOpen={dialogOpen[addObservation]}
           handleDialogClose={handleDialogClose}
         />}
+        <AlertDialog
+          trigger={!!this.state.addVerification}
+          title={messages.warning}
+          text={messages.verifyPartner}
+          handleDialogClose={() => this.setState({ addVerification: false })}
+        />
+        <AlertDialog
+          trigger={!!this.state.verifyPartner}
+          title={messages.warning}
+          text={messages.verifyPartner}
+          handleDialogClose={() => this.setState({ verifyPartner: false })}
+        />
+        <AlertDialog
+          trigger={!!this.state.hasFinished}
+          title={messages.warning}
+          text={messages.hasFinished}
+          handleDialogClose={() => this.setState({ hasFinished: false })}
+        />
+        <AlertDialog
+          trigger={!!this.state.hasSanctionMatch}
+          title={messages.warning}
+          text={messages.hasSanctionMatch}
+          handleDialogClose={() => this.setState({ hasSanctionMatch: false })}
+        />
       </SpreadContent>
     );
   }

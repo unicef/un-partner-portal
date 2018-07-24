@@ -12,35 +12,19 @@ import DeclarationRow from './declarationRow';
 const messages = {
   header: 'By answering yes, the organization confirms the following:',
   questions: {
-    questionSanctions: 'That neither it nor any of its members is mentioned ' +
-    'on the Consolidated United Nations Security Council Sanctions List. ' +
-    'Furthermore, the organization confirms that it has not supported and ' +
-    'does not support, directly or indirectly, individuals and entities ' +
-    'sanctioned by or otherwise involved in a manner prohibited by a ' +
-    'Security Council resolution adopted under Chapter VII of the Charter of ' +
-    'the United Nations.',
-    questionDiscriminate: 'That it will not discriminate against any person ' +
-    'or group on the basis of race, colour, sex, language, religion, ' +
-    'political or other opinion, national or social origin, property, ' +
-    'disability, birth, age or other status.',
-    questionPrinciples: 'That it abides by the Principles of Partnership as ' +
-    'endorsed by the Global Humanitarian Platform (GHP) in July 2007. ' +
-    'The Principles of Partnership are:\n ' +
+    ad_1: 'That it is a non-profit civil society organization.',
+    ad_2: 'That it is committed to the core values of the UN and the Universal Declaration of Human Rights.',
+    ad_3: ' That it abides by the Principles of Partnership as endorsed by the Global Humanitarian Platform (GHP) in July 2007. The Principles of Partnership are:\n ' +
     'a) Equality\n' +
     'b) Transparency\n' +
     'c) Result-orientated approach\n' +
     'd) Responsibility\n' +
     'e) Complementarity',
-    questionCrime: 'That it has not been charged with or been complicit in ' +
-    'corrupt activities, including crimes against humanity and war crimes, ' +
-    'and is not involved, nor has been involved in the past, with such ' +
-    'activities that would render the organization unsuitable for dealing ' +
-    'with UN agencies.',
-    questionTruth: 'That the information provided in the Partner Declaration ' +
-    'above is accurate to the best of its knowledge, and that any ' +
-    'misrepresentations, falsifications, or material omissions in the ' +
-    'Partner Declaration, whenever discovered, may result in ' +
-    'disqualification from or termination of partnership with the UN.',
+    ad_4: 'That it will not discriminate against any person or group on the basis of race, colour, sex, language, religion, political or other opinion, national or social origin, property, disability, birth, age or other status.',
+    ad_5: 'That it shall ensure that all its employees, personnel and sub-contractors comply with the standards of conduct listed in Section 3 of the UN Secretary-General\'s Bulletin on "Special Measures for Protection from Sexual Exploitation and Abuse".',
+    ad_6: 'That it has not been charged with or been complicit in fraud, or financial and non-financial corrupt activities, including money laundering, crimes against humanity and war crimes, and is not involved, nor has been involved in the past, with such activities that are incompatible with the UN mandate and values and that would render the organization unsuitable for dealing with UN agencies.',
+    ad_7: 'That neither it nor any of its members is mentioned on the Consolidated United Nations Security Council Sanctions List. Furthermore, that it has not supported and does not support, directly or indirectly, individuals and entities sanctioned by or otherwise involved in a manner prohibited by a Security Council resolution adopted under Chapter VII of the Charter of the United Nations.',
+    ad_8: 'That the information provided in the Partner Declaration above is accurate to the best of its knowledge, and that any misrepresentations, falsifications, or material omissions in the Partner Declaration, whenever discovered, may result in disqualification from or termination of partnership with the UN.',
   },
 };
 

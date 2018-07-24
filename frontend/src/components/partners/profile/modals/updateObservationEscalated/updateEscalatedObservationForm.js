@@ -23,9 +23,9 @@ const messages = {
   email: 'E-mail',
   attachment: 'Attachment (optional)',
   categoryOfRisk: 'Category of risk',
-  defer: 'Having reviewed the escalated risk observation, HQ has decided that the risk observation is:',
-  defferedInfo: 'Deffered back to field or local decision making',
-  confirmedInfo: 'Confirmed/deemed to be so serious that no partnership should take place with the flagged entity',
+  defer: 'Having reviewed the risk observation escalated by the Country Office, UN HQ has determined that:',
+  defferedInfo: 'The risk is deferred to the Country Office for local decision-making.',
+  confirmedInfo: 'No partnership should take place with the flagged organization.',
 };
 
 export const ESCALATION_DECISION = {
