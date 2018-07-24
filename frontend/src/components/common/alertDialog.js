@@ -11,12 +11,19 @@ import Dialog, {
 } from 'material-ui/Dialog';
 
 
-const styleSheet = theme => ({
-  dialogTitle: {
-    color: 'white',
-    background: theme.palette.secondary[500],
-  },
-});
+const styleSheet = (theme) => {
+  const padding = theme.spacing.unit * 4;
+
+  return {
+    dialogTitle: {
+      color: 'white',
+      background: theme.palette.secondary[500],
+    },
+    top: {
+      paddingTop: `${padding}px`,
+    },
+  };
+};
 
 function AlertDialog(props) {
   const { classes, trigger, title, text, handleDialogClose } = props;
@@ -29,7 +36,7 @@ function AlertDialog(props) {
         {title}
       </DialogTitle>
       <DialogContent>
-        <DialogContentText>
+        <DialogContentText className={classes.top}>
           {text}
         </DialogContentText>
       </DialogContent>

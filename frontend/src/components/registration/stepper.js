@@ -9,6 +9,7 @@ import {
   StepContent,
   StepLabel,
 } from '../customStepper';
+import LegalStatus from './legalStatus';
 import OrganizationType from './organizationType';
 import BasicInformation from './basicInformation';
 import RegistrationStep from './registrationStep';
@@ -21,6 +22,9 @@ import { loadPartnerConfig } from '../../reducers/partnerProfileConfig';
 
 const messages = {
   error: 'Registration failed',
+  declarationInfo: 'You answered no to at least one of the questions, cannot proceed',
+  warning: 'Warning',
+  legalInfo: 'You have to upload at least one of Registration, Governing documents or letter of reference to proceed registration process',
 };
 
 class RegistrationStepper extends React.Component {
@@ -29,9 +33,12 @@ class RegistrationStepper extends React.Component {
     this.state = {
       stepIndex: 0,
       lastStep: 4,
+      declarationAlert: false,
+      legalStatusAlert: false,
     };
     this.handleNext = this.handleNext.bind(this);
     this.handleNextQuestions = this.handleNextQuestions.bind(this);
+    this.handleNextLegalStatus = this.handleNextLegalStatus.bind(this);
     this.handlePrev = this.handlePrev.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -57,6 +64,19 @@ class RegistrationStepper extends React.Component {
     this.handleNext();
   }
 
+  handleNextLegalStatus() {
+    const legalStatusData = this.props.legalStatusData;
+
+    if (!legalStatusData.have_gov_doc
+      || !legalStatusData.have_ref_letter
+      || !legalStatusData.have_registration_doc) {
+      this.setState({ legalStatusAlert: true });
+      return;
+    }
+
+    this.handleNext();
+  }
+
   handlePrev() {
     const { stepIndex } = this.state;
     if (stepIndex > 0) {
@@ -76,7 +96,6 @@ class RegistrationStepper extends React.Component {
       });
     });
   }
-
 
   render() {
     const { stepIndex } = this.state;
@@ -100,7 +119,15 @@ class RegistrationStepper extends React.Component {
             </StepContent>
           </Step>
           <Step>
-            <StepLabel>Fill the Partner Declaration</StepLabel>
+            <StepLabel>Legal Status</StepLabel>
+            <StepContent>
+              <RegistrationStep onSubmit={this.handleNextLegalStatus} handlePrev={this.handlePrev}>
+                <LegalStatus />
+              </RegistrationStep>
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>Partner Declaration</StepLabel>
             <StepContent>
               <RegistrationStep onSubmit={this.handleNextQuestions} handlePrev={this.handlePrev}>
                 <Declaration />
@@ -124,9 +151,15 @@ class RegistrationStepper extends React.Component {
         </Stepper>
         <AlertDialog
           trigger={!!this.state.declarationAlert}
-          title="Warning"
-          text="You answered no to at least one of the questions, cannot proceed"
+          title={messages.warning}
+          text={messages.declarationInfo}
           handleDialogClose={() => this.setState({ declarationAlert: false })}
+        />
+        <AlertDialog
+          trigger={!!this.state.legalStatusAlert}
+          title={messages.warning}
+          text={messages.legalInfo}
+          handleDialogClose={() => this.setState({ legalStatusAlert: false })}
         />
       </div>
     );
@@ -137,6 +170,7 @@ RegistrationStepper.propTypes = {
    * answers to all questions in declaration component, show dialog when at least one is false
    */
   answers: PropTypes.arrayOf(PropTypes.bool),
+  legalStatusData: PropTypes.object,
   loadPartnerConfig: PropTypes.func,
   loadCountries: PropTypes.func,
   registerUser: PropTypes.func,
@@ -146,6 +180,7 @@ const selector = formValueSelector('registration');
 const connectedRegistrationStepper = connect(
   state => ({
     answers: selector(state, 'questions'),
+    legalStatusData: selector(state, 'json.legal'),
   }),
   dispatch => ({
     loadCountries: () => dispatch(loadCountries()),

@@ -2,8 +2,6 @@ import React from 'react';
 import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
-
 import Grid from 'material-ui/Grid';
 import TextFieldForm from '../forms/textFieldForm';
 import PolarRadio from '../forms/fields/PolarRadio';
