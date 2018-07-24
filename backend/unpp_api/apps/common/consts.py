@@ -25,8 +25,8 @@ PARTNER_TYPES = Choices(
 )
 
 CFEI_TYPES = Choices(
-    ('Ope', 'open', 'Open'),
-    ('Dir', 'direct', 'Direct'),
+    ('Ope', 'open', 'Open Selection'),
+    ('Dir', 'direct', 'Direct Selection / Retention'),
 )
 
 APPLICATION_STATUSES = Choices(
@@ -40,7 +40,7 @@ CFEI_STATUSES = Choices(
     ('Sen', 'sent', 'Sent'),
     ('Ope', 'open', 'Published'),
     ('Clo', 'closed', 'Closed/Under Review'),
-    ('Com', 'completed', 'Completed'),
+    ('Com', 'completed', 'Finalized'),
 )
 
 COLLABORATION_EVIDENCE_MODES = Choices(
@@ -238,11 +238,13 @@ FLAG_TYPES = Choices(
 )
 
 USER_CREATED_FLAG_CATEGORIES = Choices(
-    ('fraud_and_corruption', 'Fraud and corruption'),
-    ('safeguards_violation', 'Violation of protection safeguards'),
-    ('sex_abuse', 'Sexual exploitation and abuse'),
-    ('terrorism_support', 'Terrorism support'),
-    ('ZZ_other', 'Other'),  # So it's sorted as last
+    ('C01_reputational_ethical', 'Reputational / Ethical'),
+    ('C02_financial', 'Financial'),
+    ('C03_operational', 'Operational'),
+    ('C04_compliance', 'Compliance'),
+    ('C05_sex_abuse', 'Sexual exploitation and abuse'),
+    ('C06_safeguarding_violation', 'Safeguarding violation'),
+    ('C99_other', 'Other'),  # So it's sorted as last
 )
 
 INTERNAL_FLAG_CATEGORIES = Choices(

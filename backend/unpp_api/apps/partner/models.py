@@ -258,7 +258,10 @@ class PartnerProfile(TimeStampedModel):
         help_text="Enter valid year.",
         null=True,
         blank=True,
-        validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
+        validators=(
+            MaxCurrentYearValidator(),
+            MinValueValidator(1800),  # red cross since 1863 year
+        )
     )
     have_gov_doc = models.NullBooleanField(verbose_name='Does the organization have a government document?')
     gov_doc = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="gov_docs")

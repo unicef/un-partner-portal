@@ -29,6 +29,9 @@ ROOT_URLCONF = 'unpp_api.urls'
 
 DATA_VOLUME = os.getenv('DATA_VOLUME', '/data')
 
+ALLOWED_EXTENSIONS = (
+    'pdf', 'jpg', 'doc', 'tiff', 'png'
+)
 UPLOADS_DIR_NAME = 'uploads'
 MEDIA_URL = '/api/%s/' % UPLOADS_DIR_NAME
 MEDIA_ROOT = os.getenv('UNPP_UPLOADS_PATH', os.path.join(DATA_VOLUME, '%s' % UPLOADS_DIR_NAME))
