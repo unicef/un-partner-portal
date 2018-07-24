@@ -8,7 +8,7 @@ import AddFlagForm from './addFlagForm';
 
 const messages = {
   title: 'Are you sure you want to add an observation to this Profile?',
-  info: 'An observation can be added to record brief UN notes collaboration history, partner performance or other key issues.',
+  info: 'An observation can be added to record brief notes on past collaboration, risk or other key issues.',
   save: 'save',
 };
 
