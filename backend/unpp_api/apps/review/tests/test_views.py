@@ -20,7 +20,11 @@ from common.factories import (
     PartnerVerificationFactory,
     AgencyOfficeFactory,
     AgencyMemberFactory,
-    PartnerMemberFactory, PartnerFactory, COUNTRIES, SanctionedNameMatchFactory)
+    PartnerMemberFactory,
+    PartnerFactory,
+    COUNTRIES,
+    SanctionedNameMatchFactory,
+)
 from partner.models import Partner
 from review.models import PartnerFlag
 from sanctionslist.models import SanctionedItem, SanctionedName, SanctionedNameMatch
