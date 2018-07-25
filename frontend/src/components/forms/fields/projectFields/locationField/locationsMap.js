@@ -186,7 +186,7 @@ class LocationsMapBase extends Component {
       activeLocation,
     } = this.state;
 
-    return ((pos) && showMap && <MapContainer
+    return (pos && showMap && <MapContainer
       initialCenter={pos}
       center={pos}
       streetViewControl={false}
@@ -196,13 +196,13 @@ class LocationsMapBase extends Component {
     >
       <MapBounder bounds={bounds} rebound={rebound} clearBounds={this.clearBounds} />
       {this.renderMarkers()}
-      <InfoWindow
+      {activeLocation && <InfoWindow
         marker={activeMarker}
         visible={showingInfoWindow}
         text={activeLocation}
       >
         <Typography>{activeLocation}</Typography>
-      </InfoWindow>
+      </InfoWindow>}
       <SearchBox />
     </MapContainer>
     );
