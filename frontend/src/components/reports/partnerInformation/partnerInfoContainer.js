@@ -51,7 +51,7 @@ class PartnerInfoContainer extends Component {
       return <TableCell>{row.offices.length}</TableCell>;
     }
 
-    return <TableCell>{value}</TableCell>;
+    return <TableCell>{value || '-'}</TableCell>;
   }
 
   partnerProfileReport() {
@@ -99,7 +99,6 @@ class PartnerInfoContainer extends Component {
             >
               {messages.partnerProfile}
             </Button>
-
             <Button
               raised
               color="accent"
