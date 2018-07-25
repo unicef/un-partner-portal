@@ -21,7 +21,7 @@ django-model-utils==3.1.2
 dj-static==0.0.6
 python-json-logger==0.1.7
 xmltodict==0.11.0
-requests==2.18.4
+requests==2.19.1
 python-dateutil==2.6.1
 django-imagekit==4.0.1
 XlsxWriter==1.0.2

@@ -9,7 +9,10 @@ class PartnerVendorNumber(TimeStampedModel):
     number = models.TextField(max_length=1024)
 
     class Meta:
-        unique_together = ('agency', 'partner', 'number')
+        unique_together = (
+            ('agency', 'partner'),
+            ('agency', 'partner', 'number'),
+        )
 
     def __str__(self):
         return f"[{self.agency.name}] {self.partner} Vendor Number #{self.number}"

@@ -294,3 +294,15 @@ LOGGING = {
 # ELASTIC_APM_APP_NAME=<app-name> # set app name visible on dashboard
 # ELASTIC_APM_SECRET_TOKEN=<app-token> #secret token - needs to be exact same as on apm-server
 # ELASTIC_APM_SERVER_URL=http://elastic.tivixlabs.com:8200 # apm-server url
+
+UNHCR_API_HOST = os.getenv('UNHCR_API_HOST')
+UNHCR_API_USERNAME = os.getenv('UNHCR_API_USERNAME')
+UNHCR_API_PASSWORD = os.getenv('UNHCR_API_PASSWORD')
+
+UNICEF_API_HOST = os.getenv('UNICEF_API_HOST')
+UNICEF_API_USERNAME = os.getenv('UNICEF_API_USERNAME')
+UNICEF_API_PASSWORD = os.getenv('UNICEF_API_PASSWORD')
+
+WFP_API_HOST = os.getenv('WFP_API_HOST')
+WFP_API_USERNAME = os.getenv('WFP_API_USERNAME')
+WFP_API_PASSWORD = os.getenv('WFP_API_PASSWORD')
