@@ -70,10 +70,10 @@ class AgencyUserBasicSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(source='fullname', read_only=True)
     agency_name = serializers.CharField(source='agency.name', read_only=True)
+    accepted_tos = serializers.BooleanField(source='profile.accepted_tos', read_only=True)
 
     class Meta:
         model = User
-
         fields = (
             'id',
             'is_active',
@@ -81,6 +81,7 @@ class AgencyUserBasicSerializer(serializers.ModelSerializer):
             'email',
             'status',
             'agency_name',
+            'accepted_tos',
         )
 
 
