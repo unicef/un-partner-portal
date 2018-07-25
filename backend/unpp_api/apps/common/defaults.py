@@ -1,3 +1,5 @@
+from rest_framework.fields import CurrentUserDefault
+
 
 class ActivePartnerIDDefault(object):
 
@@ -6,3 +8,9 @@ class ActivePartnerIDDefault(object):
 
     def __call__(self):
         return getattr(self.active_partner, 'id', None)
+
+
+class CurrentUserAgencyDefault(CurrentUserDefault):
+
+    def __call__(self):
+        return super(CurrentUserAgencyDefault, self).__call__().agency

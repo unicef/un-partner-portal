@@ -70,3 +70,11 @@ class SkipUniqueTogetherValidationOnPatchMixin(object):
             )
 
         return validators
+
+
+class CreateOnlyFieldsMixin(object):
+
+    def update(self, instance, validated_data):
+        for field_name in self.Meta.create_only_fields:
+            validated_data.pop(field_name, None)
+        return super(CreateOnlyFieldsMixin, self).update(instance, validated_data)

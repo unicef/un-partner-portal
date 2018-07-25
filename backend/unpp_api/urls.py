@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^api/notifications/', include('notification.urls', namespace='notifications')),
     url(r'^api/dashboard/', include('dashboard.urls', namespace='dashboard')),
     url(r'^api/reports/', include('reports.urls', namespace='reports')),
+    url(r'^api/externals/', include('externals.urls', namespace='externals')),
     url(r'^api/rest-auth/', include('rest_auth.urls')),
     url(r'^api/test-raise-exception/', test_raise_exception_view),
 

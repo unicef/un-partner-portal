@@ -150,6 +150,7 @@ INSTALLED_APPS = [
     'sanctionslist',
     'management',
     'reports',
+    'externals',
 ]
 
 # auth / django-registration params
