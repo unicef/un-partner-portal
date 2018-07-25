@@ -8,7 +8,7 @@ import { withStyles } from 'material-ui/styles';
 import { browserHistory as history, withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
-import { selectNormalizedOrganizationTypes, selectNormalizedCfeiStatuses, selectMappedSpecializations, selectNormalizedCfeiTypes } from '../../../store';
+import { selectNormalizedCfeiStatuses, selectMappedSpecializations, selectNormalizedCfeiTypes } from '../../../store';
 import SelectForm from '../../forms/selectForm';
 import resetChanges from '../../eois/filters/eoiHelper';
 import CountryField from '../../forms/fields/projectFields/locationField/countryField';
@@ -93,7 +93,7 @@ class CfeiManagementFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { country_code, locations, specializations, status, org_type, posted_year, display_type } = values;
+    const { country_code, locations, specializations, status, posted_year, display_type } = values;
     this.props.saveSelectedItems([]);
     this.props.clearSelections();
 
@@ -101,7 +101,6 @@ class CfeiManagementFilter extends Component {
       pathname: pathName,
       query: R.merge(query, {
         page: 1,
-        org_type,
         posted_year,
         display_type,
         country_code,
@@ -121,7 +120,7 @@ class CfeiManagementFilter extends Component {
 
   render() {
     const { classes, handleSubmit, countryCode, reset, cfeiTypes, specs,
-      applicationStatuses, organizationTypes } = this.props;
+      applicationStatuses } = this.props;
 
     return (
       <form onSubmit={handleSubmit}>
@@ -186,17 +185,6 @@ class CfeiManagementFilter extends Component {
               />
             </Grid>
           </Grid>
-          <Grid container direction="row" >
-            <Grid item sm={4} xs={12}>
-              <SelectForm
-                fieldName="org_type"
-                label={messages.labels.typeLabel}
-                placeholder={messages.labels.typePlaceholder}
-                values={organizationTypes}
-                optional
-              />
-            </Grid>
-          </Grid>
           <Grid item className={classes.button}>
             <Button
               color="accent"
@@ -228,7 +216,6 @@ CfeiManagementFilter.propTypes = {
   countryCode: PropTypes.string,
   handleSubmit: PropTypes.func,
   query: PropTypes.object,
-  organizationTypes: PropTypes.array.isRequired,
   cfeiTypes: PropTypes.array.isRequired,
   saveSelectedItems: PropTypes.func.isRequired,
   clearSelections: PropTypes.func.isRequired,
@@ -247,7 +234,6 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { locations } = {} } = ownProps.location;
   const { query: { posted_year } = {} } = ownProps.location;
-  const { query: { org_type } = {} } = ownProps.location;
   const { query: { status } = {} } = ownProps.location;
   const { query: { display_type } = {} } = ownProps.location;
 
@@ -260,14 +246,12 @@ const mapStateToProps = (state, ownProps) => {
     countryCode: country_code,
     specs: selectMappedSpecializations(state),
     cfeiTypes: selectNormalizedCfeiTypes(state),
-    organizationTypes: selectNormalizedOrganizationTypes(state),
     applicationStatuses: selectNormalizedCfeiStatuses(state),
     initialValues: {
       country_code,
       status,
       locations,
       posted_year,
-      org_type,
       display_type,
       specializations: specializationsQ,
     },

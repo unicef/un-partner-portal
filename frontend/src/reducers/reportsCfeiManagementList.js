@@ -23,7 +23,7 @@ const saveCfeiReports = (state, action) => {
 };
 
 const messages = {
-  loadFailed: 'Loading CFEI reports failed.',
+  loadFailed: 'Loading Expression of interests reports failed.',
 };
 
 const initialState = {

@@ -52,7 +52,7 @@ class PartnerInfoContainer extends Component {
       return <TableCell>{row.offices.length}</TableCell>;
     }
 
-    return <TableCell>{value}</TableCell>;
+    return <TableCell>{value || '-'}</TableCell>;
   }
 
   partnerProfileReport() {
