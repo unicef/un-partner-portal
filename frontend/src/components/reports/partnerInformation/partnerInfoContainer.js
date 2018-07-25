@@ -13,6 +13,7 @@ import { getPartnerContactReport, getPartnerProfileReport } from '../../../reduc
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import PartnerMapping from '../partnerMapping';
 import Loader from '../../common/loader';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
   partnerProfile: 'Export partner profile report',
@@ -81,7 +82,11 @@ class PartnerInfoContainer extends Component {
   }
 
   render() {
-    const { items, columns, totalCount, loading, reportsLoading } = this.props;
+    const { items, columns, totalCount,
+      loading, reportsLoading,
+      hasCSOMappingPermission,
+      hasCSOContactPermission,
+      hasCSOProfilePermission } = this.props;
 
     return (
       <React.Fragment>
@@ -90,31 +95,30 @@ class PartnerInfoContainer extends Component {
           <PartnerInfoFilter
             clearSelections={() => this.listRef.getWrappedInstance().getWrappedInstance().clearSelections()}
           />
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button
+          {(hasCSOProfilePermission || hasCSOContactPermission) && <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            {hasCSOProfilePermission && <Button
               style={{ marginRight: '15px' }}
               raised
               color="accent"
               onTouchTap={() => this.partnerProfileReport()}
             >
               {messages.partnerProfile}
-            </Button>
-
-            <Button
+            </Button>}
+            {hasCSOContactPermission && <Button
               raised
               color="accent"
               onTouchTap={() => this.partnerContactReport()}
             >
               {messages.partnerContact}
-            </Button>
-          </div>
-          <PartnerMapping
+            </Button>}
+          </div>}
+          {hasCSOMappingPermission && <PartnerMapping
             title={messages.partnerMapping}
             items={items}
             fieldName={'offices'}
-          />
+          />}
           <SelectableList
-            innerRef={field => this.listRef = field}
+            innerRef={(field) => { this.listRef = field; }}
             items={items}
             columns={columns}
             loading={loading}
@@ -138,6 +142,9 @@ PartnerInfoContainer.propTypes = {
   reportsLoading: PropTypes.bool.isRequired,
   query: PropTypes.object,
   selectionIds: PropTypes.array,
+  hasCSOProfilePermission: PropTypes.bool,
+  hasCSOContactPermission: PropTypes.bool,
+  hasCSOMappingPermission: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -148,6 +155,9 @@ const mapStateToProps = (state, ownProps) => ({
   reportsLoading: state.generatePartnerReports.loading,
   query: ownProps.location.query,
   selectionIds: state.selectableList.items,
+  hasCSOProfilePermission: checkPermission(AGENCY_PERMISSIONS.RUN_REPORT_CSO_PROFILE, state),
+  hasCSOContactPermission: checkPermission(AGENCY_PERMISSIONS.RUN_REPORT_CSO_CONTACT, state),
+  hasCSOMappingPermission: checkPermission(AGENCY_PERMISSIONS.RUN_REPORT_CSO_MAPPING, state),
 });
 
 const mapDispatch = dispatch => ({
