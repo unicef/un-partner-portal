@@ -145,8 +145,7 @@ class SelectableList extends Component {
       onClick={() => this.props.clickableRow && this.props.onTableRowClick(row)}
       onMouseEnter={() => this.handleRowMouseEnter(rowId)}
       onMouseLeave={() => this.handleRowMouseLeave()}
-    > {children}
-    </TableRowMUI>);
+    >{children}</TableRowMUI>);
   }
 
   clearSelections() {
@@ -273,8 +272,8 @@ SelectableList.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   pathName: ownProps.location.pathname,
   query: ownProps.location.query,
-  pageSize: ownProps.location.query.page_size || 0,
-  pageNumber: ownProps.location.query.page || 0,
+  pageSize: Number(ownProps.location.query.page_size) || 0,
+  pageNumber: Number(ownProps.location.query.page) || 0,
 });
 
 const mapDispatch = dispatch => ({

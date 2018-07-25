@@ -15,6 +15,7 @@ import { loadVerificationReportsList } from '../../../reducers/reportsVerificati
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import PartnerNameCell from './partnerNameCell';
 import Loader from '../../common/loader';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
   exportReport: 'Export report',
@@ -60,14 +61,14 @@ class VerificationContainer extends Component {
   }
 
   render() {
-    const { items, columns, totalCount, loading, reportsLoading } = this.props;
+    const { items, columns, totalCount, loading, reportsLoading, hasVerificationReportPermission } = this.props;
 
     return (
       <React.Fragment>
         <Loader fullScreen loading={reportsLoading} />
         <CustomGridColumn>
           <VerificationFilter />
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          {hasVerificationReportPermission && <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button
               style={{ marginRight: '15px' }}
               raised
@@ -76,7 +77,7 @@ class VerificationContainer extends Component {
             >
               {messages.exportReport}
             </Button>
-          </div>
+          </div>}
           <TableWithStateInUrl
             component={PaginatedList}
             items={items}
@@ -109,6 +110,8 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.reportVerificationList.loading,
   query: ownProps.location.query,
   reportsLoading: state.generatePartnerReports.loading,
+  hasVerificationReportPermission:
+    checkPermission(AGENCY_PERMISSIONS.RUN_REPORT_CFEI_MANAGEMENT, state),
 });
 
 const mapDispatch = dispatch => ({

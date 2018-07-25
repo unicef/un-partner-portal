@@ -8,6 +8,7 @@ import { Typography } from 'material-ui';
 import { browserHistory as history, withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
+import CheckboxForm from '../../forms/checkboxForm';
 import RadioForm from '../../forms/radioForm';
 import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
@@ -17,7 +18,7 @@ import { saveSelections } from '../../../reducers/selectableListItems';
 import { selectNormalizedOrganizationTypes, selectMappedSpecializations } from '../../../store';
 
 const messages = {
-  select: 'Select filters to generate reports on partners and partner contact information, or a map of partner presence',
+  select: 'Select filters to generate reports on partners and partner contact information, or a map of partner presence.',
   clear: 'clear',
   choose: 'Choose',
   labels: {
@@ -29,6 +30,7 @@ const messages = {
     typePlaceholder: 'Select type',
     sector: 'Sector & Area of Specialization',
     experience: 'UN Experience',
+    show: 'Show INGO HQ only',
   },
 };
 
@@ -99,8 +101,8 @@ class PartnerInfoFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { country_code, specializations, organization_type, display_type,
-      has_experience, registered, locations } = values;
+    const { country_code, specializations, organization_type, display_types,
+      has_experience, registered, locations, is_hq } = values;
 
     this.props.saveSelectedItems([]);
     this.props.clearSelections();
@@ -109,9 +111,10 @@ class PartnerInfoFilter extends Component {
       pathname: pathName,
       query: R.merge(query, {
         page: 1,
+        is_hq,
         country_code,
         organization_type,
-        display_type,
+        display_types: Array.isArray(display_types) ? display_types.join(',') : display_types,
         registered,
         has_experience,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
@@ -163,10 +166,11 @@ class PartnerInfoFilter extends Component {
           <Grid container direction="row" >
             <Grid item sm={4} xs={12}>
               <SelectForm
-                fieldName="display_type"
+                fieldName="display_types"
                 label={messages.labels.typeLabel}
                 placeholder={messages.labels.typePlaceholder}
                 values={organizationTypes}
+                multiple
                 optional
               />
             </Grid>
@@ -186,6 +190,15 @@ class PartnerInfoFilter extends Component {
                 fieldName="has_experience"
                 label={messages.labels.experience}
                 values={STATUS_VAL}
+                optional
+              />
+            </Grid>
+          </Grid>
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12}>
+              <CheckboxForm
+                label={messages.labels.show}
+                fieldName="is_hq"
                 optional
               />
             </Grid>
@@ -236,13 +249,17 @@ const formPartnerInfoFilter = reduxForm({
 const mapStateToProps = (state, ownProps) => {
   const { query: { specializations } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
-  const { query: { display_type } = {} } = ownProps.location;
+  const { query: { display_types } = {} } = ownProps.location;
   const { query: { registered } = {} } = ownProps.location;
   const { query: { has_experience } = {} } = ownProps.location;
   const { query: { locations } = {} } = ownProps.location;
+  const { query: { is_hq } = {} } = ownProps.location;
 
   const specializationsQ = specializations &&
   R.map(Number, specializations.split(','));
+
+  const displayTypeQ = display_types &&
+  R.map(String, display_types.split(','));
 
   return {
     pathName: ownProps.location.pathname,
@@ -250,12 +267,12 @@ const mapStateToProps = (state, ownProps) => {
     specs: selectMappedSpecializations(state),
     organizationTypes: selectNormalizedOrganizationTypes(state),
     countryCode: country_code,
-    displayType: display_type,
     initialValues: {
       country_code,
       specializations: specializationsQ,
-      display_type,
+      display_types: displayTypeQ,
       registered,
+      is_hq,
       has_experience,
       locations,
     },

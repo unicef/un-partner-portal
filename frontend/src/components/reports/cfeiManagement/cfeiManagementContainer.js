@@ -15,6 +15,7 @@ import CountriesCell from './countriesCell';
 import LocationsCell from './locationsCell';
 import PartnerMapping from '../partnerMapping';
 import Loader from '../../common/loader';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
   exportReport: 'Export report',
@@ -62,7 +63,7 @@ class CfeiManagementContainer extends Component {
   }
 
   render() {
-    const { items, columns, totalCount, loading, reportsLoading } = this.props;
+    const { items, columns, totalCount, loading, reportsLoading, hasCFEIReportPermission } = this.props;
 
     return (
       <React.Fragment>
@@ -71,7 +72,7 @@ class CfeiManagementContainer extends Component {
           <CfeiManagementFilter
             clearSelections={() => this.listRef.getWrappedInstance().getWrappedInstance().clearSelections()}
           />
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          {hasCFEIReportPermission && <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button
               style={{ marginRight: '15px' }}
               raised
@@ -80,14 +81,14 @@ class CfeiManagementContainer extends Component {
             >
               {messages.exportReport}
             </Button>
-          </div>
+          </div>}
           <PartnerMapping
             title={messages.projectMapping}
             items={items}
             fieldName={'locations'}
           />
           <SelectableList
-            innerRef={field => this.listRef = field}
+            innerRef={(field) => { this.listRef = field; }}
             items={items}
             columns={columns}
             loading={loading}
@@ -110,6 +111,7 @@ CfeiManagementContainer.propTypes = {
   selectionIds: PropTypes.array,
   getProjectReports: PropTypes.func,
   reportsLoading: PropTypes.bool.isRequired,
+  hasCFEIReportPermission: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -120,6 +122,7 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.location.query,
   selectionIds: state.selectableList.items,
   reportsLoading: state.generatePartnerReports.loading,
+  hasCFEIReportPermission: checkPermission(AGENCY_PERMISSIONS.RUN_REPORT_CFEI_MANAGEMENT, state),
 });
 
 const mapDispatch = dispatch => ({
