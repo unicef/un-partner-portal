@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import AutocompleteForm from '../../../autoCompleteForm';
 import { mapValuesForSelectionField } from '../../../../../store';
-import { loadAgencyMembersForAutoComplete } from '../../../../../reducers/agencyMembers';
+import { loadAgencyFocalPointsForAutoComplete } from '../../../../../reducers/agencyMembers';
 
 // TODO: new version that supports autocomplete but can't be used right now
 class AgencyMembersField extends Component {
+  reset() {
+    this._field.reset();
+  }
+  
   render() {
     const { members, fieldName, label, getMembers, ...other } = this.props;
 
@@ -22,10 +26,6 @@ class AgencyMembersField extends Component {
         {...other}
       />
     );
-  }
-
-  reset() {
-    this._field.reset();
   }
 }
 
@@ -46,7 +46,7 @@ AgencyMembersField.propTypes = {
 export default connect(
   null,
   dispatch => ({
-    getMembers: params => dispatch(loadAgencyMembersForAutoComplete(params)).then(results =>
+    getMembers: params => dispatch(loadAgencyFocalPointsForAutoComplete(params)).then(results =>
       mapValuesForSelectionField(results)),
   }),
   null,

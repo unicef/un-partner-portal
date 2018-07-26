@@ -53,7 +53,7 @@ const EoiStatusCell = (props) => {
 
 EoiStatusCell.propTypes = {
   classes: PropTypes.object.isRequired,
-  status: PropTypes.string.isRequired,
+  status: PropTypes.string,
 };
 
 export default withStyles(styleSheet, { name: 'EoiStatusCell' })(EoiStatusCell);
