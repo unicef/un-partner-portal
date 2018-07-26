@@ -1,4 +1,8 @@
-import { getPartnerProfileReports, getPartnerContactReports, getProjectDetailsReports, getPartnerVerificationReports } from '../helpers/api/api';
+import { getPartnerProfileReports,
+  getPartnerContactReports,
+  getProjectDetailsReports,
+  getPartnerVerificationReports,
+  getPartnerMappingReports } from '../helpers/api/api';
 import download from 'downloadjs';
 import {
   clearError,
@@ -45,6 +49,20 @@ export const getPartnerContactReport = params => (dispatch) => {
   return getPartnerContactReports(params, { responseType: 'blob' })
     .then((data) => {
       download(data, `Contact Report - ${formatDateForPrint(new Date())}.xlsx`);
+      dispatch(reportsGenerateLoadEnded());
+    })
+    .catch((error) => {
+      dispatch(reportsGenerateLoadEnded());
+      dispatch(reportsGenerateLoadFailure(error));
+    });
+};
+
+export const getPartnerMappingReport = params => (dispatch) => {
+  dispatch(reportsGenerateLoadStarted());
+
+  return getPartnerMappingReports(params, { responseType: 'blob' })
+    .then((data) => {
+      download(data, `Mapping Report - ${formatDateForPrint(new Date())}.xlsx`);
       dispatch(reportsGenerateLoadEnded());
     })
     .catch((error) => {

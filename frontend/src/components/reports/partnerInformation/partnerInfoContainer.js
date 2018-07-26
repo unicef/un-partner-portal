@@ -9,7 +9,7 @@ import PartnerInfoFilter from './partnerInfoFilter';
 import CustomGridColumn from '../../common/grid/customGridColumn';
 import SelectableList from '../selectableList';
 import { loadPartnerReportsList } from '../../../reducers/reportsPartnerInformationList';
-import { getPartnerContactReport, getPartnerProfileReport } from '../../../reducers/partnerReportsGeneration';
+import { getPartnerContactReport, getPartnerProfileReport, getPartnerMappingReport } from '../../../reducers/partnerReportsGeneration';
 import { isQueryChanged } from '../../../helpers/apiHelper';
 import PartnerMapping from '../partnerMapping';
 import Loader from '../../common/loader';
@@ -18,6 +18,7 @@ import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permission
 const messages = {
   partnerProfile: 'Export partner profile report',
   partnerContact: 'Export contact information report',
+  partnerMappingReport: 'Export partner mapping report',
   partnerMapping: 'Map of CSOs',
 };
 
@@ -81,50 +82,77 @@ class PartnerInfoContainer extends Component {
     }
   }
 
+  partnerMappingReport() {
+    const { query, getPartnerMappingReports, selectionIds } = this.props;
+
+    const queryPage = R.dissoc('page', query);
+    const queryPageSize = R.dissoc('page_size', queryPage);
+
+    if (R.isEmpty(selectionIds)) {
+      getPartnerMappingReports(queryPageSize);
+    } else {
+      getPartnerMappingReports({ ids: selectionIds.join(',') });
+    }
+  }
+
   render() {
     const { items, columns, totalCount,
       loading, reportsLoading,
       hasCSOMappingPermission,
       hasCSOContactPermission,
+      query,
       hasCSOProfilePermission } = this.props;
+
+    const queryParams = R.omit(['page', 'page_size'], query);
 
     return (
       <React.Fragment>
-        <Loader fullScreen loading={reportsLoading} />
+        <Loader fullScreen loading={reportsLoading || loading} />
         <CustomGridColumn>
           <PartnerInfoFilter
-            clearSelections={() => this.listRef.getWrappedInstance().getWrappedInstance().clearSelections()}
+            clearSelections={() => this.listRef
+              && this.listRef.getWrappedInstance().getWrappedInstance().clearSelections()}
           />
-          {(hasCSOProfilePermission || hasCSOContactPermission) && <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            {hasCSOProfilePermission && <Button
-              style={{ marginRight: '15px' }}
-              raised
-              color="accent"
-              onTouchTap={() => this.partnerProfileReport()}
-            >
-              {messages.partnerProfile}
-            </Button>}
-            {hasCSOContactPermission && <Button
-              raised
-              color="accent"
-              onTouchTap={() => this.partnerContactReport()}
-            >
-              {messages.partnerContact}
-            </Button>}
-          </div>}
-          {hasCSOMappingPermission && <PartnerMapping
+          {!R.isEmpty(queryParams) &&
+            (hasCSOProfilePermission || hasCSOContactPermission)
+            && <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              {hasCSOProfilePermission && <Button
+                style={{ marginRight: '15px' }}
+                raised
+                color="accent"
+                onTouchTap={() => this.partnerProfileReport()}
+              >
+                {messages.partnerProfile}
+              </Button>}
+              {hasCSOContactPermission && <Button
+                style={{ marginRight: '15px' }}
+                raised
+                color="accent"
+                onTouchTap={() => this.partnerContactReport()}
+              >
+                {messages.partnerContact}
+              </Button>}
+              {(hasCSOContactPermission || hasCSOProfilePermission) && <Button
+                raised
+                color="accent"
+                onTouchTap={() => this.partnerMappingReport()}
+              >
+                {messages.partnerMappingReport}
+              </Button>}
+            </div>}
+          {!R.isEmpty(queryParams) && hasCSOMappingPermission && <PartnerMapping
             title={messages.partnerMapping}
             items={items}
             fieldName={'offices'}
           />}
-          <SelectableList
+          {!R.isEmpty(queryParams) && <SelectableList
             innerRef={(field) => { this.listRef = field; }}
             items={items}
             columns={columns}
             loading={loading}
             itemsCount={totalCount}
             templateCell={this.tableCell}
-          />
+          />}
         </CustomGridColumn>
       </React.Fragment>
     );
@@ -138,6 +166,7 @@ PartnerInfoContainer.propTypes = {
   loadReports: PropTypes.func.isRequired,
   getPartnerContactReports: PropTypes.func.isRequired,
   getPartnerProfileReports: PropTypes.func.isRequired,
+  getPartnerMappingReports: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   reportsLoading: PropTypes.bool.isRequired,
   query: PropTypes.object,
@@ -164,6 +193,7 @@ const mapDispatch = dispatch => ({
   loadReports: params => dispatch(loadPartnerReportsList(params)),
   getPartnerProfileReports: params => dispatch(getPartnerProfileReport(params)),
   getPartnerContactReports: params => dispatch(getPartnerContactReport(params)),
+  getPartnerMappingReports: params => dispatch(getPartnerMappingReport(params)),
 });
 
 const connectedPartnerInfoContainer =

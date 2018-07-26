@@ -61,31 +61,35 @@ class VerificationContainer extends Component {
   }
 
   render() {
-    const { items, columns, totalCount, loading, reportsLoading, hasVerificationReportPermission } = this.props;
+    const { items, columns, totalCount, loading, query,
+      reportsLoading, hasVerificationReportPermission } = this.props;
+    const queryParams = R.omit(['page', 'page_size'], query);
 
     return (
       <React.Fragment>
         <Loader fullScreen loading={reportsLoading} />
         <CustomGridColumn>
           <VerificationFilter />
-          {hasVerificationReportPermission && <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button
-              style={{ marginRight: '15px' }}
-              raised
-              color="accent"
-              onTouchTap={() => this.verificationReport()}
-            >
-              {messages.exportReport}
-            </Button>
-          </div>}
-          <TableWithStateInUrl
+          {!R.isEmpty(queryParams)
+            && hasVerificationReportPermission
+             && <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+               <Button
+                 style={{ marginRight: '15px' }}
+                 raised
+                 color="accent"
+                 onTouchTap={() => this.verificationReport()}
+               >
+                 {messages.exportReport}
+               </Button>
+             </div>}
+          {!R.isEmpty(queryParams) && <TableWithStateInUrl
             component={PaginatedList}
             items={items}
             columns={columns}
             itemsCount={totalCount}
             loading={loading}
             templateCell={this.tableCell}
-          />
+          />}
         </CustomGridColumn>
       </React.Fragment>
     );
@@ -101,6 +105,7 @@ VerificationContainer.propTypes = {
   getVerificationReports: PropTypes.func,
   query: PropTypes.object,
   reportsLoading: PropTypes.bool.isRequired,
+  hasVerificationReportPermission: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
