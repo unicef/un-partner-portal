@@ -31,7 +31,7 @@ names==0.3.0
 coolname==1.0.4
 reportlab==3.4.0
 Babel==2.6.0
-python-crontab==2.2.8
+python-crontab==2.3.4
 social-auth-app-django==2.1.0
 
 # Testing
