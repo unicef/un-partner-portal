@@ -65,6 +65,7 @@ class CfeiManagementContainer extends Component {
   render() {
     const { items, columns, totalCount, loading,
       query, reportsLoading, hasCFEIReportPermission } = this.props;
+
     const queryParams = R.omit(['page', 'page_size'], query);
 
     return (
@@ -92,14 +93,15 @@ class CfeiManagementContainer extends Component {
             items={items}
             fieldName={'locations'}
           />}
-          {!R.isEmpty(queryParams) && <SelectableList
+          <SelectableList
             innerRef={(field) => { this.listRef = field; }}
             items={items}
             columns={columns}
             loading={loading}
+            hideList={R.isEmpty(queryParams)}
             itemsCount={totalCount}
             templateCell={this.tableCell}
-          />}
+          />
         </CustomGridColumn>
       </React.Fragment>
     );

@@ -145,14 +145,15 @@ class PartnerInfoContainer extends Component {
             items={items}
             fieldName={'offices'}
           />}
-          {!R.isEmpty(queryParams) && <SelectableList
+          <SelectableList
             innerRef={(field) => { this.listRef = field; }}
             items={items}
             columns={columns}
             loading={loading}
+            hideList={R.isEmpty(queryParams)}
             itemsCount={totalCount}
             templateCell={this.tableCell}
-          />}
+          />
         </CustomGridColumn>
       </React.Fragment>
     );

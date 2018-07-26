@@ -63,6 +63,7 @@ class VerificationContainer extends Component {
   render() {
     const { items, columns, totalCount, loading, query,
       reportsLoading, hasVerificationReportPermission } = this.props;
+
     const queryParams = R.omit(['page', 'page_size'], query);
 
     return (

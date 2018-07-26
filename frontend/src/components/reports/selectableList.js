@@ -178,11 +178,12 @@ class SelectableList extends Component {
       itemsCount,
       loading,
       pathName,
+      hideList,
       query,
     } = this.props;
     const { selected, hoveredRow } = this.state;
     return (
-      <ListLoader
+      !hideList && <ListLoader
         loading={loading}
       >
         <Paper>
@@ -251,6 +252,7 @@ SelectableList.propTypes = {
   items: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   templateCell: PropTypes.func,
+  hideList: PropTypes.bool,
   itemsCount: PropTypes.number.isRequired,
   pageSize: PropTypes.oneOfType([
     PropTypes.string,
