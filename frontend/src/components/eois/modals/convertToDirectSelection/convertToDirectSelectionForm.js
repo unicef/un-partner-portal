@@ -4,12 +4,10 @@ import { reduxForm, formValueSelector } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
 import TextFieldForm from '../../../forms/textFieldForm';
-import AgencyMembersField from '../../../forms/fields/projectFields/agencyMembersFields/agencyMembersField';
-import SelectForm from '../../../forms/selectForm';
-import DatePickerForm from '../../../forms/datePickerForm';
+import FocalPoints from '../../../forms/fields/projectFields/agencyMembersFields/focalPoints';
+import SelectForm from '../../../forms/selectForm'; 
 import GridColumn from '../../../common/grid/gridColumn';
 import { selectNormalizedDirectJustification } from '../../../../store';
-import { endDate } from '../../../../helpers/validation';
 import { StartDate, EndDate } from '../../../forms/fields/projectFields/commonFields';
 
 const messages = {
@@ -49,7 +47,7 @@ const ConvertToDirectSelectionForm = (props) => {
             },
           }}
         />
-        <AgencyMembersField
+        <FocalPoints
           fieldName="focal_points"
           label={messages.focal}
           selectFieldProps={{

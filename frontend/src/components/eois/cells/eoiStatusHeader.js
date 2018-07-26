@@ -45,16 +45,16 @@ const EoiStatusCell = (props) => {
       <SvgIcon className={colorClass}>
         <circle cx="12" cy="12" r="8" />
       </SvgIcon>
-      <Typography className={classes.text} type="body1" color="inherit">
+      {projectStatuses[status] && <Typography className={classes.text} type="body1" color="inherit">
         {projectStatuses[status]}
-      </Typography>
+      </Typography>}
     </div>
   );
 };
 
 EoiStatusCell.propTypes = {
   classes: PropTypes.object.isRequired,
-  status: PropTypes.string.isRequired,
+  status: PropTypes.string,
 };
 
 export default withStyles(styleSheet, { name: 'EoiStatusCell' })(EoiStatusCell);
