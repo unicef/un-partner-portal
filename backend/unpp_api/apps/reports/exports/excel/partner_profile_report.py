@@ -1,3 +1,4 @@
+from agency.agencies import UNHCR, UNICEF, WFP
 from partner.models import Partner
 from reports.exports.excel.base import BaseXLSXExporter
 
@@ -31,11 +32,8 @@ class PartnerProfileReportXLSLExporter(BaseXLSXExporter):
             'CSO Name',
             'Acronym / Alias',
             'UNHCR Partner Code',
-            'UNHCR Cash Transfers in\nLast Calendar Year',
             'UNICEF Partner Code',
-            'UNICEF Cash Transfers in\nLast Calendar Year',
             'WFP Partner Code',
-            'WFP Cash Transfers in\nLast Calendar Year',
             'Registered in Country',
             'Registration Certificate Issuance Date',
             'Registration Certificate Expiration Date',
@@ -72,18 +70,17 @@ class PartnerProfileReportXLSLExporter(BaseXLSXExporter):
                 e.specialization.name for e in partner.experiences.all()
             ]))
 
+            vendor_numbers = dict(partner.vendor_numbers.values_list('agency__name', 'number'))
+
             worksheet.write_row(current_row, 0, (
                 partner.get_display_type_display(),
                 'HQ' if partner.is_hq else 'Country',
                 partner.get_country_code_display(),
                 partner.legal_name,
                 partner.profile.acronym,
-                'N/A',  # TODO: UNHCR Partner Code
-                'N/A',  # TODO: UNHCR Cash Transfers in Last Calendar Year
-                'N/A',  # TODO: UNICEF Partner Code
-                'N/A',  # TODO: UNICEF Cash Transfers in Last Calendar Year
-                'N/A',  # TODO: WFP Partner Code
-                'N/A',  # TODO: WFP Cash Transfers in Last Calendar Year
+                vendor_numbers.get(UNHCR.name),
+                vendor_numbers.get(UNICEF.name),
+                vendor_numbers.get(WFP.name),
                 boolean_display[partner.profile.registration_to_operate_in_country],
                 partner.profile.registration_date,
                 'N/A',  # TODO: Registration Certificate Expiration Date
