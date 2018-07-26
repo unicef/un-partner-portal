@@ -147,6 +147,7 @@ class UserProfile(TimeStampedModel):
     notification_frequency = FixedTextField(
         choices=NOTIFICATION_FREQUENCY_CHOICES, null=True, default=NOTIFICATION_FREQUENCY_CHOICES.daily
     )
+    accepted_tos = models.BooleanField(default=False)
 
     def __str__(self):
         return "[{}] {}".format(self.user.email, self.user.get_fullname())

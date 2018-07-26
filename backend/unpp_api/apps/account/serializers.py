@@ -122,15 +122,18 @@ class PartnerRegistrationSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source='fullname')
+    name = serializers.CharField(source='fullname', read_only=True)
+    accepted_tos = serializers.BooleanField(source='profile.accepted_tos', read_only=True)
 
     class Meta:
         model = User
         fields = (
             'id',
+            'is_active',
             'name',
             'email',
             'status',
+            'accepted_tos',
         )
 
 
@@ -191,6 +194,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'id',
             'notification_frequency',
             'notification_frequency_display',
+            'accepted_tos',
         )
 
 
