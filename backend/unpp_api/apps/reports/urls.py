@@ -8,6 +8,7 @@ from reports.views import (
     PartnerContactInformationReportXLSXReportAPIView,
     ProjectDetailsXLSXReportAPIView,
     PartnerVerificationsObservationsXLSXReportAPIView,
+    PartnerMappingReportXLSXReportAPIView,
 )
 
 
@@ -22,6 +23,11 @@ urlpatterns = [
         r'^partners/contact/export/xlsx/$',
         PartnerContactInformationReportXLSXReportAPIView.as_view(),
         name="partner-contact-export-xlsx"
+    ),
+    url(
+        r'^partners/mapping/export/xlsx/$',
+        PartnerMappingReportXLSXReportAPIView.as_view(),
+        name="partner-mapping-export-xlsx"
     ),
     url(r'^projects/$', ProjectReportAPIView.as_view(), name="projects"),
     url(
