@@ -23,8 +23,6 @@ const initialState = {};
 
 const getMembers = (pick, sortedMembers, allMembers) =>
   R.pick(R.flatten(R.props(pick, sortedMembers)), allMembers);
-const getAdminMembers = R.curry(getMembers)([ADMINISTRATOR]);
-const getEditMembers = R.curry(getMembers)([EDITOR]);
 const getPossibleFocalPointsReviewers = R.curry(getMembers)([ADMINISTRATOR, EDITOR]);
 
 export const loadAgencyMembers = (agencyId, params) => dispatch =>
@@ -45,13 +43,30 @@ export const selectPossibleFocalPointsReviewers = (state) => {
   return getPossibleFocalPointsReviewers(sortedMembers, allMembersShort);
 };
 
-export const loadAgencyMembersForAutoComplete = params => (dispatch, getState) => {
+export const loadAgencyFocalPointsForAutoComplete = params => (dispatch, getState) => {
   const newCancelToken = getNewRequestToken(getState, tag);
   const officeId = getState().session.officeId;
   dispatch(loadStarted(AGENCY_MEMBERS, newCancelToken));
   return getAgencyMembers(
     officeId,
     { focal: true, ...params },
+    { cancelToken: newCancelToken.token })
+    .then((response) => {
+      dispatch(loadEnded(AGENCY_MEMBERS));
+      return toObject(flattenToObjectKey('name'), response.results);
+    }).catch((error) => {
+      dispatch(loadEnded(AGENCY_MEMBERS));
+      dispatch(loadFailure(AGENCY_MEMBERS, error));
+    });
+};
+
+export const loadAgencyReviewersForAutoComplete = params => (dispatch, getState) => {
+  const newCancelToken = getNewRequestToken(getState, tag);
+  const officeId = getState().session.officeId;
+  dispatch(loadStarted(AGENCY_MEMBERS, newCancelToken));
+  return getAgencyMembers(
+    officeId,
+    { reviewer: true, ...params },
     { cancelToken: newCancelToken.token })
     .then((response) => {
       dispatch(loadEnded(AGENCY_MEMBERS));

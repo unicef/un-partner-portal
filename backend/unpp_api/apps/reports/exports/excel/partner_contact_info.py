@@ -1,4 +1,4 @@
-from partner.models import Partner
+from partner.models import Partner, PartnerHeadOrganization
 from reports.exports.excel.base import BaseXLSXExporter
 
 
@@ -8,6 +8,11 @@ class PartnerContactInformationXLSLExporter(BaseXLSXExporter):
         return f'{self.queryset.count()} Partners(s) Contact Information Report'
 
     def fill_worksheet(self):
+        boolean_display = {
+            True: 'Yes',
+            False: 'No',
+            None: 'N/A',
+        }
         header_format = self.workbook.add_format({
             'bold': True,
             'text_wrap': True,
@@ -19,19 +24,23 @@ class PartnerContactInformationXLSLExporter(BaseXLSXExporter):
         })
 
         header = [
-            'Organization\'s Legal Name',
-            'Acronym',
-            'Type of Organization',
-            'Contact Type',
-            'Street',
+            'Partner Name',
+            'Partner\nAcronym / Alias',
+            'Partner Type',
+            'Profile Type',
+            'Partner Country of\nOrigin/Operation',
+            'Name',
+            'Title',
+            'Authorized Officer?',
+            'E-mail',
+            'Telephone',
+            'Address Type',
+            'Street Address',
             'PO Box',
-            'Zip Code',
             'City',
             'Country',
-            'Phone',
-            'Fax',
+            'Zip Code',
             'Website',
-            'Email',
         ]
         worksheet = self.workbook.add_worksheet('Partner Profile Report')
 
@@ -45,19 +54,24 @@ class PartnerContactInformationXLSLExporter(BaseXLSXExporter):
 
         partner: Partner
         for partner in self.queryset:
+            org_head: PartnerHeadOrganization = getattr(partner, 'org_head', None)
             worksheet.write_row(current_row, 0, (
                 partner.legal_name,
                 partner.profile.acronym,
                 partner.get_display_type_display(),
+                'HQ' if partner.is_hq else 'Country',
+                partner.get_country_code_display(),
+                org_head and org_head.fullname,
+                org_head and org_head.job_title,
+                org_head and boolean_display[partner.authorised_officers.filter(email=org_head.email).exists()],
+                org_head and org_head.email,
+                org_head and org_head.telephone,
                 partner.mailing_address.get_mailing_type_display(),
                 partner.mailing_address.street,
                 partner.mailing_address.po_box,
-                partner.mailing_address.zip_code,
                 partner.mailing_address.city,
                 partner.mailing_address.get_country_display(),
-                partner.mailing_address.telephone,
-                partner.mailing_address.fax,
+                partner.mailing_address.zip_code,
                 partner.mailing_address.website,
-                partner.mailing_address.org_email,
             ))
             current_row += 1

@@ -2,9 +2,10 @@ import React from 'react';
 import TextFieldForm from '../../textFieldForm';
 import DatePickerForm from '../../datePickerForm';
 import PolarRadio from '../../fields/PolarRadio';
-import AgencyMembersField from './agencyMembersFields/agencyMembersField';
 import { endDate, startDate, notifResultsDate } from '../../../../helpers/validation';
 import { formatDateForDatePicker } from '../../../../helpers/dates';
+import AgencyReviewersField from './agencyMembersFields/agencyReviewersField';
+import AgencyFocalPointsField from './agencyMembersFields/agencyFocalPointsField';
 
 export const TitleField = props => (<TextFieldForm
   label="Project Title"
@@ -107,16 +108,16 @@ export const Weighting = () => (<PolarRadio
   fieldName="has_weighting"
 />);
 
-export const FocalPoint = props => (<AgencyMembersField
+export const FocalPoint = props => (<AgencyFocalPointsField
   label="Project/Programme Focal Point(s)"
   fieldName="focal_points"
   placeholder="Select the name of the Focal Point"
   {...props}
 />);
 
-export const Reviewers = props => (<AgencyMembersField
-  label="Select users"
+export const Reviewers = props => (<AgencyReviewersField
+  label="Select reviewers"
   fieldName="reviewers"
-  placeholder="Search for users"
+  placeholder="Search for reviewers"
   {...props}
 />);

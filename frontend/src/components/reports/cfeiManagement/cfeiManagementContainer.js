@@ -15,6 +15,7 @@ import CountriesCell from './countriesCell';
 import LocationsCell from './locationsCell';
 import PartnerMapping from '../partnerMapping';
 import Loader from '../../common/loader';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
   exportReport: 'Export report',
@@ -62,38 +63,43 @@ class CfeiManagementContainer extends Component {
   }
 
   render() {
-    const { items, columns, totalCount, loading, reportsLoading } = this.props;
+    const { items, columns, totalCount, loading,
+      query, reportsLoading, hasCFEIReportPermission } = this.props;
+    const queryParams = R.omit(['page', 'page_size'], query);
 
     return (
       <React.Fragment>
-        <Loader fullScreen loading={reportsLoading} />
+        <Loader fullScreen loading={reportsLoading || loading} />
         <CustomGridColumn>
           <CfeiManagementFilter
-            clearSelections={() => this.listRef.getWrappedInstance().getWrappedInstance().clearSelections()}
+            clearSelections={() => this.listRef
+              && this.listRef.getWrappedInstance().getWrappedInstance().clearSelections()}
           />
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button
-              style={{ marginRight: '15px' }}
-              raised
-              color="accent"
-              onTouchTap={() => this.projectReport()}
-            >
-              {messages.exportReport}
-            </Button>
-          </div>
-          <PartnerMapping
+          {!R.isEmpty(queryParams)
+            && hasCFEIReportPermission
+            && <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button
+                style={{ marginRight: '15px' }}
+                raised
+                color="accent"
+                onTouchTap={() => this.projectReport()}
+              >
+                {messages.exportReport}
+              </Button>
+            </div>}
+          {!R.isEmpty(queryParams) && <PartnerMapping
             title={messages.projectMapping}
             items={items}
             fieldName={'locations'}
-          />
-          <SelectableList
-            innerRef={field => this.listRef = field}
+          />}
+          {!R.isEmpty(queryParams) && <SelectableList
+            innerRef={(field) => { this.listRef = field; }}
             items={items}
             columns={columns}
             loading={loading}
             itemsCount={totalCount}
             templateCell={this.tableCell}
-          />
+          />}
         </CustomGridColumn>
       </React.Fragment>
     );
@@ -110,6 +116,7 @@ CfeiManagementContainer.propTypes = {
   selectionIds: PropTypes.array,
   getProjectReports: PropTypes.func,
   reportsLoading: PropTypes.bool.isRequired,
+  hasCFEIReportPermission: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -120,6 +127,7 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.location.query,
   selectionIds: state.selectableList.items,
   reportsLoading: state.generatePartnerReports.loading,
+  hasCFEIReportPermission: checkPermission(AGENCY_PERMISSIONS.RUN_REPORT_CFEI_MANAGEMENT, state),
 });
 
 const mapDispatch = dispatch => ({

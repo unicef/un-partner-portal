@@ -26,7 +26,7 @@ ADD ./requirements/* /tmp/
 
 # Install PyPi dependencies
 WORKDIR /tmp
-RUN pip install -r $REQUIREMENT_FILE --trusted-host pypi.python.org
+RUN pip install --upgrade pip && pip install -r $REQUIREMENT_FILE --trusted-host pypi.python.org
 
 ADD . /code/
 

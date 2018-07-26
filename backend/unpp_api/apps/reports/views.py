@@ -7,6 +7,7 @@ from common.permissions import HasUNPPPermission
 from partner.models import Partner
 from project.models import EOI
 from reports.exports.excel.partner_contact_info import PartnerContactInformationXLSLExporter
+from reports.exports.excel.partner_mapping import PartnerMappingReportXLSLExporter
 from reports.exports.excel.partner_profile_report import PartnerProfileReportXLSLExporter
 from reports.exports.excel.partner_verifications_observations import PartnerVerificationsObservationsReportXLSLExporter
 from reports.exports.excel.project_details import ProjectDetailsXLSLExporter
@@ -47,6 +48,12 @@ class PartnerContactInformationReportXLSXReportAPIView(PartnerProfileReportAPIVi
 
     def get(self, request, *args, **kwargs):
         return PartnerContactInformationXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response()
+
+
+class PartnerMappingReportXLSXReportAPIView(PartnerProfileReportAPIView):
+
+    def get(self, request, *args, **kwargs):
+        return PartnerMappingReportXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response()
 
 
 class ProjectReportAPIView(ListAPIView):
