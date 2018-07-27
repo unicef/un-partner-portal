@@ -10,7 +10,8 @@ from account.forms import CustomPasswordResetForm
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     POLICY_AREA_CHOICES,
-)
+    COLLABORATION_EVIDENCE_MODES)
+from common.serializers import CommonFileBase64UploadSerializer
 from partner.models import (
     Partner,
     PartnerProfile,
@@ -19,7 +20,7 @@ from partner.models import (
     PartnerMember,
     PartnerBudget,
     PartnerPolicyArea,
-)
+    PartnerRegistrationDocument, PartnerGoverningDocument, PartnerCollaborationEvidence)
 from partner.roles import PartnerRole
 
 from partner.serializers import (
@@ -27,6 +28,9 @@ from partner.serializers import (
     PartnerProfileSerializer,
     PartnerHeadOrganizationRegisterSerializer,
     PartnerMemberSerializer,
+    PartnerGoverningDocumentSerializer,
+    PartnerRegistrationDocumentSerializer,
+    PartnerCollaborationEvidenceSerializer,
 )
 from partner.validators import PartnerRegistrationValidator
 from account.models import User, UserProfile
@@ -59,6 +63,24 @@ class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
         return user
 
 
+class PartnerRecommendationDocumentSerializer(PartnerCollaborationEvidenceSerializer):
+
+    evidence_file = CommonFileBase64UploadSerializer()
+
+    class Meta(PartnerCollaborationEvidenceSerializer.Meta):
+        extra_kwargs = {
+            'organization_name': {
+                'required': True
+            },
+            'date_received': {
+                'required': True
+            },
+            'partner': {
+                'required': False
+            },
+        }
+
+
 class PartnerRegistrationSerializer(serializers.Serializer):
 
     user = RegisterSimpleAccountSerializer()
@@ -66,19 +88,47 @@ class PartnerRegistrationSerializer(serializers.Serializer):
     partner_profile = PartnerProfileSerializer()
     partner_head_organization = PartnerHeadOrganizationRegisterSerializer()
     partner_member = PartnerMemberSerializer()
+    governing_document = PartnerGoverningDocumentSerializer(required=False)
+    registration_document = PartnerRegistrationDocumentSerializer(required=False)
+    recommendation_document = PartnerRecommendationDocumentSerializer(required=False)
 
     class Meta:
         validators = (
             PartnerRegistrationValidator(),
         )
 
+    def save_documents(self, validated_data, user):
+        governing_document = validated_data.get('governing_document')
+        registration_document = validated_data.get('registration_document')
+        recommendation_document = validated_data.get('recommendation_document')
+
+        if not any([governing_document, recommendation_document, registration_document]):
+            raise serializers.ValidationError('At least one document needs to be provided.')
+
+        if governing_document:
+            governing_document['created_by'] = user
+            governing_document['profile'] = self.partner.profile
+            PartnerGoverningDocument.objects.create(**governing_document)
+
+        if registration_document:
+            registration_document['created_by'] = user
+            registration_document['profile'] = self.partner.profile
+            PartnerRegistrationDocument.objects.create(**registration_document)
+
+        if recommendation_document:
+            recommendation_document['created_by'] = user
+            recommendation_document['partner'] = self.partner
+            recommendation_document['mode'] = COLLABORATION_EVIDENCE_MODES.reference
+            PartnerCollaborationEvidence.objects.create(**recommendation_document)
+
     @transaction.atomic
     def create(self, validated_data):
         user_serializer = RegisterSimpleAccountSerializer(data=validated_data.pop('user'))
         user_serializer.is_valid()
-        user_serializer.save()
+        user = user_serializer.save()
 
         self.partner = Partner.objects.create(**validated_data['partner'])
+        self.save_documents(validated_data, user)
 
         PartnerProfile.objects.filter(partner=self.partner).update(**validated_data['partner_profile'])
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import base64
 import random
 from typing import List
 import mock
@@ -450,6 +451,12 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
             "partner_member": {
                 "title": "Project Manager",
             },
+            "governing_document": {
+                'document': {
+                    'content': base64.encodebytes(b'TEST_FILE_CONTENT'),
+                    'filename': 'testfile.doc',
+                },
+            }
         }
 
     def test_register_sanctioned_partner(self):

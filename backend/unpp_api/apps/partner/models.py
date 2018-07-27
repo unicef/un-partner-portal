@@ -18,7 +18,7 @@ from django.db.models.signals import post_save
 from model_utils.models import TimeStampedModel
 
 from account.models import User
-from common.fields import FixedTextField
+from common.database_fields import FixedTextField
 from common.validators import MaxCurrentYearValidator
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.utils import Thumbnail
@@ -938,12 +938,12 @@ class PartnerCollaborationEvidence(TimeStampedModel):
     @property
     def is_complete(self):
         required_fields = {
-            'mode': self.mode,
-            'organization_name': self.organization_name,
-            'date_received': self.date_received,
-            'evidence_file': self.evidence_file,
+            self.mode,
+            self.organization_name,
+            self.date_received,
+            self.evidence_file,
         }
-        return all(required_fields.values())
+        return all(required_fields)
 
 
 class PartnerOtherInfo(TimeStampedModel):

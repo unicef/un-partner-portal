@@ -18,8 +18,8 @@ from common.serializers import (
     SpecializationSerializer,
     MixinPartnerRelatedSerializer,
     MixinPreventManyCommonFile,
-    PointSerializer
-)
+    PointSerializer,
+    CommonFileBase64UploadSerializer)
 from partner.utilities import get_recent_budgets_for_partner
 from partner.models import (
     Partner,
@@ -541,7 +541,7 @@ class PartnersListSerializer(serializers.ModelSerializer):
 class PartnerGoverningDocumentSerializer(CreateOnlyFieldsMixin, serializers.ModelSerializer):
 
     created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
-    document = CommonFileSerializer()
+    document = CommonFileBase64UploadSerializer()
 
     class Meta:
         model = PartnerGoverningDocument
@@ -556,7 +556,7 @@ class PartnerGoverningDocumentSerializer(CreateOnlyFieldsMixin, serializers.Mode
 class PartnerRegistrationDocumentSerializer(CreateOnlyFieldsMixin, serializers.ModelSerializer):
 
     created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
-    document = CommonFileSerializer()
+    document = CommonFileBase64UploadSerializer()
 
     class Meta:
         model = PartnerRegistrationDocument

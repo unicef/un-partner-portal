@@ -9,7 +9,7 @@ from django_countries.fields import CountryField
 from model_utils.models import TimeStampedModel
 
 from agency.roles import AgencyRole, AGENCY_ROLE_PERMISSIONS
-from common.fields import FixedTextField
+from common.database_fields import FixedTextField
 
 
 class OtherAgency(TimeStampedModel):

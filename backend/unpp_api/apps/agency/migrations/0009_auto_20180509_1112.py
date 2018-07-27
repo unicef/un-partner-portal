@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.db import migrations
-import common.fields
+import common.database_fields
 
 
 class Migration(migrations.Migration):
@@ -26,6 +26,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='agencymember',
             name='role',
-            field=common.fields.FixedTextField(choices=[('HQ_EDITOR', 'HQ Editor'), ('ADMINISTRATOR', 'Administrator'), ('READER', 'Reader'), ('EDITOR_BASIC', 'Basic Editor'), ('EDITOR_ADVANCED', 'Advanced Editor'), ('EDITOR_BASIC_PAM', 'Basic Editor (PAM USER)'), ('EDITOR_ADVANCED_MFT', 'Advanced Editor (MFT USER)')], default='READER'),
+            field=common.database_fields.FixedTextField(choices=[('HQ_EDITOR', 'HQ Editor'), ('ADMINISTRATOR', 'Administrator'), ('READER', 'Reader'), ('EDITOR_BASIC', 'Basic Editor'), ('EDITOR_ADVANCED', 'Advanced Editor'), ('EDITOR_BASIC_PAM', 'Basic Editor (PAM USER)'), ('EDITOR_ADVANCED_MFT', 'Advanced Editor (MFT USER)')], default='READER'),
         ),
     ]

@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import base64
+import mimetypes
 import numbers
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.base import Model
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
@@ -255,6 +258,37 @@ class CommonFileUploadSerializer(serializers.ModelSerializer):
             'id',
             'file_field',
         )
+
+
+class CommonFileBase64UploadSerializer(CommonFileSerializer):
+
+    content = serializers.CharField(write_only=True)
+    filename = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = CommonFile
+        fields = (
+            'id',
+            'content',
+            'filename',
+            'file_field',
+        )
+        extra_kwargs = {
+            'file_field': {
+                'read_only': True
+            }
+        }
+
+    def to_internal_value(self, data):
+        if type(data) is not dict:
+            return super(CommonFileBase64UploadSerializer, self).to_internal_value(data)
+        else:
+            uploaded_file = SimpleUploadedFile(
+                data['filename'],
+                base64.b64decode(data['content']),
+                mimetypes.guess_type(data['filename'])
+            )
+            return CommonFile.objects.create(file_field=uploaded_file)
 
 
 class CountryPointSerializer(serializers.ModelSerializer):

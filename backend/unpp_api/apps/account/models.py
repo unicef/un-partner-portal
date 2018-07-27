@@ -12,7 +12,7 @@ from django.utils import timezone
 from model_utils.models import TimeStampedModel
 
 from common.consts import NOTIFICATION_FREQUENCY_CHOICES
-from common.fields import FixedTextField
+from common.database_fields import FixedTextField
 
 
 class UserManager(BaseUserManager):
