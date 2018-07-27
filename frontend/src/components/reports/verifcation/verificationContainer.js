@@ -63,11 +63,12 @@ class VerificationContainer extends Component {
   render() {
     const { items, columns, totalCount, loading, query,
       reportsLoading, hasVerificationReportPermission } = this.props;
+
     const queryParams = R.omit(['page', 'page_size'], query);
 
     return (
       <React.Fragment>
-        <Loader fullScreen loading={reportsLoading} />
+        <Loader fullScreen loading={reportsLoading || loading} />
         <CustomGridColumn>
           <VerificationFilter />
           {!R.isEmpty(queryParams)
