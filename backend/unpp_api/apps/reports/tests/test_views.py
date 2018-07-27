@@ -39,11 +39,11 @@ class TestPartnerProfileReportAPIView(BaseAPITestCase):
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], partners.filter(display_type=display_type).count())
 
-        for registration_to_operate_in_country in (True, False):
-            list_response = self.client.get(list_url + f'?registered={registration_to_operate_in_country}')
+        for registered_to_operate_in_country in (True, False):
+            list_response = self.client.get(list_url + f'?registered={registered_to_operate_in_country}')
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], partners.filter(
-                profile__registration_to_operate_in_country=registration_to_operate_in_country
+                profile__registered_to_operate_in_country=registered_to_operate_in_country
             ).count())
 
         for agency in Agency.objects.all():

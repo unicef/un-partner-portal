@@ -10,7 +10,7 @@ from common.consts import (
     POLICY_AREA_CHOICES,
 )
 from common.defaults import ActivePartnerIDDefault
-from common.mixins import SkipUniqueTogetherValidationOnPatchMixin
+from common.mixins import SkipUniqueTogetherValidationOnPatchMixin, CreateOnlyFieldsMixin
 from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (
@@ -42,7 +42,7 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
     PartnerCapacityAssessment,
-)
+    PartnerGoverningDocument, PartnerRegistrationDocument)
 
 
 class PartnerAdditionalSerializer(serializers.ModelSerializer):
@@ -535,7 +535,34 @@ class PartnersListSerializer(serializers.ModelSerializer):
             values_list("agency__name", flat=True).distinct()
 
 
-class PartnerIdentificationSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
+class PartnerGoverningDocumentSerializer(CreateOnlyFieldsMixin, serializers.ModelSerializer):
+    document = CommonFileSerializer()
+
+    class Meta:
+        model = PartnerGoverningDocument
+        fields = (
+            'document',
+            'editable',
+        )
+        create_only_fields = '__all__'
+
+
+class PartnerRegistrationDocumentSerializer(CreateOnlyFieldsMixin, serializers.ModelSerializer):
+    document = CommonFileSerializer()
+
+    class Meta:
+        model = PartnerRegistrationDocument
+        fields = (
+            'document',
+            'registration_number',
+            'editable',
+            'issue_date',
+            'expiry_date',
+        )
+        create_only_fields = '__all__'
+
+
+class PartnerIdentificationSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
@@ -544,9 +571,9 @@ class PartnerIdentificationSerializer(MixinPreventManyCommonFile, serializers.Mo
     former_legal_name = serializers.CharField(max_length=255, allow_blank=True)
     country_origin = serializers.CharField(read_only=True)
     type_org = serializers.CharField(source="partner.display_type", read_only=True)
-    gov_doc = CommonFileSerializer(allow_null=True)
-    registration_doc = CommonFileSerializer(allow_null=True)
     has_finished = serializers.BooleanField(read_only=True, source="profile.identification_is_complete")
+    governing_documents = PartnerGoverningDocumentSerializer(many=True, read_only=True)
+    registration_documents = PartnerRegistrationDocumentSerializer(many=True, read_only=True)
 
     class Meta:
         model = PartnerProfile
@@ -560,43 +587,20 @@ class PartnerIdentificationSerializer(MixinPreventManyCommonFile, serializers.Mo
             'type_org',
 
             'year_establishment',
-            'have_gov_doc',
-            'gov_doc',
-            'registration_to_operate_in_country',
-            'registration_doc',
-            'registration_date',
-            'registration_comment',
-            'registration_number',
+            'have_governing_document',
+            'missing_governing_document_comment',
+            'registered_to_operate_in_country',
+            'missing_registration_document_comment',
             'has_finished',
+            'governing_documents',
+            'registration_documents',
         )
-
-    prevent_keys = ['gov_doc', 'registration_doc']
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        # std method does not support writable nested fields by default
-
-        self.prevent_many_common_file_validator(self.initial_data)
-
-        instance.partner.legal_name = validated_data.get('partner', {}).get('legal_name', instance.partner.legal_name)
+        instance.partner.legal_name = validated_data.pop('partner', {}).pop('legal_name', instance.partner.legal_name)
         instance.partner.save()
-
-        instance.alias_name = validated_data.get('alias_name', instance.alias_name)
-        instance.acronym = validated_data.get('acronym', instance.acronym)
-        instance.former_legal_name = validated_data.get('former_legal_name', instance.former_legal_name)
-        instance.year_establishment = validated_data.get('year_establishment', instance.year_establishment)
-        instance.have_gov_doc = validated_data.get('have_gov_doc', instance.have_gov_doc)
-        instance.gov_doc_id = validated_data.get('gov_doc', instance.gov_doc_id)
-        instance.registration_to_operate_in_country = \
-            validated_data.get('registration_to_operate_in_country', instance.registration_to_operate_in_country)
-        instance.registration_doc_id = validated_data.get('registration_doc', instance.registration_doc_id)
-        instance.registration_date = validated_data.get('registration_date', instance.registration_date)
-        instance.registration_comment = validated_data.get('registration_comment', instance.registration_comment)
-        instance.registration_number = validated_data.get('registration_number', instance.registration_number)
-
-        instance.save()
-
-        return PartnerProfile.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+        return super(PartnerIdentificationSerializer, self).update(instance, validated_data)
 
 
 class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
