@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -53,7 +54,7 @@ class PartnerSwitch extends Component {
       isHq: partner.is_hq,
       hqId: currentHqId || isCurrentHq ? partnerId : null,
       logo: partner.logo,
-      logoThumbnail: partner.logoThumbnail,
+      logoThumbnail: R.prop('org_logo_thumbnail', partner) || partner.logoThumbnail,
       isProfileComplete: partner.partner_additional.has_finished,
       lastUpdate: partner.last_profile_update,
     });
