@@ -1050,6 +1050,7 @@ class PartnerReview(TimeStampedModel):
 
 
 class PartnerGoverningDocument(TimeStampedModel):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="governing_documents")
     profile = models.ForeignKey(PartnerProfile, related_name="governing_documents")
     document = models.ForeignKey('common.CommonFile', related_name="governing_documents")
     editable = models.BooleanField(default=False)
@@ -1062,6 +1063,7 @@ class PartnerGoverningDocument(TimeStampedModel):
 
 
 class PartnerRegistrationDocument(TimeStampedModel):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="registration_documents")
     profile = models.ForeignKey(PartnerProfile, related_name="registration_documents")
     document = models.ForeignKey('common.CommonFile', related_name="registration_documents")
     registration_number = models.TextField(max_length=255, null=True, blank=True)

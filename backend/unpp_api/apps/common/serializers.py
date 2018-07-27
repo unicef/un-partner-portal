@@ -63,7 +63,8 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
                     serializer = related_serializer(
                         related_serializer.Meta.model.objects.filter(id=_id).first(),
-                        data=object_data
+                        data=object_data,
+                        context=self.context
                     )
                     serializer.is_valid(raise_exception=True)
                     valid_ids.append(serializer.save().id)

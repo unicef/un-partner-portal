@@ -42,7 +42,9 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
     PartnerCapacityAssessment,
-    PartnerGoverningDocument, PartnerRegistrationDocument)
+    PartnerGoverningDocument,
+    PartnerRegistrationDocument,
+)
 
 
 class PartnerAdditionalSerializer(serializers.ModelSerializer):
@@ -275,6 +277,7 @@ class PartnerCollaborationPartnershipSerializer(serializers.ModelSerializer):
 
 class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
 
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
     evidence_file = CommonFileSerializer(read_only=True)
 
     class Meta:
@@ -536,11 +539,14 @@ class PartnersListSerializer(serializers.ModelSerializer):
 
 
 class PartnerGoverningDocumentSerializer(CreateOnlyFieldsMixin, serializers.ModelSerializer):
+
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
     document = CommonFileSerializer()
 
     class Meta:
         model = PartnerGoverningDocument
         fields = (
+            'created_by',
             'document',
             'editable',
         )
@@ -548,11 +554,14 @@ class PartnerGoverningDocumentSerializer(CreateOnlyFieldsMixin, serializers.Mode
 
 
 class PartnerRegistrationDocumentSerializer(CreateOnlyFieldsMixin, serializers.ModelSerializer):
+
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
     document = CommonFileSerializer()
 
     class Meta:
         model = PartnerRegistrationDocument
         fields = (
+            'created_by',
             'document',
             'registration_number',
             'editable',

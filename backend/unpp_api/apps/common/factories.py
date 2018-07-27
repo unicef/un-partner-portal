@@ -230,6 +230,7 @@ class PartnerSimpleFactory(factory.django.DjangoModelFactory):
 
 
 class PartnerGoverningDocumentFactory(factory.django.DjangoModelFactory):
+    created_by = factory.LazyFunction(lambda: User.objects.order_by('?').first())
     profile = factory.LazyFunction(lambda: get_random_partner().profile)
     document = factory.LazyFunction(get_new_common_file)
 
@@ -238,6 +239,7 @@ class PartnerGoverningDocumentFactory(factory.django.DjangoModelFactory):
 
 
 class PartnerRegistrationDocumentFactory(factory.django.DjangoModelFactory):
+    created_by = factory.LazyFunction(lambda: User.objects.order_by('?').first())
     profile = factory.LazyFunction(lambda: get_random_partner().profile)
     document = factory.LazyFunction(get_new_common_file)
     registration_number = factory.Sequence(lambda n: f"registration_number {n}")
