@@ -1,8 +1,11 @@
+import random
+
 from django.urls import reverse
 
 from rest_framework import status
 
 from agency.roles import AgencyRole
+from common.business_areas import BUSINESS_AREAS
 from common.tests.base import BaseAPITestCase
 from common.factories import PartnerSimpleFactory
 
@@ -19,6 +22,7 @@ class TestPartnerVendorNumberAPIViewTestCase(BaseAPITestCase):
 
         create_response = self.client.post(url, data={
             'partner': partner.pk,
+            'business_area': random.choice(list(BUSINESS_AREAS._db_values)),
             'number': number,
         })
         self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)

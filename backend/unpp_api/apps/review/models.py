@@ -8,7 +8,7 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 
 from common.consts import FLAG_TYPES, FLAG_CATEGORIES
-from common.fields import FixedTextField
+from common.database_fields import FixedTextField
 
 
 class PartnerFlag(TimeStampedModel):

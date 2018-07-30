@@ -18,7 +18,7 @@ from django.db.models.signals import post_save
 from model_utils.models import TimeStampedModel
 
 from account.models import User
-from common.fields import FixedTextField
+from common.database_fields import FixedTextField
 from common.validators import MaxCurrentYearValidator
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.utils import Thumbnail

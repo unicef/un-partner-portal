@@ -17,7 +17,7 @@ from common.consts import (
     EXTENDED_APPLICATION_STATUSES,
     DSR_FINALIZE_RETENTION_CHOICES,
 )
-from common.fields import FixedTextField
+from common.database_fields import FixedTextField
 from common.utils import get_countries_code_from_queryset, get_absolute_frontend_url
 from project.validators import (
     validate_weight_adjustments,

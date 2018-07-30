@@ -17,6 +17,7 @@ class PartnerVendorNumberSerializer(CreateOnlyFieldsMixin, serializers.ModelSeri
             'id',
             'partner',
             'agency',
+            'business_area',
             'number',
         )
         create_only_fields = (
