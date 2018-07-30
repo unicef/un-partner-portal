@@ -20,6 +20,7 @@ from common.serializers import (
     MixinPreventManyCommonFile,
     PointSerializer
 )
+from externals.serializers import PartnerVendorNumberSerializer
 from partner.utilities import get_recent_budgets_for_partner
 from partner.models import (
     Partner,
@@ -459,6 +460,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
     mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
     last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
+    vendor_numbers = PartnerVendorNumberSerializer(many=True, read_only=True)
 
     class Meta:
         model = Partner
@@ -483,6 +485,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'partner_additional',
             'last_profile_update',
             'has_potential_sanction_match',
+            'vendor_numbers',
         )
 
     def get_country_presence_display(self, partner):
@@ -494,9 +497,8 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             return COUNTRIES_ALPHA2_CODE_DICT.get(partner.location_of_office.admin_level_1.country_code, None)
 
     def get_org_head(self, obj):
-        if obj.is_hq is False:
-            return PartnerHeadOrganizationSerializer(obj.hq.org_head).data
-        return PartnerHeadOrganizationSerializer(obj.org_head).data
+        org_head = getattr(obj.hq if obj.is_hq is False else obj, 'org_head', None)
+        return PartnerHeadOrganizationSerializer(org_head).data
 
 
 class PartnersListSerializer(serializers.ModelSerializer):

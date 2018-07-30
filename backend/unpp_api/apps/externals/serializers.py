@@ -10,6 +10,8 @@ class PartnerVendorNumberSerializer(CreateOnlyFieldsMixin, serializers.ModelSeri
 
     agency = serializers.HiddenField(default=serializers.CreateOnlyDefault(CurrentUserAgencyDefault()))
     partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all())
+    business_area_display = serializers.CharField(source='get_business_area_display', read_only=True)
+    agency_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = PartnerVendorNumber
@@ -17,7 +19,9 @@ class PartnerVendorNumberSerializer(CreateOnlyFieldsMixin, serializers.ModelSeri
             'id',
             'partner',
             'agency',
+            'agency_id',
             'business_area',
+            'business_area_display',
             'number',
         )
         create_only_fields = (

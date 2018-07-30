@@ -42,3 +42,7 @@ class TestPartnerVendorNumberAPIViewTestCase(BaseAPITestCase):
         details_response = self.client.get(details_url)
         self.assertResponseStatusIs(details_response)
         self.assertEqual(details_response.data['partner'], partner.id)
+
+        partner_summary = self.client.get(reverse('partners:partner-profile-summary', kwargs={'pk': partner.pk}))
+        self.assertResponseStatusIs(partner_summary)
+        self.assertIsNotNone(partner_summary.data['vendor_numbers'])
