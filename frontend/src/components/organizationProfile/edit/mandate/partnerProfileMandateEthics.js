@@ -10,10 +10,10 @@ import TextFieldForm from '../../../forms/textFieldForm';
 import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
-  violation: 'Does the organization have a policy or code of conduct to safeguard ' +
-                'against the violation and abuse of beneficiaries?',
-  fraud: 'Does the organization have a policy or code of conduct to safeguard ' +
-                'against fraud and corruption?',
+  violationSafeguard: 'Briefly describe the organization’s mechanisms to safeguard against the violation and abuse of beneficiaries, including sexual exploitation and abuse.',
+  fraudSafeguard: 'Briefly describe the organization’s mechanisms to safeguard against fraud, corruption and other unethical behaviour.',
+  violation: 'Are these mechanisms formally documented in an organizational policy or code of conduct?',
+  fraud: 'Are these mechanisms formally documented in an organizational policy or code of conduct?',
   commnet: 'Please comment',
   policy: 'Copy of your policy or code of conduct',
 };
@@ -24,6 +24,20 @@ const PartnerProfileMandateEthics = (props) => {
   return (
     <FormSection name="ethics">
       <GridColumn>
+        <TextFieldForm
+          label={messages.violationSafeguard}
+          placeholder={PLACEHOLDERS.comment}
+          fieldName="violation_safeguard_desc"
+          textFieldProps={{
+            multiline: true,
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
+            },
+          }}
+          readOnly={readOnly}
+        />
         <RadioForm
           fieldName="ethic_safeguard"
           label={messages.violation}
@@ -61,6 +75,20 @@ const PartnerProfileMandateEthics = (props) => {
             readOnly={readOnly}
           />
           : null}
+        <TextFieldForm
+          label={messages.fraudSafeguard}
+          placeholder={PLACEHOLDERS.comment}
+          fieldName="fraud_safeguard_desc"
+          textFieldProps={{
+            multiline: true,
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
+            },
+          }}
+          readOnly={readOnly}
+        />
         <RadioForm
           fieldName="ethic_fraud"
           label={messages.fraud}

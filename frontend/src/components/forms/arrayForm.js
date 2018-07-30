@@ -38,7 +38,6 @@ const styleSheet = theme => ({
   },
   items: {
     flexFlow: 'column wrap',
-    display: 'flex',
     flexBasis: '90%',
   },
   delete: {

@@ -10,8 +10,7 @@ const commonFile = {
 
 export const successLoading = (state, action) => R.assoc(action.fieldName, R.assoc('loading', true, state[action.fieldName]), state);
 export const stopLoading = (state, action) => R.assoc(action.fieldName, R.assoc('loading', false, state[action.fieldName]), state);
-export const saveErrorMsg = (state, action, message) =>
-  R.assoc(action.fieldName, R.assoc('error', { message, error: action.error }, state[action.fieldName]), state);
+export const saveErrorMsg = (state, action) => R.assoc(action.fieldName, R.assoc('error', { message: action.error, error: action.error }, state[action.fieldName]), state);
 
 
 export const UPLOAD_FILE_STARTED = 'UPLOAD_FILE_STARTED';
@@ -31,7 +30,8 @@ export const uploadFileClear = fieldName => ({ type: UPLOAD_FILE_CLEAR, fieldNam
 export const uploadFileRemove = fieldName => ({ type: UPLOAD_FILE_REMOVE, fieldName });
 
 const messages = {
-  uploadFailed: 'Uploaded file failed, please try again.',
+  payloadTooLarge: 'Max file size is 25 MB',
+  uploadFailed: 'Upload file failed, please try again',
 };
 
 const initialState = [];
@@ -74,15 +74,23 @@ export const uploadFile = (fieldName, file) => (dispatch) => {
       return response.id;
     })
     .catch((error) => {
-      dispatch(uploadFileFailure(fieldName, error));
-      dispatch(uploadFileEnded(fieldName));
+      if (error && error.response && error.response.status === 413) {
+        dispatch(uploadFileFailure(fieldName, messages.payloadTooLarge));
+        dispatch(uploadFileEnded(fieldName));
+      } else if (R.path(['response', 'data', 'file_field'], error) && !R.isEmpty(R.path(['response', 'data', 'file_field'], error))) {
+        dispatch(uploadFileFailure(fieldName, R.path(['response', 'data', 'file_field'], error)[0]));
+        dispatch(uploadFileEnded(fieldName));
+      } else {
+        dispatch(uploadFileFailure(fieldName, messages.uploadFailed));
+        dispatch(uploadFileEnded(fieldName));
+      }
     });
 };
 
 export default function commonFileUploadReducer(state = initialState, action) {
   switch (action.type) {
     case UPLOAD_FILE_FAILURE: {
-      return saveErrorMsg(state, action, messages.uploadFailed);
+      return saveErrorMsg(state, action);
     }
     case UPLOAD_FILE_ENDED: {
       return stopLoading(state, action);

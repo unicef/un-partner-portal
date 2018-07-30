@@ -17,7 +17,7 @@ import FieldLabelWithTooltip from '../fieldLabelWithTooltip';
 
 const messages = {
   upload: 'upload file',
-  fileSizeError: 'Max file size: 32 MB',
+  fileSizeError: 'Max file size is 25 MB',
 };
 
 const styleSheet = theme => ({
@@ -78,7 +78,7 @@ class FileFormUploadButton extends Component {
   isFileSizeCorrect() {
     const [file] = this.refInput.files;
 
-    return file && file.size / 1024 <= 32 * 1024;
+    return file && file.size / 1024 <= 25 * 1024;
   }
 
   handleChange() {
@@ -114,6 +114,7 @@ class FileFormUploadButton extends Component {
       deleteDisabled,
       fileUrl,
       input,
+      errorMsg,
       label,
       infoText,
       loading } = this.props;
@@ -151,7 +152,7 @@ class FileFormUploadButton extends Component {
                 {messages.upload}
               </Typography>
 
-              {((touched && error) || warning) && <FormHelperText error>{!this.state.fileSizeError ? (error || warning) : messages.fileSizeError}</FormHelperText>}
+              {((touched && error) || warning) && <FormHelperText error>{(!this.state.fileSizeError && !errorMsg) ? (error || warning) : (errorMsg || messages.fileSizeError)}</FormHelperText>}
             </React.Fragment>
             : <div className={classes.wrapContent}>
               <Typography type="subheading" className={classes.iconLabel} gutterBottom >
@@ -184,6 +185,7 @@ FileFormUploadButton.propTypes = {
   deleteDisabled: PropTypes.bool,
   loading: PropTypes.bool,
   fileUrl: PropTypes.string,
+  errorMsg: PropTypes.string,
   infoText: PropTypes.node,
   meta: PropTypes.object,
   uploadFile: PropTypes.func.isRequired,
@@ -202,6 +204,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     loading: files[fieldName] ? files[fieldName].loading : false,
     fileUrl: files[fieldName] ? files[fieldName].fileUrl : null,
+    errorMsg: files[fieldName] ? files[fieldName].error.message : null,
   };
 };
 
