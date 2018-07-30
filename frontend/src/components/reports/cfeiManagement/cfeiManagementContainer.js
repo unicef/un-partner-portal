@@ -63,35 +63,42 @@ class CfeiManagementContainer extends Component {
   }
 
   render() {
-    const { items, columns, totalCount, loading, reportsLoading, hasCFEIReportPermission } = this.props;
+    const { items, columns, totalCount, loading,
+      query, reportsLoading, hasCFEIReportPermission } = this.props;
+
+    const queryParams = R.omit(['page', 'page_size'], query);
 
     return (
       <React.Fragment>
-        <Loader fullScreen loading={reportsLoading} />
+        <Loader fullScreen loading={reportsLoading || loading} />
         <CustomGridColumn>
           <CfeiManagementFilter
-            clearSelections={() => this.listRef.getWrappedInstance().getWrappedInstance().clearSelections()}
+            clearSelections={() => this.listRef
+              && this.listRef.getWrappedInstance().getWrappedInstance().clearSelections()}
           />
-          {hasCFEIReportPermission && <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button
-              style={{ marginRight: '15px' }}
-              raised
-              color="accent"
-              onTouchTap={() => this.projectReport()}
-            >
-              {messages.exportReport}
-            </Button>
-          </div>}
-          <PartnerMapping
+          {!R.isEmpty(queryParams)
+            && hasCFEIReportPermission
+            && <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button
+                style={{ marginRight: '15px' }}
+                raised
+                color="accent"
+                onTouchTap={() => this.projectReport()}
+              >
+                {messages.exportReport}
+              </Button>
+            </div>}
+          {!R.isEmpty(queryParams) && <PartnerMapping
             title={messages.projectMapping}
             items={items}
             fieldName={'locations'}
-          />
+          />}
           <SelectableList
             innerRef={(field) => { this.listRef = field; }}
             items={items}
             columns={columns}
             loading={loading}
+            hideList={R.isEmpty(queryParams)}
             itemsCount={totalCount}
             templateCell={this.tableCell}
           />
