@@ -200,6 +200,10 @@ class Partner(TimeStampedModel):
     profile_is_complete = has_finished
 
     @property
+    def org_head(self):
+        return self.organisation_heads.order_by('-created').first()
+
+    @property
     def last_update_timestamp(self):
         timestamp_fields = [
             'org_head.modified', 'profile.modified', 'mailing_address.modified', 'audit.modified', 'report.modified',
@@ -570,74 +574,53 @@ class PartnerMailingAddress(TimeStampedModel):
         return "PartnerMailingAddress <pk:{}>".format(self.id)
 
 
-class PartnerHeadOrganization(TimeStampedModel):
-    partner = models.OneToOneField(Partner, related_name="org_head", null=True, blank=True)
+class Person(TimeStampedModel):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     fullname = models.CharField(max_length=512, null=True, blank=True)
-    email = models.EmailField(max_length=255, null=True, blank=True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
+
     telephone = models.CharField(max_length=255, null=True, blank=True)
-    fax = models.CharField(max_length=255, null=True, blank=True)
     mobile = models.CharField(max_length=255, null=True, blank=True)
 
+    email = models.EmailField(max_length=255, null=True, blank=True)
+    fax = models.CharField(max_length=255, null=True, blank=True)
+
     class Meta:
         ordering = ('id', )
+        abstract = True
 
     def __str__(self):
-        return "PartnerHeadOrganization <pk:{}>".format(self.id)
+        return f"{self.__class__.__name__} <{self.pk}> {self.fullname}"
+
+    @property
+    def is_complete(self):
+        required_fields = {
+            self.fullname,
+            self.job_title,
+            self.telephone,
+            self.email,
+            hasattr(self, 'authorized') and self.authorized is not None,
+            hasattr(self, 'board_member') and self.board_member is not None,
+        }
+        return all(required_fields)
 
 
-class PartnerDirector(TimeStampedModel):
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="directors")
+class PartnerHeadOrganization(Person):
+    """
+    M2M to store historical records, only the most recent entry is valid
+    """
+    partner = models.ForeignKey(Partner, related_name="organisation_heads", null=True, blank=True)
+    authorized = models.NullBooleanField(verbose_name='Is Authorised Officer?')
+    board_member = models.NullBooleanField(verbose_name='Is Board Member?')
+
+
+class PartnerDirector(Person):
     partner = models.ForeignKey(Partner, related_name="directors")
-    fullname = models.CharField(max_length=512, null=True, blank=True)
-    job_title = models.CharField(max_length=255, null=True, blank=True)
-    authorized = models.NullBooleanField()
-    telephone = models.CharField(max_length=255, null=True, blank=True)
-    fax = models.CharField(max_length=255, null=True, blank=True)
-    email = models.EmailField(max_length=255, null=True, blank=True)
-
-    class Meta:
-        ordering = ('id', )
-
-    def __str__(self):
-        return "PartnerDirector <pk:{}>".format(self.id)
-
-    @property
-    def is_complete(self):
-        required_fields = {
-            'fullname': self.fullname,
-            'job_title': self.job_title,
-            'authorized': self.authorized is not None,
-            'telephone': self.telephone,
-            'email': self.email,
-        }
-        return all(required_fields.values())
+    authorized = models.NullBooleanField(verbose_name='Is Authorised Officer?')
 
 
-class PartnerAuthorisedOfficer(TimeStampedModel):
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name="authorised_officers")
+class PartnerAuthorisedOfficer(Person):
     partner = models.ForeignKey(Partner, related_name="authorised_officers")
-    fullname = models.CharField(max_length=512, null=True, blank=True)
-    job_title = models.CharField(max_length=255, null=True, blank=True)
-    telephone = models.CharField(max_length=255, null=True, blank=True)
-    fax = models.CharField(max_length=255, null=True, blank=True)
-    email = models.EmailField(max_length=255, null=True, blank=True)
-
-    class Meta:
-        ordering = ('id', )
-
-    def __str__(self):
-        return "PartnerAuthorisedOfficer <pk:{}>".format(self.id)
-
-    @property
-    def is_complete(self):
-        required_fields = {
-            'fullname': self.fullname,
-            'job_title': self.job_title,
-            'telephone': self.telephone,
-            'email': self.email,
-        }
-        return all(required_fields.values())
 
 
 class PartnerPolicyArea(TimeStampedModel):
