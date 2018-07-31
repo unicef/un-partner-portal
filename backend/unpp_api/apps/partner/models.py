@@ -19,7 +19,7 @@ from model_utils.models import TimeStampedModel
 
 from account.models import User
 from common.database_fields import FixedTextField
-from common.validators import MaxCurrentYearValidator
+from common.validators import MaxCurrentYearValidator, PastDateValidator, FutureDateValidator
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.utils import Thumbnail
 from common.consts import (
@@ -1068,8 +1068,12 @@ class PartnerRegistrationDocument(TimeStampedModel):
     document = models.ForeignKey('common.CommonFile', related_name="registration_documents")
     registration_number = models.TextField(max_length=255, null=True, blank=True)
     editable = models.BooleanField(default=False)
-    issue_date = models.DateField()
-    expiry_date = models.DateField()
+    issue_date = models.DateField(validators=(
+        PastDateValidator(),
+    ))
+    expiry_date = models.DateField(validators=(
+        FutureDateValidator(),
+    ))
 
     class Meta:
         ordering = ('created', )

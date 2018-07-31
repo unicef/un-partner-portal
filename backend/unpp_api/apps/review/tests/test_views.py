@@ -443,6 +443,10 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
                 "acronym": "N1",
                 "legal_name_change": True,
                 "former_legal_name": "Former Legal Name Inc.",
+                "year_establishment": 1900,
+                "have_governing_document": True,
+                "registered_to_operate_in_country": False,
+                "missing_registration_document_comment": "comment",
             },
             "partner_head_organization": {
                 "fullname": "Jack Orzeszek",

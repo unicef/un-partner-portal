@@ -127,6 +127,9 @@ class PartnerMemberSerializer(serializers.ModelSerializer):
 
 class PartnerProfileSerializer(serializers.ModelSerializer):
 
+    registered_to_operate_in_country = serializers.BooleanField(required=True)
+    have_governing_document = serializers.BooleanField(required=True)
+
     class Meta:
         model = PartnerProfile
         fields = (
@@ -135,7 +138,17 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
             'acronym',
             'former_legal_name',
             'legal_name_change',
+            'year_establishment',
+            'registered_to_operate_in_country',
+            'missing_registration_document_comment',
+            'have_governing_document',
+            'missing_governing_document_comment',
         )
+        extra_kwargs = {
+            'year_establishment': {
+                'required': True,
+            },
+        }
 
 
 class PartnerFullSerializer(serializers.ModelSerializer):

@@ -20,7 +20,10 @@ from partner.models import (
     PartnerMember,
     PartnerBudget,
     PartnerPolicyArea,
-    PartnerRegistrationDocument, PartnerGoverningDocument, PartnerCollaborationEvidence)
+    PartnerRegistrationDocument,
+    PartnerGoverningDocument,
+    PartnerCollaborationEvidence,
+)
 from partner.roles import PartnerRole
 
 from partner.serializers import (
@@ -97,13 +100,43 @@ class PartnerRegistrationSerializer(serializers.Serializer):
             PartnerRegistrationValidator(),
         )
 
-    def save_documents(self, validated_data, user):
+    def validate(self, attrs):
+        validated_data = super(PartnerRegistrationSerializer, self).validate(attrs)
         governing_document = validated_data.get('governing_document')
         registration_document = validated_data.get('registration_document')
         recommendation_document = validated_data.get('recommendation_document')
 
         if not any([governing_document, recommendation_document, registration_document]):
             raise serializers.ValidationError('At least one document needs to be provided.')
+
+        profile = validated_data.get('partner_profile', {})
+
+        if profile.get('have_governing_document'):
+            if not governing_document:
+                raise serializers.ValidationError({
+                    'governing_document': 'This field is required'
+                })
+        elif not profile.get('missing_governing_document_comment'):
+            raise serializers.ValidationError({
+                'missing_governing_document_comment': 'This field is required'
+            })
+
+        if profile.get('registered_to_operate_in_country'):
+            if not registration_document:
+                raise serializers.ValidationError({
+                    'registration_document': 'This field is required'
+                })
+        elif not profile.get('missing_registration_document_comment'):
+            raise serializers.ValidationError({
+                'missing_registration_document_comment': 'This field is required'
+            })
+
+        return validated_data
+
+    def save_documents(self, validated_data, user):
+        governing_document = validated_data.get('governing_document')
+        registration_document = validated_data.get('registration_document')
+        recommendation_document = validated_data.get('recommendation_document')
 
         if governing_document:
             governing_document['created_by'] = user
@@ -120,6 +153,8 @@ class PartnerRegistrationSerializer(serializers.Serializer):
             recommendation_document['partner'] = self.partner
             recommendation_document['mode'] = COLLABORATION_EVIDENCE_MODES.reference
             PartnerCollaborationEvidence.objects.create(**recommendation_document)
+            self.partner.profile.any_reference = True
+            self.partner.profile.save()
 
     @transaction.atomic
     def create(self, validated_data):

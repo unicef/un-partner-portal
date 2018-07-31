@@ -40,6 +40,10 @@ class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
                 "acronym": "N1",
                 "legal_name_change": True,
                 "former_legal_name": "Former Legal Name Inc.",
+                "year_establishment": 1900,
+                "registered_to_operate_in_country": False,
+                "missing_registration_document_comment": "comment",
+                "have_governing_document": True,
             },
             "partner_head_organization": {
                 "fullname": "Jack Orzeszek",
@@ -53,7 +57,7 @@ class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
     def test_register_partner(self):
         payload = self.data.copy()
         url = reverse('accounts:registration')
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
 
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
         self.assertEquals(
@@ -61,9 +65,9 @@ class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
         )
 
         payload['user']['email'] = "new-user@myorg.org"
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('document', response.data[0])
+        self.assertIn('document', response.data['non_field_errors'][0])
 
         file_content = base64.encodebytes(b'TEST_FILE_CONTENT')
         filename = 'testfile.doc'
@@ -166,6 +170,10 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
             "partner_profile": {
                 "alias_name": "Alias Org Name",
                 "acronym": "O",
+                "year_establishment": 1900,
+                "registered_to_operate_in_country": False,
+                "missing_registration_document_comment": "comment",
+                "have_governing_document": True,
             },
             "partner_head_organization": {
                 "fullname": "Jane Doe",

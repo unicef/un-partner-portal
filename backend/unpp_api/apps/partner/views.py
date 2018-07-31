@@ -29,13 +29,17 @@ from partner.serializers import (
     PartnerProfileProjectImplementationSerializer,
     PartnerProfileOtherInfoSerializer,
     PartnerCountryProfileSerializer,
-    PartnerGoverningDocumentSerializer, PartnerRegistrationDocumentSerializer)
+    PartnerGoverningDocumentSerializer,
+    PartnerRegistrationDocumentSerializer,
+)
 from partner.filters import PartnersListFilter
 from partner.models import (
     Partner,
     PartnerProfile,
     PartnerMember,
-    PartnerGoverningDocument, PartnerRegistrationDocument)
+    PartnerGoverningDocument,
+    PartnerRegistrationDocument,
+)
 from partner.mixins import FilterUsersPartnersMixin, VerifyPartnerProfileUpdatePermissionsMixin
 
 
@@ -259,7 +263,9 @@ class PartnerGoverningDocumentCreateAPIView(FilterUsersPartnersMixin, CreateAPIV
 
     def perform_create(self, serializer):
         profile = get_object_or_404(
-            PartnerProfile.objects.filter(have_governing_document=True), partner_id=self.kwargs['pk']
+            PartnerProfile.objects.filter(
+                partner_id__in=self.request.user.partner_ids, have_governing_document=True
+            ), partner_id=self.kwargs['pk']
         )
         serializer.save(profile=profile)
 
@@ -277,6 +283,8 @@ class PartnerRegistrationDocumentCreateAPIView(FilterUsersPartnersMixin, CreateA
 
     def perform_create(self, serializer):
         profile = get_object_or_404(
-            PartnerProfile.objects.filter(registered_to_operate_in_country=True), partner_id=self.kwargs['pk']
+            PartnerProfile.objects.filter(
+                partner_id__in=self.request.user.partner_ids, registered_to_operate_in_country=True
+            ), partner_id=self.kwargs['pk']
         )
         serializer.save(profile=profile)
