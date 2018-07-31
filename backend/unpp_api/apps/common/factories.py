@@ -233,6 +233,7 @@ class PartnerGoverningDocumentFactory(factory.django.DjangoModelFactory):
     created_by = factory.LazyFunction(lambda: User.objects.order_by('?').first())
     profile = factory.LazyFunction(lambda: get_random_partner().profile)
     document = factory.LazyFunction(get_new_common_file)
+    editable = False
 
     class Meta:
         model = PartnerGoverningDocument
@@ -245,6 +246,7 @@ class PartnerRegistrationDocumentFactory(factory.django.DjangoModelFactory):
     registration_number = factory.Sequence(lambda n: f"registration_number {n}")
     issue_date = factory.LazyFunction(lambda: date.today() - relativedelta(years=random.randint(1, 4)))
     expiry_date = factory.LazyFunction(lambda: date.today() + relativedelta(years=random.randint(5, 20)))
+    editable = False
 
     class Meta:
         model = PartnerRegistrationDocument

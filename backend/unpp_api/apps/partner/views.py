@@ -250,7 +250,7 @@ class PartnersMemberListAPIView(FilterUsersPartnersMixin, ListAPIView):
     partner_field = 'partner'
 
 
-class PartnerGoverningDocumentCreateAPIView(FilterUsersPartnersMixin, CreateAPIView):
+class PartnerGoverningDocumentCreateAPIView(FilterUsersPartnersMixin, CreateAPIView, RetrieveUpdateAPIView):
 
     permission_classes = (
         HasUNPPPermission(
@@ -260,6 +260,13 @@ class PartnerGoverningDocumentCreateAPIView(FilterUsersPartnersMixin, CreateAPIV
     serializer_class = PartnerGoverningDocumentSerializer
     queryset = PartnerGoverningDocument.objects.all()
     partner_field = 'profile__partner'
+    lookup_url_kwarg = 'document_pk'
+
+    def get_queryset(self):
+        queryset = super(PartnerGoverningDocumentCreateAPIView, self).get_queryset()
+        if not self.request.method == 'GET':
+            queryset = queryset.filter(editable=True)
+        return queryset
 
     def perform_create(self, serializer):
         profile = get_object_or_404(
@@ -267,10 +274,10 @@ class PartnerGoverningDocumentCreateAPIView(FilterUsersPartnersMixin, CreateAPIV
                 partner_id__in=self.request.user.partner_ids, have_governing_document=True
             ), partner_id=self.kwargs['pk']
         )
-        serializer.save(profile=profile)
+        serializer.save(profile=profile, editable=True)
 
 
-class PartnerRegistrationDocumentCreateAPIView(FilterUsersPartnersMixin, CreateAPIView):
+class PartnerRegistrationDocumentCreateAPIView(FilterUsersPartnersMixin, CreateAPIView, RetrieveUpdateAPIView):
 
     permission_classes = (
         HasUNPPPermission(
@@ -280,6 +287,13 @@ class PartnerRegistrationDocumentCreateAPIView(FilterUsersPartnersMixin, CreateA
     serializer_class = PartnerRegistrationDocumentSerializer
     queryset = PartnerRegistrationDocument.objects.all()
     partner_field = 'profile__partner'
+    lookup_url_kwarg = 'document_pk'
+
+    def get_queryset(self):
+        queryset = super(PartnerRegistrationDocumentCreateAPIView, self).get_queryset()
+        if not self.request.method == 'GET':
+            queryset = queryset.filter(editable=True)
+        return queryset
 
     def perform_create(self, serializer):
         profile = get_object_or_404(
@@ -287,4 +301,4 @@ class PartnerRegistrationDocumentCreateAPIView(FilterUsersPartnersMixin, CreateA
                 partner_id__in=self.request.user.partner_ids, registered_to_operate_in_country=True
             ), partner_id=self.kwargs['pk']
         )
-        serializer.save(profile=profile)
+        serializer.save(profile=profile, editable=True)

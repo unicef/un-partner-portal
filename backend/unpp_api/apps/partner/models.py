@@ -1059,7 +1059,7 @@ class PartnerGoverningDocument(TimeStampedModel):
         ordering = ('created', )
 
     def __str__(self):
-        return f"[{self.id}] {self.partner}"
+        return f"[{self.pk}] {self.profile.partner}"
 
 
 class PartnerRegistrationDocument(TimeStampedModel):
@@ -1079,7 +1079,7 @@ class PartnerRegistrationDocument(TimeStampedModel):
         ordering = ('created', )
 
     def __str__(self):
-        return f"[{self.id}] {self.partner} ({self.issue_date}-{self.expiry_date})"
+        return f"[{self.pk}] {self.profile.partner} ({self.issue_date}-{self.expiry_date})"
 
 
 def create_partner_additional_models(sender, instance, created, **kwargs):

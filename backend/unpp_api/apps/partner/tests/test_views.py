@@ -36,7 +36,7 @@ from common.factories import (
     OtherAgencyFactory,
     PointFactory,
     PartnerMemberFactory,
-)
+    get_new_common_file, PartnerRegistrationDocumentFactory)
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     YEARS_OF_EXP_CHOICES,
@@ -112,6 +112,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
     def test_identification(self):
         profile = PartnerProfile.objects.first()
+        partner = profile.partner
         year_establishment = 2015
 
         identification_url = reverse('partners:identification', kwargs={"pk": profile.id})
@@ -138,12 +139,13 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         self.assertIsNotNone(response.data['id'])
-        governing_documents_url = reverse('partners:governing-document', kwargs={"pk": profile.id})
+        governing_documents_url = reverse('partners:governing-document', kwargs={"pk": partner.id})
         governing_document_response = self.client.post(governing_documents_url, data={
             'document': response.data['id']
         })
         governing_document_filename = response.data['file_field']
         self.assertResponseStatusIs(governing_document_response, status.HTTP_201_CREATED)
+        self.assertTrue(governing_document_response.data['editable'])
 
         with open(filename) as doc:
             payload = {
@@ -153,7 +155,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertTrue(status.is_success(response.status_code))
         self.assertTrue(response.data['id'] is not None)
 
-        registration_documents_url = reverse('partners:registration-document', kwargs={"pk": profile.id})
+        registration_documents_url = reverse('partners:registration-document', kwargs={"pk": partner.id})
         registration_document_response = self.client.post(registration_documents_url, data={
             'document': response.data['id'],
             'issue_date': date.today() - relativedelta(years=random.randint(1, 4)),
@@ -161,6 +163,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             'registration_number': 'TEST_NUMBER',
         })
         self.assertResponseStatusIs(registration_document_response, status.HTTP_201_CREATED)
+        self.assertTrue(registration_document_response.data['editable'])
 
         response = self.client.get(identification_url, format='json')
         self.assertResponseStatusIs(response)
@@ -539,3 +542,64 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             self.assertTrue(
                 partner.capacity_assessments.filter(report_file_id=f['id']).exists()
             )
+
+    def test_update_governing_document(self):
+        partner = Partner.objects.first()
+        initial_governing_document = partner.profile.governing_documents.first()
+
+        self.assertFalse(initial_governing_document.editable)
+        initial_governing_document_update_url = reverse('partners:governing-document', kwargs={
+            "pk": partner.id,
+            "document_pk": initial_governing_document.pk
+        })
+        initial_governing_document_update_response = self.client.patch(initial_governing_document_update_url)
+        self.assertResponseStatusIs(initial_governing_document_update_response, status.HTTP_404_NOT_FOUND)
+
+        governing_documents_url = reverse('partners:governing-document', kwargs={"pk": partner.id})
+        governing_document_response = self.client.post(governing_documents_url, data={
+            'document': get_new_common_file().pk
+        })
+        self.assertResponseStatusIs(governing_document_response, status.HTTP_201_CREATED)
+        self.assertTrue(governing_document_response.data['editable'])
+        update_url = reverse('partners:governing-document', kwargs={
+            "pk": partner.id,
+            "document_pk": governing_document_response.data['id']
+        })
+        update_response = self.client.patch(update_url, data={
+            'document': get_new_common_file().pk
+        })
+        self.assertResponseStatusIs(update_response)
+
+    def test_update_registration_document(self):
+        partner = Partner.objects.first()
+        partner.profile.registered_to_operate_in_country = True
+        partner.profile.save()
+        initial_registration_document = partner.profile.registration_documents.first() or \
+            PartnerRegistrationDocumentFactory(profile=partner.profile)
+
+        self.assertFalse(initial_registration_document.editable)
+        initial_registration_document_update_url = reverse('partners:registration-document', kwargs={
+            "pk": partner.id,
+            "document_pk": initial_registration_document.pk
+        })
+        initial_registration_document_update_response = self.client.patch(initial_registration_document_update_url)
+        self.assertResponseStatusIs(initial_registration_document_update_response, status.HTTP_404_NOT_FOUND)
+
+        registration_documents_url = reverse('partners:registration-document', kwargs={"pk": partner.id})
+        registration_document_response = self.client.post(registration_documents_url, data={
+            'document': get_new_common_file().pk,
+            'issue_date': date.today() - relativedelta(years=random.randint(1, 4)),
+            'expiry_date': date.today() + relativedelta(years=random.randint(5, 20)),
+            'registration_number': 'TEST_NUMBER',
+        })
+        self.assertResponseStatusIs(registration_document_response, status.HTTP_201_CREATED)
+        self.assertTrue(registration_document_response.data['editable'])
+
+        update_url = reverse('partners:registration-document', kwargs={
+            "pk": partner.id,
+            "document_pk": registration_document_response.data['id']
+        })
+        update_response = self.client.patch(update_url, data={
+            'document': get_new_common_file().pk
+        })
+        self.assertResponseStatusIs(update_response)

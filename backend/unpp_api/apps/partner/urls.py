@@ -27,12 +27,12 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/org-profile$', OrganizationProfileAPIView.as_view(), name="org-profile"),
     url(r'^(?P<pk>\d+)/summary/$', PartnerProfileSummaryAPIView.as_view(), name="partner-profile-summary"),
     url(
-        r'^(?P<pk>\d+)/governing-document/$',
+        r'^(?P<pk>\d+)/governing-document/?(?P<document_pk>[^/]+)?/$',
         PartnerGoverningDocumentCreateAPIView.as_view(),
         name="governing-document"
     ),
     url(
-        r'^(?P<pk>\d+)/registration-document/$',
+        r'^(?P<pk>\d+)/registration-document/?(?P<document_pk>[^/]+)?/$',
         PartnerRegistrationDocumentCreateAPIView.as_view(),
         name="registration-document"
     ),

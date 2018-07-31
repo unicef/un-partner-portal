@@ -10,7 +10,7 @@ from common.consts import (
     POLICY_AREA_CHOICES,
 )
 from common.defaults import ActivePartnerIDDefault
-from common.mixins import SkipUniqueTogetherValidationOnPatchMixin, CreateOnlyFieldsMixin
+from common.mixins import SkipUniqueTogetherValidationOnPatchMixin
 from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (
@@ -555,7 +555,7 @@ class PartnersListSerializer(serializers.ModelSerializer):
             values_list("agency__name", flat=True).distinct()
 
 
-class PartnerGoverningDocumentSerializer(CreateOnlyFieldsMixin, serializers.ModelSerializer):
+class PartnerGoverningDocumentSerializer(serializers.ModelSerializer):
 
     created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
     document = CommonFileBase64UploadSerializer()
@@ -563,14 +563,19 @@ class PartnerGoverningDocumentSerializer(CreateOnlyFieldsMixin, serializers.Mode
     class Meta:
         model = PartnerGoverningDocument
         fields = (
+            'id',
             'created_by',
             'document',
             'editable',
         )
-        create_only_fields = '__all__'
+        extra_kwargs = {
+            'editable': {
+                'read_only': True
+            }
+        }
 
 
-class PartnerRegistrationDocumentSerializer(CreateOnlyFieldsMixin, serializers.ModelSerializer):
+class PartnerRegistrationDocumentSerializer(serializers.ModelSerializer):
 
     created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
     document = CommonFileBase64UploadSerializer()
@@ -578,6 +583,7 @@ class PartnerRegistrationDocumentSerializer(CreateOnlyFieldsMixin, serializers.M
     class Meta:
         model = PartnerRegistrationDocument
         fields = (
+            'id',
             'created_by',
             'document',
             'registration_number',
@@ -585,7 +591,11 @@ class PartnerRegistrationDocumentSerializer(CreateOnlyFieldsMixin, serializers.M
             'issue_date',
             'expiry_date',
         )
-        create_only_fields = '__all__'
+        extra_kwargs = {
+            'editable': {
+                'read_only': True
+            }
+        }
 
 
 class PartnerIdentificationSerializer(serializers.ModelSerializer):
