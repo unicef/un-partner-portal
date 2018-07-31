@@ -28,6 +28,7 @@ class PartnerFlag(TimeStampedModel):
     contact_email = models.EmailField(null=True, blank=True)
     attachment = models.ForeignKey('common.CommonFile', related_name="flag_attachments", null=True, blank=True)
     sanctions_match = models.ForeignKey('sanctionslist.SanctionedNameMatch', null=True, blank=True)
+    escalation_comment = models.TextField(null=True, blank=True, max_length=5120)
 
     class Meta:
         ordering = ['id']
