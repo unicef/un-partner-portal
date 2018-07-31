@@ -762,7 +762,8 @@ class PartnerMandateMission(TimeStampedModel):
     # ethics
     ethic_safeguard = models.NullBooleanField()
     ethic_safeguard_policy = models.ForeignKey(
-        'common.CommonFile', null=True, blank=True, related_name="ethic_safeguard_policies")
+        'common.CommonFile', null=True, blank=True, related_name="ethic_safeguard_policies"
+    )
     ethic_safeguard_comment = models.TextField(max_length=5000, null=True, blank=True)
     ethic_fraud = models.NullBooleanField()
     ethic_fraud_policy = models.ForeignKey(
