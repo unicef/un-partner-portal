@@ -164,7 +164,7 @@ const mapStateToProps = state => ({
     name: state.session.name,
     email: state.session.email,
     role: state.session.position || state.session.officeRole,
-    officeName: state.session.officeName,
+    officeName: state.session.officeName || state.session.partnerName,
     telephone: state.session.telephone,
   },
 });
