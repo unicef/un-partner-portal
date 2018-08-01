@@ -60,7 +60,7 @@ class ReviewersSummary extends Component {
     return (
       <HeaderList
         loading={loading}
-        header={<Typography type="headline" >{messages.title}</Typography>}
+        header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}
       >
         {this.content()}
       </HeaderList>

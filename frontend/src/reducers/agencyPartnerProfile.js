@@ -71,6 +71,7 @@ const savePartnerProfileOverview = (state, action) => {
     keyResults: R.prop('key_result', partnerDetails),
     mandateMission: R.prop('mandate_and_mission', partnerDetails),
     partnerStatus: R.prop('partner_additional', partnerDetails),
+    vendorNumbers: R.prop('vendor_numbers', partnerDetails),
   };
   return R.assoc(R.prop('id', partnerDetails), profileOverview, state);
 };

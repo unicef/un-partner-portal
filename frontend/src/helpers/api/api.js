@@ -387,6 +387,14 @@ export function patchPartnerFlags(id, body, flagId) {
   return authorizedPatch({ uri: `/partners/${id}/flags/${flagId}/`, body });
 }
 
+export function postPartnerVendorId(body) {
+  return authorizedPost({ uri: '/externals/vendor-number/partner/', body });
+}
+
+export function deletePartnerVendorId(vendorId) {
+  return authorizedDelete({ uri: `/externals/vendor-number/partner/${vendorId}/` });
+}
+
 // Agencies
 export function getAgencyMembers(id, params = { page_size: 100 }, options) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params, options },

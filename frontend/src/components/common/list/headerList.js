@@ -8,21 +8,24 @@ import Loader from '../../common/loader';
 
 const styleSheet = (theme) => {
   const padding = theme.spacing.unit * 2;
+  const paddingSmall = theme.spacing.unit;
   return {
     container: {
       width: '100%',
       margin: '0',
     },
     header: {
+      display: 'flex',
       backgroundColor: theme.palette.primary[100],
-      padding: `${padding}px ${padding}px`,
+      padding: `0px ${padding}px 0px ${padding}px`,
+      minHeight: '64px',
     },
   };
 };
 
 class HeaderList extends Component {
   render() {
-    const { classes = {}, header, loading, children } = this.props;
+    const { classes = {}, header, loading, children, paddingSmall } = this.props;
     return (
       <Paper>
         <div>
@@ -56,6 +59,7 @@ HeaderList.propTypes = {
   ]),
   children: PropTypes.node,
   loading: PropTypes.bool,
+  paddingSmall: PropTypes.bool,
 };
 
 export default withStyles(styleSheet, { name: 'HeaderList' })(HeaderList);
