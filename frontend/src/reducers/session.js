@@ -106,6 +106,7 @@ export const loadUserData = () => (dispatch, getState) => {
         const agencyObject = {
           officeId: R.prop('office_id', office),
           officeName: R.path(['office', 'name'], office),
+          telephone: R.path(['office', 'telephone'], office),
           offices: response.office_memberships,
           officeCountryCode: R.path(['office', 'country'], office),
           officeRole: R.prop('role_display', office),
@@ -130,6 +131,7 @@ export const loadUserData = () => (dispatch, getState) => {
           partnerName: R.prop('legal_name', mainPartner),
           isHq: R.prop('is_hq', mainPartner),
           displayType: R.prop('display_type', mainPartner),
+          telephone: R.path(['office', 'telephone'], mainPartner),
           logo: R.prop('logo', mainPartner),
           permissions: R.prop('permissions', response),
           logoThumbnail: R.prop('org_logo_thumbnail', mainPartner),
