@@ -39,8 +39,8 @@ from notification.helpers import (
     send_partner_made_decision_notification,
 )
 from partner.permissions import PartnerPermission
-from project.exports.application_compare import ApplicationCompareSpreadsheetGenerator
-from project.exports.cfei import CFEIPDFExporter
+from project.exports.excel.application_compare import ApplicationCompareSpreadsheetGenerator
+from project.exports.pdf.cfei import CFEIPDFExporter
 from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from project.serializers import (
     BaseProjectSerializer,
