@@ -118,14 +118,14 @@ class RegistrationStepper extends React.Component {
               </RegistrationStep>
             </StepContent>
           </Step>
-          <Step>
+          {/* <Step>
             <StepLabel>Legal Status</StepLabel>
             <StepContent>
               <RegistrationStep onSubmit={this.handleNextLegalStatus} handlePrev={this.handlePrev}>
                 <LegalStatus />
               </RegistrationStep>
             </StepContent>
-          </Step>
+          </Step> */}
           <Step>
             <StepLabel>Partner Declaration</StepLabel>
             <StepContent>
