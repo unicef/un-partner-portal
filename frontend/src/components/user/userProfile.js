@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import Divider from 'material-ui/Divider';
+import Button from 'material-ui/Button';
 import { reduxForm } from 'redux-form';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
@@ -16,6 +17,9 @@ import SelectForm from '../../components/forms/selectForm';
 import TextFieldForm from '../../components/forms/textFieldForm';
 import PaddedContent from '../common/paddedContent';
 import { selectNormalizedNotificationsFrequencies } from '../../store';
+import { updateProfile } from '../../reducers/updateUserProfile';
+import { errorToBeAdded } from '../../reducers/errorReducer';
+
 
 const messages = {
   header: 'User Profile',
@@ -26,6 +30,7 @@ const messages = {
   telephone: 'Telephone',
   permissions: 'Permissions',
   notifications: 'Frequency of Notifications',
+  save: 'Save',
 };
 
 const styleSheet = (theme) => {
@@ -43,18 +48,20 @@ const styleSheet = (theme) => {
 };
 
 class UserProfile extends Component {
-  /* eslint-disable class-methods-use-this */
-  header() {
-    const { name } = this.props;
+  constructor(props) {
+    super(props);
 
-    return (
-      <Grid alignItems="center" container>
-        <Grid xs={12} item><Typography type="headline" color="inherit">
-          {name}
-        </Typography>
-        </Grid>
-      </Grid>);
+    this.onUpdateProfile = this.onUpdateProfile.bind(this);
   }
+
+  onUpdateProfile(values) {
+    const { updateUserProfile, postMessage } = this.props;
+    const notification_frequency = values.notificationsFrequency === '0_disabled' ? '' : values.notificationsFrequency;
+
+    updateUserProfile({ notification_frequency })
+      .then(postMessage('userProfileUpdate', 'User profile updated.'));
+  }
+
 
   render() {
     const { handleSubmit, classes, notifications } = this.props;
@@ -66,9 +73,9 @@ class UserProfile extends Component {
             <GridColumn spacing={40}>
               <HeaderList >
                 <PaddedContent>
-                  <form onSubmit={handleSubmit}>
+                  <form onSubmit={handleSubmit(this.onUpdateProfile)}>
                     <Grid item xs={12}>
-                      <Grid container direction="row" >
+                      <Grid container direction="row">
                         <Grid item sm={4} xs={12}>
                           <TextFieldForm
                             label={messages.name}
@@ -85,7 +92,7 @@ class UserProfile extends Component {
                         </Grid>
                       </Grid>
                       <Divider className={classes.dividerPadding} />
-                      <Grid container direction="row" className={classes} >
+                      <Grid container direction="row">
                         <Grid item sm={4} xs={12}>
                           <TextFieldForm
                             label={messages.officeName}
@@ -108,7 +115,7 @@ class UserProfile extends Component {
                           />
                         </Grid>
                       </Grid>
-                      <Grid container direction="row" className={classes} >
+                      <Grid container direction="row">
                         <Grid item sm={12} xs={12}>
                           <TextFieldForm
                             label={messages.permissions}
@@ -118,7 +125,7 @@ class UserProfile extends Component {
                         </Grid>
                       </Grid>
                       <Divider className={classes.dividerPadding} />
-                      <Grid container direction="row" className={classes} >
+                      <Grid container direction="row">
                         <Grid item sm={4} xs={12}>
                           <SelectForm
                             label={messages.notifications}
@@ -126,6 +133,18 @@ class UserProfile extends Component {
                             values={notifications}
                             required
                           />
+                        </Grid>
+                      </Grid>
+                      <Grid container direction="row">
+                        <Grid item sm={12} xs={12}>
+                          <div className={classes.button}>
+                            <Button
+                              color="accent"
+                              raised
+                              onTouchTap={handleSubmit(this.onUpdateProfile)}
+                            >{messages.save}
+                            </Button>
+                          </div>
                         </Grid>
                       </Grid>
                     </Grid>
@@ -142,9 +161,10 @@ class UserProfile extends Component {
 
 UserProfile.propTypes = {
   classes: PropTypes.object.isRequired,
-  name: PropTypes.string,
   notifications: PropTypes.array,
   handleSubmit: PropTypes.func,
+  updateUserProfile: PropTypes.func,
+  postMessage: PropTypes.func,
 };
 
 const formUserProfile = reduxForm({
@@ -166,10 +186,15 @@ const mapStateToProps = state => ({
     officeName: state.session.officeName || state.session.partnerName,
     telephone: state.session.telephone,
     permissions: state.session.permissions.join(', '),
-    notificationsFrequency: state.session.notificationFrequency,
+    notificationsFrequency: R.isEmpty(state.session.notificationFrequency) ? '0_disabled' : state.session.notificationFrequency,
   },
 });
 
-const connectedUserProfile = connect(mapStateToProps, null)(formUserProfile);
+const mapDispatchToProps = dispatch => ({
+  updateUserProfile: payload => dispatch(updateProfile(payload)),
+  postMessage: (error, message) => dispatch(errorToBeAdded(error, 'userProfile', message)),
+});
+
+const connectedUserProfile = connect(mapStateToProps, mapDispatchToProps)(formUserProfile);
 const routerUserProfile = withRouter(connectedUserProfile);
 export default withStyles(styleSheet, { name: 'userProfile' })(routerUserProfile);
