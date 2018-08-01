@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
+import Divider from 'material-ui/Divider';
 import { reduxForm } from 'redux-form';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
@@ -14,6 +15,7 @@ import HeaderList from '../../components/common/list/headerList';
 import SelectForm from '../../components/forms/selectForm';
 import TextFieldForm from '../../components/forms/textFieldForm';
 import PaddedContent from '../common/paddedContent';
+import { selectNormalizedNotificationsFrequencies } from '../../store';
 
 const messages = {
   header: 'User Profile',
@@ -22,46 +24,20 @@ const messages = {
   officeName: 'Office Name',
   officeRole: 'Office Role',
   telephone: 'Telephone',
+  permissions: 'Permissions',
+  notifications: 'Frequency of Notifications',
 };
 
 const styleSheet = (theme) => {
-  const padding = theme.spacing.unit;
-  const paddingMedium = theme.spacing.unit * 2;
+  const padding = theme.spacing.unit * 3;
 
   return {
-    office: {
-      padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px`,
-      background: theme.palette.primary[300],
-    },
     button: {
       display: 'flex',
       justifyContent: 'flex-end',
     },
-    info: {
-      color: 'gray',
-      fontWeight: '350',
-      padding: '4px 0',
-    },
-    center: {
-      textAlign: 'center',
-    },
-    right: {
-      textAlign: 'right',
-    },
-    icon: {
-      fill: '#FF0000',
-      width: 20,
-      height: 20,
-    },
-    hqProfile: {
-      width: '100%',
-      margin: '0',
-      padding: `${paddingMedium}px 0 ${paddingMedium}px ${padding}px`,
-    },
-    countryItem: {
-      width: '100%',
-      margin: '0',
-      padding: `${paddingMedium}px 0 ${paddingMedium}px ${padding}px`,
+    dividerPadding: {
+      margin: `${padding}px 0px ${padding}px 0px`,
     },
   };
 };
@@ -81,7 +57,7 @@ class UserProfile extends Component {
   }
 
   render() {
-    const { handleSubmit, classes } = this.props;
+    const { handleSubmit, classes, notifications } = this.props;
 
     return (
       <React.Fragment>
@@ -108,6 +84,7 @@ class UserProfile extends Component {
                           />
                         </Grid>
                       </Grid>
+                      <Divider className={classes.dividerPadding} />
                       <Grid container direction="row" className={classes} >
                         <Grid item sm={4} xs={12}>
                           <TextFieldForm
@@ -131,6 +108,26 @@ class UserProfile extends Component {
                           />
                         </Grid>
                       </Grid>
+                      <Grid container direction="row" className={classes} >
+                        <Grid item sm={12} xs={12}>
+                          <TextFieldForm
+                            label={messages.permissions}
+                            fieldName="permissions"
+                            readOnly
+                          />
+                        </Grid>
+                      </Grid>
+                      <Divider className={classes.dividerPadding} />
+                      <Grid container direction="row" className={classes} >
+                        <Grid item sm={4} xs={12}>
+                          <SelectForm
+                            label={messages.notifications}
+                            fieldName="notificationsFrequency"
+                            values={notifications}
+                            required
+                          />
+                        </Grid>
+                      </Grid>
                     </Grid>
                   </form>
                 </PaddedContent>
@@ -146,6 +143,7 @@ class UserProfile extends Component {
 UserProfile.propTypes = {
   classes: PropTypes.object.isRequired,
   name: PropTypes.string,
+  notifications: PropTypes.array,
   handleSubmit: PropTypes.func,
 };
 
@@ -159,6 +157,7 @@ const formUserProfile = reduxForm({
 const mapStateToProps = state => ({
   officeRole: state.session.position || state.session.officeRole,
   name: state.session.name,
+  notifications: selectNormalizedNotificationsFrequencies(state),
 
   initialValues: {
     name: state.session.name,
@@ -166,6 +165,8 @@ const mapStateToProps = state => ({
     role: state.session.position || state.session.officeRole,
     officeName: state.session.officeName || state.session.partnerName,
     telephone: state.session.telephone,
+    permissions: state.session.permissions.join(', '),
+    notificationsFrequency: state.session.notificationFrequency,
   },
 });
 

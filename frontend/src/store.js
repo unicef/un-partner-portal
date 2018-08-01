@@ -249,6 +249,9 @@ export const selectNormalizedApplicationStatuses = state =>
 export const selectNormalizedAuditTypes = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['audit-types']);
 
+export const selectNormalizedNotificationsFrequencies = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['notification-frequency-choices']);
+
 export const selectNormalizedCapacityAssessments = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['formal-capacity-assessment']);
 

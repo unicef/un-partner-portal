@@ -95,6 +95,7 @@ export const loadUserData = () => (dispatch, getState) => {
         userId: response.id,
         email: response.email,
         position: response.role,
+        notificationFrequency: R.path(['profile', 'notification_frequency'], response),
         // token was valid so we can authorized user
         authorized: true,
       };
