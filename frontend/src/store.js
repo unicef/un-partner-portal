@@ -79,7 +79,7 @@ import selectableList from './reducers/selectableListItems';
 import generatePartnerReports from './reducers/partnerReportsGeneration';
 import partnerMembersList from './reducers/partnerMembersList';
 import vendorNumber from './reducers/vendorNumber';
-import revmoveVendorNumber from './reducers/deleteVendorNumber';
+import removeVendorNumber from './reducers/deleteVendorNumber';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -91,7 +91,7 @@ import idPortalDeactivateUser from './idPortal/reducers/deactivateUser';
 
 const mainReducer = combineReducers({
   vendorNumber,
-  revmoveVendorNumber,
+  removeVendorNumber,
   cfei,
   cfeiNav,
   cfeiDetails,

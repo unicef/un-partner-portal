@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import { withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
+import Loader from '../../../../../common/loader';
 import ControlledModal from '../../../../../common/modals/controlledModal';
 import AddVendorNumberForm from './addVendorNumberForm';
 import PaddedContent from '../../../../../common/paddedContent';
@@ -81,9 +82,9 @@ class AddVendorNumberModal extends Component {
   }
 
   render() {
-    const { submit, dialogOpen, handleDialogClose } = this.props;
+    const { submit, dialogOpen, handleDialogClose, showLoading } = this.props;
     return (
-      <div>
+      <React.Fragment>
         {!this.state.showConfirmation && <ControlledModal
           maxWidth="sm"
           title={messages.title}
@@ -119,7 +120,9 @@ class AddVendorNumberModal extends Component {
           }}
           content={this.confirmData()}
         />
-      </div>
+
+        <Loader loading={showLoading} fullscreen />
+      </React.Fragment>
     );
   }
 }
@@ -132,6 +135,7 @@ AddVendorNumberModal.propTypes = {
   partnerName: PropTypes.string,
   postVendorNumber: PropTypes.func,
   partnerId: PropTypes.string,
+  showLoading: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -141,6 +145,7 @@ const mapStateToProps = (state, ownProps) => {
     partneId: ownProps.params.id,
     partnerName,
     query: ownProps.location.query,
+    showLoading: state.vendorNumber.newVendorNumberSubmitting,
   };
 };
 

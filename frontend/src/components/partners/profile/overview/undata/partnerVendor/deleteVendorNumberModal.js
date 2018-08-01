@@ -2,11 +2,10 @@ import { prop, find, propEq } from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { submit } from 'redux-form';
 import { withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
+import Loader from '../../../../../common/loader';
 import ControlledModal from '../../../../../common/modals/controlledModal';
-import AddVendorNumberForm from './addVendorNumberForm';
 import PaddedContent from '../../../../../common/paddedContent';
 import { Typography } from '../../../../../../../node_modules/material-ui';
 import { deleteVendorNumber } from '../../../../../../reducers/deleteVendorNumber';
@@ -36,11 +35,11 @@ class DeleteVendorNumberModal extends Component {
   }
 
   vendorNumberRequest() {
-    const { removeVendorNumber, agencyId, partner } = this.props;
+    const { removeVendorNumber, agencyId, partner, partnerId } = this.props;
 
     const vendorNumber = find(propEq('agency_id', agencyId), prop('vendorNumbers', partner) || []);
 
-    removeVendorNumber(vendorNumber.id)
+    removeVendorNumber(vendorNumber.id, partnerId)
       .then(() => this.props.handleDialogClose());
   }
 
@@ -64,11 +63,11 @@ class DeleteVendorNumberModal extends Component {
   }
 
   render() {
-    const { dialogOpen, handleDialogClose, partner, agencyId } = this.props;
+    const { dialogOpen, handleDialogClose, partner, agencyId, showLoading } = this.props;
     const vendorNumber = find(propEq('agency_id', agencyId), prop('vendorNumbers', partner) || []);
 
     return (
-      <div>
+      <React.Fragment>
         <ControlledModal
           maxWidth="sm"
           title={messages.title}
@@ -86,7 +85,8 @@ class DeleteVendorNumberModal extends Component {
           }}
           content={this.confirmData(vendorNumber)}
         />
-      </div>
+        <Loader loading={showLoading} fullscreen />
+      </React.Fragment>
     );
   }
 }
@@ -97,6 +97,7 @@ DeleteVendorNumberModal.propTypes = {
   handleDialogClose: PropTypes.func,
   removeVendorNumber: PropTypes.func,
   partner: PropTypes.object,
+  showLoading: PropTypes.bool,
   partnerId: PropTypes.string,
   agencyId: PropTypes.number,
 };
@@ -105,10 +106,11 @@ const mapStateToProps = (state, ownProps) => ({
   partner: state.agencyPartnerProfile.data[ownProps.params.id] || {},
   agencyId: state.session.agencyId,
   partnerId: ownProps.params.id,
+  showLoading: state.removeVendorNumber.deleteVendorNumberSubmitting,
 });
 
 const mapDispatchToProps = dispatch => ({
-  removeVendorNumber: vendorId => dispatch(deleteVendorNumber(vendorId)),
+  removeVendorNumber: (vendorId, partnerId) => dispatch(deleteVendorNumber(vendorId, partnerId)),
 });
 
 const connectedDeleteVendorNumberModal = connect(
