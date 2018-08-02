@@ -770,16 +770,30 @@ class PartnerMandateMission(TimeStampedModel):
     )
 
     # ethics
-    ethic_safeguard = models.NullBooleanField()
+    ethic_safeguard_comment = models.TextField(
+        max_length=5000, null=True, blank=True,
+        verbose_name='Briefly describe the organization’s mechanisms to safeguard against the violation and abuse of '
+                     'beneficiaries, including sexual exploitation and abuse.'
+    )
+    ethic_safeguard = models.NullBooleanField(
+        verbose_name='Does the organization have a policy or code of conduct to '
+                     'safeguard against the violation and abuse of beneficiaries?'
+    )
     ethic_safeguard_policy = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="ethic_safeguard_policies"
     )
-    ethic_safeguard_comment = models.TextField(max_length=5000, null=True, blank=True)
-    ethic_fraud = models.NullBooleanField()
+
+    ethic_fraud_comment = models.TextField(
+        max_length=5000, null=True, blank=True,
+        verbose_name='Briefly describe the organization’s mechanisms to safeguard against fraud, '
+                     'corruption and other unethical behaviour.'
+    )
+    ethic_fraud = models.NullBooleanField(
+        verbose_name='Does the organization have a policy or code of conduct to safeguard against fraud and corruption?'
+    )
     ethic_fraud_policy = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="ethic_fraud_policies"
     )
-    ethic_fraud_comment = models.TextField(max_length=5000, null=True, blank=True)
 
     # population of concern
     population_of_concern = models.NullBooleanField()
