@@ -15,7 +15,6 @@ import FileForm from '../forms/fileForm';
 import DatePickerForm from '../forms/datePickerForm';
 
 const messages = {
-  countryOfOrigin: 'Country Of Origin',
   yearOfEstablishment: 'Year of establishment in country of origin',
   selectYear: 'Select year',
   registrationCountry: 'Is organization registered to operate in the country of origin?',
@@ -41,12 +40,6 @@ const BasicInformation = (props) => {
   return (
     <Grid item>
       <Grid container direction="column" spacing={16}>
-        <Grid item sm={6} xs={12}>
-          <CountryField
-            fieldName="json.legal.country_code_origin"
-            label={messages.countryOfOrigin}
-          />
-        </Grid>
         <Grid item sm={6} xs={12}>
           <YearFieldForm
             fieldName="json.legal.year_establishment"

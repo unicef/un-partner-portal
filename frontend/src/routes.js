@@ -48,6 +48,7 @@ import cfeiManagementContainer from './components/reports/cfeiManagement/cfeiMan
 import verificationContainer from './components/reports/verifcation/verificationContainer';
 import reportsHeader from './components/reports/reportsHeader';
 import partnerUsersContainer from './components/partners/members/partnerUsersContainer';
+import userProfile from './components/user/userProfile';
 
 // ID portal
 import mainLayoutIdPortal from './idPortal/mainLayout';
@@ -74,6 +75,7 @@ const allRoutes = () => (
         <Route path="/" component={mainLayout} >
           <IndexRedirect to="dashboard" />
           <Route path="dashboard" component={dashboard} />
+          <Route path="user" component={userProfile} />
           <Route path="cfei" component={eoiHeader} >
             <IndexRedirect to="open" />
             <Route component={mainContent} >

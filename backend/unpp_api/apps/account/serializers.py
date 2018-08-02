@@ -120,10 +120,23 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         }
 
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    notification_frequency_display = serializers.CharField(source='get_notification_frequency_display')
+
+    class Meta:
+        model = UserProfile
+        fields = (
+            'id',
+            'notification_frequency',
+            'notification_frequency_display',
+            'accepted_tos',
+        )
+
+
 class UserSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(source='fullname', read_only=True)
-    accepted_tos = serializers.BooleanField(source='profile.accepted_tos', read_only=True)
+    profile = UserProfileSerializer(read_only=True)
 
     class Meta:
         model = User
@@ -133,7 +146,7 @@ class UserSerializer(serializers.ModelSerializer):
             'name',
             'email',
             'status',
-            'accepted_tos',
+            'profile',
         )
 
 
@@ -183,19 +196,6 @@ class UserFullnameSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'fullname', 'email', )
-
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    notification_frequency_display = serializers.CharField(source='get_notification_frequency_display')
-
-    class Meta:
-        model = UserProfile
-        fields = (
-            'id',
-            'notification_frequency',
-            'notification_frequency_display',
-            'accepted_tos',
-        )
 
 
 class PartnerMemberSerializer(serializers.ModelSerializer):

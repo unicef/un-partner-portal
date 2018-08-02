@@ -395,6 +395,10 @@ export function deletePartnerVendorId(vendorId) {
   return authorizedDelete({ uri: `/externals/vendor-number/partner/${vendorId}/` });
 }
 
+export function patchUserProfile(body) {
+  return authorizedPatch({ uri: '/accounts/me/profile/', body });
+}
+
 // Agencies
 export function getAgencyMembers(id, params = { page_size: 100 }, options) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params, options },

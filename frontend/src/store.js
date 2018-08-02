@@ -256,6 +256,14 @@ export const selectNormalizedApplicationStatuses = state =>
 export const selectNormalizedAuditTypes = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['audit-types']);
 
+export const selectNormalizedNotificationsFrequencies = (state) => {
+  let frequncies = state.partnerProfileConfig['notification-frequency-choices'];
+  frequncies = R.dissoc('', frequncies);
+  frequncies['0_disabled'] = 'Disabled';
+
+  return mapValuesForSelectionField(frequncies, 'value');
+};
+
 export const selectNormalizedCapacityAssessments = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['formal-capacity-assessment']);
 

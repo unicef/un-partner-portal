@@ -29,12 +29,12 @@ class HeaderList extends Component {
     return (
       <Paper>
         <div>
-          <div className={classes.header}>
+          {header && <div className={classes.header}>
             {(typeof header === 'function')
               ? React.createElement(header)
               : header
             }
-          </div>
+          </div>}
           <Loader loading={loading}>
             <div>
               {React.Children.map(children, child => (
