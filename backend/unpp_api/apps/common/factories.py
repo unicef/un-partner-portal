@@ -299,8 +299,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     def collaborations_partnership(self, create, extracted, **kwargs):
         PartnerCollaborationPartnership.objects.create(
             partner=self,
-            created_by=User.objects.first(),
-            agency=Agency.objects.all().order_by("?").first(),
+            created_by=get_partner_member(),
+            agency=get_random_agency(),
             description="description"
         )
 
@@ -311,7 +311,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
         PartnerCollaborationEvidence.objects.create(
             partner=self,
-            created_by=User.objects.first(),
+            created_by=get_partner_member(),
             mode=COLLABORATION_EVIDENCE_MODES.accreditation,
             organization_name="accreditation organization name",
             evidence_file=cfile,
@@ -320,7 +320,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
         PartnerCollaborationEvidence.objects.create(
             partner=self,
-            created_by=User.objects.first(),
+            created_by=get_partner_member(),
             mode=COLLABORATION_EVIDENCE_MODES.reference,
             organization_name="reference organization name",
             evidence_file=cfile,

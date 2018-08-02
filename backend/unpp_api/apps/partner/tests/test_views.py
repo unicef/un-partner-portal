@@ -527,3 +527,19 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             self.assertTrue(
                 partner.capacity_assessments.filter(report_file_id=f['id']).exists()
             )
+
+
+class TestPartnerPDFExport(BaseAPITestCase):
+
+    quantity = 1
+    user_type = BaseAPITestCase.USER_AGENCY
+    initial_factories = [
+        PartnerFactory,
+    ]
+
+    def test_download_pdf(self):
+        partner = Partner.objects.first()
+        url = reverse('partners:partner-profile', kwargs={'pk': partner.pk}) + '?export=pdf'
+        response = self.client.get(url)
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertEqual(response.content_type, 'application/pdf')
