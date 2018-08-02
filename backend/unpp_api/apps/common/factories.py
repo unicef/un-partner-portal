@@ -56,7 +56,7 @@ from common.consts import (
     SELECTION_CRITERIA_CHOICES,
     STAFF_GLOBALLY_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
-)
+    WORKING_LANGUAGES_CHOICES)
 from common.countries import COUNTRIES_ALPHA2_CODE
 from sanctionslist.models import SanctionedNameMatch, SanctionedItem, SanctionedName
 
@@ -401,7 +401,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         self.profile.alias_name = "alias name {}".format(self.id)
         self.profile.registration_number = "reg-number {}".format(self.id)
 
-        self.profile.working_languages = get_country_list()
+        self.profile.working_languages = random.sample(
+            list(WORKING_LANGUAGES_CHOICES._db_values), k=random.randint(2, 3)
+        )
         self.profile.connectivity = True
 
         self.profile.acronym = "acronym {}".format(self.id)
