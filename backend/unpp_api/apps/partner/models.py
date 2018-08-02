@@ -246,10 +246,10 @@ class PartnerProfile(TimeStampedModel):
     working_languages_other = models.CharField(max_length=100, null=True, blank=True)
     # authorised_officials
     have_board_directors = models.NullBooleanField(
-        verbose_name="Does your organization have a board of directors?"
+        verbose_name="Does your organization have a board of director(s)?"
     )
     have_authorised_officers = models.NullBooleanField(
-        verbose_name="Does your organization have a authorised officers?"
+        verbose_name="Does your organization have any other authorized officers who are not listed above?"
     )
 
     # Registration of organization
@@ -270,9 +270,13 @@ class PartnerProfile(TimeStampedModel):
     missing_registration_document_comment = models.TextField(max_length=5000, null=True, blank=True)
 
     # programme management
-    have_management_approach = models.NullBooleanField()  # results_based_approach
+    have_management_approach = models.NullBooleanField(
+        verbose_name='Does the organization use a results-based approach to managing programmes and projects?'
+    )
     management_approach_desc = models.TextField(max_length=5000, null=True, blank=True)
-    have_system_monitoring = models.NullBooleanField()
+    have_system_monitoring = models.NullBooleanField(
+        verbose_name='Does your organization have a system for monitoring and evaluating its programmes and projects?'
+    )
     system_monitoring_desc = models.TextField(max_length=5000, null=True, blank=True)
     have_feedback_mechanism = models.NullBooleanField()
     feedback_mechanism_desc = models.TextField(max_length=5000, null=True, blank=True)
@@ -288,7 +292,10 @@ class PartnerProfile(TimeStampedModel):
         choices=METHOD_ACC_ADOPTED_CHOICES,
         default=METHOD_ACC_ADOPTED_CHOICES.cash
     )
-    have_system_track = models.NullBooleanField()
+    have_system_track = models.NullBooleanField(
+        verbose_name='Does your organization have a system to track expenditures, '
+                     'prepare project reports, and prepare claims for donors?'
+    )
     financial_control_system_desc = models.TextField(max_length=5000, null=True, blank=True)
 
     # internal control - other fields
@@ -305,13 +312,16 @@ class PartnerProfile(TimeStampedModel):
     )
     partnership_collaborate_institution_desc = models.CharField(
         max_length=5000, null=True, blank=True,
-        verbose_name='Please state which cluster, network or consortium and briefly explain the collaboration '
-                     'professional network, consortium or any similar institutions?'
+        verbose_name='Please state which cluster, network or consortium and briefly explain the collaboration'
     )
 
     any_partnered_with_un = models.NullBooleanField()
-    any_accreditation = models.NullBooleanField()
-    any_reference = models.NullBooleanField()
+    any_accreditation = models.NullBooleanField(
+        verbose_name='Would you like to upload any accreditations received by your organization?'
+    )
+    any_reference = models.NullBooleanField(
+        verbose_name='Would you like to upload any reference letters for your organization?'
+    )
 
     # Banking Information
     have_bank_account = models.NullBooleanField(verbose_name="Does the organization have a bank account?")
@@ -761,15 +771,30 @@ class PartnerMandateMission(TimeStampedModel):
     )
 
     # ethics
-    ethic_safeguard = models.NullBooleanField()
+    ethic_safeguard_comment = models.TextField(
+        max_length=5000, null=True, blank=True,
+        verbose_name='Briefly describe the organization’s mechanisms to safeguard against the violation and abuse of '
+                     'beneficiaries, including sexual exploitation and abuse.'
+    )
+    ethic_safeguard = models.NullBooleanField(
+        verbose_name='Does the organization have a policy or code of conduct to '
+                     'safeguard against the violation and abuse of beneficiaries?'
+    )
     ethic_safeguard_policy = models.ForeignKey(
-        'common.CommonFile', null=True, blank=True, related_name="ethic_safeguard_policies")
-    ethic_safeguard_comment = models.TextField(max_length=5000, null=True, blank=True)
-    ethic_fraud = models.NullBooleanField()
+        'common.CommonFile', null=True, blank=True, related_name="ethic_safeguard_policies"
+    )
+
+    ethic_fraud_comment = models.TextField(
+        max_length=5000, null=True, blank=True,
+        verbose_name='Briefly describe the organization’s mechanisms to safeguard against fraud, '
+                     'corruption and other unethical behaviour.'
+    )
+    ethic_fraud = models.NullBooleanField(
+        verbose_name='Does the organization have a policy or code of conduct to safeguard against fraud and corruption?'
+    )
     ethic_fraud_policy = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="ethic_fraud_policies"
     )
-    ethic_fraud_comment = models.TextField(max_length=5000, null=True, blank=True)
 
     # population of concern
     population_of_concern = models.NullBooleanField()

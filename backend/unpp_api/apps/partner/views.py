@@ -14,6 +14,7 @@ from agency.permissions import AgencyPermission
 from common.permissions import HasUNPPPermission
 from common.pagination import SmallPagination, TinyResultSetPagination
 from common.mixins import PatchOneFieldErrorMixin
+from partner.exports.pdf.partner_profile import PartnerProfilePDFExporter
 from partner.permissions import PartnerPermission
 from partner.serializers import (
     OrganizationProfileSerializer,
@@ -68,6 +69,11 @@ class PartnerProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
     )
     serializer_class = OrganizationProfileDetailsSerializer
     queryset = Partner.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        if request.GET.get('export', '').lower() == 'pdf':
+            return PartnerProfilePDFExporter(self.get_object()).get_as_response()
+        return super(PartnerProfileAPIView, self).retrieve(request, *args, **kwargs)
 
 
 class PartnerProfileSummaryAPIView(FilterUsersPartnersMixin, RetrieveAPIView):

@@ -33,7 +33,7 @@ from partner.models import (
     PartnerHeadOrganization,
     PartnerMandateMission,
     PartnerExperience,
-    PartnerBudget,
+    PartnerBudget, backend/unpp_api/apps/partner/tests/test_views.py
     PartnerFunding,
     PartnerCollaborationPartnership,
     PartnerCollaborationEvidence,

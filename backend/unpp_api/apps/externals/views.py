@@ -1,5 +1,5 @@
 from django.http import Http404
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, get_object_or_404
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, get_object_or_404, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -10,7 +10,7 @@ from externals.serializers import PartnerVendorNumberSerializer
 from externals.sources.unhcr import UNHCRInfoClient
 
 
-class PartnerVendorNumberAPIView(CreateAPIView, RetrieveUpdateAPIView):
+class PartnerVendorNumberAPIView(CreateAPIView, RetrieveUpdateAPIView, DestroyAPIView):
 
     serializer_class = PartnerVendorNumberSerializer
     queryset = PartnerVendorNumber.objects.all()
