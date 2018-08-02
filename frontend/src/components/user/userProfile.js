@@ -62,18 +62,37 @@ class UserProfile extends Component {
       .then(postMessage('userProfileUpdate', 'User profile updated.'));
   }
 
-
   render() {
     const { handleSubmit, classes, notifications } = this.props;
 
     return (
       <React.Fragment>
-        <HeaderNavigation title={messages.header}>
+        <HeaderNavigation
+          title={messages.header}
+
+          header={<Button
+            color="accent"
+            raised
+            onTouchTap={handleSubmit(this.onUpdateProfile)}
+          >{messages.save}
+          </Button>}
+        >
           <MainContentWrapper>
             <GridColumn spacing={40}>
               <HeaderList >
                 <PaddedContent>
                   <form onSubmit={handleSubmit(this.onUpdateProfile)}>
+                    <Grid container direction="row">
+                      <Grid item sm={4} xs={12}>
+                        <SelectForm
+                          label={messages.notifications}
+                          fieldName="notificationsFrequency"
+                          values={notifications}
+                          required
+                        />
+                      </Grid>
+                    </Grid>
+                    <Divider className={classes.dividerPadding} />
                     <Grid item xs={12}>
                       <Grid container direction="row">
                         <Grid item sm={4} xs={12}>
@@ -124,29 +143,6 @@ class UserProfile extends Component {
                           />
                         </Grid>
                       </Grid>
-                      <Divider className={classes.dividerPadding} />
-                      <Grid container direction="row">
-                        <Grid item sm={4} xs={12}>
-                          <SelectForm
-                            label={messages.notifications}
-                            fieldName="notificationsFrequency"
-                            values={notifications}
-                            required
-                          />
-                        </Grid>
-                      </Grid>
-                      <Grid container direction="row">
-                        <Grid item sm={12} xs={12}>
-                          <div className={classes.button}>
-                            <Button
-                              color="accent"
-                              raised
-                              onTouchTap={handleSubmit(this.onUpdateProfile)}
-                            >{messages.save}
-                            </Button>
-                          </div>
-                        </Grid>
-                      </Grid>
                     </Grid>
                   </form>
                 </PaddedContent>
@@ -185,7 +181,7 @@ const mapStateToProps = state => ({
     role: state.session.position || state.session.officeRole,
     officeName: state.session.officeName || state.session.partnerName,
     telephone: state.session.telephone,
-    permissions: state.session.permissions.join(', '),
+    permissions: state.session.permissions.join(', \n'),
     notificationsFrequency: R.isEmpty(state.session.notificationFrequency) ? '0_disabled' : state.session.notificationFrequency,
   },
 });
