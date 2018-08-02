@@ -139,8 +139,7 @@ class MainAppBar extends Component {
           }}
           onClose={this.handleProfileRequestClose}
         >
-          <Logout />
-          <Options />
+          <Logout onClose={this.handleProfileRequestClose} />
         </Popover>
       </React.Fragment>
     );
