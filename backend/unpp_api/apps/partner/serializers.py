@@ -401,6 +401,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     )
     other_info_is_complete = serializers.BooleanField(read_only=True, source="profile.other_info_is_complete")
     country_of_origin = serializers.CharField()
+    registration_declaration = CommonFileSerializer()
 
     class Meta:
         model = Partner
@@ -448,6 +449,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "other_info_is_complete",
             "country_of_origin",
             "has_sanction_match",
+            "registration_declaration",
         )
 
     def get_hq_budgets(self, partner):

@@ -7,11 +7,10 @@ import os
 from babel.dates import format_datetime
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
-from reportlab.lib import colors
 
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 
 from common.models import CommonFile
 
@@ -39,22 +38,6 @@ class PartnerDeclarationPDFCreator:
         self.style_right.fontSize = 8
 
         self.margin = 24
-
-        self.horizontal_table_style = TableStyle([
-            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-            ('VALIGN', (0, 0), (-1, -1), "TOP"),
-            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-            ('BACKGROUND', (0, 0), (0, -1), colors.darkgrey),
-            ('TEXTCOLOR', (0, 0), (0, -1), colors.white),
-        ])
-
-        self.vertical_table_style = TableStyle([
-            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-            ('VALIGN', (0, 0), (-1, -1), "TOP"),
-            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-            ('BACKGROUND', (0, 0), (-1, 0), colors.darkgrey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-        ])
 
     def generate(self):
         document = SimpleDocTemplate(

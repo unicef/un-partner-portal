@@ -182,6 +182,10 @@ class Partner(TimeStampedModel):
         }
 
     @property
+    def registration_declaration(self):
+        return getattr(self.hq, 'declaration', self.declaration)
+
+    @property
     def has_finished(self):
         if not self.profile.identification_is_complete:
             return False
