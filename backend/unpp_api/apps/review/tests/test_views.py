@@ -460,7 +460,11 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
                     'content': base64.encodebytes(b'TEST_FILE_CONTENT'),
                     'filename': 'testfile.doc',
                 },
-            }
+            },
+            "declaration": [{
+                'question': f'question{n}',
+                'answer': 'Yes',
+            } for n in range(random.randint(5, 10))]
         }
 
     def test_register_sanctioned_partner(self):

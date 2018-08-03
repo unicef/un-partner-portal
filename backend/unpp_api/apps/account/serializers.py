@@ -6,6 +6,7 @@ from rest_framework import serializers
 from rest_auth.serializers import LoginSerializer, PasswordResetSerializer
 from rest_framework.validators import UniqueValidator
 
+from account.declaration import PartnerDeclarationPDFCreator
 from account.forms import CustomPasswordResetForm
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
@@ -84,16 +85,25 @@ class PartnerRecommendationDocumentSerializer(PartnerCollaborationEvidenceSerial
         }
 
 
+class PartnerDeclarationSerializer(serializers.Serializer):
+    question = serializers.CharField()
+    answer = serializers.CharField()
+
+
 class PartnerRegistrationSerializer(serializers.Serializer):
 
     user = RegisterSimpleAccountSerializer()
+
     partner = PartnerSerializer()
     partner_profile = PartnerProfileSerializer()
     partner_head_organization = PartnerHeadOrganizationRegisterSerializer()
     partner_member = PartnerMemberSerializer()
+
     governing_document = PartnerGoverningDocumentSerializer(required=False)
     registration_document = PartnerRegistrationDocumentSerializer(required=False)
     recommendation_document = PartnerRecommendationDocumentSerializer(required=False)
+
+    declaration = PartnerDeclarationSerializer(many=True, write_only=True)
 
     class Meta:
         validators = (
@@ -162,6 +172,9 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         user_serializer.is_valid()
         user = user_serializer.save()
 
+        validated_data['partner']['declaration'] = PartnerDeclarationPDFCreator(
+            validated_data['declaration'], validated_data['partner']['legal_name'], user
+        ).get_as_common_file()
         self.partner = Partner.objects.create(**validated_data['partner'])
         self.save_documents(validated_data, user)
 

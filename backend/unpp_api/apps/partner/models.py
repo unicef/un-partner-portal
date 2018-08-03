@@ -74,6 +74,8 @@ class Partner(TimeStampedModel):
         null=True, blank=True
     )
 
+    declaration = models.ForeignKey('common.CommonFile', null=True, blank=True)
+
     class Meta:
         ordering = ('id', )
 

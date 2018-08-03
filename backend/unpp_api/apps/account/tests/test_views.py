@@ -52,6 +52,10 @@ class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
             "partner_member": {
                 "title": "Project Manager",
             },
+            "declaration": [{
+                'question': f'question{n}',
+                'answer': 'Yes',
+            } for n in range(random.randint(5, 10))]
         }
 
     def test_register_partner(self):
@@ -187,7 +191,11 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
                     'content': base64.encodebytes(b'TEST_FILE_CONTENT'),
                     'filename': 'testfile.doc',
                 },
-            }
+            },
+            "declaration": [{
+                'question': f'question{n}',
+                'answer': 'Yes',
+            } for n in range(random.randint(5, 10))]
         }
 
     def test_fails_to_register_duplicate_partner_in_same_country(self):
@@ -254,7 +262,7 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
 
 class TestUserProfileUpdateAPITestCase(BaseAPITestCase):
 
-    def test_register_partner(self):
+    def test_profile_update(self):
         profile_url = reverse('accounts:my-profile')
         response = self.client.get(profile_url)
         self.assertResponseStatusIs(response)
