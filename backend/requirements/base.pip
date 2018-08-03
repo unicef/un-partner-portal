@@ -33,6 +33,7 @@ reportlab==3.4.0
 Babel==2.6.0
 python-crontab==2.3.4
 social-auth-app-django==2.1.0
+django-sequences==2.2
 
 # Testing
 astroid==1.5.2

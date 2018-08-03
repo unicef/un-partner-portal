@@ -28,6 +28,7 @@ class EOI(TimeStampedModel):
     """
     Call of Expression of Interest
     """
+    displayID = models.TextField(max_length=32, unique=True, editable=False)
     display_type = models.CharField(
         max_length=3, choices=CFEI_TYPES, default=CFEI_TYPES.open, verbose_name='Type of Call'
     )
