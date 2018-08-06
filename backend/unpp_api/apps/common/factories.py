@@ -730,6 +730,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
     def attachments(self, create, extracted, **kwargs):
         for _ in range(random.randint(0, 3)):
             EOIAttachment.objects.create(
+                created_by=self.created_by,
                 eoi=self,
                 file=get_new_common_file(),
                 description=fake.catch_phrase()
