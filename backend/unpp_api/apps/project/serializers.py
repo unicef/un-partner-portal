@@ -12,7 +12,7 @@ from rest_framework.fields import CurrentUserDefault
 from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
-from account.serializers import IDUserSerializer, UserSerializer
+from account.serializers import IDUserSerializer, BasicUserSerializer
 from agency.agencies import UNHCR
 
 from agency.serializers import AgencySerializer, AgencyUserListSerializer
@@ -49,11 +49,13 @@ class BaseProjectSerializer(serializers.ModelSerializer):
     agency = AgencySerializer()
     created = serializers.SerializerMethodField()
     country_code = serializers.SerializerMethodField()
+    focal_points = BasicUserSerializer(read_only=True, many=True)
 
     class Meta:
         model = EOI
         fields = (
             'id',
+            'displayID',
             'title',
             'created',
             'country_code',
@@ -64,6 +66,7 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'deadline_date',
             'status',
             'completed_date',
+            'focal_points',
         )
 
     def get_created(self, obj):
@@ -209,7 +212,7 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
     agency_id = serializers.IntegerField(write_only=True)
     proposal_of_eoi_details = ProposalEOIDetailsSerializer(read_only=True)
     locations_proposal_of_eoi = PointSerializer(many=True, read_only=True)
-    submitter = UserSerializer(read_only=True, default=serializers.CurrentUserDefault())
+    submitter = BasicUserSerializer(read_only=True, default=serializers.CurrentUserDefault())
     is_direct = serializers.SerializerMethodField()
     cfei_type = serializers.CharField(read_only=True)
     application_status = serializers.CharField(read_only=True)
@@ -468,8 +471,8 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
     locations = PointSerializer(many=True)
     is_pinned = serializers.SerializerMethodField()
     application = serializers.SerializerMethodField()
-    focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
-    reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
+    focal_points_detail = BasicUserSerializer(source='focal_points', read_only=True, many=True)
+    reviewers_detail = BasicUserSerializer(source='reviewers', read_only=True, many=True)
 
     # TODO - cut down on some of these fields. partners should not get back this data
     # Frontend currently breaks if doesn't receive all
@@ -528,8 +531,8 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
     specializations = SimpleSpecializationSerializer(many=True, read_only=True)
     locations = PointSerializer(many=True, read_only=True)
     direct_selected_partners = serializers.SerializerMethodField()
-    focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
-    reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
+    focal_points_detail = BasicUserSerializer(source='focal_points', read_only=True, many=True)
+    reviewers_detail = BasicUserSerializer(source='reviewers', read_only=True, many=True)
     invited_partners = PartnerShortSerializer(many=True, read_only=True)
     applications_count = serializers.SerializerMethodField(allow_null=True, read_only=True)
 
