@@ -64,7 +64,7 @@ const ListOfSubmittedCN = (props) => {
   const { loading, data = [], loadCN, itemsCount } = props;
   return (
     <HeaderList
-      header={<Typography type="headline" >{messages.title}</Typography>}
+      header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}
       loading={loading}
     >
       <TableWithLocalState

@@ -15,7 +15,7 @@ const MyResponse = (props) => {
   const { application, status } = props;
   return (
     <HeaderList
-      header={<Typography type="headline" >{messages.title}</Typography>}
+      header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}
     >
       <ResponseForm application={application} status={status} />
     </HeaderList>

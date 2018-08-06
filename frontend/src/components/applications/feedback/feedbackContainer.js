@@ -85,15 +85,15 @@ class FeedbackContainer extends Component {
     return (
       <HeaderList
         header={
-          <Typography type="headline" >
+          <Typography style={{ margin: 'auto 0' }} type="headline">
             {extraTitle ? `${messages.title} ${messages.for} ${extraTitle}` : messages.title}
           </Typography>
         }
         loading={loading}
       >
         {(R.isEmpty(feedback) && !allowedToAdd) ? loading
-            ? <EmptyContent />
-            : <PaddedContent big><Typography>{messages.noInfo}</Typography></PaddedContent>
+          ? <EmptyContent />
+          : <PaddedContent big><Typography>{messages.noInfo}</Typography></PaddedContent>
           : <PaddedContent big>
             {allowedToAdd && <FeedbackForm applicationId={applicationId} />}
             {feedback.map(singleFeedback => (<SingleFeedback
