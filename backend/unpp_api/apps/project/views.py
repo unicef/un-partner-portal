@@ -412,12 +412,27 @@ class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
         ),
     )
     queryset = Application.objects.all()
-    serializer_class = CreateDirectApplicationNoCNSerializer
-    lookup_url_kwarg = 'pk'
 
     def get_queryset(self):
         return super(AgencyEOIApplicationDestroyAPIView, self).get_queryset().filter(
             eoi__agency=self.request.user.agency, eoi_id=self.kwargs['eoi_id']
+        )
+
+
+class PartnerEOIApplicationDestroyAPIView(DestroyAPIView):
+
+    permission_classes = (
+        HasUNPPPermission(
+            partner_permissions=[
+                PartnerPermission.CFEI_SUBMIT_CONCEPT_NOTE,
+            ],
+        ),
+    )
+    queryset = Application.objects.all()
+
+    def get_object(self):
+        return get_object_or_404(
+            self.get_queryset(), pk=self.kwargs['pk'], partner=self.request.active_partner
         )
 
 
