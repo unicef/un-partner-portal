@@ -38,6 +38,7 @@ from notification.consts import NotificationType
 from notification.helpers import user_received_notification_recently, send_notification_to_cfei_focal_points
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
+from project.identifiers import get_eoi_display_identifier
 from project.models import EOI, Application, Assessment, ApplicationFeedback
 from project.utilities import update_cfei_focal_points, update_cfei_reviewers
 
@@ -139,6 +140,10 @@ class CreateEOISerializer(serializers.ModelSerializer):
         today = date.today()
         if not all([d >= today for d in dates]):
             raise serializers.ValidationError('Dates for the project cannot be set in the past.')
+
+        validated_data['displayID'] = get_eoi_display_identifier(
+            validated_data['agency'].name, validated_data['locations'][0]['admin_level_1']['country_code']
+        )
 
         return validated_data
 

@@ -37,6 +37,7 @@ from partner.models import (
     PartnerCapacityAssessment,
 )
 from partner.roles import PartnerRole
+from project.identifiers import get_eoi_display_identifier
 from project.models import EOI, Application, Assessment
 from review.models import PartnerFlag, PartnerVerification
 from common.consts import (
@@ -56,7 +57,7 @@ from common.consts import (
     SELECTION_CRITERIA_CHOICES,
     STAFF_GLOBALLY_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
-)
+    WORKING_LANGUAGES_CHOICES)
 from common.countries import COUNTRIES_ALPHA2_CODE
 from sanctionslist.models import SanctionedNameMatch, SanctionedItem, SanctionedName
 
@@ -299,8 +300,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     def collaborations_partnership(self, create, extracted, **kwargs):
         PartnerCollaborationPartnership.objects.create(
             partner=self,
-            created_by=User.objects.first(),
-            agency=Agency.objects.all().order_by("?").first(),
+            created_by=get_partner_member(),
+            agency=get_random_agency(),
             description="description"
         )
 
@@ -311,7 +312,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
         PartnerCollaborationEvidence.objects.create(
             partner=self,
-            created_by=User.objects.first(),
+            created_by=get_partner_member(),
             mode=COLLABORATION_EVIDENCE_MODES.accreditation,
             organization_name="accreditation organization name",
             evidence_file=cfile,
@@ -320,7 +321,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
         PartnerCollaborationEvidence.objects.create(
             partner=self,
-            created_by=User.objects.first(),
+            created_by=get_partner_member(),
             mode=COLLABORATION_EVIDENCE_MODES.reference,
             organization_name="reference organization name",
             evidence_file=cfile,
@@ -401,7 +402,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         self.profile.alias_name = "alias name {}".format(self.id)
         self.profile.registration_number = "reg-number {}".format(self.id)
 
-        self.profile.working_languages = get_country_list()
+        self.profile.working_languages = random.sample(
+            list(WORKING_LANGUAGES_CHOICES._db_values), k=random.randint(2, 3)
+        )
         self.profile.connectivity = True
 
         self.profile.acronym = "acronym {}".format(self.id)
@@ -618,6 +621,7 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
 
 class OpenEOIFactory(factory.django.DjangoModelFactory):
     title = factory.LazyFunction(get_cfei_title)
+    displayID = factory.LazyAttribute(lambda o: get_eoi_display_identifier(o.agency.name, get_country()))
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
     agency_office = factory.LazyFunction(get_random_agency_office)
