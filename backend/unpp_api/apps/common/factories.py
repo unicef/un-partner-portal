@@ -38,6 +38,7 @@ from partner.models import (
     PartnerCapacityAssessment,
     PartnerGoverningDocument, PartnerRegistrationDocument)
 from partner.roles import PartnerRole
+from project.identifiers import get_eoi_display_identifier
 from project.models import EOI, Application, Assessment
 from review.models import PartnerFlag, PartnerVerification
 from common.consts import (
@@ -636,6 +637,7 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
 
 class OpenEOIFactory(factory.django.DjangoModelFactory):
     title = factory.LazyFunction(get_cfei_title)
+    displayID = factory.LazyAttribute(lambda o: get_eoi_display_identifier(o.agency.name, get_country()))
     agency = factory.LazyFunction(get_random_agency)
     created_by = factory.LazyFunction(get_agency_member)
     agency_office = factory.LazyFunction(get_random_agency_office)

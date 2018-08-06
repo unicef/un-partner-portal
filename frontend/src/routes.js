@@ -30,6 +30,7 @@ import partnerProfileEdit from './components/organizationProfile/edit/partnerPro
 import TabsContainer from './components/organizationProfile/edit/tabsContainer';
 import partnerProfileHeader from './components/partners/profile/partnerProfileHeader';
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
+import partnerUnData from './components/partners/profile/overview/undata/partnerUnData';
 import partnerVerification from './components/partners/profile/overview/partnerVerification';
 import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
 import registration from './components/registration/registration';
@@ -112,6 +113,7 @@ const allRoutes = () => (
             <Route component={mainContent} >
               <Route path="overview" component={partnerOverview} />
               <Route path="details" component={organizationProfileOverviewPaper} />
+              <Route path="undata" component={partnerUnData} />
               <Route path="users" component={partnerUsersContainer} />
               <Route path="verification" component={partnerVerification} />
               <Route path="observations" component={partnerObservationsList} />

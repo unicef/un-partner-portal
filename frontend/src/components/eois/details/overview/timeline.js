@@ -11,7 +11,7 @@ const messages = {
 };
 
 const title = () => (
-  <Typography type="headline" >{messages.title}</Typography>
+  <Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>
 );
 
 const Timeline = (props) => {

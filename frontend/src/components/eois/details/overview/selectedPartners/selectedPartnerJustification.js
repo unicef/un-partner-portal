@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
+import Typography from 'material-ui/Typography';
 import { selectCfeiDetails } from '../../../../../store';
 import TextFieldForm from '../../../../forms/textFieldForm';
 import GridColumn from '../../../../common/grid/gridColumn';
@@ -20,7 +21,7 @@ const SelectedPartnerJustification = (props) => {
   return (
     <form>
       <HeaderList
-        header={messages.justificationSummary}
+        header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.justificationSummary}</Typography>}
       >
         <PaddedContent>
           <GridColumn>

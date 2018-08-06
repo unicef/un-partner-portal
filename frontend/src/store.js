@@ -78,6 +78,9 @@ import reportVerificationList from './reducers/reportsVerificationList';
 import selectableList from './reducers/selectableListItems';
 import generatePartnerReports from './reducers/partnerReportsGeneration';
 import partnerMembersList from './reducers/partnerMembersList';
+import vendorNumber from './reducers/vendorNumber';
+import removeVendorNumber from './reducers/deleteVendorNumber';
+import partnerUnData from './reducers/partnerUnData';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -88,6 +91,9 @@ import idPortalDeactivateUser from './idPortal/reducers/deactivateUser';
 
 
 const mainReducer = combineReducers({
+  partnerUnData,
+  vendorNumber,
+  removeVendorNumber,
   cfei,
   cfeiNav,
   cfeiDetails,
@@ -229,6 +235,9 @@ export const selectNormalizedStaffGlobalyChoices = state =>
 
 export const selectNormalizedBudgets = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['budget-choices'], 'value');
+
+export const selectNormalizedBusinessAreas = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['business-areas'], 'value');
 
 export const selectNormalizedDirectJustification = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['direct-justifications'], 'value');

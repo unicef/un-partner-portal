@@ -18,7 +18,7 @@ const FinalizeJustification = (props) => {
   const { justification, cfeiCompleted } = props;
   return (
     cfeiCompleted
-      ? <HeaderList header={<Typography type="headline" >{messages.title}</Typography>}>
+      ? <HeaderList header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}>
         <PaddedContent>
           <Typography type="body1" >
             {justification}
