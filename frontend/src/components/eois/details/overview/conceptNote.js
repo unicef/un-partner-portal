@@ -17,7 +17,7 @@ const ConceptNote = (props) => {
   const { conceptNote, date, title, loading } = props;
   return (
     <HeaderList
-      header={<Typography type="headline" >{title}</Typography>}
+      header={<Typography style={{ margin: 'auto 0' }} type="headline" >{title}</Typography>}
     >
       <PaddedContent>
         <Loader loading={loading}>
