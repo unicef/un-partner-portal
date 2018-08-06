@@ -477,6 +477,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
         model = EOI
         fields = (
             'id',
+            'displayID',
             'specializations',
             'locations',
             'assessments_criteria',
@@ -536,6 +537,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         model = EOI
         fields = (
             'id',
+            'displayID',
             'specializations',
             'invited_partners',
             'locations',
@@ -576,7 +578,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'deadline_passed',
             'published_timestamp',
         )
-        read_only_fields = ('created', 'completed_date', 'is_published', 'published_timestamp')
+        read_only_fields = ('created', 'completed_date', 'is_published', 'published_timestamp', 'displayID')
 
     def get_extra_kwargs(self):
         extra_kwargs = super(AgencyProjectSerializer, self).get_extra_kwargs()
