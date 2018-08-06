@@ -678,7 +678,6 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         response = self.client.post(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         self.assertEquals(response.data['date_reviewed'], str(date.today()))
-        self.assertEquals(response.data['reviewer'], self.user.id)
         self.assertEquals(len(response.data['scores']), len(payload['scores']))
         assessment_id = Assessment.objects.last().id
         self.assertEquals(response.data['id'], assessment_id)

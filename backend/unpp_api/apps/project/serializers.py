@@ -776,6 +776,9 @@ class ReviewersApplicationSerializer(serializers.ModelSerializer):
 
 class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
     total_score = serializers.IntegerField(read_only=True)
+    reviewer = serializers.HiddenField(default=serializers.CreateOnlyDefault(CurrentUserDefault()))
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(CurrentUserDefault()))
+    modified_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(CurrentUserDefault()))
 
     class Meta:
         model = Assessment
@@ -788,18 +791,11 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
             'scores',
             'total_score',
             'date_reviewed',
+            'is_a_committee_score',
             'note',
         )
-        extra_kwargs = {
-            'created_by': {
-                'default': CurrentUserDefault(),
-            },
-            'modified_by': {
-                'default': CurrentUserDefault(),
-            },
-        }
         read_only_fields = (
-            'created_by', 'modified_by'
+            'created_by', 'modified_by',
         )
 
     def get_extra_kwargs(self):
@@ -817,6 +813,11 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
         app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
         if app.eoi.status != CFEI_STATUSES.closed:
             raise serializers.ValidationError("Assessment allowed once deadline is passed.")
+
+        if data.get('is_a_committee_score', False) and app.reviewers.count() > 1:
+            raise serializers.ValidationError({
+                'is_a_committee_score': 'Committee scores are only allowed on projects with one reviewer.'
+            })
 
         scores = data.get('scores')
         application = self.instance and self.instance.application or app

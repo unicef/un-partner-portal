@@ -335,6 +335,10 @@ class Assessment(TimeStampedModel):
     scores = JSONField(default=[dict((('selection_criteria', None), ('score', 0)))])
     date_reviewed = models.DateField(auto_now=True, verbose_name='Date reviewed')
     note = models.TextField(null=True, blank=True)
+    is_a_committee_score = models.BooleanField(
+        default=False,
+        help_text='If only one reviewer is selected, indicate that they are providing scores on behalf of a committee.'
+    )
     archived = models.BooleanField(default=False)
 
     class Meta:
