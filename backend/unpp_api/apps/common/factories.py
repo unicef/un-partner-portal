@@ -38,7 +38,7 @@ from partner.models import (
 )
 from partner.roles import PartnerRole
 from project.identifiers import get_eoi_display_identifier
-from project.models import EOI, Application, Assessment
+from project.models import EOI, Application, Assessment, EOIAttachment
 from review.models import PartnerFlag, PartnerVerification
 from common.consts import (
     PARTNER_TYPES,
@@ -725,6 +725,15 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
     @factory.post_generation
     def locations(self, create, extracted, **kwargs):
         self.locations.add(*PointFactory.create_batch(random.randint(2, 3)))
+
+    @factory.post_generation
+    def attachments(self, create, extracted, **kwargs):
+        for _ in range(random.randint(0, 3)):
+            EOIAttachment.objects.create(
+                eoi=self,
+                file=get_new_common_file(),
+                description=fake.catch_phrase()
+            )
 
 
 class DirectEOIFactory(OpenEOIFactory):
