@@ -27,7 +27,7 @@ class AgencyPermission(AutoNameEnum):
     CFEI_SENT_EDIT = auto()  # If creator / focal point
     CFEI_SENT_INVITE_CSO = auto()  # If creator / focal point
     CFEI_SENT_PUBLISH = auto()  # If focal point
-    CFEI_PUBLISH = auto()  # If creator
+    CFEI_PUBLISH = auto()
 
     # Modify Published CFEI for Own Agency
     CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS = auto()  # If creator / focal point

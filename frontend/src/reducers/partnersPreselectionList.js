@@ -3,7 +3,6 @@ const initialState = {
     { name: 'legal_name', title: 'Organization\'s Legal Name' },
     { name: 'type_org', title: 'Type of Organization' },
     { name: 'id', title: 'Application ID' },
-    { name: 'review_progress', title: 'Review progress' },
     { name: 'your_score', title: 'Your score' },
     { name: 'average_total_score', title: 'Average score' },
   ],

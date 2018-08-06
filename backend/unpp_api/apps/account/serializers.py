@@ -248,6 +248,19 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
+class BasicUserSerializer(serializers.ModelSerializer):
+
+    name = serializers.CharField(source='fullname', read_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'name',
+            'email',
+        )
+
+
 class IDUserSerializer(serializers.ModelSerializer):
 
     class Meta:

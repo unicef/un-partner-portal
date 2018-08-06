@@ -138,6 +138,7 @@ INSTALLED_APPS = [
     'django_countries',
     'mail_templated',
     'social_django',
+    'sequences.apps.SequencesConfig',
 
     'common',
     'account',

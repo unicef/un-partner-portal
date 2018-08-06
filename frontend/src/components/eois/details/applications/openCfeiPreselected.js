@@ -14,7 +14,6 @@ import Compare from '../../buttons/compareButton';
 import OrganizationTypeCell from '../../../applications/organizationTypeCell';
 import PreselectedTotalScore from '../../cells/preselectedTotalScore';
 import PreselectedYourScore from '../../cells/preselectedYourScore';
-import PreselectedReviewsCell from '../../cells/preselectedReviewsCell';
 import { loadApplications } from '../../../../reducers/partnersApplicationsList';
 import { APPLICATION_STATUSES } from '../../../../helpers/constants';
 import { isQueryChanged } from '../../../../helpers/apiHelper';
@@ -84,11 +83,6 @@ class OpenCfeiPreselections extends Component {
         score={row.average_total_score}
         hovered={hovered}
         allowedToEdit={this.props.allowedToEdit}
-      />);
-    } else if (column.name === 'review_progress') {
-      return (<PreselectedReviewsCell
-        id={row.id}
-        reviews={row.review_progress}
       />);
     } else if (column.name === 'type_org') {
       return <OrganizationTypeCell orgType={row.type_org} />;

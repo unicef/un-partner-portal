@@ -28,6 +28,7 @@ class EOI(TimeStampedModel):
     """
     Call of Expression of Interest
     """
+    displayID = models.TextField(max_length=32, unique=True, editable=False)
     display_type = models.CharField(
         max_length=3, choices=CFEI_TYPES, default=CFEI_TYPES.open, verbose_name='Type of Call'
     )
@@ -334,6 +335,10 @@ class Assessment(TimeStampedModel):
     scores = JSONField(default=[dict((('selection_criteria', None), ('score', 0)))])
     date_reviewed = models.DateField(auto_now=True, verbose_name='Date reviewed')
     note = models.TextField(null=True, blank=True)
+    is_a_committee_score = models.BooleanField(
+        default=False,
+        help_text='If only one reviewer is selected, indicate that they are providing scores on behalf of a committee.'
+    )
     archived = models.BooleanField(default=False)
 
     class Meta:
