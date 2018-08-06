@@ -1099,6 +1099,7 @@ class PartnerRegistrationDocument(TimeStampedModel):
     document = models.ForeignKey('common.CommonFile', related_name="registration_documents")
     registration_number = models.TextField(max_length=255, null=True, blank=True)
     editable = models.BooleanField(default=False)
+    issuing_authority = models.TextField()
     issue_date = models.DateField(validators=(
         PastDateValidator(),
     ))
