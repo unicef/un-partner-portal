@@ -16,7 +16,13 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_filter = ('is_unsolicited', 'agency', 'status', 'did_win', 'did_accept', 'did_decline', 'did_withdraw')
 
 
-admin.site.register(EOI)
+class EOIAdmin(admin.ModelAdmin):
+    search_fields = ('displayID', 'title')
+    list_display = ('displayID', 'display_type', 'title', 'agency')
+    list_filter = ('display_type', 'agency', 'sent_for_publishing', 'is_published')
+
+
+admin.site.register(EOI, EOIAdmin)
 admin.site.register(Pin)
 admin.site.register(Application, ApplicationAdmin)
 admin.site.register(ApplicationFeedback)
