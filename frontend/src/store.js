@@ -80,6 +80,7 @@ import generatePartnerReports from './reducers/partnerReportsGeneration';
 import partnerMembersList from './reducers/partnerMembersList';
 import vendorNumber from './reducers/vendorNumber';
 import removeVendorNumber from './reducers/deleteVendorNumber';
+import partnerUnData from './reducers/partnerUnData';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -90,6 +91,7 @@ import idPortalDeactivateUser from './idPortal/reducers/deactivateUser';
 
 
 const mainReducer = combineReducers({
+  partnerUnData,
   vendorNumber,
   removeVendorNumber,
   cfei,

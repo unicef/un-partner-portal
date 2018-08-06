@@ -9,6 +9,7 @@ import ControlledModal from '../../../../../common/modals/controlledModal';
 import PaddedContent from '../../../../../common/paddedContent';
 import { Typography } from '../../../../../../../node_modules/material-ui';
 import { deleteVendorNumber } from '../../../../../../reducers/deleteVendorNumber';
+import { getPartnerUnData } from '../../../../../../reducers/partnerUnData';
 
 const messages = {
   title: 'Delete the Partner\'s vendor number/partner ID',
@@ -35,12 +36,15 @@ class DeleteVendorNumberModal extends Component {
   }
 
   vendorNumberRequest() {
-    const { removeVendorNumber, agencyId, partner, partnerId } = this.props;
+    const { removeVendorNumber, agencyId, partner, partnerId, loadUnData } = this.props;
 
     const vendorNumber = find(propEq('agency_id', agencyId), prop('vendorNumbers', partner) || []);
 
     removeVendorNumber(vendorNumber.id, partnerId)
-      .then(() => this.props.handleDialogClose());
+      .then(() => {
+        loadUnData(agencyId);
+        this.props.handleDialogClose();
+      });
   }
 
   confirmData(vendorNumber) {
@@ -96,6 +100,7 @@ DeleteVendorNumberModal.propTypes = {
   dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   removeVendorNumber: PropTypes.func,
+  loadUnData: PropTypes.func,
   partner: PropTypes.object,
   showLoading: PropTypes.bool,
   partnerId: PropTypes.string,
@@ -109,8 +114,9 @@ const mapStateToProps = (state, ownProps) => ({
   showLoading: state.removeVendorNumber.deleteVendorNumberSubmitting,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   removeVendorNumber: (vendorId, partnerId) => dispatch(deleteVendorNumber(vendorId, partnerId)),
+  loadUnData: agencyId => dispatch(getPartnerUnData(agencyId, ownProps.params.id)),
 });
 
 const connectedDeleteVendorNumberModal = connect(

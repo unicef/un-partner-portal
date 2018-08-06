@@ -399,6 +399,10 @@ export function patchUserProfile(body) {
   return authorizedPatch({ uri: '/accounts/me/profile/', body });
 }
 
+export function fetchPartnerUnData(agencyId, partnerId) {
+  return authorizedGet({ uri: `/externals/partner-details/${agencyId}/${partnerId}/` });
+}
+
 // Agencies
 export function getAgencyMembers(id, params = { page_size: 100 }, options) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params, options },

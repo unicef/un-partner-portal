@@ -4,6 +4,7 @@ import R from 'ramda';
  */
 
 export const success = (_, tag) => `LOAD_${tag}_SUCCESS`;
+export const failure = (_, tag) => `LOAD_${tag}_FAILURE`;
 
 const clearError = state => R.assoc('error', {}, state);
 const startLoading = (state, action) =>

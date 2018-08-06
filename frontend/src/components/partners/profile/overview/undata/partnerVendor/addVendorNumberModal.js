@@ -11,6 +11,7 @@ import AddVendorNumberForm from './addVendorNumberForm';
 import PaddedContent from '../../../../../common/paddedContent';
 import { Typography } from '../../../../../../../node_modules/material-ui';
 import { addVendorNumber } from '../../../../../../reducers/vendorNumber';
+import { getPartnerUnData } from '../../../../../../reducers/partnerUnData';
 
 const messages = {
   title: 'Add the Partner\'s vendor number/partner ID',
@@ -56,10 +57,13 @@ class AddVendorNumberModal extends Component {
   }
 
   vendorNumberRequest() {
-    const { postVendorNumber, partnerId } = this.props;
+    const { postVendorNumber, partnerId, agencyId, loadUnData } = this.props;
 
     postVendorNumber(this.state.payload, partnerId)
-      .then(() => this.closeConfirmation());
+      .then(() => {
+        loadUnData(agencyId);
+        this.closeConfirmation();
+      });
   }
 
   confirmData() {
@@ -135,13 +139,16 @@ AddVendorNumberModal.propTypes = {
   partnerName: PropTypes.string,
   postVendorNumber: PropTypes.func,
   partnerId: PropTypes.string,
+  agencyId: PropTypes.number,
   showLoading: PropTypes.bool,
+  loadUnData: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const partnerName = state.agencyPartnerProfile.data[ownProps.params.id] ? state.agencyPartnerProfile.data[ownProps.params.id].name : '';
 
   return {
+    agencyId: state.session.agencyId,
     partneId: ownProps.params.id,
     partnerName,
     query: ownProps.location.query,
@@ -149,9 +156,10 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   submit: () => dispatch(submit('addVendorNumberForm')),
   postVendorNumber: (data, partnerId) => dispatch(addVendorNumber(data, partnerId)),
+  loadUnData: agencyId => dispatch(getPartnerUnData(agencyId, ownProps.params.id)),
 });
 
 const connectedAddVendorNumberModal = connect(
