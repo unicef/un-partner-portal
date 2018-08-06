@@ -156,6 +156,16 @@ class EOI(TimeStampedModel):
             return 'Direct Selection / Retention'
 
 
+class EOIAttachment(TimeStampedModel):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eoi_attachments")
+    eoi = models.ForeignKey(EOI, related_name="attachments")
+    file = models.ForeignKey('common.CommonFile', related_name="eoi_attachments")
+    description = models.TextField(max_length=5120)
+
+    def __str__(self):
+        return f"EOIAttachment <pk:{self.pk}> (eoi:{self.eoi.pk})"
+
+
 class Pin(TimeStampedModel):
     eoi = models.ForeignKey(EOI, related_name="pins")
     partner = models.ForeignKey('partner.Partner', related_name="pins")

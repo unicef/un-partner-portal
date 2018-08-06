@@ -1,3 +1,4 @@
+import random
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
@@ -10,7 +11,7 @@ from agency.permissions import AgencyPermission
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
 from common.consts import ALL_COMPLETED_REASONS, DSR_FINALIZE_RETENTION_CHOICES, CFEI_STATUSES
 from common.factories import AgencyMemberFactory, PartnerFactory, PartnerVerificationFactory, OpenEOIFactory, \
-    DirectEOIFactory, PartnerMemberFactory
+    DirectEOIFactory, PartnerMemberFactory, get_new_common_file
 from common.tests.base import BaseAPITestCase
 from partner.models import PartnerMember, Partner
 from project.models import EOI, Application
@@ -56,7 +57,10 @@ class TestOpenCFEI(BaseAPITestCase):
             ],
             "agency": office.agency.id,
             "agency_office": office.id,
-
+            'attachments': [{
+                'file': get_new_common_file().pk,
+                'description': 'Test File',
+            } for _ in range(random.randint(0, 4))]
         }
 
     def test_create_open(self):
@@ -182,7 +186,11 @@ class TestDSRCFEI(BaseAPITestCase):
                     }
                 ],
                 "agency": office.agency.id,
-                "agency_office": office.id
+                "agency_office": office.id,
+                'attachments': [{
+                    'file': get_new_common_file().pk,
+                    'description': 'Test File',
+                } for _ in range(random.randint(0, 4))]
             }
         }
 
