@@ -1055,7 +1055,6 @@ class ReviewSummarySerializer(MixinPreventManyCommonFile, serializers.ModelSeria
 
 
 class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
-    __apps_count = None
     user_id = serializers.CharField(source='id')
     user_name = serializers.CharField(source='get_fullname')
     assessments = serializers.SerializerMethodField()
@@ -1072,15 +1071,15 @@ class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
         lookup_field = self.context['view'].lookup_field
         eoi_id = self.context['request'].parser_context['kwargs'][lookup_field]
         eoi = get_object_or_404(EOI, id=eoi_id)
-        if self.__apps_count is None:
-            self.__apps_count = eoi.applications.filter(status=APPLICATION_STATUSES.preselected).count()
+        applications = eoi.applications.filter(status=APPLICATION_STATUSES.preselected)
+        applications_count = applications.count()
 
-        assessments_count = Assessment.objects.filter(reviewer=user, application__eoi_id=eoi_id).count()
+        assessments_count = Assessment.objects.filter(reviewer=user, application__in=applications).count()
         reminder_sent_recently = user_received_notification_recently(user, eoi, NotificationType.CFEI_REVIEW_REQUIRED)
 
         return {
-            'counts': "{}/{}".format(assessments_count, self.__apps_count),
-            'send_reminder': not (self.__apps_count == assessments_count) and not reminder_sent_recently,
+            'counts': "{}/{}".format(assessments_count, applications_count),
+            'send_reminder': not (applications_count == assessments_count) and not reminder_sent_recently,
             'eoi_id': eoi_id,  # use full for front-end to easier construct send reminder url
         }
 
