@@ -337,12 +337,19 @@ class AssessmentManager(models.Manager):
         return super(AssessmentManager, self).get_queryset().filter(archived=False)
 
 
+def get_default_scores():
+    return [{
+        'selection_criteria': None,
+        'score': 0,
+    }]
+
+
 class Assessment(TimeStampedModel):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="assessments_creator")
     modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="assessments_editor", null=True, blank=True)
     reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="assessments")
     application = models.ForeignKey(Application, related_name="assessments")
-    scores = JSONField(default=[dict((('selection_criteria', None), ('score', 0)))])
+    scores = JSONField(default=get_default_scores)
     date_reviewed = models.DateField(auto_now=True, verbose_name='Date reviewed')
     note = models.TextField(null=True, blank=True)
     is_a_committee_score = models.BooleanField(
@@ -350,6 +357,7 @@ class Assessment(TimeStampedModel):
         help_text='If only one reviewer is selected, indicate that they are providing scores on behalf of a committee.'
     )
     archived = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False, help_text='Once assessment is completed it is no longer editable')
 
     class Meta:
         ordering = ['id']
