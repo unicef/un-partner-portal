@@ -52,7 +52,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
             </Grid>
             <Grid item sm={4} xs={12}>
               <RadioForm
-                fieldName="have_gov_doc"
+                fieldName="have_governing_document"
                 label={messages.haveGovDoc}
                 values={BOOL_VAL}
                 warn
@@ -77,7 +77,7 @@ const PartnerProfileIdentificationRegistration = (props) => {
         </Grid>
         <Grid item sm={6} xs={12}>
           <RadioForm
-            fieldName="registration_to_operate_in_country"
+            fieldName="registered_to_operate_in_country"
             label={isCountryProfile
               ? messages.registrationCountry
               : messages.registrationCountryHq}
@@ -161,8 +161,8 @@ const connected = connect((state, ownProps) => {
 
   return {
     isCountryProfile: partner ? (partner.is_hq || false) : false,
-    isRegistered: selector(state, 'identification.registration.registration_to_operate_in_country'),
-    hasGovDoc: selector(state, 'identification.registration.have_gov_doc'),
+    isRegistered: selector(state, 'identification.registration.registered_to_operate_in_country'),
+    hasGovDoc: selector(state, 'identification.registration.have_governing_document'),
   };
 }, null)(PartnerProfileIdentificationRegistration);
 

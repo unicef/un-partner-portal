@@ -1,8 +1,8 @@
+import R from 'ramda';
 import React from 'react';
 import { connect } from 'react-redux';
 import { formValueSelector, SubmissionError } from 'redux-form';
 import PropTypes from 'prop-types';
-import { path } from 'ramda';
 import {
   Stepper,
   Step,
@@ -13,7 +13,7 @@ import LegalStatus from './legalStatus';
 import OrganizationType from './organizationType';
 import BasicInformation from './basicInformation';
 import RegistrationStep from './registrationStep';
-import Declaration from './declaration';
+import Declaration, { PLAIN_DECLRATIONS } from './declaration';
 import Account from './account';
 import AlertDialog from '../common/alertDialog';
 import { loadCountries } from '../../reducers/countries';
@@ -65,11 +65,12 @@ class RegistrationStepper extends React.Component {
   }
 
   handleNextLegalStatus() {
-    const legalStatusData = this.props.legalStatusData;
+    const formData = this.props.formData;
 
-    if (!legalStatusData.have_gov_doc
-      || !legalStatusData.have_ref_letter
-      || !legalStatusData.have_registration_doc) {
+    if (!formData.partner_profile.have_governing_document
+      && !formData.recommendation_document.have_ref_letter
+      && !(formData.partner_profile.registered_to_operate_in_country
+          && !formData.registration_document.have_registration_doc)) {
       this.setState({ legalStatusAlert: true });
       return;
     }
@@ -85,8 +86,15 @@ class RegistrationStepper extends React.Component {
   }
 
   handleSubmit(values) {
-    return this.props.registerUser(values.json).catch((error) => {
-      const errorMsg = path(['response', 'data', 'non_field_errors'], error) || messages.error;
+    let payload = R.assocPath(['json', 'declaration'],
+      Object.keys(PLAIN_DECLRATIONS.questions).map((key, index) =>
+        ({ answer: 'Yes', question: PLAIN_DECLRATIONS.questions[key] }),
+      ), values);
+
+    payload = R.dissoc('questions', payload);
+
+    return this.props.registerUser(payload.json).catch((error) => {
+      const errorMsg = R.path(['response', 'data', 'non_field_errors'], error) || messages.error;
       if (error.response.data.user) {
         this.setState({ stepIndex: 3 });
       }
@@ -118,14 +126,14 @@ class RegistrationStepper extends React.Component {
               </RegistrationStep>
             </StepContent>
           </Step>
-          {/* <Step>
+          <Step>
             <StepLabel>Legal Status</StepLabel>
             <StepContent>
               <RegistrationStep onSubmit={this.handleNextLegalStatus} handlePrev={this.handlePrev}>
                 <LegalStatus />
               </RegistrationStep>
             </StepContent>
-          </Step> */}
+          </Step>
           <Step>
             <StepLabel>Partner Declaration</StepLabel>
             <StepContent>
@@ -170,7 +178,7 @@ RegistrationStepper.propTypes = {
    * answers to all questions in declaration component, show dialog when at least one is false
    */
   answers: PropTypes.arrayOf(PropTypes.bool),
-  legalStatusData: PropTypes.object,
+  formData: PropTypes.object,
   loadPartnerConfig: PropTypes.func,
   loadCountries: PropTypes.func,
   registerUser: PropTypes.func,
@@ -180,7 +188,7 @@ const selector = formValueSelector('registration');
 const connectedRegistrationStepper = connect(
   state => ({
     answers: selector(state, 'questions'),
-    legalStatusData: selector(state, 'json.legal'),
+    formData: selector(state, 'json'),
   }),
   dispatch => ({
     loadCountries: () => dispatch(loadCountries()),
