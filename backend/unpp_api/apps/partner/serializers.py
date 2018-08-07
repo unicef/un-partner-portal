@@ -50,6 +50,50 @@ from partner.models import (
 )
 
 
+class PartnerGoverningDocumentSerializer(serializers.ModelSerializer):
+
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
+    document = CommonFileBase64UploadSerializer()
+
+    class Meta:
+        model = PartnerGoverningDocument
+        fields = (
+            'id',
+            'created_by',
+            'document',
+            'editable',
+        )
+        extra_kwargs = {
+            'editable': {
+                'read_only': True
+            }
+        }
+
+
+class PartnerRegistrationDocumentSerializer(serializers.ModelSerializer):
+
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
+    document = CommonFileBase64UploadSerializer()
+
+    class Meta:
+        model = PartnerRegistrationDocument
+        fields = (
+            'id',
+            'created_by',
+            'document',
+            'registration_number',
+            'editable',
+            'issuing_authority',
+            'issue_date',
+            'expiry_date',
+        )
+        extra_kwargs = {
+            'editable': {
+                'read_only': True
+            }
+        }
+
+
 class PartnerAdditionalSerializer(serializers.ModelSerializer):
 
     hq = serializers.SerializerMethodField()
@@ -160,8 +204,8 @@ class PartnerFullSerializer(serializers.ModelSerializer):
 
 class PartnerFullProfilesSerializer(serializers.ModelSerializer):
 
-    gov_doc = CommonFileSerializer(allow_null=True)
-    registration_doc = CommonFileSerializer(allow_null=True)
+    governing_documents = PartnerGoverningDocumentSerializer(read_only=True, many=True)
+    registration_documents = PartnerRegistrationDocumentSerializer(read_only=True, many=True)
 
     class Meta:
         model = PartnerProfile
@@ -555,49 +599,6 @@ class PartnersListSerializer(serializers.ModelSerializer):
     def get_experience_working(self, obj):
         return PartnerCollaborationPartnership.objects.filter(partner=obj).\
             values_list("agency__name", flat=True).distinct()
-
-
-class PartnerGoverningDocumentSerializer(serializers.ModelSerializer):
-
-    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
-    document = CommonFileBase64UploadSerializer()
-
-    class Meta:
-        model = PartnerGoverningDocument
-        fields = (
-            'id',
-            'created_by',
-            'document',
-            'editable',
-        )
-        extra_kwargs = {
-            'editable': {
-                'read_only': True
-            }
-        }
-
-
-class PartnerRegistrationDocumentSerializer(serializers.ModelSerializer):
-
-    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
-    document = CommonFileBase64UploadSerializer()
-
-    class Meta:
-        model = PartnerRegistrationDocument
-        fields = (
-            'id',
-            'created_by',
-            'document',
-            'registration_number',
-            'editable',
-            'issue_date',
-            'expiry_date',
-        )
-        extra_kwargs = {
-            'editable': {
-                'read_only': True
-            }
-        }
 
 
 class PartnerIdentificationSerializer(serializers.ModelSerializer):

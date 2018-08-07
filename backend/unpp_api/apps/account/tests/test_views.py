@@ -90,6 +90,7 @@ class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
             'issue_date': date.today() - relativedelta(years=random.randint(1, 4)),
             'expiry_date': date.today() + relativedelta(years=random.randint(5, 20)),
             'registration_number': 'TEST_NUMBER',
+            'issuing_authority': 'TEST_AUTHORITY',
         }
         payload['recommendation_document'] = {
             'evidence_file': {

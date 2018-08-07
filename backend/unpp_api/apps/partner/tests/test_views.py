@@ -161,6 +161,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             'issue_date': date.today() - relativedelta(years=random.randint(1, 4)),
             'expiry_date': date.today() + relativedelta(years=random.randint(5, 20)),
             'registration_number': 'TEST_NUMBER',
+            'issuing_authority': 'TEST_AUTHORITY',
         })
         self.assertResponseStatusIs(registration_document_response, status.HTTP_201_CREATED)
         self.assertTrue(registration_document_response.data['editable'])
@@ -591,6 +592,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             'issue_date': date.today() - relativedelta(years=random.randint(1, 4)),
             'expiry_date': date.today() + relativedelta(years=random.randint(5, 20)),
             'registration_number': 'TEST_NUMBER',
+            'issuing_authority': 'TEST_AUTHORITY',
         })
         self.assertResponseStatusIs(registration_document_response, status.HTTP_201_CREATED)
         self.assertTrue(registration_document_response.data['editable'])
