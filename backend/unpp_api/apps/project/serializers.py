@@ -39,8 +39,21 @@ from notification.helpers import user_received_notification_recently, send_notif
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
 from project.identifiers import get_eoi_display_identifier
-from project.models import EOI, Application, Assessment, ApplicationFeedback
+from project.models import EOI, Application, Assessment, ApplicationFeedback, EOIAttachment
 from project.utilities import update_cfei_focal_points, update_cfei_reviewers
+
+
+class EOIAttachmentSerializer(serializers.ModelSerializer):
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(CurrentUserDefault()))
+    file = CommonFileSerializer()
+
+    class Meta:
+        model = EOIAttachment
+        fields = (
+            'created_by',
+            'description',
+            'file',
+        )
 
 
 class BaseProjectSerializer(serializers.ModelSerializer):
@@ -126,6 +139,7 @@ class DirectProjectSerializer(BaseProjectSerializer):
 class CreateEOISerializer(serializers.ModelSerializer):
 
     locations = PointSerializer(many=True)
+    attachments = EOIAttachmentSerializer(many=True, required=False)
 
     def validate(self, attrs):
         validated_data = super(CreateEOISerializer, self).validate(attrs)
@@ -147,6 +161,11 @@ class CreateEOISerializer(serializers.ModelSerializer):
         validated_data['displayID'] = get_eoi_display_identifier(
             validated_data['agency'].name, validated_data['locations'][0]['admin_level_1']['country_code']
         )
+
+        if len(validated_data.get('attachments', [])) > 5:
+            raise serializers.ValidationError({
+                'attachments': 'Maximum of 5 attachments is allowed.'
+            })
 
         return validated_data
 
@@ -374,6 +393,7 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         locations = validated_data['eoi'].pop('locations')
         specializations = validated_data['eoi'].pop('specializations')
         focal_points = validated_data['eoi'].pop('focal_points')
+        attachments = validated_data['eoi'].pop('attachments', [])
 
         validated_data['eoi']['display_type'] = CFEI_TYPES.direct
         eoi = EOI.objects.create(**validated_data['eoi'])
@@ -383,6 +403,10 @@ class CreateDirectProjectSerializer(serializers.Serializer):
 
         for specialization in specializations:
             eoi.specializations.add(specialization)
+
+        for attachment_data in attachments:
+            attachment_data['eoi'] = eoi
+            EOIAttachment.objects.create(**attachment_data)
 
         applications = []
         for application_data in validated_data['applications']:
@@ -417,6 +441,7 @@ class CreateProjectSerializer(CreateEOISerializer):
         locations = validated_data.pop('locations')
         specializations = validated_data.pop('specializations')
         focal_points = validated_data.pop('focal_points')
+        attachments = validated_data.pop('attachments', [])
 
         validated_data['cn_template'] = validated_data['agency'].profile.eoi_template
         validated_data['created_by'] = self.context['request'].user
@@ -431,6 +456,11 @@ class CreateProjectSerializer(CreateEOISerializer):
 
         for focal_point in focal_points:
             self.instance.focal_points.add(focal_point)
+
+        for attachment_data in attachments:
+            attachment_data['eoi'] = self.instance
+            EOIAttachment.objects.create(**attachment_data)
+
         send_notification_to_cfei_focal_points(self.instance)
         return self.instance
 
@@ -473,6 +503,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
     application = serializers.SerializerMethodField()
     focal_points_detail = BasicUserSerializer(source='focal_points', read_only=True, many=True)
     reviewers_detail = BasicUserSerializer(source='reviewers', read_only=True, many=True)
+    attachments = EOIAttachmentSerializer(many=True, read_only=True)
 
     # TODO - cut down on some of these fields. partners should not get back this data
     # Frontend currently breaks if doesn't receive all
@@ -513,6 +544,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'application',
             'published_timestamp',
             'deadline_passed',
+            'attachments',
         )
         read_only_fields = fields
 
@@ -535,6 +567,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
     reviewers_detail = BasicUserSerializer(source='reviewers', read_only=True, many=True)
     invited_partners = PartnerShortSerializer(many=True, read_only=True)
     applications_count = serializers.SerializerMethodField(allow_null=True, read_only=True)
+    attachments = EOIAttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = EOI
@@ -580,6 +613,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'is_published',
             'deadline_passed',
             'published_timestamp',
+            'attachments',
         )
         read_only_fields = ('created', 'completed_date', 'is_published', 'published_timestamp', 'displayID')
 
