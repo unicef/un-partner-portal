@@ -639,6 +639,22 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.partner.legal_name = validated_data.pop('partner', {}).pop('legal_name', instance.partner.legal_name)
         instance.partner.save()
+
+        governing_documents = self.initial_data.get('governing_documents', None)
+        registration_documents = self.initial_data.get('registration_documents', None)
+
+        if governing_documents is not None:
+            if governing_documents:
+                for gov_doc_data in governing_documents:
+                    gov_doc = PartnerGoverningDocument.objects.filter(id=gov_doc_data.get('id')).first()
+                    if gov_doc and not gov_doc.editable:
+                        continue
+                    serializer = PartnerGoverningDocumentSerializer(instance=gov_doc, data=gov_doc_data)
+                    serializer.is_valid(raise_exception=True)
+                    serializer.save(profile=instance)
+            else:
+                instance.governing_documents.exclude(editable=False).delete()
+
         return super(PartnerIdentificationSerializer, self).update(instance, validated_data)
 
 
