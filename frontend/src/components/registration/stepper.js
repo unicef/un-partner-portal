@@ -70,7 +70,7 @@ class RegistrationStepper extends React.Component {
     if (!formData.partner_profile.have_governing_document
       && !formData.recommendation_document.have_ref_letter
       && !(formData.partner_profile.registered_to_operate_in_country
-          && !formData.registration_document.have_registration_doc)) {
+          && formData.registration_document.have_registration_doc)) {
       this.setState({ legalStatusAlert: true });
       return;
     }
