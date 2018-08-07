@@ -139,6 +139,7 @@ INSTALLED_APPS = [
     'mail_templated',
     'social_django',
     'sequences.apps.SequencesConfig',
+    'django_nose',
 
     'common',
     'account',
@@ -202,7 +203,8 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/dashboard"
 # TODO: Re-enable this back once we figure out all email domain names to whitelist from partners
 # SOCIAL_AUTH_WHITELISTED_DOMAINS = ['unicef.org', 'google.com']
 
-TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_ARGS = ['--with-timer', '--nocapture', '--nologcapture']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
