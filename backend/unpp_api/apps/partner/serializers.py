@@ -644,16 +644,32 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
         registration_documents = self.initial_data.get('registration_documents', None)
 
         if governing_documents is not None:
+            valid_ids = []
             if governing_documents:
                 for gov_doc_data in governing_documents:
                     gov_doc = PartnerGoverningDocument.objects.filter(id=gov_doc_data.get('id')).first()
-                    if gov_doc and not gov_doc.editable:
+                    if gov_doc and (not gov_doc.editable or not gov_doc.profile == instance):
                         continue
-                    serializer = PartnerGoverningDocumentSerializer(instance=gov_doc, data=gov_doc_data)
+                    serializer = PartnerGoverningDocumentSerializer(
+                        instance=gov_doc, data=gov_doc_data, context=self.context
+                    )
                     serializer.is_valid(raise_exception=True)
-                    serializer.save(profile=instance)
-            else:
-                instance.governing_documents.exclude(editable=False).delete()
+                    valid_ids.append(serializer.save(profile=instance).id)
+            instance.governing_documents.exclude(editable=False).exclude(id__in=valid_ids).delete()
+
+        if registration_documents is not None:
+            valid_ids = []
+            if registration_documents:
+                for reg_doc_data in registration_documents:
+                    reg_doc = PartnerRegistrationDocument.objects.filter(id=reg_doc_data.get('id')).first()
+                    if reg_doc and (not reg_doc.editable or not reg_doc.profile == instance):
+                        continue
+                    serializer = PartnerRegistrationDocumentSerializer(
+                        instance=reg_doc, data=reg_doc_data, context=self.context
+                    )
+                    serializer.is_valid(raise_exception=True)
+                    valid_ids.append(serializer.save(profile=instance).id)
+            instance.registration_documents.exclude(editable=False).exclude(id__in=valid_ids).delete()
 
         return super(PartnerIdentificationSerializer, self).update(instance, validated_data)
 

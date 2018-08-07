@@ -1084,7 +1084,7 @@ class PartnerGoverningDocument(TimeStampedModel):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="governing_documents")
     profile = models.ForeignKey(PartnerProfile, related_name="governing_documents")
     document = models.ForeignKey('common.CommonFile', related_name="governing_documents")
-    editable = models.BooleanField(default=False)
+    editable = models.BooleanField(default=True)
 
     class Meta:
         ordering = ('created', )
@@ -1098,7 +1098,7 @@ class PartnerRegistrationDocument(TimeStampedModel):
     profile = models.ForeignKey(PartnerProfile, related_name="registration_documents")
     document = models.ForeignKey('common.CommonFile', related_name="registration_documents")
     registration_number = models.TextField(max_length=255, null=True, blank=True)
-    editable = models.BooleanField(default=False)
+    editable = models.BooleanField(default=True)
     issuing_authority = models.TextField()
     issue_date = models.DateField(validators=(
         PastDateValidator(),

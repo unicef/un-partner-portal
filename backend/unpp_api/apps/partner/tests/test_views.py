@@ -112,7 +112,6 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
     def test_identification(self):
         profile = PartnerProfile.objects.first()
-        partner = profile.partner
         year_establishment = 2015
 
         identification_url = reverse('partners:identification', kwargs={"pk": profile.id})
@@ -120,14 +119,14 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             'year_establishment': year_establishment,
             'have_governing_document': True,
             'registered_to_operate_in_country': True,
-            'registration_number': '123/2016',
         }
-        response = self.client.patch(identification_url, data=payload, format='json')
+        response = self.client.patch(identification_url, data=payload)
         self.assertResponseStatusIs(response)
         self.assertEquals(response.data['year_establishment'], year_establishment)
 
-        response = self.client.get(identification_url, format='json')
+        response = self.client.get(identification_url)
         self.assertResponseStatusIs(response)
+        identification_payload = response.data
 
         file_endpoint_url = reverse('common:file')
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.doc')
@@ -139,38 +138,41 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         self.assertIsNotNone(response.data['id'])
-        governing_documents_url = reverse('partners:governing-document', kwargs={"pk": partner.id})
-        governing_document_response = self.client.post(governing_documents_url, data={
+
+        identification_payload['governing_documents'].append({
             'document': response.data['id']
         })
-        governing_document_filename = response.data['file_field']
-        self.assertResponseStatusIs(governing_document_response, status.HTTP_201_CREATED)
-        self.assertTrue(governing_document_response.data['editable'])
 
         with open(filename) as doc:
             payload = {
                 "file_field": doc
             }
             response = self.client.post(file_endpoint_url, data=payload, format='multipart')
+
         self.assertTrue(status.is_success(response.status_code))
         self.assertTrue(response.data['id'] is not None)
 
-        registration_documents_url = reverse('partners:registration-document', kwargs={"pk": partner.id})
-        registration_document_response = self.client.post(registration_documents_url, data={
+        identification_payload['registration_documents'].append({
             'document': response.data['id'],
             'issue_date': date.today() - relativedelta(years=random.randint(1, 4)),
             'expiry_date': date.today() + relativedelta(years=random.randint(5, 20)),
             'registration_number': 'TEST_NUMBER',
             'issuing_authority': 'TEST_AUTHORITY',
         })
-        self.assertResponseStatusIs(registration_document_response, status.HTTP_201_CREATED)
-        self.assertTrue(registration_document_response.data['editable'])
 
-        response = self.client.get(identification_url, format='json')
+        response = self.client.patch(identification_url, data=identification_payload)
         self.assertResponseStatusIs(response)
+
+        if len(response.data['registration_documents']) > 1:
+            self.assertFalse(response.data['registration_documents'][0]['editable'])
+        self.assertTrue(response.data['registration_documents'][-1]['editable'])
+
+        if len(response.data['governing_documents']) > 1:
+            self.assertFalse(response.data['governing_documents'][0]['editable'])
+        self.assertTrue(response.data['governing_documents'][-1]['editable'])
+
         self.assertTrue(response.data['have_governing_document'])
         self.assertTrue(response.data['registered_to_operate_in_country'])
-        self.assertEqual(response.data['governing_documents'][-1]['document'], governing_document_filename)
         self.assertEqual(response.data['registration_documents'][-1]['registration_number'], 'TEST_NUMBER')
 
     def test_contact_information(self):
@@ -543,68 +545,6 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             self.assertTrue(
                 partner.capacity_assessments.filter(report_file_id=f['id']).exists()
             )
-
-    def test_update_governing_document(self):
-        partner = Partner.objects.first()
-        initial_governing_document = partner.profile.governing_documents.first()
-
-        self.assertFalse(initial_governing_document.editable)
-        initial_governing_document_update_url = reverse('partners:governing-document', kwargs={
-            "pk": partner.id,
-            "document_pk": initial_governing_document.pk
-        })
-        initial_governing_document_update_response = self.client.patch(initial_governing_document_update_url)
-        self.assertResponseStatusIs(initial_governing_document_update_response, status.HTTP_404_NOT_FOUND)
-
-        governing_documents_url = reverse('partners:governing-document', kwargs={"pk": partner.id})
-        governing_document_response = self.client.post(governing_documents_url, data={
-            'document': get_new_common_file().pk
-        })
-        self.assertResponseStatusIs(governing_document_response, status.HTTP_201_CREATED)
-        self.assertTrue(governing_document_response.data['editable'])
-        update_url = reverse('partners:governing-document', kwargs={
-            "pk": partner.id,
-            "document_pk": governing_document_response.data['id']
-        })
-        update_response = self.client.patch(update_url, data={
-            'document': get_new_common_file().pk
-        })
-        self.assertResponseStatusIs(update_response)
-
-    def test_update_registration_document(self):
-        partner = Partner.objects.first()
-        partner.profile.registered_to_operate_in_country = True
-        partner.profile.save()
-        initial_registration_document = partner.profile.registration_documents.first() or \
-            PartnerRegistrationDocumentFactory(profile=partner.profile)
-
-        self.assertFalse(initial_registration_document.editable)
-        initial_registration_document_update_url = reverse('partners:registration-document', kwargs={
-            "pk": partner.id,
-            "document_pk": initial_registration_document.pk
-        })
-        initial_registration_document_update_response = self.client.patch(initial_registration_document_update_url)
-        self.assertResponseStatusIs(initial_registration_document_update_response, status.HTTP_404_NOT_FOUND)
-
-        registration_documents_url = reverse('partners:registration-document', kwargs={"pk": partner.id})
-        registration_document_response = self.client.post(registration_documents_url, data={
-            'document': get_new_common_file().pk,
-            'issue_date': date.today() - relativedelta(years=random.randint(1, 4)),
-            'expiry_date': date.today() + relativedelta(years=random.randint(5, 20)),
-            'registration_number': 'TEST_NUMBER',
-            'issuing_authority': 'TEST_AUTHORITY',
-        })
-        self.assertResponseStatusIs(registration_document_response, status.HTTP_201_CREATED)
-        self.assertTrue(registration_document_response.data['editable'])
-
-        update_url = reverse('partners:registration-document', kwargs={
-            "pk": partner.id,
-            "document_pk": registration_document_response.data['id']
-        })
-        update_response = self.client.patch(update_url, data={
-            'document': get_new_common_file().pk
-        })
-        self.assertResponseStatusIs(update_response)
 
 
 class TestPartnerPDFExport(BaseAPITestCase):

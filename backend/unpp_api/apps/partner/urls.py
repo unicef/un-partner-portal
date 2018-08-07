@@ -15,8 +15,6 @@ from partner.views import (
     PartnerOtherInfoAPIView,
     PartnerCountryProfileAPIView,
     PartnersMemberListAPIView,
-    PartnerGoverningDocumentCreateAPIView,
-    PartnerRegistrationDocumentCreateAPIView,
 )
 
 
@@ -26,16 +24,6 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/country-profile/$', PartnerCountryProfileAPIView.as_view(), name="country-profile"),
     url(r'^(?P<pk>\d+)/org-profile$', OrganizationProfileAPIView.as_view(), name="org-profile"),
     url(r'^(?P<pk>\d+)/summary/$', PartnerProfileSummaryAPIView.as_view(), name="partner-profile-summary"),
-    url(
-        r'^(?P<pk>\d+)/governing-document/?(?P<document_pk>[^/]+)?/$',
-        PartnerGoverningDocumentCreateAPIView.as_view(),
-        name="governing-document"
-    ),
-    url(
-        r'^(?P<pk>\d+)/registration-document/?(?P<document_pk>[^/]+)?/$',
-        PartnerRegistrationDocumentCreateAPIView.as_view(),
-        name="registration-document"
-    ),
     url(r'^(?P<pk>\d+)/identification/$', PartnerIdentificationAPIView.as_view(), name="identification"),
     url(r'^(?P<pk>\d+)/contact-information/$', PartnerContactInformationAPIView.as_view(), name="contact-information"),
     url(r'^(?P<pk>\d+)/mandate-mission/$', PartnerMandateMissionAPIView.as_view(), name="mandate-mission"),

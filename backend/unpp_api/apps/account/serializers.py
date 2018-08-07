@@ -151,12 +151,12 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         if governing_document:
             governing_document['created_by'] = user
             governing_document['profile'] = self.partner.profile
-            PartnerGoverningDocument.objects.create(**governing_document)
+            PartnerGoverningDocument.objects.create(editable=False, **governing_document)
 
         if registration_document:
             registration_document['created_by'] = user
             registration_document['profile'] = self.partner.profile
-            PartnerRegistrationDocument.objects.create(**registration_document)
+            PartnerRegistrationDocument.objects.create(editable=False, **registration_document)
 
         if recommendation_document:
             recommendation_document['created_by'] = user
