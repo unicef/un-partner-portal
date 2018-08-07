@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 from project.models import (
     EOI,
+    EOIAttachment,
     Pin,
     Application,
     ApplicationFeedback,
@@ -23,6 +24,7 @@ class EOIAdmin(admin.ModelAdmin):
 
 
 admin.site.register(EOI, EOIAdmin)
+admin.site.register(EOIAttachment)
 admin.site.register(Pin)
 admin.site.register(Application, ApplicationAdmin)
 admin.site.register(ApplicationFeedback)
