@@ -36,7 +36,7 @@ from common.factories import (
     OtherAgencyFactory,
     PointFactory,
     PartnerMemberFactory,
-    get_new_common_file, PartnerRegistrationDocumentFactory)
+)
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     YEARS_OF_EXP_CHOICES,
