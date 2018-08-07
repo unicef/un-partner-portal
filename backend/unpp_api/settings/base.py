@@ -203,7 +203,7 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/dashboard"
 # TODO: Re-enable this back once we figure out all email domain names to whitelist from partners
 # SOCIAL_AUTH_WHITELISTED_DOMAINS = ['unicef.org', 'google.com']
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = os.getenv('DJANGO_TEST_RUNNER', 'django.test.runner.DiscoverRunner')
 NOSE_ARGS = ['--with-timer', '--nocapture', '--nologcapture']
 
 REST_FRAMEWORK = {
