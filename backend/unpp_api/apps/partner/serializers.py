@@ -651,7 +651,7 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
                     if gov_doc and (not gov_doc.editable or not gov_doc.profile == instance):
                         continue
                     serializer = PartnerGoverningDocumentSerializer(
-                        instance=gov_doc, data=gov_doc_data, context=self.context
+                        instance=gov_doc, data=gov_doc_data, context=self.context, partial=bool(gov_doc)
                     )
                     serializer.is_valid(raise_exception=True)
                     valid_ids.append(serializer.save(profile=instance).id)
@@ -665,7 +665,7 @@ class PartnerIdentificationSerializer(serializers.ModelSerializer):
                     if reg_doc and (not reg_doc.editable or not reg_doc.profile == instance):
                         continue
                     serializer = PartnerRegistrationDocumentSerializer(
-                        instance=reg_doc, data=reg_doc_data, context=self.context
+                        instance=reg_doc, data=reg_doc_data, context=self.context, partial=bool(reg_doc)
                     )
                     serializer.is_valid(raise_exception=True)
                     valid_ids.append(serializer.save(profile=instance).id)
