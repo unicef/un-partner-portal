@@ -120,7 +120,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         AgencyOfficeFactory.create_batch(self.quantity)
         AgencyMemberFactory.create_batch(self.quantity)
         PartnerMemberFactory.create_batch(self.quantity)
-        OpenEOIFactory.create_batch(self.quantity)
+        OpenEOIFactory.create_batch(self.quantity, agency=self.user.agency)
 
     def test_open_project(self):
         # read open projects
