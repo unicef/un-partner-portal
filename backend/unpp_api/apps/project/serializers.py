@@ -109,6 +109,7 @@ class DirectProjectSerializer(BaseProjectSerializer):
 
     invited_partners = serializers.SerializerMethodField()
     partner_offer_status = serializers.SerializerMethodField()
+    selected_source_display = serializers.CharField(source='get_selected_source_display', read_only=True)
 
     class Meta:
         model = EOI
@@ -125,6 +126,7 @@ class DirectProjectSerializer(BaseProjectSerializer):
             'deadline_date',
             'status',
             'selected_source',
+            'selected_source_display',
             'partner_offer_status',
         )
 
