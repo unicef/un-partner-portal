@@ -103,8 +103,11 @@ class BaseProjectAPIView(ListCreateAPIView):
         queryset = super(BaseProjectAPIView, self).get_queryset()
         if self.request.user.is_partner_user:
             queryset = queryset.filter(is_published=True)
-        elif self.request.user.agency and not self.request.method == 'GET':
-            queryset = queryset.filter(agency=self.request.user.agency)
+        elif self.request.user.agency:
+            if not self.request.method == 'GET':
+                queryset = queryset.filter(agency=self.request.user.agency)
+            else:
+                queryset = queryset.filter(Q(agency=self.request.user.agency) | Q(is_published=True))
 
         return queryset
 
