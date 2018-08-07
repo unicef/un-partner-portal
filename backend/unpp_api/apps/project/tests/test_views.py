@@ -651,7 +651,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         app.eoi.save()
 
         response = self.client.post(url, data=payload, format='json')
-        self.assertTrue(status.is_client_error(response.status_code))
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.data['non_field_errors'], ["You can score only selection criteria defined in CFEI."]
         )
@@ -661,6 +661,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             scores.append({
                 'selection_criteria': criterion.get('selection_criteria'), 'score': 100
             })
+
         payload['scores'] = scores
         response = self.client.post(url, data=payload, format='json')
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
@@ -710,6 +711,10 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['note'], payload['note'])
         self.assertEquals(response.data['scores'], payload['scores'])
+
+        complete_assessments_url = reverse('projects:eoi-reviewers-complete-assessments', kwargs={"eoi_id": app.eoi.id})
+        complete_response = self.client.post(complete_assessments_url)
+        self.assertResponseStatusIs(complete_response)
 
 
 class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
