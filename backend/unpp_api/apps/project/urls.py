@@ -29,6 +29,7 @@ from project.views import (
     PublishCFEIAPIView,
     EOISendToPublishAPIView,
     UCNManageAPIView,
+    CompleteAssessmentsAPIView,
 )
 
 
@@ -67,6 +68,9 @@ urlpatterns = [
     url(r'^(?P<eoi_id>\d+)/applications/reviewers/(?P<reviewer_id>\d+)/notify/$',
         EOIReviewersAssessmentsNotifyAPIView.as_view(),
         name="eoi-reviewers-assessments-notify"),
+    url(r'^(?P<eoi_id>\d+)/applications/complete-assessments/$',
+        CompleteAssessmentsAPIView.as_view(),
+        name="eoi-reviewers-complete-assessments"),
     url(r'^(?P<eoi_id>\d+)/applications/awarded-partners/',
         AwardedPartnersListAPIView.as_view(),
         name="applications-awarded-partners"),

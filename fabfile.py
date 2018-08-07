@@ -114,3 +114,10 @@ def make_admin():
     Create admin user for the backend
     """
     local('docker-compose exec backend python manage.py createsuperuser')
+
+
+def clean_pyc():
+    """
+    Create admin user for the backend
+    """
+    local('docker-compose exec backend find . -name \'*.pyc\' -delete')

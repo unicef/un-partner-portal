@@ -931,3 +931,22 @@ class UCNManageAPIView(RetrieveUpdateAPIView, DestroyAPIView):
     @check_unpp_permission(partner_permissions=[PartnerPermission.UCN_DELETE])
     def perform_destroy(self, instance):
         return super(UCNManageAPIView, self).perform_destroy(instance)
+
+
+class CompleteAssessmentsAPIView(ListAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[]
+        ),
+    )
+    serializer_class = ReviewerAssessmentsSerializer
+    queryset = Assessment.objects.filter(completed=False)
+
+    def get_queryset(self):
+        queryset = super(CompleteAssessmentsAPIView, self).get_queryset()
+        return queryset.filter(created_by=self.request.user, reviewer=self.request.user)
+
+    def post(self, *args, **kwargs):
+        assessments = self.get_queryset().filter(application__eoi_id=self.kwargs['eoi_id'])
+        assessments.update(completed=True)
+        return Response(self.serializer_class(assessments, many=True).data)

@@ -1,4 +1,5 @@
 import itertools
+import random
 
 from datetime import date
 from django.urls import reverse
@@ -133,7 +134,7 @@ class TestProjectReportAPIView(BaseAPITestCase):
             frozenset, itertools.permutations(projects.values_list('specializations__id', flat=True), 2)
         ))
 
-        for ids in spec_options:
+        for ids in random.sample(spec_options, 5):
             list_response = self.client.get(list_url + f'?specializations={",".join(map(str, ids))}')
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], projects.filter(
