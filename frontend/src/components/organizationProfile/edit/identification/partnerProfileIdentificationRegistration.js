@@ -30,6 +30,7 @@ const messages = {
   'and governance of an organization, outlining the purposes of the organization and how it will ' +
   'be run. A governing document may come in the form of a trust deed, constitution, memorandum ' +
   'and articles of association, or another formal, legal document.',
+  registeringAuthority: 'Name of registering authority',
 };
 
 const GoverningDocument = readOnly => (member, index, fields) => (<Grid container>
@@ -63,7 +64,7 @@ const RegistrationDocument = readOnly => (member, index, fields) => (<Grid item>
     </Grid>
     <Grid item sm={4} xs={12}>
       <TextFieldForm
-        label={messages.number}
+        label={messages.registeringAuthority}
         fieldName={`${member}.issuing_authority`}
         optional
         placeholder={PLACEHOLDERS.provide}

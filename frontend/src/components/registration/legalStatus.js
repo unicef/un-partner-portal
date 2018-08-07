@@ -168,7 +168,23 @@ const BasicInformation = (props) => {
             values={BOOL_VAL}
           />
         </Grid>
-        {visibleIfYes(hasRefLetter) && <Grid item sm={6} xs={12}>
+        {visibleIfYes(hasRefLetter) && <Grid item sm={12} xs={12}>
+          <Grid container direction="row">
+            <Grid item sm={6} xs={12}>
+              <TextFieldForm
+                label={messages.nameOfRefferer}
+                fieldName="json.recommendation_document.organization_name"
+                placeholder={PLACEHOLDERS.provide}
+              />
+            </Grid>
+
+            <Grid item sm={6} xs={12}>
+              <DatePickerForm
+                fieldName="json.recommendation_document.date_received"
+                label={messages.received}
+              />
+            </Grid>
+          </Grid>
           <FileForm
             fieldName="json.recommendation_document.evidence_file"
             formName="registration"
@@ -176,21 +192,6 @@ const BasicInformation = (props) => {
             localUpload
             label={messages.referenceLetter}
           />
-          <Grid container direction="column">
-            <Grid item sm={4} xs={6}>
-              <TextFieldForm
-                label={messages.nameOfRefferer}
-                fieldName="json.recommendation_document.organization_name"
-                placeholder={PLACEHOLDERS.provide}
-              />
-            </Grid>
-            <Grid item sm={4} xs={6}>
-              <DatePickerForm
-                fieldName="json.recommendation_document.date_received"
-                label={messages.received}
-              />
-            </Grid>
-          </Grid>
         </Grid>}
       </Grid>
     </Grid>
