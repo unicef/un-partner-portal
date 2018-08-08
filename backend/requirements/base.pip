@@ -1,5 +1,7 @@
 # Django packages
 Django==1.11.14
+django-nose==1.4.5
+nose-timer==0.7.1
 
 # APM
 elastic-apm==2.0.0
@@ -33,6 +35,7 @@ reportlab==3.4.0
 Babel==2.6.0
 python-crontab==2.3.4
 social-auth-app-django==2.1.0
+django-sequences==2.2
 
 # Testing
 astroid==1.5.2

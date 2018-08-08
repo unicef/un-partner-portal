@@ -3,6 +3,7 @@ const initialState = {
   tabs: [
     { path: 'overview', label: 'Overview', name: 'a' },
     { path: 'details', label: 'Profile details', name: 'a' },
+    { path: 'undata', label: 'UN Data', name: 'a' },
     { path: 'verification', label: 'Verification', name: 'a' },
     { path: 'observations', label: 'Observations', name: 'a' },
     { path: 'applications', label: 'Applications', name: 'a' },

@@ -17,7 +17,7 @@ from common.consts import (
     EXTENDED_APPLICATION_STATUSES,
     DSR_FINALIZE_RETENTION_CHOICES,
 )
-from common.fields import FixedTextField
+from common.database_fields import FixedTextField
 from common.utils import get_countries_code_from_queryset, get_absolute_frontend_url
 from project.validators import (
     validate_weight_adjustments,
@@ -28,6 +28,7 @@ class EOI(TimeStampedModel):
     """
     Call of Expression of Interest
     """
+    displayID = models.TextField(max_length=32, unique=True, editable=False)
     display_type = models.CharField(
         max_length=3, choices=CFEI_TYPES, default=CFEI_TYPES.open, verbose_name='Type of Call'
     )
@@ -153,6 +154,16 @@ class EOI(TimeStampedModel):
             return 'Direct Selection converted from Unsolicited Concept Note'
         else:
             return 'Direct Selection / Retention'
+
+
+class EOIAttachment(TimeStampedModel):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eoi_attachments")
+    eoi = models.ForeignKey(EOI, related_name="attachments")
+    file = models.ForeignKey('common.CommonFile', related_name="eoi_attachments")
+    description = models.TextField(max_length=5120)
+
+    def __str__(self):
+        return f"EOIAttachment <pk:{self.pk}> (eoi:{self.eoi.pk})"
 
 
 class Pin(TimeStampedModel):
@@ -326,15 +337,27 @@ class AssessmentManager(models.Manager):
         return super(AssessmentManager, self).get_queryset().filter(archived=False)
 
 
+def get_default_scores():
+    return [{
+        'selection_criteria': None,
+        'score': 0,
+    }]
+
+
 class Assessment(TimeStampedModel):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="assessments_creator")
     modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="assessments_editor", null=True, blank=True)
     reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="assessments")
     application = models.ForeignKey(Application, related_name="assessments")
-    scores = JSONField(default=[dict((('selection_criteria', None), ('score', 0)))])
+    scores = JSONField(default=get_default_scores)
     date_reviewed = models.DateField(auto_now=True, verbose_name='Date reviewed')
     note = models.TextField(null=True, blank=True)
+    is_a_committee_score = models.BooleanField(
+        default=False,
+        help_text='If only one reviewer is selected, indicate that they are providing scores on behalf of a committee.'
+    )
     archived = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False, help_text='Once assessment is completed it is no longer editable')
 
     class Meta:
         ordering = ['id']

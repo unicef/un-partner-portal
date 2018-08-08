@@ -1,4 +1,5 @@
 import itertools
+import random
 
 from datetime import date
 from django.urls import reverse
@@ -39,11 +40,11 @@ class TestPartnerProfileReportAPIView(BaseAPITestCase):
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], partners.filter(display_type=display_type).count())
 
-        for registration_to_operate_in_country in (True, False):
-            list_response = self.client.get(list_url + f'?registered={registration_to_operate_in_country}')
+        for registered_to_operate_in_country in (True, False):
+            list_response = self.client.get(list_url + f'?registered={registered_to_operate_in_country}')
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], partners.filter(
-                profile__registration_to_operate_in_country=registration_to_operate_in_country
+                profile__registered_to_operate_in_country=registered_to_operate_in_country
             ).count())
 
         for agency in Agency.objects.all():
@@ -133,7 +134,7 @@ class TestProjectReportAPIView(BaseAPITestCase):
             frozenset, itertools.permutations(projects.values_list('specializations__id', flat=True), 2)
         ))
 
-        for ids in spec_options:
+        for ids in random.sample(spec_options, 5):
             list_response = self.client.get(list_url + f'?specializations={",".join(map(str, ids))}')
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], projects.filter(

@@ -40,6 +40,7 @@ class BaseProjectFilter(django_filters.FilterSet):
         model = EOI
         fields = (
             'title',
+            'displayID',
             'country_code',
             'locations',
             'specializations',

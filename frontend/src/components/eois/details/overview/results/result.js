@@ -30,7 +30,7 @@ const Result = (props) => {
   const { application, notifDate } = props;
   return (
     <HeaderList
-      header={<Typography type="headline" >{messages.title}</Typography>}
+      header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}
     >
       {Fields(application, notifDate)}
     </HeaderList>

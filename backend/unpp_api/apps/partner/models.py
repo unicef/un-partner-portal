@@ -18,8 +18,8 @@ from django.db.models.signals import post_save
 from model_utils.models import TimeStampedModel
 
 from account.models import User
-from common.fields import FixedTextField
-from common.validators import MaxCurrentYearValidator
+from common.database_fields import FixedTextField
+from common.validators import MaxCurrentYearValidator, PastDateValidator, FutureDateValidator
 from common.countries import COUNTRIES_ALPHA2_CODE
 from common.utils import Thumbnail
 from common.consts import (
@@ -73,6 +73,8 @@ class Partner(TimeStampedModel):
         verbose_name="Briefly describe the organization's engagement with the communities in which you operate",
         null=True, blank=True
     )
+
+    declaration = models.ForeignKey('common.CommonFile', null=True, blank=True)
 
     class Meta:
         ordering = ('id', )
@@ -180,6 +182,10 @@ class Partner(TimeStampedModel):
         }
 
     @property
+    def registration_declaration(self):
+        return getattr(self.hq, 'declaration', self.declaration)
+
+    @property
     def has_finished(self):
         if not self.profile.identification_is_complete:
             return False
@@ -246,10 +252,10 @@ class PartnerProfile(TimeStampedModel):
     working_languages_other = models.CharField(max_length=100, null=True, blank=True)
     # authorised_officials
     have_board_directors = models.NullBooleanField(
-        verbose_name="Does your organization have a board of directors?"
+        verbose_name="Does your organization have a board of director(s)?"
     )
     have_authorised_officers = models.NullBooleanField(
-        verbose_name="Does your organization have a authorised officers?"
+        verbose_name="Does your organization have any other authorized officers who are not listed above?"
     )
 
     # Registration of organization
@@ -263,18 +269,20 @@ class PartnerProfile(TimeStampedModel):
             MinValueValidator(1800),  # red cross since 1863 year
         )
     )
-    have_gov_doc = models.NullBooleanField(verbose_name='Does the organization have a government document?')
-    gov_doc = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="gov_docs")
-    registration_to_operate_in_country = models.NullBooleanField()
-    registration_doc = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="registration_docs")
-    registration_date = models.DateField(null=True, blank=True)
-    registration_comment = models.TextField(max_length=5000, null=True, blank=True)
-    registration_number = models.CharField(max_length=255, null=True, blank=True)
+    have_governing_document = models.NullBooleanField(verbose_name='Does the organization have a government document?')
+    missing_governing_document_comment = models.TextField(max_length=5000, null=True, blank=True)
+
+    registered_to_operate_in_country = models.NullBooleanField()
+    missing_registration_document_comment = models.TextField(max_length=5000, null=True, blank=True)
 
     # programme management
-    have_management_approach = models.NullBooleanField()  # results_based_approach
+    have_management_approach = models.NullBooleanField(
+        verbose_name='Does the organization use a results-based approach to managing programmes and projects?'
+    )
     management_approach_desc = models.TextField(max_length=5000, null=True, blank=True)
-    have_system_monitoring = models.NullBooleanField()
+    have_system_monitoring = models.NullBooleanField(
+        verbose_name='Does your organization have a system for monitoring and evaluating its programmes and projects?'
+    )
     system_monitoring_desc = models.TextField(max_length=5000, null=True, blank=True)
     have_feedback_mechanism = models.NullBooleanField()
     feedback_mechanism_desc = models.TextField(max_length=5000, null=True, blank=True)
@@ -290,7 +298,10 @@ class PartnerProfile(TimeStampedModel):
         choices=METHOD_ACC_ADOPTED_CHOICES,
         default=METHOD_ACC_ADOPTED_CHOICES.cash
     )
-    have_system_track = models.NullBooleanField()
+    have_system_track = models.NullBooleanField(
+        verbose_name='Does your organization have a system to track expenditures, '
+                     'prepare project reports, and prepare claims for donors?'
+    )
     financial_control_system_desc = models.TextField(max_length=5000, null=True, blank=True)
 
     # internal control - other fields
@@ -307,13 +318,16 @@ class PartnerProfile(TimeStampedModel):
     )
     partnership_collaborate_institution_desc = models.CharField(
         max_length=5000, null=True, blank=True,
-        verbose_name='Please state which cluster, network or consortium and briefly explain the collaboration '
-                     'professional network, consortium or any similar institutions?'
+        verbose_name='Please state which cluster, network or consortium and briefly explain the collaboration'
     )
 
     any_partnered_with_un = models.NullBooleanField()
-    any_accreditation = models.NullBooleanField()
-    any_reference = models.NullBooleanField()
+    any_accreditation = models.NullBooleanField(
+        verbose_name='Would you like to upload any accreditations received by your organization?'
+    )
+    any_reference = models.NullBooleanField(
+        verbose_name='Would you like to upload any reference letters for your organization?'
+    )
 
     # Banking Information
     have_bank_account = models.NullBooleanField(verbose_name="Does the organization have a bank account?")
@@ -330,6 +344,10 @@ class PartnerProfile(TimeStampedModel):
         return "PartnerProfile <pk:{}>".format(self.id)
 
     @property
+    def registration_date(self):
+        return getattr(self.registration_documents.order_by('created').last(), 'issue_date', None)
+
+    @property
     def annual_budget(self):
         budget = self.partner.budgets.filter(year=date.today().year).first()
         if budget is not None:
@@ -343,27 +361,26 @@ class PartnerProfile(TimeStampedModel):
 
     @property
     def identification_is_complete(self):
-        required_fields = {
-            'have_gov_doc': self.have_gov_doc is not None,
-            'gov_doc': self.gov_doc if self.have_gov_doc else True,
-            'registration_to_operate_in_country': self.registration_to_operate_in_country is not None,
-            'establishment_year': self.year_establishment
-        }
-        if self.registration_to_operate_in_country:
-            required_fields.update({
-                'registration_date': self.registration_date,
-                'registration_doc': self.registration_doc,
-            })
-        elif self.registration_to_operate_in_country is False:
-            required_fields.update({
-                'registration_comment': self.registration_comment,
-            })
-        if self.partner.is_hq is False:
-            required_fields.update({
-                'legal_name': self.partner.legal_name,
-            })
+        conditions = [
+            self.have_governing_document is not None,
+            self.year_establishment,
+            self.registered_to_operate_in_country is not None,
+        ]
 
-        return all(required_fields.values())
+        if self.have_governing_document:
+            conditions.append(self.governing_documents.exists())
+        else:
+            conditions.append(self.missing_governing_document_comment)
+
+        if self.registered_to_operate_in_country:
+            conditions.append(self.registration_documents.exists())
+        else:
+            conditions.append(self.missing_registration_document_comment)
+
+        if self.partner.is_hq is False:
+            conditions.append(self.partner.legal_name)
+
+        return all(conditions)
 
     @property
     def contact_is_complete(self):
@@ -760,15 +777,30 @@ class PartnerMandateMission(TimeStampedModel):
     )
 
     # ethics
-    ethic_safeguard = models.NullBooleanField()
+    ethic_safeguard_comment = models.TextField(
+        max_length=5000, null=True, blank=True,
+        verbose_name='Briefly describe the organization’s mechanisms to safeguard against the violation and abuse of '
+                     'beneficiaries, including sexual exploitation and abuse.'
+    )
+    ethic_safeguard = models.NullBooleanField(
+        verbose_name='Does the organization have a policy or code of conduct to '
+                     'safeguard against the violation and abuse of beneficiaries?'
+    )
     ethic_safeguard_policy = models.ForeignKey(
-        'common.CommonFile', null=True, blank=True, related_name="ethic_safeguard_policies")
-    ethic_safeguard_comment = models.TextField(max_length=5000, null=True, blank=True)
-    ethic_fraud = models.NullBooleanField()
+        'common.CommonFile', null=True, blank=True, related_name="ethic_safeguard_policies"
+    )
+
+    ethic_fraud_comment = models.TextField(
+        max_length=5000, null=True, blank=True,
+        verbose_name='Briefly describe the organization’s mechanisms to safeguard against fraud, '
+                     'corruption and other unethical behaviour.'
+    )
+    ethic_fraud = models.NullBooleanField(
+        verbose_name='Does the organization have a policy or code of conduct to safeguard against fraud and corruption?'
+    )
     ethic_fraud_policy = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="ethic_fraud_policies"
     )
-    ethic_fraud_comment = models.TextField(max_length=5000, null=True, blank=True)
 
     # population of concern
     population_of_concern = models.NullBooleanField()
@@ -937,12 +969,12 @@ class PartnerCollaborationEvidence(TimeStampedModel):
     @property
     def is_complete(self):
         required_fields = {
-            'mode': self.mode,
-            'organization_name': self.organization_name,
-            'date_received': self.date_received,
-            'evidence_file': self.evidence_file,
+            self.mode,
+            self.organization_name,
+            self.date_received,
+            self.evidence_file,
         }
-        return all(required_fields.values())
+        return all(required_fields)
 
 
 class PartnerOtherInfo(TimeStampedModel):
@@ -1046,6 +1078,40 @@ class PartnerReview(TimeStampedModel):
 
     def __str__(self):
         return "PartnerReview <pk:{}>".format(self.id)
+
+
+class PartnerGoverningDocument(TimeStampedModel):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="governing_documents")
+    profile = models.ForeignKey(PartnerProfile, related_name="governing_documents")
+    document = models.ForeignKey('common.CommonFile', related_name="governing_documents")
+    editable = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('created', )
+
+    def __str__(self):
+        return f"[{self.pk}] {self.profile.partner}"
+
+
+class PartnerRegistrationDocument(TimeStampedModel):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="registration_documents")
+    profile = models.ForeignKey(PartnerProfile, related_name="registration_documents")
+    document = models.ForeignKey('common.CommonFile', related_name="registration_documents")
+    registration_number = models.TextField(max_length=255, null=True, blank=True)
+    editable = models.BooleanField(default=True)
+    issuing_authority = models.TextField()
+    issue_date = models.DateField(validators=(
+        PastDateValidator(),
+    ))
+    expiry_date = models.DateField(validators=(
+        FutureDateValidator(),
+    ))
+
+    class Meta:
+        ordering = ('created', )
+
+    def __str__(self):
+        return f"[{self.pk}] {self.profile.partner} ({self.issue_date}-{self.expiry_date})"
 
 
 def create_partner_additional_models(sender, instance, created, **kwargs):

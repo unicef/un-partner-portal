@@ -15,7 +15,6 @@ import FileForm from '../forms/fileForm';
 import DatePickerForm from '../forms/datePickerForm';
 
 const messages = {
-  countryOfOrigin: 'Country Of Origin',
   yearOfEstablishment: 'Year of establishment in country of origin',
   selectYear: 'Select year',
   registrationCountry: 'Is organization registered to operate in the country of origin?',
@@ -34,6 +33,8 @@ const messages = {
   governingDoc: 'Please upload Governing Document',
   haveRefLetter: 'Does the organization have a letter o reference from a donor agency, government authority or community association?',
   referenceLetter: 'Please upload letter of reference',
+  nameOfRefferer: 'Name of referring organization',
+  received: 'Date Received',
 };
 
 const BasicInformation = (props) => {
@@ -42,21 +43,15 @@ const BasicInformation = (props) => {
     <Grid item>
       <Grid container direction="column" spacing={16}>
         <Grid item sm={6} xs={12}>
-          <CountryField
-            fieldName="json.legal.country_code_origin"
-            label={messages.countryOfOrigin}
-          />
-        </Grid>
-        <Grid item sm={6} xs={12}>
           <YearFieldForm
-            fieldName="json.legal.year_establishment"
+            fieldName="json.partner_profile.year_establishment"
             label={messages.yearOfEstablishment}
             placeholder={messages.selectYear}
           />
         </Grid>
         <Grid item>
           <RadioForm
-            fieldName="json.legal.registration_to_operate_in_country"
+            fieldName="json.partner_profile.registered_to_operate_in_country"
             label={messages.registrationCountry}
             values={BOOL_VAL}
           />
@@ -66,7 +61,7 @@ const BasicInformation = (props) => {
               <Grid container direction="row">
                 <Grid item sm={4} xs={12}>
                   <DatePickerForm
-                    fieldName="json.legal.registration_date"
+                    fieldName="json.registration_document.issue_date"
                     label={messages.date}
                     placeholder={PLACEHOLDERS.provide}
                   />
@@ -74,7 +69,7 @@ const BasicInformation = (props) => {
                 <Grid item sm={8} xs={12}>
                   <TextFieldForm
                     label={messages.number}
-                    fieldName="json.legal.registration_number"
+                    fieldName="json.registration_document.registration_number"
                     optional
                     placeholder={PLACEHOLDERS.provide}
                   />
@@ -84,13 +79,13 @@ const BasicInformation = (props) => {
                 <Grid item>
                   <TextFieldForm
                     label={messages.name}
-                    fieldName="json.legal.authority_name"
+                    fieldName="json.registration_document.issuing_authority"
                     placeholder={PLACEHOLDERS.provide}
                   />
                 </Grid>
                 <Grid item sm={4} xs={12}>
                   <DatePickerForm
-                    fieldName="json.legal.expiration_date"
+                    fieldName="json.registration_document.expiry_date"
                     label={messages.expireDate}
                     optional
                     placeholder={PLACEHOLDERS.provide}
@@ -98,23 +93,24 @@ const BasicInformation = (props) => {
                 </Grid>
                 <Grid item>
                   <RadioForm
-                    fieldName="json.legal.have_registration_doc"
+                    fieldName="json.registration_document.have_registration_doc"
                     label={messages.registrationDoc}
                     values={BOOL_VAL}
                   />
                 </Grid>
                 {visibleIfYes(hasRegistrationDoc) && <Grid item>
                   <FileForm
-                    fieldName="json.legal.registration_doc"
+                    fieldName="json.registration_document.document"
                     formName="registration"
-                    sectionName="json.legal.registration"
+                    sectionName="registration_document"
+                    localUpload
                     label={messages.document}
                   />
                 </Grid>}
                 {visibleIfNo(hasRegistrationDoc) && <Grid item>
                   <TextFieldForm
                     label={messages.comment}
-                    fieldName="json.legal.registration_doc_comment"
+                    fieldName="json.partner_profile.missing_registration_document_comment"
                     placeholder={PLACEHOLDERS.provide}
                   />
                 </Grid>}
@@ -123,7 +119,7 @@ const BasicInformation = (props) => {
         {visibleIfNo(isRegistered) && <Grid item>
           <TextFieldForm
             label={messages.comment}
-            fieldName="json.legal.registration_comment"
+            fieldName="json.partner_profile.missing_registration_document_comment"
             textFieldProps={{
               multiline: true,
               InputProps: {
@@ -136,16 +132,17 @@ const BasicInformation = (props) => {
         </Grid>}
         <Grid item sm={6} xs={12}>
           <RadioForm
-            fieldName="json.legal.have_gov_doc"
+            fieldName="json.partner_profile.have_governing_document"
             label={messages.haveGovDoc}
             values={BOOL_VAL}
           />
         </Grid>
         {visibleIfYes(hasGovDoc) && <Grid item sm={6} xs={12}>
           <FileForm
-            fieldName="gov_doc"
+            fieldName="json.governing_document.document"
             formName="registration"
-            sectionName="json.legal.registration"
+            sectionName="governing_document"
+            localUpload
             label={messages.governingDoc}
             infoText={messages.govDocTooltip}
           />
@@ -153,7 +150,7 @@ const BasicInformation = (props) => {
         {visibleIfNo(hasGovDoc) && <Grid item>
           <TextFieldForm
             label={messages.comment}
-            fieldName="json.legal.gov_doc_comment"
+            fieldName="json.partner_profile.missing_governing_document_comment"
             textFieldProps={{
               multiline: true,
               InputProps: {
@@ -166,31 +163,34 @@ const BasicInformation = (props) => {
         </Grid>}
         <Grid item>
           <RadioForm
-            fieldName="json.legal.have_ref_letter"
+            fieldName="json.recommendation_document.have_ref_letter"
             label={messages.haveRefLetter}
             values={BOOL_VAL}
           />
         </Grid>
-        {visibleIfYes(hasRefLetter) && <Grid item sm={6} xs={12}>
+        {visibleIfYes(hasRefLetter) && <Grid item sm={12} xs={12}>
+          <Grid container direction="row">
+            <Grid item sm={6} xs={12}>
+              <TextFieldForm
+                label={messages.nameOfRefferer}
+                fieldName="json.recommendation_document.organization_name"
+                placeholder={PLACEHOLDERS.provide}
+              />
+            </Grid>
+
+            <Grid item sm={6} xs={12}>
+              <DatePickerForm
+                fieldName="json.recommendation_document.date_received"
+                label={messages.received}
+              />
+            </Grid>
+          </Grid>
           <FileForm
-            fieldName="ref_letter"
+            fieldName="json.recommendation_document.evidence_file"
             formName="registration"
-            sectionName="json.legal.registration"
+            sectionName="recommendation_document"
+            localUpload
             label={messages.referenceLetter}
-          />
-        </Grid>}
-        {visibleIfNo(hasRefLetter) && <Grid item>
-          <TextFieldForm
-            label={messages.comment}
-            fieldName="json.legal.ref_letter_comment"
-            textFieldProps={{
-              multiline: true,
-              InputProps: {
-                inputProps: {
-                  maxLength: '500',
-                },
-              },
-            }}
           />
         </Grid>}
       </Grid>
@@ -208,10 +208,10 @@ BasicInformation.propTypes = {
 const selector = formValueSelector('registration');
 const connectedBasicInformation = connect(
   state => ({
-    isRegistered: selector(state, 'json.legal.registration_to_operate_in_country'),
-    hasRegistrationDoc: selector(state, 'json.legal.have_registration_doc'),
-    hasGovDoc: selector(state, 'json.legal.have_gov_doc'),
-    hasRefLetter: selector(state, 'json.legal.have_ref_letter'),
+    isRegistered: selector(state, 'json.partner_profile.registered_to_operate_in_country'),
+    hasRegistrationDoc: selector(state, 'json.registration_document.have_registration_doc'),
+    hasGovDoc: selector(state, 'json.partner_profile.have_governing_document'),
+    hasRefLetter: selector(state, 'json.recommendation_document.have_ref_letter'),
   }),
 )(BasicInformation);
 

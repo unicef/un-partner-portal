@@ -30,6 +30,7 @@ import partnerProfileEdit from './components/organizationProfile/edit/partnerPro
 import TabsContainer from './components/organizationProfile/edit/tabsContainer';
 import partnerProfileHeader from './components/partners/profile/partnerProfileHeader';
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
+import partnerUnData from './components/partners/profile/overview/undata/partnerUnData';
 import partnerVerification from './components/partners/profile/overview/partnerVerification';
 import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
 import registration from './components/registration/registration';
@@ -47,6 +48,7 @@ import cfeiManagementContainer from './components/reports/cfeiManagement/cfeiMan
 import verificationContainer from './components/reports/verifcation/verificationContainer';
 import reportsHeader from './components/reports/reportsHeader';
 import partnerUsersContainer from './components/partners/members/partnerUsersContainer';
+import userProfile from './components/user/userProfile';
 
 // ID portal
 import mainLayoutIdPortal from './idPortal/mainLayout';
@@ -73,6 +75,7 @@ const allRoutes = () => (
         <Route path="/" component={mainLayout} >
           <IndexRedirect to="dashboard" />
           <Route path="dashboard" component={dashboard} />
+          <Route path="user" component={userProfile} />
           <Route path="cfei" component={eoiHeader} >
             <IndexRedirect to="open" />
             <Route component={mainContent} >
@@ -110,6 +113,7 @@ const allRoutes = () => (
             <Route component={mainContent} >
               <Route path="overview" component={partnerOverview} />
               <Route path="details" component={organizationProfileOverviewPaper} />
+              <Route path="undata" component={partnerUnData} />
               <Route path="users" component={partnerUsersContainer} />
               <Route path="verification" component={partnerVerification} />
               <Route path="observations" component={partnerObservationsList} />

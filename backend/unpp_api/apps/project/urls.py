@@ -10,6 +10,7 @@ from project.views import (
     PartnerEOIApplicationRetrieveAPIView,
     AgencyEOIApplicationCreateAPIView,
     AgencyEOIApplicationDestroyAPIView,
+    PartnerEOIApplicationDestroyAPIView,
     AgencyApplicationListAPIView,
     ApplicationAPIView,
     EOIApplicationsListAPIView,
@@ -28,6 +29,7 @@ from project.views import (
     PublishCFEIAPIView,
     EOISendToPublishAPIView,
     UCNManageAPIView,
+    CompleteAssessmentsAPIView,
 )
 
 
@@ -45,6 +47,8 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/agency-applications/$', AgencyEOIApplicationCreateAPIView.as_view(), name="agency-applications"),
     url(r'^(?P<eoi_id>\d+)/agency-applications-delete/(?P<pk>\d+)/$',
         AgencyEOIApplicationDestroyAPIView.as_view(), name="agency-applications-delete"),
+    url(r'^(?P<pk>\d+)/partner-applications-delete/$',
+        PartnerEOIApplicationDestroyAPIView.as_view(), name="partner-applications-delete"),
     url(r'^(?P<pk>\d+)/review-summary/$', ReviewSummaryAPIView.as_view(), name="review-summary"),
     url(r'^applications/(?P<application_id>\d+)/reviewers-status/',
         ReviewersStatusAPIView.as_view(),
@@ -64,6 +68,9 @@ urlpatterns = [
     url(r'^(?P<eoi_id>\d+)/applications/reviewers/(?P<reviewer_id>\d+)/notify/$',
         EOIReviewersAssessmentsNotifyAPIView.as_view(),
         name="eoi-reviewers-assessments-notify"),
+    url(r'^(?P<eoi_id>\d+)/applications/complete-assessments/$',
+        CompleteAssessmentsAPIView.as_view(),
+        name="eoi-reviewers-complete-assessments"),
     url(r'^(?P<eoi_id>\d+)/applications/awarded-partners/',
         AwardedPartnersListAPIView.as_view(),
         name="applications-awarded-partners"),

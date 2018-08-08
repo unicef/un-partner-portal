@@ -12,7 +12,7 @@ from rest_framework.fields import CurrentUserDefault
 from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
-from account.serializers import IDUserSerializer, UserSerializer
+from account.serializers import IDUserSerializer, BasicUserSerializer
 from agency.agencies import UNHCR
 
 from agency.serializers import AgencySerializer, AgencyUserListSerializer
@@ -38,8 +38,22 @@ from notification.consts import NotificationType
 from notification.helpers import user_received_notification_recently, send_notification_to_cfei_focal_points
 from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
 from partner.models import Partner
-from project.models import EOI, Application, Assessment, ApplicationFeedback
+from project.identifiers import get_eoi_display_identifier
+from project.models import EOI, Application, Assessment, ApplicationFeedback, EOIAttachment
 from project.utilities import update_cfei_focal_points, update_cfei_reviewers
+
+
+class EOIAttachmentSerializer(serializers.ModelSerializer):
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(CurrentUserDefault()))
+    file = CommonFileSerializer()
+
+    class Meta:
+        model = EOIAttachment
+        fields = (
+            'created_by',
+            'description',
+            'file',
+        )
 
 
 class BaseProjectSerializer(serializers.ModelSerializer):
@@ -48,11 +62,13 @@ class BaseProjectSerializer(serializers.ModelSerializer):
     agency = AgencySerializer()
     created = serializers.SerializerMethodField()
     country_code = serializers.SerializerMethodField()
+    focal_points = BasicUserSerializer(read_only=True, many=True)
 
     class Meta:
         model = EOI
         fields = (
             'id',
+            'displayID',
             'title',
             'created',
             'country_code',
@@ -63,6 +79,7 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'deadline_date',
             'status',
             'completed_date',
+            'focal_points',
         )
 
     def get_created(self, obj):
@@ -92,6 +109,7 @@ class DirectProjectSerializer(BaseProjectSerializer):
 
     invited_partners = serializers.SerializerMethodField()
     partner_offer_status = serializers.SerializerMethodField()
+    selected_source_display = serializers.CharField(source='get_selected_source_display', read_only=True)
 
     class Meta:
         model = EOI
@@ -108,6 +126,7 @@ class DirectProjectSerializer(BaseProjectSerializer):
             'deadline_date',
             'status',
             'selected_source',
+            'selected_source_display',
             'partner_offer_status',
         )
 
@@ -122,6 +141,7 @@ class DirectProjectSerializer(BaseProjectSerializer):
 class CreateEOISerializer(serializers.ModelSerializer):
 
     locations = PointSerializer(many=True)
+    attachments = EOIAttachmentSerializer(many=True, required=False)
 
     def validate(self, attrs):
         validated_data = super(CreateEOISerializer, self).validate(attrs)
@@ -139,6 +159,15 @@ class CreateEOISerializer(serializers.ModelSerializer):
         today = date.today()
         if not all([d >= today for d in dates]):
             raise serializers.ValidationError('Dates for the project cannot be set in the past.')
+
+        validated_data['displayID'] = get_eoi_display_identifier(
+            validated_data['agency'].name, validated_data['locations'][0]['admin_level_1']['country_code']
+        )
+
+        if len(validated_data.get('attachments', [])) > 5:
+            raise serializers.ValidationError({
+                'attachments': 'Maximum of 5 attachments is allowed.'
+            })
 
         return validated_data
 
@@ -204,7 +233,7 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
     agency_id = serializers.IntegerField(write_only=True)
     proposal_of_eoi_details = ProposalEOIDetailsSerializer(read_only=True)
     locations_proposal_of_eoi = PointSerializer(many=True, read_only=True)
-    submitter = UserSerializer(read_only=True, default=serializers.CurrentUserDefault())
+    submitter = BasicUserSerializer(read_only=True, default=serializers.CurrentUserDefault())
     is_direct = serializers.SerializerMethodField()
     cfei_type = serializers.CharField(read_only=True)
     application_status = serializers.CharField(read_only=True)
@@ -366,6 +395,7 @@ class CreateDirectProjectSerializer(serializers.Serializer):
         locations = validated_data['eoi'].pop('locations')
         specializations = validated_data['eoi'].pop('specializations')
         focal_points = validated_data['eoi'].pop('focal_points')
+        attachments = validated_data['eoi'].pop('attachments', [])
 
         validated_data['eoi']['display_type'] = CFEI_TYPES.direct
         eoi = EOI.objects.create(**validated_data['eoi'])
@@ -375,6 +405,10 @@ class CreateDirectProjectSerializer(serializers.Serializer):
 
         for specialization in specializations:
             eoi.specializations.add(specialization)
+
+        for attachment_data in attachments:
+            attachment_data['eoi'] = eoi
+            EOIAttachment.objects.create(**attachment_data)
 
         applications = []
         for application_data in validated_data['applications']:
@@ -409,6 +443,7 @@ class CreateProjectSerializer(CreateEOISerializer):
         locations = validated_data.pop('locations')
         specializations = validated_data.pop('specializations')
         focal_points = validated_data.pop('focal_points')
+        attachments = validated_data.pop('attachments', [])
 
         validated_data['cn_template'] = validated_data['agency'].profile.eoi_template
         validated_data['created_by'] = self.context['request'].user
@@ -423,6 +458,11 @@ class CreateProjectSerializer(CreateEOISerializer):
 
         for focal_point in focal_points:
             self.instance.focal_points.add(focal_point)
+
+        for attachment_data in attachments:
+            attachment_data['eoi'] = self.instance
+            EOIAttachment.objects.create(**attachment_data)
+
         send_notification_to_cfei_focal_points(self.instance)
         return self.instance
 
@@ -463,8 +503,9 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
     locations = PointSerializer(many=True)
     is_pinned = serializers.SerializerMethodField()
     application = serializers.SerializerMethodField()
-    focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
-    reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
+    focal_points_detail = BasicUserSerializer(source='focal_points', read_only=True, many=True)
+    reviewers_detail = BasicUserSerializer(source='reviewers', read_only=True, many=True)
+    attachments = EOIAttachmentSerializer(many=True, read_only=True)
 
     # TODO - cut down on some of these fields. partners should not get back this data
     # Frontend currently breaks if doesn't receive all
@@ -472,6 +513,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
         model = EOI
         fields = (
             'id',
+            'displayID',
             'specializations',
             'locations',
             'assessments_criteria',
@@ -504,6 +546,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'application',
             'published_timestamp',
             'deadline_passed',
+            'attachments',
         )
         read_only_fields = fields
 
@@ -522,15 +565,17 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
     specializations = SimpleSpecializationSerializer(many=True, read_only=True)
     locations = PointSerializer(many=True, read_only=True)
     direct_selected_partners = serializers.SerializerMethodField()
-    focal_points_detail = UserSerializer(source='focal_points', read_only=True, many=True)
-    reviewers_detail = UserSerializer(source='reviewers', read_only=True, many=True)
+    focal_points_detail = BasicUserSerializer(source='focal_points', read_only=True, many=True)
+    reviewers_detail = BasicUserSerializer(source='reviewers', read_only=True, many=True)
     invited_partners = PartnerShortSerializer(many=True, read_only=True)
     applications_count = serializers.SerializerMethodField(allow_null=True, read_only=True)
+    attachments = EOIAttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = EOI
         fields = (
             'id',
+            'displayID',
             'specializations',
             'invited_partners',
             'locations',
@@ -570,8 +615,9 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'is_published',
             'deadline_passed',
             'published_timestamp',
+            'attachments',
         )
-        read_only_fields = ('created', 'completed_date', 'is_published', 'published_timestamp')
+        read_only_fields = ('created', 'completed_date', 'is_published', 'published_timestamp', 'displayID')
 
     def get_extra_kwargs(self):
         extra_kwargs = super(AgencyProjectSerializer, self).get_extra_kwargs()
@@ -769,6 +815,9 @@ class ReviewersApplicationSerializer(serializers.ModelSerializer):
 
 class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
     total_score = serializers.IntegerField(read_only=True)
+    reviewer = serializers.HiddenField(default=serializers.CreateOnlyDefault(CurrentUserDefault()))
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(CurrentUserDefault()))
+    modified_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(CurrentUserDefault()))
 
     class Meta:
         model = Assessment
@@ -781,18 +830,11 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
             'scores',
             'total_score',
             'date_reviewed',
+            'is_a_committee_score',
             'note',
         )
-        extra_kwargs = {
-            'created_by': {
-                'default': CurrentUserDefault(),
-            },
-            'modified_by': {
-                'default': CurrentUserDefault(),
-            },
-        }
         read_only_fields = (
-            'created_by', 'modified_by'
+            'created_by', 'modified_by',
         )
 
     def get_extra_kwargs(self):
@@ -810,6 +852,11 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
         app = get_object_or_404(Application.objects.select_related('eoi'), pk=application_id)
         if app.eoi.status != CFEI_STATUSES.closed:
             raise serializers.ValidationError("Assessment allowed once deadline is passed.")
+
+        if data.get('is_a_committee_score', False) and app.reviewers.count() > 1:
+            raise serializers.ValidationError({
+                'is_a_committee_score': 'Committee scores are only allowed on projects with one reviewer.'
+            })
 
         scores = data.get('scores')
         application = self.instance and self.instance.application or app
@@ -1047,7 +1094,6 @@ class ReviewSummarySerializer(MixinPreventManyCommonFile, serializers.ModelSeria
 
 
 class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
-    __apps_count = None
     user_id = serializers.CharField(source='id')
     user_name = serializers.CharField(source='get_fullname')
     assessments = serializers.SerializerMethodField()
@@ -1064,15 +1110,15 @@ class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
         lookup_field = self.context['view'].lookup_field
         eoi_id = self.context['request'].parser_context['kwargs'][lookup_field]
         eoi = get_object_or_404(EOI, id=eoi_id)
-        if self.__apps_count is None:
-            self.__apps_count = eoi.applications.filter(status=APPLICATION_STATUSES.preselected).count()
+        applications = eoi.applications.filter(status=APPLICATION_STATUSES.preselected)
+        applications_count = applications.count()
 
-        assessments_count = Assessment.objects.filter(reviewer=user, application__eoi_id=eoi_id).count()
+        assessments_count = Assessment.objects.filter(reviewer=user, application__in=applications).count()
         reminder_sent_recently = user_received_notification_recently(user, eoi, NotificationType.CFEI_REVIEW_REQUIRED)
 
         return {
-            'counts': "{}/{}".format(assessments_count, self.__apps_count),
-            'send_reminder': not (self.__apps_count == assessments_count) and not reminder_sent_recently,
+            'counts': "{}/{}".format(assessments_count, applications_count),
+            'send_reminder': not (applications_count == assessments_count) and not reminder_sent_recently,
             'eoi_id': eoi_id,  # use full for front-end to easier construct send reminder url
         }
 

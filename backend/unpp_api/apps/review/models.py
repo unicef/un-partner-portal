@@ -8,7 +8,7 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 
 from common.consts import FLAG_TYPES, FLAG_CATEGORIES
-from common.fields import FixedTextField
+from common.database_fields import FixedTextField
 
 
 class PartnerFlag(TimeStampedModel):
@@ -28,6 +28,7 @@ class PartnerFlag(TimeStampedModel):
     contact_email = models.EmailField(null=True, blank=True)
     attachment = models.ForeignKey('common.CommonFile', related_name="flag_attachments", null=True, blank=True)
     sanctions_match = models.ForeignKey('sanctionslist.SanctionedNameMatch', null=True, blank=True)
+    escalation_comment = models.TextField(null=True, blank=True, max_length=5120)
 
     class Meta:
         ordering = ['id']

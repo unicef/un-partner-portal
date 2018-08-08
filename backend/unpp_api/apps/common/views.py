@@ -11,6 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from agency.agencies import UNHCR
 from agency.permissions import AgencyPermission
 from agency.roles import AgencyRole
+from common.business_areas import BUSINESS_AREAS
 from common.permissions import current_user_has_permission
 from common.serializers import (
     ConfigSectorSerializer,
@@ -123,6 +124,7 @@ class GeneralConfigAPIView(APIView):
             "notification-frequency-choices": NOTIFICATION_FREQUENCY_CHOICES,
             "cfei-types": CFEI_TYPES,
             "cfei-statuses": CFEI_STATUSES,
+            "business-areas": BUSINESS_AREAS,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

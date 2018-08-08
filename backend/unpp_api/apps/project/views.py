@@ -39,8 +39,8 @@ from notification.helpers import (
     send_partner_made_decision_notification,
 )
 from partner.permissions import PartnerPermission
-from project.exports.application_compare import ApplicationCompareSpreadsheetGenerator
-from project.exports.cfei import CFEIPDFExporter
+from project.exports.excel.application_compare import ApplicationCompareSpreadsheetGenerator
+from project.exports.pdf.cfei import CFEIPDFExporter
 from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
 from project.serializers import (
     BaseProjectSerializer,
@@ -103,8 +103,11 @@ class BaseProjectAPIView(ListCreateAPIView):
         queryset = super(BaseProjectAPIView, self).get_queryset()
         if self.request.user.is_partner_user:
             queryset = queryset.filter(is_published=True)
-        elif self.request.user.agency and not self.request.method == 'GET':
-            queryset = queryset.filter(agency=self.request.user.agency)
+        elif self.request.user.agency:
+            if not self.request.method == 'GET':
+                queryset = queryset.filter(agency=self.request.user.agency)
+            else:
+                queryset = queryset.filter(Q(agency=self.request.user.agency) | Q(is_published=True))
 
         return queryset
 
@@ -412,12 +415,27 @@ class AgencyEOIApplicationDestroyAPIView(DestroyAPIView):
         ),
     )
     queryset = Application.objects.all()
-    serializer_class = CreateDirectApplicationNoCNSerializer
-    lookup_url_kwarg = 'pk'
 
     def get_queryset(self):
         return super(AgencyEOIApplicationDestroyAPIView, self).get_queryset().filter(
             eoi__agency=self.request.user.agency, eoi_id=self.kwargs['eoi_id']
+        )
+
+
+class PartnerEOIApplicationDestroyAPIView(DestroyAPIView):
+
+    permission_classes = (
+        HasUNPPPermission(
+            partner_permissions=[
+                PartnerPermission.CFEI_SUBMIT_CONCEPT_NOTE,
+            ],
+        ),
+    )
+    queryset = Application.objects.all()
+
+    def get_object(self):
+        return get_object_or_404(
+            self.get_queryset(), pk=self.kwargs['pk'], partner=self.request.active_partner
         )
 
 
@@ -916,3 +934,22 @@ class UCNManageAPIView(RetrieveUpdateAPIView, DestroyAPIView):
     @check_unpp_permission(partner_permissions=[PartnerPermission.UCN_DELETE])
     def perform_destroy(self, instance):
         return super(UCNManageAPIView, self).perform_destroy(instance)
+
+
+class CompleteAssessmentsAPIView(ListAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[]
+        ),
+    )
+    serializer_class = ReviewerAssessmentsSerializer
+    queryset = Assessment.objects.filter(completed=False)
+
+    def get_queryset(self):
+        queryset = super(CompleteAssessmentsAPIView, self).get_queryset()
+        return queryset.filter(created_by=self.request.user, reviewer=self.request.user)
+
+    def post(self, *args, **kwargs):
+        assessments = self.get_queryset().filter(application__eoi_id=self.kwargs['eoi_id'])
+        assessments.update(completed=True)
+        return Response(self.serializer_class(assessments, many=True).data)

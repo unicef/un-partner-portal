@@ -111,7 +111,7 @@ class PartnerMappingReportXLSLExporter(BaseXLSXExporter):
                 vendor_numbers.get(UNHCR.name),
                 vendor_numbers.get(UNICEF.name),
                 vendor_numbers.get(WFP.name),
-                boolean_display[partner.profile.registration_to_operate_in_country],
+                boolean_display[partner.profile.registered_to_operate_in_country],
                 sectors,
                 specializations,
                 boolean_display[partner.mandate_mission.security_high_risk_locations],

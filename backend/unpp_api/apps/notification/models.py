@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from model_utils.models import TimeStampedModel
 
-from common.fields import FixedTextField
+from common.database_fields import FixedTextField
 from notification.consts import NotificationType
 
 

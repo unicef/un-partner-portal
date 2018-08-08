@@ -11,16 +11,14 @@ const messages = {
 };
 
 const title = () => (
-  <Typography type="headline" >{messages.title}</Typography>
+  <Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>
 );
 
-const renderRow = (partners) => {
-  return partners.map(({ id, legal_name }) => (
-    <PaddedContent key={id}>
-      <Typography type="subheading">{legal_name}</Typography>
-    </PaddedContent>
-  ));
-};
+const renderRow = partners => partners.map(({ id, legal_name }) => (
+  <PaddedContent key={id}>
+    <Typography type="subheading">{legal_name}</Typography>
+  </PaddedContent>
+));
 
 const InformedPartners = (props) => {
   const { partners, partnerNames } = props;

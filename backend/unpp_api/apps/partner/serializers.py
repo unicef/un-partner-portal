@@ -18,8 +18,11 @@ from common.serializers import (
     SpecializationSerializer,
     MixinPartnerRelatedSerializer,
     MixinPreventManyCommonFile,
-    PointSerializer
+    PointSerializer,
+    CommonFileBase64UploadSerializer,
 )
+from externals.serializers import PartnerVendorNumberSerializer
+
 from partner.utilities import get_recent_budgets_for_partner
 from partner.models import (
     Partner,
@@ -42,7 +45,53 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
     PartnerCapacityAssessment,
+    PartnerGoverningDocument,
+    PartnerRegistrationDocument,
 )
+
+
+class PartnerGoverningDocumentSerializer(serializers.ModelSerializer):
+
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
+    document = CommonFileBase64UploadSerializer()
+
+    class Meta:
+        model = PartnerGoverningDocument
+        fields = (
+            'id',
+            'created_by',
+            'document',
+            'editable',
+        )
+        extra_kwargs = {
+            'editable': {
+                'read_only': True
+            }
+        }
+
+
+class PartnerRegistrationDocumentSerializer(serializers.ModelSerializer):
+
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
+    document = CommonFileBase64UploadSerializer()
+
+    class Meta:
+        model = PartnerRegistrationDocument
+        fields = (
+            'id',
+            'created_by',
+            'document',
+            'registration_number',
+            'editable',
+            'issuing_authority',
+            'issue_date',
+            'expiry_date',
+        )
+        extra_kwargs = {
+            'editable': {
+                'read_only': True
+            }
+        }
 
 
 class PartnerAdditionalSerializer(serializers.ModelSerializer):
@@ -122,6 +171,9 @@ class PartnerMemberSerializer(serializers.ModelSerializer):
 
 class PartnerProfileSerializer(serializers.ModelSerializer):
 
+    registered_to_operate_in_country = serializers.BooleanField(required=True)
+    have_governing_document = serializers.BooleanField(required=True)
+
     class Meta:
         model = PartnerProfile
         fields = (
@@ -130,7 +182,17 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
             'acronym',
             'former_legal_name',
             'legal_name_change',
+            'year_establishment',
+            'registered_to_operate_in_country',
+            'missing_registration_document_comment',
+            'have_governing_document',
+            'missing_governing_document_comment',
         )
+        extra_kwargs = {
+            'year_establishment': {
+                'required': True,
+            },
+        }
 
 
 class PartnerFullSerializer(serializers.ModelSerializer):
@@ -142,8 +204,8 @@ class PartnerFullSerializer(serializers.ModelSerializer):
 
 class PartnerFullProfilesSerializer(serializers.ModelSerializer):
 
-    gov_doc = CommonFileSerializer(allow_null=True)
-    registration_doc = CommonFileSerializer(allow_null=True)
+    governing_documents = PartnerGoverningDocumentSerializer(read_only=True, many=True)
+    registration_documents = PartnerRegistrationDocumentSerializer(read_only=True, many=True)
 
     class Meta:
         model = PartnerProfile
@@ -275,6 +337,7 @@ class PartnerCollaborationPartnershipSerializer(serializers.ModelSerializer):
 
 class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
 
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
     evidence_file = CommonFileSerializer(read_only=True)
 
     class Meta:
@@ -382,6 +445,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     )
     other_info_is_complete = serializers.BooleanField(read_only=True, source="profile.other_info_is_complete")
     country_of_origin = serializers.CharField()
+    registration_declaration = CommonFileSerializer()
 
     class Meta:
         model = Partner
@@ -429,6 +493,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "other_info_is_complete",
             "country_of_origin",
             "has_sanction_match",
+            "registration_declaration",
         )
 
     def get_hq_budgets(self, partner):
@@ -459,6 +524,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
     mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
     last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
+    vendor_numbers = PartnerVendorNumberSerializer(many=True, read_only=True)
 
     class Meta:
         model = Partner
@@ -483,6 +549,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'partner_additional',
             'last_profile_update',
             'has_potential_sanction_match',
+            'vendor_numbers',
         )
 
     def get_country_presence_display(self, partner):
@@ -494,9 +561,8 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             return COUNTRIES_ALPHA2_CODE_DICT.get(partner.location_of_office.admin_level_1.country_code, None)
 
     def get_org_head(self, obj):
-        if obj.is_hq is False:
-            return PartnerHeadOrganizationSerializer(obj.hq.org_head).data
-        return PartnerHeadOrganizationSerializer(obj.org_head).data
+        org_head = getattr(obj.hq if obj.is_hq is False else obj, 'org_head', None)
+        return PartnerHeadOrganizationSerializer(org_head).data
 
 
 class PartnersListSerializer(serializers.ModelSerializer):
@@ -535,7 +601,7 @@ class PartnersListSerializer(serializers.ModelSerializer):
             values_list("agency__name", flat=True).distinct()
 
 
-class PartnerIdentificationSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
+class PartnerIdentificationSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
@@ -544,9 +610,9 @@ class PartnerIdentificationSerializer(MixinPreventManyCommonFile, serializers.Mo
     former_legal_name = serializers.CharField(max_length=255, allow_blank=True)
     country_origin = serializers.CharField(read_only=True)
     type_org = serializers.CharField(source="partner.display_type", read_only=True)
-    gov_doc = CommonFileSerializer(allow_null=True)
-    registration_doc = CommonFileSerializer(allow_null=True)
     has_finished = serializers.BooleanField(read_only=True, source="profile.identification_is_complete")
+    governing_documents = PartnerGoverningDocumentSerializer(many=True, read_only=True)
+    registration_documents = PartnerRegistrationDocumentSerializer(many=True, read_only=True)
 
     class Meta:
         model = PartnerProfile
@@ -560,43 +626,52 @@ class PartnerIdentificationSerializer(MixinPreventManyCommonFile, serializers.Mo
             'type_org',
 
             'year_establishment',
-            'have_gov_doc',
-            'gov_doc',
-            'registration_to_operate_in_country',
-            'registration_doc',
-            'registration_date',
-            'registration_comment',
-            'registration_number',
+            'have_governing_document',
+            'missing_governing_document_comment',
+            'registered_to_operate_in_country',
+            'missing_registration_document_comment',
             'has_finished',
+            'governing_documents',
+            'registration_documents',
         )
-
-    prevent_keys = ['gov_doc', 'registration_doc']
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        # std method does not support writable nested fields by default
-
-        self.prevent_many_common_file_validator(self.initial_data)
-
-        instance.partner.legal_name = validated_data.get('partner', {}).get('legal_name', instance.partner.legal_name)
+        instance.partner.legal_name = validated_data.pop('partner', {}).pop('legal_name', instance.partner.legal_name)
         instance.partner.save()
 
-        instance.alias_name = validated_data.get('alias_name', instance.alias_name)
-        instance.acronym = validated_data.get('acronym', instance.acronym)
-        instance.former_legal_name = validated_data.get('former_legal_name', instance.former_legal_name)
-        instance.year_establishment = validated_data.get('year_establishment', instance.year_establishment)
-        instance.have_gov_doc = validated_data.get('have_gov_doc', instance.have_gov_doc)
-        instance.gov_doc_id = validated_data.get('gov_doc', instance.gov_doc_id)
-        instance.registration_to_operate_in_country = \
-            validated_data.get('registration_to_operate_in_country', instance.registration_to_operate_in_country)
-        instance.registration_doc_id = validated_data.get('registration_doc', instance.registration_doc_id)
-        instance.registration_date = validated_data.get('registration_date', instance.registration_date)
-        instance.registration_comment = validated_data.get('registration_comment', instance.registration_comment)
-        instance.registration_number = validated_data.get('registration_number', instance.registration_number)
+        governing_documents = self.initial_data.get('governing_documents', None)
+        registration_documents = self.initial_data.get('registration_documents', None)
 
-        instance.save()
+        if governing_documents is not None:
+            valid_ids = []
+            if governing_documents:
+                for gov_doc_data in governing_documents:
+                    gov_doc = PartnerGoverningDocument.objects.filter(id=gov_doc_data.get('id')).first()
+                    if gov_doc and (not gov_doc.editable or not gov_doc.profile == instance):
+                        continue
+                    serializer = PartnerGoverningDocumentSerializer(
+                        instance=gov_doc, data=gov_doc_data, context=self.context, partial=bool(gov_doc)
+                    )
+                    serializer.is_valid(raise_exception=True)
+                    valid_ids.append(serializer.save(profile=instance).id)
+            instance.governing_documents.exclude(editable=False).exclude(id__in=valid_ids).delete()
 
-        return PartnerProfile.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+        if registration_documents is not None:
+            valid_ids = []
+            if registration_documents:
+                for reg_doc_data in registration_documents:
+                    reg_doc = PartnerRegistrationDocument.objects.filter(id=reg_doc_data.get('id')).first()
+                    if reg_doc and (not reg_doc.editable or not reg_doc.profile == instance):
+                        continue
+                    serializer = PartnerRegistrationDocumentSerializer(
+                        instance=reg_doc, data=reg_doc_data, context=self.context, partial=bool(reg_doc)
+                    )
+                    serializer.is_valid(raise_exception=True)
+                    valid_ids.append(serializer.save(profile=instance).id)
+            instance.registration_documents.exclude(editable=False).exclude(id__in=valid_ids).delete()
+
+        return super(PartnerIdentificationSerializer, self).update(instance, validated_data)
 
 
 class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):

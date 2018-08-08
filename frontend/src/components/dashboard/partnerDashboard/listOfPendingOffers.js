@@ -55,7 +55,7 @@ const ListOfPendingOffers = (props) => {
   const { loading, data = [], loadOffers, itemsCount } = props;
   return (
     <HeaderList
-      header={<Typography type="headline" >{messages.title}</Typography>}
+      header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}
       loading={loading}
     >
       <TableWithLocalState

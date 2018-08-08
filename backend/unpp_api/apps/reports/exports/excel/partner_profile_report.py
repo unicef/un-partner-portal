@@ -81,7 +81,7 @@ class PartnerProfileReportXLSLExporter(BaseXLSXExporter):
                 vendor_numbers.get(UNHCR.name),
                 vendor_numbers.get(UNICEF.name),
                 vendor_numbers.get(WFP.name),
-                boolean_display[partner.profile.registration_to_operate_in_country],
+                boolean_display[partner.profile.registered_to_operate_in_country],
                 partner.profile.registration_date,
                 'N/A',  # TODO: Registration Certificate Expiration Date
                 field_offices,

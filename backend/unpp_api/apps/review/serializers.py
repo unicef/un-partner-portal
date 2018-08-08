@@ -65,6 +65,10 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                 extra_kwargs['flag_type'] = {
                     'read_only': True
                 }
+            else:
+                extra_kwargs['escalation_comment'] = {
+                    'read_only': True
+                }
 
         return extra_kwargs
 
@@ -76,7 +80,8 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
         ]):
             fields.pop('comment')
             fields.pop('validation_comment')
-        if not request and not request.method == 'GET':
+            fields.pop('escalation_comment')
+        if not request or not request.method == 'GET':
             fields.pop('sanctions_match')
 
         return fields
