@@ -832,9 +832,10 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
             'date_reviewed',
             'is_a_committee_score',
             'note',
+            'completed',
         )
         read_only_fields = (
-            'created_by', 'modified_by',
+            'created_by', 'modified_by', 'completed'
         )
 
     def get_extra_kwargs(self):

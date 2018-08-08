@@ -715,6 +715,8 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         complete_assessments_url = reverse('projects:eoi-reviewers-complete-assessments', kwargs={"eoi_id": app.eoi.id})
         complete_response = self.client.post(complete_assessments_url)
         self.assertResponseStatusIs(complete_response)
+        self.assertTrue(len(complete_response.data) > 0)
+        self.assertTrue(all([a['completed'] for a in complete_response.data]))
 
 
 class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
