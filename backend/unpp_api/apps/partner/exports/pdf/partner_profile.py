@@ -558,7 +558,9 @@ class PartnerProfilePDFExporter:
                     'professional network, consortium or any similar institution?',
                     self.style_h4
                 ),
-                CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.partnership_collaborate_institution], self.style_normal),
+                CustomParagraph(
+                    BOOLEAN_DISPLAY[self.partner.profile.partnership_collaborate_institution], self.style_normal
+                ),
                 CustomParagraph(
                     'Please state which cluster, network or consortium and briefly explain the collaboration',
                     self.style_h4
@@ -664,9 +666,9 @@ class PartnerProfilePDFExporter:
                     BOOLEAN_DISPLAY[self.partner.audit.major_accountability_issues_highlighted], self.style_normal
                 ),
                 CustomParagraph('Please comment', self.style_h4
-                          ) if self.partner.audit.major_accountability_issues_highlighted else Spacer(1, 0),
+                                ) if self.partner.audit.major_accountability_issues_highlighted else Spacer(1, 0),
                 CustomParagraph(self.partner.audit.comment, self.style_normal
-                          ) if self.partner.audit.major_accountability_issues_highlighted else Spacer(1, 0),
+                                ) if self.partner.audit.major_accountability_issues_highlighted else Spacer(1, 0),
                 CustomParagraph(
                     'Has the organization undergone a formal capacity assessment?',
                     self.style_h4
