@@ -65,13 +65,13 @@ const authorisedOfficerForm = (head, readOnly) => (
     </GridRow>
     <GridRow columns={3}>
       <RadioForm
-        fieldName={`${head}.is_authorized_officer`}
+        fieldName={`${head}.authorized`}
         values={BOOL_VAL}
         label="Authorised Officer?"
         readOnly={readOnly}
       />
       <RadioForm
-        fieldName={`${head}.is_board_member`}
+        fieldName={`${head}.board_member`}
         values={BOOL_VAL}
         label="Member of the Board of Directors?"
         readOnly={readOnly}
@@ -88,7 +88,7 @@ const PartnerProfileContactInfoHeadOrganization = (props) => {
       limit={15}
       initial
       label={messages.officers}
-      fieldName="organization_heads"
+      fieldName="organisation_heads"
       outerField={officer => authorisedOfficerForm(officer, readOnly)}
       readOnly={readOnly}
     />
