@@ -2,6 +2,7 @@ import random
 import os
 from datetime import date, timedelta
 from coolname import generate
+from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -35,7 +36,7 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
     PartnerCapacityAssessment,
-)
+    PartnerGoverningDocument, PartnerRegistrationDocument)
 from partner.roles import PartnerRole
 from project.identifiers import get_eoi_display_identifier
 from project.models import EOI, Application, Assessment, EOIAttachment
@@ -229,6 +230,29 @@ class PartnerSimpleFactory(factory.django.DjangoModelFactory):
         model = Partner
 
 
+class PartnerGoverningDocumentFactory(factory.django.DjangoModelFactory):
+    created_by = factory.LazyFunction(lambda: User.objects.order_by('?').first())
+    profile = factory.LazyFunction(lambda: get_random_partner().profile)
+    document = factory.LazyFunction(get_new_common_file)
+    editable = False
+
+    class Meta:
+        model = PartnerGoverningDocument
+
+
+class PartnerRegistrationDocumentFactory(factory.django.DjangoModelFactory):
+    created_by = factory.LazyFunction(lambda: User.objects.order_by('?').first())
+    profile = factory.LazyFunction(lambda: get_random_partner().profile)
+    document = factory.LazyFunction(get_new_common_file)
+    registration_number = factory.Sequence(lambda n: f"registration_number {n}")
+    issue_date = factory.LazyFunction(lambda: date.today() - relativedelta(years=random.randint(1, 4)))
+    expiry_date = factory.LazyFunction(lambda: date.today() + relativedelta(years=random.randint(5, 20)))
+    editable = False
+
+    class Meta:
+        model = PartnerRegistrationDocument
+
+
 class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.LazyFunction(get_partner_name)
     display_type = PARTNER_TYPES.cbo
@@ -411,13 +435,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         self.profile.former_legal_name = "former legal name {}".format(self.id)
         self.profile.connectivity_excuse = "connectivity excuse {}".format(self.id)
         self.profile.year_establishment = date.today().year - random.randint(1, 30)
-        self.profile.have_gov_doc = True
-        self.profile.gov_doc = get_new_common_file()
-        self.profile.registration_to_operate_in_country = random.randint(0, 1) == 0
-        self.profile.registration_doc = get_new_common_file()
-        self.profile.registration_date = date.today() - timedelta(days=random.randint(365, 3650))
-        self.profile.registration_comment = "registration comment {}".format(self.id)
-        self.profile.registration_number = "registration number {}".format(self.id)
         self.profile.explain = "explain {}".format(self.id)
         self.profile.experienced_staff_desc = "experienced staff desc {}".format(self.id)
 
@@ -450,6 +467,15 @@ class PartnerFactory(factory.django.DjangoModelFactory):
         # project implementation
         self.profile.experienced_staff = False
         self.profile.experienced_staff = False
+
+        self.profile.have_governing_document = True
+        PartnerGoverningDocumentFactory(profile=self.profile)
+
+        self.profile.registered_to_operate_in_country = random.randint(0, 1) == 0
+        if self.profile.registered_to_operate_in_country:
+            PartnerRegistrationDocumentFactory(profile=self.profile)
+        else:
+            self.profile.missing_registration_document_comment = "registration comment {}".format(self.id)
 
         self.profile.save()
 
@@ -485,8 +511,6 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def audit(self, create, extracted, **kwargs):
-        cfile = CommonFile.objects.create()
-        cfile.file_field.save('test.csv', open(filename))
         PartnerAuditAssessment.objects.filter(partner=self).update(
             regular_audited_comment="fake regular audited comment {}".format(self.id),
             regular_audited=False,
@@ -497,34 +521,28 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def audit_reports(self, create, extracted, **kwargs):
-        cfile1 = CommonFile.objects.create()
-        cfile1.file_field.save('test1.csv', open(filename))
-        cfile2 = CommonFile.objects.create()
-        cfile2.file_field.save('test2.csv', open(filename))
         PartnerAuditReport.objects.create(
             created_by=User.objects.first(),
             partner=self,
             org_audit=ORG_AUDIT_CHOICES.donor,
-            most_recent_audit_report=cfile1,
+            most_recent_audit_report=get_new_common_file(),
             link_report="http://fake.unicef.org/fake_uri{}_1".format(self.id),
         )
         PartnerAuditReport.objects.create(
             created_by=User.objects.first(),
             partner=self,
             org_audit=ORG_AUDIT_CHOICES.internal,
-            most_recent_audit_report=cfile2,
+            most_recent_audit_report=get_new_common_file(),
             link_report="http://fake.unicef.org/fake_uri{}_2".format(self.id),
         )
 
     @factory.post_generation
     def capacity_assessments(self, create, extracted, **kwargs):
-        cfile1 = CommonFile.objects.create()
-        cfile1.file_field.save('test1.csv', open(filename))
         PartnerCapacityAssessment.objects.create(
             created_by=User.objects.first(),
             partner=self,
             assessment_type=AUDIT_ASSESSMENT_CHOICES.micro,
-            report_file=cfile1,
+            report_file=get_new_common_file(),
         )
         PartnerCapacityAssessment.objects.create(
             created_by=User.objects.first(),
@@ -535,14 +553,12 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def report(self, create, extracted, **kwargs):
-        cfile = CommonFile.objects.create()
-        cfile.file_field.save('test.csv', open(filename, 'rb'))
         PartnerReporting.objects.filter(partner=self).update(
             publish_annual_reports=False,
             key_result="fake key result {}".format(self.id),
             last_report=date.today(),
             link_report="Http://fake.unicef.org/fake_uri{}".format(self.id),
-            report=cfile
+            report=get_new_common_file()
         )
 
     @factory.post_generation

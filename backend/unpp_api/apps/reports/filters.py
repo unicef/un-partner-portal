@@ -26,7 +26,7 @@ class PartnerReportFilter(django_filters.FilterSet):
         choices=PARTNER_TYPES, name='display_type', label='Partner Types'
     )
     specializations = CommaSeparatedListFilter(name='experiences__specialization')
-    registered = django_filters.BooleanFilter(name='profile__registration_to_operate_in_country', widget=BooleanWidget)
+    registered = django_filters.BooleanFilter(name='profile__registered_to_operate_in_country', widget=BooleanWidget)
     collabs = CommaSeparatedListFilter(name='collaborations_partnership__agency')
     has_experience = django_filters.BooleanFilter(
         method='filter_has_experience', widget=BooleanWidget, label='Has UN Experience'

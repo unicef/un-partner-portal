@@ -17,7 +17,6 @@ import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permission
 const addVerification = 'addVerification';
 const addObservation = 'addObservation';
 
-
 const messages = {
   warning: 'Warning',
   verifyPartner: 'Partner profile is not verified. Please verify partner before adding an observation.',

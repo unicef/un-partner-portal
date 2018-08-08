@@ -6,11 +6,13 @@ from rest_framework import serializers
 from rest_auth.serializers import LoginSerializer, PasswordResetSerializer
 from rest_framework.validators import UniqueValidator
 
+from account.declaration import PartnerDeclarationPDFCreator
 from account.forms import CustomPasswordResetForm
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     POLICY_AREA_CHOICES,
-)
+    COLLABORATION_EVIDENCE_MODES)
+from common.serializers import CommonFileBase64UploadSerializer
 from partner.models import (
     Partner,
     PartnerProfile,
@@ -19,6 +21,9 @@ from partner.models import (
     PartnerMember,
     PartnerBudget,
     PartnerPolicyArea,
+    PartnerRegistrationDocument,
+    PartnerGoverningDocument,
+    PartnerCollaborationEvidence,
 )
 from partner.roles import PartnerRole
 
@@ -27,6 +32,9 @@ from partner.serializers import (
     PartnerProfileSerializer,
     PartnerHeadOrganizationRegisterSerializer,
     PartnerMemberSerializer,
+    PartnerGoverningDocumentSerializer,
+    PartnerRegistrationDocumentSerializer,
+    PartnerCollaborationEvidenceSerializer,
 )
 from partner.validators import PartnerRegistrationValidator
 from account.models import User, UserProfile
@@ -59,26 +67,116 @@ class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
         return user
 
 
+class PartnerRecommendationDocumentSerializer(PartnerCollaborationEvidenceSerializer):
+
+    evidence_file = CommonFileBase64UploadSerializer()
+
+    class Meta(PartnerCollaborationEvidenceSerializer.Meta):
+        extra_kwargs = {
+            'organization_name': {
+                'required': True
+            },
+            'date_received': {
+                'required': True
+            },
+            'partner': {
+                'required': False
+            },
+        }
+
+
+class PartnerDeclarationSerializer(serializers.Serializer):
+    question = serializers.CharField()
+    answer = serializers.CharField()
+
+
 class PartnerRegistrationSerializer(serializers.Serializer):
 
     user = RegisterSimpleAccountSerializer()
+
     partner = PartnerSerializer()
     partner_profile = PartnerProfileSerializer()
     partner_head_organization = PartnerHeadOrganizationRegisterSerializer()
     partner_member = PartnerMemberSerializer()
+
+    governing_document = PartnerGoverningDocumentSerializer(required=False)
+    registration_document = PartnerRegistrationDocumentSerializer(required=False)
+    recommendation_document = PartnerRecommendationDocumentSerializer(required=False)
+
+    declaration = PartnerDeclarationSerializer(many=True, write_only=True)
 
     class Meta:
         validators = (
             PartnerRegistrationValidator(),
         )
 
+    def validate(self, attrs):
+        validated_data = super(PartnerRegistrationSerializer, self).validate(attrs)
+        governing_document = validated_data.get('governing_document')
+        registration_document = validated_data.get('registration_document')
+        recommendation_document = validated_data.get('recommendation_document')
+
+        if not any([governing_document, recommendation_document, registration_document]):
+            raise serializers.ValidationError('At least one document needs to be provided.')
+
+        profile = validated_data.get('partner_profile', {})
+
+        if profile.get('have_governing_document'):
+            if not governing_document:
+                raise serializers.ValidationError({
+                    'governing_document': 'This field is required'
+                })
+        elif not profile.get('missing_governing_document_comment'):
+            raise serializers.ValidationError({
+                'missing_governing_document_comment': 'This field is required'
+            })
+
+        if profile.get('registered_to_operate_in_country'):
+            if not registration_document:
+                raise serializers.ValidationError({
+                    'registration_document': 'This field is required'
+                })
+        elif not profile.get('missing_registration_document_comment'):
+            raise serializers.ValidationError({
+                'missing_registration_document_comment': 'This field is required'
+            })
+
+        return validated_data
+
+    def save_documents(self, validated_data, user):
+        governing_document = validated_data.get('governing_document')
+        registration_document = validated_data.get('registration_document')
+        recommendation_document = validated_data.get('recommendation_document')
+
+        if governing_document:
+            governing_document['created_by'] = user
+            governing_document['profile'] = self.partner.profile
+            PartnerGoverningDocument.objects.create(editable=False, **governing_document)
+
+        if registration_document:
+            registration_document['created_by'] = user
+            registration_document['profile'] = self.partner.profile
+            PartnerRegistrationDocument.objects.create(editable=False, **registration_document)
+
+        if recommendation_document:
+            recommendation_document['created_by'] = user
+            recommendation_document['partner'] = self.partner
+            recommendation_document['mode'] = COLLABORATION_EVIDENCE_MODES.reference
+            PartnerCollaborationEvidence.objects.create(**recommendation_document)
+            self.partner.profile.any_reference = True
+            self.partner.profile.save()
+
     @transaction.atomic
     def create(self, validated_data):
         user_serializer = RegisterSimpleAccountSerializer(data=validated_data.pop('user'))
         user_serializer.is_valid()
-        user_serializer.save()
+        user = user_serializer.save()
 
+        validated_data['partner']['declaration'] = PartnerDeclarationPDFCreator(
+            validated_data['declaration'], validated_data['partner']['legal_name'], user
+        ).get_as_common_file()
         self.partner = Partner.objects.create(**validated_data['partner'])
+        self.save_documents(validated_data, user)
 
         PartnerProfile.objects.filter(partner=self.partner).update(**validated_data['partner_profile'])
 
