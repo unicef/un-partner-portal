@@ -945,13 +945,17 @@ class CompleteAssessmentsAPIView(ListAPIView):
         ),
     )
     serializer_class = ReviewerAssessmentsSerializer
-    queryset = Assessment.objects.filter()
+    queryset = Assessment.objects.filter(completed=False)
 
     def get_queryset(self):
         queryset = super(CompleteAssessmentsAPIView, self).get_queryset()
         return queryset.filter(created_by=self.request.user, reviewer=self.request.user)
 
     def post(self, *args, **kwargs):
-        assessments = self.get_queryset().filter(application__eoi_id=self.kwargs['eoi_id'])
-        assessments.update(completed=True)
+        assessments = list(self.get_queryset().filter(application__eoi_id=self.kwargs['eoi_id']))
+        for ass in assessments:
+            ass.completed = True
+            ass.completed_date = timezone.now().date()
+            ass.save()
+
         return Response(self.serializer_class(assessments, many=True).data)

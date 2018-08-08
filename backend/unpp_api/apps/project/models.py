@@ -358,6 +358,7 @@ class Assessment(TimeStampedModel):
     )
     archived = models.BooleanField(default=False)
     completed = models.BooleanField(default=False, help_text='Once assessment is completed it is no longer editable')
+    completed_date = models.DateField(null=True, blank=True)
 
     class Meta:
         ordering = ['id']
