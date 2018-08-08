@@ -93,9 +93,10 @@ class PartnerProfilePDFExporter:
         ])
 
     def wrap_table(self, table_rows, mode=TableMode.HORIZONTAL):
-        formatted_rows = []
-        if not formatted_rows:
+        if not table_rows:
             return CustomParagraph(NO_INFO_PLACEHOLDER, self.style_normal)
+
+        formatted_rows = []
 
         for row_number, row in enumerate(table_rows):
             if mode == TableMode.HORIZONTAL:
