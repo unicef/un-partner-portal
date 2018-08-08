@@ -163,7 +163,7 @@ const BasicInformation = (props) => {
         </Grid>}
         <Grid item>
           <RadioForm
-            fieldName="json.recommendation_document.have_ref_letter"
+            fieldName="json.partner_profile.have_ref_letter"
             label={messages.haveRefLetter}
             values={BOOL_VAL}
           />
