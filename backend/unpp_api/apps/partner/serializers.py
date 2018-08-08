@@ -681,10 +681,12 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     have_authorised_officers = serializers.BooleanField(source="profile.have_authorised_officers")
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
-    org_head = PartnerHeadOrganizationSerializer(allow_null=True)
+    org_head = PartnerHeadOrganizationSerializer(allow_null=True, read_only=True)
+    organisation_heads = PartnerHeadOrganizationSerializer(allow_null=True, many=True)
     connectivity = serializers.BooleanField(source="profile.connectivity")
     connectivity_excuse = serializers.CharField(
-        source="profile.connectivity_excuse", allow_null=True, allow_blank=True)
+        source="profile.connectivity_excuse", allow_null=True, allow_blank=True
+    )
     working_languages = serializers.ListField(source="profile.working_languages")
     working_languages_other = serializers.CharField(
         source="profile.working_languages_other",
@@ -706,10 +708,11 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
             'working_languages',
             'working_languages_other',
             'has_finished',
+            'organisation_heads',
         )
 
     related_names = [
-        "profile", "mailing_address", "directors", "authorised_officers", "org_head",
+        "profile", "mailing_address", "directors", "authorised_officers", "organisation_heads",
     ]
 
     @transaction.atomic
