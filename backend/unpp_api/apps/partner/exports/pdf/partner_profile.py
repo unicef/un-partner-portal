@@ -36,6 +36,16 @@ class TableMode:
     HORIZONTAL = 2
 
 
+class CustomParagraph(Paragraph):
+    """
+    Safeguard against None values breaking export
+    """
+
+    def __init__(self, content, *args, **kwargs):
+        content = content or ''
+        super(CustomParagraph, self).__init__(content, *args, **kwargs)
+
+
 class PartnerProfilePDFExporter:
 
     def __init__(self, partner: Partner, timezone_name='UTC'):
@@ -85,11 +95,11 @@ class PartnerProfilePDFExporter:
         for row_number, row in enumerate(table_rows):
             if mode == TableMode.HORIZONTAL:
                 formatted_rows.append([
-                    Paragraph(row[0], self.style_th),
-                ] + list(map(lambda cell: Paragraph(str(cell), self.style_normal), row[1:])))
+                    CustomParagraph(row[0], self.style_th),
+                ] + list(map(lambda cell: CustomParagraph(str(cell), self.style_normal), row[1:])))
             else:
                 style = self.style_th if row_number == 0 else self.style_normal
-                formatted_rows.append(list(map(lambda cell: Paragraph(str(cell), style), row)))
+                formatted_rows.append(list(map(lambda cell: CustomParagraph(str(cell), style), row)))
 
         table = Table(formatted_rows, colWidths='*')
         if mode == TableMode.HORIZONTAL:
@@ -473,220 +483,220 @@ class PartnerProfilePDFExporter:
         paragraphs = []
         timestamp = timezone.now()
 
-        paragraphs.append(Paragraph(
+        paragraphs.append(CustomParagraph(
             format_datetime(timestamp, 'medium', tzinfo=self.tzinfo), self.style_right
         ))
-        paragraphs.append(Paragraph(self.partner.legal_name, self.style_h1))
+        paragraphs.append(CustomParagraph(self.partner.legal_name, self.style_h1))
         paragraphs.append(Spacer(1, self.margin))
 
         main_content = [
             ListItem([
-                Paragraph('Identification', style=self.style_h3),
-                Paragraph('Basic Information', self.style_h4),
+                CustomParagraph('Identification', style=self.style_h3),
+                CustomParagraph('Basic Information', self.style_h4),
                 self.get_basic_information_table(),
-                Paragraph('Legal Status', self.style_h4),
+                CustomParagraph('Legal Status', self.style_h4),
                 self.get_legal_status_table(),
                 Spacer(1, self.margin / 2)
             ]),
             ListItem([
-                Paragraph('Contact information', style=self.style_h3),
-                Paragraph('Mailing Address', self.style_h4),
+                CustomParagraph('Contact information', style=self.style_h3),
+                CustomParagraph('Mailing Address', self.style_h4),
                 self.get_mailing_address_table(),
-                Paragraph('Key Personnel', self.style_h4),
+                CustomParagraph('Key Personnel', self.style_h4),
                 self.get_key_personnel_table(),
-                Paragraph('Head of Organization', self.style_h4),
+                CustomParagraph('Head of Organization', self.style_h4),
                 self.get_organization_head_table(),
-                Paragraph('Connectivity', self.style_h4),
+                CustomParagraph('Connectivity', self.style_h4),
                 self.get_connectivity_table(),
-                Paragraph('Working Languages', self.style_h4),
+                CustomParagraph('Working Languages', self.style_h4),
                 self.get_working_languages_table(),
                 Spacer(1, self.margin / 2)
             ]),
             ListItem([
-                Paragraph('Mandate & Mission', style=self.style_h3),
-                Paragraph(
+                CustomParagraph('Mandate & Mission', style=self.style_h3),
+                CustomParagraph(
                     'Briefly state the background and rationale for the establishment of the organization',
                     self.style_h4
                 ),
-                Paragraph(self.partner.mandate_mission.background_and_rationale, self.style_normal),
-                Paragraph('Briefly state the mandate and mission of the organization', self.style_h4),
-                Paragraph(self.partner.mandate_mission.mandate_and_mission, self.style_normal),
-                Paragraph('Briefly describe the organization\'s governance structure', self.style_h4),
-                Paragraph(self.partner.mandate_mission.governance_structure, self.style_normal),
-                Paragraph('Ethics', self.style_h4),
+                CustomParagraph(self.partner.mandate_mission.background_and_rationale, self.style_normal),
+                CustomParagraph('Briefly state the mandate and mission of the organization', self.style_h4),
+                CustomParagraph(self.partner.mandate_mission.mandate_and_mission, self.style_normal),
+                CustomParagraph('Briefly describe the organization\'s governance structure', self.style_h4),
+                CustomParagraph(self.partner.mandate_mission.governance_structure, self.style_normal),
+                CustomParagraph('Ethics', self.style_h4),
                 self.get_ethics_table(),
-                Paragraph('Experience(s)', self.style_h4),
+                CustomParagraph('Experience(s)', self.style_h4),
                 self.get_experiences_table(),
-                Paragraph(
+                CustomParagraph(
                     'Does your organization work with populations of concern as defined by UNHCR?', self.style_h4
                 ),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.mandate_mission.population_of_concern], self.style_normal),
-                Paragraph('Country Presence', self.style_h4),
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.mandate_mission.population_of_concern], self.style_normal),
+                CustomParagraph('Country Presence', self.style_h4),
                 self.get_country_presence_table(),
-                Paragraph('Security', self.style_h4),
+                CustomParagraph('Security', self.style_h4),
                 self.get_security_table(),
                 Spacer(1, self.margin / 2)
             ]),
             ListItem([
-                Paragraph('Funding', style=self.style_h3),
-                Paragraph(
+                CustomParagraph('Funding', style=self.style_h3),
+                CustomParagraph(
                     'What is your organization\'s annual budget (in USD) for the current and two previous years?',
                     self.style_h4
                 ),
                 self.get_budget_table(),
-                Paragraph('Major Donors', self.style_h4),
+                CustomParagraph('Major Donors', self.style_h4),
                 self.get_major_donors_table(),
                 Spacer(1, self.margin / 2)
             ]),
             ListItem([
-                Paragraph('Collaboration', style=self.style_h3),
-                Paragraph('Has your organization collaborated with any UN agency?', self.style_h4),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.collaborations_partnership.exists()], self.style_normal),
+                CustomParagraph('Collaboration', style=self.style_h3),
+                CustomParagraph('Has your organization collaborated with any UN agency?', self.style_h4),
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.collaborations_partnership.exists()], self.style_normal),
                 self.get_collaborations_partnership_table(),
-                Paragraph(
+                CustomParagraph(
                     'Has the organization collaborated with or participated as a member of a cluster, '
                     'professional network, consortium or any similar institution?',
                     self.style_h4
                 ),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.profile.partnership_collaborate_institution], self.style_normal),
-                Paragraph(
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.partnership_collaborate_institution], self.style_normal),
+                CustomParagraph(
                     'Please state which cluster, network or consortium and briefly explain the collaboration',
                     self.style_h4
                 ),
-                Paragraph(self.partner.profile.partnership_collaborate_institution_desc, self.style_normal),
-                Paragraph(
+                CustomParagraph(self.partner.profile.partnership_collaborate_institution_desc, self.style_normal),
+                CustomParagraph(
                     'Would you like to upload any accreditations received by your organization?',
                     self.style_h4
                 ),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.profile.any_accreditation], self.style_normal),
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.any_accreditation], self.style_normal),
                 self.get_accreditations_table() if self.partner.profile.any_accreditation else Spacer(1, 0),
                 Spacer(1, self.margin / 2),
-                Paragraph(
+                CustomParagraph(
                     'Would you like to upload any reference letters for your organization?',
                     self.style_h4
                 ),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.profile.any_reference], self.style_normal),
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.any_reference], self.style_normal),
                 self.get_references_table() if self.partner.profile.any_reference else Spacer(1, 0),
                 Spacer(1, self.margin / 2),
             ]),
             ListItem([
-                Paragraph('Project Implementation', style=self.style_h3),
-                Paragraph('Programme Management', self.style_h3),
-                Paragraph(
+                CustomParagraph('Project Implementation', style=self.style_h3),
+                CustomParagraph('Programme Management', self.style_h3),
+                CustomParagraph(
                     'Does the organization use a results-based approach to managing programmes and projects?',
                     self.style_h4
                 ),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.profile.have_management_approach], self.style_normal),
-                Paragraph('Please provide a brief description of your management approach', self.style_h4),
-                Paragraph(self.partner.profile.management_approach_desc, self.style_normal),
-                Paragraph(
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.have_management_approach], self.style_normal),
+                CustomParagraph('Please provide a brief description of your management approach', self.style_h4),
+                CustomParagraph(self.partner.profile.management_approach_desc, self.style_normal),
+                CustomParagraph(
                     'Does your organization have a system for monitoring and evaluating its programmes and projects?',
                     self.style_h4
                 ),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.profile.have_system_monitoring], self.style_normal),
-                Paragraph('Briefly explain your M&amp;E system', self.style_h4),
-                Paragraph(self.partner.profile.system_monitoring_desc, self.style_normal),
-                Paragraph(
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.have_system_monitoring], self.style_normal),
+                CustomParagraph('Briefly explain your M&amp;E system', self.style_h4),
+                CustomParagraph(self.partner.profile.system_monitoring_desc, self.style_normal),
+                CustomParagraph(
                     'Does the organization have systems or procedures in place for '
                     'beneficiaries to provide feedback on project activities?',
                     self.style_h4
                 ),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.profile.have_feedback_mechanism], self.style_normal),
-                Paragraph('Briefly explain your feedback mechanism', self.style_h4),
-                Paragraph(self.partner.profile.feedback_mechanism_desc, self.style_normal),
-                Paragraph('Financial Controls', self.style_h3),
-                Paragraph('Your organization\'s accounting system', self.style_h4),
-                Paragraph(self.partner.profile.get_org_acc_system_display(), self.style_normal),
-                Paragraph('What is the method of accounting adopted by the organization?', self.style_h4),
-                Paragraph(self.partner.profile.get_method_acc_display(), self.style_normal),
-                Paragraph(
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.have_feedback_mechanism], self.style_normal),
+                CustomParagraph('Briefly explain your feedback mechanism', self.style_h4),
+                CustomParagraph(self.partner.profile.feedback_mechanism_desc, self.style_normal),
+                CustomParagraph('Financial Controls', self.style_h3),
+                CustomParagraph('Your organization\'s accounting system', self.style_h4),
+                CustomParagraph(self.partner.profile.get_org_acc_system_display(), self.style_normal),
+                CustomParagraph('What is the method of accounting adopted by the organization?', self.style_h4),
+                CustomParagraph(self.partner.profile.get_method_acc_display(), self.style_normal),
+                CustomParagraph(
                     'Does your organization have a system to track expenditures, '
                     'prepare project reports, and prepare claims for donors?',
                     self.style_h4
                 ),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.profile.have_system_track], self.style_normal),
-                Paragraph('Briefly explain the system used', self.style_h4),
-                Paragraph(self.partner.profile.financial_control_system_desc, self.style_normal),
-                Paragraph('Internal Controls', self.style_h3),
-                Paragraph(
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.have_system_track], self.style_normal),
+                CustomParagraph('Briefly explain the system used', self.style_h4),
+                CustomParagraph(self.partner.profile.financial_control_system_desc, self.style_normal),
+                CustomParagraph('Internal Controls', self.style_h3),
+                CustomParagraph(
                     'Policy Area - Does the organization have formal documented policies '
                     'applicable to all operations that cover the following areas?',
                     self.style_h4
                 ),
                 self.get_internal_controls_table(),
-                Paragraph(
+                CustomParagraph(
                     'Does the organization have an adequate number of experienced staff responsible for '
                     'financial management in all operations?',
                     self.style_h4
                 ),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.profile.experienced_staff], self.style_normal),
-                Paragraph(
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.experienced_staff], self.style_normal),
+                CustomParagraph(
                     'Policy Area - Does the organization have formal documented policies applicable '
                     'to all operations that cover the following areas?',
                     self.style_h4
                 ),
                 self.get_policy_areas_table(),
-                Paragraph('Banking Information', self.style_h3),
-                Paragraph('Does the organization have a bank account?', self.style_h4),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.profile.have_bank_account], self.style_normal),
-                Paragraph(
+                CustomParagraph('Banking Information', self.style_h3),
+                CustomParagraph('Does the organization have a bank account?', self.style_h4),
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.have_bank_account], self.style_normal),
+                CustomParagraph(
                     'Does the organization currently maintain, or has it previously maintained, '
                     'a separate interest-bearing account for UN funded projects that require a separate account?',
                     self.style_h4
                 ),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.profile.have_separate_bank_account], self.style_normal),
-                Paragraph('Audit &amp; Assessments', self.style_h3),
-                Paragraph('Is the organization regularly audited?', self.style_h4),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.audit.regular_audited], self.style_normal),
-                Paragraph(
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.have_separate_bank_account], self.style_normal),
+                CustomParagraph('Audit &amp; Assessments', self.style_h3),
+                CustomParagraph('Is the organization regularly audited?', self.style_h4),
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.audit.regular_audited], self.style_normal),
+                CustomParagraph(
                     'Please indicate the type(s) of audits the organization '
                     'undergoes?' if self.partner.audit.regular_audited else 'Please comment',
                     self.style_h4
                 ),
-                self.get_audit_reports_table() if self.partner.audit.regular_audited else Paragraph(
+                self.get_audit_reports_table() if self.partner.audit.regular_audited else CustomParagraph(
                     self.partner.audit.regular_audited_comment, self.style_normal
                 ),
-                Paragraph(
+                CustomParagraph(
                     'Were there any major accountability issues highlighted by audits in the past three years?',
                     self.style_h4
                 ),
-                Paragraph(
+                CustomParagraph(
                     BOOLEAN_DISPLAY[self.partner.audit.major_accountability_issues_highlighted], self.style_normal
                 ),
-                Paragraph('Please comment', self.style_h4
+                CustomParagraph('Please comment', self.style_h4
                           ) if self.partner.audit.major_accountability_issues_highlighted else Spacer(1, 0),
-                Paragraph(self.partner.audit.comment, self.style_normal
+                CustomParagraph(self.partner.audit.comment, self.style_normal
                           ) if self.partner.audit.major_accountability_issues_highlighted else Spacer(1, 0),
-                Paragraph(
+                CustomParagraph(
                     'Has the organization undergone a formal capacity assessment?',
                     self.style_h4
                 ),
-                Paragraph(
+                CustomParagraph(
                     BOOLEAN_DISPLAY[self.partner.audit.regular_capacity_assessments], self.style_normal
                 ),
                 self.get_capacity_assessments_item(),
-                Paragraph('Reporting', self.style_h3),
-                Paragraph(
+                CustomParagraph('Reporting', self.style_h3),
+                CustomParagraph(
                     'Briefly explain the key results achieved by your organization over the last year', self.style_h4
                 ),
-                Paragraph(self.partner.report.key_result, self.style_normal),
-                Paragraph('Does the organization publish annual reports?', self.style_h4),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.report.publish_annual_reports], self.style_normal),
-                Paragraph('Date of most recent annual report (if applicable)?', self.style_h4),
-                Paragraph(format_date(self.partner.report.last_report), self.style_normal),
+                CustomParagraph(self.partner.report.key_result, self.style_normal),
+                CustomParagraph('Does the organization publish annual reports?', self.style_h4),
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.report.publish_annual_reports], self.style_normal),
+                CustomParagraph('Date of most recent annual report (if applicable)?', self.style_h4),
+                CustomParagraph(format_date(self.partner.report.last_report), self.style_normal),
             ]),
             ListItem([
-                Paragraph('Other Information', style=self.style_h3),
-                Paragraph('Other information the organization may wish to share? (optional)', self.style_h4),
-                Paragraph(self.partner.other_info.info_to_share, self.style_normal),
-                Paragraph(
+                CustomParagraph('Other Information', style=self.style_h3),
+                CustomParagraph('Other information the organization may wish to share? (optional)', self.style_h4),
+                CustomParagraph(self.partner.other_info.info_to_share, self.style_normal),
+                CustomParagraph(
                     'The organization confirms that the information provided in the profile is accurate to the best '
                     'of its knowledge, and understands that any misrepresentations, falsifications or material '
                     'omissions in the profile, whenever discovered, may result in disqualification from or '
                     'termination of partnership with the UN.',
                     self.style_h4
                 ),
-                Paragraph(BOOLEAN_DISPLAY[self.partner.other_info.confirm_data_updated], self.style_normal),
+                CustomParagraph(BOOLEAN_DISPLAY[self.partner.other_info.confirm_data_updated], self.style_normal),
             ]),
         ]
 
