@@ -586,7 +586,7 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
         if not serializer.instance.created_by == self.request.user:
             raise PermissionDenied
         if serializer.instance.completed:
-            raise PermissionDenied('You have marked this review as completed, It can no longer be edited')
+            raise serializers.ValidationError('You have marked this review as completed, It can no longer be edited')
         super(ReviewerAssessmentsAPIView, self).perform_update(serializer)
 
 
