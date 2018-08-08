@@ -35,13 +35,13 @@ const CountryOfficesHeader = (props) => {
   const { classes, handleNewCountryClick, disableNewCountries, hasPermission } = props;
 
   return (
-    <Grid alignItems="center" container>
-      <Grid xs={9} item>
+    <Grid container direction="row" alignItems="center" >
+      <Grid sm={9} xs={12} item>
         <Typography type="title" color="inherit">
           {messages.countryProfile}
         </Typography>
       </Grid>
-      <Grid className={classes.right} xs={3} item>
+      <Grid className={classes.right} sm={3} xs={12} item>
         <Tooltip
           id="new_countries_tooltip"
           disableTriggerFocus={!disableNewCountries}
