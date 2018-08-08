@@ -61,7 +61,7 @@ class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
 
     def test_pin_unpin_project_wrong_eois(self):
         url = reverse('projects:pins')
-        response = self.client.patch(url, data={"eoi_ids": [1, 2, 3], "pin": True}, format='json')
+        response = self.client.patch(url, data={"eoi_ids": [1, 2, 3], "pin": True})
 
         self.assertResponseStatusIs(response, status_code=status.HTTP_400_BAD_REQUEST)
         self.assertEquals(response.data['non_field_errors'], PinProjectAPIView.ERROR_MSG_WRONG_EOI_PKS)
@@ -82,7 +82,7 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
 
     def test_pin_unpin_project_wrong_params(self):
         eoi_ids = EOI.objects.all().values_list('id', flat=True)
-        response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": None}, format='json')
+        response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": None})
 
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
         self.assertEquals(response.data['non_field_errors'], PinProjectAPIView.ERROR_MSG_WRONG_PARAMS)
@@ -91,19 +91,19 @@ class TestPinUnpinEOIAPITestCase(BaseAPITestCase):
     def test_pin_unpin_project(self):
         # add pins
         eoi_ids = EOI.objects.all().values_list('id', flat=True)
-        response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": True}, format='json')
+        response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": True})
 
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         self.assertEquals(Pin.objects.count(), self.quantity)
         self.assertEquals(response.data["eoi_ids"], list(eoi_ids))
 
         # read pins
-        response = self.client.get(self.url, format='json')
+        response = self.client.get(self.url)
         self.assertResponseStatusIs(response)
         self.assertEquals(response.data['count'], self.quantity)
 
         # delete pins
-        response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": False}, format='json')
+        response = self.client.patch(self.url, data={"eoi_ids": eoi_ids, "pin": False})
         self.assertResponseStatusIs(response, status_code=status.HTTP_204_NO_CONTENT)
         self.assertEquals(Pin.objects.count(), 0)
 
@@ -124,7 +124,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
 
     def test_open_project(self):
         # read open projects
-        response = self.client.get(self.url, format='json')
+        response = self.client.get(self.url)
         self.assertResponseStatusIs(response)
         self.assertEquals(response.data['count'], self.quantity)
 
@@ -164,7 +164,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             ],
         }
 
-        response = self.client.post(self.url, data=payload, format='json')
+        response = self.client.post(self.url, data=payload)
         self.assertResponseStatusIs(response, status_code=status.HTTP_400_BAD_REQUEST)
         self.assertEquals(
             response.data['assessments_criteria'],
@@ -175,7 +175,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             {'selection_criteria': SELECTION_CRITERIA_CHOICES.cost, 'weight': 20},
             {'selection_criteria': SELECTION_CRITERIA_CHOICES.innovative, 'weight': 30},
         ])
-        response = self.client.post(self.url, data=payload, format='json')
+        response = self.client.post(self.url, data=payload)
         self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         eoi = EOI.objects.last()
         self.assertEquals(response.data['title'], payload['title'])
@@ -190,7 +190,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
                 Partner.objects.first(), Partner.objects.last()
             ], many=True).data
         }
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response)
         self.assertEquals(response.data['id'], eoi.id)
         self.assertTrue(Partner.objects.first().id in [p['id'] for p in response.data['invited_partners']])
@@ -207,7 +207,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         payload = {
             "invited_partners": PartnerShortSerializer([Partner.objects.last()], many=True).data
         }
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response)
         self.assertEquals(response.data['id'], eoi.id)
         self.assertTrue(Partner.objects.last().id in [p['id'] for p in response.data['invited_partners']])
@@ -226,7 +226,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
                 AgencyMemberFactory(role=list(VALID_FOCAL_POINT_ROLE_NAMES)[0], office=ao).user.id,
             ]
         }
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response)
         self.assertEquals(response.data['notif_results_date'], str(date.today() + timedelta(days=15)))
 
@@ -236,7 +236,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             "justification": justification,
             "completed_reason": COMPLETED_REASON.cancelled,
         }
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response)
         self.assertEquals(response.data['completed_reason'], COMPLETED_REASON.cancelled)
         self.assertTrue(response.data['completed_date'])
@@ -368,7 +368,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
             ]
         }
 
-        response = self.client.post(self.url, data=payload, format='json')
+        response = self.client.post(self.url, data=payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
 
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
@@ -413,7 +413,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
             "cn": get_new_common_file().id,
         }
 
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         app_id = Application.objects.last().id
         self.assertEquals(response.data['id'], app_id)
@@ -425,7 +425,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         payload = {
             "cn": common_file.id,
         }
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
         expected_msgs = ['Project application already exists for this partner.']
         self.assertEquals(response.data['non_field_errors'], expected_msgs)
@@ -436,7 +436,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
             "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.known],
             "justification_reason": "a good reason",
         }
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
 
         expected_msgs = 'You do not have permission to perform this action.'
         self.assertEquals(response.data['detail'], expected_msgs)
@@ -465,7 +465,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
             "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.known],
             "justification_reason": "a good reason",
         }
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         app_id = eoi.applications.last().id
         self.assertEqual(response.data['id'], app_id)
@@ -473,7 +473,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         eoi.display_type = CFEI_TYPES.direct
         eoi.save()
         url = reverse('projects:agency-applications-delete', kwargs={"pk": app_id, "eoi_id": eoi.id})
-        response = self.client.delete(url, format='json')
+        response = self.client.delete(url)
         self.assertResponseStatusIs(response, status.HTTP_204_NO_CONTENT)
 
 
@@ -498,7 +498,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         application = self.eoi.applications.first()
         PartnerMemberFactory.create_batch(5, partner=application.partner)
         url = reverse('projects:application', kwargs={"pk": application.id})
-        response = self.client.get(url, format='json')
+        response = self.client.get(url)
         self.assertResponseStatusIs(response)
         self.assertFalse(response.data['did_win'])
         self.assertEquals(response.data['ds_justification_select'], [])
@@ -507,7 +507,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "status": APPLICATION_STATUSES.preselected,
             "ds_justification_select": [JUSTIFICATION_FOR_DIRECT_SELECTION.local],
         }
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
         self.assertEquals(
             response.data['non_field_errors'],
@@ -518,10 +518,10 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         creator = application.eoi.created_by
         self.client.force_login(creator)
 
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_403_FORBIDDEN)
         creator.agency_members.update(role=AgencyRole.EDITOR_ADVANCED.name)
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
         self.assertEquals(response.data['ds_justification_select'], [JUSTIFICATION_FOR_DIRECT_SELECTION.local])
@@ -531,7 +531,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "status": APPLICATION_STATUSES.preselected,
             "justification_reason": "good reason",
         }
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertEquals(
             response.data['non_field_errors'],
             ['You cannot award an application if the profile has not been verified yet.']
@@ -539,7 +539,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
         PartnerVerificationFactory(partner=application.partner, submitter=application.eoi.created_by)
 
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
@@ -554,14 +554,14 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         payload = {
             "did_accept": True,
         }
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_accept'])
         self.assertEquals(response.data['decision_date'], str(date.today()))
         self.client.force_login(application.eoi.created_by)
 
         awarded_partners_response = self.client.get(
-            reverse('projects:applications-awarded-partners', kwargs={"eoi_id": application.id}), format='json'
+            reverse('projects:applications-awarded-partners', kwargs={"eoi_id": application.id})
         )
         self.assertEqual(
             awarded_partners_response.status_code, status.HTTP_200_OK, msg=awarded_partners_response.content
@@ -576,7 +576,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "did_accept": False,
             "did_decline": True,
         }
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response)
         self.assertFalse(response.data['did_accept'])
         self.assertTrue(response.data['did_decline'])
@@ -588,14 +588,14 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "withdraw_reason": reason,
             "status": APPLICATION_STATUSES.rejected,
         }
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertTrue(status.is_client_error(response.status_code))
         self.assertEquals(
             response.data["non_field_errors"], ["Since assessment has begun, application can't be rejected."]
         )
 
         application.assessments.all().delete()
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response)
         self.assertTrue(response.data['did_win'])
         self.assertTrue(response.data['did_withdraw'])
@@ -635,12 +635,12 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             ],
             'note': note,
         }
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_403_FORBIDDEN)
 
         # add logged agency member to eoi/application reviewers
         app.eoi.reviewers.add(self.user)
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.data['non_field_errors'],
@@ -650,8 +650,8 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         app.eoi.is_published = True
         app.eoi.save()
 
-        response = self.client.post(url, data=payload, format='json')
-        self.assertTrue(status.is_client_error(response.status_code))
+        response = self.client.post(url, data=payload)
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.data['non_field_errors'], ["You can score only selection criteria defined in CFEI."]
         )
@@ -661,8 +661,9 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             scores.append({
                 'selection_criteria': criterion.get('selection_criteria'), 'score': 100
             })
+
         payload['scores'] = scores
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
         self.assertEquals(
             response.data['non_field_errors'],
@@ -675,7 +676,7 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
                 'selection_criteria': criterion.get('selection_criteria'), 'score': criterion.get('weight') - 1
             })
         payload['scores'] = scores
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         self.assertEquals(response.data['date_reviewed'], str(date.today()))
         self.assertEquals(len(response.data['scores']), len(payload['scores']))
@@ -692,7 +693,8 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
         payload = {
             'note': 'patch note test',
         }
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['note'], payload['note'])
         self.assertEquals(response.data['id'], assessment_id)
         self.assertEquals(Assessment.objects.last().note, payload['note'])
@@ -706,10 +708,29 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
             'scores': scores,
             'note': note,
         }
-        response = self.client.patch(url, data=payload, format='json')
+        response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEquals(response.data['note'], payload['note'])
         self.assertEquals(response.data['scores'], payload['scores'])
+
+        complete_assessments_url = reverse('projects:eoi-reviewers-complete-assessments', kwargs={"eoi_id": app.eoi.id})
+        complete_response = self.client.post(complete_assessments_url)
+        self.assertResponseStatusIs(complete_response)
+        self.assertTrue(len(complete_response.data) > 0)
+        self.assertTrue(all([a['completed'] for a in complete_response.data]))
+
+        url = reverse(
+            'projects:reviewer-assessments',
+            kwargs={
+                "application_id": Application.objects.first().id,
+                "reviewer_id": self.user.id,
+            }
+        )
+        payload = {
+            'note': 'patch note test',
+        }
+        response = self.client.patch(url, data=payload)
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
 
 
 class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
@@ -742,7 +763,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
             "specializations": Specialization.objects.all()[:3].values_list("id", flat=True),
             "cn": cfile.id,
         }
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         app = Application.objects.last()
         self.assertEquals(response.data['id'], str(app.id))
@@ -786,7 +807,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
             'start_date': str(start_date),
             'end_date': str(end_date),
         }
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
 
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         eoi = EOI.objects.last()
@@ -802,7 +823,7 @@ class TestCreateUnsolicitedProjectAPITestCase(BaseAPITestCase):
         self.assertEquals(Application.objects.count(), 2)
 
         # try to convert again
-        response = self.client.post(url, data=payload, format='json')
+        response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status_code=status.HTTP_400_BAD_REQUEST)
         self.assertEquals(response.data['non_field_errors'], [ConvertUnsolicitedSerializer.RESTRICTION_MSG])
 
@@ -854,7 +875,7 @@ class TestInvitedPartnersListAPIView(BaseAPITestCase):
     def test_serializes_same_fields_on_get_and_patch(self):
         eoi = OpenEOIFactory(created_by=self.user)
         url = reverse('projects:eoi-detail', kwargs={"pk": eoi.id})
-        read_response = self.client.get(url, format='json')
+        read_response = self.client.get(url)
         self.assertResponseStatusIs(read_response)
 
         update_response = self.client.patch(url, {
@@ -884,26 +905,26 @@ class TestEOIReviewersAssessmentsNotifyAPIView(BaseAPITestCase):
         url = reverse('projects:eoi-reviewers-assessments-notify', kwargs={
             "eoi_id": eoi.id, "reviewer_id": self.user.id
         })
-        create_notification_response = self.client.post(url, format='json')
+        create_notification_response = self.client.post(url)
         self.assertEqual(
             create_notification_response.status_code, status.HTTP_201_CREATED,
             msg=create_notification_response.content
         )
 
-        notifications_response = self.client.get('/api/notifications/', format='json')
+        notifications_response = self.client.get('/api/notifications/')
         self.assertEqual(notifications_response.status_code, status.HTTP_200_OK)
         self.assertEqual(notifications_response.data['count'], 1)
         self.assertEqual(
             notifications_response.data['results'][0]['notification']['source'], NotificationType.CFEI_REVIEW_REQUIRED
         )
 
-        create_notification_response = self.client.post(url, format='json')
+        create_notification_response = self.client.post(url)
         self.assertEqual(create_notification_response.status_code, status.HTTP_200_OK)
         self.assertIn('success', create_notification_response.json())
 
         with mock.patch('notification.helpers.timezone.now') as mock_now:
             mock_now.return_value = eoi.created + relativedelta(hours=25)
-            create_notification_response = self.client.post(url, format='json')
+            create_notification_response = self.client.post(url)
             self.assertEqual(create_notification_response.status_code, status.HTTP_201_CREATED)
 
 
@@ -951,18 +972,18 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
     def test_create_required(self):
         payload = self.base_payload.copy()
         url = reverse('projects:open')
-        create_response = self.client.post(url, data=payload, format='json')
+        create_response = self.client.post(url, data=payload)
         self.assertEqual(create_response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('locations', create_response.data)
 
         payload["locations"][0]['admin_level_1']['name'] = 'asd'
-        create_response = self.client.post(url, data=payload, format='json')
+        create_response = self.client.post(url, data=payload)
         self.assertEqual(create_response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('locations', create_response.data)
 
         payload["locations"][0]['lat'] = "14.95639"
         payload["locations"][0]['lon'] = "-23.62782"
-        create_response = self.client.post(url, data=payload, format='json')
+        create_response = self.client.post(url, data=payload)
         self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
 
     def test_create_with_optional_location(self):
@@ -976,7 +997,7 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
                 },
             }
         ]
-        create_response = self.client.post(url, data=payload, format='json')
+        create_response = self.client.post(url, data=payload)
         self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
 
     def test_multiple_locations(self):
@@ -997,7 +1018,7 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
                 },
             }
         ]
-        create_response = self.client.post(url, data=payload, format='json')
+        create_response = self.client.post(url, data=payload)
         self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
 
     def test_create_application(self):
@@ -1083,18 +1104,18 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
                 "agency_office": office.id
             }}
         url = reverse('projects:direct')
-        response = self.client.post(url, data=direct_selection_payload, format='json')
+        response = self.client.post(url, data=direct_selection_payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         for partner in partners:
             PartnerVerificationFactory(partner=partner, submitter=self.user)
 
-        response = self.client.post(url, data=direct_selection_payload, format='json')
+        response = self.client.post(url, data=direct_selection_payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('applications', response.data)
 
         direct_selection_payload['applications'].pop()
-        response = self.client.post(url, data=direct_selection_payload, format='json')
+        response = self.client.post(url, data=direct_selection_payload)
         self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         self.assertFalse(response.data['eoi']['sent_for_publishing'])
         self.assertFalse(response.data['eoi']['is_published'])
@@ -1124,7 +1145,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
             "did_decline": False
         }
 
-        update_response = self.client.patch(application_url, data=accept_payload, format='json')
+        update_response = self.client.patch(application_url, data=accept_payload)
         self.assertResponseStatusIs(update_response)
 
         call_command('send_daily_notifications')
@@ -1190,7 +1211,7 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         }
         url = reverse('projects:direct')
         PartnerVerificationFactory(partner=partner, submitter=self.user)
-        response = self.client.post(url, data=direct_selection_payload, format='json')
+        response = self.client.post(url, data=direct_selection_payload)
         self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         project_id = partner.applications.first().eoi_id
 
