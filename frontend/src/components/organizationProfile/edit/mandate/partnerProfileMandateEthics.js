@@ -27,7 +27,7 @@ const PartnerProfileMandateEthics = (props) => {
         <TextFieldForm
           label={messages.violationSafeguard}
           placeholder={PLACEHOLDERS.comment}
-          fieldName="violation_safeguard_desc"
+          fieldName="ethic_safeguard_comment"
           textFieldProps={{
             multiline: true,
             InputProps: {
@@ -36,6 +36,8 @@ const PartnerProfileMandateEthics = (props) => {
               },
             },
           }}
+          warn
+          optional
           readOnly={readOnly}
         />
         <RadioForm
@@ -46,24 +48,6 @@ const PartnerProfileMandateEthics = (props) => {
           optional
           readOnly={readOnly}
         />
-        {visibleIfNo(ethicsSafeguard)
-          ? <TextFieldForm
-            label={messages.commnet}
-            placeholder={PLACEHOLDERS.comment}
-            fieldName="ethic_safeguard_comment"
-            textFieldProps={{
-              multiline: true,
-              InputProps: {
-                inputProps: {
-                  maxLength: '5000',
-                },
-              },
-            }}
-            warn
-            optional
-            readOnly={readOnly}
-          />
-          : null}
         {visibleIfYes(ethicsSafeguard)
           ? <FileForm
             formName="partnerProfile"
@@ -78,7 +62,7 @@ const PartnerProfileMandateEthics = (props) => {
         <TextFieldForm
           label={messages.fraudSafeguard}
           placeholder={PLACEHOLDERS.comment}
-          fieldName="fraud_safeguard_desc"
+          fieldName="ethic_fraud_comment"
           textFieldProps={{
             multiline: true,
             InputProps: {
@@ -87,6 +71,8 @@ const PartnerProfileMandateEthics = (props) => {
               },
             },
           }}
+          warn
+          optional
           readOnly={readOnly}
         />
         <RadioForm
@@ -97,24 +83,6 @@ const PartnerProfileMandateEthics = (props) => {
           optional
           readOnly={readOnly}
         />
-        {visibleIfNo(ethicsFraud)
-          ? <TextFieldForm
-            label={messages.commnet}
-            placeholder={PLACEHOLDERS.comment}
-            fieldName="ethic_fraud_comment"
-            textFieldProps={{
-              multiline: true,
-              InputProps: {
-                inputProps: {
-                  maxLength: '5000',
-                },
-              },
-            }}
-            warn
-            optional
-            readOnly={readOnly}
-          />
-          : null}
         {visibleIfYes(ethicsFraud)
           ? <FileForm
             formName="partnerProfile"
