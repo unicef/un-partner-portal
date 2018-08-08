@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import GridColumn from '../../common/grid/gridColumn';
 import NumberOfNewCfeis from './numberOfNewCfeis';
@@ -10,6 +11,7 @@ import NewPartners from './newPartners';
 import NumberOfPartners from './numberOfPartners';
 import PartnerDecisions from './partnerDecisions';
 import Loader from '../../common/loader';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
 const styleSheet = (theme) => {
   const customPadding = theme.spacing.unit * 1.5;
@@ -23,7 +25,7 @@ const styleSheet = (theme) => {
       [theme.breakpoints.down('sm')]: {
         display: 'flex',
         flexDirection: 'column',
-      }
+      },
     },
     // custom padding here and below because grid gap not supported in IE 11
     newPartners: {
@@ -54,12 +56,13 @@ const styleSheet = (theme) => {
       paddingLeft: customPadding,
       paddingRight: customPadding,
     },
-  }
+  };
 };
 
 const AgencyDashboard = (props) => {
   const { loading,
     classes,
+    hasReviewPermission,
     dashboard: {
       new_partners_last_15_count: newPartnersCount,
       new_partners_last_15_by_day_count: newPartnersByDayCount,
@@ -93,16 +96,23 @@ const AgencyDashboard = (props) => {
 
 
       </div>
-      <ListOfConceptNotesContainer />
+      {hasReviewPermission && <ListOfConceptNotesContainer />}
       <ListOfOpenCfeiContainer />
       <PartnerDecisions />
     </GridColumn>);
 };
 
 AgencyDashboard.propTypes = {
+  classes: PropTypes.object,
   loading: PropTypes.bool,
   dashboard: PropTypes.object,
+  hasReviewPermission: PropTypes.bool,
 };
 
+const mapStateToProps = state => ({
+  hasReviewPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_REVIEW_APPLICATIONS, state),
+});
 
-export default withStyles(styleSheet, { name: 'agencyDashboard' })(AgencyDashboard);
+const connected = connect(mapStateToProps)(AgencyDashboard);
+
+export default withStyles(styleSheet, { name: 'agencyDashboard' })(connected);
