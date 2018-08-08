@@ -417,7 +417,8 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     mailing_address = PartnerMailingAddressSerializer()
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
-    org_head = PartnerHeadOrganizationSerializer()
+    org_head = PartnerHeadOrganizationSerializer(read_only=True)
+    organisation_heads = PartnerHeadOrganizationSerializer()
     hq_org_head = serializers.SerializerMethodField()
     mandate_mission = PartnerMandateMissionSerializer()
     experiences = PartnerExperienceSerializer(many=True)
@@ -494,6 +495,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "country_of_origin",
             "has_sanction_match",
             "registration_declaration",
+            "organisation_heads",
         )
 
     def get_hq_budgets(self, partner):
