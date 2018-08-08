@@ -26,6 +26,7 @@ const messages = {
   defer: 'Having reviewed the risk observation escalated by the Country Office, UN HQ has determined that:',
   defferedInfo: 'The risk is deferred to the Country Office for local decision-making.',
   confirmedInfo: 'No partnership should take place with the flagged organization.',
+  comment: 'Comment',
 };
 
 export const ESCALATION_DECISION = {
@@ -109,6 +110,11 @@ const UpdateEscalatedObservationForm = (props) => {
           initial
           label={messages.defer}
           outerField={Decision()}
+        />
+        <TextFieldForm
+          label={messages.comment}
+          fieldName="escalation_comment"
+          required
         />
       </GridColumn>
     </form >

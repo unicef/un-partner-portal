@@ -77,7 +77,7 @@ const ObservationTypeIcon = (props) => {
 ObservationTypeIcon.propTypes = {
   classes: PropTypes.object.isRequired,
   flagType: PropTypes.string.isRequired,
-  isValid: PropTypes.bool.isRequired,
+  isValid: PropTypes.bool,
   isEscalated: PropTypes.bool.isRequired,
   category: PropTypes.string,
 };

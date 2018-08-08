@@ -36,6 +36,7 @@ const saveFlags = (state, action) => {
       isValid: item.is_valid,
       isEscalated: item.can_be_escalated,
       validationComment: item.validation_comment,
+      escalationComment: item.escalation_comment,
     }), action.response.results);
 
   return R.assoc('items', flags, R.assoc('totalCount', action.response.count, state));
