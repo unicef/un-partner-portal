@@ -19,6 +19,7 @@ const messages = {
   email: 'E-mail',
   attachment: 'Attachment',
   reason: 'Reason for decision',
+  reasonEscalation: 'Reason for deffering/escalation',
 };
 
 const styleSheet = (theme) => {
@@ -89,6 +90,9 @@ const ObservationExpand = (props) => {
       </GridRow>}
       {observation.validationComment && <GridRow columns={1} spacing={8}>
         <ItemColumnCell label={messages.reason} content={R.path(['validationComment'], observation)} />
+      </GridRow>}
+      {observation.escalationComment && <GridRow columns={1} spacing={8}>
+        <ItemColumnCell label={messages.reasonEscalation} content={R.path(['escalationComment'], observation)} />
       </GridRow>}
     </GridColumn>
   );
