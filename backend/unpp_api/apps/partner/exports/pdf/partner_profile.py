@@ -24,10 +24,12 @@ COUNTRIES_DISPLAY = dict(COUNTRIES_ALPHA2_CODE)
 DONORS_DISPLAY = dict(PARTNER_DONORS_CHOICES)
 
 
+NO_INFO_PLACEHOLDER = '<i>Information not provided</i>'
+
 BOOLEAN_DISPLAY = {
     True: 'Yes',
     False: 'No',
-    None: 'N/A',
+    None: NO_INFO_PLACEHOLDER,
 }
 
 
@@ -92,6 +94,9 @@ class PartnerProfilePDFExporter:
 
     def wrap_table(self, table_rows, mode=TableMode.HORIZONTAL):
         formatted_rows = []
+        if not formatted_rows:
+            return CustomParagraph(NO_INFO_PLACEHOLDER, self.style_normal)
+
         for row_number, row in enumerate(table_rows):
             if mode == TableMode.HORIZONTAL:
                 formatted_rows.append([
