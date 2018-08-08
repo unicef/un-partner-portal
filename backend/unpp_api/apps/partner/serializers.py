@@ -418,7 +418,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
     org_head = PartnerHeadOrganizationSerializer(read_only=True)
-    organisation_heads = PartnerHeadOrganizationSerializer()
+    organisation_heads = PartnerHeadOrganizationSerializer(many=True)
     hq_org_head = serializers.SerializerMethodField()
     mandate_mission = PartnerMandateMissionSerializer()
     experiences = PartnerExperienceSerializer(many=True)
