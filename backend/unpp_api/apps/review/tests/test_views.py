@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import base64
 import random
 from typing import List
 import mock
@@ -442,6 +443,10 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
                 "acronym": "N1",
                 "legal_name_change": True,
                 "former_legal_name": "Former Legal Name Inc.",
+                "year_establishment": 1900,
+                "have_governing_document": True,
+                "registered_to_operate_in_country": False,
+                "missing_registration_document_comment": "comment",
             },
             "partner_head_organization": {
                 "fullname": "Jack Orzeszek",
@@ -450,6 +455,16 @@ class TestRegisterSanctionedPartnerTestCase(BaseAPITestCase):
             "partner_member": {
                 "title": "Project Manager",
             },
+            "governing_document": {
+                'document': {
+                    'content': base64.encodebytes(b'TEST_FILE_CONTENT'),
+                    'filename': 'testfile.doc',
+                },
+            },
+            "declaration": [{
+                'question': f'question{n}',
+                'answer': 'Yes',
+            } for n in range(random.randint(5, 10))]
         }
 
     def test_register_sanctioned_partner(self):

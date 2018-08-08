@@ -13,6 +13,7 @@ const messages = {
    and understands that any misrepresentations, falsifications or material omissions in the profile, 
    whenever discovered, may result in disqualification from or termination of partnership with the UN.`,
   orgLogo: 'Organization Logo',
+  declaration: 'Registration Declaration',
 };
 
 const PartnerProfileOtherInfoContent = (props) => {
@@ -64,6 +65,14 @@ const PartnerProfileOtherInfoContent = (props) => {
           fieldName="org_logo"
           optional
           readOnly={readOnly}
+        />
+        <FileForm
+          formName="partnerProfile"
+          sectionName="other_info.registration_declaration"
+          label={messages.declaration}
+          fieldName="registration_declaration"
+          optional
+          readOnly
         />
         <CheckboxForm
           label={messages.confirm}

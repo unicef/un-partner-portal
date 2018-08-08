@@ -135,15 +135,15 @@ class PartnerProfilePDFExporter:
             ],
             [
                 'Is the organization registered to operate in the country?',
-                BOOLEAN_DISPLAY[self.partner.profile.registration_to_operate_in_country],
+                BOOLEAN_DISPLAY[self.partner.profile.registered_to_operate_in_country],
             ],
             [
                 'Registration comment',
-                self.partner.profile.registration_comment,
+                self.partner.profile.missing_registration_document_comment,
             ],
             [
                 'Does the Organization have a Governing Document?',
-                BOOLEAN_DISPLAY[self.partner.profile.have_gov_doc],
+                BOOLEAN_DISPLAY[self.partner.profile.have_governing_document],
             ],
         ]
         return self.wrap_table(table_rows)

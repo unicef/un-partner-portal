@@ -4,7 +4,9 @@ import os
 import random
 
 import mock
+from datetime import date
 
+from dateutil.relativedelta import relativedelta
 from django.urls import reverse
 from django.conf import settings
 from rest_framework import status
@@ -111,51 +113,67 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
     def test_identification(self):
         profile = PartnerProfile.objects.first()
         year_establishment = 2015
-        registration_date = '2016-01-01'
-        url = reverse('common:file')
+
+        identification_url = reverse('partners:identification', kwargs={"pk": profile.id})
+        payload = {
+            'year_establishment': year_establishment,
+            'have_governing_document': True,
+            'registered_to_operate_in_country': True,
+        }
+        response = self.client.patch(identification_url, data=payload)
+        self.assertResponseStatusIs(response)
+        self.assertEquals(response.data['year_establishment'], year_establishment)
+
+        response = self.client.get(identification_url)
+        self.assertResponseStatusIs(response)
+        identification_payload = response.data
+
+        file_endpoint_url = reverse('common:file')
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.doc')
         with open(filename) as doc:
             payload = {
                 "file_field": doc
             }
-            response = self.client.post(url, data=payload, format='multipart')
+            response = self.client.post(file_endpoint_url, data=payload, format='multipart')
 
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
         self.assertIsNotNone(response.data['id'])
-        gov_doc_id = response.data['id']
+
+        identification_payload['governing_documents'].append({
+            'document': response.data['id']
+        })
 
         with open(filename) as doc:
             payload = {
                 "file_field": doc
             }
-            response = self.client.post(url, data=payload, format='multipart')
+            response = self.client.post(file_endpoint_url, data=payload, format='multipart')
+
         self.assertTrue(status.is_success(response.status_code))
         self.assertTrue(response.data['id'] is not None)
-        registration_doc_id = response.data['id']
 
-        url = reverse('partners:identification', kwargs={"pk": profile.id})
-        payload = {
-            'year_establishment': year_establishment,
-            'have_gov_doc': True,
-            'gov_doc': gov_doc_id,
-            'registration_to_operate_in_country': True,
-            'registration_doc': registration_doc_id,
-            'registration_date': registration_date,
-            'registration_comment': 'test comment',
-            'registration_number': '123/2016',
-        }
-        response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(status.is_success(response.status_code))
-        self.assertEquals(response.data['year_establishment'], year_establishment)
-        self.assertEquals(response.data['registration_date'], registration_date)
-        self.assertEquals(response.data['registration_comment'], 'test comment')
-        self.assertTrue(response.data['gov_doc'] is not None)
-        self.assertTrue(response.data['registration_doc'] is not None)
+        identification_payload['registration_documents'].append({
+            'document': response.data['id'],
+            'issue_date': date.today() - relativedelta(years=random.randint(1, 4)),
+            'expiry_date': date.today() + relativedelta(years=random.randint(5, 20)),
+            'registration_number': 'TEST_NUMBER',
+            'issuing_authority': 'TEST_AUTHORITY',
+        })
 
-        response = self.client.get(url, format='json')
-        self.assertTrue(status.is_success(response.status_code))
-        self.assertEquals(response.data['registration_date'], registration_date)
-        self.assertTrue(response.data['registration_doc'] is not None)
+        response = self.client.patch(identification_url, data=identification_payload)
+        self.assertResponseStatusIs(response)
+
+        if len(response.data['registration_documents']) > 1:
+            self.assertFalse(response.data['registration_documents'][0]['editable'])
+        self.assertTrue(response.data['registration_documents'][-1]['editable'])
+
+        if len(response.data['governing_documents']) > 1:
+            self.assertFalse(response.data['governing_documents'][0]['editable'])
+        self.assertTrue(response.data['governing_documents'][-1]['editable'])
+
+        self.assertTrue(response.data['have_governing_document'])
+        self.assertTrue(response.data['registered_to_operate_in_country'])
+        self.assertEqual(response.data['registration_documents'][-1]['registration_number'], 'TEST_NUMBER')
 
     def test_contact_information(self):
         partner = Partner.objects.first()
