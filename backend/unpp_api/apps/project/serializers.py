@@ -747,6 +747,19 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
         return super(AgencyProjectSerializer, self).validate(data)
 
 
+class SimpleAssessmentSerializer(serializers.ModelSerializer):
+    reviewer_fullname = serializers.CharField(source='reviewer.fullname')
+    total_score = serializers.IntegerField()
+
+    class Meta:
+        model = Assessment
+        fields = (
+            'reviewer_fullname',
+            'total_score',
+        )
+        read_only_fields = fields
+
+
 class ApplicationsListSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
@@ -757,6 +770,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
     your_score_breakdown = serializers.SerializerMethodField()
     review_progress = serializers.SerializerMethodField()
     application_status_display = serializers.CharField(read_only=True)
+    assessments = SimpleAssessmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Application
@@ -772,6 +786,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'your_score_breakdown',
             'review_progress',
             'application_status_display',
+            'assessments',
         )
 
     def _get_my_assessment(self, obj):
@@ -832,9 +847,10 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
             'date_reviewed',
             'is_a_committee_score',
             'note',
+            'completed',
         )
         read_only_fields = (
-            'created_by', 'modified_by',
+            'created_by', 'modified_by', 'completed'
         )
 
     def get_extra_kwargs(self):

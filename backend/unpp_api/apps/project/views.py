@@ -585,6 +585,8 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         if not serializer.instance.created_by == self.request.user:
             raise PermissionDenied
+        if serializer.instance.completed:
+            raise serializers.ValidationError('You have marked this review as completed, It can no longer be edited')
         super(ReviewerAssessmentsAPIView, self).perform_update(serializer)
 
 
@@ -943,7 +945,7 @@ class CompleteAssessmentsAPIView(ListAPIView):
         ),
     )
     serializer_class = ReviewerAssessmentsSerializer
-    queryset = Assessment.objects.filter(completed=False)
+    queryset = Assessment.objects.filter()
 
     def get_queryset(self):
         queryset = super(CompleteAssessmentsAPIView, self).get_queryset()
