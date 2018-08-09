@@ -16,6 +16,7 @@ export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const LOGIN_SUBMITTING = 'LOGIN_SUBMITTIN';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const SESSION_ERROR = 'SESSION_ERROR';
+export const NOTIFICATION_UPDATE = 'NOTIFICATION_UPDATE';
 
 const initialState = {
   role: null,
@@ -46,6 +47,7 @@ const initialState = {
   logoThumbnail: null,
   isProfileComplete: null,
   lastUpdate: null,
+  notificationFrequency: null,
 };
 
 export const initSession = session => ({ type: SESSION_CHANGE, session });
@@ -70,6 +72,8 @@ export const sessionError = error => ({
   type: SESSION_ERROR,
   error,
 });
+
+export const updateNotification = frequency => ({ type: NOTIFICATION_UPDATE, frequency });
 
 export const loginSuccess = session => ({ type: LOGIN_SUCCESS, session });
 
@@ -203,6 +207,9 @@ export default function sessionReducer(state = initialState, action) {
     }
     case SESSION_ERROR: {
       return R.assoc('error', action.error, state);
+    }
+    case NOTIFICATION_UPDATE: {
+      return R.assoc('notificationFrequency', action.frequency.notification_frequency, state);
     }
     default:
       return state;

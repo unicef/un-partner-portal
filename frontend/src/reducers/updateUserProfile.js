@@ -6,6 +6,7 @@ import apiMeta, {
   loadEnded,
   loadSuccess,
   loadFailure } from '../reducers/apiMeta';
+import { updateNotification } from '../reducers/session';
 
 export const UPDATE_USER_PROFILE = 'UPDATE_USER_PROFILE';
 
@@ -21,6 +22,7 @@ export const updateProfile = body => (dispatch) => {
     .then((user) => {
       dispatch(loadEnded(UPDATE_USER_PROFILE));
       dispatch(loadSuccess(UPDATE_USER_PROFILE));
+      dispatch(updateNotification(user));
       return user;
     })
     .catch((error) => {
