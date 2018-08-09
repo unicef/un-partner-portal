@@ -21,6 +21,7 @@ def generate_ids(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('sequences', '0001_initial'),
         ('project', '0062_eoi_displayid'),
     ]
 
