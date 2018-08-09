@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
 
-/** Custom grid column based on flexbox 
+/** Custom grid column based on flexbox
  * - used instead of materia-ui one to avoid strange spacing
  * issues when multiple grid columns being nested in each other
  * currently supports only one spacing - 12px
  * */
 
-const styleSheet = (theme) => ({
+const styleSheet = theme => ({
   grid: {
     display: 'flex',
     flexDirection: 'column',
@@ -39,6 +39,5 @@ CustomGridColumn.propTypes = {
   children: PropTypes.node,
 };
 
-;
 
-export default withStyles(styleSheet, { name: 'CustomGridColumn'})(CustomGridColumn);
+export default withStyles(styleSheet, { name: 'CustomGridColumn' })(CustomGridColumn);

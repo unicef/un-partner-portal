@@ -38,7 +38,6 @@ const styleSheet = theme => ({
   },
   items: {
     flexFlow: 'column wrap',
-    display: 'flex',
     flexBasis: '90%',
   },
   delete: {
@@ -108,7 +107,7 @@ class RenderArrayMembers extends Component {
                   </Paper>}
                 </div>
               </ListItem>
-              {limit > 1 && <Divider />}
+              {(limit > 1 && !(fields.length === 1 && readOnly)) && <Divider />}
             </div>
           ))}
 

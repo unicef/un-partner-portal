@@ -14,7 +14,7 @@ const messages = {
 
 function loggedOrg(props) {
   const { role, name, logo } = props;
-
+  
   return (
     <GridColumn>
       <Typography type="caption">

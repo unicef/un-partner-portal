@@ -49,7 +49,7 @@ def sanctions_scan_partner(partner):
     )
 
     # Partner Heads
-    if hasattr(partner, 'org_head'):
+    if partner.org_head:
         matched_names = filter_sanctions_names(
             partner.org_head.fullname, SANCTION_LIST_TYPES.individual, partner
         )
