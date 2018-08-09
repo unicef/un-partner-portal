@@ -494,7 +494,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.eoi.focal_points.clear()
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
-    def test_read_update(self):
+    def test_read_update_application(self):
         application = self.eoi.applications.first()
         PartnerMemberFactory.create_batch(5, partner=application.partner)
         url = reverse('projects:application', kwargs={"pk": application.id})

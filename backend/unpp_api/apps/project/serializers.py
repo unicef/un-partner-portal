@@ -239,6 +239,7 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
     application_status = serializers.CharField(read_only=True)
     application_status_display = serializers.CharField(read_only=True)
     assessments_is_completed = serializers.NullBooleanField(read_only=True)
+    assessments_marked_as_completed = serializers.NullBooleanField(read_only=True)
 
     class Meta:
         model = Application
@@ -286,25 +287,38 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
             allowed_to_modify_status = list(app.eoi.focal_points.values_list('id', flat=True)) + [app.eoi.created_by_id]
             if data.get("status") and self.context['request'].user.id not in allowed_to_modify_status:
                 raise serializers.ValidationError(
-                    "Only Focal Point/Creator is allowed to pre-select/reject an application.")
+                    "Only Focal Point/Creator is allowed to pre-select/reject an application."
+                )
 
             if data.get("status") == APPLICATION_STATUSES.rejected and \
                     Assessment.objects.filter(application=app).exists():
                 raise serializers.ValidationError("Since assessment has begun, application can't be rejected.")
 
+            if data.get("status") == APPLICATION_STATUSES.recommended:
+                if not app.status == APPLICATION_STATUSES.preselected:
+                    raise serializers.ValidationError('Only Preselected applications can be recommended.')
+
+                if not app.assessments_is_completed:
+                    raise serializers.ValidationError(
+                        'Cannot recommend application before all assessments have been completed.'
+                    )
+
             if app.eoi.is_completed:
                 raise serializers.ValidationError("Since CFEI is completed, modification is forbidden.")
 
-            if data.get("did_win") and not app.partner.is_verified:
-                raise serializers.ValidationError(
-                    "You cannot award an application if the profile has not been verified yet."
-                )
-            if data.get("did_win") and app.partner.has_red_flag:
-                raise serializers.ValidationError("You cannot award an application if the profile has red flag.")
-            if data.get("did_win") and not app.assessments_is_completed:
-                raise serializers.ValidationError(
-                    "You cannot award an application if all assessments have not been added for the application."
-                )
+            if data.get("did_win"):
+                if not app.partner.is_verified:
+                    raise serializers.ValidationError(
+                        "You cannot award an application if the profile has not been verified yet."
+                    )
+
+                if app.partner.has_red_flag:
+                    raise serializers.ValidationError("You cannot award an application if the profile has red flag.")
+
+                if not app.assessments_is_completed:
+                    raise serializers.ValidationError(
+                        "You cannot award an application if all assessments have not been added for the application."
+                    )
 
         return super(ApplicationFullSerializer, self).validate(data)
 
@@ -1222,6 +1236,7 @@ class CompareSelectedSerializer(serializers.ModelSerializer):
             'did_win',
             'did_withdraw',
             'assessments_is_completed',
+            'assessments_marked_as_completed',
         )
 
     def get_annual_budget(self, obj):
