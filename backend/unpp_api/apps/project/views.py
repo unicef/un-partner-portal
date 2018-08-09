@@ -945,14 +945,20 @@ class CompleteAssessmentsAPIView(ListAPIView):
         ),
     )
     serializer_class = ReviewerAssessmentsSerializer
-    queryset = Assessment.objects.filter(completed=False)
+    queryset = Assessment.objects.filter()
 
     def get_queryset(self):
         queryset = super(CompleteAssessmentsAPIView, self).get_queryset()
         return queryset.filter(created_by=self.request.user, reviewer=self.request.user)
 
+    @transaction.atomic
     def post(self, *args, **kwargs):
-        assessments = list(self.get_queryset().filter(application__eoi_id=self.kwargs['eoi_id']))
+        eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
+        all_assessments = self.get_queryset().filter(application__eoi=eoi)
+        if not all_assessments.count() == eoi.applications.count():
+            raise serializers.ValidationError('You nee to review all applications before completing.')
+
+        assessments = list(all_assessments.filter(completed=False))
         for ass in assessments:
             ass.completed = True
             ass.completed_date = timezone.now().date()
