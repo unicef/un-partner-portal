@@ -7,7 +7,6 @@ import DropdownMenu from '../../../common/dropdownMenu';
 import SpreadContent from '../../../common/spreadContent';
 import EditButton from '../../buttons/editCfeiButton';
 import DeleteButton from '../../buttons/deleteCfeiButton';
-import CancelButton from '../../buttons/cancelCfeiButton';
 import DownloadButton from '../../buttons/downloadCfeiButton';
 import Complete from '../../buttons/completeCfeiButton';
 import SendDsrButton from '../../buttons/sendDsrButton';

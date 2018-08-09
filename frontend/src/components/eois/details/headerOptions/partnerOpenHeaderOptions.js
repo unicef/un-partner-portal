@@ -5,8 +5,11 @@ import { withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import DropdownMenu from '../../../common/dropdownMenu';
 import PinnedCell from '../../cells/pinnedCell';
+import DownloadButton from '../../buttons/downloadCfeiButton';
 import PinButton from '../../buttons/pinItemButton';
 import { checkPermission, PARTNER_PERMISSIONS } from '../../../../helpers/permissions';
+
+const download = 'download';
 
 const PartnerOpenHeaderOptions = (props) => {
   const { params: { id }, hasPermission } = props;
@@ -20,6 +23,10 @@ const PartnerOpenHeaderOptions = (props) => {
         <DropdownMenu
           options={
             [
+              {
+                name: download,
+                content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
+              },
               {
                 name: 'pinItem',
                 content: <PinButton id={id} />,

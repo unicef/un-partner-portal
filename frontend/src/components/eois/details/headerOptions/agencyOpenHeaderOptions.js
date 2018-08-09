@@ -7,6 +7,7 @@ import { PROJECT_STATUSES } from '../../../../helpers/constants';
 import DropdownMenu from '../../../common/dropdownMenu';
 import SpreadContent from '../../../common/spreadContent';
 import EditButton from '../../buttons/editCfeiButton';
+import DownloadButton from '../../buttons/downloadCfeiButton';
 import InviteButton from '../../buttons/invitePartner';
 import Reviewers from '../../buttons/manageReviewers';
 import Complete from '../../buttons/completeCfeiButton';
@@ -41,6 +42,7 @@ const complete = 'complete';
 const send = 'send';
 const publish = 'publish';
 const editDate = 'editDate';
+const download = 'download';
 
 class PartnerOpenHeaderOptions extends Component {
   constructor(props) {
@@ -80,6 +82,7 @@ class PartnerOpenHeaderOptions extends Component {
 
   sendOptions() {
     const {
+      params: { id },
       handleDialogOpen,
       hasManageDraftPermission,
       hasInviteSentPermission,
@@ -93,7 +96,12 @@ class PartnerOpenHeaderOptions extends Component {
       isFocalPoint,
       isCreator } = this.props;
 
-    const options = [];
+    const options = [
+      {
+        name: download,
+        content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
+      },
+    ];
 
     if (((hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA)
         || (hasEditSentPermission && isFocalPoint)) && !isPublished) {
