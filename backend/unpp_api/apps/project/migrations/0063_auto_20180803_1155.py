@@ -11,16 +11,18 @@ def generate_ids(apps, schema_editor):
     EOI = apps.get_model('project', 'EOI')
     for eoi in EOI.objects.filter(displayID=None).iterator():
         point = eoi.locations.first()
-        if point:
-            eoi.displayID = get_eoi_display_identifier(
-                eoi.agency.name, point.admin_level_1.country_code, year=eoi.created.year
-            )
-            eoi.save()
+        eoi.displayID = get_eoi_display_identifier(
+            eoi.agency.name,
+            point.admin_level_1.country_code if point else 'PL',
+            year=eoi.created.year
+        )
+        eoi.save()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('sequences', '0001_initial'),
         ('project', '0062_eoi_displayid'),
     ]
 
