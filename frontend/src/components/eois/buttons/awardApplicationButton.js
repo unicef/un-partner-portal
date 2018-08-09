@@ -9,7 +9,6 @@ const messages = {
   award: 'Select',
 };
 
-
 const AwardApplicationButton = (props) => {
   const { applicationId, handleDialogClose, handleDialogOpen, dialogOpen, ...other } = props;
   return (

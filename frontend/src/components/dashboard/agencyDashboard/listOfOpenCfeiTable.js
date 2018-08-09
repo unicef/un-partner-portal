@@ -9,17 +9,15 @@ import PaginatedList from '../../common/list/paginatedList';
 import TableWithLocalState from '../../common/hoc/tableWithLocalState';
 import { formatDateForPrint } from '../../../helpers/dates';
 
-
 const columns = [
   { name: 'title', title: 'Project Title' },
-  { name: 'id', title: 'CFEI' },
+  { name: 'displayID', title: 'CFEI' },
   { name: 'applications_count', title: 'Number of Applications' },
   { name: 'deadline_date', title: 'Application deadline' },
 ];
 
-
 const renderCells = ({ row, column, value }) => {
-  if (column.name === 'id') {
+  if (column.name === 'displayID') {
     return (
       <TableCell >
         <Typography
@@ -27,7 +25,7 @@ const renderCells = ({ row, column, value }) => {
           component={Link}
           to={`/cfei/open/${row.id}`}
         >
-          {row.id}
+          {row.displayID}
         </Typography>
       </TableCell>);
   } else if (column.name === 'deadline_date') {

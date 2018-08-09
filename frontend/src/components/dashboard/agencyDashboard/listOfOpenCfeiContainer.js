@@ -4,7 +4,6 @@ import Typography from 'material-ui/Typography';
 import HeaderList from '../../common/list/headerList';
 import ListOfOpenCfeiTable from './listOfOpenCfeiTable';
 
-
 const messages = {
   title: 'List of Open CFEIs',
 };

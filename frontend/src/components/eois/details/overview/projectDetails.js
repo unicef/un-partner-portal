@@ -119,7 +119,7 @@ const title = type => () => (
     <Typography type="headline" >{messages.title}</Typography>
     {type !== PROJECT_TYPES.UNSOLICITED &&
     <TextField
-      fieldName="id"
+      fieldName="displayID"
       label={(type === PROJECT_TYPES.OPEN || type === PROJECT_TYPES.PINNED) ? messages.labels.id : messages.labels.dsrId}
       readOnly
     />}
