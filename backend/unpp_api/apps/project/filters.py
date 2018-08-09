@@ -16,7 +16,8 @@ from project.models import EOI, Application
 
 class BaseProjectFilter(django_filters.FilterSet):
 
-    title = CharFilter(method='filter_title')
+    title = CharFilter(lookup_expr='icontains')
+    displayID = CharFilter(lookup_expr='icontains')
     country_code = django_filters.ChoiceFilter(
         choices=COUNTRIES_ALPHA2_CODE, name='locations__admin_level_1__country_code', lookup_expr='iexact'
     )
@@ -51,9 +52,6 @@ class BaseProjectFilter(django_filters.FilterSet):
             'status',
             'focal_points',
         )
-
-    def filter_title(self, queryset, name, value):
-        return queryset.filter(title__icontains=value)
 
     def filter_active(self, queryset, name, value):
         if value:
