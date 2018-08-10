@@ -477,15 +477,22 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
     @transaction.atomic
     def perform_update(self, serializer):
         data = serializer.validated_data
-        if data.get('did_win'):
+        win_decision = data.get('did_win')
+        accept_decline_decision = data.get('did_accept', False) or data.get('did_decline', False)
+        save_kwargs = {}
+
+        if win_decision:
             current_user_has_permission(self.request, agency_permissions=[
                 AgencyPermission.CFEI_SELECT_RECOMMENDED_PARTNER
             ], raise_exception=True)
+            save_kwargs['win_date'] = timezone.now().date()
+            save_kwargs['win_decision_maker'] = self.request.user
 
-        instance = serializer.save()
-        if data.get('did_accept', False) or data.get('did_decline', False):
-            instance.decision_date = timezone.now().date()
-            instance.save()
+        if accept_decline_decision:
+            save_kwargs['decision_date'] = timezone.now().date()
+            save_kwargs['decision_maker'] = self.request.user
+
+        instance = serializer.save(**save_kwargs)
 
         if self.request.agency_member:
             send_agency_updated_application_notification(instance)

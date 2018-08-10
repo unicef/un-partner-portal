@@ -202,12 +202,23 @@ class Application(TimeStampedModel):
     cn = models.ForeignKey('common.CommonFile', related_name="concept_notes", null=True, blank=True)
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
+    # for did_win
+    win_date = models.DateField(null=True, blank=True)
+    win_decision_maker = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, related_name="application_selections"
+    )
+
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
-    decision_date = models.DateField(null=True, blank=True)  # for accept or decline
+    did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
+    # for accept or decline
+    decision_date = models.DateField(null=True, blank=True)
+    decision_maker = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, related_name="application_decisions"
+    )
     accept_notification = models.OneToOneField(
         'notification.Notification', related_name="accept_notification", null=True, blank=True
     )
-    did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
+
     # did_withdraw is only applicable if did_win is True
     did_withdraw = models.BooleanField(default=False, verbose_name='Did withdraw?')
     withdraw_reason = models.TextField(null=True, blank=True)  # reason why partner withdraw
