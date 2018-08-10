@@ -11,7 +11,7 @@ from agency.permissions import AgencyPermission
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
 from common.consts import ALL_COMPLETED_REASONS, DSR_FINALIZE_RETENTION_CHOICES, CFEI_STATUSES, APPLICATION_STATUSES
 from common.factories import AgencyMemberFactory, PartnerFactory, PartnerVerificationFactory, OpenEOIFactory, \
-    DirectEOIFactory, PartnerMemberFactory, get_new_common_file
+    DirectEOIFactory, PartnerMemberFactory, get_new_common_file, AgencyOfficeFactory
 from common.tests.base import BaseAPITestCase
 from partner.models import PartnerMember, Partner
 from project.models import EOI, Application
@@ -133,7 +133,7 @@ class TestOpenCFEI(BaseAPITestCase):
             self.assertResponseStatusIs(update_response, expected_response_code)
 
     def test_send_for_decision(self):
-        eoi = OpenEOIFactory(created_by=self.user)
+        eoi = OpenEOIFactory(created_by=self.user, is_published=True)
         eoi.review_summary_comment = 'COMMENT'
         eoi.save()
 
@@ -151,6 +151,119 @@ class TestOpenCFEI(BaseAPITestCase):
         )
         response = self.client.post(send_for_decision_url)
         self.assertResponseStatusIs(response)
+
+    def test_recommendation_simple_flow(self):
+        office = AgencyOfficeFactory(agency=UNICEF.model_instance)
+        agency_member_basic = AgencyMemberFactory(office=office, role=AgencyRole.EDITOR_BASIC.name)
+        reviewer_member_basic = AgencyMemberFactory(office=office, role=AgencyRole.EDITOR_BASIC.name)
+        agency_member_advanced = AgencyMemberFactory(office=office, role=AgencyRole.EDITOR_ADVANCED.name)
+
+        partner = PartnerFactory()
+        PartnerVerificationFactory(partner=partner)
+        partner_member = PartnerMemberFactory(partner=partner)
+
+        # Create Open CFEI
+        with self.login_as_user(agency_member_basic.user):
+            payload = self.base_payload.copy()
+            payload['focal_points'] = [agency_member_advanced.user.id]
+            payload['agency'] = office.agency.id
+            payload['agency_office'] = office.id
+            create_response = self.client.post(reverse('projects:open'), data=payload)
+            self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+
+        # TODO: Send to publish
+
+        # Publish
+        with self.login_as_user(agency_member_advanced.user):
+            url = reverse('projects:eoi-publish', kwargs={'pk': create_response.data['id']})
+            publish_response = self.client.post(url)
+            self.assertResponseStatusIs(publish_response)
+
+        # Add reviewers
+        with self.login_as_user(agency_member_basic.user):
+            update_url = reverse('projects:eoi-detail', kwargs={'pk': create_response.data['id']})
+            update_response = self.client.patch(update_url, data={
+                'reviewers': [reviewer_member_basic.user.id]
+            })
+            self.assertResponseStatusIs(update_response)
+
+        # Partner Applies
+        with self.login_as_user(partner_member.user):
+            apply_url = reverse('projects:partner-applications', kwargs={'pk': create_response.data['id']})
+            apply_response = self.client.post(apply_url, data={
+                'cn': get_new_common_file().pk,
+            })
+            self.assertResponseStatusIs(apply_response, status.HTTP_201_CREATED)
+
+        # Review application
+        # Have to patch deadline before we're allowed to review
+        eoi = EOI.objects.get(id=create_response.data['id'])
+        eoi.deadline_date = date.today() - relativedelta(days=1)
+        eoi.save()
+        with self.login_as_user(reviewer_member_basic.user):
+            review_url = reverse('projects:reviewer-assessments', kwargs={'application_id': apply_response.data['id']})
+
+            review_payload = {
+                'scores': [
+                    {
+                        'selection_criteria': payload['assessments_criteria'][0]['selection_criteria'],
+                        'score': 50
+                    },
+                ],
+                'note': 'MY TEST NOTE',
+            }
+            review_response = self.client.post(review_url, data=review_payload)
+            self.assertResponseStatusIs(review_response, status.HTTP_201_CREATED)
+
+            # Complete reviews
+            complete_url = reverse('projects:eoi-reviewers-complete-assessments', kwargs={'eoi_id': eoi.id})
+            complete_reviews_response = self.client.post(complete_url)
+            self.assertResponseStatusIs(complete_reviews_response)
+
+        with self.login_as_user(agency_member_basic.user):
+            # Preselect application
+            recommend_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
+            recommend_response = self.client.patch(recommend_url, data={
+                'status': APPLICATION_STATUSES.preselected
+            })
+            self.assertResponseStatusIs(recommend_response)
+
+            # Recommend application
+            recommend_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
+            recommend_response = self.client.patch(recommend_url, data={
+                'status': APPLICATION_STATUSES.recommended
+            })
+            self.assertResponseStatusIs(recommend_response)
+
+            # Fill review summary
+            review_summary_url = reverse('projects:review-summary', kwargs={'pk': create_response.data['id']})
+            review_summary_response = self.client.patch(review_summary_url, data={
+                'review_summary_comment': 'TEST COMMENT'
+            })
+            self.assertResponseStatusIs(review_summary_response)
+
+            # Send for decision
+            send_for_decision_url = reverse('projects:eoi-send-for-decision', kwargs={'pk': eoi.id})
+            send_for_decision_response = self.client.post(send_for_decision_url)
+            self.assertResponseStatusIs(send_for_decision_response)
+            eoi.refresh_from_db()
+            self.assertTrue(eoi.sent_for_decision)
+
+        with self.login_as_user(agency_member_basic.user):
+            # Recommend application
+            application_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
+            win_response = self.client.patch(application_url, data={
+                'did_win': True
+            })
+            self.assertResponseStatusIs(win_response, status.HTTP_403_FORBIDDEN)
+
+        with self.login_as_user(agency_member_advanced.user):
+            # Recommend application
+            application_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
+            win_response = self.client.patch(application_url, data={
+                'did_win': True
+            })
+            self.assertResponseStatusIs(win_response)
 
 
 class TestDSRCFEI(BaseAPITestCase):

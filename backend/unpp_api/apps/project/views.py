@@ -734,7 +734,7 @@ class ReviewSummaryAPIView(RetrieveUpdateAPIView):
         ),
     )
     serializer_class = ReviewSummarySerializer
-    queryset = EOI.objects.all()
+    queryset = EOI.objects.filter(sent_for_decision=False)
 
     def check_object_permissions(self, request, obj):
         super(ReviewSummaryAPIView, self).check_object_permissions(request, obj)
@@ -919,13 +919,11 @@ class PublishCFEIAPIView(RetrieveAPIView):
 class SendCFEIForDecisionAPIView(RetrieveAPIView):
     permission_classes = (
         HasUNPPPermission(
-            agency_permissions=[
-                AgencyPermission.CFEI_PUBLISH,
-            ]
+            agency_permissions=[]
         ),
     )
     serializer_class = AgencyProjectSerializer
-    queryset = EOI.objects.filter(is_published=False)
+    queryset = EOI.objects.filter(is_published=True)
 
     def check_object_permissions(self, request, obj):
         super(SendCFEIForDecisionAPIView, self).check_object_permissions(request, obj)
@@ -945,9 +943,11 @@ class SendCFEIForDecisionAPIView(RetrieveAPIView):
             )
         if not cfei.applications.filter(status=APPLICATION_STATUSES.recommended).exists():
             raise serializers.ValidationError(
-                'You need to recommend at least one applicaton before forwarding for partner selection.'
+                'You need to recommend at least one application before forwarding for partner selection.'
             )
 
+        cfei.sent_for_decision = True
+        cfei.save()
         send_eoi_sent_for_decision_notification(cfei)
         return Response(AgencyProjectSerializer(cfei).data)
 

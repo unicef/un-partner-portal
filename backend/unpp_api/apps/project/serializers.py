@@ -659,13 +659,6 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             extra_kwargs['completed_reason'] = {
                 'choices': completed_reason_choices
             }
-            if self.instance.sent_for_decision:
-                extra_kwargs['review_summary_comment'] = {
-                    'read_only': True
-                }
-                extra_kwargs['review_summary_attachment'] = {
-                    'read_only': True
-                }
 
         return extra_kwargs
 

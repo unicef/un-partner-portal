@@ -36,7 +36,9 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
     PartnerCapacityAssessment,
-    PartnerGoverningDocument, PartnerRegistrationDocument)
+    PartnerGoverningDocument,
+    PartnerRegistrationDocument,
+)
 from partner.roles import PartnerRole
 from project.identifiers import get_eoi_display_identifier
 from project.models import EOI, Application, Assessment, EOIAttachment
@@ -58,7 +60,8 @@ from common.consts import (
     SELECTION_CRITERIA_CHOICES,
     STAFF_GLOBALLY_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
-    WORKING_LANGUAGES_CHOICES)
+    WORKING_LANGUAGES_CHOICES,
+)
 from common.countries import COUNTRIES_ALPHA2_CODE
 from sanctionslist.models import SanctionedNameMatch, SanctionedItem, SanctionedName
 
