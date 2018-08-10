@@ -203,16 +203,16 @@ class Application(TimeStampedModel):
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
     # for did_win
-    win_date = models.DateField(null=True, blank=True)
-    win_decision_maker = models.ForeignKey(
+    agency_decision_date = models.DateField(null=True, blank=True)
+    agency_decision_maker = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, related_name="application_selections"
     )
 
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
     did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
     # for accept or decline
-    decision_date = models.DateField(null=True, blank=True)
-    decision_maker = models.ForeignKey(
+    partner_decision_date = models.DateField(null=True, blank=True)
+    partner_decision_maker = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, related_name="application_decisions"
     )
     accept_notification = models.OneToOneField(

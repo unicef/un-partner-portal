@@ -240,6 +240,7 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
     application_status_display = serializers.CharField(read_only=True)
     assessments_is_completed = serializers.NullBooleanField(read_only=True)
     assessments_marked_as_completed = serializers.NullBooleanField(read_only=True)
+    decision_date = serializers.DateField(source='partner_decision_date', read_only=True)
 
     class Meta:
         model = Application
@@ -247,7 +248,11 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
             'accept_notification',
         )
         read_only_fields = (
-            'eoi', 'review_summary_comment', 'review_summary_attachment'
+            'eoi',
+            'agency_decision_date',
+            'agency_decision_maker',
+            'partner_decision_date',
+            'partner_decision_maker',
         )
         validators = [
             UniqueTogetherValidator(
@@ -1177,7 +1182,8 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
 
     cn = CommonFileSerializer()
     partner_notified = serializers.SerializerMethodField()
-    partner_decision_date = serializers.DateField(source='decision_date', allow_null=True, read_only=True)
+    agency_decision_maker = BasicUserSerializer(read_only=True)
+    partner_decision_maker = BasicUserSerializer(read_only=True)
 
     body = serializers.SerializerMethodField()
 
@@ -1195,7 +1201,10 @@ class AwardedPartnersSerializer(serializers.ModelSerializer):
             'did_accept',
             'cn',
             'partner_notified',
+            'agency_decision_date',
+            'agency_decision_maker',
             'partner_decision_date',
+            'partner_decision_maker',
             'body',
         )
 

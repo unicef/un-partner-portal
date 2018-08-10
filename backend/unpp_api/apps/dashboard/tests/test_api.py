@@ -122,7 +122,7 @@ class TestApplicationsPartnerDecisionsListAPIView(BaseAPITestCase):
         applications.update(
             did_win=True,
             did_accept=True,
-            decision_date=date.today()
+            partner_decision_date=date.today()
         )
 
         read_response = self.client.get(url, format='json')
@@ -163,7 +163,7 @@ class TestPendingOffersListAPIView(BaseAPITestCase):
             did_win=True,
             did_accept=False,
             did_withdraw=False,
-            decision_date=None,
+            partner_decision_date=None,
             did_decline=False,
         )
 

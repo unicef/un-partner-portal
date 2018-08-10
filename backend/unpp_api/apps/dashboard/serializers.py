@@ -69,11 +69,13 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Agency
-        fields = ('new_partners_last_15_count',
-                  'new_partners_last_15_by_day_count',
-                  'new_cfei_last_15_by_day_count',
-                  'num_cn_to_score',
-                  'partner_breakdown',)
+        fields = (
+            'new_partners_last_15_count',
+            'new_partners_last_15_by_day_count',
+            'new_cfei_last_15_by_day_count',
+            'num_cn_to_score',
+            'partner_breakdown',
+        )
 
 
 class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
