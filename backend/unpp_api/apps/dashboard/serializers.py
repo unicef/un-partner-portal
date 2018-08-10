@@ -61,7 +61,8 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
             PARTNER_TYPES.cbo: Partner.objects.filter(display_type=PARTNER_TYPES.cbo).count(),
             PARTNER_TYPES.national: Partner.objects.filter(display_type=PARTNER_TYPES.national).count(),
             PARTNER_TYPES.international: Partner.objects.filter(
-                display_type=PARTNER_TYPES.international).exclude(hq__isnull=False).count(),
+                display_type=PARTNER_TYPES.international
+            ).exclude(hq__isnull=False).count(),
             PARTNER_TYPES.academic: Partner.objects.filter(display_type=PARTNER_TYPES.academic).count(),
             PARTNER_TYPES.red_cross: Partner.objects.filter(display_type=PARTNER_TYPES.red_cross).count(),
 

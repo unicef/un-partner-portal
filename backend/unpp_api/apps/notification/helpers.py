@@ -80,6 +80,15 @@ def user_received_notification_recently(user, obj, notification_type, time_ago=r
     ).exists()
 
 
+def send_eoi_sent_for_decision_notification(eoi):
+    if eoi.sent_for_decision:
+        users = eoi.focal_points.all()
+
+        send_notification(NotificationType.CFEI_SENT_FOR_DECISION_MAKING, eoi, users, context={
+            'eoi_url': eoi.get_absolute_url()
+        })
+
+
 def send_notification_cfei_completed(eoi):
     if eoi.completed_reason == COMPLETED_REASON.cancelled:
         users = get_partner_users_for_application_queryset(eoi.applications.all())

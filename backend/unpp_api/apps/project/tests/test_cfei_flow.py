@@ -9,7 +9,7 @@ from account.models import User
 from agency.agencies import UNHCR, UNICEF
 from agency.permissions import AgencyPermission
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
-from common.consts import ALL_COMPLETED_REASONS, DSR_FINALIZE_RETENTION_CHOICES, CFEI_STATUSES
+from common.consts import ALL_COMPLETED_REASONS, DSR_FINALIZE_RETENTION_CHOICES, CFEI_STATUSES, APPLICATION_STATUSES
 from common.factories import AgencyMemberFactory, PartnerFactory, PartnerVerificationFactory, OpenEOIFactory, \
     DirectEOIFactory, PartnerMemberFactory, get_new_common_file
 from common.tests.base import BaseAPITestCase
@@ -138,6 +138,17 @@ class TestOpenCFEI(BaseAPITestCase):
         eoi.save()
 
         send_for_decision_url = reverse('projects:eoi-send-for-decision', kwargs={'pk': eoi.id})
+        response = self.client.post(send_for_decision_url)
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        Application.objects.create(
+            partner=PartnerFactory(),
+            eoi=eoi,
+            agency=eoi.agency,
+            submitter=eoi.focal_points.first(),
+            did_win=True,
+            did_accept=True,
+            status=APPLICATION_STATUSES.recommended
+        )
         response = self.client.post(send_for_decision_url)
         self.assertResponseStatusIs(response)
 

@@ -24,7 +24,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from account.models import User
 from agency.permissions import AgencyPermission
-from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE
+from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE, APPLICATION_STATUSES
 from common.pagination import SmallPagination
 from common.permissions import HasUNPPPermission, check_unpp_permission, current_user_has_permission
 from notification.consts import NotificationType
@@ -37,7 +37,7 @@ from notification.helpers import (
     send_cfei_review_required_notification,
     user_received_notification_recently,
     send_partner_made_decision_notification,
-)
+    send_eoi_sent_for_decision_notification)
 from partner.permissions import PartnerPermission
 from project.exports.excel.application_compare import ApplicationCompareSpreadsheetGenerator
 from project.exports.pdf.cfei import CFEIPDFExporter
@@ -943,8 +943,12 @@ class SendCFEIForDecisionAPIView(RetrieveAPIView):
             raise serializers.ValidationError(
                 'Review summary needs to be filled in before forwarding for partner selection.'
             )
+        if not cfei.applications.filter(status=APPLICATION_STATUSES.recommended).exists():
+            raise serializers.ValidationError(
+                'You need to recommend at least one applicaton before forwarding for partner selection.'
+            )
 
-        # TODO: Focal point notification
+        send_eoi_sent_for_decision_notification(cfei)
         return Response(AgencyProjectSerializer(cfei).data)
 
 
