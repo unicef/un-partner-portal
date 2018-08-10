@@ -1134,9 +1134,7 @@ class ReviewSummarySerializer(MixinPreventManyCommonFile, serializers.ModelSeria
     prevent_keys = ['review_summary_attachment']
 
     def update(self, instance, validated_data):
-
         self.prevent_many_common_file_validator(self.initial_data)
-
         return super(ReviewSummarySerializer, self).update(instance, validated_data)
 
 

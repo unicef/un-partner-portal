@@ -20,6 +20,7 @@ from project.models import EOI, Application
 class TestOpenCFEI(BaseAPITestCase):
 
     user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
 
     def setUp(self):
         super(TestOpenCFEI, self).setUp()
@@ -130,6 +131,15 @@ class TestOpenCFEI(BaseAPITestCase):
                 }
             )
             self.assertResponseStatusIs(update_response, expected_response_code)
+
+    def test_send_for_decision(self):
+        eoi = OpenEOIFactory(created_by=self.user)
+        eoi.review_summary_comment = 'COMMENT'
+        eoi.save()
+
+        send_for_decision_url = reverse('projects:eoi-send-for-decision', kwargs={'pk': eoi.id})
+        response = self.client.post(send_for_decision_url)
+        self.assertResponseStatusIs(response)
 
 
 class TestDSRCFEI(BaseAPITestCase):

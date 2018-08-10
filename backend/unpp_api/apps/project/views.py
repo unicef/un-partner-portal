@@ -912,7 +912,9 @@ class PublishCFEIAPIView(RetrieveAPIView):
 class SendCFEIForDecisionAPIView(RetrieveAPIView):
     permission_classes = (
         HasUNPPPermission(
-            agency_permissions=[]
+            agency_permissions=[
+                AgencyPermission.CFEI_PUBLISH,
+            ]
         ),
     )
     serializer_class = AgencyProjectSerializer
@@ -920,7 +922,7 @@ class SendCFEIForDecisionAPIView(RetrieveAPIView):
 
     def check_object_permissions(self, request, obj):
         super(SendCFEIForDecisionAPIView, self).check_object_permissions(request, obj)
-        if obj.focal_points.filter(id=request.user.id).exists():
+        if obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
             return
         self.permission_denied(request)
 
