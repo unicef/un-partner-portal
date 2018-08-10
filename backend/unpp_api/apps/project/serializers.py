@@ -630,8 +630,16 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'deadline_passed',
             'published_timestamp',
             'attachments',
+            'sent_for_decision',
         )
-        read_only_fields = ('created', 'completed_date', 'is_published', 'published_timestamp', 'displayID')
+        read_only_fields = (
+            'created',
+            'completed_date',
+            'is_published',
+            'published_timestamp',
+            'displayID',
+            'sent_for_decision'
+        )
 
     def get_extra_kwargs(self):
         extra_kwargs = super(AgencyProjectSerializer, self).get_extra_kwargs()
@@ -646,6 +654,14 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             extra_kwargs['completed_reason'] = {
                 'choices': completed_reason_choices
             }
+            if self.instance.sent_for_decision:
+                extra_kwargs['review_summary_comment'] = {
+                    'read_only': True
+                }
+                extra_kwargs['review_summary_attachment'] = {
+                    'read_only': True
+                }
+
         return extra_kwargs
 
     def get_direct_selected_partners(self, obj):

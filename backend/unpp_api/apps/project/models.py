@@ -71,10 +71,13 @@ class EOI(TimeStampedModel):
         'common.CommonFile', null=True, blank=True, related_name='review_summary_attachments'
     )
     sent_for_publishing = models.BooleanField(
-        default=False, help_text='Whether CFEI has been forwarded to focal point to be published'
+        default=False, help_text='Whether CFEI has been forwarded to focal point to be published.'
+    )
+    sent_for_decision = models.BooleanField(
+        default=False, help_text='Whether CFEI has been forwarded to focal point to select a partner.'
     )
     is_published = models.BooleanField(
-        default=False, help_text='Whether CFEI is a draft or has been published'
+        default=False, help_text='Whether CFEI is a draft or has been published.'
     )
     published_timestamp = models.DateTimeField(default=timezone.now)
 

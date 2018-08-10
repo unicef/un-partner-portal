@@ -474,8 +474,14 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
             AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
         ]
     )
+    @transaction.atomic
     def perform_update(self, serializer):
         data = serializer.validated_data
+        if data.get('did_win'):
+            current_user_has_permission(self.request, agency_permissions=[
+                AgencyPermission.CFEI_SELECT_RECOMMENDED_PARTNER
+            ], raise_exception=True)
+
         instance = serializer.save()
         if data.get('did_accept', False) or data.get('did_decline', False):
             instance.decision_date = timezone.now().date()
@@ -900,7 +906,37 @@ class PublishCFEIAPIView(RetrieveAPIView):
         cfei.is_published = True
         cfei.published_timestamp = timezone.now()
         cfei.save()
-        return Response(AgencyProjectSerializer().data)
+        return Response(AgencyProjectSerializer(cfei).data)
+
+
+class SendCFEIForDecisionAPIView(RetrieveAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[]
+        ),
+    )
+    serializer_class = AgencyProjectSerializer
+    queryset = EOI.objects.filter(is_published=False)
+
+    def check_object_permissions(self, request, obj):
+        super(SendCFEIForDecisionAPIView, self).check_object_permissions(request, obj)
+        if obj.focal_points.filter(id=request.user.id).exists():
+            return
+        self.permission_denied(request)
+
+    @transaction.atomic
+    def post(self, *args, **kwargs):
+        cfei: EOI = self.get_object()
+        if not any((
+            cfei.review_summary_comment,
+            cfei.review_summary_attachment,
+        )):
+            raise serializers.ValidationError(
+                'Review summary needs to be filled in before forwarding for partner selection.'
+            )
+
+        # TODO: Focal point notification
+        return Response(AgencyProjectSerializer(cfei).data)
 
 
 class UCNManageAPIView(RetrieveUpdateAPIView, DestroyAPIView):
