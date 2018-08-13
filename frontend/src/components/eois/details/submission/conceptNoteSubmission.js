@@ -20,6 +20,7 @@ import CnFileSection from './cnFileSection';
 import PaddedContent from '../../../common/paddedContent';
 import FileForm from '../../../forms/fileForm';
 import ProfileConfirmation from '../../../organizationProfile/common/profileConfirmation';
+import { checkPermission, PARTNER_PERMISSIONS } from '../../../../helpers/permissions';
 
 const messages = {
   confirm: 'I confirm that my profile is up to date',
@@ -91,6 +92,7 @@ class ConceptNoteSubmission extends Component {
       errorUpload,
       cnUploaded,
       handleSubmit,
+      hasUploadCnPermission,
       cn } = this.props;
     const { alert, errorMsg, checked } = this.state;
     return (
@@ -103,12 +105,13 @@ class ConceptNoteSubmission extends Component {
                 optional
                 deleteDisabled={cnUploaded}
               />}
+            showComponent={hasUploadCnPermission || cnUploaded}
             displayHint={!!cn}
           />
           <Typography className={classes.alignRight} type="caption">
             {`${messages.deadline} ${formatDateForPrint(deadlineDate)}`}
           </Typography>
-          <React.Fragment>
+          {(hasUploadCnPermission || cnUploaded) && <React.Fragment>
             <ProfileConfirmation
               checked={cnUploaded || this.state.checked}
               disabled={cnUploaded}
@@ -127,7 +130,7 @@ class ConceptNoteSubmission extends Component {
                   {messages.submit}
                 </Button>}
             </div>
-          </React.Fragment>
+          </React.Fragment>}
         </PaddedContent>
         <Snackbar
           anchorOrigin={{
@@ -164,6 +167,7 @@ ConceptNoteSubmission.propTypes = {
   cnUploaded: PropTypes.bool,
   deadlineDate: PropTypes.string,
   submitDate: PropTypes.string,
+  hasUploadCnPermission: PropTypes.bool,
   handleSubmit: PropTypes.func,
   cn: PropTypes.string,
   onRef: PropTypes.func,
@@ -176,9 +180,11 @@ const selector = formValueSelector('CNSubmission');
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.params.id);
-  const application = selectPartnerApplicationDetails(state, ownProps.params.id); 
+  const application = selectPartnerApplicationDetails(state, ownProps.params.id);
+  const hasUploadCnPermission = checkPermission(PARTNER_PERMISSIONS.CFEI_SUBMIT_CONCEPT_NOTE, state);
   const { cn, created } = application;
   let props = {
+    hasUploadCnPermission,
     loader: state.conceptNote.loading,
     cnUploaded: !!state.conceptNote.cnFile,
     errorUpload: state.conceptNote.error,
@@ -199,7 +205,8 @@ const mapDispatch = (dispatch, ownProps) => {
   };
 };
 
-const connectedConceptNoteSubmission = connect(mapStateToProps, mapDispatch)(formConceptNoteSubmission);
+const connectedConceptNoteSubmission = connect(mapStateToProps,
+  mapDispatch)(formConceptNoteSubmission);
 const withRouterConceptNoteSubmission = withRouter(connectedConceptNoteSubmission);
 
 export default withStyles(styleSheet, { name: 'ConceptNoteSubmission' })(withRouterConceptNoteSubmission);

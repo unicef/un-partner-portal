@@ -14,6 +14,8 @@ import HeaderList from '../../../common/list/headerList';
 import ConceptNoteSubmission from './conceptNoteSubmission';
 import { deleteUploadedCn } from '../../../../reducers/conceptNote';
 import PaddedContent from '../../../common/paddedContent';
+import { checkPermission, PARTNER_PERMISSIONS } from '../../../../helpers/permissions';
+
 
 const messages = {
   completeProfile: 'Complete Profile',
@@ -52,11 +54,11 @@ class CfeiSubmission extends Component {
   }
 
   titleHeader() {
-    const { cnUploaded } = this.props;
+    const { cnUploaded, hasUploadCnPermission } = this.props;
     return (
       <SpreadContent>
         <Typography type="headline">{messages.title}</Typography>
-        {!!cnUploaded
+        {(!!cnUploaded && hasUploadCnPermission)
           && <IconButton onClick={() => this.onDelete()}><Delete /></IconButton>}
       </SpreadContent>
     );
@@ -129,6 +131,7 @@ CfeiSubmission.propTypes = {
   ]),
   deleteCn: PropTypes.func.isRequired,
   isProfileComplete: PropTypes.bool,
+  hasUploadCnPermission: PropTypes.bool,
   isHq: PropTypes.bool,
 };
 
@@ -141,6 +144,7 @@ const mapStateToProps = (state, ownProps) => ({
   cnUploaded: state.conceptNote.cnFile,
   isHq: state.session.isHq,
   isProfileComplete: state.session.isProfileComplete,
+  hasUploadCnPermission: checkPermission(PARTNER_PERMISSIONS.CFEI_SUBMIT_CONCEPT_NOTE, state),
 });
 
 const mapDispatch = dispatch => ({

@@ -23,7 +23,7 @@ import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
 import { ROLES, PROJECT_TYPES, DETAILS_ITEMS } from '../../../helpers/constants';
 import PaddedContent from '../../common/paddedContent';
 import MainContentWrapper from '../../common/mainContentWrapper';
-import { checkPermission, isRoleOffice, AGENCY_ROLES, PARTNER_PERMISSIONS, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
+import { checkPermission, isRoleOffice, AGENCY_ROLES, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
   noCfei: 'Sorry but this project doesn\'t exist',
@@ -51,7 +51,7 @@ class CfeiHeader extends Component {
   componentWillUnmount() {
     this.props.uploadCnClearState();
   }
-  
+
   hasPermissionToViewApplications(hasActionPermission) {
     const { isAdvEd, isPAM, isBasEd, isMFT, isCreator, isFocalPoint } = this.props;
 
@@ -82,15 +82,12 @@ class CfeiHeader extends Component {
     const { tabs,
       role,
       isCompleted,
-      hasUploadCnPermission,
       hasViewAllPermission,
       hasViewWinnerPermission,
       hasViewApplicationsPermission,
       params: { type } } = this.props;
 
-    let tabsToRender = hasUploadCnPermission
-      ? tabs
-      : R.filter(item => ((item.path) !== (DETAILS_ITEMS.SUBMISSION)), tabs);
+    let tabsToRender = tabs;
 
     if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && !isCompleted) {
       tabsToRender = this.hasPermissionToViewApplications(hasViewApplicationsPermission)
@@ -192,7 +189,6 @@ CfeiHeader.propTypes = {
     PropTypes.bool,
   ]),
   type: PropTypes.string,
-  hasUploadCnPermission: PropTypes.bool.isRequired,
   hasViewApplicationsPermission: PropTypes.bool.isRequired,
   hasViewAllPermission: PropTypes.bool.isRequired,
   hasViewWinnerPermission: PropTypes.bool.isRequired,
@@ -213,7 +209,6 @@ const mapStateToProps = (state, ownProps) => ({
   title: selectCfeiTitle(state, ownProps.params.id),
   type: ownProps.params.type,
   loading: state.cfeiDetails.status.loading,
-  hasUploadCnPermission: checkPermission(PARTNER_PERMISSIONS.CFEI_SUBMIT_CONCEPT_NOTE, state),
   hasViewApplicationsPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_VIEW_APPLICATIONS, state),
   hasViewAllPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_FINALIZED_VIEW_ALL_INFO, state),
   hasViewWinnerPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_FINALIZED_VIEW_WINNER_AND_CN, state),
