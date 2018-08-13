@@ -496,7 +496,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
 
         if self.request.agency_member:
             send_agency_updated_application_notification(instance)
-        elif self.request.active_partner:
+        elif self.request.active_partner and partner_decision:
             send_partner_made_decision_notification(instance)
 
 

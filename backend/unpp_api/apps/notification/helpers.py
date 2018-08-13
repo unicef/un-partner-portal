@@ -117,11 +117,12 @@ def send_agency_updated_application_notification(application):
 
 
 def send_partner_made_decision_notification(application):
-    if application.eoi.status == CFEI_STATUSES.open:
-        users = application.eoi.focal_points.all()
-
-        if application.did_accept or application.did_decline:
-            send_notification(NotificationType.PARTNER_DECISION_MADE, application, users)
+    if application.did_accept or application.did_decline:
+        send_notification(
+            NotificationType.PARTNER_DECISION_MADE,
+            application,
+            application.eoi.focal_points.all(),
+        )
 
 
 def send_notification_application_created(application):
