@@ -13,6 +13,7 @@ import List, { ListItem } from 'material-ui/List';
 import classname from 'classnames';
 import FieldLabelWithTooltipIcon from '../../components/common/fieldLabelWithTooltip';
 import { EMPTY_ERROR } from '../../helpers/validation';
+import { Typography } from '../../../node_modules/material-ui';
 
 const messages = {
   addNew: '+ Add New',
@@ -49,6 +50,9 @@ const styleSheet = theme => ({
     paddingTop: '1em',
     paddingBottom: '1em',
   },
+  emptyPadding: {
+    padding: '1em',
+  },
   error: {
     border: '2px solid red',
   },
@@ -84,6 +88,8 @@ class RenderArrayMembers extends Component {
     return (
       <Paper elevation={0} className={paperClass} >
         {error !== EMPTY_ERROR && error && <FormHelperText className={classes.errorText} error>{error}</FormHelperText>}
+
+        {(readOnly && fields.length === 0) && <Typography className={classes.emptyPadding} type="body1">{'-'}</Typography>}
         <List className={classes.list}>
           {fields.map((member, index) => (
             <div key={member}>
@@ -110,7 +116,6 @@ class RenderArrayMembers extends Component {
               {(limit > 1 && !(fields.length === 1 && readOnly)) && <Divider />}
             </div>
           ))}
-
           {fields.length < limit && !readOnly && !disableAdding &&
             <Button
               color="accent"

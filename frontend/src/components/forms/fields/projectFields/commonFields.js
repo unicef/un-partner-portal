@@ -1,7 +1,10 @@
 import React from 'react';
 import TextFieldForm from '../../textFieldForm';
 import DatePickerForm from '../../datePickerForm';
+import FileForm from '../../fileForm';
+import ArrayForm from '../../arrayForm';
 import PolarRadio from '../../fields/PolarRadio';
+import GridColumn from '../../../common/grid/gridColumn';
 import { endDate, startDate, notifResultsDate } from '../../../../helpers/validation';
 import { formatDateForDatePicker } from '../../../../helpers/dates';
 import AgencyReviewersField from './agencyMembersFields/agencyReviewersField';
@@ -59,6 +62,34 @@ export const OtherInfo = props => (<TextFieldForm
   optional
   {...props}
 />);
+
+
+const attachmentForm = props => member => (
+  <GridColumn spacing={8} columns={2}>
+    <FileForm
+      fieldName={`${member}.file`}
+      label={'Attachement'}
+      optional
+      {...props}
+    />
+    <TextFieldForm
+      fieldName={`${member}.description`}
+      label="Description"
+      optional
+      {...props}
+    />
+  </GridColumn>);
+
+export const Attachments = props => (
+  <ArrayForm
+    limit={5}
+    initial
+    label={'Attachments (optional)'}
+    fieldName="attachments"
+    outerField={attachmentForm(props)}
+    {...props}
+  />
+);
 
 export const StartDate = ({ minDate, ...props }) => (<DatePickerForm
   label="Estimated Start Date"

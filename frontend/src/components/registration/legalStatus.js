@@ -211,7 +211,7 @@ const connectedBasicInformation = connect(
     isRegistered: selector(state, 'json.partner_profile.registered_to_operate_in_country'),
     hasRegistrationDoc: selector(state, 'json.registration_document.have_registration_doc'),
     hasGovDoc: selector(state, 'json.partner_profile.have_governing_document'),
-    hasRefLetter: selector(state, 'json.recommendation_document.have_ref_letter'),
+    hasRefLetter: selector(state, 'json.partner_profile.have_ref_letter'),
   }),
 )(BasicInformation);
 

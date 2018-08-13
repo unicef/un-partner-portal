@@ -12,6 +12,7 @@ import TextField from '../../../forms/textFieldForm';
 import ProjectPartners from '../../../forms/fields/projectFields/partnersField/ProjectPartners';
 import PaddedContent from '../../../common/paddedContent';
 import {
+  Attachments,
   TitleField,
   FocalPoint,
   OtherInfo,
@@ -101,6 +102,8 @@ const Fields = ({ type, role, partnerId, displayGoal }) => {
         <StartDate readOnly />
         <EndDate readOnly />
       </GridRow>
+      {type === PROJECT_TYPES.OPEN &&
+        <Attachments readOnly />}
     </GridColumn>
   </PaddedContent>);
 };

@@ -33,6 +33,7 @@ const ProjectDetails = (props) => {
         <GridRow columns={4} >
           {children}
         </GridRow>
+        <fields.Attachments />
       </GridColumn>
     </GridColumn>
 
