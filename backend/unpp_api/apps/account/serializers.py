@@ -162,7 +162,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
             recommendation_document['created_by'] = user
             recommendation_document['partner'] = self.partner
             recommendation_document['mode'] = COLLABORATION_EVIDENCE_MODES.reference
-            PartnerCollaborationEvidence.objects.create(**recommendation_document)
+            PartnerCollaborationEvidence.objects.create(editable=False, **recommendation_document)
             self.partner.profile.any_reference = True
             self.partner.profile.save()
 

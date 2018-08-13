@@ -942,6 +942,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
     evidence_file = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="collaboration_evidences"
     )
+    editable = models.BooleanField(default=True)
 
     class Meta:
         ordering = ('id', )
