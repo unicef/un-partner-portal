@@ -9,6 +9,8 @@ export const openPartnerColumns = [
 
 export const openAgencyColumns = [
   { name: 'title', title: 'Project Title' },
+  { name: 'displayID', title: 'CFEI ID' },
+  { name: 'focal_points', title: 'CFEI Focal Point' },
   { name: 'agency', title: 'UN Agency' },
   { name: 'country_code', title: 'Country' },
   { name: 'specializations', title: 'Sector & Area of Specialization', width: 250 },

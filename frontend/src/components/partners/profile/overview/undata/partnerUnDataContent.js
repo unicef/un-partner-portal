@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import PaddedContent from '../../../../common/paddedContent';
 import DeleteVendorNumber from '../../buttons/deleteVendorNumber';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../../../helpers/permissions';
 
 const messages = {
   vendorID: 'Vendor/Partner ID:',
@@ -46,7 +47,7 @@ class PartnerUnDataContent extends Component {
   }
 
   render() {
-    const { classes, partner, agencyId } = this.props;
+    const { classes, partner, agencyId, hasVendorPermission } = this.props;
     const vendorNumber = find(propEq('agency_id', agencyId), prop('vendorNumbers', partner) || []);
 
     return (<div>
@@ -59,7 +60,7 @@ class PartnerUnDataContent extends Component {
           <Typography type="body2">{messages.area}</Typography>&nbsp;
           <Typography type="body1">{vendorNumber ? vendorNumber.business_area_display : '-'}</Typography>
         </div>
-        {vendorNumber && <div className={classes.delete}>
+        {vendorNumber && hasVendorPermission && <div className={classes.delete}>
           <DeleteVendorNumber />
         </div>}
       </PaddedContent>
@@ -71,11 +72,13 @@ PartnerUnDataContent.propTypes = {
   classes: PropTypes.object,
   partner: PropTypes.object,
   agencyId: PropTypes.number,
+  hasVendorPermission: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   partner: state.agencyPartnerProfile.data[ownProps.partnerId] || {},
   agencyId: state.session.agencyId,
+  hasVendorPermission: checkPermission(AGENCY_PERMISSIONS.ERP_ENTER_VENDOR_NUMBER, state),
 });
 
 const connected = connect(mapStateToProps)(PartnerUnDataContent);

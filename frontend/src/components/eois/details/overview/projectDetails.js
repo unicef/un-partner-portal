@@ -12,6 +12,7 @@ import TextField from '../../../forms/textFieldForm';
 import ProjectPartners from '../../../forms/fields/projectFields/partnersField/ProjectPartners';
 import PaddedContent from '../../../common/paddedContent';
 import {
+  Attachments,
   TitleField,
   FocalPoint,
   OtherInfo,
@@ -101,6 +102,8 @@ const Fields = ({ type, role, partnerId, displayGoal }) => {
         <StartDate readOnly />
         <EndDate readOnly />
       </GridRow>
+      {type === PROJECT_TYPES.OPEN &&
+        <Attachments readOnly />}
     </GridColumn>
   </PaddedContent>);
 };
@@ -119,7 +122,7 @@ const title = type => () => (
     <Typography type="headline" >{messages.title}</Typography>
     {type !== PROJECT_TYPES.UNSOLICITED &&
     <TextField
-      fieldName="id"
+      fieldName="displayID"
       label={(type === PROJECT_TYPES.OPEN || type === PROJECT_TYPES.PINNED) ? messages.labels.id : messages.labels.dsrId}
       readOnly
     />}

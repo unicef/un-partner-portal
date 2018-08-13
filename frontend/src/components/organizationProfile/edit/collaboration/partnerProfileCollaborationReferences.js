@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React from 'react';
 import { formValueSelector, FormSection } from 'redux-form';
 import { connect } from 'react-redux';
@@ -17,7 +18,7 @@ const messages = {
   info: 'Would you like to upload any reference letters for your organization?',
 };
 
-const Reference = readOnly => member => (
+const Reference = readOnly => (member, index, fields) => (
   <Grid container direction="row">
     <Grid item sm={6} xs={12} >
       <TextFieldForm
@@ -26,13 +27,14 @@ const Reference = readOnly => member => (
         warn
         multiline
         optional
-        readOnly={readOnly}
+        readOnly={(R.is(Boolean, fields.get(index).editable) && !fields.get(index).editable)
+          || readOnly}
       />
     </Grid>
   </Grid>
 );
 
-const ReferenceInner = readOnly => member => (
+const ReferenceInner = readOnly => (member, index, fields) => (
   <Grid container direction="row">
     <Grid item sm={6} xs={12} >
       <DatePickerForm
@@ -43,7 +45,8 @@ const ReferenceInner = readOnly => member => (
         datePickerProps={{
           maxDate: new Date(),
         }}
-        readOnly={readOnly}
+        readOnly={(R.is(Boolean, fields.get(index).editable) && !fields.get(index).editable)
+          || readOnly}
       />
     </Grid>
     <Grid item sm={6} xs={12} >
@@ -54,7 +57,8 @@ const ReferenceInner = readOnly => member => (
         label={messages.reference}
         warn
         optional
-        readOnly={readOnly}
+        readOnly={(R.is(Boolean, fields.get(index).editable) && !fields.get(index).editable)
+          || readOnly}
       />
     </Grid>
   </Grid>

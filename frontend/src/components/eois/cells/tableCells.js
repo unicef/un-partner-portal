@@ -4,15 +4,19 @@ import { TableCell } from 'material-ui/Table';
 import EoiSectorCell from './eoiSectorCell';
 import EoiPartnersStatusCell from './eoiPartnersStatusCell';
 import EoiStatusCell from './eoiStatusCell';
-import EoiPartnersCell from './eoiPartnersCell';
 import EoiNameCell from './eoiNameCell';
 import IsDirectCell from './isDirectCell';
 import CountriesCell from '../../partners/countriesCell';
 import EoiDSPartnersCell from './eoiDSPartnersCell';
 import { formatDateForPrint } from '../../../helpers/dates';
+import EoiFocalPointCell from './eoiFocalPointCell';
 
 export default type => ({ row, column, value }) => {
-  if (column.name === 'title' || column.name === 'project_title') {
+  if (column.name === 'focal_points') {
+    return (<TableCell padding="dense">
+      <EoiFocalPointCell data={row.focal_points} id={row.id} />
+    </TableCell>);
+  } else if (column.name === 'title' || column.name === 'project_title') {
     return <EoiNameCell title={row.title || row.project_title} id={`${row.id}`} />;
   } else if (column.name === 'country_code') {
     return (
