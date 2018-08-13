@@ -139,7 +139,7 @@ const allRoutes = () => (
             <IndexRedirect to="overview" />
             <Route component={mainContent} >
               <Route path="overview" component={organizationProfileOverviewPaper} />
-              <Route path="users" component={null} />
+              <Route path="undata" component={partnerUnData} />
             </Route>
           </Route>
           <Route path="reports" component={reportsHeader}>
