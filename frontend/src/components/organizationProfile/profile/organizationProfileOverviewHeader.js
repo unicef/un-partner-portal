@@ -68,7 +68,6 @@ const mapStateToProps = (state, ownProps) => ({
   hasEditProfilePermission: checkPermission(PARTNER_PERMISSIONS.EDIT_PROFILE, state),
   hasEditHqProfilePermission: checkPermission(PARTNER_PERMISSIONS.EDIT_HQ_PROFILE, state),
   isHq: state.session.isHq,
-  agencyId: state.session.agencyId,
 });
 
 const connected = connect(mapStateToProps)(OrganizationProfileOverviewHeader);
