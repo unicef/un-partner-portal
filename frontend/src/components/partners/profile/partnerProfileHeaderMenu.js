@@ -81,11 +81,7 @@ class PartnerProfileHeaderMenu extends Component {
           name: addObservation,
           content: <AddNewObservationButton
             handleClick={() => {
-              if (partnerProfile.verified) {
-                handleDialogOpen(addObservation);
-              } else {
-                this.setState({ verifyPartner: true });
-              }
+              handleDialogOpen(addObservation);
             }}
           />,
         });
