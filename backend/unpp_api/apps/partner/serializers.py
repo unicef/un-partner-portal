@@ -343,6 +343,15 @@ class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerCollaborationEvidence
         fields = "__all__"
+        read_only_fields = (
+            'editable',
+        )
+        extra_kwargs = {
+            'evidence_file_id': {
+                'write_only': True,
+                'required': True,
+            }
+        }
 
 
 class PartnerOtherInfoSerializer(serializers.ModelSerializer):

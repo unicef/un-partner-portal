@@ -36,7 +36,9 @@ from partner.models import (
     PartnerReporting,
     PartnerMember,
     PartnerCapacityAssessment,
-    PartnerGoverningDocument, PartnerRegistrationDocument)
+    PartnerGoverningDocument,
+    PartnerRegistrationDocument,
+)
 from partner.roles import PartnerRole
 from project.identifiers import get_eoi_display_identifier
 from project.models import EOI, Application, Assessment, EOIAttachment
