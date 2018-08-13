@@ -2,7 +2,10 @@ import random
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
+from django.core.management import call_command
+from django.test import override_settings
 from django.urls import reverse
+from django.core import mail
 from rest_framework import status
 
 from account.models import User
@@ -152,6 +155,7 @@ class TestOpenCFEI(BaseAPITestCase):
         response = self.client.post(send_for_decision_url)
         self.assertResponseStatusIs(response)
 
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_recommendation_simple_flow(self):
         office = AgencyOfficeFactory(agency=UNICEF.model_instance)
         agency_member_basic = AgencyMemberFactory(office=office, role=AgencyRole.EDITOR_BASIC.name)
@@ -248,9 +252,15 @@ class TestOpenCFEI(BaseAPITestCase):
             self.assertResponseStatusIs(send_for_decision_response)
             eoi.refresh_from_db()
             self.assertTrue(eoi.sent_for_decision)
+            call_command('send_daily_notifications')
+            pick_a_winner_email = next(filter(
+                lambda m: agency_member_advanced.user.email in m.to,
+                mail.outbox
+            ))
+            self.assertIn('ready to have a winner picked', pick_a_winner_email.body)
 
         with self.login_as_user(agency_member_basic.user):
-            # Recommend application
+            # Check basic user cant pick winner
             application_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
             win_response = self.client.patch(application_url, data={
                 'did_win': True
@@ -258,12 +268,20 @@ class TestOpenCFEI(BaseAPITestCase):
             self.assertResponseStatusIs(win_response, status.HTTP_403_FORBIDDEN)
 
         with self.login_as_user(agency_member_advanced.user):
-            # Recommend application
+            # Pick winner
             application_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
             win_response = self.client.patch(application_url, data={
                 'did_win': True
             })
             self.assertResponseStatusIs(win_response)
+
+        with self.login_as_user(partner_member.user):
+            # Accept
+            application_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
+            accept_response = self.client.patch(application_url, data={
+                'did_accept': True
+            })
+            self.assertResponseStatusIs(accept_response)
 
 
 class TestDSRCFEI(BaseAPITestCase):

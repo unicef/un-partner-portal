@@ -85,7 +85,7 @@ def send_eoi_sent_for_decision_notification(eoi):
         users = eoi.focal_points.all()
 
         send_notification(NotificationType.CFEI_SENT_FOR_DECISION_MAKING, eoi, users, context={
-            'eoi_url': eoi.get_absolute_url()
+            'eoi': eoi,
         })
 
 

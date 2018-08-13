@@ -1,6 +1,6 @@
 Dear UN staff member,
 
-A Call of Expression of Interest {{ eoi.displayID }} "{{ eoi_name }}" is ready to have a winner picked.
+A Call of Expression of Interest {{ eoi.displayID }} "{{ eoi.title }}" is ready to have a winner picked.
 
-To view the call for expression of interest, please visit: {{ eoi_url }}
+To view the call for expression of interest, please visit: {{ eoi.get_absolute_url }}
 Thank you.
