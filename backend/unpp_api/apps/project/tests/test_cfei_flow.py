@@ -448,7 +448,7 @@ class TestOpenCFEI(BaseAPITestCase):
             self.assertResponseStatusIs(accept_response)
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
-    def test_recommendation_pick_2nd_application(self):
+    def test_recommendation_pick_partner_declined(self):
         office = AgencyOfficeFactory(agency=UNICEF.model_instance)
         agency_member_basic = AgencyMemberFactory(office=office, role=AgencyRole.EDITOR_BASIC.name)
         reviewer_member_basic = AgencyMemberFactory(office=office, role=AgencyRole.EDITOR_BASIC.name)
