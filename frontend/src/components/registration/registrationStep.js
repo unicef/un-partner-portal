@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import Snackbar from 'material-ui/Snackbar';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
+import Checkbox from 'material-ui/Checkbox';
 import Typography from 'material-ui/Typography';
 import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
-import { Checkbox } from '../../../node_modules/material-ui';
 
 const messages = {
   continue: 'Continue',

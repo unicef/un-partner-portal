@@ -8,5 +8,5 @@ Hello {{ invited_user.fullname }}
 {{ inviting_user.fullname }} has invited you to start using UNICEF Partner Portal (UNPP).
 <br/>
 <br/>
-Please visit URL (TODO) to set your password and login.
+Please visit URL {{ frontend_reset_url }}
 {% endblock %}

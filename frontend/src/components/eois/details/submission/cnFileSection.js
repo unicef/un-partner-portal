@@ -26,10 +26,10 @@ const styleSheet = (theme) => {
 };
 
 const CnFileSection = (props) => {
-  const { classes, component, displayHint, label } = props;
+  const { classes, showComponent, component, displayHint, label } = props;
   return (
     <div className={classes.alignCenter}>
-      {component}
+      {showComponent && component}
       {displayHint ? null : (<PaddedContent>
         <Typography className={classes.paddingBottom} type="caption">
           {label || messages.label}
@@ -45,6 +45,7 @@ CnFileSection.propTypes = {
   classes: PropTypes.object,
   component: PropTypes.element,
   displayHint: PropTypes.bool,
+  showComponent: PropTypes.bool,
   label: PropTypes.string,
 };
 

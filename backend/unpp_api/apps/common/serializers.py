@@ -49,7 +49,7 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                 valid_ids = []
 
                 related_serializer = self.fields[related_name].child.__class__
-                for object_data in model_data:
+                for idx, object_data in enumerate(model_data):
                     for field in self.exclude_fields.get(related_name, []):
                         field in object_data and object_data.pop(field)
 
@@ -69,11 +69,20 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                         data=object_data,
                         context=self.context
                     )
-                    serializer.is_valid(raise_exception=True)
+                    if not serializer.is_valid():
+                        raise serializers.ValidationError({
+                            related_name: {
+                                idx: serializer.errors
+                            }
+                        })
+
                     valid_ids.append(serializer.save().id)
 
                 # user can add and remove on update
-                related_manager.exclude(id__in=valid_ids).delete()
+                to_be_removed = related_manager.exclude(id__in=valid_ids)
+                if hasattr(related_manager.model, 'editable'):
+                    to_be_removed.exclude(editable=False)
+                to_be_removed.delete()
 
 
 class MixinPreventManyCommonFile(object):

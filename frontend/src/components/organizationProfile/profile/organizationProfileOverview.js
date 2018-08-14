@@ -14,7 +14,7 @@ import PartnerProfileProjectImplementation from '../edit/projectImplementation/p
 import PartnerProfileOtherInfo from '../edit/otherInfo/partnerProfileOtherInfo';
 import { loadPartnerDetails } from '../../../reducers/partnerProfileDetails';
 import { changeTab } from '../../../reducers/partnerProfileEdit';
-import { isUserHq, selectUserHqId } from '../../../store';
+import { checkPermission, PARTNER_PERMISSIONS } from '../../../helpers/permissions';
 
 const FIRST_INDEX = 0;
 
@@ -71,7 +71,7 @@ class OrganizationProfileOverview extends Component {
 
 
   render() {
-    const { completion, hideEdit } = this.props;
+    const { completion, isHq, hasEditHqProfilePermission, hasEditProfilePermission } = this.props;
 
     return (
       <React.Fragment>
@@ -80,10 +80,13 @@ class OrganizationProfileOverview extends Component {
             <CollapsableItem
               expanded={R.indexOf(item, messages.sections) === FIRST_INDEX}
               title={item.label}
-              warning={completion ? completion[completionTabs[R.indexOf(item, messages.sections)]] : false}
-              handleEditMode={hideEdit
-                ? false
-                : () => this.handleEditMode(R.indexOf(item, messages.sections))
+              warning={completion
+                ? completion[completionTabs[R.indexOf(item, messages.sections)]]
+                : false}
+              handleEditMode={((isHq && hasEditHqProfilePermission)
+                 || (!isHq && hasEditProfilePermission))
+                ? () => this.handleEditMode(R.indexOf(item, messages.sections))
+                : false
               }
               component={messages.sectionComponents[R.indexOf(item, messages.sections)]}
             />
@@ -101,7 +104,9 @@ OrganizationProfileOverview.propTypes = {
   partnerId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   loadPartnerProfileDetails: PropTypes.func,
   completion: PropTypes.object,
-  hideEdit: PropTypes.bool,
+  isHq: PropTypes.bool,
+  hasEditHqProfilePermission: PropTypes.bool,
+  hasEditProfilePermission: PropTypes.bool,
 };
 
 const mapDispatch = dispatch => ({
@@ -109,9 +114,11 @@ const mapDispatch = dispatch => ({
   loadPartnerProfileDetails: partnerId => dispatch(loadPartnerDetails(partnerId)),
 });
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   completion: state.partnerProfileDetails.partnerProfileDetails.completion,
-  hideEdit: (!isUserHq(state) && selectUserHqId(state) === +ownProps.params.id),
+  hasEditProfilePermission: checkPermission(PARTNER_PERMISSIONS.EDIT_PROFILE, state),
+  hasEditHqProfilePermission: checkPermission(PARTNER_PERMISSIONS.EDIT_HQ_PROFILE, state),
+  isHq: state.session.isHq,
 });
 
 const connectedOrganizationProfileOverview = connect(
