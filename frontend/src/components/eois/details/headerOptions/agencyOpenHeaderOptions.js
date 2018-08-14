@@ -272,7 +272,7 @@ const mapStateToProps = (state, ownProps) => ({
   isFocalPoint: isUserAFocalPoint(state, ownProps.id),
   isCompleted: isCfeiCompleted(state, ownProps.id),
   isPublished: isCfeiPublished(state, ownProps.id),
-  isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps),
+  isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.id),
   status: selectCfeiStatus(state, ownProps.id),
   hasManageDraftPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_MANAGE, state),
   hasSendPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH,

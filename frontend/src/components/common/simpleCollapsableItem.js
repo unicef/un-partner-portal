@@ -71,7 +71,7 @@ class SimpleCollapsableItem extends Component {
           </IconButton>
           {title}
         </div>
-        <Collapse in={handleChange ? expanded : this.state.expanded} transitionDuration="auto" unmountOnExit>
+        <Collapse in={handleChange ? expanded : this.state.expanded} transitionduration="auto" unmountOnExit>
           <div className={classes.paddingContent}>{component}</div>
         </Collapse>
       </div>
