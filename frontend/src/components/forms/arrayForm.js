@@ -8,12 +8,12 @@ import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
+import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
 import classname from 'classnames';
 import FieldLabelWithTooltipIcon from '../../components/common/fieldLabelWithTooltip';
 import { EMPTY_ERROR } from '../../helpers/validation';
-import { Typography } from '../../../node_modules/material-ui';
 
 const messages = {
   addNew: '+ Add New',

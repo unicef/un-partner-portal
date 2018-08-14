@@ -3,11 +3,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 import Loader from '../../../../../common/loader';
 import ControlledModal from '../../../../../common/modals/controlledModal';
 import PaddedContent from '../../../../../common/paddedContent';
-import { Typography } from '../../../../../../../node_modules/material-ui';
 import { deleteVendorNumber } from '../../../../../../reducers/deleteVendorNumber';
 import { getPartnerUnData } from '../../../../../../reducers/partnerUnData';
 

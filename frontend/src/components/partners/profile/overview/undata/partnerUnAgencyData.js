@@ -5,11 +5,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { TableCell } from 'material-ui/Table';
 import { withStyles } from 'material-ui/styles';
+import Typography from 'material-ui/Typography';
+import Tabs from 'material-ui/Tabs';
 import Paper from 'material-ui/Paper';
 import LocalPaginatedList from '../../../../common/list/localPaginatedList';
 import { getPartnerUnData } from '../../../../../reducers/partnerUnData';
 import PaddedContent from '../../../../common/paddedContent';
-import { Tabs, Typography } from '../../../../../../node_modules/material-ui';
 import CustomTab from '../../../../common/customTab';
 import Loader from '../../../../common/loader';
 
