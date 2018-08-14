@@ -695,13 +695,14 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
 
         return application.application_feedbacks.all()
 
-    @check_unpp_permission(
-        agency_permissions=[
-            AgencyPermission.CFEI_VIEW_APPLICATIONS,
-        ]
-    )
     def perform_create(self, serializer):
-        serializer.save(provider=self.request.user, application_id=self.kwargs['pk'])
+        application = get_object_or_404(Application, id=self.kwargs['pk'])
+        eoi = application.eoi
+        if eoi.created_by == self.request.user or eoi.focal_points.filter(id=self.request.user.id).exists():
+            return serializer.save(provider=self.request.user, application=application)
+        raise PermissionDenied(
+            'Only CFEI creator or focal point can input comments in the “Feedback to partner” section'
+        )
 
 
 class ConvertUnsolicitedAPIView(CreateAPIView):
