@@ -81,6 +81,7 @@ class OpenCfeiPreselections extends Component {
         id={row.id}
         conceptNote={row.cn}
         score={row.average_total_score}
+        assessments={row.assessments}
         hovered={hovered}
         allowedToEdit={this.props.allowedToEdit}
       />);
