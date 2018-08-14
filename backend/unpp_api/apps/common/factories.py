@@ -645,10 +645,22 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
     created_by = factory.LazyFunction(get_agency_member)
     agency_office = factory.LazyFunction(get_random_agency_office)
     description = factory.Sequence(lambda n: "Brief background of the project {}".format(n))
-    start_date = date.today()
-    end_date = date.today() + timedelta(days=random.randint(90, 100))
-    deadline_date = date.today() + timedelta(days=random.randint(75, 85))
-    notif_results_date = date.today() + timedelta(days=random.randint(100, 111))
+
+    clarification_request_deadline_date = factory.LazyFunction(
+        lambda: date.today() + relativedelta(days=random.randint(7, 14))
+    )
+    deadline_date = factory.LazyFunction(
+        lambda: date.today() + relativedelta(days=random.randint(15, 30))
+    )
+    notif_results_date = factory.LazyAttribute(
+        lambda o: o.deadline_date + relativedelta(days=random.randint(7, 14))
+    )
+    start_date = factory.LazyFunction(
+        lambda: date.today() + relativedelta(days=random.randint(90, 180))
+    )
+    end_date = factory.LazyAttribute(
+        lambda o: o.start_date + relativedelta(days=random.randint(60, 120))
+    )
 
     class Meta:
         model = EOI
