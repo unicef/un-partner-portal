@@ -41,7 +41,8 @@ from notification.helpers import (
 from partner.permissions import PartnerPermission
 from project.exports.excel.application_compare import ApplicationCompareSpreadsheetGenerator
 from project.exports.pdf.cfei import CFEIPDFExporter
-from project.models import Assessment, Application, EOI, Pin
+from project.models import Assessment, Application, EOI, Pin, ClarificationRequestQuestion, \
+    ClarificationRequestAnswerFile
 from project.serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
@@ -66,7 +67,7 @@ from project.serializers import (
     AwardedPartnersSerializer,
     CompareSelectedSerializer,
     AgencyProjectSerializer,
-)
+    ClarificationRequestQuestionSerializer, ClarificationRequestAnswerFileSerializer)
 
 from project.filters import (
     BaseProjectFilter,
@@ -1026,3 +1027,61 @@ class CompleteAssessmentsAPIView(ListAPIView):
             ass.save()
 
         return Response(self.serializer_class(assessments, many=True).data)
+
+
+class ClarificationRequestQuestionAPIView(ListCreateAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
+        ),
+    )
+    serializer_class = ClarificationRequestQuestionSerializer
+    pagination_class = SmallPagination
+
+    def get_queryset(self):
+        queryset = ClarificationRequestQuestion.objects.filter(eoi_id=self.kwargs.get('eoi_id'))
+        if self.request.active_partner:
+            queryset = queryset.filter(partner=self.request.active_partner)
+
+        return queryset
+
+    def perform_create(self, serializer):
+        eoi: EOI = get_object_or_404(EOI, id=self.kwargs.get('eoi_id'))
+        if eoi.clarification_request_deadline_date > timezone.now().date():
+            raise PermissionDenied('Clarification Request Deadline has passed.')
+
+        return serializer.save(parnter=self.request.active_partner)
+
+
+class ClarificationRequestAnswerFileAPIView(ListCreateAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW
+            ]
+        ),
+    )
+    serializer_class = ClarificationRequestAnswerFileSerializer
+    pagination_class = SmallPagination
+
+    def get_queryset(self):
+        return ClarificationRequestAnswerFile.objects.filter(eoi_id=self.kwargs.get('eoi_id'))
+
+    def perform_create(self, serializer):
+        eoi: EOI = get_object_or_404(EOI, id=self.kwargs.get('eoi_id'))
+
+        if not eoi.created_by == self.request.user and not eoi.focal_points.filter(pk=self.request.user.pk).exists():
+            raise PermissionDenied('Only creators / focal points can add answer files.')
+
+        if eoi.clarification_request_deadline_date < timezone.now().date():
+            raise PermissionDenied('Clarification Request Deadline has not passed yet.')
+
+        super(ClarificationRequestAnswerFileAPIView, self).perform_create(serializer)

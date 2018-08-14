@@ -44,6 +44,7 @@ class TestOpenCFEI(BaseAPITestCase):
             ],
             "description": "asdasdas",
             "goal": "asdasdsa",
+            "clarification_request_deadline_date": date.today(),
             "deadline_date": date.today() + relativedelta(days=1),
             "notif_results_date": date.today() + relativedelta(days=2),
             "start_date": date.today() + relativedelta(days=10),

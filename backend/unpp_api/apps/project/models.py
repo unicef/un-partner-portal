@@ -49,10 +49,16 @@ class EOI(TimeStampedModel):
     other_information = models.CharField(
         max_length=5000, null=True, blank=True, verbose_name='Other information (optional)'
     )
+
+    # Timeline
     start_date = models.DateField(verbose_name='Estimated Start Date')
     end_date = models.DateField(verbose_name='Estimated End Date')
+    clarification_request_deadline_date = models.DateField(
+        verbose_name='Clarification Request Date', null=True, blank=True
+    )
     deadline_date = models.DateField(verbose_name='Estimated Deadline Date', null=True, blank=True)
     notif_results_date = models.DateField(verbose_name='Notification of Results Date', null=True, blank=True)
+
     has_weighting = models.BooleanField(default=True, verbose_name='Has weighting?')
     invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest", blank=True)
     reviewers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="eoi_as_reviewer", blank=True)
@@ -167,6 +173,26 @@ class EOIAttachment(TimeStampedModel):
 
     def __str__(self):
         return f"EOIAttachment <pk:{self.pk}> (eoi:{self.eoi.pk})"
+
+
+class ClarificationRequestQuestion(TimeStampedModel):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eoi_questions")
+    eoi = models.ForeignKey(EOI, related_name="questions")
+    partner = models.ForeignKey(EOI, related_name="eoi_questions")
+    question = models.TextField(max_length=5120)
+
+    def __str__(self):
+        return f"ClarificationRequestQuestion <pk:{self.pk}> (eoi:{self.eoi.pk})"
+
+
+class ClarificationRequestAnswerFile(TimeStampedModel):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eoi_question_answers")
+    eoi = models.ForeignKey(EOI, related_name="question_answers")
+    title = models.TextField(max_length=1024)
+    file = models.ForeignKey('common.CommonFile', related_name="eoi_question_answers")
+
+    def __str__(self):
+        return f"ClarificationRequestAnswerFile <pk:{self.pk}> (eoi:{self.eoi.pk})"
 
 
 class Pin(TimeStampedModel):
