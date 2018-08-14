@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from datetime import date
-from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse
@@ -19,12 +18,13 @@ from rest_framework.generics import (
 )
 from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
+from rest_framework.exceptions import PermissionDenied
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.models import User
 from agency.permissions import AgencyPermission
-from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE
+from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE, CFEI_STATUSES
 from common.pagination import SmallPagination
 from common.permissions import HasUNPPPermission, check_unpp_permission, current_user_has_permission
 from notification.consts import NotificationType
@@ -41,7 +41,7 @@ from notification.helpers import (
 from partner.permissions import PartnerPermission
 from project.exports.excel.application_compare import ApplicationCompareSpreadsheetGenerator
 from project.exports.pdf.cfei import CFEIPDFExporter
-from project.models import Assessment, Application, EOI, Pin, ApplicationFeedback
+from project.models import Assessment, Application, EOI, Pin
 from project.serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
@@ -680,15 +680,26 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
     pagination_class = SmallPagination
     permission_classes = (
         HasUNPPPermission(
-            agency_permissions=[
-                AgencyPermission.CFEI_VIEW_APPLICATIONS,
-            ]
+            agency_permissions=[],
+            partner_permissions=[],
         ),
     )
 
     def get_queryset(self):
-        return ApplicationFeedback.objects.filter(application=self.kwargs['pk'])
+        application = get_object_or_404(Application, id=self.kwargs['pk'])
+        if self.request.active_partner:
+            if not application.partner == self.request.active_partner:
+                raise PermissionDenied
+            if not application.eoi.status == CFEI_STATUSES.completed:
+                raise PermissionDenied('Partner Feedback is available after CFEI is finalized.')
 
+        return application.application_feedbacks.all()
+
+    @check_unpp_permission(
+        agency_permissions=[
+            AgencyPermission.CFEI_VIEW_APPLICATIONS,
+        ]
+    )
     def perform_create(self, serializer):
         serializer.save(provider=self.request.user, application_id=self.kwargs['pk'])
 
