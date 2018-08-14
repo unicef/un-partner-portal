@@ -589,6 +589,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
     invited_partners = PartnerShortSerializer(many=True, read_only=True)
     applications_count = serializers.SerializerMethodField(allow_null=True, read_only=True)
     attachments = EOIAttachmentSerializer(many=True, read_only=True)
+    current_user_finished_reviews = serializers.SerializerMethodField(allow_null=True, read_only=True)
 
     class Meta:
         model = EOI
@@ -636,6 +637,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'published_timestamp',
             'attachments',
             'sent_for_decision',
+            'current_user_finished_reviews',
         )
         read_only_fields = (
             'created',
@@ -643,7 +645,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'is_published',
             'published_timestamp',
             'displayID',
-            'sent_for_decision'
+            'sent_for_decision',
         )
 
     def get_extra_kwargs(self):
@@ -674,6 +676,14 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
 
     def get_applications_count(self, eoi):
         return eoi.applications.count()
+
+    def get_current_user_finished_reviews(self, eoi):
+        request = self.context.get('request')
+        user = request and request.user
+        if user and eoi.reviewers.filter(id=user.id).exists():
+            applications = eoi.applications.filter(status=APPLICATION_STATUSES.preselected)
+
+            return applications.count() == user.assessments.filter(application__in=applications).count()
 
     @transaction.atomic
     def update(self, instance, validated_data):

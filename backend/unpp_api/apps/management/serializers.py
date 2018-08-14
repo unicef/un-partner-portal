@@ -73,6 +73,8 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
             AgencyMember.objects.filter(user=user).exclude(pk__in=memberships).delete()
 
         if not update:
+            user.profile.accepted_tos = True
+            user.profile.save()
             user.set_unusable_password()
             user.save()
             send_agency_user_invite(user, self.context['request'].user)
@@ -147,6 +149,8 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
             PartnerMember.objects.filter(user=user).exclude(pk__in=memberships).delete()
 
         if not update:
+            user.profile.accepted_tos = True
+            user.profile.save()
             user.set_random_password()
             user.save()
             send_partner_user_invite(user, self.context['request'].user)
