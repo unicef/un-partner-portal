@@ -908,7 +908,7 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
         if app.eoi.status != CFEI_STATUSES.closed:
             raise serializers.ValidationError("Assessment allowed once deadline is passed.")
 
-        if data.get('is_a_committee_score', False) and app.reviewers.count() > 1:
+        if data.get('is_a_committee_score', False) and app.eoi.reviewers.count() > 1:
             raise serializers.ValidationError({
                 'is_a_committee_score': 'Committee scores are only allowed on projects with one reviewer.'
             })
