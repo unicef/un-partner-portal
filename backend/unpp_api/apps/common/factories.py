@@ -1,6 +1,6 @@
 import random
 import os
-from datetime import date, timedelta
+from datetime import date
 from coolname import generate
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
