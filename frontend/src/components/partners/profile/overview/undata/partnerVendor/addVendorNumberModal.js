@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import { withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
+import Typography from 'material-ui/Typography';
 import Loader from '../../../../../common/loader';
 import ControlledModal from '../../../../../common/modals/controlledModal';
 import AddVendorNumberForm from './addVendorNumberForm';
 import PaddedContent from '../../../../../common/paddedContent';
-import { Typography } from '../../../../../../../node_modules/material-ui';
 import { addVendorNumber } from '../../../../../../reducers/vendorNumber';
 import { getPartnerUnData } from '../../../../../../reducers/partnerUnData';
 
