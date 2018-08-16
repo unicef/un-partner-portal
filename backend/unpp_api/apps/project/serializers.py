@@ -857,10 +857,10 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
         return my_assessment.get_scores_as_dict() if my_assessment else None
 
     def get_review_progress(self, obj):
-        return '{}/{}'.format(*self._get_review_reviewers_count())
+        return '{}/{}'.format(*self._get_review_reviewers_count(obj))
 
     def get_reviews_finished(self, obj):
-        review_count, reviewers_count = self._get_review_reviewers_count()
+        review_count, reviewers_count = self._get_review_reviewers_count(obj)
         return review_count == reviewers_count
 
 
