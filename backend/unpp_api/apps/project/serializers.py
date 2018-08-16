@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from datetime import datetime, date
 
-from cached_property import threaded_cached_property_with_ttl
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 
@@ -840,11 +839,9 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'assessments',
         )
 
-    @threaded_cached_property_with_ttl(ttl=2)
     def _get_review_reviewers_count(self, app):
         return app.assessments.count(), app.eoi.reviewers.count()
 
-    @threaded_cached_property_with_ttl(ttl=2)
     def _get_my_assessment(self, obj):
         assess_qs = obj.assessments.filter(reviewer=self.context['request'].user)
         if assess_qs.exists():
