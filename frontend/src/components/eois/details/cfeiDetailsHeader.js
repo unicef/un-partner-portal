@@ -99,25 +99,25 @@ class CfeiHeader extends Component {
 
     let tabsToRender = tabs;
     if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && !isCompleted) {
-      tabsToRender = this.hasPermissionToViewApplications(hasViewApplicationsPermission)
-        ? tabsToRender
-        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.APPLICATIONS)), tabsToRender);
+      if (!this.hasPermissionToViewApplications(hasViewApplicationsPermission)) {
+        tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.APPLICATIONS, tabsToRender);
+      }
 
-      tabsToRender = this.hasPermissionToViewPreApplications(hasReviewPermission)
-        ? tabsToRender
-        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabsToRender);
+      if (!this.hasPermissionToViewPreApplications(hasReviewPermission)) {
+        tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.PRESELECTED, tabsToRender);
+      }
     } else if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && isCompleted) {
-      tabsToRender = this.hasPermissionToViewApplications(hasViewApplicationsPermission)
-        ? tabsToRender
-        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.APPLICATIONS)), tabsToRender);
+      if (!this.hasPermissionToViewApplications(hasViewApplicationsPermission)) {
+        tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.APPLICATIONS, tabsToRender);
+      }
 
-      tabsToRender = this.hasPermissionToViewPreApplications(hasReviewPermission)
-        ? tabsToRender
-        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabsToRender);
+      if (!this.hasPermissionToViewPreApplications(hasReviewPermission)) {
+        tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.PRESELECTED, tabsToRender);
+      }
 
-      tabsToRender = (hasViewAllPermission || hasViewWinnerPermission)
-        ? tabsToRender
-        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.RESULTS)), tabsToRender);
+      if (!hasViewAllPermission || !hasViewWinnerPermission) {
+        tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.RESULTS, tabsToRender);
+      }
     }
 
     return tabsToRender;

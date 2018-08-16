@@ -134,15 +134,6 @@ class UserProfile extends Component {
                           />
                         </Grid>
                       </Grid>
-                      <Grid container direction="row">
-                        <Grid item sm={12} xs={12}>
-                          <TextFieldForm
-                            label={messages.permissions}
-                            fieldName="permissions"
-                            readOnly
-                          />
-                        </Grid>
-                      </Grid>
                     </Grid>
                   </form>
                 </PaddedContent>
