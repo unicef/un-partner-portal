@@ -19,9 +19,7 @@ from common.consts import (
 )
 from common.database_fields import FixedTextField
 from common.utils import get_countries_code_from_queryset, get_absolute_frontend_url
-from project.validators import (
-    validate_weight_adjustments,
-)
+from project.validators import validate_weight_adjustments
 
 
 class EOI(TimeStampedModel):
@@ -157,6 +155,12 @@ class EOI(TimeStampedModel):
             return 'Direct Selection converted from Unsolicited Concept Note'
         else:
             return 'Direct Selection / Retention'
+
+    @property
+    def assessments_marked_as_completed(self):
+        applications = self.applications.filter(status=APPLICATION_STATUSES.preselected)
+
+        return applications.count() == applications.filter(assessments__completed=True).count()
 
 
 class EOIAttachment(TimeStampedModel):
