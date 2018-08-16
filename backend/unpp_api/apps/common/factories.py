@@ -60,7 +60,8 @@ from common.consts import (
     SELECTION_CRITERIA_CHOICES,
     STAFF_GLOBALLY_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
-    WORKING_LANGUAGES_CHOICES)
+    WORKING_LANGUAGES_CHOICES,
+)
 from common.countries import COUNTRIES_ALPHA2_CODE
 from sanctionslist.models import SanctionedNameMatch, SanctionedItem, SanctionedName
 
