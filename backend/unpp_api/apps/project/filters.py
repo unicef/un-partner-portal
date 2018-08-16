@@ -76,7 +76,7 @@ class BaseProjectFilter(django_filters.FilterSet):
                 is_published=False,
                 sent_for_publishing=True,
             ),
-            CFEI_STATUSES.completed: Q(
+            CFEI_STATUSES.finalized: Q(
                 is_completed=True,
                 is_published=True,
             ),
