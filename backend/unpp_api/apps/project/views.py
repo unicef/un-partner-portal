@@ -37,7 +37,8 @@ from notification.helpers import (
     send_cfei_review_required_notification,
     user_received_notification_recently,
     send_partner_made_decision_notification,
-    send_eoi_sent_for_decision_notification)
+    send_eoi_sent_for_decision_notification,
+)
 from partner.permissions import PartnerPermission
 from project.exports.excel.application_compare import ApplicationCompareSpreadsheetGenerator
 from project.exports.pdf.cfei import CFEIPDFExporter
@@ -67,7 +68,9 @@ from project.serializers import (
     AwardedPartnersSerializer,
     CompareSelectedSerializer,
     AgencyProjectSerializer,
-    ClarificationRequestQuestionSerializer, ClarificationRequestAnswerFileSerializer)
+    ClarificationRequestQuestionSerializer,
+    ClarificationRequestAnswerFileSerializer,
+)
 
 from project.filters import (
     BaseProjectFilter,
@@ -1065,10 +1068,10 @@ class ClarificationRequestQuestionAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         eoi: EOI = get_object_or_404(EOI, id=self.kwargs.get('eoi_id'))
-        if eoi.clarification_request_deadline_date > timezone.now().date():
+        if eoi.clarification_request_deadline_date < timezone.now().date():
             raise PermissionDenied('Clarification Request Deadline has passed.')
 
-        return serializer.save(parnter=self.request.active_partner)
+        return serializer.save(eoi=eoi, partner=self.request.active_partner)
 
 
 class ClarificationRequestAnswerFileAPIView(ListCreateAPIView):

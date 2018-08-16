@@ -182,8 +182,11 @@ class EOIAttachment(TimeStampedModel):
 class ClarificationRequestQuestion(TimeStampedModel):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eoi_questions")
     eoi = models.ForeignKey(EOI, related_name="questions")
-    partner = models.ForeignKey(EOI, related_name="eoi_questions")
+    partner = models.ForeignKey('partner.Partner', related_name="eoi_questions")
     question = models.TextField(max_length=5120)
+
+    class Meta:
+        ordering = ('id', )
 
     def __str__(self):
         return f"ClarificationRequestQuestion <pk:{self.pk}> (eoi:{self.eoi.pk})"
@@ -194,6 +197,9 @@ class ClarificationRequestAnswerFile(TimeStampedModel):
     eoi = models.ForeignKey(EOI, related_name="question_answers")
     title = models.TextField(max_length=1024)
     file = models.ForeignKey('common.CommonFile', related_name="eoi_question_answers")
+
+    class Meta:
+        ordering = ('id', )
 
     def __str__(self):
         return f"ClarificationRequestAnswerFile <pk:{self.pk}> (eoi:{self.eoi.pk})"

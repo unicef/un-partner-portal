@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('common', '0012_auto_20180724_0902'),
         ('project', '0072_eoi_clarification_request_deadline_date'),
+        ('partner', '0073_partnercollaborationevidence_editable'),
     ]
 
     operations = [
@@ -42,7 +43,7 @@ class Migration(migrations.Migration):
                 ('question', models.TextField(max_length=5120)),
                 ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='eoi_questions', to=settings.AUTH_USER_MODEL)),
                 ('eoi', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='questions', to='project.EOI')),
-                ('partner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='eoi_questions', to='project.EOI')),
+                ('partner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='eoi_questions', to='partner.Partner')),
             ],
             options={
                 'abstract': False,
