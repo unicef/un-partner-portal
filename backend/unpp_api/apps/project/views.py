@@ -543,19 +543,32 @@ class ReviewersStatusAPIView(ListAPIView):
     lookup_url_kwarg = 'application_id'
 
     def get_object(self):
+        valid_eoi_ids = EOI.objects.filter(
+            Q(created_by=self.request.user) | Q(focal_points=self.request.user) | Q(reviewers=self.request.user)
+        ).values_list('id', flat=True).distinct()
+
         return get_object_or_404(
-            Application.objects.select_related('eoi').prefetch_related('eoi__reviewers'),
+            Application.objects.filter(
+                eoi_id__in=valid_eoi_ids
+            ).select_related('eoi').prefetch_related('eoi__reviewers'),
             pk=self.kwargs.get(self.lookup_url_kwarg)
         )
 
-    def check_permissions(self, request):
-        super(ReviewersStatusAPIView, self).check_permissions(request)
-        eoi = self.get_object().eoi
-        if not eoi.created_by == request.user and not eoi.focal_points.filter(pk=request.user.pk).exists():
-            raise PermissionDenied('Only creators / focal points can list assessments')
-
     def get_queryset(self, *args, **kwargs):
-        return self.get_object().eoi.reviewers.all()
+        eoi: EOI = self.get_object().eoi
+        user = self.request.user
+        if eoi.status == CFEI_STATUSES.finalized:
+            current_user_has_permission(self.request, agency_permissions=[
+                AgencyPermission.CFEI_FINALIZED_VIEW_ALL_REVIEWS,
+            ], raise_exception=True)
+        elif eoi.created_by == user or eoi.focal_points.filter(pk=user.pk).exists():
+            pass
+        elif eoi.reviewers.filter(pk=user.pk).exists():
+            return eoi.reviewers.filter(pk=user.pk)
+        else:
+            return eoi.reviewers.none()
+
+        return eoi.reviewers.all()
 
 
 class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
@@ -703,7 +716,7 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
         if self.request.active_partner:
             if not application.partner == self.request.active_partner:
                 raise PermissionDenied
-            if not application.eoi.status == CFEI_STATUSES.completed:
+            if not application.eoi.status == CFEI_STATUSES.finalized:
                 raise PermissionDenied('Partner Feedback is available after CFEI is finalized.')
 
         return application.application_feedbacks.all()
