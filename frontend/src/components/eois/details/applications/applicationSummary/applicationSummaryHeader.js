@@ -136,12 +136,16 @@ class ApplicationSummaryHeader extends Component {
         />;
     } else if (hasAssessPermission) {
       if (R.prop(user, reviews) && this.isAssessActionAllowed(hasAssessPermission)) {
-        return (<EditReviewModalButton
-          assessmentId={reviews[user]}
-          scores={getAssessment(reviews[user])}
-          reviewer={`${user}`}
-          disabled={disabled}
-        />);
+        const assessment = getAssessment(reviews[user]);
+
+        return (!assessment.completed ?
+          <EditReviewModalButton
+            assessmentId={reviews[user]}
+            scores={getAssessment(reviews[user])}
+            reviewer={`${user}`}
+            disabled={disabled}
+          />
+          : null);
       } else if (this.isAssessActionAllowed(hasAssessPermission) && isDeadlinePassed) {
         return (<AddReviewModalButton
           raised

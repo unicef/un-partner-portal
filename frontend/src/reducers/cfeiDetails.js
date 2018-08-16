@@ -173,6 +173,11 @@ export function isCfeiCompleted(state, id) {
   return !!completed_reason;
 }
 
+export function isUserFinishedReview(state, id) {
+  const { [id]: { current_user_finished_reviews = null } = {} } = state;
+  return current_user_finished_reviews;
+}
+
 export function isCfeiDeadlinePassed(state, id) {
   const { [id]: { deadline_passed = null } = {} } = state;
   return deadline_passed;

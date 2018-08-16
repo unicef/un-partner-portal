@@ -22,7 +22,10 @@ import {
   isUserAFocalPoint,
   isUserAReviewer,
   isUserACreator,
+  isUserFinishedReview,
+  isCfeiDeadlinePassed,
 } from '../../../../store';
+import CompleteAssessmentButton from './applicationSummary/reviewContent/completeAssessmentButton';
 
 /* eslint-disable react/prop-types */
 const HeaderActions = (props) => {
@@ -93,7 +96,9 @@ class OpenCfeiPreselections extends Component {
   }
 
   render() {
-    const { applications, columns, loading, itemsCount, allowedToEdit, isReviewer } = this.props;
+    const { applications, isDeadlinePassed, isFinishedReview,
+      columns, loading, itemsCount, allowedToEdit, isReviewer } = this.props;
+
     let finalColumns = columns;
     if (!allowedToEdit) {
       finalColumns = reject(column => column.name === 'average_total_score', finalColumns);
@@ -101,8 +106,10 @@ class OpenCfeiPreselections extends Component {
     if (!isReviewer) {
       finalColumns = reject(column => column.name === 'your_score', finalColumns);
     }
+
     return (
       <div>
+        {isReviewer && isDeadlinePassed && <CompleteAssessmentButton disabled={!isFinishedReview} />}
         {allowedToEdit ?
           <SelectableList
             items={applications}
@@ -139,6 +146,8 @@ OpenCfeiPreselections.propTypes = {
   id: PropTypes.string,
   allowedToEdit: PropTypes.bool,
   isReviewer: PropTypes.bool,
+  isFinishedReview: PropTypes.bool,
+  isDeadlinePassed: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -148,9 +157,12 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.partnersApplicationsList.status.loading,
   query: ownProps.location.query,
   id: ownProps.params.id,
+  isFinishedReview: isUserFinishedReview(state, ownProps.params.id),
+  isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.params.id),
   allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
     && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
   isReviewer: isUserAReviewer(state, ownProps.params.id),
+
 });
 
 const mapDispatchToProps = dispatch => ({

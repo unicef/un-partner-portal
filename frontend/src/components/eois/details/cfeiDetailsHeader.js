@@ -52,11 +52,20 @@ class CfeiHeader extends Component {
     this.props.uploadCnClearState();
   }
 
+  hasPermissionToViewPreApplications(hasActionPermission) {
+    const { isAdvEd, isPAM, isBasEd, isMFT, isCreator, isFocalPoint, isReviewer } = this.props;
+
+    return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint || isReviewer))
+    || (hasActionPermission && isBasEd && (isCreator || isReviewer))
+    || (hasActionPermission && isMFT && isFocalPoint)
+    || (hasActionPermission && isPAM && isCreator));
+  }
+
   hasPermissionToViewApplications(hasActionPermission) {
     const { isAdvEd, isPAM, isBasEd, isMFT, isCreator, isFocalPoint } = this.props;
 
     return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
-    || (hasActionPermission && isBasEd && isCreator)
+    || (hasActionPermission && isBasEd && (isCreator))
     || (hasActionPermission && isMFT && isFocalPoint)
     || (hasActionPermission && isPAM && isCreator));
   }
@@ -82,28 +91,33 @@ class CfeiHeader extends Component {
     const { tabs,
       role,
       isCompleted,
+      hasReviewPermission,
       hasViewAllPermission,
       hasViewWinnerPermission,
       hasViewApplicationsPermission,
       params: { type } } = this.props;
 
     let tabsToRender = tabs;
-
     if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && !isCompleted) {
       tabsToRender = this.hasPermissionToViewApplications(hasViewApplicationsPermission)
         ? tabsToRender
-        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.APPLICATIONS)
-         && (item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabsToRender);
+        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.APPLICATIONS)), tabsToRender);
+
+      tabsToRender = this.hasPermissionToViewPreApplications(hasReviewPermission)
+        ? tabsToRender
+        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabsToRender);
     } else if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && isCompleted) {
       tabsToRender = this.hasPermissionToViewApplications(hasViewApplicationsPermission)
         ? tabsToRender
-        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.APPLICATIONS)
-         && (item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabsToRender);
+        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.APPLICATIONS)), tabsToRender);
+
+      tabsToRender = this.hasPermissionToViewPreApplications(hasReviewPermission)
+        ? tabsToRender
+        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabsToRender);
 
       tabsToRender = (hasViewAllPermission || hasViewWinnerPermission)
         ? tabsToRender
-        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.RESULTS)
-         && (item.path) !== (DETAILS_ITEMS.PRESELECTED)), tabsToRender);
+        : R.filter(item => ((item.path) !== (DETAILS_ITEMS.RESULTS)), tabsToRender);
     }
 
     return tabsToRender;
@@ -192,9 +206,11 @@ CfeiHeader.propTypes = {
   hasViewApplicationsPermission: PropTypes.bool.isRequired,
   hasViewAllPermission: PropTypes.bool.isRequired,
   hasViewWinnerPermission: PropTypes.bool.isRequired,
+  hasReviewPermission: PropTypes.bool.isRequired,
   loadUCN: PropTypes.func,
   isFocalPoint: PropTypes.bool,
   isCreator: PropTypes.bool,
+  isReviewer: PropTypes.bool,
   isAdvEd: PropTypes.bool,
   isMFT: PropTypes.bool,
   isPAM: PropTypes.bool,
@@ -209,6 +225,7 @@ const mapStateToProps = (state, ownProps) => ({
   title: selectCfeiTitle(state, ownProps.params.id),
   type: ownProps.params.type,
   loading: state.cfeiDetails.status.loading,
+  hasReviewPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_REVIEW_APPLICATIONS, state),
   hasViewApplicationsPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_VIEW_APPLICATIONS, state),
   hasViewAllPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_FINALIZED_VIEW_ALL_INFO, state),
   hasViewWinnerPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_FINALIZED_VIEW_WINNER_AND_CN, state),
