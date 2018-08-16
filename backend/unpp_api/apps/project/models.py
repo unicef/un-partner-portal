@@ -160,7 +160,7 @@ class EOI(TimeStampedModel):
     def assessments_marked_as_completed(self):
         applications = self.applications.filter(status=APPLICATION_STATUSES.preselected)
 
-        return applications.count() == applications.filter(assessments__completed=True).count()
+        return applications.count() == applications.filter(assessments__completed=True).distinct().count()
 
 
 class EOIAttachment(TimeStampedModel):
