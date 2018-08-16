@@ -19,9 +19,7 @@ from common.consts import (
 )
 from common.database_fields import FixedTextField
 from common.utils import get_countries_code_from_queryset, get_absolute_frontend_url
-from project.validators import (
-    validate_weight_adjustments,
-)
+from project.validators import validate_weight_adjustments
 
 
 class EOI(TimeStampedModel):
@@ -102,7 +100,7 @@ class EOI(TimeStampedModel):
             else:
                 return CFEI_STATUSES.sent
         elif self.is_completed:
-            return CFEI_STATUSES.completed
+            return CFEI_STATUSES.finalized
         elif self.is_completed is False and self.deadline_date and date.today() > self.deadline_date:
             return CFEI_STATUSES.closed
         else:
@@ -163,6 +161,12 @@ class EOI(TimeStampedModel):
             return 'Direct Selection converted from Unsolicited Concept Note'
         else:
             return 'Direct Selection / Retention'
+
+    @property
+    def assessments_marked_as_completed(self):
+        applications = self.applications.filter(status=APPLICATION_STATUSES.preselected)
+
+        return applications.count() == applications.filter(assessments__completed=True).distinct().count()
 
 
 class EOIAttachment(TimeStampedModel):
@@ -311,7 +315,7 @@ class Application(TimeStampedModel):
         # Any changes made here should be reflected in ApplicationsFilter.filter_applications_status
         if self.is_unsolicited and self.is_published is False:
             return EXTENDED_APPLICATION_STATUSES.draft
-        if not self.did_win and self.eoi and self.eoi.status == CFEI_STATUSES.completed:
+        if not self.did_win and self.eoi and self.eoi.status == CFEI_STATUSES.finalized:
             return EXTENDED_APPLICATION_STATUSES.unsuccessful
         elif not self.did_win and self.status == APPLICATION_STATUSES.preselected and self.recommended:
             return EXTENDED_APPLICATION_STATUSES.unsuccessful

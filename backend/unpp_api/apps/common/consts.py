@@ -51,7 +51,7 @@ CFEI_STATUSES = Choices(
     ('Sen', 'sent', 'Sent'),
     ('Ope', 'open', 'Published'),
     ('Clo', 'closed', 'Closed/Under Review'),
-    ('Com', 'completed', 'Finalized'),
+    ('Com', 'finalized', 'Finalized'),
 )
 
 COLLABORATION_EVIDENCE_MODES = Choices(

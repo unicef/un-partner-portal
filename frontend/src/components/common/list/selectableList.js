@@ -92,7 +92,7 @@ class SelectableList extends Component {
   handleRowMouseLeave() {
     this.setState({ hoveredRow: null });
   }
-  
+
   navigationHeader(selected, rows, HeaderAction) {
     const { classes, itemsCount = 0, pageSize, pageNumber } = this.props;
 
@@ -112,7 +112,7 @@ class SelectableList extends Component {
     </div>);
   }
 
-  tableRowTemplate({ row, children, selected, tableRow: { rowId }}) {
+  tableRowTemplate({ row, children, selected, tableRow: { rowId } }) {
     return (<TableRowMUI
       selected={selected}
       hover
@@ -120,8 +120,7 @@ class SelectableList extends Component {
       onClick={() => this.props.clickableRow && this.props.onTableRowClick(row)}
       onMouseEnter={() => this.handleRowMouseEnter(rowId)}
       onMouseLeave={() => this.handleRowMouseLeave()}
-    > {children}
-    </TableRowMUI>);
+    >{children}</TableRowMUI>);
   }
 
   render() {

@@ -25,7 +25,7 @@ const messages = {
 
 const styleSheet = theme => ({
   spread: {
-    minWidth: 500,
+    minWidth: 600,
   },
   weight: {
     display: 'flex',

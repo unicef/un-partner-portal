@@ -216,6 +216,10 @@ export function patchPinnedCfei(body) {
   return authorizedPatch({ uri: '/projects/pins/', body });
 }
 
+export function postCompleteAssessment(id) {
+  return authorizedPost({ uri: `/projects/${id}/applications/complete-assessments/` });
+}
+
 export function getCfeiReviewSummary(id, options) {
   return authorizedGet({ uri: `/projects/${id}/review-summary/`, options });
 }
