@@ -510,7 +510,7 @@ class EOIApplicationsListAPIView(ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         valid_eoi_ids = EOI.objects.filter(
-            Q(created_by=self.request.user) | Q(focal_points=self.request.user)
+            Q(created_by=self.request.user) | Q(focal_points=self.request.user) | Q(reviewers=self.request.user)
         ).values_list('id', flat=True).distinct()
 
         queryset = super(EOIApplicationsListAPIView, self).get_queryset().filter(eoi_id__in=valid_eoi_ids)
