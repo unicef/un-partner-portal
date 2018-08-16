@@ -360,6 +360,9 @@ export const isCfeiCompleted = (state, id) =>
 export const isUserFinishedReview = (state, id) =>
   cfeiDetailsSelector.isUserFinishedReview(state.cfeiDetails.data, id);
 
+export const isUserCompletedAssessment = (state, id) =>
+  cfeiDetailsSelector.isUserCompletedAssessment(state.cfeiDetails.data, id);
+
 export const isCfeiPublished = (state, id) =>
   cfeiDetailsSelector.isCfeiPublished(state.cfeiDetails.data, id);
 

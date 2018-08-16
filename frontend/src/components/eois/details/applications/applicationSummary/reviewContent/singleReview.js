@@ -7,14 +7,13 @@ import PaddedContent from '../../../../../common/paddedContent';
 import { selectReviewer, selectAssessment } from '../../../../../../store';
 import SpreadContent from '../../../../../common/spreadContent';
 import TextWithColor from '../../../../../common/textWithColorBackground';
-import AddReviewModalButton from './addReviewModalButton';
-import EditReviewModalButton from './editReviewModalButton';
 import SimpleCollapsableItem from '../../../../../common/simpleCollapsableItem';
 import ExpandedAssessment from './expandedAssessment';
 
 const messages = {
   you: 'You',
   date: 'Date of assessment',
+  dateCompleted: 'Assessment Completed date',
   addReview: 'add review',
   notDone: 'NOT DONE',
   score: 'Total score',
@@ -28,7 +27,7 @@ const styleSheet = () => ({
     minWidth: '40%',
   },
   smallItem2: {
-    minWidth: '45%',
+    minWidth: '55%',
   },
 });
 
@@ -42,9 +41,7 @@ const markAsYou = (text, name, isYou) =>
 
 const SingleReview = (props) => {
   const { classes,
-    reviewer,
     reviewerInfo,
-    assessment,
     assessmentInfo,
     isReviewerCurrentUser } = props;
   return assessmentInfo
@@ -56,9 +53,14 @@ const SingleReview = (props) => {
               {markAsYou`${reviewerInfo}${isReviewerCurrentUser}`}
             </Typography>
             <SpreadContent notFullWidth className={classes.smallItem2} >
-              <Typography type="caption" >
-                {`${messages.date}: ${assessmentInfo.date_reviewed}`}
-              </Typography>
+              <div>
+                <Typography type="caption" >
+                  {`${messages.date}: ${assessmentInfo.date_reviewed}`}
+                </Typography>
+                {assessmentInfo.completed_date && <Typography type="caption" >
+                  {`${messages.dateCompleted}: ${assessmentInfo.completed_date}`}
+                </Typography>}
+              </div>
               <Typography type="body2">
                 {`${messages.score}: ${calcTotalScore(assessmentInfo)}`}
               </Typography>
@@ -81,11 +83,9 @@ const SingleReview = (props) => {
 
 SingleReview.propTypes = {
   classes: PropTypes.object,
-  reviewer: PropTypes.string,
   reviewerInfo: PropTypes.object,
   assessmentInfo: PropTypes.object,
   isReviewerCurrentUser: PropTypes.bool,
-  assessment: PropTypes.number,
 };
 
 const mapStateToProps = (state, ownProps) => {

@@ -1,7 +1,7 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { reject } from 'ramda';
 import { browserHistory as history } from 'react-router';
 import { TableCell } from 'material-ui/Table';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
@@ -24,6 +24,7 @@ import {
   isUserACreator,
   isUserFinishedReview,
   isCfeiDeadlinePassed,
+  isUserCompletedAssessment,
 } from '../../../../store';
 import CompleteAssessmentButton from './applicationSummary/reviewContent/completeAssessmentButton';
 
@@ -97,19 +98,23 @@ class OpenCfeiPreselections extends Component {
 
   render() {
     const { applications, isDeadlinePassed, isFinishedReview,
-      columns, loading, itemsCount, allowedToEdit, isReviewer } = this.props;
+      columns, loading, itemsCount, allowedToEdit, isReviewer, isCompletedAssessment } = this.props;
 
     let finalColumns = columns;
     if (!allowedToEdit) {
-      finalColumns = reject(column => column.name === 'average_total_score', finalColumns);
+      finalColumns = R.reject(column => column.name === 'average_total_score', finalColumns);
     }
     if (!isReviewer) {
-      finalColumns = reject(column => column.name === 'your_score', finalColumns);
+      finalColumns = R.reject(column => column.name === 'your_score', finalColumns);
     }
 
     return (
       <div>
-        {isReviewer && isDeadlinePassed && <CompleteAssessmentButton disabled={!isFinishedReview} />}
+        {isReviewer && isDeadlinePassed && !R.equals(isFinishedReview, null)
+          && <CompleteAssessmentButton
+            isFinishedReview={isFinishedReview}
+            isCompletedAssessment={isCompletedAssessment}
+          />}
         {allowedToEdit ?
           <SelectableList
             items={applications}
@@ -148,6 +153,7 @@ OpenCfeiPreselections.propTypes = {
   isReviewer: PropTypes.bool,
   isFinishedReview: PropTypes.bool,
   isDeadlinePassed: PropTypes.bool,
+  isCompletedAssessment: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -158,6 +164,7 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.location.query,
   id: ownProps.params.id,
   isFinishedReview: isUserFinishedReview(state, ownProps.params.id),
+  isCompletedAssessment: isUserCompletedAssessment(state, ownProps.params.id),
   isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.params.id),
   allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
     && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
