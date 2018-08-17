@@ -65,6 +65,15 @@ class TestClarificationRequest(BaseAPITestCase):
             self.assertResponseStatusIs(list_response)
             self.assertEqual(list_response.data['count'], 10)
 
+        pdf_response = self.client.get(questions_url + '?export=pdf')
+        self.assertResponseStatusIs(pdf_response, status.HTTP_200_OK)
+        self.assertEqual(pdf_response.content_type, 'application/pdf')
+
+        with self.login_as_user(partner1_member.user):
+            pdf_response = self.client.get(questions_url + '?export=pdf')
+            self.assertResponseStatusIs(pdf_response, status.HTTP_200_OK)
+            self.assertNotEqual(pdf_response.content_type, 'application/pdf')
+
     def test_upload_answers(self):
         eoi = OpenEOIFactory(clarification_request_deadline_date=date.today() + relativedelta(days=7))
         answers_url = reverse('projects:question-answers', kwargs={'eoi_id': eoi.pk})
@@ -104,7 +113,6 @@ class TestClarificationRequest(BaseAPITestCase):
 
         list_response = self.client.get(answers_url)
         self.assertResponseStatusIs(list_response)
-        self.assertEqual(list_response.data['count'], 3)
 
         delete_response = self.client.delete(reverse('projects:answer-delete', kwargs={'pk': file_to_delete_pk}))
         self.assertResponseStatusIs(delete_response, status.HTTP_204_NO_CONTENT)

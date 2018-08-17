@@ -42,6 +42,7 @@ from notification.helpers import (
 from partner.permissions import PartnerPermission
 from project.exports.excel.application_compare import ApplicationCompareSpreadsheetGenerator
 from project.exports.pdf.cfei import CFEIPDFExporter
+from project.exports.pdf.cfei_questions import CFEIClarificationQuestionPDFExporter
 from project.models import Assessment, Application, EOI, Pin, ClarificationRequestQuestion, \
     ClarificationRequestAnswerFile
 from project.serializers import (
@@ -1059,8 +1060,13 @@ class ClarificationRequestQuestionAPIView(ListCreateAPIView):
     serializer_class = ClarificationRequestQuestionSerializer
     pagination_class = SmallPagination
 
+    def list(self, request, *args, **kwargs):
+        if request.GET.get('export', '').lower() == 'pdf' and request.agency_member:
+            return CFEIClarificationQuestionPDFExporter(EOI.objects.get(pk=self.kwargs['eoi_id'])).get_as_response()
+        return super(ClarificationRequestQuestionAPIView, self).list(request, *args, **kwargs)
+
     def get_queryset(self):
-        queryset = ClarificationRequestQuestion.objects.filter(eoi_id=self.kwargs.get('eoi_id'))
+        queryset = ClarificationRequestQuestion.objects.filter(eoi_id=self.kwargs['eoi_id'])
         if self.request.active_partner:
             queryset = queryset.filter(partner=self.request.active_partner)
 
