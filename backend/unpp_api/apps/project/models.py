@@ -176,7 +176,7 @@ class EOIAttachment(TimeStampedModel):
     description = models.TextField(max_length=5120)
 
     def __str__(self):
-        return f"EOIAttachment <pk:{self.pk}> (eoi:{self.eoi.pk})"
+        return f"EOIAttachment <pk:{self.pk}> (EOI: {self.eoi.pk})"
 
 
 class ClarificationRequestQuestion(TimeStampedModel):
@@ -189,7 +189,7 @@ class ClarificationRequestQuestion(TimeStampedModel):
         ordering = ('id', )
 
     def __str__(self):
-        return f"ClarificationRequestQuestion <pk:{self.pk}> (eoi:{self.eoi.pk})"
+        return f"ClarificationRequestQuestion <pk:{self.pk}> (EOI: {self.eoi.pk})"
 
 
 class ClarificationRequestAnswerFile(TimeStampedModel):
@@ -202,7 +202,7 @@ class ClarificationRequestAnswerFile(TimeStampedModel):
         ordering = ('id', )
 
     def __str__(self):
-        return f"ClarificationRequestAnswerFile <pk:{self.pk}> (eoi:{self.eoi.pk})"
+        return f"ClarificationRequestAnswerFile <pk:{self.pk}> (EOI: {self.eoi.pk})"
 
 
 class Pin(TimeStampedModel):

@@ -1,18 +1,24 @@
 from crontab import CronTab
 
 
+DAILY = '* 12 * * *'
+WEEKLY = '* 12 * * 1'
+
+
+MANAGE_PY_CRON_JOBS = [
+    (DAILY, 'send_daily_notifications'),
+    (DAILY, 'send_clarification_deadline_passed_notifications'),
+    (WEEKLY, 'send_weekly_notifications'),
+]
+
+
 if __name__ == '__main__':
     cron = CronTab(user=True)
 
-    daily_notifications_job = next(cron.find_comment('send_daily_notifications'), None) or cron.new(
-        f'python /code/manage.py send_daily_notifications', comment='send_daily_notifications'
-    )
-    daily_notifications_job.hour.on(12)
-
-    weekly_notifications_job = next(cron.find_comment('send_weekly_notifications'), None) or cron.new(
-        f'python /code/manage.py send_weekly_notifications', comment='send_weekly_notifications'
-    )
-    weekly_notifications_job.hour.on(12)
-    weekly_notifications_job.dow.on(0)
+    for frequency, command_name in MANAGE_PY_CRON_JOBS:
+        job = next(cron.find_comment(command_name), None) or cron.new(
+            f'python /code/manage.py {command_name}', comment=command_name
+        )
+        job.setall(frequency)
 
     cron.write()
