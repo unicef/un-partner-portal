@@ -1097,7 +1097,7 @@ class ClarificationRequestAnswerFileAPIView(ListCreateAPIView):
         if not eoi.created_by == self.request.user and not eoi.focal_points.filter(pk=self.request.user.pk).exists():
             raise PermissionDenied('Only creators / focal points can add answer files.')
 
-        if eoi.clarification_request_deadline_date < timezone.now().date():
+        if eoi.clarification_request_deadline_date > timezone.now().date():
             raise PermissionDenied('Clarification Request Deadline has not passed yet.')
 
-        super(ClarificationRequestAnswerFileAPIView, self).perform_create(serializer)
+        return serializer.save(eoi=eoi)
