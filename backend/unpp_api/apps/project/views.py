@@ -1052,7 +1052,7 @@ class ClarificationRequestQuestionAPIView(ListCreateAPIView):
                 AgencyPermission.CFEI_VIEW,
             ],
             partner_permissions=[
-                PartnerPermission.CFEI_VIEW
+                PartnerPermission.CFEI_VIEW,
             ]
         ),
     )
@@ -1081,7 +1081,7 @@ class ClarificationRequestAnswerFileAPIView(ListCreateAPIView):
                 AgencyPermission.CFEI_VIEW,
             ],
             partner_permissions=[
-                PartnerPermission.CFEI_VIEW
+                PartnerPermission.CFEI_VIEW,
             ]
         ),
     )
@@ -1099,5 +1099,10 @@ class ClarificationRequestAnswerFileAPIView(ListCreateAPIView):
 
         if eoi.clarification_request_deadline_date > timezone.now().date():
             raise PermissionDenied('Clarification Request Deadline has not passed yet.')
+
+        if eoi.question_answers.count() >= 3:
+            raise serializers.ValidationError(
+                'A maximum of 3 Answer Files is allowed per project, remove some to upload new.'
+            )
 
         return serializer.save(eoi=eoi)

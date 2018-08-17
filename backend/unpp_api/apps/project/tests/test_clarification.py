@@ -78,7 +78,29 @@ class TestClarificationRequest(BaseAPITestCase):
         eoi.save()
 
         create_response = self.client.post(answers_url, data={
-            'title': 'Test File',
+            'title': 'Test File1',
             'file': get_new_common_file().pk
         })
         self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+
+        create_response = self.client.post(answers_url, data={
+            'title': 'Test File2',
+            'file': get_new_common_file().pk
+        })
+        self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+
+        create_response = self.client.post(answers_url, data={
+            'title': 'Test File3',
+            'file': get_new_common_file().pk
+        })
+        self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+
+        create_response = self.client.post(answers_url, data={
+            'title': 'Test File4',
+            'file': get_new_common_file().pk
+        })
+        self.assertResponseStatusIs(create_response, status.HTTP_400_BAD_REQUEST)
+
+        list_response = self.client.get(answers_url)
+        self.assertResponseStatusIs(list_response)
+        self.assertEqual(list_response.data['count'], 3)
