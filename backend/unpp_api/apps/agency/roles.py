@@ -140,7 +140,6 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_EDIT_PUBLISHED,
         AgencyPermission.CFEI_DIRECT_CANCEL,
 
-        AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
         AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COUNT,
         AgencyPermission.RUN_REPORT_CSO_PROFILE,
         AgencyPermission.RUN_REPORT_CSO_MAPPING,
