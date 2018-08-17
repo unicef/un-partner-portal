@@ -1049,7 +1049,7 @@ class ClarificationRequestQuestionAPIView(ListCreateAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_VIEW,
+                AgencyPermission.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS,
             ],
             partner_permissions=[
                 PartnerPermission.CFEI_VIEW,
@@ -1066,6 +1066,7 @@ class ClarificationRequestQuestionAPIView(ListCreateAPIView):
 
         return queryset
 
+    @check_unpp_permission(partner_permissions=[PartnerPermission.CFEI_SEND_CLARIFICATION_REQUEST])
     def perform_create(self, serializer):
         eoi: EOI = get_object_or_404(EOI, id=self.kwargs.get('eoi_id'))
         if eoi.clarification_request_deadline_date < timezone.now().date():
@@ -1091,6 +1092,7 @@ class ClarificationRequestAnswerFileAPIView(ListCreateAPIView):
     def get_queryset(self):
         return ClarificationRequestAnswerFile.objects.filter(eoi_id=self.kwargs.get('eoi_id'))
 
+    @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS])
     def perform_create(self, serializer):
         eoi: EOI = get_object_or_404(EOI, id=self.kwargs.get('eoi_id'))
 
