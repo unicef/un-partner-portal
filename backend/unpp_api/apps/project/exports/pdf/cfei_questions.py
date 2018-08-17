@@ -53,7 +53,10 @@ class CFEIClarificationQuestionPDFExporter:
         paragraphs = [
             Paragraph(format_datetime(timestamp, 'medium'), self.style_right),
             Paragraph('Partner Clarification Questions', self.style_h2),
-            Paragraph(self.cfei.title, self.style_h1),
+            Paragraph(
+                f"{self.cfei.title} ({self.cfei.displayID})",
+                self.style_h1
+            ),
             Spacer(1, self.margin * 2),
         ]
         questions = []
