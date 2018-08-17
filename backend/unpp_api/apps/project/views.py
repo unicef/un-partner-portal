@@ -1106,3 +1106,14 @@ class ClarificationRequestAnswerFileAPIView(ListCreateAPIView):
             )
 
         return serializer.save(eoi=eoi)
+
+
+class ClarificationRequestAnswerFileDestroyAPIView(DestroyAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[]
+        ),
+    )
+
+    def get_queryset(self):
+        return ClarificationRequestAnswerFile.objects.filter(created_by=self.request.user)

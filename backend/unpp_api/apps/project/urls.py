@@ -33,6 +33,7 @@ from project.views import (
     SendCFEIForDecisionAPIView,
     ClarificationRequestQuestionAPIView,
     ClarificationRequestAnswerFileAPIView,
+    ClarificationRequestAnswerFileDestroyAPIView,
 )
 
 
@@ -133,5 +134,10 @@ urlpatterns = [
         r'^(?P<eoi_id>\d+)/answers/$',
         ClarificationRequestAnswerFileAPIView.as_view(),
         name="question-answers"
+    ),
+    url(
+        r'^answers/(?P<pk>\d+)/$',
+        ClarificationRequestAnswerFileDestroyAPIView.as_view(),
+        name="answer-delete"
     ),
 ]

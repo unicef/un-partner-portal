@@ -94,6 +94,7 @@ class TestClarificationRequest(BaseAPITestCase):
             'file': get_new_common_file().pk
         })
         self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
+        file_to_delete_pk = create_response.data['id']
 
         create_response = self.client.post(answers_url, data={
             'title': 'Test File4',
@@ -104,3 +105,12 @@ class TestClarificationRequest(BaseAPITestCase):
         list_response = self.client.get(answers_url)
         self.assertResponseStatusIs(list_response)
         self.assertEqual(list_response.data['count'], 3)
+
+        delete_response = self.client.delete(reverse('projects:answer-delete', kwargs={'pk': file_to_delete_pk}))
+        self.assertResponseStatusIs(delete_response, status.HTTP_204_NO_CONTENT)
+
+        create_response = self.client.post(answers_url, data={
+            'title': 'Test File5',
+            'file': get_new_common_file().pk
+        })
+        self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
