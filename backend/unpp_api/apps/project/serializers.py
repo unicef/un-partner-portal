@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from collections import defaultdict
 from datetime import datetime, date
 
 from django.db import transaction
@@ -803,6 +804,7 @@ class SimpleAssessmentSerializer(serializers.ModelSerializer):
         model = Assessment
         fields = (
             'reviewer_fullname',
+            'note',
             'total_score',
         )
         read_only_fields = fields
@@ -820,6 +822,8 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
     reviews_finished = serializers.SerializerMethodField()
     application_status_display = serializers.CharField(read_only=True)
     assessments = SimpleAssessmentSerializer(many=True, read_only=True)
+    completed_assessments_count = serializers.SerializerMethodField()
+    average_scores = serializers.SerializerMethodField()
 
     class Meta:
         model = Application
@@ -837,6 +841,8 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'reviews_finished',
             'application_status_display',
             'assessments',
+            'completed_assessments_count',
+            'average_scores',
         )
 
     def _get_review_reviewers_count(self, app):
@@ -862,6 +868,26 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
     def get_reviews_finished(self, obj):
         review_count, reviewers_count = self._get_review_reviewers_count(obj)
         return review_count == reviewers_count
+
+    def get_completed_assessments_count(self, obj):
+        return obj.assessments.filter(completed=True).count()
+
+    def get_average_scores(self, obj):
+        scores = defaultdict(int)
+        total = 0
+
+        for assessment in obj.assessments.filter(completed=True):
+            for score in assessment.scores:
+                scores[score['selection_criteria']] += score['score']
+
+            total += 1
+
+        if not total:
+            return {}
+
+        return {
+            k: v / total for k, v in scores.items()
+        }
 
 
 class ReviewersApplicationSerializer(serializers.ModelSerializer):
