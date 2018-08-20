@@ -750,6 +750,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
                         application=app,
                         scores=scores,
                         date_reviewed=date.today(),
+                        completed=True,
                         note='Note for application id: {}'.format(app.id)
                     )
 
