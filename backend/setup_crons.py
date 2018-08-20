@@ -1,14 +1,16 @@
 from crontab import CronTab
 
 
-DAILY = '* 12 * * *'
+DAILY_MIDNIGHT = '* 0 * * *'
+DAILY_NOON = '* 12 * * *'
 WEEKLY = '* 12 * * 1'
 
 
 MANAGE_PY_CRON_JOBS = [
-    (DAILY, 'send_daily_notifications'),
-    (DAILY, 'send_clarification_deadline_passed_notifications'),
+    (DAILY_NOON, 'send_daily_notifications'),
+    (DAILY_NOON, 'send_clarification_deadline_passed_notifications'),
     (WEEKLY, 'send_weekly_notifications'),
+    (WEEKLY, 'sanction_sync_and_rescan'),
 ]
 
 
