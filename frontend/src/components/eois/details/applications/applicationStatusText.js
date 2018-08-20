@@ -47,7 +47,7 @@ const styleSheet = theme => ({
   },
   text: {
     whiteSpace: 'normal',
-    maxWidth: 100,
+    maxWidth: 150,
   },
 });
 

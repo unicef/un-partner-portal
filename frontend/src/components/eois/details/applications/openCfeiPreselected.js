@@ -12,6 +12,7 @@ import TableWithStateInUrl from '../../../common/hoc/tableWithStateInUrl';
 import WithGreyColor from '../../../common/hoc/withGreyButtonStyle';
 import Compare from '../../buttons/compareButton';
 import OrganizationTypeCell from '../../../applications/organizationTypeCell';
+import RecommendPartnerCell from '../../cells/recommendPartnerCell';
 import PreselectedTotalScore from '../../cells/preselectedTotalScore';
 import PreselectedYourScore from '../../cells/preselectedYourScore';
 import { loadApplications } from '../../../../reducers/partnersApplicationsList';
@@ -86,11 +87,20 @@ class OpenCfeiPreselections extends Component {
         conceptNote={row.cn}
         score={row.average_total_score}
         assessments={row.assessments}
-        hovered={hovered}
         allowedToEdit={this.props.allowedToEdit}
       />);
     } else if (column.name === 'type_org') {
       return <OrganizationTypeCell orgType={row.type_org} />;
+    } else if (column.name === 'recommended_partner') {
+      return (<RecommendPartnerCell
+        id={row.id}
+        conceptNote={row.cn}
+        score={row.average_total_score}
+        assessments={row.assessments}
+        finishedReviews={row.reviews_finished}
+        hovered={hovered}
+        allowedToEdit={this.props.allowedToEdit}
+      />);
     }
 
     return <TableCell>{value}</TableCell>;
@@ -103,6 +113,7 @@ class OpenCfeiPreselections extends Component {
     let finalColumns = columns;
     if (!allowedToEdit) {
       finalColumns = R.reject(column => column.name === 'average_total_score', finalColumns);
+      finalColumns = R.reject(column => column.name === 'recommended_partner', finalColumns);
     }
     if (!isReviewer) {
       finalColumns = R.reject(column => column.name === 'your_score', finalColumns);
@@ -169,12 +180,12 @@ const mapStateToProps = (state, ownProps) => ({
   allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
     && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
   isReviewer: isUserAReviewer(state, ownProps.params.id),
-
 });
 
 const mapDispatchToProps = dispatch => ({
   loadApplications: (id, params) => dispatch(
-    loadApplications(id, { ...params, status: APPLICATION_STATUSES.PRE })),
+    loadApplications(id, { ...params,
+      status: APPLICATION_STATUSES.PRE })),
 });
 
 
