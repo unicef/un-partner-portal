@@ -172,9 +172,6 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         user_serializer.is_valid()
         user = user_serializer.save()
 
-        validated_data['partner']['declaration'] = PartnerDeclarationPDFCreator(
-            validated_data['declaration'], validated_data['partner']['legal_name'], user
-        ).get_as_common_file()
         self.partner = Partner.objects.create(**validated_data['partner'])
         self.save_documents(validated_data, user)
 
@@ -207,6 +204,11 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         partner_member['user'] = user_serializer.instance
         partner_member['role'] = PartnerRole.ADMIN.name
         self.partner_member = PartnerMember.objects.create(**validated_data['partner_member'])
+
+        self.partner.declaration = PartnerDeclarationPDFCreator(
+            validated_data['declaration'], self.partner, user
+        ).get_as_common_file()
+        self.partner.save()
 
         self.partner = Partner.objects.get(pk=self.partner.pk)
         return {
