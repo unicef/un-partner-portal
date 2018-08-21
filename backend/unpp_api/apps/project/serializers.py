@@ -843,6 +843,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'assessments',
             'completed_assessments_count',
             'average_scores',
+            'did_win',
         )
 
     def _get_review_reviewers_count(self, app):

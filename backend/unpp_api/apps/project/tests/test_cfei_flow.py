@@ -339,6 +339,21 @@ class TestOpenCFEI(BaseAPITestCase):
             })
             self.assertResponseStatusIs(apply2_response, status.HTTP_201_CREATED)
 
+        # preselect applications
+        with self.login_as_user(agency_member_basic.user):
+            preselect_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
+            preselect_response = self.client.patch(preselect_url, data={
+                'status': APPLICATION_STATUSES.preselected
+            })
+            self.assertResponseStatusIs(preselect_response)
+
+            # Preselect application
+            preselect2_url = reverse('projects:application', kwargs={'pk': apply2_response.data['id']})
+            preselect2_response = self.client.patch(preselect2_url, data={
+                'status': APPLICATION_STATUSES.preselected
+            })
+            self.assertResponseStatusIs(preselect2_response)
+
         # Review application
         # Have to patch deadline before we're allowed to review
         eoi = EOI.objects.get(id=create_response.data['id'])
@@ -386,20 +401,6 @@ class TestOpenCFEI(BaseAPITestCase):
             self.assertResponseStatusIs(complete_reviews_response)
 
         with self.login_as_user(agency_member_basic.user):
-            # Preselect application
-            preselect_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
-            preselect_response = self.client.patch(preselect_url, data={
-                'status': APPLICATION_STATUSES.preselected
-            })
-            self.assertResponseStatusIs(preselect_response)
-
-            # Preselect application
-            preselect2_url = reverse('projects:application', kwargs={'pk': apply2_response.data['id']})
-            preselect2_response = self.client.patch(preselect2_url, data={
-                'status': APPLICATION_STATUSES.preselected
-            })
-            self.assertResponseStatusIs(preselect2_response)
-
             # Recommend application
             recommend_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
             recommend_response = self.client.patch(recommend_url, data={
@@ -503,6 +504,22 @@ class TestOpenCFEI(BaseAPITestCase):
             })
             self.assertResponseStatusIs(apply2_response, status.HTTP_201_CREATED)
 
+        # Preselect
+        with self.login_as_user(agency_member_basic.user):
+            # Preselect application
+            preselect_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
+            preselect_response = self.client.patch(preselect_url, data={
+                'status': APPLICATION_STATUSES.preselected
+            })
+            self.assertResponseStatusIs(preselect_response)
+
+            # Preselect application
+            preselect2_url = reverse('projects:application', kwargs={'pk': apply2_response.data['id']})
+            preselect2_response = self.client.patch(preselect2_url, data={
+                'status': APPLICATION_STATUSES.preselected
+            })
+            self.assertResponseStatusIs(preselect2_response)
+
         # Review application
         # Have to patch deadline before we're allowed to review
         eoi = EOI.objects.get(id=create_response.data['id'])
@@ -550,20 +567,6 @@ class TestOpenCFEI(BaseAPITestCase):
             self.assertResponseStatusIs(complete_reviews_response)
 
         with self.login_as_user(agency_member_basic.user):
-            # Preselect application
-            preselect_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
-            preselect_response = self.client.patch(preselect_url, data={
-                'status': APPLICATION_STATUSES.preselected
-            })
-            self.assertResponseStatusIs(preselect_response)
-
-            # Preselect application
-            preselect2_url = reverse('projects:application', kwargs={'pk': apply2_response.data['id']})
-            preselect2_response = self.client.patch(preselect2_url, data={
-                'status': APPLICATION_STATUSES.preselected
-            })
-            self.assertResponseStatusIs(preselect2_response)
-
             # Recommend application
             recommend_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})
             recommend_response = self.client.patch(recommend_url, data={

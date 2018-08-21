@@ -1028,9 +1028,12 @@ class CompleteAssessmentsAPIView(ListAPIView):
     @transaction.atomic
     def post(self, *args, **kwargs):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
-        all_assessments = self.get_queryset().filter(application__eoi=eoi)
-        if not all_assessments.count() == eoi.applications.count():
-            raise serializers.ValidationError('You nee to review all applications before completing.')
+        all_assessments = self.get_queryset().filter(
+            application__eoi=eoi, application__status=APPLICATION_STATUSES.preselected
+        )
+        applications = eoi.applications.filter(status=APPLICATION_STATUSES.preselected)
+        if not all_assessments.count() == applications.count():
+            raise serializers.ValidationError('You need to review all applications before completing.')
 
         assessments = list(all_assessments.filter(completed=False))
         for ass in assessments:
