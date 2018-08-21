@@ -586,8 +586,11 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     def check_permissions(self, request):
         super(ReviewerAssessmentsAPIView, self).check_permissions(request)
         if not Application.objects.filter(
+            status__in=[
+                APPLICATION_STATUSES.preselected, APPLICATION_STATUSES.recommended,
+            ],
             id=self.kwargs.get(self.application_url_kwarg),
-            eoi__reviewers=self.request.user
+            eoi__reviewers=self.request.user,
         ).exists():
             raise PermissionDenied
 
