@@ -838,7 +838,6 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'your_score',
             'your_score_breakdown',
             'review_progress',
-            'reviews_finished',
             'application_status_display',
             'assessments',
             'completed_assessments_count',
