@@ -64,7 +64,7 @@ const mapStateToProps = (state, { params: { id, type } }) => {
   const status = selectCfeiStatus(state, id);
   const reviewStarted = (status === PROJECT_STATUSES.OPE && type !== PROJECT_TYPES.DIRECT);
   const hasWinners = selectCfeiWinnersStatus(state, id);
-  console.log(completionReasons);
+
   return {
     completionReasons: completionReasons.map(
       mapCompletionReasons(reviewStarted, !hasWinners)),
