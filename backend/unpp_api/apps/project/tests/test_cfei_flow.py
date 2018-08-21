@@ -521,6 +521,11 @@ class TestOpenCFEI(BaseAPITestCase):
             })
             self.assertResponseStatusIs(preselect2_response)
 
+            application_list_url = reverse('projects:applications', kwargs={'pk': create_response.data['id']})
+            application_list_response = self.client.get(application_list_url)
+            self.assertResponseStatusIs(application_list_response)
+            self.assertEqual(application_list_response.data['count'], 2)
+
         # Review application
         # Have to patch deadline before we're allowed to review
         eoi = EOI.objects.get(id=create_response.data['id'])
