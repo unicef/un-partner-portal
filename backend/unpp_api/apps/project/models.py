@@ -291,8 +291,6 @@ class Application(TimeStampedModel):
             return EXTENDED_APPLICATION_STATUSES.draft
         if not self.did_win and self.eoi and self.eoi.status == CFEI_STATUSES.finalized:
             return EXTENDED_APPLICATION_STATUSES.unsuccessful
-        elif not self.did_win and self.status in {APPLICATION_STATUSES.preselected, APPLICATION_STATUSES.recommended}:
-            return EXTENDED_APPLICATION_STATUSES.unsuccessful
         elif self.did_win and self.did_withdraw:
             return EXTENDED_APPLICATION_STATUSES.retracted
         elif self.did_win and self.did_decline is False and self.did_accept is False and not self.partner_decision_date:
