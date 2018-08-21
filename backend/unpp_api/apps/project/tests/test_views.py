@@ -542,6 +542,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
         response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response)
+        self.assertIn('application_status', response.data)
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
         call_command('send_daily_notifications')
@@ -619,6 +620,9 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
     def test_add_review(self):
         app = Application.objects.first()
+        app.status = APPLICATION_STATUSES.preselected
+        app.save()
+
         url = reverse(
             'projects:reviewer-assessments',
             kwargs={

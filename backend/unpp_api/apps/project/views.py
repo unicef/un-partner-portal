@@ -591,8 +591,11 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     def check_permissions(self, request):
         super(ReviewerAssessmentsAPIView, self).check_permissions(request)
         if not Application.objects.filter(
+            status__in=[
+                APPLICATION_STATUSES.preselected, APPLICATION_STATUSES.recommended,
+            ],
             id=self.kwargs.get(self.application_url_kwarg),
-            eoi__reviewers=self.request.user
+            eoi__reviewers=self.request.user,
         ).exists():
             raise PermissionDenied
 
@@ -1033,9 +1036,12 @@ class CompleteAssessmentsAPIView(ListAPIView):
     @transaction.atomic
     def post(self, *args, **kwargs):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
-        all_assessments = self.get_queryset().filter(application__eoi=eoi)
-        if not all_assessments.count() == eoi.applications.count():
-            raise serializers.ValidationError('You nee to review all applications before completing.')
+        all_assessments = self.get_queryset().filter(
+            application__eoi=eoi, application__status=APPLICATION_STATUSES.preselected
+        )
+        applications = eoi.applications.filter(status=APPLICATION_STATUSES.preselected)
+        if not all_assessments.count() == applications.count():
+            raise serializers.ValidationError('You need to review all applications before completing.')
 
         assessments = list(all_assessments.filter(completed=False))
         for ass in assessments:

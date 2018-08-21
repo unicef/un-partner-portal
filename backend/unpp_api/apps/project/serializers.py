@@ -838,7 +838,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
     your_score = serializers.SerializerMethodField()
     your_score_breakdown = serializers.SerializerMethodField()
     review_progress = serializers.SerializerMethodField()
-    reviews_finished = serializers.SerializerMethodField()
+    assessments_completed = serializers.SerializerMethodField()
     application_status_display = serializers.CharField(read_only=True)
     assessments = SimpleAssessmentSerializer(many=True, read_only=True)
     completed_assessments_count = serializers.SerializerMethodField()
@@ -857,11 +857,12 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'your_score',
             'your_score_breakdown',
             'review_progress',
-            'reviews_finished',
             'application_status_display',
             'assessments',
             'completed_assessments_count',
             'average_scores',
+            'did_win',
+            'assessments_completed',
         )
 
     def _get_review_reviewers_count(self, app):
@@ -884,9 +885,8 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
     def get_review_progress(self, obj):
         return '{}/{}'.format(*self._get_review_reviewers_count(obj))
 
-    def get_reviews_finished(self, obj):
-        review_count, reviewers_count = self._get_review_reviewers_count(obj)
-        return review_count == reviewers_count
+    def get_assessments_completed(self, obj):
+        return obj.eoi.reviewers.count() == self.get_completed_assessments_count(obj)
 
     def get_completed_assessments_count(self, obj):
         return obj.assessments.filter(completed=True).count()

@@ -169,17 +169,17 @@ class ApplicationsFilter(django_filters.FilterSet):
                 'did_win': True,
                 'did_decline': False,
                 'did_accept': False,
-                'decision_date__isnull': True,
+                'partner_decision_date__isnull': True,
             },
             EXTENDED_APPLICATION_STATUSES.accepted: {
                 'did_win': True,
                 'did_accept': True,
-                'decision_date__isnull': False,
+                'partner_decision_date__isnull': False,
             },
             EXTENDED_APPLICATION_STATUSES.declined: {
                 'did_win': True,
                 'did_decline': True,
-                'decision_date__isnull': False,
+                'partner_decision_date__isnull': False,
             },
         }
 

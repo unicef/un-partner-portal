@@ -46,6 +46,7 @@ import agencyMembers, * as agencyMembersSelectors from './reducers/agencyMembers
 import partnerAppDetails, * as partnerAppDetailsSelector from './reducers/partnerApplicationDetails';
 import agencies from './reducers/agencies';
 import applicationFeedback, * as applicationFeedbackSelector from './reducers/applicationFeedback';
+import recommendedPartners, * as recommendedPartnersSelector from './reducers/recommendedPartners';
 import partnerVerifications, * as partnerVerificationsSelector from './reducers/partnerVerifications';
 import partnerVerificationsList from './reducers/partnerVerificationsList';
 import cfeiReviewSummary, { selectReviewSummary } from './reducers/cfeiReviewSummary';
@@ -91,6 +92,7 @@ import idPortalDeactivateUser from './idPortal/reducers/deactivateUser';
 
 
 const mainReducer = combineReducers({
+  recommendedPartners,
   partnerUnData,
   vendorNumber,
   removeVendorNumber,
@@ -453,6 +455,12 @@ export const selectApplicationFeedback = (state, applicationId) =>
 
 export const selectApplicationFeedbackCount = (state, applicationId) =>
   applicationFeedbackSelector.selectCount(state.applicationFeedback, applicationId);
+
+export const selectRecommendedPartnersCount = (state, cfeiId) =>
+  recommendedPartnersSelector.selectCount(state.recommendedPartners, cfeiId);
+
+export const selectRecommendedPartners = (state, cfeiId) =>
+  recommendedPartnersSelector.selectPartners(state.recommendedPartners, cfeiId);
 
 export const selectPartnerVerifications = (state, partnerId) =>
   partnerVerificationsSelector.selectVerifications(state.partnerVerifications, partnerId);
