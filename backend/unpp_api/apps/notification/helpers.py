@@ -80,6 +80,23 @@ def user_received_notification_recently(user, obj, notification_type, time_ago=r
     ).exists()
 
 
+def send_eoi_sent_for_decision_notification(eoi):
+    if eoi.sent_for_decision:
+        users = eoi.focal_points.all()
+
+        send_notification(NotificationType.CFEI_SENT_FOR_DECISION_MAKING, eoi, users, context={
+            'eoi': eoi,
+        })
+
+
+def send_send_clarification_deadline_passed_notification(eoi):
+    users = list(eoi.focal_points.all()) + [eoi.created_by]
+
+    send_notification(NotificationType.CFEI_CLARIFICATION_DEADLINE_PASSED, eoi, users, context={
+        'eoi': eoi,
+    })
+
+
 def send_notification_cfei_completed(eoi):
     if eoi.completed_reason == COMPLETED_REASON.cancelled:
         users = get_partner_users_for_application_queryset(eoi.applications.all())
@@ -108,11 +125,12 @@ def send_agency_updated_application_notification(application):
 
 
 def send_partner_made_decision_notification(application):
-    if application.eoi.status == CFEI_STATUSES.open:
-        users = application.eoi.focal_points.all()
-
-        if application.did_accept or application.did_decline:
-            send_notification(NotificationType.PARTNER_DECISION_MADE, application, users)
+    if application.did_accept or application.did_decline:
+        send_notification(
+            NotificationType.PARTNER_DECISION_MADE,
+            application,
+            application.eoi.focal_points.all(),
+        )
 
 
 def send_notification_application_created(application):

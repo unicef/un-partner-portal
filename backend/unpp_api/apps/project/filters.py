@@ -10,6 +10,7 @@ from django_filters.widgets import BooleanWidget, CSVWidget
 from account.models import User
 from common.consts import EXTENDED_APPLICATION_STATUSES, CFEI_STATUSES, CFEI_TYPES
 from common.countries import COUNTRIES_ALPHA2_CODE
+from common.filter_fields import CommaSeparatedListFilter
 from common.models import Specialization, AdminLevel1
 from project.models import EOI, Application
 
@@ -108,7 +109,7 @@ class ApplicationsFilter(django_filters.FilterSet):
     )
     year = CharFilter(method='filter_year')
     concern = CharFilter(method='filter_concern')
-    status = CharFilter(method='filter_status')
+    status = CommaSeparatedListFilter(name='status')
     agency = CharFilter(method='filter_agency')
     did_win = BooleanFilter(widget=BooleanWidget())
     cfei_active = BooleanFilter(method='filter_cfei_active', widget=BooleanWidget())
@@ -117,7 +118,15 @@ class ApplicationsFilter(django_filters.FilterSet):
 
     class Meta:
         model = Application
-        fields = ['project_title', 'legal_name', 'country_code', 'eoi', 'partner', 'status', 'did_win']
+        fields = (
+            'project_title',
+            'legal_name',
+            'country_code',
+            'eoi',
+            'partner',
+            'status',
+            'did_win',
+        )
 
     def filter_project_title(self, queryset, name, value):
         return queryset.filter(eoi__title__icontains=value)
@@ -136,9 +145,6 @@ class ApplicationsFilter(django_filters.FilterSet):
 
     def filter_concern(self, queryset, name, value):
         return queryset.filter(partner__mandate_mission__concern_groups__contains=[value])
-
-    def filter_status(self, queryset, name, value):
-        return queryset.filter(status=value)
 
     def filter_applications_status(self, queryset, name, value):
         # Logic here should match Application.application_status property
@@ -163,17 +169,17 @@ class ApplicationsFilter(django_filters.FilterSet):
                 'did_win': True,
                 'did_decline': False,
                 'did_accept': False,
-                'decision_date__isnull': True,
+                'partner_decision_date__isnull': True,
             },
             EXTENDED_APPLICATION_STATUSES.accepted: {
                 'did_win': True,
                 'did_accept': True,
-                'decision_date__isnull': False,
+                'partner_decision_date__isnull': False,
             },
             EXTENDED_APPLICATION_STATUSES.declined: {
                 'did_win': True,
                 'did_decline': True,
-                'decision_date__isnull': False,
+                'partner_decision_date__isnull': False,
             },
         }
 
@@ -197,7 +203,7 @@ class ApplicationsEOIFilter(django_filters.FilterSet):
     )
     concern = CharFilter(method='filter_concern')
     type_of_org = CharFilter(method='filter_type_of_org')
-    status = CharFilter(method='filter_status')
+    status = CommaSeparatedListFilter(name='status')
 
     class Meta:
         model = Application
@@ -217,9 +223,6 @@ class ApplicationsEOIFilter(django_filters.FilterSet):
 
     def filter_type_of_org(self, queryset, name, value):
         return queryset.filter(partner__display_type__icontains=value)
-
-    def filter_status(self, queryset, name, value):
-        return queryset.filter(status=value)
 
 
 class ApplicationsUnsolicitedFilter(django_filters.FilterSet):

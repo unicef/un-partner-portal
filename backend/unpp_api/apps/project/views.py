@@ -24,7 +24,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from account.models import User
 from agency.permissions import AgencyPermission
-from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE, CFEI_STATUSES
+from common.consts import CFEI_TYPES, DIRECT_SELECTION_SOURCE, CFEI_STATUSES, APPLICATION_STATUSES
 from common.pagination import SmallPagination
 from common.permissions import HasUNPPPermission, check_unpp_permission, current_user_has_permission
 from notification.consts import NotificationType
@@ -37,11 +37,14 @@ from notification.helpers import (
     send_cfei_review_required_notification,
     user_received_notification_recently,
     send_partner_made_decision_notification,
+    send_eoi_sent_for_decision_notification,
 )
 from partner.permissions import PartnerPermission
 from project.exports.excel.application_compare import ApplicationCompareSpreadsheetGenerator
 from project.exports.pdf.cfei import CFEIPDFExporter
-from project.models import Assessment, Application, EOI, Pin
+from project.exports.pdf.cfei_questions import CFEIClarificationQuestionPDFExporter
+from project.models import Assessment, Application, EOI, Pin, ClarificationRequestQuestion, \
+    ClarificationRequestAnswerFile
 from project.serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
@@ -66,6 +69,8 @@ from project.serializers import (
     AwardedPartnersSerializer,
     CompareSelectedSerializer,
     AgencyProjectSerializer,
+    ClarificationRequestQuestionSerializer,
+    ClarificationRequestAnswerFileSerializer,
 )
 
 from project.filters import (
@@ -474,16 +479,29 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
             AgencyPermission.CFEI_PRESELECT_APPLICATIONS,
         ]
     )
+    @transaction.atomic
     def perform_update(self, serializer):
         data = serializer.validated_data
-        instance = serializer.save()
-        if data.get('did_accept', False) or data.get('did_decline', False):
-            instance.decision_date = timezone.now().date()
-            instance.save()
+        agency_decision = data.get('did_win')
+        partner_decision = data.get('did_accept', False) or data.get('did_decline', False)
+        save_kwargs = {}
+
+        if agency_decision:
+            current_user_has_permission(self.request, agency_permissions=[
+                AgencyPermission.CFEI_SELECT_RECOMMENDED_PARTNER
+            ], raise_exception=True)
+            save_kwargs['win_date'] = timezone.now().date()
+            save_kwargs['win_decision_maker'] = self.request.user
+
+        if partner_decision:
+            save_kwargs['partner_decision_date'] = timezone.now().date()
+            save_kwargs['partner_decision_maker'] = self.request.user
+
+        instance = serializer.save(**save_kwargs)
 
         if self.request.agency_member:
             send_agency_updated_application_notification(instance)
-        elif self.request.active_partner:
+        elif self.request.active_partner and partner_decision:
             send_partner_made_decision_notification(instance)
 
 
@@ -573,8 +591,11 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     def check_permissions(self, request):
         super(ReviewerAssessmentsAPIView, self).check_permissions(request)
         if not Application.objects.filter(
+            status__in=[
+                APPLICATION_STATUSES.preselected, APPLICATION_STATUSES.recommended,
+            ],
             id=self.kwargs.get(self.application_url_kwarg),
-            eoi__reviewers=self.request.user
+            eoi__reviewers=self.request.user,
         ).exists():
             raise PermissionDenied
 
@@ -746,7 +767,7 @@ class ReviewSummaryAPIView(RetrieveUpdateAPIView):
         ),
     )
     serializer_class = ReviewSummarySerializer
-    queryset = EOI.objects.all()
+    queryset = EOI.objects.filter(sent_for_decision=False)
 
     def check_object_permissions(self, request, obj):
         super(ReviewSummaryAPIView, self).check_object_permissions(request, obj)
@@ -925,7 +946,43 @@ class PublishCFEIAPIView(RetrieveAPIView):
         cfei.is_published = True
         cfei.published_timestamp = timezone.now()
         cfei.save()
-        return Response(AgencyProjectSerializer().data)
+        return Response(AgencyProjectSerializer(cfei).data)
+
+
+class SendCFEIForDecisionAPIView(RetrieveAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[]
+        ),
+    )
+    serializer_class = AgencyProjectSerializer
+    queryset = EOI.objects.filter(is_published=True)
+
+    def check_object_permissions(self, request, obj):
+        super(SendCFEIForDecisionAPIView, self).check_object_permissions(request, obj)
+        if obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
+            return
+        self.permission_denied(request)
+
+    @transaction.atomic
+    def post(self, *args, **kwargs):
+        cfei: EOI = self.get_object()
+        if not any((
+            cfei.review_summary_comment,
+            cfei.review_summary_attachment,
+        )):
+            raise serializers.ValidationError(
+                'Review summary needs to be filled in before forwarding for partner selection.'
+            )
+        if not cfei.applications.filter(status=APPLICATION_STATUSES.recommended).exists():
+            raise serializers.ValidationError(
+                'You need to recommend at least one application before forwarding for partner selection.'
+            )
+
+        cfei.sent_for_decision = True
+        cfei.save()
+        send_eoi_sent_for_decision_notification(cfei)
+        return Response(AgencyProjectSerializer(cfei).data)
 
 
 class UCNManageAPIView(RetrieveUpdateAPIView, DestroyAPIView):
@@ -979,9 +1036,12 @@ class CompleteAssessmentsAPIView(ListAPIView):
     @transaction.atomic
     def post(self, *args, **kwargs):
         eoi = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
-        all_assessments = self.get_queryset().filter(application__eoi=eoi)
-        if not all_assessments.count() == eoi.applications.count():
-            raise serializers.ValidationError('You nee to review all applications before completing.')
+        all_assessments = self.get_queryset().filter(
+            application__eoi=eoi, application__status=APPLICATION_STATUSES.preselected
+        )
+        applications = eoi.applications.filter(status=APPLICATION_STATUSES.preselected)
+        if not all_assessments.count() == applications.count():
+            raise serializers.ValidationError('You need to review all applications before completing.')
 
         assessments = list(all_assessments.filter(completed=False))
         for ass in assessments:
@@ -990,3 +1050,84 @@ class CompleteAssessmentsAPIView(ListAPIView):
             ass.save()
 
         return Response(self.serializer_class(assessments, many=True).data)
+
+
+class ClarificationRequestQuestionAPIView(ListCreateAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW,
+            ]
+        ),
+    )
+    serializer_class = ClarificationRequestQuestionSerializer
+    pagination_class = SmallPagination
+
+    def list(self, request, *args, **kwargs):
+        if request.GET.get('export', '').lower() == 'pdf' and request.agency_member:
+            return CFEIClarificationQuestionPDFExporter(EOI.objects.get(pk=self.kwargs['eoi_id'])).get_as_response()
+        return super(ClarificationRequestQuestionAPIView, self).list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = ClarificationRequestQuestion.objects.filter(eoi_id=self.kwargs['eoi_id'])
+        if self.request.active_partner:
+            queryset = queryset.filter(partner=self.request.active_partner)
+
+        return queryset
+
+    @check_unpp_permission(partner_permissions=[PartnerPermission.CFEI_SEND_CLARIFICATION_REQUEST])
+    def perform_create(self, serializer):
+        eoi: EOI = get_object_or_404(EOI, id=self.kwargs.get('eoi_id'))
+        if eoi.clarification_request_deadline_date < timezone.now().date():
+            raise PermissionDenied('Clarification Request Deadline has passed.')
+
+        return serializer.save(eoi=eoi, partner=self.request.active_partner)
+
+
+class ClarificationRequestAnswerFileAPIView(ListCreateAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW,
+            ]
+        ),
+    )
+    serializer_class = ClarificationRequestAnswerFileSerializer
+    pagination_class = SmallPagination
+
+    def get_queryset(self):
+        return ClarificationRequestAnswerFile.objects.filter(eoi_id=self.kwargs.get('eoi_id'))
+
+    @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS])
+    def perform_create(self, serializer):
+        eoi: EOI = get_object_or_404(EOI, id=self.kwargs.get('eoi_id'))
+
+        if not eoi.created_by == self.request.user and not eoi.focal_points.filter(pk=self.request.user.pk).exists():
+            raise PermissionDenied('Only creators / focal points can add answer files.')
+
+        if eoi.clarification_request_deadline_date > timezone.now().date():
+            raise PermissionDenied('Clarification Request Deadline has not passed yet.')
+
+        if eoi.question_answers.count() >= 3:
+            raise serializers.ValidationError(
+                'A maximum of 3 Answer Files is allowed per project, remove some to upload new.'
+            )
+
+        return serializer.save(eoi=eoi)
+
+
+class ClarificationRequestAnswerFileDestroyAPIView(DestroyAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[]
+        ),
+    )
+
+    def get_queryset(self):
+        return ClarificationRequestAnswerFile.objects.filter(created_by=self.request.user)

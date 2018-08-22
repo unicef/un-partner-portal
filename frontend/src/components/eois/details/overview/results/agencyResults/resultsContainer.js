@@ -6,6 +6,7 @@ import AwardedPartners from './awardedPartners';
 import ReviewSummary from './reviewSummary';
 import ReviewersSummary from './reviewersSummary';
 import FinalizeJustification from './finalizeJustification';
+import RecommendedPartners from './recommendedPartners/recommendedPartners';
 
 const ResultsContainer = (props) => {
   const { id } = props;
@@ -13,12 +14,13 @@ const ResultsContainer = (props) => {
     <Grid container direction="row" spacing={24}>
       <Grid item xs={12} sm={8}>
         <GridColumn >
-          <ReviewSummary id={id} />
+          <RecommendedPartners id={id} />
           <AwardedPartners id={id} />
         </GridColumn>
       </Grid>
       <Grid item xs={12} sm={4} >
         <GridColumn >
+          <ReviewSummary id={id} />
           <ReviewersSummary id={id} />
           <FinalizeJustification id={id} />
         </GridColumn>

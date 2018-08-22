@@ -16,6 +16,7 @@ import {
   selectReview,
   selectAssessment,
   isCfeiCompleted,
+  isCfeiDeadlinePassed,
   selectCfeiStatus,
   isUserACreator,
 } from '../../../../../store';
@@ -29,7 +30,7 @@ import { APPLICATION_STATUSES, PROJECT_STATUSES } from '../../../../../helpers/c
 import { checkPermission, AGENCY_PERMISSIONS, isRoleOffice, AGENCY_ROLES } from '../../../../../helpers/permissions';
 
 const messages = {
-  header: 'Application from :',
+  header: 'Application from:',
   noCfei: 'Sorry but this application doesn\'t exist',
   retracted: 'Retracted',
 };
@@ -105,6 +106,7 @@ class ApplicationSummaryHeader extends Component {
       completedReview,
       hasAssessPermission,
       isCompleted,
+      isDeadlinePassed,
       cfeiStatus,
     } = this.props;
     const disabled = loading
@@ -134,13 +136,17 @@ class ApplicationSummaryHeader extends Component {
         />;
     } else if (hasAssessPermission) {
       if (R.prop(user, reviews) && this.isAssessActionAllowed(hasAssessPermission)) {
-        return (<EditReviewModalButton
-          assessmentId={reviews[user]}
-          scores={getAssessment(reviews[user])}
-          reviewer={`${user}`}
-          disabled={disabled}
-        />);
-      } else if (this.isAssessActionAllowed(hasAssessPermission)) {
+        const assessment = getAssessment(reviews[user]);
+
+        return (!assessment.completed ?
+          <EditReviewModalButton
+            assessmentId={reviews[user]}
+            scores={getAssessment(reviews[user])}
+            reviewer={`${user}`}
+            disabled={disabled}
+          />
+          : null);
+      } else if (this.isAssessActionAllowed(hasAssessPermission) && isDeadlinePassed) {
         return (<AddReviewModalButton
           raised
           reviewer={`${user}`}
@@ -217,6 +223,7 @@ ApplicationSummaryHeader.propTypes = {
   isPAM: PropTypes.bool,
   isBasEd: PropTypes.bool,
   isCompleted: PropTypes.bool,
+  isDeadlinePassed: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -265,6 +272,7 @@ const mapStateToProps = (state, ownProps) => {
     redFlags,
     completedReview: assessments_is_completed,
     isCompleted: isCfeiCompleted(state, eoi),
+    isDeadlinePassed: isCfeiDeadlinePassed(state, eoi),
   };
 };
 

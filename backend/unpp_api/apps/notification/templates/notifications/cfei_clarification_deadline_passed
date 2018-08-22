@@ -1,0 +1,7 @@
+Dear UN staff member,
+
+Call of Expression of Interest {{ eoi.displayID }} "{{ eoi.title }}" clarification request deadline has passed.
+You can access partner questions and submit answer files.
+
+To view the call for expression of interest, please visit: {{ eoi.get_absolute_url }}
+Thank you.

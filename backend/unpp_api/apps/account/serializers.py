@@ -11,7 +11,8 @@ from account.forms import CustomPasswordResetForm
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     POLICY_AREA_CHOICES,
-    COLLABORATION_EVIDENCE_MODES)
+    COLLABORATION_EVIDENCE_MODES,
+)
 from common.serializers import CommonFileBase64UploadSerializer
 from partner.models import (
     Partner,

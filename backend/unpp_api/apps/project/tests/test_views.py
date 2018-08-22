@@ -153,6 +153,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
             'specializations': Specialization.objects.all().values_list('id', flat=True)[:2],
             'description': 'Brief background of the project',
             'other_information': 'Other information',
+            "clarification_request_deadline_date": date.today(),
             'start_date': date.today(),
             'end_date': date.today(),
             'deadline_date': date.today(),
@@ -494,7 +495,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.eoi.focal_points.clear()
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
-    def test_read_update(self):
+    def test_read_update_application(self):
         application = self.eoi.applications.first()
         PartnerMemberFactory.create_batch(5, partner=application.partner)
         url = reverse('projects:application', kwargs={"pk": application.id})
@@ -541,6 +542,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
         response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response)
+        self.assertIn('application_status', response.data)
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
         call_command('send_daily_notifications')
@@ -618,6 +620,9 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
     def test_add_review(self):
         app = Application.objects.first()
+        app.status = APPLICATION_STATUSES.preselected
+        app.save()
+
         url = reverse(
             'projects:reviewer-assessments',
             kwargs={
@@ -952,6 +957,7 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
             ],
             "description": "asdasdas",
             "goal": "asdasdsa",
+            "clarification_request_deadline_date": date.today(),
             "deadline_date": date.today() + relativedelta(days=1),
             "notif_results_date": date.today() + relativedelta(days=2),
             "start_date": date.today() + relativedelta(days=10),
@@ -973,18 +979,18 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
         payload = self.base_payload.copy()
         url = reverse('projects:open')
         create_response = self.client.post(url, data=payload)
-        self.assertEqual(create_response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertResponseStatusIs(create_response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('locations', create_response.data)
 
         payload["locations"][0]['admin_level_1']['name'] = 'asd'
         create_response = self.client.post(url, data=payload)
-        self.assertEqual(create_response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertResponseStatusIs(create_response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('locations', create_response.data)
 
         payload["locations"][0]['lat'] = "14.95639"
         payload["locations"][0]['lon'] = "-23.62782"
         create_response = self.client.post(url, data=payload)
-        self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
+        self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
 
     def test_create_with_optional_location(self):
         payload = self.base_payload.copy()
