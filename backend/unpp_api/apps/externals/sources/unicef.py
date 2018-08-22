@@ -1,6 +1,7 @@
 from time import sleep
 
 from django.conf import settings
+from django.db.models import Sum
 from requests.auth import HTTPBasicAuth
 import requests
 from rest_framework import status
@@ -52,3 +53,26 @@ class UNICEFInfoDownloader(object):
                         'cash_transfers_year_to_date': cash_transfers_year_to_date,
                     }
                 )
+
+
+class UNICEFInfoClient(object):
+
+    def get_tables(self, vendor_number):
+        cash_data = UNICEFVendorData.objects.filter(vendor_number=vendor_number.number).aggregate(
+            Sum('cash_transfers_current_year'),
+            Sum('cash_transfers_year_to_date'),
+        )
+
+        tables = [{
+            'title': 'Overview',
+            'header': [
+                'Total Cash Transferred Current Year',
+                'Total Cash Transferred Year to Date'
+            ],
+            'rows': [[
+                cash_data['cash_transfers_current_year__sum'],
+                cash_data['cash_transfers_year_to_date__sum'],
+            ]],
+        }]
+
+        return tables

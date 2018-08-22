@@ -9,6 +9,7 @@ from common.permissions import current_user_has_permission, HasUNPPPermission
 from externals.models import PartnerVendorNumber
 from externals.serializers import PartnerVendorNumberSerializer
 from externals.sources.unhcr import UNHCRInfoClient
+from externals.sources.unicef import UNICEFInfoClient
 
 
 class PartnerVendorNumberAPIView(CreateAPIView, RetrieveUpdateAPIView, DestroyAPIView):
@@ -52,6 +53,7 @@ class PartnerExternalDetailsAPIView(APIView):
     )
     provider_for_agency = {
         'UNHCR': UNHCRInfoClient,
+        'UNICEF': UNICEFInfoClient,
     }
 
     def get_queryset(self):
@@ -69,5 +71,5 @@ class PartnerExternalDetailsAPIView(APIView):
         if not provider:
             raise Http404
         return Response({
-            'tables': provider().get_tables(vendor_number.number)
+            'tables': provider().get_tables(vendor_number)
         })
