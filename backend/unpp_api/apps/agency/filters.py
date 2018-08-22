@@ -36,6 +36,7 @@ class AgencyUserFilter(django_filters.FilterSet):
             'office_name',
             'focal',
             'reviewer',
+            'exclude',
         )
 
     def filter_focal_points(self, queryset, name, value):
