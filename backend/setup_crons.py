@@ -11,6 +11,7 @@ MANAGE_PY_CRON_JOBS = [
     (DAILY_NOON, 'send_clarification_deadline_passed_notifications'),
     (WEEKLY, 'send_weekly_notifications'),
     (WEEKLY, 'sanction_sync_and_rescan'),
+    (WEEKLY, 'sync_unicef_erp_data'),
 ]
 
 
