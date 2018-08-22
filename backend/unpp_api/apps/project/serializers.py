@@ -699,7 +699,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def update(self, instance, validated_data):
         if instance.status == CFEI_STATUSES.closed and not set(validated_data.keys()).issubset(
-            {'reviewers', 'focal_points'}
+            {'reviewers', 'focal_points', 'completed_reason', 'justification'}
         ):
             raise serializers.ValidationError(
                 "Since CFEI deadline is passed, You can only modify reviewer(s) and/or focal point(s)."
