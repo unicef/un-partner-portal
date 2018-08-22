@@ -70,8 +70,20 @@ class PartnerExternalDetailsAPIView(APIView):
         provider = self.provider_for_agency.get(vendor_number.agency.name)
         if not provider:
             raise NotFound
+
+        children_data = []
+
+        for child in vendor_number.partner.children.all():
+            child_vendor_number = child.vendor_numbers.filter(agency_id=kwargs['agency_id']).first()
+            child_tables = provider().get_tables(child_vendor_number) if child_vendor_number else []
+            children_data.append({
+                'legal_name': child.legal_name,
+                'tables': child_tables,
+            })
+
         return Response({
-            'tables': provider().get_tables(vendor_number)
+            'tables': provider().get_tables(vendor_number),
+            'children': children_data,
         })
 
 
