@@ -27,13 +27,12 @@ const AwardApplicationButton = (props) => {
         handleDialogClose={handleDialogClose}
       />
     </Grid>
-
   );
 };
 
 
 AwardApplicationButton.propTypes = {
-  applicationId: PropTypes.string,
+  applicationId: PropTypes.number,
   dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,

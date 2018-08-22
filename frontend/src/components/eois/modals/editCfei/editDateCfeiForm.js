@@ -31,7 +31,7 @@ const EditCfeiForm = (props) => {
           <StartDate minDate={cfeiStartDate} />
           <EndDate minDate={cfeiEndDate} />
         </GridRow>
-        <FocalPoint overlap={false} initialMultiValues={focalPointNameArray} />
+        <FocalPoint formName="editCfei" overlap={false} initialMultiValues={focalPointNameArray} />
       </GridColumn>
     </form >
   );

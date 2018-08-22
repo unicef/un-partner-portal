@@ -16,6 +16,7 @@ const messages = {
 
 const ProjectDetails = (props) => {
   const { children, formName, displayPopulation } = props;
+
   return (
     <GridColumn>
       <Typography type="headline">
@@ -24,7 +25,7 @@ const ProjectDetails = (props) => {
       <GridColumn>
         <fields.TitleField />
         <LocationForm formName={formName} />
-        <fields.FocalPoint />
+        <fields.FocalPoint formName={formName} />
         <SectorForm />
         {displayPopulation && <SelectPopulationOfConcern />}
         <fields.Background />
@@ -51,6 +52,5 @@ ProjectDetails.propTypes = {
 const mapStateToProps = state => ({
   displayPopulation: state.session.agencyName === 'UNHCR',
 });
-
 
 export default connect(mapStateToProps)(ProjectDetails);

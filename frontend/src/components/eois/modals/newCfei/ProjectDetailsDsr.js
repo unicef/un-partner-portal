@@ -24,7 +24,7 @@ const ProjectDetailsDsr = (props) => {
       <GridColumn>
         <fields.TitleField />
         <LocationForm formName={formName} />
-        <fields.FocalPoint />
+        <fields.FocalPoint formName={formName}/>
         <SectorForm />
         {displayPopulation && <SelectPopulationOfConcern />}
         <fields.Background />
