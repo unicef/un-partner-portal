@@ -11,6 +11,7 @@ export const applicationStatuses = {
   Rej: 'Rejected',
   Pen: 'Pending',
   Rec: 'Application Recommended',
+  Rev: 'Application Under Review',
 };
 
 export const projectStatuses = {

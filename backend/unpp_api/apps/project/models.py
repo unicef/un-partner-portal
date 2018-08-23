@@ -130,6 +130,10 @@ class EOI(TimeStampedModel):
     def contains_partner_accepted(self):
         return self.applications.filter(did_accept=True, did_withdraw=False).exists()
 
+    @property
+    def contains_recommended_applications(self):
+        return self.applications.filter(status=APPLICATION_STATUSES.recommended).exists()
+
     def get_assessment_criteria_as_dict(self):
         output = {}
         for criteria in self.assessments_criteria:

@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { formValueSelector } from 'redux-form';
 import AutocompleteForm from '../../../autoCompleteForm';
 import { mapValuesForSelectionField } from '../../../../../store';
 import { loadAgencyReviewersForAutoComplete } from '../../../../../reducers/agencyMembers';
 
 // TODO: new version that supports autocomplete but can't be used right now
 const AgencyMembersField = (props) => {
-  const { members, fieldName, label, getMembers, initialMultiValues, ...other } = props;
+  const { members, fieldName, label, getMembers, values, initialMultiValues, ...other } = props;
   return (
     <AutocompleteForm
       fieldName={fieldName}
@@ -16,6 +17,7 @@ const AgencyMembersField = (props) => {
       asyncFunction={getMembers}
       initialMultiValues={initialMultiValues}
       multiple
+      currentValues={values}
       search={'name'}
       {...other}
     />
@@ -25,6 +27,8 @@ const AgencyMembersField = (props) => {
 AgencyMembersField.propTypes = {
   fieldName: PropTypes.string,
   label: PropTypes.string,
+  values: PropTypes.array,
+  getMembers: PropTypes.func,
   initialMultiValues: PropTypes.array,
   members: PropTypes.arrayOf(
     PropTypes.objectOf(
@@ -38,7 +42,18 @@ AgencyMembersField.propTypes = {
 };
 
 export default connect(
-  null,
+  (state, ownProps) => {
+    let values;
+
+    if (ownProps.formName) {
+      const selector = formValueSelector(ownProps.formName);
+      values = selector(state, ownProps.fieldName);
+    }
+
+    return {
+      values: values || [],
+    };
+  },
   dispatch => ({
     getMembers: params => dispatch(loadAgencyReviewersForAutoComplete(params)).then(results =>
       mapValuesForSelectionField(results)),

@@ -12,6 +12,7 @@ import ApplicationStatusText from '../details/applications/applicationStatusText
 const ApplicationStatusCell = (props) => {
   const { id, conceptNote, status, applicationStatus, hovered, progress, changeDisabled } = props;
   const Preselect = WithGreyColor(status === APPLICATION_STATUSES.PRE
+    || status === APPLICATION_STATUSES.REC
     || changeDisabled)(PreselectButton);
   const Reject = WithGreyColor(!progress.startsWith('0')
     || status === APPLICATION_STATUSES.REJ || changeDisabled)(RejectButton);

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { formValueSelector } from 'redux-form';
 import AutocompleteForm from '../../../autoCompleteForm';
 import { mapValuesForSelectionField } from '../../../../../store';
 import { loadAgencyFocalPointsForAutoComplete } from '../../../../../reducers/agencyMembers';
@@ -12,7 +13,7 @@ class AgencyMembersField extends Component {
   }
   
   render() {
-    const { members, fieldName, label, getMembers, ...other } = this.props;
+    const { members, fieldName, label, getMembers, values, ...other } = this.props;
 
     return (
       <AutocompleteForm
@@ -20,6 +21,7 @@ class AgencyMembersField extends Component {
         label={label}
         innerRef={field => this._field = field}
         async
+        currentValues={values}
         asyncFunction={getMembers}
         multiple
         search={'name'}
@@ -32,6 +34,7 @@ class AgencyMembersField extends Component {
 AgencyMembersField.propTypes = {
   fieldName: PropTypes.string,
   label: PropTypes.string,
+  values: PropTypes.array,
   members: PropTypes.arrayOf(
     PropTypes.objectOf(
       {
@@ -44,7 +47,18 @@ AgencyMembersField.propTypes = {
 };
 
 export default connect(
-  null,
+  (state, ownProps) => {
+    let values;
+
+    if (ownProps.formName) {
+      const selector = formValueSelector(ownProps.formName);
+      values = selector(state, ownProps.fieldName);
+    }
+
+    return {
+      values: values || [],
+    };
+  },
   dispatch => ({
     getMembers: params => dispatch(loadAgencyFocalPointsForAutoComplete(params)).then(results =>
       mapValuesForSelectionField(results)),

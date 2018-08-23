@@ -100,8 +100,7 @@ const ApplicationSummaryContent = (props) => {
         : null
       }
       <Grid item className={classes.gridItem}>
-        {isViewFeedbackAllowed(hasViewAssessmentsPermission, isAdvEd, isPAM, isBasEd, isCreator, isFocalPoint)
-          && <Feedback allowedToAdd applicationId={applicationId} />}
+        <Feedback allowedToAdd={isCreator || isFocalPoint} applicationId={applicationId} />
       </Grid>
     </div>
 
@@ -132,7 +131,6 @@ const mapStateToProps = (state, ownProps) => {
   const { partner = {}, eoi, status } = application;
   const partnerDetails = R.prop(R.prop('id', partner), state.agencyPartnerProfile.data);
   const cfeiCriteria = selectCfeiCriteria(state, eoi);
-  const cfeiStatus = selectCfeiStatus(state, eoi);
   return {
     isAdvEd: isRoleOffice(AGENCY_ROLES.EDITOR_ADVANCED, state),
     isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
