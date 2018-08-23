@@ -5,7 +5,7 @@ import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
 import TextFieldForm from '../../../forms/textFieldForm';
 import FocalPoints from '../../../forms/fields/projectFields/agencyMembersFields/focalPoints';
-import SelectForm from '../../../forms/selectForm'; 
+import SelectForm from '../../../forms/selectForm';
 import GridColumn from '../../../common/grid/gridColumn';
 import { selectNormalizedDirectJustification } from '../../../../store';
 import { StartDate, EndDate } from '../../../forms/fields/projectFields/commonFields';
@@ -22,6 +22,8 @@ const messages = {
   startDate: 'Estimated Start Date',
   endDate: 'Estimated End Date',
 };
+
+const FORM_NAME = 'convertToDS';
 
 const ConvertToDirectSelectionForm = (props) => {
   const { handleSubmit, directJustifications, startDate } = props;
@@ -50,6 +52,7 @@ const ConvertToDirectSelectionForm = (props) => {
         <FocalPoints
           fieldName="focal_points"
           label={messages.focal}
+          formName={FORM_NAME}
           selectFieldProps={{
             multiple: false,
           }}
@@ -104,10 +107,10 @@ ConvertToDirectSelectionForm.propTypes = {
   directJustifications: PropTypes.array,
   startDate: PropTypes.string,
 };
-const selector = formValueSelector('convertToDS');
+const selector = formValueSelector(FORM_NAME);
 
 const formConvertToDirectSelectionForm = reduxForm({
-  form: 'convertToDS',
+  form: FORM_NAME,
 })(ConvertToDirectSelectionForm);
 
 const mapStateToProps = state => ({

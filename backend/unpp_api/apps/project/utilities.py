@@ -58,6 +58,11 @@ def update_cfei_reviewers(cfei, user_ids):
             'You cannot manage reviewers after CFEI has been sent for decision making.'
         )
 
+    if cfei.contains_recommended_applications:
+        raise serializers.ValidationError(
+            'Reviewers cannot be edited after an application has been recommended.'
+        )
+
     if not _users_valid_for_agency(cfei, user_ids):
         raise serializers.ValidationError(
             'Some of the indicated reviewer user(s) belong to another agency'

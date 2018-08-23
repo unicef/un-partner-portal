@@ -1,28 +1,30 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router';
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import R from 'ramda';
 import Grid from 'material-ui/Grid';
 import HeaderList from '../../common/list/headerList';
-import { selectApplicationFeedback, selectApplicationFeedbackCount } from '../../../store';
+import { selectApplicationFeedback, selectApplicationFeedbackCount, isCfeiCompleted } from '../../../store';
 import { loadApplicationFeedback } from '../../../reducers/applicationFeedback';
 import SpreadContent from '../../common/spreadContent';
 import PaddedContent from '../../common/paddedContent';
 import GridColumn from '../../common/grid/gridColumn';
 import { formatDateForPrint } from '../../../helpers/dates';
-import { ROLES } from '../../../helpers/constants';
 import FeedbackForm from './feedbackForm';
 import Pagination from '../../common/pagination';
 import EmptyContent from '../../common/emptyContent';
 
 const messages = {
   title: 'Feedback to partner',
+  sendInfo: 'Feedback will be sent to partner after CFEI is finalized.',
   placeholder: 'Provide optional feedback',
   button: 'send',
   from: 'from',
-  noInfo: 'No information available yet.',
+  noInfo: 'No feedback to display.',
+  notCompleted: 'Feedback will be only available after CFEI is finalized.',
   for: 'for',
 };
 
@@ -80,8 +82,9 @@ class FeedbackContainer extends Component {
   }
 
   render() {
-    const { applicationId, loading, feedback, allowedToAdd, count, extraTitle } = this.props;
+    const { applicationId, loading, feedback, allowedToAdd, count, extraTitle, isCompleted } = this.props;
     const { params: { page, page_size } } = this.state;
+
     return (
       <HeaderList
         header={
@@ -93,9 +96,11 @@ class FeedbackContainer extends Component {
       >
         {(R.isEmpty(feedback) && !allowedToAdd) ? loading
           ? <EmptyContent />
-          : <PaddedContent big><Typography>{messages.noInfo}</Typography></PaddedContent>
+          : <PaddedContent big><Typography>{isCompleted ? R.isEmpty(feedback) && messages.noInfo : messages.notCompleted}</Typography></PaddedContent>
           : <PaddedContent big>
+            {allowedToAdd && !isCompleted && <Typography type="body2">{messages.sendInfo}</Typography>}
             {allowedToAdd && <FeedbackForm applicationId={applicationId} />}
+
             {feedback.map(singleFeedback => (<SingleFeedback
               key={singleFeedback.id}
               feedbackId={singleFeedback.id}
@@ -127,6 +132,7 @@ FeedbackContainer.propTypes = {
   count: PropTypes.number,
   extraTitle: PropTypes.string,
   feedbackId: PropTypes.string,
+  isCompleted: PropTypes.bool,
 };
 
 FeedbackContainer.defaultProps = {
@@ -135,10 +141,12 @@ FeedbackContainer.defaultProps = {
 
 const mapStateToProps = (state, ownProps) => {
   const { applicationId } = ownProps;
+
   return {
     loading: state.applicationFeedback.status.loading[ownProps.feedbackId],
     feedback: selectApplicationFeedback(state, applicationId),
     count: selectApplicationFeedbackCount(state, applicationId),
+    isCompleted: isCfeiCompleted(state, ownProps.params.id),
   };
 };
 
@@ -146,5 +154,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   loadFeedback: params => dispatch(loadApplicationFeedback(ownProps.applicationId, params, ownProps.feedbackId)),
 });
 
+const connected = connect(mapStateToProps, mapDispatchToProps)(FeedbackContainer);
 
-export default connect(mapStateToProps, mapDispatchToProps)(FeedbackContainer);
+export default withRouter(connected);

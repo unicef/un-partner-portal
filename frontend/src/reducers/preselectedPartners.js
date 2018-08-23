@@ -11,22 +11,22 @@ import {
 
 import { getOpenCfeiApplications } from '../helpers/api/api';
 
-export const RECOMMENDED_PARTNERS = 'RECOMMENDED_PARTNERS';
+export const PRESELECTED_PARTNERS = 'PRESELECTED_PARTNERS';
 
 const initialState = {};
 
-export const loadRecommendedPartners = (cfeiId, params) => (dispatch) => {
-  dispatch(loadStarted(RECOMMENDED_PARTNERS));
+export const loadPreselectedPartners = (cfeiId, params) => (dispatch) => {
+  dispatch(loadStarted(PRESELECTED_PARTNERS));
 
   return getOpenCfeiApplications(cfeiId, params)
     .then((data) => {
-      dispatch(loadEnded(RECOMMENDED_PARTNERS));
-      dispatch(loadSuccess(RECOMMENDED_PARTNERS, { data, cfeiId }));
+      dispatch(loadEnded(PRESELECTED_PARTNERS));
+      dispatch(loadSuccess(PRESELECTED_PARTNERS, { data, cfeiId }));
       return data;
     })
     .catch((error) => {
-      dispatch(loadEnded(RECOMMENDED_PARTNERS));
-      dispatch(loadFailure(error, RECOMMENDED_PARTNERS));
+      dispatch(loadEnded(PRESELECTED_PARTNERS));
+      dispatch(loadFailure(error, PRESELECTED_PARTNERS));
     });
 };
 
@@ -43,9 +43,9 @@ export const selectCount = (state, cfeiId) => {
   return count;
 };
 
-const recommendedPartnersReducer = (state = initialState, action) => {
+const preselectedPartnersReducer = (state = initialState, action) => {
   switch (action.type) {
-    case `LOAD_${RECOMMENDED_PARTNERS}_SUCCESS`: {
+    case `LOAD_${PRESELECTED_PARTNERS}_SUCCESS`: {
       return savePartners(state, action);
     }
     default:
@@ -53,5 +53,5 @@ const recommendedPartnersReducer = (state = initialState, action) => {
   }
 };
 
-export default combineReducers({ data: recommendedPartnersReducer,
-  status: apiMeta(RECOMMENDED_PARTNERS) });
+export default combineReducers({ data: preselectedPartnersReducer,
+  status: apiMeta(PRESELECTED_PARTNERS) });
