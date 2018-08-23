@@ -31,10 +31,11 @@ class UNICEFVendorData(TimeStampedModel):
     business_area = FixedTextField(choices=BUSINESS_AREAS)
     vendor_number = models.TextField(max_length=1024)
     vendor_name = models.TextField(max_length=1024)
+    year = models.IntegerField()
     cash_transfers_current_year = models.FloatField()
     cash_transfers_year_to_date = models.FloatField()
 
     class Meta:
         unique_together = (
-            ('business_area', 'vendor_number'),
+            ('business_area', 'vendor_number', 'year'),
         )

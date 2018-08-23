@@ -1,3 +1,4 @@
+from datetime import date
 from time import sleep
 
 from django.conf import settings
@@ -21,7 +22,7 @@ class UNICEFInfoDownloader(object):
         self.session.auth = self.auth
 
     def get_url(self, url, max_retry=1):
-        response = self.session.get(url)
+        response = self.session.get(url, timeout=300)
         if not response.status_code == status.HTTP_200_OK:
             if max_retry == 0:
                 return None
@@ -32,6 +33,7 @@ class UNICEFInfoDownloader(object):
         return response.text
 
     def sync_business_areas(self):
+        year = date.today().year
         for ba, _ in BUSINESS_AREAS:
             listing_url = f'{self.host}{BUSINESS_AREA_TO_CODE[ba]}'
             response_text = self.get_url(listing_url)
@@ -47,6 +49,7 @@ class UNICEFInfoDownloader(object):
                 UNICEFVendorData.objects.update_or_create(
                     business_area=ba,
                     vendor_number=vendor_number,
+                    year=year,
                     defaults={
                         'vendor_name': vendor_name,
                         'cash_transfers_current_year': cash_transfers_current_year,

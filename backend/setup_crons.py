@@ -1,5 +1,16 @@
 from crontab import CronTab
 
+# CHEATSHEET
+# ┌───────────── minute (0 - 59)
+# │ ┌───────────── hour (0 - 23)
+# │ │ ┌───────────── day of month (1 - 31)
+# │ │ │ ┌───────────── month (1 - 12)
+# │ │ │ │ ┌───────────── day of week (0 - 6) (Sunday to Saturday;
+# │ │ │ │ │                                   7 is also Sunday on some systems)
+# │ │ │ │ │
+# │ │ │ │ │
+# * * * * * command to execute
+
 
 DAILY_MIDNIGHT = '* 0 * * *'
 DAILY_NOON = '* 12 * * *'
@@ -11,7 +22,7 @@ MANAGE_PY_CRON_JOBS = [
     (DAILY_NOON, 'send_clarification_deadline_passed_notifications'),
     (WEEKLY, 'send_weekly_notifications'),
     (WEEKLY, 'sanction_sync_and_rescan'),
-    (WEEKLY, 'sync_unicef_erp_data'),
+    ('00 12 28-31 * *', 'sync_unicef_erp_data'),
 ]
 
 

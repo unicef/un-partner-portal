@@ -10,7 +10,7 @@ class PartnerVendorNumberAdmin(admin.ModelAdmin):
 
 class UNICEFVendorDataAdmin(admin.ModelAdmin):
     list_display = ('id', 'vendor_number', 'vendor_name', 'business_area')
-    list_filter = ('business_area', )
+    list_filter = ('business_area', 'year')
 
 
 admin.site.register(PartnerVendorNumber, PartnerVendorNumberAdmin)
