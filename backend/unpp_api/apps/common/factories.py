@@ -15,7 +15,9 @@ from account.models import User, UserProfile
 from agency.agencies import AGENCIES
 from agency.models import OtherAgency, Agency, AgencyOffice, AgencyMember
 from agency.roles import AgencyRole
+from common.business_areas import BUSINESS_AREAS
 from common.models import Specialization, Point, AdminLevel1, CommonFile
+from externals.models import UNICEFVendorData
 from partner.models import (
     Partner,
     PartnerMailingAddress,
@@ -849,3 +851,20 @@ class SanctionedNameMatchFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = SanctionedNameMatch
         django_get_or_create = ('name', 'partner')
+
+
+class UNICEFVendorDataFactory(factory.django.DjangoModelFactory):
+
+    business_area = factory.LazyFunction(lambda: random.choice(list(BUSINESS_AREAS._db_values)))
+    vendor_number = factory.Sequence(lambda n: f"VENDOR{n}")
+    vendor_name = factory.Sequence(lambda n: f"VENDOR NAME {n}")
+    cash_transfers_this_year = factory.LazyFunction(
+        lambda: random.randint(1000000, 100000000) / 10.0
+    )
+    total_cash_transfers = factory.LazyAttribute(
+        lambda o: random.randint(int(o.cash_transfers_this_year), 1000000000) / 10.0
+    )
+
+    class Meta:
+        model = UNICEFVendorData
+        django_get_or_create = ('business_area', 'vendor_number', 'year')

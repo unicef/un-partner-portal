@@ -1,13 +1,16 @@
 import random
+from datetime import date
 
 from django.urls import reverse
 
 from rest_framework import status
 
+from agency.agencies import UNICEF
 from agency.roles import AgencyRole
 from common.business_areas import BUSINESS_AREAS
 from common.tests.base import BaseAPITestCase
-from common.factories import PartnerSimpleFactory
+from common.factories import PartnerSimpleFactory, UNICEFVendorDataFactory
+from externals.models import PartnerVendorNumber
 
 
 class TestPartnerVendorNumberAPIViewTestCase(BaseAPITestCase):
@@ -57,3 +60,35 @@ class TestPartnerVendorNumberAPIViewTestCase(BaseAPITestCase):
         partner_summary = self.client.get(reverse('partners:partner-profile-summary', kwargs={'pk': partner.pk}))
         self.assertResponseStatusIs(partner_summary)
         self.assertIsNotNone(partner_summary.data['vendor_numbers'])
+
+
+class TestUNICEFVendorDataTestCase(BaseAPITestCase):
+
+    user_type = BaseAPITestCase.USER_AGENCY
+    agency_role = AgencyRole.EDITOR_ADVANCED
+
+    def test_add_vendor_number(self):
+        partner = PartnerSimpleFactory()
+        test_vendor_number = 'TEST_VN'
+
+        current_year = date.today().year
+        for year in range(max(2015, current_year - 5), current_year + 1):
+            UNICEFVendorDataFactory(year=year, vendor_number=test_vendor_number)
+
+        PartnerVendorNumber.objects.create(
+            partner=partner,
+            agency=UNICEF.model_instance,
+            number=test_vendor_number,
+            business_area=random.choice(list(BUSINESS_AREAS._db_values))
+        )
+
+        partner_erp_data_url = reverse('externals:partner-external-details', kwargs={
+            'agency_id': UNICEF.model_instance.id,
+            'partner_id': partner.id,
+        })
+        partner_erp_data_response = self.client.get(partner_erp_data_url)
+        self.assertResponseStatusIs(partner_erp_data_response)
+        data_row = partner_erp_data_response.data['tables'][0]['rows'][0]
+
+        for number in data_row[2:]:
+            self.assertTrue(number > 0)

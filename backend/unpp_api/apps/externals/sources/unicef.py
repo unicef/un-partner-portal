@@ -78,7 +78,7 @@ class UNICEFInfoClient(object):
             total = max(
                 total or 0, cash_transfers_total
             )
-        print(partner, total, yearly_data)
+
         return total, yearly_data
 
     def get_tables(self, vendor_number: PartnerVendorNumber):
