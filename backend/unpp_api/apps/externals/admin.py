@@ -9,7 +9,10 @@ class PartnerVendorNumberAdmin(admin.ModelAdmin):
 
 
 class UNICEFVendorDataAdmin(admin.ModelAdmin):
-    list_display = ('id', 'vendor_number', 'vendor_name', 'business_area')
+    list_display = (
+        'vendor_number', 'vendor_name', 'business_area', 'year',
+        'cash_transfers_this_year', 'total_cash_transfers'
+    )
     list_filter = ('business_area', 'year')
 
 

@@ -32,8 +32,10 @@ class UNICEFVendorData(TimeStampedModel):
     vendor_number = models.TextField(max_length=1024)
     vendor_name = models.TextField(max_length=1024)
     year = models.IntegerField()
-    cash_transfers_current_year = models.FloatField()
-    cash_transfers_year_to_date = models.FloatField()
+    total_cash_transfers = models.FloatField()
+    cash_transfers_this_year = models.FloatField(
+        help_text='Total amount received Year-To-Date. This will be set back to 0 each year on the 1st of Jan.'
+    )
 
     class Meta:
         unique_together = (
