@@ -37,7 +37,8 @@ from notification.helpers import (
     send_cfei_review_required_notification,
     user_received_notification_recently,
     send_partner_made_decision_notification,
-    send_eoi_sent_for_decision_notification)
+    send_eoi_sent_for_decision_notification,
+)
 from partner.permissions import PartnerPermission
 from project.exports.excel.application_compare import ApplicationCompareSpreadsheetGenerator
 from project.exports.pdf.cfei import CFEIPDFExporter
