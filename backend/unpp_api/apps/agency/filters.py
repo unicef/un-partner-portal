@@ -8,6 +8,7 @@ from django_filters.widgets import CSVWidget, BooleanWidget
 from account.models import User
 from agency.models import Agency
 from agency.roles import AgencyRole, VALID_FOCAL_POINT_ROLE_NAMES, VALID_REVIEWER_ROLE_NAMES
+from common.filter_fields import CommaSeparatedListFilter
 
 
 class AgencyUserFilter(django_filters.FilterSet):
@@ -25,6 +26,7 @@ class AgencyUserFilter(django_filters.FilterSet):
     reviewer = BooleanFilter(
         method='filter_reviewers', widget=BooleanWidget(), label='Can be selected as reviewer'
     )
+    exclude = CommaSeparatedListFilter(name='id', exclude=True)
 
     class Meta:
         model = User
@@ -34,6 +36,7 @@ class AgencyUserFilter(django_filters.FilterSet):
             'office_name',
             'focal',
             'reviewer',
+            'exclude',
         )
 
     def filter_focal_points(self, queryset, name, value):
