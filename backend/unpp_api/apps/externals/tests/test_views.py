@@ -1,7 +1,9 @@
+import os
 import random
 from datetime import date
 
 from django.urls import reverse
+from httmock import all_requests, HTTMock
 
 from rest_framework import status
 
@@ -10,7 +12,8 @@ from agency.roles import AgencyRole
 from common.business_areas import BUSINESS_AREAS
 from common.tests.base import BaseAPITestCase
 from common.factories import PartnerSimpleFactory, UNICEFVendorDataFactory
-from externals.models import PartnerVendorNumber
+from externals.models import PartnerVendorNumber, UNICEFVendorData
+from externals.sources.unicef import UNICEFInfoDownloader
 
 
 class TestPartnerVendorNumberAPIViewTestCase(BaseAPITestCase):
@@ -92,3 +95,24 @@ class TestUNICEFVendorDataTestCase(BaseAPITestCase):
 
         for number in data_row[2:]:
             self.assertTrue(number > 0)
+
+    def test_vendor_data_sync(self):
+        response_sample_file_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'samples', 'UNICEF_API_SAMPLE_OUTPUT.xml'
+        )
+
+        @all_requests
+        def unicef_api_response(url, request):
+            with open(response_sample_file_path, 'rb') as api_sample_file:
+                return {
+                    'status_code': 200,
+                    'content': api_sample_file.read()
+                }
+
+        with HTTMock(unicef_api_response):
+            UNICEFInfoDownloader().sync_business_areas()
+
+        self.assertEqual(
+            UNICEFVendorData.objects.count(),
+            (len(BUSINESS_AREAS) - 1) * 3
+        )
