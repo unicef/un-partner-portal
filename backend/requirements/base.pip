@@ -44,6 +44,7 @@ pylint==1.7.1
 factory_boy==2.11.1
 mock==2.0.0
 Faker==0.8.16
+httmock==1.2.6
 
 # WSGI
 uWSGI==2.0.17
@@ -53,6 +54,6 @@ gunicorn==19.6.0
 raven==6.4.0
 
 # New Relic
-newrelic==2.100.0.84
+newrelic==2.106.1.88
 
 -e git+https://github.com/robertavram/django-storages.git@1.6.5.3#egg=django-storages

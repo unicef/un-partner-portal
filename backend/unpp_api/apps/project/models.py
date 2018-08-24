@@ -259,9 +259,12 @@ class Application(TimeStampedModel):
         'notification.Notification', related_name="accept_notification", null=True, blank=True
     )
 
-    # did_withdraw is only applicable if did_win is True
-    did_withdraw = models.BooleanField(default=False, verbose_name='Did withdraw?')
-    withdraw_reason = models.TextField(null=True, blank=True)  # reason why partner withdraw
+    did_withdraw = models.BooleanField(
+        default=False, verbose_name='Did agency withdrew offer?',
+        help_text='Only applicable if did_win is True.'
+    )
+    withdraw_reason = models.TextField(null=True, blank=True, help_text='Reason why agency withdrew offer.')
+
     # These two (ds_*) will be used as direct selection will create applications for DS EOIs.
     # hq information
     ds_justification_select = ArrayField(
@@ -271,6 +274,7 @@ class Application(TimeStampedModel):
         blank=True,
     )
     ds_attachment = models.ForeignKey('common.CommonFile', related_name="ds_applications", null=True, blank=True)
+
     # Applies when application converted to EOI. Only applicable if this is unsolicited
     eoi_converted = models.OneToOneField(EOI, related_name="unsolicited_conversion", null=True, blank=True)
     justification_reason = models.TextField(null=True, blank=True)  # reason why we choose winner
