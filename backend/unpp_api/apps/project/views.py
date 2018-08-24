@@ -763,13 +763,16 @@ class ReviewSummaryAPIView(RetrieveUpdateAPIView):
         ),
     )
     serializer_class = ReviewSummarySerializer
-    queryset = EOI.objects.filter(sent_for_decision=False)
+    queryset = EOI.objects.all()
 
     def check_object_permissions(self, request, obj):
         super(ReviewSummaryAPIView, self).check_object_permissions(request, obj)
         if request.method == 'GET':
             return
-        if obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
+
+        if not obj.sent_for_decision and (
+            obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists()
+        ):
             return
         self.permission_denied(request)
 
