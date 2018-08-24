@@ -69,10 +69,13 @@ class EOI(TimeStampedModel):
         'common.CommonFile', null=True, blank=True, related_name='review_summary_attachments'
     )
     sent_for_publishing = models.BooleanField(
-        default=False, help_text='Whether CFEI has been forwarded to focal point to be published'
+        default=False, help_text='Whether CFEI has been forwarded to focal point to be published.'
+    )
+    sent_for_decision = models.BooleanField(
+        default=False, help_text='Whether CFEI has been forwarded to focal point to select a partner.'
     )
     is_published = models.BooleanField(
-        default=False, help_text='Whether CFEI is a draft or has been published'
+        default=False, help_text='Whether CFEI is a draft or has been published.'
     )
     published_timestamp = models.DateTimeField(default=timezone.now)
 
@@ -120,6 +123,10 @@ class EOI(TimeStampedModel):
     @property
     def contains_partner_accepted(self):
         return self.applications.filter(did_accept=True, did_withdraw=False).exists()
+
+    @property
+    def contains_recommended_applications(self):
+        return self.applications.filter(status=APPLICATION_STATUSES.recommended).exists()
 
     def get_assessment_criteria_as_dict(self):
         output = {}
@@ -203,12 +210,22 @@ class Application(TimeStampedModel):
     cn = models.ForeignKey('common.CommonFile', related_name="concept_notes", null=True, blank=True)
     status = models.CharField(max_length=3, choices=APPLICATION_STATUSES, default=APPLICATION_STATUSES.pending)
     did_win = models.BooleanField(default=False, verbose_name='Did win?')
+    # for did_win
+    agency_decision_date = models.DateField(null=True, blank=True)
+    agency_decision_maker = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, related_name="application_selections"
+    )
+
     did_accept = models.BooleanField(default=False, verbose_name='Did accept?')
-    decision_date = models.DateField(null=True, blank=True)  # for accept or decline
+    did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
+    # for accept or decline
+    partner_decision_date = models.DateField(null=True, blank=True)
+    partner_decision_maker = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, related_name="application_decisions"
+    )
     accept_notification = models.OneToOneField(
         'notification.Notification', related_name="accept_notification", null=True, blank=True
     )
-    did_decline = models.BooleanField(default=False, verbose_name='Did decline?')
 
     did_withdraw = models.BooleanField(
         default=False, verbose_name='Did agency withdrew offer?',
@@ -284,11 +301,11 @@ class Application(TimeStampedModel):
             return EXTENDED_APPLICATION_STATUSES.unsuccessful
         elif self.did_win and self.did_withdraw:
             return EXTENDED_APPLICATION_STATUSES.retracted
-        elif self.did_win and self.did_decline is False and self.did_accept is False and self.decision_date is None:
+        elif self.did_win and self.did_decline is False and self.did_accept is False and not self.partner_decision_date:
             return EXTENDED_APPLICATION_STATUSES.successful
-        elif self.did_win and self.did_accept and self.decision_date is not None:
+        elif self.did_win and self.did_accept and self.partner_decision_date is not None:
             return EXTENDED_APPLICATION_STATUSES.accepted
-        elif self.did_win and self.did_decline and self.decision_date is not None:
+        elif self.did_win and self.did_decline and self.partner_decision_date is not None:
             return EXTENDED_APPLICATION_STATUSES.declined
         return EXTENDED_APPLICATION_STATUSES.review
 
@@ -320,8 +337,20 @@ class Application(TimeStampedModel):
 
     @property
     def assessments_is_completed(self):
-        return self.eoi and self.eoi.reviewers.count() == self.assessments.filter(
+        if not self.eoi:
+            return None
+
+        return self.eoi.reviewers.count() == self.assessments.filter(
             reviewer__in=self.eoi.reviewers.all()
+        ).count()
+
+    @property
+    def assessments_marked_as_completed(self):
+        if not self.eoi:
+            return None
+
+        return self.eoi.reviewers.count() == self.assessments.filter(
+            reviewer__in=self.eoi.reviewers.all(), completed=True
         ).count()
 
     def get_absolute_url(self):

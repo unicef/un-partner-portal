@@ -33,6 +33,8 @@ const messages = {
   submit: 'submit',
 };
 
+const FORM_NAME = 'directFilter';
+
 const styleSheet = theme => ({
   filterContainer: {
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px`,
@@ -166,7 +168,7 @@ class EoiFilter extends Component {
             <Grid item sm={4} xs={12}>
               <AdminOneLocation
                 fieldName="locations"
-                formName="tableFilter"
+                formName={FORM_NAME}
                 observeFieldName="country_code"
                 label={messages.labels.location}
                 optional
@@ -217,6 +219,7 @@ class EoiFilter extends Component {
                 label={messages.labels.focalPoint}
                 ref={field => this._focalPoints = field}
                 fieldName="focal_points"
+                formName={FORM_NAME}
                 optional
               />
             </Grid>
@@ -256,7 +259,7 @@ EoiFilter.propTypes = {
 };
 
 const formEoiFilter = reduxForm({
-  form: 'directFilter',
+  form: FORM_NAME,
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
   enableReinitialize: true,

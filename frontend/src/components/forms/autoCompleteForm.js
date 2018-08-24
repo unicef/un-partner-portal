@@ -94,8 +94,10 @@ class AutocompleteField extends React.Component {
 
   handleSuggestionsFetchRequested({ value }) {
     if (this.props.async) {
-      getAsyncSuggestions(value, this.props.asyncFunction, this.props.search)
-        .then(suggestions => this.setState({ suggestions }));
+      getAsyncSuggestions(value, this.props.asyncFunction, this.props.search, this.props.currentValues)
+        .then((suggestions) => {
+          this.setState({ suggestions });
+        });
     } else {
       this.setState({
         suggestions: getSuggestions(value, this.props.suggestionsPool),
@@ -268,6 +270,7 @@ AutocompleteField.propTypes = { /**
    */
   infoText: PropTypes.node,
   classes: PropTypes.object,
+  currentValues: PropTypes.array,
 };
 
 AutocompleteField.defaultProps = {

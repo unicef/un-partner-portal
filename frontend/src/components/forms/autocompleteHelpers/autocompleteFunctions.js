@@ -66,13 +66,12 @@ export function getSuggestions(value, suggestionsPool) {
     });
 }
 
-
-export function getAsyncSuggestions(value, asyncFunc, search) {
+export function getAsyncSuggestions(value, asyncFunc, search, selected) {
   const inputValue = value.trim().toLowerCase();
   const inputLength = inputValue.length;
   return inputLength === 0
     ? []
-    : asyncFunc({ [search]: value, page_size: 5 }).then(response => response);
+    : asyncFunc({ [search]: value, page_size: 5, exclude: selected.length > 0 ? selected.join(',') : [] }).then(response => response);
 }
 
 export const debouncedAsyncSuggestions = _.debounce(getAsyncSuggestions, 500, {

@@ -52,7 +52,6 @@ const ItemPartnerAdditionalInfoCell = (props) => {
       <Typography type="body1" color="accent" onClick={onClick}>
         {info.legal_name}
       </Typography>
-
       <VerifiedUser className={className} />
       {info.flagging_status.yellow > 0 && <Flag className={`${classes.iconYellow} ${classes.iconSize}`} />}
       {info.flagging_status.red > 0 && <Flag className={`${classes.iconRed} ${classes.iconSize}`} />}

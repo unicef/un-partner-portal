@@ -22,7 +22,7 @@ const ProjectDetails = (props) => {
       <GridColumn>
         <fields.TitleField />
         <LocationForm formName={formName} />
-        <fields.FocalPoint overlap={false} initialMultiValues={focalPoints} />
+        <fields.FocalPoint overlap={false} formName={formName} initialMultiValues={focalPoints} />
         <SectorForm />
         {displayPopulation && <SelectPopulationOfConcern />}
         <fields.Background />

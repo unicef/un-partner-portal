@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { formValueSelector, clearFields } from 'redux-form';
+import { clearFields } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import TextFieldForm from '../../../textFieldForm';
 import { weight } from '../../../../../helpers/validation';

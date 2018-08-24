@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -120,7 +121,15 @@ class NewCfeiModal extends Component {
   }
 
   handleSubmit(values) {
-    return this.props.postCfei(values).then(
+    let formValues = R.clone(values);
+
+    if (this.props.type === PROJECT_TYPES.OPEN) {
+      if (R.isEmpty(values.attachments[0])) {
+        formValues = R.dissoc('attachments', formValues);
+      }
+    }
+
+    return this.props.postCfei(formValues).then(
       (cfei) => {
         this.setState({ id: cfei && cfei.id });
         this.props.onDialogClose();

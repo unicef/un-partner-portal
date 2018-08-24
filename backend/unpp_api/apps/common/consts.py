@@ -32,7 +32,18 @@ CFEI_TYPES = Choices(
 APPLICATION_STATUSES = Choices(
     ('Pen', 'pending', 'Pending'),
     ('Pre', 'preselected', 'Preselected'),
+    ('Rec', 'recommended', 'Application Recommended'),
     ('Rej', 'rejected', 'Rejected'),
+)
+
+EXTENDED_APPLICATION_STATUSES = Choices(
+    ('Dra', 'draft', 'Draft'),
+    ('Rev', 'review', 'Application Under Review'),
+    ('Uns', 'unsuccessful', 'Application Unsuccessful'),
+    ('Suc', 'successful', 'Application Successful'),
+    ('Acc', 'accepted', 'Selection Accepted'),
+    ('Dec', 'declined', 'Selection Declined'),
+    ('Ret', 'retracted', 'Selection Retracted'),
 )
 
 CFEI_STATUSES = Choices(
@@ -262,16 +273,6 @@ SANCTION_MATCH_TYPES = Choices(
     ('Usr', 'user', 'User Match'),
     ('Brd', 'board', 'Board Match'),
     ('Org', 'organization', 'Organization Name Match'),
-)
-
-EXTENDED_APPLICATION_STATUSES = Choices(
-    ('Dra', 'draft', 'Draft'),
-    ('Rev', 'review', 'Application Under Review'),
-    ('Uns', 'unsuccessful', 'Application Unsuccessful'),
-    ('Suc', 'successful', 'Application Successful'),
-    ('Acc', 'accepted', 'Selection Accepted'),
-    ('Dec', 'declined', 'Selection Declined'),
-    ('Ret', 'retracted', 'Selection Retracted'),
 )
 
 DSR_FINALIZE_RETENTION_CHOICES = Choices(

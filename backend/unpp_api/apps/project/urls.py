@@ -30,12 +30,14 @@ from project.views import (
     EOISendToPublishAPIView,
     UCNManageAPIView,
     CompleteAssessmentsAPIView,
+    SendCFEIForDecisionAPIView,
 )
 
 
 urlpatterns = [
     url(r'^(?P<pk>\d+)/$', EOIAPIView.as_view(), name="eoi-detail"),
     url(r'^(?P<pk>\d+)/publish/$', PublishCFEIAPIView.as_view(), name="eoi-publish"),
+    url(r'^(?P<pk>\d+)/send-for-decision/$', SendCFEIForDecisionAPIView.as_view(), name="eoi-send-for-decision"),
     url(r'^(?P<pk>\d+)/send-to-publish/$', EOISendToPublishAPIView.as_view(), name="eoi-send-to-publish"),
     url(r'^applications/$', AgencyApplicationListAPIView.as_view(), name="agency-applications-list"),
     url(r'^(?P<pk>\d+)/partner-applications/$',

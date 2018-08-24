@@ -22,6 +22,7 @@ class NotificationType(object):
     ADDED_AS_CFEI_FOCAL_POINT = 'added_as_cfei_local_point'
     DJANGO_ADMIN_NEW_PARTNER_FOR_DELETION = 'superadmin_new_cso_for_deletion'
     NEW_ESCALATED_FLAG = 'new_escalated_flag'
+    CFEI_SENT_FOR_DECISION_MAKING = 'cfei_sent_for_decision_making'
 
     @classmethod
     def get_choices(cls):
@@ -115,5 +116,9 @@ NOTIFICATION_DATA = {
     NotificationType.NEW_ESCALATED_FLAG: {
         'template_name': 'new_escalated_flag',
         'subject': 'CSO Profile Flagged'
+    },
+    NotificationType.CFEI_SENT_FOR_DECISION_MAKING: {
+        'template_name': 'cfei_sent_for_decision_making',
+        'subject': 'CFEI winner ready to be picked'
     },
 }

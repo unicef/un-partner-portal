@@ -28,6 +28,8 @@ export const APPLICATION_STATUSES = {
   PRE: 'Pre',
   REJ: 'Rej',
   PEN: 'Pen',
+  REC: 'Rec',
+  REV: 'Rev',
 };
 
 export const SESSION_STATUS = {

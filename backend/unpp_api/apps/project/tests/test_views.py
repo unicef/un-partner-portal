@@ -494,7 +494,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
         self.eoi.focal_points.clear()
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
-    def test_read_update(self):
+    def test_read_update_application(self):
         application = self.eoi.applications.first()
         PartnerMemberFactory.create_batch(5, partner=application.partner)
         url = reverse('projects:application', kwargs={"pk": application.id})
@@ -541,6 +541,7 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
 
         response = self.client.patch(url, data=payload)
         self.assertResponseStatusIs(response)
+        self.assertIn('application_status', response.data)
         self.assertTrue(response.data['did_win'])
         self.assertEquals(response.data['status'], APPLICATION_STATUSES.preselected)
         call_command('send_daily_notifications')
@@ -618,6 +619,9 @@ class TestReviewerAssessmentsAPIView(BaseAPITestCase):
 
     def test_add_review(self):
         app = Application.objects.first()
+        app.status = APPLICATION_STATUSES.preselected
+        app.save()
+
         url = reverse(
             'projects:reviewer-assessments',
             kwargs={

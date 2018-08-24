@@ -37,7 +37,7 @@ const styleSheetHeader = () => ({
 
 const HeaderActionsBase = (props) => {
   const { classes, rows, changeDisabled } = props;
-  
+
   const ids = rows.map(row => row.id);
   const anyReviewStarted = any(({ review_progress: progress }) => !progress.startsWith('0'), rows);
   const Preselect = WithGreyColor(changeDisabled)(PreselectButton);

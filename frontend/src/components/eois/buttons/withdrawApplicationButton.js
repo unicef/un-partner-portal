@@ -35,7 +35,6 @@ const WithdrawApplicationButton = (props) => {
         handleDialogClose={handleDialogClose}
       />
     </Grid>
-
   );
 };
 

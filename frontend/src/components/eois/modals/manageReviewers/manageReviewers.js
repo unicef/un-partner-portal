@@ -8,11 +8,13 @@ import {
 } from '../../../forms/fields/projectFields/commonFields';
 import { selectCfeiDetails } from '../../../../store';
 
+const FORM_NAME = 'manageReviewers';
+
 const ManageReviewersForm = (props) => {
   const { handleSubmit, reviewers } = props;
   return (
     <form onSubmit={handleSubmit}>
-      <Reviewers overlap={false} initialMultiValues={reviewers} />
+      <Reviewers formName={FORM_NAME} overlap={false} initialMultiValues={reviewers} />
     </form >
   );
 };
@@ -36,7 +38,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const formManageReviewers = reduxForm({
-  form: 'manageReviewers',
+  form: FORM_NAME,
 })(ManageReviewersForm);
 
 export default connect(
