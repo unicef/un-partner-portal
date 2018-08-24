@@ -258,6 +258,8 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
     assessments_is_completed = serializers.NullBooleanField(read_only=True)
     assessments_marked_as_completed = serializers.NullBooleanField(read_only=True)
     decision_date = serializers.DateField(source='partner_decision_date', read_only=True)
+    agency_decision_maker = BasicUserSerializer(read_only=True)
+    partner_decision_maker = BasicUserSerializer(read_only=True)
 
     class Meta:
         model = Application
@@ -267,9 +269,7 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
         read_only_fields = (
             'eoi',
             'agency_decision_date',
-            'agency_decision_maker',
             'partner_decision_date',
-            'partner_decision_maker',
         )
         validators = [
             UniqueTogetherValidator(
@@ -863,6 +863,7 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'completed_assessments_count',
             'average_scores',
             'did_win',
+            'did_withdraw',
             'assessments_completed',
         )
 
