@@ -9,8 +9,8 @@ import { sendCfeiForDecision } from '../../../../reducers/sendCfeiForDecision';
 
 const messages = {
   title: 'Are you sure you want to send recommendation(s) to the focal point?',
-  info: 'Please confirm that recommendation(s) should be sent to the focal point for review and issuance to the selected partner(s).' +
-   'Once sent to the focal point, you will no longer be able to make edits to this CFEI.',
+  info: 'Please confirm that recommendation(s) should be sent to the focal point for review and issuance to the selected partner(s). ' +
+      'Once sent to the focal point, you will no longer be able to make edits to this CFEI.',
   send: 'send',
 };
 
