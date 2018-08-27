@@ -846,6 +846,8 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'assessments',
             'completed_assessments_count',
             'average_scores',
+            'did_accept',
+            'did_decline',
             'did_win',
             'did_withdraw',
             'assessments_completed',
