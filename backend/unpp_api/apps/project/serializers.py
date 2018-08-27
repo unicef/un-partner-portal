@@ -317,6 +317,11 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
                 if app.partner.has_red_flag:
                     raise serializers.ValidationError("You cannot award an application if the profile has red flag.")
 
+                if app.partner.has_escalated_flag:
+                    raise serializers.ValidationError(
+                        "You cannot award an application if the profile has escalated risk flags."
+                    )
+
                 if not app.assessments_is_completed:
                     raise serializers.ValidationError(
                         "You cannot award an application if all assessments have not been added for the application."
