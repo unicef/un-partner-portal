@@ -232,6 +232,7 @@ class PartnerApplicationSerializer(MixinPreventManyCommonFile, serializers.Model
         fields = (
             'id',
             'did_win',
+            'did_withdraw',
             'did_accept',
             'did_decline',
             'decision_date',
@@ -239,6 +240,7 @@ class PartnerApplicationSerializer(MixinPreventManyCommonFile, serializers.Model
         )
         read_only_fields = (
             'did_win',
+            'did_withdraw',
             'decision_date',
         )
 
