@@ -486,8 +486,8 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
             current_user_has_permission(self.request, agency_permissions=[
                 AgencyPermission.CFEI_SELECT_RECOMMENDED_PARTNER
             ], raise_exception=True)
-            save_kwargs['win_date'] = timezone.now().date()
-            save_kwargs['win_decision_maker'] = self.request.user
+            save_kwargs['agency_decision_date'] = timezone.now().date()
+            save_kwargs['agency_decision_maker'] = self.request.user
 
         if partner_decision:
             save_kwargs['partner_decision_date'] = timezone.now().date()
