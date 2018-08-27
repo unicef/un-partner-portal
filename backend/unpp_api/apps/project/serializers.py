@@ -1212,7 +1212,9 @@ class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
         lookup_field = self.context['view'].lookup_field
         eoi_id = self.context['request'].parser_context['kwargs'][lookup_field]
         eoi = get_object_or_404(EOI, id=eoi_id)
-        applications = eoi.applications.filter(status=APPLICATION_STATUSES.preselected)
+        applications = eoi.applications.filter(status__in=[
+                APPLICATION_STATUSES.preselected, APPLICATION_STATUSES.recommended,
+        ])
         applications_count = applications.count()
 
         assessments_count = Assessment.objects.filter(reviewer=user, application__in=applications).count()
