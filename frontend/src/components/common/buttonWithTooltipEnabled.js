@@ -15,7 +15,7 @@ const ButtonWithTooltip = (props) => {
         <Button
           color="accent"
           raised
-          onTouchTap={e => onClick(e)}
+          onClick={e => onClick(e)}
           disabled={disabled}
         >
           {text}
@@ -26,7 +26,7 @@ const ButtonWithTooltip = (props) => {
 };
 
 ButtonWithTooltip.propTypes = {
-  text: PropTypes.string,
+  text: PropTypes.object,
   onClick: PropTypes.func,
   tooltipText: PropTypes.string,
   name: PropTypes.string,

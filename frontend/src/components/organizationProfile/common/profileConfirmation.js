@@ -59,7 +59,7 @@ ProfileConfirmation.propTypes = {
   classes: PropTypes.object,
   disabled: PropTypes.bool,
   checked: PropTypes.bool,
-  partnerId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  partnerId: PropTypes.string,
   onChange: PropTypes.func,
   update: PropTypes.string,
 };

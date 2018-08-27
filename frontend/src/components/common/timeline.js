@@ -7,7 +7,7 @@ import { getToday, dayDifference } from '../../helpers/dates';
 
 const styleSheet = theme => ({
   root: {
-    padding: `${theme.spacing.unit * 8}px ${theme.spacing.unit * 2}px`,
+    padding: `${theme.spacing.unit * 4}px ${theme.spacing.unit * 2}px`,
     width: '100%',
     height: '100%',
     position: 'relative',
@@ -52,7 +52,6 @@ class Timeline extends Component {
             label="Posted"
             align="left"
             color="green"
-            position="top-start"
           />
           <DatePoint
             bold
@@ -60,7 +59,6 @@ class Timeline extends Component {
             label="Application Deadline"
             align="center"
             color="red"
-            position="bottom-end"
             flexSize={calcDistance(postedDate, startDate, deadlineDate)}
           />
           <DatePoint
@@ -68,7 +66,6 @@ class Timeline extends Component {
             label="Notification of results"
             align="center"
             color="blue"
-            position="top-end"
             flexSize={calcDistance(deadlineDate, startDate, notificationDate)}
           />
           <DatePoint
@@ -76,7 +73,6 @@ class Timeline extends Component {
             label="Estimated start date"
             align="right"
             color="dark"
-            position="bottom-end"
             fullWidth
           />
         </div>

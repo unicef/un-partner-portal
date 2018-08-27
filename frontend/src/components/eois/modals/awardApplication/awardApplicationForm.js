@@ -6,6 +6,7 @@ import TextFieldForm from '../../../forms/textFieldForm';
 
 const messages = {
   label: 'Justification',
+  score: 'Your score',
 };
 
 const styleSheet = () => ({

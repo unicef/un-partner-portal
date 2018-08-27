@@ -76,7 +76,7 @@ class CfeiHeader extends Component {
     const tabIndex = tabsToRender.findIndex(tab => location.match(`^/cfei/${type}/${id}/${tab.path}`));
     if (tabIndex === -1) {
       // TODO: do real 404
-      // history.push('/');
+      history.push('/');
     }
     return tabIndex;
   }
@@ -179,10 +179,9 @@ class CfeiHeader extends Component {
     } = this.props;
     const index = this.updatePath();
     return (
-      <React.Fragment>
-        <Loader fullscreen loading={loading} />
-        {this.renderContent(index)}
-      </React.Fragment>
+      <Loader loading={loading}>
+        {loading ? null : this.renderContent(index)}
+      </Loader>
     );
   }
 }

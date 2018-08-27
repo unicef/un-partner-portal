@@ -38,7 +38,7 @@ export const loadApplications = (id, filter) => sendRequest({
 
 export const changeAppStatus = (ids, status) => (dispatch) => {
   const promises = ids.map(id => changeApplicationStatus(id, status));
-  return Promise.all(promises).then((values) => {
+  Promise.all(promises).then((values) => {
     const changedIds = values.map(value => value.id);
     dispatch(applicationStatusChanged(changedIds, status));
   });

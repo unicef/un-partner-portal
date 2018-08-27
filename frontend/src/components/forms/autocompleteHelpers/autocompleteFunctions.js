@@ -71,7 +71,7 @@ export function getAsyncSuggestions(value, asyncFunc, search, selected) {
   const inputLength = inputValue.length;
   return inputLength === 0
     ? []
-    : asyncFunc({ [search]: value, page_size: 5, exclude: selected && selected.length > 0 ? selected.join(',') : [] }).then(response => response);
+    : asyncFunc({ [search]: value, page_size: 5, exclude: selected.length > 0 ? selected.join(',') : [] }).then(response => response);
 }
 
 export const debouncedAsyncSuggestions = _.debounce(getAsyncSuggestions, 500, {

@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import GridColumn from '../../../../../common/grid/gridColumn';
+import AwardedPartners from './awardedPartners';
 import ReviewSummary from './reviewSummary';
 import ReviewersSummary from './reviewersSummary';
 import FinalizeJustification from './finalizeJustification';
 import RecommendedPartners from './recommendedPartners/recommendedPartners';
-import PreselectedPartners from './preselectedPartners/preselectedPartners';
 
 const ResultsContainer = (props) => {
   const { id } = props;
@@ -15,7 +15,7 @@ const ResultsContainer = (props) => {
       <Grid item xs={12} sm={8}>
         <GridColumn >
           <RecommendedPartners id={id} />
-          <PreselectedPartners id={id} />
+          <AwardedPartners id={id} />
         </GridColumn>
       </Grid>
       <Grid item xs={12} sm={4} >

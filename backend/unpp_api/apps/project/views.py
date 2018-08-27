@@ -343,8 +343,9 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
             ]
         ),
     )
-    serializer_class = PartnerApplicationSerializer
+    serializer_class = ApplicationFullSerializer
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         if self.request.active_partner.is_hq:
             raise serializers.ValidationError(
@@ -356,20 +357,14 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
                 "You don't have the ability to submit an application if Your profile is not completed."
             )
 
+        eoi = get_object_or_404(EOI, id=self.kwargs.get('pk'))
+        request.data['eoi_id'] = eoi.pk
+        request.data['agency_id'] = eoi.agency.pk
+        request.data['partner_id'] = self.request.active_partner.id
+
         return super(PartnerEOIApplicationCreateAPIView, self).create(request, *args, **kwargs)
 
-    @transaction.atomic
     def perform_create(self, serializer):
-        eoi = get_object_or_404(EOI, id=self.kwargs.get('pk'))
-        if eoi.applications.filter(partner=self.request.active_partner).exists():
-            raise serializers.ValidationError("You already applied for this project.")
-
-        serializer.save(
-            eoi=eoi,
-            agency=eoi.agency,
-            partner=self.request.active_partner,
-            submitter=self.request.user,
-        )
         super(PartnerEOIApplicationCreateAPIView, self).perform_create(serializer)
         send_notification_application_created(serializer.instance)
 
@@ -384,7 +379,7 @@ class PartnerEOIApplicationRetrieveAPIView(RetrieveAPIView):
         ),
     )
     queryset = Application.objects.all()
-    serializer_class = PartnerApplicationSerializer
+    serializer_class = ApplicationFullSerializer
 
     def get_object(self):
         return get_object_or_404(self.get_queryset(), **{
@@ -462,12 +457,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
         ),
     )
     queryset = Application.objects.select_related("partner", "eoi", "cn").prefetch_related("eoi__reviewers").all()
-
-    def get_serializer_class(self):
-        if self.request.agency_member:
-            return ApplicationFullSerializer
-        else:
-            return PartnerApplicationSerializer
+    serializer_class = ApplicationFullSerializer
 
     def get_queryset(self):
         queryset = super(ApplicationAPIView, self).get_queryset()
@@ -501,8 +491,8 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
             current_user_has_permission(self.request, agency_permissions=[
                 AgencyPermission.CFEI_SELECT_RECOMMENDED_PARTNER
             ], raise_exception=True)
-            save_kwargs['agency_decision_date'] = timezone.now().date()
-            save_kwargs['agency_decision_maker'] = self.request.user
+            save_kwargs['win_date'] = timezone.now().date()
+            save_kwargs['win_decision_maker'] = self.request.user
 
         if partner_decision:
             save_kwargs['partner_decision_date'] = timezone.now().date()

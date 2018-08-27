@@ -416,9 +416,10 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
 
         response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
-        app = Application.objects.last()
-        self.assertEquals(response.data['id'], app.id)
-        self.assertEquals(app.submitter.id, self.user.id)
+        app_id = Application.objects.last().id
+        self.assertEquals(response.data['id'], app_id)
+        self.assertEquals(response.data['eoi'], eoi_id)
+        self.assertEquals(response.data['submitter']['id'], self.user.id)
         common_file = CommonFile.objects.create()
         common_file.file_field.save('test.csv', open(filename))
 
@@ -427,7 +428,8 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         }
         response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEquals(response.data[0], 'You already applied for this project.')
+        expected_msgs = ['Project application already exists for this partner.']
+        self.assertEquals(response.data['non_field_errors'], expected_msgs)
 
         url = reverse('projects:agency-applications', kwargs={"pk": eoi_id})
         payload = {

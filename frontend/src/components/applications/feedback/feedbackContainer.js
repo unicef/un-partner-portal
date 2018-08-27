@@ -57,16 +57,16 @@ class FeedbackContainer extends Component {
   }
 
   componentWillMount() {
-    if (this.props.applicationId && this.props.isCompleted) {
+    if (this.props.applicationId) {
       this.props.loadFeedback(this.state.params);
     }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (!R.equals(nextState.params, this.state.params) && this.props.isCompleted) {
+    if (!R.equals(nextState.params, this.state.params)) {
       this.props.loadFeedback(nextState.params);
       return false;
-    } else if (!this.props.applicationId && nextProps.applicationId && this.props.isCompleted) {
+    } else if (!this.props.applicationId && nextProps.applicationId) {
       this.props.loadFeedback(nextState.params);
       return false;
     }
@@ -128,9 +128,10 @@ FeedbackContainer.propTypes = {
   feedback: PropTypes.array,
   loadFeedback: PropTypes.func,
   allowedToAdd: PropTypes.bool,
-  applicationId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  applicationId: PropTypes.string,
   count: PropTypes.number,
   extraTitle: PropTypes.string,
+  feedbackId: PropTypes.string,
   isCompleted: PropTypes.bool,
 };
 

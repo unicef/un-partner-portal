@@ -9,12 +9,13 @@ import { updateApplication } from '../../../../reducers/applicationDetails';
 import AwardApplicationForm from './awardApplicationForm';
 
 const messages = {
-  title: 'Are you sure you want to select this partner?',
-  header: 'Please confirm you want to select this partner. Email with notification will be sent to selected partner.',
+  title: 'Select Concept Note',
+  header: 'Partner will be notified by e-mail. Provide justification for your decision',
   award: 'submit',
 };
 
-class AwardApplicationModal extends Component {
+
+class awardApplicationModal extends Component {
   constructor(props) {
     super(props);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -22,8 +23,7 @@ class AwardApplicationModal extends Component {
   }
 
   onFormSubmit(values) {
-    this.props.updateApplication({ ...values, did_win: true })
-      .then(() => this.props.onUpdate());
+    this.props.updateApplication({ ...values, did_win: true });
     this.handleDialogClose();
   }
 
@@ -60,24 +60,26 @@ class AwardApplicationModal extends Component {
   }
 }
 
-AwardApplicationModal.propTypes = {
+awardApplicationModal.propTypes = {
   dialogOpen: PropTypes.bool,
   submit: PropTypes.func,
   handleDialogClose: PropTypes.func,
   updateApplication: PropTypes.func,
-  onUpdate: PropTypes.func,
   router: PropTypes.object,
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  updateApplication: body => dispatch(updateApplication(
-    ownProps.applicationId, body)),
-  submit: () => dispatch(submit('awardApplication')),
-});
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const { params: { applicationId } } = ownProps;
+  return {
+    updateApplication: body => dispatch(updateApplication(
+      applicationId, body)),
+    submit: () => dispatch(submit('awardApplication')),
+  };
+};
 
 const containerAwardApplicationModal = connect(
   null,
   mapDispatchToProps,
-)(AwardApplicationModal);
+)(awardApplicationModal);
 
 export default withRouter(containerAwardApplicationModal);

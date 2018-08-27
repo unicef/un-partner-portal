@@ -12,7 +12,6 @@ import {
   selectCfeiDetails,
   isCfeiCompleted,
   isUserACreator,
-  isCfeiDeadlinePassed,
 } from '../../../../../../store';
 import { loadReviewers } from '../../../../../../reducers/cfeiReviewers';
 import SingleReviewer from './singleReviewer';
@@ -57,16 +56,14 @@ class ReviewersSummary extends Component {
 
 
   render() {
-    const { deadlinePassed, loading } = this.props;
+    const { loading } = this.props;
     return (
-      deadlinePassed
-        ? <HeaderList
-          loading={loading}
-          header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}
-        >
-          {this.content()}
-        </HeaderList>
-        : null
+      <HeaderList
+        loading={loading}
+        header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}
+      >
+        {this.content()}
+      </HeaderList>
     );
   }
 }
@@ -78,7 +75,6 @@ ReviewersSummary.propTypes = {
   getReviewers: PropTypes.func,
   loading: PropTypes.bool,
   cfeiCompleted: PropTypes.bool,
-  deadlinePassed: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -90,7 +86,6 @@ const mapStateToProps = (state, ownProps) => {
     cfeiReviewers: cfei ? cfei.reviewers : [],
     loading: state.cfeiReviewers.status.loading,
     cfeiCompleted: isCfeiCompleted(state, ownProps.id),
-    deadlinePassed: isCfeiDeadlinePassed(state, ownProps.id),
   };
 };
 
