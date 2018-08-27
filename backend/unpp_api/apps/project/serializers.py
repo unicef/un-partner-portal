@@ -10,7 +10,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CurrentUserDefault
-from rest_framework.validators import UniqueTogetherValidator
 
 from account.models import User
 from account.serializers import IDUserSerializer, BasicUserSerializer
@@ -211,6 +210,8 @@ class CreateDirectApplicationSerializer(serializers.ModelSerializer):
             raise ValidationError('HQs of International partners are not eligible for Direct Selections / Retention.')
         if partner.is_locked:
             raise ValidationError('Partner account has been locked and is no longer eligible for selection.')
+        if partner.has_red_flag:
+            raise ValidationError('Partner accounts with red flags are not eligible for selection.')
         return partner
 
 
@@ -239,15 +240,37 @@ class ProposalEOIDetailsSerializer(serializers.Serializer):
         ).data
 
 
-# TODO - break this up into different serializers for different purposes
-class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
+class PartnerApplicationSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
+
+    cn = CommonFileSerializer()
+    decision_date = serializers.DateField(source='partner_decision_date', read_only=True)
+
+    class Meta:
+        model = Application
+        fields = (
+            'id',
+            'did_win',
+            'did_withdraw',
+            'did_accept',
+            'did_decline',
+            'decision_date',
+            'cn',
+        )
+        read_only_fields = (
+            'did_win',
+            'did_withdraw',
+            'decision_date',
+        )
+
+    prevent_keys = ["cn"]
+
+
+class ApplicationFullSerializer(serializers.ModelSerializer):
 
     cn = CommonFileSerializer()
     eoi_id = serializers.IntegerField(write_only=True)
     partner = PartnerSerializer(read_only=True)
-    partner_id = serializers.IntegerField(write_only=True)
     agency = AgencySerializer(read_only=True)
-    agency_id = serializers.IntegerField(write_only=True)
     proposal_of_eoi_details = ProposalEOIDetailsSerializer(read_only=True)
     locations_proposal_of_eoi = PointSerializer(many=True, read_only=True)
     submitter = BasicUserSerializer(read_only=True, default=serializers.CurrentUserDefault())
@@ -267,43 +290,18 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
             'accept_notification',
         )
         read_only_fields = (
+            'cn',
             'eoi',
             'agency_decision_date',
             'partner_decision_date',
+            'did_accept',
+            'did_decline',
         )
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Application.objects.all(),
-                fields=('eoi_id', 'partner_id'),
-                message='Project application already exists for this partner.'
-            )
-        ]
-
-    prevent_keys = ["cn"]
-
-    def get_extra_kwargs(self):
-        extra_kwargs = super(ApplicationFullSerializer, self).get_extra_kwargs()
-        request = self.context['request']
-        if request.agency_member:
-            extra_kwargs['did_accept'] = {
-                'read_only': True
-            }
-            extra_kwargs['did_decline'] = {
-                'read_only': True
-            }
-        elif request.active_partner:
-            extra_kwargs['did_win'] = {
-                'read_only': True
-            }
-
-        return extra_kwargs
 
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
 
     def validate(self, data):
-        self.prevent_many_common_file_validator(data)
-
         if isinstance(self.instance, Application):
             app = self.instance
             allowed_to_modify_status = list(app.eoi.focal_points.values_list('id', flat=True)) + [app.eoi.created_by_id]
@@ -336,6 +334,11 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
 
                 if app.partner.has_red_flag:
                     raise serializers.ValidationError("You cannot award an application if the profile has red flag.")
+
+                if app.partner.has_escalated_flag:
+                    raise serializers.ValidationError(
+                        "You cannot award an application if the profile has escalated risk flags."
+                    )
 
                 if not app.assessments_is_completed:
                     raise serializers.ValidationError(
@@ -862,6 +865,8 @@ class ApplicationsListSerializer(serializers.ModelSerializer):
             'assessments',
             'completed_assessments_count',
             'average_scores',
+            'did_accept',
+            'did_decline',
             'did_win',
             'did_withdraw',
             'assessments_completed',
@@ -1226,7 +1231,9 @@ class EOIReviewersAssessmentsSerializer(serializers.ModelSerializer):
         lookup_field = self.context['view'].lookup_field
         eoi_id = self.context['request'].parser_context['kwargs'][lookup_field]
         eoi = get_object_or_404(EOI, id=eoi_id)
-        applications = eoi.applications.filter(status=APPLICATION_STATUSES.preselected)
+        applications = eoi.applications.filter(status__in=[
+                APPLICATION_STATUSES.preselected, APPLICATION_STATUSES.recommended,
+        ])
         applications_count = applications.count()
 
         assessments_count = Assessment.objects.filter(reviewer=user, application__in=applications).count()

@@ -7,11 +7,13 @@ import ControlledModal from '../../../common/modals/controlledModal';
 import { completeAssessmentRequest } from '../../../../reducers/completeAssessment';
 import { loadCfei } from '../../../../reducers/cfeiDetails';
 import { selectApplicationPartnerName } from '../../../../store';
+import Loader from '../../../../components/common/loader';
 
 const messages = {
   complete: 'complete',
   title: 'Are you sure you want to complete your assessment?',
   header: 'Once your assessments are completed you will no longer be able to edit your scores.',
+  error: 'You need to review all applications before completing.',
 };
 
 class AddReviewModal extends Component {
@@ -23,18 +25,11 @@ class AddReviewModal extends Component {
     const { completeAssessment, handleDialogClose, loadCfeiDetails } = this.props;
 
     completeAssessment()
-      .then(() => { loadCfeiDetails(); handleDialogClose(); })
-      .catch((error) => {
-        const errorMsg = messages.error;
-        throw new SubmissionError({
-          ...error.response.data,
-          _error: errorMsg,
-        });
-      });
+      .then(() => { loadCfeiDetails(); handleDialogClose(); });
   }
 
   render() {
-    const { dialogOpen, handleDialogClose } = this.props;
+    const { dialogOpen, handleDialogClose, loading } = this.props;
     return (
       <div>
         <ControlledModal
@@ -54,6 +49,7 @@ class AddReviewModal extends Component {
           }}
           content={''}
         />
+        <Loader loading={loading} fullscreen />
       </div >
     );
   }
@@ -61,6 +57,7 @@ class AddReviewModal extends Component {
 
 AddReviewModal.propTypes = {
   dialogOpen: PropTypes.bool,
+  loading: PropTypes.bool,
   loadCfeiDetails: PropTypes.func,
   completeAssessment: PropTypes.func,
   handleDialogClose: PropTypes.func,
@@ -70,6 +67,7 @@ const mapStateToProps = (state, ownProps) => {
   const { applicationId } = ownProps.params;
   const partnerName = selectApplicationPartnerName(state, applicationId);
   return {
+    loading: state.completeAssessment.status.loading,
     partnerName,
   };
 };

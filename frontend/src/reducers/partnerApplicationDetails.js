@@ -15,15 +15,14 @@ export const loadPartnerApplication = (cfeiId, application) => (
 
 const deletePartnerApplication = (state, applicationId) => R.filter(item => item.id === applicationId, state);
 
-export const updateApplication = (applicationId, body) => (dispatch, getState) =>
+export const updateApplication = (cfeiId, applicationId, body) => (dispatch, getState) =>
   patchApplication(applicationId, body)
     .then((application) => {
-      dispatch(loadPartnerApplication(application.eoi, application, getState));
+      dispatch(loadPartnerApplication(cfeiId, application, getState));
       return application;
     });
 
-const saveApplication = (state, action) =>
-  R.assoc(action.cfeiId, action.application, state);
+const saveApplication = (state, action) => R.assoc(action.cfeiId, action.application, state);
 
 export function selectApplication(state, id) {
   const { [id]: application = {} } = state;

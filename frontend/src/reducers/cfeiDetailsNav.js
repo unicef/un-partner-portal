@@ -36,7 +36,7 @@ const initialState = [
   },
   {
     path: DETAILS_ITEMS.PRESELECTED,
-    label: 'preselected list',
+    label: 'short list',
     roles: [AGENCY],
     types: [PROJECT_TYPES.OPEN],
   },

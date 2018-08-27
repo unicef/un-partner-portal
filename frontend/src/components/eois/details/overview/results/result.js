@@ -10,14 +10,22 @@ import ResultForm from './resultForm';
 
 const messages = {
   title: 'Result',
+  retracted: 'Your selection was retracted.',
   expected: (_, notifDate) => `Notification of results will be made by: ${formatDateForPrint(notifDate)}`,
 };
 
 
 const Fields = (application, notifDate) => {
-  if (application.did_win && notifDate) {
+  if (application.did_win && notifDate && !application.did_withdraw) {
     return <ResultForm notifDate={notifDate} application={application} />;
+  } else if (application.did_withdraw) {
+    return (<PaddedContent>
+      <Typography>
+        {messages.retracted}
+      </Typography>
+    </PaddedContent>);
   }
+
   return (
     <PaddedContent>
       <Typography>
