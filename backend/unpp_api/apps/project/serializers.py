@@ -223,15 +223,35 @@ class ProposalEOIDetailsSerializer(serializers.Serializer):
         ).data
 
 
-# TODO - break this up into different serializers for different purposes
-class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
+class PartnerApplicationSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
+
+    cn = CommonFileSerializer()
+    decision_date = serializers.DateField(source='partner_decision_date', read_only=True)
+
+    class Meta:
+        model = Application
+        fields = (
+            'id',
+            'did_win',
+            'did_accept',
+            'did_decline',
+            'decision_date',
+            'cn',
+        )
+        read_only_fields = (
+            'did_win',
+            'decision_date',
+        )
+
+    prevent_keys = ["cn"]
+
+
+class ApplicationFullSerializer(serializers.ModelSerializer):
 
     cn = CommonFileSerializer()
     eoi_id = serializers.IntegerField(write_only=True)
     partner = PartnerSerializer(read_only=True)
-    partner_id = serializers.IntegerField(write_only=True)
     agency = AgencySerializer(read_only=True)
-    agency_id = serializers.IntegerField(write_only=True)
     proposal_of_eoi_details = ProposalEOIDetailsSerializer(read_only=True)
     locations_proposal_of_eoi = PointSerializer(many=True, read_only=True)
     submitter = BasicUserSerializer(read_only=True, default=serializers.CurrentUserDefault())
@@ -251,43 +271,18 @@ class ApplicationFullSerializer(MixinPreventManyCommonFile, serializers.ModelSer
             'accept_notification',
         )
         read_only_fields = (
+            'cn',
             'eoi',
             'agency_decision_date',
             'partner_decision_date',
+            'did_accept',
+            'did_decline',
         )
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Application.objects.all(),
-                fields=('eoi_id', 'partner_id'),
-                message='Project application already exists for this partner.'
-            )
-        ]
-
-    prevent_keys = ["cn"]
-
-    def get_extra_kwargs(self):
-        extra_kwargs = super(ApplicationFullSerializer, self).get_extra_kwargs()
-        request = self.context['request']
-        if request.agency_member:
-            extra_kwargs['did_accept'] = {
-                'read_only': True
-            }
-            extra_kwargs['did_decline'] = {
-                'read_only': True
-            }
-        elif request.active_partner:
-            extra_kwargs['did_win'] = {
-                'read_only': True
-            }
-
-        return extra_kwargs
 
     def get_is_direct(self, obj):
         return obj.eoi_converted is not None
 
     def validate(self, data):
-        self.prevent_many_common_file_validator(data)
-
         if isinstance(self.instance, Application):
             app = self.instance
             allowed_to_modify_status = list(app.eoi.focal_points.values_list('id', flat=True)) + [app.eoi.created_by_id]
