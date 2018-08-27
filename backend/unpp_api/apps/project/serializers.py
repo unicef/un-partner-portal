@@ -232,6 +232,7 @@ class PartnerApplicationSerializer(MixinPreventManyCommonFile, serializers.Model
         fields = (
             'id',
             'did_win',
+            'did_withdraw',
             'did_accept',
             'did_decline',
             'decision_date',
@@ -239,6 +240,7 @@ class PartnerApplicationSerializer(MixinPreventManyCommonFile, serializers.Model
         )
         read_only_fields = (
             'did_win',
+            'did_withdraw',
             'decision_date',
         )
 
@@ -314,6 +316,11 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
 
                 if app.partner.has_red_flag:
                     raise serializers.ValidationError("You cannot award an application if the profile has red flag.")
+
+                if app.partner.has_escalated_flag:
+                    raise serializers.ValidationError(
+                        "You cannot award an application if the profile has escalated risk flags."
+                    )
 
                 if not app.assessments_is_completed:
                     raise serializers.ValidationError(
