@@ -6,40 +6,30 @@ import Typography from 'material-ui/Typography';
 import { withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Divider from 'material-ui/Divider';
-import Button from 'material-ui/Button';
 import HeaderList from '../../../../../../common/list/headerList';
-import { selectRecommendedPartnersCount, selectRecommendedPartners, isUserACreator, isUserAFocalPoint, cfeiHasRecommendedPartner } from '../../../../../../../store';
-import { loadRecommendedPartners } from '../../../../../../../reducers/recommendedPartners';
+import { selectPreselectedPartnersCount, selectPreselectedPartners } from '../../../../../../../store';
+import { loadPreselectedPartners } from '../../../../../../../reducers/preselectedPartners';
 import CollapsableItemAction from '../../../../../../common/collapsableItemAction';
 import SpreadContent from '../../../../../../common/spreadContent';
 import PaddedContent from '../../../../../../common/paddedContent';
-import { formatDateForPrint } from '../../../../../../../helpers/dates';
 import Pagination from '../../../../../../common/pagination';
 import EmptyContent from '../../../../../../common/emptyContent';
-import SendRecommendedPartnerButton from '../../../../../buttons/sendForDecisionButton';
 import GridColumn from '../../../../../../common/grid/gridColumn';
 import { APPLICATION_STATUSES } from '../../../../../../../helpers/constants';
-import { AGENCY_PERMISSIONS, checkPermission } from '../../../../../../../helpers/permissions';
-import AwardApplicationButton from '../../../../../buttons/awardApplicationButton';
-import WithdrawApplicationButton from '../../../../../buttons/withdrawApplicationButton';
-import ItemRecommendation from './itemRecommendation';
 
 const messages = {
-  title: 'Recommended Partner(s)',
+  title: 'Preselected Partner(s)',
   button: 'send',
-  noInfo: 'No recommended partner(s).',
+  noInfo: 'No preselected partner(s).',
   criteria: 'Criteria',
   score: 'Average Score',
   totalScore: 'Average total score',
   notes: 'Notes',
   reviewer: 'Reviewer',
   numberOfAssessments: 'Number of completed assessments',
-  retracted: 'rectracted',
-  selectionJustification: 'Justification for selection',
-  retractJustification: 'Justification for retraction',
 };
 
-class RecommendedPartners extends Component {
+class PreselectedPartners extends Component {
   constructor() {
     super();
     this.state = {
@@ -50,7 +40,6 @@ class RecommendedPartners extends Component {
     };
     this.handleChangePage = this.handleChangePage.bind(this);
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
-    this.applicationItem = this.applicationItem.bind(this);
   }
 
   componentWillMount() {
@@ -103,80 +92,34 @@ class RecommendedPartners extends Component {
           <Typography type="body2">{application.completed_assessments_count}</Typography>
         </SpreadContent>
         <Divider />
-        <SpreadContent>
-          <Typography type="caption">{messages.notes}</Typography>
-        </SpreadContent>
-        {application.assessments.map((item, index) => (<div key={`recommended_reviewer_${index}`}>
+        <Typography type="caption">{messages.notes}</Typography>
+        {application.assessments.map((item, index) => (<div key={`preselected_reviewer_${index}`}>
           <Typography type="body2">{item.reviewer_fullname}</Typography>
           <Typography type="body1">{item.note ? item.note : '-'}</Typography>
           {((index + 1) < application.assessments.length) && <Divider />}
         </div>))}
-        {application.did_win &&
-          <Divider />}
-        {application.did_win && <SpreadContent>
-          <Typography type="caption">{messages.selectionJustification}</Typography>
-        </SpreadContent>}
-        {application.did_withdraw &&
-        <Divider />}
-        {application.did_withdraw && <SpreadContent>
-          <Typography type="caption">{messages.retractJustification}</Typography>
-        </SpreadContent>}
       </GridColumn>
     </PaddedContent>);
   }
 
   applicationItem(application) {
-    const { isCreator, isFocalPoint, hasSelectRecommendedPermission } = this.props;
-
-    let action = null;
-    if (isCreator || isFocalPoint) {
-      if (hasSelectRecommendedPermission) {
-        if (application.did_win) {
-          if (application.did_withdraw) {
-            action = <Button disabled>{messages.retracted}</Button>;
-          } else {
-            action = (<WithdrawApplicationButton
-              onUpdate={() => this.props.loadPartners(this.state.params)}
-              applicationId={application.id}
-            />);
-          }
-        } else {
-          action = (<AwardApplicationButton
-            onUpdate={() => this.props.loadPartners(this.state.params)}
-            applicationId={application.id}
-          />);
-        }
-      }
-    }
-
     return (<div key={application.id}>
       <CollapsableItemAction
         title={application.partner_additional.legal_name}
-        actionComponent={action}
-        component={<ItemRecommendation
-          assessments={application.assessments}
-          averageScores={application.average_scores}
-          averageTotalScores={application.average_total_score}
-          id={application.id}
-        />}
+        component={this.expandedContent(application)}
       />
     </div>);
   }
 
   render() {
-    const { cfeiId, loading, partners, count, hasSelectRecommendedPermission, hasRecommendedPartner } = this.props;
+    const { loading, partners, count } = this.props;
     const { params: { page, page_size } } = this.state;
-
     return (
       <HeaderList
         header={
-          <SpreadContent>
-            <Typography style={{ margin: 'auto 0' }} type="headline">
-              {messages.title}
-            </Typography>
-            {!hasSelectRecommendedPermission &&
-            <SendRecommendedPartnerButton id={cfeiId} />}
-          </SpreadContent>
+          <Typography style={{ margin: 'auto 0' }} type="headline">
+            {messages.title}
+          </Typography>
         }
         loading={loading}
       >
@@ -200,38 +143,28 @@ class RecommendedPartners extends Component {
   }
 }
 
-RecommendedPartners.propTypes = {
+PreselectedPartners.propTypes = {
   loading: PropTypes.bool,
   partners: PropTypes.array,
   loadPartners: PropTypes.func,
   count: PropTypes.number,
-  cfeiId: PropTypes.number,
+  cfeiId: PropTypes.string,
   allCriteria: PropTypes.object,
-  hasSelectRecommendedPermission: PropTypes.bool,
-  isFocalPoint: PropTypes.bool,
-  isCreator: PropTypes.bool,
 };
 
-const mapStateToProps = (state, ownProps) => {
-  const cfeiId = Number(ownProps.params.id);
-
-  return {
-    loading: state.recommendedPartners.status.loading,
-    partners: selectRecommendedPartners(state, cfeiId),
-    count: selectRecommendedPartnersCount(state, cfeiId),
-    hasSelectRecommendedPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_SELECT_RECOMMENDED_PARTNER, state),
-    isFocalPoint: isUserAFocalPoint(state, cfeiId),
-    isCreator: isUserACreator(state, cfeiId),
-    cfeiId,
-    allCriteria: state.selectionCriteria,
-  };
-};
+const mapStateToProps = (state, ownProps) => ({
+  loading: state.preselectedPartners.status.loading,
+  partners: selectPreselectedPartners(state, ownProps.params.id),
+  count: selectPreselectedPartnersCount(state, ownProps.params.id),
+  cfeiId: ownProps.params.id,
+  allCriteria: state.selectionCriteria,
+});
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  loadPartners: params => dispatch(loadRecommendedPartners(ownProps.params.id, { ...params, status: [APPLICATION_STATUSES.REC].join(',') })),
+  loadPartners: params => dispatch(loadPreselectedPartners(ownProps.params.id, { ...params, status: APPLICATION_STATUSES.PRE })),
 });
 
 export default R.compose(
   withRouter,
   connect(mapStateToProps, mapDispatchToProps),
-)(RecommendedPartners);
+)(PreselectedPartners);

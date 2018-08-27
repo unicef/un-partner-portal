@@ -47,6 +47,7 @@ import partnerAppDetails, * as partnerAppDetailsSelector from './reducers/partne
 import agencies from './reducers/agencies';
 import applicationFeedback, * as applicationFeedbackSelector from './reducers/applicationFeedback';
 import recommendedPartners, * as recommendedPartnersSelector from './reducers/recommendedPartners';
+import preselectedPartners, * as preselectedPartnersSelector from './reducers/preselectedPartners';
 import partnerVerifications, * as partnerVerificationsSelector from './reducers/partnerVerifications';
 import partnerVerificationsList from './reducers/partnerVerificationsList';
 import cfeiReviewSummary, { selectReviewSummary } from './reducers/cfeiReviewSummary';
@@ -82,6 +83,8 @@ import partnerMembersList from './reducers/partnerMembersList';
 import vendorNumber from './reducers/vendorNumber';
 import removeVendorNumber from './reducers/deleteVendorNumber';
 import partnerUnData from './reducers/partnerUnData';
+import completeAssessment from './reducers/completeAssessment';
+import sendCfeiForDecision from './reducers/sendCfeiForDecision';
 // ID portal
 
 import idPortalNav from './idPortal/reducers/nav';
@@ -92,7 +95,10 @@ import idPortalDeactivateUser from './idPortal/reducers/deactivateUser';
 
 
 const mainReducer = combineReducers({
+  sendCfeiForDecision,
+  completeAssessment,
   recommendedPartners,
+  preselectedPartners,
   partnerUnData,
   vendorNumber,
   removeVendorNumber,
@@ -371,6 +377,9 @@ export const isCfeiPublished = (state, id) =>
 export const isCfeiDeadlinePassed = (state, id) =>
   cfeiDetailsSelector.isCfeiDeadlinePassed(state.cfeiDetails.data, id);
 
+export const cfeiHasRecommendedPartner = (state, id) =>
+  cfeiDetailsSelector.cfeiHasRecommendedPartner(state.cfeiDetails.data, id);
+
 export const isCfeiPinned = (state, id) =>
   cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.data, id);
 
@@ -423,6 +432,9 @@ export const mapFocalPointsReviewersToSelection = state =>
   mapValuesForSelectionField(
     agencyMembersSelectors.selectPossibleFocalPointsReviewers(state.agencyMembers.data));
 
+export const cfeiDetailsReviewers = (state, cfeiId) => cfeiDetailsSelector.cfeiDetailsReviewers(
+  state.cfeiDetails.data, cfeiId, state.session.userId);
+
 export const isUserACreator = (state, cfeiId) => cfeiDetailsSelector.isUserACreator(
   state.cfeiDetails.data, cfeiId, state.session.userId);
 
@@ -430,6 +442,9 @@ export const isUserAReviewer = (state, cfeiId) => cfeiDetailsSelector.isUserARev
   state.cfeiDetails.data, cfeiId, state.session.userId);
 
 export const isUserAFocalPoint = (state, cfeiId) => cfeiDetailsSelector.isUserAFocalPoint(
+  state.cfeiDetails.data, cfeiId, state.session.userId);
+
+export const isSendForDecision = (state, cfeiId) => cfeiDetailsSelector.isSendForDecision(
   state.cfeiDetails.data, cfeiId, state.session.userId);
 
 export const selectNormalizedCompletionReasons = state =>
@@ -461,6 +476,12 @@ export const selectRecommendedPartnersCount = (state, cfeiId) =>
 
 export const selectRecommendedPartners = (state, cfeiId) =>
   recommendedPartnersSelector.selectPartners(state.recommendedPartners, cfeiId);
+
+export const selectPreselectedPartnersCount = (state, cfeiId) =>
+  preselectedPartnersSelector.selectCount(state.preselectedPartners, cfeiId);
+
+export const selectPreselectedPartners = (state, cfeiId) =>
+  preselectedPartnersSelector.selectPartners(state.preselectedPartners, cfeiId);
 
 export const selectPartnerVerifications = (state, partnerId) =>
   partnerVerificationsSelector.selectVerifications(state.partnerVerifications, partnerId);

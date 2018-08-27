@@ -10,13 +10,13 @@ const messages = {
   withdraw: 'retract selection',
 };
 
-
 const WithdrawApplicationButton = (props) => {
   const {
     applicationId,
     handleDialogClose,
     handleDialogOpen,
     dialogOpen,
+    onUpdate,
     ...other
   } = props;
 
@@ -31,6 +31,7 @@ const WithdrawApplicationButton = (props) => {
       </Button>
       <WithdrawApplicationModal
         applicationId={applicationId}
+        onUpdate={onUpdate}
         dialogOpen={dialogOpen}
         handleDialogClose={handleDialogClose}
       />
@@ -47,7 +48,7 @@ WithdrawApplicationButton.propTypes = {
   dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
+  onUpdate: PropTypes.func,
 };
-
 
 export default withDialogHandling(WithdrawApplicationButton);

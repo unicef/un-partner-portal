@@ -14,7 +14,7 @@ const messages = {
 };
 
 
-class awardApplicationModal extends Component {
+class RetractApplicationModal extends Component {
   constructor(props) {
     super(props);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -23,8 +23,8 @@ class awardApplicationModal extends Component {
   onFormSubmit(values) {
     this.props.handleDialogClose();
     this.props.updateApplication({ ...values,
-      did_withdraw: true,
-      justification_reason: null });
+      did_withdraw: true })
+      .then(() => this.props.onUpdate());
   }
 
   render() {
@@ -53,11 +53,12 @@ class awardApplicationModal extends Component {
   }
 }
 
-awardApplicationModal.propTypes = {
+RetractApplicationModal.propTypes = {
   dialogOpen: PropTypes.bool,
   submit: PropTypes.func,
   handleDialogClose: PropTypes.func,
   updateApplication: PropTypes.func,
+  onUpdate: PropTypes.func,
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
@@ -69,9 +70,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   };
 };
 
-const containerAwardApplicationModal = connect(
+const connected = connect(
   null,
   mapDispatchToProps,
-)(awardApplicationModal);
+)(RetractApplicationModal);
 
-export default withRouter(containerAwardApplicationModal);
+export default withRouter(connected);

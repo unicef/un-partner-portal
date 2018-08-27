@@ -94,11 +94,14 @@ class OpenCfeiPreselections extends Component {
     } else if (column.name === 'recommended_partner') {
       return (<RecommendPartnerCell
         id={row.id}
+        didWin={row.did_win}
+        retracted={row.did_withdraw}
         conceptNote={row.cn}
         score={row.average_total_score}
         assessments={row.assessments}
         finishedReviews={row.assessments_completed && row.completed_assessments_count > 0}
         hovered={hovered}
+        status={row.status}
         allowedToEdit={this.props.allowedToEdit}
       />);
     }
@@ -114,7 +117,10 @@ class OpenCfeiPreselections extends Component {
     if (!allowedToEdit) {
       finalColumns = R.reject(column => column.name === 'average_total_score', finalColumns);
       finalColumns = R.reject(column => column.name === 'recommended_partner', finalColumns);
+    } else if (!isDeadlinePassed) {
+      finalColumns = R.reject(column => column.name === 'recommended_partner', finalColumns);
     }
+
     if (!isReviewer) {
       finalColumns = R.reject(column => column.name === 'your_score', finalColumns);
     }
@@ -185,7 +191,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = dispatch => ({
   loadApplications: (id, params) => dispatch(
     loadApplications(id, { ...params,
-      status: APPLICATION_STATUSES.PRE })),
+      status: [APPLICATION_STATUSES.PRE, APPLICATION_STATUSES.REC].join(',') })),
 });
 
 

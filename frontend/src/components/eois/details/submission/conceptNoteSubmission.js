@@ -175,6 +175,9 @@ ConceptNoteSubmission.propTypes = {
 
 const formConceptNoteSubmission = reduxForm({
   form: 'CNSubmission',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(ConceptNoteSubmission);
 const selector = formValueSelector('CNSubmission');
 

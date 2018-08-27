@@ -198,6 +198,11 @@ export function isCfeiPinned(state, id) {
   return is_pinned;
 }
 
+export function isSendForDecision(state, id) {
+  const { [id]: { sent_for_decision = false } = {} } = state;
+  return sent_for_decision;
+}
+
 export function selectCfeiCriteria(state, id) {
   const { [id]: { assessments_criteria = [] } = {} } = state;
   return assessments_criteria;
@@ -214,6 +219,17 @@ export function isUserAReviewer(state, cfeiId, userId) {
   return false;
 }
 
+export function cfeiDetailsReviewers(state, cfeiId) {
+  const cfei = R.prop(cfeiId, state);
+  if (cfei) return cfei.reviewers;
+  return false;
+}
+
+export function cfeiHasRecommendedPartner(state, cfeId) {
+  const { [cfeId]: { contains_recommended_applications = false } = {} } = state;
+  return contains_recommended_applications;
+}
+
 export function isUserACreator(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
   if (cfei) return cfei.created_by === userId;
@@ -222,7 +238,10 @@ export function isUserACreator(state, cfeiId, userId) {
 
 export function isUserAFocalPoint(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
-  if (cfei) return cfei.focal_points.includes(userId);
+
+  if (cfei) {
+    return cfei.focal_points.includes(userId);
+  }
   return false;
 }
 

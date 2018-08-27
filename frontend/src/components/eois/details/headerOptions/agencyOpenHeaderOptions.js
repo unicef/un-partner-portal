@@ -30,6 +30,8 @@ import { selectCfeiStatus,
   isCfeiCompleted,
   isUserAFocalPoint,
   isUserACreator,
+  cfeiHasRecommendedPartner,
+  isSendForDecision,
 } from '../../../../store';
 import CancelCfeiButton from '../../buttons/cancelCfeiButton';
 
@@ -91,8 +93,11 @@ class PartnerOpenHeaderOptions extends Component {
       hasInvitePublishPermission,
       hasCancelPublishPermission,
       hasManageReviewersPermission,
+      hasRecommendedPartner,
+      isSend,
       status,
       isPublished,
+      isDeadlinePassed,
       isFocalPoint,
       isCreator } = this.props;
 
@@ -121,9 +126,10 @@ class PartnerOpenHeaderOptions extends Component {
         });
     }
 
-    if ((hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA)
+    if (((hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA)
     || (hasInviteSentPermission && isFocalPoint && status === PROJECT_STATUSES.SEN)
-    || (isPublished && this.isPuslishPermissionAllowed(hasInvitePublishPermission))) {
+    || (isPublished && this.isPuslishPermissionAllowed(hasInvitePublishPermission)))
+    && !isDeadlinePassed) {
       options.push(
         {
           name: invite,
@@ -131,7 +137,10 @@ class PartnerOpenHeaderOptions extends Component {
         });
     }
 
-    if (isPublished && this.isPuslishPermissionAllowed(hasManageReviewersPermission)) {
+    if (!hasRecommendedPartner
+      && !isSend
+      && isPublished
+      && this.isPuslishPermissionAllowed(hasManageReviewersPermission)) {
       options.push(
         {
           name: manage,
@@ -257,6 +266,7 @@ PartnerOpenHeaderOptions.propTypes = {
   hasEditPublishedDatesPermission: PropTypes.bool,
   hasManageReviewersPermission: PropTypes.bool,
   hasFinalizePermission: PropTypes.bool,
+  hasRecommendedPartner: PropTypes.bool,
   isDeadlinePassed: PropTypes.bool,
   isFocalPoint: PropTypes.bool,
   isCompleted: PropTypes.bool,
@@ -264,6 +274,7 @@ PartnerOpenHeaderOptions.propTypes = {
   isMFT: PropTypes.bool,
   isPAM: PropTypes.bool,
   isBasEd: PropTypes.bool,
+  isSend: PropTypes.bool,
   status: PropTypes.string,
 };
 
@@ -273,6 +284,7 @@ const mapStateToProps = (state, ownProps) => ({
   isCompleted: isCfeiCompleted(state, ownProps.id),
   isPublished: isCfeiPublished(state, ownProps.id),
   isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.id),
+  hasRecommendedPartner: cfeiHasRecommendedPartner(state, ownProps.id),
   status: selectCfeiStatus(state, ownProps.id),
   hasManageDraftPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_MANAGE, state),
   hasSendPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_SEND_TO_FOCAL_POINT_TO_PUBLISH,
@@ -290,6 +302,7 @@ const mapStateToProps = (state, ownProps) => ({
   isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
   isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),
   isBasEd: isRoleOffice(AGENCY_ROLES.EDITOR_BASIC, state),
+  isSend: isSendForDecision(state, ownProps.id),
 });
 
 
