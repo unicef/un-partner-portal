@@ -356,7 +356,9 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
 
     @transaction.atomic
     def perform_create(self, serializer):
-        eoi = get_object_or_404(EOI, id=self.kwargs.get('pk'))
+        eoi = get_object_or_404(
+            EOI, deadline_date__gte=date.today(), id=self.kwargs.get('pk')
+        )
         if eoi.applications.filter(partner=self.request.active_partner).exists():
             raise serializers.ValidationError("You already applied for this project.")
 
