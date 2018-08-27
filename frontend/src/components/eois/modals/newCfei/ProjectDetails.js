@@ -31,7 +31,7 @@ const ProjectDetails = (props) => {
         <fields.Background />
         <fields.Goal />
         <fields.OtherInfo />
-        <GridRow columns={4} >
+        <GridRow columns={3} >
           {children}
         </GridRow>
         <fields.Attachments />
