@@ -109,7 +109,7 @@ def get_new_common_file():
 
 
 def get_cfei_title():
-    return f'Help the {generate(2)[-1].title()}'
+    return f'{fake.catch_phrase()} for {" ".join(generate(4)).title()}'
 
 
 def get_partner_name():
