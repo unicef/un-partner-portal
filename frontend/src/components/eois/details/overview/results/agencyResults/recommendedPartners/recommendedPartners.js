@@ -76,55 +76,6 @@ class RecommendedPartners extends Component {
     this.setState({ params: { ...this.state.params, page_size: event.target.value } });
   }
 
-  expandedContent(application) {
-    const { allCriteria } = this.props;
-
-    return (<PaddedContent>
-      <GridColumn>
-        <SpreadContent>
-          <Typography type="caption">{messages.criteria}</Typography>
-          <Typography type="caption">{messages.score}</Typography>
-        </SpreadContent>
-        <Divider />
-        {R.keys(application.average_scores).map((key, index) => (<div key={index}>
-          <SpreadContent>
-            <Typography type="body1">{allCriteria[key]}</Typography>
-            <Typography type="body1">{application.average_scores[key]}</Typography>
-          </SpreadContent>
-          <Divider />
-        </div>))}
-        <SpreadContent>
-          <Typography type="body2">{messages.totalScore}</Typography>
-          <Typography type="body2">{application.average_total_score}</Typography>
-        </SpreadContent>
-        <Divider />
-        <SpreadContent>
-          <Typography type="body2">{messages.numberOfAssessments}</Typography>
-          <Typography type="body2">{application.completed_assessments_count}</Typography>
-        </SpreadContent>
-        <Divider />
-        <SpreadContent>
-          <Typography type="caption">{messages.notes}</Typography>
-        </SpreadContent>
-        {application.assessments.map((item, index) => (<div key={`recommended_reviewer_${index}`}>
-          <Typography type="body2">{item.reviewer_fullname}</Typography>
-          <Typography type="body1">{item.note ? item.note : '-'}</Typography>
-          {((index + 1) < application.assessments.length) && <Divider />}
-        </div>))}
-        {application.did_win &&
-          <Divider />}
-        {application.did_win && <SpreadContent>
-          <Typography type="caption">{messages.selectionJustification}</Typography>
-        </SpreadContent>}
-        {application.did_withdraw &&
-        <Divider />}
-        {application.did_withdraw && <SpreadContent>
-          <Typography type="caption">{messages.retractJustification}</Typography>
-        </SpreadContent>}
-      </GridColumn>
-    </PaddedContent>);
-  }
-
   applicationItem(application) {
     const { isCreator, isFocalPoint, hasSelectRecommendedPermission } = this.props;
 
@@ -206,7 +157,7 @@ RecommendedPartners.propTypes = {
   loadPartners: PropTypes.func,
   count: PropTypes.number,
   cfeiId: PropTypes.number,
-  allCriteria: PropTypes.object,
+  allCriteria: PropTypes.array,
   hasSelectRecommendedPermission: PropTypes.bool,
   isFocalPoint: PropTypes.bool,
   isCreator: PropTypes.bool,

@@ -74,8 +74,8 @@ class RecommendedPartners extends Component {
             {application.did_win && <div>
               <SpreadContent>
                 <Typography type="caption">{messages.selectionJustification}</Typography>
-                <Typography type="caption">{`${application.agency_decision_maker ? application.justification_reason : ''} ${application.agency_decision_date ? formatDateForPrint(application.agency_decision_date) : ''}`}</Typography>
               </SpreadContent>
+              <Typography type="body2">{`${application.agency_decision_maker ? application.agency_decision_maker.name : ''} ${application.agency_decision_date ? formatDateForPrint(application.agency_decision_date) : ''}`}</Typography>
               <Typography type="body1">{application.justification_reason ? application.justification_reason : '-'}</Typography>
             </div>}
             {application.did_withdraw &&
