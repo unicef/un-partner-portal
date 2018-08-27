@@ -6,7 +6,7 @@ import Typography from 'material-ui/Typography';
 import PaddedContent from '../../../../../common/paddedContent';
 import EmptyContent from '../../../../../common/emptyContent';
 import HeaderList from '../../../../../common/list/headerList';
-import { isUserAFocalPoint, selectCfeiReviewSummary, isUserACreator, isCfeiDeadlinePassed, isSendForDecision } from '../../../../../../store';
+import { isUserAFocalPoint, selectCfeiReviewSummary, isUserACreator, isCfeiDeadlinePassed, isSendForDecision, cfeiHasPartnerAccepted, isCfeiCompleted } from '../../../../../../store';
 import { loadReviewSummary } from '../../../../../../reducers/cfeiReviewSummary';
 import ChangeSummaryButton from '../../../../buttons/changeSummaryButton';
 import ReviewSummaryForm from '../../../../modals/changeSummary/changeSummaryForm';
@@ -45,7 +45,7 @@ class ReviewSummary extends Component {
   }
 
   content() {
-    const { id, loading, summary, hasAddSummaryPermission, deadlinePassed } = this.props;
+    const { id, loading, summary, hasAddSummaryPermission, deadlinePassed, partnerAccepted, isCompleted } = this.props;
     if (loading) {
       return <EmptyContent />;
     } else if (!summary || isEmpty(summary)) {
@@ -62,7 +62,7 @@ class ReviewSummary extends Component {
     return (
       <PaddedContent>
         <ReviewSummaryForm form="changeSummaryReadOnly" readOnly cfeiId={id} />
-        {deadlinePassed && this.isActionAllowed(hasAddSummaryPermission) && <ChangeSummaryButton
+        {(!partnerAccepted || !isCompleted) && deadlinePassed && this.isActionAllowed(hasAddSummaryPermission) && <ChangeSummaryButton
           cfeiId={id}
           edit={!!summary.review_summary_comment}
         />}
@@ -96,6 +96,8 @@ ReviewSummary.propTypes = {
   loading: PropTypes.bool,
   deadlinePassed: PropTypes.bool,
   isSend: PropTypes.bool,
+  isCompleted: PropTypes.bool,
+  partnerAccepted: PropTypes.bool,
   getReviewSummary: PropTypes.func,
 };
 
@@ -109,7 +111,9 @@ const mapStateToProps = (state, ownProps) => ({
   isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
   isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),
   isBasEd: isRoleOffice(AGENCY_ROLES.EDITOR_BASIC, state),
+  isCompleted: isCfeiCompleted(state, ownProps.id),
   deadlinePassed: isCfeiDeadlinePassed(state, ownProps.id),
+  partnerAccepted: cfeiHasPartnerAccepted(state, ownProps.id),
   isSend: isSendForDecision(state, ownProps.id),
 });
 

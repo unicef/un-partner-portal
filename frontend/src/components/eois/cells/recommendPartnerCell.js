@@ -25,6 +25,8 @@ const messages = {
   send: 'Recommendation(s) already send for decision',
   selected: 'Recommendation selected',
   retracted: 'Recommendation retracted',
+  accepted: 'Partner accepted',
+  declined: 'Partner declined',
 };
 
 const styleSheet = theme => ({
@@ -40,20 +42,25 @@ const styleSheet = theme => ({
 });
 
 const RecommendPartnerCell = (props) => {
-  const { classes, id, conceptNote, hovered, changeStatus, allowedToEdit, finishedReviews, loadCfeiDetails,
-    status, isUserCreator, isSend, didWin, retracted } = props;
+  const { classes, id, conceptNote, hovered, changeStatus,
+    allowedToEdit, finishedReviews, loadCfeiDetails,
+    status, isUserCreator, isSend, didWin, retracted,
+    didAccept, didDecline } = props;
   const Delete = WithGreyColor()(DeleteButton);
   const Download = WithGreyColor(!conceptNote)(GetConceptNoteButton);
   const buttonClass = ClassName(
     { [classes.unrecommend]: status === APPLICATION_STATUSES.REC },
   );
+console.log(didAccept);
+  const tooltip = (!finishedReviews && messages.finishReviews)
+   || ((isUserCreator && isSend) && messages.send)
+   || (didAccept && messages.accepted)
+   || (didDecline && messages.declined)
+   || ((didWin && !retracted) && messages.selected)
+   || (retracted && messages.retracted);
 
-  const tooltip = !finishedReviews && messages.finishReviews
-   || (isUserCreator && isSend) && messages.send
-   || (didWin && !retracted) && messages.selected
-   || retracted && messages.retracted;
-
-  const buttonText = status === APPLICATION_STATUSES.REC ? messages.unrecommend : messages.recommend;
+  const buttonText = status === APPLICATION_STATUSES.REC ?
+    messages.unrecommend : messages.recommend;
 
   return (
     <TableCell>
@@ -108,6 +115,8 @@ RecommendPartnerCell.propTypes = {
   isSend: PropTypes.bool,
   isUserCreator: PropTypes.bool,
   didWin: PropTypes.bool,
+  didAccept: PropTypes.bool,
+  didDecline: PropTypes.bool,
   retracted: PropTypes.bool,
 };
 

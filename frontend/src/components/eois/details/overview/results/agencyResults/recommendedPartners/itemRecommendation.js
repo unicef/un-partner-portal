@@ -23,6 +23,9 @@ const messages = {
   retracted: 'rectracted',
   selectionJustification: 'Justification for selection',
   retractJustification: 'Justification for retraction',
+  partnerDecision: 'Partner decision: ',
+  accepted: 'Accepted by: ',
+  declined: 'Declined by: ',
 };
 
 class RecommendedPartners extends Component {
@@ -75,7 +78,8 @@ class RecommendedPartners extends Component {
               <SpreadContent>
                 <Typography type="caption">{messages.selectionJustification}</Typography>
               </SpreadContent>
-              <Typography type="body2">{`${application.agency_decision_maker ? application.agency_decision_maker.name : ''} ${application.agency_decision_date ? formatDateForPrint(application.agency_decision_date) : ''}`}</Typography>
+              <Typography type="body2">{`${application.agency_decision_maker ? application.agency_decision_maker.name : ''} 
+              ${application.agency_decision_date ? formatDateForPrint(application.agency_decision_date) : ''}`}</Typography>
               <Typography type="body1">{application.justification_reason ? application.justification_reason : '-'}</Typography>
             </div>}
             {application.did_withdraw &&
@@ -85,6 +89,15 @@ class RecommendedPartners extends Component {
                 <Typography type="caption">{messages.retractJustification}</Typography>
               </SpreadContent>
               <Typography type="body1">{application.withdraw_reason ? application.withdraw_reason : '-'}</Typography>
+            </div>}
+            {!application.did_withdraw && application.did_win && <Divider />}
+            {!application.did_withdraw && application.did_win && <div>
+              <SpreadContent>
+                <Typography type="caption">{messages.partnerDecision}</Typography>
+              </SpreadContent>
+              {application.partner_decision_maker &&
+              <Typography type="body1">{`${application.did_accept ? messages.accepted : messages.declined} 
+              ${application.partner_decision_maker.name} - ${formatDateForPrint(application.partner_decision_date)}`}</Typography>}
             </div>}
           </GridColumn>}
         </Loader>

@@ -80,6 +80,7 @@ class RecommendedPartners extends Component {
     const { isCreator, isFocalPoint, hasSelectRecommendedPermission } = this.props;
 
     let action = null;
+    console.log(application)
     if (isCreator || isFocalPoint) {
       if (hasSelectRecommendedPermission) {
         if (application.did_win) {
@@ -87,6 +88,7 @@ class RecommendedPartners extends Component {
             action = <Button disabled>{messages.retracted}</Button>;
           } else {
             action = (<WithdrawApplicationButton
+              disabled={application.did_accept || application.did_decline}
               onUpdate={() => this.props.loadPartners(this.state.params)}
               applicationId={application.id}
             />);
