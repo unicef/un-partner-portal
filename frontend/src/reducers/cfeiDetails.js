@@ -230,6 +230,11 @@ export function cfeiHasRecommendedPartner(state, cfeId) {
   return contains_recommended_applications;
 }
 
+export function cfeiHasPartnerAccepted(state, cfeId) {
+  const { [cfeId]: { contains_partner_accepted = false } = {} } = state;
+  return contains_partner_accepted;
+}
+
 export function isUserACreator(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
   if (cfei) return cfei.created_by === userId;

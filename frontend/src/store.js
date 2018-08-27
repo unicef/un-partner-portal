@@ -380,6 +380,9 @@ export const isCfeiDeadlinePassed = (state, id) =>
 export const cfeiHasRecommendedPartner = (state, id) =>
   cfeiDetailsSelector.cfeiHasRecommendedPartner(state.cfeiDetails.data, id);
 
+export const cfeiHasPartnerAccepted = (state, id) =>
+  cfeiDetailsSelector.cfeiHasPartnerAccepted(state.cfeiDetails.data, id);
+
 export const isCfeiPinned = (state, id) =>
   cfeiDetailsSelector.isCfeiPinned(state.cfeiDetails.data, id);
 

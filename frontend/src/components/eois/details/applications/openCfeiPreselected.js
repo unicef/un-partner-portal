@@ -102,6 +102,8 @@ class OpenCfeiPreselections extends Component {
         finishedReviews={row.assessments_completed && row.completed_assessments_count > 0}
         hovered={hovered}
         status={row.status}
+        didAccept={row.did_accept}
+        didDecline={row.did_decline}
         allowedToEdit={this.props.allowedToEdit}
       />);
     }
@@ -183,8 +185,7 @@ const mapStateToProps = (state, ownProps) => ({
   isFinishedReview: isUserFinishedReview(state, ownProps.params.id),
   isCompletedAssessment: isUserCompletedAssessment(state, ownProps.params.id),
   isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.params.id),
-  allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
-    && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
+  allowedToEdit: (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
   isReviewer: isUserAReviewer(state, ownProps.params.id),
 });
 
