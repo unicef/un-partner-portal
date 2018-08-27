@@ -13,15 +13,14 @@ const messages = {
 };
 
 const OpenForm = (props) => {
-  const { handleSubmit, start_date, end_date, deadline_date, notif_results_date, clarification_request_deadline_date, form } = props;
+  const { handleSubmit, start_date, end_date, deadline_date, notif_results_date, form } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <ProjectDetails
           formName="newOpenCfei"
         >
-          <fields.ClarificationRequestDeadlineDate />
-          <fields.DeadlineDate minDate={clarification_request_deadline_date} />
+          <fields.DeadlineDate />
           <fields.NotifyDate minDate={deadline_date} />
           <fields.StartDate minDate={notif_results_date} />
           <fields.EndDate minDate={start_date} />
@@ -50,7 +49,7 @@ OpenForm.propTypes = {
 const selector = formValueSelector('newOpenCfei');
 
 const connectedOpenForm = connect(
-  state => selector(state, 'start_date', 'end_date', 'deadline_date', 'notif_results_date', 'clarification_request_deadline_date'),
+  state => selector(state, 'start_date', 'end_date', 'deadline_date', 'notif_results_date'),
 )(OpenForm);
 
 export default reduxForm({

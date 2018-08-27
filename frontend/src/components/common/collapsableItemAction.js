@@ -106,6 +106,8 @@ CollapsableItem.propTypes = {
   expanded: PropTypes.bool,
   component: PropTypes.element,
   actionComponent: PropTypes.element,
+  onExpand: PropTypes.func,
+  loading: PropTypes.bool,
 };
 
 export default withStyles(styleSheet, { name: 'CollapsableItem' })(CollapsableItem);

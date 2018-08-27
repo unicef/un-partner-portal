@@ -5,7 +5,7 @@ import FileForm from '../../fileForm';
 import ArrayForm from '../../arrayForm';
 import PolarRadio from '../../fields/PolarRadio';
 import GridColumn from '../../../common/grid/gridColumn';
-import { endDate, startDate, notifResultsDate, deadlineDate } from '../../../../helpers/validation';
+import { endDate, startDate, notifResultsDate } from '../../../../helpers/validation';
 import { formatDateForDatePicker } from '../../../../helpers/dates';
 import AgencyReviewersField from './agencyMembersFields/agencyReviewersField';
 import AgencyFocalPointsField from './agencyMembersFields/agencyFocalPointsField';
@@ -113,16 +113,6 @@ export const EndDate = ({ minDate, ...props }) => (<DatePickerForm
   {...props}
 />);
 
-export const ClarificationRequestDeadlineDate = ({ minDate, ...props }) => (<DatePickerForm
-  label="Clarification Request Deadline"
-  fieldName="clarification_request_deadline_date"
-  placeholder="Pick a date"
-  datePickerProps={{
-    minDate: (minDate && minDate !== 'Invalid date') ? formatDateForDatePicker(minDate) : new Date(),
-  }}
-  {...props}
-/>);
-
 export const DeadlineDate = ({ minDate, ...props }) => (<DatePickerForm
   label="Application Deadline"
   fieldName="deadline_date"
@@ -130,7 +120,6 @@ export const DeadlineDate = ({ minDate, ...props }) => (<DatePickerForm
   datePickerProps={{
     minDate: (minDate && minDate !== 'Invalid date') ? formatDateForDatePicker(minDate) : new Date(),
   }}
-  validation={[deadlineDate]}
   {...props}
 />);
 

@@ -94,11 +94,16 @@ class OpenCfeiPreselections extends Component {
     } else if (column.name === 'recommended_partner') {
       return (<RecommendPartnerCell
         id={row.id}
+        didWin={row.did_win}
+        retracted={row.did_withdraw}
         conceptNote={row.cn}
         score={row.average_total_score}
         assessments={row.assessments}
         finishedReviews={row.assessments_completed && row.completed_assessments_count > 0}
         hovered={hovered}
+        status={row.status}
+        didAccept={row.did_accept}
+        didDecline={row.did_decline}
         allowedToEdit={this.props.allowedToEdit}
       />);
     }
@@ -114,7 +119,10 @@ class OpenCfeiPreselections extends Component {
     if (!allowedToEdit) {
       finalColumns = R.reject(column => column.name === 'average_total_score', finalColumns);
       finalColumns = R.reject(column => column.name === 'recommended_partner', finalColumns);
+    } else if (!isDeadlinePassed) {
+      finalColumns = R.reject(column => column.name === 'recommended_partner', finalColumns);
     }
+
     if (!isReviewer) {
       finalColumns = R.reject(column => column.name === 'your_score', finalColumns);
     }
@@ -177,15 +185,14 @@ const mapStateToProps = (state, ownProps) => ({
   isFinishedReview: isUserFinishedReview(state, ownProps.params.id),
   isCompletedAssessment: isUserCompletedAssessment(state, ownProps.params.id),
   isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.params.id),
-  allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
-    && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
+  allowedToEdit: (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
   isReviewer: isUserAReviewer(state, ownProps.params.id),
 });
 
 const mapDispatchToProps = dispatch => ({
   loadApplications: (id, params) => dispatch(
     loadApplications(id, { ...params,
-      status: APPLICATION_STATUSES.PRE })),
+      status: [APPLICATION_STATUSES.PRE, APPLICATION_STATUSES.REC].join(',') })),
 });
 
 

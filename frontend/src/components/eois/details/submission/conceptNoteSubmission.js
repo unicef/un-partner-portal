@@ -169,12 +169,15 @@ ConceptNoteSubmission.propTypes = {
   submitDate: PropTypes.string,
   hasUploadCnPermission: PropTypes.bool,
   handleSubmit: PropTypes.func,
-  cn: PropTypes.string,
+  cn: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   onRef: PropTypes.func,
 };
 
 const formConceptNoteSubmission = reduxForm({
   form: 'CNSubmission',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(ConceptNoteSubmission);
 const selector = formValueSelector('CNSubmission');
 

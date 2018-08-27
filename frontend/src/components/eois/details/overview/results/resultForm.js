@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
 import Typography from 'material-ui/Typography';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
@@ -69,6 +70,7 @@ const showForm = (accepted, declined, classes, handleSubmit) => {
         <RemoveCircle className={classes.declined} />
       </div>);
   }
+
   return (
     <div>
       <Typography>{messages.labels.chosenQuestion}</Typography>
@@ -128,11 +130,12 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onSubmit: handleConfirmationSubmit,
-  submitConfirmation: body => dispatch(updateApplication(ownProps.application.id, body)),
+  submitConfirmation: body => dispatch(updateApplication(ownProps.params.id, ownProps.application.id, body)),
   accepted: ownProps.application.did_accept,
   declined: ownProps.application.did_decline,
 });
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+const connected = connect(mapStateToProps, mapDispatchToProps)(
   withStyles(styleSheet, { name: 'ResultForm' })(formResult));
+export default withRouter(connected);
