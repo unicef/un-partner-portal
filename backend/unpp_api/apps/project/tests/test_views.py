@@ -1298,16 +1298,17 @@ class TestEOIPublish(BaseAPITestCase):
         eoi = EOI.objects.first()
         url = reverse('projects:eoi-publish', kwargs={'pk': eoi.pk})
         response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertResponseStatusIs(response, status.HTTP_403_FORBIDDEN)
 
         self.set_current_user_role(AgencyRole.EDITOR_ADVANCED.name)
         response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertResponseStatusIs(response, status.HTTP_403_FORBIDDEN)
 
         eoi.created_by = self.user
+        eoi.deadline_date = date.today() + relativedelta(days=7)
         eoi.save()
         response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
         eoi.refresh_from_db()
         self.assertTrue(eoi.is_published)
         self.assertEqual(eoi.status, CFEI_STATUSES.open)
