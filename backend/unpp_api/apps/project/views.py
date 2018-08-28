@@ -122,10 +122,16 @@ class OpenProjectAPIView(BaseProjectAPIView):
     def get_queryset(self):
         queryset = super(OpenProjectAPIView, self).get_queryset().filter(display_type=CFEI_TYPES.open)
 
-        if self.request.user.is_agency_user:
-            return queryset
+        if self.request.active_partner:
+            # Either active projects or ones CSO has won
+            query = Q(deadline_date__gte=date.today(), is_completed=False) | Q(
+                applications__partner=self.request.active_partner,
+                applications__did_win=True,
+                applications__did_accept=True,
+            )
+            queryset = queryset.filter(query)
 
-        return queryset.filter(deadline_date__gte=date.today(), is_completed=False)
+        return queryset
 
     @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_DRAFT_CREATE])
     def post(self, request, *args, **kwargs):
