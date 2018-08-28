@@ -120,7 +120,13 @@ class EOI(TimeStampedModel):
 
     @property
     def deadline_passed(self):
-        return self.deadline_date and self.deadline_date < date.today()
+        return bool(self.deadline_date and self.deadline_date < date.today())
+
+    @property
+    def clarification_request_deadline_passed(self):
+        return bool(
+            self.clarification_request_deadline_date and self.clarification_request_deadline_date < date.today()
+        )
 
     @property
     def contains_the_winners(self):

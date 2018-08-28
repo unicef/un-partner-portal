@@ -78,6 +78,7 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'start_date',
             'end_date',
             'deadline_date',
+            'deadline_date',
             'status',
             'completed_date',
             'focal_points',
@@ -594,6 +595,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'application',
             'published_timestamp',
             'deadline_passed',
+            'clarification_request_deadline_passed',
             'attachments',
         )
         read_only_fields = fields
@@ -665,6 +667,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'applications_count',
             'is_published',
             'deadline_passed',
+            'clarification_request_deadline_passed',
             'published_timestamp',
             'attachments',
             'sent_for_decision',
