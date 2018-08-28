@@ -4,7 +4,7 @@ import ButtonWithTooltip from '../../common/buttonWithTooltip';
 
 const messages = {
   text: 'Send',
-  tooltip: 'In order to publish this CFEI, you need to send it to Advanced Editor for acceptance.',
+  tooltip: 'In order to publish this CFEI, you need to send it to Focal Point for acceptance.',
 };
 
 const SendCfeiButton = (props) => {
