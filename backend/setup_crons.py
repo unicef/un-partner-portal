@@ -16,18 +16,6 @@ DAILY_MIDNIGHT = '* 0 * * *'
 DAILY_NOON = '* 12 * * *'
 WEEKLY = '* 12 * * 1'
 
-
-MANAGE_PY_CRON_JOBS = [
-    (DAILY_NOON, 'send_daily_notifications'),
-    (WEEKLY, 'send_weekly_notifications'),
-]
-
-
-DAILY_MIDNIGHT = '* 0 * * *'
-DAILY_NOON = '* 12 * * *'
-WEEKLY = '* 12 * * 1'
-
-
 MANAGE_PY_CRON_JOBS = [
     (DAILY_NOON, 'send_daily_notifications'),
     (DAILY_NOON, 'send_clarification_deadline_passed_notifications'),
