@@ -5,12 +5,12 @@ import { withStyles } from 'material-ui/styles';
 import { Typography } from 'material-ui';
 import PaddedContent from '../../../common/paddedContent';
 import ControlledModal from '../../../common/modals/controlledModal';
-import { sendCfeiRequest } from '../../../../reducers/sendCfei';
+import { sendCfeiForDecision } from '../../../../reducers/sendCfeiForDecision';
 
 const messages = {
-  title: 'Are you sure you want to send this recommendation to the focal point?',
-  info: 'Please confirm that this recommendation should be sent to the focal point for review and issuance to the selected partner.' +
-   'Once sent to the focal point, you will no longer be able to make edits to this CFEI.',
+  title: 'Are you sure you want to send recommendation(s) to the focal point?',
+  info: 'Please confirm that recommendation(s) should be sent to the focal point for review and issuance to the selected partner(s). ' +
+      'Once sent to the focal point, you will no longer be able to make edits to this CFEI.',
   send: 'send',
 };
 
@@ -20,7 +20,7 @@ const styleSheet = theme => ({
   },
 });
 
-class SendRecommendedPartnerModal extends Component {
+class SendCfeiForDecisionModal extends Component {
   constructor(props) {
     super(props);
     this.send = this.send.bind(this);
@@ -52,7 +52,7 @@ class SendRecommendedPartnerModal extends Component {
           }}
           content={
             <PaddedContent>
-              <Typography className={classes.text} >{messages.info}</Typography>
+              <Typography type="body1">{messages.info}</Typography>
             </PaddedContent>
           }
         />
@@ -61,7 +61,7 @@ class SendRecommendedPartnerModal extends Component {
   }
 }
 
-SendRecommendedPartnerModal.propTypes = {
+SendCfeiForDecisionModal.propTypes = {
   classes: PropTypes.object.isRequired,
   dialogOpen: PropTypes.bool,
   sendRecommendedPartner: PropTypes.func,
@@ -73,9 +73,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  sendRecommendedPartner: () => dispatch(sendCfeiRequest(ownProps.id)),
+  sendRecommendedPartner: () => dispatch(sendCfeiForDecision(ownProps.id)),
 });
 
-const connected = connect(mapStateToProps, mapDispatchToProps)(SendRecommendedPartnerModal);
+const connected = connect(mapStateToProps, mapDispatchToProps)(SendCfeiForDecisionModal);
 
-export default withStyles(styleSheet, { name: 'SendRecommendedPartnerModal' })(connected);
+export default withStyles(styleSheet, { name: 'SendCfeiForDecisionModal' })(connected);

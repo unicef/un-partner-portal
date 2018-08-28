@@ -21,8 +21,8 @@ import PartnerUcnHeaderOptions from './partnerUcnHeaderOptions';
 
 const messages = {
   infoDsr: 'This direct selection/retention was sent to the focal point for review and issuance to the selected partner.',
-  infoCfei: 'This CFEI was sent to Advanced Editor for acceptance and publication',
-  infoUcn: 'This UCN was sent to Advanced Editor for acceptance and publication',
+  infoCfei: 'This CFEI was sent to Focal Point for acceptance and publication',
+  infoUcn: 'This UCN was forwarded for acceptance and publication',
 };
 
 const tooltipInfo = (projectType) => {

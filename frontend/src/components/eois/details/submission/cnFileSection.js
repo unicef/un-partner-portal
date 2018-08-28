@@ -34,7 +34,6 @@ const CnFileSection = (props) => {
         <Typography className={classes.paddingBottom} type="caption">
           {label || messages.label}
         </Typography>
-        <Typography type="caption">{messages.upload_2}</Typography>
       </PaddedContent>)
       }
     </div>
