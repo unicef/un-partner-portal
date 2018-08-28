@@ -1,5 +1,27 @@
 from crontab import CronTab
 
+# CHEATSHEET
+# ┌───────────── minute (0 - 59)
+# │ ┌───────────── hour (0 - 23)
+# │ │ ┌───────────── day of month (1 - 31)
+# │ │ │ ┌───────────── month (1 - 12)
+# │ │ │ │ ┌───────────── day of week (0 - 6) (Sunday to Saturday;
+# │ │ │ │ │                                   7 is also Sunday on some systems)
+# │ │ │ │ │
+# │ │ │ │ │
+# * * * * * command to execute
+
+
+DAILY_MIDNIGHT = '* 0 * * *'
+DAILY_NOON = '* 12 * * *'
+WEEKLY = '* 12 * * 1'
+
+
+MANAGE_PY_CRON_JOBS = [
+    (DAILY_NOON, 'send_daily_notifications'),
+    (WEEKLY, 'send_weekly_notifications'),
+]
+
 
 DAILY_MIDNIGHT = '* 0 * * *'
 DAILY_NOON = '* 12 * * *'

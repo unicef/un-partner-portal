@@ -530,7 +530,15 @@ class TestApplicationsAPITestCase(BaseAPITestCase):
             "status": APPLICATION_STATUSES.preselected,
             "justification_reason": "good reason",
         }
+
         response = self.client.patch(url, data=payload)
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('review_summary_comment', response.data)
+        application.eoi.review_summary_comment = 'Test comment'
+        application.eoi.save()
+
+        response = self.client.patch(url, data=payload)
+        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
         self.assertEquals(
             response.data['non_field_errors'],
             ['You cannot award an application if the profile has not been verified yet.']

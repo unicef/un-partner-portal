@@ -249,6 +249,7 @@ class PartnerApplicationSerializer(MixinPreventManyCommonFile, serializers.Model
         model = Application
         fields = (
             'id',
+            'created',
             'did_win',
             'did_withdraw',
             'did_accept',
@@ -257,6 +258,7 @@ class PartnerApplicationSerializer(MixinPreventManyCommonFile, serializers.Model
             'cn',
         )
         read_only_fields = (
+            'created',
             'did_win',
             'did_withdraw',
             'decision_date',
@@ -327,6 +329,11 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Since CFEI is completed, modification is forbidden.")
 
             if data.get("did_win"):
+                if not app.eoi.review_summary_comment:
+                    raise serializers.ValidationError({
+                        'review_summary_comment': 'Review summary needs to be filled in before picking a winner.'
+                    })
+
                 if not app.partner.is_verified:
                     raise serializers.ValidationError(
                         "You cannot award an application if the profile has not been verified yet."
