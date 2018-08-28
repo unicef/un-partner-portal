@@ -569,6 +569,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'created',
             'start_date',
             'end_date',
+            'clarification_request_deadline_date',
             'deadline_date',
             'notif_results_date',
             'justification',
