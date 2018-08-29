@@ -15,6 +15,11 @@ import nav from './reducers/nav';
 import session from './reducers/session';
 import offices from './reducers/offices';
 import countries from './reducers/countries';
+import deleteClarificationAnswer from './reducers/deleteClarificationAnswer';
+import addClarificationRequest from './reducers/addClarificationRequest';
+import addClarificationAnswer from './reducers/addClarificationAnswer';
+import clarificationRequests, * as clarificationRequestsSelector from './reducers/clarificationRequests';
+import clarificationAnswers, * as clarificationAnswersSelector from './reducers/clarificationAnswers';
 import countryProfiles from './reducers/countryProfiles';
 import partnerProfileEdit from './reducers/partnerProfileEdit';
 import partnerProfileDetails from './reducers/partnerProfileDetails';
@@ -95,7 +100,12 @@ import idPortalDeactivateUser from './idPortal/reducers/deactivateUser';
 
 
 const mainReducer = combineReducers({
+  clarificationAnswers,
+  clarificationRequests,
   sendCfeiForDecision,
+  addClarificationAnswer,
+  addClarificationRequest,
+  deleteClarificationAnswer,
   completeAssessment,
   recommendedPartners,
   preselectedPartners,
@@ -377,6 +387,9 @@ export const isCfeiPublished = (state, id) =>
 export const isCfeiDeadlinePassed = (state, id) =>
   cfeiDetailsSelector.isCfeiDeadlinePassed(state.cfeiDetails.data, id);
 
+export const isCfeiClarificationDeadlinePassed = (state, id) =>
+  cfeiDetailsSelector.isCfeiClarificationDeadlinePassed(state.cfeiDetails.data, id);
+
 export const cfeiHasRecommendedPartner = (state, id) =>
   cfeiDetailsSelector.cfeiHasRecommendedPartner(state.cfeiDetails.data, id);
 
@@ -479,6 +492,18 @@ export const selectRecommendedPartnersCount = (state, cfeiId) =>
 
 export const selectRecommendedPartners = (state, cfeiId) =>
   recommendedPartnersSelector.selectPartners(state.recommendedPartners, cfeiId);
+
+export const selectClarificationRequestsCount = (state, cfeiId) =>
+  clarificationRequestsSelector.selectCount(state.clarificationRequests, cfeiId);
+
+export const selectClarificationRequests = (state, cfeiId) =>
+  clarificationRequestsSelector.selectRequests(state.clarificationRequests, cfeiId);
+
+export const selectClarificationAnswersCount = (state, cfeiId) =>
+  clarificationAnswersSelector.selectCount(state.clarificationAnswers, cfeiId);
+
+export const selectClarificationAnswers = (state, cfeiId) =>
+  clarificationAnswersSelector.selectAnswers(state.clarificationAnswers, cfeiId);
 
 export const selectPreselectedPartnersCount = (state, cfeiId) =>
   preselectedPartnersSelector.selectCount(state.preselectedPartners, cfeiId);

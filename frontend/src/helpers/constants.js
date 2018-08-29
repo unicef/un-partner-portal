@@ -20,6 +20,7 @@ export const DETAILS_ITEMS = {
   SUBMISSION: 'submission',
   RESULTS: 'results',
   PRESELECTED: 'preselected',
+  REQUESTS: 'requests',
   APPLICATIONS: 'applications',
   RESPONSE: 'response',
 };

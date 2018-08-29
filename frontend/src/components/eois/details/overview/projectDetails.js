@@ -21,6 +21,7 @@ import {
   StartDate,
   EndDate,
   DeadlineDate,
+  ClarificationRequestDeadlineDate,
   NotifyDate,
 } from '../../../forms/fields/projectFields/commonFields';
 import LocationFieldReadOnlyArray from '../../../forms/fields/projectFields/locationField/locationFieldReadOnlyArray';
@@ -94,11 +95,12 @@ const Fields = ({ type, role, partnerId, displayGoal }) => {
       <Background readOnly />
       {displayGoal && <Goal readOnly />}
       <OtherInfo readOnly />
-      {type === PROJECT_TYPES.OPEN && <GridRow columns={2} >
+      {type === PROJECT_TYPES.OPEN && <GridRow columns={3} >
+        <ClarificationRequestDeadlineDate readOnly />
         <DeadlineDate readOnly />
         <NotifyDate readOnly />
       </GridRow>}
-      <GridRow columns={2} >
+      <GridRow columns={3} >
         <StartDate readOnly />
         <EndDate readOnly />
       </GridRow>

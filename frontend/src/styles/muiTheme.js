@@ -165,6 +165,7 @@ const getTheme = () => (
         green: '#72C300',
         red: '#EA4022',
         blue: '#0099FF',
+        orange: '#fec832',
       },
       flags: {
         observation: '#A1A1A1',

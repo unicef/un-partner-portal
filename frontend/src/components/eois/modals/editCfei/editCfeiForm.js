@@ -18,7 +18,8 @@ const EditCfeiForm = (props) => {
     handleSubmit,
     start_date,
     deadline_date,
-    notif_results_date, 
+    notif_results_date,
+    clarification_request_deadline_date,
     form,
     focalPointNameArray,
   } = props;
@@ -29,7 +30,8 @@ const EditCfeiForm = (props) => {
           formName="editCfei"
           focalPoints={focalPointNameArray}
         >
-          <fields.DeadlineDate />
+          <fields.ClarificationRequestDeadlineDate />
+          <fields.DeadlineDate minDate={clarification_request_deadline_date} />
           <fields.NotifyDate minDate={notif_results_date} />
           <fields.StartDate minDate={start_date} />
           <fields.EndDate minDate={deadline_date} />
@@ -58,7 +60,7 @@ const mapStateToProps = (state, ownProps) => {
     item => item.id);
   const focalPointNameArray = cfei.focal_points_detail.map(
     item => item.name);
-    
+
   return {
     initialValues: {
       title: cfei.title,
@@ -70,6 +72,7 @@ const mapStateToProps = (state, ownProps) => {
       end_date: cfei.end_date,
       deadline_date: cfei.deadline_date,
       notif_results_date: cfei.notif_results_date,
+      clarification_request_deadline_date: cfei.clarification_request_deadline_date,
       countries: cfei.cfei_locations,
       description: cfei.description,
       goal: cfei.goal,

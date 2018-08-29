@@ -485,6 +485,26 @@ export function getPartnerMappingReports(params, options) {
   return authorizedGet({ uri: '/reports/partners/mapping/export/xlsx', params, options });
 }
 
+export function getClarificationRequests(cfeId, params) {
+  return authorizedGet({ uri: `/projects/${cfeId}/questions`, params });
+}
+
+export function getClarificationAnswers(cfeiId, params) {
+  return authorizedGet({ uri: `/projects/${cfeiId}/answers/`, params });
+}
+
+export function postClarificationRequest(cfeiId, body) {
+  return authorizedPost({ uri: `/projects/${cfeiId}/questions/`, body });
+}
+
+export function postClarificationAnswer(cfeiId, body) {
+  return authorizedPost({ uri: `/projects/${cfeiId}/answers/`, body });
+}
+
+export function deleteClarificationAnswer(id) {
+  return authorizedDelete({ uri: `/projects/answers/${id}` });
+}
+
 // ID portal
 export function postNewUser(body) {
   return authorizedPost({ uri: '/manage/user/', body });

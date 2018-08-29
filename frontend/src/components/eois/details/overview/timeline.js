@@ -15,12 +15,13 @@ const title = () => (
 );
 
 const Timeline = (props) => {
-  const { deadline, start, posted, notif } = props;
+  const { deadline, start, posted, notif, clarification } = props;
   return (
     <HeaderList
       header={title}
     >
       <TimelineComponent
+        clarificationDate={clarification}
         postedDate={posted}
         deadlineDate={deadline}
         notificationDate={notif}
@@ -35,11 +36,13 @@ Timeline.propTypes = {
   deadline: PropTypes.string,
   notif: PropTypes.string,
   start: PropTypes.string,
+  clarification: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
   return {
+    clarification: cfei && cfei.clarification_request_deadline_date,
     deadline: cfei && cfei.deadline_date,
     start: cfei && cfei.start_date,
     posted: cfei && cfei.created,

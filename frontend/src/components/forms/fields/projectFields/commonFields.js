@@ -5,7 +5,7 @@ import FileForm from '../../fileForm';
 import ArrayForm from '../../arrayForm';
 import PolarRadio from '../../fields/PolarRadio';
 import GridColumn from '../../../common/grid/gridColumn';
-import { endDate, startDate, notifResultsDate } from '../../../../helpers/validation';
+import { endDate, startDate, notifResultsDate, deadlineDate } from '../../../../helpers/validation';
 import { formatDateForDatePicker } from '../../../../helpers/dates';
 import AgencyReviewersField from './agencyMembersFields/agencyReviewersField';
 import AgencyFocalPointsField from './agencyMembersFields/agencyFocalPointsField';
@@ -131,6 +131,16 @@ export const NotifyDate = ({ minDate, ...props }) => (<DatePickerForm
     minDate: (minDate && minDate !== 'Invalid date') ? formatDateForDatePicker(minDate) : new Date(),
   }}
   validation={[notifResultsDate]}
+  {...props}
+/>);
+
+export const ClarificationRequestDeadlineDate = ({ minDate, ...props }) => (<DatePickerForm
+  label="Clarification Request Deadline"
+  fieldName="clarification_request_deadline_date"
+  placeholder="Pick a date"
+  datePickerProps={{
+    minDate: (minDate && minDate !== 'Invalid date') ? formatDateForDatePicker(minDate) : new Date(),
+  }}
   {...props}
 />);
 

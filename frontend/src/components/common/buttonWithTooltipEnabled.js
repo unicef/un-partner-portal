@@ -17,6 +17,7 @@ const ButtonWithTooltip = (props) => {
           raised
           onTouchTap={e => onClick(e)}
           disabled={disabled}
+          {...other}
         >
           {text}
         </Button>
@@ -26,7 +27,7 @@ const ButtonWithTooltip = (props) => {
 };
 
 ButtonWithTooltip.propTypes = {
-  text: PropTypes.string,
+  text: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   onClick: PropTypes.func,
   tooltipText: PropTypes.string,
   name: PropTypes.string,

@@ -5,19 +5,16 @@ import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import { withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
-import Divider from 'material-ui/Divider';
 import Button from 'material-ui/Button';
 import HeaderList from '../../../../../../common/list/headerList';
-import { selectRecommendedPartnersCount, selectRecommendedPartners, isUserACreator, isUserAFocalPoint, cfeiHasRecommendedPartner } from '../../../../../../../store';
+import { selectRecommendedPartnersCount, selectRecommendedPartners, isUserACreator, isUserAFocalPoint } from '../../../../../../../store';
 import { loadRecommendedPartners } from '../../../../../../../reducers/recommendedPartners';
 import CollapsableItemAction from '../../../../../../common/collapsableItemAction';
 import SpreadContent from '../../../../../../common/spreadContent';
 import PaddedContent from '../../../../../../common/paddedContent';
-import { formatDateForPrint } from '../../../../../../../helpers/dates';
 import Pagination from '../../../../../../common/pagination';
 import EmptyContent from '../../../../../../common/emptyContent';
 import SendRecommendedPartnerButton from '../../../../../buttons/sendForDecisionButton';
-import GridColumn from '../../../../../../common/grid/gridColumn';
 import { APPLICATION_STATUSES } from '../../../../../../../helpers/constants';
 import { AGENCY_PERMISSIONS, checkPermission } from '../../../../../../../helpers/permissions';
 import AwardApplicationButton from '../../../../../buttons/awardApplicationButton';
@@ -80,7 +77,7 @@ class RecommendedPartners extends Component {
     const { isCreator, isFocalPoint, hasSelectRecommendedPermission } = this.props;
 
     let action = null;
-    console.log(application)
+
     if (isCreator || isFocalPoint) {
       if (hasSelectRecommendedPermission) {
         if (application.did_win) {
@@ -159,7 +156,6 @@ RecommendedPartners.propTypes = {
   loadPartners: PropTypes.func,
   count: PropTypes.number,
   cfeiId: PropTypes.number,
-  allCriteria: PropTypes.array,
   hasSelectRecommendedPermission: PropTypes.bool,
   isFocalPoint: PropTypes.bool,
   isCreator: PropTypes.bool,
@@ -172,7 +168,8 @@ const mapStateToProps = (state, ownProps) => {
     loading: state.recommendedPartners.status.loading,
     partners: selectRecommendedPartners(state, cfeiId),
     count: selectRecommendedPartnersCount(state, cfeiId),
-    hasSelectRecommendedPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_SELECT_RECOMMENDED_PARTNER, state),
+    hasSelectRecommendedPermission:
+      checkPermission(AGENCY_PERMISSIONS.CFEI_SELECT_RECOMMENDED_PARTNER, state),
     isFocalPoint: isUserAFocalPoint(state, cfeiId),
     isCreator: isUserACreator(state, cfeiId),
     cfeiId,

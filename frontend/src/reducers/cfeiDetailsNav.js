@@ -29,6 +29,12 @@ const initialState = [
     types: [PROJECT_TYPES.OPEN],
   },
   {
+    path: DETAILS_ITEMS.REQUESTS,
+    label: 'requests for additional information/clarification',
+    roles: [AGENCY],
+    types: [PROJECT_TYPES.OPEN],
+  },
+  {
     path: DETAILS_ITEMS.APPLICATIONS,
     label: 'applications',
     roles: [AGENCY],
@@ -36,7 +42,7 @@ const initialState = [
   },
   {
     path: DETAILS_ITEMS.PRESELECTED,
-    label: 'shortlist',
+    label: 'short list',
     roles: [AGENCY],
     types: [PROJECT_TYPES.OPEN],
   },

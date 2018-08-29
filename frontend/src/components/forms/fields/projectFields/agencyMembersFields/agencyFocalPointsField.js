@@ -59,7 +59,5 @@ export default connect(
     getMembers: params => dispatch(loadAgencyFocalPointsForAutoComplete(params)).then(results =>
       mapValuesForSelectionField(results)),
   }),
-  null,
-  { withRef: true },
 )(AgencyMembersField);
 

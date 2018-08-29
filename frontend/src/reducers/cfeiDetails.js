@@ -188,6 +188,11 @@ export function isCfeiDeadlinePassed(state, id) {
   return deadline_passed;
 }
 
+export function isCfeiClarificationDeadlinePassed(state, id) {
+  const { [id]: { clarification_request_deadline_passed = null } = {} } = state;
+  return clarification_request_deadline_passed;
+}
+
 export function isCfeiPublished(state, id) {
   const { [id]: { is_published = null } = {} } = state;
   return is_published;
