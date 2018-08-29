@@ -132,3 +132,8 @@ BUSINESS_AREAS = Choices(
     ('togo', 'Togo - 4230'),
     ('wcaro_senegal', 'WCARO, Senegal - 381R'),  # Regional Office
 )
+
+
+BUSINESS_AREA_TO_CODE = {
+    ba: display.split()[-1] for ba, display in BUSINESS_AREAS
+}

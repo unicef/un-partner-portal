@@ -15,12 +15,12 @@ class UNHCRInfoClient(object):
         self.session = requests.Session()
         self.session.auth = self.auth
 
-    def get_tables(self, vendor_id):
+    def get_tables(self, vendor_number):
         sources = {
-            'Overview': f"{self.host}params/flat/OVERVIEW?PARTNER_CODE={vendor_id}",
-            'Projects': f"{self.host}params/flat/PROJECTS?PARTNER_CODE={vendor_id}",
-            'By Country': f"{self.host}params/flat/BY_COUNTRY?PARTNER_CODE={vendor_id}",
-            'By Year': f"{self.host}params/flat/HISTORICAL?PARTNER_CODE={vendor_id}",
+            'Overview': f"{self.host}params/flat/OVERVIEW?PARTNER_CODE={vendor_number.number}",
+            'Projects': f"{self.host}params/flat/PROJECTS?PARTNER_CODE={vendor_number.number}",
+            'By Country': f"{self.host}params/flat/BY_COUNTRY?PARTNER_CODE={vendor_number.number}",
+            'By Year': f"{self.host}params/flat/HISTORICAL?PARTNER_CODE={vendor_number.number}",
         }
 
         tables = []
