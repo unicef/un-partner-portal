@@ -42,7 +42,9 @@ from notification.helpers import (
 from partner.permissions import PartnerPermission
 from project.exports.excel.application_compare import ApplicationCompareSpreadsheetGenerator
 from project.exports.pdf.cfei import CFEIPDFExporter
-from project.models import Assessment, Application, EOI, Pin
+from project.exports.pdf.cfei_questions import CFEIClarificationQuestionPDFExporter
+from project.models import Assessment, Application, EOI, Pin, ClarificationRequestQuestion, \
+    ClarificationRequestAnswerFile
 from project.serializers import (
     BaseProjectSerializer,
     DirectProjectSerializer,
@@ -67,6 +69,8 @@ from project.serializers import (
     AwardedPartnersSerializer,
     CompareSelectedSerializer,
     AgencyProjectSerializer,
+    ClarificationRequestQuestionSerializer,
+    ClarificationRequestAnswerFileSerializer,
     PartnerApplicationSerializer,
 )
 
@@ -1077,3 +1081,84 @@ class CompleteAssessmentsAPIView(ListAPIView):
             ass.save()
 
         return Response(self.serializer_class(assessments, many=True).data)
+
+
+class ClarificationRequestQuestionAPIView(ListCreateAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW,
+            ]
+        ),
+    )
+    serializer_class = ClarificationRequestQuestionSerializer
+    pagination_class = SmallPagination
+
+    def list(self, request, *args, **kwargs):
+        if request.GET.get('export', '').lower() == 'pdf' and request.agency_member:
+            return CFEIClarificationQuestionPDFExporter(EOI.objects.get(pk=self.kwargs['eoi_id'])).get_as_response()
+        return super(ClarificationRequestQuestionAPIView, self).list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = ClarificationRequestQuestion.objects.filter(eoi_id=self.kwargs['eoi_id'])
+        if self.request.active_partner:
+            queryset = queryset.filter(partner=self.request.active_partner)
+
+        return queryset
+
+    @check_unpp_permission(partner_permissions=[PartnerPermission.CFEI_SEND_CLARIFICATION_REQUEST])
+    def perform_create(self, serializer):
+        eoi: EOI = get_object_or_404(EOI, id=self.kwargs.get('eoi_id'))
+        if eoi.clarification_request_deadline_date < timezone.now().date():
+            raise PermissionDenied('Clarification Request Deadline has passed.')
+
+        return serializer.save(eoi=eoi, partner=self.request.active_partner, created_by=self.request.user)
+
+
+class ClarificationRequestAnswerFileAPIView(ListCreateAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[
+                AgencyPermission.CFEI_VIEW,
+            ],
+            partner_permissions=[
+                PartnerPermission.CFEI_VIEW,
+            ]
+        ),
+    )
+    serializer_class = ClarificationRequestAnswerFileSerializer
+    pagination_class = SmallPagination
+
+    def get_queryset(self):
+        return ClarificationRequestAnswerFile.objects.filter(eoi_id=self.kwargs.get('eoi_id'))
+
+    @check_unpp_permission(agency_permissions=[AgencyPermission.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS])
+    def perform_create(self, serializer):
+        eoi: EOI = get_object_or_404(EOI, id=self.kwargs.get('eoi_id'))
+
+        if not eoi.created_by == self.request.user and not eoi.focal_points.filter(pk=self.request.user.pk).exists():
+            raise PermissionDenied('Only creators / focal points can add answer files.')
+
+        if eoi.clarification_request_deadline_date > timezone.now().date():
+            raise PermissionDenied('Clarification Request Deadline has not passed yet.')
+
+        if eoi.question_answers.count() >= 3:
+            raise serializers.ValidationError(
+                'A maximum of 3 Answer Files is allowed per project, remove some to upload new.'
+            )
+
+        return serializer.save(eoi=eoi)
+
+
+class ClarificationRequestAnswerFileDestroyAPIView(DestroyAPIView):
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[]
+        ),
+    )
+
+    def get_queryset(self):
+        return ClarificationRequestAnswerFile.objects.filter(created_by=self.request.user)

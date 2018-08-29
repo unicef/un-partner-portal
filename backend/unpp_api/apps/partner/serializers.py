@@ -94,6 +94,16 @@ class PartnerRegistrationDocumentSerializer(serializers.ModelSerializer):
         }
 
 
+class PartnerSimpleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Partner
+        fields = (
+            'id',
+            'legal_name',
+        )
+
+
 class PartnerAdditionalSerializer(serializers.ModelSerializer):
 
     hq = serializers.SerializerMethodField()

@@ -50,6 +50,7 @@ import verificationContainer from './components/reports/verifcation/verification
 import reportsHeader from './components/reports/reportsHeader';
 import partnerUsersContainer from './components/partners/members/partnerUsersContainer';
 import userProfile from './components/user/userProfile';
+import openCfeiRequests from './components/eois/details/applications/openCfeiRequests';
 
 // ID portal
 import mainLayoutIdPortal from './idPortal/mainLayout';
@@ -90,6 +91,7 @@ const allRoutes = () => (
               <Route path="feedback" component={cfeiFeedback} />
               <Route path="submission" component={cfeiSubmission} />
               <Route path="results" component={cfeiOpenResults} />
+              <Route path="requests" component={openCfeiRequests} />
               <Route path="preselected" component={openCfeiPreselected} />
               <Route path="applications" component={openCfeiApplications} />
               <Route path="response" component={cfeiDirectResponse} />

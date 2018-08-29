@@ -23,6 +23,7 @@ class NotificationType(object):
     DJANGO_ADMIN_NEW_PARTNER_FOR_DELETION = 'superadmin_new_cso_for_deletion'
     NEW_ESCALATED_FLAG = 'new_escalated_flag'
     CFEI_SENT_FOR_DECISION_MAKING = 'cfei_sent_for_decision_making'
+    CFEI_CLARIFICATION_DEADLINE_PASSED = 'cfei_clarification_deadline_passed'
 
     @classmethod
     def get_choices(cls):
@@ -120,5 +121,9 @@ NOTIFICATION_DATA = {
     NotificationType.CFEI_SENT_FOR_DECISION_MAKING: {
         'template_name': 'cfei_sent_for_decision_making',
         'subject': 'CFEI winner ready to be picked'
+    },
+    NotificationType.CFEI_CLARIFICATION_DEADLINE_PASSED: {
+        'template_name': 'cfei_clarification_deadline_passed',
+        'subject': 'CFEI Clarification Request Deadline passed'
     },
 }

@@ -65,6 +65,9 @@ const styleSheet = theme => ({
   darkB: {
     borderBottom: `4px solid ${theme.palette.dateColors.dark}`,
   },
+  orangeB: {
+    borderBottom: `4px solid ${theme.palette.dateColors.orange}`,
+  },
   green: {
     color: theme.palette.dateColors.green,
   },
@@ -76,6 +79,9 @@ const styleSheet = theme => ({
   },
   dark: {
     color: theme.palette.dateColors.dark,
+  },
+  orange: {
+    color: theme.palette.dateColors.orange,
   },
 });
 
@@ -113,11 +119,10 @@ const DatePoint = (props) => {
 
   const labelClass = className({ [classes.bold]: bold });
 
-  const fontType = bold ? 'body2' : 'body1';
-
   let viewBox = '-4 -4 16 16';
   if (align === 'left') viewBox = '0 -5 16 16';
   else if (align === 'right') viewBox = '-5 -4 16 16';
+
   return (
     <div
       className={containerClass}

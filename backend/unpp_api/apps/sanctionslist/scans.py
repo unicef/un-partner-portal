@@ -42,16 +42,33 @@ def create_sanctions_match(name_matches_qs, partner, match_type, match_text):
 def sanctions_scan_partner(partner):
     # Partner Org Legal Name
     matched_names = filter_sanctions_names(partner.legal_name, SANCTION_LIST_TYPES.entity, partner)
-
     create_sanctions_match(
         matched_names, partner, SANCTION_MATCH_TYPES.organization,
         "Match found on the partners organization legal name"
     )
 
+    if partner.profile.legal_name_change:
+        matched_former_names = filter_sanctions_names(
+            partner.profile.former_legal_name, SANCTION_LIST_TYPES.entity, partner
+        )
+        create_sanctions_match(
+            matched_former_names, partner, SANCTION_MATCH_TYPES.organization,
+            "Match found on the partners past legal name"
+        )
+
+    if partner.profile.alias_name:
+        matched_aliases = filter_sanctions_names(
+            partner.profile.alias_name, SANCTION_LIST_TYPES.entity, partner
+        )
+        create_sanctions_match(
+            matched_aliases, partner, SANCTION_MATCH_TYPES.organization,
+            "Match found on the partners alias"
+        )
+
     # Partner Heads
-    if partner.org_head:
+    for org_head in partner.organisation_heads.all():
         matched_names = filter_sanctions_names(
-            partner.org_head.fullname, SANCTION_LIST_TYPES.individual, partner
+            org_head.fullname, SANCTION_LIST_TYPES.individual, partner
         )
         create_sanctions_match(
             matched_names, partner, SANCTION_MATCH_TYPES.board, "Match found for head of organization"

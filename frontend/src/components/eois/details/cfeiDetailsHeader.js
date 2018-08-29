@@ -95,9 +95,16 @@ class CfeiHeader extends Component {
       hasViewAllPermission,
       hasViewWinnerPermission,
       hasViewApplicationsPermission,
+      hasRequestsViewPermission,
       params: { type } } = this.props;
 
     let tabsToRender = tabs;
+    if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
+      if (!this.hasPermissionToViewApplications(hasRequestsViewPermission)) {
+        tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.REQUESTS, tabsToRender);
+      }
+    }
+
     if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && !isCompleted) {
       if (!this.hasPermissionToViewApplications(hasViewApplicationsPermission)) {
         tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.APPLICATIONS, tabsToRender);
@@ -208,6 +215,7 @@ CfeiHeader.propTypes = {
   hasViewAllPermission: PropTypes.bool.isRequired,
   hasViewWinnerPermission: PropTypes.bool.isRequired,
   hasReviewPermission: PropTypes.bool.isRequired,
+  hasRequestsViewPermission: PropTypes.bool.isRequired,
   loadUCN: PropTypes.func,
   isFocalPoint: PropTypes.bool,
   isCreator: PropTypes.bool,
@@ -230,6 +238,7 @@ const mapStateToProps = (state, ownProps) => ({
   hasViewApplicationsPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_VIEW_APPLICATIONS, state),
   hasViewAllPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_FINALIZED_VIEW_ALL_INFO, state),
   hasViewWinnerPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_FINALIZED_VIEW_WINNER_AND_CN, state),
+  hasRequestsViewPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS, state),
   cnFile: state.conceptNote.cnFile,
   error: state.cfeiDetails.status.error,
   status: selectCfeiStatus(state, ownProps.params.id),

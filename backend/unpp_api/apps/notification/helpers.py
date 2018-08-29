@@ -89,6 +89,14 @@ def send_eoi_sent_for_decision_notification(eoi):
         })
 
 
+def send_send_clarification_deadline_passed_notification(eoi):
+    users = list(eoi.focal_points.all()) + [eoi.created_by]
+
+    send_notification(NotificationType.CFEI_CLARIFICATION_DEADLINE_PASSED, eoi, users, context={
+        'eoi': eoi,
+    })
+
+
 def send_notification_cfei_completed(eoi):
     if eoi.completed_reason == COMPLETED_REASON.cancelled:
         users = get_partner_users_for_application_queryset(eoi.applications.all())

@@ -13,6 +13,7 @@ import {
   TableCell,
 } from 'material-ui/Table';
 import ListLoader from './listLoader';
+import SpreadContent from '../spreadContent';
 
 
 const table = {
@@ -24,7 +25,8 @@ const styleSheet = (theme) => {
   const paddingBig = theme.spacing.unit * 3;
   return {
     container: {
-      padding: `${paddingSmall}px 0 ${paddingSmall}px ${paddingBig}px`,
+      padding: `${paddingSmall}px ${paddingBig}px ${paddingSmall}px ${paddingBig}px`,
+      backgroundColor: theme.palette.primary[100],
     },
   };
 };
@@ -58,14 +60,20 @@ class PaginatedList extends Component {
     this.handleRowMouseLeave = this.handleRowMouseLeave.bind(this);
   }
 
-  navigationHeader() {
+  navigationHeader(headerAction) {
     const { classes, itemsCount = 0, pageSize, pageNumber } = this.props;
     const firstRange = (pageSize * (pageNumber - 1)) + 1;
     const secondTmp = (pageSize * (pageNumber));
     const secondRange = secondTmp > itemsCount ? itemsCount : secondTmp;
-    return (<div className={classes.container}><Typography type="title">
-      {`${isNaN(firstRange) ? 0 : firstRange}-${isNaN(secondRange) ? 0 : secondRange} of ${itemsCount} results`}
-    </Typography></div>);
+    return (
+      <div className={classes.container}>
+        <SpreadContent>
+          <Typography type="title">
+            {`${isNaN(firstRange) ? 0 : firstRange}-${isNaN(secondRange) ? 0 : secondRange} of ${itemsCount} results`}
+          </Typography>
+          {headerAction || null}
+        </SpreadContent>
+      </div>);
   }
 
   changeSorting(sorting) {
@@ -107,6 +115,7 @@ class PaginatedList extends Component {
       pageNumber,
       loading,
       sorting,
+      headerAction,
       allowSorting,
       changeSorting,
       changePageSize,
@@ -120,7 +129,7 @@ class PaginatedList extends Component {
           <Grid
             rows={items}
             columns={columns}
-            headerPlaceholderComponent={() => this.navigationHeader()}
+            headerPlaceholderComponent={() => this.navigationHeader(headerAction)}
           >
             {allowSorting && <SortingState
               sorting={sorting}
@@ -203,6 +212,7 @@ PaginatedList.propTypes = {
   changePageNumber: PropTypes.func,
   onTableRowClick: PropTypes.func,
   clickableRow: PropTypes.bool,
+  headerAction: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
 };
 
 PaginatedList.defaultProps = {

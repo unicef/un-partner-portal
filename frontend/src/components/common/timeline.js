@@ -40,6 +40,7 @@ class Timeline extends Component {
     const {
       classes,
       postedDate,
+      clarificationDate,
       deadlineDate,
       notificationDate,
       startDate } = this.props;
@@ -55,20 +56,28 @@ class Timeline extends Component {
             position="top-start"
           />
           <DatePoint
+            date={clarificationDate}
+            label="Clarification Request Deadline"
+            align="center"
+            color="orange"
+            position="bottom-start"
+            flexSize={calcDistance(postedDate, startDate, clarificationDate)}
+          />
+          <DatePoint
             bold
             date={deadlineDate}
             label="Application Deadline"
             align="center"
             color="red"
-            position="bottom-end"
-            flexSize={calcDistance(postedDate, startDate, deadlineDate)}
+            position="top-start"
+            flexSize={calcDistance(clarificationDate, startDate, deadlineDate)}
           />
           <DatePoint
             date={notificationDate}
             label="Notification of results"
             align="center"
             color="blue"
-            position="top-end"
+            position="bottom-end"
             flexSize={calcDistance(deadlineDate, startDate, notificationDate)}
           />
           <DatePoint
@@ -76,7 +85,7 @@ class Timeline extends Component {
             label="Estimated start date"
             align="right"
             color="dark"
-            position="bottom-end"
+            position="top-end"
             fullWidth
           />
         </div>
@@ -88,6 +97,7 @@ class Timeline extends Component {
 
 Timeline.propTypes = {
   classes: PropTypes.object,
+  clarificationDate: PropTypes.string,
   postedDate: PropTypes.string,
   deadlineDate: PropTypes.string,
   notificationDate: PropTypes.string,

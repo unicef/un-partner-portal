@@ -8,6 +8,8 @@ import GridColumn from '../../../common/grid/gridColumn';
 import Timeline from './timeline';
 import ProjectDetails from './projectDetails';
 import SelectionCriteria from './selectionCriteria';
+import PartnerClarificationRequests from './partnerClarificationRequests';
+import AgencyClarificationAnswers from './agencyClarificationAnswers';
 import InformedPartners from './informedPartners';
 import SelectedPartners from './selectedPartners/selectedPartnersContainer';
 import SelectedPartnerJustification from './selectedPartners/selectedPartnerJustification';
@@ -21,7 +23,8 @@ const messages = {
 };
 
 const CfeiOverview = (props) => {
-  const { params: { id, type }, role, cn, isComplete, cn_template, partner, partnerId, displayGoal, loading, cfei } = props;
+  const { params: { id, type }, role, cn, isComplete, cn_template,
+    partner, partnerId, displayGoal, loading } = props;
 
   return (
     <form >
@@ -43,6 +46,12 @@ const CfeiOverview = (props) => {
                 && <ConceptNote title={messages.cnTemplate} conceptNote={cn_template} />}
               {(type === PROJECT_TYPES.UNSOLICITED)
                 && <ConceptNote title={messages.cn} conceptNote={cn} />}
+              {type === PROJECT_TYPES.OPEN && role === ROLES.PARTNER
+                && <AgencyClarificationAnswers id={id} />}
+              {type === PROJECT_TYPES.OPEN && role === ROLES.PARTNER
+                && <PartnerClarificationRequests id={id} />}
+              {type === PROJECT_TYPES.OPEN && role === ROLES.AGENCY
+                && <AgencyClarificationAnswers id={id} />}
               {type === PROJECT_TYPES.OPEN
                 && <SelectionCriteria id={id} />}
               {role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN
@@ -69,7 +78,6 @@ CfeiOverview.propTypes = {
   displayGoal: PropTypes.bool,
   isComplete: PropTypes.bool,
   loading: PropTypes.bool,
-  cfei: PropTypes.object,
 };
 
 const formCfeiDetails = reduxForm({
@@ -82,10 +90,8 @@ const mapStateToProps = (state, ownProps) => {
   const { cn = null,
     is_completed = null,
     partner_id = null,
-    partner_name = null,
-    selected_source = null,
-    cn_template = null,
-    goal = null,
+    partner_name = null, 
+    cn_template = null, 
     focal_points_detail = [],
   } = cfei || {};
 

@@ -19,7 +19,6 @@ import { loadApplications } from '../../../../reducers/partnersApplicationsList'
 import { APPLICATION_STATUSES } from '../../../../helpers/constants';
 import { isQueryChanged } from '../../../../helpers/apiHelper';
 import {
-  isCfeiCompleted,
   isUserAFocalPoint,
   isUserAReviewer,
   isUserACreator,

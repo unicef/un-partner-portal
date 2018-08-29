@@ -36,10 +36,12 @@ from common.serializers import (
 from common.models import Point, Specialization
 from notification.consts import NotificationType
 from notification.helpers import user_received_notification_recently, send_notification_to_cfei_focal_points
-from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
+from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer, \
+    PartnerSimpleSerializer
 from partner.models import Partner
 from project.identifiers import get_eoi_display_identifier
-from project.models import EOI, Application, Assessment, ApplicationFeedback, EOIAttachment
+from project.models import EOI, Application, Assessment, ApplicationFeedback, EOIAttachment, \
+    ClarificationRequestQuestion, ClarificationRequestAnswerFile
 from project.utilities import update_cfei_focal_points, update_cfei_reviewers
 
 
@@ -76,6 +78,7 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'agency',
             'start_date',
             'end_date',
+            'deadline_date',
             'deadline_date',
             'status',
             'completed_date',
@@ -146,7 +149,11 @@ class CreateEOISerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         validated_data = super(CreateEOISerializer, self).validate(attrs)
         date_field_names_that_should_be_in_this_order = [
-            'deadline_date', 'notif_results_date', 'start_date', 'end_date'
+            'clarification_request_deadline_date',
+            'deadline_date',
+            'notif_results_date',
+            'start_date',
+            'end_date',
         ]
         dates = []
         for field_name in date_field_names_that_should_be_in_this_order:
@@ -174,13 +181,24 @@ class CreateEOISerializer(serializers.ModelSerializer):
     class Meta:
         model = EOI
         exclude = ('cn_template', )
+        extra_kwargs = {
+            'clarification_request_deadline_date': {
+                'required': True,
+            },
+            'deadline_date': {
+                'required': True,
+            },
+            'notif_results_date': {
+                'required': True,
+            },
+        }
 
 
 class CreateDirectEOISerializer(CreateEOISerializer):
 
     class Meta:
         model = EOI
-        exclude = ('cn_template', 'deadline_date')
+        exclude = ('cn_template', 'deadline_date', 'clarification_request_deadline_date')
 
 
 class CreateDirectApplicationSerializer(serializers.ModelSerializer):
@@ -479,9 +497,11 @@ class CreateDirectProjectSerializer(serializers.Serializer):
 
 class CreateProjectSerializer(CreateEOISerializer):
 
-    class Meta:
+    class Meta(CreateEOISerializer.Meta):
         model = EOI
-        exclude = ('cn_template', 'created_by')
+        exclude = CreateEOISerializer.Meta.exclude + (
+            'created_by',
+        )
 
     @transaction.atomic
     def create(self, validated_data):
@@ -565,6 +585,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'created',
             'start_date',
             'end_date',
+            'clarification_request_deadline_date',
             'deadline_date',
             'notif_results_date',
             'justification',
@@ -591,6 +612,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'application',
             'published_timestamp',
             'deadline_passed',
+            'clarification_request_deadline_passed',
             'attachments',
         )
         read_only_fields = fields
@@ -630,6 +652,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'created',
             'start_date',
             'end_date',
+            'clarification_request_deadline_date',
             'deadline_date',
             'notif_results_date',
             'justification',
@@ -661,6 +684,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'applications_count',
             'is_published',
             'deadline_passed',
+            'clarification_request_deadline_passed',
             'published_timestamp',
             'attachments',
             'sent_for_decision',
@@ -1384,4 +1408,36 @@ class PendingOffersSerializer(SubmittedCNSerializer):
             'countries',
             'specializations',
             'eoi_id'
+        )
+
+
+class ClarificationRequestQuestionSerializer(serializers.ModelSerializer):
+    created_by = BasicUserSerializer(read_only=True)
+    partner = PartnerSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = ClarificationRequestQuestion
+        fields = (
+            'id',
+            'created',
+            'created_by',
+            'partner',
+            'question',
+        )
+        read_only_fields = (
+            'created',
+        )
+
+
+class ClarificationRequestAnswerFileSerializer(serializers.ModelSerializer):
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(CurrentUserDefault()))
+    file = CommonFileSerializer()
+
+    class Meta:
+        model = ClarificationRequestAnswerFile
+        fields = (
+            'id',
+            'created_by',
+            'title',
+            'file',
         )

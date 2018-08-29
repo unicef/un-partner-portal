@@ -13,14 +13,17 @@ const messages = {
 };
 
 const OpenForm = (props) => {
-  const { handleSubmit, start_date, end_date, deadline_date, notif_results_date, form } = props;
+  const { handleSubmit, start_date, deadline_date,
+    notif_results_date, clarification_request_deadline_date, form } = props;
+
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
         <ProjectDetails
           formName="newOpenCfei"
         >
-          <fields.DeadlineDate />
+          <fields.ClarificationRequestDeadlineDate />
+          <fields.DeadlineDate minDate={clarification_request_deadline_date} />
           <fields.NotifyDate minDate={deadline_date} />
           <fields.StartDate minDate={notif_results_date} />
           <fields.EndDate minDate={start_date} />
@@ -42,6 +45,7 @@ OpenForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   deadline_date: PropTypes.string,
   notif_results_date: PropTypes.string,
+  clarification_request_deadline_date: PropTypes.string,
   start_date: PropTypes.string,
   form: PropTypes.string,
 };

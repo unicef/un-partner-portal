@@ -141,7 +141,6 @@ const mapStateToProps = (state, ownProps) => {
     cfeiStatus: selectCfeiStatus(state, eoi),
     isReviewer: isUserAReviewer(state, eoi),
     hasViewAssessmentsPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_VIEW_ALL_REVIEWS, state),
-    hasFeedbackPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS, state),
     application,
     partner,
     partnerDetails,

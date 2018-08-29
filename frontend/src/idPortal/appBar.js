@@ -7,9 +7,9 @@ import Popover from 'material-ui/Popover';
 import AppBar from 'material-ui/AppBar';
 import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
-import AccountIcon from 'material-ui-icons/AccountCircle'; 
+import AccountIcon from 'material-ui-icons/AccountCircle';
 import Logout from '../components/layout/logout';
-import Options from '../components/layout/options';
+
 const styleSheet = theme => ({
   leftHeader: {
     [theme.breakpoints.down('xs')]: {
@@ -45,9 +45,9 @@ class MainAppBar extends Component {
     super();
     this.state = {
       notifAnchor: null,
-      profileAnchor: null, 
+      profileAnchor: null,
       profileOpen: false,
-    }; 
+    };
 
     this.handleProfileClick = this.handleProfileClick.bind(this);
     this.handleProfileOnClose = this.handleProfileOnClose.bind(this);

@@ -47,10 +47,16 @@ class EOI(TimeStampedModel):
     other_information = models.CharField(
         max_length=5000, null=True, blank=True, verbose_name='Other information (optional)'
     )
+
+    # Timeline
     start_date = models.DateField(verbose_name='Estimated Start Date')
     end_date = models.DateField(verbose_name='Estimated End Date')
+    clarification_request_deadline_date = models.DateField(
+        verbose_name='Clarification Request Date', null=True, blank=True
+    )
     deadline_date = models.DateField(verbose_name='Estimated Deadline Date', null=True, blank=True)
     notif_results_date = models.DateField(verbose_name='Notification of Results Date', null=True, blank=True)
+
     has_weighting = models.BooleanField(default=True, verbose_name='Has weighting?')
     invited_partners = models.ManyToManyField('partner.Partner', related_name="expressions_of_interest", blank=True)
     reviewers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="eoi_as_reviewer", blank=True)
@@ -119,7 +125,13 @@ class EOI(TimeStampedModel):
 
     @property
     def deadline_passed(self):
-        return self.deadline_date and self.deadline_date < date.today()
+        return bool(self.deadline_date and self.deadline_date < date.today())
+
+    @property
+    def clarification_request_deadline_passed(self):
+        return bool(
+            self.clarification_request_deadline_date and self.clarification_request_deadline_date < date.today()
+        )
 
     @property
     def contains_the_winners(self):
@@ -179,7 +191,33 @@ class EOIAttachment(TimeStampedModel):
     description = models.TextField(max_length=5120)
 
     def __str__(self):
-        return f"EOIAttachment <pk:{self.pk}> (eoi:{self.eoi.pk})"
+        return f"EOIAttachment <pk:{self.pk}> (EOI: {self.eoi.pk})"
+
+
+class ClarificationRequestQuestion(TimeStampedModel):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eoi_questions")
+    eoi = models.ForeignKey(EOI, related_name="questions")
+    partner = models.ForeignKey('partner.Partner', related_name="eoi_questions")
+    question = models.TextField(max_length=5120)
+
+    class Meta:
+        ordering = ('id', )
+
+    def __str__(self):
+        return f"ClarificationRequestQuestion <pk:{self.pk}> (EOI: {self.eoi.pk})"
+
+
+class ClarificationRequestAnswerFile(TimeStampedModel):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eoi_question_answers")
+    eoi = models.ForeignKey(EOI, related_name="question_answers")
+    title = models.TextField(max_length=1024)
+    file = models.ForeignKey('common.CommonFile', related_name="eoi_question_answers")
+
+    class Meta:
+        ordering = ('id', )
+
+    def __str__(self):
+        return f"ClarificationRequestAnswerFile <pk:{self.pk}> (EOI: {self.eoi.pk})"
 
 
 class Pin(TimeStampedModel):
