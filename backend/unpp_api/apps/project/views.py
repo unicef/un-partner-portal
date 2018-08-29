@@ -457,6 +457,11 @@ class PartnerEOIApplicationDestroyAPIView(DestroyAPIView):
             self.get_queryset(), pk=self.kwargs['pk'], partner=self.request.active_partner
         )
 
+    def perform_destroy(self, instance: Application):
+        if instance.eoi and instance.eoi.deadline_passed:
+            raise PermissionDenied('You cannot delete application past submission deadline.')
+        return super(PartnerEOIApplicationDestroyAPIView, self).perform_destroy(instance)
+
 
 class ApplicationAPIView(RetrieveUpdateAPIView):
     permission_classes = (
