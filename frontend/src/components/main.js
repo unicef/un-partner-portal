@@ -9,7 +9,6 @@ import { loadPartnerConfig } from '../reducers/partnerProfileConfig';
 import { loadSectors } from '../reducers/sectors';
 import getTheme, { muiOldTheme } from '../styles/muiTheme';
 import SnackbarContainer from './common/snackbarContainer';
-import { loadOffices } from '../reducers/offices';
 
 class Main extends Component {
   constructor() {
@@ -24,13 +23,11 @@ class Main extends Component {
     const { getCountries,
       getPartnerConfig,
       getSectors,
-      getOffices,
     } = this.props;
     const configPromises = [
       getCountries(),
       getPartnerConfig(),
       getSectors(),
-      getOffices(),
     ];
     Promise.all(configPromises).then(() => {
       this.setState({ configLoaded: true });
@@ -60,7 +57,6 @@ Main.propTypes = {
   session: PropTypes.object,
   getCountries: PropTypes.func,
   getSectors: PropTypes.func,
-  getOffices: PropTypes.func,
   getPartnerConfig: PropTypes.func,
 };
 
@@ -72,7 +68,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   getCountries: () => dispatch(loadCountries()),
   getSectors: () => dispatch(loadSectors()),
-  getOffices: () => dispatch(loadOffices()),
   getPartnerConfig: () => dispatch(loadPartnerConfig()),
 });
 
