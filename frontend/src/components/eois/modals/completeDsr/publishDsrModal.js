@@ -39,7 +39,7 @@ class PublishDsrModal extends Component {
           title={messages.title}
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
-          minWidth={40}
+          minwidth={40}
           buttons={{
             flat: {
               handleClick: handleDialogClose,

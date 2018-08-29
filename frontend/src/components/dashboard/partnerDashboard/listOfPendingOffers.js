@@ -31,7 +31,7 @@ const renderCells = ({ row, column, value }) => {
     return (
       <TableCell >
         {row.countries.map((code, index) =>
-          (<span>
+          (<span key={code}>
             <EoiCountryCell code={code} />
             {(index === row.countries.length - 1) ? '' : ', '}
           </span>),

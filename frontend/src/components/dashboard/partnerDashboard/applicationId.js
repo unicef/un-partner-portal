@@ -41,8 +41,10 @@ const CnCell = (props) => {
 };
 
 CnCell.propTypes = {
-  eoiId: PropTypes.string,
-  cnId: PropTypes.string,
+  eoiId: PropTypes.oneOfType([
+    PropTypes.string, PropTypes.number]),
+  cnId: PropTypes.oneOfType([
+    PropTypes.string, PropTypes.number]),
   type: PropTypes.string,
 };
 

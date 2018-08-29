@@ -34,7 +34,7 @@ class FinalizeDsrModal extends Component {
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
           info={messages.header}
-          minWidth={40}
+          minwidth={40}
           buttons={{
             flat: {
               handleClick: handleDialogClose,

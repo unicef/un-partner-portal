@@ -29,7 +29,7 @@ const PublishCfeiButton = (props) => {
 
 PublishCfeiButton.propTypes = {
   handleClick: PropTypes.func,
-  disabled: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 export default PublishCfeiButton;

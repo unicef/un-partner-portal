@@ -53,7 +53,7 @@ OpenForm.propTypes = {
 const selector = formValueSelector('newOpenCfei');
 
 const connectedOpenForm = connect(
-  state => selector(state, 'start_date', 'end_date', 'deadline_date', 'notif_results_date'),
+  state => selector(state, 'start_date', 'end_date', 'deadline_date', 'notif_results_date', 'clarification_request_deadline_date'),
 )(OpenForm);
 
 export default reduxForm({

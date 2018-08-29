@@ -24,7 +24,7 @@ const PreselectedYourScore = (props) => {
         title={renderExpandedCell(R.toPairs(breakdown) || [], allCriteria)}
         disabled={score && score.breakdown}
       >
-        <div>{localScore}</div>
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{localScore}</div>
       </Tooltip>
     </TableCell>
   );

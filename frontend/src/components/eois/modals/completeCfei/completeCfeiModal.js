@@ -34,7 +34,7 @@ class CompleteCfeiModal extends Component {
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
           info={messages.header}
-          minWidth={30}
+          minwidth={40}
           buttons={{
             flat: {
               handleClick: handleDialogClose,

@@ -44,7 +44,7 @@ class AddClarificationAnswerModal extends Component {
           title={messages.title}
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
-          info={{ title: formatDateForPrint(Date()) }}
+          info={{ title: formatDateForPrint(new Date()) }}
           buttons={{
             flat: {
               handleClick: handleDialogClose,

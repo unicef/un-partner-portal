@@ -33,14 +33,14 @@ class SendCfeiForDecisionModal extends Component {
   }
 
   render() {
-    const { classes, dialogOpen, handleDialogClose } = this.props;
+    const { dialogOpen, handleDialogClose } = this.props;
     return (
       <div>
         <ControlledModal
           title={messages.title}
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
-          minWidth={40}
+          minwidth={40}
           buttons={{
             flat: {
               handleClick: handleDialogClose,

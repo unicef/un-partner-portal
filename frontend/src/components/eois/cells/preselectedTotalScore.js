@@ -39,7 +39,7 @@ const PreselectedTotalScore = (props) => {
           id={`${id}-your-score-tooltip`}
           title={renderExpandedCell(classes, assessments)}
         >
-          <Typography type="body1" color="inherit">
+          <Typography style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} type="body1" color="inherit">
             {localScore}
           </Typography>
         </Tooltip>
