@@ -36,7 +36,8 @@ from common.serializers import (
 from common.models import Point, Specialization
 from notification.consts import NotificationType
 from notification.helpers import user_received_notification_recently, send_notification_to_cfei_focal_points
-from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer
+from partner.serializers import PartnerSerializer, PartnerAdditionalSerializer, PartnerShortSerializer, \
+    PartnerSimpleSerializer
 from partner.models import Partner
 from project.identifiers import get_eoi_display_identifier
 from project.models import EOI, Application, Assessment, ApplicationFeedback, EOIAttachment, \
@@ -1396,14 +1397,20 @@ class PendingOffersSerializer(SubmittedCNSerializer):
 
 
 class ClarificationRequestQuestionSerializer(serializers.ModelSerializer):
-    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(CurrentUserDefault()))
+    created_by = BasicUserSerializer(read_only=True)
+    partner = PartnerSimpleSerializer(read_only=True)
 
     class Meta:
         model = ClarificationRequestQuestion
         fields = (
             'id',
+            'created',
             'created_by',
+            'partner',
             'question',
+        )
+        read_only_fields = (
+            'created',
         )
 
 

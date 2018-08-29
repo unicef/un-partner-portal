@@ -1111,7 +1111,7 @@ class ClarificationRequestQuestionAPIView(ListCreateAPIView):
         if eoi.clarification_request_deadline_date < timezone.now().date():
             raise PermissionDenied('Clarification Request Deadline has passed.')
 
-        return serializer.save(eoi=eoi, partner=self.request.active_partner)
+        return serializer.save(eoi=eoi, partner=self.request.active_partner, created_by=self.request.user)
 
 
 class ClarificationRequestAnswerFileAPIView(ListCreateAPIView):
