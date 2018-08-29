@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('common', '0012_auto_20180724_0902'),
-        ('project', '0072_eoi_clarification_request_deadline_date'),
+        ('project', '0072_auto_20180829_0755'),
         ('partner', '0073_partnercollaborationevidence_editable'),
     ]
 
