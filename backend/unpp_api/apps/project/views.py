@@ -454,8 +454,8 @@ class PartnerEOIApplicationDestroyAPIView(DestroyAPIView):
         )
 
     def perform_destroy(self, instance: Application):
-        if instance.did_win:
-            raise PermissionDenied('You cannot delete a successful application.')
+        if instance.eoi and instance.eoi.deadline_passed:
+            raise PermissionDenied('You cannot delete application past submission deadline.')
         return super(PartnerEOIApplicationDestroyAPIView, self).perform_destroy(instance)
 
 
