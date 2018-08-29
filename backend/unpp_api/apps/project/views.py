@@ -368,13 +368,17 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
         if eoi.applications.filter(partner=self.request.active_partner).exists():
             raise serializers.ValidationError("You already applied for this project.")
 
-        serializer.save(
-            eoi=eoi,
-            agency=eoi.agency,
-            partner=self.request.active_partner,
-            submitter=self.request.user,
-        )
-        super(PartnerEOIApplicationCreateAPIView, self).perform_create(serializer)
+        save_kwargs = {
+            'eoi': eoi,
+            'agency': eoi.agency,
+            'partner': self.request.active_partner,
+            'submitter': self.request.user,
+        }
+
+        if self.request.active_partner.pk in eoi.preselected_partners:
+            save_kwargs['status'] = APPLICATION_STATUSES.preselected
+
+        serializer.save(**save_kwargs)
         send_notification_application_created(serializer.instance)
 
 

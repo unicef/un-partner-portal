@@ -79,6 +79,8 @@ class EOI(TimeStampedModel):
     )
     published_timestamp = models.DateTimeField(default=timezone.now)
 
+    preselected_partners = ArrayField(models.IntegerField(), default=list)
+
     class Meta:
         ordering = ['id']
 

@@ -338,6 +338,21 @@ class ApplicationFullSerializer(serializers.ModelSerializer):
 
         return super(ApplicationFullSerializer, self).validate(data)
 
+    def update(self, instance, validated_data):
+        if 'status' in validated_data:
+            with transaction.atomic():
+                eoi = EOI.objects.select_for_update().get(pk=instance.eoi_id)
+                preselected_partners = set(eoi.preselected_partners)
+
+                if validated_data['status'] in {APPLICATION_STATUSES.preselected, APPLICATION_STATUSES.recommended}:
+                    preselected_partners.add(instance.partner_id)
+                else:
+                    preselected_partners.discard(instance.partner_id)
+                eoi.preselected_partners = list(preselected_partners)
+                eoi.save()
+
+        return super(ApplicationFullSerializer, self).update(instance, validated_data)
+
 
 class ApplicationFullEOISerializer(ApplicationFullSerializer):
     eoi = BaseProjectSerializer(read_only=True)
@@ -1352,10 +1367,10 @@ class SubmittedCNSerializer(serializers.ModelSerializer):
 
     def get_specializations(self, obj):
         if obj.is_unsolicited:
-            query = Specialization.objects.filter(id__in=obj.proposal_of_eoi_details.get('specializations'))
+            queryset = Specialization.objects.filter(id__in=obj.proposal_of_eoi_details.get('specializations'))
         else:
-            query = obj.eoi.specializations.all()
-        return SimpleSpecializationSerializer(query, many=True).data
+            queryset = obj.eoi.specializations.all()
+        return SimpleSpecializationSerializer(queryset, many=True).data
 
 
 class PendingOffersSerializer(SubmittedCNSerializer):
