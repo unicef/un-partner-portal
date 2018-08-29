@@ -1,13 +1,15 @@
-from django.http import Http404
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, get_object_or_404, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.exceptions import PermissionDenied, NotFound
 
+from agency.agencies import UNICEF
 from agency.permissions import AgencyPermission
 from common.permissions import current_user_has_permission, HasUNPPPermission
-from externals.models import PartnerVendorNumber
+from externals.models import PartnerVendorNumber, UNICEFVendorData
 from externals.serializers import PartnerVendorNumberSerializer
 from externals.sources.unhcr import UNHCRInfoClient
+from externals.sources.unicef import UNICEFInfoClient
 
 
 class PartnerVendorNumberAPIView(CreateAPIView, RetrieveUpdateAPIView, DestroyAPIView):
@@ -30,6 +32,16 @@ class PartnerVendorNumberAPIView(CreateAPIView, RetrieveUpdateAPIView, DestroyAP
 
         return queryset
 
+    def perform_create(self, serializer):
+        partner = serializer.validated_data['partner']
+        user_country = self.request.agency_member.office.country
+        if not partner.country_code == user_country.code:
+            raise PermissionDenied(
+                f'You\'re currently logged in under {user_country.name}, '
+                'you cannot add Vendor Numbers outside of that country.'
+            )
+        serializer.save()
+
 
 class PartnerExternalDetailsAPIView(APIView):
 
@@ -41,6 +53,7 @@ class PartnerExternalDetailsAPIView(APIView):
     )
     provider_for_agency = {
         'UNHCR': UNHCRInfoClient,
+        'UNICEF': UNICEFInfoClient,
     }
 
     def get_queryset(self):
@@ -56,7 +69,39 @@ class PartnerExternalDetailsAPIView(APIView):
         )
         provider = self.provider_for_agency.get(vendor_number.agency.name)
         if not provider:
-            raise Http404
+            raise NotFound
+
         return Response({
-            'tables': provider().get_tables(vendor_number.number)
+            'tables': provider().get_tables(vendor_number),
+        })
+
+
+class PartnerBasicInfoAPIView(APIView):
+
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[],
+        ),
+    )
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.agency == UNICEF.model_instance:
+            raise NotFound('Your agency doesn\'t support basic partner info lookup.')
+
+        vendor_number = request.GET.get('vendor_number')
+        if not vendor_number:
+            raise NotFound
+
+        filter_kwargs = {
+            'vendor_number': vendor_number
+        }
+        if 'business_area' in request.GET:
+            filter_kwargs['business_area'] = request.GET['business_area']
+
+        vendor_data: UNICEFVendorData = UNICEFVendorData.objects.filter(**filter_kwargs).first()
+        if not vendor_data:
+            raise NotFound
+
+        return Response({
+            'partner_name': vendor_data.vendor_name
         })
