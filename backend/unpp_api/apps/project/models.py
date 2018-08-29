@@ -85,6 +85,11 @@ class EOI(TimeStampedModel):
     )
     published_timestamp = models.DateTimeField(default=timezone.now)
 
+    # Used to keep track of preselected CSOs to fulfill following requirement:
+    # 'If the CSO deletes the concept note and replaces it with a new concept note,
+    # then CSO should remain on the shortlist.'
+    preselected_partners = ArrayField(models.IntegerField(), default=list)
+
     class Meta:
         ordering = ['id']
 
