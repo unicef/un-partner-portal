@@ -1,3 +1,5 @@
+from django.core.management import call_command
+from django.test import TestCase
 from django.urls import reverse
 
 from agency.roles import AgencyRole
@@ -24,3 +26,12 @@ class TestAPISwaggerView(BaseAPITestCase):
     def test_view(self):
         response = self.client.get('/api/doc/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class MigrationTestCase(TestCase):
+
+    def test_all_changes_migrated(self):
+        """
+        Fail if there are changes in the models not reflected in migrations
+        """
+        call_command('makemigrations', check=True, dry_run=True)
