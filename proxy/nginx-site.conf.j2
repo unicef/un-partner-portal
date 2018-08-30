@@ -8,25 +8,23 @@ upstream frontend {
 
 server {
     listen 80;
-    {% if SSL_CERTIFICATE %}
-        listen 443 ssl;
-        ssl_certificate     {{ SSL_CERTIFICATE }}/fullchain.pem;
-        ssl_certificate_key {{ SSL_CERTIFICATE }}/privkey.pem;
-    {% endif %}
-
-    location /.well-known/acme-challenge {
-        allow all;
-        root /usr/share/nginx/html;
-    }
 
     location /api/ {
-        uwsgi_pass backend;
-        include /etc/nginx/conf.d/uwsgi_params;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_pass http://backend;
     }
 
     location /social/ {
-        uwsgi_pass backend;
-        include /etc/nginx/conf.d/uwsgi_params;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_pass http://backend;
     }
 
     location /api/uploads  {
@@ -48,6 +46,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
         # Following is necessary for Websocket support
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;

@@ -48,8 +48,7 @@ Faker==0.8.16
 httmock==1.2.6
 
 # WSGI
-uWSGI==2.0.17
-gunicorn==19.6.0
+gunicorn==19.9.0
 
 # Sentry
 raven==6.4.0

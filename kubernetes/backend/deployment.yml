@@ -40,7 +40,7 @@ spec:
             - name: static-volume-{{NAMESPACE}}
               mountPath: /data
           command: ["bash"]
-          args: ["-c", "uwsgi --ini /code/unpp_api/uwsgi.ini"]
+          args: ["-c", "gunicorn unpp_api.wsgi -c /code/gunicorn_config.py"]
           ports:
             - containerPort: 8000
           env:

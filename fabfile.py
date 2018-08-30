@@ -61,8 +61,8 @@ def managepy(command=''):
     local(cmd)
 
 
-def preview_uwsgi_log():
-    cmd = 'docker-compose exec backend tail -f /var/log/uwsgi_global.log'
+def preview_gunicorn_log():
+    cmd = 'docker-compose exec backend tail -f /data/unpp_api/logs/gunicorn.log'
     local(cmd)
 
 
