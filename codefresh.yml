@@ -9,7 +9,7 @@ steps:
         working_directory: ${{main_clone}}/backend
         tag: ${{CF_BRANCH}}
         build_arguments:
-            - env=$ENV
+            - env=${{ENV}}
 
     build_db:
         type: build
