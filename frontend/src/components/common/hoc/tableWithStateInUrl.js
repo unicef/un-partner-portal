@@ -87,8 +87,8 @@ const mapStateToProps = (state, {
 }) => ({
   pathName,
   query,
-  pageSize: R.isNil(query.page_size) ? 0 : +query.page_size,
-  pageNumber: R.isNil(query.page) ? 1 : +query.page,
+  pageSize: R.isNil(query.page_size) ? 0 : query.page_size,
+  pageNumber: R.isNil(query.page) ? 1 : query.page,
 });
 
 export default withRouter(connect(mapStateToProps, null)(TableWithStateInUrl));

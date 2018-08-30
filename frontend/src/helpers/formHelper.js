@@ -414,6 +414,7 @@ export const renderDatePicker = ({
         {...inputOther}
         onChange={saveValueToStore}
         onDismiss={saveValueToStore}
+        underlineStyle={{ borderColor: '#949494' }}
         {...other}
       />
     </div>
