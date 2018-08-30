@@ -63,7 +63,7 @@ const ApplicationStatusText = (props) => {
       </Grid>
       <Grid item className={classes.text}>
         <Typography type="body1" color="inherit">
-          {label}
+          {label || ''}
         </Typography>
       </Grid>
     </Grid>
@@ -76,7 +76,7 @@ ApplicationStatusText.propTypes = {
 };
 
 const mapStateToProps = (state, { status, applicationStatus }) => ({
-  finalStatus: !applicationStatus || applicationStatus === 'Rev'
+  finalStatus: !applicationStatus
     ? { id: status, label: applicationStatuses[status] }
     : { id: applicationStatus, label: selectExtendedApplicationStatuses(state)[applicationStatus] },
 });
