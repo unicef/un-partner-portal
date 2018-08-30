@@ -166,7 +166,7 @@ class AgencyClarificationAnswers extends Component {
 
   render() {
     const { dialogOpen, handleDialogClose, loading, id,
-      loadingAnswers, answers, role } = this.props;
+      loadingAnswers, answers, role, isClarificationDeadlinePassed } = this.props;
 
     return (
       <React.Fragment>
@@ -185,7 +185,7 @@ class AgencyClarificationAnswers extends Component {
             <GridColumn spacing={8}>
               {role === ROLES.AGENCY
                 ? !loadingAnswers && answers && this.fileItems()
-                : isCfeiClarificationDeadlinePassed
+                : isClarificationDeadlinePassed
                   ? this.fileItems()
                   : <Typography type="body1">{messages.publishedUntil}</Typography>}
             </GridColumn>
@@ -203,7 +203,7 @@ AgencyClarificationAnswers.propTypes = {
   id: PropTypes.string,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
-  isClaraificationDeadlinePassed: PropTypes.bool,
+  isClarificationDeadlinePassed: PropTypes.bool,
   hasPermissionToAdd: PropTypes.bool,
   loading: PropTypes.bool,
   loadingAnswers: PropTypes.bool,
@@ -222,7 +222,7 @@ AgencyClarificationAnswers.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   loading: state.addClarificationAnswer.status.loading,
   loadingAnswers: state.clarificationAnswers.status.loading,
-  isClaraificationDeadlinePassed: isCfeiClarificationDeadlinePassed(state, ownProps.id),
+  isClarificationDeadlinePassed: isCfeiClarificationDeadlinePassed(state, ownProps.id),
   hasPermissionToAdd:
   checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS, state),
   count: selectClarificationAnswersCount(state, ownProps.id),
