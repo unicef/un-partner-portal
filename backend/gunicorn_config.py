@@ -4,7 +4,8 @@ ENV = os.getenv('ENV')
 IS_DEV = ENV == 'dev'
 
 reload = IS_DEV
-errorlog = '/data/unpp_api/logs/gunicorn.log'
+errorlog = '-'
+accesslog = '-'
 capture_output = IS_DEV
 preload = True
 bind = ':8000'
