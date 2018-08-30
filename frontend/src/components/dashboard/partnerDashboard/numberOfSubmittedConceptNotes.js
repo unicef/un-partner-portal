@@ -53,7 +53,7 @@ const NumberOfSubmittedConceptNotes = (props) => {
                       <Typography>{name}</Typography>
                     </Grid>
                   </Grid>
-                  <Typography>{value}</Typography>
+                  {value}
                 </SpreadContent>
                 <Divider />
               </GridColumn>
