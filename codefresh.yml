@@ -48,7 +48,6 @@ steps:
                     - POSTGRES_PASSWORD=
                     - POSTGRES_HOST=db
                     - SECRET_KEY=asdfqwef124rf
-                    - ENV=dev
                     - DJANGO_ALLOWED_HOST="*"
                     - FRONTEND_SERVICE_HOST=frontend
 
