@@ -26,10 +26,18 @@ class PartnersListFilter(django_filters.FilterSet):
     limit = CharFilter(method='filter_limit')
     is_hq = CharFilter(method='filter_is_hq')
     no_flags = CommaSeparatedListFilter(choices=FLAG_TYPES, name='flags__flag_type', exclude=True)
+    exclude = CommaSeparatedListFilter(name='id', exclude=True)
 
     class Meta:
         model = Partner
-        fields = ('legal_name', 'country_code', 'display_type', 'specializations', 'concern')
+        fields = (
+            'legal_name',
+            'country_code',
+            'display_type',
+            'specializations',
+            'concern',
+            'exclude',
+        )
 
     def filter_legal_name(self, queryset, name, value):
         return queryset.filter(legal_name__icontains=value)
