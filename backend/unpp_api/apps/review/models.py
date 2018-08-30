@@ -31,7 +31,9 @@ class PartnerFlag(TimeStampedModel):
     escalation_comment = models.TextField(null=True, blank=True, max_length=5120)
 
     class Meta:
-        ordering = ['id']
+        ordering = (
+            '-created',
+        )
 
     def __str__(self):
         return "Partner: {} Flag Type::{}>".format(self.partner, self.flag_type)
@@ -62,7 +64,9 @@ class PartnerVerification(TimeStampedModel):
     can_verify_comment = models.TextField(null=True, blank=True)
 
     class Meta:
-        ordering = ['-created']
+        ordering = (
+            '-created',
+        )
 
     def __str__(self):
         return "Partner: {} Verified: {}>".format(self.partner, self.is_verified)
