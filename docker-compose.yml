@@ -31,7 +31,7 @@ services:
     volumes:
       - './backend:/code/'
       - '/data'
-    command: bash -c "/usr/local/bin/wait-for-it.sh db:5432 -t 30 && python /code/manage.py collectstatic --noinput && python /code/manage.py migrate --noinput && python /code/manage.py sanctions_list_sync --initial && uwsgi --ini /code/unpp_api/uwsgi.ini"
+    command: bash -c "/usr/local/bin/wait-for-it.sh db:5432 -t 30 && python /code/manage.py collectstatic --noinput && python /code/manage.py migrate --noinput && python /code/manage.py sanctions_list_sync --initial && gunicorn unpp_api.wsgi -c /code/gunicorn_config.py"
     depends_on:
       - db
 
