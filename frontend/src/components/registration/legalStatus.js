@@ -58,39 +58,7 @@ const BasicInformation = (props) => {
         </Grid>
         {visibleIfYes(isRegistered)
             && <Grid item>
-              <Grid container direction="row">
-                <Grid item sm={4} xs={12}>
-                  <DatePickerForm
-                    fieldName="json.registration_document.issue_date"
-                    label={messages.date}
-                    placeholder={PLACEHOLDERS.provide}
-                  />
-                </Grid>
-                <Grid item sm={8} xs={12}>
-                  <TextFieldForm
-                    label={messages.number}
-                    fieldName="json.registration_document.registration_number"
-                    optional
-                    placeholder={PLACEHOLDERS.provide}
-                  />
-                </Grid>
-              </Grid>
               <Grid container direction="column">
-                <Grid item>
-                  <TextFieldForm
-                    label={messages.name}
-                    fieldName="json.registration_document.issuing_authority"
-                    placeholder={PLACEHOLDERS.provide}
-                  />
-                </Grid>
-                <Grid item sm={4} xs={12}>
-                  <DatePickerForm
-                    fieldName="json.registration_document.expiry_date"
-                    label={messages.expireDate}
-                    optional
-                    placeholder={PLACEHOLDERS.provide}
-                  />
-                </Grid>
                 <Grid item>
                   <RadioForm
                     fieldName="json.registration_document.have_registration_doc"
@@ -114,6 +82,40 @@ const BasicInformation = (props) => {
                     placeholder={PLACEHOLDERS.provide}
                   />
                 </Grid>}
+                <Grid item>
+                  <TextFieldForm
+                    label={messages.name}
+                    fieldName="json.registration_document.issuing_authority"
+                    placeholder={PLACEHOLDERS.provide}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container direction="row">
+                <Grid item sm={4} xs={12}>
+                  <DatePickerForm
+                    fieldName="json.registration_document.issue_date"
+                    label={messages.date}
+                    placeholder={PLACEHOLDERS.provide}
+                  />
+                </Grid>
+                <Grid item sm={8} xs={12}>
+                  <TextFieldForm
+                    label={messages.number}
+                    fieldName="json.registration_document.registration_number"
+                    optional
+                    placeholder={PLACEHOLDERS.provide}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container direction="column">
+                <Grid item sm={4} xs={12}>
+                  <DatePickerForm
+                    fieldName="json.registration_document.expiry_date"
+                    label={messages.expireDate}
+                    optional
+                    placeholder={PLACEHOLDERS.provide}
+                  />
+                </Grid>
               </Grid>
             </Grid>}
         {visibleIfNo(isRegistered) && <Grid item>
