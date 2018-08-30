@@ -43,7 +43,7 @@ WORKDIR /code/
 # TODO: When deploying multiple django containers these crons should be moved to a dedicated one
 RUN python setup_crons.py
 
-COPY waitforit /usr/local/bin/waitforit
-RUN chmod +x /usr/local/bin/waitforit
+COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
 
 EXPOSE 8000
