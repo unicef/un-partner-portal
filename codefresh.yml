@@ -41,21 +41,21 @@ steps:
                 depends_on:
                     - backend
                 command: 'bash -c "/usr/local/bin/wait-for-it.sh backend:8000 -t 180 && python /code/manage.py test --parallel"'
-                environment:
-                    - ENV=dev
-                    - POSTGRES_DB=postgres
-                    - POSTGRES_USER=postgres
-                    - POSTGRES_PASSWORD=
-                    - POSTGRES_HOST=db
-                    - SECRET_KEY=asdfqwef124rf
-                    - DJANGO_ALLOWED_HOST="*"
-                    - FRONTEND_SERVICE_HOST=frontend
-                    - UNHCR_API_HOST=https://api.test/
-                    - UNHCR_API_USERNAME=user
-                    - UNHCR_API_PASSWORD=password
-                    - UNICEF_PARTNER_DETAILS_URL=https://api.test/
-                    - UNICEF_API_USERNAME=user
-                    - UNICEF_API_PASSWORD=password
+        composition_variables:
+            - ENV=dev
+            - POSTGRES_DB=postgres
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=
+            - POSTGRES_HOST=db
+            - SECRET_KEY=asdfqwef124rf
+            - DJANGO_ALLOWED_HOST="*"
+            - FRONTEND_SERVICE_HOST=frontend
+            - UNHCR_API_HOST=https://api.test/
+            - UNHCR_API_USERNAME=user
+            - UNHCR_API_PASSWORD=password
+            - UNICEF_PARTNER_DETAILS_URL=https://api.test/
+            - UNICEF_API_USERNAME=user
+            - UNICEF_API_PASSWORD=password
 
     push_backend_to_hub:
         type: push
