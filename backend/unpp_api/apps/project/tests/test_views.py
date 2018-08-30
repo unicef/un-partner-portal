@@ -198,11 +198,8 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         self.assertTrue(Partner.objects.count(), len(response.data['invited_partners']))
 
         call_command('send_daily_notifications')
-        print([
-            msg.body for msg in mail.outbox
-        ])
         notification_emails = list(filter(
-            lambda msg: eoi.get_absolute_url() in msg.body,
+            lambda msg: f'/cfei/open/{eoi.id}/overview' in msg.body,
             mail.outbox
         ))
 
