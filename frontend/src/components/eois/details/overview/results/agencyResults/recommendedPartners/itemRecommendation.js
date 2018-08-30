@@ -60,7 +60,7 @@ class RecommendedPartners extends Component {
             <Divider />
             <SpreadContent>
               <Typography type="body2">{messages.numberOfAssessments}</Typography>
-              <Typography type="body2">{application.completed_assessments_count}</Typography>
+              <Typography type="body2">{application.completed_assessments_count || '-'}</Typography>
             </SpreadContent>
             <Divider />
             <SpreadContent>
@@ -90,8 +90,8 @@ class RecommendedPartners extends Component {
               </SpreadContent>
               <Typography type="body1">{application.withdraw_reason ? application.withdraw_reason : '-'}</Typography>
             </div>}
-            {!application.did_withdraw && application.did_win && <Divider />}
-            {!application.did_withdraw && application.did_win && <div>
+            {(application.did_accept || application.did_decline) && <Divider />}
+            {(application.did_accept || application.did_decline) && <div>
               <SpreadContent>
                 <Typography type="caption">{messages.partnerDecision}</Typography>
               </SpreadContent>
@@ -111,8 +111,8 @@ RecommendedPartners.propTypes = {
   loadApplicationDetails: PropTypes.func,
   allCriteria: PropTypes.object,
   assessments: PropTypes.array,
-  averageScores: PropTypes.array,
-  averageTotalScores: PropTypes.string,
+  averageScores: PropTypes.object,
+  averageTotalScores: PropTypes.number,
 };
 
 const mapStateToProps = (state, ownProps) => ({

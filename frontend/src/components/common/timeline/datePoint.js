@@ -131,13 +131,6 @@ const DatePoint = (props) => {
       }}
     >
       <div className={mainClass}>
-        {/* <Typography
-          type={fontType}
-          align={align}
-          className={classes.text}
-        >
-          {formatDateForPrint(date) || ''}
-        </Typography> */}
         <Tooltip
           PopperProps={{
             eventsEnabled: false,
@@ -154,9 +147,7 @@ const DatePoint = (props) => {
           <SvgIcon className={classes.firstIcon} viewBox={viewBox}>
             <circle cx="5" cy="5" r="5" />
           </SvgIcon>
-
         </Tooltip>
-        {/* <Typography type={fontType} align={align} className={classes.text}>{label}</Typography> */}
       </div>
     </div>
   );

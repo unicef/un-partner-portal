@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { updateApplication } from '../../../../../reducers/applicationDetails';
 import { loadCfei } from '../../../../../reducers/cfeiDetails';
-import { selectApplicationCurrentStatus, selectExtendedApplicationStatuses, isCfeiCompleted, selectNormalizedDirectJustification } from '../../../../../store';
+import { selectNormalizedDirectJustification } from '../../../../../store';
 import FileForm from '../../../../forms/fileForm';
 import TextFieldForm from '../../../../forms/textFieldForm';
 import SelectForm from '../../../../forms/selectForm';
@@ -18,7 +18,7 @@ const messages = {
 
 
 const SingleSelectedPartnerInfo = (props) => {
-  const { directJustifications, form } = props;
+  const { directJustifications } = props;
   return (
     <form>
       <GridColumn>
@@ -45,10 +45,8 @@ const SingleSelectedPartnerInfo = (props) => {
 };
 
 SingleSelectedPartnerInfo.propTypes = {
-  partner: PropTypes.object,
   directJustifications: PropTypes.array,
   form: PropTypes.string,
-  justification: PropTypes.string,
 };
 
 const formSingleSelectedPartnerInfo = reduxForm({

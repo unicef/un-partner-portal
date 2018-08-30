@@ -73,11 +73,11 @@ const HeaderOptionsContainer = (props) => {
   if (cfeiStatus === 'Sen') {
     status = (<Tooltip
       title={tooltipInfo(type)}
-      placement="center"
+      placement="bottom"
     >
       <div>
         <EoiStatusHeader status={cfeiStatus} />
-        <Typography type="caption">{completedReasonDisplay}</Typography>
+        <Typography type="caption">{completedReasonDisplay || ''}</Typography>
       </div>
     </Tooltip>);
   }
@@ -87,7 +87,7 @@ const HeaderOptionsContainer = (props) => {
       <Grid item>
         <div>
           {status}
-          {completedReasonDisplay && <Typography type="caption">{completedReasonDisplay}</Typography>}
+          {completedReasonDisplay && <Typography type="caption">{completedReasonDisplay || ''}</Typography>}
         </div></Grid>
       <Grid item>{options}</Grid>
     </Grid>

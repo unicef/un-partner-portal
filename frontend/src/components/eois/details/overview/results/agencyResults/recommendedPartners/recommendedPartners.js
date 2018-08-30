@@ -7,7 +7,7 @@ import { withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import HeaderList from '../../../../../../common/list/headerList';
-import { selectRecommendedPartnersCount, selectRecommendedPartners, isUserACreator, isUserAFocalPoint } from '../../../../../../../store';
+import { selectRecommendedPartnersCount, selectRecommendedPartners, isUserACreator, isUserAFocalPoint, selectCfeiReviewSummary } from '../../../../../../../store';
 import { loadRecommendedPartners } from '../../../../../../../reducers/recommendedPartners';
 import CollapsableItemAction from '../../../../../../common/collapsableItemAction';
 import SpreadContent from '../../../../../../common/spreadContent';
@@ -20,8 +20,11 @@ import { AGENCY_PERMISSIONS, checkPermission } from '../../../../../../../helper
 import AwardApplicationButton from '../../../../../buttons/awardApplicationButton';
 import WithdrawApplicationButton from '../../../../../buttons/withdrawApplicationButton';
 import ItemRecommendation from './itemRecommendation';
+import ButtonWithTooltip from '../../../../../../common/buttonWithTooltipEnabled';
 
 const messages = {
+  accepted: 'Accepted',
+  declined: 'Declined',
   title: 'Recommended Partner(s)',
   button: 'send',
   noInfo: 'No recommended partner(s).',
@@ -34,6 +37,9 @@ const messages = {
   retracted: 'rectracted',
   selectionJustification: 'Justification for selection',
   retractJustification: 'Justification for retraction',
+  select: 'select',
+  selectInfo: 'Provide review summary before selecting partner.',
+  verifiedInfo: 'Partner Profile is not verified, please verify before selecting.',
 };
 
 class RecommendedPartners extends Component {
@@ -45,6 +51,7 @@ class RecommendedPartners extends Component {
         page_size: 5,
       },
     };
+
     this.handleChangePage = this.handleChangePage.bind(this);
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
     this.applicationItem = this.applicationItem.bind(this);
@@ -74,7 +81,7 @@ class RecommendedPartners extends Component {
   }
 
   applicationItem(application) {
-    const { isCreator, isFocalPoint, hasSelectRecommendedPermission } = this.props;
+    const { isCreator, isFocalPoint, hasSelectRecommendedPermission, summary } = this.props;
 
     let action = null;
 
@@ -83,6 +90,10 @@ class RecommendedPartners extends Component {
         if (application.did_win) {
           if (application.did_withdraw) {
             action = <Button disabled>{messages.retracted}</Button>;
+          } else if (application.did_accept) {
+            action = <Button style={{ color: '#72C300' }} disabled>{messages.accepted}</Button>;
+          } else if (application.did_decline) {
+            action = <Button style={{ color: '#EA4022' }} disabled>{messages.declined}</Button>;
           } else {
             action = (<WithdrawApplicationButton
               disabled={application.did_accept || application.did_decline}
@@ -90,6 +101,20 @@ class RecommendedPartners extends Component {
               applicationId={application.id}
             />);
           }
+        } else if (!summary.review_summary_comment) {
+          action = (<ButtonWithTooltip
+            name="select"
+            disabled
+            text={messages.select}
+            tooltipText={messages.selectInfo}
+          />);
+        } else if (!application.partner_additional.is_verified) {
+          action = (<ButtonWithTooltip
+            name="select"
+            disabled
+            text={messages.select}
+            tooltipText={messages.verifiedInfo}
+          />);
         } else {
           action = (<AwardApplicationButton
             onUpdate={() => this.props.loadPartners(this.state.params)}
@@ -114,7 +139,7 @@ class RecommendedPartners extends Component {
   }
 
   render() {
-    const { cfeiId, loading, partners, count, hasSelectRecommendedPermission, hasRecommendedPartner } = this.props;
+    const { cfeiId, loading, partners, count, hasSelectRecommendedPermission } = this.props;
     const { params: { page, page_size } } = this.state;
 
     return (
@@ -158,6 +183,7 @@ RecommendedPartners.propTypes = {
   cfeiId: PropTypes.number,
   hasSelectRecommendedPermission: PropTypes.bool,
   isFocalPoint: PropTypes.bool,
+  summary: PropTypes.object,
   isCreator: PropTypes.bool,
 };
 
@@ -168,6 +194,7 @@ const mapStateToProps = (state, ownProps) => {
     loading: state.recommendedPartners.status.loading,
     partners: selectRecommendedPartners(state, cfeiId),
     count: selectRecommendedPartnersCount(state, cfeiId),
+    summary: selectCfeiReviewSummary(state, ownProps.id),
     hasSelectRecommendedPermission:
       checkPermission(AGENCY_PERMISSIONS.CFEI_SELECT_RECOMMENDED_PARTNER, state),
     isFocalPoint: isUserAFocalPoint(state, cfeiId),

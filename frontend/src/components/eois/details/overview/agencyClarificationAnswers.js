@@ -185,7 +185,7 @@ class AgencyClarificationAnswers extends Component {
             <GridColumn spacing={8}>
               {role === ROLES.AGENCY
                 ? !loadingAnswers && answers && this.fileItems()
-                : !isCfeiClarificationDeadlinePassed
+                : isCfeiClarificationDeadlinePassed
                   ? this.fileItems()
                   : <Typography type="body1">{messages.publishedUntil}</Typography>}
             </GridColumn>

@@ -64,7 +64,7 @@ const EoiSectorCell = (props) => {
 EoiSectorCell.propTypes = {
   classes: PropTypes.object.isRequired,
   sectors: PropTypes.array.isRequired,
-  id: PropTypes.number.isRequired,
+  id: PropTypes.number,
 };
 
 const connectedEoiSectorCell = connect(

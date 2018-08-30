@@ -51,7 +51,7 @@ const RecommendPartnerCell = (props) => {
   const buttonClass = ClassName(
     { [classes.unrecommend]: status === APPLICATION_STATUSES.REC },
   );
-console.log(didAccept);
+
   const tooltip = (!finishedReviews && messages.finishReviews)
    || ((isUserCreator && isSend) && messages.send)
    || (didAccept && messages.accepted)

@@ -7,8 +7,6 @@ import HeaderList from '../../../../common/list/headerList';
 import PaddedContent from '../../../../common/paddedContent';
 import { selectCfeiDetails } from '../../../../../store';
 import SingleSelectedPartner from './singleSelectedPartner';
-import SingleSelectedPartnerInfo from './singleSelectedPartnerInfo';
-import { PROJECT_STATUSES } from '../../../../../helpers/constants';
 
 const messages = {
   title: 'Selected Partner(s)',
@@ -19,7 +17,7 @@ const title = () => (
 );
 
 const renderRow = (partners, id, cfei, agencyId) => partners.map((partner, index) => (
-  <div>
+  <div key={`partner_info_${index}`}>
     <PaddedContent key={partner.id}>
       <SingleSelectedPartner
         key={`partner_${index}`}
@@ -27,19 +25,6 @@ const renderRow = (partners, id, cfei, agencyId) => partners.map((partner, index
         id={id}
       />
     </PaddedContent>
-    {((agencyId === cfei.agency)
-     || (cfei.status === PROJECT_STATUSES.COM)) &&
-     <div>
-       <Divider />
-       <PaddedContent>
-         <SingleSelectedPartnerInfo
-           key={`partner_info_${index}`}
-           partner={partner}
-           id={id}
-         />
-       </PaddedContent>
-     </div>
-    }
   </div>
 ));
 
@@ -58,7 +43,7 @@ const SelectedPartners = (props) => {
 
 SelectedPartners.propTypes = {
   partners: PropTypes.array,
-  id: PropTypes.number,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.string]),
   agencyId: PropTypes.number,
 };
 

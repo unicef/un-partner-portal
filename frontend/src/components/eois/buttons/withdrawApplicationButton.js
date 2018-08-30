@@ -22,7 +22,7 @@ const WithdrawApplicationButton = (props) => {
     disabled,
     ...other
   } = props;
-console.log(disabled);
+
   return (
     <Grid item>
       {disabled ?

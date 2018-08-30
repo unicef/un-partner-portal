@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { SubmissionError } from 'redux-form';
 import { withRouter } from 'react-router';
 import ControlledModal from '../../../common/modals/controlledModal';
 import { completeAssessmentRequest } from '../../../../reducers/completeAssessment';
 import { loadCfei } from '../../../../reducers/cfeiDetails';
 import { selectApplicationPartnerName } from '../../../../store';
 import Loader from '../../../../components/common/loader';
+import { APPLICATION_STATUSES } from '../../../../helpers/constants';
+import { loadApplications } from '../../../../reducers/partnersApplicationsList';
 
 const messages = {
   complete: 'complete',
@@ -16,16 +17,20 @@ const messages = {
   error: 'You need to review all applications before completing.',
 };
 
-class AddReviewModal extends Component {
+class CompleteAssessmentModal extends Component {
   constructor(props) {
     super(props);
     this.onComplete = this.onComplete.bind(this);
   }
   onComplete() {
-    const { completeAssessment, handleDialogClose, loadCfeiDetails } = this.props;
+    const { completeAssessment, handleDialogClose, loadCfeiDetails, loadApplication } = this.props;
 
     completeAssessment()
-      .then(() => { loadCfeiDetails(); handleDialogClose(); });
+      .then(() => {
+        loadCfeiDetails();
+        loadApplication();
+        handleDialogClose();
+      });
   }
 
   render() {
@@ -55,11 +60,12 @@ class AddReviewModal extends Component {
   }
 }
 
-AddReviewModal.propTypes = {
+CompleteAssessmentModal.propTypes = {
   dialogOpen: PropTypes.bool,
   loading: PropTypes.bool,
   loadCfeiDetails: PropTypes.func,
   completeAssessment: PropTypes.func,
+  loadApplication: PropTypes.func,
   handleDialogClose: PropTypes.func,
 };
 
@@ -74,15 +80,19 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   const { params: { id } } = ownProps;
+
   return {
     completeAssessment: () => dispatch(completeAssessmentRequest(id)),
     loadCfeiDetails: () => dispatch(loadCfei(id)),
+    loadApplication: () => dispatch(
+      loadApplications(id, { ...ownProps.location.query,
+        status: [APPLICATION_STATUSES.PRE, APPLICATION_STATUSES.REC].join(',') })),
   };
 };
 
-const containerAddReviewModal = connect(
+const containerCompleteAssessmentModal = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(AddReviewModal);
+)(CompleteAssessmentModal);
 
-export default withRouter(containerAddReviewModal);
+export default withRouter(containerCompleteAssessmentModal);
