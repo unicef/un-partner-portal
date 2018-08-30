@@ -25,6 +25,7 @@ const styles = theme => ({
   suggestionsContainerOpen: {
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit * 3,
+    margin: '2px',
     left: 0,
     right: 0,
     zIndex: 2000,
