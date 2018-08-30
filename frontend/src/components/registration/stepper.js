@@ -24,7 +24,7 @@ const messages = {
   error: 'Registration failed',
   declarationInfo: 'You answered no to at least one of the questions, cannot proceed',
   warning: 'Notice',
-  legalInfo: 'You must upload at least one of the following documents: (1) Registration certificate or (2) Governing document or (3) Letter of reference' +
+  legalInfo: 'You must upload at least one of the following documents: (1) Registration certificate or (2) Governing document or (3) Letter of reference' +  
   'from a donor agency, government authority or community association in order to register your organization on UN Partner Portal.',
 };
 

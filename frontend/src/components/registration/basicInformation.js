@@ -57,6 +57,7 @@ const BasicInformation = (props) => {
             fieldName="json.partner.country_code"
             label="Country of Origin"
             initialValue={country}
+            overlap={false}
             infoText={messages.tooltip}
           />
         </Grid>
