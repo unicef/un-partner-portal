@@ -40,6 +40,7 @@ const messages = {
   select: 'select',
   selectInfo: 'Provide review summary before selecting partner.',
   verifiedInfo: 'Partner Profile is not verified, please verify before selecting.',
+  sanctionMatch: 'Partner has confirmed match on sanctions list and can not be selected.',
 };
 
 class RecommendedPartners extends Component {
@@ -114,6 +115,13 @@ class RecommendedPartners extends Component {
             disabled
             text={messages.select}
             tooltipText={messages.verifiedInfo}
+          />);
+        } else if (application.partner_additional.has_potential_sanction_match) {
+          action = (<ButtonWithTooltip
+            name="select"
+            disabled
+            text={messages.select}
+            tooltipText={messages.sanctionMatch}
           />);
         } else {
           action = (<AwardApplicationButton
