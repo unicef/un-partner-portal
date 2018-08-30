@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { formValueSelector } from 'redux-form';
 import AutocompleteForm from '../../../autoCompleteForm';
 import { mapValuesForSelectionField } from '../../../../../store';
 import { loadPartnerNamesForAutoComplete } from '../../../../../reducers/partnerNames';
@@ -8,7 +9,7 @@ import { clearPartnersCache } from '../../../../../reducers/cache';
 
 class ProjectPartners extends PureComponent {
   render() {
-    const { fieldName, label, getPartners, ...other } = this.props;
+    const { fieldName, label, values, getPartners, ...other } = this.props;
 
     return (
       <AutocompleteForm
@@ -17,6 +18,7 @@ class ProjectPartners extends PureComponent {
         async
         asyncFunction={getPartners}
         multiple
+        currentValues={values}
         search={'legal_name'}
         {...other}
       />
@@ -33,6 +35,7 @@ ProjectPartners.propTypes = {
   label: PropTypes.string,
   getPartners: PropTypes.func,
   disabled: PropTypes.bool,
+  values: PropTypes.array,
   clearCache: PropTypes.func.isRequired,
 };
 
@@ -41,7 +44,18 @@ ProjectPartners.defaultProps = {
 };
 
 export default connect(
-  null,
+  (state, ownProps) => {
+    let values;
+
+    if (ownProps.formName) {
+      const selector = formValueSelector(ownProps.formName);
+      values = selector(state, ownProps.fieldName);
+    }
+
+    return {
+      values: values || [],
+    };
+  },
   dispatch => ({
     getPartners: params => dispatch(
       loadPartnerNamesForAutoComplete({ ...params }))
