@@ -23,6 +23,9 @@ class EOIAdmin(admin.ModelAdmin):
     search_fields = ('displayID', 'title')
     list_display = ('displayID', 'display_type', 'title', 'agency')
     list_filter = ('display_type', 'agency', 'sent_for_publishing', 'is_published')
+    exclude = (
+        'preselected_partners',
+    )
 
 
 admin.site.register(EOI, EOIAdmin)
