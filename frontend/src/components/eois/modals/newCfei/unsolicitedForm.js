@@ -34,6 +34,7 @@ const OpenForm = (props) => {
           {messages.cn}
         </Typography>
         <CnFileSection
+          showComponent
           component={<FileForm
             fieldName="cn"
           />}
