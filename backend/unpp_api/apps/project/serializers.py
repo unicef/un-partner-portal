@@ -252,37 +252,29 @@ class PartnerApplicationSerializer(MixinPreventManyCommonFile, serializers.Model
 
     class Meta:
         model = Application
-        fields = (
+        editable_fields = (
+            'did_accept',
+            'did_decline',
+            'cn',
+        )
+        read_only_fields = (
             'id',
-            'created',
             'status',
+            'created',
             'agency',
             'did_win',
             'did_withdraw',
-            'did_accept',
-            'did_decline',
             'decision_date',
+            'is_published',
+            'published_timestamp',
             'cfei_type',
             'application_status',
             'application_status_display',
             'proposal_of_eoi_details',
             'locations_proposal_of_eoi',
             'is_unsolicited',
-            'cn',
-            'is_published',
-            'published_timestamp',
         )
-        read_only_fields = (
-            'status',
-            'created',
-            'did_win',
-            'did_withdraw',
-            'decision_date',
-            'is_published',
-            'published_timestamp',
-            'is_unsolicited',
-            'agency',
-        )
+        fields = editable_fields + read_only_fields
 
     prevent_keys = ["cn"]
 
