@@ -245,25 +245,43 @@ class ProposalEOIDetailsSerializer(serializers.Serializer):
 class PartnerApplicationSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
 
     cn = CommonFileSerializer()
+    agency = AgencySerializer(read_only=True)
     decision_date = serializers.DateField(source='partner_decision_date', read_only=True)
+    proposal_of_eoi_details = ProposalEOIDetailsSerializer(read_only=True)
+    locations_proposal_of_eoi = PointSerializer(many=True, read_only=True)
 
     class Meta:
         model = Application
         fields = (
             'id',
             'created',
+            'status',
+            'agency',
             'did_win',
             'did_withdraw',
             'did_accept',
             'did_decline',
             'decision_date',
+            'cfei_type',
+            'application_status',
+            'application_status_display',
+            'proposal_of_eoi_details',
+            'locations_proposal_of_eoi',
+            'is_unsolicited',
             'cn',
+            'is_published',
+            'published_timestamp',
         )
         read_only_fields = (
+            'status',
             'created',
             'did_win',
             'did_withdraw',
             'decision_date',
+            'is_published',
+            'published_timestamp',
+            'is_unsolicited',
+            'agency',
         )
 
     prevent_keys = ["cn"]
