@@ -99,6 +99,11 @@ class CfeiHeader extends Component {
       params: { type } } = this.props;
 
     let tabsToRender = tabs;
+
+    if (role === ROLES.PARTNER && type === PROJECT_TYPES.UNSOLICITED) {
+      tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.FEEDBACK, tabsToRender);
+    }
+
     if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
       if (!this.hasPermissionToViewApplications(hasRequestsViewPermission)) {
         tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.REQUESTS, tabsToRender);
