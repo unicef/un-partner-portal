@@ -62,7 +62,7 @@ def managepy(command=''):
 
 
 def preview_gunicorn_log():
-    cmd = 'docker-compose exec backend tail -f /data/unpp_api/logs/gunicorn.log'
+    cmd = 'docker-compose exec backend tail -f /data/unpp_api/logs/gunicorn_error.log'
     local(cmd)
 
 
