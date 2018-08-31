@@ -28,9 +28,4 @@ class Migration(migrations.Migration):
             name='withdraw_reason',
             field=models.TextField(blank=True, help_text='Reason why agency withdrew offer.', null=True),
         ),
-        migrations.AddField(
-            model_name='eoi',
-            name='clarification_request_deadline_date',
-            field=models.DateField(blank=True, null=True, verbose_name='Clarification Request Date'),
-        ),
     ]

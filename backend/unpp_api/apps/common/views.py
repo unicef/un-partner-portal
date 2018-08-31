@@ -64,7 +64,9 @@ class AppliedMigrationsAPIView(APIView):
         for app_label, migration in migrations:
             results[app_label].append(migration)
 
-        return Response(dict(results), status=statuses.HTTP_200_OK)
+        return Response({
+            k: sorted(v) for k, v in results.items()
+        }, status=statuses.HTTP_200_OK)
 
 
 class ConfigCountriesAPIView(APIView):
