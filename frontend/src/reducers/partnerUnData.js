@@ -27,7 +27,6 @@ export const getPartnerUnData = (agencyId, partnerId) => (dispatch) => {
     .catch((error) => {
       dispatch(loadEnded(PARTNER_UN_DATA));
       dispatch(loadFailure(PARTNER_UN_DATA, { error, agencyId }));
-      throw error;
     });
 };
 

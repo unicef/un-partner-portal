@@ -15,6 +15,7 @@ import ConceptNoteSubmission from './conceptNoteSubmission';
 import { deleteUploadedCn } from '../../../../reducers/conceptNote';
 import PaddedContent from '../../../common/paddedContent';
 import { checkPermission, PARTNER_PERMISSIONS } from '../../../../helpers/permissions';
+import { isCfeiDeadlinePassed } from '../../../../store';
 
 
 const messages = {
@@ -54,11 +55,11 @@ class CfeiSubmission extends Component {
   }
 
   titleHeader() {
-    const { cnUploaded, hasUploadCnPermission } = this.props;
+    const { cnUploaded, hasUploadCnPermission, isDeadlinePassed } = this.props;
     return (
       <SpreadContent>
         <Typography type="headline">{messages.title}</Typography>
-        {(!!cnUploaded && hasUploadCnPermission)
+        {(!!cnUploaded && hasUploadCnPermission && !isDeadlinePassed)
           && <IconButton onClick={() => this.onDelete()}><Delete /></IconButton>}
       </SpreadContent>
     );
@@ -133,11 +134,13 @@ CfeiSubmission.propTypes = {
   isProfileComplete: PropTypes.bool,
   hasUploadCnPermission: PropTypes.bool,
   isHq: PropTypes.bool,
+  isDeadlinePassed: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   partnerId: state.session.partnerId,
   projectId: ownProps.params.id,
+  isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.params.id),
   applicationId: state.partnerAppDetails[ownProps.params.id]
     ? state.partnerAppDetails[ownProps.params.id].id : null,
   loader: state.conceptNote.loading,
