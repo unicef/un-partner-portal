@@ -6,6 +6,7 @@ import { withRouter } from 'react-router';
 import { loadVerificationsList } from '../../../../../reducers/partnerVerificationsList';
 import ControlledModal from '../../../../common/modals/controlledModal';
 import { updatePartnerVerifications } from '../../../../../reducers/partnerVerifications';
+import AlertDialog from '../../../../common/alertDialog';
 import AddVerificationForm from './addVerificationForm';
 import VerificationConfirmation from './verificationConfirmation';
 
@@ -14,6 +15,8 @@ const messages = {
   header: 'You are verifying Organization Profile of',
   save: 'verify',
   confirmation: 'Confirmation',
+  alertTitle: 'Confirm verification',
+  confirm: 'Are you sure you want to send this verification?',
 };
 
 
@@ -22,6 +25,7 @@ class AddVerificationModal extends Component {
     super(props);
     this.state = {
       submitting: false,
+      confirmAlert: false,
       verification: null,
       error: null };
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -29,9 +33,14 @@ class AddVerificationModal extends Component {
   }
 
   onFormSubmit(values) {
+    this.setState({ values, confirmAlert: true });
+  }
+
+  submitConfirmation() {
     const { query } = this.props;
+
     this.setState({ submitting: true });
-    this.props.addVerification(values)
+    this.props.addVerification(this.state.values)
       .then((verification) => {
         this.setState({ verification });
         this.props.getVerifications(query);
@@ -79,6 +88,14 @@ class AddVerificationModal extends Component {
             verification={verification}
             error={error}
           />}
+        />
+        <AlertDialog
+          trigger={!!this.state.confirmAlert}
+          title={messages.alertTitle}
+          text={messages.confirm}
+          showCancel
+          handleClick={() => this.submitConfirmation()}
+          handleDialogClose={() => this.setState({ confirmAlert: false })}
         />
       </div >
     );

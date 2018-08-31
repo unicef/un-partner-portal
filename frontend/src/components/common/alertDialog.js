@@ -26,7 +26,7 @@ const styleSheet = (theme) => {
 };
 
 function AlertDialog(props) {
-  const { classes, trigger, title, text, handleDialogClose } = props;
+  const { classes, trigger, title, text, handleDialogClose, showCancel, handleClick } = props;
   return (
     <Dialog open={trigger} >
       <DialogTitle
@@ -41,7 +41,10 @@ function AlertDialog(props) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleDialogClose} raised color="accent">
+        {showCancel && <Button onClick={handleDialogClose} color="accent">
+          Cancel
+        </Button>}
+        <Button onClick={handleClick || handleDialogClose} raised color="accent">
           Ok
         </Button>
       </DialogActions>
@@ -62,6 +65,14 @@ AlertDialog.propTypes = {
   * text body of the dialog
   */
   text: PropTypes.string,
+  /**
+  * cancel button of dialog
+  */
+  showCancel: PropTypes.bool,
+  /**
+  * handle click of ok button of dialog
+  */
+  handleClick: PropTypes.func,
   /**
   * lcallback called when dialog is closed
   */
