@@ -1,5 +1,9 @@
 from __future__ import absolute_import
 
+from collections import defaultdict
+
+from django.db import connections
+from django.db.migrations.recorder import MigrationRecorder
 from rest_framework import status as statuses
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -50,6 +54,17 @@ from common.consts import (
     CFEI_STATUSES,
 )
 from partner.roles import PartnerRole
+
+
+class AppliedMigrationsAPIView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        migrations = MigrationRecorder(connection=connections['default']).applied_migrations()
+        results = defaultdict(list)
+        for app_label, migration in migrations:
+            results[app_label].append(migration)
+
+        return Response(dict(results), status=statuses.HTTP_200_OK)
 
 
 class ConfigCountriesAPIView(APIView):
