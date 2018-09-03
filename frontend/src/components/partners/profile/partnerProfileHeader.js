@@ -2,8 +2,6 @@ import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
-import { withStyles } from 'material-ui/styles';
-import Flag from 'material-ui-icons/Flag';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
@@ -62,9 +60,9 @@ class PartnerProfileHeader extends Component {
   }
 
   updatePath() {
-    const { tabs, location, partnerId, hasViewObservationPermission, hasViewSanctionsPermission } = this.props;
+    const { tabs, location, partnerId, hasViewObservationPermission } = this.props;
 
-    const filterTabs = (hasViewObservationPermission || hasViewSanctionsPermission)
+    const filterTabs = (hasViewObservationPermission)
       ? tabs
       : R.filter(item => item.path !== messages.observationTab, tabs);
 
@@ -90,10 +88,9 @@ class PartnerProfileHeader extends Component {
       tabs,
       children,
       hasViewObservationPermission,
-      hasViewSanctionsPermission,
     } = this.props;
 
-    const filterTabs = (hasViewObservationPermission || hasViewSanctionsPermission)
+    const filterTabs = (hasViewObservationPermission)
       ? tabs
       : R.filter(item => item.path !== messages.observationTab, tabs);
 
@@ -136,8 +133,8 @@ const mapStateToProps = (state, ownProps) => ({
   partner: state.agencyPartnerProfile.data[ownProps.params.id] || {},
   partnerId: ownProps.params.id,
   location: ownProps.location.pathname,
-  hasViewObservationPermission: checkPermission(AGENCY_PERMISSIONS.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS, state),
-  hasViewSanctionsPermission: checkPermission(AGENCY_PERMISSIONS.REVIEW_AND_MARK_SANCTIONS_MATCHES, state),
+  hasViewObservationPermission:
+    checkPermission(AGENCY_PERMISSIONS.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS, state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
