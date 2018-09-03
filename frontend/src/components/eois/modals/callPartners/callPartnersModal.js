@@ -83,7 +83,7 @@ class CallPartnersModal extends Component {
 
 CallPartnersModal.propTypes = {
   id: PropTypes.number,
-  openDialog: PropTypes.object,
+  openDialog: PropTypes.bool,
   showLoading: PropTypes.bool,
   submit: PropTypes.func,
   newCfeiProcessed: PropTypes.func,
