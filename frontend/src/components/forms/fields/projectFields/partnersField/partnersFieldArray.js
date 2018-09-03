@@ -24,6 +24,7 @@ const Partner = (getPartners, readOnly, partnerName, ...props) => (member, index
       readOnly={readOnly}
       initial={partnerName}
       search={'legal_name'}
+      extra={'no_flags=FL4_Red'}
       {...props}
     />
     <JustificationField

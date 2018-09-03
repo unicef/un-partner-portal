@@ -95,7 +95,7 @@ class AutocompleteField extends React.Component {
 
   handleSuggestionsFetchRequested({ value }) {
     if (this.props.async) {
-      getAsyncSuggestions(value, this.props.asyncFunction, this.props.search, this.props.currentValues)
+      getAsyncSuggestions(value, this.props.asyncFunction, this.props.search, this.props.currentValues, this.props.extra)
         .then((suggestions) => {
           this.setState({ suggestions });
         });
