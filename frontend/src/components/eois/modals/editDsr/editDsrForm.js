@@ -60,7 +60,7 @@ const mapStateToProps = (state, ownProps) => {
     item => item.partner_name));
   const applications = cfei.direct_selected_partners.map(
     item => ({
-      partner: Number(item.partner_id),
+      partner: [Number(item.partner_id)],
       ds_justification_select: item.ds_justification_select,
       justification_reason: item.justification_reason,
       ds_attachment: item.ds_attachment,

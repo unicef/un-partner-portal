@@ -20,9 +20,11 @@ const Partner = (getPartners, readOnly, partnerName, ...props) => (member, index
       fieldName={`${member}.partner`}
       label="Partner"
       async
+      multiple
+      multipleSize={1}
       asyncFunction={getPartners}
       readOnly={readOnly}
-      initial={partnerName}
+      initialMultiValues={[partnerName]}
       search={'legal_name'}
       extra={'no_flags=FL4_Red'}
       {...props}

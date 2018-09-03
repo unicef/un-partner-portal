@@ -33,6 +33,9 @@ class EditDsrModal extends Component {
     const normalizedValues = values;
     normalizedValues.locations = [];
     R.map(loc => normalizedValues.locations.push(loc.locations[0]), i);
+
+    normalizedValues.applications[0].partner = normalizedValues.applications[0].partner[0];
+    
     return this.props.patchDsr(normalizedValues).then(() => {
       this.props.handleDialogClose();
     });

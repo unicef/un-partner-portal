@@ -120,9 +120,15 @@ class AutocompleteField extends React.Component {
   }
 
   handleMultiChange(newValue) {
-    this.setState({
-      multiValues: this.state.multiValues.concat(newValue),
-    });
+    if (this.props.multipleSize && this.props.multipleSize > this.state.multiValues.length) {
+      this.setState({
+        multiValues: this.state.multiValues.concat(newValue),
+      });
+    } else if (!this.props.multipleSize) {
+      this.setState({
+        multiValues: this.state.multiValues.concat(newValue),
+      });
+    }
   }
 
   handleMultiClear(indexToClear) {
@@ -238,6 +244,10 @@ AutocompleteField.propTypes = { /**
    * if field should allow multiple values
    */
   multiple: PropTypes.bool,
+  /**
+   * if field should allow multiple values
+   */
+  multipleSize: PropTypes.number,
   /**
    * array to pick suggestions from, in sync mode
    */

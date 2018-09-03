@@ -127,6 +127,8 @@ class NewCfeiModal extends Component {
       if (R.isEmpty(values.attachments[0])) {
         formValues = R.dissoc('attachments', formValues);
       }
+    } else if (this.props.type === PROJECT_TYPES.DIRECT) {
+      formValues.applications[0].partner = formValues.applications[0].partner[0];
     }
 
     return this.props.postCfei(formValues).then(
