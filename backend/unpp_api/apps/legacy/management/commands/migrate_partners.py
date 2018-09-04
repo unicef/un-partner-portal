@@ -1,12 +1,19 @@
 from __future__ import absolute_import
 
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from common.consts import BUDGET_CHOICES
 from legacy import models as legacy_models
-from partner.models import Partner, PartnerAuditAssessment, PartnerAuthorisedOfficer, PartnerBudget
+from partner.models import (
+    Partner,
+    PartnerAuditAssessment,
+    PartnerAuthorisedOfficer,
+    PartnerBudget,
+    PartnerCollaborationEvidence,
+)
 
 
 class Command(BaseCommand):
@@ -33,6 +40,7 @@ class Command(BaseCommand):
         legacy_models.PartnerPartnerreporting,
         legacy_models.PartnerPartnerreview,
     }
+    dummy_user = None
 
     def check_empty_models(self):
         all_models = apps.get_app_config('legacy').get_models()
@@ -132,8 +140,34 @@ class Command(BaseCommand):
             }
         )
 
+    def migrate_collaboration_evidence(self, source: legacy_models.PartnerPartnercollaborationevidence):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerCollaborationEvidence {source.pk} for {partner}')
+
+        PartnerCollaborationEvidence.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'date_received': source.date_received,
+                'organization_name': source.organization_name,
+                'created_by': self.dummy_user,
+            }
+        )
+
     def handle(self, *args, **options):
         self.check_empty_models()
+        # Need this for models that require a creator
+        self.dummy_user, _ = get_user_model().objects.update_or_create(
+            email='DummyUNHCRUserMigrationSource',
+            defaults={
+                'fullname': 'Imported from UNHCR database',
+                'is_active': False,
+            }
+        )
 
         for external_partner in legacy_models.PartnerPartner.objects.all():
             self.migrate_partner(external_partner)
@@ -146,3 +180,6 @@ class Command(BaseCommand):
 
         for budget_info in legacy_models.PartnerPartnerbudget.objects.all():
             self.migrate_budget_info(budget_info)
+
+        for collaboration_evidence in legacy_models.PartnerPartnercollaborationevidence.objects.all():
+            self.migrate_collaboration_evidence(collaboration_evidence)
