@@ -4,8 +4,9 @@ from django.apps import apps
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
+from common.consts import BUDGET_CHOICES
 from legacy import models as legacy_models
-from partner.models import Partner, PartnerAuditAssessment, PartnerAuthorisedOfficer
+from partner.models import Partner, PartnerAuditAssessment, PartnerAuthorisedOfficer, PartnerBudget
 
 
 class Command(BaseCommand):
@@ -110,6 +111,27 @@ class Command(BaseCommand):
             }
         )
 
+    def migrate_budget_info(self, source: legacy_models.PartnerPartnerbudget):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerBudget {source.pk} for {partner}')
+
+        if source.budget not in BUDGET_CHOICES._db_values:
+            self.stderr.write(f'{source.budget} is not a valid budget value. Skipping.')
+            return
+
+        PartnerBudget.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'year': source.year,
+                'budget': source.budget,
+            }
+        )
+
     def handle(self, *args, **options):
         self.check_empty_models()
 
@@ -121,3 +143,6 @@ class Command(BaseCommand):
 
         for authorised_officer in legacy_models.PartnerPartnerauthorisedofficer.objects.all():
             self.migrate_authorised_officer(authorised_officer)
+
+        for budget_info in legacy_models.PartnerPartnerbudget.objects.all():
+            self.migrate_budget_info(budget_info)
