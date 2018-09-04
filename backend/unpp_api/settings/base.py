@@ -309,20 +309,3 @@ UNICEF_API_PASSWORD = os.getenv('UNICEF_API_PASSWORD')
 WFP_API_HOST = os.getenv('WFP_API_HOST')
 WFP_API_USERNAME = os.getenv('WFP_API_USERNAME')
 WFP_API_PASSWORD = os.getenv('WFP_API_PASSWORD')
-
-
-LEGACY_DB_HOST = os.getenv('LEGACY_DB_HOST')
-if LEGACY_DB_HOST and 'test' not in sys.argv:
-    # bit of an ugly hack, to stop creating legacy DB when testing
-    DATABASES['legacy'] = {
-        'ENGINE': 'sqlserver',
-        'NAME': os.getenv('LEGACY_DB_NAME'),
-        'USER': os.getenv('LEGACY_DB_USER'),
-        'PASSWORD': os.getenv('LEGACY_DB_PW'),
-        'HOST': LEGACY_DB_HOST,
-        'PORT': int(os.getenv('LEGACY_DB_PORT', 1433)),
-    }
-    DATABASE_ROUTERS = [
-        'legacy.database_routers.LegacyDatabaseRouter',
-    ]
-    INSTALLED_APPS += ['legacy']
