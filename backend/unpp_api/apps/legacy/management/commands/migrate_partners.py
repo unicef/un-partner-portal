@@ -14,6 +14,7 @@ from partner.models import (
     PartnerBudget,
     PartnerCollaborationEvidence,
     PartnerFunding,
+    PartnerMailingAddress,
 )
 
 
@@ -177,6 +178,31 @@ class Command(BaseCommand):
             }
         )
 
+    def migrate_mailing_address(self, source: legacy_models.PartnerPartnermailingaddress):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerMailingAddress {source.pk} for {partner}')
+
+        PartnerMailingAddress.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'mailing_type': source.mailing_type,
+                'street': source.street,
+                'po_box': source.po_box,
+                'city': source.city,
+                'country': source.country,
+                'zip_code': source.zip_code,
+                'telephone': source.telephone,
+                'fax': source.fax,
+                'website': source.website,
+                'org_email': source.org_email,
+            }
+        )
+
     def handle(self, *args, **options):
         self.check_empty_models()
         # Need this for models that require a creator
@@ -203,5 +229,5 @@ class Command(BaseCommand):
         for collaboration_evidence in legacy_models.PartnerPartnercollaborationevidence.objects.all():
             self.migrate_collaboration_evidence(collaboration_evidence)
 
-        for partner_funding in legacy_models.PartnerPartnerfunding.objects.all():
-            self.migrate_partner_funding(partner_funding)
+        for mailing_address in legacy_models.PartnerPartnermailingaddress.objects.all():
+            self.migrate_mailing_address(mailing_address)
