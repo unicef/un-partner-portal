@@ -13,6 +13,7 @@ from partner.models import (
     PartnerAuthorisedOfficer,
     PartnerBudget,
     PartnerCollaborationEvidence,
+    PartnerFunding,
 )
 
 
@@ -158,6 +159,24 @@ class Command(BaseCommand):
             }
         )
 
+    def migrate_partner_funding(self, source: legacy_models.PartnerPartnerfunding):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerFunding {source.pk} for {partner}')
+
+        PartnerFunding.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'source_core_funding': source.source_core_funding,
+                'major_donors': source.major_donors.split(',') if source.major_donors else [],
+                'main_donors_list': source.main_donors_list,
+            }
+        )
+
     def handle(self, *args, **options):
         self.check_empty_models()
         # Need this for models that require a creator
@@ -183,3 +202,6 @@ class Command(BaseCommand):
 
         for collaboration_evidence in legacy_models.PartnerPartnercollaborationevidence.objects.all():
             self.migrate_collaboration_evidence(collaboration_evidence)
+
+        for partner_funding in legacy_models.PartnerPartnerfunding.objects.all():
+            self.migrate_partner_funding(partner_funding)
