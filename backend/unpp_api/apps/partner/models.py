@@ -18,6 +18,7 @@ from django.db.models.signals import post_save
 from model_utils.models import TimeStampedModel
 
 from account.models import User
+from common.base_models import MigratedTimeStampedModel
 from common.database_fields import FixedTextField
 from common.validators import MaxCurrentYearValidator, PastDateValidator, FutureDateValidator
 from common.countries import COUNTRIES_ALPHA2_CODE
@@ -49,7 +50,7 @@ from review.models import PartnerFlag
 logger = logging.getLogger(__name__)
 
 
-class Partner(TimeStampedModel):
+class Partner(MigratedTimeStampedModel):
     legal_name = models.CharField(max_length=255)
     display_type = models.CharField(max_length=3, choices=PARTNER_TYPES, verbose_name='Organization Type')
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children')

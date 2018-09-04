@@ -10,7 +10,7 @@ from common.consts import (
     POLICY_AREA_CHOICES,
 )
 from common.defaults import ActivePartnerIDDefault
-from common.mixins import SkipUniqueTogetherValidationOnPatchMixin
+from common.mixins.serializers import SkipUniqueTogetherValidationOnPatchMixin
 from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (

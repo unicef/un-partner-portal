@@ -8,7 +8,7 @@ from django.db.models import Count
 from rest_framework import serializers
 
 from common.consts import CFEI_TYPES, PARTNER_TYPES
-from common.mixins import PartnerIdsMixin
+from common.mixins.views import PartnerIdsMixin
 from common.models import Sector
 from partner.models import Partner
 from agency.models import Agency

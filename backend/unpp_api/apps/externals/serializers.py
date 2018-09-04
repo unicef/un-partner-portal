@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from common.defaults import CurrentUserAgencyDefault
-from common.mixins import CreateOnlyFieldsMixin
+from common.mixins.serializers import CreateOnlyFieldsMixin
 from externals.models import PartnerVendorNumber
 from partner.models import Partner
 

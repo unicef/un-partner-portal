@@ -13,7 +13,7 @@ from account.serializers import PartnerMemberSerializer
 from agency.permissions import AgencyPermission
 from common.permissions import HasUNPPPermission
 from common.pagination import SmallPagination, TinyResultSetPagination
-from common.mixins import PatchOneFieldErrorMixin
+from common.mixins.serializers import PatchOneFieldErrorMixin
 from partner.exports.pdf.partner_profile import PartnerProfilePDFExporter
 from partner.permissions import PartnerPermission
 from partner.serializers import (
