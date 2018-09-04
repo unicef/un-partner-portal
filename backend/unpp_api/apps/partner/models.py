@@ -668,7 +668,7 @@ class PartnerAuditAssessment(TimeStampedModel):
         ordering = ('id', )
 
     def __str__(self):
-        return "PartnerAuditAssessment <pk:{}>".format(self.id)
+        return f"PartnerAuditAssessment <pk:{self.pk}> for {self.partner}"
 
 
 class PartnerAuditReport(TimeStampedModel):

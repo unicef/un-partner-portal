@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from legacy import models as legacy_models
-from partner.models import Partner, PartnerAuditAssessment
+from partner.models import Partner, PartnerAuditAssessment, PartnerAuthorisedOfficer
 
 
 class Command(BaseCommand):
@@ -90,6 +90,26 @@ class Command(BaseCommand):
             }
         )
 
+    def migrate_authorised_officer(self, source: legacy_models.PartnerPartnerauthorisedofficer):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerAuthorisedOfficer {source.pk} for {partner}')
+
+        PartnerAuthorisedOfficer.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'fullname': source.fullname,
+                'job_title': source.job_title,
+                'telephone': source.telephone,
+                'email': source.email,
+                'fax': source.fax,
+            }
+        )
+
     def handle(self, *args, **options):
         self.check_empty_models()
 
@@ -98,3 +118,6 @@ class Command(BaseCommand):
 
         for audit_assessment in legacy_models.PartnerPartnerauditassessment.objects.all():
             self.migrate_audit(audit_assessment)
+
+        for authorised_officer in legacy_models.PartnerPartnerauthorisedofficer.objects.all():
+            self.migrate_authorised_officer(authorised_officer)
