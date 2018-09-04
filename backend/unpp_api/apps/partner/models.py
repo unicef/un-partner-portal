@@ -1090,7 +1090,7 @@ class PartnerRegistrationDocument(TimeStampedModel):
     ))
     expiry_date = models.DateField(validators=(
         FutureDateValidator(),
-    ))
+    ), null=True, blank=True)
 
     class Meta:
         ordering = ('created', )

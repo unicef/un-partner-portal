@@ -2,10 +2,12 @@ from __future__ import absolute_import
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from common.consts import BUDGET_CHOICES
+from common.factories import get_new_common_file
 from legacy import models as legacy_models
 from partner.models import (
     Partner,
@@ -15,6 +17,8 @@ from partner.models import (
     PartnerCollaborationEvidence,
     PartnerFunding,
     PartnerMailingAddress,
+    PartnerProfile,
+    PartnerRegistrationDocument,
 )
 
 
@@ -203,6 +207,71 @@ class Command(BaseCommand):
             }
         )
 
+    def migrate_profile(self, source: legacy_models.PartnerPartnerprofile):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerProfile {source.pk} for {partner}')
+
+        profile, _ = PartnerProfile.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'alias_name': source.alias_name,
+                'acronym': source.acronym,
+                'legal_name_change': source.legal_name_change,
+                'former_legal_name': source.former_legal_name,
+                'connectivity': source.connectivity,
+                'connectivity_excuse': source.connectivity_excuse,
+                'working_languages': source.working_languages.split(',') if source.working_languages else [],
+                'working_languages_other': source.working_languages_other,
+                'have_board_directors': source.have_board_directors,
+                'have_authorised_officers': source.have_authorised_officers,
+                'year_establishment': source.year_establishment,
+                'have_governing_document': source.have_gov_doc,
+                'registered_to_operate_in_country': source.registration_to_operate_in_country,
+                'missing_registration_document_comment': source.registration_comment,
+                'have_management_approach': source.have_management_approach,
+                'management_approach_desc': source.management_approach_desc,
+                'have_system_monitoring': source.have_system_monitoring,
+                'system_monitoring_desc': source.system_monitoring_desc,
+                'have_feedback_mechanism': source.have_feedback_mechanism,
+                'feedback_mechanism_desc': source.feedback_mechanism_desc,
+                'org_acc_system': source.org_acc_system,
+                'method_acc': source.method_acc,
+                'have_system_track': source.have_system_track,
+                'financial_control_system_desc': source.financial_control_system_desc,
+                'experienced_staff': source.experienced_staff,
+                'experienced_staff_desc': source.experienced_staff_desc,
+                'partnership_collaborate_institution': source.partnership_collaborate_institution,
+                'partnership_collaborate_institution_desc': source.partnership_collaborate_institution_desc,
+                'any_partnered_with_un': source.any_partnered_with_un,
+                'any_accreditation': source.any_accreditation,
+                'any_reference': source.any_reference,
+                'have_bank_account': source.have_bank_account,
+                'have_separate_bank_account': source.have_separate_bank_account,
+                'explain': source.explain,
+            }
+        )
+
+        dummy_registration_document = get_new_common_file()
+        dummy_registration_document.file_field.save('dummy_registration_doc.txt', ContentFile(
+            'Placeholder registration document for imported registration number.'
+        ))
+        PartnerRegistrationDocument.objects.update_or_create(
+            profile=profile,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'created_by': self.dummy_user,
+                'registration_number': source.registration_number,
+                'issue_date': source.created,
+                'document': dummy_registration_document,
+            }
+        )
+
     def handle(self, *args, **options):
         self.check_empty_models()
         # Need this for models that require a creator
@@ -231,3 +300,6 @@ class Command(BaseCommand):
 
         for mailing_address in legacy_models.PartnerPartnermailingaddress.objects.all():
             self.migrate_mailing_address(mailing_address)
+
+        for profile in legacy_models.PartnerPartnerprofile.objects.all():
+            self.migrate_profile(profile)
