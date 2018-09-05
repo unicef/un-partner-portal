@@ -6,14 +6,13 @@ jobs:
       - image: python:3.6.5-alpine3.7
     steps:
       - checkout
-#      - restore_cache:
-#          key: pip-packages3-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
+      - restore_cache:
+          key: python-env-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
       - run: apk add --upgrade --no-cache postgresql-client postgresql-contrib postgresql-dev
       - run: apk add --upgrade --no-cache g++ linux-headers gcc make libffi-dev git wget jpeg-dev zlib-dev libpng-dev graphviz-dev libjpeg
       - run: pip install --upgrade pip && pip install -r backend/requirements/dev.pip
-      - run: pip list
       - save_cache:
-          key: pip-packages3-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
+          key: python-env-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
           paths:
             - "/usr/lib/"
             - "/root/project/src/"
@@ -26,7 +25,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: pip-packages3-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
+          key: python-env-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
       - run:
           command: flake8
           working_directory: backend
@@ -43,10 +42,10 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: pip-packages3-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
-      - run: pip list
+          key: python-env-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
+      - run: mkdir -p /data/unpp_api/logs
       - run:
-          command: python manage.py test --noinput --parallel
+          command: python manage.py test --noinput --parallel 6
           working_directory: backend
 
 workflows:
