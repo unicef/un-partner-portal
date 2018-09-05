@@ -10,6 +10,7 @@ from externals.models import PartnerVendorNumber, UNICEFVendorData
 from externals.serializers import PartnerVendorNumberSerializer
 from externals.sources.unhcr import UNHCRInfoClient
 from externals.sources.unicef import UNICEFInfoClient
+from externals.sources.wfp import WFPPartnerInfoClient
 
 
 class PartnerVendorNumberAPIView(CreateAPIView, RetrieveUpdateAPIView, DestroyAPIView):
@@ -54,6 +55,7 @@ class PartnerExternalDetailsAPIView(APIView):
     provider_for_agency = {
         'UNHCR': UNHCRInfoClient,
         'UNICEF': UNICEFInfoClient,
+        'WFP': WFPPartnerInfoClient,
     }
 
     def get_queryset(self):

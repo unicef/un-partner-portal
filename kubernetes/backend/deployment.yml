@@ -76,6 +76,12 @@ spec:
               value: "{{ELASTIC_APM_SERVER_URL}}"
             - name: ELASTIC_APM_SERVICE_NAME
               value: "{{ELASTIC_APM_SERVICE_NAME}}"
+            - name: UNHCR_API_HOST
+              value: "{{UNHCR_API_HOST}}"
+            - name: UNHCR_API_USERNAME
+              value: "{{UNHCR_API_USERNAME}}"
+            - name: UNHCR_API_PASSWORD
+              value: "{{UNHCR_API_PASSWORD}}"
             - name: ELASTIC_APM_SECRET_TOKEN
               valueFrom:
                 secretKeyRef:
