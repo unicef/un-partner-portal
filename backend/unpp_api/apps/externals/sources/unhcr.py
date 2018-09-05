@@ -25,7 +25,7 @@ class UNHCRInfoClient(object):
 
         tables = []
         for title, url in sources.items():
-            response = self.session.get(url)
+            response = self.session.get(url, timeout=30)
             if response.status_code == status.HTTP_200_OK:
                 header, rows = to_table_format(response.json())
                 tables.append({

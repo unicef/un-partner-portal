@@ -22,7 +22,7 @@ class UNICEFInfoDownloader(object):
         self.session.auth = self.auth
 
     def get_url(self, url, max_retry=1):
-        response = self.session.get(url, timeout=300)
+        response = self.session.get(url, timeout=60)
         if not response.status_code == status.HTTP_200_OK:
             if max_retry == 0:
                 return None
