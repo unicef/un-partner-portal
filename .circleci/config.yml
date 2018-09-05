@@ -11,7 +11,7 @@ jobs:
       - run: apk add --upgrade --no-cache postgresql-client postgresql-contrib postgresql-dev
       - run: apk add --upgrade --no-cache g++ linux-headers gcc make libffi-dev git wget jpeg-dev zlib-dev libpng-dev graphviz-dev libjpeg
       - run: pip install --upgrade pip && pip install -r backend/requirements/dev.pip
-      - run: find / -name "libjpeg.so.8"
+      - run: find / -name "libjpeg.so.8" || true
       - save_cache:
           key: pip-packages-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
           paths:
@@ -43,7 +43,7 @@ jobs:
       - checkout
       - restore_cache:
           key: pip-packages-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
-      - run: find / -name "libjpeg.so.8"
+      - run: find / -name "libjpeg.so.8" || true
       - run:
           command: python manage.py test --noinput --parallel
           working_directory: backend
