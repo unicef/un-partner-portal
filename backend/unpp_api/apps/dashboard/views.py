@@ -11,7 +11,7 @@ from rest_framework.generics import RetrieveAPIView, ListAPIView
 from agency.permissions import AgencyPermission
 from common.consts import CFEI_TYPES
 from common.permissions import HasUNPPPermission
-from common.mixins import PartnerIdsMixin
+from common.mixins.views import PartnerIdsMixin
 from common.pagination import MediumPagination, SmallPagination
 from partner.permissions import PartnerPermission
 from project.serializers import ApplicationFullEOISerializer, SubmittedCNSerializer, PendingOffersSerializer, \

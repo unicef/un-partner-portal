@@ -40,7 +40,7 @@ RUN chmod -R a+rw /data
 ENV PYTHONUNBUFFERED 1
 WORKDIR /code/
 
-# TODO: When deploying multiple django containers these crons should be moved to a dedicated one
+# TODO: Move to k8s cronjob
 RUN python setup_crons.py
 
 COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh

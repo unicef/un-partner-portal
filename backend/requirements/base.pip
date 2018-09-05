@@ -57,3 +57,6 @@ raven==6.4.0
 newrelic==2.106.1.88
 
 -e git+https://github.com/robertavram/django-storages.git@1.6.5.3#egg=django-storages
+
+# For accessing legacy MSSQL DB
+-e git+https://github.com/denisenkom/django-sqlserver.git#egg=django-sqlserver
