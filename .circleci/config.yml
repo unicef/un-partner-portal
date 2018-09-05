@@ -8,8 +8,8 @@ jobs:
       - checkout
       - restore_cache:
           key: pip-packages-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
-      - run: apk add --upgrade --no-cache postgresql-client postgresql-contrib postgresql-dev
-      - run: pip install -r backend/requirements/dev.pip
+      - run: apk add --upgrade --no-cache postgresql-client postgresql-contrib postgresql-dev git
+      - run: pip install --upgrade pip && pip install -r backend/requirements/dev.pip
       - save_cache:
           key: pip-packages-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
           paths:
