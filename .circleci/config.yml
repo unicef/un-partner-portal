@@ -14,7 +14,7 @@ jobs:
       - save_cache:
           key: pip-packages-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
           paths:
-            - "/usr/local/lib"
+            - "/usr/lib"
             - "/usr/local/bin"
             - "/usr/local/lib/python3.6/"
 
