@@ -7,15 +7,16 @@ jobs:
     steps:
       - checkout
 #      - restore_cache:
-#          key: pip-packages2-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
+#          key: pip-packages3-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
       - run: apk add --upgrade --no-cache postgresql-client postgresql-contrib postgresql-dev
       - run: apk add --upgrade --no-cache g++ linux-headers gcc make libffi-dev git wget jpeg-dev zlib-dev libpng-dev graphviz-dev libjpeg
       - run: pip install --upgrade pip && pip install -r backend/requirements/dev.pip
       - run: pip list
       - save_cache:
-          key: pip-packages2-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
+          key: pip-packages3-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
           paths:
             - "/usr/lib/"
+            - "/root/project/src/"
             - "/usr/local/bin/"
             - "/usr/local/lib/python3.6/"
 
@@ -25,7 +26,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: pip-packages2-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
+          key: pip-packages3-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
       - run:
           command: flake8
           working_directory: backend
@@ -42,7 +43,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: pip-packages2-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
+          key: pip-packages3-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
       - run: pip list
       - run:
           command: python manage.py test --noinput --parallel
