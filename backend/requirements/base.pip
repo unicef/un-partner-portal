@@ -11,11 +11,6 @@ dj-static==0.0.6
 
 # APM
 elastic-apm==2.0.0
-Fabric==1.13.1
-Pillow==5.0.0
-python-memcached==1.59
-ipython==5.4.1
-azure-storage==0.20.2
 
 # REST framework
 djangorestframework==3.7.7
@@ -24,6 +19,11 @@ django-rest-auth==0.9.3
 django-countries==5.3
 
 # Other Python packages
+Fabric==1.13.1
+Pillow==5.2.0
+python-memcached==1.59
+ipython==5.4.1
+azure-storage==0.20.2
 psycopg2==2.7.5
 python-json-logger==0.1.7
 xmltodict==0.11.0
