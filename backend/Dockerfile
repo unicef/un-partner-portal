@@ -14,7 +14,6 @@ RUN apk add --upgrade --no-cache g++ linux-headers gcc make libffi-dev git wget 
 RUN pip install --upgrade \
     virtualenv \
     fabric \
-    pip \
     wheel \
     --trusted-host pypi.python.org
 
