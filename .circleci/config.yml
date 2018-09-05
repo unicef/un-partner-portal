@@ -8,7 +8,8 @@ jobs:
       - checkout
       - restore_cache:
           key: pip-packages-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
-      - run: apk add --upgrade --no-cache postgresql-client postgresql-contrib postgresql-dev git libffi-dev gcc
+      - run: apk add --upgrade --no-cache postgresql-client postgresql-contrib postgresql-dev
+      - run: apk add --upgrade --no-cache g++ linux-headers gcc make libffi-dev git wget jpeg-dev zlib-dev libpng-dev graphviz-dev
       - run: pip install --upgrade pip && pip install -r backend/requirements/dev.pip
       - save_cache:
           key: pip-packages-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
