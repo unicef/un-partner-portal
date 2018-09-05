@@ -88,8 +88,8 @@ spec:
               value: "{{UNICEF_API_USERNAME}}"
             - name: UNICEF_API_PASSWORD
               value: "{{UNICEF_API_PASSWORD}}"
-            - name: WFP_API_IP
-              value: "{{WFP_API_IP}}"
+            - name: WFP_API_URL
+              value: "{{WFP_API_URL}}"
             - name: WFP_API_TOKEN
               value: "{{WFP_API_TOKEN}}"
             - name: ELASTIC_APM_SECRET_TOKEN
