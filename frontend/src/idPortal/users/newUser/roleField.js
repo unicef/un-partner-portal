@@ -17,7 +17,7 @@ const Office = (values, readOnly, ...props) => (member, index, fields) => {
     fieldName={`${member}.office_id`}
     label="Office"
     values={newValues}
-    readOnly={readOnly}
+    readOnly={readOnly || values.length === 1}
     {...props}
   />);
 };

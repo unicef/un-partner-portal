@@ -7,6 +7,7 @@ import TextFieldForm from '../../../components/forms/textFieldForm';
 import GridColumn from '../../../components/common/grid/gridColumn';
 import { email } from '../../../helpers/validation';
 import RoleField from './roleField';
+import { selectNormalizedOffices } from '../../../store';
 
 const messages = {
   formName: 'newUserForm',
@@ -56,6 +57,8 @@ const formNewUser = reduxForm({
 const mapStateToProps = (state, ownProps) => {
   let initialValues;
 
+  const offices = selectNormalizedOffices(state);
+
   if (ownProps.id) {
     const users = state.idPortalUsersList.users;
     const user = R.find(R.propEq('id', ownProps.id))(users);
@@ -67,6 +70,8 @@ const mapStateToProps = (state, ownProps) => {
       , user.office_memberships);
 
     initialValues = { fullname, email, office_memberships };
+  } else if (offices.length === 1) {
+    initialValues = { office_memberships: [{ office_id: offices[0].value }] };
   }
 
   return {
