@@ -106,4 +106,4 @@ spec:
       hostAliases:
        - ip: "{{WFP_API_IP}}"
          hostnames:
-         - "{{WFP_API_URL}}"
+         - "{{WFP_API_HOST}}"
