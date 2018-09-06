@@ -17,7 +17,7 @@ const messages = {
 
 const columns = [
   { name: 'cn_id', title: 'Application ID' },
-  { name: 'project_title', title: 'Project Title' },
+  { name: 'title', title: 'Project Title', width: 250 },
   { name: 'cfei_type', title: 'Offer Type' },
   { name: 'agency_name', title: 'UN Agency' },
   { name: 'countries', title: 'Country' },

@@ -10,7 +10,7 @@ import TableWithLocalState from '../../common/hoc/tableWithLocalState';
 import { formatDateForPrint } from '../../../helpers/dates';
 
 const columns = [
-  { name: 'title', title: 'Project Title' },
+  { name: 'title', title: 'Project Title', width: 250 },
   { name: 'displayID', title: 'CFEI' },
   { name: 'applications_count', title: 'Number of Applications' },
   { name: 'deadline_date', title: 'Application deadline' },
