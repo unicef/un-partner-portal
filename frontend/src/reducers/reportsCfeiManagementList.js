@@ -28,7 +28,7 @@ const messages = {
 
 const initialState = {
   columns: [
-    { name: 'title', title: 'Project Title' },
+    { name: 'title', title: 'Project Title', width: 250 },
     { name: 'locations', title: 'Country' },
     { name: 'project_locations', title: 'Project Location' },
     { name: 'type_display', title: 'Type of expresssion of interest' },
