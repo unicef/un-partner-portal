@@ -181,7 +181,7 @@ def generate_fake_data(country_count=3):
         PartnerVerificationFactory(partner=hq)
         for role_code, display_name in PartnerRole.get_choices():
             user = UserFactory(
-                email=f'ingo-hq-{index}-{role_code.lower()}@partner.org'
+                email=f'ingo-hq-{index + 1}-{role_code.lower()}@partner.org'
             )
             PartnerMemberFactory(user=user, role=role_code, partner=hq)
             print(f'Created {user}')
