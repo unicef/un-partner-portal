@@ -20,11 +20,17 @@ class WFPPartnerInfoClient(object):
         if not response.status_code == 200:
             raise ServiceUnavailable
 
+        header = []
+        row = []
+
+        for k, v in response.json()['data']['results'].items():
+            header.append(k)
+            row.append(v)
+
         return [{
             'title': 'Partner Basic Information',
-            'header': [
-                'Category',
-                'Value',
+            'header': header,
+            'rows': [
+                row
             ],
-            'rows': response.json()['data']['results'].items(),
         }]
