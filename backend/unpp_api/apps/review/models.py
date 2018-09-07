@@ -45,23 +45,35 @@ class PartnerFlag(TimeStampedModel):
 
 class PartnerVerification(TimeStampedModel):
     partner = models.ForeignKey('partner.Partner', related_name="verifications")
+    submitter = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="given_verifications")
     is_valid = models.BooleanField(default=True)
     is_verified = models.BooleanField()
-    submitter = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="given_verifications")
-    is_cert_uploaded = models.BooleanField()
+
+    is_cert_uploaded = models.BooleanField(
+        help_text='Has the CSO/partner uploaded its valid, '
+                  'non-expired registration certificate issued by the correct government body?'
+    )
     cert_uploaded_comment = models.TextField(null=True, blank=True)
-    is_reason_acceptable = models.NullBooleanField()
-    reason_acceptable_comment = models.TextField(null=True, blank=True)
-    is_mm_consistent = models.BooleanField()
+
+    is_mm_consistent = models.BooleanField(
+        help_text='Are the mandate and mission of the CSO/partner consistent with that of the UN?'
+    )
     mm_consistent_comment = models.TextField(null=True, blank=True)
-    is_indicate_results = models.BooleanField()
+
+    is_indicate_results = models.BooleanField(
+        help_text='Does the CSO/partner have mechanisms to combat fraud and corruption, '
+                  'prevent sexual exploitation and abuse, and protect and safeguard beneficiaries?'
+    )
     indicate_results_comment = models.TextField(null=True, blank=True)
-    is_rep_risk = models.BooleanField()
+
+    is_rep_risk = models.BooleanField(
+        help_text='Are there any other risk-related observations associated with the CSO/partner that are not '
+                  'captured in UN Partner Portal, but which pose unacceptable risk to the UN?'
+    )
     rep_risk_comment = models.TextField(null=True, blank=True)
-    is_yellow_flag = models.BooleanField()
+
+    is_yellow_flag = models.BooleanField(help_text='Do these observations pose unacceptable risk to the UN?')
     yellow_flag_comment = models.TextField(null=True, blank=True)
-    can_verify = models.NullBooleanField()
-    can_verify_comment = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = (
@@ -73,11 +85,11 @@ class PartnerVerification(TimeStampedModel):
 
     def _passed_verify(self):
         return all([
-            self.is_cert_uploaded or (not self.is_cert_uploaded and self.is_reason_acceptable),
+            self.is_cert_uploaded,
             self.is_mm_consistent,
             self.is_indicate_results,
             not self.is_rep_risk,
-            not self.is_yellow_flag or (self.is_yellow_flag and self.can_verify)
+            not self.is_yellow_flag
         ])
 
     def save(self, *args, **kwargs):

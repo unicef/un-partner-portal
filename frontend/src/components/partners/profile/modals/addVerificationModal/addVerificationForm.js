@@ -11,7 +11,7 @@ const messages = {
   mmConsistent: 'Are the mandate and mission of the CSO/partner consistent with that of the UN?',
   indicateResults: 'Does the CSO/partner have mechanisms to combat fraud and corruption, prevent sexual exploitation and abuse, and protect and safeguard beneficiaries?',
   observationsPose: 'Do these observations pose unacceptable risk to the UN?',
-  riskRelated: 'Are there any other risk-related observations associated with the CSO/partner that are not captured in UN Partner Portal, but which pose unacceptable risk to the UN? ',
+  riskRelated: 'Are there any other risk-related observations associated with the CSO/partner that are not captured in UN Partner Portal, but which pose unacceptable risk to the UN?',
 };
 
 const verificationQuestions = [
