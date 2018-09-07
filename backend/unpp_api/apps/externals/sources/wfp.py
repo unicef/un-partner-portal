@@ -1,6 +1,7 @@
 from django.conf import settings
 import requests
 
+from externals.exceptions import ServiceUnavailable
 from externals.models import PartnerVendorNumber
 
 
@@ -16,7 +17,14 @@ class WFPPartnerInfoClient(object):
 
         response = requests.get(source_url, headers=self.headers, timeout=30)
 
-        return {
-            'status_code': response.status_code,
-            'content': response.json(),
-        }
+        if not response.status_code == 200:
+            raise ServiceUnavailable
+
+        return [{
+            'title': 'Partner Basic Information',
+            'header': [
+                'Category',
+                'Value',
+            ],
+            'rows': response.json()['data']['results'].items(),
+        }]
