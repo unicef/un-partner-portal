@@ -26,7 +26,8 @@ from common.factories import (
     PartnerFlagFactory,
     UserFactory,
     get_partner_name,
-    DirectEOIFactory)
+    DirectEOIFactory,
+)
 from common.models import (
     AdminLevel1,
     Point,

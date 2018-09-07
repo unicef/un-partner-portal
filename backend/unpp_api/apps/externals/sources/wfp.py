@@ -18,5 +18,5 @@ class WFPPartnerInfoClient(object):
 
         return {
             'status_code': response.status_code,
-            'text': getattr(response, 'text', None),
+            'content': response.json(),
         }
