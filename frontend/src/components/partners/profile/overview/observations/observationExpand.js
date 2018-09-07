@@ -77,7 +77,7 @@ const ObservationExpand = (props) => {
   const { classes, observation } = props;
 
   return (
-    <GridColumn className={classes.container}>
+    <GridColumn spacing={8} className={classes.container}>
       <GridRow columns={2} spacing={8}>
         <ItemColumnCell label={messages.created} content={formatDateForPrint(R.path(['created'], observation))} />
         <ItemColumnCell label={messages.comment} content={R.path(['comment'], observation)} />
