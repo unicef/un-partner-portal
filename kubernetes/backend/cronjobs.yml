@@ -2,7 +2,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: send_daily_notifications
+  name: send-daily-notifications
   annotations:
     revision: "{{CF_SHORT_REVISION}}"
   namespace: {{NAMESPACE}}
