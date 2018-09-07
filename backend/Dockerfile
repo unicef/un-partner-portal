@@ -39,9 +39,6 @@ RUN chmod -R a+rw /data
 ENV PYTHONUNBUFFERED 1
 WORKDIR /code/
 
-# TODO: Move to k8s cronjob
-RUN python setup_crons.py
-
 COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
 RUN chmod +x /usr/local/bin/wait-for-it.sh
 
