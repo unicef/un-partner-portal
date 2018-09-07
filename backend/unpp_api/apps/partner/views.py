@@ -6,7 +6,7 @@ from rest_framework.generics import (
     CreateAPIView,
     RetrieveAPIView,
     RetrieveUpdateAPIView,
-)
+    get_object_or_404)
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.serializers import PartnerMemberSerializer
@@ -248,5 +248,15 @@ class PartnersMemberListAPIView(FilterUsersPartnersMixin, ListAPIView):
     serializer_class = PartnerMemberSerializer
     queryset = PartnerMember.objects.all()
     pagination_class = SmallPagination
-    lookup_field = 'pk'
+    lookup_field = 'partner_id'
     partner_field = 'partner'
+
+    def get_queryset(self):
+        queryset = super(PartnersMemberListAPIView, self).get_queryset()
+        if self.request.agency_member:
+            return queryset.filter(partner_id=self.kwargs['pk'])
+        else:
+            partner = get_object_or_404(
+                Partner.objects.filter(partner_members__user=self.request.user), id=self.kwargs['pk']
+            )
+            return queryset.filter(partner=partner)
