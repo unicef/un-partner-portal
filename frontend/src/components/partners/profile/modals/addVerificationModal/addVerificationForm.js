@@ -36,14 +36,14 @@ const verificationQuestions = [
   {
     id: 3,
     question: messages.observationsPose,
-    questionFieldName: 'is_rep_risk',
-    commentFieldName: 'rep_risk_comment',
+    questionFieldName: 'is_yellow_flag',
+    commentFieldName: 'yellow_flag_comment',
   }, 
   {
     id: 4,
     question: messages.riskRelated,
-    questionFieldName: 'is_yellow_flag',
-    commentFieldName: 'yellow_flag_comment',
+    questionFieldName: 'is_rep_risk',
+    commentFieldName: 'rep_risk_comment',
   },
 ];
 
