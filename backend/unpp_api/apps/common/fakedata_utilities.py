@@ -176,8 +176,14 @@ def generate_fake_data(country_count=3):
     ingo_hqs = [
         PartnerFactory(display_type=PARTNER_TYPES.international) for _ in range(partner_count)
     ]
-    for hq in ingo_hqs:
+    for index, hq in enumerate(ingo_hqs):
         PartnerVerificationFactory(partner=hq)
+        for role_code, display_name in PartnerRole.get_choices():
+            user = UserFactory(
+                email=f'ingo-hq-{index}-{role_code.lower()}@partner.org'
+            )
+            PartnerMemberFactory(user=user, role=role_code, partner=hq)
+            print(f'Created {user}')
 
     standard_partners_created = 0
     ingo_partners_created = 0
@@ -220,7 +226,7 @@ def generate_fake_data(country_count=3):
                 for role_code, display_name in PartnerRole.get_choices():
                     postfix = f'ingo-{ingo_partners_created}' if partner.hq else standard_partners_created
 
-                    user = UserFactory(email=f'partner-{postfix}-{role_code.lower()}@partner.org')
+                    user = UserFactory(email=f'{postfix}-{role_code.lower()}@partner.org')
                     PartnerMemberFactory(user=user, role=role_code, partner=partner)
                     if partner.hq:
                         PartnerMemberFactory(user=user, role=role_code, partner=partner.hq)
@@ -228,8 +234,6 @@ def generate_fake_data(country_count=3):
 
                     user = UserFactory(email=f'{role_code.lower()}@{partner.legal_name}')
                     PartnerMemberFactory(user=user, role=role_code, partner=partner)
-                    if partner.hq:
-                        PartnerMemberFactory(user=user, role=role_code, partner=partner.hq)
                     print(f'Created {user}')
 
                 if random.randint(1, 2) == 2:
