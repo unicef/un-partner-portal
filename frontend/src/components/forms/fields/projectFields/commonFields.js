@@ -68,7 +68,7 @@ const attachmentForm = props => member => (
   <GridColumn spacing={8} columns={2}>
     <FileForm
       fieldName={`${member}.file`}
-      label={'Attachement'}
+      label={'Attachment'}
       optional
       {...props}
     />
@@ -124,7 +124,7 @@ export const DeadlineDate = ({ minDate, ...props }) => (<DatePickerForm
 />);
 
 export const NotifyDate = ({ minDate, ...props }) => (<DatePickerForm
-  label="Notification of Result"
+  label="Notification of Results"
   fieldName="notif_results_date"
   placeholder="Pick a date"
   datePickerProps={{
@@ -135,7 +135,7 @@ export const NotifyDate = ({ minDate, ...props }) => (<DatePickerForm
 />);
 
 export const ClarificationRequestDeadlineDate = ({ minDate, ...props }) => (<DatePickerForm
-  label="Clarification Request Deadline"
+  label="Request for clarification deadline"
   fieldName="clarification_request_deadline_date"
   placeholder="Pick a date"
   datePickerProps={{
