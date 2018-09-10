@@ -17,7 +17,7 @@ class Command(BaseCommand):
         yesterday = date.today() - relativedelta(days=1)
         eoi_ids = set(EOI.objects.filter(
             is_published=True, clarification_request_deadline_date=yesterday
-        ).values_list('id', Flat=True))
+        ).values_list('id', flat=True))
 
         for eoi_id in eoi_ids:
             with transaction.atomic():
