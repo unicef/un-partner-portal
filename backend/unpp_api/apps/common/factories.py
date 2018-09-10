@@ -279,8 +279,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             city=fake.city(),
             country=random.choice(COUNTRIES),
             zip_code=fake.postalcode(),
-            telephone=fake.phone_number(),
-            fax=fake.phone_number(),
+            telephone=fake.msisdn(),
+            fax=fake.msisdn(),
             website=fake.url(),
             org_email=fake.company_email(),
         )
@@ -301,8 +301,8 @@ class PartnerFactory(factory.django.DjangoModelFactory):
                 partner=self,
                 fullname=get_fullname(),
                 job_title=get_job_title(),
-                telephone='(123) 234 569',
-                fax='(123) 234 566',
+                telephone=fake.msisdn(),
+                fax=fake.msisdn(),
                 email="office@partner.website.org",
             )
 
@@ -423,7 +423,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
             fullname=get_fullname(),
             email="fake-partner-head-{}@unicef.org".format(self.id),
             job_title=get_job_title(),
-            telephone="+48 22 568 03 0{}".format(self.id)
+            telephone=fake.msisdn()
         )
 
     @factory.post_generation
