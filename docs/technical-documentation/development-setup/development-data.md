@@ -70,5 +70,13 @@ partner-ingo-<number>-<role>@partner.org
 
 Number is an integer from **1 to 6** range.
 
-Roles are the same as standard partner. **Each INGO account is added both to the country profile and HQ profile.**
+Roles are the same as standard partner.
+
+### INGO HQs
+
+```text
+partner-ingo-hq-<number>-<role>@partner.org
+```
+
+Number is an integer from **1 to 2** range. Roles same as above.
 
