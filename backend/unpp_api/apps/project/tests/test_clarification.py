@@ -1,6 +1,7 @@
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
+from django.core.management import call_command
 from django.urls import reverse
 from rest_framework import status
 
@@ -76,6 +77,7 @@ class TestClarificationRequest(BaseAPITestCase):
 
     def test_upload_answers(self):
         eoi = OpenEOIFactory(clarification_request_deadline_date=date.today() + relativedelta(days=7))
+        call_command('send_clarification_deadline_passed_notifications')
         answers_url = reverse('projects:question-answers', kwargs={'eoi_id': eoi.pk})
         create_response = self.client.post(answers_url, data={
             'title': 'Test File',
