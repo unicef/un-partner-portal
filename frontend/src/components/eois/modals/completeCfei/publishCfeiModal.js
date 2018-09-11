@@ -26,7 +26,7 @@ class PublishCfeiModal extends Component {
   }
 
   publish() {
-    return this.props.publisCfei().then(() => {
+    return this.props.publishCfei().then(() => {
       this.props.handleDialogClose();
     });
   }
@@ -63,7 +63,7 @@ class PublishCfeiModal extends Component {
 PublishCfeiModal.propTypes = {
   classes: PropTypes.object.isRequired,
   dialogOpen: PropTypes.bool,
-  publisCfei: PropTypes.func,
+  publishCfei: PropTypes.func,
   handleDialogClose: PropTypes.func,
 };
 
@@ -72,7 +72,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  publisCfei: () => dispatch(publishCfeiRequest(ownProps.id)),
+  publishCfei: () => dispatch(publishCfeiRequest(ownProps.id)),
 });
 
 const connected = connect(mapStateToProps, mapDispatchToProps)(PublishCfeiModal);
