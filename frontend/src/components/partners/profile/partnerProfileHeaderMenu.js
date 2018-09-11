@@ -51,40 +51,42 @@ class PartnerProfileHeaderMenu extends Component {
 
     const options = [];
 
-    if (hasVerifyHqPermission || hasVerifyAllCSOPermission
-      || (hasVerifyAssignedCSOPermission && agencyCountryCode === partnerProfile.countryCode)) {
-      options.push(
-        {
-          name: addVerification,
-          content: <AddNewVerificationButton handleClick={() => {
-            if (!partnerProfile.partnerStatus.has_potential_sanction_match) {
-              if (partnerProfile.partnerStatus.can_be_verified && partnerProfile.partnerStatus.has_finished) {
-                handleDialogOpen(addVerification);
-              } else if (!partnerProfile.isHq && partnerProfile.partnerStatus.has_finished) {
-                this.setState({ addVerification: true });
-              } else if (!partnerProfile.partnerStatus.has_finished) {
-                this.setState({ hasFinished: true });
+    if (partnerProfile.isLocked === false) {
+      if (hasVerifyHqPermission || hasVerifyAllCSOPermission
+        || (hasVerifyAssignedCSOPermission && agencyCountryCode === partnerProfile.countryCode)) {
+        options.push(
+          {
+            name: addVerification,
+            content: <AddNewVerificationButton handleClick={() => {
+              if (!partnerProfile.partnerStatus.has_potential_sanction_match) {
+                if (partnerProfile.partnerStatus.can_be_verified && partnerProfile.partnerStatus.has_finished) {
+                  handleDialogOpen(addVerification);
+                } else if (!partnerProfile.isHq && partnerProfile.partnerStatus.has_finished) {
+                  this.setState({ addVerification: true });
+                } else if (!partnerProfile.partnerStatus.has_finished) {
+                  this.setState({ hasFinished: true });
+                }
+              } else {
+                this.setState({ hasSanctionMatch: true });
               }
-            } else {
-              this.setState({ hasSanctionMatch: true });
-            }
-          }}
-          />,
-        });
-    }
-
-    if (hasAddFlagAllPermission
-      || (hasAddFlagCSOPermission && !partnerProfile.isHq
-          && agencyCountryCode === partnerProfile.countryCode)) {
-      options.push(
-        {
-          name: addObservation,
-          content: <AddNewObservationButton
-            handleClick={() => {
-              handleDialogOpen(addObservation);
             }}
-          />,
-        });
+            />,
+          });
+      }
+
+      if (hasAddFlagAllPermission
+        || (hasAddFlagCSOPermission && !partnerProfile.isHq
+            && agencyCountryCode === partnerProfile.countryCode)) {
+        options.push(
+          {
+            name: addObservation,
+            content: <AddNewObservationButton
+              handleClick={() => {
+                handleDialogOpen(addObservation);
+              }}
+            />,
+          });
+      }
     }
 
     return options;

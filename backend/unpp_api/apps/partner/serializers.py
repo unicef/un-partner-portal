@@ -570,7 +570,11 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'partner_additional',
             'last_profile_update',
             'has_potential_sanction_match',
+            'is_locked',
             'vendor_numbers',
+        )
+        read_only_fields = (
+            'is_locked',
         )
 
     def get_country_presence_display(self, partner):

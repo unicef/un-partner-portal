@@ -9,7 +9,7 @@ from partner.models import Partner
 class PartnerVendorNumberSerializer(CreateOnlyFieldsMixin, serializers.ModelSerializer):
 
     agency = serializers.HiddenField(default=serializers.CreateOnlyDefault(CurrentUserAgencyDefault()))
-    partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.all())
+    partner = serializers.PrimaryKeyRelatedField(queryset=Partner.objects.filter(is_locked=False))
     business_area_display = serializers.CharField(source='get_business_area_display', read_only=True)
     agency_id = serializers.IntegerField(read_only=True)
 

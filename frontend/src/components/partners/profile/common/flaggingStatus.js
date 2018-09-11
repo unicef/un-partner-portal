@@ -10,7 +10,6 @@ import { FLAGS } from '../../../../helpers/constants';
 import { checkPermission, AGENCY_PERMISSIONS } from '../../../../helpers/permissions';
 
 const FlaggingStatus = (props) => {
-  console.log(props);
   const { flags: { red, escalated, yellow, observation }, hasPermissionViewFlagCount } = props;
 
   return (hasPermissionViewFlagCount && <Grid container spacing={0}>

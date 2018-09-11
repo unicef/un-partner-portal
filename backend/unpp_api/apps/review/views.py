@@ -39,7 +39,7 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
     def get_queryset(self):
         queryset = PartnerFlag.objects.filter(
             Q(partner=self.kwargs['partner_id']) | Q(partner__children__id=self.kwargs['partner_id'])
-        )
+        ).distinct()
         if current_user_has_permission(
             self.request, agency_permissions=[AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS]
         ):
@@ -52,7 +52,7 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
         raise PermissionDenied
 
     def perform_create(self, serializer):
-        partner = get_object_or_404(Partner, id=self.kwargs['partner_id'])
+        partner = get_object_or_404(Partner, id=self.kwargs['partner_id'], is_locked=False)
         if current_user_has_permission(
             self.request,
             agency_permissions=[AgencyPermission.ADD_FLAG_OBSERVATION_ALL_CSO_PROFILES],
@@ -132,7 +132,7 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
         return PartnerVerification.objects.filter(partner=self.kwargs['partner_id'])
 
     def perform_create(self, serializer):
-        partner = get_object_or_404(Partner, id=self.kwargs['partner_id'])
+        partner = get_object_or_404(Partner, id=self.kwargs['partner_id'], is_locked=False)
         if partner.is_hq:
             current_user_has_permission(
                 self.request, agency_permissions=[AgencyPermission.VERIFY_INGO_HQ], raise_exception=True

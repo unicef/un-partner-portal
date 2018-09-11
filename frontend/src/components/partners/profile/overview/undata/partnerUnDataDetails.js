@@ -17,11 +17,12 @@ const fields = partnerId => (
   <PartnerUndataContent partnerId={partnerId} />
 );
 
-const summaryHeader = (vendorNumber, hasVendorPermission) => (
+const summaryHeader = (vendorNumber, hasVendorPermission, partnerIsLocked) => (
   <SpreadContent>
     <Typography type="title">{messages.partnerInfo}</Typography>
-    {!vendorNumber && hasVendorPermission && <PartnerUnDataDetailsMenu />}
-  </SpreadContent>);
+    {!partnerIsLocked && !vendorNumber && hasVendorPermission && <PartnerUnDataDetailsMenu />}
+  </SpreadContent>
+);
 
 const PartnerUnDataDetails = (props) => {
   const { partnerId, partner, agencyId, hasVendorPermission } = props;
@@ -30,7 +31,7 @@ const PartnerUnDataDetails = (props) => {
   return (
     <div>
       <HeaderList
-        header={summaryHeader(vendorNumber, hasVendorPermission)}
+        header={summaryHeader(vendorNumber, hasVendorPermission, partner.isLocked)}
       >
         {fields(partnerId)}
       </HeaderList>
