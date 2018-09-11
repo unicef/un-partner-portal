@@ -9,7 +9,7 @@ import { publishCfeiRequest } from '../../../../reducers/publishCfei';
 
 const messages = {
   title: 'Are you sure you want to publish this CFEI?',
-  info: 'Please confirm that you want to publish this CFEI. Email with notification will be sent to selected partner.',
+  info: 'Please confirm you want to publish this CFEI. Email with notification will be sent to invited partners.',
   publish: 'publish',
 };
 
