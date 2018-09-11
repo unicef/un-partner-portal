@@ -1,6 +1,5 @@
 import random
 from django.conf import settings
-from django_countries import countries
 
 from account.models import User, UserProfile
 from agency.models import (
@@ -14,6 +13,7 @@ from agency.roles import AgencyRole
 from common.consts import (
     PARTNER_TYPES,
 )
+from common.countries import COUNTRIES_ALPHA2_CODE
 from common.factories import (
     PartnerFactory,
     PartnerMemberFactory,
@@ -169,7 +169,7 @@ def generate_fake_data(country_count=3):
         Agency.objects.get(name="UNHCR"),
     ]
 
-    chosen_countries = random.choices(countries, k=country_count)
+    chosen_countries = random.choices(COUNTRIES_ALPHA2_CODE, k=country_count)
 
     OtherAgencyFactory()
 
@@ -214,7 +214,11 @@ def generate_fake_data(country_count=3):
                     }
                     standard_partners_created += 1
 
-                partner = PartnerFactory(display_type=partner_type, **partner_kwargs)
+                partner = PartnerFactory(
+                    country_code=country_code,
+                    display_type=partner_type,
+                    **partner_kwargs
+                )
                 partner.country_presence = [country_code]
                 partner.save()
 
