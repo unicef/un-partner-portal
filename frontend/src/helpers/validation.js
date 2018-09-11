@@ -106,13 +106,6 @@ export const notifResultsDate = (value, allValues) => {
   return undefined;
 };
 
-export const deadlineDate = (value, allValues) => {
-  if (allValues.clarification_request_deadline_date) {
-    if (isDateBefore(value, allValues.clarification_request_deadline_date)) return 'Deadline date must be after clarification request deadline date';
-  }
-  return undefined;
-};
-
 export const validateReviewScores = (values, props) => {
   if (values.scores) {
     const scoresError = [];
