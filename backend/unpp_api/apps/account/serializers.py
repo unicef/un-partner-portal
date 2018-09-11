@@ -328,7 +328,7 @@ class CustomLoginSerializer(LoginSerializer):
         user = attrs['user']
         if user.is_partner_user:
             if not user.partner_members.filter(partner__is_locked=False).exists():
-                raise serializers.ValidationError('Account is Currently Locked')
+                raise serializers.ValidationError('Account is Locked')
         return attrs
 
 

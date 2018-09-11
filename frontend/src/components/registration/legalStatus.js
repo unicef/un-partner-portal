@@ -24,7 +24,7 @@ const messages = {
   document: 'Please upload Registration Document',
   comment: 'Comment',
   name: 'Name of registering authority',
-  expireDate: 'Expiration date',
+  expireDate: 'Expiration Date',
   govDocTooltip: 'Governing document: is a formal document with information about the structure ' +
   'and governance of an organization, outlining the purposes of the organization and how it will ' +
   'be run. A governing document may come in the form of a trust deed, constitution, memorandum ' +

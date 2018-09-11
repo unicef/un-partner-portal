@@ -66,6 +66,7 @@ const RegistrationDocument = readOnly => (member, index, fields) => (<Grid item>
       <TextFieldForm
         label={messages.registeringAuthority}
         fieldName={`${member}.issuing_authority`}
+        warn
         optional
         placeholder={PLACEHOLDERS.provide}
         readOnly={(R.is(Boolean, fields.get(index).editable) && !fields.get(index).editable)
@@ -88,7 +89,6 @@ const RegistrationDocument = readOnly => (member, index, fields) => (<Grid item>
       <DatePickerForm
         fieldName={`${member}.expiry_date`}
         label={messages.expireDate}
-        warn
         optional
         placeholder={PLACEHOLDERS.provide}
         readOnly={(R.is(Boolean, fields.get(index).editable) && !fields.get(index).editable)
