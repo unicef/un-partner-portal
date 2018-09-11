@@ -121,9 +121,7 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
 
         instance = super(PartnerFlagSerializer, self).update(instance, validated_data)
 
-        if instance.flag_type == FLAG_TYPES.red and instance.is_valid:
-            lock_partner_for_deactivation(instance.partner)
-        elif instance.category == INTERNAL_FLAG_CATEGORIES.sanctions_match and instance.sanctions_match:
+        if instance.category == INTERNAL_FLAG_CATEGORIES.sanctions_match and instance.sanctions_match:
             if instance.is_valid is not None:
                 instance.sanctions_match.can_ignore = not instance.is_valid
                 instance.sanctions_match.save()
@@ -139,6 +137,13 @@ class PartnerFlagSerializer(serializers.ModelSerializer):
                 'flag_type': FLAG_TYPES.red if instance.is_valid else FLAG_TYPES.yellow,
                 'is_valid': True,
             })
+
+        return instance
+
+    def save(self, **kwargs):
+        instance: PartnerFlag = super(PartnerFlagSerializer, self).save(**kwargs)
+        if instance.flag_type == FLAG_TYPES.red and instance.is_valid:
+            lock_partner_for_deactivation(instance.partner)
 
         return instance
 
