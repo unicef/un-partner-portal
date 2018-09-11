@@ -37,7 +37,9 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
     filter_class = PartnerFlagFilter
 
     def get_queryset(self):
-        queryset = PartnerFlag.objects.filter(partner=self.kwargs['partner_id'])
+        queryset = PartnerFlag.objects.filter(
+            Q(partner=self.kwargs['partner_id']) | Q(partner__children__id=self.kwargs['partner_id'])
+        )
         if current_user_has_permission(
             self.request, agency_permissions=[AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS]
         ):
@@ -68,6 +70,50 @@ class PartnerFlagListCreateAPIView(ListCreateAPIView):
                 raise PermissionDenied('You do not have permission to flag partner outside your country office.')
 
         serializer.save(submitter=self.request.user, partner=partner)
+
+
+class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (
+        HasUNPPPermission(
+            agency_permissions=[]  # Permissions verified below
+        ),
+    )
+    serializer_class = PartnerFlagSerializer
+
+    def get_queryset(self):
+        partner = get_object_or_404(Partner, id=self.kwargs.get('partner_id'))
+        queryset = PartnerFlag.objects.filter(Q(partner=partner) | Q(partner=partner.hq))
+        if current_user_has_permission(
+            self.request, agency_permissions=[AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS]
+        ):
+            return queryset
+        elif current_user_has_permission(
+            self.request, agency_permissions=[AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES]
+        ):
+            return queryset.filter(category=FLAG_CATEGORIES.sanctions_match)
+
+        raise PermissionDenied
+
+    def get_object(self):
+        flag: PartnerFlag = super(PartnerFlagRetrieveUpdateAPIView, self).get_object()
+        if not self.request.method == 'GET':
+            if flag.flag_type == FLAG_TYPES.escalated:
+                current_user_has_permission(
+                    self.request,
+                    agency_permissions=[AgencyPermission.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES],
+                    raise_exception=True
+                )
+            elif flag.category == FLAG_CATEGORIES.sanctions_match:
+                current_user_has_permission(
+                    self.request,
+                    agency_permissions=[AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES],
+                    raise_exception=True
+                )
+            elif flag.submitter and not flag.submitter == self.request.user:
+                raise PermissionDenied("This flag can only be edited by it's creator.")
+
+        return flag
 
 
 class PartnerVerificationListCreateAPIView(ListCreateAPIView):
@@ -119,50 +165,6 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
             )
 
         serializer.save(submitter=self.request.user, partner=partner)
-
-
-class PartnerFlagRetrieveUpdateAPIView(RetrieveUpdateAPIView):
-
-    permission_classes = (
-        HasUNPPPermission(
-            agency_permissions=[]  # Permissions verified below
-        ),
-    )
-    serializer_class = PartnerFlagSerializer
-
-    def get_queryset(self):
-        partner = get_object_or_404(Partner, id=self.kwargs.get('partner_id'))
-        queryset = PartnerFlag.objects.filter(Q(partner=partner) | Q(partner=partner.hq))
-        if current_user_has_permission(
-            self.request, agency_permissions=[AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS]
-        ):
-            return queryset
-        elif current_user_has_permission(
-            self.request, agency_permissions=[AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES]
-        ):
-            return queryset.filter(category=FLAG_CATEGORIES.sanctions_match)
-
-        raise PermissionDenied
-
-    def get_object(self):
-        flag: PartnerFlag = super(PartnerFlagRetrieveUpdateAPIView, self).get_object()
-        if not self.request.method == 'GET':
-            if flag.flag_type == FLAG_TYPES.escalated:
-                current_user_has_permission(
-                    self.request,
-                    agency_permissions=[AgencyPermission.RESOLVE_ESCALATED_FLAG_ALL_CSO_PROFILES],
-                    raise_exception=True
-                )
-            elif flag.category == FLAG_CATEGORIES.sanctions_match:
-                current_user_has_permission(
-                    self.request,
-                    agency_permissions=[AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES],
-                    raise_exception=True
-                )
-            elif flag.submitter and not flag.submitter == self.request.user:
-                raise PermissionDenied("This flag can only be edited by it's creator.")
-
-        return flag
 
 
 class PartnerVerificationRetrieveAPIView(RetrieveAPIView):

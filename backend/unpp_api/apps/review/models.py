@@ -17,7 +17,7 @@ class PartnerFlag(TimeStampedModel):
     """
     partner = models.ForeignKey('partner.Partner', related_name="flags")
     flag_type = FixedTextField(choices=FLAG_TYPES, default=FLAG_TYPES.yellow)
-    type_history = ArrayField(flag_type, default=list, blank=True, null=True)
+    type_history = ArrayField(flag_type, default=list, blank=True, null=True, editable=False)
     category = FixedTextField(choices=FLAG_CATEGORIES, null=True, blank=True)
     is_valid = models.NullBooleanField(default=True)
     submitter = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="given_flags", null=True)
