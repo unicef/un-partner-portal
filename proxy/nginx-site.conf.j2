@@ -40,8 +40,11 @@ server {
     }
 
     {% if FRONTEND_FILES_PATH is defined %}
+        root {{ FRONTEND_FILES_PATH }};
+        index index.html;
+
         location / {
-            alias {{ FRONTEND_FILES_PATH }};
+            try_files $uri $uri/;
     {% else %}
         location / {
             try_files $uri $uri/ @frontend;
