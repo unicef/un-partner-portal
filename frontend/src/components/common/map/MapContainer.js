@@ -1,8 +1,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Map } from 'google-maps-react';
+import ReactMapboxGl from "react-mapbox-gl";
 
+const MapGl = ReactMapboxGl({
+  accessToken: process.env.MAP_BOX_KEY,
+});
 
 const style = {
   position: 'relative',
@@ -10,23 +13,17 @@ const style = {
 };
 
 const MapContainer = (props) => {
-  const { children, ...other } = props;
+  const { children, center, bounds, locations, onClick, ...other } = props;
+
   return (
-    <Map
-      containerStyle={style}
-      google={window.google}
-      {...other}
-      styles={[
-        {
-          featureType: 'poi',
-          elementType: 'labels.text.fill',
-          stylers: [{ visibility: 'off' }],
-        },
-      ]}
-      clickableIcons={false}
-    >
+    <MapGl
+      style="mapbox://styles/mapbox/streets-v9"
+      center={center}
+      fitBounds={bounds}
+      onClick={onClick}
+      containerStyle={style}>
       {children}
-    </Map>
+    </MapGl>
   );
 };
 

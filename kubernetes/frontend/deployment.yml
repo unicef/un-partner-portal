@@ -39,8 +39,8 @@ spec:
           command: ["bash"]
           args: ["-c", "yarn run start"]
           env:
-            - name: GOOGLE_KEY
+            - name: MAP_BOX_KEY
               valueFrom:
                 secretKeyRef:
-                  name: google-key
+                  name: map-box-key
                   key: password
