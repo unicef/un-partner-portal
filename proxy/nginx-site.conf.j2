@@ -39,7 +39,8 @@ server {
         expires 1d;
     }
 
-    {% if FRONTEND_FILES_PATH is defined %}
+    {% if FRONTEND_FILES_PATH2 is defined %}
+    # TEMP DISABLE
         root {{ FRONTEND_FILES_PATH }};
         index index.html;
 
