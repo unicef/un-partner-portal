@@ -217,6 +217,10 @@ steps:
         working_directory: ${{main_clone}}
         commands:
           - /cf-deploy-kubernetes ./kubernetes/frontend/jobs.yml
+        environment:
+          - KUBECONTEXT=${{KUBECONTEXT}}
+          - KUBERNETES_NAMESPACE=${{NAMESPACE}}
+          - ENV=${{ENV}}
         when:
           branch:
             only:
