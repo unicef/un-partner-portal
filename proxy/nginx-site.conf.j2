@@ -41,7 +41,7 @@ server {
 
     {% if FRONTEND_FILES_PATH is defined %}
         location / {
-            try_files $uri $uri/ {{ FRONTEND_FILES_PATH }};
+            alias {{ FRONTEND_FILES_PATH }};
     {% else %}
         location / {
             try_files $uri $uri/ @frontend;
