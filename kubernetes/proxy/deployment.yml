@@ -52,6 +52,8 @@ spec:
           volumeMounts:
             - name: static-volume-{{NAMESPACE}}
               mountPath: /data
+            - name: frontend-volume-{{NAMESPACE}}
+              mountPath: /frontend
           env:
             - name: DJANGO_APPLICATION_SERVICE_HOST
               value: backend
@@ -61,3 +63,6 @@ spec:
       - name: static-volume-{{NAMESPACE}}
         persistentVolumeClaim:
           claimName: static-volume-claim-{{NAMESPACE}}
+      - name: frontend-volume-{{NAMESPACE}}
+        persistentVolumeClaim:
+          claimName: frontend-volume-claim-{{NAMESPACE}}
