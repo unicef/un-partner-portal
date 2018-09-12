@@ -48,14 +48,14 @@ class LocationsMapField extends Component {
   }
 
   render() {
-    const { countryCode, currentCountry, currentLocations, optionalLocations } = this.props;
+    const { readOnly, countryCode, currentCountry, currentLocations, optionalLocations } = this.props;
     const {
       showMap,
     } = this.state;
-    console.log('a');
+
     return (
       <div>
-        <SpreadContent>
+        {!readOnly && <SpreadContent>
           <Typography type="caption">{messages.label}</Typography>
           <Button
             color="accent"
@@ -64,8 +64,9 @@ class LocationsMapField extends Component {
           >
             {showMap ? messages.hideMap : messages.showMap}
           </Button>
-        </SpreadContent>
+        </SpreadContent>}
         <LocationsMap
+          readOnly={readOnly}
           currentCountryCode={countryCode}
           currentCountry={currentCountry}
           locations={currentLocations}
@@ -74,7 +75,7 @@ class LocationsMapField extends Component {
           removeLocation={this.removeLocation}
           removeAllLocations={this.removeAllLocations}
         />
-        {currentCountry
+        {!readOnly && currentCountry
           && R.isEmpty(currentLocations)
           && !optionalLocations.includes(countryCode)
           && <FormHelperText error>{'Select locations'}</FormHelperText>}
@@ -91,6 +92,7 @@ LocationsMapField.propTypes = {
   formName: PropTypes.string,
   dispatch: PropTypes.func,
   optionalLocations: PropTypes.array,
+  readOnly: PropTypes.bool,
 };
 
 export default connect(

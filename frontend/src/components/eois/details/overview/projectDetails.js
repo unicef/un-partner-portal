@@ -44,7 +44,7 @@ const messages = {
   },
 };
 
-const Fields = ({ type, role, partnerId, displayGoal }) => {
+const Fields = ({ type, role, partnerId, displayGoal, formName }) => {
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return (<PaddedContent>
       <GridColumn >
@@ -66,7 +66,7 @@ const Fields = ({ type, role, partnerId, displayGoal }) => {
           fieldName="agency"
           readOnly
         />}
-        <LocationFieldReadOnlyArray />
+        <LocationFieldReadOnlyArray formName={formName}  />
         <SectorForm readOnly />
         {role === ROLES.AGENCY && <Grid container justify="flex-end">
           <Grid item>
@@ -85,7 +85,7 @@ const Fields = ({ type, role, partnerId, displayGoal }) => {
     <GridColumn >
       <TitleField readOnly />
       <FocalPoint readOnly />
-      <LocationFieldReadOnlyArray />
+      <LocationFieldReadOnlyArray formName={formName} />
       <SectorForm readOnly />
       <Agencies
         fieldName="agency"
@@ -114,6 +114,7 @@ Fields.propTypes = {
   type: PropTypes.string,
   role: PropTypes.string,
   partner: PropTypes.string,
+  formName: PropTypes.string,
   partnerId: PropTypes.number,
   displayGoal: PropTypes.bool,
 };
@@ -131,11 +132,11 @@ const title = type => () => (
   </SpreadContent>
 );
 
-const ProjectDetails = ({ type, role, partner, partnerId, displayGoal }) => (
+const ProjectDetails = ({ type, role, partner, partnerId, displayGoal, formName }) => (
   <HeaderList
     header={title(type)}
   >
-    <Fields type={type} role={role} partner={partner} partnerId={partnerId} displayGoal={displayGoal} />
+    <Fields formName={formName} type={type} role={role} partner={partner} partnerId={partnerId} displayGoal={displayGoal} />
   </HeaderList>
 );
 

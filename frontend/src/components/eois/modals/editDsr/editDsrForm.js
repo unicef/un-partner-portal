@@ -79,7 +79,7 @@ const mapStateToProps = (state, ownProps) => {
       start_date: cfei.start_date,
       end_date: cfei.end_date,
       other_information: cfei.other_information,
-      countries: cfei.cfei_locations,
+      countries: cfei.locations_edit,
     },
   };
 };

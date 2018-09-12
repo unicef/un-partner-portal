@@ -8,7 +8,7 @@ import { Marker, Popup } from "react-mapbox-gl";
 import MapContainer from '../../../../common/map/MapContainer';
 import { errorToBeAdded } from '../../../../../reducers/errorReducer';
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
-const geocodingClient = mbxGeocoding({ accessToken: 'pk.eyJ1Ijoia2Vuem8yMyIsImEiOiJjamx3MHlhbDIweXRiM3FxeDJ5MmlkbjVvIn0.PfRV_mFNHyHR_nTVpeipeQ' });
+const geocodingClient = mbxGeocoding({ accessToken: process.env.MAP_BOX_KEY });
 /**
  * this component is controlled implementation of map.
  * To work, it needs to recieve focused country name, than it will center and zoom to this
@@ -86,7 +86,7 @@ class LocationsMapBase extends Component {
   initMap(country) {
     const { removeAllLocations } = this.props;
 
-    if (this.state.previousCountry && this.state.previousCountry !== country) {
+    if (this.state.previousCountry && this.state.previousCountry !== country && !this.props.readOnly) {
       removeAllLocations();
     }
 

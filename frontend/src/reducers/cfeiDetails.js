@@ -104,8 +104,9 @@ const normalizeEditLocations = R.compose(
 
 const saveCfei = (state, action) => {
   let cfei = normalizeSingleCfei(action.cfei);
-  const cfeiLocations = R.assoc('cfei_locations', normalizeEditLocations(cfei.locations), cfei);
+  const cfeiLocations = R.assoc('locations_edit', normalizeEditLocations(cfei.locations), cfei);
   cfei = R.assoc('locations', normalizeLocations(cfei.locations), cfeiLocations);
+  
   return R.assoc(cfei.id, cfei, state);
 };
 

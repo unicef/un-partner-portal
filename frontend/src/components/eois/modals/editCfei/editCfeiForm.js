@@ -73,7 +73,7 @@ const mapStateToProps = (state, ownProps) => {
       deadline_date: cfei.deadline_date,
       notif_results_date: cfei.notif_results_date,
       clarification_request_deadline_date: cfei.clarification_request_deadline_date,
-      countries: cfei.cfei_locations,
+      countries: cfei.locations_edit,
       description: cfei.description,
       goal: cfei.goal,
       other_information: cfei.other_information,

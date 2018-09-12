@@ -2,6 +2,7 @@
 import React from 'react';
 import ArrayForm from '../../../arrayForm';
 import CountryField from './countryField';
+import LocationsMap from './locationsMapField';
 import TextField from '../../../textFieldForm';
 
 const messages = {
@@ -16,23 +17,24 @@ const Country = (name, index) => (
   />
 );
 
-const adminLevel = (name, index) => (
-  <TextField
-    fieldName={`${name}.adminLevel`}
+const adminLevel = (formName) => (name, index) => {
+  return <LocationsMap
+    formName={formName}
+    name={name}
+    index={index}
     readOnly
-    key={index}
   />
-);
+};
 
 const LocationFieldArray = (props) => {
-  const { ...other } = props;
-  
+  const { formName, ...other } = props;
+
   return (<ArrayForm
     limit={230}
     label={messages.adminLevel}
-    fieldName="locations"
+    fieldName="locations_edit"
     outerField={Country}
-    innerField={adminLevel}
+    innerField={adminLevel(formName, ...other)}
     readOnly
     {...other}
   />);
