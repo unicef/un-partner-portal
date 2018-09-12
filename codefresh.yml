@@ -173,7 +173,7 @@ steps:
               - master
 
     delete_jobs:
-        title: Delete backend jobs with label redeploy
+        title: Delete jobs with label redeploy
         image: codefresh/kube-helm:master
         environment:
             - KUBECONTEXT=${{KUBECONTEXT}}
@@ -189,8 +189,8 @@ steps:
               - develop
               - master
 
-    deploy_jobs:
-        title: Creating backend jobs (skipping fakedata)
+    backend_jobs:
+        title: Creating backend jobs
         image: codefresh/cf-deploy-kubernetes
         tag: ${{CF_SHORT_REVISION}}
         working_directory: ${{main_clone}}
@@ -204,6 +204,19 @@ steps:
           - POSTGRES_USER=${{POSTGRES_USER}}
           - POSTGRES_DB=${{POSTGRES_DB}}
           - POSTGRES_HOST=${{POSTGRES_HOST}}
+        when:
+          branch:
+            only:
+              - develop
+              - master
+
+    frontend_jobs:
+        title: Creating frontend jobs
+        image: codefresh/cf-deploy-kubernetes
+        tag: ${{CF_SHORT_REVISION}}
+        working_directory: ${{main_clone}}
+        commands:
+          - /cf-deploy-kubernetes ./kubernetes/frontend/jobs.yml
         when:
           branch:
             only:
