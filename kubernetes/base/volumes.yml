@@ -63,3 +63,35 @@ spec:
   resources:
     requests:
       storage: 8Gi
+# data volume for backend
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: frontend-volume-{{NAMESPACE}}
+  labels:
+    type: local
+  namespace: {{NAMESPACE}}
+spec:
+  capacity:
+    storage: 4Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /frontend-{{NAMESPACE}}
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: frontend-volume-claim-{{NAMESPACE}}
+  labels:
+    type: local
+  namespace: {{NAMESPACE}}
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 3Gi
