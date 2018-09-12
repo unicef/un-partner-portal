@@ -39,14 +39,14 @@ server {
         expires 1d;
     }
 
-    location / {
-        try_files $uri $uri/ @frontend;
-    }
-
-    location @frontend {
-        {% if FRONTEND_FILES_PATH is defined %}
-            alias {{ FRONTEND_FILES_PATH }};
-        {% else %}
+    {% if FRONTEND_FILES_PATH is defined %}
+        location / {
+            try_files $uri $uri/ {{ FRONTEND_FILES_PATH }};
+    {% else %}
+        location / {
+            try_files $uri $uri/ @frontend;
+        }
+        location @frontend {
             proxy_pass http://frontend;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host $host;
@@ -56,6 +56,6 @@ server {
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "upgrade";
-        {% endif %}
-    }
+    {% endif %}
+        }
 }
