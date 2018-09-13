@@ -44,6 +44,8 @@ server {
         index index.html;
 
         location / {
+            try_files $uri /index.html;
+        }
     {% else %}
         location / {
             try_files $uri $uri/ @frontend;
