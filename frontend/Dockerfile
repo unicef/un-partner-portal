@@ -21,10 +21,11 @@ RUN cd /tmp && yarn install
 ADD . /code/
 RUN rm -rf /code/node_modules
 RUN cp -a /tmp/node_modules /code/node_modules
-RUN yarn run build
-RUN cp -r build/* /srv/www/
 
 WORKDIR /code
+
+RUN yarn run build
+RUN cp -r build/* /srv/www/
 
 EXPOSE 8080
 CMD ["yarn run start"]
