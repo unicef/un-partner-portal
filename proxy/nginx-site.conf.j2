@@ -39,13 +39,11 @@ server {
         expires 1d;
     }
 
-    {% if FRONTEND_FILES_PATH2 is defined %}
-    # TEMP DISABLE
+    {% if FRONTEND_FILES_PATH is defined %}
         root {{ FRONTEND_FILES_PATH }};
         index index.html;
 
         location / {
-            try_files $uri $uri/;
     {% else %}
         location / {
             try_files $uri $uri/ @frontend;
