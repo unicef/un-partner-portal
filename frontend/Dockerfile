@@ -21,6 +21,8 @@ RUN cd /tmp && yarn install
 ADD . /code/
 RUN rm -rf /code/node_modules
 RUN cp -a /tmp/node_modules /code/node_modules
+yarn run build
+cp -r build/* /srv/www/
 
 WORKDIR /code
 
