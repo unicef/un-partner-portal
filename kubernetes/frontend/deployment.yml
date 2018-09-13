@@ -37,10 +37,7 @@ spec:
         - name: frontend
           image: unicef/unpp-frontend:{{CF_SHORT_REVISION}}
           command: ["bash"]
-          args: ["-c", "yarn run start"]
+          args: ["-c", "/./entrypoint.sh"]
           env:
-            - name: GOOGLE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: google-key
-                  key: password
+            - name: MAP_BOX_KEY
+              value: {{MAP_BOX_KEY}}

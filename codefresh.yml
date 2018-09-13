@@ -24,7 +24,7 @@ steps:
         dockerfile: Dockerfile
         working_directory: ${{main_clone}}/frontend
         tag: ${{CF_BRANCH}}
-    
+
     build_proxy:
         type: build
         image_name: unicef/unpp-proxy
@@ -204,23 +204,6 @@ steps:
           - POSTGRES_USER=${{POSTGRES_USER}}
           - POSTGRES_DB=${{POSTGRES_DB}}
           - POSTGRES_HOST=${{POSTGRES_HOST}}
-        when:
-          branch:
-            only:
-              - develop
-              - master
-
-    frontend_jobs:
-        title: Creating frontend jobs
-        image: codefresh/cf-deploy-kubernetes
-        tag: ${{CF_SHORT_REVISION}}
-        working_directory: ${{main_clone}}
-        commands:
-          - /cf-deploy-kubernetes ./kubernetes/frontend/jobs.yml
-        environment:
-          - KUBECONTEXT=${{KUBECONTEXT}}
-          - KUBERNETES_NAMESPACE=${{NAMESPACE}}
-          - ENV=${{ENV}}
         when:
           branch:
             only:
