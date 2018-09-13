@@ -23,6 +23,11 @@ spec:
                     secretKeyRef:
                       name: secret-key
                       key: password
+                - name: EMAIL_HOST_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: email-host-password
+                      key: password
                 - name: ENV
                   value: {{ENV}}
                 - name: POSTGRES_DB
@@ -33,7 +38,14 @@ spec:
                   value: {{POSTGRES_HOST}}
                 - name: DJANGO_ALLOWED_HOST
                   value: {{DJANGO_ALLOWED_HOST}}
+                - name: EMAIL_HOST
+                  value: "{{EMAIL_HOST}}"
+                - name: EMAIL_PORT
+                  value: "{{EMAIL_PORT}}"
+                - name: EMAIL_HOST_USER
+                  value: "{{EMAIL_HOST_USER}}"
           restartPolicy: OnFailure
+      backoffLimit: 4
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -59,6 +71,11 @@ spec:
                     secretKeyRef:
                       name: secret-key
                       key: password
+                - name: EMAIL_HOST_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: email-host-password
+                      key: password
                 - name: ENV
                   value: {{ENV}}
                 - name: POSTGRES_DB
@@ -69,7 +86,14 @@ spec:
                   value: {{POSTGRES_HOST}}
                 - name: DJANGO_ALLOWED_HOST
                   value: {{DJANGO_ALLOWED_HOST}}
+                - name: EMAIL_HOST
+                  value: "{{EMAIL_HOST}}"
+                - name: EMAIL_PORT
+                  value: "{{EMAIL_PORT}}"
+                - name: EMAIL_HOST_USER
+                  value: "{{EMAIL_HOST_USER}}"
           restartPolicy: OnFailure
+      backoffLimit: 4
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -95,6 +119,11 @@ spec:
                     secretKeyRef:
                       name: secret-key
                       key: password
+                - name: EMAIL_HOST_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: email-host-password
+                      key: password
                 - name: ENV
                   value: {{ENV}}
                 - name: POSTGRES_DB
@@ -105,7 +134,14 @@ spec:
                   value: {{POSTGRES_HOST}}
                 - name: DJANGO_ALLOWED_HOST
                   value: {{DJANGO_ALLOWED_HOST}}
+                - name: EMAIL_HOST
+                  value: "{{EMAIL_HOST}}"
+                - name: EMAIL_PORT
+                  value: "{{EMAIL_PORT}}"
+                - name: EMAIL_HOST_USER
+                  value: "{{EMAIL_HOST_USER}}"
           restartPolicy: OnFailure
+      backoffLimit: 4
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -131,6 +167,11 @@ spec:
                     secretKeyRef:
                       name: secret-key
                       key: password
+                - name: EMAIL_HOST_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: email-host-password
+                      key: password
                 - name: ENV
                   value: {{ENV}}
                 - name: POSTGRES_DB
@@ -139,9 +180,16 @@ spec:
                   value: {{POSTGRES_USER}}
                 - name: POSTGRES_HOST
                   value: {{POSTGRES_HOST}}
+                - name: EMAIL_HOST
+                  value: "{{EMAIL_HOST}}"
+                - name: EMAIL_PORT
+                  value: "{{EMAIL_PORT}}"
+                - name: EMAIL_HOST_USER
+                  value: "{{EMAIL_HOST_USER}}"
                 - name: DJANGO_ALLOWED_HOST
                   value: {{DJANGO_ALLOWED_HOST}}
           restartPolicy: OnFailure
+      backoffLimit: 4
 
 ---
 apiVersion: batch/v1beta1
@@ -168,6 +216,11 @@ spec:
                     secretKeyRef:
                       name: secret-key
                       key: password
+                - name: EMAIL_HOST_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: email-host-password
+                      key: password
                 - name: ENV
                   value: {{ENV}}
                 - name: POSTGRES_DB
@@ -178,6 +231,12 @@ spec:
                   value: {{POSTGRES_HOST}}
                 - name: DJANGO_ALLOWED_HOST
                   value: {{DJANGO_ALLOWED_HOST}}
+                - name: EMAIL_HOST
+                  value: "{{EMAIL_HOST}}"
+                - name: EMAIL_PORT
+                  value: "{{EMAIL_PORT}}"
+                - name: EMAIL_HOST_USER
+                  value: "{{EMAIL_HOST_USER}}"
                 - name: UNICEF_PARTNER_DETAILS_URL
                   value: "{{UNICEF_PARTNER_DETAILS_URL}}"
                 - name: UNICEF_API_USERNAME
@@ -185,3 +244,4 @@ spec:
                 - name: UNICEF_API_PASSWORD
                   value: "{{UNICEF_API_PASSWORD}}"
           restartPolicy: OnFailure
+      backoffLimit: 4

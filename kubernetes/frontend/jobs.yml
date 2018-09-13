@@ -20,10 +20,7 @@ spec:
             mountPath: /code/build
         env:
           - name: MAP_BOX_KEY
-            valueFrom:
-              secretKeyRef:
-                name: map-box-key
-                key: password
+            value: {{MAP_BOX_KEY}}
 
       volumes:
       - name: frontend-volume-{{NAMESPACE}}

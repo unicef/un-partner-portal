@@ -138,23 +138,6 @@ steps:
               - develop
               - master
 
-    deploy_frontend:
-        title: Deploying frontend
-        image: codefresh/cf-deploy-kubernetes
-        tag: latest
-        working_directory: ${{main_clone}}
-        commands:
-          - /cf-deploy-kubernetes ./kubernetes/frontend/deployment.yml
-        environment:
-          - KUBECONTEXT=${{KUBECONTEXT}}
-          - KUBERNETES_NAMESPACE=${{NAMESPACE}}
-          - ENV=${{ENV}}
-        when:
-          branch:
-            only:
-              - develop
-              - master
-
     deploy_proxy:
         title: Deploying nginx proxy
         image: codefresh/cf-deploy-kubernetes
