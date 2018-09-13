@@ -33,6 +33,7 @@ const CfeiOverview = (props) => {
         <Grid container direction="row" spacing={24}>
           <Grid item xs={12} sm={8}>
             <ProjectDetails
+              formName={'cfeiDetails'}
               type={type}
               role={role}
               partnerId={partnerId}
@@ -59,7 +60,7 @@ const CfeiOverview = (props) => {
               {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT
                 && <SelectedPartners id={id} />}
               {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT && isComplete
-                    && <SelectedPartnerJustification id={id} />}
+                && <SelectedPartnerJustification id={id} />}
             </GridColumn>
           </Grid>
         </Grid>
@@ -90,8 +91,8 @@ const mapStateToProps = (state, ownProps) => {
   const { cn = null,
     is_completed = null,
     partner_id = null,
-    partner_name = null, 
-    cn_template = null, 
+    partner_name = null,
+    cn_template = null,
     focal_points_detail = [],
   } = cfei || {};
 
