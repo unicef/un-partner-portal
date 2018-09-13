@@ -19,10 +19,10 @@ spec:
           - name: frontend-volume-{{NAMESPACE}}
             mountPath: /code/build
         env:
-          - name: GOOGLE_KEY
+          - name: MAP_BOX_KEY
             valueFrom:
               secretKeyRef:
-                name: google-key
+                name: map-box-key
                 key: password
 
       volumes:

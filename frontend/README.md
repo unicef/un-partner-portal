@@ -14,7 +14,7 @@ and providing mocked responses are possible
 
 ## Docker local development setup:
   .env file needs to be added to main folder, please make sure to populate fields SECRET_KEY (any string is ok for local environment)
-  and GOOGLE_KEY - this needs to be google application key that has Geocoding API and Map API  enabled
+  and MAP_BOX_KEY - this needs to be google application key that has Geocoding API and Map API  enabled
   Simply copy .env.example, change name to .env and populate those two fields
 
   `docker-compose build` or `fab rebuild` to build all containers it takes a lot of time when run for the first time.

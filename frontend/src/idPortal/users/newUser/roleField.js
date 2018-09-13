@@ -33,7 +33,7 @@ const Roles = (values, readOnly, ...props) => member => (
 );
 
 const RoleField = (props) => {
-  const { formName, offices, roleChoices, readOnly, loaded, ...other } = props;
+  const { formName, offices, roleChoices, readOnly, ...other } = props;
 
   return (<ArrayForm
     limit={offices.length}
@@ -52,7 +52,6 @@ RoleField.propTypes = {
   readOnly: PropTypes.bool,
   roleChoices: PropTypes.array,
   offices: PropTypes.array,
-  loaded: PropTypes.bool,
 };
 
 export default connect(

@@ -3250,14 +3250,7 @@ globby@^6.1.0:
     glob "^7.0.3"
     object-assign "^4.0.1"
     pify "^2.0.0"
-    pinkie-promise "^2.0.0"
-
-google-maps-react@^1.1.0:
-  version "1.1.11"
-  resolved "https://registry.yarnpkg.com/google-maps-react/-/google-maps-react-1.1.11.tgz#7e5ccb88e65c06a8f8db470eaea1ec30d0572511"
-  dependencies:
-    history "^3.0.0"
-    invariant "^2.2.1"
+    pinkie-promise "^2.0.0" 
 
 got@^6.7.1:
   version "6.7.1"

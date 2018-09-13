@@ -5,7 +5,6 @@ import { withStyles } from 'material-ui/styles';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Typography from 'material-ui/Typography';
-import { GoogleApiWrapper } from 'google-maps-react';
 import HeaderList from '../common/list/headerList';
 import SpreadContent from '../common/spreadContent';
 import LocationsMap from '../forms/fields/projectFields/locationField/locationsMap';
@@ -72,11 +71,6 @@ PartnerMapping.propTypes = {
   title: PropTypes.string,
 };
 
-const wrappedPartnerMappin = GoogleApiWrapper({
-  version: '3.exp',
-  apiKey: process.env.GOOGLE_KEY,
-})(PartnerMapping);
-
 const mapStateToProps = (state, ownProps) => {
   const selectionIds = state.selectableList.items;
 
@@ -97,7 +91,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const connected = connect(mapStateToProps, null)(wrappedPartnerMappin);
+const connected = connect(mapStateToProps, null)(PartnerMapping);
 const withRouterMapping = withRouter(connected);
 
 export default (withStyles(styleSheet, { name: 'PartnerMapping' })(withRouterMapping));

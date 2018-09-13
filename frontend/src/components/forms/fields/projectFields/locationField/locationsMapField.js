@@ -10,7 +10,6 @@ import SpreadContent from '../../../../common/spreadContent';
 import LocationsMap from './locationsMap';
 import { selectCountriesWithOptionalLocations } from '../../../../../store';
 
-
 const messages = {
   label: 'Choose location(s) for this country - pick location(s) from the map. Remove locations by clicking the markers.',
   showMap: 'show map',
@@ -53,6 +52,7 @@ class LocationsMapField extends Component {
     const {
       showMap,
     } = this.state;
+    console.log('a');
     return (
       <div>
         <SpreadContent>
@@ -75,9 +75,9 @@ class LocationsMapField extends Component {
           removeAllLocations={this.removeAllLocations}
         />
         {currentCountry
-            && R.isEmpty(currentLocations)
-            && !optionalLocations.includes(countryCode)
-            && <FormHelperText error>{'Select locations'}</FormHelperText>}
+          && R.isEmpty(currentLocations)
+          && !optionalLocations.includes(countryCode)
+          && <FormHelperText error>{'Select locations'}</FormHelperText>}
       </div>
     );
   }
