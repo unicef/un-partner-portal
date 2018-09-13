@@ -140,6 +140,7 @@ spec:
                   value: "{{EMAIL_PORT}}"
                 - name: EMAIL_HOST_USER
                   value: "{{EMAIL_HOST_USER}}"
+          restartPolicy: OnFailure
       backoffLimit: 4
 ---
 apiVersion: batch/v1beta1
