@@ -12,8 +12,10 @@ ADD nginx.conf /etc/nginx/nginx.conf
 ADD nginx_site.conf /etc/nginx/conf.d/default.conf
 
 ADD entrypoint.sh /
+ADD compile-production.sh /
 
 RUN chmod +x entrypoint.sh
+RUN chmod +x compile-production.sh
 
 ADD package.json yarn.lock /tmp/
 RUN cd /tmp && yarn install
