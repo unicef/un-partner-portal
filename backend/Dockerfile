@@ -36,6 +36,9 @@ RUN touch /data/unpp_api/logs/django.log
 
 RUN chmod -R a+rw /data
 
+ADD worker-entrypoint.sh /
+RUN chmod +x /worker-entrypoint.sh
+
 ENV PYTHONUNBUFFERED 1
 WORKDIR /code/
 
