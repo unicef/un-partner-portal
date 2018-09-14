@@ -42,7 +42,7 @@ spec:
             - name: MAP_BOX_KEY
               value: {{MAP_BOX_KEY}}
           volumeMounts:
-            - name: workdir
+            - name: srv-www
               mountPath: /srv/www/
       initContainers:
         - name: compile-frontend
@@ -53,8 +53,8 @@ spec:
             - name: MAP_BOX_KEY
               value: {{MAP_BOX_KEY}}
           volumeMounts:
-            - name: workdir
+            - name: srv-www
               mountPath: /srv/www/
-  volumes:
-    - name: srv-www
-      emptyDir: {}
+      volumes:
+        - name: srv-www
+          emptyDir: {}
