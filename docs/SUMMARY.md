@@ -48,6 +48,7 @@
   * [Development Data](technical-documentation/development-setup/development-data.md)
 * [Deployment / DevOps](technical-documentation/deployment-devops/README.md)
   * [Environment](technical-documentation/deployment-devops/environment.md)
+  * [Background tasks](technical-documentation/deployment-devops/background-tasks.md)
 * [ID System Process](technical-documentation/id-system-process.md)
 * [Sanctions Screening](technical-documentation/sanctions-screening.md)
 * [API Documentation](technical-documentation/api-documentation.md)
