@@ -149,6 +149,7 @@ steps:
           - KUBECONTEXT=${{KUBECONTEXT}}
           - KUBERNETES_NAMESPACE=${{NAMESPACE}}
           - ENV=${{ENV}}
+          - KUBERNETES_DEPLOYMENT_TIMEOUT=300
         when:
           branch:
             only:
