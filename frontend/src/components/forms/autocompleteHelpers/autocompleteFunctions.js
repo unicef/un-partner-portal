@@ -42,7 +42,7 @@ export function normalizeSuggestion(suggestion, previousSuggestion) {
   if (!suggestion) return previousSuggestion;
 
   if (has('clear', suggestion)) {
-    return previousSuggestion.filter((_, index) => index !== suggestion.index);
+    return previousSuggestion && previousSuggestion.filter((_, index) => index !== suggestion.index);
   }
   if (Array.isArray(previousSuggestion)) return uniq(previousSuggestion.concat(suggestion));
   return suggestion;
