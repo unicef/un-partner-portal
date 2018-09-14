@@ -12,8 +12,10 @@ ADD nginx.conf /etc/nginx/nginx.conf
 ADD nginx_site.conf /etc/nginx/conf.d/default.conf
 
 ADD entrypoint.sh /
+ADD compile-production.sh /
 
 RUN chmod +x entrypoint.sh
+RUN chmod +x compile-production.sh
 
 ADD package.json yarn.lock /tmp/
 RUN cd /tmp && yarn install
@@ -23,9 +25,6 @@ RUN rm -rf /code/node_modules
 RUN cp -a /tmp/node_modules /code/node_modules
 
 WORKDIR /code
-
-RUN yarn run build
-RUN cp -r build/* /srv/www/
 
 EXPOSE 8080
 CMD ["yarn run start"]

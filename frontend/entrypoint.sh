@@ -1,7 +1,4 @@
 #!/bin/sh
 
-cd /code
-yarn run build
-cp -r build/* /srv/www/
-
+/./compile-production.sh
 nginx -g "daemon off;"
