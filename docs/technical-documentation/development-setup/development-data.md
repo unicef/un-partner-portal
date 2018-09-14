@@ -4,7 +4,7 @@
 
 Test fixtures can be created by running:
 
-```
+```text
 fab fakedata
 ```
 

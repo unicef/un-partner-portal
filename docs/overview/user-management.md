@@ -32,7 +32,7 @@ The user who registers the CSO account on the portal and the head of organizatio
 **Key Functionality & Controls**
 
 | Ability to add users to their organization |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| :--- |
 | Ability to assign roles and permissions to users in the organization |
 | Ability to deactivate users from the organization |
 | Ability to change user’s roles and permissions |
@@ -57,7 +57,7 @@ Participating agency users have access to the portal
 **Key Functionality & Controls:** 
 
 | Ability for all participating agency users to have reader permissions as a default. |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| :--- |
 | Ability for participating agencies to assign additional roles & permissions to the agency’s users. |
 | Ability for participating agencies to assign users to multiple countries \(locations\) with the same or different roles & permissions in each country location. |
 | Ability for participating agencies to modify permissions within a role. |

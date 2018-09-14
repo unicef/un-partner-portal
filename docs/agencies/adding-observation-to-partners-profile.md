@@ -7,7 +7,7 @@ The observation feature allows participating agencies to record key brief notes,
 ### Key Functionality & Controls
 
 | Ability to add an observation to a CSO’s profile at any time |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| :--- |
 | Ability to edit an observation on a CSO’s profile |
 | Ability to mark an observation as risk related by appending a yellow risk flag to the CSO’s profile |
 | Ability to escalate a yellow risk flag to HQ |
