@@ -24,6 +24,11 @@ metadata:
     revision: "{{CF_SHORT_REVISION}}"
   namespace: {{NAMESPACE}}
 spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   replicas: 1
   selector:
     matchLabels:
@@ -97,6 +102,13 @@ spec:
                 secretKeyRef:
                   name: elastic-apm-secret-token
                   key: password
+          readinessProbe:
+            httpGet:
+              path: /api/admin/
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
 
       volumes:
       - name: static-volume-{{NAMESPACE}}
