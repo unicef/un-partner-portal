@@ -24,8 +24,6 @@ steps:
         dockerfile: Dockerfile
         working_directory: ${{main_clone}}/frontend
         tag: ${{CF_BRANCH}}
-        build_arguments:
-            - MAP_BOX_KEY=${{MAP_BOX_KEY}}
 
     build_proxy:
         type: build

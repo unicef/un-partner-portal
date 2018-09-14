@@ -37,7 +37,7 @@ spec:
         - name: frontend
           image: unicef/unpp-frontend:{{CF_SHORT_REVISION}}
           command: ["bash"]
-          args: ["-c", "nginx -g \"daemon off;\""]
+          args: ["-c", "/./entrypoint.sh"]
           env:
             - name: MAP_BOX_KEY
               value: {{MAP_BOX_KEY}}

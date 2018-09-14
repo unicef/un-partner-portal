@@ -24,8 +24,5 @@ RUN cp -a /tmp/node_modules /code/node_modules
 
 WORKDIR /code
 
-RUN yarn run build
-RUN cp -r build/* /srv/www/
-
 EXPOSE 8080
 CMD ["yarn run start"]
