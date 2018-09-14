@@ -103,9 +103,8 @@ spec:
                   name: elastic-apm-secret-token
                   key: password
           readinessProbe:
-            httpGet:
-              path: /api/admin/
-              port: 8000
+            tcpSocket:
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 5
             successThreshold: 1
