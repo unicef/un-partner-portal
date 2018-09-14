@@ -37,7 +37,24 @@ spec:
         - name: frontend
           image: unicef/unpp-frontend:{{CF_SHORT_REVISION}}
           command: ["bash"]
-          args: ["-c", "/./entrypoint.sh"]
+          args: ["-c", "nginx -g \"daemon off;\""]
           env:
             - name: MAP_BOX_KEY
               value: {{MAP_BOX_KEY}}
+          volumeMounts:
+            - name: workdir
+              mountPath: /srv/www/
+      initContainers:
+        - name: compile-frontend
+          image: unicef/unpp-frontend:{{CF_SHORT_REVISION}}
+          command: ["bash"]
+          args: ["-c", "/.compile-production.sh"]
+          env:
+            - name: MAP_BOX_KEY
+              value: {{MAP_BOX_KEY}}
+          volumeMounts:
+            - name: workdir
+              mountPath: /srv/www/
+  volumes:
+    - name: srv-www
+      emptyDir: {}
