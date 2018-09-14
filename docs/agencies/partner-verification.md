@@ -11,7 +11,7 @@ Button is placed in a header, under the menu located in the top right of the pag
 ### Key Functionality & Controls
 
 | Ability to automatically mark a CSO’s profile as “Pending Verification” by default upon entry into the portal. |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| :--- |
 | Ability to have automated periodic scans of a CSO and its key staff against the UN Security Council sanctions list on the following profile fields:   • Organization Name   •Alias    • Former Legal Name   • First + Last Name of Head of Organization   • Board Members   • Authorized Officials |
 | Ability to view potential matches on the UN Security Council Sanctions List and indicate if the organization or individual is ‘Not a true Match’ or a ‘Confirmed Match’. |
 | Ability to ensure that the name of a CSO is not flagged in subsequent scans if the potential match on the UN Sanctions list was manually determined to be ‘Not a true match’. |
@@ -22,7 +22,7 @@ Button is placed in a header, under the menu located in the top right of the pag
 | Ability to notify agency user when a CSO’s profile was verified more than 5 years ago. |
 
 | Ability to restrict verification to advanced editor and HQ editor roles. |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| :--- |
 | Ability to restrict the user from verifying a CSO if the profile is incomplete. |
 | Ability to restrict verification if there is a potential match of the organization’s name or key personnel on the UN Security Council Sanctions List. |
 | Ability to restrict verification of INGO HQ’s to HQ editor. |
