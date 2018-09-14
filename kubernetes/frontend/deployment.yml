@@ -24,6 +24,11 @@ metadata:
     revision: "{{CF_SHORT_REVISION}}"
   namespace: {{NAMESPACE}}
 spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   replicas: 1
   selector:
     matchLabels:
@@ -37,24 +42,14 @@ spec:
         - name: frontend
           image: unicef/unpp-frontend:{{CF_SHORT_REVISION}}
           command: ["bash"]
-          args: ["-c", "nginx -g \"daemon off;\""]
+          args: ["-c", "/./entrypoint.sh"]
           env:
             - name: MAP_BOX_KEY
               value: {{MAP_BOX_KEY}}
-          volumeMounts:
-            - name: srv-www
-              mountPath: /srv/www/
-      initContainers:
-        - name: compile-frontend
-          image: unicef/unpp-frontend:{{CF_SHORT_REVISION}}
-          command: ["bash"]
-          args: ["-c", "/./compile-production.sh"]
-          env:
-            - name: MAP_BOX_KEY
-              value: {{MAP_BOX_KEY}}
-          volumeMounts:
-            - name: srv-www
-              mountPath: /srv/www/
-      volumes:
-        - name: srv-www
-          emptyDir: {}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
