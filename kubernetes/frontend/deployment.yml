@@ -48,7 +48,7 @@ spec:
         - name: compile-frontend
           image: unicef/unpp-frontend:{{CF_SHORT_REVISION}}
           command: ["bash"]
-          args: ["-c", "/.compile-production.sh"]
+          args: ["-c", "/./compile-production.sh"]
           env:
             - name: MAP_BOX_KEY
               value: {{MAP_BOX_KEY}}
