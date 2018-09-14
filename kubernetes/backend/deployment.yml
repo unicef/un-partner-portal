@@ -104,7 +104,7 @@ spec:
                   key: password
           readinessProbe:
             tcpSocket:
-              port: 8080
+              port: 8000
             initialDelaySeconds: 5
             periodSeconds: 5
             successThreshold: 1
