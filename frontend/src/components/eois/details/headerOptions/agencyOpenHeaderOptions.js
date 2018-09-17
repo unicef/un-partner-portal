@@ -24,7 +24,8 @@ import PublishCfeiButton from '../../buttons/publishCfeiButton';
 import SendCfeiModal from '../../modals/completeCfei/sendCfeiModal';
 import PublishCfeiModal from '../../modals/completeCfei/publishCfeiModal';
 import { checkPermission, isRoleOffice, AGENCY_ROLES, AGENCY_PERMISSIONS, COMMON_PERMISSIONS } from '../../../../helpers/permissions';
-import { selectCfeiStatus,
+import {
+  selectCfeiStatus,
   isCfeiPublished,
   isCfeiDeadlinePassed,
   isCfeiCompleted,
@@ -64,9 +65,9 @@ class PartnerOpenHeaderOptions extends Component {
       isFocalPoint } = this.props;
 
     return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
-    || (hasActionPermission && isBasEd && isCreator)
-    || (hasActionPermission && isMFT && isFocalPoint)
-    || (hasActionPermission && isPAM && isCreator));
+      || (hasActionPermission && isBasEd && isCreator)
+      || (hasActionPermission && isMFT && isFocalPoint)
+      || (hasActionPermission && isPAM && isCreator));
   }
 
   isPuslishPermissionAllowed(hasActionPermission) {
@@ -78,8 +79,8 @@ class PartnerOpenHeaderOptions extends Component {
       isFocalPoint } = this.props;
 
     return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
-    || (hasActionPermission && isBasEd && isCreator)
-    || (hasActionPermission && isPAM && isCreator));
+      || (hasActionPermission && isBasEd && isCreator)
+      || (hasActionPermission && isPAM && isCreator));
   }
 
   sendOptions() {
@@ -109,7 +110,7 @@ class PartnerOpenHeaderOptions extends Component {
     ];
 
     if (((hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA)
-        || (hasEditSentPermission && isFocalPoint)) && !isPublished) {
+      || (hasEditSentPermission && isFocalPoint)) && !isPublished) {
       options.push(
         {
           name: edit,
@@ -118,7 +119,7 @@ class PartnerOpenHeaderOptions extends Component {
     }
 
     if (this.isPuslishPermissionAllowed(hasEditPublishedDatesPermission)
-    && isPublished) {
+      && isPublished) {
       options.push(
         {
           name: editDate,
@@ -127,9 +128,9 @@ class PartnerOpenHeaderOptions extends Component {
     }
 
     if (((hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA)
-    || (hasInviteSentPermission && isFocalPoint && status === PROJECT_STATUSES.SEN)
-    || (isPublished && this.isPuslishPermissionAllowed(hasInvitePublishPermission)))
-    && !isDeadlinePassed) {
+      || (hasInviteSentPermission && isFocalPoint && status === PROJECT_STATUSES.SEN)
+      || (isPublished && this.isPuslishPermissionAllowed(hasInvitePublishPermission)))
+      && !isDeadlinePassed) {
       options.push(
         {
           name: invite,
@@ -148,7 +149,8 @@ class PartnerOpenHeaderOptions extends Component {
         });
     }
 
-    if (hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA) {
+    if (hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA
+      || (hasEditSentPermission && isFocalPoint)) {
       options.push(
         {
           name: del,
@@ -193,8 +195,8 @@ class PartnerOpenHeaderOptions extends Component {
           <SendCfeiButton handleClick={() => handleDialogOpen(send)} />}
 
         {!isPublished && !isCompleted && hasPublishPermission &&
-            (((isFocalPoint || isCreator) && isAdvEd) || (isCreator && isPAM))
-         && <PublishCfeiButton disabled={isDeadlinePassed} handleClick={() => handleDialogOpen(publish)} />}
+          (((isFocalPoint || isCreator) && isAdvEd) || (isCreator && isPAM))
+          && <PublishCfeiButton disabled={isDeadlinePassed} handleClick={() => handleDialogOpen(publish)} />}
 
         <DropdownMenu
           options={this.sendOptions()}
