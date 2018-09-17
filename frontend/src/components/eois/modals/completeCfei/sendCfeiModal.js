@@ -9,7 +9,7 @@ import { sendCfeiRequest } from '../../../../reducers/sendCfei';
 
 const messages = {
   title: 'Are you sure you want to send this CFEI to the focal point?',
-  info: 'An e-mail notification that this CFEI is now finalized will be sent to all partners who applied for this CFEI.',
+  info: 'This CFEI will be sent to the Focal Point for review and publishing. Once sent to the focal point you cannot make edits to this CFEI',
   send: 'send',
 };
 
