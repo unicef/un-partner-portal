@@ -13,7 +13,7 @@ const messages = {
    and understands that any misrepresentations, falsifications or material omissions in the profile, 
    whenever discovered, may result in disqualification from or termination of partnership with the UN.`,
   orgLogo: 'Organization Logo',
-  declaration: 'Registration Declaration',
+  declaration: 'Partner Declaration',
 };
 
 const PartnerProfileOtherInfoContent = (props) => {
