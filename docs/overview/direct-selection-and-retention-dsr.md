@@ -22,7 +22,7 @@ This feature also allows for the maintenance of a retention decision of a previo
 ### Key Functions & Controls
 
 | Ability to filter list of direct selections & retention by agency, country, status, focal point, sector and areas of specialization and direct selection source. |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| :--- |
 | Ability to view all direct selection & retentions irrespective of agency |
 | Ability to view justification reason and summary, including any uploads \(if applicable\) of a direction selection & retention |
 | Ability to indicate a CSO for a direct selection & retention |
@@ -34,7 +34,7 @@ This feature also allows for the maintenance of a retention decision of a previo
 | Ability to view whether the CSO accepted or declines the direct selection & retention |
 
 | Ability to restrict deletion of direct selection & retention if already published. |
-| --- | --- | --- | --- | --- | --- | --- |
+| :--- |
 | Ability to restrict the creation of a direct selection & retention to the user’s agency. |
 | Ability to restrict viewing justification reason and summary, including any uploads \(if applicable\) of a direction selection & retention to user’s agency and advanced editor role |
 | Ability to restrict selecting CSO for direct selection & retention to advanced editor role |
@@ -45,7 +45,7 @@ This feature also allows for the maintenance of a retention decision of a previo
 ### Processes & Performance Metrics
 
 | Ability to check, via reports, the number of direct selection & retention made per country and by agency |
-| --- | --- |
+| :--- |
 | Ability to compare, via reports, the number of UN initiated direct selections to CSO initiated direct selections |
 
 ## Partner: Direct Selection & Retention \(DSR\)
@@ -62,7 +62,7 @@ This feature allows for a CSO to be notified when they have been made a partners
 ### Key Functions & Controls
 
 | Ability for the CSO to be notified when a direct selection & retention offer has been made by a participating agency. |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| :--- |
 | Ability for CSO users to view the details of a direct selection & retention offer made to their organization |
 | Ability for CSO to download the direct selection & retention in a presentable PDF format |
 | Ability for a CSO to accept or decline a partnership offer made via direct selection & retention |

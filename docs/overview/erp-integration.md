@@ -1,7 +1,3 @@
----
-description: Part of the CR-2 Set of Requirements
----
-
 # ERP Integration
 
 

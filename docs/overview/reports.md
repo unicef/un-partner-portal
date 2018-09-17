@@ -15,7 +15,7 @@ This feature allows UN agencies users to export data from the portal to an Excel
 ### Key Functions & Controls
 
 | **Ability to select from a list of reports to run. Reports are the following:    •Partner Profile   • Partner Mapping   • CFEI Management   • Verification & Observations   •CSO Contact Information** |
-| --- | --- | --- | --- | --- | --- |
+| :--- |
 | **Ability to select a number of filters to run per report.** |
 | **Ability to view report results in the portal.** |
 | **Ability to export results of report to an Excel document.** |
