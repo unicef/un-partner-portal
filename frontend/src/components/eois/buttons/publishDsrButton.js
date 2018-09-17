@@ -5,7 +5,7 @@ import ButtonWithTooltipEnabled from '../../common/buttonWithTooltipEnabled';
 
 const messages = {
   text: 'Publish',
-  tooltipInfo: 'You can\'t publish this DS/R until selected partner get verified',
+  tooltipInfo: 'This DS/R cannot be published as partner selected does not have a \'verification passed\' status. The partner must be verified in order to proceed.',
 };
 
 const PublishDsrButton = (props) => {
