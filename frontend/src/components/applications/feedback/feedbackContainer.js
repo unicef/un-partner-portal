@@ -24,7 +24,7 @@ const messages = {
   button: 'send',
   from: 'from',
   noInfo: 'No feedback to display.',
-  notCompleted: 'Feedback will be only available after CFEI is finalized.',
+  notCompleted: 'No feedback available.',
   for: 'for',
 };
 
