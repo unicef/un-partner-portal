@@ -10,7 +10,7 @@ import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import { browserHistory as history, withRouter } from 'react-router';
 import GridRow from '../../common/grid/gridRow';
-import { sessionChange, sessionInitializing } from '../../../reducers/session';
+import { sessionChange, sessionInitializing, loadUserData } from '../../../reducers/session';
 
 const styleSheet = theme => ({
   expand: {
@@ -45,7 +45,7 @@ class PartnerSwitch extends Component {
   }
 
   handleRequest = (partner) => {
-    const { startRefresh, stopRefresh, isCurrentHq, currentHqId, partnerId } = this.props;
+    const { startRefresh, stopRefresh, isCurrentHq, currentHqId, partnerId, loadUserInfo } = this.props;
 
     this.props.saveNewCurrentPartner({
       partnerId: partner.id,
@@ -64,10 +64,11 @@ class PartnerSwitch extends Component {
     const loc = history.getCurrentLocation();
     startRefresh();
     history.push('/');
-    setTimeout(() => {
+
+    loadUserInfo().then(() => {
       history.push(loc);
       stopRefresh();
-    }, 100);
+    })
   }
 
   renderMenuItems(partners = [], countries = {}) {
@@ -126,6 +127,7 @@ PartnerSwitch.propTypes = {
   countries: PropTypes.object,
   name: PropTypes.string,
   saveNewCurrentPartner: PropTypes.func,
+  loadUserInfo: PropTypes.func,
   partnerId: PropTypes.number,
   isCurrentHq: PropTypes.bool,
   currentHqId: PropTypes.number,
@@ -146,6 +148,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   saveNewCurrentPartner: session => dispatch(sessionChange(session)),
+  loadUserInfo: () => dispatch(loadUserData()),
   startRefresh: () => dispatch(sessionInitializing()),
   stopRefresh: () => dispatch(sessionChange()),
 });
