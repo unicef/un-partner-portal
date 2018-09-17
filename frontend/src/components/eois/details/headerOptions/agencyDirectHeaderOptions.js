@@ -20,7 +20,8 @@ import PublishDsrModal from '../../modals/completeDsr/publishDsrModal';
 import FinalizeDsrModal from '../../modals/completeDsr/finalizeDsrModal';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import { checkPermission, isRoleOffice, AGENCY_ROLES, AGENCY_PERMISSIONS, COMMON_PERMISSIONS } from '../../../../helpers/permissions';
-import { selectCfeiStatus,
+import {
+  selectCfeiStatus,
   isCfeiPublished,
   isCfeiCompleted,
   isUserAFocalPoint,
@@ -52,6 +53,7 @@ class AgencyDirectHeaderOptions extends Component {
       handleDialogOpen,
       hasEditDraftPermission,
       hasDeleteDraftPermission,
+      isFocalPoint,
       isCreator } = this.props;
 
     const options = [
@@ -61,7 +63,8 @@ class AgencyDirectHeaderOptions extends Component {
       },
     ];
 
-    if (hasEditDraftPermission && isCreator) {
+    if (hasEditDraftPermission && isCreator
+      || hasDeleteDraftPermission && isFocalPoint) {
       options.push(
         {
           name: edit,
@@ -71,7 +74,8 @@ class AgencyDirectHeaderOptions extends Component {
         });
     }
 
-    if (hasDeleteDraftPermission && isCreator) {
+    if (hasDeleteDraftPermission && isCreator
+      || hasDeleteDraftPermission && isFocalPoint) {
       options.push(
         {
           name: del,
@@ -92,9 +96,9 @@ class AgencyDirectHeaderOptions extends Component {
       isFocalPoint } = this.props;
 
     return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
-    || (hasActionPermission && isMFT && isFocalPoint)
-    || (hasActionPermission && isBasEd && isCreator)
-    || (hasActionPermission && isPAM && isCreator));
+      || (hasActionPermission && isMFT && isFocalPoint)
+      || (hasActionPermission && isBasEd && isCreator)
+      || (hasActionPermission && isPAM && isCreator));
   }
 
   publishOptions() {
@@ -103,7 +107,6 @@ class AgencyDirectHeaderOptions extends Component {
       handleDialogOpen,
       hasEditSentPermission,
       hasEditPublishedPermission,
-      hasCancelPermission,
       isPublished,
       status,
       isCompleted,
@@ -119,8 +122,8 @@ class AgencyDirectHeaderOptions extends Component {
     ];
 
     if ((!isCompleted && isPublished && this.isActionAllowed(hasEditPublishedPermission))
-    || (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
-    || (!isCompleted && hasEditPublishedPermission && isMFT && isFocalPoint)))) {
+      || (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
+        || (!isCompleted && hasEditPublishedPermission && isMFT && isFocalPoint)))) {
       options.push(
         {
           name: edit,
@@ -163,11 +166,11 @@ class AgencyDirectHeaderOptions extends Component {
           && <Complete handleClick={() => handleDialogOpen(complete)} />}
 
         {!isCompleted && status === 'Dra' && isCreator && hasSendPermission
-         && <SendDsrButton handleClick={() => handleDialogOpen(send)} />}
+          && <SendDsrButton handleClick={() => handleDialogOpen(send)} />}
 
         {!isPublished && !isCompleted && hasPublishPermission &&
-            (((isFocalPoint || isCreator) && isAdvEd) || (isFocalPoint && isMFT))
-         && <PublishDsrButton disabled={!this.isPartnerVerified()} handleClick={() => handleDialogOpen(publish)} />}
+          (((isFocalPoint || isCreator) && isAdvEd) || (isFocalPoint && isMFT))
+          && <PublishDsrButton disabled={!this.isPartnerVerified()} handleClick={() => handleDialogOpen(publish)} />}
 
         <DropdownMenu
           options={status === 'Dra' ? this.sendOptions() : this.publishOptions()}
