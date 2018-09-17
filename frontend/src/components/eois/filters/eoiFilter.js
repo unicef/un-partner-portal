@@ -18,6 +18,7 @@ import CountryField from '../../forms/fields/projectFields/locationField/country
 import { selectMappedSpecializations, selectNormalizedCountries } from '../../../store';
 import FocalPoints from '../../forms/fields/projectFields/agencyMembersFields/focalPoints';
 import resetChanges from './eoiHelper';
+import { STATUS_VAL } from './eoiDsFilter';
 
 const messages = {
   choose: 'Choose',
@@ -52,17 +53,6 @@ const styleSheet = theme => ({
   },
 });
 
-export const STATUS_VAL = [
-  {
-    value: true,
-    label: 'Active',
-  },
-  {
-    value: false,
-    label: 'Finalized',
-  },
-];
-
 class EoiFilter extends Component {
   constructor(props) {
     super(props);
@@ -78,13 +68,11 @@ class EoiFilter extends Component {
     const { pathName, query, agencyId } = this.props;
 
     const agency = this.props.query.agency ? this.props.query.agency : agencyId;
-    const active = !!(this.props.query.active === 'true' || (typeof (this.props.query.active) === 'boolean' && this.props.query.active) || !this.props.query.active);
-    const ordering = active ? 'deadline_date' : '-completed_date';
 
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { active, ordering, agency },
+        { agency },
       ),
     });
   }
@@ -93,13 +81,11 @@ class EoiFilter extends Component {
     if (R.isEmpty(nextProps.query)) {
       const { pathname } = nextProps.location;
       const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
-      const ordering = this.props.query.active === 'true' ? 'deadline_date' : '-completed_date';
-      const active = this.props.query.active ? this.props.query.active : true;
 
       history.push({
         pathname,
         query: R.merge(this.props.query,
-          { active, ordering, agency: agencyQ },
+          { agency: agencyQ },
         ),
       });
     }
@@ -109,10 +95,9 @@ class EoiFilter extends Component {
     const { pathName, query } = this.props;
 
     const { title, agency, country_code, specializations,
-      posted_from_date, posted_to_date, active, locations, displayID, focal_points } = values;
+      posted_from_date, posted_to_date, status, locations, displayID, focal_points } = values;
 
     const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
-    const ordering = active === 'true' ? 'deadline_date' : '-completed_date';
     history.push({
       pathname: pathName,
       query: R.merge(query, {
@@ -120,8 +105,7 @@ class EoiFilter extends Component {
         title,
         displayID,
         agency: agencyQ,
-        ordering,
-        active,
+        status,
         country_code,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         posted_from_date,
@@ -142,7 +126,7 @@ class EoiFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { active: true, ordering: 'deadline_date', agency: agencyId },
+        { agency: agencyId },
       ),
     });
   }
@@ -236,7 +220,7 @@ class EoiFilter extends Component {
               </Grid>
               <Grid item style={{ marginTop: '-18px' }} sm={4} xs={12}>
                 <RadioForm
-                  fieldName="active"
+                  fieldName="status"
                   label={messages.labels.status}
                   values={STATUS_VAL}
                   optional
@@ -289,7 +273,7 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { title } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { agency } = {} } = ownProps.location;
-  const { query: { active } = {} } = ownProps.location;
+  const { query: { status } = {} } = ownProps.location;
   const { query: { locations } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
   const { query: { posted_from_date } = {} } = ownProps.location;
@@ -299,7 +283,7 @@ const mapStateToProps = (state, ownProps) => {
   const agencyQ = Number(agency);
 
   const specializationsQ = specializations &&
-      R.map(Number, specializations.split(','));
+    R.map(Number, specializations.split(','));
 
   return {
     countries: selectNormalizedCountries(state),
@@ -313,7 +297,7 @@ const mapStateToProps = (state, ownProps) => {
       title,
       country_code,
       agency: agencyQ,
-      active,
+      status,
       locations,
       specializations: specializationsQ,
       posted_from_date,
