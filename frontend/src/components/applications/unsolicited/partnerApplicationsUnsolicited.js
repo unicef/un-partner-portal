@@ -24,7 +24,7 @@ const applicationCell = ({ row, column, value }) => {
       directSelection={row.is_direct}
     />);
   } else if (column.name === 'submission_date') {
-    return <WrappedCell content={formatDateForPrint(row.submission_date)} />;
+    return <WrappedCell content={row.submission_date ? formatDateForPrint(row.submission_date) : '-'} />;
   } else if (column.name === 'id') {
     return (<ConceptNoteIDCell
       cfeiId={`${row.id}`}

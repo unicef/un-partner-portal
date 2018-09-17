@@ -57,7 +57,7 @@ export default type => ({ row, column, value }) => {
   } else if (column.name === 'submission_date') {
     return (
       <TableCell >
-        {formatDateForPrint(row.submission_date)}
+        {row.submission_date ? formatDateForPrint(row.submission_date) : '-'}
       </TableCell>);
   } else if (column.name === 'created') {
     return (
