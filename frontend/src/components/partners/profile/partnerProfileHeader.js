@@ -19,6 +19,7 @@ import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permission
 
 const messages = {
   observationTab: 'observations',
+  verificationTab: 'verification',
 };
 
 const PartnerTitle = (props) => {
@@ -60,11 +61,15 @@ class PartnerProfileHeader extends Component {
   }
 
   updatePath() {
-    const { tabs, location, partnerId, hasViewObservationPermission } = this.props;
+    const { tabs, location, partnerId, hasViewObservationPermission, hasVerifySeeCommentsPermission } = this.props;
 
-    const filterTabs = (hasViewObservationPermission)
+    let filterTabs = (hasViewObservationPermission)
       ? tabs
       : R.filter(item => item.path !== messages.observationTab, tabs);
+
+    filterTabs = (hasVerifySeeCommentsPermission)
+      ? tabs
+      : R.filter(item => item.path !== messages.verificationTab, tabs);
 
     if (filterTabs.findIndex(tab => location.match(`^/partner/${partnerId}/${tab.path}`)) === -1) {
       history.push('/');
@@ -74,11 +79,15 @@ class PartnerProfileHeader extends Component {
   }
 
   handleChange(event, index) {
-    const { tabs, partnerId, hasViewObservationPermission, hasViewSanctionsPermission } = this.props;
+    const { tabs, partnerId, hasViewObservationPermission, hasVerifySeeCommentsPermission } = this.props;
 
-    const filterTabs = (hasViewObservationPermission || hasViewSanctionsPermission)
+    let filterTabs = (hasViewObservationPermission)
       ? tabs
       : R.filter(item => item.path !== messages.observationTab, tabs);
+
+    filterTabs = (hasVerifySeeCommentsPermission)
+      ? tabs
+      : R.filter(item => item.path !== messages.verificationTab, tabs);
 
     history.push(`/partner/${partnerId}/${filterTabs[index].path}`);
   }
@@ -116,8 +125,8 @@ class PartnerProfileHeader extends Component {
 PartnerProfileHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
+  hasVerifySeeCommentsPermission: PropTypes.bool,
   hasViewObservationPermission: PropTypes.bool,
-  hasViewSanctionsPermission: PropTypes.bool,
   location: PropTypes.string.isRequired,
   partnerId: PropTypes.string.isRequired,
   loadPartnerSummary: PropTypes.func,
@@ -135,6 +144,7 @@ const mapStateToProps = (state, ownProps) => ({
   location: ownProps.location.pathname,
   hasViewObservationPermission:
     checkPermission(AGENCY_PERMISSIONS.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS, state),
+  hasVerifySeeCommentsPermission: checkPermission(AGENCY_PERMISSIONS.VERIFY_SEE_COMMENTS, state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
