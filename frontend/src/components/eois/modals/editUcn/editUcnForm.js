@@ -35,6 +35,7 @@ const EditUcnForm = (props) => {
           {messages.cn}
         </Typography>
         <CnFileSection
+          showComponent
           component={<FileForm
             fieldName="cn"
           />}
