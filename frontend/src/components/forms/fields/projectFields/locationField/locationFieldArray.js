@@ -1,7 +1,5 @@
-
 import React from 'react';
 import PropTypes from 'prop-types';
-import { GoogleApiWrapper } from 'google-maps-react';
 import ArrayForm from '../../../arrayForm';
 import LocationsMap from './locationsMapField';
 import LocationsCountry from './locationsCountry';
@@ -14,16 +12,16 @@ const Country = formName => sector => (
   />
 );
 
-const Locations = (formName, loaded) => (name, index) => loaded &&
-<LocationsMap
-  formName={formName}
-  name={name}
-  index={index}
-/>;
+const Locations = (formName) => (name, index) =>
+  <LocationsMap
+    formName={formName}
+    name={name}
+    index={index}
+  />
+;
 
 const LocationFieldArray = (props) => {
-  const { formName, readOnly, loaded, ...other } = props;
-
+  const { formName, readOnly, ...other } = props;
   return (<ArrayForm
     limit={230}
     label="Project Location"
@@ -31,7 +29,7 @@ const LocationFieldArray = (props) => {
     validate={[hasLocations]}
     fieldName="countries"
     outerField={Country(formName, ...other)}
-    innerField={Locations(formName, loaded, ...other)}
+    innerField={Locations(formName, ...other)}
     {...other}
   />);
 };
@@ -39,14 +37,7 @@ const LocationFieldArray = (props) => {
 LocationFieldArray.propTypes = {
   formName: PropTypes.string,
   readOnly: PropTypes.bool,
-  loaded: PropTypes.bool,
 };
 
-const WrappedLocationFieldArray = GoogleApiWrapper({
-  version: '3.exp',
-  apiKey: process.env.GOOGLE_KEY,
-})(LocationFieldArray);
-
-
-export default (WrappedLocationFieldArray);
+export default (LocationFieldArray);
 

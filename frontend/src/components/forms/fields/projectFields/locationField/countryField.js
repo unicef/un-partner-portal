@@ -24,7 +24,6 @@ const CountryField = (props) => {
   if (!fieldName) {
     return null;
   }
-
   return readOnly ? (
     <SelectForm
       fieldName={fieldName}
@@ -32,8 +31,10 @@ const CountryField = (props) => {
       values={countries}
       readOnly={readOnly}
       textFieldProps={{
-        inputProps: {
-          initial,
+        InputProps: {
+          inputProps: {
+            initial,
+          },
         },
       }}
       {...other}
@@ -59,6 +60,7 @@ CountryField.propTypes = {
   infoText: PropTypes.node,
   initial: PropTypes.string,
   suggestionsPool: PropTypes.array,
+  initialMultiValues: PropTypes.array,
 };
 
 CountryField.defaultProps = {

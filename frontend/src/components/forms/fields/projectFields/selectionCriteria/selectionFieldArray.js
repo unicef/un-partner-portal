@@ -23,9 +23,7 @@ const messages = {
 const insertWeight = (index, fields) => {
   const tempSelection = fields.get(index);
   if (!has('weight', tempSelection)) {
-    const currentWeight = fields.getAll().reduce((acc, next) => {
-      return has('weight', next) ? acc + next.weight : acc;
-    }, 0);
+    const currentWeight = fields.getAll().reduce((acc, next) => (has('weight', next) ? acc + next.weight : acc), 0);
     const remainingWeight = 100 - currentWeight;
     const newWeight = remainingWeight >= 0 ? remainingWeight : 0;
     fields.remove(index);
@@ -52,8 +50,10 @@ const Description = (readOnly, form, hasWeighting, ...props) => (member, index, 
         optional
         textFieldProps={{
           multiline: true,
-          inputProps: {
-            maxLength: '5000',
+          InputProps: {
+            inputProps: {
+              maxLength: '5000',
+            },
           },
           disabled,
         }}
@@ -88,11 +88,13 @@ SelectionFieldArray.propTypes = {
   form: PropTypes.string,
 };
 
-const selector = formValueSelector('newOpenCfei');
 
 export default connect(
-  state => ({
-    criteria: mapSelectCriteriaToSelection(state),
-    hasWeighting: selector(state, 'has_weighting'),
-  }),
+  (state, ownProps) => {
+    const selector = formValueSelector(ownProps.form);
+    return {
+      criteria: mapSelectCriteriaToSelection(state),
+      hasWeighting: selector(state, 'has_weighting'),
+    };
+  },
 )(SelectionFieldArray);

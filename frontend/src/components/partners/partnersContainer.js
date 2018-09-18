@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
+import { TableCell } from 'material-ui/Table';
 import { browserHistory as history, withRouter } from 'react-router';
 import MainContentWrapper from '../../components/common/mainContentWrapper';
 import HeaderNavigation from '../../components/common/headerNavigation';
@@ -38,7 +39,7 @@ class PartnersContainer extends Component {
   }
 
   /* eslint-disable class-methods-use-this */
-  partnerCell({ row, column }) {
+  partnerCell({ row, column, value }) {
     if (column.name === 'name') {
       return (<PartnerProfileNameCell
         info={row.partner_additional}
@@ -52,7 +53,7 @@ class PartnersContainer extends Component {
       return <OrganizationTypeCell orgType={row.display_type} />;
     }
 
-    return undefined;
+    return <TableCell>{value}</TableCell>;
   }
 
   render() {

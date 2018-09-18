@@ -8,10 +8,7 @@ def ssh(service):
     :param service: ['backend', 'frontend', 'proxy', 'db']
     """
     assert service in ['backend', 'frontend', 'proxy', 'db'], "%s is unrecognized service"
-    if service == 'frontend':
-        local('docker-compose exec frontend ash')
-    else:
-        local('docker-compose exec %s bash' % service)
+    local('docker-compose exec %s bash' % service)
 
 
 def up_recreate():
@@ -64,16 +61,16 @@ def managepy(command=''):
     local(cmd)
 
 
-def preview_uwsgi_log():
-    cmd = 'docker-compose exec backend tail -f /var/log/uwsgi_global.log'
+def preview_gunicorn_log():
+    cmd = 'docker-compose exec backend tail -f /data/unpp_api/logs/gunicorn_error.log'
     local(cmd)
 
 
-def fakedata(quantity=50, clean_before=True):
+def fakedata(clean_before=True):
     """
-    Load example data from fakedata management command.
+    Create mock data for the django backend.
     """
-    cmd = 'docker-compose exec backend python manage.py fakedata %d' % (int(quantity))
+    cmd = 'docker-compose exec backend python manage.py fakedata'
     if clean_before:
         cmd += ' --clean_before'
     local(cmd)
@@ -82,7 +79,7 @@ def fakedata(quantity=50, clean_before=True):
 def reset_db():
     """
     Reset db, migrate and generate fixtures.
-    Useful when changing branch with different migration.
+    Useful when changing branch with different migrations.
     """
     local('docker-compose exec backend python manage.py reset_db')
     local('docker-compose exec backend python manage.py migrate')
@@ -105,7 +102,7 @@ def remove_untagged_images():
     local('docker rmi $(docker images | grep "^<none>" | awk "{print $3}")')
 
 
-def pep8():
+def lint():
     """
     Run python code linter
     """
@@ -117,3 +114,10 @@ def make_admin():
     Create admin user for the backend
     """
     local('docker-compose exec backend python manage.py createsuperuser')
+
+
+def clean_pyc():
+    """
+    Create admin user for the backend
+    """
+    local('docker-compose exec backend find . -name \'*.pyc\' -delete')

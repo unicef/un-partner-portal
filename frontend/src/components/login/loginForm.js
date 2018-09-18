@@ -82,10 +82,10 @@ const Login = (props) => {
             open={error}
             message={error}
             autoHideDuration={4e3}
-            onRequestClose={() => dispatch(clearSubmitErrors(form))}
+            onClose={() => dispatch(clearSubmitErrors(form))}
           />
         </GridColumn>
-      </form >
+      </form>
     </div>
   );
 };

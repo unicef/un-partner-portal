@@ -6,9 +6,10 @@ import MyResponse from './myResponse';
 import Feedback from '../../../../applications/feedback/feedbackContainer';
 import { selectPartnerApplicationDetails } from '../../../../../store';
 import { ROLES } from '../../../../../helpers/constants';
+import { checkPermission, PARTNER_PERMISSIONS } from '../../../../../helpers/permissions';
 
 const Results = (props) => {
-  const { role, params: { id }, application } = props;
+  const { role, hasPermission, params: { id }, application } = props;
   if (role === ROLES.PARTNER) {
     return (
       <Grid container direction="row" spacing={24}>
@@ -16,7 +17,7 @@ const Results = (props) => {
           <Feedback applicationId={application.id} />
         </Grid>
         <Grid item xs={12} sm={4}>
-          <MyResponse cfeiId={id} application={application} />
+          {hasPermission && <MyResponse cfeiId={id} application={application} />}
         </Grid>
       </Grid>
     );
@@ -26,6 +27,7 @@ const Results = (props) => {
 
 Results.propTypes = {
   role: PropTypes.string,
+  hasPermission: PropTypes.bool,
   params: PropTypes.object,
   application: PropTypes.object,
 };
@@ -33,6 +35,7 @@ Results.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   role: state.session.role,
   application: selectPartnerApplicationDetails(state, ownProps.params.id),
+  hasPermission: checkPermission(PARTNER_PERMISSIONS.DSR_ANSWER, state),
 });
 
 export default connect(mapStateToProps)(Results);

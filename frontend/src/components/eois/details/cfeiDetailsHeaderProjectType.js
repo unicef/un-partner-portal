@@ -15,7 +15,7 @@ const styleSheet = theme => ({
 
 const typeMap = {
   [OPEN]: { name: 'OPEN SELECTION', color: 'orange' },
-  [DIRECT]: { name: 'DIRECT SELECTION', color: 'purple' },
+  [DIRECT]: { name: 'DIRECT SELECTION/RETENTION', color: 'purple' },
   [UNSOLICITED]: { name: 'UNSOLICITED CONCEPT NOTE', color: 'blue' },
 
 };

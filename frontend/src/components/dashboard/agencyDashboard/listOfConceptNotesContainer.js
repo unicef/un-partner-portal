@@ -13,7 +13,7 @@ const ListOfConceptNotesContainer = (props) => {
   const { loading } = props;
   return (
     <HeaderList
-      header={<Typography type="headline" >{messages.title}</Typography>}
+      header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}
       loading={loading}
     >
       <ListOfConceptNotesTable />

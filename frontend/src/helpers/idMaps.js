@@ -10,10 +10,15 @@ export const applicationStatuses = {
   Pre: 'Preselected',
   Rej: 'Rejected',
   Pen: 'Pending',
+  Rec: 'Application Recommended',
+  Rev: 'Application Under Review',
 };
 
 export const projectStatuses = {
-  Ope: 'Open',
+  Sen: 'Sent',
+  Dra: 'Draft',
+  Ope: 'Published',
   Clo: 'Closed/Under Review',
   Com: 'Completed',
+  Rev: 'Application Under Review',
 };

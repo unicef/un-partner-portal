@@ -1,0 +1,61 @@
+version: 2
+
+jobs:
+  python-dependencies:
+    docker:
+      - image: python:3.6.5-alpine3.7
+    steps:
+      - checkout
+      - restore_cache:
+          key: python-env-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
+      - run: apk add --upgrade --no-cache postgresql-client postgresql-contrib postgresql-dev
+      - run: apk add --upgrade --no-cache g++ linux-headers gcc make libffi-dev git wget jpeg-dev zlib-dev libpng-dev graphviz-dev libjpeg
+      - run: pip install --upgrade pip && pip install -r backend/requirements/dev.pip
+      - save_cache:
+          key: python-env-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
+          paths:
+            - "/usr/lib/"
+            - "/root/project/src/"
+            - "/usr/local/bin/"
+            - "/usr/local/lib/python3.6/"
+
+  flake8:
+    docker:
+      - image: python:3.6.5-alpine3.7
+    steps:
+      - checkout
+      - restore_cache:
+          key: python-env-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
+      - run:
+          command: flake8
+          working_directory: backend
+
+  python-tests:
+    docker:
+      - image: python:3.6.5-alpine3.7
+        environment:
+          ENV: dev
+          SECRET_KEY: test-secret-key
+      - image: circleci/postgres:9.6.2
+        environment:
+          POSTGRES_USER: ubuntu
+    steps:
+      - checkout
+      - restore_cache:
+          key: python-env-{{ checksum "backend/requirements/base.pip" }}-{{ checksum "backend/requirements/dev.pip" }}
+      - run: mkdir -p /data/unpp_api/logs
+      - run:
+          command: python manage.py test --noinput --parallel 6
+          working_directory: backend
+
+workflows:
+  version: 2
+  test_and_lint:
+    jobs:
+      - python-dependencies
+      - flake8:
+          requires:
+            - python-dependencies
+      - python-tests:
+          requires:
+            - python-dependencies

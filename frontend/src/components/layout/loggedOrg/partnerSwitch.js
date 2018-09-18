@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -9,7 +10,7 @@ import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import { browserHistory as history, withRouter } from 'react-router';
 import GridRow from '../../common/grid/gridRow';
-import { sessionChange, sessionInitializing } from '../../../reducers/session';
+import { sessionChange, sessionInitializing, loadUserData } from '../../../reducers/session';
 
 const styleSheet = theme => ({
   expand: {
@@ -33,47 +34,48 @@ class PartnerSwitch extends Component {
       anchorEl: null,
       open: false,
     };
-    this.handleClick = this.handleClick.bind(this);
-    this.handleRequestClose = this.handleRequestClose.bind(this);
   }
 
-  handleClick(event) {
+  handleClick = (event) => {
     this.setState({ open: true, anchorEl: event.currentTarget });
   }
 
-  handleRequestClose(partner) {
-    const { startRefresh, stopRefresh, isCurrentHq, currentHqId, partnerId } = this.props;
-    if (partner.id) {
-      this.props.saveNewCurrentPartner({
-        partnerId: partner.id,
-        partnerCountry: partner.country_code,
-        partnerName: partner.legal_name,
-        isHq: partner.is_hq,
-        hqId: currentHqId || isCurrentHq ? partnerId : null,
-        logo: partner.logo,
-        logoThumbnail: partner.logoThumbnail,
-        isProfileComplete: partner.partner_additional.has_finished,
-        lastUpdate: partner.last_profile_update,
-      });
-
-      this.setState({ open: false });
-      const loc = history.getCurrentLocation();
-      startRefresh();
-      history.push('/');
-      setTimeout(() => {
-        history.push(loc);
-        stopRefresh();
-      }, 100);
-    }
-
+  onClose = () => {
     this.setState({ open: false });
+  }
+
+  handleRequest = (partner) => {
+    const { startRefresh, stopRefresh, isCurrentHq, currentHqId, partnerId, loadUserInfo } = this.props;
+
+    this.props.saveNewCurrentPartner({
+      partnerId: partner.id,
+      partnerCountry: partner.country_code,
+      partnerName: partner.legal_name,
+      isHq: partner.is_hq,
+      hqId: currentHqId || isCurrentHq ? partnerId : null,
+      logo: partner.logo,
+      logoThumbnail: R.prop('org_logo_thumbnail', partner) || partner.logoThumbnail,
+      isProfileComplete: partner.partner_additional.has_finished,
+      lastUpdate: partner.last_profile_update,
+    });
+
+    this.onClose();
+
+    const loc = history.getCurrentLocation();
+    startRefresh();
+    history.push('/');
+
+    loadUserInfo().then(() => {
+      history.push(loc);
+      stopRefresh();
+    })
   }
 
   renderMenuItems(partners = [], countries = {}) {
     return partners.map(partner => (
       <MenuItem
         key={partner.id}
-        onClick={() => this.handleRequestClose(partner)}
+        onClick={() => this.handleRequest(partner)}
         selected={partner.id === this.props.partnerId}
       >
         <Typography type="body2">
@@ -109,7 +111,7 @@ class PartnerSwitch extends Component {
           id="switch-partner"
           anchorEl={this.state.anchorEl}
           open={this.state.open}
-          onRequestClose={this.handleRequestClose}
+          onClose={this.onClose}
         >
           {this.renderMenuItems(partners, countries)}
         </Menu>
@@ -125,6 +127,7 @@ PartnerSwitch.propTypes = {
   countries: PropTypes.object,
   name: PropTypes.string,
   saveNewCurrentPartner: PropTypes.func,
+  loadUserInfo: PropTypes.func,
   partnerId: PropTypes.number,
   isCurrentHq: PropTypes.bool,
   currentHqId: PropTypes.number,
@@ -145,6 +148,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   saveNewCurrentPartner: session => dispatch(sessionChange(session)),
+  loadUserInfo: () => dispatch(loadUserData()),
   startRefresh: () => dispatch(sessionInitializing()),
   stopRefresh: () => dispatch(sessionChange()),
 });

@@ -17,21 +17,21 @@ const messages = {
 
 const columns = [
   { name: 'cn_id', title: 'Application ID' },
-  { name: 'project_title', title: 'Project Title' },
+  { name: 'title', title: 'Project Title', width: 250 },
   { name: 'cfei_type', title: 'Offer Type' },
   { name: 'agency_name', title: 'UN Agency' },
   { name: 'countries', title: 'Country' },
   { name: 'specializations', title: 'Sector & Area of Specialization' },
 ];
 
-const renderCells = ({ row, column }) => {
+const renderCells = ({ row, column, value }) => {
   if (column.name === 'cn_id') {
     return (<ApplicationIDCell type={row.cfei_type} eoiId={row.eoi_id} cnId={row.cn_id} />);
   } else if (column.name === 'countries') {
     return (
       <TableCell >
         {row.countries.map((code, index) =>
-          (<span>
+          (<span key={code}>
             <EoiCountryCell code={code} />
             {(index === row.countries.length - 1) ? '' : ', '}
           </span>),
@@ -43,7 +43,7 @@ const renderCells = ({ row, column }) => {
         <EoiSectorCell data={row.specializations} id={row.id} />
       </TableCell>);
   }
-  return undefined;
+  return <TableCell>{value}</TableCell>;
 };
 
 renderCells.propTypes = {
@@ -55,7 +55,7 @@ const ListOfPendingOffers = (props) => {
   const { loading, data = [], loadOffers, itemsCount } = props;
   return (
     <HeaderList
-      header={<Typography type="headline" >{messages.title}</Typography>}
+      header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}
       loading={loading}
     >
       <TableWithLocalState

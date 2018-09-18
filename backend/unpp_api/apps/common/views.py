@@ -1,5 +1,9 @@
 from __future__ import absolute_import
 
+from collections import defaultdict
+
+from django.db import connections
+from django.db.migrations.recorder import MigrationRecorder
 from rest_framework import status as statuses
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,6 +12,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
+from agency.agencies import UNHCR
+from agency.permissions import AgencyPermission
+from agency.roles import AgencyRole
+from common.business_areas import BUSINESS_AREAS
+from common.permissions import current_user_has_permission
 from common.serializers import (
     ConfigSectorSerializer,
     CommonFileUploadSerializer,
@@ -34,8 +43,30 @@ from common.consts import (
     COMPLETED_REASON,
     DIRECT_SELECTION_SOURCE,
     JUSTIFICATION_FOR_DIRECT_SELECTION,
-    EXTENDED_APPLICATION_STATUSES
+    EXTENDED_APPLICATION_STATUSES,
+    DSR_FINALIZE_RETENTION_CHOICES,
+    FLAG_TYPES,
+    NOTIFICATION_FREQUENCY_CHOICES,
+    USER_CREATED_FLAG_CATEGORIES,
+    UNHCR_DSR_COMPLETED_REASONS,
+    OTHER_AGENCIES_DSR_COMPLETED_REASONS,
+    CFEI_TYPES,
+    CFEI_STATUSES,
 )
+from partner.roles import PartnerRole
+
+
+class AppliedMigrationsAPIView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        migrations = MigrationRecorder(connection=connections['default']).applied_migrations()
+        results = defaultdict(list)
+        for app_label, migration in migrations:
+            results[app_label].append(migration)
+
+        return Response({
+            k: sorted(v) for k, v in results.items()
+        }, status=statuses.HTTP_200_OK)
 
 
 class ConfigCountriesAPIView(APIView):
@@ -56,12 +87,29 @@ class ConfigAdminLevel1ListAPIView(ListAPIView):
     pagination_class = MediumPagination
 
 
-class ConfigPPAPIView(APIView):
+class GeneralConfigAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
-        """
-        Return list of defined countries in backend.
-        """
+        if self.request.active_partner:
+            choices = dict(PartnerRole.get_choices())
+        elif self.request.agency_member:
+            choices = dict(AgencyRole.get_choices(self.request.user.agency))
+        else:
+            choices = {}
+
+        if self.request.agency_member and self.request.user.agency.name == UNHCR.name:
+            dsr_completed_reason_choices = UNHCR_DSR_COMPLETED_REASONS
+        else:
+            dsr_completed_reason_choices = OTHER_AGENCIES_DSR_COMPLETED_REASONS
+
+        flag_type_choices = dict(FLAG_TYPES).copy()
+        if not current_user_has_permission(request, agency_permissions=[
+            AgencyPermission.ADD_RED_FLAG_ALL_CSO_PROFILES,
+        ]):
+            flag_type_choices.pop(FLAG_TYPES.red)
+        else:
+            flag_type_choices.pop(FLAG_TYPES.escalated)
+
         data = {
             "financial-control-system": FINANCIAL_CONTROL_SYSTEM_CHOICES,
             "functional-responsibilities": FUNCTIONAL_RESPONSIBILITY_CHOICES,
@@ -80,10 +128,20 @@ class ConfigPPAPIView(APIView):
             "policy-area-choices": POLICY_AREA_CHOICES,
             "application-statuses": APPLICATION_STATUSES,
             "completed-reason": COMPLETED_REASON,
+            "direct-selection-completed-reason": dsr_completed_reason_choices,
             "direct-selection-source": DIRECT_SELECTION_SOURCE,
+            "direct-selection-retention": DSR_FINALIZE_RETENTION_CHOICES,
             "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,
             "extended-application-statuses": EXTENDED_APPLICATION_STATUSES,
             "countries-with-optional-location": LOCATION_OPTIONAL_COUNTRIES,
+            "user-role-choices": choices,
+            "flag-type-choices": flag_type_choices,
+            "flag-types": FLAG_TYPES,
+            "flag-category-choices": USER_CREATED_FLAG_CATEGORIES,
+            "notification-frequency-choices": NOTIFICATION_FREQUENCY_CHOICES,
+            "cfei-types": CFEI_TYPES,
+            "cfei-statuses": CFEI_STATUSES,
+            "business-areas": BUSINESS_AREAS,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

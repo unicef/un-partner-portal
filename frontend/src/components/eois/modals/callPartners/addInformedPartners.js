@@ -74,7 +74,7 @@ class CallPartnersModal extends Component {
 CallPartnersModal.propTypes = {
   id: PropTypes.string,
   submitInvite: PropTypes.func,
-  dialogOpen: PropTypes.object,
+  dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   updateCfei: PropTypes.func,
   partners: PropTypes.array,

@@ -1,23 +1,42 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Grid from 'material-ui/Grid';
+import Tooltip from 'material-ui/Tooltip';
 import Typography from 'material-ui/Typography';
-import { PROJECT_TYPES, ROLES, PROJECT_STATUSES } from '../../../../helpers/constants';
+import { PROJECT_TYPES, ROLES } from '../../../../helpers/constants';
 import PartnerOpenHeaderOptions from './partnerOpenHeaderOptions';
 import AgencyOpenHeaderOptions from './agencyOpenHeaderOptions';
 import AgencyDirectHeaderOptions from './agencyDirectHeaderOptions';
-import AgencyOpenAfterDeadlineHeaderOptions from './agencyOpenAfterDeadlineHeaderOptions';
-import EoiStatusCell from '../../cells/eoiStatusCell';
+import PartnerDirectHeaderOptions from './partnerDirectHeaderOptions';
+import EoiStatusHeader from '../../cells/eoiStatusHeader';
 import { selectCfeiStatus,
+  isCfeiPublished,
   isCfeiCompleted,
   selectCfeiConverted,
-  selectCfeiJustification,
-  isUserAFocalPoint,
-  isUserACreator,
+  selectCfeiCompletedReasonDisplay,
 } from '../../../../store';
-import GridColumn from '../../../common/grid/gridColumn';
-import Grid from 'material-ui/Grid';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
+import PartnerUcnHeaderOptions from './partnerUcnHeaderOptions';
+
+const messages = {
+  infoDsr: 'This direct selection/retention was sent to the focal point for review and issuance to the selected partner.',
+  infoCfei: 'This CFEI was sent to Focal Point for acceptance and publication',
+  infoUcn: 'This UCN was forwarded for acceptance and publication',
+};
+
+const tooltipInfo = (projectType) => {
+  switch (projectType) {
+    case PROJECT_TYPES.OPEN:
+      return messages.infoCfei;
+    case PROJECT_TYPES.DIRECT:
+      return messages.infoDsr;
+    case PROJECT_TYPES.UNSOLICITED:
+      return messages.infoUcn;
+    default:
+      return '';
+  }
+};
 
 const HeaderOptionsContainer = (props) => {
   const { role,
@@ -27,40 +46,49 @@ const HeaderOptionsContainer = (props) => {
     cfeiConverted,
     id,
     partnerId,
-    completedJustification,
-    allowedToEdit,
-    completedReasons,
+    completedReasonDisplay,
   } = props;
   let options;
+  let status = <EoiStatusHeader status={cfeiStatus} />;
+
   if (type === PROJECT_TYPES.OPEN) {
     if (role === ROLES.AGENCY) {
-      options = (allowedToEdit && !cfeiCompleted)
-        ? cfeiStatus === PROJECT_STATUSES.OPE
-          ? <AgencyOpenHeaderOptions />
-          : <AgencyOpenAfterDeadlineHeaderOptions />
-        : null;
+      options = !cfeiCompleted ? <AgencyOpenHeaderOptions id={id} /> : null;
     } else if (role === ROLES.PARTNER) {
       options = <PartnerOpenHeaderOptions />;
     }
-  } else if (type === PROJECT_TYPES.DIRECT && role === ROLES.AGENCY) {
-    options = (allowedToEdit && !cfeiCompleted) ? <AgencyDirectHeaderOptions /> : null;
+  } else if (type === PROJECT_TYPES.DIRECT) {
+    if (role === ROLES.AGENCY) {
+      options = <AgencyDirectHeaderOptions id={id} />;
+    } else if (role === ROLES.PARTNER) {
+      options = <PartnerDirectHeaderOptions id={id} />;
+    }
+  } else if (type === PROJECT_TYPES.UNSOLICITED && role === ROLES.PARTNER) {
+    options = <PartnerUcnHeaderOptions id={id} />;
   }
-  if (type === PROJECT_TYPES.UNSOLICITED) {
-    return !cfeiConverted && role === ROLES.AGENCY
-      ? <ConvertToDS partnerId={partnerId} id={id} />
-      : null;
+  if (type === PROJECT_TYPES.UNSOLICITED && role === ROLES.AGENCY) {
+    return !cfeiConverted ? <ConvertToDS partnerId={partnerId} id={id} /> : null;
   }
-  if (cfeiCompleted) {
-    return (
-      <GridColumn spacing={0} justify="flex-end" alignItems="flex-end">
-        <EoiStatusCell status={cfeiStatus} />
-        <Typography type="caption">{completedReasons[completedJustification]}</Typography>
-      </GridColumn>);
+
+  if (cfeiStatus === 'Sen') {
+    status = (<Tooltip
+      title={tooltipInfo(type)}
+      placement="bottom"
+    >
+      <div>
+        <EoiStatusHeader status={cfeiStatus} />
+        <Typography type="caption">{completedReasonDisplay || ''}</Typography>
+      </div>
+    </Tooltip>);
   }
 
   return (
     <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={24}>
-      {cfeiStatus && <Grid item><EoiStatusCell status={cfeiStatus} /></Grid>}
+      <Grid item>
+        <div>
+          {status}
+          {completedReasonDisplay && <Typography type="caption">{completedReasonDisplay || ''}</Typography>}
+        </div></Grid>
       <Grid item>{options}</Grid>
     </Grid>
   );
@@ -74,18 +102,15 @@ HeaderOptionsContainer.propTypes = {
   cfeiStatus: PropTypes.string,
   id: PropTypes.string,
   partnerId: PropTypes.string,
-  allowedToEdit: PropTypes.bool,
-  completedJustification: PropTypes.string,
-  completedReasons: PropTypes.object,
+  completedReasonDisplay: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   cfeiCompleted: isCfeiCompleted(state, ownProps.id),
+  cfeiPublished: isCfeiPublished(state, ownProps.id),
   cfeiStatus: selectCfeiStatus(state, ownProps.id),
-  completedJustification: selectCfeiJustification(state, ownProps.id),
-  completedReasons: state.partnerProfileConfig['completed-reason'] || {},
+  completedReasonDisplay: selectCfeiCompletedReasonDisplay(state, ownProps.id),
   cfeiConverted: selectCfeiConverted(state, ownProps.id),
-  allowedToEdit: isUserAFocalPoint(state, ownProps.id) || isUserACreator(state, ownProps.id),
 });
 
 export default connect(

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 class SearchBox extends Component {
   componentWillUpdate(nextProps) {
     if (this.props.map === undefined && nextProps !== undefined) {
-      const searchBox = new google.maps.places.SearchBox(this.searchBoxInput);
+      // const searchBox = new google.maps.places.SearchBox(this.searchBoxInput);
       nextProps.map.controls[google.maps.ControlPosition.TOP_LEFT].push(this.searchBoxInput);
 
       // Bias the SearchBox results towards current map's viewport.
@@ -17,7 +17,7 @@ class SearchBox extends Component {
         if (places.length === 0) {
           return;
         }
-        const bounds = new google.maps.LatLngBounds();
+        // const bounds = new google.maps.LatLngBounds();
         places.forEach((place) => {
           if (!place.geometry) return;
 

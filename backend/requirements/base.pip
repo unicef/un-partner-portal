@@ -1,46 +1,61 @@
 # Django packages
-Django==1.11.8
+Django==1.11.15
+django-nose==1.4.5
+nose-timer==0.7.1
+django-model-utils==3.1.2
+social-auth-app-django==2.1.0
+django-sequences==2.2
+django-mail-templated==2.6.5
+django-imagekit==4.0.1
+dj-static==0.0.6
 
-Fabric==1.13.1
-BeautifulSoup==3.2.1
-Pillow==3.1.1
-python-memcached==1.58
-ipython==5.4.1
-azure-storage==0.20.2
-django_compressor==2.1
-
-django-common-helpers==0.9.1
+# APM
+elastic-apm==2.0.0
 
 # REST framework
 djangorestframework==3.7.7
-django-filter==1.0.4
-django-rest-auth==0.9.2
+django-filter==1.1.0
+django-rest-auth==0.9.3
+django-countries==5.3
 
 # Other Python packages
-psycopg2==2.7.1
-django-model-utils==2.6.1  # latest 3.0.0 but need to check changes
-dj-static==0.0.6
+Fabric==1.13.1
+Pillow==5.2.0
+python-memcached==1.59
+ipython==5.4.1
+azure-storage==0.20.2
+psycopg2==2.7.5
 python-json-logger==0.1.7
 xmltodict==0.11.0
-requests==2.18.4
+requests==2.19.1
 python-dateutil==2.6.1
-django-imagekit==4.0.1
 XlsxWriter==1.0.2
+cached-property==1.4.2
+names==0.3.0
+coolname==1.0.4
+reportlab==3.4.0
+Babel==2.6.0
+defusedxml==0.5.0
 
 # Testing
 astroid==1.5.2
 isort==4.2.5
 pylint==1.7.1
-factory_boy==2.8.1
+factory_boy==2.11.1
 mock==2.0.0
+Faker==0.8.16
+httmock==1.2.6
 
 # WSGI
-gunicorn==19.6.0
+gunicorn==19.9.0
 
 # Sentry
 raven==6.4.0
 
 # New Relic
-newrelic==2.100.0.84
+newrelic==2.106.1.88
 
 -e git+https://github.com/robertavram/django-storages.git@1.6.5.3#egg=django-storages
+
+# For accessing legacy MSSQL DB
+-e git+https://github.com/denisenkom/django-sqlserver.git#egg=django-sqlserver

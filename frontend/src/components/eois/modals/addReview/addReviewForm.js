@@ -9,20 +9,23 @@ import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import Grid from 'material-ui/Grid';
 import GridColumn from '../../../common/grid/gridColumn';
-import { selectCfeiCriteria, selectApplicationProject } from '../../../../store';
+import { selectCfeiCriteria, selectApplicationProject, selectCfeiDetails } from '../../../../store';
 import TextFieldForm from '../../../forms/textFieldForm';
+import CheckboxForm from '../../../forms/checkboxForm';
 import SpreadContent from '../../../common/spreadContent';
+import { visibleIfYes } from '../../../../helpers/formHelper';
 
 import { validateReviewScores } from '../../../../helpers/validation';
 
 const messages = {
   criteria: 'Criteria',
   score: 'Your score',
+  confirmReview: 'I confirm that these scores are entered on behalf of review committee',
 };
 
 const styleSheet = theme => ({
   spread: {
-    minWidth: 500,
+    minWidth: 600,
   },
   weight: {
     display: 'flex',
@@ -48,10 +51,12 @@ const renderCriteriaBase = ({ classes, criteria, allCriteria, fields }) => (<div
           fieldName={`${name}.score`}
           placeholder="Score..."
           textFieldProps={{
-            inputProps: {
-              min: '1',
-              max: criteria[index].weight || '100',
-              type: 'number',
+            InputProps: {
+              inputProps: {
+                min: '1',
+                max: criteria[index].weight || '100',
+                type: 'number',
+              },
             },
           }}
           normalize={(value) => {
@@ -80,7 +85,7 @@ const renderCriteria = withStyles(styleSheet)(renderCriteriaBase);
 
 
 const AddReview = (props) => {
-  const { classes, handleSubmit, criteria, allCriteria } = props;
+  const { classes, handleSubmit, criteria, allCriteria, isSingleReviewer } = props;
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
@@ -102,6 +107,13 @@ const AddReview = (props) => {
           optional
           {...props}
         />
+        {visibleIfYes(isSingleReviewer)
+          ? <CheckboxForm
+            fieldName="is_a_committee_score"
+            label={messages.confirmReview}
+            optional
+          />
+          : null}
       </GridColumn>
     </form >
   );
@@ -115,6 +127,7 @@ AddReview.propTypes = {
   classes: PropTypes.object,
   allCriteria: PropTypes.object,
   criteria: PropTypes.array,
+  isSingleReviewer: PropTypes.bool,
 };
 
 const formAddReview = reduxForm({
@@ -126,8 +139,10 @@ const mapStateToProps = (state, ownProps) => {
   const { applicationId } = ownProps.params;
   const eoi = selectApplicationProject(state, applicationId);
   const criteria = selectCfeiCriteria(state, eoi);
+  const cfeiDetails = selectCfeiDetails(state, eoi);
   return {
     criteria,
+    isSingleReviewer: cfeiDetails.reviewers.length === 1,
     allCriteria: state.selectionCriteria,
     initialValues: {
       scores: R.pathOr(criteria, ['scores', 'scores'], ownProps),

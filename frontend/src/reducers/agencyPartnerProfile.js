@@ -41,11 +41,13 @@ const savePartnerProfileOverview = (state, action) => {
     lastUpdate: R.prop('last_profile_update', partnerDetails),
     name: R.prop('legal_name', partnerDetails),
     verified: R.path(['partner_additional', 'is_verified'], partnerDetails),
+    isHq: R.path(['is_hq'], partnerDetails),
+    countryCode: R.path(['country_code'], partnerDetails),
     partnerId: R.prop('id', partnerDetails),
     organisationType: R.path(['partnerProfileConfig', 'partner-type', R.prop(
       'display_type', partnerDetails)], wholeState),
     operationCountry: wholeState.countries[R.prop('country_code', partnerDetails)],
-    location: R.prop('location_of_office', partnerDetails) || R.prop('country_presence_display', partnerDetails),
+    location: R.prop('location_of_offices', partnerDetails) || R.prop('country_presence_display', partnerDetails),
     head: {
       fullname: R.path(['org_head', 'fullname'], partnerDetails),
       title: R.path(['org_head', 'job_title'], partnerDetails),
@@ -69,6 +71,8 @@ const savePartnerProfileOverview = (state, action) => {
     keyResults: R.prop('key_result', partnerDetails),
     mandateMission: R.prop('mandate_and_mission', partnerDetails),
     partnerStatus: R.prop('partner_additional', partnerDetails),
+    vendorNumbers: R.prop('vendor_numbers', partnerDetails),
+    isLocked: R.prop('is_locked', partnerDetails),
   };
   return R.assoc(R.prop('id', partnerDetails), profileOverview, state);
 };

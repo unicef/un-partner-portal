@@ -119,8 +119,8 @@ class PartnerApplicationsUnsolicitedFilter extends Component {
     return (
       <form onSubmit={handleSubmit(this.onSearch)}>
         <Grid item xs={12} className={classes.filterContainer} >
-          <Grid container direction="row" >
-            <Grid item sm={4} xs={12} >
+          <Grid container direction="row">
+            <Grid item sm={4} xs={12}>
               <TextFieldForm
                 label={messages.labels.search}
                 placeholder={messages.labels.search}

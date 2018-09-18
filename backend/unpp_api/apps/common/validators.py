@@ -26,3 +26,25 @@ class MaxCurrentYearValidator(BaseValidator):
 
     def compare(self, a, b):
         return a > b
+
+
+class PastDateValidator(BaseValidator):
+
+    message = 'Ensure that given date is in the past.'
+
+    def __init__(self, limit_value=None, message=None):
+        super(PastDateValidator, self).__init__(limit_value=limit_value, message=message)
+
+    def compare(self, a, b):
+        return a > date.today()
+
+
+class FutureDateValidator(BaseValidator):
+
+    message = 'Ensure that given date is in the future.'
+
+    def __init__(self, limit_value=None, message=None):
+        super(FutureDateValidator, self).__init__(limit_value=limit_value, message=message)
+
+    def compare(self, a, b):
+        return a < date.today()

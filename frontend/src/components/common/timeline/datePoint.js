@@ -2,11 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import SvgIcon from 'material-ui/SvgIcon';
+import Tooltip from 'material-ui/Tooltip';
 import Typography from 'material-ui/Typography';
 import className from 'classnames';
 import { formatDateForPrint } from '../../../helpers/dates';
 
 const styleSheet = theme => ({
+  lightTooltip: {
+    background: theme.palette.common.white,
+    color: theme.palette.text.primary,
+    boxShadow: theme.shadows[2],
+    fontSize: 12,
+  },
+  title: {
+    display: 'flex',
+    flexDirection: 'column',
+    lineHeight: '15px',
+    padding: '5px 2px',
+    alignItems: 'center',
+  },
   container: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -36,7 +50,24 @@ const styleSheet = theme => ({
   center: {
     alignItems: 'center',
   },
-
+  bold: {
+    fontWeight: 500,
+  },
+  greenB: {
+    borderBottom: `4px solid ${theme.palette.dateColors.green}`,
+  },
+  redB: {
+    borderBottom: `4px solid ${theme.palette.dateColors.red}`,
+  },
+  blueB: {
+    borderBottom: `4px solid ${theme.palette.dateColors.blue}`,
+  },
+  darkB: {
+    borderBottom: `4px solid ${theme.palette.dateColors.dark}`,
+  },
+  orangeB: {
+    borderBottom: `4px solid ${theme.palette.dateColors.orange}`,
+  },
   green: {
     color: theme.palette.dateColors.green,
   },
@@ -49,6 +80,9 @@ const styleSheet = theme => ({
   dark: {
     color: theme.palette.dateColors.dark,
   },
+  orange: {
+    color: theme.palette.dateColors.orange,
+  },
 });
 
 const DatePoint = (props) => {
@@ -56,6 +90,7 @@ const DatePoint = (props) => {
     classes,
     label,
     date,
+    position,
     flexSize,
     align,
     bold,
@@ -78,11 +113,16 @@ const DatePoint = (props) => {
       [classes.fullWidth]: fullWidth,
     });
 
-  const fontType = bold ? 'body2' : 'body1';
+  const tooltipClass = className(
+    classes.lightTooltip,
+    classes[`${color}B`]);
+
+  const labelClass = className({ [classes.bold]: bold });
 
   let viewBox = '-4 -4 16 16';
-  if (align === 'left') viewBox = '0 -4 16 16';
-  else if (align === 'right') viewBox = '-8 -4 16 16';
+  if (align === 'left') viewBox = '0 -5 16 16';
+  else if (align === 'right') viewBox = '-5 -4 16 16';
+
   return (
     <div
       className={containerClass}
@@ -91,17 +131,23 @@ const DatePoint = (props) => {
       }}
     >
       <div className={mainClass}>
-        <Typography
-          type={fontType}
-          align={align}
-          className={classes.text}
+        <Tooltip
+          PopperProps={{
+            eventsEnabled: false,
+          }}
+          classes={{ tooltip: tooltipClass }}
+          id={`${label}-button`}
+          title={<div className={classes.title}>
+            <div className={labelClass}>{label}</div>
+            <div className={labelClass}>{formatDateForPrint(date) || ''}</div>
+          </div>}
+          placement={position}
+          open
         >
-          {formatDateForPrint(date)}
-        </Typography>
-        <SvgIcon className={classes.firstIcon} viewBox={viewBox}>
-          <circle cx="4" cy="4" r="4" />
-        </SvgIcon>
-        <Typography type={fontType} align={align} className={classes.text}>{label}</Typography>
+          <SvgIcon className={classes.firstIcon} viewBox={viewBox}>
+            <circle cx="5" cy="5" r="5" />
+          </SvgIcon>
+        </Tooltip>
       </div>
     </div>
   );
@@ -109,6 +155,7 @@ const DatePoint = (props) => {
 
 DatePoint.propTypes = {
   classes: PropTypes.object,
+  position: PropTypes.string,
   /**
    * label to be displayed below the point
    */
@@ -122,7 +169,7 @@ DatePoint.propTypes = {
    */
   flexSize: PropTypes.number,
   /**
-   * align of texts and dot, 
+   * align of texts and dot,
    */
   align: PropTypes.string,
   /**

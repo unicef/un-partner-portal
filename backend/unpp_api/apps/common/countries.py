@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-COUNTRIES_ALPHA2_CODE = (
+from operator import itemgetter
+
+COUNTRIES_ALPHA2_CODE = sorted((
     ("AF", "Afghanistan"),
     ("AL", "Albania"),
     ("DZ", "Algeria"),
@@ -224,7 +226,7 @@ COUNTRIES_ALPHA2_CODE = (
     ("CS", "Serbia & Montenegro"),
     ("VA", "Vatican City"),
     ("WF", "Wallis & Futuna Islands"),
-)
+), key=itemgetter(1))
 
 COUNTRIES_ALPHA2_CODE_DICT = dict(COUNTRIES_ALPHA2_CODE)
 

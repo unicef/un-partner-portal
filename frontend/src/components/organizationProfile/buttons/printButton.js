@@ -6,13 +6,15 @@ const messages = {
   print: 'Print',
 };
 
-const PrintButton = () => (
-  <IconWithTextButton
+const PrintButton = (props) => {
+  const { id } = props;
+
+  return (<IconWithTextButton
     icon={<Print />}
     text={messages.print}
-    onClick={window.print}
-  />
-);
+    onClick={() => window.open(`/api/partners/${id}/?export=pdf`, '_self')}
+  />);
+};
 
 
 export default PrintButton;

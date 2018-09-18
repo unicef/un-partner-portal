@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment-timezone';
 import store from '../../store';
 
 const host = '/api';
@@ -23,12 +24,15 @@ function getCookie(name) {
 function buildHeaders(authorize = false, extraHeaders = {}) {
   const token = store.getState().session.token;
   const partnerId = store.getState().session.partnerId;
+  const officeId = store.getState().session.officeId;
   let headers = {
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
+    'Client-Timezone-Name': moment.tz.guess(),
   };
   if (authorize) headers = { ...headers, Authorization: `token ${token}` };
   if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };
+  if (officeId) headers = { ...headers, 'Agency-Office-ID': officeId };
   return { ...headers, ...extraHeaders };
 }
 
@@ -60,6 +64,7 @@ function authorizedPost({ uri, params, body = {} }) {
     params,
     headers: buildHeaders(true, { 'X-CSRFToken': getCookie('csrftoken') }),
   };
+
   return axios.post(`${host}${uri}`, body, options)
     .then(response => response.data);
 }
@@ -121,6 +126,10 @@ export function getUserData() {
   return authorizedGet({ uri: '/accounts/me/' });
 }
 
+export const passwordReset = post.bind(null, '/rest-auth/password/reset/');
+
+export const passwordResetConfirm = post.bind(null, '/rest-auth/password/reset/confirm/');
+
 // Config
 export function getCountries() {
   return get('/config/countries');
@@ -155,6 +164,30 @@ export function patchCfei(body, id) {
   return authorizedPatch({ uri: `/projects/${id}/`, body });
 }
 
+export function publishCfei(id) {
+  return authorizedPost({ uri: `/projects/${id}/publish/` });
+}
+
+export function submitUcn(id) {
+  return authorizedPost({ uri: `/projects/applications/unsolicited/${id}/manage/` });
+}
+
+export function patchUcn(body, id) {
+  return authorizedPatch({ uri: `/projects/applications/unsolicited/${id}/manage/`, body });
+}
+
+export function deleteUcn(id) {
+  return authorizedDelete({ uri: `/projects/applications/unsolicited/${id}/manage/` });
+}
+
+export function deleteCfei(id) {
+  return authorizedDelete({ uri: `/projects/${id}/` });
+}
+
+export function sendCfei(id) {
+  return authorizedPost({ uri: `/projects/${id}/send-to-publish/` });
+}
+
 export function convertCnToDirectSelection(body, id) {
   return authorizedPost({ uri: `/projects/application/${id}/convert-unsolicited/`, body });
 }
@@ -181,6 +214,10 @@ export function getUnsolicitedCN(params, options) {
 
 export function patchPinnedCfei(body) {
   return authorizedPatch({ uri: '/projects/pins/', body });
+}
+
+export function postCompleteAssessment(id) {
+  return authorizedPost({ uri: `/projects/${id}/applications/complete-assessments/` });
 }
 
 export function getCfeiReviewSummary(id, options) {
@@ -298,6 +335,10 @@ export function getMembersList(id, params, options) {
   return authorizedGet({ uri: `/agencies/${id}/members`, params, options });
 }
 
+export function getPartnerMembersList(id, params, options) {
+  return authorizedGet({ uri: `/partners/${id}/members`, params, options });
+}
+
 export function getNotifications(params, options) {
   return authorizedGet({ uri: '/notifications', params, options });
 }
@@ -310,8 +351,12 @@ export function patchNotifications(body) {
   return authorizedPatch({ uri: '/notifications/', body });
 }
 
-export function getPartnerProfileConfig() {
-  return get('/config/partners/profile');
+export function getGlobalConfig() {
+  return get('/config/general/');
+}
+
+export function getOffices() {
+  return get('/manage/offices/');
 }
 
 export function getPartnerOrganizationProfiles(id, options) {
@@ -346,6 +391,25 @@ export function patchPartnerFlags(id, body, flagId) {
   return authorizedPatch({ uri: `/partners/${id}/flags/${flagId}/`, body });
 }
 
+export function postPartnerVendorId(body) {
+  return authorizedPost({ uri: '/externals/vendor-number/partner/', body });
+}
+
+export function deletePartnerVendorId(vendorId) {
+  return authorizedDelete({ uri: `/externals/vendor-number/partner/${vendorId}/` });
+}
+
+export function patchUserProfile(body) {
+  return authorizedPatch({ uri: '/accounts/me/profile/', body });
+}
+
+export function fetchPartnerUnData(agencyId, partnerId) {
+  return authorizedGet({ uri: `/externals/partner-details/${agencyId}/${partnerId}/` });
+}
+
+export function sendForDecision(id) {
+  return authorizedPost({ uri: `/projects/${id}/send-for-decision/` });
+}
 
 // Agencies
 export function getAgencyMembers(id, params = { page_size: 100 }, options) {
@@ -385,4 +449,71 @@ export function getPendingOffers(params, options) {
 
 export function getAdminOneLocations(countryCode, options) {
   return authorizedGet({ uri: '/common/admin-levels', params: countryCode, options });
+}
+
+// Reports
+
+export function getPartnerReports(params, options) {
+  return authorizedGet({ uri: '/reports/partners', params, options });
+}
+
+export function getProjectReports(params, options) {
+  return authorizedGet({ uri: '/reports/projects', params, options });
+}
+
+export function getVerificationsReports(params, options) {
+  return authorizedGet({ uri: '/reports/verifications-observations', params, options });
+}
+
+export function getPartnerProfileReports(params, options) {
+  return authorizedGet({ uri: '/reports/partners/profile/export/xlsx', params, options });
+}
+
+export function getPartnerContactReports(params, options) {
+  return authorizedGet({ uri: '/reports/partners/contact/export/xlsx', params, options });
+}
+
+export function getProjectDetailsReports(params, options) {
+  return authorizedGet({ uri: '/reports/projects/details/export/xlsx', params, options });
+}
+
+export function getPartnerVerificationReports(params, options) {
+  return authorizedGet({ uri: '/reports/verifications-observations/export/xlsx', params, options });
+}
+
+export function getPartnerMappingReports(params, options) {
+  return authorizedGet({ uri: '/reports/partners/mapping/export/xlsx', params, options });
+}
+
+export function getClarificationRequests(cfeId, params) {
+  return authorizedGet({ uri: `/projects/${cfeId}/questions`, params });
+}
+
+export function getClarificationAnswers(cfeiId, params) {
+  return authorizedGet({ uri: `/projects/${cfeiId}/answers/`, params });
+}
+
+export function postClarificationRequest(cfeiId, body) {
+  return authorizedPost({ uri: `/projects/${cfeiId}/questions/`, body });
+}
+
+export function postClarificationAnswer(cfeiId, body) {
+  return authorizedPost({ uri: `/projects/${cfeiId}/answers/`, body });
+}
+
+export function deleteClarificationAnswer(id) {
+  return authorizedDelete({ uri: `/projects/answers/${id}` });
+}
+
+// ID portal
+export function postNewUser(body) {
+  return authorizedPost({ uri: '/manage/user/', body });
+}
+
+export function patchUser(id, body) {
+  return authorizedPatch({ uri: `/manage/user/${id}/`, body });
+}
+
+export function getUsersList(params, options) {
+  return authorizedGet({ uri: '/manage/users/', params, options });
 }

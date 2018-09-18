@@ -31,13 +31,8 @@ class DeferredRotatingFileHandler(RotatingFileHandler):
 
 
 def get_countries_code_from_queryset(queryset):
-    from .serializers import CountryPointSerializer
+    from common.serializers import CountryPointSerializer
     return list(set(map(lambda x: x.get("country_code"), CountryPointSerializer(queryset, many=True).data)))
-
-
-def get_partners_name_from_queryset(queryset):
-    from partner.serializers import PartnerShortSerializer
-    return map(lambda x: x.get("legal_name"), PartnerShortSerializer(queryset, many=True).data)
 
 
 class Thumbnail(ImageSpec):
@@ -71,7 +66,7 @@ def confirm(prompt='Confirm', default=False):
         prompt = '%s [%s]|%s: ' % (prompt, 'n', 'y')
 
     while True:
-        ans = raw_input(prompt)
+        ans = input(prompt)
         if not ans:
             return default
         if ans not in ['y', 'Y', 'n', 'N']:

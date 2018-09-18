@@ -1,16 +1,14 @@
 
 import React, { Component } from 'react';
+import R from 'ramda';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Marker, InfoWindow } from 'google-maps-react';
-import Typography from 'material-ui/Typography';
-import SearchBox from '../../../../common/map/SearchBox';
+import Place from 'material-ui-icons/Place';
+import { Marker, Popup } from "react-mapbox-gl";
 import MapContainer from '../../../../common/map/MapContainer';
-import MapBounder from '../../../../common/map/MapBounder';
 import { errorToBeAdded } from '../../../../../reducers/errorReducer';
-
-const mapError = 'Mapping feature is not supported in this location';
-
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const geocodingClient = mbxGeocoding({ accessToken: process.env.MAP_BOX_KEY });
 /**
  * this component is controlled implementation of map.
  * To work, it needs to recieve focused country name, than it will center and zoom to this
@@ -29,19 +27,23 @@ const mapError = 'Mapping feature is not supported in this location';
  *   formatted_address
  * }
  */
+
+const messages = {
+  error: 'Location doesn\'t contains all required informations',
+}
+
 class LocationsMapBase extends Component {
   constructor() {
     super();
     this.state = {
       pos: null,
+      previousCountry: null,
       activeMarker: null,
-      showingInfoWindow: false,
       hoverMarker: null,
       activeMarkerNumber: null,
       activeLocation: null,
-      rebound: true,
     };
-    this.geocoder = new google.maps.Geocoder();
+    
     this.initMap = this.initMap.bind(this);
     this.mapClicked = this.mapClicked.bind(this);
     this.onMarkerOver = this.onMarkerOver.bind(this);
@@ -70,18 +72,13 @@ class LocationsMapBase extends Component {
     this.setState({
       activeLocation: null,
       activeMarker: null,
-      showingInfoWindow: false,
     });
   }
 
-  onMarkerOver(props, marker) {
-    if (!this.state.activeMarker || !this.state.showingInfoWindow || (this.state.activeMarker
-      && this.state.activeMarker.position.lat() !== marker.position.lat()
-      && this.state.activeMarker.position.lng() !== marker.position.lng())) {
+  onMarkerOver(lat, lon, admin) {
+    if (!this.state.activeLocation) {
       this.setState({
-        activeLocation: props.location,
-        activeMarker: marker,
-        showingInfoWindow: true,
+        activeLocation: { lat, lon, name: admin.name },
       });
     }
   }
@@ -89,113 +86,98 @@ class LocationsMapBase extends Component {
   initMap(country) {
     const { removeAllLocations } = this.props;
 
-    removeAllLocations();
-    this.geocoder.geocode({ address: country }, (results, status) => {
-      if (status === google.maps.GeocoderStatus.OK) {
+    if (this.state.previousCountry && this.state.previousCountry !== country && !this.props.readOnly) {
+      removeAllLocations();
+    }
+
+    geocodingClient.forwardGeocode({ query: country, limit: 1, })
+      .send()
+      .then(response => {
+        const match = response.body.features[0];
+
         this.setState({
-          pos: {
-            lat: results[0].geometry.location.lat(),
-            lng: results[0].geometry.location.lng(),
-          },
-          bounds: results[0].geometry.viewport,
-          rebound: true,
+          pos: match.center,
+          bounds: match.bbox,
         });
-      }
-    });
+      });
+
+    this.setState({ previousCountry: country });
   }
 
   clearBounds() {
     this.setState({ rebound: false });
   }
 
-  mapClicked(mapProps, map, clickEvent) {
-    const { readOnly, postError } = this.props;
+  mapClicked(arg, clickEvent) {
+    const { readOnly, postError, currentCountryCode, saveLocation } = this.props;
 
     if (!readOnly) {
-      const { currentCountryCode, saveLocation } = this.props;
-      this.geocoder.geocode({ location: clickEvent.latLng }, (results, status) => {
-        if (status === google.maps.GeocoderStatus.OK && results) {
-          let countryCode;
-          let loc = results.find(location =>
-            location.types.includes('administrative_area_level_1'));
-          if (loc === undefined) {
-            loc = results.find(location =>
-              location.types.includes('country'));
-            countryCode = loc.address_components[0].short_name;
+      geocodingClient.reverseGeocode({ query: [clickEvent.lngLat.lng, clickEvent.lngLat.lat], language: ['en'] })
+        .send()
+        .then(response => {
+          if (response.statusCode === 200) {
+            let region = R.filter(feature => feature.place_type[0] === 'region', response.body.features)[0];
+            let country = R.filter(feature => feature.place_type[0] === 'country', response.body.features)[0];
+
+            if (region && country && country.properties && currentCountryCode === country.properties.short_code.toUpperCase()) {
+              const newLocation = {
+                admin_level_1: {
+                  name: region.place_name,
+                  country_code: currentCountryCode
+                },
+                lat: clickEvent.lngLat.lat.toFixed(5),
+                lon: clickEvent.lngLat.lng.toFixed(5),
+              };
+              saveLocation(newLocation);
+            } else {
+              postError(messages.error);
+            }
           } else {
-            countryCode = loc.address_components[1].short_name;
+            postError(messages.error);
           }
-          if (countryCode !== currentCountryCode) return;
-          const newLocation = {
-            admin_level_1: {
-              name: loc.address_components[0].long_name,
-              country_code: countryCode },
-            lat: clickEvent.latLng.lat().toFixed(5),
-            lon: clickEvent.latLng.lng().toFixed(5),
-          };
-          saveLocation(newLocation);
-        } else if (status !== google.maps.GeocoderStatus.OK) {
-          postError(status);
-        }
-      });
+        });
     }
   }
 
-  removeMarker(markerProps) {
-    const { removeLocation } = this.props;
-    const { index } = markerProps;
+  removeMarker(index) {
+    const { removeLocation, readOnly } = this.props;
     this.setState({
-      showingInfoWindow: false,
+      activeLocation: null,
     });
-    removeLocation(index);
-  }
 
-  renderMarkers() {
-    const { locations } = this.props;
-
-    return locations.map(({ lat, lon, admin_level_1 }, index) => (
-      <Marker
-        key={`${lat}_${lon}`}
-        label=""
-        index={index}
-        location={admin_level_1.name}
-        onClick={this.removeMarker}
-        onMouseover={this.onMarkerOver}
-        onMouseout={this.onMarkerOut}
-        position={{ lat, lng: lon }}
-      />
-    ));
+    if (!readOnly) {
+      removeLocation(index);
+    }
   }
 
   render() {
-    const { showMap } = this.props;
+    const { showMap, locations } = this.props;
     const {
       pos,
       bounds,
-      rebound,
-      activeMarker,
-      showingInfoWindow,
       activeLocation,
     } = this.state;
+
     return (pos && showMap && <MapContainer
-      initialCenter={pos}
       center={pos}
-      streetViewControl={false}
-      mapTypeControl={false}
-      bounds
+      bounds={bounds}
       onClick={this.mapClicked}
     >
-      <MapBounder bounds={bounds} rebound={rebound} clearBounds={this.clearBounds} />
-      {this.renderMarkers()}
-      <InfoWindow
-        marker={activeMarker}
-        visible={showingInfoWindow}
-        text={activeLocation}
-      >
-        <Typography>{activeLocation}</Typography>
-      </InfoWindow>
-      <SearchBox />
-    </MapContainer >
+      {locations && locations.map(({ lat, lon, admin_level_1 }, index) => (
+        <Marker onClick={(event) => this.removeMarker(index)}
+          onMouseEnter={() => this.onMarkerOver(lat, lon, admin_level_1)}
+          onMouseLeave={this.onMarkerOut} coordinates={[lon, lat]} key={index} anchor="bottom">
+          <Place color="accent" />
+        </Marker>
+      ))}
+
+      {activeLocation
+        && <Popup
+          coordinates={[activeLocation.lon, activeLocation.lat]}
+          offset={{ 'bottom-left': [12, -38], 'bottom': [0, -38], 'bottom-right': [-12, -38] }}>
+          {activeLocation.name}
+        </Popup>}
+    </MapContainer>
     );
   }
 }
@@ -241,7 +223,7 @@ LocationsMapBase.propTypes = {
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   postError: error => dispatch(errorToBeAdded(
-    error, `pinNotAdded${ownProps.activeMarkercurrentCountryCode}`, mapError)),
+    error, `pinNotAdded${ownProps.activeMarkercurrentCountryCode}`, messages.error)),
 });
 
 

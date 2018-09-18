@@ -6,7 +6,7 @@ import TextFieldForm from '../../../forms/textFieldForm';
 
 const messages = {
   label: 'Justification',
-  placeholder: 'I decided to withdraw this selection because of the: ...',
+  placeholder: 'Provide justification of retraction',
 };
 
 const styleSheet = () => ({
@@ -14,7 +14,6 @@ const styleSheet = () => ({
     minWidth: 500,
   },
 });
-
 
 const WithdrawAward = (props) => {
   const { classes, handleSubmit } = props;
@@ -27,8 +26,10 @@ const WithdrawAward = (props) => {
         fieldName="withdraw_reason"
         textFieldProps={{
           multiline: true,
-          inputProps: {
-            maxLength: '5000',
+          InputProps: {
+            inputProps: {
+              maxLength: '5000',
+            },
           },
         }}
       />

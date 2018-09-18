@@ -1,48 +1,30 @@
-import logging
-
+from django.db import transaction
 from django.http import Http404
 
-from rest_framework import status as statuses
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.generics import RetrieveAPIView
-
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateAPIView
 
 from partner.models import Partner
 from sanctionslist.scans import sanctions_scan_partner
-from .serializers import (
-    RegisterSimpleAccountSerializer,
+from account.serializers import (
     PartnerRegistrationSerializer,
-    AgencyUserSerializer,
     PartnerUserSerializer,
+    UserProfileSerializer,
 )
+from agency.serializers import AgencyUserSerializer
 
-logger = logging.getLogger(__name__)
 
+class AccountRegisterAPIView(CreateAPIView):
 
-class AccountRegisterAPIView(APIView):
-
-    serializer_class = RegisterSimpleAccountSerializer
     permission_classes = (AllowAny, )
+    serializer_class = PartnerRegistrationSerializer
 
-    def post(self, request, *args, **kwargs):
-        serializer = PartnerRegistrationSerializer(data=self.request.data)
-
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
-
-        serializer.save()
-
-        partner_id = serializer.instance_json['partner']['id']
-        partner = Partner.objects.get(id=partner_id)
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        response = super(AccountRegisterAPIView, self).create(request, *args, **kwargs)
+        partner = Partner.objects.get(id=response.data['partner']['id'])
         sanctions_scan_partner(partner)
-
-        if partner.has_sanction_match:
-            partner.is_locked = True
-            partner.save()
-
-        return Response(serializer.instance_json, status=statuses.HTTP_201_CREATED)
+        return response
 
 
 class AccountCurrentUserRetrieveAPIView(RetrieveAPIView):
@@ -57,3 +39,12 @@ class AccountCurrentUserRetrieveAPIView(RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class UserProfileRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (IsAuthenticated, )
+    serializer_class = UserProfileSerializer
+
+    def get_object(self):
+        return self.request.user.profile

@@ -34,11 +34,13 @@ export const saveApplications = (action) => {
     id,
     deadline_date,
     applications_count,
+    displayID,
   }) => ({
     title,
     id,
     deadline_date,
     applications_count,
+    displayID,
   }));
   return { applications: newApplications, count };
 };

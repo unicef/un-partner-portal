@@ -7,7 +7,7 @@ import { getToday, dayDifference } from '../../helpers/dates';
 
 const styleSheet = theme => ({
   root: {
-    padding: `${theme.spacing.unit * 4}px ${theme.spacing.unit * 2}px`,
+    padding: `${theme.spacing.unit * 8}px ${theme.spacing.unit * 2}px`,
     width: '100%',
     height: '100%',
     position: 'relative',
@@ -40,6 +40,7 @@ class Timeline extends Component {
     const {
       classes,
       postedDate,
+      clarificationDate,
       deadlineDate,
       notificationDate,
       startDate } = this.props;
@@ -52,6 +53,15 @@ class Timeline extends Component {
             label="Posted"
             align="left"
             color="green"
+            position="top-start"
+          />
+          <DatePoint
+            date={clarificationDate}
+            label="Clarification Request Deadline"
+            align="center"
+            color="orange"
+            position="bottom-start"
+            flexSize={calcDistance(postedDate, startDate, clarificationDate)}
           />
           <DatePoint
             bold
@@ -59,13 +69,15 @@ class Timeline extends Component {
             label="Application Deadline"
             align="center"
             color="red"
-            flexSize={calcDistance(postedDate, startDate, deadlineDate)}
+            position="top-start"
+            flexSize={calcDistance(clarificationDate, startDate, deadlineDate)}
           />
           <DatePoint
             date={notificationDate}
             label="Notification of results"
             align="center"
             color="blue"
+            position="bottom-end"
             flexSize={calcDistance(deadlineDate, startDate, notificationDate)}
           />
           <DatePoint
@@ -73,6 +85,7 @@ class Timeline extends Component {
             label="Estimated start date"
             align="right"
             color="dark"
+            position="top-end"
             fullWidth
           />
         </div>
@@ -84,6 +97,7 @@ class Timeline extends Component {
 
 Timeline.propTypes = {
   classes: PropTypes.object,
+  clarificationDate: PropTypes.string,
   postedDate: PropTypes.string,
   deadlineDate: PropTypes.string,
   notificationDate: PropTypes.string,

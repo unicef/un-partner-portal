@@ -12,11 +12,10 @@ import {
   selectCfeiDetails,
   isCfeiCompleted,
   isUserACreator,
+  isCfeiDeadlinePassed,
 } from '../../../../../../store';
 import { loadReviewers } from '../../../../../../reducers/cfeiReviewers';
 import SingleReviewer from './singleReviewer';
-import withConditionalDisplay from '../../../../../common/hoc/withConditionalDisplay';
-import { isUserNotAgencyReader } from '../../../../../../helpers/authHelpers';
 
 const messages = {
   title: 'Reviewers',
@@ -58,14 +57,16 @@ class ReviewersSummary extends Component {
 
 
   render() {
-    const { loading } = this.props;
+    const { deadlinePassed, loading } = this.props;
     return (
-      <HeaderList
-        loading={loading}
-        header={<Typography type="headline" >{messages.title}</Typography>}
-      >
-        {this.content()}
-      </HeaderList>
+      deadlinePassed
+        ? <HeaderList
+          loading={loading}
+          header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}
+        >
+          {this.content()}
+        </HeaderList>
+        : null
     );
   }
 }
@@ -77,6 +78,7 @@ ReviewersSummary.propTypes = {
   getReviewers: PropTypes.func,
   loading: PropTypes.bool,
   cfeiCompleted: PropTypes.bool,
+  deadlinePassed: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -88,6 +90,7 @@ const mapStateToProps = (state, ownProps) => {
     cfeiReviewers: cfei ? cfei.reviewers : [],
     loading: state.cfeiReviewers.status.loading,
     cfeiCompleted: isCfeiCompleted(state, ownProps.id),
+    deadlinePassed: isCfeiDeadlinePassed(state, ownProps.id),
   };
 };
 
@@ -95,6 +98,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   getReviewers: () => dispatch(loadReviewers(ownProps.id)),
 });
 
-export default withConditionalDisplay([isUserNotAgencyReader])(
-  connect(mapStateToProps, mapDispatchToProps)(ReviewersSummary),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(ReviewersSummary);

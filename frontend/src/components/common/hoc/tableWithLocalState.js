@@ -37,10 +37,15 @@ class TableWithLocalState extends Component {
 
   changeSorting(sorting) {
     const { loadingFunction } = this.props;
-    const direction = sorting[0].direction === 'desc' ? '-' : '';
-    const newState = R.merge(this.state, { ordering: direction + sorting[0].columnName });
-    loadingFunction(newState);
-    this.setState({ sorting, ...newState });
+
+    if (sorting[0].columnName !== 'country_code' && sorting[0].columnName !== 'status') {
+      const order = sorting[0].columnName === 'specializations' ? 'specializations__name' : sorting[0].columnName;
+
+      const direction = sorting[0].direction === 'desc' ? '-' : '';
+      const newState = R.merge(this.state, { ordering: direction + order });
+      loadingFunction(newState);
+      this.setState({ sorting, ...newState });
+    }
   }
 
   render() {
@@ -60,8 +65,8 @@ class TableWithLocalState extends Component {
 
 TableWithLocalState.propTypes = {
   component: PropTypes.oneOfType([
-      PropTypes.element,
-      PropTypes.func,
+    PropTypes.element,
+    PropTypes.func,
   ]).isRequired,
   itemsCount: PropTypes.number,
   loadingFunction: PropTypes.func,

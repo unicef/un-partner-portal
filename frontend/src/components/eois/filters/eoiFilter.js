@@ -16,7 +16,9 @@ import Agencies from '../../forms/fields/projectFields/agencies';
 import AdminOneLocation from '../../forms/fields/projectFields/adminOneLocations';
 import CountryField from '../../forms/fields/projectFields/locationField/countryField';
 import { selectMappedSpecializations, selectNormalizedCountries } from '../../../store';
+import FocalPoints from '../../forms/fields/projectFields/agencyMembersFields/focalPoints';
 import resetChanges from './eoiHelper';
+import { STATUS_VAL } from './eoiDsFilter';
 
 const messages = {
   choose: 'Choose',
@@ -30,10 +32,15 @@ const messages = {
     fromDate: 'From date',
     toDate: 'To date',
     date: 'Date posted - choose date range',
+    cfeiID: 'CFEI ID',
+    focalPoint: 'CFEI Focal Point',
+    select: 'Select',
   },
   clear: 'clear',
   submit: 'submit',
 };
+
+const FORM_NAME = 'eoiFilter';
 
 const styleSheet = theme => ({
   filterContainer: {
@@ -45,17 +52,6 @@ const styleSheet = theme => ({
     justifyContent: 'flex-end',
   },
 });
-
-export const STATUS_VAL = [
-  {
-    value: true,
-    label: 'Active',
-  },
-  {
-    value: false,
-    label: 'Finalized',
-  },
-];
 
 class EoiFilter extends Component {
   constructor(props) {
@@ -72,13 +68,11 @@ class EoiFilter extends Component {
     const { pathName, query, agencyId } = this.props;
 
     const agency = this.props.query.agency ? this.props.query.agency : agencyId;
-    const active = !!(this.props.query.active === 'true' || (typeof (this.props.query.active) === 'boolean' && this.props.query.active) || !this.props.query.active);
-    const ordering = active ? 'deadline_date' : '-completed_date';
 
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { active, ordering, agency },
+        { agency },
       ),
     });
   }
@@ -86,15 +80,12 @@ class EoiFilter extends Component {
   componentWillReceiveProps(nextProps) {
     if (R.isEmpty(nextProps.query)) {
       const { pathname } = nextProps.location;
-
       const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
-      const ordering = this.props.query.active === 'true' ? 'deadline_date' : '-completed_date';
-      const active = this.props.query.active ? this.props.query.active : true;
 
       history.push({
         pathname,
         query: R.merge(this.props.query,
-          { active, ordering, agency: agencyQ },
+          { agency: agencyQ },
         ),
       });
     }
@@ -104,23 +95,23 @@ class EoiFilter extends Component {
     const { pathName, query } = this.props;
 
     const { title, agency, country_code, specializations,
-      posted_from_date, posted_to_date, active, locations } = values;
+      posted_from_date, posted_to_date, status, locations, displayID, focal_points } = values;
 
     const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
-    const ordering = active === 'true' ? 'deadline_date' : '-completed_date';
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         page: 1,
         title,
+        displayID,
         agency: agencyQ,
-        ordering,
-        active,
+        status,
         country_code,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         posted_from_date,
         posted_to_date,
         locations,
+        focal_points,
       }),
     });
   }
@@ -130,10 +121,12 @@ class EoiFilter extends Component {
 
     const { pathName, agencyId } = this.props;
 
+    this._focalPoints.getWrappedInstance().reset();
+
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { active: true, ordering: 'deadline_date', agency: agencyId },
+        { agency: agencyId },
       ),
     });
   }
@@ -163,7 +156,7 @@ class EoiFilter extends Component {
             <Grid item sm={4} xs={12}>
               <AdminOneLocation
                 fieldName="locations"
-                formName="tableFilter"
+                formName={FORM_NAME}
                 observeFieldName="country_code"
                 label={messages.labels.location}
                 optional
@@ -182,11 +175,10 @@ class EoiFilter extends Component {
                 optional
               />
             </Grid>
-            <Grid item sm={4} xs={12}>
-              <RadioForm
-                fieldName="active"
-                label={messages.labels.status}
-                values={STATUS_VAL}
+            <Grid item sm={4} xs={12} >
+              <TextFieldForm
+                label={messages.labels.cfeiID}
+                fieldName="displayID"
                 optional
               />
             </Grid>
@@ -200,19 +192,37 @@ class EoiFilter extends Component {
             </Grid>
           </Grid>
           <FormControl fullWidth>
-            <FormLabel>{messages.labels.date}</FormLabel>
+            <FormLabel style={{ marginTop: '8px' }}>{messages.labels.date}</FormLabel>
             <Grid container direction="row" >
-              <Grid item sm={3} xs={12} >
+              <Grid item sm={2} xs={12} >
                 <DatePickerForm
                   placeholder={messages.labels.fromDate}
                   fieldName="posted_from_date"
                   optional
                 />
               </Grid>
-              <Grid item sm={3} xs={12} >
+              <Grid item sm={2} xs={12} >
                 <DatePickerForm
                   placeholder={messages.labels.toDate}
                   fieldName="posted_to_date"
+                  optional
+                />
+              </Grid>
+              <Grid item style={{ marginTop: '-18px' }} sm={4} xs={12} >
+                <FocalPoints
+                  label={messages.labels.focalPoint}
+                  placeholder={messages.labels.select}
+                  ref={field => this._focalPoints = field}
+                  formName={FORM_NAME}
+                  fieldName="focal_points"
+                  optional
+                />
+              </Grid>
+              <Grid item style={{ marginTop: '-18px' }} sm={4} xs={12}>
+                <RadioForm
+                  fieldName="status"
+                  label={messages.labels.status}
+                  values={STATUS_VAL}
                   optional
                 />
               </Grid>
@@ -253,7 +263,7 @@ EoiFilter.propTypes = {
 };
 
 const formEoiFilter = reduxForm({
-  form: 'tableFilter',
+  form: FORM_NAME,
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
   enableReinitialize: true,
@@ -263,15 +273,17 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { title } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { agency } = {} } = ownProps.location;
-  const { query: { active } = {} } = ownProps.location;
+  const { query: { status } = {} } = ownProps.location;
   const { query: { locations } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
   const { query: { posted_from_date } = {} } = ownProps.location;
   const { query: { posted_to_date } = {} } = ownProps.location;
+  const { query: { displayID } = {} } = ownProps.location;
+  const { query: { focal_points } = {} } = ownProps.location;
   const agencyQ = Number(agency);
 
   const specializationsQ = specializations &&
-      R.map(Number, specializations.split(','));
+    R.map(Number, specializations.split(','));
 
   return {
     countries: selectNormalizedCountries(state),
@@ -281,14 +293,16 @@ const mapStateToProps = (state, ownProps) => {
     query: ownProps.location.query,
     countryCode: country_code,
     initialValues: {
+      displayID,
       title,
       country_code,
       agency: agencyQ,
-      active,
+      status,
       locations,
       specializations: specializationsQ,
       posted_from_date,
       posted_to_date,
+      focal_points,
     },
   };
 };

@@ -8,7 +8,7 @@ const messages = {
 };
 
 const deactivateProfile = (id) => {
-  console.log(`Deactivate profile: ${id}`);
+
 };
 
 const DeactivateProfileButton = (props) => {

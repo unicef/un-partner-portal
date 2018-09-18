@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import { withRouter } from 'react-router';
+import { loadVerificationsList } from '../../../../../reducers/partnerVerificationsList';
 import ControlledModal from '../../../../common/modals/controlledModal';
 import { updatePartnerVerifications } from '../../../../../reducers/partnerVerifications';
+import AlertDialog from '../../../../common/alertDialog';
 import AddVerificationForm from './addVerificationForm';
 import VerificationConfirmation from './verificationConfirmation';
 
@@ -13,6 +15,8 @@ const messages = {
   header: 'You are verifying Organization Profile of',
   save: 'verify',
   confirmation: 'Confirmation',
+  alertTitle: 'Confirm verification',
+  confirm: 'Are you sure you want to send this verification?',
 };
 
 
@@ -21,6 +25,7 @@ class AddVerificationModal extends Component {
     super(props);
     this.state = {
       submitting: false,
+      confirmAlert: false,
       verification: null,
       error: null };
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -28,13 +33,21 @@ class AddVerificationModal extends Component {
   }
 
   onFormSubmit(values) {
+    this.setState({ values, confirmAlert: true });
+  }
+
+  submitConfirmation() {
+    const { query } = this.props;
+
     this.setState({ submitting: true });
-    this.props.addVerification(values).then((verification) => {
-      this.setState({ verification });
-    },
-    ).catch((error) => {
-      this.setState({ error });
-    });
+    this.props.addVerification(this.state.values)
+      .then((verification) => {
+        this.setState({ verification });
+        this.props.getVerifications(query);
+      },
+      ).catch((error) => {
+        this.setState({ error });
+      });
   }
 
   closeConfirmation() {
@@ -76,6 +89,14 @@ class AddVerificationModal extends Component {
             error={error}
           />}
         />
+        <AlertDialog
+          trigger={!!this.state.confirmAlert}
+          title={messages.alertTitle}
+          text={messages.confirm}
+          showCancel
+          handleClick={() => this.submitConfirmation()}
+          handleDialogClose={() => this.setState({ confirmAlert: false })}
+        />
       </div >
     );
   }
@@ -87,6 +108,8 @@ AddVerificationModal.propTypes = {
   addVerification: PropTypes.func,
   handleDialogClose: PropTypes.func,
   partnerName: PropTypes.string,
+  getVerifications: PropTypes.func,
+  query: PropTypes.object,
 };
 
 
@@ -94,6 +117,7 @@ const mapStateToProps = (state, ownProps) => {
   const partnerName = state.agencyPartnerProfile.data[ownProps.params.id] ? state.agencyPartnerProfile.data[ownProps.params.id].name : '';
   return {
     partnerName,
+    query: ownProps.location.query,
   };
 };
 
@@ -103,6 +127,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     addVerification: body => dispatch(updatePartnerVerifications(
       partnerId, body)),
     submit: () => dispatch(submit('addVerification')),
+    getVerifications: params => dispatch(loadVerificationsList(ownProps.params.id, params)),
   };
 };
 

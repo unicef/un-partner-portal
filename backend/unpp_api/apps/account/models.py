@@ -1,11 +1,18 @@
 from __future__ import unicode_literals
 
+import random
+import string
+
+from cached_property import threaded_cached_property
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
 
 from model_utils.models import TimeStampedModel
+
+from common.consts import NOTIFICATION_FREQUENCY_CHOICES
+from common.database_fields import FixedTextField
 
 
 class UserManager(BaseUserManager):
@@ -58,13 +65,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=True,
         help_text=(
             'Designates whether this user should be treated as active. '
-            'Unselect this instead of deleting accounts.'
+            'Deselect this instead of deleting accounts.'
         ),
     )
 
     date_joined = models.DateTimeField(auto_now_add=True)
-
-    __partner_ids = None
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -82,7 +87,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.fullname
 
     def __str__(self):
-        return "[{}] {}".format(self.email, self.get_fullname())
+        return "{} ({})".format(self.get_fullname(), self.email)
 
     @property
     def is_agency_user(self):
@@ -96,33 +101,39 @@ class User(AbstractBaseUser, PermissionsMixin):
     def member(self):
         return self.partner_members.first() if self.is_partner_user else self.agency_members.first()
 
-    @property
-    def is_account_locked(self):
-        from partner.models import Partner
-        # If associated w/ any partners accounts who are locked
-        if self.is_partner_user:
-            partner_ids = self.get_partner_ids_i_can_access()
-            return Partner.objects.filter(id__in=partner_ids, is_locked=True).exists()
-        return False
+    @threaded_cached_property
+    def agency(self):
+        from agency.models import Agency
+        agencies = Agency.objects.filter(agency_offices__agency_members__user=self).distinct()
+        if len(agencies) > 1:
+            raise Exception('User belongs to more than 1 agency!')
+        return agencies[0] if agencies else None
 
-    def get_agency(self):
-        if self.is_agency_user:
-            return self.agency_members.first().office.agency
+    @threaded_cached_property
+    def partner_ids(self):
+        partner_members = self.partner_members.exclude(partner__is_locked=True)
+        partner_ids = []
+        for partner_member in partner_members:
+            partner_ids.append(partner_member.partner.id)
+            if partner_member.partner.is_hq:
+                partner_ids.extend(partner_member.partner.country_profiles.values_list('id', flat=True))
+
+        return partner_ids
 
     def get_partner_ids_i_can_access(self):
-        # Returns country partners if member of HQ (since no db relation there)
-        if self.__partner_ids is not None:
-            return self.__partner_ids
+        return self.partner_ids
 
-        partner_members = self.partner_members.all()
-        self.__partner_ids = []
-        for partner_member in partner_members:
-            self.__partner_ids.append(partner_member.partner.id)
-            if partner_member.partner.is_hq:
-                self.__partner_ids.extend(
-                    [p.id for p in partner_member.partner.country_profiles])
+    @threaded_cached_property
+    def status(self):
+        if not self.is_active:
+            return 'Deactivated'
+        elif not self.last_login:
+            return 'Invited'
+        else:
+            return 'Active'
 
-        return self.__partner_ids
+    def set_random_password(self):
+        self.set_password(''.join(random.choices(string.printable, k=256)))
 
 
 class UserProfile(TimeStampedModel):
@@ -133,6 +144,10 @@ class UserProfile(TimeStampedModel):
         account.User (OneToOne): "user"
     """
     user = models.OneToOneField(User, related_name="profile")
+    notification_frequency = FixedTextField(
+        choices=NOTIFICATION_FREQUENCY_CHOICES, null=True, default=NOTIFICATION_FREQUENCY_CHOICES.daily
+    )
+    accepted_tos = models.BooleanField(default=False)
 
     def __str__(self):
         return "[{}] {}".format(self.user.email, self.user.get_fullname())

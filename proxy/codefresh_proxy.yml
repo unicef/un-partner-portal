@@ -8,17 +8,3 @@ steps:
         dockerfile: Dockerfile
         working_directory: ${{main_clone}}/proxy
         tag: ${{CF_BRANCH}}
-            
-    push_to_hub:
-        type: push
-        title: Pushing proxy image to docker hub
-        candidate: ${{build_proxy}}
-        registry: unicef-dockerhub
-        tags: 
-            - ${{CF_BRANCH}}
-            - latest
-        when:
-            branch:
-                only: 
-                    - develop
-                    - master

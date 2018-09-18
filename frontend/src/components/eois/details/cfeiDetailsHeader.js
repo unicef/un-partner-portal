@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -16,13 +17,13 @@ import {
   isUserACreator,
   isUserAFocalPoint,
 } from '../../../store';
-import { loadCfei, loadUnsolicitedCfei } from '../../../reducers/cfeiDetails';
+import { loadCfei, loadUnsolicitedCfei, isCfeiCompleted } from '../../../reducers/cfeiDetails';
 import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
 import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
-import { ROLES, PROJECT_TYPES, PROJECT_STATUSES } from '../../../helpers/constants';
+import { ROLES, PROJECT_TYPES, DETAILS_ITEMS } from '../../../helpers/constants';
 import PaddedContent from '../../common/paddedContent';
 import MainContentWrapper from '../../common/mainContentWrapper';
-import { isUserAgencyReader, isUserAgencyEditor } from '../../../helpers/authHelpers';
+import { checkPermission, isRoleOffice, AGENCY_ROLES, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
   noCfei: 'Sorry but this project doesn\'t exist',
@@ -36,10 +37,11 @@ class CfeiHeader extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.cfeiTabs = this.cfeiTabs.bind(this);
-    this.filterTaba = this.filterTabs.bind(this);
+    this.filterTabs = this.filterTabs.bind(this);
+    this.hasPermissionToViewApplications = this.hasPermissionToViewApplications.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { role, type, loadCfeiDetails, loadProjectApplication, loadUCN } = this.props;
     if (role === ROLES.PARTNER) loadProjectApplication();
     if (type === PROJECT_TYPES.UNSOLICITED) loadUCN();
@@ -50,13 +52,31 @@ class CfeiHeader extends Component {
     this.props.uploadCnClearState();
   }
 
+  hasPermissionToViewPreApplications(hasActionPermission) {
+    const { isAdvEd, isPAM, isBasEd, isMFT, isCreator, isFocalPoint, isReviewer } = this.props;
+
+    return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint || isReviewer))
+    || (hasActionPermission && isBasEd && (isCreator || isReviewer))
+    || (hasActionPermission && isMFT && isFocalPoint)
+    || (hasActionPermission && isPAM && isCreator));
+  }
+
+  hasPermissionToViewApplications(hasActionPermission) {
+    const { isAdvEd, isPAM, isBasEd, isMFT, isCreator, isFocalPoint } = this.props;
+
+    return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
+    || (hasActionPermission && isBasEd && (isCreator))
+    || (hasActionPermission && isMFT && isFocalPoint)
+    || (hasActionPermission && isPAM && isCreator));
+  }
+
   updatePath() {
     const { params: { type, id }, location } = this.props;
     const tabsToRender = this.filterTabs();
     const tabIndex = tabsToRender.findIndex(tab => location.match(`^/cfei/${type}/${id}/${tab.path}`));
     if (tabIndex === -1) {
       // TODO: do real 404
-      history.push('/');
+      // history.push('/');
     }
     return tabIndex;
   }
@@ -70,20 +90,48 @@ class CfeiHeader extends Component {
   filterTabs() {
     const { tabs,
       role,
-      isOwner,
-      isReaderEditor,
-      status,
-      isReviewer, params: { type } } = this.props;
+      isCompleted,
+      hasReviewPermission,
+      hasViewAllPermission,
+      hasViewWinnerPermission,
+      hasViewApplicationsPermission,
+      hasRequestsViewPermission,
+      params: { type } } = this.props;
+
     let tabsToRender = tabs;
-    if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
-      tabsToRender = tabsToRender.filter(({ path }) => {
-        if ((['applications', 'preselected'].includes(path) && isReaderEditor && !isReviewer && !isOwner)
-        || (path === 'results' && isReaderEditor && status !== PROJECT_STATUSES.COM && !isReviewer && !isOwner)) {
-          return false;
-        }
-        return true;
-      });
+
+    if (role === ROLES.PARTNER && type === PROJECT_TYPES.UNSOLICITED) {
+      tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.FEEDBACK, tabsToRender);
     }
+
+    if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN) {
+      if (!this.hasPermissionToViewApplications(hasRequestsViewPermission)) {
+        tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.REQUESTS, tabsToRender);
+      }
+    }
+
+    if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && !isCompleted) {
+      if (!this.hasPermissionToViewApplications(hasViewApplicationsPermission)) {
+        tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.APPLICATIONS, tabsToRender);
+      }
+
+      if (!this.hasPermissionToViewPreApplications(hasReviewPermission)) {
+        tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.PRESELECTED, tabsToRender);
+      }
+    } else if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && isCompleted) {
+      if (!this.hasPermissionToViewApplications(hasViewApplicationsPermission)) {
+        tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.APPLICATIONS, tabsToRender);
+      }
+
+      if (!this.hasPermissionToViewPreApplications(hasReviewPermission)) {
+        tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.PRESELECTED, tabsToRender);
+      }
+
+      if (!hasViewAllPermission || !hasViewWinnerPermission) {
+        tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.RESULTS, tabsToRender);
+      }
+    }
+
     return tabsToRender;
   }
 
@@ -143,9 +191,10 @@ class CfeiHeader extends Component {
     } = this.props;
     const index = this.updatePath();
     return (
-      <Loader loading={loading}>
-        {loading ? null : this.renderContent(index)}
-      </Loader>
+      <React.Fragment>
+        <Loader fullscreen loading={loading} />
+        {this.renderContent(index)}
+      </React.Fragment>
     );
   }
 }
@@ -167,11 +216,20 @@ CfeiHeader.propTypes = {
     PropTypes.bool,
   ]),
   type: PropTypes.string,
+  hasViewApplicationsPermission: PropTypes.bool.isRequired,
+  hasViewAllPermission: PropTypes.bool.isRequired,
+  hasViewWinnerPermission: PropTypes.bool.isRequired,
+  hasReviewPermission: PropTypes.bool.isRequired,
+  hasRequestsViewPermission: PropTypes.bool.isRequired,
   loadUCN: PropTypes.func,
-  isReaderEditor: PropTypes.bool,
+  isFocalPoint: PropTypes.bool,
+  isCreator: PropTypes.bool,
   isReviewer: PropTypes.bool,
-  status: PropTypes.string,
-  isOwner: PropTypes.bool,
+  isAdvEd: PropTypes.bool,
+  isMFT: PropTypes.bool,
+  isPAM: PropTypes.bool,
+  isBasEd: PropTypes.bool,
+  isCompleted: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -181,13 +239,22 @@ const mapStateToProps = (state, ownProps) => ({
   title: selectCfeiTitle(state, ownProps.params.id),
   type: ownProps.params.type,
   loading: state.cfeiDetails.status.loading,
+  hasReviewPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_REVIEW_APPLICATIONS, state),
+  hasViewApplicationsPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_VIEW_APPLICATIONS, state),
+  hasViewAllPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_FINALIZED_VIEW_ALL_INFO, state),
+  hasViewWinnerPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_FINALIZED_VIEW_WINNER_AND_CN, state),
+  hasRequestsViewPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS, state),
   cnFile: state.conceptNote.cnFile,
   error: state.cfeiDetails.status.error,
-  isReaderEditor: isUserAgencyReader(state) || isUserAgencyEditor(state),
   status: selectCfeiStatus(state, ownProps.params.id),
   isReviewer: isUserAReviewer(state, ownProps.params.id),
-  isOwner: isUserACreator(state, ownProps.params.id)
-    || isUserAFocalPoint(state, ownProps.params.id),
+  isCreator: isUserACreator(state, ownProps.params.id),
+  isFocalPoint: isUserAFocalPoint(state, ownProps.params.id),
+  isAdvEd: isRoleOffice(AGENCY_ROLES.EDITOR_ADVANCED, state),
+  isMFT: isRoleOffice(AGENCY_ROLES.MFT_USER, state),
+  isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),
+  isBasEd: isRoleOffice(AGENCY_ROLES.EDITOR_BASIC, state),
+  isCompleted: isCfeiCompleted(state, ownProps.params.id),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

@@ -7,60 +7,53 @@ import Typography from 'material-ui/Typography';
 import HeaderList from '../../../../common/list/headerList';
 import PaddedContent from '../../../../common/paddedContent';
 import SpreadContent from '../../../../common/spreadContent';
-import PartnerOverviewFlagMenu from './partnerOverviewFlagMenu';
-import { isUserAgencyReader } from '../../../../../helpers/authHelpers';
-import FlagSummaryButton from '../../buttons/viewFlagsSummaryButton';
 import FlaggingStatus from '../../common/flaggingStatus';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../../../helpers/permissions';
 
 const messages = {
-  flagStatus: 'Flag status',
-  updated: 'Last updated: ',
-  none: 'None',
+  flagStatus: 'Observations',
+  potentialMatch: 'Potential Match',
+  onSecurityList: 'on the UN Security Council Sanctions List',
 };
 
-const flags = (displayMenu, flagItems = {}) => (
+const flags = (flagItems = {}, hasSanctionMatch) => (
   <PaddedContent>
     <SpreadContent>
       <FlaggingStatus flags={flagItems} noFlagText />
-      {(flagItems.yellow > 0 || flagItems.red > 0 || flagItems.invalid > 0)
-        && displayMenu
-        && <FlagSummaryButton flagItems={flagItems} />}
     </SpreadContent>
+
+    {hasSanctionMatch && <div style={{ paddingTop: '10px' }}>
+      <Typography type="body2">{messages.potentialMatch}</Typography>
+      <Typography type="caption">{messages.onSecurityList}</Typography>
+    </div>}
   </PaddedContent>
 );
 
-const flagHeader = displayMenu => (
+const flagHeader = () => (
   <Grid container alignItems="center" justify="space-between" direction="row">
-    <Grid item xs={10}>
+    <Grid item xs={12}>
       <Typography type="title" >{messages.flagStatus}</Typography>
-    </Grid>
-    <Grid item xs={2}>
-      {displayMenu && <PartnerOverviewFlagMenu />}
     </Grid>
   </Grid>);
 
 const PartnerOverviewFlag = (props) => {
-  const { partner, displayMenu } = props;
+  const { partner, hasPermissionViewFlagCount } = props;
   const flagItems = R.path(['partnerStatus', 'flagging_status'], partner);
-  return (
-    <div>
-      <HeaderList
-        header={flagHeader(displayMenu, flagItems)}
-      >
-        {flags(displayMenu, flagItems)}
-      </HeaderList>
-    </div>);
-};
+  const hasSanctionMatch = R.path(['partnerStatus', 'has_potential_sanction_match'], partner);
 
+  return (hasPermissionViewFlagCount && <HeaderList header={flagHeader(flagItems)}>
+    {flags(flagItems, hasSanctionMatch)}
+  </HeaderList>);
+};
 
 PartnerOverviewFlag.propTypes = {
   partner: PropTypes.object.isRequired,
-  displayMenu: PropTypes.bool,
+  hasPermissionViewFlagCount: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
-  displayMenu: !isUserAgencyReader(state),
+  hasPermissionViewFlagCount:
+    checkPermission(AGENCY_PERMISSIONS.VIEW_PROFILE_OBSERVATION_FLAG_COUNT, state),
 });
-
 
 export default connect(mapStateToProps)(PartnerOverviewFlag);

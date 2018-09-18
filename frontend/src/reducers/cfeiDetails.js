@@ -75,15 +75,38 @@ const mapLocations = R.map(location =>
   }),
 );
 
+const editMapLocations = R.map(location =>
+  ({
+    country: location.admin_level_1.country_code,
+    locations: [location],
+  }),
+);
+
+const mergeLocations = (k, l, r) =>
+  (k === 'locations' ? R.concat(l, r) : r);
+
+const sortLocations = locations => R.sortBy(R.path(['admin_level_1', 'country_code']), locations);
+
+
 const normalizeLocations = R.compose(
   R.map(R.reduce(R.mergeDeepWithKey(mergeCountries), {})),
   R.groupWith(R.eqProps('country')),
   mapLocations,
+  sortLocations,
+);
+
+const normalizeEditLocations = R.compose(
+  R.map(R.reduce(R.mergeDeepWithKey(mergeLocations), {})),
+  R.groupWith(R.eqProps('country')),
+  editMapLocations,
+  sortLocations,
 );
 
 const saveCfei = (state, action) => {
   let cfei = normalizeSingleCfei(action.cfei);
-  cfei = R.assoc('locations', normalizeLocations(cfei.locations), cfei);
+  const cfeiLocations = R.assoc('locations_edit', normalizeEditLocations(cfei.locations), cfei);
+  cfei = R.assoc('locations', normalizeLocations(cfei.locations), cfeiLocations);
+  
   return R.assoc(cfei.id, cfei, state);
 };
 
@@ -94,15 +117,19 @@ const saveUCN = (state, action) => {
     id: ucn.id,
     reviewers: [],
     focal_points: [],
-    partner_id: ucn.partner.id,
-    partner_name: ucn.partner.legal_name,
-    display_type: ucn.partner.display_type,
+    partner_id: R.path(['partner', 'id'], ucn),
+    partner_name: R.path(['partner', 'legal_name'], ucn),
+    display_type: R.path(['partner', 'display_type'], ucn),
     title: R.path(['proposal_of_eoi_details', 'title'], ucn),
     locations: normalizeLocations(ucn.locations_proposal_of_eoi),
+    locations_edit: normalizeEditLocations(ucn.locations_proposal_of_eoi),
     specializations: R.path(['proposal_of_eoi_details', 'specializations'], ucn),
     agency: R.path(['agency', 'name'], ucn),
+    agency_id: R.path(['agency', 'id'], ucn),
     cn: ucn.cn,
     eoiConverted: ucn.eoi_converted,
+    status: ucn.application_status,
+    displayStatus: ucn.application_status_display,
   };
   return R.assoc(ucn.id, normalizeSingleCfei(newUCN), state);
 };
@@ -122,14 +149,24 @@ export function selectCfeiStatus(state, id) {
   return status;
 }
 
+export function selectCfeiDisplayStatus(state, id) {
+  const { [id]: { displayStatus = null } = {} } = state;
+  return displayStatus;
+}
+
 export function selectCfeiConverted(state, id) {
   const { [id]: { eoiConverted = null } = {} } = state;
   return eoiConverted;
 }
 
-export function selectCfeiJustification(state, id) {
+export function selectCfeiCompletedReason(state, id) {
   const { [id]: { completed_reason = null } = {} } = state;
   return completed_reason;
+}
+
+export function selectCfeiCompletedReasonDisplay(state, id) {
+  const { [id]: { completed_reason_display = null } = {} } = state;
+  return completed_reason_display;
 }
 
 export function isCfeiCompleted(state, id) {
@@ -137,9 +174,39 @@ export function isCfeiCompleted(state, id) {
   return !!completed_reason;
 }
 
+export function isUserFinishedReview(state, id) {
+  const { [id]: { current_user_finished_reviews = null } = {} } = state;
+  return current_user_finished_reviews;
+}
+
+export function isUserCompletedAssessment(state, id) {
+  const { [id]: { current_user_marked_reviews_completed = null } = {} } = state;
+  return current_user_marked_reviews_completed;
+}
+
+export function isCfeiDeadlinePassed(state, id) {
+  const { [id]: { deadline_passed = null } = {} } = state;
+  return deadline_passed;
+}
+
+export function isCfeiClarificationDeadlinePassed(state, id) {
+  const { [id]: { clarification_request_deadline_passed = null } = {} } = state;
+  return clarification_request_deadline_passed;
+}
+
+export function isCfeiPublished(state, id) {
+  const { [id]: { is_published = null } = {} } = state;
+  return is_published;
+}
+
 export function isCfeiPinned(state, id) {
   const { [id]: { is_pinned = null } = {} } = state;
   return is_pinned;
+}
+
+export function isSendForDecision(state, id) {
+  const { [id]: { sent_for_decision = false } = {} } = state;
+  return sent_for_decision;
 }
 
 export function selectCfeiCriteria(state, id) {
@@ -158,6 +225,22 @@ export function isUserAReviewer(state, cfeiId, userId) {
   return false;
 }
 
+export function cfeiDetailsReviewers(state, cfeiId) {
+  const cfei = R.prop(cfeiId, state);
+  if (cfei) return cfei.reviewers;
+  return false;
+}
+
+export function cfeiHasRecommendedPartner(state, cfeId) {
+  const { [cfeId]: { contains_recommended_applications = false } = {} } = state;
+  return contains_recommended_applications;
+}
+
+export function cfeiHasPartnerAccepted(state, cfeId) {
+  const { [cfeId]: { contains_partner_accepted = false } = {} } = state;
+  return contains_partner_accepted;
+}
+
 export function isUserACreator(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
   if (cfei) return cfei.created_by === userId;
@@ -166,7 +249,10 @@ export function isUserACreator(state, cfeiId, userId) {
 
 export function isUserAFocalPoint(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
-  if (cfei) return cfei.focal_points.includes(userId);
+
+  if (cfei) {
+    return cfei.focal_points.includes(userId);
+  }
   return false;
 }
 

@@ -5,46 +5,10 @@ import { submit } from 'redux-form';
 import ControlledModal from '../../../../common/modals/controlledModal';
 import { updatePartnerFlags } from '../../../../../reducers/partnerFlags';
 import AddFlagForm from './addFlagForm';
-import { FLAGS } from '../../../../../helpers/constants';
-import FlagIcon from '../../icons/flagIcon';
 
 const messages = {
-  title: (_, flag) => {
-    let type;
-    switch (flag) {
-      case FLAGS.YELLOW:
-      default:
-        type = 'Yellow';
-        break;
-      case FLAGS.RED:
-        type = 'Red';
-    }
-    return `Are you sure you want to add ${type} Flag to this Profile?`;
-  },
-  header: (_, flag) => {
-    let type;
-    switch (flag) {
-      case FLAGS.YELLOW:
-      default:
-        type = 'Yellow';
-        break;
-      case FLAGS.RED:
-        type = 'Red';
-    }
-    return `${type} Flag`;
-  },
-  info: (_, flag) => {
-    let type;
-    switch (flag) {
-      case FLAGS.YELLOW:
-      default:
-        type = 'Alleged';
-        break;
-      case FLAGS.RED:
-        type = 'Confirmed';
-    }
-    return `${type} fraud, corruption, ethical concern, or other reputational risk`;
-  },
+  title: 'Are you sure you want to add an observation to this Profile?',
+  info: 'An observation can be added to record brief notes on past collaboration, risk or other key issues.',
   save: 'save',
 };
 
@@ -62,21 +26,21 @@ class AddFlagModal extends Component {
   }
 
   render() {
-    const { submit, dialogOpen, handleDialogClose, flag } = this.props;
+    const { submitForm, dialogOpen, handleDialogClose } = this.props;
     return (
       <div>
         <ControlledModal
           maxWidth="md"
-          title={messages.title`${flag}`}
+          title={messages.title}
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
-          info={{ title: <div><FlagIcon color={flag} />{messages.header`${flag}`}</div>, body: messages.info`${flag}` }}
+          info={{ title: messages.info }}
           buttons={{
             flat: {
               handleClick: handleDialogClose,
             },
             raised: {
-              handleClick: submit,
+              handleClick: submitForm,
               label: messages.save,
             },
           }}
@@ -89,31 +53,21 @@ class AddFlagModal extends Component {
 
 AddFlagModal.propTypes = {
   dialogOpen: PropTypes.bool,
-  submit: PropTypes.func,
+  submitForm: PropTypes.func,
   addFlag: PropTypes.func,
   handleDialogClose: PropTypes.func,
-  flag: PropTypes.string,
-};
-
-
-const mapStateToProps = (state, ownProps) => {
-  const partnerName = state.partnerNames[ownProps.partnerId];
-  return {
-    partnerName,
-  };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const { partnerId, flag } = ownProps;
+  const { partnerId } = ownProps;
   return {
-    addFlag: body => dispatch(updatePartnerFlags(
-      partnerId, { ...body, flag_type: flag }, false)),
-    submit: () => dispatch(submit('addFlag')),
+    addFlag: body => dispatch(updatePartnerFlags(partnerId, body, false)),
+    submitForm: () => dispatch(submit('addFlag')),
   };
 };
 
 const containerAddFlagModal = connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps,
 )(AddFlagModal);
 

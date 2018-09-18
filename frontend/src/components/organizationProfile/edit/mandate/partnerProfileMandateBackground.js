@@ -23,8 +23,10 @@ const PartnerProfileMandateBackground = (props) => {
           placeholder={PLACEHOLDERS.state}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           warn
@@ -37,8 +39,10 @@ const PartnerProfileMandateBackground = (props) => {
           placeholder={PLACEHOLDERS.state}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           warn

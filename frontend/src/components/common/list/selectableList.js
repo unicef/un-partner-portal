@@ -3,6 +3,7 @@ import { withStyles } from 'material-ui/styles';
 import { connect } from 'react-redux';
 import { browserHistory as history, withRouter } from 'react-router';
 import { PagingState, SelectionState } from '@devexpress/dx-react-grid';
+import { Paper } from 'material-ui';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import R from 'ramda';
@@ -12,7 +13,7 @@ import {
 import {
   TableRow as TableRowMUI,
 } from 'material-ui/Table';
-import { Grid, TableView, TableHeaderRow, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
+import { Grid, Table, TableHeaderRow, TableSelection, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import SelectedHeader from './selectedHeader';
 import ListLoader from './listLoader';
 import { calculatePaginatedPage, updatePageNumberSize, updatePageNumber } from '../../../helpers/apiHelper';
@@ -35,7 +36,7 @@ const styleSheet = (theme) => {
 };
 
 const getSelectTableRowTemplateArgs = (
-  { selectByRowClick, highlightSelected, hovered, ...restParams },
+  { selectByRowClick, highlightRow, hovered, ...restParams },
   { selection }, // current selection
 // action that changes row selection
 ) => {
@@ -44,7 +45,7 @@ const getSelectTableRowTemplateArgs = (
     ...restParams,
     row,
     selectByRowClick,
-    selected: highlightSelected && selection.indexOf(rowId) > -1,
+    selected: highlightRow && selection.indexOf(rowId) > -1,
     rowId,
     hovered: hovered === rowId,
   });
@@ -91,6 +92,7 @@ class SelectableList extends Component {
   handleRowMouseLeave() {
     this.setState({ hoveredRow: null });
   }
+
   navigationHeader(selected, rows, HeaderAction) {
     const { classes, itemsCount = 0, pageSize, pageNumber } = this.props;
 
@@ -110,7 +112,7 @@ class SelectableList extends Component {
     </div>);
   }
 
-  tableRowTemplate({ row, children, selected, rowId }) {
+  tableRowTemplate({ row, children, selected, tableRow: { rowId } }) {
     return (<TableRowMUI
       selected={selected}
       hover
@@ -118,8 +120,7 @@ class SelectableList extends Component {
       onClick={() => this.props.clickableRow && this.props.onTableRowClick(row)}
       onMouseEnter={() => this.handleRowMouseEnter(rowId)}
       onMouseLeave={() => this.handleRowMouseLeave()}
-    > {children}
-    </TableRowMUI>);
+    >{children}</TableRowMUI>);
   }
 
   render() {
@@ -138,62 +139,64 @@ class SelectableList extends Component {
     const { selected, hoveredRow } = this.state;
     return (
       <ListLoader loading={loading}>
-        <Grid
-          rows={items}
-          columns={columns}
-          headerPlaceholderTemplate={() => this.navigationHeader(
-            selected,
-            items,
-            headerAction)}
-        >
-          <PagingState
-            currentPage={pageNumber - 1}
-            pageSize={+pageSize}
-            onPageSizeChange={(size) => { this.onPageSize(size); }}
-            onCurrentPageChange={(page) => { updatePageNumber(page, pathName, query); }}
-            totalCount={itemsCount}
-          />
-          <SelectionState
-            selection={selected}
-            onSelectionChange={this.handleSelect}
-          />
-          <TableView
-            tableRowTemplate={this.tableRowTemplate}
-            table
-            tableCellTemplate={({ row, column, tableRow: { rowId } }) =>
-              templateCell({ row, column, hovered: hoveredRow === rowId })}
-          />
-          <Template
-            name="tableViewRow"
-            // use custom template only for table data rows
-            predicate={({ tableRow }) => tableRow.type === 'data'}
+        <Paper>
+          <Grid
+            rows={items}
+            columns={columns}
+            headerPlaceholderComponent={() => this.navigationHeader(
+              selected,
+              items,
+              headerAction)}
           >
-            {params => (
-              <TemplateConnector>
-                {(getters, actions) => (
-                  <TemplateRenderer
-                  // custom template
-                    template={this.tableRowTemplate}
-                    // custom template params
-                    params={
-                      getSelectTableRowTemplateArgs({
-                        selectByRowClick: true,
-                        highlightSelected: true,
-                        hovered: hoveredRow,
-                        ...params,
-                      }, getters, actions)
-                    }
-                  />
-                )}
-              </TemplateConnector>
-            )}
-          </Template>
-          <TableSelection
-            selectionColumnWidth={50}
-          />
-          <TableHeaderRow />
-          <PagingPanel allowedPageSizes={table.allowedPageSizes} />
-        </Grid>
+            <PagingState
+              currentPage={pageNumber - 1}
+              pageSize={+pageSize}
+              onPageSizeChange={(size) => { this.onPageSize(size); }}
+              onCurrentPageChange={(page) => { updatePageNumber(page, pathName, query); }}
+              totalCount={itemsCount}
+            />
+            <SelectionState
+              selection={selected}
+              onSelectionChange={this.handleSelect}
+            />
+            <Table
+              table
+              rowComponent={this.tableRowTemplate}
+              cellComponent={({ row, column, tableRow: { rowId } }) =>
+                templateCell({ row, column, hovered: hoveredRow === rowId })}
+            />
+            <Template
+              name="tableViewRow"
+              // use custom template only for table data rows
+              predicate={({ tableRow }) => tableRow.type === 'data'}
+            >
+              {params => (
+                <TemplateConnector>
+                  {(getters, actions) => (
+                    <TemplateRenderer
+                      // custom template
+                      template={this.tableRowTemplate}
+                      // custom template params
+                      params={
+                        getSelectTableRowTemplateArgs({
+                          selectByRowClick: true,
+                          highlightRow: true,
+                          hovered: hoveredRow,
+                          ...params,
+                        }, getters, actions)
+                      }
+                    />
+                  )}
+                </TemplateConnector>
+              )}
+            </Template>
+            <TableSelection
+              selectionColumnWidth={50}
+            />
+            <TableHeaderRow />
+            <PagingPanel allowedPageSizes={table.allowedPageSizes} />
+          </Grid>
+        </Paper>
       </ListLoader>
     );
   }

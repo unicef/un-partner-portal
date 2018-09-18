@@ -27,8 +27,11 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEFAULT_CHARSET = 'utf-8'
 ROOT_URLCONF = 'unpp_api.urls'
 
-DATA_VOLUME = '/data'
+DATA_VOLUME = os.getenv('DATA_VOLUME', '/data')
 
+ALLOWED_EXTENSIONS = (
+    'pdf', 'doc', 'docx', 'xls', 'xlsx' 'img', 'png', 'jpg', 'jpeg'
+)
 UPLOADS_DIR_NAME = 'uploads'
 MEDIA_URL = '/api/%s/' % UPLOADS_DIR_NAME
 MEDIA_ROOT = os.getenv('UNPP_UPLOADS_PATH', os.path.join(DATA_VOLUME, '%s' % UPLOADS_DIR_NAME))
@@ -44,9 +47,6 @@ STATIC_ROOT = '%s/staticserve' % DATA_VOLUME
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-
-    # other finders..
-    "compressor.finders.CompressorFinder",
 )
 
 DEBUG = True
@@ -76,10 +76,10 @@ FRONTEND_HOST = os.getenv('UNPP_FRONTEND_HOST', DOMAIN_NAME)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '%s' % os.getenv('POSTGRES_DB'),
-        'USER': '%s' % os.getenv('POSTGRES_USER'),
-        'PASSWORD': '%s' % os.getenv('POSTGRES_PASSWORD'),
-        'HOST': '%s' % os.getenv('POSTGRES_HOST'),
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
         'PORT': 5432,
     }
 }
@@ -89,12 +89,15 @@ if POSTGRES_SSL_MODE == 'on':
     DATABASES['default'].update({'OPTIONS': {"sslmode": 'require'}})
 
 MIDDLEWARE = [
+    'elasticapm.contrib.django.middleware.TracingMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'common.middleware.ActivePartnerMiddlewware',
+    'common.middleware.ActivePartnerMiddleware',
+    'common.middleware.ActiveAgencyOfficeMiddleware',
+    'common.middleware.ClientTimezoneMiddleware',
 ]
 
 TEMPLATES = [
@@ -110,7 +113,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.static',
-                'django_common.context_processors.common_settings',
                 'django.template.context_processors.request',
             ],
         },
@@ -118,6 +120,7 @@ TEMPLATES = [
 ]
 
 INSTALLED_APPS = [
+    'elasticapm.contrib.django',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.humanize',
@@ -131,9 +134,12 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'django_filters',
-    # 'compressor',
-    'django_common',
     'imagekit',
+    'django_countries',
+    'mail_templated',
+    'social_django',
+    'sequences.apps.SequencesConfig',
+    'django_nose',
 
     'common',
     'account',
@@ -144,28 +150,73 @@ INSTALLED_APPS = [
     'storages',
     'notification',
     'sanctionslist',
+    'management',
+    'reports',
+    'externals',
 ]
 
 # auth / django-registration params
 AUTH_USER_MODEL = 'account.User'
 
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 12,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+PASSWORD_RESET_TIMEOUT_DAYS = 31
+
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+    'common.authentication.CustomAzureADBBCOAuth2',
 ]
 
-TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+# Django-social-auth settings
+KEY = os.getenv('AZURE_B2C_CLIENT_ID', None)
+SECRET = os.getenv('AZURE_B2C_CLIENT_SECRET', None)
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_SANITIZE_REDIRECTS = False
+POLICY = os.getenv('AZURE_B2C_POLICY_NAME', "b2c_1A_UNICEF_PARTNERS_signup_signin")
+
+TENANT_ID = os.getenv('AZURE_B2C_TENANT', 'unicefpartners.onmicrosoft.com')
+SCOPE = ['openid', 'email']
+IGNORE_DEFAULT_SCOPE = True
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/dashboard"
+
+# TODO: Re-enable this back once we figure out all email domain names to whitelist from partners
+# SOCIAL_AUTH_WHITELISTED_DOMAINS = ['unicef.org', 'google.com']
+
+TEST_RUNNER = os.getenv('DJANGO_TEST_RUNNER', 'django.test.runner.DiscoverRunner')
+NOSE_ARGS = ['--with-timer', '--nocapture', '--nologcapture']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    )
+    ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'account.serializers.CustomLoginSerializer',
     'USER_DETAILS_SERIALIZER': 'account.serializers.RegisterSimpleAccountSerializer',
+    'PASSWORD_RESET_SERIALIZER': 'account.serializers.CustomPasswordResetSerializer',
 }
 
 
@@ -206,10 +257,13 @@ LOGGING = {
             'filename': 'django.log',
             'formatter': 'verbose',
         },
+        'elasticapm': {
+            'level': 'ERROR',
+            'class': 'elasticapm.contrib.django.handlers.LoggingHandler',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
-            'filters': ['require_debug_false'],
             'include_html': True,
         }
     },
@@ -229,8 +283,45 @@ LOGGING = {
             'handlers': ['default'],
             'propagate': False,
         },
+        'elasticapm.errors': {
+            'level': 'ERROR',
+            'handlers': ['default'],
+            'propagate': False,
+        },
     }
 }
 
-DEFAULT_FAKE_DATA_OPEN_APPLICATIONS_COUNT = 21
-DEFAULT_FAKE_DATA_DIRECT_APPLICATIONS_COUNT = 6
+# apm related - it's enough to set those as env variables, here just for documentation
+# by default logging and apm is off, so below envs needs to be set per environment
+
+# ELASTIC_APM_APP_NAME=<app-name> # set app name visible on dashboard
+# ELASTIC_APM_SECRET_TOKEN=<app-token> #secret token - needs to be exact same as on apm-server
+# ELASTIC_APM_SERVER_URL=http://elastic.tivixlabs.com:8200 # apm-server url
+
+UNHCR_API_HOST = os.getenv('UNHCR_API_HOST')
+UNHCR_API_USERNAME = os.getenv('UNHCR_API_USERNAME')
+UNHCR_API_PASSWORD = os.getenv('UNHCR_API_PASSWORD')
+
+UNICEF_PARTNER_DETAILS_URL = os.getenv('UNICEF_PARTNER_DETAILS_URL')
+UNICEF_API_USERNAME = os.getenv('UNICEF_API_USERNAME')
+UNICEF_API_PASSWORD = os.getenv('UNICEF_API_PASSWORD')
+
+WFP_API_HOST = os.getenv('WFP_API_HOST')
+WFP_API_TOKEN = os.getenv('WFP_API_TOKEN')
+
+
+LEGACY_DB_HOST = os.getenv('LEGACY_DB_HOST')
+if LEGACY_DB_HOST and 'test' not in sys.argv:
+    # bit of an ugly hack, to stop creating legacy DB when testing
+    DATABASES['legacy'] = {
+        'ENGINE': 'sqlserver',
+        'NAME': os.getenv('LEGACY_DB_NAME'),
+        'USER': os.getenv('LEGACY_DB_USER'),
+        'PASSWORD': os.getenv('LEGACY_DB_PW'),
+        'HOST': LEGACY_DB_HOST,
+        'PORT': int(os.getenv('LEGACY_DB_PORT', 1433)),
+    }
+    DATABASE_ROUTERS = [
+        'legacy.database_routers.LegacyDatabaseRouter',
+    ]
+    INSTALLED_APPS += ['legacy']

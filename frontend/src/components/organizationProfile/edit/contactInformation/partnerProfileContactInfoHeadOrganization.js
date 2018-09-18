@@ -2,7 +2,14 @@ import React from 'react';
 import { FormSection } from 'redux-form';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
+import RadioForm from '../../../forms/radioForm';
+import { BOOL_VAL } from '../../../../helpers/formHelper';
 import TextFieldForm from '../../../forms/textFieldForm';
+import ArrayForm from '../../../forms/arrayForm';
+import GridRow from '../../../common/grid/gridRow';
+import GridColumn from '../../../common/grid/gridColumn';
+import { email, phoneNumber } from '../../../../helpers/validation';
+import CustomGridColumn from '../../../common/grid/customGridColumn';
 
 const messages = {
   fullname: 'Full name',
@@ -13,60 +20,78 @@ const messages = {
   email: 'Email',
 };
 
+const authorisedOfficerForm = (head, readOnly) => (
+  <CustomGridColumn>
+    <GridRow columns={3}>
+      <TextFieldForm
+        label={messages.fullname}
+        fieldName={`${head}.fullname`}
+        readOnly
+      />
+      <TextFieldForm
+        label={messages.jobTitle}
+        fieldName={`${head}.job_title`}
+        optional
+        readOnly={readOnly}
+      />
+      <TextFieldForm
+        label={messages.telephone}
+        fieldName={`${head}.telephone`}
+        validation={[phoneNumber]}
+        optional
+        readOnly={readOnly}
+      />
+    </GridRow>
+    <GridRow columns={3}>
+      <TextFieldForm
+        label={messages.mobile}
+        fieldName={`${head}.mobile`}
+        validation={[phoneNumber]}
+        optional
+        readOnly={readOnly}
+      />
+      <TextFieldForm
+        label={messages.fax}
+        fieldName={`${head}.fax`}
+        optional
+        readOnly={readOnly}
+      />
+      <TextFieldForm
+        label={messages.email}
+        fieldName={`${head}.email`}
+        validation={[email]}
+        readOnly
+      />
+    </GridRow>
+    <GridRow columns={3}>
+      <RadioForm
+        fieldName={`${head}.authorized`}
+        values={BOOL_VAL}
+        label="Authorised Officer?"
+        readOnly={readOnly}
+      />
+      <RadioForm
+        fieldName={`${head}.board_member`}
+        values={BOOL_VAL}
+        label="Member of the Board of Directors?"
+        readOnly={readOnly}
+      />
+    </GridRow>
+  </CustomGridColumn>
+);
+
 const PartnerProfileContactInfoHeadOrganization = (props) => {
   const { readOnly } = props;
 
   return (<FormSection name="org_head">
-    <Grid container direction="row">
-      <Grid item sm={4} xs={12}>
-        <TextFieldForm
-          label={messages.fullname}
-          fieldName="fullname"
-          readOnly
-        />
-      </Grid>
-      <Grid item sm={4} xs={12}>
-        <TextFieldForm
-          label={messages.jobTitle}
-          fieldName="job_title"
-          optional
-          readOnly={readOnly}
-        />
-      </Grid>
-      <Grid item sm={4} xs={12}>
-        <TextFieldForm
-          label={messages.telephone}
-          fieldName="telephone"
-          optional
-          readOnly={readOnly}
-        />
-      </Grid>
-    </Grid>
-    <Grid container direction="row">
-      <Grid item sm={3} xs={12}>
-        <TextFieldForm
-          label={messages.mobile}
-          fieldName="mobile"
-          optional
-          readOnly={readOnly}
-        />
-      </Grid>
-      <Grid item sm={3} xs={12}>
-        <TextFieldForm
-          label={messages.fax}
-          fieldName="fax"
-          optional
-          readOnly={readOnly}
-        />
-      </Grid>
-      <Grid item sm={3} xs={12}>
-        <TextFieldForm
-          label={messages.email}
-          fieldName="email"
-          readOnly
-        />
-      </Grid>
-    </Grid>
+    <ArrayForm
+      limit={15}
+      initial
+      label={messages.officers}
+      fieldName="organisation_heads"
+      outerField={officer => authorisedOfficerForm(officer, readOnly)}
+      readOnly={readOnly}
+    />
   </FormSection>
   );
 };

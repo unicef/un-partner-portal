@@ -2,12 +2,13 @@
 from __future__ import unicode_literals
 
 import django_filters
-from django_filters.filters import MultipleChoiceFilter, CharFilter
-from django_filters.widgets import CSVWidget
+from django_filters.filters import MultipleChoiceFilter, CharFilter, BooleanFilter
+from django_filters.widgets import CSVWidget, BooleanWidget
 
 from account.models import User
 from agency.models import Agency
-from common.consts import MEMBER_ROLES
+from agency.roles import AgencyRole, VALID_FOCAL_POINT_ROLE_NAMES, VALID_REVIEWER_ROLE_NAMES
+from common.filter_fields import CommaSeparatedListFilter
 
 
 class AgencyUserFilter(django_filters.FilterSet):
@@ -17,12 +18,42 @@ class AgencyUserFilter(django_filters.FilterSet):
     role = MultipleChoiceFilter(
         widget=CSVWidget(),
         name='agency_members__role',
-        choices=MEMBER_ROLES
+        choices=AgencyRole.get_choices()
     )
+    focal = BooleanFilter(
+        method='filter_focal_points', widget=BooleanWidget(), label='Can be selected as focal point'
+    )
+    reviewer = BooleanFilter(
+        method='filter_reviewers', widget=BooleanWidget(), label='Can be selected as reviewer'
+    )
+    exclude = CommaSeparatedListFilter(name='id', exclude=True)
 
     class Meta:
         model = User
-        fields = ['role', 'name', 'office_name']
+        fields = (
+            'role',
+            'name',
+            'office_name',
+            'focal',
+            'reviewer',
+            'exclude',
+        )
+
+    def filter_focal_points(self, queryset, name, value):
+        if value is True:
+            queryset = queryset.filter(agency_members__role__in=VALID_FOCAL_POINT_ROLE_NAMES)
+        elif value is False:
+            queryset = queryset.exclude(agency_members__role__in=VALID_FOCAL_POINT_ROLE_NAMES)
+
+        return queryset
+
+    def filter_reviewers(self, queryset, name, value):
+        if value is True:
+            queryset = queryset.filter(agency_members__role__in=VALID_REVIEWER_ROLE_NAMES)
+        elif value is False:
+            queryset = queryset.exclude(agency_members__role__in=VALID_REVIEWER_ROLE_NAMES)
+
+        return queryset
 
 
 class AgencyFilter(django_filters.FilterSet):

@@ -29,6 +29,7 @@ import {
   handleClear,
 } from '../components/forms//autocompleteHelpers/autocompleteFunctions';
 import { RenderMultipleSelections, RenderPlaceholder } from '../components/forms/selectHelpers/selectRenderers';
+import TextFieldForm from '../components/forms/textFieldForm';
 
 export const fileNameFromUrl = (url) => {
   if (url) {
@@ -126,6 +127,7 @@ export const renderSelectField = ({
   label,
   values,
   placeholder,
+  formControlStyle,
   infoText,
   ...other
 }) => {
@@ -135,7 +137,7 @@ export const renderSelectField = ({
   } else {
     valueForSelect = input.value || defaultValue || 'placeholder_none';
   }
-  return (<FormControl fullWidth error={(touched && error) || warning}>
+  return (<FormControl fullWidth style={formControlStyle} error={(touched && error) || warning}>
     <FieldLabelWithTooltipIcon
       infoText={infoText}
       tooltipIconProps={{
@@ -217,6 +219,61 @@ export const renderRadioField = ({ input,
     <FormHelperText error>{error || warning}</FormHelperText>}
   </div>);
 
+export const renderRadioFieldWithChild = ({ input,
+  label,
+  defaultValue,
+  classes,
+  disabled,
+  children,
+  textfield,
+  infoText,
+  meta: { touched, error, warning },
+  options, ...other
+}) => (
+  <div>
+    <FormControl fullWidth>
+      {label && <FieldLabelWithTooltipIcon
+        infoText={infoText}
+        tooltipIconProps={{
+          name: input.name,
+        }}
+      >
+        {label}
+      </FieldLabelWithTooltipIcon>}
+      <RadioGroupRow
+        selectedValue={!R.isEmpty(input.value) ? transformBool(input.value) : defaultValue}
+        onChange={(event, value) => { input.onChange(transformBool(value)); }}
+        {...other}
+      >
+        {options.map((value, index) => {
+          if (value.child) {
+            return (
+              <div>
+                <FormControlLabel
+                  key={index}
+                  value={`${value.value}`}
+                  control={<RadioHeight />}
+                  label={value.label}
+                  disabled={value.disabled || disabled}
+                />
+                <div>
+                  {value.child}
+                </div>
+              </div>);
+          } return (
+            <FormControlLabel
+              key={index}
+              value={`${value.value}`}
+              control={<RadioHeight />}
+              label={value.label}
+              disabled={value.disabled || disabled}
+            />);
+        })}</RadioGroupRow>
+    </FormControl>
+    {(((touched && error) || warning) && !disabled) &&
+    <FormHelperText error>{error || warning}</FormHelperText>}
+  </div>);
+
 export const renderCheckbox = ({
   name,
   disabled,
@@ -275,8 +332,9 @@ export const renderTextField = ({
   input,
   label,
   infoText,
+  formControlStyle,
   ...other
-}) => (<FormControl fullWidth>
+}) => (<FormControl fullWidth style={formControlStyle}>
   <FieldLabelWithTooltipIcon
     infoText={infoText}
     tooltipIconProps={{
@@ -295,11 +353,10 @@ export const renderTextField = ({
   />
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
     {((touched && error) || warning) && <FormHelperText error>{error || warning}</FormHelperText>}
-    {/* show limit of characters
-       {other.inputProps && other.inputProps.maxLength &&
-        <FormHelperText style={{ marginLeft: 'auto' }}>
-        {input.value.length}/{other.inputProps.maxLength}
-        </FormHelperText>} */}
+    {/* {other.InputProps.inputProps && other.InputProps.inputProps.maxLength &&
+      <FormHelperText style={{ marginLeft: 'auto' }}>
+      {input.value.length}/{other.InputProps.inputProps.maxLength}
+      </FormHelperText>} */}
   </div>
 </FormControl>);
 
@@ -310,7 +367,7 @@ export const renderNumberField = ({
   input,
   ...other
 }) => {
-  const rangeError = numerical(other.inputProps.min, other.inputProps.max)(input.value);
+  const rangeError = numerical(other.InputProps.inputProps.min, other.InputProps.inputProps.max)(input.value);
 
   return (
     <div>
@@ -326,7 +383,7 @@ export const renderNumberField = ({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         {((touched && error) || warning || rangeError) &&
           <FormHelperText error>{error || warning || rangeError}</FormHelperText>}
-        {other.inputProps && other.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
+        {other.InputProps.inputProps && other.InputProps.inputProps.maxLength && <FormHelperText style={{ marginLeft: 'auto' }}>{input.value.length}/{other.inputProps.maxLength}</FormHelperText>}
       </div>
     </div>);
 };
@@ -357,6 +414,7 @@ export const renderDatePicker = ({
         {...inputOther}
         onChange={saveValueToStore}
         onDismiss={saveValueToStore}
+        underlineStyle={{ borderColor: '#949494' }}
         {...other}
       />
     </div>
@@ -374,12 +432,13 @@ export const renderText = ({
   meta,
   multiline,
   inputProps,
+  InputProps,
   ...other
 }) => {
   let value = (!R.isNil(input.value) && !R.isEmpty(input.value))
     ? input.value
-    : (inputProps
-      ? inputProps.initial
+    : (InputProps
+      ? InputProps.inputProps.initial
       : null);
 
   if (!value) value = '-';
@@ -394,8 +453,8 @@ export const renderText = ({
   if (R.isEmpty(value) || R.isNil(value)) {
     value = (!R.isNil(input.value) && !R.isEmpty(input.value))
       ? input.value
-      : (inputProps
-        ? inputProps.initial
+      : (InputProps
+        ? InputProps.inputProps.initial
         : null);
   }
   if (date) value = formatDateForPrint(value);

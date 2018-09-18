@@ -44,8 +44,10 @@ const PartnerProfileProjectImplementationManagement = (props) => {
             fieldName="management_approach_desc"
             textFieldProps={{
               multiline: true,
-              inputProps: {
-                maxLength: '5000',
+              InputProps: {
+                inputProps: {
+                  maxLength: '5000',
+                },
               },
             }}
             optional
@@ -68,8 +70,10 @@ const PartnerProfileProjectImplementationManagement = (props) => {
             fieldName="system_monitoring_desc"
             textFieldProps={{
               multiline: true,
-              inputProps: {
-                maxLength: '5000',
+              InputProps: {
+                inputProps: {
+                  maxLength: '5000',
+                },
               },
             }}
             optional
@@ -92,8 +96,10 @@ const PartnerProfileProjectImplementationManagement = (props) => {
             placeholder={PLACEHOLDERS.explain}
             textFieldProps={{
               multiline: true,
-              inputProps: {
-                maxLength: '5000',
+              InputProps: {
+                inputProps: {
+                  maxLength: '5000',
+                },
               },
             }}
             warn

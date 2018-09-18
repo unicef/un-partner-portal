@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from decimal import Decimal
+
+from django.conf import settings
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, FileExtensionValidator
 from model_utils.models import TimeStampedModel
-from common.countries import COUNTRIES_ALPHA2_CODE
+from common.countries import COUNTRIES_ALPHA2_CODE, COUNTRIES_ALPHA2_CODE_DICT
 
 
 class PointQuerySet(models.QuerySet):
 
     def get_point(self, lat=None, lon=None, admin_level_1=None):
-        return self.get_or_create(
-            lat=lat,
-            lon=lon,
-            admin_level_1=AdminLevel1.objects.get_or_create(
-                name=admin_level_1.get('name'),
-                country_code=admin_level_1['country_code'],
-            )[0]
-        )[0]
+        admin_level_1, _ = AdminLevel1.objects.get_or_create(
+            name=admin_level_1.get('name'),
+            country_code=admin_level_1['country_code'],
+        )
+        point, _ = self.get_or_create(lat=lat, lon=lon, admin_level_1=admin_level_1)
+
+        return point
 
 
 class AdminLevel1(models.Model):
@@ -29,10 +30,14 @@ class AdminLevel1(models.Model):
 
     class Meta:
         ordering = ['id']
-        unique_together = (('name', 'country_code'), )
+        unique_together = ('name', 'country_code')
 
     def __str__(self):
-        return "AdminLevel1 <pk:{}>".format(self.id)
+        return f"[{self.country_name}] {self.name}"
+
+    @property
+    def country_name(self):
+        return COUNTRIES_ALPHA2_CODE_DICT[self.country_code]
 
 
 class Point(models.Model):
@@ -42,7 +47,7 @@ class Point(models.Model):
         blank=True,
         max_digits=8,
         decimal_places=5,
-        validators=[MinValueValidator(Decimal(-180)), MaxValueValidator(Decimal(180))]
+        validators=[MinValueValidator(Decimal(-90)), MaxValueValidator(Decimal(90))]
     )
     lon = models.DecimalField(
         verbose_name='Longitude',
@@ -81,11 +86,13 @@ class Specialization(models.Model):
         ordering = ['id']
 
     def __str__(self):
-        return "Specialization: {} <pk:{}>".format(self.name, self.id)
+        return f'<{self.pk}> {self.category.name}: {self.name}'
 
 
 class CommonFile(TimeStampedModel):
-    file_field = models.FileField()
+    file_field = models.FileField(validators=(
+        FileExtensionValidator(settings.ALLOWED_EXTENSIONS),
+    ))
 
     class Meta:
         ordering = ['id']

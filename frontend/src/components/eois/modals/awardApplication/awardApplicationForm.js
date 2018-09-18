@@ -6,7 +6,6 @@ import TextFieldForm from '../../../forms/textFieldForm';
 
 const messages = {
   label: 'Justification',
-  score: 'Your score',
 };
 
 const styleSheet = () => ({
@@ -26,8 +25,10 @@ const AddReview = (props) => {
         fieldName="justification_reason"
         textFieldProps={{
           multiline: true,
-          inputProps: {
-            maxLength: '5000',
+          InputProps: {
+            inputProps: {
+              maxLength: '5000',
+            },
           },
         }}
       />

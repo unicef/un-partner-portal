@@ -48,8 +48,10 @@ const PartnerProfileMandateSecurity = (props) => {
           placeholder={PLACEHOLDERS.comment}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           warn

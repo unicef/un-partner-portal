@@ -16,6 +16,7 @@ const messages = {
 
 const ProjectDetails = (props) => {
   const { children, formName, displayPopulation } = props;
+
   return (
     <GridColumn>
       <Typography type="headline">
@@ -24,15 +25,16 @@ const ProjectDetails = (props) => {
       <GridColumn>
         <fields.TitleField />
         <LocationForm formName={formName} />
-        <fields.FocalPoint />
+        <fields.FocalPoint formName={formName} />
         <SectorForm />
         {displayPopulation && <SelectPopulationOfConcern />}
         <fields.Background />
         <fields.Goal />
         <fields.OtherInfo />
-        <GridRow columns={4} >
+        <GridRow columns={3} >
           {children}
         </GridRow>
+        <fields.Attachments />
       </GridColumn>
     </GridColumn>
 
@@ -50,6 +52,5 @@ ProjectDetails.propTypes = {
 const mapStateToProps = state => ({
   displayPopulation: state.session.agencyName === 'UNHCR',
 });
-
 
 export default connect(mapStateToProps)(ProjectDetails);

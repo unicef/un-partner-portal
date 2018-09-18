@@ -4,8 +4,8 @@ from .base import *  # noqa: ignore=F403
 
 # dev overrides
 DEBUG = True
-# TEMPLATE_DEBUG = DEBUG
 IS_DEV = True
+TEMPLATES[0]['OPTIONS']['debug'] = True
 
 # domains/hosts etc.
 DOMAIN_NAME = 'localhost:8000'

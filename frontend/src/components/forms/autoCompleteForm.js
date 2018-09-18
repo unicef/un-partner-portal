@@ -25,6 +25,7 @@ const styles = theme => ({
   suggestionsContainerOpen: {
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit * 3,
+    margin: '2px',
     left: 0,
     right: 0,
     zIndex: 2000,
@@ -94,8 +95,10 @@ class AutocompleteField extends React.Component {
 
   handleSuggestionsFetchRequested({ value }) {
     if (this.props.async) {
-      getAsyncSuggestions(value, this.props.asyncFunction, this.props.search)
-        .then(suggestions => this.setState({ suggestions }));
+      getAsyncSuggestions(value, this.props.asyncFunction, this.props.search, this.props.currentValues, this.props.extra)
+        .then((suggestions) => {
+          this.setState({ suggestions });
+        });
     } else {
       this.setState({
         suggestions: getSuggestions(value, this.props.suggestionsPool),
@@ -112,14 +115,20 @@ class AutocompleteField extends React.Component {
   handleChange(event, { newValue }) {
     this.setState({
       value: typeof newValue.label !== 'undefined' ?
-          newValue.label : newValue,
+        newValue.label : newValue,
     });
   }
 
   handleMultiChange(newValue) {
-    this.setState({
-      multiValues: this.state.multiValues.concat(newValue),
-    });
+    if (this.props.multipleSize && this.props.multipleSize > this.state.multiValues.length) {
+      this.setState({
+        multiValues: this.state.multiValues.concat(newValue),
+      });
+    } else if (!this.props.multipleSize) {
+      this.setState({
+        multiValues: this.state.multiValues.concat(newValue),
+      });
+    }
   }
 
   handleMultiClear(indexToClear) {
@@ -135,6 +144,12 @@ class AutocompleteField extends React.Component {
     if (!R.prop('value', suggestion)) return null;
     if (this.props.multiple) return [suggestion.value];
     return suggestion.value;
+  }
+
+  reset() {
+    const { multiple } = this.props;
+
+    this.setState(multiple ? { multiValues: [] } : { value: '' });
   }
 
   render() {
@@ -230,6 +245,10 @@ AutocompleteField.propTypes = { /**
    */
   multiple: PropTypes.bool,
   /**
+   * if field should allow multiple values
+   */
+  multipleSize: PropTypes.number,
+  /**
    * array to pick suggestions from, in sync mode
    */
   suggestionsPool: PropTypes.array,
@@ -253,8 +272,8 @@ AutocompleteField.propTypes = { /**
    * query param name for getting async suggestions
    */
   search: PropTypes.string,
-  /** 
-   * whether suggestions should overlap content below 
+  /**
+   * whether suggestions should overlap content below
    */
   overlap: PropTypes.bool,
   /**
@@ -262,6 +281,7 @@ AutocompleteField.propTypes = { /**
    */
   infoText: PropTypes.node,
   classes: PropTypes.object,
+  currentValues: PropTypes.array,
 };
 
 AutocompleteField.defaultProps = {

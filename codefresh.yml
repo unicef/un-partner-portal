@@ -9,7 +9,7 @@ steps:
         working_directory: ${{main_clone}}/backend
         tag: ${{CF_BRANCH}}
         build_arguments:
-            - env=$ENV
+            - env=${{ENV}}
 
     build_db:
         type: build
@@ -24,7 +24,7 @@ steps:
         dockerfile: Dockerfile
         working_directory: ${{main_clone}}/frontend
         tag: ${{CF_BRANCH}}
-    
+
     build_proxy:
         type: build
         image_name: unicef/unpp-proxy
@@ -32,24 +32,30 @@ steps:
         working_directory: ${{main_clone}}/proxy
         tag: ${{CF_BRANCH}}
 
-    composition_step:
+    backend_tests:
         type: composition
         composition: 'unicef-unpp'
         composition_candidates:
             test:
                 image: ${{build_backend}}
                 depends_on:
-                    - proxy
                     - backend
-                command: 'bash -c "/usr/local/bin/waitforit -host=backend -port=8000 -timeout=30 -- python /code/manage.py test --parallel"'
-        composition_variables:
-            - POSTGRES_DB=postgres
-            - POSTGRES_USER=postgres
-            - POSTGRES_PASSWORD=
-            - POSTGRES_HOST=db
-            - SECRET_KEY=asdfqwef124rf
-            - ENV=dev
-            - DJANGO_ALLOWED_HOST="*"
+                command: 'bash -c "/usr/local/bin/wait-for-it.sh backend:8000 -t 180 && python /code/manage.py test --parallel && flake8 /code/backend"'
+                environment:
+                    - ENV=dev
+                    - POSTGRES_DB=postgres
+                    - POSTGRES_USER=postgres
+                    - POSTGRES_PASSWORD=
+                    - POSTGRES_HOST=db
+                    - SECRET_KEY=asdfqwef124rf
+                    - DJANGO_ALLOWED_HOST="*"
+                    - FRONTEND_SERVICE_HOST=frontend
+                    - UNHCR_API_HOST=https://api.test/
+                    - UNHCR_API_USERNAME=user
+                    - UNHCR_API_PASSWORD=password
+                    - UNICEF_PARTNER_DETAILS_URL=https://api.test/
+                    - UNICEF_API_USERNAME=user
+                    - UNICEF_API_PASSWORD=password
 
     push_backend_to_hub:
         type: push
@@ -126,6 +132,7 @@ steps:
           - POSTGRES_USER=${{POSTGRES_USER}}
           - POSTGRES_DB=${{POSTGRES_DB}}
           - POSTGRES_HOST=${{POSTGRES_HOST}}
+          - KUBERNETES_DEPLOYMENT_TIMEOUT=300
         when:
           branch:
             only:
@@ -143,6 +150,7 @@ steps:
           - KUBECONTEXT=${{KUBECONTEXT}}
           - KUBERNETES_NAMESPACE=${{NAMESPACE}}
           - ENV=${{ENV}}
+          - KUBERNETES_DEPLOYMENT_TIMEOUT=300
         when:
           branch:
             only:
@@ -167,7 +175,7 @@ steps:
               - master
 
     delete_jobs:
-        title: Delete backend jobs with label redeploy
+        title: Delete jobs with label redeploy
         image: codefresh/kube-helm:master
         environment:
             - KUBECONTEXT=${{KUBECONTEXT}}
@@ -183,13 +191,34 @@ steps:
               - develop
               - master
 
-    deploy_jobs:
-        title: Creating backend jobs (skipping fakedata)
+    backend_jobs:
+        title: Creating backend jobs
         image: codefresh/cf-deploy-kubernetes
         tag: ${{CF_SHORT_REVISION}}
         working_directory: ${{main_clone}}
         commands:
           - /cf-deploy-kubernetes ./kubernetes/backend/jobs.yml
+        environment:
+          - KUBECONTEXT=${{KUBECONTEXT}}
+          - KUBERNETES_NAMESPACE=${{NAMESPACE}}
+          - ENV=${{ENV}}
+          - DJANGO_ALLOWED_HOST=${{DJANGO_ALLOWED_HOST}}
+          - POSTGRES_USER=${{POSTGRES_USER}}
+          - POSTGRES_DB=${{POSTGRES_DB}}
+          - POSTGRES_HOST=${{POSTGRES_HOST}}
+        when:
+          branch:
+            only:
+              - develop
+              - master
+
+    deploy_cronjobs:
+        title: Creating backend cronjobs
+        image: codefresh/cf-deploy-kubernetes
+        tag: ${{CF_SHORT_REVISION}}
+        working_directory: ${{main_clone}}
+        commands:
+          - /cf-deploy-kubernetes ./kubernetes/backend/cronjobs.yml
         environment:
           - KUBECONTEXT=${{KUBECONTEXT}}
           - KUBERNETES_NAMESPACE=${{NAMESPACE}}

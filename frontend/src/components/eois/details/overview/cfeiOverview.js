@@ -8,8 +8,11 @@ import GridColumn from '../../../common/grid/gridColumn';
 import Timeline from './timeline';
 import ProjectDetails from './projectDetails';
 import SelectionCriteria from './selectionCriteria';
+import PartnerClarificationRequests from './partnerClarificationRequests';
+import AgencyClarificationAnswers from './agencyClarificationAnswers';
 import InformedPartners from './informedPartners';
 import SelectedPartners from './selectedPartners/selectedPartnersContainer';
+import SelectedPartnerJustification from './selectedPartners/selectedPartnerJustification';
 import { selectCfeiDetails } from '../../../../store';
 import { ROLES, PROJECT_TYPES } from '../../../../helpers/constants';
 import ConceptNote from './conceptNote';
@@ -20,15 +23,17 @@ const messages = {
 };
 
 const CfeiOverview = (props) => {
-  const { params: { id, type }, role, cn, cn_template, partner, partnerId, displayGoal } = props;
+  const { params: { id, type }, role, cn, isComplete, cn_template,
+    partner, partnerId, displayGoal, loading } = props;
 
   return (
     <form >
       <GridColumn >
-        {type === PROJECT_TYPES.OPEN && <Timeline id={id} />}
+        {type === PROJECT_TYPES.OPEN && !loading && <Timeline id={id} />}
         <Grid container direction="row" spacing={24}>
           <Grid item xs={12} sm={8}>
             <ProjectDetails
+              formName={'cfeiDetails'}
               type={type}
               role={role}
               partnerId={partnerId}
@@ -37,17 +42,25 @@ const CfeiOverview = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <GridColumn >
+            <GridColumn>
               {(role === ROLES.PARTNER && type === PROJECT_TYPES.OPEN)
-              && <ConceptNote title={messages.cnTemplate} conceptNote={cn_template} />}
+                && <ConceptNote title={messages.cnTemplate} conceptNote={cn_template} />}
               {(type === PROJECT_TYPES.UNSOLICITED)
                 && <ConceptNote title={messages.cn} conceptNote={cn} />}
+              {type === PROJECT_TYPES.OPEN && role === ROLES.PARTNER
+                && <AgencyClarificationAnswers id={id} />}
+              {type === PROJECT_TYPES.OPEN && role === ROLES.PARTNER
+                && <PartnerClarificationRequests id={id} />}
+              {type === PROJECT_TYPES.OPEN && role === ROLES.AGENCY
+                && <AgencyClarificationAnswers id={id} />}
               {type === PROJECT_TYPES.OPEN
                 && <SelectionCriteria id={id} />}
               {role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN
                 && <InformedPartners id={id} />}
               {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT
-                && <SelectedPartners id={+id} />}
+                && <SelectedPartners id={id} />}
+              {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT && isComplete
+                && <SelectedPartnerJustification id={id} />}
             </GridColumn>
           </Grid>
         </Grid>
@@ -64,6 +77,8 @@ CfeiOverview.propTypes = {
   partner: PropTypes.string,
   partnerId: PropTypes.number,
   displayGoal: PropTypes.bool,
+  isComplete: PropTypes.bool,
+  loading: PropTypes.bool,
 };
 
 const formCfeiDetails = reduxForm({
@@ -74,21 +89,24 @@ const formCfeiDetails = reduxForm({
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.params.id);
   const { cn = null,
+    is_completed = null,
     partner_id = null,
     partner_name = null,
-    selected_source = null,
     cn_template = null,
-    goal = null,
     focal_points_detail = [],
   } = cfei || {};
+
   return {
     initialValues: assoc('focal_points', pluck('name', focal_points_detail), cfei),
+    loading: state.cfeiDetails.status.loading,
+    isComplete: is_completed,
     cn,
     cn_template,
     partner: partner_name,
     partnerId: partner_id,
     role: state.session.role,
     displayGoal: true,
+    cfei,
   };
 };
 

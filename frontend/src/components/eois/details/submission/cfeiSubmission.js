@@ -14,7 +14,9 @@ import HeaderList from '../../../common/list/headerList';
 import ConceptNoteSubmission from './conceptNoteSubmission';
 import { deleteUploadedCn } from '../../../../reducers/conceptNote';
 import PaddedContent from '../../../common/paddedContent';
-import { isUserNotPartnerReader } from '../../../../helpers/authHelpers';
+import { checkPermission, PARTNER_PERMISSIONS } from '../../../../helpers/permissions';
+import { isCfeiDeadlinePassed } from '../../../../store';
+
 
 const messages = {
   completeProfile: 'Complete Profile',
@@ -53,12 +55,11 @@ class CfeiSubmission extends Component {
   }
 
   titleHeader() {
-    const { cnUploaded, isReader } = this.props;
+    const { cnUploaded, hasUploadCnPermission, isDeadlinePassed } = this.props;
     return (
       <SpreadContent>
         <Typography type="headline">{messages.title}</Typography>
-        {!!cnUploaded
-          && isReader
+        {(!!cnUploaded && hasUploadCnPermission && !isDeadlinePassed)
           && <IconButton onClick={() => this.onDelete()}><Delete /></IconButton>}
       </SpreadContent>
     );
@@ -66,7 +67,7 @@ class CfeiSubmission extends Component {
 
   render() {
     const { open } = this.state;
-    const { partnerId, cnUploaded, isReader, isHq, isProfileComplete } = this.props;
+    const { partnerId, isHq, isProfileComplete } = this.props;
     if (isHq) {
       return (<Paper>
         <PaddedContent big >
@@ -79,7 +80,7 @@ class CfeiSubmission extends Component {
           <Typography>{messages.incomplete}</Typography>
           <Grid container justify="flex-end">
             <Grid item>
-              {isReader && <Button
+              {<Button
                 component={Link}
                 to={`/profile/${partnerId}/edit/`}
                 color="accent"
@@ -130,19 +131,23 @@ CfeiSubmission.propTypes = {
     PropTypes.bool,
   ]),
   deleteCn: PropTypes.func.isRequired,
-  dispatch: PropTypes.func,
-  isReader: PropTypes.bool,
+  isProfileComplete: PropTypes.bool,
+  hasUploadCnPermission: PropTypes.bool,
+  isHq: PropTypes.bool,
+  isDeadlinePassed: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   partnerId: state.session.partnerId,
   projectId: ownProps.params.id,
-  applicationId: state.partnerAppDetails[ownProps.params.id] ? state.partnerAppDetails[ownProps.params.id].id : null,
+  isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.params.id),
+  applicationId: state.partnerAppDetails[ownProps.params.id]
+    ? state.partnerAppDetails[ownProps.params.id].id : null,
   loader: state.conceptNote.loading,
   cnUploaded: state.conceptNote.cnFile,
   isHq: state.session.isHq,
   isProfileComplete: state.session.isProfileComplete,
-  isReader: isUserNotPartnerReader(state),
+  hasUploadCnPermission: checkPermission(PARTNER_PERMISSIONS.CFEI_SUBMIT_CONCEPT_NOTE, state),
 });
 
 const mapDispatch = dispatch => ({

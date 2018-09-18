@@ -19,9 +19,9 @@ const messages = {
 };
 
 const mapCompletionReasons = (disableNoC, disablePar) => (item) => {
-  if (item.value === 'NoC' && disableNoC) {
+  if (item.value === 'no_candidate' && disableNoC) {
     return { disabled: true, ...item };
-  } else if (item.value === 'Par' && disablePar) {
+  } else if (item.value === 'partners' && disablePar) {
     return { disabled: true, ...item };
   }
   return item;
@@ -29,6 +29,7 @@ const mapCompletionReasons = (disableNoC, disablePar) => (item) => {
 
 const CompleteCfeiForm = (props) => {
   const { handleSubmit, completionReasons } = props;
+
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
@@ -50,9 +51,6 @@ const CompleteCfeiForm = (props) => {
 };
 
 CompleteCfeiForm.propTypes = {
-  /**
-   * callback for form submit
-   */
   handleSubmit: PropTypes.func.isRequired,
   completionReasons: PropTypes.array,
 };
@@ -66,6 +64,7 @@ const mapStateToProps = (state, { params: { id, type } }) => {
   const status = selectCfeiStatus(state, id);
   const reviewStarted = (status === PROJECT_STATUSES.OPE && type !== PROJECT_TYPES.DIRECT);
   const hasWinners = selectCfeiWinnersStatus(state, id);
+
   return {
     completionReasons: completionReasons.map(
       mapCompletionReasons(reviewStarted, !hasWinners)),

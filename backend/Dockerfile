@@ -1,4 +1,4 @@
-FROM python:2.7
+FROM python:3.6.6-alpine3.8
 
 ARG env
 ENV ENV ${env:-dev}
@@ -6,44 +6,14 @@ ENV ENV ${env:-dev}
 ARG requirement_file
 ENV REQUIREMENT_FILE ${requirement_file:-dev.pip}
 
-# Install dependencies
-RUN apt-get update && \
-    # fix certificates for easy_install "certificate verify failed"
-    apt-get install --assume-yes --reinstall ca-certificates
-RUN apt-get install -y --no-install-recommends \
-    build-essential \
-    libcurl4-openssl-dev \
-    libjpeg-dev \
-    libgif-dev \
-    libffi-dev \
-    libpng-dev \
-    libtiff-dev \
-    libxml2-dev \
-    libxslt-dev \
-    xmlsec1 \
-    vim \
-    ntp
-RUN apt-get install -y --no-install-recommends \
-    git-core
-RUN apt-get install -y --no-install-recommends \
-    python-dev \
-    python-setuptools
-RUN apt-get install -y --no-install-recommends \
-    postgresql-client \
-    libpq-dev \
-    python-psycopg2
-
-RUN apt-get install -y --no-install-recommends \
-    python-gdal \
-    gdal-bin \
-    libgdal-dev \
-    libgdal20
+RUN apk update
+RUN apk add --upgrade --no-cache "postgresql-client" "postgresql-contrib" "postgresql-dev" bash curl
+RUN apk add --upgrade --no-cache g++ linux-headers gcc make libffi-dev git wget jpeg-dev zlib-dev libpng-dev graphviz-dev
 
 # Install Python tools
 RUN pip install --upgrade \
     virtualenv \
     fabric \
-    pip \
     wheel \
     --trusted-host pypi.python.org
 
@@ -55,7 +25,7 @@ ADD ./requirements/* /tmp/
 
 # Install PyPi dependencies
 WORKDIR /tmp
-RUN pip install -r $REQUIREMENT_FILE --trusted-host pypi.python.org
+RUN pip install --upgrade pip && pip install -r $REQUIREMENT_FILE --trusted-host pypi.python.org
 
 ADD . /code/
 
@@ -66,10 +36,13 @@ RUN touch /data/unpp_api/logs/django.log
 
 RUN chmod -R a+rw /data
 
+ADD worker-entrypoint.sh /
+RUN chmod +x /worker-entrypoint.sh
+
 ENV PYTHONUNBUFFERED 1
 WORKDIR /code/
 
-COPY waitforit /usr/local/bin/waitforit
-RUN chmod +x /usr/local/bin/waitforit
+COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
 
 EXPOSE 8000

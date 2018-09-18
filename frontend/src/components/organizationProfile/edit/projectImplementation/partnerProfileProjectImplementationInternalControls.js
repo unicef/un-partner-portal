@@ -14,11 +14,11 @@ import { PLACEHOLDERS } from '../../../../helpers/constants';
 
 const messages = {
   areaOfResponsibilityDesc: 'Area of Responsibility - Has the organization instituted safeguards to ensure the following functional responsibilities are appropriately segregated?',
-  areaOfResponsibility: 'Area of Responsibility',
+  areaOfResponsibility: 'Subject Area',
   segregationOf: 'Segregation of Duties',
   pleaseComment: 'Please comment',
   experiencedStaff: 'Does the organization have an adequate number of experienced staff responsible for financial management in all operations?',
-  policyArea: 'Policy Area - Does the organization have formal documented policies applicable to all operations that cover the following areas?',
+  policyArea: 'Policy Area - Does the organization have documented policies in the following subject areas?',
   selectArea: 'Select Area',
   documentedPolicies: 'Documented Policies?',
 };
@@ -62,8 +62,10 @@ const CommentInner = (readOnly, ...props) => member => (
     placeholder={PLACEHOLDERS.comment}
     textFieldProps={{
       multiline: true,
-      inputProps: {
-        maxLength: '5000',
+      InputProps: {
+        inputProps: {
+          maxLength: '5000',
+        },
       },
     }}
     warn
@@ -136,8 +138,10 @@ const PartnerProfileProjectImplementationInternalControls = (props) => {
               placeholder={PLACEHOLDERS.comment}
               textFieldProps={{
                 multiline: true,
-                inputProps: {
-                  maxLength: '5000',
+                InputProps: {
+                  inputProps: {
+                    maxLength: '5000',
+                  },
                 },
               }}
               warn

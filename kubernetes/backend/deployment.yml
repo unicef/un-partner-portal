@@ -24,6 +24,11 @@ metadata:
     revision: "{{CF_SHORT_REVISION}}"
   namespace: {{NAMESPACE}}
 spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   replicas: 1
   selector:
     matchLabels:
@@ -37,18 +42,23 @@ spec:
         - name: backend
           image: unicef/unpp-backend:{{CF_SHORT_REVISION}}
           volumeMounts:
-            - name: static-volume
+            - name: static-volume-{{NAMESPACE}}
               mountPath: /data
           command: ["bash"]
-          args: ["-c", "uwsgi --ini /code/unpp_api/uwsgi.ini"]
+          args: ["-c", "gunicorn unpp_api.wsgi -c /code/gunicorn_config.py"]
           ports:
             - containerPort: 8000
           env:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: unpp-{{ENV}}-secrets
-                  key: SECRET_KEY
+                  name: secret-key
+                  key: password
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: email-host-password
+                  key: password
             - name: ENV
               value: {{ENV}}
             - name: POSTGRES_DB
@@ -65,9 +75,46 @@ spec:
               value: "{{EMAIL_PORT}}"
             - name: EMAIL_HOST_USER
               value: "{{EMAIL_HOST_USER}}"
-            - name: EMAIL_HOST_PASSWORD
-              value: "{{EMAIL_HOST_PASSWORD}}"
+            - name: ELASTIC_APM_DEBUG
+              value: "{{ELASTIC_APM_DEBUG}}"
+            - name: ELASTIC_APM_SERVER_URL
+              value: "{{ELASTIC_APM_SERVER_URL}}"
+            - name: ELASTIC_APM_SERVICE_NAME
+              value: "{{ELASTIC_APM_SERVICE_NAME}}"
+            - name: UNHCR_API_HOST
+              value: "{{UNHCR_API_HOST}}"
+            - name: UNHCR_API_USERNAME
+              value: "{{UNHCR_API_USERNAME}}"
+            - name: UNHCR_API_PASSWORD
+              value: "{{UNHCR_API_PASSWORD}}"
+            - name: UNICEF_PARTNER_DETAILS_URL
+              value: "{{UNICEF_PARTNER_DETAILS_URL}}"
+            - name: UNICEF_API_USERNAME
+              value: "{{UNICEF_API_USERNAME}}"
+            - name: UNICEF_API_PASSWORD
+              value: "{{UNICEF_API_PASSWORD}}"
+            - name: WFP_API_HOST
+              value: "{{WFP_API_HOST}}"
+            - name: WFP_API_TOKEN
+              value: "{{WFP_API_TOKEN}}"
+            - name: ELASTIC_APM_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: elastic-apm-secret-token
+                  key: password
+          readinessProbe:
+            tcpSocket:
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+
       volumes:
-      - name: static-volume
+      - name: static-volume-{{NAMESPACE}}
         persistentVolumeClaim:
-          claimName: static-volume-claim-{{ENV}}
+          claimName: static-volume-claim-{{NAMESPACE}}
+
+      hostAliases:
+       - ip: "{{WFP_API_IP}}"
+         hostnames:
+         - "{{WFP_API_HOST}}"

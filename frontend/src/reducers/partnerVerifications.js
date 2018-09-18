@@ -10,6 +10,14 @@ import { loadPartnerProfileSummary } from './agencyPartnerProfile';
 import { getPartnerVerifications, postPartnerVerifications } from '../helpers/api/api';
 
 const initialState = {
+  columns: [
+    { name: 'is_verified', title: 'Verification status' },
+    { name: 'modified', title: 'Date' },
+    { name: 'name', title: 'Verified by' },
+  ],
+  loading: false,
+  totalCount: 0,
+  users: [],
 };
 
 const SINGLE_VERIFICATION_ADDED = 'SINGLE_VERIFICATION_ADDED';

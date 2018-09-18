@@ -2,17 +2,31 @@ upstream backend {
   server {{ DJANGO_APPLICATION_SERVICE_HOST }}:8000;
 }
 
-upstream frontend {
-  server {{ FRONTEND_SERVICE_HOST }}:8080;
-}
+{% if FRONTEND_SERVICE_HOST is defined %}
+    upstream frontend {
+      server {{ FRONTEND_SERVICE_HOST }}:8080;
+    }
+{% endif %}
 
 server {
-    listen      80 default;
-    client_max_body_size 32M;
+    listen 80;
 
     location /api/ {
-      uwsgi_pass backend;
-      include /etc/nginx/conf.d/uwsgi_params;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_pass http://backend;
+    }
+
+    location /social/ {
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_pass http://backend;
     }
 
     location /api/uploads  {
@@ -25,18 +39,26 @@ server {
         expires 1d;
     }
 
-    location / {
-      try_files $uri $uri/ @frontend;
-    }
+    {% if FRONTEND_FILES_PATH is defined %}
+        root {{ FRONTEND_FILES_PATH }};
+        index index.html;
 
-    location @frontend {
-      proxy_pass http://frontend;
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header Host $host;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      # Following is necessary for Websocket support
-      proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
-      }
+        location / {
+            try_files $uri /index.html;
+    {% else %}
+        location / {
+            try_files $uri $uri/ @frontend;
+        }
+        location @frontend {
+            proxy_pass http://frontend;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+            # Following is necessary for Websocket support
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+    {% endif %}
+        }
 }

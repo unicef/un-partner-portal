@@ -18,7 +18,7 @@ export const normalizeDate = (date) => {
 };
 
 export const formatDateForPrint = (date) => {
-  if (!date) return null;
+  if (!date || date === '-') return date;
   return moment(date).format(printFormat).toString();
 };
 

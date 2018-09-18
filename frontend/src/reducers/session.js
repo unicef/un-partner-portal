@@ -1,6 +1,12 @@
 import { browserHistory as history } from 'react-router';
 import R from 'ramda';
-import { postRegistration, login, logout, getUserData } from '../helpers/api/api';
+import {
+  getUserData,
+  login,
+  logout,
+  postRegistration,
+  passwordResetConfirm,
+} from '../helpers/api/api';
 import { ROLES, SESSION_STATUS } from '../helpers/constants';
 
 export const SESSION_CHANGE = 'SESSION_CHANGE';
@@ -10,6 +16,7 @@ export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const LOGIN_SUBMITTING = 'LOGIN_SUBMITTIN';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const SESSION_ERROR = 'SESSION_ERROR';
+export const NOTIFICATION_UPDATE = 'NOTIFICATION_UPDATE';
 
 const initialState = {
   role: null,
@@ -40,6 +47,7 @@ const initialState = {
   logoThumbnail: null,
   isProfileComplete: null,
   lastUpdate: null,
+  notificationFrequency: null,
 };
 
 export const initSession = session => ({ type: SESSION_CHANGE, session });
@@ -65,12 +73,17 @@ export const sessionError = error => ({
   error,
 });
 
+export const updateNotification = frequency => ({ type: NOTIFICATION_UPDATE, frequency });
+
 export const loginSuccess = session => ({ type: LOGIN_SUCCESS, session });
 
 export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
 
 export const loadUserData = () => (dispatch, getState) => {
-  const token = getState().session.token;
+  const { session } = getState();
+  const token = session.token;
+  const partnerId = session.partnerId;
+
   if (!token) {
     history.push('/login');
     return Promise.resolve();
@@ -78,7 +91,7 @@ export const loadUserData = () => (dispatch, getState) => {
   dispatch(sessionInitializing());
   return getUserData(token)
     .then((response) => {
-      const role = response.agency_name ? ROLES.AGENCY : ROLES.PARTNER;
+      const role = response.office_memberships ? ROLES.AGENCY : ROLES.PARTNER;
       window.localStorage.setItem('role', role);
       let sessionObject = {
         role,
@@ -86,23 +99,35 @@ export const loadUserData = () => (dispatch, getState) => {
         userId: response.id,
         email: response.email,
         position: response.role,
+        notificationFrequency: R.path(['profile', 'notification_frequency'], response),
         // token was valid so we can authorized user
         authorized: true,
       };
       const addToSession = R.mergeDeepRight(sessionObject);
       // agency specific fields
+
       if (role === ROLES.AGENCY) {
+        const office = R.head(response.office_memberships);
         const agencyObject = {
-          agencyName: response.agency_name,
-          agencyId: response.agency_id,
-          officeName: response.office_name,
-          officeId: response.office_id,
+          officeId: R.prop('office_id', office),
+          officeName: R.path(['office', 'name'], office),
+          telephone: R.path(['office', 'telephone'], office),
+          offices: response.office_memberships,
+          officeCountryCode: R.path(['office', 'country'], office),
+          officeRole: R.prop('role_display', office),
+          agencyName: R.path(['office', 'agency', 'name'], office),
+          agencyId: R.path(['office', 'agency', 'id'], office),
+          permissions: R.path(['permissions'], office),
         };
         sessionObject = addToSession(agencyObject);
       }
       // partner specific fields
       if (role === ROLES.PARTNER) {
-        const mainPartner = R.head(response.partners);
+        const mainPartner = R.defaultTo(
+          R.head(response.partners),
+          R.find(R.propEq('id', partnerId), response.partners),
+        );
+
         const partnerObject = {
           partners: response.partners,
           hqId: R.propOr(null, 'hq_id', mainPartner),
@@ -111,7 +136,9 @@ export const loadUserData = () => (dispatch, getState) => {
           partnerName: R.prop('legal_name', mainPartner),
           isHq: R.prop('is_hq', mainPartner),
           displayType: R.prop('display_type', mainPartner),
+          telephone: R.path(['office', 'telephone'], mainPartner),
           logo: R.prop('logo', mainPartner),
+          permissions: R.prop('permissions', response),
           logoThumbnail: R.prop('org_logo_thumbnail', mainPartner),
           isProfileComplete: R.path(['partner_additional', 'has_finished'],
             mainPartner),
@@ -124,7 +151,7 @@ export const loadUserData = () => (dispatch, getState) => {
       return sessionObject;
     })
     .catch((error) => {
-      // TODO (marcindo) correct error handling for different scenarios
+      // TODO correct error handling for different scenarios
       history.push('/login');
       dispatch(initSession({
         authorized: false,
@@ -160,6 +187,8 @@ export const registerUser = json => dispatch => postRegistration(json)
     dispatch(loginUser({ email, password: R.path(['user', 'password'], json) }));
   });
 
+export const changePassword = payload => () => passwordResetConfirm(payload);
+
 const setSession = (state, session) => R.mergeDeepRight(state, session);
 
 export default function sessionReducer(state = initialState, action) {
@@ -178,6 +207,9 @@ export default function sessionReducer(state = initialState, action) {
     }
     case SESSION_ERROR: {
       return R.assoc('error', action.error, state);
+    }
+    case NOTIFICATION_UPDATE: {
+      return R.assoc('notificationFrequency', action.frequency.notification_frequency, state);
     }
     default:
       return state;

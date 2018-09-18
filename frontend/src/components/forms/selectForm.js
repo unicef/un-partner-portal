@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import R from 'ramda';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-
 import Grid from 'material-ui/Grid';
 import { renderSelectField, renderText } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
-import TooltipIcon from '../common/tooltipIcon';
 import { renderSelectOptions } from './selectHelpers/selectRenderers';
-
 
 class SelectForm extends Component {
   constructor(props) {
@@ -35,6 +32,7 @@ class SelectForm extends Component {
       validation,
       defaultValue,
       readOnly,
+      formControlStyle,
       sections,
       multiple,
       textFieldProps,
@@ -63,6 +61,7 @@ class SelectForm extends Component {
             warn={warn ? warning : null}
             defaultValue={defaultValue || multiple ? ['placeholder_none'] : 'placeholder_none'}
             multiple={multiple}
+            formControlStyle={formControlStyle}
             fullWidth
             infoText={infoText}
             values={sections ? R.reduce((current, [_, nextValues]) => R.concat(current, nextValues), [], values) : values}
@@ -145,6 +144,8 @@ SelectForm.propTypes = {
    * props for read-only text field
    */
   textFieldProps: PropTypes.object,
+
+  formControlStyle: PropTypes.object,
 };
 
 export default SelectForm;

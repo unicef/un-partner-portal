@@ -20,10 +20,15 @@ urlpatterns = [
     url(r'^api/agencies/', include('agency.urls', namespace='agencies')),
     url(r'^api/partners/', include('partner.urls', namespace='partners')),
     url(r'^api/partners/', include('review.urls', namespace='partner-reviews')),
+    url(r'^api/manage/', include('management.urls', namespace='management')),
     url(r'^api/notifications/', include('notification.urls', namespace='notifications')),
     url(r'^api/dashboard/', include('dashboard.urls', namespace='dashboard')),
+    url(r'^api/reports/', include('reports.urls', namespace='reports')),
+    url(r'^api/externals/', include('externals.urls', namespace='externals')),
     url(r'^api/rest-auth/', include('rest_auth.urls')),
     url(r'^api/test-raise-exception/', test_raise_exception_view),
+
+    url(r'^social/', include('social_django.urls', namespace='social')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.IS_DEV or settings.IS_STAGING:

@@ -9,9 +9,8 @@ const messages = {
   award: 'Select',
 };
 
-
 const AwardApplicationButton = (props) => {
-  const { applicationId, handleDialogClose, handleDialogOpen, dialogOpen, ...other } = props;
+  const { applicationId, handleDialogClose, handleDialogOpen, dialogOpen, onUpdate, ...other } = props;
   return (
     <Grid item>
       <Button
@@ -23,22 +22,22 @@ const AwardApplicationButton = (props) => {
         {messages.award}
       </Button>
       <AwardApplicationModal
+        onUpdate={onUpdate}
         applicationId={applicationId}
         dialogOpen={dialogOpen}
         handleDialogClose={handleDialogClose}
       />
     </Grid>
-
   );
 };
 
 
 AwardApplicationButton.propTypes = {
-  applicationId: PropTypes.string,
+  applicationId: PropTypes.number,
   dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
+  onUpdate: PropTypes.func,
 };
-
 
 export default withDialogHandling(AwardApplicationButton);

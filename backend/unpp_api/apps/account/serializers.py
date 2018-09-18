@@ -3,46 +3,51 @@ from datetime import date
 from django.db import transaction
 
 from rest_framework import serializers
-from rest_auth.serializers import LoginSerializer
+from rest_auth.serializers import LoginSerializer, PasswordResetSerializer
 from rest_framework.validators import UniqueValidator
 
+from account.declaration import PartnerDeclarationPDFCreator
+from account.forms import CustomPasswordResetForm
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
-    MEMBER_ROLES,
-    MEMBER_STATUSES,
     POLICY_AREA_CHOICES,
+    COLLABORATION_EVIDENCE_MODES,
 )
+from common.serializers import CommonFileBase64UploadSerializer
 from partner.models import (
     Partner,
     PartnerProfile,
-    PartnerMailingAddress,
     PartnerHeadOrganization,
-    PartnerAuditAssessment,
-    PartnerReporting,
-    PartnerMandateMission,
-    PartnerFunding,
-    PartnerOtherInfo,
     PartnerInternalControl,
     PartnerMember,
     PartnerBudget,
     PartnerPolicyArea,
+    PartnerRegistrationDocument,
+    PartnerGoverningDocument,
+    PartnerCollaborationEvidence,
 )
+from partner.roles import PartnerRole
 
 from partner.serializers import (
     PartnerSerializer,
     PartnerProfileSerializer,
     PartnerHeadOrganizationRegisterSerializer,
     PartnerMemberSerializer,
+    PartnerGoverningDocumentSerializer,
+    PartnerRegistrationDocumentSerializer,
+    PartnerCollaborationEvidenceSerializer,
 )
 from partner.validators import PartnerRegistrationValidator
-from .models import User
+from account.models import User, UserProfile
 
 
 class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
 
     date_joined = serializers.DateTimeField(required=False, read_only=True)
-    fullname = serializers.CharField(required=False, read_only=True)
-    email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
+    fullname = serializers.CharField(required=False)
+    email = serializers.EmailField(validators=[
+        UniqueValidator(queryset=User.objects.all(), lookup='iexact')
+    ])
 
     class Meta:
         model = User
@@ -53,42 +58,129 @@ class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
             'password',
             'date_joined',
         )
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def save(self):
+        user = super(RegisterSimpleAccountSerializer, self).save()
+        if 'password' in self.validated_data:
+            user.set_password(self.validated_data['password'])
+            user.save()
+        return user
+
+
+class PartnerRecommendationDocumentSerializer(PartnerCollaborationEvidenceSerializer):
+
+    evidence_file = CommonFileBase64UploadSerializer()
+
+    class Meta(PartnerCollaborationEvidenceSerializer.Meta):
+        extra_kwargs = {
+            'organization_name': {
+                'required': True
+            },
+            'date_received': {
+                'required': True
+            },
+            'partner': {
+                'required': False
+            },
+        }
+
+
+class PartnerDeclarationSerializer(serializers.Serializer):
+    question = serializers.CharField()
+    answer = serializers.CharField()
 
 
 class PartnerRegistrationSerializer(serializers.Serializer):
 
     user = RegisterSimpleAccountSerializer()
+
     partner = PartnerSerializer()
     partner_profile = PartnerProfileSerializer()
     partner_head_organization = PartnerHeadOrganizationRegisterSerializer()
     partner_member = PartnerMemberSerializer()
 
+    governing_document = PartnerGoverningDocumentSerializer(required=False)
+    registration_document = PartnerRegistrationDocumentSerializer(required=False)
+    recommendation_document = PartnerRecommendationDocumentSerializer(required=False)
+
+    declaration = PartnerDeclarationSerializer(many=True, write_only=True)
+
     class Meta:
-        validators = [PartnerRegistrationValidator()]
+        validators = (
+            PartnerRegistrationValidator(),
+        )
+
+    def validate(self, attrs):
+        validated_data = super(PartnerRegistrationSerializer, self).validate(attrs)
+        governing_document = validated_data.get('governing_document')
+        registration_document = validated_data.get('registration_document')
+        recommendation_document = validated_data.get('recommendation_document')
+
+        if not any([governing_document, recommendation_document, registration_document]):
+            raise serializers.ValidationError('At least one document needs to be provided.')
+
+        profile = validated_data.get('partner_profile', {})
+
+        if profile.get('have_governing_document'):
+            if not governing_document:
+                raise serializers.ValidationError({
+                    'governing_document': 'This field is required'
+                })
+        elif not profile.get('missing_governing_document_comment'):
+            raise serializers.ValidationError({
+                'missing_governing_document_comment': 'This field is required'
+            })
+
+        if profile.get('registered_to_operate_in_country'):
+            if not registration_document:
+                raise serializers.ValidationError({
+                    'registration_document': 'This field is required'
+                })
+        elif not profile.get('missing_registration_document_comment'):
+            raise serializers.ValidationError({
+                'missing_registration_document_comment': 'This field is required'
+            })
+
+        return validated_data
+
+    def save_documents(self, validated_data, user):
+        governing_document = validated_data.get('governing_document')
+        registration_document = validated_data.get('registration_document')
+        recommendation_document = validated_data.get('recommendation_document')
+
+        if governing_document:
+            governing_document['created_by'] = user
+            governing_document['profile'] = self.partner.profile
+            PartnerGoverningDocument.objects.create(editable=False, **governing_document)
+
+        if registration_document:
+            registration_document['created_by'] = user
+            registration_document['profile'] = self.partner.profile
+            PartnerRegistrationDocument.objects.create(editable=False, **registration_document)
+
+        if recommendation_document:
+            recommendation_document['created_by'] = user
+            recommendation_document['partner'] = self.partner
+            recommendation_document['mode'] = COLLABORATION_EVIDENCE_MODES.reference
+            PartnerCollaborationEvidence.objects.create(editable=False, **recommendation_document)
+            self.partner.profile.any_reference = True
+            self.partner.profile.save()
 
     @transaction.atomic
     def create(self, validated_data):
-        validated_data['user']['fullname'] = validated_data['user']['email']
-        self.user = User.objects.create(**validated_data['user'])
-        self.user.set_password(validated_data['user']['password'])
-        self.user.save()
+        user_serializer = RegisterSimpleAccountSerializer(data=validated_data.pop('user'))
+        user_serializer.is_valid()
+        user = user_serializer.save()
 
         self.partner = Partner.objects.create(**validated_data['partner'])
+        self.save_documents(validated_data, user)
 
-        partner_profile = validated_data['partner_profile']
-        partner_profile['partner_id'] = self.partner.id
-        self.partner_profile = PartnerProfile.objects.create(**partner_profile)
+        PartnerProfile.objects.filter(partner=self.partner).update(**validated_data['partner_profile'])
 
         partner_head_org = validated_data['partner_head_organization']
-        partner_head_org['partner_id'] = self.partner.id
-        self.partner_head_organization = PartnerHeadOrganization.objects.create(**partner_head_org)
-
-        PartnerMailingAddress.objects.create(partner=self.partner)
-        PartnerAuditAssessment.objects.create(partner=self.partner)
-        PartnerReporting.objects.create(partner=self.partner)
-        PartnerMandateMission.objects.create(partner=self.partner)
-        PartnerFunding.objects.create(partner=self.partner)
-        PartnerOtherInfo.objects.create(partner=self.partner)
+        partner_head_org['partner_id'] = self.partner.pk
+        PartnerHeadOrganization.objects.create(**partner_head_org)
 
         responsibilities = []
         for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
@@ -110,30 +202,66 @@ class PartnerRegistrationSerializer(serializers.Serializer):
 
         partner_member = validated_data['partner_member']
         partner_member['partner_id'] = self.partner.id
-        partner_member['user_id'] = self.user.id
-        partner_member['role'] = MEMBER_ROLES.admin
-        partner_member['status'] = MEMBER_STATUSES.active
+        partner_member['user'] = user_serializer.instance
+        partner_member['role'] = PartnerRole.ADMIN.name
         self.partner_member = PartnerMember.objects.create(**validated_data['partner_member'])
 
-        user_data = RegisterSimpleAccountSerializer(instance=self.user).data
-        user_data.pop('password')
-        self.instance_json = {
+        self.partner.declaration = PartnerDeclarationPDFCreator(
+            validated_data['declaration'], self.partner, user
+        ).get_as_common_file()
+        self.partner.save()
+
+        self.partner = Partner.objects.get(pk=self.partner.pk)
+        return {
             "partner": PartnerSerializer(instance=self.partner).data,
-            "user": user_data,
-            "partner_profile": PartnerProfileSerializer(instance=self.partner_profile).data,
-            "partner_head_organization": PartnerHeadOrganizationRegisterSerializer(self.partner_head_organization).data,
+            "user": user_serializer.data,
+            "partner_profile": PartnerProfileSerializer(instance=self.partner.profile).data,
+            "partner_head_organization": PartnerHeadOrganizationRegisterSerializer(instance=self.partner.org_head).data,
             "partner_member": PartnerMemberSerializer(instance=self.partner_member).data,
         }
-        return self.instance_json
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    notification_frequency_display = serializers.CharField(source='get_notification_frequency_display')
+
+    class Meta:
+        model = UserProfile
+        fields = (
+            'id',
+            'notification_frequency',
+            'notification_frequency_display',
+            'accepted_tos',
+        )
 
 
 class UserSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source='fullname')
+    name = serializers.CharField(source='fullname', read_only=True)
+    profile = UserProfileSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ('id', 'name', 'email',)
+        fields = (
+            'id',
+            'is_active',
+            'name',
+            'email',
+            'status',
+            'profile',
+        )
+
+
+class BasicUserSerializer(serializers.ModelSerializer):
+
+    name = serializers.CharField(source='fullname', read_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'name',
+            'email',
+        )
 
 
 class IDUserSerializer(serializers.ModelSerializer):
@@ -143,64 +271,38 @@ class IDUserSerializer(serializers.ModelSerializer):
         fields = ('id', )
 
 
-class AgencyUserSerializer(UserSerializer):
-
-    agency_name = serializers.SerializerMethodField()
-    agency_id = serializers.SerializerMethodField()
-    office_name = serializers.SerializerMethodField()
-    office_id = serializers.SerializerMethodField()
-    role = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = UserSerializer.Meta.fields + ('agency_name',
-                                               'agency_id',
-                                               'role',
-                                               'status',
-                                               'office_name',
-                                               'office_id',)
-
-    def _agency_member(self, obj):
-        return obj.agency_members.get()
-
-    def get_role(self, obj):
-        return self._agency_member(obj).get_role_display()
-
-    def get_status(self, obj):
-        return self._agency_member(obj).get_status_display()
-
-    def get_agency_name(self, obj):
-        return self._agency_member(obj).office.agency.name
-
-    def get_agency_id(self, obj):
-        return self._agency_member(obj).office.agency.id
-
-    def get_office_name(self, obj):
-        return self._agency_member(obj).office.name
-
-    def get_office_id(self, obj):
-        return self._agency_member(obj).office.id
-
-
 class PartnerUserSerializer(UserSerializer):
 
     partners = serializers.SerializerMethodField()
     role = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField()
 
-    def _partner_member(self, obj):
-        return obj.partner_members.get()
+    def _partner_member(self, user):
+        request = self.context.get('request')
+        if request and request.partner_member:
+            return request.partner_member
 
-    def get_role(self, obj):
-        return self._partner_member(obj).get_role_display()
+        return user.partner_members.first()
+
+    def get_role(self, user):
+        return self._partner_member(user).get_role_display()
 
     class Meta:
         model = User
-        fields = UserSerializer.Meta.fields + ('partners', 'role', 'is_account_locked')
+        fields = UserSerializer.Meta.fields + (
+            'partners',
+            'role',
+            'permissions',
+        )
 
     def get_partners(self, obj):
         partner_ids = obj.get_partner_ids_i_can_access()
         return PartnerSerializer(Partner.objects.filter(id__in=partner_ids), many=True).data
+
+    def get_permissions(self, user):
+        return [
+            p.name for p in self._partner_member(user).user_permissions
+        ]
 
 
 class UserFullnameSerializer(serializers.ModelSerializer):
@@ -222,9 +324,14 @@ class PartnerMemberSerializer(serializers.ModelSerializer):
 class CustomLoginSerializer(LoginSerializer):
 
     def validate(self, attrs):
-        sup_attrs = super(CustomLoginSerializer, self).validate(attrs)
-        user = sup_attrs['user']
+        attrs = super(CustomLoginSerializer, self).validate(attrs)
+        user = attrs['user']
         if user.is_partner_user:
-            if user.is_account_locked:
-                raise serializers.ValidationError('Account is Currently Locked')
-        return sup_attrs
+            if not user.partner_members.filter(partner__is_locked=False).exists():
+                raise serializers.ValidationError('Account is Locked')
+        return attrs
+
+
+class CustomPasswordResetSerializer(PasswordResetSerializer):
+
+    password_reset_form_class = CustomPasswordResetForm

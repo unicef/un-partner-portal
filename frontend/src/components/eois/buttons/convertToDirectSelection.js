@@ -6,7 +6,7 @@ import withDialogHandling from '../../common/hoc/withDialogHandling';
 import ConvertToDirectSelectionModal from '../modals/convertToDirectSelection/convertToDirectSelectionModal';
 
 const messages = {
-  label: 'Convert to Direct Selection',
+  label: 'Convert to Direct Selection/Retention',
 };
 
 const ConvertToDS = (props) => {
@@ -15,8 +15,6 @@ const ConvertToDS = (props) => {
     handleDialogClose,
     handleDialogOpen,
     dialogOpen,
-    partnerId,
-    ...other,
   } = props;
 
   return (
@@ -25,7 +23,6 @@ const ConvertToDS = (props) => {
         raised
         color="accent"
         onClick={handleDialogOpen}
-        {...other}
       >
         {messages.label}
       </Button>
@@ -34,11 +31,8 @@ const ConvertToDS = (props) => {
         dialogOpen={dialogOpen}
         handleDialogClose={handleDialogClose}
       />
-    </Grid>
-
-  );
+    </Grid>);
 };
-
 
 ConvertToDS.propTypes = {
   id: PropTypes.string,
@@ -46,6 +40,5 @@ ConvertToDS.propTypes = {
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
 };
-
 
 export default withDialogHandling(ConvertToDS);
