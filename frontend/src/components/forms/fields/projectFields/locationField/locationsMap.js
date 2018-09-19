@@ -4,9 +4,10 @@ import R from 'ramda';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Place from 'material-ui-icons/Place';
-import { Marker, Popup } from "react-mapbox-gl";
+import { Marker, Popup, ZoomControl } from "react-mapbox-gl";
 import MapContainer from '../../../../common/map/MapContainer';
 import { errorToBeAdded } from '../../../../../reducers/errorReducer';
+import LocationsGeocoder from './locationsGeocoder';
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const geocodingClient = mbxGeocoding({ accessToken: process.env.MAP_BOX_KEY });
 /**
@@ -43,7 +44,7 @@ class LocationsMapBase extends Component {
       activeMarkerNumber: null,
       activeLocation: null,
     };
-    
+
     this.initMap = this.initMap.bind(this);
     this.mapClicked = this.mapClicked.bind(this);
     this.onMarkerOver = this.onMarkerOver.bind(this);
@@ -151,7 +152,7 @@ class LocationsMapBase extends Component {
   }
 
   render() {
-    const { showMap, locations } = this.props;
+    const { showMap, locations, readOnly } = this.props;
     const {
       pos,
       bounds,
@@ -163,6 +164,8 @@ class LocationsMapBase extends Component {
       bounds={bounds}
       onClick={this.mapClicked}
     >
+      {!readOnly && <LocationsGeocoder />}
+      <ZoomControl position="bottom-right" />
       {locations && locations.map(({ lat, lon, admin_level_1 }, index) => (
         <Marker onClick={(event) => this.removeMarker(index)}
           onMouseEnter={() => this.onMarkerOver(lat, lon, admin_level_1)}
