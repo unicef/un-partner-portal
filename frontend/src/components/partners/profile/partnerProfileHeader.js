@@ -68,8 +68,8 @@ class PartnerProfileHeader extends Component {
       : R.filter(item => item.path !== messages.observationTab, tabs);
 
     filterTabs = (hasVerifySeeCommentsPermission)
-      ? tabs
-      : R.filter(item => item.path !== messages.verificationTab, tabs);
+      ? filterTabs
+      : R.filter(item => item.path !== messages.verificationTab, filterTabs);
 
     if (filterTabs.findIndex(tab => location.match(`^/partner/${partnerId}/${tab.path}`)) === -1) {
       history.push('/');
@@ -86,8 +86,8 @@ class PartnerProfileHeader extends Component {
       : R.filter(item => item.path !== messages.observationTab, tabs);
 
     filterTabs = (hasVerifySeeCommentsPermission)
-      ? tabs
-      : R.filter(item => item.path !== messages.verificationTab, tabs);
+      ? filterTabs
+      : R.filter(item => item.path !== messages.verificationTab, filterTabs);
 
     history.push(`/partner/${partnerId}/${filterTabs[index].path}`);
   }
@@ -97,11 +97,16 @@ class PartnerProfileHeader extends Component {
       tabs,
       children,
       hasViewObservationPermission,
+      hasVerifySeeCommentsPermission,
     } = this.props;
-
-    const filterTabs = (hasViewObservationPermission)
+    
+    let filterTabs = (hasViewObservationPermission)
       ? tabs
       : R.filter(item => item.path !== messages.observationTab, tabs);
+
+    filterTabs = (hasVerifySeeCommentsPermission)
+      ? filterTabs
+      : R.filter(item => item.path !== messages.verificationTab, filterTabs);
 
     const index = this.updatePath();
     return (
