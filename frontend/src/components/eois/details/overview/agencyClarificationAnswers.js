@@ -133,13 +133,13 @@ class AgencyClarificationAnswers extends Component {
   }
 
   uploadFile() {
-    const { classes, handleDialogOpen, isClaraificationDeadlinePassed,
+    const { classes, handleDialogOpen, isClarificationDeadlinePassed,
       count, hasPermissionToAdd } = this.props;
-    const tooltipText = (!isClaraificationDeadlinePassed && messages.isCfeiDeadlinePassed)
+    const tooltipText = (!isClarificationDeadlinePassed && messages.isCfeiDeadlinePassed)
                           || (count === 3 && messages.maxFile);
 
     return (
-      (!isClaraificationDeadlinePassed || count === 3) ?
+      (!isClarificationDeadlinePassed || count === 3) ?
         <ButtonWithTooltip
           name="publish"
           className={classes.btnSize}
